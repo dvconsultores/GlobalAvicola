@@ -1,11 +1,18 @@
 import { create } from 'zustand'
 import api from '../services/api'
 
+interface JwtClaims {
+  sub?: string | number
+  username?: string
+  role_id?: number | null
+  view_type?: string
+}
+
 // Decode JWT payload without verification (view_type is in the token)
-function decodeJWT(token: string): Record<string, unknown> | null {
+function decodeJWT(token: string): JwtClaims | null {
   try {
     const payload = token.split('.')[1]
-    return JSON.parse(atob(payload))
+    return JSON.parse(atob(payload)) as JwtClaims
   } catch {
     return null
   }
@@ -44,7 +51,7 @@ function getInitialUser(): User | null {
     first_name: '',
     last_name: '',
     email: '',
-    role_id: claims.role_id || null,
+    role_id: claims.role_id ?? null,
     view_type: claims.view_type || 'web',
   }
 }
@@ -69,7 +76,7 @@ export const useAuthStore = create<AuthState>((set) => ({
       first_name: '',
       last_name: '',
       email: '',
-      role_id: claims?.role_id || null,
+      role_id: claims?.role_id ?? null,
       view_type: claims?.view_type || 'web',
     }
     set({ token: access_token, user: immediateUser, isAuthenticated: true, isLoading: false })
