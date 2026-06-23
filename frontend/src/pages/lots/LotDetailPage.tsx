@@ -4,50 +4,48 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Bird, Wheat, Skull, Syringe, Egg, Baby } from 'lucide-react'
 import api from '../../services/api'
 
-const BIRD_TYPE_LABELS: Record<string, string> = {
-  grandparent: 'Progenitoras', breeder: 'Reproductoras', broiler: 'Engorde',
-}
+
 
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-800', closed: 'bg-slate-100 text-slate-600', cancelled: 'bg-red-100 text-red-800',
 }
 
-// Operations available per bird_type (productive stage)
-const STAGE_OPERATIONS: Record<string, { label: string; eventType: string; icon: any }[]> = {
+// Operations available per bird_type (productive stage) — labels resolved at render via t()
+const STAGE_OPERATIONS: Record<string, { eventType: string; icon: any }[]> = {
   grandparent: [
-    { label: 'Inspección Granja', eventType: 'farm_inspection', icon: Activity },
-    { label: 'Recepción de Aves', eventType: 'bird_reception', icon: Bird },
-    { label: 'Distribución', eventType: 'bird_distribution', icon: Bird },
-    { label: 'Alimento', eventType: 'feed_registration', icon: Wheat },
-    { label: 'Pesaje', eventType: 'weight_recording', icon: TrendingUp },
-    { label: 'Mortalidad', eventType: 'mortality_recording', icon: Skull },
-    { label: 'Vacunación', eventType: 'vaccination', icon: Syringe },
-    { label: 'Medicación', eventType: 'medication', icon: Syringe },
-    { label: 'Salida de Aves', eventType: 'bird_exit', icon: Bird },
+    { eventType: 'farm_inspection', icon: Activity },
+    { eventType: 'bird_reception', icon: Bird },
+    { eventType: 'bird_distribution', icon: Bird },
+    { eventType: 'feed_registration', icon: Wheat },
+    { eventType: 'weight_recording', icon: TrendingUp },
+    { eventType: 'mortality_recording', icon: Skull },
+    { eventType: 'vaccination', icon: Syringe },
+    { eventType: 'medication', icon: Syringe },
+    { eventType: 'bird_exit', icon: Bird },
   ],
   breeder: [
-    { label: 'Inspección Granja', eventType: 'farm_inspection', icon: Activity },
-    { label: 'Recepción de Aves', eventType: 'bird_reception', icon: Bird },
-    { label: 'Distribución', eventType: 'bird_distribution', icon: Bird },
-    { label: 'Alimento', eventType: 'feed_registration', icon: Wheat },
-    { label: 'Pesaje', eventType: 'weight_recording', icon: TrendingUp },
-    { label: 'Mortalidad', eventType: 'mortality_recording', icon: Skull },
-    { label: 'Vacunación', eventType: 'vaccination', icon: Syringe },
-    { label: 'Medicación', eventType: 'medication', icon: Syringe },
-    { label: 'Recolección Huevos', eventType: 'egg_collection', icon: Egg },
-    { label: 'Clasificación Huevos', eventType: 'egg_classification', icon: Egg },
-    { label: 'Despacho Huevos', eventType: 'egg_dispatch', icon: Egg },
-    { label: 'Salida de Aves', eventType: 'bird_exit', icon: Bird },
+    { eventType: 'farm_inspection', icon: Activity },
+    { eventType: 'bird_reception', icon: Bird },
+    { eventType: 'bird_distribution', icon: Bird },
+    { eventType: 'feed_registration', icon: Wheat },
+    { eventType: 'weight_recording', icon: TrendingUp },
+    { eventType: 'mortality_recording', icon: Skull },
+    { eventType: 'vaccination', icon: Syringe },
+    { eventType: 'medication', icon: Syringe },
+    { eventType: 'egg_collection', icon: Egg },
+    { eventType: 'egg_classification', icon: Egg },
+    { eventType: 'egg_dispatch', icon: Egg },
+    { eventType: 'bird_exit', icon: Bird },
   ],
   broiler: [
-    { label: 'Inspección Granja', eventType: 'farm_inspection', icon: Activity },
-    { label: 'Recepción Pollitos', eventType: 'bird_reception', icon: Baby },
-    { label: 'Alimento', eventType: 'feed_registration', icon: Wheat },
-    { label: 'Pesaje', eventType: 'weight_recording', icon: TrendingUp },
-    { label: 'Mortalidad', eventType: 'mortality_recording', icon: Skull },
-    { label: 'Vacunación', eventType: 'vaccination', icon: Syringe },
-    { label: 'Medicación', eventType: 'medication', icon: Syringe },
-    { label: 'Cierre de Lote', eventType: 'lot_closure', icon: Activity },
+    { eventType: 'farm_inspection', icon: Activity },
+    { eventType: 'bird_reception', icon: Baby },
+    { eventType: 'feed_registration', icon: Wheat },
+    { eventType: 'weight_recording', icon: TrendingUp },
+    { eventType: 'mortality_recording', icon: Skull },
+    { eventType: 'vaccination', icon: Syringe },
+    { eventType: 'medication', icon: Syringe },
+    { eventType: 'lot_closure', icon: Activity },
   ],
 }
 
@@ -86,22 +84,22 @@ export default function LotDetailPage() {
   }, [id])
 
   if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
-  if (!lot) return <div className="p-6 text-slate-500">Lote no encontrado</div>
+  if (!lot) return <div className="p-6 text-slate-500">{t('lots.lotNotFound')}</div>
 
   const birdType = lot.bird_type || 'broiler'
   const stageOps = STAGE_OPERATIONS[birdType] || STAGE_OPERATIONS.broiler
-  const stageLabel = BIRD_TYPE_LABELS[birdType] || birdType
+  const stageLabel = t(`birdTypes.${birdType}`, birdType)
 
   // G-09: Close lot with summary
   const handleCloseLot = async () => {
-    if (!confirm('¿Estás seguro de cerrar este lote? Se generará un resumen final.')) return
+    if (!confirm(t('lots.closeConfirm'))) return
     setClosing(true)
     try {
       const { data } = await api.post(`/lots/${id}/close`)
       setCloseResult(data)
       setLot((prev: any) => ({ ...prev, status: 'closed' }))
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Error al cerrar lote')
+      alert(err.response?.data?.detail || t('lots.closeError'))
     } finally {
       setClosing(false)
     }
@@ -120,17 +118,17 @@ export default function LotDetailPage() {
       <div className="flex items-center gap-3 mb-6">
         <Link to="/lots" className="text-slate-400 hover:text-slate-600"><ArrowLeft size={20} /></Link>
         <div className="flex-1">
-          <h1 className="text-2xl font-bold text-[#1E3A5F]">{lot.lot_code || `Lote #${lot.id}`}</h1>
-          <p className="text-sm text-slate-500">{stageLabel} · {lot.status === 'active' ? 'Activo' : lot.status}</p>
+          <h1 className="text-2xl font-bold text-[#1E3A5F]">{lot.lot_code || `${t('lots.title')} #${lot.id}`}</h1>
+          <p className="text-sm text-slate-500">{stageLabel} · {t(`lotStatus.${lot.status}`, lot.status)}</p>
         </div>
         <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100'}`}>
-          {lot.status === 'active' ? 'Activo' : lot.status === 'closed' ? 'Cerrado' : 'Cancelado'}
+          {t(`lotStatus.${lot.status}`, lot.status)}
         </span>
         {/* G-09: Close lot button */}
         {lot.status === 'active' && (
           <button onClick={handleCloseLot} disabled={closing}
             className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition disabled:opacity-50">
-            {closing ? 'Cerrando...' : '🔒 Cerrar Lote'}
+            {closing ? t('lots.closing') : '🔒 ' + t('lots.closeButton')}
           </button>
         )}
       </div>
@@ -138,15 +136,15 @@ export default function LotDetailPage() {
       {/* G-09: Close summary modal */}
       {closeResult && (
         <div className="mb-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl">
-          <h3 className="text-lg font-bold text-emerald-800 mb-3">✅ Lote Cerrado — Resumen Final</h3>
+          <h3 className="text-lg font-bold text-emerald-800 mb-3">✅ {t('lots.closedSummary')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <div><span className="text-slate-500">Edad:</span> <strong>{closeResult.age_days} días</strong></div>
-            <div><span className="text-slate-500">Mortalidad total:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
-            <div><span className="text-slate-500">Alimento total:</span> <strong>{closeResult.total_feed_kg} kg</strong></div>
-            <div><span className="text-slate-500">Huevos totales:</span> <strong>{closeResult.total_eggs}</strong></div>
-            <div><span className="text-slate-500">Eventos totales:</span> <strong>{closeResult.total_events}</strong></div>
-            <div><span className="text-slate-500">Aprobados:</span> <strong className="text-emerald-600">{closeResult.approved_events}</strong></div>
-            <div><span className="text-slate-500">Cierre:</span> <strong>{closeResult.end_date}</strong></div>
+            <div><span className="text-slate-500">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
+            <div><span className="text-slate-500">{t('lots.totalMortality')}:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
+            <div><span className="text-slate-500">{t('lots.totalFeed')}:</span> <strong>{closeResult.total_feed_kg} {t('lots.kg')}</strong></div>
+            <div><span className="text-slate-500">{t('lots.totalEggs')}:</span> <strong>{closeResult.total_eggs}</strong></div>
+            <div><span className="text-slate-500">{t('lots.totalEvents')}:</span> <strong>{closeResult.total_events}</strong></div>
+            <div><span className="text-slate-500">{t('lots.approvedEvents')}:</span> <strong className="text-emerald-600">{closeResult.approved_events}</strong></div>
+            <div><span className="text-slate-500">{t('lots.closure')}:</span> <strong>{closeResult.end_date}</strong></div>
           </div>
         </div>
       )}
@@ -157,7 +155,7 @@ export default function LotDetailPage() {
           {/* Quick Actions — Stage-specific operations */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
-              <Plus size={18} /> Registrar Operación — {stageLabel}
+              <Plus size={18} /> {t('lots.registerOperation')} — {stageLabel}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
               {stageOps.map(op => {
@@ -167,7 +165,7 @@ export default function LotDetailPage() {
                     to={`/operations/new?type=${op.eventType}&lot_id=${lot.id}`}
                     className="flex flex-col items-center gap-1 p-3 rounded-lg border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50 transition text-center">
                     <Icon size={22} className="text-[#2563EB]" />
-                    <span className="text-xs text-slate-600 leading-tight">{op.label}</span>
+                    <span className="text-xs text-slate-600 leading-tight">{t(`eventsShort.${op.eventType}`, op.eventType)}</span>
                   </Link>
                 )
               })}
@@ -202,18 +200,18 @@ export default function LotDetailPage() {
             if (weeks.length === 0) return null
             return (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mt-4">
-                <h2 className="font-semibold text-slate-700 mb-3">📅 Vista Semanal</h2>
+                <h2 className="font-semibold text-slate-700 mb-3">📅 {t('lots.weeklyView')}</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead className="bg-slate-50">
                       <tr>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">N° Sem</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">Peso ♂ (g)</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">Peso ♀ (g)</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">Mort. ♂</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">Mort. ♀</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">Alim. (kg)</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">Fecha</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.weekNumber')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.maleWeight')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.femaleWeight')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.maleMort')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.femaleMort')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.feed')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.date')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -238,10 +236,10 @@ export default function LotDetailPage() {
           {/* Recent Events */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
-              <Activity size={18} /> Últimos Registros
+              <Activity size={18} /> {t('lots.lastRecords')}
             </h2>
             {events.length === 0 ? (
-              <p className="text-sm text-slate-400">Sin registros operativos</p>
+              <p className="text-sm text-slate-400">{t('lots.noOperationalRecords')}</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {events.slice(0, 15).map((ev: any) => (
@@ -267,13 +265,13 @@ export default function LotDetailPage() {
           {/* Lot Info */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
-              <Calendar size={18} /> Información
+              <Calendar size={18} /> {t('lots.info')}
             </h2>
             <dl className="space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500">Inicio</dt><dd>{lot.start_date || '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Tipo</dt><dd>{stageLabel}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Granja</dt><dd>{lot.farm_id || '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">Galpón</dt><dd>{lot.house_id || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
             </dl>
           </div>
 
@@ -281,32 +279,32 @@ export default function LotDetailPage() {
           {kpis && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
               <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
-                <TrendingUp size={18} /> KPIs
+                <TrendingUp size={18} /> {t('lots.kpis')}
               </h2>
               <div className="space-y-3">
                 {kpis.mortality && (
                   <div className="p-3 bg-red-50 rounded-lg">
-                    <p className="text-xs text-red-600 font-medium">Mortalidad</p>
+                    <p className="text-xs text-red-600 font-medium">{t('lots.mortalityKpi')}</p>
                     <p className="text-lg font-bold text-red-700">{kpis.mortality.mortality_rate_pct}%</p>
-                    <p className="text-xs text-red-500">{kpis.mortality.total_deaths} bajas</p>
+                    <p className="text-xs text-red-500">{kpis.mortality.total_deaths} {t('lots.bajas')}</p>
                   </div>
                 )}
                 {kpis.feed_conversion && (
                   <div className="p-3 bg-amber-50 rounded-lg">
-                    <p className="text-xs text-amber-600 font-medium">Conversión Alimenticia</p>
-                    <p className="text-lg font-bold text-amber-700">{kpis.feed_conversion.total_feed_kg} kg</p>
+                    <p className="text-xs text-amber-600 font-medium">{t('lots.feedConversionKpi')}</p>
+                    <p className="text-lg font-bold text-amber-700">{kpis.feed_conversion.total_feed_kg} {t('lots.kg')}</p>
                   </div>
                 )}
                 {kpis.egg_production && kpis.egg_production.total_eggs > 0 && (
                   <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs text-blue-600 font-medium">Prod. Huevos</p>
+                    <p className="text-xs text-blue-600 font-medium">{t('lots.eggProdKpi')}</p>
                     <p className="text-lg font-bold text-blue-700">{kpis.egg_production.total_eggs}</p>
-                    <p className="text-xs text-blue-500">{kpis.egg_production.hen_day_production_pct}% hen-day</p>
+                    <p className="text-xs text-blue-500">{kpis.egg_production.hen_day_production_pct}% {t('lots.henDay')}</p>
                   </div>
                 )}
                 {kpis.hatchery_yield && kpis.hatchery_yield.total_chicks_born > 0 && (
                   <div className="p-3 bg-purple-50 rounded-lg">
-                    <p className="text-xs text-purple-600 font-medium">Nacimientos</p>
+                    <p className="text-xs text-purple-600 font-medium">{t('lots.birthsKpi')}</p>
                     <p className="text-lg font-bold text-purple-700">{kpis.hatchery_yield.total_chicks_born}</p>
                   </div>
                 )}

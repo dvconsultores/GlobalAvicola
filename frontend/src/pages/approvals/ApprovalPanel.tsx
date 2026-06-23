@@ -5,17 +5,7 @@ import { Check, CheckCircle, X, ArrowLeft } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
-const EVENT_LABELS: Record<string, string> = {
-  bird_reception: 'Recepción de Aves', bird_distribution: 'Distribución', bird_transfer: 'Transferencia',
-  bird_exit: 'Salida de Aves', feed_registration: 'Alimento', weight_recording: 'Pesaje',
-  mortality_recording: 'Mortalidad', cull_recording: 'Descarte', vaccination: 'Vacunación',
-  medication: 'Medicación', farm_inspection: 'Inspección Granja', transport_inspection: 'Inspección Transporte',
-  hatchery_inspection: 'Inspección Incubadora', egg_collection: 'Recolección Huevos', egg_classification: 'Clasificación',
-  egg_dispatch: 'Despacho Huevos', egg_reception_hatchery: 'Recepción Huevos Incub.',
-  incubation_load: 'Carga Incubación', ovoscopy: 'Ovoscopia', transfer_to_hatcher: 'Transferencia a Nacedora',
-  birth_registration: 'Nacimiento', chick_dispatch: 'Despacho Pollitos', lot_closure: 'Cierre de Lote',
-  grandparent_import: 'Importación',
-}
+const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
 const STATUS_COLORS: Record<string, string> = {
   corrected: 'bg-teal-100 text-teal-800', in_review: 'bg-indigo-100 text-indigo-800',
@@ -45,7 +35,7 @@ export default function ApprovalPanel() {
       setEvents(data.events || [])
       setTotal(data.total || 0)
     } catch (err: any) {
-      const msg = getErrorMessage(err, 'Error al cargar aprobaciones')
+      const msg = getErrorMessage(err, t('review.errorLoadingApprovals'))
 
       toast.error(msg)
     } finally {
@@ -58,10 +48,10 @@ export default function ApprovalPanel() {
   const handleApprove = async (eventId: number) => {
     try {
       await api.post('/approvals/approve', { event_id: eventId })
-      toast.success('Evento aprobado correctamente')
+      toast.success(t('review.eventApproved'))
       fetchEvents()
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error al aprobar'))
+      toast.error(getErrorMessage(err, t('review.errorApprove')))
     }
   }
 
@@ -75,10 +65,10 @@ export default function ApprovalPanel() {
       setShowRejectModal(false)
       setRejectReason('')
       setSingleRejectId(null)
-      toast.success('Evento rechazado')
+      toast.success(t('review.eventRejected'))
       fetchEvents()
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error al rechazar'))
+      toast.error(getErrorMessage(err, t('review.errorReject')))
     }
   }
 
@@ -91,12 +81,12 @@ export default function ApprovalPanel() {
 
   const handleBatchApprove = async () => {
     const selected = events.filter((e: any) => e._checked)
-    if (selected.length === 0) return alert('Selecciona al menos un evento')
+    if (selected.length === 0) return alert(t('common.noSelection'))
     try {
       await api.post('/approvals/batch-approve', { event_ids: selected.map((e: any) => e.id) })
       fetchEvents()
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Error')
+      alert(err.response?.data?.detail || t('common.error'))
     }
   }
 
@@ -158,7 +148,7 @@ export default function ApprovalPanel() {
 
       {/* Filters */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap gap-3 items-center">
-        <input type="number" placeholder="Lote ID" value={lotId} onChange={e => { setLotId(e.target.value); setPage(0) }}
+        <input type="number" placeholder={t('review.lot') + ' ID'} value={lotId} onChange={e => { setLotId(e.target.value); setPage(0) }}
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-28" />
         <span className="text-sm text-slate-500 ml-auto">{total} {t('common.results')}</span>
       </div>
@@ -184,8 +174,8 @@ export default function ApprovalPanel() {
                     {event.status}
                   </span>
                 </div>
-                <p className="text-sm text-slate-600">{EVENT_LABELS[event.event_type] || event.event_type}</p>
-                <p className="text-xs text-slate-400">Lote: {event.lot_id} | {event.event_date}</p>
+                <p className="text-sm text-slate-600">{getEventLabel(t, event.event_type)}</p>
+                <p className="text-xs text-slate-400">{t('review.lotPrefix')}{event.lot_id} | {event.event_date}</p>
               </div>
             </div>
             <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
@@ -238,7 +228,7 @@ export default function ApprovalPanel() {
                   <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)} className="rounded" />
                 </td>
                 <td className="px-4 py-3 font-mono text-xs">#{event.id}</td>
-                <td className="px-4 py-3">{EVENT_LABELS[event.event_type] || event.event_type}</td>
+                <td className="px-4 py-3">{getEventLabel(t, event.event_type)}</td>
                 <td className="px-4 py-3 font-mono text-xs">L-{event.lot_id}</td>
                 <td className="px-4 py-3 text-slate-500">{event.event_date}</td>
                 <td className="px-4 py-3">

@@ -16,7 +16,7 @@ export default function DashboardPage() {
     api.get('/dashboard/admin')
       .then(r => setData(r.data))
       .catch((e: any) => {
-        const msg = getErrorMessage(e, 'Error al cargar dashboard')
+        const msg = getErrorMessage(e, t('dashboard.errorLoading'))
         setError(msg)
         toast.error(msg)
       })
@@ -35,7 +35,7 @@ export default function DashboardPage() {
     return (
       <div className="p-4 sm:p-6 max-w-6xl mx-auto">
         <h1 className="text-2xl font-bold text-slate-800 mb-1">{t('nav.dashboard')}</h1>
-        <p className="text-slate-500 mt-2">{t('common.noResults') || 'Sin datos disponibles'}</p>
+        <p className="text-slate-500 mt-2">{t('dashboard.noData')}</p>
       </div>
     )
   }
@@ -50,15 +50,15 @@ export default function DashboardPage() {
   const statusLabels: Record<string, string> = {
     registered: t('dashboard.registered'),
     pending_review: t('dashboard.pendingReview'),
-    in_review: 'En Revisión',
-    returned: 'Devuelto',
-    corrected: 'Corregido',
+    in_review: t('status.in_review'),
+    returned: t('status.returned'),
+    corrected: t('status.corrected'),
     approved: t('dashboard.approved'),
-    rejected: 'Rechazado',
-    consolidated: 'Consolidado',
-    sent_to_sap: 'Enviado a SAP',
-    sap_confirmed: 'SAP Confirmado',
-    cancelled: 'Anulado',
+    rejected: t('status.rejected'),
+    consolidated: t('status.consolidated'),
+    sent_to_sap: t('status.sent_to_sap'),
+    sap_confirmed: t('status.sap_confirmed'),
+    cancelled: t('status.cancelled'),
   }
 
   return (

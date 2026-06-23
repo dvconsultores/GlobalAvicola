@@ -5,17 +5,7 @@ import { CheckCircle, Check, Play, Undo2, ZoomIn, Package, Search } from 'lucide
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
-const EVENT_LABELS: Record<string, string> = {
-  bird_reception: 'Recepción de Aves', bird_distribution: 'Distribución', bird_transfer: 'Transferencia',
-  bird_exit: 'Salida de Aves', feed_registration: 'Alimento', weight_recording: 'Pesaje',
-  mortality_recording: 'Mortalidad', cull_recording: 'Descarte', vaccination: 'Vacunación',
-  medication: 'Medicación', farm_inspection: 'Inspección Granja', transport_inspection: 'Inspección Transporte',
-  hatchery_inspection: 'Inspección Incubadora', egg_collection: 'Recolección Huevos', egg_classification: 'Clasificación',
-  egg_dispatch: 'Despacho Huevos', egg_reception_hatchery: 'Recepción Huevos Incub.',
-  incubation_load: 'Carga Incubación', ovoscopy: 'Ovoscopia', transfer_to_hatcher: 'Transferencia a Nacedora',
-  birth_registration: 'Nacimiento', chick_dispatch: 'Despacho Pollitos', lot_closure: 'Cierre de Lote',
-  grandparent_import: 'Importación',
-}
+const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
 const STATUS_COLORS: Record<string, string> = {
   registered: 'bg-sky-100 text-sky-800', pending_review: 'bg-amber-100 text-amber-800',
@@ -58,7 +48,7 @@ export default function ReviewCenter() {
       setEvents(data.events || [])
       setTotal(data.total || 0)
     } catch (err: any) {
-      const msg = getErrorMessage(err, 'Error al cargar eventos')
+      const msg = getErrorMessage(err, t('review.errorLoading'))
 
       toast.error(msg)
     } finally {
@@ -73,34 +63,34 @@ export default function ReviewCenter() {
   }, [])
 
   const handleAction = async (eventId: number, action: 'start' | 'return' | 'complete') => {
-    const observations = action === 'return' ? prompt('Observaciones (obligatorio):') : undefined
+    const observations = action === 'return' ? prompt(t('review.obsPrompt')) : undefined
     if (action === 'return' && !observations) return
 
     try {
       if (action === 'start') await api.post(`/review/start/${eventId}`)
       else if (action === 'complete') await api.post('/review/complete', { event_id: eventId })
       else if (action === 'return') await api.post('/review/return', { event_id: eventId, observations })
-      toast.success(`Acción "${action}" completada`)
+      toast.success(t('review.actionCompleted', { action }))
       fetchEvents()
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error en la acción'))
+      toast.error(getErrorMessage(err, t('review.errorAction')))
     }
   }
 
   const handleCreateBatch = async () => {
     const selected = events.filter((e: any) => e._checked)
     if (selected.length === 0) {
-      toast.warning('Selecciona al menos un evento')
+      toast.warning(t('common.noSelection'))
       return
     }
-    const name = prompt('Nombre del lote de revisión:')
+    const name = prompt(t('review.batchNamePrompt'))
     if (!name) return
     try {
       await api.post('/review/batches', { batch_name: name, event_ids: selected.map((e: any) => e.id) })
-      toast.success(`Lote "${name}" creado con ${selected.length} eventos`)
+      toast.success(t('review.batchCreated', { name, count: selected.length }))
       fetchEvents()
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error al crear lote'))
+      toast.error(getErrorMessage(err, t('review.errorCreateBatch')))
     }
   }
 
@@ -124,26 +114,26 @@ export default function ReviewCenter() {
 
       {/* Filters — G-10: Added farm, status, operator filters */}
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap gap-3">
-        <input type="number" placeholder="Lote ID" value={lotId} onChange={e => { setLotId(e.target.value); setPage(0) }}
+        <input type="number" placeholder={t('review.lot') + ' ID'} value={lotId} onChange={e => { setLotId(e.target.value); setPage(0) }}
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-28" />
         <select value={farmId} onChange={e => { setFarmId(e.target.value); setPage(0) }}
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
-          <option value="">Todas las granjas</option>
+          <option value="">{t('review.allFarms')}</option>
           {farms.map((f: any) => <option key={f.id} value={f.id}>{f.name}</option>)}
         </select>
         <select value={eventType} onChange={e => { setEventType(e.target.value); setPage(0) }}
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
           <option value="">{t('common.allTypes')}</option>
-          {Object.entries(EVENT_LABELS).map(([k, v]) => (<option key={k} value={k}>{v}</option>))}
+          {EVT_KEYS.map((k) => (<option key={k} value={k}>{getEventLabel(t, k)}</option>))}
         </select>
         <select value={status} onChange={e => { setStatus(e.target.value); setPage(0) }}
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
-          <option value="">Todos los estados</option>
+          <option value="">{t('review.allStatuses')}</option>
           {Object.entries(STATUS_COLORS).map(([k]) => (<option key={k} value={k}>{k}</option>))}
         </select>
         <select value={operatorId} onChange={e => { setOperatorId(e.target.value); setPage(0) }}
           className="border border-slate-300 rounded-lg px-3 py-2 text-sm">
-          <option value="">Todos los operadores</option>
+          <option value="">{t('review.allOperators')}</option>
           {users.map((u: any) => <option key={u.id} value={u.id}>{u.username}</option>)}
         </select>
         <input type="date" value={dateFrom} onChange={e => { setDateFrom(e.target.value); setPage(0) }}
@@ -169,32 +159,32 @@ export default function ReviewCenter() {
                     {event.status}
                   </span>
                 </div>
-                <p className="text-sm text-slate-600">{EVENT_LABELS[event.event_type] || event.event_type}</p>
-                <p className="text-xs text-slate-400">Lote: {event.lot_id} | {event.event_date}</p>
+                <p className="text-sm text-slate-600">{getEventLabel(t, event.event_type)}</p>
+                <p className="text-xs text-slate-400">{t('review.lotPrefix')}{event.lot_id} | {event.event_date}</p>
               </div>
             </div>
             <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
               {event.status === 'pending_review' && (
                 <button onClick={() => handleAction(event.id, 'start')}
                   className="flex-1 bg-indigo-100 text-indigo-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-indigo-200 transition flex items-center justify-center gap-1">
-                  <Play size={14} /> Iniciar
+                  <Play size={14} /> {t('review.start')}
                 </button>
               )}
               {event.status === 'in_review' && (
                 <>
                   <button onClick={() => handleAction(event.id, 'complete')}
                     className="flex-1 bg-teal-100 text-teal-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-teal-200 transition flex items-center justify-center gap-1">
-                    <Check size={14} /> Completar
+                    <Check size={14} /> {t('review.complete')}
                   </button>
                   <button onClick={() => handleAction(event.id, 'return')}
                     className="flex-1 bg-orange-100 text-orange-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-orange-200 transition flex items-center justify-center gap-1">
-                    <Undo2 size={14} /> Devolver
+                    <Undo2 size={14} /> {t('review.return')}
                   </button>
                 </>
               )}
               <Link to={`/review/${event.id}`}
                 className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition text-center flex items-center justify-center gap-1">
-                <ZoomIn size={14} /> Detalle
+                <ZoomIn size={14} /> {t('review.detail')}
               </Link>
             </div>
           </div>
@@ -209,9 +199,9 @@ export default function ReviewCenter() {
               <th className="w-10 px-4 py-3 text-left">
                 <input type="checkbox" onChange={e => setEvents(prev => prev.map(ev => ({ ...ev, _checked: e.target.checked })))} />
               </th>
-              <th className="px-4 py-3 text-left font-semibold text-slate-600">ID</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('review.id')}</th>
               <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.type')}</th>
-              <th className="px-4 py-3 text-left font-semibold text-slate-600">Lote</th>
+              <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('review.lot')}</th>
               <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.date')}</th>
               <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.status')}</th>
               <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.actions')}</th>

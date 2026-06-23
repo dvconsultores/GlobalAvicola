@@ -25,8 +25,8 @@ export default function Sidebar() {
     <aside className="hidden lg:flex flex-col w-64 bg-[#1E3A5F] text-white min-h-screen fixed left-0 top-0 z-30">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-blue-900">
-        <h1 className="text-lg font-bold tracking-tight">Global Avícola</h1>
-        <p className="text-xs text-blue-300">Gestión Operativa</p>
+        <h1 className="text-lg font-bold tracking-tight">{t('brand.name')}</h1>
+        <p className="text-xs text-blue-300">{t('brand.tagline')}</p>
       </div>
 
       {/* Navigation */}
@@ -54,15 +54,15 @@ export default function Sidebar() {
       <div className="px-4 py-4 border-t border-blue-900">
         <div className="flex items-center gap-3 mb-3">
           <div className="w-8 h-8 rounded-full bg-blue-600 flex items-center justify-center text-xs font-bold">
-            {user?.first_name?.charAt(0) || 'U'}
+            {user?.first_name?.charAt(0) || user?.username?.charAt(0) || '?'}
           </div>
           <div className="flex-1 min-w-0">
-            <p className="text-sm font-medium truncate">{user?.first_name || 'Usuario'}</p>
+            <p className="text-sm font-medium truncate">{user?.first_name || user?.username || ''}</p>
             <p className="text-xs text-blue-300 truncate">{user?.username || ''}</p>
           </div>
         </div>
           <Link to="/profile" className="block text-xs text-blue-300 hover:text-white transition mb-1">
-            👤 {t('nav.profile') || 'Perfil'}
+            👤 {t('nav.profile')}
           </Link>
           <button
             onClick={logout}

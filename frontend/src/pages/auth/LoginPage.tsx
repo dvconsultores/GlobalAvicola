@@ -8,8 +8,8 @@ import { useTranslation } from 'react-i18next'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 const loginSchema = z.object({
-  username: z.string().min(3, 'Usuario debe tener al menos 3 caracteres'),
-  password: z.string().min(6, 'Contraseña debe tener al menos 6 caracteres'),
+  username: z.string().min(3, 'auth.usernameMinLength'),
+  password: z.string().min(6, 'auth.passwordMinLength'),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
@@ -35,7 +35,7 @@ export default function LoginPage() {
     setLoading(true)
     try {
       await login(data.username, data.password)
-      toast.success(`Bienvenido, ${data.username}`)
+      toast.success(`${t('dashboard.welcome')}, ${data.username}`)
       navigate('/')
     } catch (err: any) {
       const msg = getErrorMessage(err, t('auth.loginError'))
@@ -55,8 +55,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-[#1E3A5F]">Global Avícola</h1>
-            <p className="text-slate-500 text-sm mt-1">Gestión Operativa</p>
+            <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('brand.name')}</h1>
+            <p className="text-slate-500 text-sm mt-1">{t('brand.tagline')}</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
@@ -76,7 +76,7 @@ export default function LoginPage() {
                 placeholder="admin"
               />
               {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{errors.username.message}</p>
+                <p className="text-red-500 text-xs mt-1">{t(errors.username.message)}</p>
               )}
             </div>
 
@@ -91,7 +91,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
               />
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{errors.password.message}</p>
+                <p className="text-red-500 text-xs mt-1">{t(errors.password.message)}</p>
               )}
             </div>
 
@@ -109,13 +109,13 @@ export default function LoginPage() {
               onClick={toggleLang}
               className="text-sm text-slate-400 hover:text-slate-600 transition"
             >
-              {i18n.language === 'es' ? 'English' : 'Español'}
+              {i18n.language === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}
             </button>
           </div>
         </div>
 
         <p className="text-center text-blue-200 text-xs mt-6">
-          Global Avícola v0.1.0 — Plataforma de Gestión Operativa Avícola
+          {t('brand.footer')}
         </p>
       </div>
     </div>

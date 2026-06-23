@@ -21,18 +21,18 @@ export default function SapManagerPage() {
   const handleConsolidate = async () => {
     try {
       const r = await api.post('/sap/consolidate', {})
-      toast.success(`Consolidados: ${r.data.length} movimientos`)
+      toast.success(t('sap.consolidatedToast', { count: r.data.length }))
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error al consolidar'))
+      toast.error(getErrorMessage(err, t('sap.errorConsolidate')))
     }
   }
 
   const handleExport = async () => {
     try {
       const r = await api.post('/sap/export', {})
-      toast.success(`Job #${r.data.sync_job_id}: ${r.data.message}`)
+      toast.success(t('sap.exportToast', { id: r.data.sync_job_id, message: r.data.message }))
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error al exportar'))
+      toast.error(getErrorMessage(err, t('sap.errorExport')))
     }
   }
 
@@ -75,7 +75,7 @@ export default function SapManagerPage() {
           <h2 className="font-semibold text-slate-700 mb-2 text-sm">{t('sap.payloads')} ({payloads.length})</h2>
           {payloads.map((p: any) => (
             <div key={p.id} className="text-xs text-slate-600 py-1 border-b border-slate-50 last:border-0">
-              {p.status}: {p.sap_document_id || 'pending'}
+              {p.status}: {p.sap_document_id || t('sap.pending')}
             </div>
           ))}
         </div>

@@ -35,9 +35,9 @@ export default function ReportsPage() {
   const handleExport = async (format: 'excel' | 'pdf') => {
     try {
       const { data } = await api.post('/reports/export', { format, lot_id: lotId })
-      alert(`Exportación ${format.toUpperCase()} iniciada: ${data?.message || 'OK'}`)
+      alert(t('reports.exportStarted', { format: format.toUpperCase(), message: data?.message || 'OK' }))
     } catch (err: any) {
-      alert(err.response?.data?.detail || 'Error al exportar')
+      alert(t('reports.exportError'))
     }
   }
 
@@ -47,7 +47,7 @@ export default function ReportsPage() {
         <h1 className="text-2xl font-bold text-[#1E3A5F]">📊 {t('nav.reports')}</h1>
         <div className="flex gap-2 items-center">
           <input type="number" value={lotId} onChange={e => setLotId(Number(e.target.value))}
-            className="w-24 h-9 px-2 border border-slate-300 rounded text-sm" placeholder="Lote ID" />
+            className="w-24 h-9 px-2 border border-slate-300 rounded text-sm" placeholder={t('review.lot') + ' ID'} />
           {/* G-06: Export buttons */}
           <button onClick={() => handleExport('excel')}
             className="bg-emerald-600 text-white px-3 py-1.5 rounded-lg text-sm hover:bg-emerald-700 flex items-center gap-1">
@@ -66,7 +66,7 @@ export default function ReportsPage() {
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h2 className="font-semibold text-slate-700 mb-3">💀 {t('reports.mortality')}</h2>
             <p className="text-3xl font-bold text-red-600">{kpis.mortality.mortality_rate_pct}%</p>
-            <p className="text-sm text-slate-500">{kpis.mortality.total_deaths} bajas / {kpis.mortality.initial_population} inicial</p>
+            <p className="text-sm text-slate-500">{kpis.mortality.total_deaths} {t('reports.bajas')} / {kpis.mortality.initial_population} {t('reports.inicial')}</p>
           </div>
         )}
         {kpis?.feed_conversion && (
@@ -80,14 +80,14 @@ export default function ReportsPage() {
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h2 className="font-semibold text-slate-700 mb-3">🥚 {t('reports.eggProduction')}</h2>
             <p className="text-3xl font-bold text-blue-600">{kpis.egg_production.hen_day_production_pct}%</p>
-            <p className="text-sm text-slate-500">{kpis.egg_production.total_eggs} huevos</p>
+            <p className="text-sm text-slate-500">{kpis.egg_production.total_eggs} {t('reports.huevos')}</p>
           </div>
         )}
         {kpis?.hatchery_yield && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
             <h2 className="font-semibold text-slate-700 mb-3">🐤 {t('reports.hatchery')}</h2>
             <p className="text-3xl font-bold text-purple-600">{kpis.hatchery_yield.total_chicks_born}</p>
-            <p className="text-sm text-slate-500">pollitos nacidos</p>
+            <p className="text-sm text-slate-500">{t('reports.pollitosNacidos')}</p>
           </div>
         )}
       </div>
@@ -97,35 +97,35 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Mortality Bar Chart */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3">💀 Mortalidad Diaria</h2>
+            <h2 className="font-semibold text-slate-700 mb-3">💀 {t('reports.dailyMortality')}</h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" fontSize={11} />
                 <YAxis fontSize={11} />
                 <Tooltip />
-                <Bar dataKey="mortality" fill="#EF4444" name="Bajas" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="mortality" fill="#EF4444" name={t('reports.deaths')} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           {/* Feed Consumption Bar Chart */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3">🌾 Consumo de Alimento (kg)</h2>
+            <h2 className="font-semibold text-slate-700 mb-3">🌾 {t('reports.feedConsumption')}</h2>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={chartData}>
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="date" fontSize={11} />
                 <YAxis fontSize={11} />
                 <Tooltip />
-                <Bar dataKey="feed_kg" fill="#F59E0B" name="Alimento kg" radius={[4, 4, 0, 0]} />
+                <Bar dataKey="feed_kg" fill="#F59E0B" name={t('reports.feedKg')} radius={[4, 4, 0, 0]} />
               </BarChart>
             </ResponsiveContainer>
           </div>
 
           {/* Weight Line Chart */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 lg:col-span-2">
-            <h2 className="font-semibold text-slate-700 mb-3">⚖️ Evolución de Peso (g)</h2>
+            <h2 className="font-semibold text-slate-700 mb-3">⚖️ {t('reports.weightEvolution')}</h2>
             <ResponsiveContainer width="100%" height={250}>
               <LineChart data={chartData.filter((d: any) => d.weight_g > 0)}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -133,7 +133,7 @@ export default function ReportsPage() {
                 <YAxis fontSize={11} />
                 <Tooltip />
                 <Legend />
-                <Line type="monotone" dataKey="weight_g" stroke="#2563EB" name="Peso (g)" strokeWidth={2} dot={{ r: 4 }} />
+                <Line type="monotone" dataKey="weight_g" stroke="#2563EB" name={t('reports.weightG')} strokeWidth={2} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
           </div>
@@ -145,10 +145,10 @@ export default function ReportsPage() {
         <h2 className="font-semibold text-slate-700 mb-3">📋 {t('reports.quickAccess')}</h2>
         <div className="flex flex-wrap gap-3">
           <Link to="/reports/lot/2" className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
-            📋 Reporte Lote #2
+            📋 {t('reports.lotReportLink', { id: 2 })}
           </Link>
           <Link to="/reports/sap" className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition">
-            🔄 SAP Comparison
+            🔄 {t('reports.sapComparisonLink')}
           </Link>
         </div>
       </div>
@@ -158,19 +158,19 @@ export default function ReportsPage() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           {kpis?.animal_welfare && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-              <h2 className="font-semibold text-slate-700 mb-3">🏥 Bienestar Animal</h2>
+              <h2 className="font-semibold text-slate-700 mb-3">🏥 {t('reports.animalWelfare')}</h2>
               <p className="text-3xl font-bold text-green-600">{kpis.animal_welfare.welfare_score_pct}%</p>
             </div>
           )}
           {kpis?.vaccination_efficiency && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-              <h2 className="font-semibold text-slate-700 mb-3">💉 Eficiencia Vacunación</h2>
+              <h2 className="font-semibold text-slate-700 mb-3">💉 {t('reports.vaccinationEfficiency')}</h2>
               <p className="text-3xl font-bold text-indigo-600">{kpis.vaccination_efficiency.vaccination_coverage_pct}%</p>
             </div>
           )}
           {kpis?.transfer_efficiency && (
             <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-              <h2 className="font-semibold text-slate-700 mb-3">🚛 Eficiencia Traslado</h2>
+              <h2 className="font-semibold text-slate-700 mb-3">🚛 {t('reports.transferEfficiency')}</h2>
               <p className="text-3xl font-bold text-teal-600">{kpis.transfer_efficiency.transfer_efficiency_pct}%</p>
             </div>
           )}

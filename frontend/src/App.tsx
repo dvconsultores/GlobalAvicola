@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
@@ -24,12 +25,13 @@ import LotDetailPage from './pages/lots/LotDetailPage'
 import ProfilePage from './pages/users/ProfilePage'
 
 function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNode; roles?: string[]; webOnly?: boolean }) {
+  const { t } = useTranslation()
   const { isAuthenticated, isLoading, user } = useAuthStore()
   
   // Show nothing while restoring session
   if (isLoading) {
     return <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <p className="text-slate-500 text-lg">Cargando...</p>
+      <p className="text-slate-500 text-lg">{t('common.loading')}</p>
     </div>
   }
   

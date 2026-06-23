@@ -1,5 +1,6 @@
 import { useState, useCallback, createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react'
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
@@ -88,8 +89,11 @@ export function useToast(): ToastContextType {
   return ctx
 }
 
-/** Helper: extract error message from axios error */
-export function getErrorMessage(err: any, fallback = 'Error inesperado'): string {
+/** Helper: extract error message from axios error. 
+ *  NOTE: This is a standalone function so it cannot use hooks directly.
+ *  Callers should pass a translated fallback using t() from their component.
+ */
+export function getErrorMessage(err: any, fallback = 'Unexpected error'): string {
   if (typeof err === 'string') return err
   return err?.response?.data?.detail || err?.message || fallback
 }

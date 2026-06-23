@@ -54,17 +54,17 @@ export default function CorrectionForm() {
         correction_type_id: correctionTypeId || null,
         reason,
       })
-      toast.success('Corrección guardada exitosamente')
+      toast.success(t('review.correctionSaved'))
       navigate(`/review/${id}`)
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error al guardar corrección'))
+      toast.error(getErrorMessage(err, t('review.errorSavingCorrection')))
     } finally {
       setSubmitting(false)
     }
   }
 
   if (loading) return <div className="max-w-2xl mx-auto px-4 py-8 text-center text-slate-500">{t('common.loading')}</div>
-  if (!event) return <div className="max-w-2xl mx-auto px-4 py-8 text-center text-slate-500">Evento no encontrado</div>
+  if (!event) return <div className="max-w-2xl mx-auto px-4 py-8 text-center text-slate-500">{t('review.eventNotFound')}</div>
 
   const fields = [
     { key: 'observations', label: t('common.observations'), current: event.observations || '' },

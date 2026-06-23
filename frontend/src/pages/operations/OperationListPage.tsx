@@ -3,17 +3,8 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import api from '../../services/api'
 
-const EVENT_LABELS: Record<string, string> = {
-  bird_reception: 'Recepción de Aves', bird_distribution: 'Distribución', bird_transfer: 'Transferencia',
-  bird_exit: 'Salida de Aves', feed_registration: 'Alimento', weight_recording: 'Pesaje',
-  mortality_recording: 'Mortalidad', cull_recording: 'Descarte', vaccination: 'Vacunación',
-  medication: 'Medicación', farm_inspection: 'Inspección Granja', transport_inspection: 'Inspección Transporte',
-  hatchery_inspection: 'Inspección Incubadora', egg_collection: 'Recolección Huevos', egg_classification: 'Clasificación',
-  egg_dispatch: 'Despacho Huevos', egg_reception_hatchery: 'Recepción Huevos Incub.',
-  incubation_load: 'Carga Incubación', ovoscopy: 'Ovoscopia', transfer_to_hatcher: 'Transferencia a Nacedora',
-  birth_registration: 'Nacimiento', chick_dispatch: 'Despacho Pollitos', lot_closure: 'Cierre de Lote',
-  grandparent_import: 'Importación',
-}
+const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
+const EVT_KEYS = ['bird_reception','bird_distribution','bird_transfer','bird_exit','feed_registration','weight_recording','mortality_recording','cull_recording','vaccination','medication','farm_inspection','transport_inspection','hatchery_inspection','egg_collection','egg_classification','egg_dispatch','egg_reception_hatchery','incubation_load','ovoscopy','transfer_to_hatcher','birth_registration','chick_dispatch','lot_closure','grandparent_import']
 
 const STATUS_COLORS: Record<string, string> = {
   registered: 'bg-blue-100 text-blue-800', pending_review: 'bg-yellow-100 text-yellow-800',
@@ -47,7 +38,7 @@ export default function OperationListPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
           <h1 className="text-2xl font-bold text-slate-800">{t('nav.operations')}</h1>
-          <p className="text-sm text-slate-500">{events.length} registros</p>
+          <p className="text-sm text-slate-500">{events.length} {t('common.results')}</p>
         </div>
         <Link to="/operations/new" className="inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
           + {t('common.create')}
@@ -56,10 +47,10 @@ export default function OperationListPage() {
 
       {/* Filters */}
       <div className="flex gap-3 mb-4">
-        <input type="number" placeholder="Lote ID" value={lotId} onChange={e => setLotId(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm w-28" />
+        <input type="number" placeholder={t('review.lot') + ' ID'} value={lotId} onChange={e => setLotId(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm w-28" />
         <select value={eventType} onChange={e => setEventType(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm">
-          <option value="">Todos los tipos</option>
-          {Object.entries(EVENT_LABELS).map(([k, v]) => <option key={k} value={k}>{v}</option>)}
+          <option value="">{t('common.allTypes')}</option>
+          {EVT_KEYS.map((k) => <option key={k} value={k}>{getEventLabel(t, k)}</option>)}
         </select>
       </div>
 
@@ -71,11 +62,11 @@ export default function OperationListPage() {
             <div key={ev.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">{EVENT_LABELS[ev.event_type]?.split(' ')[0] || '📋'}</span>
-                  <span className="text-sm font-medium text-slate-700">{EVENT_LABELS[ev.event_type]?.split(' ').slice(1).join(' ') || ev.event_type}</span>
+                  <span className="text-lg">📋</span>
+                  <span className="text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 text-slate-600'}`}>{ev.status}</span>
                 </div>
-                <p className="text-xs text-slate-500">Lote #{ev.lot_id} — {ev.event_date}</p>
+                <p className="text-xs text-slate-500">{t('review.lot')} #{ev.lot_id} — {ev.event_date}</p>
               </div>
               <Link to={`/operations/${ev.id}`} className="text-blue-600 text-sm hover:underline ml-3">{t('common.edit')}</Link>
             </div>

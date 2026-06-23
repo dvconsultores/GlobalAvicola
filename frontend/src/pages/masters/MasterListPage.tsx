@@ -64,7 +64,7 @@ export default function MasterListPage({
         <div>
           <h1 className="text-2xl font-bold text-slate-800">{t(titleKey)}</h1>
           <p className="text-sm text-slate-500 mt-1">
-            {total} {t('common.noResults') === 'No results' ? 'results' : 'resultados'}
+            {total} {t('common.results')}
           </p>
         </div>
         <div className="flex gap-3">
@@ -98,14 +98,14 @@ export default function MasterListPage({
             ← {t('common.back')}
           </button>
           <span className="text-slate-500">
-            {t('common.noResults') === 'No results' ? 'Page' : 'Página'} {page + 1}
+            {t('common.page')} {page + 1}
           </span>
           <button
             disabled={items.length < pageSize}
             onClick={() => setPage(page + 1)}
             className="px-3 py-1.5 border border-slate-300 rounded-lg disabled:opacity-40 hover:bg-slate-50 transition"
           >
-            {t('common.noResults') === 'No results' ? 'Next' : 'Siguiente'} →
+            {t('common.next')} →
           </button>
         </div>
       )}

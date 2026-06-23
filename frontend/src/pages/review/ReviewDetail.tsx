@@ -4,17 +4,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
-const EVENT_LABELS: Record<string, string> = {
-  bird_reception: 'Recepción de Aves', bird_distribution: 'Distribución', bird_transfer: 'Transferencia',
-  bird_exit: 'Salida de Aves', feed_registration: 'Alimento', weight_recording: 'Pesaje',
-  mortality_recording: 'Mortalidad', cull_recording: 'Descarte', vaccination: 'Vacunación',
-  medication: 'Medicación', farm_inspection: 'Inspección Granja', transport_inspection: 'Inspección Transporte',
-  hatchery_inspection: 'Inspección Incubadora', egg_collection: 'Recolección Huevos', egg_classification: 'Clasificación',
-  egg_dispatch: 'Despacho Huevos', egg_reception_hatchery: 'Recepción Huevos Incub.',
-  incubation_load: 'Carga Incubación', ovoscopy: 'Ovoscopia', transfer_to_hatcher: 'Transferencia a Nacedora',
-  birth_registration: 'Nacimiento', chick_dispatch: 'Despacho Pollitos', lot_closure: 'Cierre de Lote',
-  grandparent_import: 'Importación',
-}
+const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
 const STATUS_COLORS: Record<string, string> = {
   registered: 'bg-sky-100 text-sky-800', pending_review: 'bg-amber-100 text-amber-800',
@@ -83,12 +73,12 @@ export default function ReviewDetail() {
       }
       navigate('/review')
     } catch (err: any) {
-      toast.error(getErrorMessage(err, 'Error en la acción'))
+      toast.error(getErrorMessage(err, t('review.errorAction')))
     }
   }
 
   if (loading) return <div className="max-w-4xl mx-auto px-4 py-8 text-center text-slate-500">{t('common.loading')}</div>
-  if (!event) return <div className="max-w-4xl mx-auto px-4 py-8 text-center text-slate-500">Evento no encontrado</div>
+  if (!event) return <div className="max-w-4xl mx-auto px-4 py-8 text-center text-slate-500">{t('review.eventNotFound')}</div>
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
@@ -108,23 +98,23 @@ export default function ReviewDetail() {
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
           <h2 className="font-semibold text-slate-700 mb-4">📋 {t('review.originalData')}</h2>
           <dl className="space-y-2 text-sm">
-            <div className="flex justify-between"><dt className="text-slate-500">{t('common.type')}</dt><dd>{EVENT_LABELS[event.event_type] || event.event_type}</dd></div>
+            <div className="flex justify-between"><dt className="text-slate-500">{t('common.type')}</dt><dd>{getEventLabel(t, event.event_type)}</dd></div>
             <div className="flex justify-between"><dt className="text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-500">Lote</dt><dd className="font-mono">#{event.lot_id}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-500">Granja</dt><dd>{event.farm_id || '-'}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-500">Galpón</dt><dd>{event.house_id || '-'}</dd></div>
+            <div className="flex justify-between"><dt className="text-slate-500">{t('review.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
+            <div className="flex justify-between"><dt className="text-slate-500">{t('review.farm')}</dt><dd>{event.farm_id || '-'}</dd></div>
+            <div className="flex justify-between"><dt className="text-slate-500">{t('review.house')}</dt><dd>{event.house_id || '-'}</dd></div>
             <div className="flex justify-between"><dt className="text-slate-500">{t('common.observations')}</dt><dd className="max-w-[200px] truncate">{event.observations || '-'}</dd></div>
-            <div className="flex justify-between"><dt className="text-slate-500">Versión</dt><dd>v{event.version}</dd></div>
+            <div className="flex justify-between"><dt className="text-slate-500">{t('common.version')}</dt><dd>v{event.version}</dd></div>
           </dl>
 
           {/* Sub-movements */}
           {event.bird_movements?.length > 0 && (
             <div className="mt-4 pt-4 border-t border-slate-100">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">🐔 Movimientos de Aves</h3>
+              <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">🐔 {t('review.birdMovements')}</h3>
               {event.bird_movements.map((bm: any, i: number) => (
                 <div key={i} className="text-xs text-slate-600 flex gap-3">
-                  <span>{bm.sex || 'mixto'}</span>
-                  <span>{bm.quantity} aves</span>
+                  <span>{bm.sex || t('review.mixto')}</span>
+                  <span>{bm.quantity} {t('review.aves')}</span>
                   <span>{bm.avg_weight ? `${bm.avg_weight}g` : ''}</span>
                 </div>
               ))}
@@ -132,7 +122,7 @@ export default function ReviewDetail() {
           )}
           {event.feed_movements?.length > 0 && (
             <div className="mt-4 pt-4 border-t border-slate-100">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">🌾 Movimientos de Alimento</h3>
+              <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">🌾 {t('review.feedMovements')}</h3>
               {event.feed_movements.map((fm: any, i: number) => (
                 <div key={i} className="text-xs text-slate-600">{fm.quantity_kg} kg</div>
               ))}
@@ -140,9 +130,9 @@ export default function ReviewDetail() {
           )}
           {event.egg_movements?.length > 0 && (
             <div className="mt-4 pt-4 border-t border-slate-100">
-              <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">🥚 Movimientos de Huevos</h3>
+              <h3 className="text-xs font-semibold text-slate-500 uppercase mb-2">🥚 {t('review.eggMovements')}</h3>
               {event.egg_movements.map((em: any, i: number) => (
-                <div key={i} className="text-xs text-slate-600">{em.quantity} huevos ({em.egg_type})</div>
+                <div key={i} className="text-xs text-slate-600">{em.quantity} {t('review.huevos')} ({em.egg_type})</div>
               ))}
             </div>
           )}
@@ -153,7 +143,7 @@ export default function ReviewDetail() {
           <h2 className="font-semibold text-slate-700 mb-4">🔄 {t('review.sapReference')}</h2>
           {event.sap_document_ref ? (
             <dl className="space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500">Documento SAP</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('sap.references')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>
             </dl>
           ) : (
             <p className="text-sm text-slate-400 italic">{t('review.noSapRef')}</p>
