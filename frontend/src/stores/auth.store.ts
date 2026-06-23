@@ -2,7 +2,7 @@ import { create } from 'zustand'
 import api from '../services/api'
 
 // Decode JWT payload without verification (view_type is in the token)
-function decodeJWT(token: string): Record<string, any> | null {
+function decodeJWT(token: string): Record<string, unknown> | null {
   try {
     const payload = token.split('.')[1]
     return JSON.parse(atob(payload))

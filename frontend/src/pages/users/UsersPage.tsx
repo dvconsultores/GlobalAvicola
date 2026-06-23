@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Pencil, Trash2, X, Users, Monitor, Smartphone } from 'lucide-react'
 import api from '../../services/api'
@@ -17,8 +17,9 @@ export default function UsersPage() {
   const [form, setForm] = useState<UserForm>(emptyForm)
   const [saving, setSaving] = useState(false)
 
-  const fetchData = async () => { setLoading(true); try { const [ur, rr] = await Promise.all([api.get('/users'), api.get('/roles')]); setUsers(ur.data || []); setRoles(rr.data || []) } catch (err) { console.error(err) } finally { setLoading(false) } }
-  useEffect(() => { fetchData() }, [])
+  const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr] = await Promise.all([api.get('/users'), api.get('/roles')]); setUsers(ur.data || []); setRoles(rr.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { fetchData() }, [fetchData])
 
   const openCreate = () => { setEditingId(null); setForm(emptyForm); setShowModal(true) }
   const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setShowModal(true) }
@@ -31,8 +32,8 @@ export default function UsersPage() {
       setShowModal(false); fetchData() } catch (err: any) { alert(err.response?.data?.detail || 'Error') } finally { setSaving(false) }
   }
 
-  const handleDelete = async (userId: number) => { if (!confirm('¿Eliminar usuario?')) return; try { await api.delete(`/users/${userId}`); fetchData() } catch (err: any) { alert(err.response?.data?.detail || 'Error') } }
-  const handleToggleActive = async (user: any) => { try { await api.put(`/users/${user.id}`, { ...user, is_active: !user.is_active, password: undefined }); fetchData() } catch (err: any) { alert('Error') } }
+  const handleDelete = async (userId: number) => { if (!confirm('¿Eliminar usuario?')) return; try { await api.delete(`/users/${userId}`); fetchData() } catch { alert('Error al eliminar') } }
+  const handleToggleActive = async (user: any) => { try { await api.put(`/users/${user.id}`, { ...user, is_active: !user.is_active, password: undefined }); fetchData() } catch { alert('Error') } }
 
   if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
 
