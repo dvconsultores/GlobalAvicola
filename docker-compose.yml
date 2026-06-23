@@ -1,0 +1,87 @@
+# ============================================================
+# Global Avícola — Docker Compose
+# Servicios: PostgreSQL, Backend (FastAPI), Frontend (Nginx + React)
+# ============================================================
+
+version: "3.8"
+
+services:
+  # ----- PostgreSQL Database -----
+  db:
+    image: postgres:15-alpine
+    container_name: globalavicola-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-global_avicola}
+      POSTGRES_USER: ${POSTGRES_USER:-global_avicola_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change_me}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-global_avicola_user} -d ${POSTGRES_DB:-global_avicola}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - avicola-network
+
+  # ----- Backend API (FastAPI) -----
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: globalavicola-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      PROJECT_NAME: ${PROJECT_NAME:-Global Avícola}
+      DEBUG: "false"
+      DATABASE_URL: postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${JWT_REFRESH_TOKEN_EXPIRE_DAYS:-7}
+      BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost}
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    networks:
+      - avicola-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # ----- Frontend (React + Nginx) -----
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: globalavicola-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    networks:
+      - avicola-network
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  avicola-network:
+    driver: bridge

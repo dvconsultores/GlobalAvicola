@@ -1,0 +1,22 @@
+# Dependencies
+node_modules/
+
+# Git
+.git/
+.gitignore
+
+# Env
+.env
+.env.*
+
+# IDE
+.vscode/
+.idea/
+
+# Build
+dist/
+
+# Tests
+tests/
+*.spec.ts
+*.test.ts

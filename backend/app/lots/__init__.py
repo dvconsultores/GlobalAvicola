@@ -1,0 +1,2 @@
+"""Gestión de Lotes"""
+

@@ -1,0 +1,2 @@
+"""Global Avícola - Backend API"""
+
