@@ -4,12 +4,10 @@
 # For local development, override with docker-compose.override.yml.
 # ============================================================
 
-version: "3.8"
-
 services:
   # ----- Backend API (FastAPI) -----
   backend:
-    image: ${DOCKER_USERNAME:-globalavicola}/globalavicola-backend:latest
+    image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-backend:latest
     container_name: globalavicola-backend
     restart: unless-stopped
     environment:
@@ -35,7 +33,7 @@ services:
 
   # ----- Frontend (React + Nginx) — Production -----
   frontend:
-    image: ${DOCKER_USERNAME:-globalavicola}/globalavicola-frontend:latest
+    image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-frontend:latest
     container_name: globalavicola-frontend
     restart: unless-stopped
     depends_on:
@@ -45,7 +43,7 @@ services:
     networks:
       - avicola-network
     healthcheck:
-      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:80/"]
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://localhost:80/ || exit 1"]
       interval: 30s
       timeout: 5s
       retries: 3
