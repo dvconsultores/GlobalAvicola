@@ -3,7 +3,45 @@
 > **Spec Kit:** `/speckit.tasks` Phase 2 output
 > **Derived from:** [plan.md](./plan.md)
 > **Date:** 2026-06-22
-> **Total Tasks:** 120+
+> **Last Updated:** 2026-06-24
+> **Total Tasks:** 83+
+
+---
+
+## Implementation Status — 2026-06-24
+
+Estado real de la implementación tras auditoría del código fuente.
+
+| Fase | Descripción | Estado | Notas |
+|------|-------------|--------|-------|
+| **Phase 0** | Project Setup | ✅ Completo | Docker, Alembic, pyproject, vite config |
+| **Phase 1 Backend** | Auth + Masters CRUD API | ✅ Completo | JWT, RBAC básico, 19 catálogos con CRUD |
+| **Phase 1 Frontend** | Login, Layout, i18n, Masters lista | 🔶 Parcial | i18n ✅, Layout ✅, Masters solo lista (sin forms crear/editar) |
+| **Phase 2** | Lots + Opening Balance | ✅ Completo | Backend + LotListPage + LotDetailPage básico |
+| **Phase 3 Backend** | 24 EventTypes + Business Rules | ✅ Completo | Models, services, router con filtros |
+| **Phase 3 Frontend** | Operation forms | 🔶 Parcial | OperationFormPage (24 tipos) ✅, pero STAGE_OPERATIONS incompleto en LotDetailPage |
+| **Phase 4** | Review + Approval + Corrections | ✅ Completo | Backend + frontend ReviewCenter, ApprovalPanel, CorrectionForm |
+| **Phase 5** | SAP Integration | ✅ Completo | Backend adapter + SapManagerPage |
+| **Phase 6** | Audit + Reports + Dashboard | 🔶 Parcial | AuditPage ✅, ReportsPage ✅, KPI endpoints ✅, sin export PDF/Excel, Dashboard básico |
+| **Phase 7** | QA Tests | 🔶 Parcial | Backend tests básicos (auth, ops, review, sap). Frontend sin tests. Sin E2E. |
+
+### Gaps Críticos Identificados (a resolver en Phase 8)
+
+| ID | Severidad | Gap | Archivo/Módulo |
+|----|-----------|-----|----------------|
+| **G-01** | 🔴 | `STAGE_OPERATIONS` incompleto — grandparent sin egg ops ni transport_inspection ni cull_recording | `LotDetailPage.tsx` |
+| **G-02** | 🔴 | `STAGE_OPERATIONS` breeder no diferencia fase cría vs producción | `LotDetailPage.tsx` |
+| **G-03** | 🔴 | `STAGE_OPERATIONS` broiler falta bird_distribution, cull_recording, transport_inspection, bird_exit | `LotDetailPage.tsx` |
+| **G-04** | 🔴 | `STAGE_OPERATIONS` hatchery no existe en absoluto | `LotDetailPage.tsx` |
+| **G-05** | 🔴 | `BirdTypeEnum` no tiene `hatchery` — la incubadora no puede ser un tipo de lote | `masters/models.py` |
+| **G-06** | 🟡 | Masters CRUD: solo listas, sin formularios crear/editar en frontend | `MasterListPage.tsx` |
+| **G-07** | 🟡 | No existe UI para crear nuevo lote (formulario + activación manual) | `lots/` |
+| **G-08** | 🟡 | No existe UI para transición de fase (cría → producción) | `LotDetailPage.tsx` |
+| **G-09** | 🟡 | Design system no aplicado — ad-hoc Tailwind, emojis en lugar de iconos, sin componentes reutilizables | `components/`, `index.css` |
+| **G-10** | 🟡 | Dashboard básico — sin KPIs por etapa, sin gráficas de tendencia | `DashboardPage.tsx` |
+| **G-11** | 🟡 | Sin exportación PDF/Excel en reportes | `reports/` |
+| **G-12** | 🟡 | Sin página "Mis Pendientes" para operadores móviles | `operations/` |
+| **G-13** | 🟡 | Sin hamburger/drawer en Header móvil | `Header.tsx` |
 
 ---
 
@@ -628,22 +666,171 @@ graph TD
 
 ## Task Summary by Phase
 
-| Phase | Tasks | Description |
-|---|---|---|
-| **Phase 0** | T-001 to T-005 (5) | Project setup, Docker, CI/CD |
-| **Phase 1** | T-006 to T-016 (11) | Auth, RBAC, masters, i18n, layout |
-| **Phase 2** | T-017 to T-021 (5) | Lots, opening balance, activation |
-| **Phase 3** | T-022 to T-034 (13) | All operational event types (mobile forms) |
-| **Phase 4** | T-035 to T-042 (8) | Review center, corrections, approvals |
-| **Phase 5** | T-043 to T-048 (6) | SAP integration (adapter, import/export) |
-| **Phase 6** | T-049 to T-055 (7) | Audit, reports, dashboards, user mgmt UI |
-| **Phase 7** | T-056 to T-066 (11) | Testing, QA, performance, accessibility |
-| **TOTAL** | **66 tasks** | |
+| Phase | Tasks | Description | Estado |
+|---|---|---|---|
+| **Phase 0** | T-001 to T-005 (5) | Project setup, Docker, CI/CD | ✅ Completo |
+| **Phase 1** | T-006 to T-016 (11) | Auth, RBAC, masters, i18n, layout | 🔶 Parcial |
+| **Phase 2** | T-017 to T-021 (5) | Lots, opening balance, activation | 🔶 Parcial |
+| **Phase 3** | T-022 to T-034 (13) | All operational event types (mobile forms) | 🔶 Parcial |
+| **Phase 4** | T-035 to T-042 (8) | Review center, corrections, approvals | ✅ Completo |
+| **Phase 5** | T-043 to T-048 (6) | SAP integration (adapter, import/export) | ✅ Completo |
+| **Phase 6** | T-049 to T-055 (7) | Audit, reports, dashboards, user mgmt UI | 🔶 Parcial |
+| **Phase 7** | T-056 to T-066 (11) | Testing, QA, performance, accessibility | 🔶 Parcial |
+| **Phase 8** | T-067 to T-083 (17) | Gap resolution & quality elevation | ❌ Pendiente |
 
-## Next Actions
+---
 
-1. **Review tasks** with team (Product Manager, Tech Leads)
-2. **Assign priorities** — Phase 0-1 are blocking for everything else
-3. **Estimate effort** — Use story points or hours
-4. **Begin Phase 0** — Run T-001 through T-005
-5. **DO NOT implement** until spec/plan/tasks are approved
+## Phase 8: Gap Resolution & Quality Elevation
+
+> **Contexto:** Fases 0–7 implementadas parcialmente. Esta fase resuelve gaps confirmados por auditoría del código (2026-06-24). Ver tabla de gaps en la sección "Implementation Status" al inicio de este documento.
+
+### T-067: Fix STAGE_OPERATIONS — Grandparent
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 2h | **Resuelve:** G-01
+- En `LotDetailPage.tsx`, agregar a la clave `grandparent` del objeto `STAGE_OPERATIONS`:
+  - `cull_recording`
+  - `transport_inspection`
+  - `egg_collection`, `egg_classification`, `egg_dispatch`
+- Verificar que todos los íconos sean de `lucide-react`
+- **Archivos:** `frontend/src/pages/lots/LotDetailPage.tsx`
+
+### T-068: Fix STAGE_OPERATIONS — Broiler
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 1h | **Resuelve:** G-03
+- En `LotDetailPage.tsx`, agregar a la clave `broiler`:
+  - `bird_distribution`, `cull_recording`, `transport_inspection`, `bird_exit`
+- **Archivos:** `frontend/src/pages/lots/LotDetailPage.tsx`
+
+### T-069: Add BirdTypeEnum.HATCHERY + Alembic migration
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 2h | **Resuelve:** G-05
+- Agregar `HATCHERY = "hatchery"` a `BirdTypeEnum` en `backend/app/masters/models.py`
+- Crear migración Alembic para actualizar el enum en PostgreSQL (ALTER TYPE ... ADD VALUE)
+- **Archivos:** `backend/app/masters/models.py`, nueva migración `backend/alembic/versions/`
+
+### T-070: Add STAGE_OPERATIONS — Hatchery
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 2h | **Resuelve:** G-04
+- Agregar clave `hatchery` al objeto `STAGE_OPERATIONS`:
+  - `egg_reception_hatchery`, `hatchery_inspection`, `transport_inspection`
+  - `incubation_load`, `ovoscopy`, `transfer_to_hatcher`
+  - `birth_registration`, `chick_dispatch`
+- **Archivos:** `frontend/src/pages/lots/LotDetailPage.tsx`
+- **Depends on:** T-069
+
+### T-071: Implement Breeder Phase Differentiation
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 4h | **Resuelve:** G-02
+- Consultar `GET /lots/{id}/phases` para determinar la fase activa del lote breeder
+- Crear dos sub-conjuntos: `breeder_rearing` (sin egg ops, ver spec §4.5) y `breeder_production` (con egg ops, ver spec §4.6)
+- Mostrar badge de fase activa (Cría / Producción) en la UI del lote
+- **Archivos:** `frontend/src/pages/lots/LotDetailPage.tsx`
+
+### T-072: Lot Phase Transition UI (Cría → Producción)
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 3h | **Resuelve:** G-08
+- Botón "Transicionar a Producción" en lote BREEDER en fase CRÍA
+- Modal: fecha transición, población inicial, peso promedio
+- Llamar `POST /lots/{id}/phases`
+- **Archivos:** `frontend/src/pages/lots/LotDetailPage.tsx`
+
+### T-073: Lot Creation Form
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 4h | **Resuelve:** G-07
+- Botón "Nuevo Lote" en `LotListPage.tsx`
+- Modal/página con: código, tipo (GRANDPARENT/BREEDER/BROILER/HATCHERY), granja, galpón, fecha inicio, línea genética, referencia SAP
+- Llamar `POST /lots`
+- **Archivos:** `frontend/src/pages/lots/LotListPage.tsx`
+
+### T-074: Frontend Design System — Base Components
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 6h | **Resuelve:** G-09 (parcial)
+- `Button.tsx` — variantes: primary, secondary, danger, ghost; tamaños sm/md/lg; loading/disabled
+- `Input.tsx` — con label, error, helper text, iconos
+- `Card.tsx` — con header/body/footer
+- `Badge.tsx` — variantes de estado (approved/pending/rejected/in-process)
+- `Modal.tsx` — accesible, trap focus
+- Aplicar paleta de `docs/11-ui-ux-design-system.md`
+- **Archivos:** `frontend/src/components/ui/*`
+
+### T-075: Frontend Design System — Fix Global CSS
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 1h | **Resuelve:** G-09 (parcial)
+- Limpiar `index.css`: eliminar variables Vite template, `prefers-color-scheme: dark`
+- Agregar variables CSS corporativas, extender paleta en `tailwind.config.ts`
+- **Archivos:** `frontend/src/index.css`, `frontend/tailwind.config.ts`
+
+### T-076: Replace Emoji Icons with Lucide Icons
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 3h | **Resuelve:** G-09 (parcial)
+- Reemplazar todos los emojis en `EVENT_DEFS.icon` de `OperationFormPage.tsx` por componentes `lucide-react`
+- Auditar resto de pages/ y eliminar emojis de UI
+- **Archivos:** `frontend/src/pages/operations/OperationFormPage.tsx`, resto de pages
+
+### T-077: Masters CRUD Forms
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 6h | **Resuelve:** G-06
+- Botón "Nuevo" + modal crear/editar en `MasterListPage.tsx` para: Granjas, Galpones, Incubadoras, Líneas Genéticas, Proveedores, Tipos de Alimento, Vacunas, Medicamentos
+- Usar componentes T-074
+- **Archivos:** `frontend/src/pages/masters/MasterListPage.tsx`
+- **Depends on:** T-074
+
+### T-078: Dashboard — KPIs por Etapa + Gráficas
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 5h | **Resuelve:** G-10
+- Conteo lotes activos por tipo (Progenitoras/Reproductoras/Incubadora/Engorde)
+- KPI cards por etapa: mortalidad semanal, % postura (reproductoras), conversión alimenticia (engorde)
+- Gráfica de tendencia mortalidad (Recharts LineChart, últimas 8 semanas)
+- **Archivos:** `frontend/src/pages/dashboard/DashboardPage.tsx`
+
+### T-079: Mobile — My Pending Page
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 3h | **Resuelve:** G-12
+- Nueva `MyPendingPage.tsx`: eventos del usuario actual en estado RETURNED o PENDING_REVIEW
+- Agregar filtro `registered_by_me=true` al backend si no existe (`backend/app/operations/router.py`)
+- Agregar ítem "Pendientes" al `MobileNav.tsx` (5to ítem, ícono `Clock` lucide)
+- **Archivos:** nuevo `MyPendingPage.tsx`, `MobileNav.tsx`, posiblemente `operations/router.py`
+
+### T-080: Mobile — Hamburger Menu + Drawer
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 3h | **Resuelve:** G-13
+- Botón hamburger (≡) en `Header.tsx` (mobile)
+- Nuevo `MobileDrawer.tsx`: slide-out con todas las rutas del Sidebar web
+- Animación 150ms, overlay semi-transparente, cerrar al click fuera
+- **Archivos:** `frontend/src/components/layout/Header.tsx`, nuevo `MobileDrawer.tsx`
+
+### T-081: Reports — Export Excel/PDF
+**Prioridad:** 🟡 Media | **Esfuerzo:** 4h | **Resuelve:** G-11
+- Verificar/implementar endpoint `GET /reports/export/{type}` en backend
+- Botones "Exportar Excel" y "Exportar PDF" en `ReportsPage.tsx` y `LotReportPage.tsx`
+- **Archivos:** `frontend/src/pages/reports/`, `backend/app/reports/router.py`
+
+### T-082: Business Rules BR-05 to BR-16 (Backend Validation)
+**Prioridad:** 🟡 Media | **Esfuerzo:** 3h
+- Verificar e implementar reglas faltantes: BR-05 (cierre requiere resumen), BR-14 (segregación), BR-15 (no editar post-SAP), BR-16 (ajustes post-SAP requieren reverso)
+- Agregar test para cada regla
+- **Archivos:** `backend/app/operations/validators.py`, `backend/tests/test_operations.py`
+
+### T-083: Generational Traceability — EggBatch & ChickBatch
+**Prioridad:** 🟡 Media | **Esfuerzo:** 8h
+- Modelo `EggBatch`: lote producción → huevos → lote hatchery
+- Modelo `ChickBatch`: lote hatchery → pollitos → lote engorde
+- Endpoint `GET /lots/{id}/traceability` retorna árbol genealógico completo
+- Vista en `LotDetailPage.tsx`: árbol de trazabilidad inter-generacional
+- **Depends on:** T-069, T-070, T-071
+
+---
+
+## Next Actions — Orden de Ejecución
+
+### Sprint A — Operativo Completo (1-2 días) 🔴 BLOQUEA todo lo demás
+1. T-069 — BirdTypeEnum.HATCHERY + migración
+2. T-067 — Fix grandparent STAGE_OPERATIONS
+3. T-068 — Fix broiler STAGE_OPERATIONS
+4. T-070 — Hatchery STAGE_OPERATIONS
+5. T-071 — Breeder phase differentiation
+
+### Sprint B — Diseño y UX (2-3 días)
+6. T-075 — Fix global CSS
+7. T-076 — Reemplazar emojis por lucide-react
+8. T-074 — Componentes UI base
+9. T-080 — Hamburger + drawer móvil
+10. T-079 — Página Mis Pendientes
+
+### Sprint C — Funcionalidad Pendiente (2-3 días)
+11. T-072 — Lot phase transition UI
+12. T-073 — Lot creation form
+13. T-077 — Masters CRUD forms
+14. T-078 — Dashboard KPIs por etapa
+
+### Sprint D — Calidad y Completitud (2-3 días)
+15. T-081 — Report exports Excel/PDF
+16. T-082 — Business rules BR-05 to BR-16
+17. T-083 — Trazabilidad generacional
+

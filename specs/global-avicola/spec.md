@@ -59,40 +59,144 @@
 - Bitácora de sincronización (SapSyncJob, SapPayload, SapResponse)
 
 #### 4.4 Grandparent Importation
-- Plan de importación con documentos sanitarios/aduana
-- Creación de lote de abuelas
-- Trazabilidad a generaciones posteriores
+**Lot type:** `GRANDPARENT` | **BirdTypeEnum:** `grandparent`
+
+- Plan de importación (PO SAP, proveedor internacional, docs sanitarios, aduana, cuarentena)
+- Creación de lote de abuelas vinculado a granja/galpón
+- Trazabilidad hacia reproductoras y generaciones posteriores
+- **Operaciones disponibles (event_type):**
+
+| event_type | Descripción |
+|---|---|
+| `grandparent_import` | Registro inicial de importación con documentos |
+| `farm_inspection` | Inspección de granja antes y durante el ciclo |
+| `bird_reception` | Recepción de aves (cantidad, sexo, peso promedio) |
+| `bird_distribution` | Distribución a galpones |
+| `transport_inspection` | Inspección de transporte en recepciones y despachos |
+| `feed_registration` | Registro diario/semanal de alimento consumido |
+| `weight_recording` | Pesaje semanal (machos/hembras, semana de vida) |
+| `mortality_recording` | Mortalidad diaria por causa y sexo |
+| `cull_recording` | Descarte de aves fuera de estándar |
+| `vaccination` | Vacunación (vacuna, dosis, vía, lote de vacuna) |
+| `medication` | Medicación (fármaco, dosis, duración, motivo) |
+| `egg_collection` | Recolección de huevos (fértiles, sucios, rotos, infértiles) |
+| `egg_classification` | Clasificación detallada para envío a reproductoras |
+| `egg_dispatch` | Despacho de aves/huevos a granjas de reproductoras |
+| `bird_exit` | Salida definitiva o descarte del lote |
+
+---
 
 #### 4.5 Breeder Rearing Phase
-- Registro de lote de cría
-- Recepción y distribución de aves (machos/hembras, peso, galpón)
-- Registro de alimento, pesaje (semanal), mortalidad (diaria), vacunación, medicación
-- Inspección de granja (condiciones, equipos, temperatura, humedad)
-- Salida de aves (transición a producción)
-- Alertas por desviaciones (peso, mortalidad, consumo)
+**Lot type:** `BREEDER` | **Phase:** `CRÍA` (código `rearing` / `cria`)
+
+Un lote BREEDER tiene **dos fases secuenciales**: Cría → Producción, registradas en `lot_phases`. La UI debe mostrar operaciones filtradas según la fase activa.
+
+- Recepción y distribución de aves desde progenitoras o externo
+- Ciclo diario/semanal: alimento, pesaje, mortalidad, vacunación, medicación
+- Inspección de granja (temperatura, humedad, equipos, camas)
+- Registro de transporte en recepciones y transferencias
+- Transferencia a fase Producción (cierre de fase + apertura nueva)
+- Alertas por desviaciones (peso fuera de curva estándar, mortalidad > umbral)
+- **Operaciones disponibles en FASE CRÍA:**
+
+| event_type | Descripción |
+|---|---|
+| `farm_inspection` | Inspección periódica de granja |
+| `bird_reception` | Recepción de aves al inicio de cría |
+| `bird_distribution` | Distribución a galpones |
+| `transport_inspection` | Inspección de transporte en recepciones |
+| `feed_registration` | Registro de alimento |
+| `weight_recording` | Pesaje semanal |
+| `mortality_recording` | Mortalidad diaria |
+| `cull_recording` | Descarte de aves |
+| `vaccination` | Vacunación |
+| `medication` | Medicación |
+| `bird_exit` | Transferencia/salida (cierre de fase cría) |
+
+> **Nota:** La fase CRÍA **no incluye** operaciones de huevos (`egg_collection`, `egg_classification`, `egg_dispatch`). Estas solo están disponibles en fase Producción.
+
+---
 
 #### 4.6 Breeder Production Phase
-- Transición desde cría (cierre/apertura, población inicial)
-- Registro de postura/recolección de huevos (fértiles, sucios, rotos, infértiles, descartados)
-- Clasificación de huevos
-- Despacho de huevos a incubadora
-- Salida de aves
-- KPIs: % postura, fertilidad, huevos/ave alojada
+**Lot type:** `BREEDER` | **Phase:** `PRODUCCIÓN` (código `production` / `produccion`)
+
+- Transición automática desde fase Cría (población inicial heredada)
+- Ciclo: postura diaria, clasificación, despacho semanal a incubadora
+- Registro de alimento, mortalidad, vacunación continúa
+- KPIs clave: % postura, fertilidad, huevos/ave alojada, conversión alimenticia
+- **Operaciones disponibles en FASE PRODUCCIÓN:**
+
+| event_type | Descripción |
+|---|---|
+| `farm_inspection` | Inspección periódica |
+| `transport_inspection` | Inspección transporte en despacho de huevos |
+| `feed_registration` | Registro de alimento |
+| `weight_recording` | Pesaje |
+| `mortality_recording` | Mortalidad |
+| `cull_recording` | Descarte |
+| `vaccination` | Vacunación |
+| `medication` | Medicación |
+| `egg_collection` | Recolección diaria de huevos (fértiles, sucios, rotos, infértiles) |
+| `egg_classification` | Clasificación de huevos para incubación |
+| `egg_dispatch` | Despacho de huevos a incubadora (con transporte y guía) |
+| `bird_exit` | Salida definitiva del lote (descarte, venta) |
+
+---
 
 #### 4.7 Hatchery / Incubation
-- Recepción de huevos fértiles
-- Carga de incubación (temperatura, humedad, CO2, volteo)
-- Ovoscopia (infértiles, embriones muertos)
-- Transferencia a nacedora
-- Nacimiento (pollitos viables, descartados, vacunación en planta)
-- Despacho de pollitos a engorde
-- KPIs: % eclosión, % nacimiento, rendimiento
+**Lot type:** `HATCHERY` | **BirdTypeEnum:** `hatchery` *(requiere agregar este valor al enum backend)*
+
+La incubadora es una etapa independiente que recibe huevos de reproductoras y produce pollitos de un día.
+
+- Recepción de huevos fértiles (trazados al lote de producción origen)
+- Carga en incubadoras con parámetros controlados (temperatura, humedad, CO2)
+- Ovoscopia para retiro de infértiles y embriones muertos
+- Transferencia a nacedoras en día 18
+- Registro de nacimiento (pollitos viables, descartados, vacunación in ovo/en planta)
+- Despacho de pollitos a granjas de engorde
+- KPIs: % eclosión, % nacimiento, rendimiento de incubadora, costo/pollito
+- **Operaciones disponibles:**
+
+| event_type | Descripción |
+|---|---|
+| `egg_reception_hatchery` | Recepción de huevos fértiles (con clasificación y condición) |
+| `hatchery_inspection` | Inspección de instalaciones, equipos, temperatura/humedad ambiental |
+| `transport_inspection` | Inspección transporte de huevos en recepción |
+| `incubation_load` | Carga de incubadora (parámetros: temp, humedad, CO2, volteo, cantidad) |
+| `ovoscopy` | Ovoscopia (infértiles, embriones muertos tempranos/tardíos, contaminados) |
+| `transfer_to_hatcher` | Transferencia a nacedora en día 18 |
+| `birth_registration` | Registro de nacimiento (viables, descartados, mortalidad en planta, vacunación) |
+| `chick_dispatch` | Despacho de pollitos a granjas de engorde (cantidad, destino, transporte) |
+
+---
 
 #### 4.8 Broiler / Fattening
-- Recepción de pollitos
-- Registros operativos (alimento, pesaje, mortalidad, vacunación)
-- Cierre y despacho a planta de beneficio
-- KPIs: ganancia diaria, conversión alimenticia, viabilidad, uniformidad
+**Lot type:** `BROILER` | **BirdTypeEnum:** `broiler`
+
+- Recepción de pollitos de un día desde incubadora (trazados al lote origen)
+- Distribución a galpones por lote
+- Ciclo: alimento (diario), pesaje (semanal), mortalidad (diaria), vacunación
+- Descarte de aves fuera de condición
+- Cierre de lote y despacho a planta de beneficio
+- KPIs: ganancia diaria de peso, conversión alimenticia, viabilidad, uniformidad, EPEF
+- **Operaciones disponibles:**
+
+| event_type | Descripción |
+|---|---|
+| `farm_inspection` | Inspección de granja |
+| `bird_reception` | Recepción de pollitos (cantidad, peso promedio, mortalidad inicial) |
+| `bird_distribution` | Distribución a galpones |
+| `transport_inspection` | Inspección de transporte en recepción de pollitos |
+| `feed_registration` | Registro de alimento |
+| `weight_recording` | Pesaje semanal |
+| `mortality_recording` | Mortalidad diaria |
+| `cull_recording` | Descarte de aves fuera de condición |
+| `vaccination` | Vacunación |
+| `medication` | Medicación |
+| `bird_exit` | Salida de aves / despacho a planta de beneficio |
+| `lot_closure` | Cierre formal del lote con resumen final |
+
+---
 
 #### 4.9 Manual Lot Activation (Opening Balance)
 - Activar lotes existentes antes de la implantación
@@ -154,13 +258,36 @@
 
 ### 6. UI/UX Requirements
 
-- **Mobile-first:** Formularios usables con una mano, botones >44px, validación visible
-- **Web ejecutiva:** Dashboard, tablas con filtros, panel de revisión/aprobación
-- **Paleta:** Blanco (#FFF) base, Azules corporativos (#1E3A5F, #2563EB, #3B82F6)
-- **Estados:** Verde (aprobado), Amarillo (pendiente), Rojo (rechazado), Azul (en proceso)
-- **Bilingüe:** Español (default) + Inglés, selector de idioma visible
-- **Compatibilidad:** Chrome, Edge, Firefox, Safari, Opera, iOS Safari, Android Chrome
-- **Viewports:** 360×640 a 1440×900
+**Ver especificación completa:** `docs/11-ui-ux-design-system.md`
+
+#### 6.1 Mobile (Operador de Campo — view_type: mobile)
+- Formularios usables con una mano, botones ≥44px touch target
+- Validación visible en tiempo real con mensajes claros
+- Bottom navigation: Home, Lotes, Registrar, KPIs, Pendientes
+- Flujo guiado: Seleccionar Lote → Etapa activa → Operaciones disponibles → Formulario → Confirmar
+- Sin menús de navegación secundarios en la tarea de registro
+- Hamburger/drawer para acceso a secciones secundarias
+
+#### 6.2 Web Administrativa (Supervisor/Admin — view_type: web)
+- Dashboard ejecutivo con KPIs por etapa productiva y gráficas Recharts
+- Tablas con filtros avanzados, paginación, ordenamiento (TanStack Table)
+- Panel de revisión: side-by-side comparación SAP vs operativo
+- Panel de aprobación con selección múltiple y acciones en lote
+- Visor de auditoría con línea de tiempo por registro
+
+#### 6.3 Design System (obligatorio — no ad-hoc)
+- **Paleta:** `#FFFFFF` base, `#F8FAFC` fondo, `#1E3A5F` header/sidebar, `#2563EB` primario, `#3B82F6` hover
+- **Estados:** `#16A34A` aprobado, `#EAB308` pendiente, `#DC2626` rechazado, `#2563EB` en proceso
+- **Tipografía:** Inter (Google Fonts), semibold para headings, regular para body
+- **Componentes reutilizables obligatorios:** `Button`, `Input`, `Select`, `Card`, `Badge`, `Modal`, `Toast`, `DataTable`, `FormField`, `StatusBadge`
+- **Iconografía:** lucide-react exclusivamente (sin emojis en UI de producción)
+- **Sin dark mode** — diseño corporativo claro siempre
+- **Transiciones:** 150ms ease para interacciones, sin animaciones excesivas
+
+#### 6.4 Compatibilidad
+- Navegadores: Chrome, Edge, Firefox, Safari, Opera, iOS Safari, Android Chrome (últimas 2 versiones)
+- Viewports: 360×640 a 1440×900 (7 breakpoints validados)
+- Bilingüe: Español (default) + Inglés, selector de idioma visible en header/login
 
 ### 7. Non-Functional Requirements
 
