@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { Download, BarChart2, Wheat, Egg, Baby, Syringe, Truck } from 'lucide-react'
+import { Download, BarChart2, Wheat, Egg, Baby, Syringe, Truck, ClipboardList, RefreshCw } from 'lucide-react'
 import api from '../../services/api'
 import { exportToExcel, exportToPDF, kpisToRows } from '../../utils/export'
 import { Button } from '../../components/ui'
@@ -177,10 +177,12 @@ export default function ReportsPage() {
         <h2 className="font-semibold text-slate-700 mb-3">{t('reports.quickAccess')}</h2>
         <div className="flex flex-wrap gap-3">
           <Link to="/reports/lot/2" className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
-            📋 {t('reports.lotReportLink', { id: 2 })}
+            <ClipboardList size={16} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />
+            {t('reports.lotReportLink', { id: 2 })}
           </Link>
           <Link to="/reports/sap" className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition">
-            🔄 {t('reports.sapComparisonLink')}
+            <RefreshCw size={16} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />
+            {t('reports.sapComparisonLink')}
           </Link>
         </div>
       </div>

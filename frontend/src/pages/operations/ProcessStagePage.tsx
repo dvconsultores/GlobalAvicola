@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
-import { ChevronLeft, ArrowRight, Info } from 'lucide-react'
+import { ChevronLeft, ArrowRight, Info, Bird, ClipboardList } from 'lucide-react'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
 import {
@@ -93,7 +93,8 @@ export default function ProcessStagePage() {
         {/* Lot selector */}
         <div className="bg-white rounded-2xl border-2 border-slate-200 shadow-sm p-5 mb-6">
           <label className="block text-sm font-bold text-slate-700 mb-2">
-            🐔 {t('process.stage.lotLabel', 'Selecciona un lote (opcional)')}
+            <Bird size={16} className="inline-block mr-1.5 -mt-0.5 text-blue-600" aria-hidden="true" />
+            {t('process.stage.lotLabel', 'Selecciona un lote (opcional)')}
           </label>
           <select
             value={lotId}
@@ -123,7 +124,8 @@ export default function ProcessStagePage() {
         {/* Sequential operation flow - using new timeline component */}
         <div className="mb-6">
           <h2 className="text-lg font-bold text-slate-800 mb-4">
-            📋 {t('process.stage.flowTitle', 'Flujo de Operaciones')}
+            <ClipboardList size={20} className="inline-block mr-1.5 -mt-0.5 text-blue-600" aria-hidden="true" />
+            {t('process.stage.flowTitle', 'Flujo de Operaciones')}
           </h2>
           <StageTimeline
             stages={flow}

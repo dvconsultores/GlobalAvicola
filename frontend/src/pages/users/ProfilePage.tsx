@@ -20,16 +20,16 @@ export default function ProfilePage() {
     setSaving(true)
     try {
       await api.put(`/users/${user?.id}`, { password: newPassword })
-      setMessage('✅ ' + t('profile.passwordUpdated'))
+      setMessage(t('profile.passwordUpdated'))
       setCurrentPassword(''); setNewPassword(''); setConfirmPassword('')
     } catch (err: any) {
-      setMessage('❌ ' + (err.response?.data?.detail || t('profile.passwordError')))
+      setMessage(t('profile.passwordError'))
     } finally { setSaving(false) }
   }
 
   return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1E3A5F] flex items-center gap-2 mb-6"><User size={24} /> {t('profile.title')}</h1>
+      <h1 className="text-2xl font-bold text-[#1E3A5F] flex items-center gap-2 mb-6"><User size={24} aria-hidden="true" /> {t('profile.title')}</h1>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
         <h2 className="font-semibold text-slate-700 mb-4">{t('profile.personalInfo')}</h2>
@@ -41,7 +41,7 @@ export default function ProfilePage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2"><Lock size={18} /> {t('profile.changePassword')}</h2>
+        <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2"><Lock size={18} aria-hidden="true" /> {t('profile.changePassword')}</h2>
         <form onSubmit={handleChangePassword} className="space-y-3">
           <input type="password" placeholder={t('profile.currentPassword')} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)}
             className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
@@ -49,10 +49,10 @@ export default function ProfilePage() {
             className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
           <input type="password" placeholder={t('profile.confirmPassword')} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)}
             className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
-          {message && <p className={`text-sm ${message.startsWith('✅') ? 'text-emerald-600' : 'text-red-600'}`}>{message}</p>}
+          {message && <p className={`text-sm ${message === t('profile.passwordUpdated') ? 'text-emerald-600' : 'text-red-600'}`}>{message}</p>}
           <button type="submit" disabled={saving}
             className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5 disabled:opacity-50">
-            <Save size={16} /> {saving ? t('common.saving') : t('profile.updatePassword')}
+            <Save size={16} aria-hidden="true" /> {saving ? t('common.saving') : t('profile.updatePassword')}
           </button>
         </form>
       </div>

@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Check, CheckCircle, X, ArrowLeft } from 'lucide-react'
+import { Check, CheckCircle, X, ArrowLeft, Search } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
@@ -158,7 +158,7 @@ export default function ApprovalPanel() {
         {loading && <p className="text-slate-500 text-center py-8">{t('common.loading')}</p>}
         {!loading && events.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-4xl mb-2">✅</p>
+            <CheckCircle size={40} className="mx-auto mb-2 text-green-400" aria-hidden="true" />
             <p className="text-slate-500">{t('review.noPendingApprovals')}</p>
           </div>
         )}
@@ -185,11 +185,11 @@ export default function ApprovalPanel() {
               </button>
               <button onClick={() => openRejectSingle(event.id)}
                 className="flex-1 bg-red-100 text-red-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-200 transition">
-                ✗ {t('review.reject')}
+                <X size={12} className="inline-block mr-1" aria-hidden="true" />{t('review.reject')}
               </button>
               <Link to={`/review/${event.id}`}
                 className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition text-center">
-                🔎
+                <Search size={12} className="inline-block" aria-hidden="true" />
               </Link>
             </div>
           </div>
@@ -218,7 +218,7 @@ export default function ApprovalPanel() {
             )}
             {!loading && events.length === 0 && (
               <tr><td colSpan={7} className="px-4 py-8 text-center text-slate-500">
-                <p className="text-2xl mb-1">✅</p>
+                <CheckCircle size={28} className="mx-auto mb-1 text-green-400" aria-hidden="true" />
                 {t('review.noPendingApprovals')}
               </td></tr>
             )}
@@ -240,15 +240,15 @@ export default function ApprovalPanel() {
                   <div className="flex gap-1.5">
                     <button onClick={() => handleApprove(event.id)}
                       className="bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded text-xs font-medium hover:bg-emerald-200 transition">
-                      ✓ {t('review.approve')}
+                      <Check size={12} className="inline-block mr-1" aria-hidden="true" /> {t('review.approve')}
                     </button>
                     <button onClick={() => openRejectSingle(event.id)}
                       className="bg-red-100 text-red-700 px-2.5 py-1 rounded text-xs font-medium hover:bg-red-200 transition">
-                      ✗ {t('review.reject')}
+                      <X size={12} className="inline-block mr-1" aria-hidden="true" /> {t('review.reject')}
                     </button>
                     <Link to={`/review/${event.id}`}
                       className="bg-slate-100 text-slate-700 px-2.5 py-1 rounded text-xs font-medium hover:bg-slate-200 transition">
-                      🔎
+                      <Search size={12} className="inline-block" aria-hidden="true" />
                     </Link>
                   </div>
                 </td>

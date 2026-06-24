@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ChevronLeft } from 'lucide-react'
+import { ChevronLeft, Bird, Wheat, Egg, Flame, Search, CheckCircle, AlertTriangle, XCircle, Lock, CheckCheck } from 'lucide-react'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
 import { EVENT_ICONS } from '../../components/Icon'
@@ -175,7 +175,7 @@ export default function OperationFormPage() {
       if (!def?.hatcheryParams) payload.hatchery_params = []
       if (!def?.inspectionDetails) payload.inspection_details = []
       await api.post('/operations', payload)
-      setResult({ ok: true, message: '✅ ' + t('operations.saveSuccess') })
+      setResult({ ok: true, message: t('operations.saveSuccess') })
       setTimeout(() => navigate('/operations'), 1500)
     } catch (err: any) {
       setResult({ ok: false, message: err.response?.data?.detail || t('operations.saveError') })
@@ -251,7 +251,9 @@ export default function OperationFormPage() {
           <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
           <select {...register('lot_id', { valueAsNumber: true })} className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
             <option value="">{t('operations.selectLot')}</option>
-            {stageLots.map((l: any) => <option key={l.id} value={l.id}>{l.lot_code} ({l.status === 'active' ? '✅' : '🔒'})</option>)}
+            {stageLots.map((l: any) => <option key={l.id} value={l.id}>{l.lot_code} ({l.status === 'active'
+              ? <><CheckCircle size={12} className="inline-block text-green-600" aria-hidden="true" /> </>
+              : <><Lock size={12} className="inline-block text-amber-600" aria-hidden="true" /> </>})</option>)}
           </select>
           {stageLots.length === 0 && (
             <p className="text-xs text-amber-600 mt-2">{t('process.noLots', 'No hay lotes activos para este proceso.')}</p>
@@ -336,7 +338,10 @@ export default function OperationFormPage() {
         {/* Bird Movements */}
         {def?.birdMovements && (
           <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">🐔 {t('operations.birdMovements')}</p>
+            <p className="text-sm font-semibold text-slate-700 mb-2">
+              <Bird size={16} className="inline-block mr-1 -mt-0.5 text-blue-600" aria-hidden="true" />
+              {t('operations.birdMovements')}
+            </p>
             {[0].map((_, i) => (
               <div key={i} className="grid grid-cols-2 gap-2">
                 <select {...register(`bird_movements.${i}.sex`)} className="h-10 px-2 border border-slate-200 rounded text-sm">
@@ -350,10 +355,15 @@ export default function OperationFormPage() {
           </div>
         )}
 
-        {/* Feed Movements — G-08: Enhanced with feed_type, sacks, week, SAP order */}
+        {/* Feed Movements — G-08: Enhanced with feed_type, sack
+              <Wheat size={16} className="inline-block mr-1 -mt-0.5 text-amber-600" aria-hidden="true" />
+        {/* Feed Registration */}
         {def?.feedMovements && (
           <div className="border border-slate-200 rounded-lg p-3 space-y-2">
-            <p className="text-sm font-semibold text-slate-700">🌾 {t('operations.feed')}</p>
+            <p className="text-sm font-semibold text-slate-700">
+              <Wheat size={16} className="inline-block mr-1 -mt-0.5 text-amber-600" aria-hidden="true" />
+              {t('operations.feed')}
+            </p>
             <div className="grid grid-cols-2 gap-2">
               <select {...register('feed_movements.0.feed_type_id', { valueAsNumber: true })} className="h-10 px-2 border border-slate-200 rounded text-sm">
                 <option value="">{t('operations.feedType')}</option>
@@ -375,7 +385,10 @@ export default function OperationFormPage() {
         {/* Egg Movements */}
         {def?.eggMovements && (
           <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">🥚 {t('operations.eggs')}</p>
+            <p className="text-sm font-semibold text-slate-700 mb-2">
+              <Egg size={16} className="inline-block mr-1 -mt-0.5 text-indigo-600" aria-hidden="true" />
+              {t('operations.eggs')}
+            </p>
             {[0].map((_, i) => (
               <div key={i} className="grid grid-cols-2 gap-2">
                 <select {...register(`egg_movements.${i}.egg_type`)} className="h-10 px-2 border border-slate-200 rounded text-sm">
@@ -390,7 +403,10 @@ export default function OperationFormPage() {
         {/* Hatchery Params */}
         {def?.hatcheryParams && (
           <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">🔥 {t('operations.incubationParams')}</p>
+            <p className="text-sm font-semibold text-slate-700 mb-2">
+              <Flame size={16} className="inline-block mr-1 -mt-0.5 text-orange-600" aria-hidden="true" />
+              {t('operations.incubationParams')}
+            </p>
             <div className="grid grid-cols-2 gap-2">
               <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} placeholder={t('operations.temp')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
               <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} placeholder={t('operations.humidity')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
@@ -402,7 +418,10 @@ export default function OperationFormPage() {
         {/* Inspection Details */}
         {def?.inspectionDetails && (
           <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">🔍 {t('operations.inspection')}</p>
+            <p className="text-sm font-semibold text-slate-700 mb-2">
+              <Search size={16} className="inline-block mr-1 -mt-0.5 text-cyan-600" aria-hidden="true" />
+              {t('operations.inspection')}
+            </p>
             {[t('operations.temperature'), t('operations.humidity'), t('operations.camaCondition'), t('operations.equipmentStatus')].map((param, i) => (
               <input key={i} {...register(`inspection_details.${i}.parameter`)} defaultValue={param} type="hidden" />
             ))}
@@ -411,7 +430,7 @@ export default function OperationFormPage() {
                 <div key={i} className="flex gap-2">
                   <span className="text-xs text-slate-500 w-32 pt-2">{param}</span>
                   <select {...register(`inspection_details.${i}.status`)} className="h-10 flex-1 px-2 border border-slate-200 rounded text-sm">
-                    <option value="">--</option><option value="good">✅ {t('operations.good')}</option><option value="regular">⚠️ {t('operations.regular')}</option><option value="bad">❌ {t('operations.bad')}</option>
+                    <option value="">--</option><option value="good"><CheckCheck size={14} className="inline-block text-green-600" aria-hidden="true" /> {t('operations.good')}</option><option value="regular"><AlertTriangle size={14} className="inline-block text-amber-600" aria-hidden="true" /> {t('operations.regular')}</option><option value="bad"><XCircle size={14} className="inline-block text-red-600" aria-hidden="true" /> {t('operations.bad')}</option>
                   </select>
                 </div>
               ))}

@@ -160,6 +160,7 @@ La incubadora es una etapa independiente que recibe huevos de reproductoras y pr
 | event_type | Descripción |
 |---|---|
 | `egg_reception_hatchery` | Recepción de huevos fértiles (con clasificación y condición) |
+| `egg_classification` | Clasificación de huevos recibidos (aptos, no aptos para incubar) |
 | `hatchery_inspection` | Inspección de instalaciones, equipos, temperatura/humedad ambiental |
 | `transport_inspection` | Inspección transporte de huevos en recepción |
 | `incubation_load` | Carga de incubadora (parámetros: temp, humedad, CO2, volteo, cantidad) |
@@ -195,6 +196,25 @@ La incubadora es una etapa independiente que recibe huevos de reproductoras y pr
 | `medication` | Medicación |
 | `bird_exit` | Salida de aves / despacho a planta de beneficio |
 | `lot_closure` | Cierre formal del lote con resumen final |
+
+---
+
+#### 4.9 Generational Traceability (Trazabilidad Generacional)
+
+**Entidades implementadas:** `egg_batches`, `chick_batches`
+
+El sistema registra la trazabilidad completa entre generaciones:
+
+- **EggBatch** — Conecta un lote de Reproductoras (Producción) con un lote de Incubadora. Se crea cuando se despachan huevos desde `breeder_production` (vía `egg_dispatch`) y se reciben en `hatchery` (vía `egg_reception_hatchery`). Almacena: lote origen, lote destino, cantidad despachada, cantidad recibida, fechas.
+- **ChickBatch** — Conecta un lote de Incubadora con un lote de Engorde. Se crea cuando se despachan pollitos desde `hatchery` (vía `chick_dispatch`) y se reciben en `broiler` (vía `bird_reception`). Almacena: lote origen (incubadora), lote destino (engorde), egg_batch de referencia, cantidades, fechas.
+
+**Visualización:** El `LotDetailPage` muestra un árbol de trazabilidad (`TraceabilityTree.tsx`) con enlaces entre lotes padre e hijo, permitiendo navegar entre generaciones.
+
+**Reglas:**
+- Un EggBatch se crea automáticamente al registrar `egg_dispatch` + `egg_reception_hatchery` para el mismo lote de huevos
+- Un ChickBatch se crea automáticamente al registrar `chick_dispatch` + `bird_reception` para el mismo grupo de pollitos
+- La trazabilidad es bidireccional: desde un lote se puede ver su origen y destino
+- La UI permite crear enlaces manuales entre lotes si la correspondencia automática no es posible
 
 ---
 

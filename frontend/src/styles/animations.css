@@ -179,6 +179,33 @@
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
 }
 
+/* ============================================================
+   Reduced motion — respect user accessibility preferences
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .animate-stagger > * {
+    animation: none !important;
+    opacity: 1 !important;
+  }
+
+  .hover-lift:hover {
+    transform: none !important;
+  }
+
+  .progress-animated {
+    animation: none !important;
+  }
+}
+
 .hover-scale {
   transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
+import { ClipboardList } from 'lucide-react'
 import api from '../../services/api'
 import { PROCESS_STAGES, flowForStage, type StageKey } from '../../data/processCatalog'
 
@@ -79,7 +80,7 @@ export default function OperationListPage() {
             <div key={ev.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-lg">📋</span>
+                  <ClipboardList size={20} className="text-slate-400" aria-hidden="true" />
                   <span className="text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
                   <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 text-slate-600'}`}>{ev.status}</span>
                 </div>

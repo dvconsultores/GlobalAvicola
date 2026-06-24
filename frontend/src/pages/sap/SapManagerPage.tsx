@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { RefreshCw, CheckCircle, XCircle, Package, Upload } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
@@ -38,19 +39,25 @@ export default function SapManagerPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1E3A5F] mb-2">🔄 {t('nav.sap')}</h1>
+      <h1 className="text-2xl font-bold text-[#1E3A5F] mb-2">
+        <RefreshCw size={24} className="inline-block mr-2 -mt-0.5" aria-hidden="true" />
+        {t('nav.sap')}
+      </h1>
       {conn && (
-        <p className={`text-sm mb-6 ${conn.connected ? 'text-green-600' : 'text-red-600'}`}>
-          {conn.connected ? '✅' : '❌'} {conn.adapter}
+        <p className={`text-sm mb-6 flex items-center gap-1.5 ${conn.connected ? 'text-green-600' : 'text-red-600'}`}>
+          {conn.connected
+            ? <CheckCircle size={16} aria-hidden="true" />
+            : <XCircle size={16} aria-hidden="true" />}
+          {conn.adapter}
         </p>
       )}
 
       <div className="flex flex-wrap gap-3 mb-6">
-        <button onClick={handleConsolidate} className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition">
-          📦 {t('sap.consolidate')}
+        <button onClick={handleConsolidate} className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition inline-flex items-center gap-2">
+          <Package size={16} aria-hidden="true" /> {t('sap.consolidate')}
         </button>
-        <button onClick={handleExport} className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition">
-          📤 {t('sap.export')}
+        <button onClick={handleExport} className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition inline-flex items-center gap-2">
+          <Upload size={16} aria-hidden="true" /> {t('sap.export')}
         </button>
       </div>
 

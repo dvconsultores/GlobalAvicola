@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Shield } from 'lucide-react'
 import api from '../../services/api'
 
 
@@ -18,7 +19,10 @@ export default function AuditPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1E3A5F] mb-6">🔐 {t('nav.audit')}</h1>
+      <h1 className="text-2xl font-bold text-[#1E3A5F] mb-6">
+        <Shield size={24} className="inline-block mr-2 -mt-0.5" aria-hidden="true" />
+        {t('nav.audit')}
+      </h1>
 
       <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
         <div className="px-5 py-3 bg-slate-50 border-b border-slate-200 flex justify-between items-center">

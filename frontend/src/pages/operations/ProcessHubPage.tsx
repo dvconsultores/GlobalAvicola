@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Sparkles } from 'lucide-react'
+import { Sparkles, Lightbulb } from 'lucide-react'
 import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
 import { ProcessCard } from '../../components/operations'
 
@@ -50,7 +50,8 @@ export default function ProcessHubPage() {
         {/* Footer Help Text */}
         <div className="mt-10 p-5 bg-blue-50 dark:bg-slate-700 border-2 border-blue-200 dark:border-slate-600 rounded-xl text-center">
           <p className="text-sm text-blue-900 dark:text-slate-100 font-medium">
-            💡 {t('process.hub.hint', 'Toca cualquier proceso para ver el flujo de operaciones disponibles')}
+            <Lightbulb size={18} className="inline-block mr-1.5 -mt-0.5 text-blue-600 dark:text-blue-400" aria-hidden="true" />
+            {t('process.hub.hint', 'Toca cualquier proceso para ver el flujo de operaciones disponibles')}
           </p>
         </div>
       </div>

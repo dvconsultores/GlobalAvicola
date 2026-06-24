@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { Home, Bird, FileText, Database, Search, CheckCircle, TrendingUp, Shield, RefreshCw, Users, Workflow } from 'lucide-react'
+import { Home, Bird, FileText, Database, Search, CheckCircle, TrendingUp, Shield, RefreshCw, Users, Workflow, User } from 'lucide-react'
 
 const navItems = [
   { path: '/', label: 'home', Icon: Home },
@@ -62,8 +62,8 @@ export default function Sidebar() {
             <p className="text-xs text-blue-300 truncate">{user?.username || ''}</p>
           </div>
         </div>
-          <Link to="/profile" className="block text-xs text-blue-300 hover:text-white transition mb-1">
-            👤 {t('nav.profile')}
+          <Link to="/profile" className="block text-xs text-blue-300 hover:text-white transition mb-1 flex items-center gap-1.5">
+            <User size={14} aria-hidden="true" /> {t('nav.profile')}
           </Link>
           <button
             onClick={logout}
