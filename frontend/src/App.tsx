@@ -23,6 +23,7 @@ import SapManagerPage from './pages/sap/SapManagerPage'
 import UsersPage from './pages/users/UsersPage'
 import LotListPage from './pages/lots/LotListPage'
 import LotDetailPage from './pages/lots/LotDetailPage'
+import LotFormPage from './pages/lots/LotFormPage'
 import ProfilePage from './pages/users/ProfilePage'
 
 function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNode; roles?: string[]; webOnly?: boolean }) {
@@ -121,6 +122,7 @@ export default function App() {
           <Route path="/operations/:id" element={<OperationDetailPage />} />
           <Route path="/my-pending" element={<MyPendingPage />} />
           <Route path="/lots" element={<LotListPage />} />
+          <Route path="/lots/new" element={<LotFormPage />} />
           <Route path="/lots/:id" element={<LotDetailPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/reports/lot/:id" element={<LotReportPage />} />

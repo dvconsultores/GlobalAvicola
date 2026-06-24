@@ -40,7 +40,10 @@
     "all": "Todos",
     "noSelection": "Selecciona al menos un evento",
     "error": "Error",
-    "errorUnexpected": "Error inesperado"
+    "errorUnexpected": "Error inesperado",
+    "new": "Nuevo",
+    "confirmDelete": "¿Eliminar registro?",
+    "deleteWarning": "Esta acción no se puede deshacer."
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -261,7 +264,11 @@
     "statusDistribution": "Distribución por Estado",
     "topEventTypes": "Tipos de Evento Más Frecuentes",
     "errorLoading": "Error al cargar dashboard",
-    "noData": "Sin datos disponibles"
+    "noData": "Sin datos disponibles",
+    "activeLotsByStage": "Lotes activos por etapa",
+    "totalActive": "lotes activos",
+    "mortalityTrend": "Tendencia de mortalidad",
+    "last8Weeks": "Últimas 8 semanas"
   },
   "reports": {
     "mortality": "Mortalidad",
@@ -474,10 +481,32 @@
     "transitionToProduction": "Iniciar Producción",
     "transitionConfirm": "¿Confirmar transición a Fase Producción? El lote pasará a registrar postura de huevos.",
     "transitionError": "Error al transicionar fase",
-    "currentPhase": "Fase activa"
+    "currentPhase": "Fase activa",
+    "basicInfo": "Información básica",
+    "locationInfo": "Ubicación",
+    "genetics": "Genética",
+    "integration": "Integración SAP",
+    "selectType": "Seleccionar tipo...",
+    "selectFarm": "Seleccionar granja...",
+    "selectHouse": "Seleccionar galpón...",
+    "selectLine": "Seleccionar línea genética...",
+    "selectBreed": "Seleccionar raza...",
+    "createdSuccess": "Lote creado exitosamente",
+    "create": "Crear Lote",
+    "sapReference": "Referencia SAP",
+    "sapRefHelper": "Opcional. Centro de costo o referencia en SAP.",
+    "closeWarning": "Se generará un resumen final con todas las métricas del lote.",
+    "confirmTransition": "Confirmar",
+    "transitionDate": "Fecha de transición",
+    "populationMale": "Población machos",
+    "populationFemale": "Población hembras"
   },
   "phases": {
     "rearing": "Fase Cría",
     "production": "Fase Producción"
+  },
+  "errors": {
+    "saveFailed": "Error al guardar",
+    "loadFailed": "Error al cargar"
   }
 }

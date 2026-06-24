@@ -104,4 +104,41 @@ class DashboardService:
             "pending_approval": pending_approval.scalar() or 0,
             "top_event_types": top_types,
             "last_7_days": last_week.scalar() or 0,
+            "lots_by_type": await self._get_lots_by_type(),
+            "mortality_trend": await self._get_mortality_trend(),
         }
+
+    async def _get_lots_by_type(self) -> dict:
+        """Count active lots grouped by bird_type."""
+        from ..masters.models import Lot
+        rows = await self.db.execute(
+            select(Lot.bird_type, func.count().label("cnt"))
+            .where(Lot.company_id == self.company_id, Lot.status == "active")
+            .group_by(Lot.bird_type)
+        )
+        return {str(row.bird_type): row.cnt for row in rows.fetchall()}
+
+    async def _get_mortality_trend(self) -> list[dict]:
+        """Weekly mortality totals for the last 8 weeks."""
+        from datetime import datetime, timedelta, timezone
+        from sqlalchemy import cast, Integer, extract
+        now = datetime.now(timezone.utc)
+        eight_weeks_ago = now - timedelta(weeks=8)
+        rows = await self.db.execute(
+            select(
+                extract("isoyear", OperationalEvent.event_date).label("yr"),
+                extract("week", OperationalEvent.event_date).label("wk"),
+                func.sum(OperationalEvent.total_count).label("total"),
+            )
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.event_type == EventType.MORTALITY_RECORDING,
+                OperationalEvent.event_date >= eight_weeks_ago,
+            )
+            .group_by("yr", "wk")
+            .order_by("yr", "wk")
+        )
+        return [
+            {"week": f"S{int(r.wk)}", "mortality": int(r.total or 0)}
+            for r in rows.fetchall()
+        ]

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock } from 'lucide-react'
 import { EVENT_ICONS } from '../../components/Icon'
+import { Button, Modal, Input } from '../../components/ui'
 import api from '../../services/api'
 
 // ─── Status badge colours ────────────────────────────────────────────────────
@@ -120,6 +121,12 @@ export default function LotDetailPage() {
   const [closeResult, setCloseResult] = useState<any>(null)
   const [closing, setClosing] = useState(false)
   const [transitioning, setTransitioning] = useState(false)
+  // Modal states
+  const [showTransitionModal, setShowTransitionModal] = useState(false)
+  const [showCloseModal, setShowCloseModal] = useState(false)
+  const [transitionDate, setTransitionDate] = useState(() => new Date().toISOString().split('T')[0])
+  const [transitionMale, setTransitionMale] = useState('')
+  const [transitionFemale, setTransitionFemale] = useState('')
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -166,34 +173,33 @@ export default function LotDetailPage() {
   const canTransition = birdType === 'breeder' && stageKey === 'breeder_rearing' && lot.status === 'active'
 
   const handleCloseLot = async () => {
-    if (!confirm(t('lots.closeConfirm'))) return
+    setShowCloseModal(false)
     setClosing(true)
     try {
       const { data } = await api.post(`/lots/${id}/close`)
       setCloseResult(data)
       setLot((prev: any) => ({ ...prev, status: 'closed' }))
     } catch (err: any) {
-      alert(err.response?.data?.detail || t('lots.closeError'))
+      console.error(err.response?.data?.detail || t('lots.closeError'))
     } finally {
       setClosing(false)
     }
   }
 
   const handleTransitionPhase = async () => {
-    if (!confirm(t('lots.transitionConfirm', '¿Confirmar transición a Fase Producción? Esta acción no se puede deshacer.'))) return
+    setShowTransitionModal(false)
     setTransitioning(true)
     try {
-      const today = new Date().toISOString().split('T')[0]
       await api.post(`/lots/${id}/phases`, {
         phase_code: 'production',
-        start_date: today,
-        start_population_male: activePhase?.start_population_male ?? 0,
-        start_population_female: activePhase?.start_population_female ?? 0,
+        start_date: transitionDate || new Date().toISOString().split('T')[0],
+        start_population_male: Number(transitionMale) || activePhase?.start_population_male || 0,
+        start_population_female: Number(transitionFemale) || activePhase?.start_population_female || 0,
       })
       const { data: newPhases } = await api.get(`/lots/${id}/phases`)
       setPhases(newPhases || [])
     } catch (err: any) {
-      alert(err.response?.data?.detail || t('lots.transitionError', 'Error al transicionar fase'))
+      console.error(err.response?.data?.detail || t('lots.transitionError', 'Error al transicionar fase'))
     } finally {
       setTransitioning(false)
     }
@@ -233,25 +239,26 @@ export default function LotDetailPage() {
 
         {/* Phase transition button (Cría → Producción) */}
         {canTransition && (
-          <button
-            onClick={handleTransitionPhase}
-            disabled={transitioning}
-            className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 whitespace-nowrap"
+          <Button
+            size="sm"
+            onClick={() => setShowTransitionModal(true)}
+            loading={transitioning}
           >
-            {transitioning ? t('common.saving') : t('lots.transitionToProduction', 'Iniciar Producción')}
-          </button>
+            {t('lots.transitionToProduction', 'Iniciar Producción')}
+          </Button>
         )}
 
         {/* Close lot button */}
         {lot.status === 'active' && (
-          <button
-            onClick={handleCloseLot}
-            disabled={closing}
-            className="flex items-center gap-1.5 px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => setShowCloseModal(true)}
+            loading={closing}
+            leftIcon={<Lock size={13} />}
           >
-            <Lock size={14} />
-            {closing ? t('lots.closing') : t('lots.closeButton')}
-          </button>
+            {t('lots.closeButton', 'Cerrar Lote')}
+          </Button>
         )}
       </div>
 
@@ -445,5 +452,70 @@ export default function LotDetailPage() {
         </div>
       </div>
     </div>
+
+    {/* ── Modal: Phase Transition (Cría → Producción) ── */}
+    <Modal
+      open={showTransitionModal}
+      onClose={() => setShowTransitionModal(false)}
+      title={t('lots.transitionToProduction', 'Iniciar Fase Producción')}
+      description={t('lots.transitionConfirm', '¿Confirmar transición a Fase Producción? Esta acción no se puede deshacer.')}
+      footer={
+        <>
+          <Button variant="secondary" onClick={() => setShowTransitionModal(false)}>
+            {t('common.cancel', 'Cancelar')}
+          </Button>
+          <Button onClick={handleTransitionPhase} loading={transitioning}>
+            {t('lots.confirmTransition', 'Confirmar')}
+          </Button>
+        </>
+      }
+    >
+      <div className="space-y-4">
+        <Input
+          label={t('lots.transitionDate', 'Fecha de transición')}
+          type="date"
+          value={transitionDate}
+          onChange={e => setTransitionDate(e.target.value)}
+        />
+        <Input
+          label={t('lots.populationMale', 'Población machos')}
+          type="number"
+          min={0}
+          placeholder={String(activePhase?.start_population_male ?? 0)}
+          value={transitionMale}
+          onChange={e => setTransitionMale(e.target.value)}
+        />
+        <Input
+          label={t('lots.populationFemale', 'Población hembras')}
+          type="number"
+          min={0}
+          placeholder={String(activePhase?.start_population_female ?? 0)}
+          value={transitionFemale}
+          onChange={e => setTransitionFemale(e.target.value)}
+        />
+      </div>
+    </Modal>
+
+    {/* ── Modal: Close Lot confirmation ── */}
+    <Modal
+      open={showCloseModal}
+      onClose={() => setShowCloseModal(false)}
+      title={t('lots.closeButton', 'Cerrar Lote')}
+      description={t('lots.closeConfirm', '¿Estás seguro de cerrar este lote? No podrás registrar más operaciones.')}
+      footer={
+        <>
+          <Button variant="secondary" onClick={() => setShowCloseModal(false)}>
+            {t('common.cancel', 'Cancelar')}
+          </Button>
+          <Button variant="danger" onClick={handleCloseLot} loading={closing}>
+            {t('lots.closeButton', 'Cerrar Lote')}
+          </Button>
+        </>
+      }
+    >
+      <p className="text-sm text-slate-600">
+        {t('lots.closeWarning', 'Se generará un resumen final con todas las métricas del lote.')}
+      </p>
+    </Modal>
   )
 }

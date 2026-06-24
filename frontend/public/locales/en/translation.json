@@ -40,7 +40,10 @@
     "all": "All",
     "noSelection": "Select at least one event",
     "error": "Error",
-    "errorUnexpected": "Unexpected error"
+    "errorUnexpected": "Unexpected error",
+    "new": "New",
+    "confirmDelete": "Delete record?",
+    "deleteWarning": "This action cannot be undone."
   },
   "auth": {
     "login": "Sign In",
@@ -261,7 +264,11 @@
     "statusDistribution": "Status Distribution",
     "topEventTypes": "Top Event Types",
     "errorLoading": "Error loading dashboard",
-    "noData": "No data available"
+    "noData": "No data available",
+    "activeLotsByStage": "Active lots by stage",
+    "totalActive": "active lots",
+    "mortalityTrend": "Mortality trend",
+    "last8Weeks": "Last 8 weeks"
   },
   "reports": {
     "mortality": "Mortality",
@@ -474,10 +481,32 @@
     "transitionToProduction": "Start Production",
     "transitionConfirm": "Confirm transition to Production Phase? The lot will start recording egg laying.",
     "transitionError": "Error transitioning phase",
-    "currentPhase": "Active phase"
+    "currentPhase": "Active phase",
+    "basicInfo": "Basic information",
+    "locationInfo": "Location",
+    "genetics": "Genetics",
+    "integration": "SAP Integration",
+    "selectType": "Select type...",
+    "selectFarm": "Select farm...",
+    "selectHouse": "Select house...",
+    "selectLine": "Select genetic line...",
+    "selectBreed": "Select breed...",
+    "createdSuccess": "Lot created successfully",
+    "create": "Create Lot",
+    "sapReference": "SAP Reference",
+    "sapRefHelper": "Optional. Cost center or SAP reference.",
+    "closeWarning": "A final summary will be generated with all lot metrics.",
+    "confirmTransition": "Confirm",
+    "transitionDate": "Transition date",
+    "populationMale": "Male population",
+    "populationFemale": "Female population"
   },
   "phases": {
     "rearing": "Rearing Phase",
     "production": "Production Phase"
+  },
+  "errors": {
+    "saveFailed": "Failed to save",
+    "loadFailed": "Failed to load"
   }
 }
