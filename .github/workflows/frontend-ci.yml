@@ -5,11 +5,10 @@
 
 name: Frontend CI
 
+# Los tests corren SOLO en Pull Requests, NUNCA en push directo a main.
+# Motivo: un push a main debe disparar unicamente el deploy (docker-push-frontend.yml);
+# los tests no deben bloquear ni ensuciar el pipeline de publicacion de imagenes.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'frontend/**'
   pull_request:
     branches: [main]
     paths:

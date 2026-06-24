@@ -1,11 +1,10 @@
 # A-04: Backend CI — lint, test, security audit
 name: Backend CI
 
+# Los tests corren SOLO en Pull Requests, NUNCA en push directo a main.
+# Motivo: un push a main debe disparar unicamente el deploy (docker-push-backend.yml);
+# los tests no deben bloquear ni ensuciar el pipeline de publicacion de imagenes.
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'backend/**'
   pull_request:
     branches: [main]
     paths:
