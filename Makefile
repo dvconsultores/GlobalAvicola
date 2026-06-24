@@ -1,4 +1,4 @@
-.PHONY: help install dev build test lint typecheck clean docker-up docker-down db-migrate db-seed
+.PHONY: help install dev build test lint typecheck clean docker-up docker-down docker-dev docker-dev-down docker-dev-logs docker-dev-rebuild db-migrate db-seed
 
 # ============================================================
 # Global Avícola - Makefile
@@ -57,6 +57,22 @@ docker-down: ## Stop all services
 
 docker-build: ## Build Docker images
 	docker compose build
+
+# ----- Docker (DESARROLLO local con autoreload de UI) -----
+DEV_COMPOSE = docker compose -f docker-compose.yml -f docker-compose.dev.yml
+
+docker-dev: ## Levanta el stack en modo desarrollo (UI con HMR + backend autoreload)
+	$(DEV_COMPOSE) up -d --build
+	@echo "Frontend dev: http://localhost:5173"
+
+docker-dev-down: ## Detiene el stack de desarrollo
+	$(DEV_COMPOSE) down
+
+docker-dev-logs: ## Muestra los logs del stack de desarrollo
+	$(DEV_COMPOSE) logs -f
+
+docker-dev-rebuild: ## Reconstruye y reinicia el stack de desarrollo
+	$(DEV_COMPOSE) up -d --build --force-recreate
 
 # ----- Full Stack -----
 install: backend-install frontend-install ## Install all dependencies

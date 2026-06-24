@@ -1,0 +1,76 @@
+# ============================================================
+# Global Avícola — Docker Compose (DESARROLLO local)
+# ============================================================
+# Este archivo NO se usa solo. Se combina con docker-compose.yml:
+#
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# (o usa `make docker-dev`). A diferencia del compose de producción
+# —que descarga imágenes :latest de Docker Hub— aquí:
+#
+#   • backend  → se CONSTRUYE desde ./backend y recarga con --reload
+#   • frontend → corre el servidor de Vite con HMR montando ./frontend,
+#                así los cambios de UI se ven AUTOMÁTICAMENTE sin reconstruir
+#   • watchtower → deshabilitado (solo aplica en producción)
+#
+# Frontend dev:  http://localhost:5173
+# Backend  API:  http://localhost:8002  (proxyeado por Vite en /api)
+# ============================================================
+
+services:
+  # ----- Backend API (FastAPI) — build local + autoreload -----
+  backend:
+    image: globalavicola-backend:dev
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    pull_policy: never
+    # Ejecutar como root para poder escribir/recargar el código montado
+    user: root
+    command:
+      - uvicorn
+      - app.main:app
+      - --host
+      - "0.0.0.0"
+      - --port
+      - "8000"
+      - --reload
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: development
+      DEBUG: "true"
+    volumes:
+      # Código montado → autoreload al editar el backend
+      - ./backend/app:/app/app
+      - ./backend/alembic:/app/alembic
+      - ./backend/seeds:/app/seeds
+
+  # ----- Frontend (Vite dev server + HMR) -----
+  frontend:
+    image: node:24-alpine
+    pull_policy: missing
+    working_dir: /app
+    # Instala dependencias (si faltan) y arranca Vite escuchando hacia afuera
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+    environment:
+      # Dentro de la red de Docker el backend es 'backend', no localhost
+      VITE_API_PROXY_TARGET: http://backend:8000
+      # Polling para HMR fiable en bind mounts
+      VITE_USE_POLLING: "true"
+      CHOKIDAR_USEPOLLING: "true"
+    volumes:
+      - ./frontend:/app
+      # Mantener node_modules del contenedor (no pisarlos con los del host)
+      - /app/node_modules
+    ports:
+      - "${FRONTEND_DEV_PORT:-5173}:5173"
+    depends_on:
+      - backend
+    healthcheck:
+      disable: true
+
+  # ----- Watchtower deshabilitado en desarrollo -----
+  watchtower:
+    profiles:
+      - donotstart
