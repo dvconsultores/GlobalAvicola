@@ -46,6 +46,7 @@
     "deleteWarning": "Esta acción no se puede deshacer.",
     "retry": "Reintentar",
     "refresh": "Actualizar",
+    "viewAll": "Ver todos",
     "completed": "Completado",
     "current": "En progreso",
     "complete": "Completado"
@@ -178,9 +179,13 @@
       "lifecycle": "Ciclo de Vida"
     },
     "hub": {
-      "title": "Procesos de Producción",
-      "subtitle": "Elige un proceso para registrar operaciones",
-      "operations": "operaciones",
+      "title": "Elige un Proceso",
+      "subtitle": "Toca un proceso para ver su secuencia de operaciones",
+      "eyebrow": "Centro de Operaciones",
+      "processes": "Procesos",
+      "operations": "Operaciones",
+      "steps": "pasos",
+      "open": "Abrir",
       "totalProcesses": "6 procesos principales",
       "totalOperations": "operaciones",
       "hint": "Toca cualquier proceso para ver el flujo de operaciones disponibles"
@@ -188,6 +193,11 @@
     "stage": {
       "lotLabel": "Selecciona un lote (opcional)",
       "allLots": "Sin lote — elegir al registrar",
+      "back": "Procesos",
+      "birds": "aves",
+      "operations": "operaciones",
+      "viewGrid": "Cuadrícula",
+      "viewSequence": "Secuencia",
       "flowTitle": "Flujo de Operaciones",
       "viewHistory": "Ver historial de operaciones",
       "registerOperation": "Registrar operación"

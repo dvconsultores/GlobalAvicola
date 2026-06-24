@@ -9,7 +9,6 @@ import {
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
-import { ProcessCard } from '../../components/operations'
 import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
 
 const BIRD_TYPE_COLORS: Record<string, string> = {
@@ -124,18 +123,30 @@ export default function DashboardPage() {
 
           {/* 6 Procesos Grid */}
           <div className="space-y-3">
-            <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
-              {t('process.hub.title', '6 Procesos')}
-            </h2>
-            <div className="grid grid-cols-1 gap-3">
-              {PROCESS_STAGES.map(process => {
-                const operationCount = flowForStage(process.key).length
+            <div className="flex items-center justify-between">
+              <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
+                {t('process.hub.title', '6 Procesos')}
+              </h2>
+              <Link to="/processes" className="text-xs font-bold text-[#2563EB]">
+                {t('common.viewAll', 'Ver todos')} →
+              </Link>
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {PROCESS_STAGES.map((stage, idx) => {
+                const count = flowForStage(stage.key).length
                 return (
-                  <ProcessCard
-                    key={process.key}
-                    process={process}
-                    operationCount={operationCount}
-                  />
+                  <Link
+                    key={stage.key}
+                    to={`/processes/${stage.key}`}
+                    className={`group relative overflow-hidden rounded-3xl bg-gradient-to-br ${stage.gradient} p-4 text-white shadow-sm active:scale-[0.97] transition-all`}
+                  >
+                    <span className="absolute -top-2 -right-1 text-white/25 text-5xl font-black select-none">{idx + 1}</span>
+                    <span className="inline-flex w-12 h-12 rounded-2xl bg-white/25 backdrop-blur items-center justify-center ring-1 ring-white/30 shadow-inner">
+                      <stage.Icon size={26} strokeWidth={2.2} />
+                    </span>
+                    <h3 className="mt-3 text-sm font-extrabold leading-tight">{t(stage.labelKey, stage.fallback)}</h3>
+                    <p className="text-[11px] font-semibold text-white/80 mt-0.5">{count} {t('process.hub.steps', 'pasos')}</p>
+                  </Link>
                 )
               })}
             </div>

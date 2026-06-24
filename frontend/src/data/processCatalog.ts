@@ -32,6 +32,8 @@ export interface ProcessStage {
   accent: string
   iconBg: string
   iconColor: string
+  /** Vibrant gradient (from-…/to-…) for the redesigned hub tiles */
+  gradient: string
 }
 
 // Visual, high-level process cards (the first choice the user makes)
@@ -46,6 +48,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-amber-400 hover:bg-amber-50',
     iconBg: 'bg-amber-100',
     iconColor: 'text-amber-600',
+    gradient: 'from-amber-400 to-orange-500',
   },
   {
     key: 'grandparent_production',
@@ -57,6 +60,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-yellow-400 hover:bg-yellow-50',
     iconBg: 'bg-yellow-100',
     iconColor: 'text-yellow-600',
+    gradient: 'from-yellow-400 to-amber-500',
   },
   {
     key: 'breeder_rearing',
@@ -68,6 +72,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-teal-400 hover:bg-teal-50',
     iconBg: 'bg-teal-100',
     iconColor: 'text-teal-600',
+    gradient: 'from-teal-400 to-emerald-500',
   },
   {
     key: 'breeder_production',
@@ -79,6 +84,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-blue-400 hover:bg-blue-50',
     iconBg: 'bg-blue-100',
     iconColor: 'text-blue-600',
+    gradient: 'from-blue-400 to-indigo-500',
   },
   {
     key: 'hatchery',
@@ -90,6 +96,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-orange-400 hover:bg-orange-50',
     iconBg: 'bg-orange-100',
     iconColor: 'text-orange-600',
+    gradient: 'from-orange-400 to-red-500',
   },
   {
     key: 'broiler',
@@ -101,6 +108,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-green-400 hover:bg-green-50',
     iconBg: 'bg-green-100',
     iconColor: 'text-green-600',
+    gradient: 'from-green-400 to-teal-500',
   },
 ]
 
@@ -239,6 +247,42 @@ export const EVENT_ICON_MAP: Record<string, LucideIcon> = {
   chick_dispatch: Truck,
   lot_closure: Lock,
   grandparent_import: Plane,
+}
+
+/**
+ * Vibrant per-event color palette (solid icon bg + text), used by the
+ * icon-grid operation tiles. Each event has a distinctive, friendly color
+ * so operators of any age can recognize an action by its color + icon.
+ */
+export const EVENT_COLOR_MAP: Record<string, { bg: string; ring: string; text: string }> = {
+  grandparent_import:     { bg: 'bg-amber-500',   ring: 'ring-amber-200',   text: 'text-amber-600' },
+  farm_inspection:        { bg: 'bg-cyan-500',    ring: 'ring-cyan-200',    text: 'text-cyan-600' },
+  hatchery_inspection:    { bg: 'bg-cyan-600',    ring: 'ring-cyan-200',    text: 'text-cyan-700' },
+  transport_inspection:   { bg: 'bg-sky-500',     ring: 'ring-sky-200',     text: 'text-sky-600' },
+  bird_reception:         { bg: 'bg-blue-500',    ring: 'ring-blue-200',    text: 'text-blue-600' },
+  bird_distribution:      { bg: 'bg-indigo-500',  ring: 'ring-indigo-200',  text: 'text-indigo-600' },
+  bird_transfer:          { bg: 'bg-violet-500',  ring: 'ring-violet-200',  text: 'text-violet-600' },
+  bird_exit:              { bg: 'bg-purple-500',  ring: 'ring-purple-200',  text: 'text-purple-600' },
+  feed_registration:      { bg: 'bg-amber-500',   ring: 'ring-amber-200',   text: 'text-amber-600' },
+  weight_recording:       { bg: 'bg-teal-500',    ring: 'ring-teal-200',    text: 'text-teal-600' },
+  vaccination:            { bg: 'bg-rose-500',    ring: 'ring-rose-200',    text: 'text-rose-600' },
+  medication:             { bg: 'bg-pink-500',    ring: 'ring-pink-200',    text: 'text-pink-600' },
+  mortality_recording:    { bg: 'bg-slate-600',   ring: 'ring-slate-200',   text: 'text-slate-600' },
+  cull_recording:         { bg: 'bg-stone-500',   ring: 'ring-stone-200',   text: 'text-stone-600' },
+  egg_collection:         { bg: 'bg-yellow-500',  ring: 'ring-yellow-200',  text: 'text-yellow-600' },
+  egg_classification:     { bg: 'bg-orange-500',  ring: 'ring-orange-200',  text: 'text-orange-600' },
+  egg_dispatch:           { bg: 'bg-orange-600',  ring: 'ring-orange-200',  text: 'text-orange-700' },
+  egg_reception_hatchery: { bg: 'bg-amber-600',   ring: 'ring-amber-200',   text: 'text-amber-700' },
+  incubation_load:        { bg: 'bg-orange-500',  ring: 'ring-orange-200',  text: 'text-orange-600' },
+  ovoscopy:               { bg: 'bg-fuchsia-500', ring: 'ring-fuchsia-200', text: 'text-fuchsia-600' },
+  transfer_to_hatcher:    { bg: 'bg-red-500',     ring: 'ring-red-200',     text: 'text-red-600' },
+  birth_registration:     { bg: 'bg-green-500',   ring: 'ring-green-200',   text: 'text-green-600' },
+  chick_dispatch:         { bg: 'bg-emerald-500', ring: 'ring-emerald-200', text: 'text-emerald-600' },
+  lot_closure:            { bg: 'bg-slate-700',   ring: 'ring-slate-200',   text: 'text-slate-700' },
+}
+
+export function eventColor(event: string) {
+  return EVENT_COLOR_MAP[event] ?? { bg: 'bg-blue-500', ring: 'ring-blue-200', text: 'text-blue-600' }
 }
 
 /**

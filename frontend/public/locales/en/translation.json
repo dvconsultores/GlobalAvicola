@@ -46,6 +46,7 @@
     "deleteWarning": "This action cannot be undone.",
     "retry": "Retry",
     "refresh": "Refresh",
+    "viewAll": "View all",
     "completed": "Completed",
     "current": "In progress",
     "complete": "Complete"
@@ -178,9 +179,13 @@
       "lifecycle": "Lifecycle"
     },
     "hub": {
-      "title": "Production Processes",
-      "subtitle": "Pick a process to record operations",
-      "operations": "operations",
+      "title": "Choose a Process",
+      "subtitle": "Tap a process to see its operation sequence",
+      "eyebrow": "Operations Center",
+      "processes": "Processes",
+      "operations": "Operations",
+      "steps": "steps",
+      "open": "Open",
       "totalProcesses": "6 main processes",
       "totalOperations": "operations",
       "hint": "Tap any process to see the available operations flow"
@@ -188,6 +193,11 @@
     "stage": {
       "lotLabel": "Select a lot (optional)",
       "allLots": "No lot — choose when registering",
+      "back": "Processes",
+      "birds": "birds",
+      "operations": "operations",
+      "viewGrid": "Grid",
+      "viewSequence": "Sequence",
       "flowTitle": "Operations Flow",
       "viewHistory": "View operation history",
       "registerOperation": "Register operation"
