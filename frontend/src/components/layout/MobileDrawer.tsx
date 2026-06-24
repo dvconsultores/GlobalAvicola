@@ -8,7 +8,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import {
-  X, Home, Bird, FileText, TrendingUp, Clock, LogOut, Globe
+  X, Home, Bird, FileText, TrendingUp, Clock, LogOut, Globe, Workflow
 } from 'lucide-react'
 
 interface MobileDrawerProps {
@@ -18,6 +18,7 @@ interface MobileDrawerProps {
 
 const drawerItems = [
   { path: '/',            labelKey: 'nav.home',       Icon: Home },
+  { path: '/processes',   labelKey: 'nav.processes',  Icon: Workflow },
   { path: '/lots',        labelKey: 'nav.lots',        Icon: Bird },
   { path: '/operations',  labelKey: 'nav.operations',  Icon: FileText },
   { path: '/reports',     labelKey: 'nav.reports',     Icon: TrendingUp },

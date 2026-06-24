@@ -1,13 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
-import { Bird, FileText, Clock, CheckCircle, TrendingDown } from 'lucide-react'
+import { Bird, FileText, Clock, CheckCircle, TrendingDown, Wheat, Skull, Scale, Egg, Sparkles, AlertCircle } from 'lucide-react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
+import { ProcessCard } from '../../components/operations'
+import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
 
 const BIRD_TYPE_COLORS: Record<string, string> = {
   grandparent: 'bg-purple-100 text-purple-700 border-purple-200',
@@ -19,13 +22,15 @@ const BIRD_TYPE_COLORS: Record<string, string> = {
 export default function DashboardPage() {
   const { t } = useTranslation()
   const { user } = useAuthStore()
+  const isMobileUser = user?.view_type === 'mobile'
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const toast = useToast()
 
   useEffect(() => {
-    api.get('/dashboard/admin')
+    const endpoint = isMobileUser ? '/dashboard/mobile' : '/dashboard/admin'
+    api.get(endpoint)
       .then(r => setData(r.data))
       .catch((e: any) => {
         const msg = getErrorMessage(e, t('dashboard.errorLoading'))
@@ -33,7 +38,7 @@ export default function DashboardPage() {
         toast.error(msg)
       })
       .finally(() => setLoading(false))
-  }, [])
+  }, [isMobileUser])
 
   if (loading) {
     return (
@@ -48,8 +53,144 @@ export default function DashboardPage() {
   }
 
   if (error) {
-    return <div className="p-6 text-red-600 bg-red-50 rounded-lg m-6">{error}</div>
+    return (
+      <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
+          <p className="text-red-600 mb-3">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
+          >
+            {t('common.retry', 'Reintentar')}
+          </button>
+        </div>
+      </div>
+    )
   }
+
+  // ── MOBILE OPERATOR DASHBOARD (REDESIGNED) ──────────────────────────────
+  if (isMobileUser) {
+    return (
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+        {/* Welcome header */}
+        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4">
+          <div className="flex items-center gap-2 mb-1">
+            <Sparkles size={20} />
+            <h1 className="text-2xl font-bold">{t('nav.home', 'Inicio')}</h1>
+          </div>
+          <p className="text-blue-100 text-sm">
+            {t('dashboard.welcome')} {user?.first_name || 'Operador'}
+          </p>
+        </div>
+
+        <div className="p-4 space-y-6">
+          {/* KPI Section */}
+          <div className="space-y-2">
+            <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
+              {t('dashboard.todayMetrics', 'Hoy')}
+            </h2>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white rounded-xl border-2 border-blue-200 p-3 text-center shadow-sm">
+                <div className="text-2xl font-bold text-blue-600">{data?.today_events ?? 0}</div>
+                <div className="text-[10px] text-slate-500 mt-1 font-semibold">
+                  {t('dashboard.todayEvents', 'Operaciones')}
+                </div>
+              </div>
+              <div className="bg-white rounded-xl border-2 border-amber-200 p-3 text-center shadow-sm">
+                <div className="text-2xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
+                <div className="text-[10px] text-slate-500 mt-1 font-semibold">
+                  {t('dashboard.pendingCorrections', 'Por revisar')}
+                </div>
+              </div>
+              <div className="bg-white rounded-xl border-2 border-green-200 p-3 text-center shadow-sm">
+                <div className="text-2xl font-bold text-green-600">{data?.approved_today ?? 0}</div>
+                <div className="text-[10px] text-slate-500 mt-1 font-semibold">
+                  {t('dashboard.approvedToday', 'Aprobados')}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Alerts/Info */}
+          {data?.pending_corrections && data.pending_corrections > 0 && (
+            <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 flex items-start gap-2">
+              <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-sm">
+                <p className="font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
+                <p className="text-xs text-amber-700 mt-1">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
+              </div>
+            </div>
+          )}
+
+          {/* 6 Procesos Grid */}
+          <div className="space-y-3">
+            <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
+              {t('process.hub.title', '6 Procesos')}
+            </h2>
+            <div className="grid grid-cols-1 gap-3">
+              {PROCESS_STAGES.map(process => {
+                const operationCount = flowForStage(process.key).length
+                return (
+                  <ProcessCard
+                    key={process.key}
+                    process={process}
+                    operationCount={operationCount}
+                  />
+                )
+              })}
+            </div>
+          </div>
+
+          {/* Quick actions section */}
+          <div className="space-y-3">
+            <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
+              {t('dashboard.quickActions', 'Acciones Rápidas')}
+            </h2>
+            <div className="grid grid-cols-2 gap-3">
+              <Link
+                to="/operations/new?type=feed_registration"
+                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+              >
+                <Wheat size={24} className="text-yellow-600 mb-2" />
+                <span className="text-xs font-bold text-yellow-900 text-center">{t('events.feed_registration', 'Alimento')}</span>
+              </Link>
+              <Link
+                to="/operations/new?type=weight_recording"
+                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+              >
+                <Scale size={24} className="text-blue-600 mb-2" />
+                <span className="text-xs font-bold text-blue-900 text-center">{t('events.weight_recording', 'Pesaje')}</span>
+              </Link>
+              <Link
+                to="/operations/new?type=mortality_recording"
+                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+              >
+                <Skull size={24} className="text-red-600 mb-2" />
+                <span className="text-xs font-bold text-red-900 text-center">{t('events.mortality_recording', 'Mortalidad')}</span>
+              </Link>
+              <Link
+                to="/operations/new?type=egg_collection"
+                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+              >
+                <Egg size={24} className="text-orange-600 mb-2" />
+                <span className="text-xs font-bold text-orange-900 text-center">{t('events.egg_collection', 'Huevos')}</span>
+              </Link>
+            </div>
+          </div>
+
+          {/* Go to all processes */}
+          <Link
+            to="/operations"
+            className="block w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl text-center hover:shadow-lg transition-all active:scale-95"
+          >
+            {t('nav.operations', 'Ver Todas las Operaciones')} →
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
+  // ── ADMIN / WEB DASHBOARD ──────────────────────────────────
 
   const lotsByType: Record<string, number> = data?.lots_by_type ?? {}
   const totalActiveLots = Object.values(lotsByType).reduce((a, b) => a + (b as number), 0)

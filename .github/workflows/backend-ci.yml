@@ -34,11 +34,10 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
+          cache: 'pip'
       - name: Install dependencies
         working-directory: ./backend
-        run: uv sync
+        run: pip install -e ".[dev]"
       - name: Run pytest
         working-directory: ./backend
         env:
@@ -55,10 +54,8 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Install uv
-        uses: astral-sh/setup-uv@v5
       - name: Install pip-audit
-        run: uv tool install pip-audit
+        run: pip install pip-audit
       - name: Run pip-audit
         working-directory: ./backend
-        run: uvx pip-audit --require-hashes=false || true
+        run: pip-audit --require-hashes=false || true

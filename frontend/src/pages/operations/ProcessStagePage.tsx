@@ -1,14 +1,14 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
-import { ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { ChevronLeft, ArrowRight, Info } from 'lucide-react'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
-import { EVENT_ICONS } from '../../components/Icon'
 import {
-  PROCESS_STAGES, EVENT_ICON_MAP, flowForStage,
+  PROCESS_STAGES, flowForStage,
   type StageKey,
 } from '../../data/processCatalog'
+import { StageTimeline, ProcessFlowVisualizer } from '../../components/operations'
 
 // Which lot bird_type(s) each stage draws from
 const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
@@ -24,9 +24,9 @@ const VALID_STAGES = PROCESS_STAGES.map(s => s.key)
 
 /**
  * Stage detail — shows the ordered, real-world operation flow for one stage.
- * The user optionally picks a lot, then taps an operation in sequence to
- * register it. This replaces the abstract category grouping with a clear,
- * numbered process the operator can follow top to bottom.
+ * REDESIGN: Uses visual timeline component and flow visualizer for better UX.
+ * The user optionally picks a lot, then expands/taps an operation in sequence to
+ * register it. This provides a clear, intuitive process the operator can follow.
  */
 export default function ProcessStagePage() {
   const { t } = useTranslation()
@@ -65,87 +65,80 @@ export default function ProcessStagePage() {
   }
 
   return (
-    <div className="p-4 sm:p-6 max-w-2xl mx-auto">
-      <Link to="/processes" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[#2563EB] mb-4">
-        <ChevronLeft size={16} /> {t('process.hub.title', 'Procesos')}
-      </Link>
-
-      {/* Stage header */}
-      <div className="flex items-center gap-4 mb-5">
-        <div className={`shrink-0 w-12 h-12 rounded-xl flex items-center justify-center ${stageMeta.iconBg}`}>
-          <StageIcon size={26} className={stageMeta.iconColor} />
-        </div>
-        <div>
-          <h1 className="text-xl font-bold text-slate-800 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
-          <p className="text-sm text-slate-500 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
-        </div>
-      </div>
-
-      {/* Lot selector */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-4 mb-6">
-        <label className="block text-sm font-semibold text-slate-700 mb-1.5">
-          {t('process.stage.lotLabel', 'Lote (opcional)')}
-        </label>
-        <select
-          value={lotId}
-          onChange={e => setLotId(e.target.value)}
-          className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"
-        >
-          <option value="">{t('process.stage.allLots', 'Sin lote — elegir al registrar')}</option>
-          {stageLots.map((l: any) => (
-            <option key={l.id} value={l.id}>
-              {l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}
-            </option>
-          ))}
-        </select>
-        {stageLots.length === 0 && (
-          <p className="text-xs text-amber-600 mt-2">{t('process.noLots', 'No hay lotes para este proceso.')}</p>
-        )}
-      </div>
-
-      {/* Sequential operation flow */}
-      <p className="text-xs font-bold uppercase tracking-wide text-slate-400 mb-3">
-        {t('process.stage.flowTitle', 'Operaciones del proceso')}
-      </p>
-      <ol className="relative space-y-2">
-        {flow.map((s, i) => {
-          const Icon = EVENT_ICON_MAP[s.event] ?? EVENT_ICONS[s.event]
-          return (
-            <li key={s.event} className="relative">
-              {/* connector line */}
-              {i < flow.length - 1 && (
-                <span className="absolute left-[1.45rem] top-12 bottom-[-0.5rem] w-px bg-slate-200" aria-hidden />
-              )}
-              <button
-                type="button"
-                onClick={() => goToOperation(s.event)}
-                className="group w-full flex items-center gap-3 p-3 rounded-xl border border-slate-200 bg-white shadow-sm text-left transition-all hover:border-[#2563EB] hover:bg-blue-50/50"
-              >
-                {/* step number + icon */}
-                <div className="relative shrink-0">
-                  <div className="w-12 h-12 rounded-xl bg-slate-100 group-hover:bg-blue-100 flex items-center justify-center transition-colors">
-                    {Icon && <Icon size={22} className="text-[#2563EB]" />}
-                  </div>
-                  <span className="absolute -top-1.5 -left-1.5 w-5 h-5 rounded-full bg-[#1E3A5F] text-white text-[11px] font-bold flex items-center justify-center">
-                    {i + 1}
-                  </span>
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="font-semibold text-slate-800 leading-tight">{t(`events.${s.event}`, s.event)}</p>
-                  <p className="text-xs text-slate-500 leading-snug mt-0.5">{t(s.descKey, s.descFallback)}</p>
-                </div>
-                <ChevronRight size={18} className="shrink-0 text-slate-300 group-hover:text-[#2563EB] transition-colors" />
-              </button>
-            </li>
-          )
-        })}
-      </ol>
-
-      {/* History shortcut */}
-      <div className="mt-6 text-center">
-        <Link to="/operations" className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[#2563EB]">
-          {t('process.stage.viewHistory', 'Ver historial de operaciones')} <ArrowRight size={14} />
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
+      <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+        {/* Back button */}
+        <Link to="/processes" className="inline-flex items-center gap-1 text-sm font-medium text-slate-600 hover:text-blue-600 mb-6 transition-colors">
+          <ChevronLeft size={16} /> {t('process.hub.title', 'Volver a Procesos')}
         </Link>
+
+        {/* Stage header with visual branding */}
+        <div className={`relative rounded-2xl overflow-hidden mb-6 p-6 text-white ${stageMeta.iconBg}`}>
+          {/* Subtle background pattern */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-0 right-0 w-40 h-40 rounded-full blur-3xl" style={{ background: 'rgba(255,255,255,0.5)' }} />
+          </div>
+
+          <div className="relative flex items-center gap-4">
+            <div className="w-16 h-16 rounded-2xl bg-white/20 flex items-center justify-center backdrop-blur">
+              <StageIcon size={32} />
+            </div>
+            <div>
+              <h1 className="text-2xl font-bold leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
+              <p className="text-white/80 text-sm mt-1 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Lot selector */}
+        <div className="bg-white rounded-2xl border-2 border-slate-200 shadow-sm p-5 mb-6">
+          <label className="block text-sm font-bold text-slate-700 mb-2">
+            🐔 {t('process.stage.lotLabel', 'Selecciona un lote (opcional)')}
+          </label>
+          <select
+            value={lotId}
+            onChange={e => setLotId(e.target.value)}
+            className="w-full h-12 px-4 border-2 border-slate-300 rounded-xl text-sm font-medium focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+          >
+            <option value="">{t('process.stage.allLots', 'Sin lote — elegir al registrar')}</option>
+            {stageLots.map((l: any) => (
+              <option key={l.id} value={l.id}>
+                {l.lot_code} {l.status && l.status !== 'active' ? `(${String(l.status)})` : ''}
+              </option>
+            ))}
+          </select>
+          {stageLots.length === 0 && (
+            <div className="flex items-start gap-2 mt-3 p-3 bg-amber-50 rounded-lg border border-amber-200">
+              <Info size={16} className="text-amber-600 shrink-0 mt-0.5" />
+              <p className="text-xs text-amber-700 font-medium">{t('process.noLots', 'No hay lotes activos para este proceso.')}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Progress visualization */}
+        <div className="bg-white rounded-2xl border-2 border-slate-200 shadow-sm p-5 mb-6">
+          <ProcessFlowVisualizer stages={flow} completedCount={0} totalCount={flow.length} />
+        </div>
+
+        {/* Sequential operation flow - using new timeline component */}
+        <div className="mb-6">
+          <h2 className="text-lg font-bold text-slate-800 mb-4">
+            📋 {t('process.stage.flowTitle', 'Flujo de Operaciones')}
+          </h2>
+          <StageTimeline
+            stages={flow}
+            onStageSelect={goToOperation}
+            completedStages={[]}
+            currentStage={undefined}
+          />
+        </div>
+
+        {/* History shortcut */}
+        <div className="text-center pt-4 border-t border-slate-200">
+          <Link to="/operations" className="inline-flex items-center gap-1.5 text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
+            {t('process.stage.viewHistory', 'Ver historial de operaciones')} <ArrowRight size={14} />
+          </Link>
+        </div>
       </div>
     </div>
   )

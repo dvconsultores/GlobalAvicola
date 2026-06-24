@@ -45,7 +45,10 @@
     "confirmDelete": "¿Eliminar registro?",
     "deleteWarning": "Esta acción no se puede deshacer.",
     "retry": "Reintentar",
-    "refresh": "Actualizar"
+    "refresh": "Actualizar",
+    "completed": "Completado",
+    "current": "En progreso",
+    "complete": "Completado"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -175,16 +178,22 @@
       "lifecycle": "Ciclo de Vida"
     },
     "hub": {
-      "title": "Procesos",
-      "subtitle": "Elige una etapa de producción para ver sus operaciones",
-      "operations": "operaciones"
+      "title": "Procesos de Producción",
+      "subtitle": "Elige un proceso para registrar operaciones",
+      "operations": "operaciones",
+      "totalProcesses": "6 procesos principales",
+      "totalOperations": "operaciones",
+      "hint": "Toca cualquier proceso para ver el flujo de operaciones disponibles"
     },
     "stage": {
-      "lotLabel": "Lote (opcional)",
+      "lotLabel": "Selecciona un lote (opcional)",
       "allLots": "Sin lote — elegir al registrar",
-      "flowTitle": "Operaciones del proceso",
-      "viewHistory": "Ver historial de operaciones"
+      "flowTitle": "Flujo de Operaciones",
+      "viewHistory": "Ver historial de operaciones",
+      "registerOperation": "Registrar operación"
     },
+    "progress": "Progreso del proceso",
+    "stagesCompleted": "etapas completadas",
     "flowDesc": {
       "grandparent_import": "Registrar la importación y llegada de aves abuelas",
       "farm_inspection": "Inspeccionar condiciones de la granja",
@@ -342,7 +351,14 @@
     "activeLotsByStage": "Lotes activos por etapa",
     "totalActive": "lotes activos",
     "mortalityTrend": "Tendencia de mortalidad",
-    "last8Weeks": "Últimas 8 semanas"
+    "last8Weeks": "Últimas 8 semanas",
+    "todayEvents": "Operaciones",
+    "pendingCorrections": "Por revisar",
+    "approvedToday": "Aprobados",
+    "todayMetrics": "Hoy",
+    "quickActions": "Acciones Rápidas",
+    "hasPendingCorrections": "Tienes correcciones pendientes",
+    "checkAndReview": "Revisa tus operaciones rechazadas"
   },
   "reports": {
     "mortality": "Mortalidad",

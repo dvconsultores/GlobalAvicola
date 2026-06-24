@@ -45,7 +45,10 @@
     "confirmDelete": "Delete record?",
     "deleteWarning": "This action cannot be undone.",
     "retry": "Retry",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "completed": "Completed",
+    "current": "In progress",
+    "complete": "Complete"
   },
   "auth": {
     "login": "Sign In",
@@ -175,16 +178,22 @@
       "lifecycle": "Lifecycle"
     },
     "hub": {
-      "title": "Processes",
-      "subtitle": "Pick a production stage to see its operations",
-      "operations": "operations"
+      "title": "Production Processes",
+      "subtitle": "Pick a process to record operations",
+      "operations": "operations",
+      "totalProcesses": "6 main processes",
+      "totalOperations": "operations",
+      "hint": "Tap any process to see the available operations flow"
     },
     "stage": {
-      "lotLabel": "Lot (optional)",
+      "lotLabel": "Select a lot (optional)",
       "allLots": "No lot — choose when registering",
-      "flowTitle": "Process operations",
-      "viewHistory": "View operation history"
+      "flowTitle": "Operations Flow",
+      "viewHistory": "View operation history",
+      "registerOperation": "Register operation"
     },
+    "progress": "Process Progress",
+    "stagesCompleted": "stages completed",
     "flowDesc": {
       "grandparent_import": "Record the import and arrival of grandparent birds",
       "farm_inspection": "Inspect farm conditions",
@@ -342,7 +351,14 @@
     "activeLotsByStage": "Active lots by stage",
     "totalActive": "active lots",
     "mortalityTrend": "Mortality trend",
-    "last8Weeks": "Last 8 weeks"
+    "last8Weeks": "Last 8 weeks",
+    "todayEvents": "Operations",
+    "pendingCorrections": "To review",
+    "approvedToday": "Approved",
+    "todayMetrics": "Today",
+    "quickActions": "Quick Actions",
+    "hasPendingCorrections": "You have pending corrections",
+    "checkAndReview": "Review your rejected operations"
   },
   "reports": {
     "mortality": "Mortality",

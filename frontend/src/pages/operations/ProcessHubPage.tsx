@@ -1,50 +1,58 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
-import { ChevronRight, ListChecks } from 'lucide-react'
+import { Sparkles } from 'lucide-react'
 import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
+import { ProcessCard } from '../../components/operations'
 
 /**
- * Process hub — the main, clear entry point for registering operations.
+ * Process hub — the main, visual entry point for registering operations.
  * The user picks a production stage (Incubadora, Reproductoras, etc.) and
  * is taken to that stage's ordered list of operations.
+ * 
+ * REDESIGN: Enhanced visual layout with improved typography, spacing,
+ * and modern card design for better intuitiveness and mobile experience.
  */
 export default function ProcessHubPage() {
   const { t } = useTranslation()
 
   return (
-    <div className="p-4 sm:p-6 max-w-4xl mx-auto">
-      <header className="mb-6">
-        <h1 className="text-2xl font-bold text-slate-800">{t('process.hub.title', 'Procesos')}</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          {t('process.hub.subtitle', 'Elige una etapa de producción para ver sus operaciones')}
-        </p>
-      </header>
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white dark:from-slate-900 dark:to-slate-800">
+      {/* Header Section */}
+      <div className="p-4 sm:p-6 max-w-5xl mx-auto">
+        <header className="mb-8 text-center sm:text-left">
+          <div className="flex items-center gap-2 mb-2">
+            <Sparkles size={24} className="text-blue-600 dark:text-blue-400" />
+            <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 dark:text-slate-100">
+              {t('process.hub.title', 'Procesos de Producción')}
+            </h1>
+          </div>
+          <p className="text-base text-slate-600 dark:text-slate-400 mt-3 max-w-2xl">
+            {t('process.hub.subtitle', 'Elige un proceso para registrar operaciones')}
+          </p>
+          <p className="text-xs text-slate-500 dark:text-slate-500 mt-2">
+            {t('process.hub.totalProcesses', '6 procesos principales')} • {PROCESS_STAGES.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.totalOperations', 'operaciones')}
+          </p>
+        </header>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        {PROCESS_STAGES.map(s => {
-          const Icon = s.Icon
-          const count = flowForStage(s.key).length
-          return (
-            <Link
-              key={s.key}
-              to={`/processes/${s.key}`}
-              className={`group flex items-center gap-4 p-5 rounded-2xl border border-slate-200 bg-white shadow-sm transition-all hover:shadow-md hover:-translate-y-0.5 ${s.accent}`}
-            >
-              <div className={`shrink-0 w-14 h-14 rounded-xl flex items-center justify-center ${s.iconBg}`}>
-                <Icon size={30} className={s.iconColor} />
-              </div>
-              <div className="min-w-0 flex-1">
-                <p className="font-semibold text-slate-800 leading-tight">{t(s.labelKey, s.fallback)}</p>
-                <p className="text-xs text-slate-500 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
-                <span className="inline-flex items-center gap-1 mt-2 text-xs font-medium text-slate-400">
-                  <ListChecks size={13} />
-                  {count} {t('process.hub.operations', 'operaciones')}
-                </span>
-              </div>
-              <ChevronRight size={20} className="shrink-0 text-slate-300 group-hover:text-slate-500 transition-colors" />
-            </Link>
-          )
-        })}
+        {/* Process Grid - 3 columns desktop, 1 column mobile */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+          {PROCESS_STAGES.map(process => {
+            const operationCount = flowForStage(process.key).length
+            return (
+              <ProcessCard
+                key={process.key}
+                process={process}
+                operationCount={operationCount}
+              />
+            )
+          })}
+        </div>
+
+        {/* Footer Help Text */}
+        <div className="mt-10 p-5 bg-blue-50 dark:bg-slate-700 border-2 border-blue-200 dark:border-slate-600 rounded-xl text-center">
+          <p className="text-sm text-blue-900 dark:text-slate-100 font-medium">
+            💡 {t('process.hub.hint', 'Toca cualquier proceso para ver el flujo de operaciones disponibles')}
+          </p>
+        </div>
       </div>
     </div>
   )

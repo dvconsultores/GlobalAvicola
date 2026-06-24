@@ -13,16 +13,14 @@ export default defineConfig({
     screenshot: 'only-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-    { name: 'firefox',  use: { ...devices['Desktop Firefox'] } },
-    { name: 'webkit',   use: { ...devices['Desktop Safari'] } },
-    { name: 'mobile-chrome', use: { ...devices['Pixel 5'] } },
-    { name: 'mobile-safari', use: { ...devices['iPhone 13'] } },
+    { name: 'chromium', use: { ...devices.chromium } },
+    { name: 'firefox',  use: { ...devices.firefox } },
+    { name: 'webkit',   use: { ...devices.webkit } },
   ],
   webServer: {
     command: 'npm run dev',
     url: 'http://localhost:5173',
-    reuseExistingServer: false,
+    reuseExistingServer: true,
     timeout: 120_000,
   },
 })

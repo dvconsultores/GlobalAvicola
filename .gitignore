@@ -24,7 +24,20 @@ pnpm-debug.log*
 
 # ===== Build =====
 frontend/dist/
+frontend/dist-ssr/
 backend/dist/
+.vite/
+.turbo/
+
+# ===== Environment Variables (Local Development) =====
+.env
+.env.local
+.env.*.local
+!.env.example
+!.env.*.example
+/frontend/.env
+/frontend/.env.local
+/frontend/.env.*.local
 
 # ===== IDE =====
 .vscode/
@@ -33,17 +46,27 @@ backend/dist/
 *.swo
 *~
 .DS_Store
+.vscode/settings.json
+.vscode/launch.json
+.vscode/extensions.json
 
 # ===== Docker =====
 .docker/
 
-# ===== Testing =====
+# ===== Testing & E2E =====
 .coverage
 htmlcov/
 .pytest_cache/
 coverage.xml
 playwright-report/
 test-results/
+/frontend/playwright-report/
+/frontend/test-results/
+/frontend/.playwrightrc.js
+/frontend/videos/
+/frontend/test-artifacts/
+/frontend/.nyc_output/
+/frontend/coverage/
 
 # ===== Database =====
 *.db
@@ -53,8 +76,17 @@ pgdata/
 # ===== Logs =====
 *.log
 logs/
+/frontend/*.log
+/backend/*.log
 
-# ===== Misc =====
+# ===== Misc & Temporary Files =====
 *.tmp
 *.bak
 .cache/
+/frontend/.cache/
+/frontend/.parcel-cache/
+/backend/.cache/
+
+# ===== Development Artifacts =====
+/frontend/tsconfig.tsbuildinfo
+/backend/*.egg-info

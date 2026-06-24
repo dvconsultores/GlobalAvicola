@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import api from '../../services/api'
+import { PROCESS_STAGES, flowForStage, type StageKey } from '../../data/processCatalog'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
-const EVT_KEYS = ['bird_reception','bird_distribution','bird_transfer','bird_exit','feed_registration','weight_recording','mortality_recording','cull_recording','vaccination','medication','farm_inspection','transport_inspection','hatchery_inspection','egg_collection','egg_classification','egg_dispatch','egg_reception_hatchery','incubation_load','ovoscopy','transfer_to_hatcher','birth_registration','chick_dispatch','lot_closure','grandparent_import']
 
 const STATUS_COLORS: Record<string, string> = {
   registered: 'bg-blue-100 text-blue-800', pending_review: 'bg-yellow-100 text-yellow-800',
@@ -22,11 +22,22 @@ export default function OperationListPage() {
   const fetchEvents = useCallback(async () => {
     setLoading(true)
     try {
-      const params: any = { limit: 50 }
+      const params: any = { limit: 100 }
       if (lotId) params.lot_id = lotId
-      if (eventType) params.event_type = eventType
+      // For stage-based filter: fetch all and filter client-side
+      // (backend doesn't support multi event_type yet)
+      if (eventType && !eventType.startsWith('__stage__')) {
+        params.event_type = eventType
+      }
       const r = await api.get('/operations', { params })
-      setEvents(r.data)
+      let result = r.data ?? []
+      // Client-side filter by stage
+      if (eventType && eventType.startsWith('__stage__')) {
+        const stageKey = eventType.replace('__stage__', '') as StageKey
+        const flowEvents = new Set(flowForStage(stageKey).map(s => s.event))
+        result = result.filter((ev: any) => flowEvents.has(ev.event_type))
+      }
+      setEvents(result)
     } catch { setEvents([]) }
     finally { setLoading(false) }
   }, [lotId, eventType])
@@ -45,12 +56,18 @@ export default function OperationListPage() {
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-3 mb-4">
+      {/* Filters — stage-based instead of old 24-event flat dropdown */}
+      <div className="flex gap-3 mb-4 flex-wrap">
         <input type="number" placeholder={t('review.lot') + ' ID'} value={lotId} onChange={e => setLotId(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm w-28" />
-        <select value={eventType} onChange={e => setEventType(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm">
+        <select value={eventType} onChange={e => setEventType(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]">
           <option value="">{t('common.allTypes')}</option>
-          {EVT_KEYS.map((k) => <option key={k} value={k}>{getEventLabel(t, k)}</option>)}
+          <optgroup label={t('process.hub.title', 'Etapas de producción')}>
+            {PROCESS_STAGES.map(s => (
+              <option key={s.key} value={`__stage__${s.key}`}>
+                {t(s.labelKey, s.fallback)}
+              </option>
+            ))}
+          </optgroup>
         </select>
       </div>
 

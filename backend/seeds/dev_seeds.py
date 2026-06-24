@@ -162,12 +162,28 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "password": "audit123",
             "role_name": "Auditor",
         },
+        {
+            "first_name": "Operador",
+            "last_name": "Móvil",
+            "email": "operador.mobile@globalavicola.com",
+            "username": "operador.mobile",
+            "password": "mobile123456",
+            "role_name": "Operador de Granja",
+            "view_type": "mobile",
+        },
     ]
 
     for user_data in users_data:
         existing = await session.execute(select(User).where(User.username == user_data["username"]))
-        if existing.scalar_one_or_none():
-            print(f"  ⏭️  Usuario '{user_data['username']}' ya existe, saltando...")
+        existing_user = existing.scalar_one_or_none()
+        if existing_user:
+            desired_view = user_data.get("view_type", "web")
+            if existing_user.view_type != desired_view:
+                existing_user.view_type = desired_view
+                session.add(existing_user)
+                print(f"  🔄 Usuario '{user_data['username']}' ya existe, view_type actualizado a '{desired_view}'")
+            else:
+                print(f"  ⏭️  Usuario '{user_data['username']}' ya existe, saltando...")
             continue
 
         role = roles.get(user_data["role_name"])
@@ -179,9 +195,10 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             phone=None,
             hashed_password=hash_password(user_data["password"]),
             role_id=role.id if role else None,
+            view_type=user_data.get("view_type", "web"),
         )
         session.add(user)
-        print(f"  ✅ Usuario: {user.username} ({user_data['role_name']})")
+        print(f"  ✅ Usuario: {user.username} ({user_data['role_name']}) [vista: {user.view_type}]")
 
 
 async def main():
@@ -202,14 +219,15 @@ async def main():
     print("✅ Seeds completados!")
     print()
     print("   Usuarios de prueba:")
-    print("   ┌──────────────────┬──────────────┐")
-    print("   │ admin            │ admin123     │")
-    print("   │ supervisora      │ super123     │")
-    print("   │ operador         │ oper123      │")
-    print("   │ aprobador        │ aprob123     │")
-    print("   │ sap_analyst      │ sap123       │")
-    print("   │ auditor          │ audit123     │")
-    print("   └──────────────────┴──────────────┘")
+    print("   ┌──────────────────┬─────────────────┐")
+    print("   │ admin            │ admin123        │")
+    print("   │ supervisora      │ super123        │")
+    print("   │ operador         │ oper123         │")
+    print("   │ operador.mobile  │ mobile123456    │")
+    print("   │ aprobador        │ aprob123        │")
+    print("   │ sap_analyst      │ sap123          │")
+    print("   │ auditor          │ audit123        │")
+    print("   └──────────────────┴─────────────────┘")
 
 
 if __name__ == "__main__":
