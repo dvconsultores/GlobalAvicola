@@ -56,7 +56,12 @@ class Settings(BaseSettings):
                 "JWT_SECRET_KEY debe configurarse en .env con un valor seguro. "
                 "Genera uno con: python -c 'import secrets; print(secrets.token_hex(32))'"
             )
-        if not self.POSTGRES_PASSWORD or self.POSTGRES_PASSWORD == "change_me":
+        # Si DATABASE_URL está definido, ya contiene las credenciales completas
+        # (usuario/contraseña/host), por lo que POSTGRES_PASSWORD es redundante.
+        # Solo se exige cuando se arma la URL a partir de las variables sueltas.
+        if not self.DATABASE_URL and (
+            not self.POSTGRES_PASSWORD or self.POSTGRES_PASSWORD == "change_me"
+        ):
             raise ValueError(
                 "POSTGRES_PASSWORD debe configurarse en .env con un valor seguro"
             )
