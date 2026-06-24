@@ -1,10 +1,11 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { Home, Bird, FileText, Database, Search, CheckCircle, TrendingUp, Shield, RefreshCw, Users } from 'lucide-react'
+import { Home, Bird, FileText, Database, Search, CheckCircle, TrendingUp, Shield, RefreshCw, Users, Workflow } from 'lucide-react'
 
 const navItems = [
   { path: '/', label: 'home', Icon: Home },
+  { path: '/processes', label: 'processes', Icon: Workflow },
   { path: '/lots', label: 'lots', Icon: Bird },
   { path: '/operations', label: 'operations', Icon: FileText },
   { path: '/masters', label: 'masters', Icon: Database },

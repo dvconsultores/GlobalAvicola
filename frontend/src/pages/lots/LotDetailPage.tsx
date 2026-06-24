@@ -68,15 +68,17 @@ export default function LotDetailPage() {
   const stageOps = STAGE_OPERATIONS[stageKey] ?? STAGE_OPERATIONS.broiler
   const stageLabel = t(`birdTypes.${birdType}`, birdType)
 
-  // Phase label for breeder badge
-  const phaseLabel = stageKey === 'breeder_production'
+  // Phase label for breeder/grandparent badge
+  const phaseLabel = (stageKey === 'breeder_production' || stageKey === 'grandparent_production')
     ? t('phases.production', 'Producción')
-    : stageKey === 'breeder_rearing'
+    : (stageKey === 'breeder_rearing' || stageKey === 'grandparent_rearing')
     ? t('phases.rearing', 'Cría')
     : null
 
   // Can transition from rearing to production
-  const canTransition = birdType === 'breeder' && stageKey === 'breeder_rearing' && lot.status === 'active'
+  const canTransition = (birdType === 'breeder' || birdType === 'grandparent')
+    && (stageKey === 'breeder_rearing' || stageKey === 'grandparent_rearing')
+    && lot.status === 'active'
 
   const handleCloseLot = async () => {
     setShowCloseModal(false)

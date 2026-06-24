@@ -66,6 +66,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "processes": "Processes",
     "lots": "Lots",
     "operations": "Operations",
     "review": "Review",
@@ -149,14 +150,16 @@
     "selectLotFirst": "Select a lot to enable operations.",
     "noLots": "No active lots for this process.",
     "stages": {
-      "grandparent": "Grandparents",
+      "grandparent_rearing": "Grandparents — Rearing",
+      "grandparent_production": "Grandparents — Production",
       "breeder_rearing": "Breeders — Rearing",
       "breeder_production": "Breeders — Production",
       "hatchery": "Hatchery",
       "broiler": "Broilers"
     },
     "stagesDesc": {
-      "grandparent": "Import, rearing and egg production of grandparents",
+      "grandparent_rearing": "Import and rearing of grandparent birds",
+      "grandparent_production": "Production and egg collection of grandparents",
       "breeder_rearing": "Breeder rearing before production",
       "breeder_production": "Production and daily fertile egg collection",
       "hatchery": "Egg reception, incubation and chick hatching",
@@ -170,6 +173,42 @@
       "eggs": "Eggs",
       "incubation": "Incubation",
       "lifecycle": "Lifecycle"
+    },
+    "hub": {
+      "title": "Processes",
+      "subtitle": "Pick a production stage to see its operations",
+      "operations": "operations"
+    },
+    "stage": {
+      "lotLabel": "Lot (optional)",
+      "allLots": "No lot — choose when registering",
+      "flowTitle": "Process operations",
+      "viewHistory": "View operation history"
+    },
+    "flowDesc": {
+      "grandparent_import": "Record the import and arrival of grandparent birds",
+      "farm_inspection": "Inspect farm conditions",
+      "bird_reception": "Receive the birds and record quantities",
+      "bird_distribution": "Distribute the birds to the houses",
+      "feed_registration": "Record feed consumption",
+      "weight_recording": "Record the lot weighing",
+      "vaccination": "Apply and record vaccines",
+      "medication": "Apply and record medication",
+      "mortality_recording": "Record daily mortality",
+      "cull_recording": "Record bird culling",
+      "egg_collection": "Collect the produced eggs",
+      "egg_classification": "Classify the eggs by type and quality",
+      "egg_dispatch": "Dispatch the eggs to their destination",
+      "bird_exit": "Record the exit or transfer of birds",
+      "hatchery_inspection": "Inspect the hatchery before operating",
+      "egg_reception_hatchery": "Receive the eggs arriving at the plant",
+      "incubation_load": "Load the eggs into the incubation machines",
+      "ovoscopy": "Perform candling to check fertility",
+      "transfer_to_hatcher": "Transfer the eggs to the hatcher",
+      "birth_registration": "Record the birth of the chicks",
+      "chick_dispatch": "Dispatch the hatched chicks",
+      "lot_closure": "Close the lot at the end of the cycle",
+      "transport_inspection": "Inspect the transport"
     }
   },
   "status": {

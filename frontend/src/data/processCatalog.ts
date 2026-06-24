@@ -13,7 +13,8 @@ import {
 // ============================================================
 
 export type StageKey =
-  | 'grandparent'
+  | 'grandparent_rearing'
+  | 'grandparent_production'
   | 'breeder_rearing'
   | 'breeder_production'
   | 'hatchery'
@@ -36,15 +37,26 @@ export interface ProcessStage {
 // Visual, high-level process cards (the first choice the user makes)
 export const PROCESS_STAGES: ProcessStage[] = [
   {
-    key: 'grandparent',
-    labelKey: 'process.stages.grandparent',
-    fallback: 'Progenitoras / Abuelas',
-    descKey: 'process.stagesDesc.grandparent',
-    descFallback: 'Importación, crianza y producción de huevos de abuelas',
+    key: 'grandparent_rearing',
+    labelKey: 'process.stages.grandparent_rearing',
+    fallback: 'Progenitoras — Cría',
+    descKey: 'process.stagesDesc.grandparent_rearing',
+    descFallback: 'Importación y levante de aves abuelas',
     Icon: Plane,
     accent: 'hover:border-amber-400 hover:bg-amber-50',
     iconBg: 'bg-amber-100',
     iconColor: 'text-amber-600',
+  },
+  {
+    key: 'grandparent_production',
+    labelKey: 'process.stages.grandparent_production',
+    fallback: 'Progenitoras — Producción',
+    descKey: 'process.stagesDesc.grandparent_production',
+    descFallback: 'Producción y recolección de huevos de abuelas',
+    Icon: Egg,
+    accent: 'hover:border-yellow-400 hover:bg-yellow-50',
+    iconBg: 'bg-yellow-100',
+    iconColor: 'text-yellow-600',
   },
   {
     key: 'breeder_rearing',
@@ -170,11 +182,15 @@ export const OPERATION_CATEGORIES: OperationCategory[] = [
 // ============================================================
 
 export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
-  grandparent: [
+  grandparent_rearing: [
     'grandparent_import', 'farm_inspection', 'bird_reception', 'bird_distribution',
     'transport_inspection', 'feed_registration', 'weight_recording', 'mortality_recording',
-    'cull_recording', 'vaccination', 'medication', 'egg_collection', 'egg_classification',
-    'egg_dispatch', 'bird_exit',
+    'cull_recording', 'vaccination', 'medication', 'bird_exit',
+  ],
+  grandparent_production: [
+    'farm_inspection', 'transport_inspection', 'feed_registration', 'weight_recording',
+    'mortality_recording', 'cull_recording', 'vaccination', 'medication', 'egg_collection',
+    'egg_classification', 'egg_dispatch', 'bird_exit',
   ],
   breeder_rearing: [
     'farm_inspection', 'bird_reception', 'bird_distribution', 'transport_inspection',
@@ -187,8 +203,8 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
     'egg_classification', 'egg_dispatch', 'bird_exit',
   ],
   hatchery: [
-    'egg_reception_hatchery', 'hatchery_inspection', 'transport_inspection', 'incubation_load',
-    'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
+    'hatchery_inspection', 'egg_reception_hatchery', 'egg_classification', 'transport_inspection',
+    'incubation_load', 'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
   ],
   broiler: [
     'farm_inspection', 'bird_reception', 'bird_distribution', 'transport_inspection',
@@ -230,11 +246,12 @@ export const EVENT_ICON_MAP: Record<string, LucideIcon> = {
  * Mirrors the legacy logic in LotDetailPage so wizard + lot detail agree.
  */
 export function resolveStageKey(birdType: string, activePhase: string | null): StageKey {
+  const isProduction = !!activePhase && /producc|production|hf|huevo/i.test(activePhase)
+  if (birdType === 'grandparent') {
+    return isProduction ? 'grandparent_production' : 'grandparent_rearing'
+  }
   if (birdType === 'breeder') {
-    if (activePhase && /producc|production|hf|huevo/i.test(activePhase)) {
-      return 'breeder_production'
-    }
-    return 'breeder_rearing'
+    return isProduction ? 'breeder_production' : 'breeder_rearing'
   }
   if (birdType in STAGE_OPERATIONS) return birdType as StageKey
   return 'broiler'
@@ -249,4 +266,106 @@ export function categoriesForStage(stage: StageKey): { category: OperationCatego
       events: category.events.filter(e => allowed.includes(e)),
     }))
     .filter(group => group.events.length > 0)
+}
+
+// ============================================================
+// STAGE FLOWS — the REAL production sequence for each stage.
+// This is what the user sees: an ordered, numbered list of the
+// operations that happen in that stage, each with a short
+// plain-language description of what it does.
+// ============================================================
+
+export interface FlowStep {
+  /** event type — links to the operation form */
+  event: string
+  /** i18n key under `process.flowDesc.*` */
+  descKey: string
+  descFallback: string
+}
+
+function step(event: string, descFallback: string): FlowStep {
+  return { event, descKey: `process.flowDesc.${event}`, descFallback }
+}
+
+export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
+  grandparent_rearing: [
+    step('grandparent_import', 'Registrar la importación y llegada de aves abuelas'),
+    step('farm_inspection', 'Inspeccionar la granja antes de recibir las aves'),
+    step('bird_reception', 'Recepcionar las aves y registrar cantidades'),
+    step('bird_distribution', 'Distribuir las aves a los galpones'),
+    step('feed_registration', 'Registrar el consumo de alimento'),
+    step('weight_recording', 'Registrar el pesaje semanal del lote'),
+    step('vaccination', 'Aplicar y registrar vacunas'),
+    step('medication', 'Aplicar y registrar medicación'),
+    step('mortality_recording', 'Registrar mortalidad diaria'),
+    step('cull_recording', 'Registrar descarte de aves'),
+    step('bird_exit', 'Trasladar el lote a la etapa de producción'),
+  ],
+  grandparent_production: [
+    step('farm_inspection', 'Inspeccionar condiciones de la granja'),
+    step('feed_registration', 'Registrar el consumo de alimento'),
+    step('weight_recording', 'Registrar el pesaje del lote'),
+    step('vaccination', 'Aplicar y registrar vacunas'),
+    step('medication', 'Aplicar y registrar medicación'),
+    step('mortality_recording', 'Registrar mortalidad diaria'),
+    step('cull_recording', 'Registrar descarte de aves'),
+    step('egg_collection', 'Recolectar los huevos producidos'),
+    step('egg_classification', 'Clasificar los huevos por tipo y calidad'),
+    step('egg_dispatch', 'Despachar los huevos a su destino'),
+    step('bird_exit', 'Registrar la salida o cierre del lote'),
+  ],
+  breeder_rearing: [
+    step('farm_inspection', 'Inspeccionar la granja antes de recibir las pollitas'),
+    step('bird_reception', 'Recepcionar las pollitas y registrar cantidades'),
+    step('bird_distribution', 'Distribuir las pollitas a los galpones'),
+    step('feed_registration', 'Registrar el consumo de alimento'),
+    step('weight_recording', 'Registrar el pesaje semanal'),
+    step('vaccination', 'Aplicar y registrar vacunas'),
+    step('medication', 'Aplicar y registrar medicación'),
+    step('mortality_recording', 'Registrar mortalidad diaria'),
+    step('cull_recording', 'Registrar descarte de aves'),
+    step('bird_exit', 'Trasladar el lote a la etapa de producción'),
+  ],
+  breeder_production: [
+    step('farm_inspection', 'Inspeccionar condiciones de la granja'),
+    step('feed_registration', 'Registrar el consumo de alimento'),
+    step('weight_recording', 'Registrar el pesaje del lote'),
+    step('vaccination', 'Aplicar y registrar vacunas'),
+    step('medication', 'Aplicar y registrar medicación'),
+    step('mortality_recording', 'Registrar mortalidad diaria'),
+    step('cull_recording', 'Registrar descarte de aves'),
+    step('egg_collection', 'Recolectar el huevo fértil diario'),
+    step('egg_classification', 'Clasificar los huevos por tipo y calidad'),
+    step('egg_dispatch', 'Despachar el huevo fértil a la incubadora'),
+    step('bird_exit', 'Registrar la salida o cierre del lote'),
+  ],
+  hatchery: [
+    step('hatchery_inspection', 'Inspeccionar la incubadora antes de operar'),
+    step('egg_reception_hatchery', 'Recepcionar los huevos que llegan a la planta'),
+    step('egg_classification', 'Clasificar los huevos aptos para incubar'),
+    step('incubation_load', 'Cargar los huevos a las máquinas de incubación'),
+    step('ovoscopy', 'Realizar ovoscopía para verificar fertilidad'),
+    step('transfer_to_hatcher', 'Transferir los huevos a la nacedora'),
+    step('birth_registration', 'Registrar el nacimiento de los pollitos'),
+    step('chick_dispatch', 'Despachar los pollitos nacidos'),
+  ],
+  broiler: [
+    step('farm_inspection', 'Inspeccionar la granja antes de recibir los pollitos'),
+    step('bird_reception', 'Recepcionar los pollitos y registrar cantidades'),
+    step('bird_distribution', 'Distribuir los pollitos a los galpones'),
+    step('feed_registration', 'Registrar el consumo de alimento'),
+    step('weight_recording', 'Registrar el pesaje del lote'),
+    step('vaccination', 'Aplicar y registrar vacunas'),
+    step('medication', 'Aplicar y registrar medicación'),
+    step('mortality_recording', 'Registrar mortalidad diaria'),
+    step('cull_recording', 'Registrar descarte de aves'),
+    step('bird_exit', 'Registrar la salida de aves a planta'),
+    step('lot_closure', 'Cerrar el lote al finalizar el ciclo'),
+  ],
+}
+
+/** Ordered operation flow for a stage (only events allowed in that stage). */
+export function flowForStage(stage: StageKey): FlowStep[] {
+  const allowed = STAGE_OPERATIONS[stage] ?? []
+  return (STAGE_FLOWS[stage] ?? []).filter(s => allowed.includes(s.event))
 }

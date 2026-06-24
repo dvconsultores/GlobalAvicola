@@ -10,6 +10,8 @@ import MasterListPage from './pages/masters/MasterListPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
+import ProcessHubPage from './pages/operations/ProcessHubPage'
+import ProcessStagePage from './pages/operations/ProcessStagePage'
 import MyPendingPage from './pages/operations/MyPendingPage'
 import ReviewCenter from './pages/review/ReviewCenter'
 import ReviewDetail from './pages/review/ReviewDetail'
@@ -116,7 +118,9 @@ export default function App() {
               }
             />
           ))}
-          {/* Shared: Operations, Lots, Reports — accessible by both web and mobile */}
+          {/* Shared: Processes, Operations, Lots, Reports — accessible by both web and mobile */}
+          <Route path="/processes" element={<ProcessHubPage />} />
+          <Route path="/processes/:stage" element={<ProcessStagePage />} />
           <Route path="/operations" element={<OperationListPage />} />
           <Route path="/operations/new" element={<OperationFormPage />} />
           <Route path="/operations/:id" element={<OperationDetailPage />} />

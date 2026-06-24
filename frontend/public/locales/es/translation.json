@@ -66,6 +66,7 @@
   "nav": {
     "home": "Inicio",
     "dashboard": "Dashboard",
+    "processes": "Procesos",
     "lots": "Lotes",
     "operations": "Operaciones",
     "review": "Revisión",
@@ -149,14 +150,16 @@
     "selectLotFirst": "Selecciona un lote para habilitar las operaciones.",
     "noLots": "No hay lotes activos para este proceso.",
     "stages": {
-      "grandparent": "Progenitoras / Abuelas",
+      "grandparent_rearing": "Progenitoras — Cría",
+      "grandparent_production": "Progenitoras — Producción",
       "breeder_rearing": "Reproductoras — Cría",
       "breeder_production": "Reproductoras — Producción",
       "hatchery": "Incubadora",
       "broiler": "Pollo de Engorde"
     },
     "stagesDesc": {
-      "grandparent": "Importación, crianza y producción de huevos de abuelas",
+      "grandparent_rearing": "Importación y levante de aves abuelas",
+      "grandparent_production": "Producción y recolección de huevos de abuelas",
       "breeder_rearing": "Levante de reproductoras antes de producción",
       "breeder_production": "Producción y recolección diaria de huevo fértil",
       "hatchery": "Recepción de huevo, incubación y nacimiento de pollitos",
@@ -170,6 +173,42 @@
       "eggs": "Huevos",
       "incubation": "Incubación",
       "lifecycle": "Ciclo de Vida"
+    },
+    "hub": {
+      "title": "Procesos",
+      "subtitle": "Elige una etapa de producción para ver sus operaciones",
+      "operations": "operaciones"
+    },
+    "stage": {
+      "lotLabel": "Lote (opcional)",
+      "allLots": "Sin lote — elegir al registrar",
+      "flowTitle": "Operaciones del proceso",
+      "viewHistory": "Ver historial de operaciones"
+    },
+    "flowDesc": {
+      "grandparent_import": "Registrar la importación y llegada de aves abuelas",
+      "farm_inspection": "Inspeccionar condiciones de la granja",
+      "bird_reception": "Recepcionar las aves y registrar cantidades",
+      "bird_distribution": "Distribuir las aves a los galpones",
+      "feed_registration": "Registrar el consumo de alimento",
+      "weight_recording": "Registrar el pesaje del lote",
+      "vaccination": "Aplicar y registrar vacunas",
+      "medication": "Aplicar y registrar medicación",
+      "mortality_recording": "Registrar mortalidad diaria",
+      "cull_recording": "Registrar descarte de aves",
+      "egg_collection": "Recolectar los huevos producidos",
+      "egg_classification": "Clasificar los huevos por tipo y calidad",
+      "egg_dispatch": "Despachar los huevos a su destino",
+      "bird_exit": "Registrar la salida o traslado de aves",
+      "hatchery_inspection": "Inspeccionar la incubadora antes de operar",
+      "egg_reception_hatchery": "Recepcionar los huevos que llegan a la planta",
+      "incubation_load": "Cargar los huevos a las máquinas de incubación",
+      "ovoscopy": "Realizar ovoscopía para verificar fertilidad",
+      "transfer_to_hatcher": "Transferir los huevos a la nacedora",
+      "birth_registration": "Registrar el nacimiento de los pollitos",
+      "chick_dispatch": "Despachar los pollitos nacidos",
+      "lot_closure": "Cerrar el lote al finalizar el ciclo",
+      "transport_inspection": "Inspeccionar el transporte"
     }
   },
   "status": {

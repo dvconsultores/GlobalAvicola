@@ -15,7 +15,8 @@ import {
 
 // Map a process stage to the lot bird_type(s) it draws lots from
 const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
-  grandparent: ['grandparent'],
+  grandparent_rearing: ['grandparent'],
+  grandparent_production: ['grandparent'],
   breeder_rearing: ['breeder'],
   breeder_production: ['breeder'],
   hatchery: ['hatchery'],
@@ -135,7 +136,7 @@ export default function OperationFormPage() {
   // ----- Wizard state -----
   // Step 1 = choose process/stage · Step 2 = choose lot + operation · Step 3 = fill data
   const [stage, setStage] = useState<StageKey | null>(null)
-  const [step, setStep] = useState<1 | 2 | 3>(prefillType && prefillLotId ? 3 : 1)
+  const [step, setStep] = useState<1 | 2 | 3>(prefillType ? 3 : 1)
 
   // Lots filtered by the chosen stage's bird type(s)
   const stageLots = useMemo(() => {
@@ -315,8 +316,15 @@ export default function OperationFormPage() {
         )}
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          {/* Lot (read-only summary — chosen in step 2) */}
-          {errors.lot_id && <p className="text-red-500 text-xs">{t(errors.lot_id.message ?? '')}</p>}
+          {/* Lot selector — self-contained so the form works from the process flow */}
+          <div>
+            <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
+            <select {...register('lot_id', { valueAsNumber: true })} className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+              <option value="">{t('operations.selectLot')}</option>
+              {lots.map((l: any) => <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>)}
+            </select>
+            {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
+          </div>
 
           {/* Date */}
 
