@@ -52,7 +52,7 @@ export default function OperationListPage() {
           <h1 className="text-2xl font-bold text-slate-800">{t('nav.operations')}</h1>
           <p className="text-sm text-slate-500">{events.length} {t('common.results')}</p>
         </div>
-        <Link to="/processes" className="inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
+        <Link to="/poultry" className="inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
           + {t('common.create')}
         </Link>
       </div>

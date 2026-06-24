@@ -63,7 +63,7 @@ export default function ProcessStagePage() {
     [stageLots, lotId],
   )
 
-  if (!isValid || !stageMeta) return <Navigate to="/processes" replace />
+  if (!isValid || !stageMeta) return <Navigate to="/poultry" replace />
 
   const StageIcon = stageMeta.Icon
 
@@ -79,7 +79,7 @@ export default function ProcessStagePage() {
       <div className={`relative overflow-hidden bg-gradient-to-br ${stageMeta.gradient} text-white px-5 pt-5 pb-8 rounded-b-[2rem] shadow-lg`}>
         <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
         <div className="relative max-w-2xl mx-auto">
-          <Link to="/processes" className="inline-flex items-center gap-1 text-sm font-semibold text-white/90 hover:text-white mb-4 transition-colors">
+          <Link to="/poultry" className="inline-flex items-center gap-1 text-sm font-semibold text-white/90 hover:text-white mb-4 transition-colors">
             <ChevronLeft size={18} /> {t('process.stage.back', 'Procesos')}
           </Link>
 

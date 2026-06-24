@@ -2,34 +2,78 @@
  * MobileDrawer — slide-in lateral menu para operadores móviles
  * Se activa con el botón hamburger en Header.tsx
  * Overlay + 150ms slide, cierra con Escape o click fuera
+ *
+ * REDISEÑADO: Muestra la misma jerarquía completa que el Sidebar desktop,
+ * con secciones, submenús colapsables y navegación completa.
  */
-import { useEffect, useRef } from 'react'
-import { Link, useLocation } from 'react-router-dom'
+import { useEffect, useRef, useMemo } from 'react'
+import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import {
-  X, Home, Bird, FileText, TrendingUp, Clock, LogOut, Globe, Workflow
-} from 'lucide-react'
+import { X, Globe, LogOut } from 'lucide-react'
+import { NAV_SECTIONS, NAV_ITEMS, getSectionKeyForPath, type NavItem } from '../../data/navigationConfig'
+import { useSidebar } from '../../hooks/useSidebar'
+import SidebarSection from './SidebarSection'
+import SidebarItem from './SidebarItem'
+import SidebarSubmenu from './SidebarSubmenu'
 
 interface MobileDrawerProps {
   open: boolean
   onClose: () => void
 }
 
-const drawerItems = [
-  { path: '/',            labelKey: 'nav.home',       Icon: Home },
-  { path: '/processes',   labelKey: 'nav.processes',  Icon: Workflow },
-  { path: '/lots',        labelKey: 'nav.lots',        Icon: Bird },
-  { path: '/operations',  labelKey: 'nav.operations',  Icon: FileText },
-  { path: '/reports',     labelKey: 'nav.reports',     Icon: TrendingUp },
-  { path: '/my-pending',  labelKey: 'nav.myPending',   Icon: Clock },
-]
+function DrawerNavItem({ item, expandedSections, toggleSection, onClose }: {
+  item: NavItem
+  expandedSections: Record<string, boolean>
+  toggleSection: (key: string) => void
+  onClose: () => void
+}) {
+  const hasChildren = item.children && item.children.length > 0
+
+  if (hasChildren) {
+    return (
+      <SidebarSubmenu
+        icon={item.icon}
+        labelKey={item.labelKey}
+        fallback={item.fallback}
+        children={item.children!}
+        expanded={expandedSections[item.key]}
+        onToggle={() => toggleSection(item.key)}
+        onChildClick={onClose}
+      />
+    )
+  }
+
+  if (item.to) {
+    return (
+      <SidebarItem
+        icon={item.icon}
+        labelKey={item.labelKey}
+        fallback={item.fallback}
+        to={item.to}
+        badge={item.badge}
+        onClick={onClose}
+      />
+    )
+  }
+
+  return null
+}
 
 export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const { t, i18n } = useTranslation()
   const { user, logout } = useAuthStore()
   const location = useLocation()
   const closeRef = useRef<HTMLButtonElement>(null)
+  const { isExpanded, toggleSection, expandContaining } = useSidebar()
+
+  // Expandir automáticamente la sección de la ruta activa
+  useMemo(() => {
+    const sectionKey = getSectionKeyForPath(location.pathname)
+    if (sectionKey) {
+      expandContaining(sectionKey)
+    }
+  }, [location.pathname, expandContaining])
 
   // Close on Escape
   useEffect(() => {
@@ -53,10 +97,13 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   // Close on location change (after nav)
   useEffect(() => { onClose() }, [location.pathname, onClose])
 
-  const isActive = (path: string) => {
-    if (path === '/') return location.pathname === '/'
-    return location.pathname.startsWith(path)
-  }
+  // Agrupar items por sección
+  const sections = useMemo(() => {
+    return NAV_SECTIONS.map(section => ({
+      section,
+      items: NAV_ITEMS.filter(item => item.section === section.key),
+    })).filter(s => s.items.length > 0)
+  }, [])
 
   return (
     <>
@@ -76,7 +123,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         role="navigation"
         aria-label={t('nav.menu', 'Menú')}
         className={[
-          'lg:hidden fixed top-0 left-0 h-full w-72 z-50',
+          'lg:hidden fixed top-0 left-0 h-full w-[80vw] max-w-sm z-50',
           'bg-[#1E3A5F] text-white flex flex-col',
           'transition-transform duration-150 ease-out',
           open ? 'translate-x-0' : '-translate-x-full',
@@ -98,29 +145,25 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
           </button>
         </div>
 
-        {/* Nav links */}
-        <ul className="flex-1 overflow-y-auto py-3">
-          {drawerItems.map(({ path, labelKey, Icon }) => {
-            const active = isActive(path)
-            return (
-              <li key={path}>
-                <Link
-                  to={path}
-                  className={[
-                    'flex items-center gap-3 px-5 py-3 text-sm font-medium',
-                    'transition-colors duration-100',
-                    active
-                      ? 'bg-white/15 text-white'
-                      : 'text-blue-200 hover:bg-white/10 hover:text-white',
-                  ].join(' ')}
-                >
-                  <Icon size={18} className="shrink-0" />
-                  {t(labelKey, labelKey)}
-                </Link>
-              </li>
-            )
-          })}
-        </ul>
+        {/* Navigation — jerarquía completa como sidebar desktop */}
+        <div className="flex-1 overflow-y-auto px-3 py-3">
+          {sections.map(({ section, items }) => (
+            <div key={section.key}>
+              <SidebarSection labelKey={section.labelKey} fallback={section.fallback} />
+              <div className="space-y-0.5">
+                {items.map(item => (
+                  <DrawerNavItem
+                    key={item.key}
+                    item={item}
+                    expandedSections={isExpanded}
+                    toggleSection={toggleSection}
+                    onClose={onClose}
+                  />
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
 
         {/* Footer actions */}
         <div className="px-4 py-4 border-t border-white/10 space-y-1">

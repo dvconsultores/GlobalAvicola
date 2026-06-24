@@ -127,7 +127,7 @@ export default function DashboardPage() {
               <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
                 {t('process.hub.title', '6 Procesos')}
               </h2>
-              <Link to="/processes" className="text-xs font-bold text-[#2563EB]">
+              <Link to="/poultry" className="text-xs font-bold text-[#2563EB]">
                 {t('common.viewAll', 'Ver todos')} →
               </Link>
             </div>
@@ -137,7 +137,7 @@ export default function DashboardPage() {
                 return (
                   <Link
                     key={stage.key}
-                    to={`/processes/${stage.key}`}
+                    to={`/poultry/${stage.key}`}
                     className={`group relative overflow-hidden rounded-3xl bg-gradient-to-br ${stage.gradient} p-4 text-white shadow-sm active:scale-[0.97] transition-all`}
                   >
                     <span className="absolute -top-2 -right-1 text-white/25 text-5xl font-black select-none">{idx + 1}</span>

@@ -52,7 +52,7 @@ export default function ProcessHubPage() {
             return (
               <Link
                 key={stage.key}
-                to={`/processes/${stage.key}`}
+                to={`/poultry/${stage.key}`}
                 className="group relative overflow-hidden rounded-3xl bg-white dark:bg-dark-card shadow-sm hover:shadow-xl border border-slate-100 dark:border-slate-700 transition-all active:scale-[0.98]"
               >
                 {/* Colored header band */}

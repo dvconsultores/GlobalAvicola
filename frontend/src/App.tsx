@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
@@ -10,8 +10,8 @@ import MasterListPage from './pages/masters/MasterListPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
-import ProcessHubPage from './pages/operations/ProcessHubPage'
-import ProcessStagePage from './pages/operations/ProcessStagePage'
+import PoultryHubPage from './pages/operations/PoultryHubPage'
+import PoultryStagePage from './pages/operations/PoultryStagePage'
 import MyPendingPage from './pages/operations/MyPendingPage'
 import ReviewCenter from './pages/review/ReviewCenter'
 import ReviewDetail from './pages/review/ReviewDetail'
@@ -60,6 +60,29 @@ function WebOnlyRoute({ children }: { children: React.ReactNode }) {
   const { user } = useAuthStore()
   if (user?.view_type === 'mobile') return <Navigate to="/" replace />
   return <>{children}</>
+}
+
+/**
+ * ProcessStageRedirect — mapea rutas legacy /processes/:stage a /poultry/:birdType/:phase
+ */
+const STAGE_ROUTE_MAP: Record<string, string> = {
+  'grandparent_rearing': '/poultry/grandparent/rearing',
+  'grandparent_production': '/poultry/grandparent/production',
+  'breeder_rearing': '/poultry/breeder/rearing',
+  'breeder_production': '/poultry/breeder/production',
+  'hatchery': '/poultry/hatchery',
+  'broiler': '/poultry/broiler',
+}
+
+function ProcessStageRedirect() {
+  return <ProcessStageRedirectInner />
+}
+
+function ProcessStageRedirectInner() {
+  const { stage } = useParams<{ stage: string }>()
+  const target = stage ? STAGE_ROUTE_MAP[stage] : null
+  if (target) return <Navigate to={target} replace />
+  return <Navigate to="/poultry" replace />
 }
 
 const masterEntities = [
@@ -118,9 +141,13 @@ export default function App() {
               }
             />
           ))}
-          {/* Shared: Processes, Operations, Lots, Reports — accessible by both web and mobile */}
-          <Route path="/processes" element={<ProcessHubPage />} />
-          <Route path="/processes/:stage" element={<ProcessStagePage />} />
+          {/* Shared: Poultry (new) + Processes (legacy redirects) */}
+          <Route path="/poultry" element={<PoultryHubPage />} />
+          <Route path="/poultry/:birdType/:phase?" element={<PoultryStagePage />} />
+          {/* Legacy redirects — keep for backward compatibility */}
+          <Route path="/processes" element={<Navigate to="/poultry" replace />} />
+          <Route path="/processes/:stage" element={<ProcessStageRedirect />} />
+          {/* Operations, Lots, Reports — accessible by both web and mobile */}
           <Route path="/operations" element={<OperationListPage />} />
           <Route path="/operations/new" element={<OperationFormPage />} />
           <Route path="/operations/:id" element={<OperationDetailPage />} />

@@ -1,22 +1,46 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { RefreshCw, CheckCircle, XCircle, Package, Upload } from 'lucide-react'
+import {
+  RefreshCw, CheckCircle, XCircle, Package, Upload, Clock,
+  Send, AlertTriangle, FileText,
+} from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
+import SubNavHeader from '../../components/layout/SubNavHeader'
+import { KpiCard, Badge } from '../../components/ui'
+
+type SapTab = 'overview' | 'pending' | 'sent' | 'errors' | 'log'
+
+const SAP_TABS = [
+  { key: 'overview' as SapTab, labelKey: 'sap.overview', icon: RefreshCw },
+  { key: 'pending' as SapTab, labelKey: 'sap.pending', icon: Clock },
+  { key: 'sent' as SapTab, labelKey: 'sap.sent', icon: Send },
+  { key: 'errors' as SapTab, labelKey: 'sap.errors', icon: AlertTriangle },
+  { key: 'log' as SapTab, labelKey: 'sap.log', icon: FileText },
+]
 
 export default function SapManagerPage() {
   const { t } = useTranslation()
+  const toast = useToast()
+  const [activeTab, setActiveTab] = useState<SapTab>('overview')
   const [refs, setRefs] = useState<any[]>([])
   const [jobs, setJobs] = useState<any[]>([])
   const [payloads, setPayloads] = useState<any[]>([])
   const [conn, setConn] = useState<any>(null)
-  const toast = useToast()
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    api.get('/sap/references?limit=10').then(r => setRefs(r.data.references || [])).catch(() => {})
-    api.get('/sap/sync/jobs?limit=5').then(r => setJobs(r.data.jobs || [])).catch(() => {})
-    api.get('/sap/payloads?limit=5').then(r => setPayloads(r.data.payloads || [])).catch(() => {})
-    api.get('/sap/connection-check').then(r => setConn(r.data)).catch(() => {})
+    Promise.all([
+      api.get('/sap/references?limit=10').catch(() => ({ data: { references: [] } })),
+      api.get('/sap/sync/jobs?limit=5').catch(() => ({ data: { jobs: [] } })),
+      api.get('/sap/payloads?limit=5').catch(() => ({ data: { payloads: [] } })),
+      api.get('/sap/connection-check').catch(() => ({ data: null })),
+    ]).then(([refRes, jobsRes, payloadRes, connRes]) => {
+      setRefs(refRes.data.references || [])
+      setJobs(jobsRes.data.jobs || [])
+      setPayloads(payloadRes.data.payloads || [])
+      setConn(connRes.data)
+    }).finally(() => setLoading(false))
   }, [])
 
   const handleConsolidate = async () => {
@@ -37,55 +61,232 @@ export default function SapManagerPage() {
     }
   }
 
-  return (
-    <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      <h1 className="text-2xl font-bold text-[#1E3A5F] mb-2">
-        <RefreshCw size={24} className="inline-block mr-2 -mt-0.5" aria-hidden="true" />
-        {t('nav.sap')}
-      </h1>
-      {conn && (
-        <p className={`text-sm mb-6 flex items-center gap-1.5 ${conn.connected ? 'text-green-600' : 'text-red-600'}`}>
-          {conn.connected
-            ? <CheckCircle size={16} aria-hidden="true" />
-            : <XCircle size={16} aria-hidden="true" />}
-          {conn.adapter}
-        </p>
-      )}
+  // Calcular KPIs
+  const pendingCount = payloads.filter(p => p.status === 'pending' || p.status === 'draft').length
+  const sentCount = payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').length
+  const errorCount = payloads.filter(p => p.status === 'error').length
 
+  return (
+    <div>
+      {/* Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+        <SubNavHeader
+          title={t('nav.sap', 'Integración SAP')}
+          hideBack
+          actions={
+            conn && (
+              <div className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
+                conn.connected ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
+              }`}>
+                {conn.connected ? <CheckCircle size={14} /> : <XCircle size={14} />}
+                {conn.adapter || (conn.connected ? t('sap.connected', 'Conectado') : t('sap.disconnected', 'Desconectado'))}
+              </div>
+            )
+          }
+        />
+      </div>
+
+      {/* KPI Cards */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <KpiCard
+          icon={Clock}
+          label={t('sap.pendingDocuments', 'Documentos Pendientes')}
+          value={pendingCount}
+          color="amber"
+        />
+        <KpiCard
+          icon={Send}
+          label={t('sap.sentDocuments', 'Enviados a SAP')}
+          value={sentCount}
+          color="green"
+        />
+        <KpiCard
+          icon={AlertTriangle}
+          label={t('sap.errorDocuments', 'Errores SAP')}
+          value={errorCount}
+          color="red"
+        />
+        <KpiCard
+          icon={Package}
+          label={t('sap.references', 'Referencias SAP')}
+          value={refs.length}
+          color="blue"
+          subtitle={t('sap.lastSync', 'Sincronizadas')}
+        />
+      </div>
+
+      {/* Action buttons */}
       <div className="flex flex-wrap gap-3 mb-6">
-        <button onClick={handleConsolidate} className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition inline-flex items-center gap-2">
-          <Package size={16} aria-hidden="true" /> {t('sap.consolidate')}
+        <button onClick={handleConsolidate}
+          className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800 transition inline-flex items-center gap-2 shadow-sm">
+          <Package size={16} /> {t('sap.consolidate', 'Consolidar')}
         </button>
-        <button onClick={handleExport} className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition inline-flex items-center gap-2">
-          <Upload size={16} aria-hidden="true" /> {t('sap.export')}
+        <button onClick={handleExport}
+          className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-700 transition inline-flex items-center gap-2 shadow-sm">
+          <Upload size={16} /> {t('sap.export', 'Exportar a SAP')}
         </button>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-          <h2 className="font-semibold text-slate-700 mb-2 text-sm">{t('sap.references')} ({refs.length})</h2>
-          {refs.slice(0, 5).map((r: any) => (
-            <div key={r.id} className="text-xs text-slate-600 py-1 border-b border-slate-50 last:border-0">
-              <span className="font-mono">{r.sap_code}</span> — {r.ref_type}
-            </div>
-          ))}
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-          <h2 className="font-semibold text-slate-700 mb-2 text-sm">{t('sap.syncJobs')} ({jobs.length})</h2>
-          {jobs.map((j: any) => (
-            <div key={j.id} className="text-xs text-slate-600 py-1 border-b border-slate-50 last:border-0">
-              Job #{j.id}: {j.direction} — {j.status} ({j.success_count}/{j.total_records})
-            </div>
-          ))}
-        </div>
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
-          <h2 className="font-semibold text-slate-700 mb-2 text-sm">{t('sap.payloads')} ({payloads.length})</h2>
-          {payloads.map((p: any) => (
-            <div key={p.id} className="text-xs text-slate-600 py-1 border-b border-slate-50 last:border-0">
-              {p.status}: {p.sap_document_id || t('sap.pending')}
-            </div>
-          ))}
-        </div>
+      {/* Tabs */}
+      <div className="flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide">
+        {SAP_TABS.map((tab) => {
+          const isActive = activeTab === tab.key
+          const Icon = tab.icon
+          return (
+            <button
+              key={tab.key}
+              onClick={() => setActiveTab(tab.key)}
+              className={`
+                inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+                ${isActive
+                  ? 'bg-[#1E3A5F] text-white shadow-md'
+                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
+                }
+              `}
+            >
+              <Icon size={16} />
+              {t(tab.labelKey)}
+            </button>
+          )
+        })}
+      </div>
+
+      {/* Tab Content */}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+        {activeTab === 'overview' && (
+          <div className="p-5">
+            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.recentActivity', 'Actividad reciente')}</h3>
+            {jobs.length === 0 && payloads.length === 0 ? (
+              <div className="text-center py-8">
+                <RefreshCw size={32} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-sm text-slate-500">{t('sap.noActivity', 'Sin actividad reciente')}</p>
+              </div>
+            ) : (
+              <div className="space-y-3">
+                {jobs.slice(0, 5).map((j: any) => (
+                  <div key={j.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">
+                        {t('sap.syncJob', 'Trabajo de sincronización')} #{j.id}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-0.5">
+                        {j.direction} · {j.success_count}/{j.total_records} {t('sap.records', 'registros')}
+                      </p>
+                    </div>
+                    <Badge variant={j.status === 'completed' ? 'approved' : j.status === 'error' ? 'rejected' : 'pending'} size="sm">
+                      {j.status}
+                    </Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'pending' && (
+          <div className="p-5">
+            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.pendingDocuments', 'Documentos Pendientes')}</h3>
+            {payloads.filter(p => p.status === 'pending' || p.status === 'draft').length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle size={32} className="mx-auto text-emerald-300 mb-2" />
+                <p className="text-sm text-slate-500">{t('sap.noPending', 'Sin documentos pendientes')}</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {payloads.filter(p => p.status === 'pending' || p.status === 'draft').map((p: any) => (
+                  <div key={p.id} className="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
+                      <p className="text-xs text-slate-500">{p.event_type || t('sap.document', 'Documento')}</p>
+                    </div>
+                    <Badge variant="pending" size="sm">{p.status}</Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'sent' && (
+          <div className="p-5">
+            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.sentDocuments', 'Enviados a SAP')}</h3>
+            {payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').length === 0 ? (
+              <div className="text-center py-8">
+                <Send size={32} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-sm text-slate-500">{t('sap.noSent', 'Sin envíos a SAP')}</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').map((p: any) => (
+                  <div key={p.id} className="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
+                    <div>
+                      <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
+                      <p className="text-xs text-slate-500">{new Date(p.created_at).toLocaleString()}</p>
+                    </div>
+                    <Badge variant={p.status === 'confirmed' ? 'approved' : 'sent_sap'} size="sm">{p.status}</Badge>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'errors' && (
+          <div className="p-5">
+            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.errorDocuments', 'Errores SAP')}</h3>
+            {payloads.filter(p => p.status === 'error').length === 0 ? (
+              <div className="text-center py-8">
+                <CheckCircle size={32} className="mx-auto text-emerald-300 mb-2" />
+                <p className="text-sm text-slate-500">{t('sap.noErrors', 'Sin errores SAP')}</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {payloads.filter(p => p.status === 'error').map((p: any) => (
+                  <div key={p.id} className="py-3 hover:bg-red-50 px-2 rounded-lg transition">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
+                      <Badge variant="error_sap" size="sm">{t('sap.error', 'Error')}</Badge>
+                    </div>
+                    {p.error_message && (
+                      <p className="text-xs text-red-600 mt-1 font-mono">{p.error_message}</p>
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
+        {activeTab === 'log' && (
+          <div className="p-5">
+            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.syncJobs', 'Trabajos de Sincronización')}</h3>
+            {jobs.length === 0 ? (
+              <div className="text-center py-8">
+                <FileText size={32} className="mx-auto text-slate-300 mb-2" />
+                <p className="text-sm text-slate-500">{t('sap.noJobs', 'Sin trabajos de sincronización')}</p>
+              </div>
+            ) : (
+              <div className="divide-y divide-slate-100">
+                {jobs.map((j: any) => (
+                  <div key={j.id} className="py-3 hover:bg-slate-50 px-2 rounded-lg transition">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-slate-700">
+                        {t('sap.syncJob', 'Sincronización')} #{j.id}
+                      </p>
+                      <Badge variant={j.status === 'completed' ? 'approved' : j.status === 'error' ? 'rejected' : 'pending'} size="sm">
+                        {j.status}
+                      </Badge>
+                    </div>
+                    <p className="text-xs text-slate-500 mt-1">
+                      {j.direction} · {j.success_count}/{j.total_records} {t('sap.records', 'registros')}
+                      {j.created_at && ` · ${new Date(j.created_at).toLocaleString()}`}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )

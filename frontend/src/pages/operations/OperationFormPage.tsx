@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { ChevronLeft, Bird, Wheat, Egg, Flame, Search, CheckCircle, AlertTriangle, XCircle, Lock, CheckCheck } from 'lucide-react'
+import { ChevronLeft, Bird, Wheat, Egg, Flame, Search, CheckCircle, AlertTriangle, XCircle, Lock, CheckCheck, ClipboardList } from 'lucide-react'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
 import { EVENT_ICONS } from '../../components/Icon'
@@ -12,6 +12,7 @@ import {
   PROCESS_STAGES, EVENT_ICON_MAP, categoriesForStage,
   type StageKey,
 } from '../../data/processCatalog'
+import FormSection from '../../components/ui/FormSection'
 
 // Map a process stage to the lot bird_type(s) it draws lots from
 const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
@@ -337,105 +338,190 @@ export default function OperationFormPage() {
 
         {/* Bird Movements */}
         {def?.birdMovements && (
-          <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">
-              <Bird size={16} className="inline-block mr-1 -mt-0.5 text-blue-600" aria-hidden="true" />
-              {t('operations.birdMovements')}
-            </p>
+          <FormSection
+            title={t('operations.birdMovements', 'Movimiento de Aves')}
+            description={t('operations.birdMovementsDesc', 'Registra cantidades, peso y semana')}
+            icon={Bird}
+            iconColor="text-blue-600"
+            collapsible
+          >
             {[0].map((_, i) => (
-              <div key={i} className="grid grid-cols-2 gap-2">
-                <select {...register(`bird_movements.${i}.sex`)} className="h-10 px-2 border border-slate-200 rounded text-sm">
-                  <option value="">{t('operations.sex')}</option><option value="male">{t('operations.male')}</option><option value="female">{t('operations.female')}</option><option value="mixed">{t('operations.mixed')}</option>
-                </select>
-                <input type="number" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} placeholder={t('operations.quantity')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
-                <input type="number" step="0.1" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} placeholder={t('operations.avgWeight')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
-                <input type="number" {...register(`bird_movements.${i}.week_number`, { valueAsNumber: true })} placeholder={t('operations.weekNumber')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.sex', 'Sexo')}</label>
+                  <select {...register(`bird_movements.${i}.sex`)} className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <option value="">{t('operations.selectSex', 'Seleccionar...')}</option>
+                    <option value="male">{t('operations.male', 'Macho')}</option>
+                    <option value="female">{t('operations.female', 'Hembra')}</option>
+                    <option value="mixed">{t('operations.mixed', 'Mixto')}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.quantity', 'Cantidad')}</label>
+                  <input type="number" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })}
+                    placeholder="0"
+                    className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.avgWeight', 'Peso Promedio (kg)')}</label>
+                  <input type="number" step="0.1" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })}
+                    placeholder="0.0"
+                    className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.weekNumber', 'Semana')}</label>
+                  <input type="number" {...register(`bird_movements.${i}.week_number`, { valueAsNumber: true })}
+                    placeholder="1"
+                    className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+                </div>
               </div>
             ))}
-          </div>
+          </FormSection>
         )}
 
-        {/* Feed Movements — G-08: Enhanced with feed_type, sack
-              <Wheat size={16} className="inline-block mr-1 -mt-0.5 text-amber-600" aria-hidden="true" />
         {/* Feed Registration */}
         {def?.feedMovements && (
-          <div className="border border-slate-200 rounded-lg p-3 space-y-2">
-            <p className="text-sm font-semibold text-slate-700">
-              <Wheat size={16} className="inline-block mr-1 -mt-0.5 text-amber-600" aria-hidden="true" />
-              {t('operations.feed')}
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <select {...register('feed_movements.0.feed_type_id', { valueAsNumber: true })} className="h-10 px-2 border border-slate-200 rounded text-sm">
-                <option value="">{t('operations.feedType')}</option>
-                {feedTypes.map((ft: any) => <option key={ft.id} value={ft.id}>{ft.name}</option>)}
-              </select>
-              <input type="number" {...register('feed_movements.0.week_number', { valueAsNumber: true })} placeholder={t('operations.weekNumber')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
+          <FormSection
+            title={t('operations.feed', 'Registro de Alimento')}
+            description={t('operations.feedDesc', 'Tipo de alimento, cantidad y orden SAP')}
+            icon={Wheat}
+            iconColor="text-amber-600"
+            collapsible
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.feedType', 'Tipo de Alimento')}</label>
+                <select {...register('feed_movements.0.feed_type_id', { valueAsNumber: true })}
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
+                  {feedTypes.map((ft: any) => <option key={ft.id} value={ft.id}>{ft.name}</option>)}
+                </select>
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.weekNumber', 'Semana')}</label>
+                <input type="number" {...register('feed_movements.0.week_number', { valueAsNumber: true })}
+                  placeholder="1"
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+              </div>
             </div>
-            <div className="grid grid-cols-3 gap-2">
-              <input type="number" step="0.1" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} placeholder={t('operations.quantityKg')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
-              <input type="number" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })} placeholder={t('operations.sacks')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
-              <select {...register('feed_movements.0.sap_order_id')} className="h-10 px-2 border border-slate-200 rounded text-sm">
-                <option value="">{t('operations.sapOrder')}</option>
-                {sapOrders.map((s: any) => <option key={s.id} value={s.sap_code}>{s.sap_code}</option>)}
-              </select>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.quantityKg', 'Cantidad (kg)')}</label>
+                <input type="number" step="0.1" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })}
+                  placeholder="0.0"
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.sacks', 'Sacos')}</label>
+                <input type="number" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })}
+                  placeholder="0"
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.sapOrder', 'Orden SAP')}</label>
+                <select {...register('feed_movements.0.sap_order_id')}
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                  <option value="">{t('operations.noOrder', 'Sin orden')}</option>
+                  {sapOrders.map((s: any) => <option key={s.id} value={s.sap_code}>{s.sap_code}</option>)}
+                </select>
+              </div>
             </div>
-          </div>
+          </FormSection>
         )}
 
         {/* Egg Movements */}
         {def?.eggMovements && (
-          <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">
-              <Egg size={16} className="inline-block mr-1 -mt-0.5 text-indigo-600" aria-hidden="true" />
-              {t('operations.eggs')}
-            </p>
+          <FormSection
+            title={t('operations.eggs', 'Registro de Huevos')}
+            description={t('operations.eggsDesc', 'Tipo y cantidad de huevos')}
+            icon={Egg}
+            iconColor="text-indigo-600"
+            collapsible
+          >
             {[0].map((_, i) => (
-              <div key={i} className="grid grid-cols-2 gap-2">
-                <select {...register(`egg_movements.${i}.egg_type`)} className="h-10 px-2 border border-slate-200 rounded text-sm">
-                  <option value="">{t('operations.eggType')}</option><option value="fertile">{t('operations.fertile')}</option><option value="dirty">{t('operations.dirty')}</option><option value="broken">{t('operations.broken')}</option><option value="infertile">{t('operations.infertile')}</option><option value="discarded">{t('operations.discarded')}</option>
-                </select>
-                <input type="number" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} placeholder={t('operations.quantity')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
+              <div key={i} className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.eggType', 'Tipo de Huevo')}</label>
+                  <select {...register(`egg_movements.${i}.egg_type`)}
+                    className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
+                    <option value="fertile">{t('operations.fertile', 'Fértil')}</option>
+                    <option value="dirty">{t('operations.dirty', 'Sucio')}</option>
+                    <option value="broken">{t('operations.broken', 'Roto')}</option>
+                    <option value="infertile">{t('operations.infertile', 'Infértil')}</option>
+                    <option value="discarded">{t('operations.discarded', 'Descartado')}</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.quantity', 'Cantidad')}</label>
+                  <input type="number" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })}
+                    placeholder="0"
+                    className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+                </div>
               </div>
             ))}
-          </div>
+          </FormSection>
         )}
 
         {/* Hatchery Params */}
         {def?.hatcheryParams && (
-          <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">
-              <Flame size={16} className="inline-block mr-1 -mt-0.5 text-orange-600" aria-hidden="true" />
-              {t('operations.incubationParams')}
-            </p>
-            <div className="grid grid-cols-2 gap-2">
-              <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} placeholder={t('operations.temp')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
-              <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} placeholder={t('operations.humidity')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
-              <input type="number" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })} placeholder={t('operations.quantityLoaded')} className="h-10 px-2 border border-slate-200 rounded text-sm" />
+          <FormSection
+            title={t('operations.incubationParams', 'Parámetros de Incubación')}
+            description={t('operations.incubationDesc', 'Temperatura, humedad y carga')}
+            icon={Flame}
+            iconColor="text-orange-600"
+            collapsible
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.temp', 'Temperatura (°C)')}</label>
+                <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })}
+                  placeholder="37.5"
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.humidity', 'Humedad (%)')}</label>
+                <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })}
+                  placeholder="55"
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-slate-500 mb-1">{t('operations.quantityLoaded', 'Cantidad Cargada')}</label>
+                <input type="number" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })}
+                  placeholder="0"
+                  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" />
+              </div>
             </div>
-          </div>
+          </FormSection>
         )}
 
         {/* Inspection Details */}
         {def?.inspectionDetails && (
-          <div className="border border-slate-200 rounded-lg p-3">
-            <p className="text-sm font-semibold text-slate-700 mb-2">
-              <Search size={16} className="inline-block mr-1 -mt-0.5 text-cyan-600" aria-hidden="true" />
-              {t('operations.inspection')}
-            </p>
-            {[t('operations.temperature'), t('operations.humidity'), t('operations.camaCondition'), t('operations.equipmentStatus')].map((param, i) => (
+          <FormSection
+            title={t('operations.inspection', 'Detalles de Inspección')}
+            description={t('operations.inspectionDesc', 'Estado de parámetros de la granja')}
+            icon={Search}
+            iconColor="text-cyan-600"
+            collapsible
+          >
+            {[t('operations.temperature', 'Temperatura'), t('operations.humidity', 'Humedad'), t('operations.camaCondition', 'Condición de Cama'), t('operations.equipmentStatus', 'Estado de Equipos')].map((param, i) => (
               <input key={i} {...register(`inspection_details.${i}.parameter`)} defaultValue={param} type="hidden" />
             ))}
-            <div className="space-y-2">
-              {[t('operations.temperature'), t('operations.humidity'), t('operations.camaCondition'), t('operations.equipmentStatus')].map((param, i) => (
-                <div key={i} className="flex gap-2">
-                  <span className="text-xs text-slate-500 w-32 pt-2">{param}</span>
-                  <select {...register(`inspection_details.${i}.status`)} className="h-10 flex-1 px-2 border border-slate-200 rounded text-sm">
-                    <option value="">--</option><option value="good"><CheckCheck size={14} className="inline-block text-green-600" aria-hidden="true" /> {t('operations.good')}</option><option value="regular"><AlertTriangle size={14} className="inline-block text-amber-600" aria-hidden="true" /> {t('operations.regular')}</option><option value="bad"><XCircle size={14} className="inline-block text-red-600" aria-hidden="true" /> {t('operations.bad')}</option>
+            <div className="space-y-3">
+              {[t('operations.temperature', 'Temperatura'), t('operations.humidity', 'Humedad'), t('operations.camaCondition', 'Condición de Cama'), t('operations.equipmentStatus', 'Estado de Equipos')].map((param, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <span className="text-sm text-slate-600 w-32 shrink-0">{param}</span>
+                  <select {...register(`inspection_details.${i}.status`)}
+                    className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                    <option value="">{t('operations.selectState', 'Seleccionar...')}</option>
+                    <option value="good">✅ {t('operations.good', 'Bueno')}</option>
+                    <option value="regular">⚠️ {t('operations.regular', 'Regular')}</option>
+                    <option value="bad">❌ {t('operations.bad', 'Malo')}</option>
                   </select>
                 </div>
               ))}
             </div>
-          </div>
+          </FormSection>
         )}
 
         {/* Observations */}

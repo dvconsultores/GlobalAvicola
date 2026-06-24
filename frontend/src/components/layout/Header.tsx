@@ -1,7 +1,7 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { Menu } from 'lucide-react'
+import { Menu, Globe } from 'lucide-react'
 import MobileDrawer from './MobileDrawer'
 
 export default function Header() {
@@ -27,15 +27,17 @@ export default function Header() {
             <p className="text-xs text-blue-300">{t('brand.tagline')}</p>
           </div>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
           <button
             onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
-            className="text-xs bg-blue-700 px-2 py-1 rounded"
+            className="text-xs bg-blue-700/80 hover:bg-blue-700 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+            title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
           >
-            {i18n.language === 'es' ? t('lang.shortEn') : t('lang.shortEs')}
+            <Globe size={14} />
+            {i18n.language === 'es' ? 'EN' : 'ES'}
           </button>
           {user && (
-            <button onClick={logout} className="text-xs text-blue-200">
+            <button onClick={logout} className="text-xs text-blue-200 hover:text-white px-2 py-1.5 transition-colors">
               {t('auth.logout')}
             </button>
           )}
