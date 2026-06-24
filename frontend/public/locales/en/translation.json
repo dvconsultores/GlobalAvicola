@@ -72,7 +72,9 @@
     "users": "Users",
     "settings": "Settings",
     "profile": "Profile",
-    "register": "Register"
+    "register": "Register",
+    "myPending": "My Pending",
+    "menu": "Menu"
   },
   "lang": {
     "toggleEs": "Español",
@@ -148,7 +150,8 @@
   "birdTypes": {
     "grandparent": "Grandparents",
     "breeder": "Breeders",
-    "broiler": "Broilers"
+    "broiler": "Broilers",
+    "hatchery": "Hatchery"
   },
   "lotStatus": {
     "active": "Active",
@@ -411,7 +414,8 @@
     "errorLoadingEvent": "Error loading operation",
     "eventNotFound": "Event not found",
     "backToOperations": "Back",
-    "sapRef": "SAP Ref."
+    "sapRef": "SAP Ref.",
+    "noPending": "No pending records found"
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -466,6 +470,14 @@
     "bajas": "deaths",
     "lot": "Lot",
     "status": "Status",
-    "lotCode": "Lot Code"
+    "lotCode": "Lot Code",
+    "transitionToProduction": "Start Production",
+    "transitionConfirm": "Confirm transition to Production Phase? The lot will start recording egg laying.",
+    "transitionError": "Error transitioning phase",
+    "currentPhase": "Active phase"
+  },
+  "phases": {
+    "rearing": "Rearing Phase",
+    "production": "Production Phase"
   }
 }

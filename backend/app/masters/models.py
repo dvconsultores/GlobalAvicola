@@ -33,6 +33,7 @@ class BirdTypeEnum(str, enum.Enum):
     GRANDPARENT = "grandparent"
     BREEDER = "breeder"
     BROILER = "broiler"
+    HATCHERY = "hatchery"
 
 
 class SexEnum(str, enum.Enum):

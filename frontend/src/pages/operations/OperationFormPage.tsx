@@ -6,42 +6,42 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
+import { EVENT_ICONS } from '../../components/Icon'
 
 // ============================================================
 // All 24 event types with their required movement sub-forms
 // ============================================================
 const EVENT_DEFS: Record<string, {
-  icon: string
   birdMovements?: boolean
   eggMovements?: boolean
   feedMovements?: boolean
   hatcheryParams?: boolean
   inspectionDetails?: boolean
 }> = {
-  bird_reception: { icon: '🐔', birdMovements: true },
-  bird_distribution: { icon: '📦', birdMovements: true },
-  bird_transfer: { icon: '🚛', birdMovements: true },
-  bird_exit: { icon: '📤', birdMovements: true },
-  feed_registration: { icon: '🌾', feedMovements: true },
-  weight_recording: { icon: '⚖️', birdMovements: true },
-  mortality_recording: { icon: '💀', birdMovements: true },
-  cull_recording: { icon: '🗑️', birdMovements: true },
-  vaccination: { icon: '💉', birdMovements: true },
-  medication: { icon: '💊', birdMovements: true },
-  farm_inspection: { icon: '🏭', inspectionDetails: true },
-  transport_inspection: { icon: '🚛', inspectionDetails: true },
-  hatchery_inspection: { icon: '🔥', inspectionDetails: true },
-  egg_collection: { icon: '🥚', eggMovements: true },
-  egg_classification: { icon: '📋', eggMovements: true },
-  egg_dispatch: { icon: '📤', eggMovements: true },
-  egg_reception_hatchery: { icon: '📥', eggMovements: true },
-  incubation_load: { icon: '🔥', hatcheryParams: true },
-  ovoscopy: { icon: '🔦', eggMovements: true },
-  transfer_to_hatcher: { icon: '🔄', hatcheryParams: true },
-  birth_registration: { icon: '🐤', birdMovements: true },
-  chick_dispatch: { icon: '📤', birdMovements: true },
-  lot_closure: { icon: '🔒' },
-  grandparent_import: { icon: '✈️', birdMovements: true },
+  bird_reception:          { birdMovements: true },
+  bird_distribution:       { birdMovements: true },
+  bird_transfer:           { birdMovements: true },
+  bird_exit:               { birdMovements: true },
+  feed_registration:       { feedMovements: true },
+  weight_recording:        { birdMovements: true },
+  mortality_recording:     { birdMovements: true },
+  cull_recording:          { birdMovements: true },
+  vaccination:             { birdMovements: true },
+  medication:              { birdMovements: true },
+  farm_inspection:         { inspectionDetails: true },
+  transport_inspection:    { inspectionDetails: true },
+  hatchery_inspection:     { inspectionDetails: true },
+  egg_collection:          { eggMovements: true },
+  egg_classification:      { eggMovements: true },
+  egg_dispatch:            { eggMovements: true },
+  egg_reception_hatchery:  { eggMovements: true },
+  incubation_load:         { hatcheryParams: true },
+  ovoscopy:                { eggMovements: true },
+  transfer_to_hatcher:     { hatcheryParams: true },
+  birth_registration:      { birdMovements: true },
+  chick_dispatch:          { birdMovements: true },
+  lot_closure:             {},
+  grandparent_import:      { birdMovements: true },
 }
 
 // ============================================================
@@ -170,8 +170,8 @@ export default function OperationFormPage() {
           <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.recordType')}</label>
           <select {...register('event_type')} className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
             <option value="">{t('operations.selectType')}</option>
-            {Object.entries(EVENT_DEFS).map(([key, val]) => (
-              <option key={key} value={key}>{val.icon} {t(`events.${key}`, key)}</option>
+            {Object.keys(EVENT_DEFS).map(key => (
+              <option key={key} value={key}>{t(`events.${key}`, key)}</option>
             ))}
           </select>
         </div>

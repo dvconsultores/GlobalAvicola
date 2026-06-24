@@ -10,6 +10,7 @@ import MasterListPage from './pages/masters/MasterListPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
+import MyPendingPage from './pages/operations/MyPendingPage'
 import ReviewCenter from './pages/review/ReviewCenter'
 import ReviewDetail from './pages/review/ReviewDetail'
 import CorrectionForm from './pages/review/CorrectionForm'
@@ -118,6 +119,7 @@ export default function App() {
           <Route path="/operations" element={<OperationListPage />} />
           <Route path="/operations/new" element={<OperationFormPage />} />
           <Route path="/operations/:id" element={<OperationDetailPage />} />
+          <Route path="/my-pending" element={<MyPendingPage />} />
           <Route path="/lots" element={<LotListPage />} />
           <Route path="/lots/:id" element={<LotDetailPage />} />
           <Route path="/reports" element={<ReportsPage />} />

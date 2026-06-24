@@ -1,13 +1,14 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Home, Bird, FileText, TrendingUp } from 'lucide-react'
+import { Home, Bird, FileText, TrendingUp, Clock } from 'lucide-react'
 
-// Mobile nav: field operators — Home, Lots, Operations, KPIs
+// Mobile nav: field operators — Home, Lots, Operations, KPIs, My Pending
 const mobileItems = [
-  { path: '/', labelKey: 'nav.home', Icon: Home, fallback: 'Home' },
-  { path: '/lots', labelKey: 'nav.lots', Icon: Bird, fallback: 'Lotes' },
-  { path: '/operations', labelKey: 'nav.operations', Icon: FileText, fallback: 'Registrar' },
-  { path: '/reports', labelKey: 'nav.reports', Icon: TrendingUp, fallback: 'KPIs' },
+  { path: '/',            labelKey: 'nav.home',       Icon: Home,       fallback: 'Home' },
+  { path: '/lots',        labelKey: 'nav.lots',        Icon: Bird,       fallback: 'Lotes' },
+  { path: '/operations',  labelKey: 'nav.operations',  Icon: FileText,   fallback: 'Registrar' },
+  { path: '/reports',     labelKey: 'nav.reports',     Icon: TrendingUp, fallback: 'KPIs' },
+  { path: '/my-pending',  labelKey: 'nav.myPending',   Icon: Clock,      fallback: 'Pendientes' },
 ]
 
 export default function MobileNav() {

@@ -1,53 +1,113 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Bird, Wheat, Skull, Syringe, Egg, Baby } from 'lucide-react'
+import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock } from 'lucide-react'
+import { EVENT_ICONS } from '../../components/Icon'
 import api from '../../services/api'
 
-
-
+// ─── Status badge colours ────────────────────────────────────────────────────
 const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-emerald-100 text-emerald-800', closed: 'bg-slate-100 text-slate-600', cancelled: 'bg-red-100 text-red-800',
+  active: 'bg-emerald-100 text-emerald-800',
+  closed: 'bg-slate-100 text-slate-600',
+  cancelled: 'bg-red-100 text-red-800',
 }
 
-// Operations available per bird_type (productive stage) — labels resolved at render via t()
-const STAGE_OPERATIONS: Record<string, { eventType: string; icon: any }[]> = {
+// ─── Operations per stage / phase ────────────────────────────────────────────
+// Each key maps to the ordered list of event_types available in that context.
+// Icons come from the canonical EVENT_ICONS map in Icon.tsx (lucide-react).
+
+const STAGE_OPERATIONS: Record<string, string[]> = {
+  // PROGENITORAS / ABUELAS — full cycle including egg production
   grandparent: [
-    { eventType: 'farm_inspection', icon: Activity },
-    { eventType: 'bird_reception', icon: Bird },
-    { eventType: 'bird_distribution', icon: Bird },
-    { eventType: 'feed_registration', icon: Wheat },
-    { eventType: 'weight_recording', icon: TrendingUp },
-    { eventType: 'mortality_recording', icon: Skull },
-    { eventType: 'vaccination', icon: Syringe },
-    { eventType: 'medication', icon: Syringe },
-    { eventType: 'bird_exit', icon: Bird },
+    'grandparent_import',
+    'farm_inspection',
+    'bird_reception',
+    'bird_distribution',
+    'transport_inspection',
+    'feed_registration',
+    'weight_recording',
+    'mortality_recording',
+    'cull_recording',
+    'vaccination',
+    'medication',
+    'egg_collection',
+    'egg_classification',
+    'egg_dispatch',
+    'bird_exit',
   ],
-  breeder: [
-    { eventType: 'farm_inspection', icon: Activity },
-    { eventType: 'bird_reception', icon: Bird },
-    { eventType: 'bird_distribution', icon: Bird },
-    { eventType: 'feed_registration', icon: Wheat },
-    { eventType: 'weight_recording', icon: TrendingUp },
-    { eventType: 'mortality_recording', icon: Skull },
-    { eventType: 'vaccination', icon: Syringe },
-    { eventType: 'medication', icon: Syringe },
-    { eventType: 'egg_collection', icon: Egg },
-    { eventType: 'egg_classification', icon: Egg },
-    { eventType: 'egg_dispatch', icon: Egg },
-    { eventType: 'bird_exit', icon: Bird },
+
+  // REPRODUCTORAS — FASE CRÍA (no hay operaciones de huevo aún)
+  breeder_rearing: [
+    'farm_inspection',
+    'bird_reception',
+    'bird_distribution',
+    'transport_inspection',
+    'feed_registration',
+    'weight_recording',
+    'mortality_recording',
+    'cull_recording',
+    'vaccination',
+    'medication',
+    'bird_exit',
   ],
+
+  // REPRODUCTORAS — FASE PRODUCCIÓN (ciclo diario de postura)
+  breeder_production: [
+    'farm_inspection',
+    'transport_inspection',
+    'feed_registration',
+    'weight_recording',
+    'mortality_recording',
+    'cull_recording',
+    'vaccination',
+    'medication',
+    'egg_collection',
+    'egg_classification',
+    'egg_dispatch',
+    'bird_exit',
+  ],
+
+  // INCUBADORA — desde recepción de huevos hasta despacho de pollitos
+  hatchery: [
+    'egg_reception_hatchery',
+    'hatchery_inspection',
+    'transport_inspection',
+    'incubation_load',
+    'ovoscopy',
+    'transfer_to_hatcher',
+    'birth_registration',
+    'chick_dispatch',
+  ],
+
+  // ENGORDE — desde recepción hasta desalojo a planta
   broiler: [
-    { eventType: 'farm_inspection', icon: Activity },
-    { eventType: 'bird_reception', icon: Baby },
-    { eventType: 'feed_registration', icon: Wheat },
-    { eventType: 'weight_recording', icon: TrendingUp },
-    { eventType: 'mortality_recording', icon: Skull },
-    { eventType: 'vaccination', icon: Syringe },
-    { eventType: 'medication', icon: Syringe },
-    { eventType: 'lot_closure', icon: Activity },
+    'farm_inspection',
+    'bird_reception',
+    'bird_distribution',
+    'transport_inspection',
+    'feed_registration',
+    'weight_recording',
+    'mortality_recording',
+    'cull_recording',
+    'vaccination',
+    'medication',
+    'bird_exit',
+    'lot_closure',
   ],
 }
+
+// ─── Determine stage ops key from lot + active phase ─────────────────────────
+function resolveStageKey(birdType: string, activePhase: string | null): string {
+  if (birdType === 'breeder') {
+    // If phase name / code contains production keywords → production ops
+    if (activePhase && /producc|production|hf|huevo/i.test(activePhase)) {
+      return 'breeder_production'
+    }
+    return 'breeder_rearing'
+  }
+  return birdType in STAGE_OPERATIONS ? birdType : 'broiler'
+}
+
 
 export default function LotDetailPage() {
   const { t } = useTranslation()
@@ -55,42 +115,56 @@ export default function LotDetailPage() {
   const [lot, setLot] = useState<any>(null)
   const [kpis, setKpis] = useState<any>(null)
   const [events, setEvents] = useState<any[]>([])
+  const [phases, setPhases] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [closeResult, setCloseResult] = useState<any>(null)
   const [closing, setClosing] = useState(false)
+  const [transitioning, setTransitioning] = useState(false)
 
   useEffect(() => {
-    const fetch = async () => {
+    const fetchAll = async () => {
       try {
-        // Get all lots and find this one
-        const { data: lots } = await api.get('/lots?limit=100')
+        const { data: lots } = await api.get('/lots?limit=200')
         const found = (lots as any[]).find((l: any) => l.id === Number(id))
         setLot(found || null)
 
-        // Get KPIs
-        const { data: kpiData } = await api.get(`/reports/kpis?lot_id=${id}`)
-        setKpis(kpiData)
-
-        // Get events for this lot
-        const { data: evts } = await api.get(`/operations?lot_id=${id}&limit=50`)
-        setEvents(evts || [])
+        const [kpiRes, evtRes, phaseRes] = await Promise.allSettled([
+          api.get(`/reports/kpis?lot_id=${id}`),
+          api.get(`/operations?lot_id=${id}&limit=50`),
+          api.get(`/lots/${id}/phases`),
+        ])
+        if (kpiRes.status === 'fulfilled') setKpis(kpiRes.value.data)
+        if (evtRes.status === 'fulfilled') setEvents(evtRes.value.data || [])
+        if (phaseRes.status === 'fulfilled') setPhases(phaseRes.value.data || [])
       } catch (err) {
         console.error(err)
       } finally {
         setLoading(false)
       }
     }
-    fetch()
+    fetchAll()
   }, [id])
 
   if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
   if (!lot) return <div className="p-6 text-slate-500">{t('lots.lotNotFound')}</div>
 
   const birdType = lot.bird_type || 'broiler'
-  const stageOps = STAGE_OPERATIONS[birdType] || STAGE_OPERATIONS.broiler
+  const activePhase = phases.find((p: any) => p.is_active)
+  const activePhaseName: string | null = activePhase?.phase?.name ?? activePhase?.phase?.code ?? null
+  const stageKey = resolveStageKey(birdType, activePhaseName)
+  const stageOps = STAGE_OPERATIONS[stageKey] ?? STAGE_OPERATIONS.broiler
   const stageLabel = t(`birdTypes.${birdType}`, birdType)
 
-  // G-09: Close lot with summary
+  // Phase label for breeder badge
+  const phaseLabel = stageKey === 'breeder_production'
+    ? t('phases.production', 'Producción')
+    : stageKey === 'breeder_rearing'
+    ? t('phases.rearing', 'Cría')
+    : null
+
+  // Can transition from rearing to production
+  const canTransition = birdType === 'breeder' && stageKey === 'breeder_rearing' && lot.status === 'active'
+
   const handleCloseLot = async () => {
     if (!confirm(t('lots.closeConfirm'))) return
     setClosing(true)
@@ -105,7 +179,27 @@ export default function LotDetailPage() {
     }
   }
 
-  // Group events by type
+  const handleTransitionPhase = async () => {
+    if (!confirm(t('lots.transitionConfirm', '¿Confirmar transición a Fase Producción? Esta acción no se puede deshacer.'))) return
+    setTransitioning(true)
+    try {
+      const today = new Date().toISOString().split('T')[0]
+      await api.post(`/lots/${id}/phases`, {
+        phase_code: 'production',
+        start_date: today,
+        start_population_male: activePhase?.start_population_male ?? 0,
+        start_population_female: activePhase?.start_population_female ?? 0,
+      })
+      const { data: newPhases } = await api.get(`/lots/${id}/phases`)
+      setPhases(newPhases || [])
+    } catch (err: any) {
+      alert(err.response?.data?.detail || t('lots.transitionError', 'Error al transicionar fase'))
+    } finally {
+      setTransitioning(false)
+    }
+  }
+
+  // Group events by type for weekly table
   const eventsByType: Record<string, any[]> = {}
   events.forEach(e => {
     if (!eventsByType[e.event_type]) eventsByType[e.event_type] = []
@@ -114,29 +208,57 @@ export default function LotDetailPage() {
 
   return (
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="flex items-center gap-3 mb-6">
-        <Link to="/lots" className="text-slate-400 hover:text-slate-600"><ArrowLeft size={20} /></Link>
-        <div className="flex-1">
-          <h1 className="text-2xl font-bold text-[#1E3A5F]">{lot.lot_code || `${t('lots.title')} #${lot.id}`}</h1>
-          <p className="text-sm text-slate-500">{stageLabel} · {t(`lotStatus.${lot.status}`, lot.status)}</p>
+        <Link to="/lots" className="text-slate-400 hover:text-slate-600 transition-colors">
+          <ArrowLeft size={20} />
+        </Link>
+        <div className="flex-1 min-w-0">
+          <h1 className="text-2xl font-bold text-[#1E3A5F] truncate">
+            {lot.lot_code || `${t('lots.title')} #${lot.id}`}
+          </h1>
+          <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+            <span className="text-sm text-slate-500">{stageLabel}</span>
+            {phaseLabel && (
+              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                {phaseLabel}
+              </span>
+            )}
+            <span className="text-slate-300">·</span>
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 text-slate-600'}`}>
+              {t(`lotStatus.${lot.status}`, lot.status)}
+            </span>
+          </div>
         </div>
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100'}`}>
-          {t(`lotStatus.${lot.status}`, lot.status)}
-        </span>
-        {/* G-09: Close lot button */}
+
+        {/* Phase transition button (Cría → Producción) */}
+        {canTransition && (
+          <button
+            onClick={handleTransitionPhase}
+            disabled={transitioning}
+            className="px-3 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 whitespace-nowrap"
+          >
+            {transitioning ? t('common.saving') : t('lots.transitionToProduction', 'Iniciar Producción')}
+          </button>
+        )}
+
+        {/* Close lot button */}
         {lot.status === 'active' && (
-          <button onClick={handleCloseLot} disabled={closing}
-            className="px-4 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition disabled:opacity-50">
-            {closing ? t('lots.closing') : '🔒 ' + t('lots.closeButton')}
+          <button
+            onClick={handleCloseLot}
+            disabled={closing}
+            className="flex items-center gap-1.5 px-3 py-2 bg-red-600 text-white rounded-lg text-sm font-medium hover:bg-red-700 transition-colors disabled:opacity-50"
+          >
+            <Lock size={14} />
+            {closing ? t('lots.closing') : t('lots.closeButton')}
           </button>
         )}
       </div>
 
-      {/* G-09: Close summary modal */}
+      {/* Close summary */}
       {closeResult && (
         <div className="mb-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl">
-          <h3 className="text-lg font-bold text-emerald-800 mb-3">✅ {t('lots.closedSummary')}</h3>
+          <h3 className="text-lg font-bold text-emerald-800 mb-3">{t('lots.closedSummary')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
             <div><span className="text-slate-500">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
             <div><span className="text-slate-500">{t('lots.totalMortality')}:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
@@ -152,20 +274,28 @@ export default function LotDetailPage() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left: Operations Panel */}
         <div className="lg:col-span-2 space-y-6">
-          {/* Quick Actions — Stage-specific operations */}
+          {/* ── Quick Actions: stage-specific operations ── */}
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
-              <Plus size={18} /> {t('lots.registerOperation')} — {stageLabel}
+            <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+              <Plus size={18} className="text-[#2563EB]" />
+              {t('lots.registerOperation')}
+              {phaseLabel && (
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                  {phaseLabel}
+                </span>
+              )}
             </h2>
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {stageOps.map(op => {
-                const Icon = op.icon
+              {stageOps.map(eventType => {
+                const Icon = EVENT_ICONS[eventType] ?? Activity
                 return (
-                  <Link key={op.eventType}
-                    to={`/operations/new?type=${op.eventType}&lot_id=${lot.id}`}
-                    className="flex flex-col items-center gap-1 p-3 rounded-lg border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50 transition text-center">
-                    <Icon size={22} className="text-[#2563EB]" />
-                    <span className="text-xs text-slate-600 leading-tight">{t(`eventsShort.${op.eventType}`, op.eventType)}</span>
+                  <Link
+                    key={eventType}
+                    to={`/operations/new?type=${eventType}&lot_id=${lot.id}`}
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50 transition-colors text-center group"
+                  >
+                    <Icon size={20} className="text-[#2563EB] group-hover:scale-110 transition-transform" />
+                    <span className="text-xs text-slate-600 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
                   </Link>
                 )
               })}
@@ -200,7 +330,8 @@ export default function LotDetailPage() {
             if (weeks.length === 0) return null
             return (
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mt-4">
-                <h2 className="font-semibold text-slate-700 mb-3">📅 {t('lots.weeklyView')}</h2>
+                <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                <Calendar size={18} className="text-[#2563EB]" /> {t('lots.weeklyView')}</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead className="bg-slate-50">

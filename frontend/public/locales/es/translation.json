@@ -72,7 +72,9 @@
     "users": "Usuarios",
     "settings": "Configuración",
     "profile": "Perfil",
-    "register": "Registrar"
+    "register": "Registrar",
+    "myPending": "Mis Pendientes",
+    "menu": "Menú"
   },
   "lang": {
     "toggleEs": "Español",
@@ -148,7 +150,8 @@
   "birdTypes": {
     "grandparent": "Progenitoras",
     "breeder": "Reproductoras",
-    "broiler": "Engorde"
+    "broiler": "Engorde",
+    "hatchery": "Incubadora"
   },
   "lotStatus": {
     "active": "Activo",
@@ -411,7 +414,8 @@
     "errorLoadingEvent": "Error al cargar operación",
     "eventNotFound": "Evento no encontrado",
     "backToOperations": "Volver",
-    "sapRef": "Ref. SAP"
+    "sapRef": "Ref. SAP",
+    "noPending": "No tienes registros pendientes"
   },
   "weekly": {
     "weekNumber": "N° Sem",
@@ -466,6 +470,14 @@
     "bajas": "bajas",
     "lot": "Lote",
     "status": "Estado",
-    "lotCode": "Código de Lote"
+    "lotCode": "Código de Lote",
+    "transitionToProduction": "Iniciar Producción",
+    "transitionConfirm": "¿Confirmar transición a Fase Producción? El lote pasará a registrar postura de huevos.",
+    "transitionError": "Error al transicionar fase",
+    "currentPhase": "Fase activa"
+  },
+  "phases": {
+    "rearing": "Fase Cría",
+    "production": "Fase Producción"
   }
 }
