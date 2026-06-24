@@ -139,6 +139,39 @@
     "lot_closure": "Cierre de Lote",
     "grandparent_import": "Importación"
   },
+  "process": {
+    "title": "Registrar Operación",
+    "subtitle": "¿Qué proceso vas a registrar?",
+    "step1": "1 · Proceso",
+    "step2": "2 · Lote y Operación",
+    "step3": "3 · Datos",
+    "chooseOperation": "Elige la operación",
+    "selectLotFirst": "Selecciona un lote para habilitar las operaciones.",
+    "noLots": "No hay lotes activos para este proceso.",
+    "stages": {
+      "grandparent": "Progenitoras / Abuelas",
+      "breeder_rearing": "Reproductoras — Cría",
+      "breeder_production": "Reproductoras — Producción",
+      "hatchery": "Incubadora",
+      "broiler": "Pollo de Engorde"
+    },
+    "stagesDesc": {
+      "grandparent": "Importación, crianza y producción de huevos de abuelas",
+      "breeder_rearing": "Levante de reproductoras antes de producción",
+      "breeder_production": "Producción y recolección diaria de huevo fértil",
+      "hatchery": "Recepción de huevo, incubación y nacimiento de pollitos",
+      "broiler": "Recepción, crianza y cierre de lotes de engorde"
+    },
+    "categories": {
+      "movement": "Movimiento de Aves",
+      "daily": "Registros Diarios",
+      "health": "Sanidad",
+      "inspection": "Inspección",
+      "eggs": "Huevos",
+      "incubation": "Incubación",
+      "lifecycle": "Ciclo de Vida"
+    }
+  },
   "status": {
     "registered": "Registrado",
     "pending_review": "Enviado a Revisión",

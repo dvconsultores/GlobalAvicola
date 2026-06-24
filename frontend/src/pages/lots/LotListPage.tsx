@@ -74,10 +74,10 @@ export default function LotListPage() {
             <div className="flex items-center justify-between mb-2">
               <span className="font-mono font-semibold text-[#1E3A5F]">{lot.lot_code || `L-${lot.id}`}</span>
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100'}`}>
-                {t(`lotStatus.${lot.status}`, lot.status)}
+                {t(`lotStatus.${lot.status}`, String(lot.status))}
               </span>
             </div>
-            <p className="text-sm text-slate-600">{t(`birdTypes.${lot.bird_type}`, lot.bird_type || t('lots.noType'))}</p>
+            <p className="text-sm text-slate-600">{t(`birdTypes.${lot.bird_type}`, String(lot.bird_type || t('lots.noType')))}</p>
             <p className="text-xs text-slate-400 mt-1">{t('lots.startPrefix')}{lot.start_date || '—'}</p>
           </Link>
         ))}
@@ -101,10 +101,10 @@ export default function LotListPage() {
             {lots.map((lot: any) => (
               <tr key={lot.id} className="hover:bg-slate-50 transition">
                 <td className="px-4 py-3 font-mono font-medium text-[#1E3A5F]">{lot.lot_code || `L-${lot.id}`}</td>
-                <td className="px-4 py-3">{t(`birdTypes.${lot.bird_type}`, lot.bird_type || '—')}</td>
+                <td className="px-4 py-3">{t(`birdTypes.${lot.bird_type}`, String(lot.bird_type || '—'))}</td>
                 <td className="px-4 py-3">
                   <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100'}`}>
-                    {t(`lotStatus.${lot.status}`, lot.status)}
+                    {t(`lotStatus.${lot.status}`, String(lot.status))}
                   </span>
                 </td>
                 <td className="px-4 py-3 text-slate-500">{lot.start_date || '—'}</td>

@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom'
 import { CheckCircle, Check, Play, Undo2, ZoomIn, Package, Search } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
+import { EVENT_ICON_MAP } from '../../data/processCatalog'
+
+const EVT_KEYS = Object.keys(EVENT_ICON_MAP)
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
@@ -220,7 +223,7 @@ export default function ReviewCenter() {
                   <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)} className="rounded" />
                 </td>
                 <td className="px-4 py-3 font-mono text-xs">#{event.id}</td>
-                <td className="px-4 py-3">{EVENT_LABELS[event.event_type] || event.event_type}</td>
+                <td className="px-4 py-3">{getEventLabel(t, event.event_type)}</td>
                 <td className="px-4 py-3 font-mono text-xs">L-{event.lot_id}</td>
                 <td className="px-4 py-3 text-slate-500">{event.event_date}</td>
                 <td className="px-4 py-3">

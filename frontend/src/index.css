@@ -6,6 +6,9 @@
 @import '@fontsource/inter/600.css';
 @import '@fontsource/inter/700.css';
 
+/* TailwindCSS v4 — utility engine (package-based, no CDN) */
+@import 'tailwindcss';
+
 :root {
   --color-primary: #1E3A5F;
   --color-primary-light: #2563EB;
@@ -41,55 +44,13 @@ body {
 #root {
   min-height: 100vh;
 }
-  box-sizing: border-box;
-}
 
 body {
   margin: 0;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
-  }
-}
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
-  }
-}
 p {
   margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
 }
 
 /* Toast animation */

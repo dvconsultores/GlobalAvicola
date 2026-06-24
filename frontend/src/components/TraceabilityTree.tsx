@@ -6,10 +6,10 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Egg, Baby, ArrowRight, RefreshCw, Link2, Plus, X } from 'lucide-react'
-import api from '../../services/api'
-import { Badge, statusToVariant } from '../ui'
-import { Button, Input, Modal } from '../ui'
+import { Egg, Baby, ArrowRight, RefreshCw } from 'lucide-react'
+import api from '../services/api'
+import { Badge, statusToVariant } from './ui'
+import { Button, Input, Modal } from './ui'
 
 interface LotRef {
   id: number

@@ -85,7 +85,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-white/10">
           <div>
             <p className="font-bold text-sm">{t('brand.name', 'Global Avícola')}</p>
-            {user && <p className="text-xs text-blue-300 mt-0.5">{user.full_name ?? user.username}</p>}
+            {user && <p className="text-xs text-blue-300 mt-0.5">{[user.first_name, user.last_name].filter(Boolean).join(' ') || user.username}</p>}
           </div>
           <button
             ref={closeRef}

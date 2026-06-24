@@ -19,7 +19,7 @@ const BIRD_TYPES = ['grandparent', 'breeder', 'broiler', 'hatchery'] as const
 
 const schema = z.object({
   lot_code:        z.string().min(2, 'Mínimo 2 caracteres').max(50),
-  bird_type:       z.enum(BIRD_TYPES, { required_error: 'Requerido' }),
+  bird_type:       z.enum(BIRD_TYPES, { error: 'Requerido' }),
   farm_id:         z.coerce.number().min(1, 'Requerido'),
   house_id:        z.coerce.number().optional().nullable(),
   genetic_line_id: z.coerce.number().optional().nullable(),
@@ -28,7 +28,8 @@ const schema = z.object({
   sap_reference:   z.string().optional(),
 })
 
-type FormValues = z.infer<typeof schema>
+type FormInput = z.input<typeof schema>
+type FormValues = z.output<typeof schema>
 
 interface SelectOption { id: number; name: string; code?: string }
 
@@ -48,7 +49,7 @@ export default function LotFormPage() {
     handleSubmit,
     watch,
     formState: { errors, isSubmitting },
-  } = useForm<FormValues>({ resolver: zodResolver(schema) })
+  } = useForm<FormInput, unknown, FormValues>({ resolver: zodResolver(schema) })
 
   const selectedFarmId = watch('farm_id')
 

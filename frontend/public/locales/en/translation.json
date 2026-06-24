@@ -139,6 +139,39 @@
     "lot_closure": "Lot Closure",
     "grandparent_import": "Import"
   },
+  "process": {
+    "title": "Register Operation",
+    "subtitle": "Which process are you recording?",
+    "step1": "1 · Process",
+    "step2": "2 · Lot & Operation",
+    "step3": "3 · Data",
+    "chooseOperation": "Choose the operation",
+    "selectLotFirst": "Select a lot to enable operations.",
+    "noLots": "No active lots for this process.",
+    "stages": {
+      "grandparent": "Grandparents",
+      "breeder_rearing": "Breeders — Rearing",
+      "breeder_production": "Breeders — Production",
+      "hatchery": "Hatchery",
+      "broiler": "Broilers"
+    },
+    "stagesDesc": {
+      "grandparent": "Import, rearing and egg production of grandparents",
+      "breeder_rearing": "Breeder rearing before production",
+      "breeder_production": "Production and daily fertile egg collection",
+      "hatchery": "Egg reception, incubation and chick hatching",
+      "broiler": "Reception, rearing and closing of broiler lots"
+    },
+    "categories": {
+      "movement": "Bird Movement",
+      "daily": "Daily Records",
+      "health": "Health",
+      "inspection": "Inspection",
+      "eggs": "Eggs",
+      "incubation": "Incubation",
+      "lifecycle": "Lifecycle"
+    }
+  },
   "status": {
     "registered": "Registered",
     "pending_review": "Pending Review",

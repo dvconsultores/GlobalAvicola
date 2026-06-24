@@ -5,6 +5,7 @@ import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock } from 'lucide-re
 import { EVENT_ICONS } from '../../components/Icon'
 import { Button, Modal, Input } from '../../components/ui'
 import { TraceabilityTree } from '../../components/TraceabilityTree'
+import { STAGE_OPERATIONS, resolveStageKey } from '../../data/processCatalog'
 import api from '../../services/api'
 
 // ─── Status badge colours ────────────────────────────────────────────────────
@@ -12,102 +13,6 @@ const STATUS_COLORS: Record<string, string> = {
   active: 'bg-emerald-100 text-emerald-800',
   closed: 'bg-slate-100 text-slate-600',
   cancelled: 'bg-red-100 text-red-800',
-}
-
-// ─── Operations per stage / phase ────────────────────────────────────────────
-// Each key maps to the ordered list of event_types available in that context.
-// Icons come from the canonical EVENT_ICONS map in Icon.tsx (lucide-react).
-
-const STAGE_OPERATIONS: Record<string, string[]> = {
-  // PROGENITORAS / ABUELAS — full cycle including egg production
-  grandparent: [
-    'grandparent_import',
-    'farm_inspection',
-    'bird_reception',
-    'bird_distribution',
-    'transport_inspection',
-    'feed_registration',
-    'weight_recording',
-    'mortality_recording',
-    'cull_recording',
-    'vaccination',
-    'medication',
-    'egg_collection',
-    'egg_classification',
-    'egg_dispatch',
-    'bird_exit',
-  ],
-
-  // REPRODUCTORAS — FASE CRÍA (no hay operaciones de huevo aún)
-  breeder_rearing: [
-    'farm_inspection',
-    'bird_reception',
-    'bird_distribution',
-    'transport_inspection',
-    'feed_registration',
-    'weight_recording',
-    'mortality_recording',
-    'cull_recording',
-    'vaccination',
-    'medication',
-    'bird_exit',
-  ],
-
-  // REPRODUCTORAS — FASE PRODUCCIÓN (ciclo diario de postura)
-  breeder_production: [
-    'farm_inspection',
-    'transport_inspection',
-    'feed_registration',
-    'weight_recording',
-    'mortality_recording',
-    'cull_recording',
-    'vaccination',
-    'medication',
-    'egg_collection',
-    'egg_classification',
-    'egg_dispatch',
-    'bird_exit',
-  ],
-
-  // INCUBADORA — desde recepción de huevos hasta despacho de pollitos
-  hatchery: [
-    'egg_reception_hatchery',
-    'hatchery_inspection',
-    'transport_inspection',
-    'incubation_load',
-    'ovoscopy',
-    'transfer_to_hatcher',
-    'birth_registration',
-    'chick_dispatch',
-  ],
-
-  // ENGORDE — desde recepción hasta desalojo a planta
-  broiler: [
-    'farm_inspection',
-    'bird_reception',
-    'bird_distribution',
-    'transport_inspection',
-    'feed_registration',
-    'weight_recording',
-    'mortality_recording',
-    'cull_recording',
-    'vaccination',
-    'medication',
-    'bird_exit',
-    'lot_closure',
-  ],
-}
-
-// ─── Determine stage ops key from lot + active phase ─────────────────────────
-function resolveStageKey(birdType: string, activePhase: string | null): string {
-  if (birdType === 'breeder') {
-    // If phase name / code contains production keywords → production ops
-    if (activePhase && /producc|production|hf|huevo/i.test(activePhase)) {
-      return 'breeder_production'
-    }
-    return 'breeder_rearing'
-  }
-  return birdType in STAGE_OPERATIONS ? birdType : 'broiler'
 }
 
 
@@ -156,7 +61,7 @@ export default function LotDetailPage() {
   if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
   if (!lot) return <div className="p-6 text-slate-500">{t('lots.lotNotFound')}</div>
 
-  const birdType = lot.bird_type || 'broiler'
+  const birdType: string = lot.bird_type || 'broiler'
   const activePhase = phases.find((p: any) => p.is_active)
   const activePhaseName: string | null = activePhase?.phase?.name ?? activePhase?.phase?.code ?? null
   const stageKey = resolveStageKey(birdType, activePhaseName)
@@ -214,6 +119,7 @@ export default function LotDetailPage() {
   })
 
   return (
+    <>
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* ── Header ── */}
       <div className="flex items-center gap-3 mb-6">
@@ -233,7 +139,7 @@ export default function LotDetailPage() {
             )}
             <span className="text-slate-300">·</span>
             <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 text-slate-600'}`}>
-              {t(`lotStatus.${lot.status}`, lot.status)}
+              {t(`lotStatus.${lot.status}`, String(lot.status))}
             </span>
           </div>
         </div>
@@ -527,5 +433,6 @@ export default function LotDetailPage() {
         {t('lots.closeWarning', 'Se generará un resumen final con todas las métricas del lote.')}
       </p>
     </Modal>
+    </>
   )
 }

@@ -76,7 +76,7 @@ export default function LoginPage() {
                 placeholder="admin"
               />
               {errors.username && (
-                <p className="text-red-500 text-xs mt-1">{t(errors.username.message)}</p>
+                <p className="text-red-500 text-xs mt-1">{t(errors.username.message ?? '')}</p>
               )}
             </div>
 
@@ -91,7 +91,7 @@ export default function LoginPage() {
                 placeholder="••••••••"
               />
               {errors.password && (
-                <p className="text-red-500 text-xs mt-1">{t(errors.password.message)}</p>
+                <p className="text-red-500 text-xs mt-1">{t(errors.password.message ?? '')}</p>
               )}
             </div>
 

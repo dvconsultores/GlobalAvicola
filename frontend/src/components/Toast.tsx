@@ -1,6 +1,5 @@
 import { useState, useCallback, createContext, useContext } from 'react'
 import type { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react'
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
