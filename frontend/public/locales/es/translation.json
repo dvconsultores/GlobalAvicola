@@ -43,7 +43,9 @@
     "errorUnexpected": "Error inesperado",
     "new": "Nuevo",
     "confirmDelete": "¿Eliminar registro?",
-    "deleteWarning": "Esta acción no se puede deshacer."
+    "deleteWarning": "Esta acción no se puede deshacer.",
+    "retry": "Reintentar",
+    "refresh": "Actualizar"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -508,5 +510,17 @@
   "errors": {
     "saveFailed": "Error al guardar",
     "loadFailed": "Error al cargar"
+  },
+  "traceability": {
+    "title": "Trazabilidad Generacional",
+    "eggsSent": "Huevos enviados a incubadora",
+    "eggsReceived": "Huevos recibidos de reproductoras",
+    "chicksSent": "Pollitos enviados a engorde",
+    "chicksReceived": "Pollitos recibidos de incubadora",
+    "eggs": "huevos",
+    "chicks": "pollitos",
+    "received": "recibidos",
+    "noLinks": "Sin vínculos de trazabilidad generacional registrados.",
+    "loadError": "Error al cargar trazabilidad"
   }
 }

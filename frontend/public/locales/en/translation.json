@@ -43,7 +43,9 @@
     "errorUnexpected": "Unexpected error",
     "new": "New",
     "confirmDelete": "Delete record?",
-    "deleteWarning": "This action cannot be undone."
+    "deleteWarning": "This action cannot be undone.",
+    "retry": "Retry",
+    "refresh": "Refresh"
   },
   "auth": {
     "login": "Sign In",
@@ -508,5 +510,17 @@
   "errors": {
     "saveFailed": "Failed to save",
     "loadFailed": "Failed to load"
+  },
+  "traceability": {
+    "title": "Generational Traceability",
+    "eggsSent": "Eggs dispatched to hatchery",
+    "eggsReceived": "Eggs received from breeders",
+    "chicksSent": "Chicks dispatched to broiler",
+    "chicksReceived": "Chicks received from hatchery",
+    "eggs": "eggs",
+    "chicks": "chicks",
+    "received": "received",
+    "noLinks": "No generational traceability links recorded.",
+    "loadError": "Failed to load traceability"
   }
 }

@@ -289,6 +289,14 @@ class ApprovalService:
         """Approve a single event."""
         event = await self._get_event_for_approval(event_id)
 
+        # BR-14: Operator cannot approve own data (segregation of duties)
+        from ..operations.validators import validate_segregation, BusinessRuleViolation
+        from fastapi import HTTPException, status as http_status
+        try:
+            validate_segregation(event.registered_by_id, self.current_user["id"], "aprobar")
+        except BusinessRuleViolation as e:
+            raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail=e.message)
+
         event.status = EventStatus.APPROVED
         event.approved_by_id = self.current_user["id"]
         if observations:

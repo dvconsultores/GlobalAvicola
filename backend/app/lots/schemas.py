@@ -120,3 +120,71 @@ class OpeningBalanceRead(OpeningBalanceBase):
     activated_by_id: int
     created_at: datetime
     model_config = {"from_attributes": True}
+
+
+# ============================================================
+# T-083: Generational Traceability
+# ============================================================
+
+class LotRef(BaseModel):
+    """Minimal lot reference for traceability tree nodes."""
+    id: int
+    lot_code: str
+    bird_type: Optional[str] = None
+    status: str
+    model_config = {"from_attributes": True}
+
+
+class EggBatchRead(BaseModel):
+    id: int
+    source_lot_id: int
+    hatchery_lot_id: Optional[int] = None
+    quantity_dispatched: int
+    quantity_received: Optional[int] = None
+    dispatch_date: date
+    reception_date: Optional[date] = None
+    source_lot: Optional[LotRef] = None
+    hatchery_lot: Optional[LotRef] = None
+    model_config = {"from_attributes": True}
+
+
+class ChickBatchRead(BaseModel):
+    id: int
+    hatchery_lot_id: int
+    broiler_lot_id: Optional[int] = None
+    egg_batch_id: Optional[int] = None
+    quantity_dispatched: int
+    quantity_received: Optional[int] = None
+    dispatch_date: date
+    reception_date: Optional[date] = None
+    hatchery_lot: Optional[LotRef] = None
+    broiler_lot: Optional[LotRef] = None
+    model_config = {"from_attributes": True}
+
+
+class EggBatchCreate(BaseModel):
+    source_lot_id: int
+    hatchery_lot_id: Optional[int] = None
+    dispatch_event_id: Optional[int] = None
+    quantity_dispatched: int
+    dispatch_date: date
+    notes: Optional[str] = None
+
+
+class ChickBatchCreate(BaseModel):
+    hatchery_lot_id: int
+    broiler_lot_id: Optional[int] = None
+    dispatch_event_id: Optional[int] = None
+    egg_batch_id: Optional[int] = None
+    quantity_dispatched: int
+    dispatch_date: date
+    notes: Optional[str] = None
+
+
+class TraceabilityNode(BaseModel):
+    """Full generational traceability tree for a lot."""
+    lot: LotRef
+    egg_batches_sent: list[EggBatchRead] = []        # batches this lot sent upstream
+    egg_batches_received: list[EggBatchRead] = []    # batches received (hatchery)
+    chick_batches_sent: list[ChickBatchRead] = []    # chicks dispatched to broiler
+    chick_batches_received: list[ChickBatchRead] = []  # chicks received (broiler)

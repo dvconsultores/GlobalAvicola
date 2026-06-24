@@ -1,26 +1,59 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import { ArrowLeft, Download } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
+import { Button } from '../../components/ui'
+import { exportToExcel, exportToPDF, lotReportToRows } from '../../utils/export'
 
 export default function LotReportPage() {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const [report, setReport] = useState<any>(null)
+  const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
   const toast = useToast()
 
   useEffect(() => {
     api.get(`/reports/lot/${id}`).then(r => setReport(r.data)).catch((e: any) => toast.error(getErrorMessage(e, t('reports.errorLoading'))))
   }, [id])
 
+  const handleExport = async (format: 'excel'|'pdf') => {
+    setExporting(format)
+    try {
+      const headers: Record<string, string> = {
+        lot_code: t('lots.code', 'Código'), bird_type: t('lots.type', 'Tipo'),
+        status: t('common.status', 'Estado'), start_date: t('lots.start', 'Inicio'),
+        end_date: t('lots.end', 'Cierre'), total_birds: t('reports.birds', 'Aves'),
+        males: t('reports.males', 'Machos'), females: t('reports.females', 'Hembras'),
+        total_events: t('dashboard.totalEvents', 'Total eventos'),
+      }
+      const rows = lotReportToRows(report)
+      const lotCode = report?.lot?.lot_code ?? id
+      const filename = `GlobalAvicola_Lote_${lotCode}_${new Date().toISOString().slice(0,10)}`
+      if (format === 'excel') await exportToExcel(rows, headers, filename)
+      else await exportToPDF(rows, headers, `${t('reports.lotReport', 'Reporte de Lote')}: ${lotCode}`, filename)
+    } finally {
+      setExporting(null)
+    }
+  }
+
   if (!report) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
 
   return (
     <div className="p-4 sm:p-6 max-w-4xl mx-auto">
       <Link to="/reports" className="text-slate-400 hover:text-slate-600 flex items-center gap-1 mb-4"><ArrowLeft size={16} /> {t('nav.reports')}</Link>
-      <h1 className="text-2xl font-bold text-[#1E3A5F] mb-6">{t('reports.lotReport')}: {report.lot?.lot_code || `${t('lots.title')} #${report.lot?.id}`}</h1>
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
+        <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('reports.lotReport')}: {report.lot?.lot_code || `${t('lots.title')} #${report.lot?.id}`}</h1>
+        <div className="flex gap-2">
+          <Button size="sm" variant="secondary" leftIcon={<Download size={14} />} loading={exporting === 'excel'} onClick={() => handleExport('excel')}>
+            Excel
+          </Button>
+          <Button size="sm" variant="danger" leftIcon={<Download size={14} />} loading={exporting === 'pdf'} onClick={() => handleExport('pdf')}>
+            PDF
+          </Button>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">

@@ -1,0 +1,236 @@
+/**
+ * TraceabilityTree — Árbol de trazabilidad generacional para un lote
+ * REPRODUCTORAS → INCUBADORA → ENGORDE
+ * Consume GET /lots/{id}/traceability
+ */
+import { useState, useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
+import { Egg, Baby, ArrowRight, RefreshCw } from 'lucide-react'
+import api from '../../services/api'
+import { Badge, statusToVariant } from '../ui'
+
+interface LotRef {
+  id: number
+  lot_code: string
+  bird_type?: string
+  status: string
+}
+
+interface EggBatch {
+  id: number
+  source_lot_id: number
+  hatchery_lot_id?: number
+  quantity_dispatched: number
+  quantity_received?: number
+  dispatch_date: string
+  source_lot?: LotRef
+  hatchery_lot?: LotRef
+}
+
+interface ChickBatch {
+  id: number
+  hatchery_lot_id: number
+  broiler_lot_id?: number
+  quantity_dispatched: number
+  quantity_received?: number
+  dispatch_date: string
+  hatchery_lot?: LotRef
+  broiler_lot?: LotRef
+}
+
+interface TraceabilityNode {
+  lot: LotRef
+  egg_batches_sent: EggBatch[]
+  egg_batches_received: EggBatch[]
+  chick_batches_sent: ChickBatch[]
+  chick_batches_received: ChickBatch[]
+}
+
+interface Props { lotId: number | string }
+
+function LotChip({ lot }: { lot: LotRef }) {
+  return (
+    <Link
+      to={`/lots/${lot.id}`}
+      className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#1E3A5F]/5 border border-[#1E3A5F]/20 text-[#1E3A5F] text-xs font-mono font-semibold hover:bg-[#1E3A5F]/10 transition-colors"
+    >
+      {lot.lot_code}
+      <Badge variant={statusToVariant(lot.status)} size="sm">{lot.status}</Badge>
+    </Link>
+  )
+}
+
+export function TraceabilityTree({ lotId }: Props) {
+  const { t } = useTranslation()
+  const [data, setData] = useState<TraceabilityNode | null>(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(false)
+
+  const load = async () => {
+    setLoading(true)
+    setError(false)
+    try {
+      const { data: d } = await api.get(`/lots/${lotId}/traceability`)
+      setData(d)
+    } catch {
+      setError(true)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { load() }, [lotId])
+
+  const hasData = data && (
+    data.egg_batches_sent.length > 0 ||
+    data.egg_batches_received.length > 0 ||
+    data.chick_batches_sent.length > 0 ||
+    data.chick_batches_received.length > 0
+  )
+
+  if (loading) {
+    return (
+      <div className="animate-pulse">
+        <div className="h-4 bg-slate-100 rounded w-1/3 mb-3" />
+        <div className="h-16 bg-slate-100 rounded" />
+      </div>
+    )
+  }
+
+  if (error) {
+    return (
+      <p className="text-xs text-slate-400 flex items-center gap-1">
+        {t('traceability.loadError', 'Error al cargar trazabilidad')}
+        <button onClick={load} className="text-blue-500 hover:underline ml-1">{t('common.retry', 'Reintentar')}</button>
+      </p>
+    )
+  }
+
+  if (!hasData) {
+    return (
+      <p className="text-sm text-slate-400 italic">
+        {t('traceability.noLinks', 'Sin vínculos de trazabilidad generacional registrados.')}
+      </p>
+    )
+  }
+
+  return (
+    <div className="space-y-5">
+      {/* Eggs sent upstream (Breeder → Hatchery) */}
+      {data!.egg_batches_sent.length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <Egg size={13} />
+            {t('traceability.eggsSent', 'Huevos enviados a incubadora')}
+          </h4>
+          <div className="space-y-2">
+            {data!.egg_batches_sent.map(b => (
+              <div key={b.id} className="flex items-center gap-2 text-sm">
+                <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+                <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
+                <span className="text-slate-400">{t('traceability.eggs', 'huevos')}</span>
+                {b.quantity_received != null && (
+                  <span className="text-xs text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
+                )}
+                {b.hatchery_lot && (
+                  <>
+                    <ArrowRight size={13} className="text-slate-300 shrink-0" />
+                    <LotChip lot={b.hatchery_lot} />
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Eggs received (Hatchery ← Breeder) */}
+      {data!.egg_batches_received.length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <Egg size={13} />
+            {t('traceability.eggsReceived', 'Huevos recibidos de reproductoras')}
+          </h4>
+          <div className="space-y-2">
+            {data!.egg_batches_received.map(b => (
+              <div key={b.id} className="flex items-center gap-2 text-sm">
+                {b.source_lot && (
+                  <>
+                    <LotChip lot={b.source_lot} />
+                    <ArrowRight size={13} className="text-slate-300 shrink-0" />
+                  </>
+                )}
+                <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+                <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
+                <span className="text-slate-400">{t('traceability.eggs', 'huevos')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chicks dispatched (Hatchery → Broiler) */}
+      {data!.chick_batches_sent.length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <Baby size={13} />
+            {t('traceability.chicksSent', 'Pollitos enviados a engorde')}
+          </h4>
+          <div className="space-y-2">
+            {data!.chick_batches_sent.map(b => (
+              <div key={b.id} className="flex items-center gap-2 text-sm">
+                <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+                <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
+                <span className="text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
+                {b.quantity_received != null && (
+                  <span className="text-xs text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
+                )}
+                {b.broiler_lot && (
+                  <>
+                    <ArrowRight size={13} className="text-slate-300 shrink-0" />
+                    <LotChip lot={b.broiler_lot} />
+                  </>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {/* Chicks received (Broiler ← Hatchery) */}
+      {data!.chick_batches_received.length > 0 && (
+        <div>
+          <h4 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <Baby size={13} />
+            {t('traceability.chicksReceived', 'Pollitos recibidos de incubadora')}
+          </h4>
+          <div className="space-y-2">
+            {data!.chick_batches_received.map(b => (
+              <div key={b.id} className="flex items-center gap-2 text-sm">
+                {b.hatchery_lot && (
+                  <>
+                    <LotChip lot={b.hatchery_lot} />
+                    <ArrowRight size={13} className="text-slate-300 shrink-0" />
+                  </>
+                )}
+                <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+                <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
+                <span className="text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
+      <button
+        onClick={load}
+        disabled={loading}
+        className="text-xs text-slate-400 hover:text-slate-600 flex items-center gap-1 transition-colors"
+      >
+        <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />
+        {t('common.refresh', 'Actualizar')}
+      </button>
+    </div>
+  )
+}

@@ -138,3 +138,77 @@ async def add_lot_phase(
         raise HTTPException(status_code=400, detail="lot_id mismatch")
     phase = await _service(db, current_user).add_phase(data)
     return schemas.LotPhaseRead.model_validate(phase)
+
+
+# ============================================================
+# T-083: Generational Traceability
+# ============================================================
+
+@router.get("/{lot_id}/traceability", response_model=schemas.TraceabilityNode)
+async def get_lot_traceability(
+    lot_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Return full generational traceability tree for a lot (egg batches + chick batches)."""
+    from sqlalchemy import select
+    from .models import EggBatch, ChickBatch
+    from ..masters.models import Lot
+
+    result = await db.execute(select(Lot).where(Lot.id == lot_id))
+    lot = result.scalar_one_or_none()
+    if not lot:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=404, detail="Lote no encontrado")
+
+    egg_sent_r = await db.execute(select(EggBatch).where(EggBatch.source_lot_id == lot_id))
+    egg_sent = egg_sent_r.scalars().all()
+    egg_recv_r = await db.execute(select(EggBatch).where(EggBatch.hatchery_lot_id == lot_id))
+    egg_recv = egg_recv_r.scalars().all()
+    chick_sent_r = await db.execute(select(ChickBatch).where(ChickBatch.hatchery_lot_id == lot_id))
+    chick_sent = chick_sent_r.scalars().all()
+    chick_recv_r = await db.execute(select(ChickBatch).where(ChickBatch.broiler_lot_id == lot_id))
+    chick_recv = chick_recv_r.scalars().all()
+
+    lot_ref = schemas.LotRef(
+        id=lot.id, lot_code=lot.lot_code or f"L-{lot.id}",
+        bird_type=lot.bird_type.value if lot.bird_type else None,
+        status=lot.status.value if hasattr(lot.status, "value") else str(lot.status),
+    )
+    return schemas.TraceabilityNode(
+        lot=lot_ref,
+        egg_batches_sent=[schemas.EggBatchRead.model_validate(b) for b in egg_sent],
+        egg_batches_received=[schemas.EggBatchRead.model_validate(b) for b in egg_recv],
+        chick_batches_sent=[schemas.ChickBatchRead.model_validate(b) for b in chick_sent],
+        chick_batches_received=[schemas.ChickBatchRead.model_validate(b) for b in chick_recv],
+    )
+
+
+@router.post("/egg-batches", response_model=schemas.EggBatchRead, status_code=201)
+async def create_egg_batch(
+    data: schemas.EggBatchCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Link a breeder/grandparent lot → hatchery lot via egg batch."""
+    from .models import EggBatch
+    batch = EggBatch(**data.model_dump())
+    db.add(batch)
+    await db.flush()
+    await db.refresh(batch)
+    return schemas.EggBatchRead.model_validate(batch)
+
+
+@router.post("/chick-batches", response_model=schemas.ChickBatchRead, status_code=201)
+async def create_chick_batch(
+    data: schemas.ChickBatchCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Link a hatchery lot → broiler lot via chick batch."""
+    from .models import ChickBatch
+    batch = ChickBatch(**data.model_dump())
+    db.add(batch)
+    await db.flush()
+    await db.refresh(batch)
+    return schemas.ChickBatchRead.model_validate(batch)

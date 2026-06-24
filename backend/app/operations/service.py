@@ -12,6 +12,7 @@ from .validators import (
     BusinessRuleViolation,
     validate_chick_dispatch,
     validate_egg_dispatch,
+    validate_event_date,
     validate_house_capacity,
     validate_incubation_load,
     validate_lot_active,
@@ -19,6 +20,7 @@ from .validators import (
     validate_oc_limit,
     validate_period_open,
     validate_sap_edit_lock,
+    validate_segregation,
 )
 
 
@@ -79,6 +81,8 @@ class OperationsService:
         """Apply business rules based on event type."""
         # BR-07: Lot must be active
         await validate_lot_active(self.db, data.lot_id)
+        # BR-06: Event date cannot be before lot activation date
+        await validate_event_date(self.db, data.lot_id, data.event_date)
         # BR-19: Date not in closed period
         await validate_period_open(self.db, data.event_date)
 

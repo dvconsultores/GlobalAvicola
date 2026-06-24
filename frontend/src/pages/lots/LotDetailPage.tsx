@@ -4,6 +4,7 @@ import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock } from 'lucide-react'
 import { EVENT_ICONS } from '../../components/Icon'
 import { Button, Modal, Input } from '../../components/ui'
+import { TraceabilityTree } from '../../components/TraceabilityTree'
 import api from '../../services/api'
 
 // ─── Status badge colours ────────────────────────────────────────────────────
@@ -449,6 +450,15 @@ export default function LotDetailPage() {
               </div>
             </div>
           )}
+
+          {/* ── Traceability Tree (T-083) ── */}
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+              <Activity size={18} className="text-teal-600" />
+              {t('traceability.title', 'Trazabilidad Generacional')}
+            </h2>
+            <TraceabilityTree lotId={Number(id)} />
+          </div>
         </div>
       </div>
     </div>
