@@ -325,6 +325,7 @@ La incubadora es una etapa independiente que recibe huevos de reproductoras y pr
 - Machine Learning / IA predictiva
 - IoT / Sensores en tiempo real
 - Notificaciones push (v2)
+- **Cadena de Aves Livianas (Ponedoras / Huevo Comercial)** — contempla: Reproductoras Livianas (AVI-REP-LIV-01 a 06), Incubadora Ponedoras (AVI-INC-PON-03), Granjas de Ponedoras (AVI-GRA-PON-01 a 06). Procesos distintos: cría de pollonas, producción de huevo consumo, clasificación por tamaño/peso, desalojo de ponedoras. **Arquitectura preparada para esta extensión vía BirdTypeEnum: LAYER.**
 
 ### 10. Migration Strategy from Legacy
 
