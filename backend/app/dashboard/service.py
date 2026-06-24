@@ -121,15 +121,17 @@ class DashboardService:
     async def _get_mortality_trend(self) -> list[dict]:
         """Weekly mortality totals for the last 8 weeks."""
         from datetime import datetime, timedelta, timezone
-        from sqlalchemy import cast, Integer, extract
+        from sqlalchemy import extract
+        from ..operations.models import BirdMovement
         now = datetime.now(timezone.utc)
         eight_weeks_ago = now - timedelta(weeks=8)
         rows = await self.db.execute(
             select(
                 extract("isoyear", OperationalEvent.event_date).label("yr"),
                 extract("week", OperationalEvent.event_date).label("wk"),
-                func.sum(OperationalEvent.total_count).label("total"),
+                func.sum(BirdMovement.quantity).label("total"),
             )
+            .join(BirdMovement, BirdMovement.event_id == OperationalEvent.id)
             .where(
                 OperationalEvent.company_id == self.company_id,
                 OperationalEvent.event_type == EventType.MORTALITY_RECORDING,
