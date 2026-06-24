@@ -1,8 +1,9 @@
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
 from ..dependencies import get_current_user
+from ..main import limiter  # S-05: rate limiting
 from .schemas import (
     LoginRequest,
     RefreshRequest,
@@ -22,7 +23,8 @@ router = APIRouter()
 # ------------------- Auth Endpoints -------------------
 
 @router.post("/login", response_model=TokenResponse, tags=["Auth"])
-async def login(data: LoginRequest, db: AsyncSession = Depends(get_db)):
+@limiter.limit("5/minute")  # S-05: Anti brute-force
+async def login(request: Request, data: LoginRequest, db: AsyncSession = Depends(get_db)):
     return await AuthService(db).login(data)
 
 

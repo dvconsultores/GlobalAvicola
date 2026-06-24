@@ -457,7 +457,7 @@ export default function LotDetailPage() {
               <Activity size={18} className="text-teal-600" />
               {t('traceability.title', 'Trazabilidad Generacional')}
             </h2>
-            <TraceabilityTree lotId={Number(id)} />
+            <TraceabilityTree lotId={Number(id)} birdType={birdType} />
           </div>
         </div>
       </div>

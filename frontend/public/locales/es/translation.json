@@ -521,6 +521,14 @@
     "chicks": "pollitos",
     "received": "recibidos",
     "noLinks": "Sin vínculos de trazabilidad generacional registrados.",
-    "loadError": "Error al cargar trazabilidad"
+    "loadError": "Error al cargar trazabilidad",
+    "linkEggs": "Vincular huevos a incubadora",
+    "linkChicks": "Vincular pollitos a engorde",
+    "createEggBatch": "Vincular huevos a incubadora",
+    "createChickBatch": "Vincular pollitos a engorde",
+    "hatcheryLotId": "Lote de incubadora destino",
+    "broilerLotId": "Lote de engorde destino",
+    "quantity": "Cantidad",
+    "dispatchDate": "Fecha de despacho"
   }
 }

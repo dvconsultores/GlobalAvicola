@@ -6,9 +6,10 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Egg, Baby, ArrowRight, RefreshCw } from 'lucide-react'
+import { Egg, Baby, ArrowRight, RefreshCw, Link2, Plus, X } from 'lucide-react'
 import api from '../../services/api'
 import { Badge, statusToVariant } from '../ui'
+import { Button, Input, Modal } from '../ui'
 
 interface LotRef {
   id: number
@@ -47,7 +48,7 @@ interface TraceabilityNode {
   chick_batches_received: ChickBatch[]
 }
 
-interface Props { lotId: number | string }
+interface Props { lotId: number | string; birdType?: string }
 
 function LotChip({ lot }: { lot: LotRef }) {
   return (
@@ -61,11 +62,58 @@ function LotChip({ lot }: { lot: LotRef }) {
   )
 }
 
-export function TraceabilityTree({ lotId }: Props) {
+export function TraceabilityTree({ lotId, birdType }: Props) {
   const { t } = useTranslation()
   const [data, setData] = useState<TraceabilityNode | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(false)
+
+  // F-02: Link creation state
+  const [showEggLink, setShowEggLink] = useState(false)
+  const [showChickLink, setShowChickLink] = useState(false)
+  const [linking, setLinking] = useState(false)
+  const [linkError, setLinkError] = useState('')
+  const today = new Date().toISOString().split('T')[0]
+  const [eggForm, setEggForm] = useState({ hatcheryLotId: '', quantity: '', date: today })
+  const [chickForm, setChickForm] = useState({ broilerLotId: '', quantity: '', date: today })
+
+  const handleCreateEggBatch = async () => {
+    setLinking(true)
+    setLinkError('')
+    try {
+      await api.post('/lots/egg-batches', {
+        source_lot_id: Number(lotId),
+        hatchery_lot_id: Number(eggForm.hatcheryLotId) || null,
+        quantity_dispatched: Number(eggForm.quantity),
+        dispatch_date: eggForm.date,
+      })
+      setShowEggLink(false)
+      load()
+    } catch (err: any) {
+      setLinkError(err?.response?.data?.detail ?? t('errors.saveFailed', 'Error al guardar'))
+    } finally {
+      setLinking(false)
+    }
+  }
+
+  const handleCreateChickBatch = async () => {
+    setLinking(true)
+    setLinkError('')
+    try {
+      await api.post('/lots/chick-batches', {
+        hatchery_lot_id: Number(lotId),
+        broiler_lot_id: Number(chickForm.broilerLotId) || null,
+        quantity_dispatched: Number(chickForm.quantity),
+        dispatch_date: chickForm.date,
+      })
+      setShowChickLink(false)
+      load()
+    } catch (err: any) {
+      setLinkError(err?.response?.data?.detail ?? t('errors.saveFailed', 'Error al guardar'))
+    } finally {
+      setLinking(false)
+    }
+  }
 
   const load = async () => {
     setLoading(true)
@@ -231,6 +279,114 @@ export function TraceabilityTree({ lotId }: Props) {
         <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />
         {t('common.refresh', 'Actualizar')}
       </button>
+
+      {/* F-02: Link creation buttons */}
+      <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
+        {birdType === 'breeder' && (
+          <Button
+            size="sm"
+            variant="outline"
+            leftIcon={<Egg size={12} />}
+            onClick={() => setShowEggLink(true)}
+          >
+            {t('traceability.linkEggs', 'Vincular huevos a incubadora')}
+          </Button>
+        )}
+        {birdType === 'hatchery' && (
+          <Button
+            size="sm"
+            variant="outline"
+            leftIcon={<Baby size={12} />}
+            onClick={() => setShowChickLink(true)}
+          >
+            {t('traceability.linkChicks', 'Vincular pollitos a engorde')}
+          </Button>
+        )}
+      </div>
+
+      {/* Egg batch creation modal */}
+      <Modal
+        open={showEggLink}
+        onClose={() => setShowEggLink(false)}
+        title={t('traceability.createEggBatch', 'Vincular huevos a incubadora')}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowEggLink(false)}>
+              {t('common.cancel', 'Cancelar')}
+            </Button>
+            <Button onClick={handleCreateEggBatch} loading={linking}>
+              {t('common.save', 'Guardar')}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <Input
+            label={t('traceability.hatcheryLotId', 'Lote de incubadora destino')}
+            type="number"
+            min={1}
+            placeholder="ID del lote HATCHERY"
+            value={eggForm.hatcheryLotId}
+            onChange={e => setEggForm(prev => ({ ...prev, hatcheryLotId: e.target.value }))}
+          />
+          <Input
+            label={t('traceability.quantity', 'Cantidad de huevos')}
+            type="number"
+            min={1}
+            value={eggForm.quantity}
+            onChange={e => setEggForm(prev => ({ ...prev, quantity: e.target.value }))}
+          />
+          <Input
+            label={t('traceability.dispatchDate', 'Fecha de despacho')}
+            type="date"
+            value={eggForm.date}
+            onChange={e => setEggForm(prev => ({ ...prev, date: e.target.value }))}
+          />
+          {linkError && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{linkError}</p>}
+        </div>
+      </Modal>
+
+      {/* Chick batch creation modal */}
+      <Modal
+        open={showChickLink}
+        onClose={() => setShowChickLink(false)}
+        title={t('traceability.createChickBatch', 'Vincular pollitos a engorde')}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setShowChickLink(false)}>
+              {t('common.cancel', 'Cancelar')}
+            </Button>
+            <Button onClick={handleCreateChickBatch} loading={linking}>
+              {t('common.save', 'Guardar')}
+            </Button>
+          </>
+        }
+      >
+        <div className="space-y-4">
+          <Input
+            label={t('traceability.broilerLotId', 'Lote de engorde destino')}
+            type="number"
+            min={1}
+            placeholder="ID del lote BROILER"
+            value={chickForm.broilerLotId}
+            onChange={e => setChickForm(prev => ({ ...prev, broilerLotId: e.target.value }))}
+          />
+          <Input
+            label={t('traceability.quantity', 'Cantidad de pollitos')}
+            type="number"
+            min={1}
+            value={chickForm.quantity}
+            onChange={e => setChickForm(prev => ({ ...prev, quantity: e.target.value }))}
+          />
+          <Input
+            label={t('traceability.dispatchDate', 'Fecha de despacho')}
+            type="date"
+            value={chickForm.date}
+            onChange={e => setChickForm(prev => ({ ...prev, date: e.target.value }))}
+          />
+          {linkError && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{linkError}</p>}
+        </div>
+      </Modal>
     </div>
   )
 }

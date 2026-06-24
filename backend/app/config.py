@@ -18,18 +18,23 @@ class Settings(BaseSettings):
     BACKEND_PORT: int = 8000
     BACKEND_CORS_ORIGINS: str = "http://localhost:5173"
 
-    # Database
-    POSTGRES_HOST: str = "localhost"
+    # Database (S-03/04: sin defaults inseguros — requieren config explícita en .env)
+    POSTGRES_HOST: str = ""
     POSTGRES_PORT: int = 5432
-    POSTGRES_DB: str = "global_avicola"
-    POSTGRES_USER: str = "global_avicola_user"
-    POSTGRES_PASSWORD: str = "change_me"
+    POSTGRES_DB: str = ""
+    POSTGRES_USER: str = ""
+    POSTGRES_PASSWORD: str = ""
     DATABASE_URL: str = ""
 
     @property
     def database_url(self) -> str:
         if self.DATABASE_URL:
             return self.DATABASE_URL
+        if not self.POSTGRES_USER or not self.POSTGRES_PASSWORD:
+            raise ValueError(
+                "POSTGRES_USER y POSTGRES_PASSWORD deben configurarse en .env "
+                "(sin valores por defecto)"
+            )
         return (
             f"postgresql+asyncpg://"
             f"{self.POSTGRES_USER}:{self.POSTGRES_PASSWORD}"
@@ -37,16 +42,33 @@ class Settings(BaseSettings):
             f"/{self.POSTGRES_DB}"
         )
 
-    # JWT
-    JWT_SECRET_KEY: str = "change_me_to_a_secure_random_string"
+    # JWT (S-03: sin default inseguro — requiere config explícita en .env)
+    JWT_SECRET_KEY: str = ""
     JWT_ALGORITHM: str = "HS256"
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # S-03/04: Validar que no se usen defaults inseguros
+        if not self.JWT_SECRET_KEY or self.JWT_SECRET_KEY.startswith("change_me"):
+            raise ValueError(
+                "JWT_SECRET_KEY debe configurarse en .env con un valor seguro. "
+                "Genera uno con: python -c 'import secrets; print(secrets.token_hex(32))'"
+            )
+        if not self.POSTGRES_PASSWORD or self.POSTGRES_PASSWORD == "change_me":
+            raise ValueError(
+                "POSTGRES_PASSWORD debe configurarse en .env con un valor seguro"
+            )
 
     # CORS
     @property
     def cors_origins(self) -> list[str]:
         return [origin.strip() for origin in self.BACKEND_CORS_ORIGINS.split(",")]
+
+    # Rate limiting (S-05)
+    RATE_LIMIT_LOGIN: str = "5/minute"
+    RATE_LIMIT_GLOBAL: str = "60/minute"
 
 
 settings = Settings()

@@ -219,3 +219,39 @@ async def validate_period_open(db: AsyncSession, event_date) -> None:
             "BR-19",
         )
 
+
+async def validate_farm_house(
+    event_type: str,
+    farm_id: int | None,
+    house_id: int | None,
+) -> None:
+    """
+    F-03 / BR-08: Movements require farm/house when applicable.
+    Events that operate on physical locations (reception, distribution,
+    inspection, dispatch, egg handling) must have farm and house assigned.
+    """
+    location_events = {
+        "bird_reception",
+        "bird_distribution",
+        "bird_transfer",
+        "bird_exit",
+        "farm_inspection",
+        "transport_inspection",
+        "egg_collection",
+        "egg_dispatch",
+        "egg_reception_hatchery",
+        "chick_dispatch",
+        "hatchery_inspection",
+    }
+    if event_type in location_events:
+        if farm_id is None or farm_id <= 0:
+            raise BusinessRuleViolation(
+                f"El evento '{event_type}' requiere una granja asignada",
+                "BR-08",
+            )
+        if house_id is None or house_id <= 0:
+            raise BusinessRuleViolation(
+                f"El evento '{event_type}' requiere un galpón asignado",
+                "BR-08",
+            )
+

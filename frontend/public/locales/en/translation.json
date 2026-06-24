@@ -521,6 +521,14 @@
     "chicks": "chicks",
     "received": "received",
     "noLinks": "No generational traceability links recorded.",
-    "loadError": "Failed to load traceability"
+    "loadError": "Failed to load traceability",
+    "linkEggs": "Link eggs to hatchery",
+    "linkChicks": "Link chicks to broiler",
+    "createEggBatch": "Link eggs to hatchery",
+    "createChickBatch": "Link chicks to broiler",
+    "hatcheryLotId": "Target hatchery lot",
+    "broilerLotId": "Target broiler lot",
+    "quantity": "Quantity",
+    "dispatchDate": "Dispatch date"
   }
 }

@@ -32,18 +32,27 @@ interface User {
 interface AuthState {
   user: User | null
   token: string | null
+  refreshToken: string | null
   isAuthenticated: boolean
   isLoading: boolean
   login: (username: string, password: string) => Promise<void>
   logout: () => void
   fetchMe: () => Promise<void>
+  setTokens: (access: string, refresh: string) => void
+  getAccessToken: () => string | null
+  getRefreshToken: () => string | null
 }
 
-// Read initial view_type from cached token if available
+// S-01: Tokens stored in memory for runtime. sessionStorage used only for
+// page-refresh survival (cleared on tab close — better than localStorage).
+// Access token expiry reduced to 15min recommendation from security audit.
+let accessToken: string | null = sessionStorage.getItem('access_token')
+let refreshToken: string | null = sessionStorage.getItem('refresh_token')
+
+// Hydrate initial user from sessionStorage if available
 function getInitialUser(): User | null {
-  const token = localStorage.getItem('access_token')
-  if (!token) return null
-  const claims = decodeJWT(token)
+  if (!accessToken) return null
+  const claims = decodeJWT(accessToken)
   if (!claims) return null
   return {
     id: Number(claims.sub) || 0,
@@ -56,46 +65,59 @@ function getInitialUser(): User | null {
   }
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
   user: getInitialUser(),
-  token: localStorage.getItem('access_token'),
-  isAuthenticated: !!localStorage.getItem('access_token'),
-  // Only show loading if we have a token but couldn't decode basic user data
-  isLoading: !!localStorage.getItem('access_token') && !getInitialUser(),
+  token: accessToken,
+  refreshToken: refreshToken,
+  isAuthenticated: !!accessToken,
+  isLoading: false,
 
-  login: async (username: string, password: string) => {
-    const response = await api.post('/login', { username, password })
-    const { access_token, refresh_token } = response.data
-    localStorage.setItem('access_token', access_token)
-    localStorage.setItem('refresh_token', refresh_token)
-    // Decode JWT to get immediate user data (view_type needed before /me completes)
-    const claims = decodeJWT(access_token)
+  setTokens: (access: string, refresh: string) => {
+    accessToken = access
+    refreshToken = refresh
+    // sessionStorage backup for page-refresh survival
+    sessionStorage.setItem('access_token', access)
+    sessionStorage.setItem('refresh_token', refresh)
+    const claims = decodeJWT(access)
     const immediateUser: User = {
       id: Number(claims?.sub) || 0,
-      username: claims?.username || username,
+      username: claims?.username || '',
       first_name: '',
       last_name: '',
       email: '',
       role_id: claims?.role_id ?? null,
       view_type: claims?.view_type || 'web',
     }
-    set({ token: access_token, user: immediateUser, isAuthenticated: true, isLoading: false })
+    set({ token: access, refreshToken: refresh, isAuthenticated: true, user: immediateUser })
+  },
+
+  getAccessToken: () => accessToken,
+  getRefreshToken: () => refreshToken,
+
+  login: async (username: string, password: string) => {
+    const response = await api.post('/login', { username, password })
+    const { access_token, refresh_token } = response.data
+    get().setTokens(access_token, refresh_token)
+    // Fetch full user profile after login
+    await get().fetchMe()
   },
 
   logout: () => {
-    localStorage.removeItem('access_token')
-    localStorage.removeItem('refresh_token')
-    set({ user: null, token: null, isAuthenticated: false, isLoading: false })
+    accessToken = null
+    refreshToken = null
+    sessionStorage.removeItem('access_token')
+    sessionStorage.removeItem('refresh_token')
+    set({ user: null, token: null, refreshToken: null, isAuthenticated: false, isLoading: false })
   },
 
   fetchMe: async () => {
     try {
-      const response = await api.get('/me')
-      set({ user: response.data, isAuthenticated: true, isLoading: false })
+      const { data } = await api.get('/me')
+      set({ user: { ...data, view_type: data.view_type || 'web' }, isLoading: false })
     } catch {
-      localStorage.removeItem('access_token')
-      localStorage.removeItem('refresh_token')
-      set({ user: null, token: null, isAuthenticated: false, isLoading: false })
+      // If /me fails, we still have basic user from JWT claims
+      set({ isLoading: false })
     }
   },
 }))
+

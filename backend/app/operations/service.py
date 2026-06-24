@@ -13,6 +13,7 @@ from .validators import (
     validate_chick_dispatch,
     validate_egg_dispatch,
     validate_event_date,
+    validate_farm_house,
     validate_house_capacity,
     validate_incubation_load,
     validate_lot_active,
@@ -83,6 +84,8 @@ class OperationsService:
         await validate_lot_active(self.db, data.lot_id)
         # BR-06: Event date cannot be before lot activation date
         await validate_event_date(self.db, data.lot_id, data.event_date)
+        # BR-08: Movements require farm/house when applicable
+        await validate_farm_house(data.event_type.value if hasattr(data.event_type, 'value') else str(data.event_type), data.farm_id, data.house_id)
         # BR-19: Date not in closed period
         await validate_period_open(self.db, data.event_date)
 
