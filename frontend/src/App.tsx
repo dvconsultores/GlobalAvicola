@@ -126,7 +126,7 @@ export default function App() {
           <Route path="/operations/:id" element={<OperationDetailPage />} />
           <Route path="/my-pending" element={<MyPendingPage />} />
           <Route path="/lots" element={<LotListPage />} />
-          <Route path="/lots/new" element={<LotFormPage />} />
+          <Route path="/lots/new" element={<WebOnlyRoute><LotFormPage /></WebOnlyRoute>} />
           <Route path="/lots/:id" element={<LotDetailPage />} />
           <Route path="/reports" element={<ReportsPage />} />
           <Route path="/reports/lot/:id" element={<LotReportPage />} />

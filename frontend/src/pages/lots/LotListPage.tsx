@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import api from '../../services/api'
+import { useAuthStore } from '../../stores/auth.store'
 
 const BIRD_TYPE_KEYS = ['grandparent', 'breeder', 'broiler'] as const
 
@@ -14,6 +15,8 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function LotListPage() {
   const { t } = useTranslation()
+  const { user } = useAuthStore()
+  const isWebUser = user?.view_type !== 'mobile'
   const [lots, setLots] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
   const [birdType, setBirdType] = useState('')
@@ -45,9 +48,11 @@ export default function LotListPage() {
             {activeLots} {t('lots.activeCount')} · {closedLots} {t('lots.closedCount')}
           </p>
         </div>
-        <Link to="/lots/new" className="bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5">
-          <Plus size={16} /> {t('lots.newLot')}
-        </Link>
+        {isWebUser && (
+          <Link to="/lots/new" className="bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5">
+            <Plus size={16} /> {t('lots.newLot')}
+          </Link>
+        )}
       </div>
 
       {/* Stage quick filters */}
