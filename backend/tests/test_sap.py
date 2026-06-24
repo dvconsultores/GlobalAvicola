@@ -1,6 +1,15 @@
 """Tests for SAP Integration module."""
 import pytest
 
+from app.config import settings
+
+# Skip all SAP tests when SAP feature is disabled (development mode)
+pytestmark = pytest.mark.skipif(
+    not settings.FEATURE_SAP_ENABLED,
+    reason="SAP integration disabled (FEATURE_SAP_ENABLED=false in .env). "
+           "Set FEATURE_SAP_ENABLED=true to run these tests."
+)
+
 
 @pytest.mark.asyncio
 async def test_import_sap_references(auth_headers, client):

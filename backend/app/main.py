@@ -9,8 +9,25 @@ from starlette.middleware.base import BaseHTTPMiddleware
 
 from .config import settings
 
-# S-05: Rate limiting
+# S-05: Rate limiting — always instantiated, but limits are
+# effectively disabled when FEATURE_RATE_LIMIT_ENABLED=false
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.RATE_LIMIT_GLOBAL])
+_limiter_active = settings.FEATURE_RATE_LIMIT_ENABLED
+
+
+def rate_limit(limit_value: str):
+    """Conditional rate limit decorator.
+    
+    When FEATURE_RATE_LIMIT_ENABLED is false, this is a no-op passthrough.
+    When true, applies the slowapi rate limit.
+    """
+    if _limiter_active:
+        return limiter.limit(limit_value)
+    else:
+        # No-op decorator: just returns the function unchanged
+        def noop_decorator(func):
+            return func
+        return noop_decorator
 
 
 @asynccontextmanager
@@ -28,9 +45,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# S-05: Rate limiting handler
+# S-05: Rate limiting handler (only active when feature flag is on)
 app.state.limiter = limiter
-app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+if _limiter_active:
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
 
 # CORS
 app.add_middleware(
@@ -71,10 +89,13 @@ from .lots.router import router as lots_router
 from .operations.router import router as ops_router
 from .review.router import router as review_router, approval_router, steps_router
 from .corrections.router import router as corrections_router
-from .integrations.sap.router import router as sap_router
 from .audit.router import router as audit_router
 from .reports.router import router as reports_router
 from .dashboard.router import router as dashboard_router
+
+# SAP Integration: solo se carga si el feature flag está activo
+if settings.FEATURE_SAP_ENABLED:
+    from .integrations.sap.router import router as sap_router
 
 app.include_router(auth_router, prefix="/api/v1", tags=["Auth & Users"])
 app.include_router(masters_router, prefix="/api/v1", tags=["Masters"])
@@ -84,7 +105,9 @@ app.include_router(review_router, prefix="/api/v1", tags=["Review"])
 app.include_router(approval_router, prefix="/api/v1", tags=["Approvals"])
 app.include_router(steps_router, prefix="/api/v1", tags=["Approval Steps"])
 app.include_router(corrections_router, prefix="/api/v1", tags=["Corrections"])
-app.include_router(sap_router, prefix="/api/v1", tags=["SAP Integration"])
 app.include_router(audit_router, prefix="/api/v1", tags=["Audit"])
 app.include_router(reports_router, prefix="/api/v1", tags=["Reports"])
 app.include_router(dashboard_router, prefix="/api/v1", tags=["Dashboard"])
+
+if settings.FEATURE_SAP_ENABLED:
+    app.include_router(sap_router, prefix="/api/v1", tags=["SAP Integration"])

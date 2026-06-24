@@ -70,5 +70,23 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOGIN: str = "5/minute"
     RATE_LIMIT_GLOBAL: str = "60/minute"
 
+    # ============================================================
+    # Feature Flags — controlan qué se habilita en cada entorno
+    # ============================================================
+    # SAP Integration: false en desarrollo (sin SAP disponible),
+    # true en producción cuando se configure la conexión real.
+    FEATURE_SAP_ENABLED: bool = False
+
+    # Rate Limiting: false en desarrollo para no bloquear pruebas,
+    # true en producción para proteger la API.
+    FEATURE_RATE_LIMIT_ENABLED: bool = False
+
+    # Audit: true en todos los entornos (siempre auditar).
+    FEATURE_AUDIT_ENABLED: bool = True
+
+    # Review & Approval workflow: true en producción.
+    # En desarrollo se puede desactivar para agilizar pruebas.
+    FEATURE_REVIEW_ENABLED: bool = True
+
 
 settings = Settings()

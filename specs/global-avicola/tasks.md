@@ -4,7 +4,7 @@
 > **Derived from:** [plan.md](./plan.md)
 > **Date:** 2026-06-22
 > **Last Updated:** 2026-06-24
-> **Total Tasks:** 83+
+> **Total Tasks:** 90 (Phases 0-9)
 
 ---
 
@@ -24,6 +24,7 @@ Estado real de la implementación tras auditoría del código fuente.
 | **Phase 5** | SAP Integration | ✅ Completo | Backend adapter + SapManagerPage |
 | **Phase 6** | Audit + Reports + Dashboard | 🔶 Parcial | AuditPage ✅, ReportsPage ✅, KPI endpoints ✅, sin export PDF/Excel, Dashboard básico |
 | **Phase 7** | QA Tests | 🔶 Parcial | Backend tests básicos (auth, ops, review, sap). Frontend sin tests. Sin E2E. |
+| **Phase 9** | Production Readiness | 🟡 Pendiente | Feature flags implementados ✅, checklist prod creado ✅, SAP adapter real pendiente, activación flags pendiente |
 
 ### Gaps Críticos Identificados (a resolver en Phase 8)
 
@@ -677,6 +678,7 @@ graph TD
 | **Phase 6** | T-049 to T-055 (7) | Audit, reports, dashboards, user mgmt UI | 🔶 Parcial |
 | **Phase 7** | T-056 to T-066 (11) | Testing, QA, performance, accessibility | 🔶 Parcial |
 | **Phase 8** | T-067 to T-083 (17) | Gap resolution & quality elevation | ❌ Pendiente |
+| **Phase 9** | T-084 to T-090 (7) | Production readiness & deploy | 🟡 Pendiente |
 
 ---
 
@@ -833,4 +835,98 @@ graph TD
 15. T-081 — Report exports Excel/PDF
 16. T-082 — Business rules BR-05 to BR-16
 17. T-083 — Trazabilidad generacional
+
+---
+
+## Phase 9: Production Readiness & Deploy
+
+> **Contexto:** 2026-06-24 — Feature flags implementados en código. SAP y Rate Limiting desactivados en desarrollo. Esta fase documenta y ejecuta todo lo necesario para el pase a producción.
+> **Checklist detallado:** [`docs/17-production-checklist.md`](../../docs/17-production-checklist.md)
+> **Spec:** [`spec.md §14`](./spec.md#14-feature-flags--environment-configuration)
+
+### T-084: Verify Feature Flags in Staging
+**Prioridad:** 🟡 Alta | **Esfuerzo:** 1h
+- Desplegar en entorno staging con `.env` de staging
+- Verificar que `FEATURE_SAP_ENABLED=false` → rutas SAP no expuestas en `/docs`
+- Verificar que `FEATURE_RATE_LIMIT_ENABLED=false` → login no tiene rate limit
+- Verificar que health check responde `{"environment": "development"}`
+- Verificar que tests SAP se skipean: `uv run pytest tests/test_sap.py -v` → `9 skipped`
+- **Archivos:** `.env`, `backend/app/config.py`
+
+### T-085: Implement RealSapAdapter
+**Prioridad:** 🔴 Crítica (bloquea prod) | **Esfuerzo:** 8h
+- Crear `RealSapAdapter` en `backend/app/integrations/sap/adapter.py`
+  - Hereda de `SapIntegrationAdapter`
+  - Conexión OData/REST a SAP S/4HANA
+  - Implementa `export_consolidated()`, `check_connection()`, `get_adapter_name()`
+  - Manejo de autenticación SAP (Basic Auth / OAuth / Certificado)
+  - Idempotencia con `idempotency_key`
+- Actualizar `SapService.get_adapter()` para seleccionar adaptador según config
+- Agregar `SAP_ADAPTER` y `SAP_BASE_URL` a `Settings`
+- **Archivos:** `backend/app/integrations/sap/adapter.py`, `backend/app/integrations/sap/service.py`, `backend/app/config.py`
+
+### T-086: Activate Feature Flags for Production
+**Prioridad:** 🔴 Crítica (bloquea prod) | **Esfuerzo:** 30min
+- En `.env` de producción:
+  ```env
+  ENVIRONMENT=production
+  DEBUG=false
+  FEATURE_SAP_ENABLED=true
+  FEATURE_RATE_LIMIT_ENABLED=true
+  ```
+- **Archivos:** `.env` (servidor producción, NO commiteado)
+
+### T-087: Production Security Hardening
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 1h
+- Generar `JWT_SECRET_KEY` seguro: `python -c 'import secrets; print(secrets.token_hex(32))'`
+- Cambiar `POSTGRES_PASSWORD` por contraseña fuerte
+- Restringir `BACKEND_CORS_ORIGINS` solo al dominio de producción
+- Activar SSL en `DATABASE_URL` (`?ssl=require`)
+- Verificar que `.env` NO está commiteado (está en `.gitignore`)
+- **Archivos:** `.env` (servidor producción)
+
+### T-088: Deploy & Smoke Test
+**Prioridad:** 🔴 Crítica | **Esfuerzo:** 2h
+- `docker compose -f docker-compose.yml up -d --build`
+- Health check: `curl https://api.dominio.com/health` → `{"status":"ok","environment":"production"}`
+- Verificar Swagger docs: `https://api.dominio.com/docs`
+- Verificar que rutas SAP aparecen en `/docs` (FEATURE_SAP_ENABLED=true)
+- Login test con credenciales reales
+- Verificar rate limiting: 6+ intentos de login en 1 minuto → 429
+- **Archivos:** `docker-compose.yml`
+
+### T-089: Post-Deploy Monitoring (24h)
+**Prioridad:** 🟡 Alta | **Esfuerzo:** Ongoing
+- Monitorear logs de aplicación (errores 5xx, timeouts)
+- Monitorear logs de SAP (sync jobs, payloads, errores)
+- Verificar conexión BD: pool size, connection leaks
+- Verificar uso de memoria/CPU
+- Configurar alertas (UptimeRobot o similar)
+- **Archivos:** N/A (operaciones)
+
+### T-090: Document Production Runbook
+**Prioridad:** 🟡 Media | **Esfuerzo:** 2h
+- Crear `docs/18-production-runbook.md` con:
+  - Pasos de deploy
+  - Rollback procedure
+  - Contactos de emergencia
+  - Comandos útiles (logs, restart, health check)
+  - Procedimiento de backup/restore de BD
+- **Archivos:** `docs/18-production-runbook.md`
+
+---
+
+## Production Activation Checklist (Resumen)
+
+```
+☐ T-084 — Verificar feature flags en staging
+☐ T-085 — Implementar RealSapAdapter (cuando SAP esté disponible)
+☐ T-086 — Activar flags en .env de producción
+☐ T-087 — Hardening de seguridad
+☐ T-088 — Deploy + smoke test
+☐ T-089 — Monitoreo 24h post-deploy
+☐ T-090 — Documentar runbook
+```
+
+> **Documento completo:** [`docs/17-production-checklist.md`](../../docs/17-production-checklist.md)
 

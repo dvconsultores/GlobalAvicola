@@ -378,3 +378,81 @@ global-avicola/
 3. Generar tareas derivadas
 4. Iniciar implementación Fase 0 (setup del proyecto)
 5. **NO codificar funcionalidad antes de completar especificación y plan**
+
+---
+
+### 14. Feature Flags & Environment Configuration
+
+> **Implementado:** 2026-06-24  
+> **Ver:** `docs/17-production-checklist.md` para checklist de activación.
+
+El sistema usa **feature flags** controlados por variables de entorno (`.env`) para habilitar/deshabilitar funcionalidades según el entorno. Esto permite desarrollar y probar en `development` sin dependencias externas (SAP), y activar progresivamente al pasar a `production`.
+
+#### 14.1 Feature Flags Definidos
+
+| Flag | Tipo | Dev | Prod | Descripción |
+|------|------|-----|------|-------------|
+| `FEATURE_SAP_ENABLED` | `bool` | `false` | `true` | Habilita rutas y servicio de integración SAP. En dev, las rutas `/api/v1/sap/*` no se cargan. Los tests de SAP se skipean automáticamente. |
+| `FEATURE_RATE_LIMIT_ENABLED` | `bool` | `false` | `true` | Habilita rate limiting (slowapi). En dev, el decorador `@rate_limit()` es un no-op. En prod, aplica límites configurados (`RATE_LIMIT_LOGIN`, `RATE_LIMIT_GLOBAL`). |
+| `FEATURE_AUDIT_ENABLED` | `bool` | `true` | `true` | Habilita registro de auditoría inmutable. Debe estar siempre activo. |
+| `FEATURE_REVIEW_ENABLED` | `bool` | `true` | `true` | Habilita workflow de revisión/aprobación. |
+| `ENVIRONMENT` | `str` | `development` | `production` | Controla headers HSTS, nivel de logging, CORS restrictivo. |
+| `DEBUG` | `bool` | `true` | `false` | SQL echoing, detailed errors. |
+
+#### 14.2 Comportamiento por Entorno
+
+```
+┌──────────────────────────────────────────────────────────┐
+│ DEVELOPMENT (actual)                                      │
+│ • SAP: OFF → rutas no expuestas, tests skipeados         │
+│ • Rate Limit: OFF → sin bloqueos en pruebas              │
+│ • HSTS: OFF                                              │
+│ • CORS: permisivo (localhost)                            │
+│ • DEBUG: true → SQL logs, errores detallados             │
+├──────────────────────────────────────────────────────────┤
+│ PRODUCTION (pendiente activar)                            │
+│ • SAP: ON → RealSapAdapter (a implementar)               │
+│ • Rate Limit: ON → login 5/min, global 60/min            │
+│ • HSTS: ON → max-age=31536000                            │
+│ • CORS: restrictivo (solo dominio producción)            │
+│ • DEBUG: false                                           │
+└──────────────────────────────────────────────────────────┘
+```
+
+#### 14.3 Cómo Activar para Producción
+
+1. Cambiar en `.env` del servidor de producción:
+   ```env
+   ENVIRONMENT=production
+   DEBUG=false
+   FEATURE_SAP_ENABLED=true
+   FEATURE_RATE_LIMIT_ENABLED=true
+   ```
+2. Implementar `RealSapAdapter` en `backend/app/integrations/sap/adapter.py`
+3. Restringir `BACKEND_CORS_ORIGINS` al dominio real
+4. Generar `JWT_SECRET_KEY` seguro (no usar el de desarrollo)
+5. Seguir checklist completo en `docs/17-production-checklist.md`
+
+#### 14.4 SAP Integration — Estados
+
+| Estado | Descripción | Feature Flag |
+|--------|-------------|--------------|
+| **OFF** (actual) | Rutas SAP no cargadas. Tests skipeados. | `FEATURE_SAP_ENABLED=false` |
+| **MOCK** | `MockSapAdapter`: simula respuestas SAP para testing interno. | `FEATURE_SAP_ENABLED=true` + adapter mock |
+| **MANUAL** | `ManualSapAdapter`: genera archivos JSON/CSV para carga manual por analista. | `FEATURE_SAP_ENABLED=true` + adapter manual |
+| **REAL** | `RealSapAdapter`: conexión OData/REST a SAP S/4HANA (pendiente implementar). | `FEATURE_SAP_ENABLED=true` + adapter real |
+
+#### 14.5 Pendiente para Producción (Resumen)
+
+> **Ver checklist detallado en:** [`docs/17-production-checklist.md`](../docs/17-production-checklist.md)
+
+| Item | Estado | Responsable |
+|------|--------|-------------|
+| Activar feature flags en `.env` | ⬜ Pendiente | DevOps |
+| Implementar `RealSapAdapter` | ⬜ Pendiente | Backend |
+| Restringir CORS origins | ⬜ Pendiente | DevOps |
+| Generar JWT_SECRET_KEY seguro | ⬜ Pendiente | DevOps |
+| Configurar SSL en BD | ⬜ Pendiente | DevOps |
+| Activar rate limiting | ⬜ Pendiente | Backend |
+| Verificar health check | ⬜ Pendiente | QA |
+| Monitorear logs 24h post-deploy | ⬜ Pendiente | DevOps |
