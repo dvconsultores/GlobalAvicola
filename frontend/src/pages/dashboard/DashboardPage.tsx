@@ -70,7 +70,7 @@ export default function DashboardPage() {
   // ── MOBILE OPERATOR DASHBOARD (REDESIGNED) ──────────────────────────────
   if (isMobileUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white pb-24">
+      <div className="min-h-screen bg-gradient-to-b from-slate-50 dark:from-dark-bg to-white dark:to-dark-surface pb-24">
         {/* Welcome header */}
         <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4">
           <div className="flex items-center gap-2 mb-1">

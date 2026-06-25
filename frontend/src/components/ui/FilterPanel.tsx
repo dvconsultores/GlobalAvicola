@@ -27,11 +27,11 @@ export default function FilterPanel({
   const [open, setOpen] = useState(true)
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden">
+    <div className="bg-white dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700 mb-4 overflow-hidden">
       {/* Header clickeable */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         aria-expanded={open}
       >
         <div className="flex items-center gap-2">
@@ -67,7 +67,7 @@ export default function FilterPanel({
           open ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
         }`}
       >
-        <div className="px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3">
+        <div className="px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 dark:border-slate-700 pt-3">
           {children}
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function FilterPanel({
 export function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
-      <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
+      <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</span>
       <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2">
         {children}
       </div>

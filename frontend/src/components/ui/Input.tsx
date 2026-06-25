@@ -34,7 +34,7 @@ export function Input({
   return (
     <div className={`flex flex-col gap-1 ${wrapperClassName}`}>
       {label && (
-        <label htmlFor={inputId} className="text-sm font-semibold text-slate-700">
+        <label htmlFor={inputId} className="text-sm font-semibold text-slate-700 dark:text-slate-300">
           {label}
           {props.required && <span className="text-red-500 ml-0.5" aria-hidden>*</span>}
         </label>
@@ -52,10 +52,11 @@ export function Input({
           aria-invalid={!!error}
           aria-describedby={error ? errorId : helperText ? helpId : undefined}
           className={[
-            'w-full h-10 border rounded-lg text-sm text-slate-900 bg-white',
-            'placeholder:text-slate-400',
+            'w-full h-10 border rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-dark-surface',
+            'placeholder:text-slate-400 dark:placeholder:text-slate-500',
             'transition-colors duration-150',
             'focus:outline-none focus:ring-2 focus:ring-offset-0',
+            error ? 'border-red-500 focus:ring-red-400' : 'border-slate-300 dark:border-slate-600 focus:border-blue-500 focus:ring-blue-500',
             leadingIcon ? 'pl-9' : 'pl-3',
             trailingIcon ? 'pr-9' : 'pr-3',
             error

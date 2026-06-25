@@ -34,10 +34,10 @@ export default function FormSection({
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div className={`border border-slate-200 rounded-xl bg-white overflow-hidden ${className}`}>
+    <div className={`border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-dark-card overflow-hidden ${className}`}>
       {/* Header */}
       <div
-        className={`flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 ${
+        className={`flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 dark:border-slate-700 ${
           collapsible ? 'cursor-pointer hover:bg-slate-50 select-none' : ''
         }`}
         onClick={collapsible ? () => setOpen(!open) : undefined}
@@ -48,7 +48,7 @@ export default function FormSection({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-bold text-slate-700">{title}</h3>
+          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-300">{title}</h3>
           {description && (
             <p className="text-xs text-slate-400 mt-0.5">{description}</p>
           )}

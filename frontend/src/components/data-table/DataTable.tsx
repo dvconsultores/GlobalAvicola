@@ -24,28 +24,28 @@ export default function DataTable<T extends { id: number }>({
   const { t } = useTranslation()
 
   if (loading) {
-    return <p className="text-slate-500 text-sm py-8 text-center">{t('common.loading')}</p>
+    return <p className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">{t('common.loading')}</p>
   }
 
   if (!data.length) {
-    return <p className="text-slate-400 text-sm py-8 text-center">{t('common.noResults')}</p>
+    return <p className="text-slate-400 dark:text-slate-500 text-sm py-8 text-center">{t('common.noResults')}</p>
   }
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-slate-50 border-b border-slate-200">
+          <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="text-left px-4 py-3 font-semibold text-slate-700 whitespace-nowrap"
+                className="text-left px-4 py-3 font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap"
               >
                 {col.label}
               </th>
             ))}
             {(onEdit || onDelete) && (
-              <th className="text-right px-4 py-3 font-semibold text-slate-700">
+              <th className="text-right px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">
                 {t('common.actions')}
               </th>
             )}
@@ -55,7 +55,7 @@ export default function DataTable<T extends { id: number }>({
           {data.map((item) => (
             <tr
               key={item.id}
-              className="border-b border-slate-100 hover:bg-blue-50 transition-colors"
+              className="border-b border-slate-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors"
             >
               {columns.map((col) => (
                 <td key={col.key} className="px-4 py-3 text-slate-600 whitespace-nowrap">

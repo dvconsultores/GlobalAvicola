@@ -23,13 +23,13 @@ const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
     'bg-[#2563EB] text-white hover:bg-[#1D4ED8] active:bg-[#1E40AF] focus-visible:ring-blue-400',
   secondary:
-    'bg-[#F1F5F9] text-[#334155] hover:bg-[#E2E8F0] active:bg-[#CBD5E1] focus-visible:ring-slate-400',
+    'bg-[#F1F5F9] dark:bg-slate-700 text-[#334155] dark:text-slate-200 hover:bg-[#E2E8F0] dark:hover:bg-slate-600 active:bg-[#CBD5E1] focus-visible:ring-slate-400',
   danger:
     'bg-[#DC2626] text-white hover:bg-[#B91C1C] active:bg-[#991B1B] focus-visible:ring-red-400',
   ghost:
-    'bg-transparent text-[#334155] hover:bg-[#F1F5F9] active:bg-[#E2E8F0] focus-visible:ring-slate-400',
+    'bg-transparent text-[#334155] dark:text-slate-300 hover:bg-[#F1F5F9] dark:hover:bg-slate-700 active:bg-[#E2E8F0] focus-visible:ring-slate-400',
   outline:
-    'bg-transparent border border-[#E2E8F0] text-[#334155] hover:bg-[#F8FAFC] active:bg-[#F1F5F9] focus-visible:ring-slate-400',
+    'bg-transparent border border-[#E2E8F0] dark:border-slate-600 text-[#334155] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-700 active:bg-[#F1F5F9] focus-visible:ring-slate-400',
 }
 
 const SIZE_CLASSES: Record<Size, string> = {

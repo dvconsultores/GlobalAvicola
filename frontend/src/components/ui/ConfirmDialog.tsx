@@ -69,8 +69,7 @@ export default function ConfirmDialog({
       />
 
       {/* Modal */}
-      <div
-        className="relative bg-white rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
+      <div className="relative bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
@@ -93,12 +92,12 @@ export default function ConfirmDialog({
         )}
 
         {/* Title */}
-        <h2 id="confirm-title" className="text-lg font-bold text-slate-900 text-center mb-2">
+        <h2 id="confirm-title" className="text-lg font-bold text-slate-900 dark:text-slate-200 text-center mb-2">
           {title}
         </h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-600 text-center mb-6">
+        <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-6">
           {message}
         </p>
 
@@ -107,7 +106,7 @@ export default function ConfirmDialog({
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex-1 h-11 rounded-lg border border-slate-300 text-sm font-semibold text-slate-700 hover:bg-slate-50 transition-colors disabled:opacity-50"
+            className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           >
             {cancelLabel || t('common.cancel', 'Cancelar')}
           </button>

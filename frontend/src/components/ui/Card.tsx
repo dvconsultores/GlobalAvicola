@@ -25,9 +25,9 @@ interface CardBodyProps {
 }
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default: 'bg-white border border-slate-200 shadow-sm',
-  flat: 'bg-white border border-slate-200',
-  elevated: 'bg-white shadow-md border border-slate-100',
+  default: 'bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 shadow-sm',
+  flat: 'bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700',
+  elevated: 'bg-white dark:bg-dark-card shadow-md border border-slate-100 dark:border-slate-700',
 }
 
 const PADDING_CLASSES = {
@@ -61,13 +61,13 @@ export function Card({
 
 export function CardHeader({ title, subtitle, action, className = '' }: CardHeaderProps) {
   return (
-    <div className={`flex items-start justify-between gap-3 px-5 py-4 border-b border-slate-100 ${className}`}>
+    <div className={`flex items-start justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-700 ${className}`}>
       <div>
         {typeof title === 'string' ? (
-          <h3 className="font-semibold text-slate-800 text-sm">{title}</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">{title}</h3>
         ) : title}
         {subtitle && (
-          <p className="text-xs text-slate-500 mt-0.5">{subtitle}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}

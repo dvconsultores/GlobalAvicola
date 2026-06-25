@@ -76,7 +76,7 @@ export function Modal({
         ref={dialogRef}
         tabIndex={-1}
         className={[
-          'relative w-full bg-white rounded-2xl shadow-xl',
+          'relative w-full bg-white dark:bg-dark-card rounded-2xl shadow-xl',
           'outline-none overflow-hidden',
           'max-h-[90dvh] flex flex-col',
           SIZE_CLASSES[size],

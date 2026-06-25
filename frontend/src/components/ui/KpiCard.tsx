@@ -48,8 +48,8 @@ export default function KpiCard({
     <div
       onClick={onClick}
       className={`
-        relative bg-white rounded-xl border ${c.border} p-4
-        ${onClick ? 'cursor-pointer hover:shadow-md hover:border-blue-300' : ''}
+        relative bg-white dark:bg-dark-card rounded-xl border ${c.border} dark:border-slate-700 p-4
+        ${onClick ? 'cursor-pointer hover:shadow-md hover:border-blue-300 dark:hover:border-blue-600' : ''}
         transition-all duration-200
         ${className}
       `}

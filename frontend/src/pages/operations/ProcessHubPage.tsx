@@ -16,7 +16,7 @@ export default function ProcessHubPage() {
   const totalOps = PROCESS_STAGES.reduce((acc, s) => acc + flowForStage(s.key).length, 0)
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-dark-bg pb-24 lg:pb-8">
+    <div className="min-h-screen bg-slate-50 dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
       {/* Hero header */}
       <div className="bg-gradient-to-br from-[#1E3A5F] via-[#234876] to-[#2563EB] text-white px-5 pt-8 pb-10 rounded-b-[2rem] shadow-lg">
         <div className="max-w-5xl mx-auto">

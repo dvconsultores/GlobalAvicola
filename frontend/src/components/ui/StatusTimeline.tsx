@@ -63,7 +63,7 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
               {/* Círculo indicador con color compartido */}
               <div className={`
                 relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0
-                ${style.bg} ring-4 ring-white
+                ${style.bg} ring-4 ring-white dark:ring-dark-bg
               `}>
                 <Icon size={16} className={style.iconColor} />
               </div>

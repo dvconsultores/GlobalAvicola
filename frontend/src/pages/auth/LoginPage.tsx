@@ -53,7 +53,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#1E3A5F] to-[#3B82F6] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
+        <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
             <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('brand.name')}</h1>
             <p className="text-slate-500 text-sm mt-1">{t('brand.tagline')}</p>
