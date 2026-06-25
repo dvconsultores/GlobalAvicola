@@ -55,8 +55,8 @@ export default function LoginPage() {
       <div className="w-full max-w-md">
         <div className="bg-white dark:bg-dark-card rounded-2xl shadow-xl p-8">
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('brand.name')}</h1>
-            <p className="text-slate-500 text-sm mt-1">{t('brand.tagline')}</p>
+            <h1 className="text-2xl font-bold text-[#1E3A5F] dark:text-white">{t('brand.name')}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">{t('brand.tagline')}</p>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">

@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
-import { ChevronLeft, ArrowRight, Info, Bird, LayoutGrid, ListOrdered } from 'lucide-react'
+import { ChevronLeft, ArrowRight, Info, Bird, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
 import {
@@ -67,6 +67,15 @@ export default function ProcessStagePage() {
 
   const StageIcon = stageMeta.Icon
 
+  // Determinar badge de fase (Cría/Producción/Incubación/Engorde)
+  const phaseBadge = (() => {
+    if (stageKey.includes('rearing')) return { label: 'Cría', icon: Sprout, color: 'bg-emerald-500/30 text-emerald-100' }
+    if (stageKey.includes('production')) return { label: 'Producción', icon: Egg, color: 'bg-amber-500/30 text-amber-100' }
+    if (stageKey === 'hatchery') return { label: 'Incubación', icon: Flame, color: 'bg-orange-500/30 text-orange-100' }
+    if (stageKey === 'broiler') return { label: 'Engorde', icon: Drumstick, color: 'bg-teal-500/30 text-teal-100' }
+    return null
+  })()
+
   const goToOperation = (event: string) => {
     const q = new URLSearchParams({ type: event })
     if (lotId) q.set('lot_id', lotId)
@@ -88,7 +97,15 @@ export default function ProcessStagePage() {
               <StageIcon size={32} strokeWidth={2.2} />
             </div>
             <div className="min-w-0">
-              <h1 className="text-2xl font-extrabold leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
+              <div className="flex items-center gap-3 flex-wrap">
+                <h1 className="text-2xl font-extrabold leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
+                {phaseBadge && (
+                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${phaseBadge.color}`}>
+                    <phaseBadge.icon size={14} />
+                    {phaseBadge.label}
+                  </span>
+                )}
+              </div>
               <p className="text-white/85 text-sm mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
             </div>
           </div>
