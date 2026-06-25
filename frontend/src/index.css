@@ -22,6 +22,22 @@
   --color-text: #1E293B;
   --color-text-muted: #64748B;
   --color-border: #E2E8F0;
+}
+
+/* Dark mode — paleta corporativa oscura */
+.dark {
+  --color-primary: #1E3A5F;
+  --color-primary-light: #3B82F6;
+  --color-primary-lighter: #60A5FA;
+  --color-success: #22C55E;
+  --color-warning: #EAB308;
+  --color-danger: #EF4444;
+  --color-info: #22D3EE;
+  --color-bg: #0F172A;
+  --color-surface: #1E293B;
+  --color-text: #F1F5F9;
+  --color-text-muted: #94A3B8;
+  --color-border: #334155;
 
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 16px;

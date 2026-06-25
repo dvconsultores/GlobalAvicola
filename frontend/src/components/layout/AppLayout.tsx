@@ -9,7 +9,7 @@ export default function AppLayout() {
   const isMobileUser = user?.view_type === 'mobile'
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-slate-50 dark:bg-dark-bg transition-colors duration-200">
       {/* Desktop sidebar: only for web/admin users */}
       {!isMobileUser && <Sidebar />}
       <Header />

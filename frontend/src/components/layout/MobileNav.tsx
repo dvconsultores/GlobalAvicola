@@ -85,7 +85,7 @@ export default function MobileNav() {
   const items = getItems()
 
   return (
-    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 z-30 flex justify-around items-center py-1 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
+    <nav className="lg:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-dark-surface border-t border-slate-200 dark:border-slate-700 z-30 flex justify-around items-center py-1 safe-area-bottom shadow-[0_-2px_10px_rgba(0,0,0,0.05)]">
       {items.map((item) => {
         if (item.path) {
           const active = isActive(item.path)
@@ -95,8 +95,8 @@ export default function MobileNav() {
               to={item.path}
               className={`flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-xs transition min-w-[56px] ${
                 active
-                  ? 'text-[#2563EB] font-semibold bg-blue-50'
-                  : 'text-slate-500'
+                  ? 'text-[#2563EB] font-semibold bg-blue-50 dark:bg-blue-900/30'
+                  : 'text-slate-500 dark:text-slate-400'
               } ${item.primary ? 'bg-[#1E3A5F] text-white px-5 py-2 shadow-md' : ''}`}
             >
               <item.Icon size={item.primary ? 20 : 22} />

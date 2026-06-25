@@ -72,7 +72,7 @@ export default function Sidebar() {
   }, [])
 
   return (
-    <aside className="hidden lg:flex flex-col w-64 bg-[#1E3A5F] text-white min-h-screen fixed left-0 top-0 z-30">
+    <aside className="hidden lg:flex flex-col w-64 bg-[#1E3A5F] dark:bg-dark-bg text-white min-h-screen fixed left-0 top-0 z-30 transition-colors duration-200">
       {/* Logo */}
       <div className="px-6 py-5 border-b border-blue-900">
         <h1 className="text-lg font-bold tracking-tight">{t('brand.name')}</h1>

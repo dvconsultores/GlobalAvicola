@@ -8,6 +8,14 @@ import App from './App'
 
 // S-01/02: Wire in-memory token accessors so api.ts can read/refresh tokens
 // without touching localStorage. Must happen before any API call.
+
+// Dark mode initialization — apply class before first render to avoid FOUC
+try {
+  const stored = JSON.parse(localStorage.getItem('theme-storage') || '{}')
+  if (stored?.state?.isDark) {
+    document.documentElement.classList.add('dark')
+  }
+} catch { /* ignore */ }
 registerTokenAccessors(
   () => useAuthStore.getState().token,
   () => useAuthStore.getState().refreshToken,
