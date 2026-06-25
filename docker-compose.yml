@@ -8,8 +8,11 @@ services:
   # ----- Backend API (FastAPI) -----
   backend:
     image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-backend:latest
+    pull_policy: always
     container_name: globalavicola-backend
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     environment:
       ENVIRONMENT: ${ENVIRONMENT:-production}
       PROJECT_NAME: ${PROJECT_NAME:-Global Avícola}
@@ -34,8 +37,11 @@ services:
   # ----- Frontend (React + Nginx) — Production -----
   frontend:
     image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-frontend:latest
+    pull_policy: always
     container_name: globalavicola-frontend
     restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
     depends_on:
       - backend
     ports:
