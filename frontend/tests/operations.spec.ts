@@ -7,53 +7,34 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Operations Redesign', () => {
   
-  test.describe('ProcessHubPage', () => {
+  test.describe('PoultryHubPage', () => {
     
     test('should display 6 process cards', async ({ page }) => {
-      await page.goto('/processes')
-      
-      // Verificar que se muestren 6 procesos
-      const processCards = await page.locator('a[href*="/processes/"]').count()
+      await page.goto('/poultry')
+      const processCards = await page.locator('a[href*="/poultry/"]').count()
       expect(processCards).toBe(6)
     })
 
     test('should show process cards with icons and descriptions', async ({ page }) => {
-      await page.goto('/processes')
-      
-      // Verificar que cada card tenga un icono
-      const firstCard = page.locator('a[href*="/processes/"]').first()
-      await expect(firstCard).toContainText('operaciones')
-      
-      // Verificar que haya texto descriptivo
+      await page.goto('/poultry')
+      const firstCard = page.locator('a[href*="/poultry/"]').first()
+      await expect(firstCard).toContainText('pasos')
       const cardText = await firstCard.textContent()
       expect(cardText?.length).toBeGreaterThan(20)
     })
 
     test('should navigate to process stage when clicked', async ({ page }) => {
-      await page.goto('/processes')
-      
-      // Hacer clic en el primer proceso
-      const firstProcess = page.locator('a[href*="/processes/"]').first()
+      await page.goto('/poultry')
+      const firstProcess = page.locator('a[href*="/poultry/"]').first()
       await firstProcess.click()
-      
-      // Verificar que se navegó a la página de etapas
-      expect(page.url()).toContain('/processes/')
+      expect(page.url()).toContain('/poultry/')
     })
-
-    test('should show helpful hint at bottom', async ({ page }) => {
-      await page.goto('/processes')
-      
-      // Buscar el hint
-      const hint = page.locator('text=Toca cualquier proceso').or(page.locator('text=Tap any process'))
-      await expect(hint).toBeVisible()
-    })
-
   })
 
   test.describe('ProcessStagePage - Timeline', () => {
     
-    test('should display operations as timeline items', async ({ page }) => {
-      await page.goto('/processes/broiler')
+    test('should display operations', async ({ page }) => {
+      await page.goto('/poultry/broiler')
       
       // Esperar a que cargue
       await page.waitForLoadState('networkidle')

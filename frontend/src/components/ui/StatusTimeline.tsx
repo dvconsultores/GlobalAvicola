@@ -1,9 +1,5 @@
-import { type LucideIcon } from 'lucide-react'
-import {
-  FileText, Search, RotateCcw, CheckCircle, XCircle, Send,
-  Package, AlertTriangle, Eye,
-} from 'lucide-react'
 import { useTranslation } from 'react-i18next'
+import { STATUS_STYLES, type StatusKey } from '../../data/statusColors'
 
 export type TimelineEventType =
   | 'create' | 'review' | 'correction' | 'approval' | 'rejection'
@@ -25,18 +21,19 @@ interface StatusTimelineProps {
   className?: string
 }
 
-const EVENT_STYLES: Record<TimelineEventType, { bg: string; icon: LucideIcon; color: string; dot: string }> = {
-  create:        { bg: 'bg-blue-100', icon: FileText,    color: 'text-blue-600',   dot: 'bg-blue-500' },
-  review:        { bg: 'bg-indigo-100', icon: Search,    color: 'text-indigo-600', dot: 'bg-indigo-500' },
-  correction:    { bg: 'bg-purple-100', icon: RotateCcw, color: 'text-purple-600', dot: 'bg-purple-500' },
-  approval:      { bg: 'bg-emerald-100', icon: CheckCircle, color: 'text-emerald-600', dot: 'bg-emerald-500' },
-  rejection:     { bg: 'bg-red-100', icon: XCircle,     color: 'text-red-600',    dot: 'bg-red-500' },
-  return:        { bg: 'bg-orange-100', icon: RotateCcw, color: 'text-orange-600', dot: 'bg-orange-500' },
-  sap_send:      { bg: 'bg-blue-100', icon: Send,       color: 'text-blue-600',   dot: 'bg-blue-500' },
-  sap_error:     { bg: 'bg-red-100', icon: AlertTriangle, color: 'text-red-600',  dot: 'bg-red-500' },
-  sap_confirm:   { bg: 'bg-emerald-100', icon: CheckCircle, color: 'text-emerald-600', dot: 'bg-emerald-500' },
-  consolidation: { bg: 'bg-teal-100', icon: Package,    color: 'text-teal-600',   dot: 'bg-teal-500' },
-  view:          { bg: 'bg-slate-100', icon: Eye,       color: 'text-slate-600',  dot: 'bg-slate-400' },
+// Mapeo de TimelineEventType a StatusKey para usar colores compartidos
+const TYPE_TO_STATUS: Record<TimelineEventType, StatusKey> = {
+  create:        'registered',
+  review:        'in_review',
+  correction:    'corrected',
+  approval:      'approved',
+  rejection:     'rejected',
+  return:        'returned',
+  sap_send:      'sent_sap',
+  sap_error:     'error_sap',
+  sap_confirm:   'confirmed_sap',
+  consolidation: 'consolidated',
+  view:          'neutral',
 }
 
 /**
@@ -57,17 +54,18 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
 
       <div className="space-y-0">
         {events.map((event, index) => {
-          const style = EVENT_STYLES[event.type] || EVENT_STYLES.view
+          const statusKey = TYPE_TO_STATUS[event.type] || 'neutral'
+          const style = STATUS_STYLES[statusKey]
           const Icon = style.icon
 
           return (
             <div key={event.id} className="relative flex gap-4 pb-6 last:pb-0">
-              {/* Círculo indicador */}
+              {/* Círculo indicador con color compartido */}
               <div className={`
                 relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0
                 ${style.bg} ring-4 ring-white
               `}>
-                <Icon size={16} className={style.color} />
+                <Icon size={16} className={style.iconColor} />
               </div>
 
               {/* Contenido */}

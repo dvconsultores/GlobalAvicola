@@ -14,48 +14,49 @@ import { test, expect } from '@playwright/test'
 
 test.describe('Operations Redesign - Smoke Tests', () => {
   
-  test.describe('ProcessHubPage (/processes)', () => {
+  test.describe('PoultryHubPage (/poultry)', () => {
     
     test('page loads without errors', async ({ page }) => {
-      const response = await page.goto('/processes', { waitUntil: 'networkidle' })
-      
-      // Verificar que la página cargó (no 404 o 500)
+      const response = await page.goto('/poultry', { waitUntil: 'networkidle' })
       expect(response?.status()).toBeLessThan(400)
     })
 
     test('displays header title', async ({ page }) => {
-      await page.goto('/processes', { waitUntil: 'networkidle' })
-      
-      // Verificar que hay un h1 visible
+      await page.goto('/poultry', { waitUntil: 'networkidle' })
       const header = page.locator('h1').first()
       await expect(header).toBeVisible()
     })
 
     test('displays content', async ({ page }) => {
-      await page.goto('/processes', { waitUntil: 'networkidle' })
-      
-      // Verificar que hay contenido en la página
+      await page.goto('/poultry', { waitUntil: 'networkidle' })
       const body = page.locator('body')
       const text = await body.textContent()
       expect(text?.length).toBeGreaterThan(100)
     })
 
+    test('legacy /processes redirects to /poultry', async ({ page }) => {
+      await page.goto('/processes', { waitUntil: 'networkidle' })
+      expect(page.url()).toContain('/poultry')
+    })
   })
 
-  test.describe('ProcessStagePage (/processes/:key)', () => {
+  test.describe('PoultryStagePage (/poultry/:birdType/:phase)', () => {
     
     test('broiler stage page loads', async ({ page }) => {
-      const response = await page.goto('/processes/broiler', { 
+      const response = await page.goto('/poultry/broiler', { 
         waitUntil: 'networkidle',
         timeout: 30000 
       }).catch(() => null)
-      
       if (response) {
         const status = response.status()
         expect(status).toBeLessThan(500)
       }
     })
 
+    test('legacy /processes/broiler redirects to /poultry/broiler', async ({ page }) => {
+      await page.goto('/processes/broiler', { waitUntil: 'networkidle' })
+      expect(page.url()).toContain('/poultry')
+    })
   })
 
   test.describe('Dashboard (/)', () => {
