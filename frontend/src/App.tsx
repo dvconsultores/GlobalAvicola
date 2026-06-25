@@ -64,6 +64,7 @@ function WebOnlyRoute({ children }: { children: React.ReactNode }) {
 
 /**
  * ProcessStageRedirect — mapea rutas legacy /processes/:stage a /poultry/:birdType/:phase
+ * Usa useParams directamente en el componente (sin wrapper innecesario)
  */
 const STAGE_ROUTE_MAP: Record<string, string> = {
   'grandparent_rearing': '/poultry/grandparent/rearing',
@@ -75,10 +76,6 @@ const STAGE_ROUTE_MAP: Record<string, string> = {
 }
 
 function ProcessStageRedirect() {
-  return <ProcessStageRedirectInner />
-}
-
-function ProcessStageRedirectInner() {
   const { stage } = useParams<{ stage: string }>()
   const target = stage ? STAGE_ROUTE_MAP[stage] : null
   if (target) return <Navigate to={target} replace />

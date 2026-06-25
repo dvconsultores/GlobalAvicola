@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ChevronDown, type LucideIcon } from 'lucide-react'
+import { ChevronDown, Dot, type LucideIcon } from 'lucide-react'
 import { isAnyChildActive, type NavItem } from '../../data/navigationConfig'
 import SidebarItem from './SidebarItem'
 
@@ -17,14 +17,15 @@ interface SidebarSubmenuProps {
   onToggle?: () => void
   /** Callback al hacer clic en un hijo (para cerrar drawer) */
   onChildClick?: () => void
-  /** Clave única para persistir estado */
-  sectionKey?: string
 }
 
 /**
  * Submenú colapsable del sidebar.
  * Muestra un header clickeable con chevron animado y expande/colapsa hijos.
  * Se expande automáticamente si algún hijo está activo.
+ *
+ * NOTA: El control de expansión puede ser externo (vía props `expanded` + `onToggle`)
+ * o interno (auto-gestionado). Si se proporciona `expanded`, se ignora el estado interno.
  */
 export default function SidebarSubmenu({
   icon: Icon,
@@ -39,26 +40,27 @@ export default function SidebarSubmenu({
   const location = useLocation()
   const contentRef = useRef<HTMLDivElement>(null)
 
-  // Control interno de expandido (si no hay control externo)
+  // Control interno SOLO si no hay control externo
   const [internalExpanded, setInternalExpanded] = useState(
     () => items.some(item => isAnyChildActive(location.pathname, item)),
   )
 
-  const isExpanded = externalExpanded !== undefined ? externalExpanded : internalExpanded
+  // Si hay control externo, usamos ese; si no, el interno
+  const isControlled = externalExpanded !== undefined
+  const isExpanded = isControlled ? externalExpanded : internalExpanded
   const anyChildActive = items.some(item => isAnyChildActive(location.pathname, item))
 
-  // Auto-expandir si un hijo está activo
+  // Auto-expandir si un hijo está activo (solo en modo no controlado)
   useEffect(() => {
-    if (anyChildActive && externalExpanded === undefined) {
+    if (!isControlled && anyChildActive) {
       setInternalExpanded(true)
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location.pathname])
+  }, [location.pathname, isControlled, anyChildActive])
 
   const handleToggle = () => {
-    if (onToggle) {
+    if (isControlled && onToggle) {
       onToggle()
-    } else {
+    } else if (!isControlled) {
       setInternalExpanded(prev => !prev)
     }
   }
@@ -81,6 +83,7 @@ export default function SidebarSubmenu({
           <Icon size={18} strokeWidth={anyChildActive ? 2.2 : 1.8} />
         </span>
         <span className="flex-1 truncate text-left">{t(labelKey, fallback)}</span>
+        <span className="text-[10px] font-bold text-blue-300/50 mr-1">{items.length}</span>
         <ChevronDown
           size={16}
           className={`shrink-0 text-blue-300/60 transition-transform duration-200 ${

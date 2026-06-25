@@ -77,12 +77,15 @@ export default function FilterPanel({
 
 /**
  * FilterGroup — Agrupación de filtros relacionados con label.
+ * Responsive: en mobile (<640px) los filtros se apilan verticalmente.
  */
 export function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1.5">
       <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
-      <div className="flex flex-wrap items-center gap-2">{children}</div>
+      <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2">
+        {children}
+      </div>
     </div>
   )
 }
