@@ -11,7 +11,7 @@ import {
   Home, Bird, Egg, Flame, Drumstick, Feather, Plane,
   Search, CheckCircle, RefreshCw, TrendingUp, Shield,
   Database, Settings, Users, FileText, Clock, Undo2,
-  Package, Send, AlertTriangle, BarChart3, UserCheck,
+  Send, AlertTriangle, BarChart3, UserCheck,
   type LucideIcon,
 } from 'lucide-react'
 
@@ -87,6 +87,7 @@ export const NAV_ITEMS: NavItem[] = [
         icon: Plane,
         labelKey: 'nav.grandparent',
         fallback: 'Progenitoras',
+        section: 'operational',
         children: [
           { key: 'gp_rearing', icon: FileText, labelKey: 'nav.gpRearing', fallback: 'Cría', to: '/poultry/grandparent/rearing', section: 'operational' },
           { key: 'gp_production', icon: Egg, labelKey: 'nav.gpProduction', fallback: 'Producción', to: '/poultry/grandparent/production', section: 'operational' },
@@ -97,6 +98,7 @@ export const NAV_ITEMS: NavItem[] = [
         icon: Feather,
         labelKey: 'nav.breeder',
         fallback: 'Reproductoras',
+        section: 'operational',
         children: [
           { key: 'br_rearing', icon: FileText, labelKey: 'nav.brRearing', fallback: 'Cría', to: '/poultry/breeder/rearing', section: 'operational' },
           { key: 'br_production', icon: Egg, labelKey: 'nav.brProduction', fallback: 'Producción', to: '/poultry/breeder/production', section: 'operational' },

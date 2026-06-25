@@ -225,11 +225,11 @@ export default function ApprovalPanel() {
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
                   <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
-                    {t(`status.${event.status}`, event.status)}
+                    {String(t(`status.${event.status}`, event.status))}
                   </Badge>
                 </div>
                 <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
-                <p className="text-xs text-slate-400 mt-0.5">{t('review.lotPrefix', 'Lote')} #{event.lot_id} · {event.event_date}</p>
+                <p className="text-xs text-slate-400 mt-0.5">{String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}</p>
               </div>
             </div>
             <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
@@ -301,7 +301,7 @@ export default function ApprovalPanel() {
                 <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
                 <td className="px-4 py-3">
                   <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
-                    {t(`status.${event.status}`, event.status)}
+                    {String(t(`status.${event.status}`, event.status))}
                   </Badge>
                 </td>
                 <td className="px-4 py-3">

@@ -1,7 +1,6 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect, vi } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { I18nextProvider } from 'react-i18next'
 import { Button } from '../Button'
 import { Input } from '../Input'
 import { Card, CardHeader, CardBody } from '../Card'
@@ -13,6 +12,7 @@ import ConfirmDialog from '../ConfirmDialog'
 import FormSection from '../FormSection'
 import FilterPanel, { FilterGroup } from '../FilterPanel'
 import StatusTimeline from '../StatusTimeline'
+import { Search } from 'lucide-react'
 import type { TimelineEvent } from '../StatusTimeline'
 
 // Mock i18n
@@ -137,8 +137,7 @@ describe('KpiCard', () => {
   })
 
   it('renders with different color variants', () => {
-    const { container } = render(<KpiCard label="Test" value={1} color="red" />)
-    // KpiCard se renderiza sin errores con variantes de color
+    render(<KpiCard label="Test" value={1} color="red" />)
     expect(screen.getByText('Test')).toBeInTheDocument()
   })
 })
@@ -148,9 +147,9 @@ describe('KpiCard', () => {
 // ============================================================
 describe('EmptyState', () => {
   it('renders title and description', () => {
-    const { container } = render(
+    render(
       <BrowserRouter>
-        <EmptyState icon={() => null} title="Sin datos" description="No hay registros" />
+        <EmptyState icon={Search} title="Sin datos" description="No hay registros" />
       </BrowserRouter>
     )
     expect(screen.getByText('Sin datos')).toBeInTheDocument()

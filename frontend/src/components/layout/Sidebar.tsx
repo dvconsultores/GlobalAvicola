@@ -53,7 +53,7 @@ export default function Sidebar() {
   const { t } = useTranslation()
   const location = useLocation()
   const { logout, user } = useAuthStore()
-  const { isExpanded, toggleSection, expandContaining } = useSidebar()
+  const { expandedSections, toggleSection, expandContaining } = useSidebar()
 
   // Expandir automáticamente la sección que contiene la ruta activa
   useMemo(() => {
@@ -89,7 +89,7 @@ export default function Sidebar() {
                 <NavItemRenderer
                   key={item.key}
                   item={item}
-                  expandedSections={isExpanded}
+                  expandedSections={expandedSections}
                   toggleSection={toggleSection}
                 />
               ))}

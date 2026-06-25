@@ -65,7 +65,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const { user, logout } = useAuthStore()
   const location = useLocation()
   const closeRef = useRef<HTMLButtonElement>(null)
-  const { isExpanded, toggleSection, expandContaining } = useSidebar()
+  const { expandedSections, toggleSection, expandContaining } = useSidebar()
 
   // Expandir automáticamente la sección de la ruta activa
   useMemo(() => {
@@ -155,7 +155,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                   <DrawerNavItem
                     key={item.key}
                     item={item}
-                    expandedSections={isExpanded}
+                    expandedSections={expandedSections}
                     toggleSection={toggleSection}
                     onClose={onClose}
                   />

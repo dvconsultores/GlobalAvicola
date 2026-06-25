@@ -27,7 +27,6 @@ export default function SapManagerPage() {
   const [jobs, setJobs] = useState<any[]>([])
   const [payloads, setPayloads] = useState<any[]>([])
   const [conn, setConn] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     Promise.all([
@@ -40,7 +39,7 @@ export default function SapManagerPage() {
       setJobs(jobsRes.data.jobs || [])
       setPayloads(payloadRes.data.payloads || [])
       setConn(connRes.data)
-    }).finally(() => setLoading(false))
+    })
   }, [])
 
   const handleConsolidate = async () => {

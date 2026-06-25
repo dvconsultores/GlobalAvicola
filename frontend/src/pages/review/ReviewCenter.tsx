@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
   CheckCircle, Check, Play, Undo2, ZoomIn, Package, Search,
-  Clock, XCircle, FileText, ListChecks, Filter,
+  Clock, ListChecks,
 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -302,12 +302,12 @@ export default function ReviewCenter() {
                 <div className="flex items-center gap-2 mb-1.5">
                   <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
                   <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
-                    {t(`status.${event.status}`, event.status)}
+                    {String(t(`status.${event.status}`, event.status))}
                   </Badge>
                 </div>
                 <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
                 <p className="text-xs text-slate-400 mt-0.5">
-                  {t('review.lotPrefix', 'Lote')} #{event.lot_id} · {event.event_date}
+                  {String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}
                 </p>
               </div>
             </div>
@@ -405,7 +405,7 @@ export default function ReviewCenter() {
                   <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
                   <td className="px-4 py-3">
                     <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
-                      {t(`status.${event.status}`, event.status)}
+                      {String(t(`status.${event.status}`, event.status))}
                     </Badge>
                   </td>
                   <td className="px-4 py-3">

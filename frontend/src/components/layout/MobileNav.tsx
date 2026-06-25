@@ -1,7 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Home, Bird, TrendingUp, Clock, PlusCircle, ArrowLeft, Save, Menu } from 'lucide-react'
-import { useAuthStore } from '../../stores/auth.store'
+import { Home, Bird, TrendingUp, PlusCircle, ArrowLeft, Save, Menu } from 'lucide-react'
 import { useUiStore } from '../../stores/ui.store'
 
 type NavContext = 'default' | 'form' | 'detail'

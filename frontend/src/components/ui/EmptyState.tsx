@@ -1,5 +1,4 @@
 import { type LucideIcon, Plus } from 'lucide-react'
-import { useTranslation } from 'react-i18next'
 
 interface EmptyStateProps {
   icon: LucideIcon
@@ -24,7 +23,6 @@ export default function EmptyState({
   action,
   className = '',
 }: EmptyStateProps) {
-  const { t } = useTranslation()
 
   return (
     <div className={`flex flex-col items-center justify-center py-12 px-4 ${className}`}>

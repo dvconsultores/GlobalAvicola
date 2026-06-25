@@ -53,7 +53,7 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
       <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-slate-200 rounded-full" />
 
       <div className="space-y-0">
-        {events.map((event, index) => {
+        {events.map((event) => {
           const statusKey = TYPE_TO_STATUS[event.type] || 'neutral'
           const style = STATUS_STYLES[statusKey]
           const Icon = style.icon

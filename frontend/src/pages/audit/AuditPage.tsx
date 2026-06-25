@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Shield, Search, Filter, Clock, User, Database, RotateCcw } from 'lucide-react'
+import { Shield, User, Database, RotateCcw } from 'lucide-react'
 import api from '../../services/api'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { FilterPanel, FilterGroup, Badge, StatusTimeline, EmptyState } from '../../components/ui'
