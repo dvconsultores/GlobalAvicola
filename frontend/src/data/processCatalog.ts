@@ -84,7 +84,7 @@ export const PROCESS_STAGES: ProcessStage[] = [
     accent: 'hover:border-blue-400 hover:bg-blue-50',
     iconBg: 'bg-blue-100',
     iconColor: 'text-blue-600',
-    gradient: 'from-blue-400 to-indigo-500',
+    gradient: 'from-[#1E3A5F] to-[#2563EB]',
   },
   {
     key: 'hatchery',
