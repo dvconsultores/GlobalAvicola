@@ -138,7 +138,7 @@ export default function DashboardPage() {
                   <Link
                     key={stage.key}
                     to={`/poultry/${stage.key}`}
-                    className={`group relative overflow-hidden rounded-3xl bg-gradient-to-br ${stage.gradient} p-4 text-white shadow-sm active:scale-[0.97] transition-all`}
+                    className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E3A5F] to-[#2563EB] p-4 text-white shadow-sm active:scale-[0.97] transition-all"
                   >
                     <span className="absolute -top-2 -right-1 text-white/25 text-5xl font-black select-none">{idx + 1}</span>
                     <span className="inline-flex w-12 h-12 rounded-2xl bg-white/25 backdrop-blur items-center justify-center ring-1 ring-white/30 shadow-inner">

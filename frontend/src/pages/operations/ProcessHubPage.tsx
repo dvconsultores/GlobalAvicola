@@ -53,14 +53,14 @@ export default function ProcessHubPage() {
               <Link
                 key={stage.key}
                 to={`/poultry/${stage.key}`}
-                className="group relative overflow-hidden rounded-3xl bg-white dark:bg-dark-card shadow-sm hover:shadow-xl border border-slate-100 dark:border-slate-700 transition-all active:scale-[0.98]"
+                className="group relative overflow-hidden rounded-3xl bg-white dark:bg-dark-card shadow-sm hover:shadow-xl border border-slate-200 dark:border-slate-700 transition-all active:scale-[0.98]"
               >
-                {/* Colored header band */}
-                <div className={`relative bg-gradient-to-br ${stage.gradient} p-5 pb-12`}>
-                  <span className="absolute top-4 right-4 text-white/40 text-5xl font-black leading-none select-none">
+                {/* Azul corporativo header band — todas las tarjetas iguales */}
+                <div className="relative bg-gradient-to-br from-[#1E3A5F] to-[#2563EB] p-5 pb-12">
+                  <span className="absolute top-4 right-4 text-white/15 text-5xl font-black leading-none select-none">
                     {idx + 1}
                   </span>
-                  <span className="inline-flex w-14 h-14 rounded-2xl bg-white/25 backdrop-blur items-center justify-center text-white shadow-inner ring-1 ring-white/30">
+                  <span className="inline-flex w-14 h-14 rounded-2xl bg-white/20 backdrop-blur items-center justify-center text-white shadow-inner ring-1 ring-white/30">
                     <stage.Icon size={30} strokeWidth={2.2} />
                   </span>
                 </div>
@@ -80,13 +80,13 @@ export default function ProcessHubPage() {
                       {preview.map((label, i) => (
                         <span
                           key={i}
-                          className="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300"
+                          className="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                         >
                           {label}
                         </span>
                       ))}
                       {flow.length > 3 && (
-                        <span className="text-[10px] font-bold text-slate-400">
+                        <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
                           +{flow.length - 3}
                         </span>
                       )}

@@ -84,8 +84,8 @@ export default function ProcessStagePage() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
-      {/* Colorful stage header */}
-      <div className={`relative overflow-hidden bg-gradient-to-br ${stageMeta.gradient} text-white px-5 pt-5 pb-8 rounded-b-[2rem] shadow-lg`}>
+      {/* Corporate blue header — todas las fases usan el mismo estilo */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-[#1E3A5F] to-[#2563EB] text-white px-5 pt-5 pb-8 rounded-b-[2rem] shadow-lg">
         <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
         <div className="relative max-w-2xl mx-auto">
           <Link to="/poultry" className="inline-flex items-center gap-1 text-sm font-semibold text-white/90 hover:text-white mb-4 transition-colors">
