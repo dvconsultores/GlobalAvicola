@@ -17,6 +17,8 @@ interface SidebarSubmenuProps {
   onToggle?: () => void
   /** Callback al hacer clic en un hijo (para cerrar drawer) */
   onChildClick?: () => void
+  /** Nivel de profundidad: 0=raíz, 1=primer nivel, 2=segundo nivel */
+  depth?: number
 }
 
 /**
@@ -35,6 +37,7 @@ export default function SidebarSubmenu({
   expanded: externalExpanded,
   onToggle,
   onChildClick,
+  depth = 0,
 }: SidebarSubmenuProps) {
   const { t } = useTranslation()
   const location = useLocation()
@@ -113,10 +116,11 @@ export default function SidebarSubmenu({
                   fallback={child.fallback}
                   children={child.children}
                   onChildClick={onChildClick}
+                  depth={depth}
                 />
               )
             }
-            // Si es un item hoja, renderizar SidebarItem
+            // Si es un item hoja, renderizar SidebarItem con profundidad aumentada
             if (child.to) {
               return (
                 <SidebarItem
@@ -125,7 +129,7 @@ export default function SidebarSubmenu({
                   labelKey={child.labelKey}
                   fallback={child.fallback}
                   to={child.to}
-                  depth={1}
+                  depth={depth + 1}
                   badge={child.badge}
                   onClick={onChildClick}
                 />
