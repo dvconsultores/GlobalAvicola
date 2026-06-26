@@ -6,6 +6,7 @@ interface JwtClaims {
   username?: string
   role_id?: number | null
   view_type?: string
+  company_id?: string | number | null
 }
 
 // Decode JWT payload without verification (view_type is in the token)
@@ -27,6 +28,8 @@ interface User {
   role_id: number | null
   view_type?: string
   is_super_admin?: boolean
+  company_id?: number | null
+  company_name?: string | null
 }
 
 interface AuthState {
@@ -62,6 +65,8 @@ function getInitialUser(): User | null {
     email: '',
     role_id: claims.role_id ?? null,
     view_type: claims.view_type || 'web',
+    company_id: claims.company_id != null ? Number(claims.company_id) : null,
+    company_name: null,
   }
 }
 
@@ -87,6 +92,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       email: '',
       role_id: claims?.role_id ?? null,
       view_type: claims?.view_type || 'web',
+      company_id: claims?.company_id != null ? Number(claims.company_id) : null,
+      company_name: null,
     }
     set({ token: access, refreshToken: refresh, isAuthenticated: true, user: immediateUser })
   },

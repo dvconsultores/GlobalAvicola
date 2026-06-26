@@ -12,11 +12,32 @@ from app.auth.models import Permission, PermissionAction, Role, User
 from app.auth.security import hash_password
 from app.database import async_session
 from app.masters.models import (
-    Breed, CullCause, Farm, FarmType, FeedType, Hatcher, Hatchery,
+    Breed, Company, CullCause, Farm, FarmType, FeedType, Hatcher, Hatchery,
     House, HouseType, Incubator, Medication, MortalityCause,
     ProcessingPlant, Supplier, Transport, Vaccine,
 )
 import app.lots.models  # noqa: F401 — register LotPhase/OpeningBalance mappers
+
+
+async def seed_companies(session: AsyncSession) -> dict[str, int]:
+    """Ensure both dev companies exist. Returns {name: id} mapping."""
+    companies_data = [
+        {"name": "Avícola Global C.A.",  "tax_id": "J-12345678-9", "country": "Venezuela", "currency": "USD"},
+        {"name": "Avícola Del Sur C.A.", "tax_id": "J-98765432-1", "country": "Venezuela", "currency": "USD"},
+    ]
+    result: dict[str, int] = {}
+    for c_data in companies_data:
+        existing = await session.execute(select(Company).where(Company.name == c_data["name"]))
+        company = existing.scalar_one_or_none()
+        if company:
+            print(f"  ⏭️  Compañía '{company.name}' ya existe (id={company.id})")
+        else:
+            company = Company(**c_data)
+            session.add(company)
+            await session.flush()
+            print(f"  ✅ Compañía: {company.name} (id={company.id})")
+        result[company.name] = company.id
+    return result
 
 
 async def seed_roles(session: AsyncSession) -> dict[str, Role]:
@@ -118,7 +139,9 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
     return created_roles
 
 
-async def seed_users(session: AsyncSession, roles: dict[str, Role]):
+async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: dict[str, int]):
+    c1 = companies.get("Avícola Global C.A.", 1)
+    c2 = companies.get("Avícola Del Sur C.A.", 2)
     users_data = [
         {
             "first_name": "Admin",
@@ -127,6 +150,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "username": "admin",
             "password": "admin123",
             "role_name": "Super Administrador",
+            "company_id": None,  # super admin no está limitado a empresa
         },
         {
             "first_name": "María",
@@ -135,6 +159,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "username": "supervisora",
             "password": "super123",
             "role_name": "Supervisor Avícola",
+            "company_id": c1,
         },
         {
             "first_name": "Juan",
@@ -143,6 +168,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "username": "operador",
             "password": "oper123",
             "role_name": "Operador de Granja",
+            "company_id": c1,
         },
         {
             "first_name": "Carlos",
@@ -151,6 +177,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "username": "aprobador",
             "password": "aprob123",
             "role_name": "Aprobador",
+            "company_id": c1,
         },
         {
             "first_name": "Ana",
@@ -159,6 +186,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "username": "sap_analyst",
             "password": "sap123",
             "role_name": "Analista SAP",
+            "company_id": c1,
         },
         {
             "first_name": "Auditor",
@@ -167,6 +195,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "username": "auditor",
             "password": "audit123",
             "role_name": "Auditor",
+            "company_id": c1,
         },
         {
             "first_name": "Operador",
@@ -176,6 +205,26 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             "password": "mobile123456",
             "role_name": "Operador de Granja",
             "view_type": "mobile",
+            "company_id": c1,
+        },
+        # ── Empresa 2: Avícola Del Sur C.A. ─────────────────────────────
+        {
+            "first_name": "Pedro",
+            "last_name": "Supervisor Sur",
+            "email": "supervisor@avicola-sur.com",
+            "username": "supervisor_sur",
+            "password": "sur123456",
+            "role_name": "Supervisor Avícola",
+            "company_id": c2,
+        },
+        {
+            "first_name": "Luis",
+            "last_name": "Operador Sur",
+            "email": "operador@avicola-sur.com",
+            "username": "operador_sur",
+            "password": "sur123456",
+            "role_name": "Operador de Granja",
+            "company_id": c2,
         },
     ]
 
@@ -201,18 +250,24 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             phone=None,
             hashed_password=hash_password(user_data["password"]),
             role_id=role.id if role else None,
+            company_id=user_data.get("company_id"),
             view_type=user_data.get("view_type", "web"),
         )
         session.add(user)
-        print(f"  ✅ Usuario: {user.username} ({user_data['role_name']}) [vista: {user.view_type}]")
+        print(f"  ✅ Usuario: {user.username} ({user_data['role_name']}) [empresa_id={user_data.get('company_id')}]")
 
 
 async def seed_catalogs(session: AsyncSession, company_id: int) -> None:
     """Seed all master catalog tables needed by operation forms."""
 
-    # ── Helper: skip if already seeded ───────────────────────────────
+    # ── Helper: skip if already seeded for this company ─────────────
     async def already_seeded(model) -> bool:
-        r = await session.execute(select(model).limit(1))
+        if hasattr(model, 'company_id'):
+            r = await session.execute(
+                select(model).where(model.company_id == company_id).limit(1)
+            )
+        else:
+            r = await session.execute(select(model).limit(1))
         return r.first() is not None
 
     # ── Farms & Houses ────────────────────────────────────────────────
@@ -376,23 +431,33 @@ async def main():
     print()
 
     async with async_session() as session:
+        print("🏢 Creando compañías...")
+        companies = await seed_companies(session)
+
+        print()
         print("📋 Creando roles y permisos...")
         roles = await seed_roles(session)
 
         print()
         print("👤 Creando usuarios...")
-        await seed_users(session, roles)
+        await seed_users(session, roles, companies)
 
         print()
-        print("📦 Creando catálogos maestros...")
-        await seed_catalogs(session, company_id=1)
+        print("📦 Creando catálogos maestros (empresa 1)...")
+        c1 = companies.get("Avícola Global C.A.", 1)
+        await seed_catalogs(session, company_id=c1)
+
+        print()
+        print("📦 Creando catálogos maestros (empresa 2)...")
+        c2 = companies.get("Avícola Del Sur C.A.", 2)
+        await seed_catalogs(session, company_id=c2)
 
         await session.commit()
 
     print()
     print("✅ Seeds completados!")
     print()
-    print("   Usuarios de prueba:")
+    print("   Empresa 1 — Avícola Global C.A.:")
     print("   ┌──────────────────┬─────────────────┐")
     print("   │ admin            │ admin123        │")
     print("   │ supervisora      │ super123        │")
@@ -401,6 +466,12 @@ async def main():
     print("   │ aprobador        │ aprob123        │")
     print("   │ sap_analyst      │ sap123          │")
     print("   │ auditor          │ audit123        │")
+    print("   └──────────────────┴─────────────────┘")
+    print()
+    print("   Empresa 2 — Avícola Del Sur C.A.:")
+    print("   ┌──────────────────┬─────────────────┐")
+    print("   │ supervisor_sur   │ sur123456       │")
+    print("   │ operador_sur     │ sur123456       │")
     print("   └──────────────────┴─────────────────┘")
 
 

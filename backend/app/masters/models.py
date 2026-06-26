@@ -74,7 +74,7 @@ class Farm(Base):
     __tablename__ = "farms"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"))
+    company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"), index=True)
     name: Mapped[str] = mapped_column(String(200))
     code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     location: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -105,7 +105,7 @@ class Hatchery(Base):
     __tablename__ = "hatcheries"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"))
+    company_id: Mapped[int] = mapped_column(Integer, ForeignKey("companies.id"), index=True)
     name: Mapped[str] = mapped_column(String(200))
     code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     location: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
@@ -147,7 +147,7 @@ class GeneticLine(Base):
     __tablename__ = "genetic_lines"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     supplier: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
@@ -193,7 +193,7 @@ class Lot(Base):
     __tablename__ = "lots"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     farm_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("farms.id"), nullable=True)
     house_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("houses.id"), nullable=True)
     genetic_line_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("genetic_lines.id"), nullable=True)
@@ -221,7 +221,7 @@ class Supplier(Base):
     __tablename__ = "suppliers"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     sap_code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     country: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -234,7 +234,7 @@ class FeedType(Base):
     __tablename__ = "feed_types"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     presentation: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -246,7 +246,7 @@ class Vaccine(Base):
     __tablename__ = "vaccines"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     laboratory: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
     vaccine_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -260,7 +260,7 @@ class Medication(Base):
     __tablename__ = "medications"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     laboratory: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
     presentation: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -272,7 +272,7 @@ class MortalityCause(Base):
     __tablename__ = "mortality_causes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -283,7 +283,7 @@ class CullCause(Base):
     __tablename__ = "cull_causes"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -294,7 +294,7 @@ class Transport(Base):
     __tablename__ = "transports"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     plate: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     transport_type: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -307,7 +307,7 @@ class ProcessingPlant(Base):
     __tablename__ = "processing_plants"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     location: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
@@ -318,7 +318,7 @@ class RejectionReason(Base):
     __tablename__ = "rejection_reasons"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
@@ -330,7 +330,7 @@ class CorrectionType(Base):
     __tablename__ = "correction_types"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
-    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True)
+    company_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("companies.id"), nullable=True, index=True)
     name: Mapped[str] = mapped_column(String(200))
     description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)

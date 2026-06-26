@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { Menu, Globe, Sun, Moon, Bird } from 'lucide-react'
+import { Menu, Globe, Sun, Moon, Bird, Building2 } from 'lucide-react'
 import { useThemeStore } from '../../stores/theme.store'
 import MobileDrawer from './MobileDrawer'
 
@@ -41,6 +41,16 @@ export default function Header() {
 
         {/* Divider */}
         <div className="w-px h-5 bg-slate-200 dark:bg-dark-border" />
+
+        {/* Company badge */}
+        {user?.company_name && (
+          <div className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40">
+            <Building2 size={12} className="text-blue-500 dark:text-blue-400 shrink-0" />
+            <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 max-w-[140px] truncate">
+              {user.company_name}
+            </span>
+          </div>
+        )}
 
         {/* User chip */}
         {user && (

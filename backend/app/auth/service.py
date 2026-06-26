@@ -5,6 +5,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Permission, PermissionAction, Role, User
+from ..masters.models import Company
 from .security import create_access_token, create_refresh_token, decode_token, hash_password, verify_password
 from .schemas import (
     LoginRequest,
@@ -97,7 +98,13 @@ class AuthService:
         user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-        return UserRead.model_validate(user)
+        data = UserRead.model_validate(user)
+        if user.company_id:
+            company_result = await self.db.execute(
+                select(Company.name).where(Company.id == user.company_id)
+            )
+            data.company_name = company_result.scalar_one_or_none()
+        return data
 
     async def create_user(self, data: UserCreate) -> UserRead:
         existing = await self.db.execute(select(User).where((User.username == data.username) | (User.email == data.email)))

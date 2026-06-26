@@ -55,6 +55,7 @@ class UserRead(UserBase):
     is_active: bool
     last_login: Optional[datetime] = None
     created_at: datetime
+    company_name: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
