@@ -49,25 +49,25 @@ const operationSchema = z.object({
   // Sub-models
   bird_movements: z.array(z.object({
     sex: z.string().optional(),
-    quantity: z.number().min(0).default(0),
+    quantity: z.number().min(0).optional(),
     avg_weight: z.number().optional(),
     week_number: z.number().optional(),
     breed_id: z.number().optional(),
     source_house_id: z.number().optional(),
     target_house_id: z.number().optional(),
-  })).optional().default([]),
+  })).optional(),
   egg_movements: z.array(z.object({
     egg_type: z.string(),
-    quantity: z.number().min(0).default(0),
+    quantity: z.number().min(0).optional(),
     avg_weight: z.number().optional(),
-  })).optional().default([]),
+  })).optional(),
   feed_movements: z.array(z.object({
     feed_type_id: z.number().optional(),
-    quantity_kg: z.number().min(0).default(0),
+    quantity_kg: z.number().min(0).optional(),
     sacks_count: z.number().optional(),
     week_number: z.number().optional(),
     sap_order_id: z.string().optional(),
-  })).optional().default([]),
+  })).optional(),
   hatchery_params: z.array(z.object({
     incubator_id: z.number().optional(),
     hatcher_id: z.number().optional(),
@@ -77,12 +77,12 @@ const operationSchema = z.object({
     turning: z.boolean().optional(),
     quantity_loaded: z.number().optional(),
     quantity_transferred: z.number().optional(),
-  })).optional().default([]),
+  })).optional(),
   inspection_details: z.array(z.object({
     parameter: z.string(),
     value: z.string().optional(),
     status: z.string().optional(),
-  })).optional().default([]),
+  })).optional(),
   egg_storage_records: z.array(z.object({
     eggs_received: z.number().optional(),
     storage_temp_c: z.number().optional(),
@@ -90,7 +90,7 @@ const operationSchema = z.object({
     transport_temp_c: z.number().optional(),
     transport_duration_min: z.number().optional(),
     notes: z.string().optional(),
-  })).optional().default([]),
+  })).optional(),
 })
 
 type OperationFormData = z.infer<typeof operationSchema>
