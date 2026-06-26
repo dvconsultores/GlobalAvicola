@@ -1,7 +1,6 @@
 /**
- * Card — Global Avícola design system
- * Variants: default | flat | elevated
- * Optional header with title + action slot
+ * Card — Global Avícola Corporate Design System v2
+ * Clean, architectural card with shadow hierarchy
  */
 import { type ReactNode, type HTMLAttributes } from 'react'
 
@@ -25,16 +24,16 @@ interface CardBodyProps {
 }
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default: 'bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 shadow-sm',
-  flat: 'bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700',
-  elevated: 'bg-white dark:bg-dark-card shadow-md border border-slate-100 dark:border-slate-700',
+  default:  'bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-card',
+  flat:     'bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border',
+  elevated: 'bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-card-md',
 }
 
 const PADDING_CLASSES = {
   none: '',
-  sm: 'p-3',
-  md: 'p-5',
-  lg: 'p-6',
+  sm:   'p-4',
+  md:   'p-5',
+  lg:   'p-6',
 }
 
 export function Card({
@@ -47,7 +46,7 @@ export function Card({
   return (
     <div
       className={[
-        'rounded-xl overflow-hidden',
+        'rounded-2xl overflow-hidden',
         VARIANT_CLASSES[variant],
         padding !== 'none' ? PADDING_CLASSES[padding] : '',
         className,
@@ -61,13 +60,13 @@ export function Card({
 
 export function CardHeader({ title, subtitle, action, className = '' }: CardHeaderProps) {
   return (
-    <div className={`flex items-start justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-slate-700 ${className}`}>
+    <div className={`flex items-start justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-dark-border ${className}`}>
       <div>
         {typeof title === 'string' ? (
-          <h3 className="font-semibold text-slate-800 dark:text-slate-200 text-sm">{title}</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm leading-snug">{title}</h3>
         ) : title}
         {subtitle && (
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>
         )}
       </div>
       {action && <div className="shrink-0">{action}</div>}
@@ -82,3 +81,4 @@ export function CardBody({ children, className = '' }: CardBodyProps) {
     </div>
   )
 }
+

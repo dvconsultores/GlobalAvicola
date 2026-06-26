@@ -12,14 +12,14 @@ import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../compon
 import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
 
 const BIRD_TYPE_COLORS: Record<string, string> = {
-  grandparent: 'bg-purple-100 text-purple-700 border-purple-200',
-  breeder:     'bg-blue-100 text-blue-700 border-blue-200',
-  hatchery:    'bg-amber-100 text-amber-700 border-amber-200',
-  broiler:     'bg-emerald-100 text-emerald-700 border-emerald-200',
+  grandparent: 'bg-purple-50 text-purple-700 border border-purple-200',
+  breeder:     'bg-blue-50 text-blue-700 border border-blue-200',
+  hatchery:    'bg-amber-50 text-amber-700 border border-amber-200',
+  broiler:     'bg-emerald-50 text-emerald-700 border border-emerald-200',
 }
 
 export default function DashboardPage() {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   const { user } = useAuthStore()
   const isMobileUser = user?.view_type === 'mobile'
   const [data, setData] = useState<any>(null)
@@ -70,17 +70,19 @@ export default function DashboardPage() {
   // ── MOBILE OPERATOR DASHBOARD (REDESIGNED) ──────────────────────────────
   if (isMobileUser) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-slate-50 dark:from-dark-bg to-white dark:to-dark-surface pb-24">
+      <div className="min-h-screen bg-[#F4F6F9] dark:bg-dark-bg pb-24">
         {/* Welcome header */}
-        <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4">
-          <div className="flex items-center gap-2 mb-1">
-            <Sparkles size={20} />
-            <h1 className="text-2xl font-bold">{t('nav.home', 'Inicio')}</h1>
-          </div>
-          <p className="text-blue-100 text-sm">
-            {t('dashboard.welcome')} {user?.first_name || 'Operador'}
-          </p>
+      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4"
+        style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 60%, #1A6DCC 100%)' }}
+      >
+        <div className="flex items-center gap-2 mb-1">
+          <Sparkles size={18} />
+          <h1 className="text-xl font-bold">{t('nav.home', 'Inicio')}</h1>
         </div>
+        <p className="text-blue-100 text-sm opacity-90">
+          {t('dashboard.welcome')} {user?.first_name || 'Operador'}
+        </p>
+      </div>
 
         <div className="p-4 space-y-6">
           {/* KPI Section */}
@@ -89,21 +91,21 @@ export default function DashboardPage() {
               {t('dashboard.todayMetrics', 'Hoy')}
             </h2>
             <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white rounded-xl border-2 border-blue-200 p-3 text-center shadow-sm">
-                <div className="text-2xl font-bold text-blue-600">{data?.today_events ?? 0}</div>
-                <div className="text-[10px] text-slate-500 mt-1 font-semibold">
+              <div className="bg-white rounded-2xl border border-slate-100 p-3 text-center shadow-card accent-bar accent-bar-blue">
+                <div className="text-2xl font-bold text-brand-700 pt-2">{data?.today_events ?? 0}</div>
+                <div className="text-[10px] text-slate-500 mt-1 font-semibold uppercase tracking-wide">
                   {t('dashboard.todayEvents', 'Operaciones')}
                 </div>
               </div>
-              <div className="bg-white rounded-xl border-2 border-amber-200 p-3 text-center shadow-sm">
-                <div className="text-2xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
-                <div className="text-[10px] text-slate-500 mt-1 font-semibold">
+              <div className="bg-white rounded-2xl border border-slate-100 p-3 text-center shadow-card accent-bar accent-bar-amber">
+                <div className="text-2xl font-bold text-amber-600 pt-2">{data?.pending_corrections ?? 0}</div>
+                <div className="text-[10px] text-slate-500 mt-1 font-semibold uppercase tracking-wide">
                   {t('dashboard.pendingCorrections', 'Por revisar')}
                 </div>
               </div>
-              <div className="bg-white rounded-xl border-2 border-green-200 p-3 text-center shadow-sm">
-                <div className="text-2xl font-bold text-green-600">{data?.approved_today ?? 0}</div>
-                <div className="text-[10px] text-slate-500 mt-1 font-semibold">
+              <div className="bg-white rounded-2xl border border-slate-100 p-3 text-center shadow-card accent-bar accent-bar-green">
+                <div className="text-2xl font-bold text-emerald-600 pt-2">{data?.approved_today ?? 0}</div>
+                <div className="text-[10px] text-slate-500 mt-1 font-semibold uppercase tracking-wide">
                   {t('dashboard.approvedToday', 'Aprobados')}
                 </div>
               </div>
@@ -138,14 +140,15 @@ export default function DashboardPage() {
                   <Link
                     key={stage.key}
                     to={`/poultry/${stage.key}`}
-                    className="group relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E3A5F] to-[#2563EB] p-4 text-white shadow-sm active:scale-[0.97] transition-all"
+                    className="group relative overflow-hidden rounded-2xl p-4 text-white active:scale-[0.97] transition-all"
+                    style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)', boxShadow: '0 4px 12px -2px rgba(11,35,64,0.35)' }}
                   >
-                    <span className="absolute -top-2 -right-1 text-white/25 text-5xl font-black select-none">{idx + 1}</span>
-                    <span className="inline-flex w-12 h-12 rounded-2xl bg-white/25 backdrop-blur items-center justify-center ring-1 ring-white/30 shadow-inner">
-                      <stage.Icon size={26} strokeWidth={2.2} />
+                    <span className="absolute -top-1 -right-1 text-white/10 text-6xl font-black select-none leading-none">{idx + 1}</span>
+                    <span className="inline-flex w-10 h-10 rounded-xl bg-white/15 backdrop-blur items-center justify-center ring-1 ring-white/20">
+                      <stage.Icon size={22} strokeWidth={2} />
                     </span>
-                    <h3 className="mt-3 text-sm font-extrabold leading-tight">{t(stage.labelKey, stage.fallback)}</h3>
-                    <p className="text-[11px] font-semibold text-white/80 mt-0.5">{count} {t('process.hub.steps', 'pasos')}</p>
+                    <h3 className="mt-2.5 text-[13px] font-bold leading-tight">{t(stage.labelKey, stage.fallback)}</h3>
+                    <p className="text-[10px] font-medium text-white/70 mt-0.5">{count} {t('process.hub.steps', 'pasos')}</p>
                   </Link>
                 )
               })}
@@ -160,31 +163,39 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 gap-3">
               <Link
                 to="/operations/new?type=feed_registration"
-                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 border-2 border-yellow-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+                className="flex flex-col items-center justify-center p-4 bg-white border border-amber-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
               >
-                <Wheat size={24} className="text-yellow-600 mb-2" />
-                <span className="text-xs font-bold text-yellow-900 text-center">{t('events.feed_registration', 'Alimento')}</span>
+                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-2">
+                  <Wheat size={20} className="text-amber-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.feed_registration', 'Alimento')}</span>
               </Link>
               <Link
                 to="/operations/new?type=weight_recording"
-                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+                className="flex flex-col items-center justify-center p-4 bg-white border border-blue-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
               >
-                <Scale size={24} className="text-blue-600 mb-2" />
-                <span className="text-xs font-bold text-blue-900 text-center">{t('events.weight_recording', 'Pesaje')}</span>
+                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-2">
+                  <Scale size={20} className="text-blue-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.weight_recording', 'Pesaje')}</span>
               </Link>
               <Link
                 to="/operations/new?type=mortality_recording"
-                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-red-50 to-red-100 border-2 border-red-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+                className="flex flex-col items-center justify-center p-4 bg-white border border-red-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
               >
-                <Skull size={24} className="text-red-600 mb-2" />
-                <span className="text-xs font-bold text-red-900 text-center">{t('events.mortality_recording', 'Mortalidad')}</span>
+                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-2">
+                  <Skull size={20} className="text-red-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.mortality_recording', 'Mortalidad')}</span>
               </Link>
               <Link
                 to="/operations/new?type=egg_collection"
-                className="flex flex-col items-center justify-center p-4 bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl hover:shadow-md transition-all active:scale-95"
+                className="flex flex-col items-center justify-center p-4 bg-white border border-orange-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
               >
-                <Egg size={24} className="text-orange-600 mb-2" />
-                <span className="text-xs font-bold text-orange-900 text-center">{t('events.egg_collection', 'Huevos')}</span>
+                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mb-2">
+                  <Egg size={20} className="text-orange-600" />
+                </div>
+                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.egg_collection', 'Huevos')}</span>
               </Link>
             </div>
           </div>
@@ -192,7 +203,8 @@ export default function DashboardPage() {
           {/* Go to all processes */}
           <Link
             to="/operations"
-            className="block w-full py-3 px-4 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl text-center hover:shadow-lg transition-all active:scale-95"
+            className="block w-full py-3 px-4 text-white font-bold rounded-2xl text-center transition-all active:scale-95 text-sm"
+            style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)', boxShadow: '0 4px 12px -2px rgba(11,35,64,0.35)' }}
           >
             {t('nav.operations', 'Ver Todas las Operaciones')} →
           </Link>
@@ -235,26 +247,38 @@ export default function DashboardPage() {
   ]
 
   return (
-    <div className="p-4 sm:p-6 max-w-6xl mx-auto space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('nav.dashboard')}</h1>
-        <p className="text-sm text-slate-500 mt-0.5">
-          {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''}
-        </p>
+    <div className="max-w-6xl mx-auto space-y-6">
+      {/* Page header */}
+      <div className="flex items-start justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white leading-tight">{t('nav.dashboard')}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+            {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} —{' '}
+            <span className="text-slate-400 dark:text-slate-500">{new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
+          </p>
+        </div>
       </div>
 
       {/* Summary KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {summaryCards.map((card, i) => (
-          <Card key={i}>
-            <CardBody>
-              <div className={`w-9 h-9 rounded-lg flex items-center justify-center mb-3 ${card.color}`}>
-                {card.icon}
+          <div
+            key={i}
+            className="relative bg-white dark:bg-dark-card rounded-2xl border border-slate-100 dark:border-dark-border shadow-card overflow-hidden accent-bar accent-bar-blue"
+            style={{ '--accent-color': ['#1A6DCC', '#D97706', '#0891B2', '#059669'][i] } as any}
+          >
+            <div className="px-5 pt-5 pb-4">
+              <div className="flex items-start justify-between gap-2">
+                <div>
+                  <p className="text-[28px] font-bold text-slate-900 dark:text-white leading-none tracking-tight">{card.value}</p>
+                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5">{card.label}</p>
+                </div>
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${card.color}`}>
+                  {card.icon}
+                </div>
               </div>
-              <p className="text-2xl font-bold text-slate-800">{card.value}</p>
-              <p className="text-xs text-slate-500 mt-0.5">{card.label}</p>
-            </CardBody>
-          </Card>
+            </div>
+          </div>
         ))}
       </div>
 

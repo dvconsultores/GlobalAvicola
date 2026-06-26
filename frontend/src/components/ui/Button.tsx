@@ -1,8 +1,7 @@
 /**
- * Button — Global Avícola design system
+ * Button — Global Avícola Corporate Design System v2
  * Variants: primary | secondary | danger | ghost | outline
  * Sizes: sm | md | lg
- * Works on all modern browsers (Chrome, Edge, Firefox, Safari, Opera, iOS, Android)
  */
 import { type ButtonHTMLAttributes, type ReactNode } from 'react'
 import { Loader2 } from 'lucide-react'
@@ -21,21 +20,21 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<Variant, string> = {
   primary:
-    'bg-[#2563EB] text-white hover:bg-[#1D4ED8] active:bg-[#1E40AF] focus-visible:ring-blue-400',
+    'bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 focus-visible:ring-brand-400 shadow-sm hover:shadow-md',
   secondary:
-    'bg-[#F1F5F9] dark:bg-slate-700 text-[#334155] dark:text-slate-200 hover:bg-[#E2E8F0] dark:hover:bg-slate-600 active:bg-[#CBD5E1] focus-visible:ring-slate-400',
+    'bg-slate-100 dark:bg-dark-card text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 dark:border-dark-border',
   danger:
-    'bg-[#DC2626] text-white hover:bg-[#B91C1C] active:bg-[#991B1B] focus-visible:ring-red-400',
+    'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-400 shadow-sm hover:shadow-md',
   ghost:
-    'bg-transparent text-[#334155] dark:text-slate-300 hover:bg-[#F1F5F9] dark:hover:bg-slate-700 active:bg-[#E2E8F0] focus-visible:ring-slate-400',
+    'bg-transparent text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-dark-card active:bg-slate-200 focus-visible:ring-slate-400',
   outline:
-    'bg-transparent border border-[#E2E8F0] dark:border-slate-600 text-[#334155] dark:text-slate-300 hover:bg-[#F8FAFC] dark:hover:bg-slate-700 active:bg-[#F1F5F9] focus-visible:ring-slate-400',
+    'bg-transparent border border-slate-200 dark:border-dark-border text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-dark-card active:bg-slate-100 focus-visible:ring-slate-400',
 }
 
 const SIZE_CLASSES: Record<Size, string> = {
-  sm: 'h-11 px-4 text-sm gap-1.5',   // F-01: 44px minimum touch target
-  md: 'h-11 px-5 text-sm gap-2',
-  lg: 'h-12 px-6 text-base gap-2',
+  sm: 'h-9 px-3.5 text-xs gap-1.5 rounded-lg',
+  md: 'h-10 px-4 text-sm gap-2 rounded-xl',
+  lg: 'h-11 px-5 text-sm gap-2 rounded-xl',
 }
 
 export function Button({
@@ -55,10 +54,10 @@ export function Button({
     <button
       disabled={isDisabled}
       className={[
-        'inline-flex items-center justify-center font-medium rounded-lg',
-        'transition-colors duration-150',
+        'inline-flex items-center justify-center font-semibold',
+        'transition-all duration-150',
         'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2',
-        'disabled:opacity-50 disabled:cursor-not-allowed',
+        'disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],
         className,
@@ -66,7 +65,7 @@ export function Button({
       {...props}
     >
       {loading ? (
-        <Loader2 size={size === 'sm' ? 14 : 16} className="animate-spin shrink-0" />
+        <Loader2 size={size === 'sm' ? 13 : 15} className="animate-spin shrink-0" />
       ) : leftIcon ? (
         <span className="shrink-0">{leftIcon}</span>
       ) : null}
@@ -75,3 +74,4 @@ export function Button({
     </button>
   )
 }
+

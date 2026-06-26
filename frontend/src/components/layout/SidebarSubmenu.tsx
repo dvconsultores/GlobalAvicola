@@ -74,22 +74,21 @@ export default function SidebarSubmenu({
       <button
         onClick={handleToggle}
         className={`
-          w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-sm font-medium transition-all duration-150
+          w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150
           ${anyChildActive
-            ? 'bg-blue-600/20 text-white'
-            : 'text-blue-100/80 hover:bg-blue-700/40 hover:text-white'
+            ? 'text-white/90'
+            : 'text-white/65 hover:text-white hover:bg-white/[0.07]'
           }
         `}
         aria-expanded={isExpanded}
       >
-        <span className="shrink-0 flex items-center justify-center" style={{ width: 20, height: 20 }}>
-          <Icon size={18} strokeWidth={anyChildActive ? 2.2 : 1.8} />
+        <span className={`shrink-0 flex items-center justify-center w-5 h-5 ${ anyChildActive ? 'text-brand-300' : 'text-white/55' }`}>
+          <Icon size={16} strokeWidth={anyChildActive ? 2.2 : 1.8} />
         </span>
         <span className="flex-1 truncate text-left">{t(labelKey, fallback)}</span>
-        <span className="text-[10px] font-bold text-blue-300/50 mr-1">{items.length}</span>
         <ChevronDown
-          size={16}
-          className={`shrink-0 text-blue-300/60 transition-transform duration-200 ${
+          size={14}
+          className={`shrink-0 transition-transform duration-200 ${ anyChildActive ? 'text-brand-300/70' : 'text-white/30' } ${
             isExpanded ? 'rotate-0' : '-rotate-90'
           }`}
         />

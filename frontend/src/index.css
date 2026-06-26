@@ -1,85 +1,238 @@
-/* Global Avícola — Corporate Design System */
-/* White/Blue palette. No dark mode. No purple accents. */
+/* ============================================================
+   Global Avícola — Corporate Design System v2
+   "Precision Azul" — Enterprise-grade, world-class UI
+   ============================================================ */
 
-/* A-06: Self-host Inter font via @fontsource (no Google Fonts CDN dependency in production) */
+/* A-06: Self-host Inter — multiple weights for hierarchy */
+@import '@fontsource/inter/300.css';
 @import '@fontsource/inter/400.css';
+@import '@fontsource/inter/500.css';
 @import '@fontsource/inter/600.css';
 @import '@fontsource/inter/700.css';
 
-/* TailwindCSS v4 — utility engine (package-based, no CDN) */
+/* TailwindCSS v4 — utility engine */
 @import 'tailwindcss';
 
+/* ── Design Tokens ────────────────────────────────────────── */
 :root {
-  --color-primary: #1E3A5F;
-  --color-primary-light: #2563EB;
-  --color-primary-lighter: #3B82F6;
-  --color-success: #16A34A;
-  --color-warning: #D97706;
-  --color-danger: #DC2626;
-  --color-info: #0891B2;
-  --color-bg: #F8FAFC;
-  --color-surface: #FFFFFF;
-  --color-text: #1E293B;
-  --color-text-muted: #64748B;
-  --color-border: #E2E8F0;
+  /* Brand — Deep Midnight Navy */
+  --brand-950: #030C18;
+  --brand-900: #071829;
+  --brand-800: #0B2340;
+  --brand-700: #0F3361;
+  --brand-600: #154F94;
+  --brand-500: #1A6DCC;
+  --brand-400: #3B82F6;
+  --brand-300: #60A5FA;
+  --brand-200: #BFDBFE;
+  --brand-100: #DBEAFE;
+  --brand-50:  #EFF6FF;
+
+  /* Semantic */
+  --color-primary:     var(--brand-800);
+  --color-accent:      var(--brand-500);
+  --color-success:     #059669;
+  --color-warning:     #D97706;
+  --color-danger:      #DC2626;
+  --color-info:        #0891B2;
+
+  /* Surfaces */
+  --color-bg:          #F4F6F9;
+  --color-surface:     #FFFFFF;
+  --color-surface-alt: #F8FAFC;
+  --color-border:      #E5E7EB;
+  --color-border-subtle: #F1F5F9;
+
+  /* Text */
+  --color-text:         #0F172A;
+  --color-text-secondary: #475569;
+  --color-text-muted:   #94A3B8;
+
+  /* Sidebar */
+  --sidebar-from:   #071829;
+  --sidebar-to:     #0F3361;
+  --sidebar-width:  256px;
+
+  /* Shadows — architectural, directional */
+  --shadow-xs:   0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
+  --shadow-md:   0 4px 8px -2px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.07);
+  --shadow-lg:   0 10px 20px -4px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.07);
+  --shadow-card: 0 1px 4px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.04);
+
+  /* Radius */
+  --radius-sm:  6px;
+  --radius-md:  10px;
+  --radius-lg:  14px;
+  --radius-xl:  18px;
+  --radius-2xl: 24px;
+
+  /* Transitions */
+  --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Dark mode — paleta corporativa oscura */
+/* Dark mode */
 .dark {
-  --color-primary: #1E3A5F;
-  --color-primary-light: #3B82F6;
-  --color-primary-lighter: #60A5FA;
-  --color-success: #22C55E;
-  --color-warning: #EAB308;
-  --color-danger: #EF4444;
-  --color-info: #22D3EE;
-  --color-bg: #0F172A;
-  --color-surface: #1E293B;
-  --color-text: #F1F5F9;
-  --color-text-muted: #94A3B8;
-  --color-border: #334155;
-
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  font-size: 16px;
-  line-height: 1.5;
-  color: var(--color-text);
-  background-color: var(--color-bg);
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+  --brand-800: #0B2340;
+  --color-bg:          #0A0F1A;
+  --color-surface:     #111827;
+  --color-surface-alt: #1C2533;
+  --color-border:      #1E293B;
+  --color-border-subtle: #162032;
+  --color-text:         #F1F5F9;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted:   #475569;
+  --shadow-card: 0 1px 4px 0 rgb(0 0 0 / 0.25);
 }
 
+/* ── Base Reset ──────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
+}
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--color-text);
+  background-color: var(--color-bg);
 }
 
 #root {
   min-height: 100vh;
 }
 
-body {
-  margin: 0;
+p { margin: 0; }
+
+/* ── Scrollbar refinement ─────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+
+/* ── Sidebar scrollbar ────────────────────────────────────── */
+.sidebar-scroll::-webkit-scrollbar { width: 3px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
+
+/* ── Focus ring ──────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid var(--brand-400);
+  outline-offset: 2px;
 }
 
-p {
-  margin: 0;
-}
-
-/* Toast animation */
+/* ── Toast animation ─────────────────────────────────────── */
 @keyframes slide-in {
-  from { transform: translateX(100%); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+  from { transform: translateX(calc(100% + 16px)); opacity: 0; }
+  to   { transform: translateX(0);              opacity: 1; }
 }
 .animate-slide-in {
-  animation: slide-in 0.3s ease-out;
+  animation: slide-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
-/* Modal slide-up (mobile bottom-sheet feel) */
+/* ── Modal slide-up ──────────────────────────────────────── */
 @keyframes slide-up {
-  from { transform: translateY(12px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
+  from { transform: translateY(16px); opacity: 0; }
+  to   { transform: translateY(0);   opacity: 1; }
 }
+.animate-modal {
+  animation: slide-up 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Fade in ─────────────────────────────────────────────── */
+@keyframes fade-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.animate-fade-in {
+  animation: fade-in 0.3s ease;
+}
+
+/* ── Scale in ────────────────────────────────────────────── */
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in {
+  animation: scale-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── Page enter ──────────────────────────────────────────── */
+@keyframes page-enter {
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.page-enter {
+  animation: page-enter 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* ── KPI number sparkle ──────────────────────────────────── */
+@keyframes number-enter {
+  from { opacity: 0; transform: translateY(6px) scale(0.92); }
+  to   { opacity: 1; transform: translateY(0)   scale(1); }
+}
+.animate-number {
+  animation: number-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* ── Skeleton shimmer ────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -800px 0; }
+  100% { background-position: 800px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg, #f0f2f5 25%, #e4e7eb 50%, #f0f2f5 75%);
+  background-size: 800px 100%;
+  animation: shimmer 1.5s infinite;
+}
+.dark .skeleton {
+  background: linear-gradient(90deg, #1C2533 25%, #232E3E 50%, #1C2533 75%);
+  background-size: 800px 100%;
+}
+
+/* ── Safe area for mobile ────────────────────────────────── */
+.safe-area-bottom {
+  padding-bottom: max(env(safe-area-inset-bottom), 8px);
+}
+
+/* ── Card hover lift ─────────────────────────────────────── */
+.card-hover {
+  transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+}
+.card-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ── Brand gradient bg ───────────────────────────────────── */
+.bg-brand-gradient {
+  background: linear-gradient(160deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%);
+}
+
+/* ── Accent accent line ──────────────────────────────────── */
+.accent-bar {
+  position: relative;
+}
+.accent-bar::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.accent-bar-blue::before    { background: linear-gradient(90deg, #1A6DCC, #3B82F6); }
+.accent-bar-green::before   { background: linear-gradient(90deg, #059669, #10B981); }
+.accent-bar-amber::before   { background: linear-gradient(90deg, #D97706, #FBBF24); }
+.accent-bar-red::before     { background: linear-gradient(90deg, #DC2626, #EF4444); }
+.accent-bar-teal::before    { background: linear-gradient(90deg, #0891B2, #22D3EE); }
+.accent-bar-indigo::before  { background: linear-gradient(90deg, #4F46E5, #818CF8); }
+.accent-bar-slate::before   { background: linear-gradient(90deg, #475569, #94A3B8); }

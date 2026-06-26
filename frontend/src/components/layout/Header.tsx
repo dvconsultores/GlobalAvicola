@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { Menu, Globe, Sun, Moon } from 'lucide-react'
+import { Menu, Globe, Sun, Moon, Bird } from 'lucide-react'
 import { useThemeStore } from '../../stores/theme.store'
 import MobileDrawer from './MobileDrawer'
 
@@ -13,83 +13,126 @@ export default function Header() {
 
   const toggleLang = () => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
 
+  const initials = [user?.first_name?.charAt(0), user?.last_name?.charAt(0)]
+    .filter(Boolean).join('').toUpperCase() || user?.username?.charAt(0)?.toUpperCase() || '?'
+
   return (
     <>
-      {/* Desktop Header — visible on lg+ */}
-      <header className="hidden lg:flex h-14 bg-white dark:bg-dark-surface border-b border-slate-200 dark:border-slate-700 items-center justify-end px-6 gap-2 sticky top-0 z-20">
+      {/* ── Desktop Header ───────────────────────────────── */}
+      <header className="hidden lg:flex h-14 bg-white dark:bg-dark-surface border-b border-slate-200/80 dark:border-dark-border items-center justify-end px-6 gap-3 sticky top-0 z-20">
         {/* Language toggle */}
         <button
           onClick={toggleLang}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border border-slate-200 dark:border-slate-600"
+          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-card hover:text-slate-700 dark:hover:text-slate-200 transition-all border border-slate-200 dark:border-dark-border"
           title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
         >
-          <Globe size={14} />
+          <Globe size={13} />
           {i18n.language === 'es' ? 'EN' : 'ES'}
         </button>
 
         {/* Dark mode toggle */}
         <button
           onClick={toggleDarkMode}
-          className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-card hover:text-slate-600 dark:hover:text-slate-300 transition-all"
           aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
-          title={isDark ? 'Modo claro' : 'Modo oscuro'}
         >
-          {isDark ? <Sun size={16} /> : <Moon size={16} />}
+          {isDark ? <Sun size={15} /> : <Moon size={15} />}
         </button>
 
-        {/* User info + logout */}
+        {/* Divider */}
+        <div className="w-px h-5 bg-slate-200 dark:bg-dark-border" />
+
+        {/* User chip */}
         {user && (
-          <>
-            <span className="text-xs text-slate-400 dark:text-slate-500">|</span>
-            <span className="text-xs font-medium text-slate-600 dark:text-slate-300">
-              {user.first_name || user.username}
-            </span>
+          <div className="flex items-center gap-2.5">
+            {/* Avatar */}
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+              style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)' }}
+            >
+              {initials}
+            </div>
+            <div className="text-xs">
+              <p className="font-semibold text-slate-700 dark:text-slate-200 leading-none">
+                {user.first_name ? `${user.first_name} ${user.last_name ?? ''}`.trim() : user.username}
+              </p>
+              <p className="text-slate-400 dark:text-slate-500 mt-0.5 leading-none">{user.username}</p>
+            </div>
             <button
               onClick={logout}
-              className="text-xs font-medium text-slate-500 dark:text-slate-400 hover:text-red-600 dark:hover:text-red-400 transition-colors"
+              className="h-7 px-2.5 text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all"
             >
               {t('auth.logout')}
             </button>
-          </>
+          </div>
         )}
       </header>
 
-      {/* Mobile Header */}
-      <header className="lg:hidden bg-[#1E3A5F] text-white px-4 py-3 flex items-center justify-between shadow-md dark:bg-[#0F172A]">
+      {/* ── Mobile Header ────────────────────────────────── */}
+      <header
+        className="lg:hidden text-white px-4 py-0 flex items-center justify-between sticky top-0 z-20"
+        style={{ background: 'linear-gradient(135deg, #071829 0%, #0F3361 100%)', height: '56px' }}
+      >
         <div className="flex items-center gap-3">
-          {/* Hamburger — opens MobileDrawer */}
+          {/* Hamburger */}
           <button
             onClick={() => setDrawerOpen(true)}
             aria-label={t('nav.menu', 'Menú')}
             aria-expanded={drawerOpen}
-            className="w-9 h-9 flex items-center justify-center rounded-lg text-white hover:bg-white/10 transition-colors"
+            className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
+            style={{ background: 'rgba(255,255,255,0.08)' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.14)' }}
+            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)' }}
           >
-            <Menu size={22} />
+            <Menu size={20} />
           </button>
-          <div>
-            <h1 className="text-base font-bold">{t('brand.name')}</h1>
-            <p className="text-xs text-blue-300">{t('brand.tagline')}</p>
+          <div className="flex items-center gap-2">
+            <div
+              className="w-7 h-7 rounded-lg flex items-center justify-center"
+              style={{ background: 'rgba(26,109,204,0.7)' }}
+            >
+              <Bird size={15} className="text-white" strokeWidth={1.8} />
+            </div>
+            <div>
+              <h1 className="text-[13px] font-bold leading-none">{t('brand.name')}</h1>
+              <p className="text-[10px] mt-0.5 leading-none" style={{ color: 'rgba(147,197,253,0.7)' }}>
+                {t('brand.tagline')}
+              </p>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+
+        <div className="flex items-center gap-1.5">
+          {/* Language */}
           <button
             onClick={toggleLang}
-            className="text-xs bg-blue-700/80 hover:bg-blue-700 px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 transition-colors"
+            className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+            style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(147,197,253,0.9)' }}
             title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
           >
-            <Globe size={14} />
+            <Globe size={12} />
             {i18n.language === 'es' ? 'EN' : 'ES'}
           </button>
+
+          {/* Dark mode */}
           <button
             onClick={toggleDarkMode}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-blue-200 hover:bg-white/10 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
+            style={{ color: 'rgba(147,197,253,0.8)' }}
             aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
           >
-            {isDark ? <Sun size={16} /> : <Moon size={16} />}
+            {isDark ? <Sun size={15} /> : <Moon size={15} />}
           </button>
+
+          {/* User avatar */}
           {user && (
-            <button onClick={logout} className="text-xs text-blue-200 hover:text-white px-2 py-1.5 transition-colors">
-              {t('auth.logout')}
+            <button
+              onClick={logout}
+              className="w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-bold text-white transition-all"
+              style={{ background: 'rgba(26,109,204,0.5)' }}
+              title={t('auth.logout')}
+            >
+              {initials}
             </button>
           )}
         </div>
@@ -99,3 +142,4 @@ export default function Header() {
     </>
   )
 }
+
