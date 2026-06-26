@@ -186,6 +186,13 @@ export default function OperationFormPage() {
   const goToStep2 = (s: StageKey) => { setStage(s); setValue('event_type', ''); setStep(2) }
   const chooseOperation = (evt: string) => { setValue('event_type', evt); setStep(3) }
 
+  // Auto-init: add one empty house row when farm_inspection is selected
+  useEffect(() => {
+    if (eventType === 'farm_inspection' && houseInspFields.length === 0) {
+      appendHouseInsp({ litter_condition: '' })
+    }
+  }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     api.get('/lots?limit=100').then(r => setLots(r.data)).catch(() => toast.error(t('operations.errorLoadingLots')))
     api.get('/sap/references?ref_type=transfer_order&limit=50').then(r => setSapOrders(r.data?.references || [])).catch(() => {})
