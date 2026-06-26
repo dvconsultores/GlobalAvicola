@@ -424,6 +424,10 @@ export default function OperationFormPage() {
               <label className={lc}>{t('operations.weekNumber', 'Semana de vida')}</label>
               <input type="number" min="0" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="0" />
             </div>
+            <div>
+              <label className={lc}>{t('operations.sapOrderRef', 'Ref. OC SAP')}</label>
+              <input {...register('extra_data.sap_order_ref' as any)} className={ic} placeholder="OC-SAP-001" />
+            </div>
           </div>
           {renderMFRows(true)}
         </div>
@@ -494,6 +498,10 @@ export default function OperationFormPage() {
               <label className={lc}>{t('operations.transport', 'Transporte')}</label>
               {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar transporte...'), (x: any) => `${x.plate} — ${x.name}`)}
             </div>
+            <div>
+              <label className={lc}>{t('operations.sapOrderRef', 'Ref. OC SAP')}</label>
+              <input {...register('extra_data.sap_order_ref' as any)} className={ic} placeholder="OC-SAP-001" />
+            </div>
           </div>
           {renderMFRows(true)}
         </div>
@@ -502,6 +510,16 @@ export default function OperationFormPage() {
       case 'feed_registration': return (
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label className={lc}>{t('operations.feedPhase', 'Fase de alimento')}</label>
+              <select {...register('extra_data.feed_phase' as any)} className={ic}>
+                <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
+                <option value="pre_starter">{t('operations.feedPreStarter', 'Pre-iniciador')}</option>
+                <option value="starter">{t('operations.feedStarter', 'Iniciador')}</option>
+                <option value="grower">{t('operations.feedGrower', 'Crecimiento')}</option>
+                <option value="finisher">{t('operations.feedFinisher', 'Finalizador')}</option>
+              </select>
+            </div>
             <div>
               <label className={lc}>{t('operations.feedType', 'Tipo de Alimento')}</label>
               {sel(register('feed_movements.0.feed_type_id', { valueAsNumber: true }), feedTypes, t('operations.selectType', 'Seleccionar...'))}
@@ -544,9 +562,14 @@ export default function OperationFormPage() {
         return (
           <div className="space-y-4">
             {eventType === 'egg_dispatch' && (
-              <div>
-                <label className={lc}>{t('operations.transport', 'Transporte')}</label>
-                {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar transporte...'), (x: any) => `${x.plate} — ${x.name}`)}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className={lc}>{t('operations.destinationIncubator', 'Incubadora destino')}</label>
+                  {sel(register('hatchery_params.0.incubator_id', { valueAsNumber: true }), incubators, t('operations.selectType', 'Seleccionar...'))}                </div>
+                <div>
+                  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
+                  {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar transporte...'), (x: any) => `${x.plate} — ${x.name}`)}
+                </div>
               </div>
             )}
             <div className="border border-slate-200 rounded-lg overflow-hidden">
@@ -578,28 +601,35 @@ export default function OperationFormPage() {
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
+              <label className={lc}>{t('operations.sourceOriginFarm', 'Granja de origen')}</label>
+              {sel(register('extra_data.source_farm_id' as any), farms, t('operations.selectType', 'Seleccionar...'))}            </div>
+            <div>
               <label className={lc}>{t('operations.transport', 'Transporte')}</label>
               {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar...'), (x: any) => `${x.plate} — ${x.name}`)}
             </div>
             <div>
-              <label className={lc}>Temp. transporte (°C)</label>
-              <input type="number" step="0.1" {...register('egg_storage_records.0.transport_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
-            </div>
-            <div>
-              <label className={lc}>Duración transporte (min)</label>
-              <input type="number" min="0" {...register('egg_storage_records.0.transport_duration_min', { valueAsNumber: true })} className={ic} placeholder="60" />
-            </div>
-            <div>
-              <label className={lc}>Temp. almacén destino (°C)</label>
-              <input type="number" step="0.1" {...register('egg_storage_records.0.storage_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
-            </div>
-            <div>
-              <label className={lc}>Humedad almacén (%)</label>
-              <input type="number" step="0.1" {...register('egg_storage_records.0.storage_humidity_pct', { valueAsNumber: true })} className={ic} placeholder="75" />
+              <label className={lc}>{t('operations.dispatchOrder', 'No. de orden de despacho')}</label>
+              <input {...register('extra_data.dispatch_order' as any)} className={ic} placeholder="D-2024-001" />
             </div>
             <div>
               <label className={lc}>{t('operations.quantity', 'Huevos recibidos')}</label>
               <input type="number" min="0" {...register('egg_storage_records.0.eggs_received', { valueAsNumber: true })} className={ic} placeholder="0" />
+            </div>
+            <div>
+              <label className={lc}>{t('operations.tempTransport', 'Temp. transporte (°C)')}</label>
+              <input type="number" step="0.1" {...register('egg_storage_records.0.transport_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
+            </div>
+            <div>
+              <label className={lc}>{t('operations.durationTransport', 'Duración transporte (min)')}</label>
+              <input type="number" min="0" {...register('egg_storage_records.0.transport_duration_min', { valueAsNumber: true })} className={ic} placeholder="60" />
+            </div>
+            <div>
+              <label className={lc}>{t('operations.storageTemp', 'Temp. almacén (°C)')}</label>
+              <input type="number" step="0.1" {...register('egg_storage_records.0.storage_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
+            </div>
+            <div>
+              <label className={lc}>{t('operations.storageHumidity', 'Humedad almacén (%)')}</label>
+              <input type="number" step="0.1" {...register('egg_storage_records.0.storage_humidity_pct', { valueAsNumber: true })} className={ic} placeholder="75" />
             </div>
           </div>
         </div>
@@ -680,7 +710,7 @@ export default function OperationFormPage() {
       case 'transport_inspection': {
         const params = [
           { key: 'cage_condition', label: t('operations.cageCondition', 'Estado de jaulas'), numeric: false },
-          { key: 'density', label: t('operations.density', 'Densidad de carga'), numeric: false },
+          { key: 'density', label: t('operations.densityBirdsM2', 'Densidad (aves/m²)'), numeric: true },
           { key: 'temperature', label: t('operations.temperature', 'Temperatura (°C)'), numeric: true },
           { key: 'ventilation', label: t('operations.ventilation', 'Ventilación'), numeric: false },
           { key: 'hygiene', label: t('operations.hygiene', 'Higiene del vehículo'), numeric: false },
@@ -837,6 +867,10 @@ export default function OperationFormPage() {
               {sel(register('hatchery_params.0.hatcher_id', { valueAsNumber: true }), hatchers, t('operations.selectType', 'Seleccionar...'))}
             </div>
             <div>
+              <label className={lc}>{t('operations.incubationDay', 'Día de incubación')}</label>
+              <input type="number" min="1" max="21" {...register('extra_data.incubation_day' as any)} className={ic} placeholder="18" />
+            </div>
+            <div>
               <label className={lc}>{t('operations.qtyTransferred', 'Cantidad transferida')}</label>
               <input type="number" min="0" {...register('hatchery_params.0.quantity_transferred', { valueAsNumber: true })} className={ic} placeholder="0" />
             </div>
@@ -884,6 +918,10 @@ export default function OperationFormPage() {
             <div>
               <label className={lc}>{t('operations.transport', 'Transporte')}</label>
               {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar transporte...'), (x: any) => `${x.plate} — ${x.name}`)}
+            </div>
+            <div>
+              <label className={lc}>{t('operations.sanitaryCert', 'Certificado sanitario')}</label>
+              <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder="No. de certificado" />
             </div>
           </div>
           {renderMFRows(false)}
