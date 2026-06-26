@@ -119,8 +119,10 @@ export default function SidebarSubmenu({
                 />
               )
             }
-            // Si es un item hoja, renderizar SidebarItem con profundidad aumentada
+            // Si es un item hoja, usar mismo nivel que submenús hermanos
+            // (si hay submenús en este nivel, las hojas deben estar al mismo nivel visual)
             if (child.to) {
+              const hasSiblingSubmenus = items.some(i => i.children && i.children.length > 0)
               return (
                 <SidebarItem
                   key={child.key}
@@ -128,7 +130,7 @@ export default function SidebarSubmenu({
                   labelKey={child.labelKey}
                   fallback={child.fallback}
                   to={child.to}
-                  depth={depth + 1}
+                  depth={hasSiblingSubmenus ? depth : depth + 1}
                   badge={child.badge}
                   onClick={onChildClick}
                 />
