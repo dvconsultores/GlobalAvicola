@@ -788,5 +788,13 @@
     "broilerLotId": "Lote de engorde destino",
     "quantity": "Cantidad",
     "dispatchDate": "Fecha de despacho"
+  },
+  "company": {
+    "selector": "Empresa activa",
+    "switchTo": "Cambiar a empresa",
+    "switching": "Cambiando empresa...",
+    "switchSuccess": "Empresa cambiada correctamente",
+    "switchError": "No se pudo cambiar de empresa",
+    "allCompanies": "Todas las empresas"
   }
 }

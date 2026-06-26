@@ -53,11 +53,16 @@ class UserRead(UserBase):
     id: int
     view_type: str
     is_active: bool
+    is_super_admin: bool = False
     last_login: Optional[datetime] = None
     created_at: datetime
     company_name: Optional[str] = None
 
     model_config = {"from_attributes": True}
+
+
+class SwitchCompanyRequest(BaseModel):
+    company_id: int = Field(..., gt=0)
 
 
 # ------------------- Role -------------------

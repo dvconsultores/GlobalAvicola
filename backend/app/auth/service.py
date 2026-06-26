@@ -149,6 +149,34 @@ class AuthService:
         user.is_active = False
         await self.db.flush()
 
+    async def switch_company(self, company_id: int, current_user: dict) -> "TokenResponse":
+        """Issue new tokens scoped to a different company. Super-admin only."""
+        from .schemas import TokenResponse as TR
+        if not current_user.get("is_super_admin"):
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Solo super administradores pueden cambiar de empresa")
+        company_result = await self.db.execute(
+            select(Company.id).where(Company.id == company_id, Company.is_active == True)
+        )
+        if not company_result.scalar_one_or_none():
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Empresa no encontrada o inactiva")
+        user_id = current_user["id"]
+        result = await self.db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        token_data = {
+            "sub": user.id,
+            "username": user.username,
+            "company_id": company_id,
+            "role_id": user.role_id,
+            "view_type": user.view_type or "web",
+        }
+        return TR(
+            access_token=create_access_token(token_data),
+            refresh_token=create_refresh_token(token_data),
+            expires_in=30 * 60,
+        )
+
     # ---- Role CRUD ----
 
     async def get_roles(self) -> list[RoleRead]:

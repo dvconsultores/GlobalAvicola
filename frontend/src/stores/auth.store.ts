@@ -120,7 +120,11 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   fetchMe: async () => {
     try {
       const { data } = await api.get('/me')
-      set({ user: { ...data, view_type: data.view_type || 'web' }, isLoading: false })
+      const user = { ...data, view_type: data.view_type || 'web' }
+      set({ user, isLoading: false })
+      // Keep company store in sync
+      const { useCompanyStore } = await import('./company.store')
+      useCompanyStore.getState().initFromUser(user.company_id, user.company_name)
     } catch {
       // If /me fails, we still have basic user from JWT claims
       set({ isLoading: false })

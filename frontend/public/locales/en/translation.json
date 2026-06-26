@@ -788,5 +788,13 @@
     "broilerLotId": "Target broiler lot",
     "quantity": "Quantity",
     "dispatchDate": "Dispatch date"
+  },
+  "company": {
+    "selector": "Active company",
+    "switchTo": "Switch to company",
+    "switching": "Switching company...",
+    "switchSuccess": "Company switched successfully",
+    "switchError": "Could not switch company",
+    "allCompanies": "All companies"
   }
 }

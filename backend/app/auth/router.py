@@ -10,6 +10,7 @@ from .schemas import (
     RoleCreate,
     RoleRead,
     RoleUpdate,
+    SwitchCompanyRequest,
     TokenResponse,
     UserCreate,
     UserRead,
@@ -38,7 +39,19 @@ async def get_me(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    return await AuthService(db).get_user(current_user["id"])
+    user_read = await AuthService(db).get_user(current_user["id"])
+    user_read.is_super_admin = current_user.get("is_super_admin", False)
+    return user_read
+
+
+@router.post("/switch-company", response_model=TokenResponse, tags=["Auth"])
+async def switch_company(
+    data: SwitchCompanyRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Super-admin only: issue new tokens scoped to a different company."""
+    return await AuthService(db).switch_company(data.company_id, current_user)
 
 
 # ------------------- User Endpoints -------------------
