@@ -80,6 +80,21 @@ class OperationalEventBase(BaseModel):
     event_date: date = Field(default_factory=date.today)
     observations: Optional[str] = None
     sap_document_ref: Optional[str] = None
+    # Operation-specific catalog references
+    supplier_id: Optional[int] = None
+    cause_id: Optional[int] = None
+    cull_cause_id: Optional[int] = None
+    vaccine_id: Optional[int] = None
+    vaccination_route: Optional[str] = None
+    vaccine_lot_number: Optional[str] = None
+    medication_id: Optional[int] = None
+    dosage_per_bird: Optional[float] = None
+    treatment_days: Optional[int] = None
+    destination_farm_id: Optional[int] = None
+    destination_plant_id: Optional[int] = None
+    transport_id: Optional[int] = None
+    sample_size: Optional[int] = None
+    extra_data: Optional[dict] = None
 
 
 class OperationalEventCreate(OperationalEventBase):

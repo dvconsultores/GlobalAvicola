@@ -96,6 +96,22 @@ class OperationalEvent(Base):
     # SAP reference
     sap_document_ref: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
 
+    # Operation-specific catalog references (nullable — only populated for the relevant event type)
+    supplier_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("suppliers.id"), nullable=True)
+    cause_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("mortality_causes.id"), nullable=True)
+    cull_cause_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("cull_causes.id"), nullable=True)
+    vaccine_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("vaccines.id"), nullable=True)
+    vaccination_route: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    vaccine_lot_number: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    medication_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("medications.id"), nullable=True)
+    dosage_per_bird: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    treatment_days: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    destination_farm_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("farms.id"), nullable=True)
+    destination_plant_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("processing_plants.id"), nullable=True)
+    transport_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("transports.id"), nullable=True)
+    sample_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    extra_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+
     # Notes
     observations: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
 
