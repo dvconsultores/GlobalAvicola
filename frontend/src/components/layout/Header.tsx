@@ -77,7 +77,7 @@ export default function Header() {
           {/* Hamburger */}
           <button
             onClick={() => setDrawerOpen(true)}
-            aria-label={t('nav.menu', 'Menú')}
+            aria-label={t('nav.menu')}
             aria-expanded={drawerOpen}
             className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
             style={{ background: 'rgba(255,255,255,0.08)' }}

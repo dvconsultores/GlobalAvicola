@@ -121,7 +121,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
       {/* Drawer panel */}
       <nav
         role="navigation"
-        aria-label={t('nav.menu', 'Menú')}
+        aria-label={t('nav.menu')}
         className={[
           'lg:hidden fixed top-0 left-0 h-full w-[82vw] max-w-[300px] z-50',
           'text-white flex flex-col',
@@ -154,7 +154,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
           <button
             ref={closeRef}
             onClick={onClose}
-            aria-label={t('common.close', 'Cerrar')}
+            aria-label={t('common.close')}
             className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
             style={{ color: 'rgba(147,197,253,0.7)' }}
             onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.1)'; (e.currentTarget as HTMLElement).style.color = 'white' }}
@@ -198,7 +198,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.75)' }}
           >
             <Globe size={14} />
-            {i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+            {i18n.language === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}
           </button>
           <button
             onClick={logout}

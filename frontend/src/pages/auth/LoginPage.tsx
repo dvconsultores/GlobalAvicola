@@ -92,7 +92,7 @@ export default function LoginPage() {
                   autoComplete="username"
                   autoFocus
                   className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
-                  placeholder="usuario"
+                  placeholder={t('auth.usernamePlaceholder', 'username')}
                 />
               </div>
               {errors.username && <p className="text-red-500 text-xs">{t(errors.username.message ?? '')}</p>}
@@ -151,7 +151,7 @@ export default function LoginPage() {
             className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
           >
             <Globe size={12} />
-            {i18n.language === 'es' ? t('lang.toggleEn', 'Switch to English') : t('lang.toggleEs', 'Cambiar a Español')}
+            {i18n.language === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}
           </button>
         </div>
 

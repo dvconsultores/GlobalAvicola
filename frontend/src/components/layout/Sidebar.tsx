@@ -148,7 +148,7 @@ export default function Sidebar() {
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.8)' }}
           >
             <Settings size={13} />
-            {t('nav.profile', 'Perfil')}
+            {t('nav.profile')}
           </Link>
           <button
             onClick={logout}
@@ -158,7 +158,7 @@ export default function Sidebar() {
             onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.8)' }}
           >
             <LogOut size={13} />
-            {t('auth.logout', 'Salir')}
+            {t('auth.logout')}
           </button>
         </div>
       </div>
