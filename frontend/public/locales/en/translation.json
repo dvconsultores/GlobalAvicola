@@ -668,7 +668,20 @@
     "cageCondition": "Cage condition",
     "density": "Load density",
     "hygiene": "Vehicle hygiene",
-    "durationMin": "Trip duration (min)"
+    "durationMin": "Trip duration (min)",
+    "inspectionPerHouse": "Record temperature, humidity and litter condition per house",
+    "tempC": "Temperature (°C)",
+    "humidityPct": "Humidity (%)",
+    "litterCondition": "Litter condition",
+    "litterDry": "Dry",
+    "litterWet": "Wet",
+    "litterAmmoniacal": "Ammoniacal",
+    "litterCompacted": "Compacted",
+    "litterNotes": "Litter notes",
+    "litterNotesPlaceholder": "Depth, renewal, etc.",
+    "equipmentNotes": "Equipment condition (drinkers, feeders, fans)",
+    "equipmentNotesPlaceholder": "Equipment observations",
+    "addHouse": "Add house"
   },
   "weekly": {
     "weekNumber": "Week N°",

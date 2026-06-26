@@ -63,6 +63,7 @@ class HatcheryParamsSchema(BaseModel):
 
 
 class InspectionDetailSchema(BaseModel):
+    house_id: Optional[int] = None  # Scopes record to a specific house; NULL = farm-level
     parameter: str
     value: Optional[str] = None
     status: Optional[str] = None

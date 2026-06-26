@@ -207,12 +207,16 @@ class HatcheryParams(Base):
 
 
 class InspectionDetail(Base):
-    """Farm, transport, or hatchery inspection details."""
+    """Farm, transport, or hatchery inspection details.
+    house_id scopes the record to a specific house (galpón) when set.
+    Existing records with house_id=NULL represent farm-level data.
+    """
     __tablename__ = "inspection_details"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     event_id: Mapped[int] = mapped_column(Integer, ForeignKey("operational_events.id"), index=True)
-    parameter: Mapped[str] = mapped_column(String(200))  # e.g. "bedding_condition", "temperature", "cage_state"
+    house_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("houses.id"), nullable=True, index=True)
+    parameter: Mapped[str] = mapped_column(String(200))  # e.g. "temperature", "humidity", "litter_condition"
     value: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
     status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # good, regular, bad
 

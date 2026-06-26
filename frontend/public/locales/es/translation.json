@@ -668,7 +668,20 @@
     "cageCondition": "Estado de jaulas",
     "density": "Densidad de carga",
     "hygiene": "Higiene del vehículo",
-    "durationMin": "Duración viaje (min)"
+    "durationMin": "Duración viaje (min)",
+    "inspectionPerHouse": "Registra T°, H° y estado de cama por cada galpón inspeccionado",
+    "tempC": "Temperatura (°C)",
+    "humidityPct": "Humedad (%)",
+    "litterCondition": "Condición de cama",
+    "litterDry": "Seca",
+    "litterWet": "Húmeda",
+    "litterAmmoniacal": "Amoniacal",
+    "litterCompacted": "Compactada",
+    "litterNotes": "Observaciones de cama",
+    "litterNotesPlaceholder": "Profundidad, renovación, etc.",
+    "equipmentNotes": "Estado de equipos (bebederos, comederos, ventiladores)",
+    "equipmentNotesPlaceholder": "Observaciones de equipos",
+    "addHouse": "Añadir galpón"
   },
   "weekly": {
     "weekNumber": "N° Sem",

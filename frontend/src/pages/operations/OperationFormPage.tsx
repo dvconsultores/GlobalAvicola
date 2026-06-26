@@ -79,9 +79,19 @@ const operationSchema = z.object({
     quantity_transferred: z.number().optional(),
   })).optional(),
   inspection_details: z.array(z.object({
+    house_id: z.number().optional(),
     parameter: z.string(),
     value: z.string().optional(),
     status: z.string().optional(),
+  })).optional(),
+  // UI-only: per-house inspection rows → converted to inspection_details on submit
+  house_inspections: z.array(z.object({
+    house_id: z.number().optional(),
+    temperature: z.number().optional(),
+    humidity: z.number().optional(),
+    litter_condition: z.string().optional(),
+    litter_notes: z.string().optional(),
+    equipment_notes: z.string().optional(),
   })).optional(),
   egg_storage_records: z.array(z.object({
     eggs_received: z.number().optional(),
@@ -142,6 +152,7 @@ export default function OperationFormPage() {
       feed_movements: [{ quantity_kg: 0 }],
       hatchery_params: [{}],
       inspection_details: [],
+      house_inspections: [],
       egg_storage_records: [{}],
     },
   })
@@ -149,10 +160,19 @@ export default function OperationFormPage() {
   const eventType = watch('event_type')
   const lotId = watch('lot_id')
 
+  // Houses filtered to the farm of the selected lot (for farm_inspection per-house rows)
+  const farmHouses = useMemo(() => {
+    const lot = lots.find((l: any) => l.id === lotId)
+    if (!lot?.farm_id) return houses
+    return houses.filter((h: any) => h.farm_id === lot.farm_id)
+  }, [lots, lotId, houses])
+
   const { fields: birdFields, append: appendBird, remove: removeBird } =
     useFieldArray({ control, name: 'bird_movements' })
   const { fields: incubatorFields, append: appendIncubator, remove: removeIncubator } =
     useFieldArray({ control, name: 'hatchery_params' })
+  const { fields: houseInspFields, append: appendHouseInsp, remove: removeHouseInsp } =
+    useFieldArray({ control, name: 'house_inspections' })
 
   const [stage, setStage] = useState<StageKey | null>(null)
   const [step, setStep] = useState<1 | 2 | 3>(prefillType ? 3 : 1)
@@ -198,14 +218,30 @@ export default function OperationFormPage() {
   const onSubmit = async (data: OperationFormData) => {
     setSubmitting(true); setResult(null)
     try {
+      // Convert per-house inspection rows into inspection_details records with house_id
+      const houseDetails: any[] = []
+      for (const h of data.house_inspections || []) {
+        if (h.temperature != null && !isNaN(Number(h.temperature)))
+          houseDetails.push({ house_id: h.house_id, parameter: 'temperature', value: String(h.temperature) })
+        if (h.humidity != null && !isNaN(Number(h.humidity)))
+          houseDetails.push({ house_id: h.house_id, parameter: 'humidity', value: String(h.humidity) })
+        if (h.litter_condition)
+          houseDetails.push({ house_id: h.house_id, parameter: 'litter_condition', status: h.litter_condition })
+        if (h.litter_notes)
+          houseDetails.push({ house_id: h.house_id, parameter: 'litter_notes', value: h.litter_notes })
+        if (h.equipment_notes)
+          houseDetails.push({ house_id: h.house_id, parameter: 'equipment_notes', value: h.equipment_notes })
+      }
+
       const payload: any = {
         ...data,
         bird_movements: (data.bird_movements || []).filter(m => (m.quantity ?? 0) > 0),
         egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
         feed_movements: data.feed_movements || [],
         hatchery_params: data.hatchery_params || [],
-        inspection_details: data.inspection_details || [],
+        inspection_details: [...(data.inspection_details || []), ...houseDetails],
         egg_storage_records: data.egg_storage_records || [],
+        house_inspections: undefined, // strip UI-only field
       }
       await api.post('/operations', payload)
       setResult({ ok: true, message: t('operations.saveSuccess') })
@@ -555,34 +591,73 @@ export default function OperationFormPage() {
       )
 
       case 'farm_inspection': {
-        const params = [
-          { key: 'temperature', label: t('operations.temperature', 'Temperatura (°C)'), numeric: true },
-          { key: 'humidity', label: t('operations.humidity', 'Humedad (%)'), numeric: true },
-          { key: 'litter', label: t('operations.camaCondition', 'Condición de Cama'), numeric: false },
-          { key: 'equipment', label: t('operations.equipmentStatus', 'Estado de Equipos'), numeric: false },
-          { key: 'ventilation', label: t('operations.ventilation', 'Ventilación'), numeric: false },
-          { key: 'water_lines', label: t('operations.waterLines', 'Líneas de Agua'), numeric: false },
-        ]
         return (
-          <div className="space-y-3">
-            {params.map((param, i) => (
-              <div key={param.key} className="flex items-center gap-3">
-                <input type="hidden" {...register(`inspection_details.${i}.parameter`)} defaultValue={param.key} />
-                <span className="text-sm text-slate-600 w-44 shrink-0">{param.label}</span>
-                {param.numeric ? (
-                  <input type="number" step="0.1" {...register(`inspection_details.${i}.value`)}
-                    className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none" placeholder="--" />
-                ) : (
-                  <select {...register(`inspection_details.${i}.status`)}
-                    className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none">
-                    <option value="">{t('operations.selectState', 'Seleccionar...')}</option>
-                    <option value="good">✅ {t('operations.good', 'Bueno')}</option>
-                    <option value="regular">⚠️ {t('operations.regular', 'Regular')}</option>
-                    <option value="bad">❌ {t('operations.bad', 'Malo')}</option>
+          <div className="space-y-4">
+            <p className="text-xs text-slate-500">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
+            {houseInspFields.map((field, i) => (
+              <div key={field.id} className="border border-slate-200 rounded-xl p-4 space-y-3 relative bg-slate-50">
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{t('operations.house', 'Galpón')} {i + 1}</span>
+                  {i > 0 && (
+                    <button type="button" onClick={() => removeHouseInsp(i)}
+                      className="text-red-400 hover:text-red-600 p-1"><Trash2 size={14} /></button>
+                  )}
+                </div>
+                {/* House selector */}
+                <div>
+                  <label className={lc}>{t('operations.selectHouse', 'Galpón')}</label>
+                  <select {...register(`house_inspections.${i}.house_id`, { valueAsNumber: true })} className={ic}>
+                    <option value="">{t('operations.selectHouse', 'Seleccionar galpón...')}</option>
+                    {(farmHouses.length > 0 ? farmHouses : houses).map((h: any) => (
+                      <option key={h.id} value={h.id}>{h.name}{h.capacity ? ` (cap. ${h.capacity})` : ''}</option>
+                    ))}
                   </select>
-                )}
+                </div>
+                {/* T° and H° row */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <label className={lc}>{t('operations.tempC', 'Temperatura (°C)')}</label>
+                    <input type="number" step="0.1" min="0" max="60"
+                      {...register(`house_inspections.${i}.temperature`, { valueAsNumber: true })}
+                      className={ic} placeholder="28.0" />
+                  </div>
+                  <div>
+                    <label className={lc}>{t('operations.humidityPct', 'Humedad (%)')}</label>
+                    <input type="number" step="0.1" min="0" max="100"
+                      {...register(`house_inspections.${i}.humidity`, { valueAsNumber: true })}
+                      className={ic} placeholder="65" />
+                  </div>
+                </div>
+                {/* Litter condition */}
+                <div>
+                  <label className={lc}>{t('operations.litterCondition', 'Condición de cama')}</label>
+                  <select {...register(`house_inspections.${i}.litter_condition`)} className={ic}>
+                    <option value="">{t('operations.selectState', 'Seleccionar...')}</option>
+                    <option value="seca">{t('operations.litterDry', 'Seca')}</option>
+                    <option value="húmeda">{t('operations.litterWet', 'Húmeda')}</option>
+                    <option value="amoniacal">{t('operations.litterAmmoniacal', 'Amoniacal')}</option>
+                    <option value="compactada">{t('operations.litterCompacted', 'Compactada')}</option>
+                  </select>
+                </div>
+                {/* Litter notes */}
+                <div>
+                  <label className={lc}>{t('operations.litterNotes', 'Observaciones de cama')}</label>
+                  <input type="text" {...register(`house_inspections.${i}.litter_notes`)}
+                    className={ic} placeholder={t('operations.litterNotesPlaceholder', 'Profundidad, renovación, etc.')} />
+                </div>
+                {/* Equipment notes */}
+                <div>
+                  <label className={lc}>{t('operations.equipmentNotes', 'Estado de equipos (bebederos, comederos, ventiladores)')}</label>
+                  <input type="text" {...register(`house_inspections.${i}.equipment_notes`)}
+                    className={ic} placeholder={t('operations.equipmentNotesPlaceholder', 'Observaciones de equipos')} />
+                </div>
               </div>
             ))}
+            <button type="button"
+              onClick={() => appendHouseInsp({ litter_condition: '' })}
+              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
+              <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
+            </button>
           </div>
         )
       }
