@@ -69,6 +69,7 @@ const operationSchema = z.object({
     sap_order_id: z.string().optional(),
   })).optional(),
   hatchery_params: z.array(z.object({
+    machine_type: z.enum(['incubator', 'hatcher']).optional(), // UI-only, stripped on submit
     incubator_id: z.number().optional(),
     hatcher_id: z.number().optional(),
     temperature: z.number().optional(),
@@ -193,6 +194,13 @@ export default function OperationFormPage() {
     }
   }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Auto-init: add one empty machine row when hatchery_inspection is selected
+  useEffect(() => {
+    if (eventType === 'hatchery_inspection' && incubatorFields.length === 0) {
+      appendIncubator({ machine_type: 'incubator' } as any)
+    }
+  }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     api.get('/lots?limit=100').then(r => setLots(r.data)).catch(() => toast.error(t('operations.errorLoadingLots')))
     api.get('/sap/references?ref_type=transfer_order&limit=50').then(r => setSapOrders(r.data?.references || [])).catch(() => {})
@@ -245,7 +253,7 @@ export default function OperationFormPage() {
         bird_movements: (data.bird_movements || []).filter(m => (m.quantity ?? 0) > 0),
         egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
         feed_movements: data.feed_movements || [],
-        hatchery_params: data.hatchery_params || [],
+        hatchery_params: (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp),  // strip UI-only machine_type
         inspection_details: [...(data.inspection_details || []), ...houseDetails],
         egg_storage_records: data.egg_storage_records || [],
         house_inspections: undefined, // strip UI-only field
@@ -708,36 +716,50 @@ export default function OperationFormPage() {
 
       case 'hatchery_inspection': return (
         <div className="space-y-4">
-          <p className="text-xs text-slate-500">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina')}</p>
-          {incubatorFields.map((field, i) => (
-            <div key={field.id} className="border border-slate-200 rounded-lg p-3 space-y-3 relative">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div className="col-span-2 sm:col-span-1">
-                  <label className={lc}>{t('operations.incubator', 'Incubadora')}</label>
-                  {sel(register(`hatchery_params.${i}.incubator_id`, { valueAsNumber: true }), incubators, '---')}
+          <p className="text-xs text-slate-500">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina (incubadora o nacedora)')}</p>
+          {incubatorFields.map((field, i) => {
+            const machineType = watch(`hatchery_params.${i}.machine_type` as any)
+            return (
+              <div key={field.id} className="border border-slate-200 dark:border-dark-border rounded-xl p-3 space-y-3 relative bg-slate-50/50 dark:bg-dark-card/40">
+                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                  <div>
+                    <label className={lc}>{t('operations.machineType', 'Tipo de máquina')}</label>
+                    <select {...register(`hatchery_params.${i}.machine_type` as any)} className={ic}>
+                      <option value="incubator">{t('operations.incubatorMachine', 'Incubadora')}</option>
+                      <option value="hatcher">{t('operations.hatcherMachine', 'Nacedora')}</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className={lc}>{machineType === 'hatcher' ? t('operations.hatcher', 'Nacedora') : t('operations.incubator', 'Incubadora')}</label>
+                    {machineType === 'hatcher'
+                      ? sel(register(`hatchery_params.${i}.hatcher_id`, { valueAsNumber: true }), hatchers, '---')
+                      : sel(register(`hatchery_params.${i}.incubator_id`, { valueAsNumber: true }), incubators, '---')
+                    }
+                  </div>
+                  <div>
+                    <label className={lc}>{t('operations.temp', 'T° (°C)')}</label>
+                    <input type="number" step="0.1" {...register(`hatchery_params.${i}.temperature`, { valueAsNumber: true })} className={ic} placeholder="37.5" />
+                  </div>
+                  <div>
+                    <label className={lc}>{t('operations.humidity', 'H° (%)')}</label>
+                    <input type="number" step="0.1" min="0" max="100" {...register(`hatchery_params.${i}.humidity`, { valueAsNumber: true })} className={ic} placeholder="56" />
+                  </div>
+                  <div>
+                    <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
+                    <input type="number" step="0.01" min="0" {...register(`hatchery_params.${i}.co2`, { valueAsNumber: true })} className={ic} placeholder="0.50" />
+                  </div>
                 </div>
-                <div>
-                  <label className={lc}>{t('operations.temp', 'T° (°C)')}</label>
-                  <input type="number" step="0.1" {...register(`hatchery_params.${i}.temperature`, { valueAsNumber: true })} className={ic} placeholder="37.5" />
-                </div>
-                <div>
-                  <label className={lc}>{t('operations.humidity', 'H° (%)')}</label>
-                  <input type="number" step="0.1" {...register(`hatchery_params.${i}.humidity`, { valueAsNumber: true })} className={ic} placeholder="55" />
-                </div>
-                <div>
-                  <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
-                  <input type="number" step="0.01" {...register(`hatchery_params.${i}.co2`, { valueAsNumber: true })} className={ic} placeholder="0.5" />
-                </div>
+                {i > 0 && (
+                  <button type="button" onClick={() => removeIncubator(i)}
+                    className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1">
+                    <Trash2 size={14} />
+                  </button>
+                )}
               </div>
-              {i > 0 && (
-                <button type="button" onClick={() => removeIncubator(i)}
-                  className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1">
-                  <Trash2 size={14} />
-                </button>
-              )}
-            </div>
-          ))}
-          <button type="button" onClick={() => appendIncubator({ temperature: undefined, humidity: undefined })}
+            )
+          })}
+          <button type="button" onClick={() => appendIncubator({ machine_type: 'incubator' } as any)}
             className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
             <Plus size={14} /> {t('operations.addMachine', 'Añadir máquina')}
           </button>

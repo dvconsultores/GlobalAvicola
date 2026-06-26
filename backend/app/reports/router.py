@@ -112,6 +112,26 @@ async def get_production_index_kpi(
     return await ReportsService(db, current_user).get_kpi_production_index(lot_id)
 
 
+@router.get("/kpi/ipe/{lot_id}")
+async def get_kpi_ipe(
+    lot_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """G-06: European Production Index (IPE) = (Viabilidad × Ganancia Diaria × 100) / (FCR × 10)."""
+    return await ReportsService(db, current_user).get_kpi_ipe(lot_id)
+
+
+@router.get("/kpi/weight-uniformity/{lot_id}")
+async def get_kpi_weight_uniformity(
+    lot_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """G-07: Weight uniformity (CV%) across weight_recording events for the lot."""
+    return await ReportsService(db, current_user).get_kpi_weight_uniformity(lot_id)
+
+
 @router.get("/lot/{lot_id}")
 async def get_lot_report(
     lot_id: int,

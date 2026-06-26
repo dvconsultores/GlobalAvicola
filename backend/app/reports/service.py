@@ -1,4 +1,5 @@
 """Reports service — KPI calculations, lot reports, SAP comparison."""
+from datetime import date
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -445,4 +446,114 @@ class ReportsService:
             "fcr": round(fcr, 2),
             "production_index": round(pi, 1),
             "unit": "index",
+        }
+
+    # ============================================================
+    # G-06: IPE — Índice de Producción Europeo
+    # ============================================================
+
+    async def get_kpi_ipe(self, lot_id: int) -> dict:
+        """
+        European Production Index (IPE).
+        IPE = (Viabilidad% × Ganancia_Diaria_g × 100) / (FCR × 10)
+        Ganancia diaria = avg_weight_g / age_days
+        """
+        mortality_kpi = await self.get_kpi_mortality(lot_id)
+        viabilidad = 100.0 - mortality_kpi["mortality_rate_pct"]
+
+        q = select(func.avg(BirdMovement.avg_weight)).join(
+            OperationalEvent, BirdMovement.event_id == OperationalEvent.id
+        ).where(
+            OperationalEvent.lot_id == lot_id,
+            OperationalEvent.company_id == self.company_id,
+            OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
+            BirdMovement.avg_weight != None,
+        )
+        result = await self.db.execute(q)
+        avg_weight_g = result.scalar() or 0.0
+
+        lot_result = await self.db.execute(
+            select(Lot).where(Lot.id == lot_id, Lot.company_id == self.company_id)
+        )
+        lot = lot_result.scalar_one_or_none()
+        age_days = (date.today() - lot.start_date).days if lot and lot.start_date else 30
+        if age_days <= 0:
+            age_days = 1
+
+        fcr_kpi = await self.get_kpi_feed_conversion(lot_id)
+        fcr = fcr_kpi.get("feed_conversion_ratio") or 0.0
+
+        ganancia_diaria = avg_weight_g / age_days if age_days > 0 else 0.0
+        ipe = (viabilidad * ganancia_diaria * 100) / (fcr * 10) if fcr > 0 else 0.0
+
+        return {
+            "lot_id": lot_id,
+            "viabilidad_pct": round(viabilidad, 2),
+            "avg_weight_g": round(avg_weight_g, 1),
+            "ganancia_diaria_g": round(ganancia_diaria, 2),
+            "age_days": age_days,
+            "fcr": round(fcr, 2),
+            "ipe": round(ipe, 1),
+            "reference": {"excellent": ">300", "good": "250-300", "average": "200-250"},
+        }
+
+    # ============================================================
+    # G-07: Uniformidad de lote (CV% del peso)
+    # ============================================================
+
+    async def get_kpi_weight_uniformity(self, lot_id: int) -> dict:
+        """
+        Weight uniformity (lot uniformity).
+        CV% = (STDDEV_SAMP(avg_weight) / AVG(avg_weight)) × 100
+        Computed across all weight_recording events for the lot.
+        Excellent: CV% < 8%, Acceptable: 8-12%, Poor: > 12%
+        """
+        from sqlalchemy import text as sa_text
+        q = select(
+            func.avg(BirdMovement.avg_weight).label("mean_w"),
+            func.stddev_samp(BirdMovement.avg_weight).label("std_w"),
+            func.count(BirdMovement.id).label("n_samples"),
+            func.min(BirdMovement.avg_weight).label("min_w"),
+            func.max(BirdMovement.avg_weight).label("max_w"),
+        ).join(
+            OperationalEvent, BirdMovement.event_id == OperationalEvent.id
+        ).where(
+            OperationalEvent.lot_id == lot_id,
+            OperationalEvent.company_id == self.company_id,
+            OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
+            BirdMovement.avg_weight != None,
+            BirdMovement.avg_weight > 0,
+        )
+        result = await self.db.execute(q)
+        row = result.one_or_none()
+        if not row or not row.mean_w or row.n_samples < 2:
+            return {
+                "lot_id": lot_id,
+                "n_samples": row.n_samples if row else 0,
+                "mean_weight_g": None,
+                "cv_pct": None,
+                "uniformity_status": "insufficient_data",
+            }
+
+        mean_w = float(row.mean_w)
+        std_w = float(row.std_w or 0)
+        cv_pct = (std_w / mean_w * 100) if mean_w > 0 else 0.0
+
+        if cv_pct < 8:
+            status = "excellent"
+        elif cv_pct < 12:
+            status = "acceptable"
+        else:
+            status = "poor"
+
+        return {
+            "lot_id": lot_id,
+            "n_samples": row.n_samples,
+            "mean_weight_g": round(mean_w, 1),
+            "std_weight_g": round(std_w, 1),
+            "min_weight_g": round(float(row.min_w), 1),
+            "max_weight_g": round(float(row.max_w), 1),
+            "cv_pct": round(cv_pct, 2),
+            "uniformity_status": status,
+            "reference": {"excellent": "CV% < 8%", "acceptable": "CV% 8-12%", "poor": "CV% > 12%"},
         }

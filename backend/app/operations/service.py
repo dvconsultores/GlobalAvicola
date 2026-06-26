@@ -17,9 +17,11 @@ from .validators import (
     validate_house_capacity,
     validate_incubation_load,
     validate_lot_active,
+    validate_lot_closure,
     validate_mortality,
     validate_oc_limit,
     validate_period_open,
+    validate_sap_document_unique,
     validate_sap_edit_lock,
     validate_segregation,
 )
@@ -88,6 +90,9 @@ class OperationsService:
         await validate_farm_house(data.event_type.value if hasattr(data.event_type, 'value') else str(data.event_type), data.farm_id, data.house_id)
         # BR-19: Date not in closed period
         await validate_period_open(self.db, data.event_date)
+        # BR-10: SAP document must not be duplicated
+        if data.sap_document_ref:
+            await validate_sap_document_unique(self.db, data.lot_id, event_type, data.sap_document_ref)
 
         total_qty = sum(bm.quantity for bm in data.bird_movements) + sum(em.quantity for em in data.egg_movements)
 
@@ -113,6 +118,8 @@ class OperationsService:
             elif event_type == models.EventType.CHICK_DISPATCH:
                 if total_qty > 0:
                     await validate_chick_dispatch(self.db, data.lot_id, total_qty)
+            elif event_type == models.EventType.LOT_CLOSURE:
+                await validate_lot_closure(self.db, data.lot_id)
         except BusinessRuleViolation as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
 
