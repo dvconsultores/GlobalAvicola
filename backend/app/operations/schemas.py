@@ -97,6 +97,7 @@ class OperationalEventBase(BaseModel):
     transport_id: Optional[int] = None
     sample_size: Optional[int] = None
     extra_data: Optional[dict] = None
+    idempotency_key: Optional[str] = None  # Client-generated UUID to prevent duplicate submissions
 
 
 class OperationalEventCreate(OperationalEventBase):
@@ -186,6 +187,7 @@ ALL_EVENT_TYPES = [
     {"type": "hatchery_inspection", "label": "Inspección de Incubadora"},
     {"type": "egg_collection", "label": "Recolección de Huevos"},
     {"type": "egg_classification", "label": "Clasificación de Huevos"},
+    {"type": "egg_reception_classification", "label": "Clasificación de Huevos Recibidos (Incubadora)"},
     {"type": "egg_dispatch", "label": "Despacho de Huevos"},
     {"type": "egg_reception_hatchery", "label": "Recepción de Huevos (Incubadora)"},
     {"type": "incubation_load", "label": "Carga de Incubación"},

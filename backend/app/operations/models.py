@@ -36,6 +36,7 @@ class EventType(str, enum.Enum):
     HATCHERY_INSPECTION = "hatchery_inspection"
     EGG_COLLECTION = "egg_collection"
     EGG_CLASSIFICATION = "egg_classification"
+    EGG_RECEPTION_CLASSIFICATION = "egg_reception_classification"  # Hatchery: classify received eggs
     EGG_DISPATCH = "egg_dispatch"
     EGG_RECEPTION_HATCHERY = "egg_reception_hatchery"
     INCUBATION_LOAD = "incubation_load"
@@ -87,6 +88,9 @@ class OperationalEvent(Base):
     # Status workflow
     status: Mapped[EventStatus] = mapped_column(Enum(EventStatus), default=EventStatus.DRAFT)
     version: Mapped[int] = mapped_column(Integer, default=1)  # optimistic locking
+
+    # Idempotency — client-generated UUID to prevent duplicate submissions
+    idempotency_key: Mapped[Optional[str]] = mapped_column(String(64), nullable=True, unique=True)
 
     # Audit
     registered_by_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))

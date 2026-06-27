@@ -1,7 +1,7 @@
 import {
   Bird, Egg, Flame, Drumstick, Feather,
   Truck, Package, ArrowUpRight, Wheat, Scale, Skull, Trash2,
-  Syringe, Pill, Building2, ClipboardList, ArrowDownRight,
+  Syringe, Pill, Building2, ClipboardList, ClipboardCheck, ArrowDownRight,
   Eye, RefreshCw, Baby, Lock, Plane, Thermometer,
   type LucideIcon,
 } from 'lucide-react'
@@ -211,7 +211,7 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
     'medication', 'egg_collection', 'egg_classification', 'egg_dispatch', 'bird_exit',
   ],
   hatchery: [
-    'hatchery_inspection', 'egg_reception_hatchery', 'egg_classification', 'transport_inspection',
+    'hatchery_inspection', 'egg_reception_hatchery', 'egg_reception_classification', 'transport_inspection',
     'incubation_load', 'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
   ],
   broiler: [
@@ -238,6 +238,7 @@ export const EVENT_ICON_MAP: Record<string, LucideIcon> = {
   hatchery_inspection: Thermometer,
   egg_collection: Egg,
   egg_classification: ClipboardList,
+  egg_reception_classification: ClipboardCheck,
   egg_dispatch: ArrowUpRight,
   egg_reception_hatchery: ArrowDownRight,
   incubation_load: Flame,
@@ -270,9 +271,10 @@ export const EVENT_COLOR_MAP: Record<string, { bg: string; ring: string; text: s
   mortality_recording:    { bg: 'bg-slate-600',   ring: 'ring-slate-200',   text: 'text-slate-600' },
   cull_recording:         { bg: 'bg-stone-500',   ring: 'ring-stone-200',   text: 'text-stone-600' },
   egg_collection:         { bg: 'bg-yellow-500',  ring: 'ring-yellow-200',  text: 'text-yellow-600' },
-  egg_classification:     { bg: 'bg-orange-500',  ring: 'ring-orange-200',  text: 'text-orange-600' },
-  egg_dispatch:           { bg: 'bg-orange-600',  ring: 'ring-orange-200',  text: 'text-orange-700' },
-  egg_reception_hatchery: { bg: 'bg-amber-600',   ring: 'ring-amber-200',   text: 'text-amber-700' },
+  egg_classification:              { bg: 'bg-orange-500',  ring: 'ring-orange-200',  text: 'text-orange-600' },
+  egg_reception_classification:    { bg: 'bg-teal-500',    ring: 'ring-teal-200',    text: 'text-teal-600' },
+  egg_dispatch:                    { bg: 'bg-orange-600',  ring: 'ring-orange-200',  text: 'text-orange-700' },
+  egg_reception_hatchery:          { bg: 'bg-amber-600',   ring: 'ring-amber-200',   text: 'text-amber-700' },
   incubation_load:        { bg: 'bg-orange-500',  ring: 'ring-orange-200',  text: 'text-orange-600' },
   ovoscopy:               { bg: 'bg-fuchsia-500', ring: 'ring-fuchsia-200', text: 'text-fuchsia-600' },
   transfer_to_hatcher:    { bg: 'bg-red-500',     ring: 'ring-red-200',     text: 'text-red-600' },
@@ -386,7 +388,7 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
   hatchery: [
     step('hatchery_inspection', 'Inspeccionar la incubadora antes de operar'),
     step('egg_reception_hatchery', 'Recepcionar los huevos que llegan a la planta'),
-    step('egg_classification', 'Clasificar los huevos aptos para incubar'),
+    step('egg_reception_classification', 'Clasificar los huevos recibidos (aptos/no aptos)'),
     step('incubation_load', 'Cargar los huevos a las máquinas de incubación'),
     step('ovoscopy', 'Realizar ovoscopía para verificar fertilidad'),
     step('transfer_to_hatcher', 'Transferir los huevos a la nacedora'),

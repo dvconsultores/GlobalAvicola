@@ -26,15 +26,8 @@ const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
 // ============================================================
 // Technical ranges — Ross/Cobb guidelines
 // ============================================================
-// Temperature °C by week of life (index = week number, capped at last entry for older birds)
-const TEMP_RANGES: Record<string, Array<[number, number]>> = {
-  broiler:     [[32, 35], [30, 33], [27, 30], [24, 27], [21, 24], [18, 22]],
-  breeder:     [[30, 33], [28, 30], [26, 28], [24, 26], [22, 24], [20, 22]],
-  grandparent: [[30, 33], [28, 30], [26, 28], [24, 26], [22, 24], [20, 22]],
-  default:     [[28, 33], [26, 31], [24, 28], [22, 26], [20, 24], [18, 22]],
-}
-// Humidity % — universal guideline
-const HUMIDITY_RANGE: [number, number] = [60, 75]
+// Thermal zones — Ross/Cobb dynamic curves by bird type + week
+import { getThermalZone, DEFAULT_THERMAL_ZONE } from '../../data/thermalCurves'
 // Incubator (setter) and Hatcher fixed ranges
 const INCUBATOR_TEMP_RANGE: [number, number] = [37.5, 38.0]
 const HATCHER_TEMP_RANGE: [number, number]   = [37.0, 37.5]
@@ -42,9 +35,15 @@ const INCUBATOR_HUM_RANGE: [number, number]  = [55, 62]
 const HATCHER_HUM_RANGE: [number, number]    = [65, 75]
 
 function getTempRange(birdType: string, ageWeeks: number): [number, number] {
-  const ranges = TEMP_RANGES[birdType] ?? TEMP_RANGES.default
-  const idx = Math.min(ageWeeks, ranges.length - 1)
-  return ranges[idx]
+  const zone = getThermalZone(birdType, 'rearing', ageWeeks)
+  if (zone) return [zone.tempMin, zone.tempMax]
+  return [DEFAULT_THERMAL_ZONE.tempMin, DEFAULT_THERMAL_ZONE.tempMax]
+}
+
+function getHumidityRange(ageWeeks: number): [number, number] {
+  const zone = getThermalZone('broiler', 'rearing', ageWeeks)
+  if (zone) return [zone.humidMin, zone.humidMax]
+  return [DEFAULT_THERMAL_ZONE.humidMin, DEFAULT_THERMAL_ZONE.humidMax]
 }
 
 type RangeStatus = 'ok' | 'warn' | 'error' | 'none'
@@ -612,6 +611,7 @@ export default function OperationFormPage() {
 
       case 'egg_collection':
       case 'egg_classification':
+      case 'egg_reception_classification':
       case 'egg_dispatch': {
         const eggTypes = [
           { key: 'fertile', label: t('operations.fertile', 'Fértiles') },
@@ -739,7 +739,8 @@ export default function OperationFormPage() {
                       className={ic} placeholder="65" />
                     {(() => {
                       const v = watch(`house_inspections.${i}.humidity` as any)
-                      return <RangeIndicator value={v} min={HUMIDITY_RANGE[0]} max={HUMIDITY_RANGE[1]} unit="%" />
+                      const [hMin, hMax] = getHumidityRange(lotAgeWeeks)
+                      return <RangeIndicator value={v} min={hMin} max={hMax} unit="%" />
                     })()}
                   </div>
                 </div>

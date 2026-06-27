@@ -41,6 +41,18 @@ class OperationsService:
         # Validate event type
         event_type = models.EventType(data.event_type)
 
+        # Idempotency: if client sent a key, check for duplicate submission
+        if data.idempotency_key:
+            existing = await self.db.execute(
+                select(models.OperationalEvent).where(
+                    models.OperationalEvent.idempotency_key == data.idempotency_key,
+                    models.OperationalEvent.company_id == self.company_id,
+                )
+            )
+            dup = existing.scalar_one_or_none()
+            if dup:
+                return dup  # Return existing event — no duplicate created
+
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
 
@@ -56,6 +68,7 @@ class OperationsService:
             sap_document_ref=data.sap_document_ref,
             status=models.EventStatus.REGISTERED,
             registered_by_id=self.current_user["id"],
+            idempotency_key=data.idempotency_key,
         )
         self.db.add(event)
         await self.db.flush()
