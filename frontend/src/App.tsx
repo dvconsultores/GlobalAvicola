@@ -12,6 +12,7 @@ import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
 import PoultryHubPage from './pages/operations/PoultryHubPage'
 import PoultryStagePage from './pages/operations/PoultryStagePage'
+import MenuHubPage from './pages/operations/MenuHubPage'
 import MyPendingPage from './pages/operations/MyPendingPage'
 import ReviewCenter from './pages/review/ReviewCenter'
 import ReviewDetail from './pages/review/ReviewDetail'
@@ -120,6 +121,8 @@ export default function App() {
           }
         >
           <Route path="/" element={<DashboardPage />} />
+          {/* Menu hubs — grilla de opciones por área (capa de presentación) */}
+          <Route path="/menu/:menuKey" element={<MenuHubPage />} />
           {/* Web-only: Masters */}
           <Route path="/masters" element={<WebOnlyRoute><Navigate to="/masters/farms" replace /></WebOnlyRoute>} />
           {masterEntities.map((m) => (

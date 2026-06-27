@@ -95,6 +95,7 @@
   "nav": {
     "home": "Home",
     "dashboard": "Dashboard",
+    "optionsCount": "{{count}} options",
     "processes": "Processes",
     "lots": "Lots",
     "operations": "Operations",
@@ -238,6 +239,7 @@
       "operations": "Operations",
       "steps": "steps",
       "open": "Open",
+      "chooseOption": "Choose an option",
       "totalProcesses": "6 main processes",
       "totalOperations": "operations",
       "hint": "Tap any process to see the available operations flow"

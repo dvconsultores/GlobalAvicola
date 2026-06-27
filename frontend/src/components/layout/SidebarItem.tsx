@@ -11,6 +11,8 @@ interface SidebarItemProps {
   depth?: number
   badge?: number
   onClick?: () => void
+  /** Forzar estado activo (ej. hub activo por ruta hija) */
+  forceActive?: boolean
 }
 
 export default function SidebarItem({
@@ -21,10 +23,11 @@ export default function SidebarItem({
   depth = 0,
   badge,
   onClick,
+  forceActive,
 }: SidebarItemProps) {
   const { t } = useTranslation()
   const location = useLocation()
-  const active = isPathActive(location.pathname, to)
+  const active = forceActive || isPathActive(location.pathname, to)
 
   const paddingByDepth = ['px-3', 'pl-9 pr-3', 'pl-14 pr-3']
 

@@ -3,28 +3,28 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { Bird, LogOut, Settings } from 'lucide-react'
-import { NAV_SECTIONS, NAV_ITEMS, getSectionKeyForPath, type NavItem } from '../../data/navigationConfig'
-import { useSidebar } from '../../hooks/useSidebar'
+import { NAV_SECTIONS, NAV_ITEMS, isAnyChildActive, type NavItem } from '../../data/navigationConfig'
 import SidebarSection from './SidebarSection'
 import SidebarItem from './SidebarItem'
-import SidebarSubmenu from './SidebarSubmenu'
 
-function NavItemRenderer({ item, expandedSections, toggleSection }: {
+function NavItemRenderer({ item, pathname }: {
   item: NavItem
-  expandedSections: Record<string, boolean>
-  toggleSection: (key: string) => void
+  pathname: string
 }) {
   const hasChildren = item.children && item.children.length > 0
 
+  // Áreas con sub-opciones → enlazan a su hub en grilla (/menu/:key)
   if (hasChildren) {
+    const hubPath = `/menu/${item.key}`
+    const active = pathname.startsWith(hubPath) || isAnyChildActive(pathname, item)
     return (
-      <SidebarSubmenu
+      <SidebarItem
         icon={item.icon}
         labelKey={item.labelKey}
         fallback={item.fallback}
-        children={item.children!}
-        expanded={expandedSections[item.key]}
-        onToggle={() => toggleSection(item.key)}
+        to={hubPath}
+        badge={item.badge}
+        forceActive={active}
       />
     )
   }
@@ -48,14 +48,6 @@ export default function Sidebar() {
   const { t } = useTranslation()
   const location = useLocation()
   const { logout, user } = useAuthStore()
-  const { expandedSections, toggleSection, expandContaining } = useSidebar()
-
-  useMemo(() => {
-    const sectionKey = getSectionKeyForPath(location.pathname)
-    if (sectionKey) {
-      expandContaining(sectionKey)
-    }
-  }, [location.pathname, expandContaining])
 
   const sections = useMemo(() => {
     return NAV_SECTIONS.map(section => ({
@@ -107,8 +99,7 @@ export default function Sidebar() {
                 <NavItemRenderer
                   key={item.key}
                   item={item}
-                  expandedSections={expandedSections}
-                  toggleSection={toggleSection}
+                  pathname={location.pathname}
                 />
               ))}
             </div>

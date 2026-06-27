@@ -95,6 +95,7 @@
   "nav": {
     "home": "Inicio",
     "dashboard": "Dashboard",
+    "optionsCount": "{{count}} opciones",
     "processes": "Procesos",
     "lots": "Lotes",
     "operations": "Operaciones",
@@ -238,6 +239,7 @@
       "operations": "Operaciones",
       "steps": "pasos",
       "open": "Abrir",
+      "chooseOption": "Elige una opción",
       "totalProcesses": "6 procesos principales",
       "totalOperations": "operaciones",
       "hint": "Toca cualquier proceso para ver el flujo de operaciones disponibles"
