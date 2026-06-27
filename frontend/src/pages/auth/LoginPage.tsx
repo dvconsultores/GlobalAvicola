@@ -60,7 +60,7 @@ export default function LoginPage() {
           <h1 className="text-[22px] font-bold text-slate-900 dark:text-white tracking-tight">
             {t('brand.name', 'Global Avícola')}
           </h1>
-          <p className="text-sm text-slate-400 dark:text-slate-500 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
             {t('auth.loginSubtitle', 'Ingresa tus credenciales para continuar')}
           </p>
         </div>

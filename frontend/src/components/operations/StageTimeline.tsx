@@ -80,12 +80,12 @@ export default function StageTimeline({
                   {/* Circle with step number or checkmark */}
                   <div className="relative shrink-0 mt-1">
                     <div
-                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-white transition-all transform group-hover:scale-110 ${
+                      className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all transform group-hover:scale-110 ${
                         isCompleted
-                          ? 'bg-green-500 dark:bg-green-600'
+                          ? 'bg-green-500 dark:bg-green-600 text-white'
                           : isCurrent
-                            ? 'bg-blue-600 dark:bg-blue-500 scale-110 shadow-md'
-                            : 'bg-slate-300 dark:bg-slate-600'
+                            ? 'bg-blue-600 dark:bg-blue-500 scale-110 shadow-md text-white'
+                          : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300'
                       }`}
                       aria-hidden="true"
                     >
