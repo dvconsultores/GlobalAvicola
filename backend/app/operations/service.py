@@ -95,7 +95,124 @@ class OperationsService:
         # Phase 3.2: auto-generate alerts for threshold violations
         await self._check_and_create_alerts(event, data)
 
+        # Phase 5.4: auto-create generational traceability batches
+        await self._auto_create_traceability_batches(event, data)
+
         return event
+
+    async def _auto_create_traceability_batches(
+        self,
+        event: models.OperationalEvent,
+        data: schemas.OperationalEventCreate,
+    ) -> None:
+        """
+        Auto-create EggBatch or ChickBatch when matching dispatch+reception events exist.
+        
+        EggBatch: egg_dispatch (breeder/grandparent prod → hatchery) matched with
+                  egg_reception_hatchery for the same lot.
+        ChickBatch: chick_dispatch (hatchery → breeder/broiler) matched with
+                    bird_reception for the same lot.
+        """
+        from ..lots.models import EggBatch, ChickBatch
+        from ..masters.models import Lot
+
+        if event.event_type == models.EventType.EGG_DISPATCH:
+            match = await self.db.execute(
+                select(models.OperationalEvent).where(
+                    models.OperationalEvent.lot_id == data.lot_id,
+                    models.OperationalEvent.event_type == models.EventType.EGG_RECEPTION_HATCHERY,
+                    models.OperationalEvent.status.not_in([models.EventStatus.CANCELLED]),
+                    models.OperationalEvent.id != event.id,
+                ).order_by(models.OperationalEvent.event_date.desc()).limit(1)
+            )
+            reception = match.scalar_one_or_none()
+            if reception:
+                src_lot_result = await self.db.execute(select(Lot).where(Lot.id == data.lot_id))
+                src_lot = src_lot_result.scalar_one_or_none()
+                generation = None
+                if src_lot and src_lot.bird_type:
+                    generation = src_lot.bird_type.value if hasattr(src_lot.bird_type, 'value') else str(src_lot.bird_type)
+                total_qty = sum(em.quantity for em in data.egg_movements)
+                batch = EggBatch(
+                    source_lot_id=data.lot_id,
+                    hatchery_lot_id=reception.lot_id,
+                    generation=generation,
+                    dispatch_event_id=event.id,
+                    reception_event_id=reception.id,
+                    quantity_dispatched=total_qty,
+                    dispatch_date=event.event_date,
+                )
+                self.db.add(batch)
+
+        elif event.event_type == models.EventType.EGG_RECEPTION_HATCHERY:
+            match = await self.db.execute(
+                select(models.OperationalEvent).where(
+                    models.OperationalEvent.lot_id == data.lot_id,
+                    models.OperationalEvent.event_type == models.EventType.EGG_DISPATCH,
+                    models.OperationalEvent.status.not_in([models.EventStatus.CANCELLED]),
+                    models.OperationalEvent.id != event.id,
+                ).order_by(models.OperationalEvent.event_date.desc()).limit(1)
+            )
+            dispatch = match.scalar_one_or_none()
+            if dispatch:
+                batch_result = await self.db.execute(
+                    select(EggBatch).where(EggBatch.dispatch_event_id == dispatch.id)
+                )
+                batch = batch_result.scalar_one_or_none()
+                if batch:
+                    total_qty = sum(em.quantity for em in data.egg_movements)
+                    batch.quantity_received = total_qty
+                    batch.reception_event_id = event.id
+                    batch.reception_date = event.event_date
+
+        elif event.event_type == models.EventType.CHICK_DISPATCH:
+            match = await self.db.execute(
+                select(models.OperationalEvent).where(
+                    models.OperationalEvent.lot_id == data.lot_id,
+                    models.OperationalEvent.event_type == models.EventType.BIRD_RECEPTION,
+                    models.OperationalEvent.status.not_in([models.EventStatus.CANCELLED]),
+                    models.OperationalEvent.id != event.id,
+                ).order_by(models.OperationalEvent.event_date.desc()).limit(1)
+            )
+            reception = match.scalar_one_or_none()
+            if reception:
+                egg_batch_result = await self.db.execute(
+                    select(EggBatch).where(EggBatch.hatchery_lot_id == data.lot_id)
+                )
+                egg_batch = egg_batch_result.scalars().first()
+                total_qty = sum(bm.quantity for bm in data.bird_movements)
+                batch = ChickBatch(
+                    hatchery_lot_id=data.lot_id,
+                    destination_lot_id=reception.lot_id,
+                    broiler_lot_id=reception.lot_id,
+                    dispatch_event_id=event.id,
+                    reception_event_id=reception.id,
+                    egg_batch_id=egg_batch.id if egg_batch else None,
+                    quantity_dispatched=total_qty,
+                    dispatch_date=event.event_date,
+                )
+                self.db.add(batch)
+
+        elif event.event_type == models.EventType.BIRD_RECEPTION:
+            match = await self.db.execute(
+                select(models.OperationalEvent).where(
+                    models.OperationalEvent.lot_id == data.lot_id,
+                    models.OperationalEvent.event_type == models.EventType.CHICK_DISPATCH,
+                    models.OperationalEvent.status.not_in([models.EventStatus.CANCELLED]),
+                    models.OperationalEvent.id != event.id,
+                ).order_by(models.OperationalEvent.event_date.desc()).limit(1)
+            )
+            dispatch = match.scalar_one_or_none()
+            if dispatch:
+                batch_result = await self.db.execute(
+                    select(ChickBatch).where(ChickBatch.dispatch_event_id == dispatch.id)
+                )
+                batch = batch_result.scalar_one_or_none()
+                if batch:
+                    total_qty = sum(bm.quantity for bm in data.bird_movements)
+                    batch.quantity_received = total_qty
+                    batch.reception_event_id = event.id
+                    batch.reception_date = event.event_date
 
     async def _check_and_create_alerts(
         self,

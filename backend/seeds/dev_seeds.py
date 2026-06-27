@@ -14,7 +14,7 @@ from app.database import async_session
 from app.masters.models import (
     Breed, Company, CullCause, Farm, FarmType, FeedType, Hatcher, Hatchery,
     House, HouseType, Incubator, Medication, MortalityCause,
-    ProcessingPlant, Supplier, Transport, Vaccine,
+    ProcessingPlant, ProductivePhase, Supplier, Transport, Vaccine,
 )
 import app.lots.models  # noqa: F401 — register LotPhase/OpeningBalance mappers
 
@@ -424,6 +424,16 @@ async def seed_catalogs(session: AsyncSession, company_id: int) -> None:
             CullCause(company_id=company_id, name="Bajo rendimiento postura",category="reproductivo"),
         ])
         print("  ✅ Causas de descarte (8)")
+
+    # ── Productive Phases ──────────────────────────────────────────────
+    if not await already_seeded(ProductivePhase):
+        session.add_all([
+            ProductivePhase(name="Cría",          code="CRIA",       order=1, duration_days=140, is_initial=True,  is_final=False),
+            ProductivePhase(name="Producción",    code="PROD",       order=2, duration_days=280, is_initial=False, is_final=False),
+            ProductivePhase(name="Incubación",    code="INCUB",      order=3, duration_days=21,  is_initial=False, is_final=False),
+            ProductivePhase(name="Engorde",       code="ENGORDE",    order=4, duration_days=42,  is_initial=False, is_final=True),
+        ])
+        print("  ✅ Fases productivas (4: Cría, Producción, Incubación, Engorde)")
 
 
 async def main():

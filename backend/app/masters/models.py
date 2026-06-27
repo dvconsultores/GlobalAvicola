@@ -200,6 +200,9 @@ class Lot(Base):
     breed_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("breeds.id"), nullable=True)
     lot_code: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     bird_type: Mapped[Optional[BirdTypeEnum]] = mapped_column(Enum(BirdTypeEnum), nullable=True)
+    # For hatchery-type lots: distinguishes grandparent-egg incubation (→ breeder chicks)
+    # from breeder-egg incubation (→ broiler chicks). Values: "grandparent" | "breeder"
+    hatchery_purpose: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     sex: Mapped[Optional[SexEnum]] = mapped_column(Enum(SexEnum), nullable=True)
     status: Mapped[LotStatus] = mapped_column(Enum(LotStatus), default=LotStatus.ACTIVE)
     activation_type: Mapped[Optional[str]] = mapped_column(String(50), default="normal")
