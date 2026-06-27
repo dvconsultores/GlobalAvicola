@@ -24,16 +24,16 @@ interface CardBodyProps {
 }
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default:  'bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-card',
-  flat:     'bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border',
-  elevated: 'bg-white dark:bg-dark-card border border-slate-100 dark:border-dark-border shadow-card-md',
+  default:  'bg-white dark:bg-dark-card border border-slate-200/80 dark:border-dark-border',
+  flat:     'bg-white dark:bg-dark-card border border-slate-200/80 dark:border-dark-border',
+  elevated: 'bg-white dark:bg-dark-card border border-slate-200/80 dark:border-dark-border shadow-card',
 }
 
 const PADDING_CLASSES = {
   none: '',
-  sm:   'p-4',
-  md:   'p-5',
-  lg:   'p-6',
+  sm:   'p-3',
+  md:   'p-4',
+  lg:   'p-5',
 }
 
 export function Card({
@@ -46,7 +46,7 @@ export function Card({
   return (
     <div
       className={[
-        'rounded-2xl overflow-hidden',
+        'rounded-xl overflow-hidden',
         VARIANT_CLASSES[variant],
         padding !== 'none' ? PADDING_CLASSES[padding] : '',
         className,
@@ -60,23 +60,23 @@ export function Card({
 
 export function CardHeader({ title, subtitle, action, className = '' }: CardHeaderProps) {
   return (
-    <div className={`flex items-start justify-between gap-3 px-5 py-4 border-b border-slate-100 dark:border-dark-border ${className}`}>
+    <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100 dark:border-dark-border ${className}`}>
       <div>
         {typeof title === 'string' ? (
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm leading-snug">{title}</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{title}</h3>
         ) : title}
         {subtitle && (
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>
         )}
       </div>
-      {action && <div className="shrink-0">{action}</div>}
+      {action && <div className="shrink-0 text-slate-400">{action}</div>}
     </div>
   )
 }
 
 export function CardBody({ children, className = '' }: CardBodyProps) {
   return (
-    <div className={`px-5 py-4 ${className}`}>
+    <div className={`px-4 py-3 ${className}`}>
       {children}
     </div>
   )

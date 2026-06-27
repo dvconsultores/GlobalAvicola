@@ -12,10 +12,10 @@ export default function SidebarSection({ labelKey, fallback }: SidebarSectionPro
   if (!label) return null
 
   return (
-    <div className="px-3 pt-5 pb-1">
+    <div className="px-3 pt-4 pb-0.5">
       <span
-        className="text-[10px] font-semibold uppercase tracking-[0.18em] select-none"
-        style={{ color: 'rgba(147,197,253,0.45)' }}
+        className="text-[10px] font-semibold uppercase tracking-[0.12em] select-none"
+        style={{ color: 'rgba(148,163,184,0.35)' }}
       >
         {label}
       </span>

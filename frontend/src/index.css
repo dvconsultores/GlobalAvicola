@@ -37,11 +37,11 @@
   --color-info:        #0891B2;
 
   /* Surfaces */
-  --color-bg:          #F4F6F9;
+  --color-bg:          #F7F8FA;
   --color-surface:     #FFFFFF;
-  --color-surface-alt: #F8FAFC;
-  --color-border:      #E5E7EB;
-  --color-border-subtle: #F1F5F9;
+  --color-surface-alt: #FAFAFA;
+  --color-border:      #E4E7EC;
+  --color-border-subtle: #F1F3F6;
 
   /* Text */
   --color-text:         #0F172A;
@@ -53,12 +53,12 @@
   --sidebar-to:     #0F3361;
   --sidebar-width:  256px;
 
-  /* Shadows — architectural, directional */
-  --shadow-xs:   0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
-  --shadow-md:   0 4px 8px -2px rgb(0 0 0 / 0.10), 0 2px 4px -2px rgb(0 0 0 / 0.07);
-  --shadow-lg:   0 10px 20px -4px rgb(0 0 0 / 0.12), 0 4px 8px -4px rgb(0 0 0 / 0.07);
-  --shadow-card: 0 1px 4px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.04);
+  /* Shadows — clean, non-decorative */
+  --shadow-xs:   0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
+  --shadow-md:   0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg:   0 8px 24px -4px rgb(0 0 0 / 0.10), 0 4px 8px -4px rgb(0 0 0 / 0.06);
+  --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.05), 0 0 0 1px rgb(15 23 42 / 0.04);
 
   /* Radius */
   --radius-sm:  6px;
@@ -218,21 +218,20 @@ p { margin: 0; }
   background: linear-gradient(160deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%);
 }
 
-/* ── Accent accent line ──────────────────────────────────── */
-.accent-bar {
-  position: relative;
+/* ── Accent dot — minimal semantic color indicator ────────── */
+/* accent-bar classes retained for compatibility but render nothing now */
+.accent-bar { position: relative; }
+.accent-bar-blue,
+.accent-bar-green,
+.accent-bar-amber,
+.accent-bar-red,
+.accent-bar-teal,
+.accent-bar-indigo,
+.accent-bar-slate { /* semantic class kept, no decorative stripe */ }
+
+/* ── Stat value typography ───────────────────────────────── */
+.stat-value {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.025em;
+  line-height: 1;
 }
-.accent-bar::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-}
-.accent-bar-blue::before    { background: linear-gradient(90deg, #1A6DCC, #3B82F6); }
-.accent-bar-green::before   { background: linear-gradient(90deg, #059669, #10B981); }
-.accent-bar-amber::before   { background: linear-gradient(90deg, #D97706, #FBBF24); }
-.accent-bar-red::before     { background: linear-gradient(90deg, #DC2626, #EF4444); }
-.accent-bar-teal::before    { background: linear-gradient(90deg, #0891B2, #22D3EE); }
-.accent-bar-indigo::before  { background: linear-gradient(90deg, #4F46E5, #818CF8); }
-.accent-bar-slate::before   { background: linear-gradient(90deg, #475569, #94A3B8); }

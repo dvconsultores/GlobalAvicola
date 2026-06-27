@@ -9,12 +9,12 @@ export default function AppLayout() {
   const isMobileUser = user?.view_type === 'mobile'
 
   return (
-    <div className="min-h-screen bg-[#F4F6F9] dark:bg-dark-bg">
+    <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg">
       {/* Desktop sidebar: only for web/admin users */}
       {!isMobileUser && <Sidebar />}
       <Header />
       <main className={`pb-20 lg:pb-0 ${!isMobileUser ? 'lg:ml-64' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 lg:py-6 page-enter">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-5 page-enter">
           <Outlet />
         </div>
       </main>

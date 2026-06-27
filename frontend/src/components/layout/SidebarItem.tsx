@@ -33,33 +33,23 @@ export default function SidebarItem({
       to={to}
       onClick={onClick}
       className={`
-        flex items-center gap-2.5 py-2 rounded-lg text-[13px] font-medium transition-all duration-150
+        flex items-center gap-2 py-1.5 rounded-lg text-[13px] transition-colors duration-100
         ${paddingByDepth[depth] ?? paddingByDepth[0]}
         ${active
-          ? 'bg-white text-brand-800 shadow-sm'
-          : 'text-white/65 hover:text-white hover:bg-white/[0.07]'
+          ? 'bg-white/[0.12] text-white font-medium'
+          : 'text-white/55 font-normal hover:text-white/90 hover:bg-white/[0.06]'
         }
       `}
       aria-current={active ? 'page' : undefined}
     >
       {Icon && (
-        <span
-          className={`shrink-0 flex items-center justify-center w-5 h-5 ${
-            active ? 'text-brand-600' : 'text-white/60'
-          }`}
-        >
-          <Icon size={16} strokeWidth={active ? 2.2 : 1.8} />
+        <span className={`shrink-0 ${active ? 'text-white/90' : 'text-white/40'}`}>
+          <Icon size={15} strokeWidth={active ? 2 : 1.7} />
         </span>
       )}
       <span className="flex-1 truncate">{t(labelKey, fallback)}</span>
       {badge !== undefined && badge > 0 && (
-        <span
-          className={`inline-flex items-center justify-center min-w-[18px] h-4.5 px-1.5 rounded-full text-[10px] font-bold ${
-            active
-              ? 'bg-brand-500 text-white'
-              : 'bg-white/20 text-white'
-          }`}
-        >
+        <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full text-[10px] font-semibold bg-white/20 text-white/90">
           {badge > 99 ? '99+' : badge}
         </span>
       )}

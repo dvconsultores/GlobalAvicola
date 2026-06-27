@@ -11,13 +11,6 @@ import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
 import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
 
-const BIRD_TYPE_COLORS: Record<string, string> = {
-  grandparent: 'bg-purple-50 text-purple-700 border border-purple-200',
-  breeder:     'bg-blue-50 text-blue-700 border border-blue-200',
-  hatchery:    'bg-amber-50 text-amber-700 border border-amber-200',
-  broiler:     'bg-emerald-50 text-emerald-700 border border-emerald-200',
-}
-
 // ── Alert severity styles ───────────────────────────────────────────────────
 const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
   critical: { bar: 'bg-red-500',    bg: 'bg-red-50',    text: 'text-red-800',    badge: 'bg-red-100 text-red-700 border-red-200' },
@@ -293,66 +286,48 @@ export default function DashboardPage() {
   const mortalityTrend: { week: string; mortality: number }[] = data?.mortality_trend ?? []
 
   const summaryCards = [
-    {
-      label: t('dashboard.totalEvents'),
-      value: data?.total_events ?? 0,
-      icon: <FileText size={18} />,
-      color: 'text-blue-600 bg-blue-50',
-    },
-    {
-      label: t('dashboard.pendingReview'),
-      value: data?.pending_review ?? 0,
-      icon: <Clock size={18} />,
-      color: 'text-amber-600 bg-amber-50',
-    },
-    {
-      label: t('dashboard.pendingApproval'),
-      value: data?.pending_approval ?? 0,
-      icon: <CheckCircle size={18} />,
-      color: 'text-teal-600 bg-teal-50',
-    },
-    {
-      label: t('dashboard.last7Days'),
-      value: data?.last_7_days ?? 0,
-      icon: <TrendingDown size={18} />,
-      color: 'text-emerald-600 bg-emerald-50',
-    },
+    { label: t('dashboard.totalEvents'),    value: data?.total_events    ?? 0, icon: <FileText size={16} /> },
+    { label: t('dashboard.pendingReview'),  value: data?.pending_review  ?? 0, icon: <Clock size={16} /> },
+    { label: t('dashboard.pendingApproval'),value: data?.pending_approval ?? 0, icon: <CheckCircle size={16} /> },
+    { label: t('dashboard.last7Days'),      value: data?.last_7_days     ?? 0, icon: <TrendingDown size={16} /> },
+  ]
+
+  const CARD_ACCENT_COLORS = [
+    { dot: 'bg-blue-500',    icon: 'text-blue-600 bg-blue-50' },
+    { dot: 'bg-amber-500',   icon: 'text-amber-600 bg-amber-50' },
+    { dot: 'bg-teal-500',    icon: 'text-teal-600 bg-teal-50' },
+    { dot: 'bg-emerald-500', icon: 'text-emerald-600 bg-emerald-50' },
   ]
 
   return (
-    <div className="max-w-6xl mx-auto space-y-6">
+    <div className="max-w-5xl mx-auto space-y-5">
       {/* Page header */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-slate-900 dark:text-white leading-tight">{t('nav.dashboard')}</h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
-            {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} —{' '}
-            <span className="text-slate-400 dark:text-slate-500">{new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}</span>
-          </p>
-        </div>
+      <div>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-white">{t('nav.dashboard')}</h1>
+        <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+          {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
+        </p>
       </div>
 
       {/* Summary KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-        {summaryCards.map((card, i) => (
-          <div
-            key={i}
-            className="relative bg-white dark:bg-dark-card rounded-2xl border border-slate-100 dark:border-dark-border shadow-card overflow-hidden accent-bar accent-bar-blue"
-            style={{ '--accent-color': ['#1A6DCC', '#D97706', '#0891B2', '#059669'][i] } as any}
-          >
-            <div className="px-5 pt-5 pb-4">
-              <div className="flex items-start justify-between gap-2">
-                <div>
-                  <p className="text-[28px] font-bold text-slate-900 dark:text-white leading-none tracking-tight">{card.value}</p>
-                  <p className="text-xs font-medium text-slate-500 dark:text-slate-400 mt-1.5">{card.label}</p>
-                </div>
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 ${card.color}`}>
+        {summaryCards.map((card, i) => {
+          const ac = CARD_ACCENT_COLORS[i]
+          return (
+            <div key={i} className="bg-white dark:bg-dark-card rounded-xl border border-slate-200/80 dark:border-dark-border p-4">
+              <div className="flex items-center gap-1.5 mb-2">
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ac.dot}`} />
+                <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 leading-none truncate">{card.label}</p>
+              </div>
+              <div className="flex items-end justify-between gap-2">
+                <p className="text-2xl font-semibold text-slate-900 dark:text-white stat-value">{card.value}</p>
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ac.icon}`}>
                   {card.icon}
                 </div>
               </div>
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
 
       {/* Active lots by stage */}
@@ -360,22 +335,25 @@ export default function DashboardPage() {
         <CardHeader
           title={t('dashboard.activeLotsByStage', 'Lotes activos por etapa')}
           subtitle={`${totalActiveLots} ${t('dashboard.totalActive', 'lotes activos')}`}
-          action={
-            <Bird size={18} className="text-slate-400" />
-          }
+          action={<Bird size={16} />}
         />
         <CardBody>
           {totalActiveLots === 0 ? (
-            <p className="text-sm text-slate-400 text-center py-4">{t('lots.noLots', 'Sin lotes activos')}</p>
+            <p className="text-sm text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
           ) : (
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-              {['grandparent', 'breeder', 'hatchery', 'broiler'].map(bt => (
-                <div
-                  key={bt}
-                  className={`rounded-xl border p-4 ${BIRD_TYPE_COLORS[bt] ?? 'bg-slate-100 text-slate-600 border-slate-200'}`}
-                >
-                  <p className="text-2xl font-bold">{lotsByType[bt] ?? 0}</p>
-                  <p className="text-xs font-medium mt-0.5">{t(`birdTypes.${bt}`, bt)}</p>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {[
+                { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700', bg: 'bg-purple-50' },
+                { key: 'breeder',     dot: 'bg-blue-400',   text: 'text-blue-700',   bg: 'bg-blue-50' },
+                { key: 'hatchery',    dot: 'bg-amber-400',  text: 'text-amber-700',  bg: 'bg-amber-50' },
+                { key: 'broiler',     dot: 'bg-emerald-400',text: 'text-emerald-700',bg: 'bg-emerald-50' },
+              ].map(({ key, dot, text, bg }) => (
+                <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-3`}>
+                  <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
+                  <div className="min-w-0">
+                    <p className={`text-xl font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
+                    <p className="text-[10px] font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
+                  </div>
                 </div>
               ))}
             </div>

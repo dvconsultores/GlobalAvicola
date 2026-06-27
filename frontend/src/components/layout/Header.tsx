@@ -48,28 +48,28 @@ export default function Header() {
   return (
     <>
       {/* ── Desktop Header ───────────────────────────────── */}
-      <header className="hidden lg:flex h-14 bg-white dark:bg-dark-surface border-b border-slate-200/80 dark:border-dark-border items-center justify-end px-6 gap-3 sticky top-0 z-20">
+      <header className="hidden lg:flex h-12 bg-white/95 dark:bg-dark-surface backdrop-blur border-b border-slate-200/70 dark:border-dark-border items-center justify-end px-5 gap-2.5 sticky top-0 z-20">
         {/* Language toggle */}
         <button
           onClick={toggleLang}
-          className="inline-flex items-center gap-1.5 h-8 px-3 rounded-lg text-xs font-semibold text-slate-500 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-dark-card hover:text-slate-700 dark:hover:text-slate-200 transition-all border border-slate-200 dark:border-dark-border"
+          className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[11px] font-semibold text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-card hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
           title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
         >
-          <Globe size={13} />
+          <Globe size={12} />
           {i18n.language === 'es' ? 'EN' : 'ES'}
         </button>
 
         {/* Dark mode toggle */}
         <button
           onClick={toggleDarkMode}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-card hover:text-slate-600 dark:hover:text-slate-300 transition-all"
+          className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-card transition-colors"
           aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
         >
-          {isDark ? <Sun size={15} /> : <Moon size={15} />}
+          {isDark ? <Sun size={14} /> : <Moon size={14} />}
         </button>
 
         {/* Divider */}
-        <div className="w-px h-5 bg-slate-200 dark:bg-dark-border" />
+        <div className="w-px h-4 bg-slate-200/80 dark:bg-dark-border" />
 
         {/* Company selector (super_admin) or badge (regular user) */}
         {(activeCompanyName || user?.company_name) && (
@@ -79,20 +79,20 @@ export default function Header() {
               <button
                 onClick={() => setCompanyOpen(v => !v)}
                 disabled={isSwitching}
-                className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40 hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-all disabled:opacity-60"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-card/80 transition-colors disabled:opacity-60"
                 title={t('company.selector')}
               >
-                <Building2 size={12} className="text-blue-500 dark:text-blue-400 shrink-0" />
-                <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 max-w-[130px] truncate">
+                <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
+                <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 max-w-[130px] truncate">
                   {isSwitching ? t('company.switching') : (activeCompanyName || user?.company_name)}
                 </span>
-                <ChevronDown size={11} className={`text-blue-400 transition-transform ${companyOpen ? 'rotate-180' : ''}`} />
+                <ChevronDown size={10} className={`text-slate-400 transition-transform ${companyOpen ? 'rotate-180' : ''}`} />
               </button>
             ) : (
               /* ── Static badge for regular users ── */
-              <div className="flex items-center gap-1.5 h-8 px-3 rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-100 dark:border-blue-900/40">
-                <Building2 size={12} className="text-blue-500 dark:text-blue-400 shrink-0" />
-                <span className="text-xs font-semibold text-blue-700 dark:text-blue-300 max-w-[140px] truncate">
+              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border">
+                <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
+                <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 max-w-[140px] truncate">
                   {activeCompanyName || user?.company_name}
                 </span>
               </div>
@@ -100,7 +100,7 @@ export default function Header() {
 
             {/* Dropdown panel */}
             {companyOpen && isSuperAdmin && (
-              <div className="absolute right-0 top-10 z-50 w-56 rounded-xl bg-white dark:bg-dark-surface border border-slate-200 dark:border-dark-border shadow-lg overflow-hidden">
+              <div className="absolute right-0 top-9 z-50 w-52 rounded-xl bg-white dark:bg-dark-surface border border-slate-200 dark:border-dark-border shadow-lg overflow-hidden">
                 <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-dark-border">
                   {t('company.selector')}
                 </p>
@@ -112,12 +112,12 @@ export default function Header() {
                       <li key={c.id}>
                         <button
                           onClick={() => handleSwitchCompany(c.id, c.name)}
-                          className="w-full flex items-center gap-2.5 px-3 py-2.5 text-left text-xs hover:bg-slate-50 dark:hover:bg-dark-card transition-colors"
+                          className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-dark-card transition-colors"
                         >
-                          <Building2 size={13} className="text-slate-400 dark:text-slate-500 shrink-0" />
+                          <Building2 size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />
                           <span className="flex-1 text-slate-700 dark:text-slate-200 truncate">{c.name}</span>
                           {c.id === activeCompanyId && (
-                            <Check size={13} className="text-blue-500 shrink-0" />
+                            <Check size={12} className="text-blue-500 shrink-0" />
                           )}
                         </button>
                       </li>
@@ -131,10 +131,10 @@ export default function Header() {
 
         {/* User chip */}
         {user && (
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2">
             {/* Avatar */}
             <div
-              className="w-7 h-7 rounded-lg flex items-center justify-center text-[11px] font-bold text-white shrink-0"
+              className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
               style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)' }}
             >
               {initials}
