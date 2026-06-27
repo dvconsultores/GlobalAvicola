@@ -8,7 +8,7 @@ type NavContext = 'default' | 'form' | 'detail'
 interface MobileNavItem {
   id: string
   path?: string
-  action?: 'back' | 'drawer' | 'register'
+  action?: 'back' | 'drawer' | 'register' | 'submit'
   labelKey: string
   fallback: string
   Icon: any
@@ -34,7 +34,7 @@ export default function MobileNav() {
       case 'form':
         return [
           { id: 'back',  action: 'back',   labelKey: 'common.back',    fallback: 'Atrás',     Icon: ArrowLeft },
-          { id: 'save',  path: '#',         labelKey: 'common.save',    fallback: 'Guardar',   Icon: Save, primary: true },
+          { id: 'save',  action: 'submit',  labelKey: 'common.save',    fallback: 'Guardar',   Icon: Save, primary: true },
           { id: 'poultry', path: '/menu/poultry', labelKey: 'nav.poultry', fallback: 'Gestión', Icon: Sprout },
           { id: 'menu',  action: 'drawer',  labelKey: 'nav.menu',       fallback: 'Menú',      Icon: Menu },
         ]
@@ -61,6 +61,11 @@ export default function MobileNav() {
       case 'back':     navigate(-1); break
       case 'drawer':   openDrawer(); break
       case 'register': navigate('/operations/new'); break
+      case 'submit': {
+        const form = document.getElementById('operation-form') as HTMLFormElement | null
+        form?.requestSubmit()
+        break
+      }
     }
   }
 
@@ -73,7 +78,7 @@ export default function MobileNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex justify-around items-center bg-white dark:bg-dark-surface safe-area-bottom"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 flex justify-around items-center bg-white dark:bg-slate-900 safe-area-bottom"
       style={{
         borderTop: '1px solid rgba(15,23,42,0.07)',
         boxShadow: '0 -4px 20px -4px rgba(15,23,42,0.08)',

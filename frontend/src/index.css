@@ -13,6 +13,9 @@
 /* TailwindCSS v4 — utility engine */
 @import 'tailwindcss';
 
+/* Tailwind v4: force dark variant to follow html.dark class (not media query) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 /* ── Design Tokens ────────────────────────────────────────── */
 :root {
   /* Brand — Deep Midnight Navy */

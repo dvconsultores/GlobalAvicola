@@ -16,7 +16,7 @@ export default function ProcessHubPage() {
   const totalOps = PROCESS_STAGES.reduce((acc, s) => acc + flowForStage(s.key).length, 0)
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
+    <div className="min-h-screen bg-[#F7F8FA] dark:bg-slate-950 pb-24 lg:pb-8 transition-colors duration-200">
       {/* Page header */}
       <div className="max-w-5xl mx-auto px-4 pt-5 pb-4">
         <div className="flex items-start justify-between gap-4">
@@ -56,7 +56,7 @@ export default function ProcessHubPage() {
               <Link
                 key={stage.key}
                 to={`/poultry/${stage.key}`}
-                className="group relative overflow-hidden rounded-xl bg-white dark:bg-dark-card shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 transition-all active:scale-[0.98]"
+                className="group relative overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 transition-all active:scale-[0.98]"
               >
                 <div className="p-4">
                   {/* Icon + title */}

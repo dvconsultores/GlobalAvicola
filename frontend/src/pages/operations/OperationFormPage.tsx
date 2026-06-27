@@ -158,8 +158,8 @@ const operationSchema = z.object({
 type OperationFormData = z.infer<typeof operationSchema>
 
 // Shared CSS helpers (module-level to avoid recreating on each render)
-const ic = 'w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
-const lc = 'block text-xs font-medium text-slate-500 mb-1'
+const ic = 'w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
+const lc = 'block text-xs font-medium text-slate-900 dark:text-slate-100 mb-1'
 
 // ============================================================
 // Component
@@ -824,7 +824,7 @@ export default function OperationFormPage() {
           {incubatorFields.map((field, i) => {
             const machineType = watch(`hatchery_params.${i}.machine_type` as any)
             return (
-              <div key={field.id} className="border border-slate-200 dark:border-dark-border rounded-xl p-3 space-y-3 relative bg-slate-50/50 dark:bg-dark-card/40">
+              <div key={field.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-3 space-y-3 relative bg-slate-50/50 dark:bg-slate-800/40">
                 <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
                 <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                   <div>
@@ -1065,7 +1065,7 @@ export default function OperationFormPage() {
       )
 
       default: return (
-        <div className="py-6 text-sm text-slate-400 text-center italic">
+        <div className="py-6 text-sm text-slate-900 dark:text-slate-100 text-center italic">
           {t('operations.noSpecificFields', 'Registra tus observaciones en el campo de abajo.')}
         </div>
       )
@@ -1077,20 +1077,20 @@ export default function OperationFormPage() {
   const SelectedStageIcon = selectedStageMeta?.Icon
 
   return (
-    <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+    <div className="p-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
       {/* Stepper */}
       <nav className="flex items-center gap-1.5 text-xs font-semibold mb-5 select-none">
-        <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#2563EB]' : 'text-slate-400'}>
+        <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'}>
           {t('process.step1', '1 · Proceso')}
         </button>
-        <span className="text-slate-300">/</span>
+        <span className="text-slate-900 dark:text-slate-100">/</span>
         <button type="button" disabled={!stage} onClick={() => stage && setStep(2)}
-          className={`${step >= 2 ? 'text-[#2563EB]' : 'text-slate-400'} disabled:cursor-not-allowed`}>
+          className={`${step >= 2 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
           {t('process.step2', '2 · Lote y Operación')}
         </button>
-        <span className="text-slate-300">/</span>
+        <span className="text-slate-900 dark:text-slate-100">/</span>
         <button type="button" disabled={!eventType} onClick={() => eventType && setStep(3)}
-          className={`${step >= 3 ? 'text-[#2563EB]' : 'text-slate-400'} disabled:cursor-not-allowed`}>
+          className={`${step >= 3 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
           {t('process.step3', '3 · Datos')}
         </button>
       </nav>
@@ -1098,20 +1098,20 @@ export default function OperationFormPage() {
       {/* ===================== STEP 1 — PROCESS ===================== */}
       {step === 1 && (
         <div>
-          <h1 className="text-xl font-bold text-slate-800">{t('process.title', 'Registrar Operación')}</h1>
-          <p className="text-sm text-slate-500 mt-1 mb-5">{t('process.subtitle', '¿Qué proceso vas a registrar?')}</p>
+          <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t('process.title', 'Registrar Operación')}</h1>
+          <p className="text-sm text-slate-900 dark:text-slate-100 mt-1 mb-5">{t('process.subtitle', '¿Qué proceso vas a registrar?')}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {PROCESS_STAGES.map(s => {
               const Icon = s.Icon
               return (
                 <button key={s.key} type="button" onClick={() => goToStep2(s.key)}
-                  className={`flex items-center gap-4 p-4 min-h-[5rem] rounded-xl border border-slate-200 bg-white text-left shadow-sm transition-colors ${s.accent}`}>
+                  className={`flex items-center gap-4 p-4 min-h-[5rem] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-left shadow-sm transition-colors ${s.accent}`}>
                   <div className={`shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${s.iconBg}`}>
                     <Icon size={26} className={s.iconColor} />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight">{t(s.labelKey, s.fallback)}</p>
-                    <p className="text-xs text-slate-500 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
+                    <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{t(s.labelKey, s.fallback)}</p>
+                    <p className="text-xs text-slate-900 dark:text-slate-100 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
                   </div>
                 </button>
               )
@@ -1124,19 +1124,19 @@ export default function OperationFormPage() {
       {step === 2 && stage && selectedStageMeta && (
         <div>
           <button type="button" onClick={() => setStep(1)}
-            className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[#2563EB] mb-3">
+            className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#2563EB] mb-3">
             <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
           </button>
           <div className="flex items-center gap-3 mb-5">
             <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selectedStageMeta.iconBg}`}>
               {SelectedStageIcon && <SelectedStageIcon size={22} className={selectedStageMeta.iconColor} />}
             </div>
-            <h1 className="text-lg font-bold text-slate-800">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
+            <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
           </div>
 
           <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
           <select {...register('lot_id', { valueAsNumber: true })}
-            className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+            className="w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
             <option value="">{t('operations.selectLot')}</option>
             {stageLots.map((l: any) => (
               <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
@@ -1147,7 +1147,7 @@ export default function OperationFormPage() {
           )}
 
           <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-6 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
-          {!lotId && <p className="text-xs text-slate-400 mb-3">{t('process.selectLotFirst', 'Selecciona un lote primero.')}</p>}
+          {!lotId && <p className="text-xs text-slate-900 dark:text-slate-100 mb-3">{t('process.selectLotFirst', 'Selecciona un lote primero.')}</p>}
           <div className={`space-y-5 ${!lotId ? 'opacity-50 pointer-events-none' : ''} mt-3`}>
             {categoriesForStage(stage).map(({ category, events }) => {
               const CatIcon = category.Icon
@@ -1155,7 +1155,7 @@ export default function OperationFormPage() {
                 <div key={category.key}>
                   <div className="flex items-center gap-2 mb-2">
                     <CatIcon size={16} className={category.color} />
-                    <span className="text-xs font-bold uppercase tracking-wide text-slate-500">
+                    <span className="text-xs font-bold uppercase tracking-wide text-slate-900 dark:text-slate-100">
                       {t(category.labelKey, category.fallback)}
                     </span>
                   </div>
@@ -1164,9 +1164,9 @@ export default function OperationFormPage() {
                       const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
                       return (
                         <button key={evt} type="button" disabled={!lotId} onClick={() => chooseOperation(evt)}
-                          className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 bg-white hover:border-[#2563EB] hover:bg-blue-50 transition-colors text-center group">
+                          className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
                           {EvIcon && <EvIcon size={22} className="text-[#2563EB] group-hover:scale-110 transition-transform" />}
-                          <span className="text-xs text-slate-600 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
+                          <span className="text-xs text-slate-900 dark:text-slate-100 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
                         </button>
                       )
                     })}
@@ -1181,8 +1181,17 @@ export default function OperationFormPage() {
       {/* ===================== STEP 3 — DATA FORM ===================== */}
       {step === 3 && (
         <div>
-          <button type="button" onClick={() => setStep(stage ? 2 : 1)}
-            className="inline-flex items-center gap-1 text-sm text-slate-500 hover:text-[#2563EB] mb-3">
+          <button
+            type="button"
+            onClick={() => {
+              if (prefillType && !stage) {
+                navigate(-1)
+                return
+              }
+              setStep(stage ? 2 : 1)
+            }}
+            className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#2563EB] mb-3"
+          >
             <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
           </button>
 
@@ -1190,9 +1199,9 @@ export default function OperationFormPage() {
             <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100">
               {SelectedEventIcon && <SelectedEventIcon size={22} className="text-[#2563EB]" />}
               <div>
-                <p className="text-sm font-bold text-slate-800">{t(`events.${eventType}`, eventType)}</p>
+                <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{t(`events.${eventType}`, eventType)}</p>
                 {selectedStageMeta && (
-                  <p className="text-xs text-slate-500">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</p>
+                  <p className="text-xs text-slate-900 dark:text-slate-100">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</p>
                 )}
               </div>
             </div>
@@ -1204,11 +1213,11 @@ export default function OperationFormPage() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
               <select {...register('lot_id', { valueAsNumber: true })}
-                className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                className="w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
                 <option value="">{t('operations.selectLot')}</option>
                 {lots.map((l: any) => (
                   <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
@@ -1220,18 +1229,18 @@ export default function OperationFormPage() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.date')}</label>
               <input type="date" {...register('event_date')}
-                className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
+                className="w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
             </div>
 
             {/* Operation-specific fields */}
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
               {renderOperationFields()}
             </div>
 
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.observations')}</label>
               <textarea {...register('observations')} rows={2}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
             </div>
 
             <button type="submit" disabled={submitting || !eventType}

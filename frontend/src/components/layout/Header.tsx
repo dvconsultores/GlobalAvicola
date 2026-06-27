@@ -35,6 +35,11 @@ export default function Header() {
     return () => document.removeEventListener('mousedown', handleClick)
   }, [])
 
+  // Keep html.dark in sync with persisted/theme-store state.
+  useEffect(() => {
+    document.documentElement.classList.toggle('dark', isDark)
+  }, [isDark])
+
   const handleSwitchCompany = async (id: number, name: string) => {
     setCompanyOpen(false)
     await switchCompany(id, name)

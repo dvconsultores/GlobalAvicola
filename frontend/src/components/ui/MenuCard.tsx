@@ -41,7 +41,7 @@ export default function MenuCard({
       className={`group relative flex flex-col items-start text-left p-5 rounded-2xl border-2 transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5
         ${isActive
           ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-500 shadow-lg shadow-blue-500/10'
-          : 'bg-white dark:bg-dark-card border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm hover:shadow-md'
+          : 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 hover:border-blue-300 dark:hover:border-blue-700 shadow-sm hover:shadow-md'
         }`}
     >
       {/* Step number badge */}
