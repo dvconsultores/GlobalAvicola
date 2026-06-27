@@ -213,6 +213,73 @@ class OperationsService:
         return event
 
     # ============================================================
+    # Evidence / Attachments
+    # ============================================================
+
+    async def get_evidences(self, event_id: int) -> list[models.Evidence]:
+        event = await self.get_event(event_id)
+        if not self.current_user.get("is_super_admin") and event.company_id != self.company_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        return list(event.evidences)
+
+    async def create_evidence(
+        self, event_id: int, file_name: str, file_path: str,
+        file_size: int, mime_type: str, evidence_type: str, description: str | None,
+    ) -> models.Evidence:
+        event = await self.get_event(event_id)
+        if not self.current_user.get("is_super_admin") and event.company_id != self.company_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        evidence = models.Evidence(
+            event_id=event_id,
+            company_id=event.company_id,
+            file_name=file_name,
+            file_path=file_path,
+            file_size=file_size,
+            mime_type=mime_type,
+            evidence_type=evidence_type,
+            description=description,
+            uploaded_by_id=self.current_user["id"],
+        )
+        self.db.add(evidence)
+        await self.db.commit()
+        await self.db.refresh(evidence)
+        return evidence
+
+    async def delete_evidence(self, event_id: int, evidence_id: int) -> None:
+        import os
+        result = await self.db.execute(
+            select(models.Evidence).where(
+                models.Evidence.id == evidence_id,
+                models.Evidence.event_id == event_id,
+            )
+        )
+        evidence = result.scalar_one_or_none()
+        if not evidence:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evidencia no encontrada")
+        if not self.current_user.get("is_super_admin") and evidence.company_id != self.company_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        try:
+            os.remove(evidence.file_path)
+        except OSError:
+            pass
+        await self.db.delete(evidence)
+        await self.db.commit()
+
+    async def get_evidence_for_download(self, event_id: int, evidence_id: int) -> models.Evidence:
+        result = await self.db.execute(
+            select(models.Evidence).where(
+                models.Evidence.id == evidence_id,
+                models.Evidence.event_id == event_id,
+            )
+        )
+        evidence = result.scalar_one_or_none()
+        if not evidence:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evidencia no encontrada")
+        if not self.current_user.get("is_super_admin") and evidence.company_id != self.company_id:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        return evidence
+
+    # ============================================================
     # Event Types Reference
     # ============================================================
 

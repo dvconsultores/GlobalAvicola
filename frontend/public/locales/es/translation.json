@@ -816,5 +816,22 @@
     "switchSuccess": "Empresa cambiada correctamente",
     "switchError": "No se pudo cambiar de empresa",
     "allCompanies": "Todas las empresas"
+  },
+  "evidence": {
+    "title": "Evidencias adjuntas",
+    "noFiles": "Sin archivos adjuntos.",
+    "allowedTypes": "JPG, PNG, GIF, WEBP, PDF",
+    "uploadButton": "Adjuntar archivo",
+    "uploading": "Subiendo...",
+    "descriptionPlaceholder": "Descripción opcional (ej: foto de inspección galpón 2)",
+    "maxSize": "Máx. {{max}} MB por archivo",
+    "download": "Descargar",
+    "deleteSuccess": "Evidencia eliminada",
+    "deleteError": "Error al eliminar evidencia",
+    "uploadSuccess": "Archivo adjuntado exitosamente",
+    "uploadError": "Error al subir archivo",
+    "downloadError": "Error al descargar archivo",
+    "invalidType": "Tipo de archivo no permitido. Use JPG, PNG, GIF, WEBP o PDF.",
+    "tooLarge": "Archivo demasiado grande (máx. {{max}} MB)"
   }
 }

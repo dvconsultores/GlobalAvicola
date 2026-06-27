@@ -816,5 +816,22 @@
     "switchSuccess": "Company switched successfully",
     "switchError": "Could not switch company",
     "allCompanies": "All companies"
+  },
+  "evidence": {
+    "title": "Attached evidence",
+    "noFiles": "No files attached.",
+    "allowedTypes": "JPG, PNG, GIF, WEBP, PDF",
+    "uploadButton": "Attach file",
+    "uploading": "Uploading...",
+    "descriptionPlaceholder": "Optional description (e.g. house 2 inspection photo)",
+    "maxSize": "Max {{max}} MB per file",
+    "download": "Download",
+    "deleteSuccess": "Evidence deleted",
+    "deleteError": "Error deleting evidence",
+    "uploadSuccess": "File attached successfully",
+    "uploadError": "Error uploading file",
+    "downloadError": "Error downloading file",
+    "invalidType": "File type not allowed. Use JPG, PNG, GIF, WEBP or PDF.",
+    "tooLarge": "File too large (max {{max}} MB)"
   }
 }

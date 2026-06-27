@@ -126,6 +126,19 @@ class OperationalEventRead(OperationalEventBase):
     model_config = {"from_attributes": True}
 
 
+class EvidenceRead(BaseModel):
+    id: int
+    event_id: int
+    file_name: str
+    file_size: Optional[int] = None
+    mime_type: Optional[str] = None
+    evidence_type: str
+    description: Optional[str] = None
+    uploaded_by_id: int
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
 class OperationalEventDetailRead(OperationalEventRead):
     bird_movements: list[BirdMovementSchema] = []
     egg_movements: list[EggMovementSchema] = []
@@ -133,6 +146,7 @@ class OperationalEventDetailRead(OperationalEventRead):
     hatchery_params: list[HatcheryParamsSchema] = []
     inspection_details: list[InspectionDetailSchema] = []
     egg_storage_records: list[EggStorageSchema] = []
+    evidences: list[EvidenceRead] = []
 
 
 # ============================================================

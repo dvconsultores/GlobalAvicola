@@ -1,8 +1,12 @@
 """REST API router for operational events — unified endpoint for 24 event types."""
+import os
+import uuid
 from datetime import date
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+import aiofiles
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
@@ -11,6 +15,10 @@ from . import schemas
 from .service import OperationsService
 
 router = APIRouter(prefix="/operations", tags=["Operations"])
+
+MEDIA_DIR = os.environ.get("MEDIA_DIR", "/app/media")
+_ALLOWED_MIME = {"image/jpeg", "image/png", "image/gif", "image/webp", "application/pdf"}
+_MAX_SIZE = 10 * 1024 * 1024  # 10 MB
 
 
 def _service(db: AsyncSession, user: dict):
@@ -110,3 +118,84 @@ async def cancel_event(
 ):
     event = await _service(db, current_user).cancel_event(event_id)
     return schemas.OperationalEventRead.model_validate(event)
+
+
+# ============================================================
+# Evidence / Attachments
+# ============================================================
+
+@router.get("/{event_id}/evidences", response_model=list[schemas.EvidenceRead])
+async def list_evidences(
+    event_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    evidences = await _service(db, current_user).get_evidences(event_id)
+    return [schemas.EvidenceRead.model_validate(e) for e in evidences]
+
+
+@router.post("/{event_id}/evidences", response_model=schemas.EvidenceRead, status_code=201)
+async def upload_evidence(
+    event_id: int,
+    file: UploadFile = File(...),
+    description: str = Form(""),
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    if file.content_type not in _ALLOWED_MIME:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Tipo de archivo no permitido. Permitidos: jpg, png, gif, webp, pdf",
+        )
+    content = await file.read()
+    if len(content) > _MAX_SIZE:
+        raise HTTPException(status_code=400, detail="Archivo demasiado grande (máx. 10 MB)")
+
+    svc = _service(db, current_user)
+    event = await svc.get_event(event_id)
+    company_dir = os.path.join(MEDIA_DIR, "evidences", str(event.company_id), str(event_id))
+    os.makedirs(company_dir, exist_ok=True)
+
+    safe_name = f"{uuid.uuid4().hex}_{os.path.basename(file.filename or 'file')}"
+    file_path = os.path.join(company_dir, safe_name)
+    async with aiofiles.open(file_path, "wb") as f:
+        await f.write(content)
+
+    evidence_type = "photo" if (file.content_type or "").startswith("image/") else "document"
+    evidence = await svc.create_evidence(
+        event_id=event_id,
+        file_name=file.filename or safe_name,
+        file_path=file_path,
+        file_size=len(content),
+        mime_type=file.content_type or "application/octet-stream",
+        evidence_type=evidence_type,
+        description=description or None,
+    )
+    return schemas.EvidenceRead.model_validate(evidence)
+
+
+@router.get("/{event_id}/evidences/{evidence_id}/download")
+async def download_evidence(
+    event_id: int,
+    evidence_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    evidence = await _service(db, current_user).get_evidence_for_download(event_id, evidence_id)
+    if not os.path.exists(evidence.file_path):
+        raise HTTPException(status_code=404, detail="Archivo no encontrado en el servidor")
+    return FileResponse(
+        evidence.file_path,
+        filename=evidence.file_name,
+        media_type=evidence.mime_type or "application/octet-stream",
+    )
+
+
+@router.delete("/{event_id}/evidences/{evidence_id}", status_code=204)
+async def delete_evidence(
+    event_id: int,
+    evidence_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    await _service(db, current_user).delete_evidence(event_id, evidence_id)
