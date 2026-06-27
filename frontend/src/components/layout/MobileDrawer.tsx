@@ -60,7 +60,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   useEffect(() => { if (!open) return; const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }; document.addEventListener('keydown', onKey); return () => document.removeEventListener('keydown', onKey) }, [open, onClose])
   useEffect(() => { document.body.style.overflow = open ? 'hidden' : ''; return () => { document.body.style.overflow = '' } }, [open])
   useEffect(() => { if (open) setTimeout(() => closeRef.current?.focus(), 50) }, [open])
-  useEffect(() => { onClose(); setSelectedSection(null); setItemStack([]) }, [location.pathname, onClose])
+  useEffect(() => { onClose(); setSelectedSection(null); setItemStack([]) }, [location.pathname])
   useEffect(() => {
     if (!open) {
       setSelectedSection(null)
