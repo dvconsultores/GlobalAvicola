@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
-import { Bird, FileText, Clock, CheckCircle, TrendingDown, Wheat, Skull, Scale, Egg, Sparkles, AlertCircle, AlertTriangle, X } from 'lucide-react'
+import { Bird, FileText, Clock, CheckCircle, TrendingDown, Egg, Sparkles, AlertCircle, AlertTriangle, X, Sprout, Feather, ChevronRight, ChevronDown } from 'lucide-react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -78,6 +78,7 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [activeAlerts, setActiveAlerts] = useState<any[]>([])
+  const [expandedBird, setExpandedBird] = useState<string | null>(null)  // For mobile bird-type → phase expansion
   const toast = useToast()
 
   useEffect(() => {
@@ -133,147 +134,161 @@ export default function DashboardPage() {
     )
   }
 
-  // ── MOBILE OPERATOR DASHBOARD (REDESIGNED) ──────────────────────────────
+  // ── MOBILE OPERATOR DASHBOARD — BIRD TYPE → PHASE → OPERATIONS ─────────────
   if (isMobileUser) {
+    // Group stages by bird type for hierarchical navigation
+    const birdTypeGroups = [
+      { 
+        id: 'grandparent', labelKey: 'process.grandparent.title', fallback: 'Progenitoras',
+        icon: Sprout, color: 'from-indigo-500 to-indigo-700',
+        stages: PROCESS_STAGES.filter(s => s.key.startsWith('grandparent')),
+      },
+      { 
+        id: 'breeder', labelKey: 'process.breeder.title', fallback: 'Reproductoras',
+        icon: Feather, color: 'from-blue-500 to-blue-700',
+        stages: PROCESS_STAGES.filter(s => s.key.startsWith('breeder')),
+      },
+      { 
+        id: 'hatchery', labelKey: 'process.hatchery.title', fallback: 'Incubadora',
+        icon: Egg, color: 'from-teal-500 to-teal-700',
+        stages: PROCESS_STAGES.filter(s => s.key === 'hatchery'),
+      },
+      { 
+        id: 'broiler', labelKey: 'process.broiler.title', fallback: 'Pollo de Engorde',
+        icon: Bird, color: 'from-orange-500 to-orange-700',
+        stages: PROCESS_STAGES.filter(s => s.key === 'broiler'),
+      },
+    ]
+
     return (
       <div className="min-h-screen bg-[#F4F6F9] dark:bg-dark-bg pb-24">
-        {/* Welcome header */}
-      <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4"
-        style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 60%, #1A6DCC 100%)' }}
-      >
-        <div className="flex items-center gap-2 mb-1">
-          <Sparkles size={18} />
-          <h1 className="text-xl font-bold">{t('nav.home', 'Inicio')}</h1>
+        {/* Welcome header — slim, corporate */}
+        <div className="bg-gradient-to-r from-[#071829] to-[#0F3361] text-white px-4 py-4">
+          <div className="flex items-center gap-2">
+            <Sparkles size={16} className="text-blue-300" />
+            <div>
+              <h1 className="text-base font-bold leading-tight">{t('nav.home', 'Inicio')}</h1>
+              <p className="text-[11px] text-blue-200/80">
+                {t('dashboard.welcome')}, {user?.first_name || 'Operador'}
+              </p>
+            </div>
+          </div>
         </div>
-        <p className="text-blue-100 text-sm opacity-90">
-          {t('dashboard.welcome')} {user?.first_name || 'Operador'}
-        </p>
-      </div>
 
-        <div className="p-4 space-y-6">
+        <div className="p-4 space-y-5">
           {/* KPI Section */}
           <div className="space-y-2">
-            <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
+            <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
               {t('dashboard.todayMetrics', 'Hoy')}
             </h2>
-            <div className="grid grid-cols-3 gap-3">
-              <div className="bg-white rounded-2xl border border-slate-100 p-3 text-center shadow-card accent-bar accent-bar-blue">
-                <div className="text-2xl font-bold text-brand-700 pt-2">{data?.today_events ?? 0}</div>
-                <div className="text-[10px] text-slate-500 mt-1 font-semibold uppercase tracking-wide">
-                  {t('dashboard.todayEvents', 'Operaciones')}
+            <div className="grid grid-cols-3 gap-2.5">
+              <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
+                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                  {t('dashboard.todayEvents', 'Registros')}
                 </div>
               </div>
-              <div className="bg-white rounded-2xl border border-slate-100 p-3 text-center shadow-card accent-bar accent-bar-amber">
-                <div className="text-2xl font-bold text-amber-600 pt-2">{data?.pending_corrections ?? 0}</div>
-                <div className="text-[10px] text-slate-500 mt-1 font-semibold uppercase tracking-wide">
-                  {t('dashboard.pendingCorrections', 'Por revisar')}
+              <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
+                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                  {t('dashboard.pendingCorrections', 'Pendientes')}
                 </div>
               </div>
-              <div className="bg-white rounded-2xl border border-slate-100 p-3 text-center shadow-card accent-bar accent-bar-green">
-                <div className="text-2xl font-bold text-emerald-600 pt-2">{data?.approved_today ?? 0}</div>
-                <div className="text-[10px] text-slate-500 mt-1 font-semibold uppercase tracking-wide">
+              <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
+                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                   {t('dashboard.approvedToday', 'Aprobados')}
                 </div>
               </div>
             </div>
           </div>
 
-          {/* Alerts/Info */}
+          {/* Alerts */}
           {data?.pending_corrections && data.pending_corrections > 0 && (
-            <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-3 flex items-start gap-2">
-              <AlertCircle size={18} className="text-amber-600 shrink-0 mt-0.5" />
-              <div className="text-sm">
-                <p className="font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
-                <p className="text-xs text-amber-700 mt-1">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
+            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
+              <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+              <div>
+                <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
+                <p className="text-[11px] text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
               </div>
             </div>
           )}
 
-          {/* 6 Procesos Grid */}
-          <div className="space-y-3">
-            <div className="flex items-center justify-between">
-              <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
-                {t('process.hub.title', '6 Procesos')}
-              </h2>
-              <Link to="/poultry" className="text-xs font-bold text-[#2563EB]">
-                {t('common.viewAll', 'Ver todos')} →
-              </Link>
-            </div>
-            <div className="grid grid-cols-2 gap-3">
-              {PROCESS_STAGES.map((stage, idx) => {
-                const count = flowForStage(stage.key).length
+          {/* Procesos — Bird Type → Phase hierarchy */}
+          <div className="space-y-2">
+            <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+              {t('process.hub.title', 'Procesos')}
+            </h2>
+            <div className="space-y-2.5">
+              {birdTypeGroups.map((group) => {
+                const hasSubPhases = group.stages.length > 1
                 return (
-                  <Link
-                    key={stage.key}
-                    to={`/poultry/${stage.key}`}
-                    className="group relative overflow-hidden rounded-2xl p-4 text-white active:scale-[0.97] transition-all"
-                    style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)', boxShadow: '0 4px 12px -2px rgba(11,35,64,0.35)' }}
-                  >
-                    <span className="absolute -top-1 -right-1 text-white/10 text-6xl font-black select-none leading-none">{idx + 1}</span>
-                    <span className="inline-flex w-10 h-10 rounded-xl bg-white/15 backdrop-blur items-center justify-center ring-1 ring-white/20">
-                      <stage.Icon size={22} strokeWidth={2} />
-                    </span>
-                    <h3 className="mt-2.5 text-[13px] font-bold leading-tight">{t(stage.labelKey, stage.fallback)}</h3>
-                    <p className="text-[10px] font-medium text-white/70 mt-0.5">{count} {t('process.hub.steps', 'pasos')}</p>
-                  </Link>
+                  <div key={group.id} className="space-y-2">
+                    {/* Bird type card */}
+                    {hasSubPhases ? (
+                      <button
+                        onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
+                        className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
+                      >
+                        <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
+                          <group.icon size={18} className="text-white" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
+                          </p>
+                        </div>
+                        {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronRight size={16} className="text-slate-400" />}
+                      </button>
+                    ) : (
+                      <Link
+                        to={`/poultry/${group.stages[0].key}`}
+                        className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
+                      >
+                        <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
+                          <group.icon size={18} className="text-white" />
+                        </span>
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
+                          <p className="text-[11px] text-slate-400 mt-0.5">
+                            {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
+                          </p>
+                        </div>
+                        <ChevronRight size={16} className="text-slate-400" />
+                      </Link>
+                    )}
+
+                    {/* Sub-phase cards (Cría / Producción) */}
+                    {hasSubPhases && expandedBird === group.id && (
+                      <div className="pl-2 space-y-2 border-l-2 border-slate-200 ml-5">
+                        {group.stages.map((stage) => {
+                          const count = flowForStage(stage.key).length
+                          const isRearing = stage.key.includes('rearing')
+                          return (
+                            <Link
+                              key={stage.key}
+                              to={`/poultry/${stage.key}`}
+                              className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
+                            >
+                              <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                                {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
+                              </span>
+                              <div className="flex-1 min-w-0">
+                                <span className="text-[13px] font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
+                                <span className="text-[10px] text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
+                              </div>
+                              <ChevronRight size={14} className="text-slate-300" />
+                            </Link>
+                          )
+                        })}
+                      </div>
+                    )}
+                  </div>
                 )
               })}
             </div>
           </div>
-
-          {/* Quick actions section */}
-          <div className="space-y-3">
-            <h2 className="text-xs font-bold uppercase text-slate-500 tracking-wide">
-              {t('dashboard.quickActions', 'Acciones Rápidas')}
-            </h2>
-            <div className="grid grid-cols-2 gap-3">
-              <Link
-                to="/operations/new?type=feed_registration"
-                className="flex flex-col items-center justify-center p-4 bg-white border border-amber-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
-              >
-                <div className="w-10 h-10 rounded-xl bg-amber-50 flex items-center justify-center mb-2">
-                  <Wheat size={20} className="text-amber-600" />
-                </div>
-                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.feed_registration', 'Alimento')}</span>
-              </Link>
-              <Link
-                to="/operations/new?type=weight_recording"
-                className="flex flex-col items-center justify-center p-4 bg-white border border-blue-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
-              >
-                <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center mb-2">
-                  <Scale size={20} className="text-blue-600" />
-                </div>
-                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.weight_recording', 'Pesaje')}</span>
-              </Link>
-              <Link
-                to="/operations/new?type=mortality_recording"
-                className="flex flex-col items-center justify-center p-4 bg-white border border-red-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
-              >
-                <div className="w-10 h-10 rounded-xl bg-red-50 flex items-center justify-center mb-2">
-                  <Skull size={20} className="text-red-600" />
-                </div>
-                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.mortality_recording', 'Mortalidad')}</span>
-              </Link>
-              <Link
-                to="/operations/new?type=egg_collection"
-                className="flex flex-col items-center justify-center p-4 bg-white border border-orange-200 rounded-2xl shadow-card hover:shadow-card-md transition-all active:scale-95"
-              >
-                <div className="w-10 h-10 rounded-xl bg-orange-50 flex items-center justify-center mb-2">
-                  <Egg size={20} className="text-orange-600" />
-                </div>
-                <span className="text-xs font-semibold text-slate-700 text-center">{t('events.egg_collection', 'Huevos')}</span>
-              </Link>
-            </div>
-          </div>
-
-          {/* Go to all processes */}
-          <Link
-            to="/operations"
-            className="block w-full py-3 px-4 text-white font-bold rounded-2xl text-center transition-all active:scale-95 text-sm"
-            style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)', boxShadow: '0 4px 12px -2px rgba(11,35,64,0.35)' }}
-          >
-            {t('nav.operations', 'Ver Todas las Operaciones')} →
-          </Link>
         </div>
       </div>
     )
