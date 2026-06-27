@@ -3,7 +3,12 @@ import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { Bird, LogOut, Settings } from 'lucide-react'
-import { NAV_SECTIONS, NAV_ITEMS, isAnyChildActive, type NavItem } from '../../data/navigationConfig'
+import {
+  getNavItemsForViewType,
+  getNavSectionsForItems,
+  isAnyChildActive,
+  type NavItem,
+} from '../../data/navigationConfig'
 import SidebarSection from './SidebarSection'
 import SidebarItem from './SidebarItem'
 
@@ -49,12 +54,15 @@ export default function Sidebar() {
   const location = useLocation()
   const { logout, user } = useAuthStore()
 
+  const navItems = useMemo(() => getNavItemsForViewType(user?.view_type), [user?.view_type])
+
   const sections = useMemo(() => {
-    return NAV_SECTIONS.map(section => ({
+    const visibleSections = getNavSectionsForItems(navItems)
+    return visibleSections.map(section => ({
       section,
-      items: NAV_ITEMS.filter(item => item.section === section.key),
+      items: navItems.filter(item => item.section === section.key),
     })).filter(s => s.items.length > 0)
-  }, [])
+  }, [navItems])
 
   const initials = [user?.first_name?.charAt(0), user?.last_name?.charAt(0)]
     .filter(Boolean).join('').toUpperCase() || user?.username?.charAt(0)?.toUpperCase() || '?'

@@ -2,12 +2,12 @@
  * MobileDrawer — slide-in grid menu para operadores móviles
  * Secciones como tarjetas en grilla → sub-sección con back button → items grid
  */
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useMemo } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { X, Globe, LogOut, ArrowLeft, Bird, Sprout, Home, ShieldCheck, RefreshCw, BarChart3, Database, Settings, Users, ClipboardList, CheckCircle } from 'lucide-react'
-import { NAV_SECTIONS, NAV_ITEMS, type NavItem } from '../../data/navigationConfig'
+import { getNavItemsForViewType, getNavSectionsForItems, type NavItem } from '../../data/navigationConfig'
 
 interface MobileDrawerProps { open: boolean; onClose: () => void }
 
@@ -38,26 +38,50 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const { user, logout } = useAuthStore()
   const location = useLocation()
   const [selectedSection, setSelectedSection] = useState<string | null>(null)
+  const [itemStack, setItemStack] = useState<NavItem[]>([])
   const closeRef = useRef<HTMLButtonElement>(null)
 
-  // Build section index
-  const sectionMap = (() => {
+  const navItems = useMemo(() => getNavItemsForViewType(user?.view_type), [user?.view_type])
+  const navSections = useMemo(
+    () => getNavSectionsForItems(navItems).filter((s) => s.key !== 'main'),
+    [navItems],
+  )
+
+  // Build section index (excluding "main" because dashboard is shown as shortcut card)
+  const sectionMap = useMemo(() => {
     const map: Record<string, NavItem[]> = {}
-    for (const s of NAV_SECTIONS) {
-      const items = NAV_ITEMS.filter(i => i.section === s.key)
+    for (const s of navSections) {
+      const items = navItems.filter((i) => i.section === s.key)
       if (items.length > 0) map[s.key] = items
     }
     return map
-  })()
+  }, [navSections, navItems])
 
   useEffect(() => { if (!open) return; const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }; document.addEventListener('keydown', onKey); return () => document.removeEventListener('keydown', onKey) }, [open, onClose])
   useEffect(() => { document.body.style.overflow = open ? 'hidden' : ''; return () => { document.body.style.overflow = '' } }, [open])
   useEffect(() => { if (open) setTimeout(() => closeRef.current?.focus(), 50) }, [open])
-  useEffect(() => { onClose(); setSelectedSection(null) }, [location.pathname, onClose])
+  useEffect(() => { onClose(); setSelectedSection(null); setItemStack([]) }, [location.pathname, onClose])
+  useEffect(() => {
+    if (!open) {
+      setSelectedSection(null)
+      setItemStack([])
+    }
+  }, [open])
 
   const sectionEntries = Object.entries(sectionMap)
-  const currentSection = selectedSection ? NAV_SECTIONS.find(s => s.key === selectedSection) : null
-  const currentItems = selectedSection ? sectionMap[selectedSection] || [] : []
+  const currentSection = selectedSection ? navSections.find(s => s.key === selectedSection) : null
+  const currentNode = itemStack.length > 0 ? itemStack[itemStack.length - 1] : null
+  const currentItems = currentNode
+    ? (currentNode.children ?? [])
+    : (selectedSection ? sectionMap[selectedSection] || [] : [])
+
+  const handleBack = () => {
+    if (itemStack.length > 0) {
+      setItemStack((prev) => prev.slice(0, -1))
+      return
+    }
+    setSelectedSection(null)
+  }
 
   return (
     <>
@@ -70,10 +94,14 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100 dark:border-slate-800">
           {selectedSection ? (
-            <button onClick={() => setSelectedSection(null)}
+            <button onClick={handleBack}
               className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
               <ArrowLeft size={18} />
-              <span className="text-sm font-semibold">{t(currentSection?.labelKey || '', currentSection?.fallback || '')}</span>
+              <span className="text-sm font-semibold">
+                {currentNode
+                  ? t(currentNode.labelKey, currentNode.fallback)
+                  : t(currentSection?.labelKey || '', currentSection?.fallback || '')}
+              </span>
             </button>
           ) : (
             <div className="flex items-center gap-2.5">
@@ -101,7 +129,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
               </Link>
 
               {sectionEntries.map(([key, items]) => {
-                const section = NAV_SECTIONS.find(s => s.key === key)
+                const section = navSections.find(s => s.key === key)
                 if (!section) return null
                 const Icon = SECTION_ICONS[key]
                 return (
@@ -124,21 +152,24 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
                 if (item.children && item.children.length > 0) {
                   return (
                     <div key={item.key} className="space-y-1">
-                      <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-1">
-                        {t(item.labelKey, item.fallback)}
-                      </p>
-                      <div className="grid grid-cols-2 gap-1.5">
-                        {item.children.map(child => (
-                          <Link key={child.key} to={child.to || '#'} onClick={onClose}
-                            className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 dark:active:bg-slate-700 transition-colors">
-                            {child.icon && <child.icon size={14} className="text-slate-500 dark:text-slate-400 shrink-0" />}
-                            <span className="text-xs font-medium text-slate-700 dark:text-slate-200 dark:text-slate-200 truncate">{t(child.labelKey, child.fallback)}</span>
-                          </Link>
-                        ))}
-                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setItemStack((prev) => [...prev, item])}
+                        className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 dark:active:bg-slate-700 transition-colors"
+                      >
+                        {Icon && <Icon size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />}
+                        <div className="flex-1 min-w-0 text-left">
+                          <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 block truncate">{t(item.labelKey, item.fallback)}</span>
+                          <span className="text-[10px] text-slate-400 dark:text-slate-500">{item.children.length} {t('common.options', 'opciones')}</span>
+                        </div>
+                        <ArrowLeft size={14} className="text-slate-300 rotate-180" />
+                      </button>
                     </div>
                   )
                 }
+
+                if (!item.to) return null
+
                 return (
                   <Link key={item.key} to={item.to || '#'} onClick={onClose}
                     className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 dark:active:bg-slate-700 transition-colors">

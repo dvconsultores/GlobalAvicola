@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LayoutGrid } from 'lucide-react'
@@ -6,6 +6,7 @@ import { NAV_ITEMS, type NavItem } from '../../data/navigationConfig'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import MenuCard from '../../components/ui/MenuCard'
 import type { BreadcrumbItem } from '../../components/ui/Breadcrumbs'
+import { useAuthStore } from '../../stores/auth.store'
 
 /** Busca recursivamente un NavItem por su clave dentro de NAV_ITEMS. */
 function findNavItem(key: string, items: NavItem[] = NAV_ITEMS): NavItem | null {
@@ -33,12 +34,20 @@ export default function MenuHubPage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { menuKey } = useParams<{ menuKey: string }>()
+  const { user } = useAuthStore()
+  const isMobileUser = user?.view_type === 'mobile'
 
   const root = useMemo(() => (menuKey ? findNavItem(menuKey) : null), [menuKey])
   // Pila de navegación interna (drill-in dentro del hub)
   const [stack, setStack] = useState<NavItem[]>([])
 
+  useEffect(() => {
+    // Evita arrastrar historial al cambiar de un hub a otro.
+    setStack([])
+  }, [menuKey])
+
   if (!root) return <Navigate to="/" replace />
+  if (isMobileUser && root.key !== 'poultry') return <Navigate to="/menu/poultry" replace />
 
   const current = stack.length ? stack[stack.length - 1] : root
   const items = current.children ?? []
@@ -63,7 +72,11 @@ export default function MenuHubPage() {
   const path = [root, ...stack]
   const breadcrumbs: BreadcrumbItem[] = [
     { label: 'nav.dashboard', fallback: 'Dashboard', to: '/' },
-    ...path.map((node) => ({ label: node.labelKey, fallback: node.fallback })),
+    ...path.map((node, index) => ({
+      label: node.labelKey,
+      fallback: node.fallback,
+      to: index === 0 ? `/menu/${root.key}` : undefined,
+    })),
   ]
 
   return (
@@ -72,6 +85,7 @@ export default function MenuHubPage() {
         title={t(current.labelKey, current.fallback)}
         breadcrumbs={breadcrumbs}
         onBack={handleBack}
+        hideBack={stack.length === 0}
       />
 
       <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 -mt-2">
@@ -80,7 +94,7 @@ export default function MenuHubPage() {
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item) => {
+        {items.map((item, index) => {
           const childCount = item.children?.length ?? 0
           const description =
             childCount > 0
@@ -92,6 +106,7 @@ export default function MenuHubPage() {
               icon={item.icon}
               title={t(item.labelKey, item.fallback)}
               description={description}
+              step={index + 1}
               badge={item.badge}
               onClick={() => handleSelect(item)}
             />

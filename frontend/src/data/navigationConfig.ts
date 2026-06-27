@@ -205,6 +205,44 @@ export const NAV_ITEMS: NavItem[] = [
   },
 ]
 
+const MOBILE_TOP_LEVEL_KEYS = new Set(['dashboard', 'poultry'])
+
+function filterItemForView(item: NavItem, viewType?: string, depth = 0): NavItem | null {
+  if (viewType !== 'mobile') return item
+  if (depth === 0 && !MOBILE_TOP_LEVEL_KEYS.has(item.key)) return null
+
+  if (!item.children) return item
+
+  const visibleChildren = item.children
+    .map((child) => filterItemForView(child, viewType, depth + 1))
+    .filter(Boolean) as NavItem[]
+
+  return { ...item, children: visibleChildren }
+}
+
+/**
+ * Retorna los ítems de navegación visibles para el tipo de vista.
+ *
+ * Regla actual:
+ * - web: menú completo
+ * - mobile: solo Dashboard + Gestión Avícola (con sus sub-opciones)
+ */
+export function getNavItemsForViewType(viewType?: string): NavItem[] {
+  if (viewType !== 'mobile') return NAV_ITEMS
+
+  return NAV_ITEMS
+    .map((item) => filterItemForView(item, viewType, 0))
+    .filter(Boolean) as NavItem[]
+}
+
+/**
+ * Dado un conjunto de ítems, devuelve solo las secciones que contienen elementos.
+ */
+export function getNavSectionsForItems(items: NavItem[]): NavSection[] {
+  const presentSections = new Set(items.map((item) => item.section))
+  return NAV_SECTIONS.filter((section) => presentSections.has(section.key))
+}
+
 /**
  * Obtiene la clave de sección para un ítem dada su ruta.
  * Útil para expandir automáticamente la sección correcta al navegar.

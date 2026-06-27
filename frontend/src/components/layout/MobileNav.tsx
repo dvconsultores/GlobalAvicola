@@ -1,6 +1,6 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { Home, Bird, TrendingUp, PlusCircle, ArrowLeft, Save, Menu } from 'lucide-react'
+import { Home, Bird, Sprout, PlusCircle, ArrowLeft, Save, Menu } from 'lucide-react'
 import { useUiStore } from '../../stores/ui.store'
 
 type NavContext = 'default' | 'form' | 'detail'
@@ -35,21 +35,22 @@ export default function MobileNav() {
         return [
           { id: 'back',  action: 'back',   labelKey: 'common.back',    fallback: 'Atrás',     Icon: ArrowLeft },
           { id: 'save',  path: '#',         labelKey: 'common.save',    fallback: 'Guardar',   Icon: Save, primary: true },
+          { id: 'poultry', path: '/menu/poultry', labelKey: 'nav.poultry', fallback: 'Gestión', Icon: Sprout },
           { id: 'menu',  action: 'drawer',  labelKey: 'nav.menu',       fallback: 'Menú',      Icon: Menu },
         ]
       case 'detail':
         return [
           { id: 'back',     action: 'back',          labelKey: 'common.back',     fallback: 'Atrás',      Icon: ArrowLeft },
           { id: 'register', path: '/operations/new', labelKey: 'nav.register',    fallback: 'Registrar',  Icon: PlusCircle, primary: true },
-          { id: 'kpis',     path: '/reports',         labelKey: 'nav.reports',     fallback: 'KPIs',       Icon: TrendingUp },
+          { id: 'poultry',  path: '/menu/poultry',    labelKey: 'nav.poultry',     fallback: 'Gestión',    Icon: Sprout },
           { id: 'menu',     action: 'drawer',         labelKey: 'nav.menu',        fallback: 'Menú',       Icon: Menu },
         ]
       default:
         return [
           { id: 'home',     path: '/',               labelKey: 'nav.home',        fallback: 'Inicio',     Icon: Home },
+          { id: 'poultry',  path: '/menu/poultry',   labelKey: 'nav.poultry',     fallback: 'Gestión',    Icon: Sprout },
           { id: 'register', action: 'register',      labelKey: 'nav.register',    fallback: 'Registrar',  Icon: PlusCircle, primary: true },
-          { id: 'lots',     path: '/lots',            labelKey: 'nav.lots',        fallback: 'Lotes',      Icon: Bird },
-          { id: 'kpis',     path: '/reports',         labelKey: 'nav.reports',     fallback: 'KPIs',       Icon: TrendingUp },
+          { id: 'lots',     path: '/lots',           labelKey: 'nav.lots',        fallback: 'Lotes',      Icon: Bird },
           { id: 'menu',     action: 'drawer',         labelKey: 'nav.menu',        fallback: 'Menú',       Icon: Menu },
         ]
     }

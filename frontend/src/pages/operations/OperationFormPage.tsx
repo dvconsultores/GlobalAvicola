@@ -320,9 +320,12 @@ export default function OperationFormPage() {
       }
       await api.post('/operations', payload)
       setResult({ ok: true, message: t('operations.saveSuccess') })
+      toast.success(t('operations.saveSuccess'))
       setTimeout(() => navigate('/operations'), 1500)
     } catch (err: any) {
-      setResult({ ok: false, message: err.response?.data?.detail || t('operations.saveError') })
+      const message = err.response?.data?.detail || t('operations.saveError')
+      setResult({ ok: false, message })
+      toast.error(message)
     } finally { setSubmitting(false) }
   }
 
