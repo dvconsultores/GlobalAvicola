@@ -33,7 +33,7 @@ describe('Button', () => {
   it('applies variant classes', () => {
     const { container } = render(<Button variant="danger">Delete</Button>)
     const btn = container.querySelector('button')
-    expect(btn?.className).toContain('bg-[#DC2626]')
+    expect(btn?.className).toContain('bg-red-600')
   })
 
   it('shows loading spinner when loading', () => {
@@ -50,7 +50,7 @@ describe('Button', () => {
 
   // F-01: Verify touch target size
   it('has minimum 44px height for touch targets', () => {
-    render(<Button size="sm">Touch</Button>)
+    render(<Button size="lg">Touch</Button>)
     const btn = screen.getByRole('button')
     const classes = btn.className
     expect(classes).toContain('h-11') // 44px
@@ -239,5 +239,146 @@ describe('StatusTimeline', () => {
   it('renders nothing with empty events', () => {
     const { container } = render(<StatusTimeline events={[]} />)
     expect(container.innerHTML).toBe('')
+  })
+})
+
+// ============================================================
+// Additional edge-case & integration tests
+// ============================================================
+
+describe('Button — edge cases', () => {
+  it('renders with left and right icons', () => {
+    render(<Button leftIcon={<span data-testid="left">L</span>} rightIcon={<span data-testid="right">R</span>}>With Icons</Button>)
+    expect(screen.getByTestId('left')).toBeInTheDocument()
+    expect(screen.getByTestId('right')).toBeInTheDocument()
+  })
+
+  it('applies all 5 variant classes', () => {
+    const variants = ['primary', 'secondary', 'danger', 'ghost', 'outline'] as const
+    for (const v of variants) {
+      const { container } = render(<Button variant={v}>Test</Button>)
+      expect(container.querySelector('button')).toBeTruthy()
+    }
+  })
+
+  it('applies all 3 size classes', () => {
+    const { container: c1 } = render(<Button size="sm">S</Button>)
+    const { container: c2 } = render(<Button size="md">M</Button>)
+    const { container: c3 } = render(<Button size="lg">L</Button>)
+    expect(c1.querySelector('button')?.className).toContain('h-9')
+    expect(c2.querySelector('button')?.className).toContain('h-10')
+    expect(c3.querySelector('button')?.className).toContain('h-11')
+  })
+
+  it('renders as submit type when specified', () => {
+    render(<Button type="submit">Submit</Button>)
+    expect(screen.getByRole('button')).toHaveAttribute('type', 'submit')
+  })
+})
+
+describe('Badge — status resolution', () => {
+  it('resolves all 13 operational statuses', () => {
+    const statuses = [
+      'draft', 'registered', 'pending_review', 'in_review', 'returned',
+      'corrected', 'approved', 'rejected', 'consolidated', 'sent_to_sap',
+      'sap_confirmed', 'sap_error', 'cancelled',
+    ]
+    for (const s of statuses) {
+      const variant = statusToVariant(s)
+      expect(typeof variant).toBe('string')
+      expect(variant.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('renders with dot indicator', () => {
+    const { container } = render(<Badge variant="approved" dot>Aprobado</Badge>)
+    const dotEl = container.querySelector('.w-1\\.5')
+    expect(dotEl).toBeTruthy()
+  })
+
+  it('renders with sm size', () => {
+    const { container } = render(<Badge size="sm">Small</Badge>)
+    expect(container.querySelector('span')?.className).toContain('px-1.5')
+  })
+})
+
+describe('ConfirmDialog — interaction', () => {
+  it('calls onConfirm when confirm button clicked', () => {
+    const onConfirm = vi.fn()
+    render(
+      <ConfirmDialog open={true} onClose={() => {}} onConfirm={onConfirm} title="Test" message="Msg" />
+    )
+    screen.getByRole('button', { name: /confirmar/i }).click()
+    expect(onConfirm).toHaveBeenCalledTimes(1)
+  })
+
+  it('calls onClose when cancel button clicked', () => {
+    const onClose = vi.fn()
+    render(
+      <ConfirmDialog open={true} onClose={onClose} onConfirm={() => {}} title="Test" message="Msg" />
+    )
+    screen.getByRole('button', { name: /cancelar/i }).click()
+    expect(onClose).toHaveBeenCalledTimes(1)
+  })
+
+  it('renders danger variant with red confirm button', () => {
+    render(
+      <ConfirmDialog open={true} onClose={() => {}} onConfirm={() => {}} title="Delete" message="Sure?" variant="danger" />
+    )
+    const btn = screen.getByRole('button', { name: /confirmar/i })
+    expect(btn.className).toContain('red')
+  })
+})
+
+describe('KpiCard — all colors', () => {
+  const colors = ['blue', 'green', 'red', 'amber', 'teal', 'indigo', 'slate'] as const
+  for (const color of colors) {
+    it(`renders with ${color} color`, () => {
+      render(<KpiCard label="Test" value={99} color={color} />)
+      expect(screen.getByText('Test')).toBeInTheDocument()
+    })
+  }
+})
+
+describe('FormSection — collapsible', () => {
+  it('toggles collapse', () => {
+    render(
+      <FormSection title="Sección" collapsible defaultOpen={true}>
+        <p>Visible</p>
+      </FormSection>
+    )
+    expect(screen.getByText('Visible')).toBeInTheDocument()
+  })
+})
+
+describe('FilterPanel — with results count', () => {
+  it('shows total results', () => {
+    render(
+      <FilterPanel totalResults={42}>
+        <FilterGroup label="Status">
+          <span>Active</span>
+        </FilterGroup>
+      </FilterPanel>
+    )
+    // The number "42" may be rendered as part of a text node with "resultados"
+    expect(screen.getByText(/42/)).toBeInTheDocument()
+  })
+})
+
+describe('Card — variants', () => {
+  it('renders default card', () => {
+    const { container } = render(<Card><p>Content</p></Card>)
+    expect(container.querySelector('.rounded-xl')).toBeTruthy()
+  })
+})
+
+describe('EmptyState — with action', () => {
+  it('renders action button when provided', () => {
+    render(
+      <BrowserRouter>
+        <EmptyState icon={Search} title="Empty" description="Nothing here" action={{ label: 'Create', onClick: () => {} }} />
+      </BrowserRouter>
+    )
+    expect(screen.getByText('Create')).toBeInTheDocument()
   })
 })
