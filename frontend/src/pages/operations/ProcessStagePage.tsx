@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
 import { ChevronLeft, ArrowRight, Info, Bird, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
 import api from '../../services/api'
-import { useToast } from '../../components/Toast'
 import {
   PROCESS_STAGES, flowForStage,
   type StageKey,
@@ -34,7 +33,6 @@ type ViewMode = 'grid' | 'sequence'
  */
 export default function ProcessStagePage() {
   const { t } = useTranslation()
-  const toast = useToast()
   const navigate = useNavigate()
   const { stage: stageParam, birdType, phase } = useParams<{ stage?: string; birdType?: string; phase?: string }>()
   // Compatibilidad: soporta tanto :stage (legacy) como :birdType/:phase? (nuevo ruteo)
@@ -49,8 +47,8 @@ export default function ProcessStagePage() {
   useEffect(() => {
     if (!isValid) return
     api.get('/lots?limit=100')
-      .then(r => setLots(r.data || []))
-      .catch(() => toast.error(t('operations.errorLoadingLots', 'Error al cargar lotes')))
+      .then(r => setLots(Array.isArray(r.data) ? r.data : []))
+      .catch(() => setLots([]))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isValid])
 

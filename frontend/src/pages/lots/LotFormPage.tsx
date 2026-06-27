@@ -58,10 +58,10 @@ export default function LotFormPage() {
     const load = async () => {
       try {
         const [farmRes, houseRes, lineRes, breedRes] = await Promise.allSettled([
-          api.get('/masters/farms?limit=200'),
-          api.get('/masters/houses?limit=200'),
-          api.get('/masters/genetic-lines?limit=200'),
-          api.get('/masters/breeds?limit=200'),
+          api.get('/masters/farms?limit=100'),
+          api.get('/masters/houses?limit=100'),
+          api.get('/masters/genetic-lines?limit=100'),
+          api.get('/masters/breeds?limit=100'),
         ])
         if (farmRes.status  === 'fulfilled') setFarms(farmRes.value.data  ?? [])
         if (houseRes.status === 'fulfilled') setHouses(houseRes.value.data ?? [])

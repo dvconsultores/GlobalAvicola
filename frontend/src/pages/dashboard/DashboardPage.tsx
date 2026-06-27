@@ -9,7 +9,7 @@ import {
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
-import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
+import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
 
 // ── Alert severity styles ───────────────────────────────────────────────────
 const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
@@ -243,7 +243,7 @@ export default function DashboardPage() {
                       </button>
                     ) : (
                       <Link
-                        to={`/poultry/${group.stages[0].key}`}
+                        to={stagePathForKey(group.stages[0].key)}
                         className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
                       >
                         <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
@@ -268,7 +268,7 @@ export default function DashboardPage() {
                           return (
                             <Link
                               key={stage.key}
-                              to={`/poultry/${stage.key}`}
+                              to={stagePathForKey(stage.key)}
                               className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
                             >
                               <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>

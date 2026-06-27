@@ -28,6 +28,7 @@ import LotListPage from './pages/lots/LotListPage'
 import LotDetailPage from './pages/lots/LotDetailPage'
 import LotFormPage from './pages/lots/LotFormPage'
 import ProfilePage from './pages/users/ProfilePage'
+import { STAGE_PATH_MAP } from './data/processCatalog'
 
 function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNode; roles?: string[]; webOnly?: boolean }) {
   const { t } = useTranslation()
@@ -67,14 +68,7 @@ function WebOnlyRoute({ children }: { children: React.ReactNode }) {
  * ProcessStageRedirect — mapea rutas legacy /processes/:stage a /poultry/:birdType/:phase
  * Usa useParams directamente en el componente (sin wrapper innecesario)
  */
-const STAGE_ROUTE_MAP: Record<string, string> = {
-  'grandparent_rearing': '/poultry/grandparent/rearing',
-  'grandparent_production': '/poultry/grandparent/production',
-  'breeder_rearing': '/poultry/breeder/rearing',
-  'breeder_production': '/poultry/breeder/production',
-  'hatchery': '/poultry/hatchery',
-  'broiler': '/poultry/broiler',
-}
+const STAGE_ROUTE_MAP: Record<string, string> = { ...STAGE_PATH_MAP }
 
 function ProcessStageRedirect() {
   const { stage } = useParams<{ stage: string }>()

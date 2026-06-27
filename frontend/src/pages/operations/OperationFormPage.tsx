@@ -172,6 +172,7 @@ export default function OperationFormPage() {
   const prefillType = searchParams.get('type')
 
   const [lots, setLots] = useState<any[]>([])
+  const [lotsLoadError, setLotsLoadError] = useState(false)
   const [sapOrders, setSapOrders] = useState<any[]>([])
   const [submitting, setSubmitting] = useState(false)
   const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null)
@@ -262,22 +263,30 @@ export default function OperationFormPage() {
   }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    api.get('/lots?limit=100').then(r => setLots(r.data)).catch(() => toast.error(t('operations.errorLoadingLots')))
+    api.get('/lots?limit=100')
+      .then(r => {
+        setLots(Array.isArray(r.data) ? r.data : [])
+        setLotsLoadError(false)
+      })
+      .catch(() => {
+        setLots([])
+        setLotsLoadError(true)
+      })
     api.get('/sap/references?ref_type=transfer_order&limit=50').then(r => setSapOrders(r.data?.references || [])).catch(() => {})
     Promise.allSettled([
-      api.get('/masters/vaccines?limit=200'),
-      api.get('/masters/medications?limit=200'),
-      api.get('/masters/mortality-causes?limit=200'),
-      api.get('/masters/cull-causes?limit=200'),
-      api.get('/masters/transports?limit=200'),
-      api.get('/masters/farms?limit=200'),
-      api.get('/masters/processing-plants?limit=200'),
-      api.get('/masters/suppliers?limit=200'),
-      api.get('/masters/breeds?limit=200'),
-      api.get('/masters/houses?limit=200'),
-      api.get('/masters/feed-types?limit=200'),
-      api.get('/masters/incubators?limit=200'),
-      api.get('/masters/hatchers?limit=200'),
+      api.get('/masters/vaccines?limit=100'),
+      api.get('/masters/medications?limit=100'),
+      api.get('/masters/mortality-causes?limit=100'),
+      api.get('/masters/cull-causes?limit=100'),
+      api.get('/masters/transports?limit=100'),
+      api.get('/masters/farms?limit=100'),
+      api.get('/masters/processing-plants?limit=100'),
+      api.get('/masters/suppliers?limit=100'),
+      api.get('/masters/breeds?limit=100'),
+      api.get('/masters/houses?limit=100'),
+      api.get('/masters/feed-types?limit=100'),
+      api.get('/masters/incubators?limit=100'),
+      api.get('/masters/hatchers?limit=100'),
     ]).then(results => {
       const get = (r: PromiseSettledResult<any>) => r.status === 'fulfilled' ? (r.value.data || []) : []
       setVaccines(get(results[0])); setMedications(get(results[1]))
@@ -1142,7 +1151,9 @@ export default function OperationFormPage() {
               <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
             ))}
           </select>
-          {stageLots.length === 0 && (
+          {lotsLoadError ? (
+            <p className="text-xs text-red-600 mt-2">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>
+          ) : stageLots.length === 0 && (
             <p className="text-xs text-amber-600 mt-2">{t('process.noLots', 'No hay lotes activos para este proceso.')}</p>
           )}
 
@@ -1223,6 +1234,7 @@ export default function OperationFormPage() {
                   <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
                 ))}
               </select>
+              {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
               {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
             </div>
 

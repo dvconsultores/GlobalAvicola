@@ -112,6 +112,19 @@ export const PROCESS_STAGES: ProcessStage[] = [
   },
 ]
 
+export const STAGE_PATH_MAP: Record<StageKey, string> = {
+  grandparent_rearing: '/poultry/grandparent/rearing',
+  grandparent_production: '/poultry/grandparent/production',
+  breeder_rearing: '/poultry/breeder/rearing',
+  breeder_production: '/poultry/breeder/production',
+  hatchery: '/poultry/hatchery',
+  broiler: '/poultry/broiler',
+}
+
+export function stagePathForKey(stage: StageKey): string {
+  return STAGE_PATH_MAP[stage]
+}
+
 // ============================================================
 // OPERATION CATEGORIES — group the 24 event types by purpose
 // ============================================================

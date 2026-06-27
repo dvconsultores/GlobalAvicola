@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ChevronRight, ListChecks } from 'lucide-react'
-import type { ProcessStage } from '../../data/processCatalog'
+import { stagePathForKey, type ProcessStage } from '../../data/processCatalog'
 
 interface ProcessCardProps {
   process: ProcessStage
@@ -20,7 +20,7 @@ export default function ProcessCard({ process, operationCount }: ProcessCardProp
 
   return (
     <Link
-      to={`/poultry/${process.key}`}
+      to={stagePathForKey(process.key)}
       className={`group block relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-gradient-to-br shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:-translate-y-1 dark:border-slate-700 dark:shadow-md ${process.accent} animate-scale-in hover-lift`}
     >
       {/* Background accent */}

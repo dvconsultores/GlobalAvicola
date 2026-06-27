@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ChevronRight, LayoutGrid } from 'lucide-react'
-import { PROCESS_STAGES, flowForStage } from '../../data/processCatalog'
+import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
 
 /**
  * Process hub — the main, visual entry point for registering operations.
@@ -55,7 +55,7 @@ export default function ProcessHubPage() {
             return (
               <Link
                 key={stage.key}
-                to={`/poultry/${stage.key}`}
+                to={stagePathForKey(stage.key)}
                 className="group relative overflow-hidden rounded-xl bg-white dark:bg-slate-800 shadow-sm hover:shadow-md border border-slate-200 dark:border-slate-700 transition-all active:scale-[0.98]"
               >
                 <div className="p-4">
