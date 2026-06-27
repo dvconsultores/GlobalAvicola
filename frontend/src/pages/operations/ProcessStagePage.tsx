@@ -71,10 +71,10 @@ export default function ProcessStagePage() {
 
   // Determinar badge de fase (Cría/Producción/Incubación/Engorde)
   const phaseBadge = (() => {
-    if (stageKey.includes('rearing')) return { label: 'Cría', icon: Sprout, color: 'bg-emerald-500/30 text-emerald-100' }
-    if (stageKey.includes('production')) return { label: 'Producción', icon: Egg, color: 'bg-amber-500/30 text-amber-100' }
-    if (stageKey === 'hatchery') return { label: 'Incubación', icon: Flame, color: 'bg-orange-500/30 text-orange-100' }
-    if (stageKey === 'broiler') return { label: 'Engorde', icon: Drumstick, color: 'bg-teal-500/30 text-teal-100' }
+    if (stageKey.includes('rearing')) return { label: 'Cría', icon: Sprout, color: 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-300' }
+    if (stageKey.includes('production')) return { label: 'Producción', icon: Egg, color: 'bg-amber-50 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300' }
+    if (stageKey === 'hatchery') return { label: 'Incubación', icon: Flame, color: 'bg-orange-50 text-orange-700 dark:bg-orange-900/30 dark:text-orange-300' }
+    if (stageKey === 'broiler') return { label: 'Engorde', icon: Drumstick, color: 'bg-teal-50 text-teal-700 dark:bg-teal-900/30 dark:text-teal-300' }
     return null
   })()
 
@@ -85,49 +85,45 @@ export default function ProcessStagePage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
-      {/* Corporate blue header — todas las fases usan el mismo estilo */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-[#1E3A5F] to-[#2563EB] text-white px-5 pt-5 pb-8 rounded-b-[2rem] shadow-lg">
-        <div className="absolute -top-10 -right-10 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
-        <div className="relative max-w-2xl mx-auto">
-          <Link to="/poultry" className="inline-flex items-center gap-1 text-sm font-semibold text-white/90 hover:text-white mb-4 transition-colors">
-            <ChevronLeft size={18} /> {t('process.stage.back', 'Procesos')}
-          </Link>
-
-          <div className="flex items-center gap-4">
-            <div className="w-16 h-16 rounded-2xl bg-white/25 backdrop-blur flex items-center justify-center shadow-inner ring-1 ring-white/30 shrink-0">
-              <StageIcon size={32} strokeWidth={2.2} />
+    <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
+      {/* Page header */}
+      <div className="max-w-2xl mx-auto px-4 pt-5 pb-4">
+        <Link to="/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 mb-3 transition-colors">
+          <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
+        </Link>
+        <div className="flex items-start gap-3">
+          <span className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 dark:text-blue-400 shrink-0 mt-0.5">
+            <StageIcon size={18} strokeWidth={2} />
+          </span>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
+              {phaseBadge && (
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${phaseBadge.color}`}>
+                  <phaseBadge.icon size={11} />
+                  {phaseBadge.label}
+                </span>
+              )}
             </div>
-            <div className="min-w-0">
-              <div className="flex items-center gap-3 flex-wrap">
-                <h1 className="text-2xl font-extrabold leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
-                {phaseBadge && (
-                  <span className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-bold ${phaseBadge.color}`}>
-                    <phaseBadge.icon size={14} />
-                    {phaseBadge.label}
-                  </span>
-                )}
-              </div>
-              <p className="text-white/85 text-sm mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
-            </div>
+            <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
           </div>
-
-          {/* Lot summary chip (Maya-style) */}
-          {selectedLot && (
-            <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-1 bg-white/15 backdrop-blur rounded-2xl px-4 py-2.5 text-sm font-semibold">
-              <span className="inline-flex items-center gap-1.5"><Bird size={15} /> {selectedLot.lot_code}</span>
-              {selectedLot.current_quantity != null && (
-                <span className="text-white/90">{Number(selectedLot.current_quantity).toLocaleString()} {t('process.stage.birds', 'aves')}</span>
-              )}
-              {selectedLot.status && (
-                <span className="text-white/75 capitalize">{String(selectedLot.status)}</span>
-              )}
-            </div>
-          )}
         </div>
+        {/* Selected lot chip */}
+        {selectedLot && (
+          <div className="mt-3 inline-flex items-center gap-2.5 bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm">
+            <Bird size={14} className="text-slate-400" />
+            <span className="font-semibold text-slate-800 dark:text-slate-100">{selectedLot.lot_code}</span>
+            {selectedLot.current_quantity != null && (
+              <span className="text-slate-400">{Number(selectedLot.current_quantity).toLocaleString()} {t('process.stage.birds', 'aves')}</span>
+            )}
+            {selectedLot.status && (
+              <span className="text-slate-400 capitalize">{String(selectedLot.status)}</span>
+            )}
+          </div>
+        )}
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 -mt-4">
+      <div className="max-w-2xl mx-auto px-4">
         {/* Lot selector */}
         <div className="bg-white dark:bg-dark-card rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-4 mb-4">
           <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 uppercase tracking-wide">
