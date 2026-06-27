@@ -205,7 +205,7 @@ export const NAV_ITEMS: NavItem[] = [
   },
 ]
 
-const MOBILE_TOP_LEVEL_KEYS = new Set(['dashboard', 'poultry'])
+const MOBILE_TOP_LEVEL_KEYS = new Set(['poultry'])
 
 function filterItemForView(item: NavItem, viewType?: string, depth = 0): NavItem | null {
   if (viewType !== 'mobile') return item
@@ -225,7 +225,7 @@ function filterItemForView(item: NavItem, viewType?: string, depth = 0): NavItem
  *
  * Regla actual:
  * - web: menú completo
- * - mobile: solo Dashboard + Gestión Avícola (con sus sub-opciones)
+ * - mobile: solo Gestión Avícola (con sus sub-opciones)
  */
 export function getNavItemsForViewType(viewType?: string): NavItem[] {
   if (viewType !== 'mobile') return NAV_ITEMS

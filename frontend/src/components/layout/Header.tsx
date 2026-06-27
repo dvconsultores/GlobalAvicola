@@ -2,16 +2,14 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
-import { Menu, Globe, Sun, Moon, Bird, Building2, ChevronDown, Check } from 'lucide-react'
+import { Globe, Sun, Moon, Bird, Building2, ChevronDown, Check } from 'lucide-react'
 import { useThemeStore } from '../../stores/theme.store'
-import MobileDrawer from './MobileDrawer'
 
 export default function Header() {
   const { t, i18n } = useTranslation()
   const { user, logout } = useAuthStore()
   const { isDark, toggleDarkMode } = useThemeStore()
   const { activeCompanyId, activeCompanyName, companies, isSwitching, fetchCompanies, switchCompany } = useCompanyStore()
-  const [drawerOpen, setDrawerOpen] = useState(false)
   const [companyOpen, setCompanyOpen] = useState(false)
   const companyRef = useRef<HTMLDivElement>(null)
 
@@ -166,18 +164,6 @@ export default function Header() {
         style={{ background: 'linear-gradient(135deg, #071829 0%, #0F3361 100%)', height: '56px' }}
       >
         <div className="flex items-center gap-3">
-          {/* Hamburger */}
-          <button
-            onClick={() => setDrawerOpen(true)}
-            aria-label={t('nav.menu')}
-            aria-expanded={drawerOpen}
-            className="w-9 h-9 flex items-center justify-center rounded-xl transition-all"
-            style={{ background: 'rgba(255,255,255,0.08)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.14)' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.08)' }}
-          >
-            <Menu size={20} />
-          </button>
           <div className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -215,22 +201,9 @@ export default function Header() {
           >
             {isDark ? <Sun size={15} /> : <Moon size={15} />}
           </button>
-
-          {/* User avatar */}
-          {user && (
-            <button
-              onClick={logout}
-              className="w-8 h-8 flex items-center justify-center rounded-lg text-[11px] font-bold text-white transition-all"
-              style={{ background: 'rgba(26,109,204,0.5)' }}
-              title={t('auth.logout')}
-            >
-              {initials}
-            </button>
-          )}
         </div>
       </header>
 
-      <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
     </>
   )
 }

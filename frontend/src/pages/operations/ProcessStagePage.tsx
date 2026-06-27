@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link, useParams, useNavigate, Navigate } from 'react-router-dom'
+import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { ChevronLeft, ArrowRight, Info, Bird, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
 import api from '../../services/api'
 import {
@@ -34,6 +34,7 @@ type ViewMode = 'grid' | 'sequence'
 export default function ProcessStagePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
+  const location = useLocation()
   const { stage: stageParam, birdType, phase } = useParams<{ stage?: string; birdType?: string; phase?: string }>()
   // Compatibilidad: soporta tanto :stage (legacy) como :birdType/:phase? (nuevo ruteo)
   const stage = stageParam || (birdType && phase ? `${birdType}_${phase}` : birdType || '')
@@ -63,7 +64,7 @@ export default function ProcessStagePage() {
     [stageLots, lotId],
   )
 
-  if (!isValid || !stageMeta) return <Navigate to="/poultry" replace />
+  if (!isValid || !stageMeta) return <Navigate to="/menu/poultry" replace />
 
   const StageIcon = stageMeta.Icon
 
@@ -77,6 +78,7 @@ export default function ProcessStagePage() {
   })()
 
   const goToOperation = (event: string) => {
+    sessionStorage.setItem('operationBackTarget', location.pathname)
     const q = new URLSearchParams({ type: event })
     if (lotId) q.set('lot_id', lotId)
     navigate(`/operations/new?${q.toString()}`)
@@ -86,7 +88,7 @@ export default function ProcessStagePage() {
     <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
       {/* Page header */}
       <div className="max-w-2xl mx-auto px-4 pt-5 pb-4">
-        <Link to="/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 mb-3 transition-colors">
+        <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 mb-3 transition-colors">
           <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
         </Link>
         <div className="flex items-start gap-3">

@@ -8,6 +8,8 @@ import MenuCard from '../../components/ui/MenuCard'
 import type { BreadcrumbItem } from '../../components/ui/Breadcrumbs'
 import { useAuthStore } from '../../stores/auth.store'
 
+const MENU_STACK_KEY_PREFIX = 'menuHubStack:'
+
 /** Busca recursivamente un NavItem por su clave dentro de NAV_ITEMS. */
 function findNavItem(key: string, items: NavItem[] = NAV_ITEMS): NavItem | null {
   for (const it of items) {
@@ -41,10 +43,36 @@ export default function MenuHubPage() {
   // Pila de navegación interna (drill-in dentro del hub)
   const [stack, setStack] = useState<NavItem[]>([])
 
+  const restoreStack = (key: string) => {
+    try {
+      const raw = sessionStorage.getItem(`${MENU_STACK_KEY_PREFIX}${key}`)
+      if (!raw) return []
+      const keys = JSON.parse(raw) as string[]
+      if (!Array.isArray(keys)) return []
+      const resolved = keys
+        .map((k) => findNavItem(k))
+        .filter(Boolean) as NavItem[]
+      return resolved
+    } catch {
+      return []
+    }
+  }
+
+  const persistStack = (key: string, items: NavItem[]) => {
+    const keys = items.map((it) => it.key)
+    sessionStorage.setItem(`${MENU_STACK_KEY_PREFIX}${key}`, JSON.stringify(keys))
+  }
+
   useEffect(() => {
     // Evita arrastrar historial al cambiar de un hub a otro.
-    setStack([])
+    if (!menuKey) return
+    setStack(restoreStack(menuKey))
   }, [menuKey])
+
+  useEffect(() => {
+    if (!menuKey) return
+    persistStack(menuKey, stack)
+  }, [menuKey, stack])
 
   if (!root) return <Navigate to="/" replace />
   if (isMobileUser && root.key !== 'poultry') return <Navigate to="/menu/poultry" replace />

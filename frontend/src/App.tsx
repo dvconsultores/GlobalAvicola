@@ -64,6 +64,12 @@ function WebOnlyRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>
 }
 
+function HomeRoute() {
+  const { user } = useAuthStore()
+  if (user?.view_type === 'mobile') return <Navigate to="/menu/poultry" replace />
+  return <DashboardPage />
+}
+
 /**
  * ProcessStageRedirect — mapea rutas legacy /processes/:stage a /poultry/:birdType/:phase
  * Usa useParams directamente en el componente (sin wrapper innecesario)
@@ -114,7 +120,8 @@ export default function App() {
             </ProtectedRoute>
           }
         >
-          <Route path="/" element={<DashboardPage />} />
+          <Route path="/" element={<HomeRoute />} />
+          <Route path="/kpi" element={<DashboardPage />} />
           {/* Menu hubs — grilla de opciones por área (capa de presentación) */}
           <Route path="/menu/:menuKey" element={<MenuHubPage />} />
           {/* Web-only: Masters */}

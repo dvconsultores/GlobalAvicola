@@ -1196,6 +1196,11 @@ export default function OperationFormPage() {
             type="button"
             onClick={() => {
               if (prefillType && !stage) {
+                const target = sessionStorage.getItem('operationBackTarget')
+                if (target) {
+                  navigate(target)
+                  return
+                }
                 navigate(-1)
                 return
               }
