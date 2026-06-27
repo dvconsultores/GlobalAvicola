@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Download } from 'lucide-react'
+import { ArrowLeft, Download, TrendingUp, Activity } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Button } from '../../components/ui'
@@ -11,11 +11,20 @@ export default function LotReportPage() {
   const { t } = useTranslation()
   const { id } = useParams<{ id: string }>()
   const [report, setReport] = useState<any>(null)
+  const [kpiIpe, setKpiIpe] = useState<any>(null)
+  const [kpiUniformity, setKpiUniformity] = useState<any>(null)
   const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
   const toast = useToast()
 
   useEffect(() => {
     api.get(`/reports/lot/${id}`).then(r => setReport(r.data)).catch((e: any) => toast.error(getErrorMessage(e, t('reports.errorLoading'))))
+    Promise.allSettled([
+      api.get(`/reports/kpi/ipe/${id}`),
+      api.get(`/reports/kpi/weight-uniformity/${id}`),
+    ]).then(([ipeRes, uniformRes]) => {
+      if (ipeRes.status === 'fulfilled') setKpiIpe(ipeRes.value.data)
+      if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
+    })
   }, [id])
 
   const handleExport = async (format: 'excel'|'pdf') => {
@@ -84,6 +93,50 @@ export default function LotReportPage() {
             </div>
           )}
         </div>
+
+        {/* IPE KPI */}
+        {kpiIpe && kpiIpe.ipe != null && (
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+              <TrendingUp size={16} className="text-emerald-600" /> IPE {t('kpi.europeanProductionIndex', '')}
+            </h2>
+            <p className="text-4xl font-black text-emerald-700 mb-1">{kpiIpe.ipe}</p>
+            <p className="text-xs text-slate-500 mb-3">
+              {kpiIpe.ipe >= 300 ? '🟢 ' : kpiIpe.ipe >= 250 ? '🟡 ' : '🔴 '}
+              {kpiIpe.ipe >= 300 ? t('kpi.excellent', 'Excelente') : kpiIpe.ipe >= 250 ? t('kpi.good', 'Bueno') : t('kpi.average', 'Regular')}
+            </p>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+              <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.viability', 'Viabilidad')}</dt><dd className="font-medium">{kpiIpe.viabilidad_pct}%</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">FCR</dt><dd className="font-medium">{kpiIpe.fcr}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.avgWeight', 'Peso prom.')}</dt><dd className="font-medium">{kpiIpe.avg_weight_g}g</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.dailyGain', 'Gan. diaria')}</dt><dd className="font-medium">{kpiIpe.ganancia_diaria_g}g/día</dd></div>
+              <div className="flex justify-between col-span-2"><dt className="text-slate-500">{t('kpi.ageDays', 'Edad')}</dt><dd className="font-medium">{kpiIpe.age_days} días</dd></div>
+            </dl>
+          </div>
+        )}
+
+        {/* Weight Uniformity KPI */}
+        {kpiUniformity && kpiUniformity.cv_pct != null && (
+          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+              <Activity size={16} className="text-blue-600" /> {t('kpi.uniformity', 'Uniformidad de Lote')}
+            </h2>
+            <p className={`text-4xl font-black mb-1 ${
+              kpiUniformity.uniformity_status === 'excellent' ? 'text-emerald-700' :
+              kpiUniformity.uniformity_status === 'acceptable' ? 'text-amber-700' : 'text-red-700'
+            }`}>CV {kpiUniformity.cv_pct}%</p>
+            <p className="text-xs text-slate-500 mb-3">
+              {kpiUniformity.uniformity_status === 'excellent' ? '🟢 ' : kpiUniformity.uniformity_status === 'acceptable' ? '🟡 ' : '🔴 '}
+              {String(t(`kpi.${kpiUniformity.uniformity_status}`, kpiUniformity.uniformity_status))}
+            </p>
+            <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+              <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.meanWeight', 'Peso medio')}</dt><dd className="font-medium">{kpiUniformity.mean_weight_g?.toFixed(1) ?? '—'}g</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.samples', 'Muestras')}</dt><dd className="font-medium">{kpiUniformity.n_samples}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">Min</dt><dd className="font-medium">{kpiUniformity.min_weight_g?.toFixed(1) ?? '—'}g</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500">Max</dt><dd className="font-medium">{kpiUniformity.max_weight_g?.toFixed(1) ?? '—'}g</dd></div>
+            </dl>
+          </div>
+        )}
       </div>
     </div>
   )

@@ -226,6 +226,25 @@ class OperationsService:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
+    async def resolve_alert(self, alert_id: int) -> models.OperationalAlert:
+        from datetime import datetime, timezone
+        result = await self.db.execute(
+            select(models.OperationalAlert).where(
+                models.OperationalAlert.id == alert_id,
+                models.OperationalAlert.company_id == self.company_id,
+            )
+        )
+        alert = result.scalar_one_or_none()
+        if alert is None:
+            from fastapi import HTTPException
+            raise HTTPException(status_code=404, detail="Alerta no encontrada")
+        alert.is_resolved = True
+        alert.resolved_by_id = self.current_user.get("id")
+        alert.resolved_at = datetime.now(timezone.utc)
+        await self.db.flush()
+        await self.db.refresh(alert)
+        return alert
+
     async def get_events(
         self,
         skip: int = 0,

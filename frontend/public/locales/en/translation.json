@@ -833,5 +833,39 @@
     "downloadError": "Error downloading file",
     "invalidType": "File type not allowed. Use JPG, PNG, GIF, WEBP or PDF.",
     "tooLarge": "File too large (max {{max}} MB)"
+  },
+  "alerts": {
+    "activeTitle": "Active alerts",
+    "unresolved": "unresolved",
+    "resolve": "Mark as resolved",
+    "resolvedOk": "Alert resolved",
+    "resolveError": "Failed to resolve alert",
+    "severity": {
+      "critical": "Critical",
+      "warning": "Warning",
+      "info": "Info"
+    },
+    "type": {
+      "high_mortality": "High mortality",
+      "temperature_out_of_range": "Temperature out of range",
+      "humidity_out_of_range": "Humidity out of range"
+    }
+  },
+  "kpi": {
+    "excellent": "Excellent",
+    "good": "Good",
+    "average": "Average",
+    "poor": "Poor",
+    "insufficient_data": "Insufficient data",
+    "acceptable": "Acceptable",
+    "viability": "Viability",
+    "fcr": "FCR",
+    "avgWeight": "Avg weight",
+    "dailyGain": "Daily gain",
+    "ageDays": "Age (days)",
+    "uniformity": "Uniformity",
+    "samples": "Samples",
+    "meanWeight": "Mean weight",
+    "europeanProductionIndex": "European Production Index"
   }
 }

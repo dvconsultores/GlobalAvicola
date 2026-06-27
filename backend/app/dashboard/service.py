@@ -4,7 +4,7 @@ from typing import Any
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..operations.models import EventStatus, EventType, OperationalEvent
+from ..operations.models import EventStatus, EventType, OperationalAlert, OperationalEvent
 
 
 class DashboardService:
@@ -106,6 +106,7 @@ class DashboardService:
             "last_7_days": last_week.scalar() or 0,
             "lots_by_type": await self._get_lots_by_type(),
             "mortality_trend": await self._get_mortality_trend(),
+            "active_alerts": await self._get_active_alerts(),
         }
 
     async def _get_lots_by_type(self) -> dict:
@@ -142,5 +143,37 @@ class DashboardService:
         )
         return [
             {"week": f"S{int(r.wk)}", "mortality": int(r.total or 0)}
+            for r in rows.fetchall()
+        ]
+
+    async def _get_active_alerts(self) -> list[dict]:
+        """Return last 10 unresolved alerts for the company."""
+        rows = await self.db.execute(
+            select(
+                OperationalAlert.id,
+                OperationalAlert.lot_id,
+                OperationalAlert.alert_type,
+                OperationalAlert.severity,
+                OperationalAlert.message,
+                OperationalAlert.actual_value,
+                OperationalAlert.created_at,
+            )
+            .where(
+                OperationalAlert.company_id == self.company_id,
+                OperationalAlert.is_resolved == False,  # noqa: E712
+            )
+            .order_by(OperationalAlert.created_at.desc())
+            .limit(10)
+        )
+        return [
+            {
+                "id": r.id,
+                "lot_id": r.lot_id,
+                "alert_type": r.alert_type,
+                "severity": r.severity,
+                "message": r.message,
+                "actual_value": r.actual_value,
+                "created_at": r.created_at.isoformat() if r.created_at else None,
+            }
             for r in rows.fetchall()
         ]

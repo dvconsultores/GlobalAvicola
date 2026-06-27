@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock } from 'lucide-react'
+import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock, AlertTriangle, X } from 'lucide-react'
 import { EVENT_ICONS } from '../../components/Icon'
 import { Button, Modal, Input } from '../../components/ui'
 import { TraceabilityTree } from '../../components/TraceabilityTree'
 import { STAGE_OPERATIONS, resolveStageKey } from '../../data/processCatalog'
 import api from '../../services/api'
+import { useToast, getErrorMessage } from '../../components/Toast'
 
 // ─── Status badge colours ────────────────────────────────────────────────────
 const STATUS_COLORS: Record<string, string> = {
@@ -21,6 +22,9 @@ export default function LotDetailPage() {
   const { id } = useParams<{ id: string }>()
   const [lot, setLot] = useState<any>(null)
   const [kpis, setKpis] = useState<any>(null)
+  const [kpiIpe, setKpiIpe] = useState<any>(null)
+  const [kpiUniformity, setKpiUniformity] = useState<any>(null)
+  const [lotAlerts, setLotAlerts] = useState<any[]>([])
   const [events, setEvents] = useState<any[]>([])
   const [phases, setPhases] = useState<any[]>([])
   const [loading, setLoading] = useState(true)
@@ -33,6 +37,7 @@ export default function LotDetailPage() {
   const [transitionDate, setTransitionDate] = useState(() => new Date().toISOString().split('T')[0])
   const [transitionMale, setTransitionMale] = useState('')
   const [transitionFemale, setTransitionFemale] = useState('')
+  const toast = useToast()
 
   useEffect(() => {
     const fetchAll = async () => {
@@ -41,14 +46,20 @@ export default function LotDetailPage() {
         const found = (lots as any[]).find((l: any) => l.id === Number(id))
         setLot(found || null)
 
-        const [kpiRes, evtRes, phaseRes] = await Promise.allSettled([
+        const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes] = await Promise.allSettled([
           api.get(`/reports/kpis?lot_id=${id}`),
           api.get(`/operations?lot_id=${id}&limit=50`),
           api.get(`/lots/${id}/phases`),
+          api.get(`/reports/kpi/ipe/${id}`),
+          api.get(`/reports/kpi/weight-uniformity/${id}`),
+          api.get(`/operations/alerts?lot_id=${id}&is_resolved=false&limit=20`),
         ])
         if (kpiRes.status === 'fulfilled') setKpis(kpiRes.value.data)
         if (evtRes.status === 'fulfilled') setEvents(evtRes.value.data || [])
         if (phaseRes.status === 'fulfilled') setPhases(phaseRes.value.data || [])
+        if (ipeRes.status === 'fulfilled') setKpiIpe(ipeRes.value.data)
+        if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
+        if (alertsRes.status === 'fulfilled') setLotAlerts(alertsRes.value.data || [])
       } catch (err) {
         console.error(err)
       } finally {
@@ -57,6 +68,16 @@ export default function LotDetailPage() {
     }
     fetchAll()
   }, [id])
+
+  const handleResolveAlert = async (alertId: number) => {
+    try {
+      await api.patch(`/operations/alerts/${alertId}/resolve`)
+      setLotAlerts(prev => prev.filter(a => a.id !== alertId))
+      toast.success(t('alerts.resolvedOk', 'Alerta resuelta'))
+    } catch (e: any) {
+      toast.error(getErrorMessage(e, t('alerts.resolveError', 'Error al resolver')))
+    }
+  }
 
   if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
   if (!lot) return <div className="p-6 text-slate-500">{t('lots.lotNotFound')}</div>
@@ -355,6 +376,72 @@ export default function LotDetailPage() {
                     <p className="text-lg font-bold text-purple-700">{kpis.hatchery_yield.total_chicks_born}</p>
                   </div>
                 )}
+              </div>
+            </div>
+          )}
+
+          {/* IPE */}
+          {kpiIpe && kpiIpe.ipe != null && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+              <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                <TrendingUp size={18} className="text-emerald-600" /> IPE
+              </h2>
+              <p className="text-3xl font-bold text-emerald-700">{kpiIpe.ipe}</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {kpiIpe.ipe >= 300 ? '🟢' : kpiIpe.ipe >= 250 ? '🟡' : '🔴'}{' '}
+                {kpiIpe.ipe >= 300 ? t('kpi.excellent', 'Excelente') : kpiIpe.ipe >= 250 ? t('kpi.good', 'Bueno') : t('kpi.average', 'Regular')}
+              </p>
+              <div className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500">
+                <span>{t('kpi.viability', 'Viab.')} {kpiIpe.viabilidad_pct}%</span>
+                <span>{t('kpi.fcr', 'FCR')} {kpiIpe.fcr}</span>
+                <span>{t('kpi.avgWeight', 'Peso')} {kpiIpe.avg_weight_g}g</span>
+                <span>{t('kpi.ageDays', 'Días')} {kpiIpe.age_days}</span>
+              </div>
+            </div>
+          )}
+
+          {/* Weight Uniformity */}
+          {kpiUniformity && kpiUniformity.cv_pct != null && (
+            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+              <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+                <Activity size={18} className="text-blue-600" /> {t('kpi.uniformity', 'Uniformidad')}
+              </h2>
+              <p className={`text-2xl font-bold ${
+                kpiUniformity.uniformity_status === 'excellent' ? 'text-emerald-700' :
+                kpiUniformity.uniformity_status === 'acceptable' ? 'text-amber-700' : 'text-red-700'
+              }`}>CV {kpiUniformity.cv_pct}%</p>
+              <p className="text-xs text-slate-500 mt-1">
+                {kpiUniformity.uniformity_status === 'excellent' ? '🟢 ' : kpiUniformity.uniformity_status === 'acceptable' ? '🟡 ' : '🔴 '}
+                {t(`kpi.${kpiUniformity.uniformity_status}`, kpiUniformity.uniformity_status)}
+                {' · '}{kpiUniformity.n_samples} {t('kpi.samples', 'muestras')}
+              </p>
+            </div>
+          )}
+
+          {/* Lot Alerts */}
+          {lotAlerts.length > 0 && (
+            <div className="bg-white rounded-xl shadow-sm border border-amber-200 p-5">
+              <h2 className="font-semibold text-amber-700 mb-3 flex items-center gap-2">
+                <AlertTriangle size={18} className="text-amber-500" />
+                {t('alerts.activeTitle', 'Alertas activas')}
+                <span className="ml-auto text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">{lotAlerts.length}</span>
+              </h2>
+              <div className="space-y-2">
+                {lotAlerts.map((a: any) => (
+                  <div key={a.id} className={`flex items-start gap-2 rounded-lg p-2.5 text-xs ${
+                    a.severity === 'critical' ? 'bg-red-50 border border-red-200' : 'bg-amber-50 border border-amber-200'
+                  }`}>
+                    <div className="flex-1 min-w-0">
+                      <span className={`font-bold uppercase ${a.severity === 'critical' ? 'text-red-700' : 'text-amber-700'}`}>
+                        {String(t(`alerts.severity.${a.severity}`, a.severity))}
+                      </span>
+                      <p className="text-slate-700 mt-0.5 leading-snug">{a.message}</p>
+                    </div>
+                    <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover:text-slate-600 shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
               </div>
             </div>
           )}

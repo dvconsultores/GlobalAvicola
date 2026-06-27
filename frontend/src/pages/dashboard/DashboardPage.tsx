@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
-import { Bird, FileText, Clock, CheckCircle, TrendingDown, Wheat, Skull, Scale, Egg, Sparkles, AlertCircle } from 'lucide-react'
+import { Bird, FileText, Clock, CheckCircle, TrendingDown, Wheat, Skull, Scale, Egg, Sparkles, AlertCircle, AlertTriangle, X } from 'lucide-react'
 import {
   LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -18,6 +18,65 @@ const BIRD_TYPE_COLORS: Record<string, string> = {
   broiler:     'bg-emerald-50 text-emerald-700 border border-emerald-200',
 }
 
+// ── Alert severity styles ───────────────────────────────────────────────────
+const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
+  critical: { bar: 'bg-red-500',    bg: 'bg-red-50',    text: 'text-red-800',    badge: 'bg-red-100 text-red-700 border-red-200' },
+  warning:  { bar: 'bg-amber-400',  bg: 'bg-amber-50',  text: 'text-amber-800',  badge: 'bg-amber-100 text-amber-700 border-amber-200' },
+  info:     { bar: 'bg-blue-400',   bg: 'bg-blue-50',   text: 'text-blue-800',   badge: 'bg-blue-100 text-blue-700 border-blue-200' },
+}
+
+function AlertsWidget({ alerts, onResolve }: {
+  alerts: any[]
+  onResolve: (id: number) => void
+}) {
+  const { t } = useTranslation()
+  if (!alerts || alerts.length === 0) return null
+  return (
+    <Card>
+      <CardHeader
+        title={t('alerts.activeTitle', 'Alertas activas')}
+        subtitle={`${alerts.length} ${t('alerts.unresolved', 'sin resolver')}`}
+        action={<AlertTriangle size={18} className="text-amber-500" />}
+      />
+      <CardBody>
+        <div className="space-y-2">
+          {alerts.map((a: any) => {
+            const s = ALERT_STYLE[a.severity] ?? ALERT_STYLE.info
+            return (
+              <div key={a.id} className={`flex items-start gap-3 rounded-xl border p-3 ${s.bg}`}>
+                <div className={`w-1 self-stretch rounded-full shrink-0 ${s.bar}`} />
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 flex-wrap mb-0.5">
+                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
+                      {String(t(`alerts.severity.${a.severity}`, a.severity))}
+                    </span>
+                    <span className="text-[10px] text-slate-500">
+                      {String(t(`alerts.type.${a.alert_type}`, a.alert_type.replace(/_/g, ' ')))}
+                    </span>
+                    {a.lot_id && (
+                      <Link to={`/lots/${a.lot_id}`} className="text-[10px] text-blue-600 hover:underline">
+                        {t('lots.lot', 'Lote')} #{a.lot_id}
+                      </Link>
+                    )}
+                  </div>
+                  <p className={`text-xs leading-snug ${s.text}`}>{a.message}</p>
+                </div>
+                <button
+                  onClick={() => onResolve(a.id)}
+                  className="shrink-0 text-slate-400 hover:text-slate-600 p-1 rounded"
+                  title={t('alerts.resolve', 'Marcar como resuelta')}
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            )
+          })}
+        </div>
+      </CardBody>
+    </Card>
+  )
+}
+
 export default function DashboardPage() {
   const { t, i18n } = useTranslation()
   const { user } = useAuthStore()
@@ -25,12 +84,16 @@ export default function DashboardPage() {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
+  const [activeAlerts, setActiveAlerts] = useState<any[]>([])
   const toast = useToast()
 
   useEffect(() => {
     const endpoint = isMobileUser ? '/dashboard/mobile' : '/dashboard/admin'
     api.get(endpoint)
-      .then(r => setData(r.data))
+      .then(r => {
+        setData(r.data)
+        setActiveAlerts(r.data?.active_alerts ?? [])
+      })
       .catch((e: any) => {
         const msg = getErrorMessage(e, t('dashboard.errorLoading'))
         setError(msg)
@@ -38,6 +101,16 @@ export default function DashboardPage() {
       })
       .finally(() => setLoading(false))
   }, [isMobileUser])
+
+  const handleResolveAlert = async (alertId: number) => {
+    try {
+      await api.patch(`/operations/alerts/${alertId}/resolve`)
+      setActiveAlerts(prev => prev.filter(a => a.id !== alertId))
+      toast.success(t('alerts.resolvedOk', 'Alerta resuelta'))
+    } catch (e: any) {
+      toast.error(getErrorMessage(e, t('alerts.resolveError', 'Error al resolver la alerta')))
+    }
+  }
 
   if (loading) {
     return (
@@ -387,6 +460,9 @@ export default function DashboardPage() {
           </Card>
         )}
       </div>
+
+      {/* Active operational alerts */}
+      <AlertsWidget alerts={activeAlerts} onResolve={handleResolveAlert} />
     </div>
   )
 }

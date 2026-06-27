@@ -218,3 +218,13 @@ async def list_alerts(
     return await _service(db, current_user).get_alerts(
         lot_id=lot_id, is_resolved=is_resolved, skip=skip, limit=limit
     )
+
+
+@router.patch("/alerts/{alert_id}/resolve", response_model=schemas.OperationalAlertRead)
+async def resolve_alert(
+    alert_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Mark an alert as resolved."""
+    return await _service(db, current_user).resolve_alert(alert_id)

@@ -833,5 +833,39 @@
     "downloadError": "Error al descargar archivo",
     "invalidType": "Tipo de archivo no permitido. Use JPG, PNG, GIF, WEBP o PDF.",
     "tooLarge": "Archivo demasiado grande (máx. {{max}} MB)"
+  },
+  "alerts": {
+    "activeTitle": "Alertas activas",
+    "unresolved": "sin resolver",
+    "resolve": "Marcar como resuelta",
+    "resolvedOk": "Alerta resuelta",
+    "resolveError": "Error al resolver la alerta",
+    "severity": {
+      "critical": "Crítica",
+      "warning": "Advertencia",
+      "info": "Información"
+    },
+    "type": {
+      "high_mortality": "Mortalidad alta",
+      "temperature_out_of_range": "Temperatura fuera de rango",
+      "humidity_out_of_range": "Humedad fuera de rango"
+    }
+  },
+  "kpi": {
+    "excellent": "Excelente",
+    "good": "Bueno",
+    "average": "Regular",
+    "poor": "Deficiente",
+    "insufficient_data": "Datos insuficientes",
+    "acceptable": "Aceptable",
+    "viability": "Viabilidad",
+    "fcr": "FCR",
+    "avgWeight": "Peso prom.",
+    "dailyGain": "Gan. diaria",
+    "ageDays": "Edad (días)",
+    "uniformity": "Uniformidad",
+    "samples": "Muestras",
+    "meanWeight": "Peso medio",
+    "europeanProductionIndex": "Índice Europeo de Producción"
   }
 }
