@@ -63,7 +63,7 @@ export default function MenuCard({
         className={`inline-flex p-3 rounded-xl mb-4 transition-colors
           ${isActive
             ? 'bg-gradient-to-br from-blue-500 to-blue-700 text-white shadow-md shadow-blue-500/30'
-            : 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400'
+            : 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100 group-hover:bg-blue-50 dark:group-hover:bg-blue-900/30 group-hover:text-blue-600 dark:group-hover:text-blue-400'
           }`}
       >
         <Icon size={22} strokeWidth={2} />
@@ -82,7 +82,7 @@ export default function MenuCard({
 
       {/* Description */}
       {description && (
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-snug line-clamp-2">
+        <p className="text-xs text-slate-900 dark:text-slate-100 leading-snug line-clamp-2">
           {description}
         </p>
       )}

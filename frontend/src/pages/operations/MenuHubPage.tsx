@@ -88,7 +88,7 @@ export default function MenuHubPage() {
         hideBack={stack.length === 0}
       />
 
-      <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 -mt-2">
+      <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-4 -mt-2">
         <LayoutGrid size={13} />
         {t('process.hub.chooseOption', 'Elige una opción')}
       </p>

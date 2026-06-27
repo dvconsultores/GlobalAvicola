@@ -51,7 +51,7 @@ export default function SubNavHeader({
         {!hideBack && (
           <button
             onClick={handleBack}
-            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-500 hover:text-blue-600 hover:bg-blue-50 transition-all active:scale-95"
+            className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-all active:scale-95"
             aria-label={t('common.back', 'Atrás')}
           >
             <ArrowLeft size={18} />

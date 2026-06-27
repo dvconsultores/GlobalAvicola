@@ -118,12 +118,12 @@ export default function MobileNav() {
               <item.Icon
                 size={20}
                 strokeWidth={active ? 2.3 : 1.8}
-                className={active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-400 dark:text-slate-500'}
+                className={active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-slate-100'}
               />
               <span
                 className={`text-[9px] leading-none font-semibold transition-all ${ active
                   ? 'text-brand-700 dark:text-brand-400'
-                  : 'text-slate-400 dark:text-slate-500'
+                  : 'text-slate-900 dark:text-slate-100'
                 }`}
               >
                 {t(item.labelKey, item.fallback)}
@@ -144,8 +144,8 @@ export default function MobileNav() {
             onClick={() => handleAction(item)}
             className="flex flex-col items-center gap-1 px-3 py-1.5 min-w-[52px] transition-all active:scale-95"
           >
-            <item.Icon size={20} strokeWidth={1.8} className="text-slate-400 dark:text-slate-500" />
-            <span className="text-[9px] leading-none font-semibold text-slate-400 dark:text-slate-500">
+            <item.Icon size={20} strokeWidth={1.8} className="text-slate-900 dark:text-slate-100" />
+            <span className="text-[9px] leading-none font-semibold text-slate-900 dark:text-slate-100">
               {t(item.labelKey, item.fallback)}
             </span>
           </button>
