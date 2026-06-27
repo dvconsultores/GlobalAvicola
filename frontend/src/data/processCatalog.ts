@@ -192,32 +192,32 @@ export const OPERATION_CATEGORIES: OperationCategory[] = [
 export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
   grandparent_rearing: [
     'grandparent_import', 'farm_inspection', 'bird_reception', 'bird_distribution',
+    'bird_transfer', 'transport_inspection', 'feed_registration', 'weight_recording',
+    'mortality_recording', 'cull_recording', 'vaccination', 'medication', 'bird_exit',
+  ],
+  grandparent_production: [
+    'farm_inspection', 'bird_transfer', 'transport_inspection', 'feed_registration',
+    'weight_recording', 'mortality_recording', 'cull_recording', 'vaccination',
+    'medication', 'egg_collection', 'egg_classification', 'egg_dispatch', 'bird_exit',
+  ],
+  breeder_rearing: [
+    'farm_inspection', 'bird_reception', 'bird_distribution', 'bird_transfer',
     'transport_inspection', 'feed_registration', 'weight_recording', 'mortality_recording',
     'cull_recording', 'vaccination', 'medication', 'bird_exit',
   ],
-  grandparent_production: [
-    'farm_inspection', 'transport_inspection', 'feed_registration', 'weight_recording',
-    'mortality_recording', 'cull_recording', 'vaccination', 'medication', 'egg_collection',
-    'egg_classification', 'egg_dispatch', 'bird_exit',
-  ],
-  breeder_rearing: [
-    'farm_inspection', 'bird_reception', 'bird_distribution', 'transport_inspection',
-    'feed_registration', 'weight_recording', 'mortality_recording', 'cull_recording',
-    'vaccination', 'medication', 'bird_exit',
-  ],
   breeder_production: [
-    'farm_inspection', 'transport_inspection', 'feed_registration', 'weight_recording',
-    'mortality_recording', 'cull_recording', 'vaccination', 'medication', 'egg_collection',
-    'egg_classification', 'egg_dispatch', 'bird_exit',
+    'farm_inspection', 'bird_transfer', 'transport_inspection', 'feed_registration',
+    'weight_recording', 'mortality_recording', 'cull_recording', 'vaccination',
+    'medication', 'egg_collection', 'egg_classification', 'egg_dispatch', 'bird_exit',
   ],
   hatchery: [
     'hatchery_inspection', 'egg_reception_hatchery', 'egg_classification', 'transport_inspection',
     'incubation_load', 'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
   ],
   broiler: [
-    'farm_inspection', 'bird_reception', 'bird_distribution', 'transport_inspection',
-    'feed_registration', 'weight_recording', 'mortality_recording', 'cull_recording',
-    'vaccination', 'medication', 'bird_exit', 'lot_closure',
+    'farm_inspection', 'bird_reception', 'bird_distribution', 'bird_transfer',
+    'transport_inspection', 'feed_registration', 'weight_recording', 'mortality_recording',
+    'cull_recording', 'vaccination', 'medication', 'bird_exit', 'lot_closure',
   ],
 }
 

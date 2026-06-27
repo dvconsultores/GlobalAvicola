@@ -96,7 +96,7 @@ class OperationsService:
         if event.event_type == models.EventType.MORTALITY_RECORDING:
             total_mortality = sum(bm.quantity for bm in data.bird_movements)
             if total_mortality > 0:
-                balance = await get_current_bird_balance(self.db, event.lot_id)
+                balance = await get_current_bird_balance(self.db, event.lot_id, self.company_id)
                 # balance already includes this event's mortality (flushed above),
                 # so add it back to get the pre-event balance
                 pre_balance = balance + total_mortality
@@ -287,9 +287,11 @@ class OperationsService:
         return list(result.scalars().all()), total
 
     async def get_event(self, event_id: int) -> models.OperationalEvent:
-        result = await self.db.execute(
-            select(models.OperationalEvent).where(models.OperationalEvent.id == event_id)
+        query = select(models.OperationalEvent).where(
+            models.OperationalEvent.id == event_id,
+            models.OperationalEvent.company_id == self.company_id,
         )
+        result = await self.db.execute(query)
         event = result.scalar_one_or_none()
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")

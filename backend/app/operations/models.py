@@ -8,7 +8,7 @@ from typing import Optional
 
 from sqlalchemy import (
     Boolean, Date, DateTime, Enum, Float, ForeignKey, Integer,
-    String, Text, func,
+    Numeric, String, Text, func,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
@@ -218,6 +218,7 @@ class InspectionDetail(Base):
     house_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("houses.id"), nullable=True, index=True)
     parameter: Mapped[str] = mapped_column(String(200))  # e.g. "temperature", "humidity", "litter_condition"
     value: Mapped[Optional[str]] = mapped_column(String(500), nullable=True)
+    value_numeric: Mapped[Optional[float]] = mapped_column(Numeric(10, 3), nullable=True)  # numeric counterpart for aggregations
     status: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)  # good, regular, bad
 
     event: Mapped["OperationalEvent"] = relationship("OperationalEvent", back_populates="inspection_details")

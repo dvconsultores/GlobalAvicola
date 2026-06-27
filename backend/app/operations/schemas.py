@@ -66,6 +66,7 @@ class InspectionDetailSchema(BaseModel):
     house_id: Optional[int] = None  # Scopes record to a specific house; NULL = farm-level
     parameter: str
     value: Optional[str] = None
+    value_numeric: Optional[float] = None  # Numeric counterpart for aggregations (T°, H%, etc.)
     status: Optional[str] = None
 
 

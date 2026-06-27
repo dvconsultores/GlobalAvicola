@@ -235,3 +235,15 @@ p { margin: 0; }
   letter-spacing: -0.025em;
   line-height: 1;
 }
+
+/* ── Accessibility: prefers-reduced-motion (WCAG 2.2.2) ──── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

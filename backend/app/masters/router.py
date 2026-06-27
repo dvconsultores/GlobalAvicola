@@ -3,7 +3,8 @@ REST API router for master data entities.
 """
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
@@ -120,9 +121,18 @@ async def get_houses_by_farm(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Get houses belonging to a specific farm."""
+    """Get houses belonging to a specific farm. Validates farm belongs to user's company."""
+    company_id = current_user.get("company_id")
+    is_super_admin = current_user.get("is_super_admin", False)
+    # Verify farm belongs to user's company (super admins bypass)
+    if not is_super_admin and company_id is not None:
+        farm_check = await db.execute(
+            select(models.Farm).where(models.Farm.id == farm_id, models.Farm.company_id == company_id)
+        )
+        if not farm_check.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Granja no encontrada")
     result = await db.execute(
-        __import__("sqlalchemy").select(models.House).where(models.House.farm_id == farm_id)
+        select(models.House).where(models.House.farm_id == farm_id)
     )
     return [schemas.HouseRead.model_validate(h) for h in result.scalars().all()]
 
@@ -133,8 +143,17 @@ async def get_incubators_by_hatchery(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Get incubators belonging to a specific hatchery."""
+    """Get incubators belonging to a specific hatchery. Validates hatchery belongs to user's company."""
+    company_id = current_user.get("company_id")
+    is_super_admin = current_user.get("is_super_admin", False)
+    # Verify hatchery belongs to user's company (super admins bypass)
+    if not is_super_admin and company_id is not None:
+        hatchery_check = await db.execute(
+            select(models.Hatchery).where(models.Hatchery.id == hatchery_id, models.Hatchery.company_id == company_id)
+        )
+        if not hatchery_check.scalar_one_or_none():
+            raise HTTPException(status_code=404, detail="Incubadora no encontrada")
     result = await db.execute(
-        __import__("sqlalchemy").select(models.Incubator).where(models.Incubator.hatchery_id == hatchery_id)
+        select(models.Incubator).where(models.Incubator.hatchery_id == hatchery_id)
     )
     return [schemas.IncubatorRead.model_validate(i) for i in result.scalars().all()]

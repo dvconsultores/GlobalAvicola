@@ -362,15 +362,8 @@ async def validate_farm_house(event_type: str, farm_id: int | None, house_id: in
 
 
 
-class BusinessRuleViolation(Exception):
-    """Raised when a business rule is violated."""
-    def __init__(self, message: str, rule_id: str = ""):
-        self.message = message
-        self.rule_id = rule_id
-        super().__init__(message)
-
-
-async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> tuple[int, int]:
+# Legacy balance helper — renamed to avoid shadowing the comprehensive version above
+async def get_current_bird_balance_legacy(db: AsyncSession, lot_id: int) -> tuple[int, int]:
     """Calculate current bird balance (males, females) for a lot."""
     # Sum all bird movements
     result = await db.execute(
@@ -400,7 +393,7 @@ async def validate_mortality(
     if quantity <= 0:
         raise BusinessRuleViolation("La cantidad de mortalidad debe ser mayor a cero", "BR-01")
 
-    current, _ = await get_current_bird_balance(db, lot_id)
+    current, _ = await get_current_bird_balance_legacy(db, lot_id)
     if quantity > current:
         raise BusinessRuleViolation(
             f"Mortalidad ({quantity}) excede el saldo disponible ({current})",
