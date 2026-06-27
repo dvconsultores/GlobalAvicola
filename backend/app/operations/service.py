@@ -78,7 +78,88 @@ class OperationsService:
 
         await self.db.flush()
         await self.db.refresh(event)
+
+        # Phase 3.2: auto-generate alerts for threshold violations
+        await self._check_and_create_alerts(event, data)
+
         return event
+
+    async def _check_and_create_alerts(
+        self,
+        event: models.OperationalEvent,
+        data: schemas.OperationalEventCreate,
+    ) -> None:
+        """Auto-generate OperationalAlerts when operational thresholds are exceeded."""
+        alerts: list[models.OperationalAlert] = []
+
+        # Alert 1: High mortality (>= 3% of current bird balance triggers warning; >= 8% critical)
+        if event.event_type == models.EventType.MORTALITY_RECORDING:
+            total_mortality = sum(bm.quantity for bm in data.bird_movements)
+            if total_mortality > 0:
+                balance = await get_current_bird_balance(self.db, event.lot_id)
+                # balance already includes this event's mortality (flushed above),
+                # so add it back to get the pre-event balance
+                pre_balance = balance + total_mortality
+                if pre_balance > 0:
+                    pct = total_mortality / pre_balance * 100
+                    if pct >= 3.0:
+                        severity = "critical" if pct >= 8.0 else "warning"
+                        alerts.append(models.OperationalAlert(
+                            company_id=event.company_id,
+                            lot_id=event.lot_id,
+                            event_id=event.id,
+                            alert_type="high_mortality",
+                            severity=severity,
+                            message=(
+                                f"Mortalidad del {pct:.1f}% del saldo "
+                                f"({total_mortality} aves). "
+                                f"Umbral: 3% advertencia / 8% crítico."
+                            ),
+                            threshold_value=3.0,
+                            actual_value=round(pct, 2),
+                        ))
+
+        # Alert 2: Temperature / humidity extremes during farm inspection
+        if event.event_type == models.EventType.FARM_INSPECTION:
+            TEMP_MIN, TEMP_MAX = 18.0, 35.0
+            HUMI_MIN, HUMI_MAX = 40.0, 90.0
+            for ins in data.inspection_details:
+                ins_data = ins.model_dump()
+                temp = ins_data.get("temperature")
+                humi = ins_data.get("humidity")
+                house = ins_data.get("house_id", "?")
+                if temp is not None and (temp < TEMP_MIN or temp > TEMP_MAX):
+                    alerts.append(models.OperationalAlert(
+                        company_id=event.company_id,
+                        lot_id=event.lot_id,
+                        event_id=event.id,
+                        alert_type="temperature_out_of_range",
+                        severity="warning",
+                        message=(
+                            f"Temperatura {temp}°C fuera del rango "
+                            f"[{TEMP_MIN}–{TEMP_MAX}°C] en galpón {house}."
+                        ),
+                        threshold_value=TEMP_MAX,
+                        actual_value=temp,
+                    ))
+                if humi is not None and (humi < HUMI_MIN or humi > HUMI_MAX):
+                    alerts.append(models.OperationalAlert(
+                        company_id=event.company_id,
+                        lot_id=event.lot_id,
+                        event_id=event.id,
+                        alert_type="humidity_out_of_range",
+                        severity="warning",
+                        message=(
+                            f"Humedad {humi}% fuera del rango "
+                            f"[{HUMI_MIN}–{HUMI_MAX}%] en galpón {house}."
+                        ),
+                        threshold_value=HUMI_MAX,
+                        actual_value=humi,
+                    ))
+
+        if alerts:
+            self.db.add_all(alerts)
+            await self.db.flush()
 
     async def _apply_business_rules(self, event_type: models.EventType, data: schemas.OperationalEventCreate):
         """Apply business rules based on event type."""
@@ -126,6 +207,24 @@ class OperationsService:
     # ============================================================
     # Query Events
     # ============================================================
+
+    async def get_alerts(
+        self,
+        lot_id: Optional[int] = None,
+        is_resolved: Optional[bool] = None,
+        skip: int = 0,
+        limit: int = 50,
+    ) -> list[models.OperationalAlert]:
+        query = select(models.OperationalAlert)
+        if not self.current_user.get("is_super_admin") and self.company_id:
+            query = query.where(models.OperationalAlert.company_id == self.company_id)
+        if lot_id is not None:
+            query = query.where(models.OperationalAlert.lot_id == lot_id)
+        if is_resolved is not None:
+            query = query.where(models.OperationalAlert.is_resolved == is_resolved)
+        query = query.order_by(models.OperationalAlert.created_at.desc()).offset(skip).limit(limit)
+        result = await self.db.execute(query)
+        return list(result.scalars().all())
 
     async def get_events(
         self,

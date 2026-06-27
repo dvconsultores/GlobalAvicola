@@ -24,6 +24,58 @@ const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
 }
 
 // ============================================================
+// Technical ranges — Ross/Cobb guidelines
+// ============================================================
+// Temperature °C by week of life (index = week number, capped at last entry for older birds)
+const TEMP_RANGES: Record<string, Array<[number, number]>> = {
+  broiler:     [[32, 35], [30, 33], [27, 30], [24, 27], [21, 24], [18, 22]],
+  breeder:     [[30, 33], [28, 30], [26, 28], [24, 26], [22, 24], [20, 22]],
+  grandparent: [[30, 33], [28, 30], [26, 28], [24, 26], [22, 24], [20, 22]],
+  default:     [[28, 33], [26, 31], [24, 28], [22, 26], [20, 24], [18, 22]],
+}
+// Humidity % — universal guideline
+const HUMIDITY_RANGE: [number, number] = [60, 75]
+// Incubator (setter) and Hatcher fixed ranges
+const INCUBATOR_TEMP_RANGE: [number, number] = [37.5, 38.0]
+const HATCHER_TEMP_RANGE: [number, number]   = [37.0, 37.5]
+const INCUBATOR_HUM_RANGE: [number, number]  = [55, 62]
+const HATCHER_HUM_RANGE: [number, number]    = [65, 75]
+
+function getTempRange(birdType: string, ageWeeks: number): [number, number] {
+  const ranges = TEMP_RANGES[birdType] ?? TEMP_RANGES.default
+  const idx = Math.min(ageWeeks, ranges.length - 1)
+  return ranges[idx]
+}
+
+type RangeStatus = 'ok' | 'warn' | 'error' | 'none'
+function getRangeStatus(value: number | undefined, min: number, max: number): RangeStatus {
+  if (value == null || isNaN(value)) return 'none'
+  if (value >= min && value <= max) return 'ok'
+  const margin = (max - min) * 0.5
+  if (value >= min - margin && value <= max + margin) return 'warn'
+  return 'error'
+}
+
+function RangeIndicator({ value, min, max, unit, weekLabel }: {
+  value: number | undefined; min: number; max: number; unit: string; weekLabel?: string
+}) {
+  const s = getRangeStatus(value, min, max)
+  if (s === 'none') return null
+  const cfg: Record<RangeStatus, { bg: string; text: string; icon: string }> = {
+    ok:    { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', icon: '✅' },
+    warn:  { bg: 'bg-amber-50 border-amber-200',    text: 'text-amber-700',   icon: '⚠️' },
+    error: { bg: 'bg-red-50 border-red-200',         text: 'text-red-700',    icon: '❌' },
+    none:  { bg: '', text: '', icon: '' },
+  }
+  const { bg, text, icon } = cfg[s]
+  return (
+    <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border ${bg} ${text} mt-1`}>
+      {icon} {min}–{max}{unit}{weekLabel ? ` (${weekLabel})` : ''}
+    </span>
+  )
+}
+
+// ============================================================
 // Zod Schema — covers all 24 operation types
 // ============================================================
 const operationSchema = z.object({
@@ -167,6 +219,15 @@ export default function OperationFormPage() {
     if (!lot?.farm_id) return houses
     return houses.filter((h: any) => h.farm_id === lot.farm_id)
   }, [lots, lotId, houses])
+
+  // Age of selected lot in weeks (for technical range indicators)
+  const { lotAgeWeeks, lotBirdType } = useMemo(() => {
+    const lot = lots.find((l: any) => l.id === lotId)
+    if (!lot?.start_date) return { lotAgeWeeks: 0, lotBirdType: 'default' }
+    const startMs = new Date(lot.start_date).getTime()
+    const weeks = Math.max(0, Math.floor((Date.now() - startMs) / (7 * 24 * 60 * 60 * 1000)))
+    return { lotAgeWeeks: weeks, lotBirdType: lot.bird_type ?? 'default' }
+  }, [lots, lotId])
 
   const { fields: birdFields, append: appendBird, remove: removeBird } =
     useFieldArray({ control, name: 'bird_movements' })
@@ -665,12 +726,21 @@ export default function OperationFormPage() {
                     <input type="number" step="0.1" min="0" max="60"
                       {...register(`house_inspections.${i}.temperature`, { valueAsNumber: true })}
                       className={ic} placeholder="28.0" />
+                    {(() => {
+                      const v = watch(`house_inspections.${i}.temperature` as any)
+                      const [tMin, tMax] = getTempRange(lotBirdType, lotAgeWeeks)
+                      return <RangeIndicator value={v} min={tMin} max={tMax} unit="°C" weekLabel={`sem.${lotAgeWeeks}`} />
+                    })()}
                   </div>
                   <div>
                     <label className={lc}>{t('operations.humidityPct', 'Humedad (%)')}</label>
                     <input type="number" step="0.1" min="0" max="100"
                       {...register(`house_inspections.${i}.humidity`, { valueAsNumber: true })}
                       className={ic} placeholder="65" />
+                    {(() => {
+                      const v = watch(`house_inspections.${i}.humidity` as any)
+                      return <RangeIndicator value={v} min={HUMIDITY_RANGE[0]} max={HUMIDITY_RANGE[1]} unit="%" />
+                    })()}
                   </div>
                 </div>
                 {/* Litter condition */}
@@ -770,14 +840,28 @@ export default function OperationFormPage() {
                   <div>
                     <label className={lc}>{t('operations.temp', 'T° (°C)')}</label>
                     <input type="number" step="0.1" {...register(`hatchery_params.${i}.temperature`, { valueAsNumber: true })} className={ic} placeholder="37.5" />
+                    {(() => {
+                      const v = watch(`hatchery_params.${i}.temperature` as any)
+                      const [tMin, tMax] = machineType === 'hatcher' ? HATCHER_TEMP_RANGE : INCUBATOR_TEMP_RANGE
+                      return <RangeIndicator value={v} min={tMin} max={tMax} unit="°C" />
+                    })()}
                   </div>
                   <div>
                     <label className={lc}>{t('operations.humidity', 'H° (%)')}</label>
                     <input type="number" step="0.1" min="0" max="100" {...register(`hatchery_params.${i}.humidity`, { valueAsNumber: true })} className={ic} placeholder="56" />
+                    {(() => {
+                      const v = watch(`hatchery_params.${i}.humidity` as any)
+                      const [hMin, hMax] = machineType === 'hatcher' ? HATCHER_HUM_RANGE : INCUBATOR_HUM_RANGE
+                      return <RangeIndicator value={v} min={hMin} max={hMax} unit="%" />
+                    })()}
                   </div>
                   <div>
                     <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
                     <input type="number" step="0.01" min="0" {...register(`hatchery_params.${i}.co2`, { valueAsNumber: true })} className={ic} placeholder="0.50" />
+                    {(() => {
+                      const v = watch(`hatchery_params.${i}.co2` as any)
+                      return <RangeIndicator value={v} min={0} max={0.5} unit="%" />
+                    })()}
                   </div>
                 </div>
                 {i > 0 && (

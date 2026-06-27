@@ -139,6 +139,22 @@ class EvidenceRead(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class OperationalAlertRead(BaseModel):
+    id: int
+    company_id: int
+    lot_id: int
+    event_id: Optional[int] = None
+    alert_type: str
+    severity: str
+    message: str
+    threshold_value: Optional[float] = None
+    actual_value: Optional[float] = None
+    is_resolved: bool
+    resolved_at: Optional[datetime] = None
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
 class OperationalEventDetailRead(OperationalEventRead):
     bird_movements: list[BirdMovementSchema] = []
     egg_movements: list[EggMovementSchema] = []

@@ -199,3 +199,22 @@ async def delete_evidence(
     current_user: dict = Depends(get_current_user),
 ):
     await _service(db, current_user).delete_evidence(event_id, evidence_id)
+
+
+# ============================================================
+# Alerts
+# ============================================================
+
+@router.get("/alerts", response_model=list[schemas.OperationalAlertRead])
+async def list_alerts(
+    lot_id: Optional[int] = Query(None),
+    is_resolved: Optional[bool] = Query(None),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Return auto-generated alerts filtered by lot and resolution status."""
+    return await _service(db, current_user).get_alerts(
+        lot_id=lot_id, is_resolved=is_resolved, skip=skip, limit=limit
+    )
