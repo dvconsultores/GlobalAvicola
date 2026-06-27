@@ -33,7 +33,7 @@ export default function ProcessCard({ process, operationCount }: ProcessCardProp
         </div>
 
         {/* Content */}
-        <h3 className="text-lg font-bold text-slate-800 mb-1 leading-tight dark:text-slate-100">
+        <h3 className="text-lg font-bold text-slate-800 dark:text-slate-100 mb-1 leading-tight dark:text-slate-100">
           {t(process.labelKey, process.fallback)}
         </h3>
         <p className="text-sm text-slate-600 leading-snug mb-4 dark:text-slate-400">

@@ -143,7 +143,7 @@ export default function AuditPage() {
       </FilterPanel>
 
       {/* Content */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         {loading ? (
           <div className="p-8 space-y-4">
             {[1, 2, 3, 4].map(i => (

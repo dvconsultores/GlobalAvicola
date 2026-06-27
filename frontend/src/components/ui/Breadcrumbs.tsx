@@ -52,7 +52,7 @@ export default function Breadcrumbs({
         return (
           <Fragment key={index}>
             {isLast ? (
-              <span className="text-slate-900 font-semibold truncate max-w-[200px]" aria-current="page">
+              <span className="text-slate-900 dark:text-slate-50 font-semibold truncate max-w-[200px]" aria-current="page">
                 {label}
               </span>
             ) : (

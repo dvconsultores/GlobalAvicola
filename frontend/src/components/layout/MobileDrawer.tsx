@@ -1,212 +1,173 @@
 /**
- * MobileDrawer — slide-in lateral menu para operadores móviles
- * Se activa con el botón hamburger en Header.tsx
- * Overlay + 150ms slide, cierra con Escape o click fuera
- *
- * REDISEÑADO: Muestra la misma jerarquía completa que el Sidebar desktop,
- * con secciones, submenús colapsables y navegación completa.
+ * MobileDrawer — slide-in grid menu para operadores móviles
+ * Secciones como tarjetas en grilla → sub-sección con back button → items grid
  */
-import { useEffect, useRef, useMemo } from 'react'
-import { useLocation } from 'react-router-dom'
+import { useState, useEffect, useRef } from 'react'
+import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { X, Globe, LogOut } from 'lucide-react'
-import { NAV_SECTIONS, NAV_ITEMS, getSectionKeyForPath, type NavItem } from '../../data/navigationConfig'
-import { useSidebar } from '../../hooks/useSidebar'
-import SidebarSection from './SidebarSection'
-import SidebarItem from './SidebarItem'
-import SidebarSubmenu from './SidebarSubmenu'
+import { X, Globe, LogOut, ArrowLeft, Bird, Sprout, Home, ShieldCheck, RefreshCw, BarChart3, Database, Settings, Users, ClipboardList, CheckCircle } from 'lucide-react'
+import { NAV_SECTIONS, NAV_ITEMS, type NavItem } from '../../data/navigationConfig'
 
-interface MobileDrawerProps {
-  open: boolean
-  onClose: () => void
+interface MobileDrawerProps { open: boolean; onClose: () => void }
+
+// Section icon mapping
+const SECTION_ICONS: Record<string, React.ComponentType<{size?: number; className?: string}>> = {
+  operational: Sprout,
+  review: ShieldCheck,
+  integration: RefreshCw,
+  reports: BarChart3,
+  administration: Settings,
 }
 
-function DrawerNavItem({ item, expandedSections, toggleSection, onClose }: {
-  item: NavItem
-  expandedSections: Record<string, boolean>
-  toggleSection: (key: string) => void
-  onClose: () => void
-}) {
-  const hasChildren = item.children && item.children.length > 0
-
-  if (hasChildren) {
-    return (
-      <SidebarSubmenu
-        icon={item.icon}
-        labelKey={item.labelKey}
-        fallback={item.fallback}
-        children={item.children!}
-        expanded={expandedSections[item.key]}
-        onToggle={() => toggleSection(item.key)}
-        onChildClick={onClose}
-      />
-    )
-  }
-
-  if (item.to) {
-    return (
-      <SidebarItem
-        icon={item.icon}
-        labelKey={item.labelKey}
-        fallback={item.fallback}
-        to={item.to}
-        badge={item.badge}
-        onClick={onClose}
-      />
-    )
-  }
-
-  return null
+const ITEM_ICON_MAP: Record<string, React.ComponentType<{size?: number; className?: string}>> = {
+  poultry: Bird,
+  review: ClipboardList,
+  approvals: CheckCircle,
+  sap: RefreshCw,
+  reports: BarChart3,
+  audit: ShieldCheck,
+  masters: Database,
+  settings: Settings,
+  users: Users,
+  profile: Users,
 }
 
 export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
   const { t, i18n } = useTranslation()
   const { user, logout } = useAuthStore()
   const location = useLocation()
+  const [selectedSection, setSelectedSection] = useState<string | null>(null)
   const closeRef = useRef<HTMLButtonElement>(null)
-  const { expandedSections, toggleSection, expandContaining } = useSidebar()
 
-  // Expandir automáticamente la sección de la ruta activa
-  useMemo(() => {
-    const sectionKey = getSectionKeyForPath(location.pathname)
-    if (sectionKey) {
-      expandContaining(sectionKey)
+  // Build section index
+  const sectionMap = (() => {
+    const map: Record<string, NavItem[]> = {}
+    for (const s of NAV_SECTIONS) {
+      const items = NAV_ITEMS.filter(i => i.section === s.key)
+      if (items.length > 0) map[s.key] = items
     }
-  }, [location.pathname, expandContaining])
+    return map
+  })()
 
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
-    document.addEventListener('keydown', onKey)
-    return () => document.removeEventListener('keydown', onKey)
-  }, [open, onClose])
+  useEffect(() => { if (!open) return; const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }; document.addEventListener('keydown', onKey); return () => document.removeEventListener('keydown', onKey) }, [open, onClose])
+  useEffect(() => { document.body.style.overflow = open ? 'hidden' : ''; return () => { document.body.style.overflow = '' } }, [open])
+  useEffect(() => { if (open) setTimeout(() => closeRef.current?.focus(), 50) }, [open])
+  useEffect(() => { onClose(); setSelectedSection(null) }, [location.pathname, onClose])
 
-  // Prevent body scroll
-  useEffect(() => {
-    document.body.style.overflow = open ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
-  }, [open])
-
-  // Focus close button when opens
-  useEffect(() => {
-    if (open) setTimeout(() => closeRef.current?.focus(), 50)
-  }, [open])
-
-  // Close on location change (after nav)
-  useEffect(() => { onClose() }, [location.pathname, onClose])
-
-  // Agrupar items por sección
-  const sections = useMemo(() => {
-    return NAV_SECTIONS.map(section => ({
-      section,
-      items: NAV_ITEMS.filter(item => item.section === section.key),
-    })).filter(s => s.items.length > 0)
-  }, [])
+  const sectionEntries = Object.entries(sectionMap)
+  const currentSection = selectedSection ? NAV_SECTIONS.find(s => s.key === selectedSection) : null
+  const currentItems = selectedSection ? sectionMap[selectedSection] || [] : []
 
   return (
     <>
       {/* Overlay */}
-      <div
-        aria-hidden="true"
-        onClick={onClose}
-        className={[
-          'lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm',
-          'transition-opacity duration-200',
-          open ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none',
-        ].join(' ')}
-      />
+      <div aria-hidden="true" onClick={onClose}
+        className={`lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
 
-      {/* Drawer panel */}
-      <nav
-        role="navigation"
-        aria-label={t('nav.menu')}
-        className={[
-          'lg:hidden fixed top-0 left-0 h-full w-[82vw] max-w-[300px] z-50',
-          'text-white flex flex-col',
-          'transition-transform duration-200 ease-out',
-          open ? 'translate-x-0' : '-translate-x-full',
-        ].join(' ')}
-        style={{ background: 'linear-gradient(180deg, #071829 0%, #0F3361 100%)' }}
-      >
-        {/* Inner highlight */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%)' }} />
-
-        {/* Drawer header */}
-        <div className="relative flex items-center justify-between px-4 py-4">
-          <div className="flex items-center gap-2.5">
-            <div
-              className="w-8 h-8 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: 'linear-gradient(135deg, #1A6DCC 0%, #3B82F6 100%)' }}
-            >
-              <span className="text-white font-bold text-xs">GA</span>
-            </div>
-            <div>
-              <p className="font-bold text-[13px] leading-none">{t('brand.name', 'Global Avícola')}</p>
-              {user && (
-                <p className="text-[11px] mt-0.5" style={{ color: 'rgba(147,197,253,0.7)' }}>
-                  {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.username}
-                </p>
-              )}
-            </div>
-          </div>
-          <button
-            ref={closeRef}
-            onClick={onClose}
-            aria-label={t('common.close')}
-            className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
-            style={{ color: 'rgba(147,197,253,0.7)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.1)'; (e.currentTarget as HTMLElement).style.color = 'white' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.7)' }}
-          >
-            <X size={16} />
-          </button>
-        </div>
-
-        {/* Divider */}
-        <div className="mx-4" style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />
-
-        {/* Navigation */}
-        <div className="relative flex-1 overflow-y-auto px-3 py-2 sidebar-scroll">
-          {sections.map(({ section, items }) => (
-            <div key={section.key}>
-              <SidebarSection labelKey={section.labelKey} fallback={section.fallback} />
-              <div className="space-y-0.5">
-                {items.map(item => (
-                  <DrawerNavItem
-                    key={item.key}
-                    item={item}
-                    expandedSections={expandedSections}
-                    toggleSection={toggleSection}
-                    onClose={onClose}
-                  />
-                ))}
+      {/* Panel */}
+      <nav className={`lg:hidden fixed top-0 left-0 h-full w-[88vw] max-w-[340px] z-50 flex flex-col bg-white dark:bg-slate-900 transition-transform duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+        {/* Header */}
+        <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100 dark:border-slate-800">
+          {selectedSection ? (
+            <button onClick={() => setSelectedSection(null)}
+              className="flex items-center gap-2 text-slate-600 dark:text-slate-300">
+              <ArrowLeft size={18} />
+              <span className="text-sm font-semibold">{t(currentSection?.labelKey || '', currentSection?.fallback || '')}</span>
+            </button>
+          ) : (
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#1A6DCC] to-[#3B82F6] flex items-center justify-center">
+                <Bird size={15} className="text-white" />
               </div>
+              <span className="font-bold text-slate-800 dark:text-slate-100 dark:text-white text-sm">{t('brand.name', 'Global Avícola')}</span>
             </div>
-          ))}
+          )}
+          <button ref={closeRef} onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800">
+            <X size={18} />
+          </button>
         </div>
 
-        {/* Footer actions */}
-        <div className="relative px-3 py-3">
-          <div className="mb-3" style={{ height: '1px', background: 'rgba(255,255,255,0.08)' }} />
-          <button
-            onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-all mb-1"
-            style={{ color: 'rgba(147,197,253,0.75)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLElement).style.color = 'white' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.75)' }}
-          >
+        {/* Body */}
+        <div className="flex-1 overflow-y-auto p-3">
+          {!selectedSection ? (
+            /* ── SECTION GRID ── */
+            <div className="grid grid-cols-2 gap-2.5">
+              {/* Dashboard shortcut */}
+              <Link to="/" onClick={onClose}
+                className="col-span-2 flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 transition-colors">
+                <Home size={20} className="text-blue-600 dark:text-blue-400 shrink-0" />
+                <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{t('nav.home', 'Inicio')}</span>
+              </Link>
+
+              {sectionEntries.map(([key, items]) => {
+                const section = NAV_SECTIONS.find(s => s.key === key)
+                if (!section) return null
+                const Icon = SECTION_ICONS[key]
+                return (
+                  <button key={key} onClick={() => setSelectedSection(key)}
+                    className="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 dark:active:bg-slate-700 transition-colors text-center">
+                    {Icon && <Icon size={22} className="text-blue-600 dark:text-blue-400" />}
+                    <div>
+                      <span className="text-xs font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-200 block">{t(section.labelKey, section.fallback)}</span>
+                      <span className="text-[10px] text-slate-400 dark:text-slate-500">{items.length} {t('common.options', 'opciones')}</span>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          ) : (
+            /* ── ITEMS GRID ── */
+            <div className="space-y-2">
+              {currentItems.map(item => {
+                const Icon = item.icon || ITEM_ICON_MAP[item.key]
+                if (item.children && item.children.length > 0) {
+                  return (
+                    <div key={item.key} className="space-y-1">
+                      <p className="text-[11px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider px-1">
+                        {t(item.labelKey, item.fallback)}
+                      </p>
+                      <div className="grid grid-cols-2 gap-1.5">
+                        {item.children.map(child => (
+                          <Link key={child.key} to={child.to || '#'} onClick={onClose}
+                            className="flex items-center gap-2 p-2.5 rounded-lg bg-slate-50 dark:bg-slate-800 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 dark:active:bg-slate-700 transition-colors">
+                            {child.icon && <child.icon size={14} className="text-slate-500 dark:text-slate-400 shrink-0" />}
+                            <span className="text-xs font-medium text-slate-700 dark:text-slate-200 dark:text-slate-200 truncate">{t(child.labelKey, child.fallback)}</span>
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )
+                }
+                return (
+                  <Link key={item.key} to={item.to || '#'} onClick={onClose}
+                    className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 dark:bg-slate-800 border border-slate-100 dark:border-slate-700 active:bg-slate-100 dark:active:bg-slate-700 transition-colors">
+                    {Icon && <Icon size={18} className="text-blue-600 dark:text-blue-400 shrink-0" />}
+                    <div className="flex-1 min-w-0">
+                      <span className="text-sm font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{t(item.labelKey, item.fallback)}</span>
+                    </div>
+                    {item.badge && <span className="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
+                  </Link>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Footer */}
+        <div className="border-t border-slate-100 dark:border-slate-800 px-3 py-2 space-y-1">
+          <button onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
             <Globe size={14} />
-            {i18n.language === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}
+            {i18n.language === 'es' ? t('lang.toggleEn', 'English') : t('lang.toggleEs', 'Español')}
           </button>
-          <button
-            onClick={logout}
-            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[12px] font-medium transition-all"
-            style={{ color: 'rgba(147,197,253,0.75)' }}
-            onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.15)'; (e.currentTarget as HTMLElement).style.color = '#FCA5A5' }}
-            onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.75)' }}
-          >
+          {user && (
+            <p className="text-[10px] text-slate-400 dark:text-slate-600 px-3 text-center">
+              {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.username}
+            </p>
+          )}
+          <button onClick={logout}
+            className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
             <LogOut size={14} />
             {t('auth.logout', 'Cerrar sesión')}
           </button>

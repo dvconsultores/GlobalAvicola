@@ -212,8 +212,8 @@ export default function LotDetailPage() {
         {/* Left: Operations Panel */}
         <div className="lg:col-span-2 space-y-6">
           {/* ── Quick Actions: stage-specific operations ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
               <Plus size={18} className="text-[#2563EB]" />
               {t('lots.registerOperation')}
               {phaseLabel && (
@@ -266,8 +266,8 @@ export default function LotDetailPage() {
             const weeks = Object.values(weekly).sort((a: any, b: any) => a.week - b.week)
             if (weeks.length === 0) return null
             return (
-              <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mt-4">
-                <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+              <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5 mt-4">
+                <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <Calendar size={18} className="text-[#2563EB]" /> {t('lots.weeklyView')}</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
@@ -302,8 +302,8 @@ export default function LotDetailPage() {
           })()}
 
           {/* Recent Events */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <Activity size={18} /> {t('lots.lastRecords')}
             </h2>
             {events.length === 0 ? (
@@ -331,8 +331,8 @@ export default function LotDetailPage() {
         {/* Right: KPIs + Info */}
         <div className="space-y-4">
           {/* Lot Info */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <Calendar size={18} /> {t('lots.info')}
             </h2>
             <dl className="space-y-2 text-sm">
@@ -345,8 +345,8 @@ export default function LotDetailPage() {
 
           {/* KPIs */}
           {kpis && (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-              <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+              <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <TrendingUp size={18} /> {t('lots.kpis')}
               </h2>
               <div className="space-y-3">
@@ -382,8 +382,8 @@ export default function LotDetailPage() {
 
           {/* IPE */}
           {kpiIpe && kpiIpe.ipe != null && (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-              <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+              <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <TrendingUp size={18} className="text-emerald-600" /> IPE
               </h2>
               <p className="text-3xl font-bold text-emerald-700">{kpiIpe.ipe}</p>
@@ -402,8 +402,8 @@ export default function LotDetailPage() {
 
           {/* Weight Uniformity */}
           {kpiUniformity && kpiUniformity.cv_pct != null && (
-            <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-              <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+              <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <Activity size={18} className="text-blue-600" /> {t('kpi.uniformity', 'Uniformidad')}
               </h2>
               <p className={`text-2xl font-bold ${
@@ -435,7 +435,7 @@ export default function LotDetailPage() {
                       <span className={`font-bold uppercase ${a.severity === 'critical' ? 'text-red-700' : 'text-amber-700'}`}>
                         {String(t(`alerts.severity.${a.severity}`, a.severity))}
                       </span>
-                      <p className="text-slate-700 mt-0.5 leading-snug">{a.message}</p>
+                      <p className="text-slate-700 dark:text-slate-200 mt-0.5 leading-snug">{a.message}</p>
                     </div>
                     <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover:text-slate-600 shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
                       <X size={12} />
@@ -447,8 +447,8 @@ export default function LotDetailPage() {
           )}
 
           {/* ── Traceability Tree (T-083) ── */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
               <Activity size={18} className="text-teal-600" />
               {t('traceability.title', 'Trazabilidad Generacional')}
             </h2>

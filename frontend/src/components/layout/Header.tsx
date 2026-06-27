@@ -79,7 +79,7 @@ export default function Header() {
               <button
                 onClick={() => setCompanyOpen(v => !v)}
                 disabled={isSwitching}
-                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-card/80 transition-colors disabled:opacity-60"
+                className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-slate-800 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-card/80 transition-colors disabled:opacity-60"
                 title={t('company.selector')}
               >
                 <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
@@ -90,7 +90,7 @@ export default function Header() {
               </button>
             ) : (
               /* ── Static badge for regular users ── */
-              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border">
+              <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-slate-800 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border">
                 <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
                 <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 max-w-[140px] truncate">
                   {activeCompanyName || user?.company_name}
@@ -115,7 +115,7 @@ export default function Header() {
                           className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-dark-card transition-colors"
                         >
                           <Building2 size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />
-                          <span className="flex-1 text-slate-700 dark:text-slate-200 truncate">{c.name}</span>
+                          <span className="flex-1 text-slate-700 dark:text-slate-200 dark:text-slate-200 truncate">{c.name}</span>
                           {c.id === activeCompanyId && (
                             <Check size={12} className="text-blue-500 shrink-0" />
                           )}
@@ -140,7 +140,7 @@ export default function Header() {
               {initials}
             </div>
             <div className="text-xs">
-              <p className="font-semibold text-slate-700 dark:text-slate-200 leading-none">
+              <p className="font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-200 leading-none">
                 {user.first_name ? `${user.first_name} ${user.last_name ?? ''}`.trim() : user.username}
               </p>
               <p className="text-slate-400 dark:text-slate-500 mt-0.5 leading-none">{user.username}</p>

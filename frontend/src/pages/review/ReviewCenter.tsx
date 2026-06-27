@@ -275,7 +275,7 @@ export default function ReviewCenter() {
         {loading && (
           <div className="space-y-3">
             {[1,2,3].map(i => (
-              <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 animate-pulse">
+              <div key={i} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 p-4 animate-pulse">
                 <div className="h-4 bg-slate-100 rounded w-1/3 mb-3" />
                 <div className="h-3 bg-slate-100 rounded w-2/3 mb-2" />
                 <div className="h-3 bg-slate-100 rounded w-1/2" />
@@ -290,7 +290,7 @@ export default function ReviewCenter() {
           </div>
         )}
         {events.map((event: any) => (
-          <div key={event.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div key={event.id} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
@@ -300,7 +300,7 @@ export default function ReviewCenter() {
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-100 font-mono text-xs">#{event.id}</span>
                   <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
                     {String(t(`status.${event.status}`, event.status))}
                   </Badge>
@@ -331,7 +331,7 @@ export default function ReviewCenter() {
                 </>
               )}
               <Link to={`/review/${event.id}`}
-                className="flex-1 bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
+                className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
                 <ZoomIn size={14} /> {t('review.detail', 'Detalle')}
               </Link>
             </div>
@@ -340,9 +340,9 @@ export default function ReviewCenter() {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="hidden lg:block bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
             <tr>
               <th className="w-12 px-4 py-3.5 text-left">
                 <input
@@ -398,7 +398,7 @@ export default function ReviewCenter() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded">
+                    <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
                       #{event.lot_id}
                     </span>
                   </td>
@@ -429,7 +429,7 @@ export default function ReviewCenter() {
                         </>
                       )}
                       <Link to={`/review/${event.id}`}
-                        className="bg-slate-50 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1">
+                        className="bg-slate-50 dark:bg-slate-800 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1">
                         <ZoomIn size={12} />
                       </Link>
                     </div>

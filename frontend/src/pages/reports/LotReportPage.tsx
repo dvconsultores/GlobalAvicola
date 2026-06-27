@@ -68,16 +68,16 @@ export default function LotReportPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-          <h2 className="font-semibold text-slate-700 mb-3">{t('reports.lotInfo')}</h2>
+        <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">{t('reports.lotInfo')}</h2>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between"><dt className="text-slate-500">{t('common.status')}</dt><dd>{report.lot?.status}</dd></div>
             <div className="flex justify-between"><dt className="text-slate-500">{t('common.start')}</dt><dd>{report.lot?.start_date || '—'}</dd></div>
           </dl>
         </div>
         {report.opening_balance && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3">{t('reports.openingBalance')}</h2>
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">{t('reports.openingBalance')}</h2>
             <dl className="space-y-2 text-sm">
               <div className="flex justify-between"><dt className="text-slate-500">{t('reports.birds')}</dt><dd>{report.opening_balance.total_birds}</dd></div>
               <div className="flex justify-between"><dt className="text-slate-500">{t('reports.males')}</dt><dd>{report.opening_balance.total_males}</dd></div>
@@ -85,8 +85,8 @@ export default function LotReportPage() {
             </dl>
           </div>
         )}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 md:col-span-2">
-          <h2 className="font-semibold text-slate-700 mb-3">{t('reports.eventsSummary')}</h2>
+        <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5 md:col-span-2">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">{t('reports.eventsSummary')}</h2>
           <p className="text-sm text-slate-600 mb-2">{t('dashboard.totalEvents')}: {report.event_summary?.total_events || 0} {t('reports.eventsCount')}</p>
           {report.event_summary?.by_type && (
             <div className="flex flex-wrap gap-2">
@@ -99,8 +99,8 @@ export default function LotReportPage() {
 
         {/* IPE KPI */}
         {kpiIpe && kpiIpe.ipe != null && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <TrendingUp size={16} className="text-emerald-600" /> IPE {t('kpi.europeanProductionIndex', '')}
             </h2>
             <p className="text-4xl font-black text-emerald-700 mb-1">{kpiIpe.ipe}</p>
@@ -120,8 +120,8 @@ export default function LotReportPage() {
 
         {/* Weight Uniformity KPI */}
         {kpiUniformity && kpiUniformity.cv_pct != null && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <Activity size={16} className="text-blue-600" /> {t('kpi.uniformity', 'Uniformidad de Lote')}
             </h2>
             <p className={`text-4xl font-black mb-1 ${
@@ -143,8 +143,8 @@ export default function LotReportPage() {
 
         {/* AFCR KPI */}
         {kpiAfcr && kpiAfcr.afcr != null && (
-          <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-            <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <TrendingUp size={16} className="text-violet-600" /> AFCR {t('kpi.afcr', 'FCR Ajustado')}
             </h2>
             <p className={`text-4xl font-black mb-1 ${

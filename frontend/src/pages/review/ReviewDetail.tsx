@@ -96,8 +96,8 @@ export default function ReviewDetail() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Original Data */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">
+        <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">
             <ClipboardList size={18} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />
             {t('review.originalData')}
           </h2>
@@ -155,8 +155,8 @@ export default function ReviewDetail() {
         </div>
 
         {/* SAP Reference & Corrections */}
-        <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">
+        <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">
             <RefreshCw size={18} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />
             {t('review.sapReference')}
           </h2>
@@ -204,8 +204,8 @@ export default function ReviewDetail() {
       </div>
 
       {/* Actions */}
-      <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5">
-        <h2 className="font-semibold text-slate-700 mb-3">{t('common.actions')}</h2>
+      <div className="mt-6 bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3">{t('common.actions')}</h2>
         <div className="flex flex-wrap gap-3">
           {event.status === 'pending_review' && (
             <button onClick={() => handleAction('start')}

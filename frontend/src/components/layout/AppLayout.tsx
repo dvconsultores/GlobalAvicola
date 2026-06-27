@@ -9,16 +9,15 @@ export default function AppLayout() {
   const isMobileUser = user?.view_type === 'mobile'
 
   return (
-    <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg">
-      {/* Desktop sidebar: only for web/admin users */}
+    <div className="min-h-screen bg-[#F7F8FA] dark:bg-slate-950">
       {!isMobileUser && <Sidebar />}
       <Header />
       <main className={`pb-20 lg:pb-0 ${!isMobileUser ? 'lg:ml-64' : ''}`}>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-5 page-enter">
+        {/* Mobile: minimal padding for native-like experience. Desktop: generous padding */}
+        <div className={`mx-auto ${isMobileUser ? 'px-2 py-2' : 'max-w-7xl px-4 sm:px-6 lg:px-8 py-4 lg:py-5 page-enter'}`}>
           <Outlet />
         </div>
       </main>
-      {/* Bottom nav: only for mobile field operators */}
       {isMobileUser && <MobileNav />}
     </div>
   )

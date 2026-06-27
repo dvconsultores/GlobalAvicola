@@ -133,7 +133,7 @@ export default function MasterListPage({
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none overflow-hidden">
         <DataTable
           columns={tableColumns}
           data={items}

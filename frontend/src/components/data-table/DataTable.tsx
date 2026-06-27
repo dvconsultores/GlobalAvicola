@@ -35,17 +35,17 @@ export default function DataTable<T extends { id: number }>({
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
+          <tr className="bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-700">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="text-left px-4 py-3 font-semibold text-slate-700 dark:text-slate-300 whitespace-nowrap"
+                className="text-left px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 whitespace-nowrap"
               >
                 {col.label}
               </th>
             ))}
             {(onEdit || onDelete) && (
-              <th className="text-right px-4 py-3 font-semibold text-slate-700 dark:text-slate-300">
+              <th className="text-right px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300">
                 {t('common.actions')}
               </th>
             )}

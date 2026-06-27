@@ -151,10 +151,10 @@ export default function SapManagerPage() {
       </div>
 
       {/* Tab Content */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
         {activeTab === 'overview' && (
           <div className="p-5">
-            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.recentActivity', 'Actividad reciente')}</h3>
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.recentActivity', 'Actividad reciente')}</h3>
             {jobs.length === 0 && payloads.length === 0 ? (
               <div className="text-center py-8">
                 <RefreshCw size={32} className="mx-auto text-slate-300 mb-2" />
@@ -163,7 +163,7 @@ export default function SapManagerPage() {
             ) : (
               <div className="space-y-3">
                 {jobs.slice(0, 5).map((j: any) => (
-                  <div key={j.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div key={j.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
                     <div>
                       <p className="text-sm font-medium text-slate-700">
                         {t('sap.syncJob', 'Trabajo de sincronización')} #{j.id}
@@ -184,7 +184,7 @@ export default function SapManagerPage() {
 
         {activeTab === 'pending' && (
           <div className="p-5">
-            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.pendingDocuments', 'Documentos Pendientes')}</h3>
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.pendingDocuments', 'Documentos Pendientes')}</h3>
             {payloads.filter(p => p.status === 'pending' || p.status === 'draft').length === 0 ? (
               <div className="text-center py-8">
                 <CheckCircle size={32} className="mx-auto text-emerald-300 mb-2" />
@@ -208,7 +208,7 @@ export default function SapManagerPage() {
 
         {activeTab === 'sent' && (
           <div className="p-5">
-            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.sentDocuments', 'Enviados a SAP')}</h3>
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.sentDocuments', 'Enviados a SAP')}</h3>
             {payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').length === 0 ? (
               <div className="text-center py-8">
                 <Send size={32} className="mx-auto text-slate-300 mb-2" />
@@ -232,7 +232,7 @@ export default function SapManagerPage() {
 
         {activeTab === 'errors' && (
           <div className="p-5">
-            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.errorDocuments', 'Errores SAP')}</h3>
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.errorDocuments', 'Errores SAP')}</h3>
             {payloads.filter(p => p.status === 'error').length === 0 ? (
               <div className="text-center py-8">
                 <CheckCircle size={32} className="mx-auto text-emerald-300 mb-2" />
@@ -258,7 +258,7 @@ export default function SapManagerPage() {
 
         {activeTab === 'log' && (
           <div className="p-5">
-            <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.syncJobs', 'Trabajos de Sincronización')}</h3>
+            <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.syncJobs', 'Trabajos de Sincronización')}</h3>
             {jobs.length === 0 ? (
               <div className="text-center py-8">
                 <FileText size={32} className="mx-auto text-slate-300 mb-2" />

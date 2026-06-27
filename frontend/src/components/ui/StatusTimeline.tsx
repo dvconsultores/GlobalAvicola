@@ -80,7 +80,7 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
                 )}
 
                 {event.detail && (
-                  <p className="text-xs text-slate-500 mt-1 bg-slate-50 rounded-lg px-3 py-1.5 border border-slate-100">
+                  <p className="text-xs text-slate-500 mt-1 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-1.5 border border-slate-100">
                     {event.detail}
                   </p>
                 )}

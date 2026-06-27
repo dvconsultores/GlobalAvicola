@@ -31,8 +31,8 @@ export default function ProfilePage() {
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <h1 className="text-2xl font-bold text-[#1E3A5F] flex items-center gap-2 mb-6"><User size={24} aria-hidden="true" /> {t('profile.title')}</h1>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">
-        <h2 className="font-semibold text-slate-700 mb-4">{t('profile.personalInfo')}</h2>
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6 mb-6">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4">{t('profile.personalInfo')}</h2>
         <dl className="space-y-3 text-sm">
           <div className="flex justify-between py-2 border-b border-slate-50"><dt className="text-slate-500">{t('profile.username')}</dt><dd className="font-medium">{user?.username}</dd></div>
           <div className="flex justify-between py-2 border-b border-slate-50"><dt className="text-slate-500">{t('profile.name')}</dt><dd className="font-medium">{user?.first_name} {user?.last_name}</dd></div>
@@ -40,8 +40,8 @@ export default function ProfilePage() {
         </dl>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-        <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2"><Lock size={18} aria-hidden="true" /> {t('profile.changePassword')}</h2>
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
+        <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2"><Lock size={18} aria-hidden="true" /> {t('profile.changePassword')}</h2>
         <form onSubmit={handleChangePassword} className="space-y-3">
           <input type="password" placeholder={t('profile.currentPassword')} value={currentPassword} onChange={e => setCurrentPassword(e.target.value)}
             className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />

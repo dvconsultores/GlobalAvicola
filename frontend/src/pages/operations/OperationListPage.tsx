@@ -77,7 +77,7 @@ export default function OperationListPage() {
         : events.length === 0 ? <p className="text-slate-400 text-sm py-8 text-center">{t('common.noResults')}</p>
         : <div className="space-y-3">
           {events.map((ev: any) => (
-            <div key={ev.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between">
+            <div key={ev.id} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-4 flex items-center justify-between">
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1">
                   <ClipboardList size={20} className="text-slate-400" aria-hidden="true" />

@@ -329,7 +329,7 @@ export default function OperationFormPage() {
   // ── M+F rows helper ──────────────────────────────────────────────
   const renderMFRows = (showWeight = true) => (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
-      <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-3 py-2 bg-slate-50 border-b border-slate-200`}>
+      <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-3 py-2 bg-slate-50 dark:bg-slate-800 border-b border-slate-200`}>
         <span className="text-xs font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
         <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
         {showWeight && <span className="text-xs font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
@@ -634,7 +634,7 @@ export default function OperationFormPage() {
               </div>
             )}
             <div className="border border-slate-200 rounded-lg overflow-hidden">
-              <div className="grid grid-cols-2 px-3 py-2 bg-slate-50 border-b border-slate-200">
+              <div className="grid grid-cols-2 px-3 py-2 bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
                 <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
                 <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
               </div>
@@ -1107,7 +1107,7 @@ export default function OperationFormPage() {
                     <Icon size={26} className={s.iconColor} />
                   </div>
                   <div className="min-w-0">
-                    <p className="font-semibold text-slate-800 leading-tight">{t(s.labelKey, s.fallback)}</p>
+                    <p className="font-semibold text-slate-800 dark:text-slate-100 leading-tight">{t(s.labelKey, s.fallback)}</p>
                     <p className="text-xs text-slate-500 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
                   </div>
                 </button>
@@ -1131,7 +1131,7 @@ export default function OperationFormPage() {
             <h1 className="text-lg font-bold text-slate-800">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
           </div>
 
-          <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
+          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
           <select {...register('lot_id', { valueAsNumber: true })}
             className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
             <option value="">{t('operations.selectLot')}</option>
@@ -1143,7 +1143,7 @@ export default function OperationFormPage() {
             <p className="text-xs text-amber-600 mt-2">{t('process.noLots', 'No hay lotes activos para este proceso.')}</p>
           )}
 
-          <p className="text-sm font-semibold text-slate-700 mt-6 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-6 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
           {!lotId && <p className="text-xs text-slate-400 mb-3">{t('process.selectLotFirst', 'Selecciona un lote primero.')}</p>}
           <div className={`space-y-5 ${!lotId ? 'opacity-50 pointer-events-none' : ''} mt-3`}>
             {categoriesForStage(stage).map(({ category, events }) => {
@@ -1203,7 +1203,7 @@ export default function OperationFormPage() {
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
               <select {...register('lot_id', { valueAsNumber: true })}
                 className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
                 <option value="">{t('operations.selectLot')}</option>
@@ -1215,7 +1215,7 @@ export default function OperationFormPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.date')}</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.date')}</label>
               <input type="date" {...register('event_date')}
                 className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
             </div>
@@ -1226,7 +1226,7 @@ export default function OperationFormPage() {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.observations')}</label>
+              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.observations')}</label>
               <textarea {...register('observations')} rows={2}
                 className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
             </div>

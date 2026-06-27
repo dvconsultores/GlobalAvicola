@@ -25,7 +25,7 @@ export default function ProcessHubPage() {
               <LayoutGrid size={13} />
               {t('process.hub.eyebrow', 'Centro de Operaciones')}
             </p>
-            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
+            <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50 dark:text-slate-100 leading-tight">
               {t('process.hub.title', 'Elige un Proceso')}
             </h1>
             <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
@@ -34,12 +34,12 @@ export default function ProcessHubPage() {
           </div>
           <div className="hidden sm:flex items-center gap-4 shrink-0 pt-1">
             <div className="text-right">
-              <div className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-none">6</div>
+              <div className="text-xl font-bold text-slate-900 dark:text-slate-50 dark:text-slate-100 leading-none">6</div>
               <div className="text-[11px] text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.processes', 'Procesos')}</div>
             </div>
             <div className="w-px h-8 bg-slate-200 dark:bg-slate-700" />
             <div className="text-right">
-              <div className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-none">{totalOps}</div>
+              <div className="text-xl font-bold text-slate-900 dark:text-slate-50 dark:text-slate-100 leading-none">{totalOps}</div>
               <div className="text-[11px] text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.operations', 'Operaciones')}</div>
             </div>
           </div>
@@ -65,7 +65,7 @@ export default function ProcessHubPage() {
                       <stage.Icon size={20} strokeWidth={2} />
                     </span>
                     <div className="min-w-0 pt-0.5">
-                      <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">
+                      <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 dark:text-slate-100 leading-tight">
                         {t(stage.labelKey, stage.fallback)}
                       </h2>
                       <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-2">

@@ -111,7 +111,7 @@ export default function DashboardPage() {
       <div className="p-4 sm:p-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[1,2,3,4].map(i => (
-            <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 h-24 animate-pulse bg-slate-100" />
+            <div key={i} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 p-4 h-24 animate-pulse bg-slate-100" />
           ))}
         </div>
       </div>
@@ -318,7 +318,7 @@ export default function DashboardPage() {
     <div className="max-w-5xl mx-auto space-y-5">
       {/* Page header */}
       <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-white">{t('nav.dashboard')}</h1>
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white">{t('nav.dashboard')}</h1>
         <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
           {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
@@ -335,7 +335,7 @@ export default function DashboardPage() {
                 <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 leading-none truncate">{card.label}</p>
               </div>
               <div className="flex items-end justify-between gap-2">
-                <p className="text-2xl font-semibold text-slate-900 dark:text-white stat-value">{card.value}</p>
+                <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white stat-value">{card.value}</p>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ac.icon}`}>
                   {card.icon}
                 </div>

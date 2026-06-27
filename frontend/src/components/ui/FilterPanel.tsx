@@ -31,7 +31,7 @@ export default function FilterPanel({
       {/* Header clickeable */}
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         aria-expanded={open}
       >
         <div className="flex items-center gap-2">

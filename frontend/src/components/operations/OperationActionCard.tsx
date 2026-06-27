@@ -53,7 +53,7 @@ export default function OperationActionCard({
           {/* Content */}
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 mb-0.5">
-              <h4 className="font-bold text-slate-800 leading-tight dark:text-slate-100">{title}</h4>
+              <h4 className="font-bold text-slate-800 dark:text-slate-100 leading-tight dark:text-slate-100">{title}</h4>
               {badge && (
                 <span className="inline-flex text-[10px] font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 px-1.5 py-0.5 rounded-full">
                   {badge}

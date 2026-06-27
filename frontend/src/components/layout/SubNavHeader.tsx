@@ -57,7 +57,7 @@ export default function SubNavHeader({
             <ArrowLeft size={18} />
           </button>
         )}
-        <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight">
+        <h1 className="text-xl lg:text-2xl font-extrabold text-slate-900 dark:text-slate-50 leading-tight">
           {displayTitle}
         </h1>
         {actions && (

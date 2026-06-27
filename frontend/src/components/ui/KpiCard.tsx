@@ -64,7 +64,7 @@ export default function KpiCard({
               </p>
             </div>
             {/* Value */}
-            <p className="text-2xl font-semibold text-slate-900 dark:text-white stat-value">
+            <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white stat-value">
               {value}
             </p>
             {subtitle && (

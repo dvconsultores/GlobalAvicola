@@ -75,7 +75,7 @@ export default function LotListPage() {
         {!loading && lots.length === 0 && <p className="text-slate-500 text-center py-8">{t('lots.noLots')}</p>}
         {lots.map((lot: any) => (
           <Link key={lot.id} to={`/lots/${lot.id}`}
-            className="block bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:border-[#2563EB] transition">
+            className="block bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-4 hover:border-[#2563EB] transition">
             <div className="flex items-center justify-between mb-2">
               <span className="font-mono font-semibold text-[#1E3A5F]">{lot.lot_code || `L-${lot.id}`}</span>
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100'}`}>
@@ -89,9 +89,9 @@ export default function LotListPage() {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="hidden lg:block bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 border-b border-slate-200">
+          <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
             <tr>
               <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('lots.code')}</th>
               <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('lots.type')}</th>

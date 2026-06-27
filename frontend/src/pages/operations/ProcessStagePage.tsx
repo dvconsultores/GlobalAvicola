@@ -97,7 +97,7 @@ export default function ProcessStagePage() {
           </span>
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
+              <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50 dark:text-slate-100 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
               {phaseBadge && (
                 <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${phaseBadge.color}`}>
                   <phaseBadge.icon size={11} />
@@ -112,7 +112,7 @@ export default function ProcessStagePage() {
         {selectedLot && (
           <div className="mt-3 inline-flex items-center gap-2.5 bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm">
             <Bird size={14} className="text-slate-400" />
-            <span className="font-semibold text-slate-800 dark:text-slate-100">{selectedLot.lot_code}</span>
+            <span className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{selectedLot.lot_code}</span>
             {selectedLot.current_quantity != null && (
               <span className="text-slate-400">{Number(selectedLot.current_quantity).toLocaleString()} {t('process.stage.birds', 'aves')}</span>
             )}
@@ -132,7 +132,7 @@ export default function ProcessStagePage() {
           <select
             value={lotId}
             onChange={e => setLotId(e.target.value)}
-            className="w-full h-12 px-4 bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
+            className="w-full h-12 px-4 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
           >
             <option value="">{t('process.stage.allLots', 'Sin lote — elegir al registrar')}</option>
             {stageLots.map((l: any) => (
@@ -151,7 +151,7 @@ export default function ProcessStagePage() {
 
         {/* View toggle + step count */}
         <div className="flex items-center justify-between mb-4">
-          <span className="text-sm font-bold text-slate-700 dark:text-slate-200">
+          <span className="text-sm font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">
             {flow.length} {t('process.stage.operations', 'operaciones')}
           </span>
           <div className="inline-flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1">

@@ -92,7 +92,7 @@ export default function ConfirmDialog({
         )}
 
         {/* Title */}
-        <h2 id="confirm-title" className="text-lg font-bold text-slate-900 dark:text-slate-200 text-center mb-2">
+        <h2 id="confirm-title" className="text-lg font-bold text-slate-900 dark:text-slate-50 dark:text-slate-200 text-center mb-2">
           {title}
         </h2>
 
@@ -106,7 +106,7 @@ export default function ConfirmDialog({
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+            className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           >
             {cancelLabel || t('common.cancel', 'Cancelar')}
           </button>

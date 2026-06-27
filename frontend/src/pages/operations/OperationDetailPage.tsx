@@ -131,7 +131,7 @@ export default function OperationDetailPage() {
       </Link>
 
       {/* Event Card */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
         <div className="flex items-center justify-between mb-4">
           <h1 className="text-xl font-bold text-[#1E3A5F]">{t('operations.eventDetail', { id: event.id })}</h1>
           <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100'}`}>{event.status}</span>
@@ -170,7 +170,7 @@ export default function OperationDetailPage() {
       </div>
 
       {/* Evidence Section */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
         <div className="flex items-center gap-2 mb-4">
           <Paperclip size={18} className="text-[#1A6DCC]" />
           <h2 className="text-base font-bold text-slate-800">{t('evidence.title')}</h2>
@@ -183,12 +183,12 @@ export default function OperationDetailPage() {
             {evidences.map((ev) => {
               const isImage = ev.mime_type?.startsWith('image/')
               return (
-                <li key={ev.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 group">
+                <li key={ev.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 group">
                   <div className="shrink-0 text-slate-400">
                     {isImage ? <Image size={20} className="text-blue-500" /> : <FileText size={20} className="text-red-500" />}
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-700 truncate">{ev.file_name}</p>
+                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{ev.file_name}</p>
                     <p className="text-xs text-slate-400">
                       {ev.file_size ? formatBytes(ev.file_size) : ''}
                       {ev.description ? ` · ${ev.description}` : ''}

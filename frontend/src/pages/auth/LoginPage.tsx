@@ -57,7 +57,7 @@ export default function LoginPage() {
           >
             <Bird size={24} className="text-white" strokeWidth={1.8} />
           </div>
-          <h1 className="text-[22px] font-bold text-slate-900 dark:text-white tracking-tight">
+          <h1 className="text-[22px] font-bold text-slate-900 dark:text-slate-50 dark:text-white tracking-tight">
             {t('brand.name', 'Global Avícola')}
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
@@ -91,7 +91,7 @@ export default function LoginPage() {
                   {...register('username')}
                   autoComplete="username"
                   autoFocus
-                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-slate-50 dark:text-white bg-slate-50 dark:bg-slate-800 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
                   placeholder={t('auth.usernamePlaceholder', 'username')}
                 />
               </div>
@@ -112,7 +112,7 @@ export default function LoginPage() {
                   {...register('password')}
                   type="password"
                   autoComplete="current-password"
-                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-slate-50 dark:text-white bg-slate-50 dark:bg-slate-800 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
                   placeholder="••••••••"
                 />
               </div>

@@ -115,7 +115,7 @@ export default function StageTimeline({
                           />
                         </div>
                       )}
-                      <h4 className={`font-semibold text-slate-800 leading-tight dark:text-slate-100`}>
+                      <h4 className={`font-semibold text-slate-800 dark:text-slate-100 leading-tight dark:text-slate-100`}>
                         {t(`events.${stage.event}`, stage.event)}
                       </h4>
                       {isCompleted && (

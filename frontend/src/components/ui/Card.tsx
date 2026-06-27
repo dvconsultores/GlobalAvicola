@@ -63,7 +63,7 @@ export function CardHeader({ title, subtitle, action, className = '' }: CardHead
     <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100 dark:border-dark-border ${className}`}>
       <div>
         {typeof title === 'string' ? (
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100 text-sm">{title}</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100 text-sm">{title}</h3>
         ) : title}
         {subtitle && (
           <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>

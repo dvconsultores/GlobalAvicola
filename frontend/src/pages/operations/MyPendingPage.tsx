@@ -44,7 +44,7 @@ export default function MyPendingPage() {
   useEffect(() => { fetch() }, [fetch])
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-24">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 pb-24">
       {/* Page header */}
       <div className="bg-white border-b border-slate-200 px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -87,10 +87,10 @@ export default function MyPendingPage() {
           <button
             key={op.id}
             onClick={() => navigate(`/operations/${op.id}`)}
-            className="w-full text-left bg-white rounded-xl border border-slate-200 px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
+            className="w-full text-left bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
           >
             <div className="flex items-start justify-between gap-2 mb-1">
-              <p className="text-sm font-medium text-slate-800 leading-snug">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug">
                 {t(`events.${op.event_type}`, op.event_type)}
               </p>
               <Badge variant={statusToVariant(op.status)} size="sm">
