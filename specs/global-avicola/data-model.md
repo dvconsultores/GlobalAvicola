@@ -99,22 +99,27 @@ ConsolidatedMovement(id, company_id→Company, review_batch_id→ReviewBatch,
 
 ### 1.10 Traceability Bridges (Trazabilidad Generacional)
 
-Cross-lot bridge entities that connect production generations.
+Cross-lot bridge entities that connect production generations in the full chain:
+Progenitoras → Incubadora → Reproductoras → Incubadora → Pollo Engorde.
 
 ```
-EggBatch(source_lot_id→Lot, hatchery_lot_id→Lot, dispatch_event_id→OperationalEvent,
-         reception_event_id→OperationalEvent, quantity_dispatched:int,
-         quantity_received:int?, dispatch_date, reception_date?, notes?, created_at)
+EggBatch(source_lot_id→Lot, hatchery_lot_id→Lot, generation:str?,
+         dispatch_event_id→OperationalEvent, reception_event_id→OperationalEvent,
+         quantity_dispatched:int, quantity_received:int?, dispatch_date,
+         reception_date?, notes?, created_at)
 
-ChickBatch(hatchery_lot_id→Lot, broiler_lot_id→Lot, dispatch_event_id→OperationalEvent,
+ChickBatch(hatchery_lot_id→Lot, destination_lot_id→Lot (generalized: breeder|broiler),
+           broiler_lot_id→Lot (legacy), dispatch_event_id→OperationalEvent,
            reception_event_id→OperationalEvent, egg_batch_id→EggBatch,
            quantity_dispatched:int, quantity_received:int?, dispatch_date,
            reception_date?, notes?, created_at)
 ```
 
-**Generational chain:** `Lot(production)` → `EggBatch` → `Lot(hatchery)` → `ChickBatch` → `Lot(broiler)`
+**Generational chain:** `Lot(grandparent_prod)` → `EggBatch(gen=grandparent)` → `Lot(hatchery)` → `ChickBatch(dest=breeder)` → `Lot(breeder_rearing)` → ... → `Lot(breeder_prod)` → `EggBatch(gen=breeder)` → `Lot(hatchery)` → `ChickBatch(dest=broiler)` → `Lot(broiler)`
 
-Endpoints: `GET /lots/{id}/traceability` returns the full ancestry tree.
+Endpoints: `GET /lots/{id}/traceability` returns the full ancestry tree with both
+egg and chick directions. `POST /lots/egg-batches` and `POST /lots/chick-batches`
+for manual linking.
 
 ---
 

@@ -1,6 +1,6 @@
 /**
  * TraceabilityTree — Árbol de trazabilidad generacional para un lote
- * REPRODUCTORAS → INCUBADORA → ENGORDE
+ * Cadena completa: PROGENITORAS → INCUBADORA → REPRODUCTORAS → INCUBADORA → ENGORDE
  * Consume GET /lots/{id}/traceability
  */
 import { useState, useEffect } from 'react'
@@ -32,11 +32,13 @@ interface EggBatch {
 interface ChickBatch {
   id: number
   hatchery_lot_id: number
+  destination_lot_id?: number
   broiler_lot_id?: number
   quantity_dispatched: number
   quantity_received?: number
   dispatch_date: string
   hatchery_lot?: LotRef
+  destination_lot?: LotRef
   broiler_lot?: LotRef
 }
 
@@ -75,7 +77,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
   const [linkError, setLinkError] = useState('')
   const today = new Date().toISOString().split('T')[0]
   const [eggForm, setEggForm] = useState({ hatcheryLotId: '', quantity: '', date: today })
-  const [chickForm, setChickForm] = useState({ broilerLotId: '', quantity: '', date: today })
+  const [chickForm, setChickForm] = useState({ destinationLotId: '', quantity: '', date: today })
 
   const handleCreateEggBatch = async () => {
     setLinking(true)
@@ -102,7 +104,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
     try {
       await api.post('/lots/chick-batches', {
         hatchery_lot_id: Number(lotId),
-        broiler_lot_id: Number(chickForm.broilerLotId) || null,
+        destination_lot_id: Number(chickForm.destinationLotId) || null,
         quantity_dispatched: Number(chickForm.quantity),
         dispatch_date: chickForm.date,
       })
@@ -234,10 +236,10 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
                 {b.quantity_received != null && (
                   <span className="text-xs text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
                 )}
-                {b.broiler_lot && (
+                {(b.destination_lot || b.broiler_lot) && (
                   <>
                     <ArrowRight size={13} className="text-slate-300 shrink-0" />
-                    <LotChip lot={b.broiler_lot} />
+                    <LotChip lot={b.destination_lot || b.broiler_lot!} />
                   </>
                 )}
               </div>
@@ -282,7 +284,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
 
       {/* F-02: Link creation buttons */}
       <div className="flex flex-wrap gap-2 pt-2 border-t border-slate-100">
-        {birdType === 'breeder' && (
+        {(birdType === 'breeder' || birdType === 'grandparent') && (
           <Button
             size="sm"
             variant="outline"
@@ -364,12 +366,12 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
       >
         <div className="space-y-4">
           <Input
-            label={t('traceability.broilerLotId', 'Lote de engorde destino')}
+            label={t('traceability.destinationLotId', 'Lote destino (reproductoras o engorde)')}
             type="number"
             min={1}
-            placeholder="ID del lote BROILER"
-            value={chickForm.broilerLotId}
-            onChange={e => setChickForm(prev => ({ ...prev, broilerLotId: e.target.value }))}
+            placeholder="ID del lote destino"
+            value={chickForm.destinationLotId}
+            onChange={e => setChickForm(prev => ({ ...prev, destinationLotId: e.target.value }))}
           />
           <Input
             label={t('traceability.quantity', 'Cantidad de pollitos')}

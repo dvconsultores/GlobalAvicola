@@ -300,33 +300,43 @@ HatcheryMovement
 ### 4.4 Trazabilidad Generacional (Traceability Bridges)
 
 Los puentes de trazabilidad (`EggBatch`, `ChickBatch`) conectan lotes de distintas
-generaciones productivas, permitiendo rastrear el linaje completo de las aves desde
-Progenitoras → Reproductoras → Incubadora → Pollo de Engorde.
+generaciones productivas, permitiendo rastrear el linaje completo de las aves:
 
 ```
-┌─────────────────────────────────────────────────────────────────┐
-│                 TRAZABILIDAD GENERACIONAL                        │
-│                                                                  │
-│  Reproductoras (Prod.)          Incubadora          Engorde      │
-│  ┌──────────┐                  ┌──────────┐        ┌──────────┐ │
-│  │ Lote #5  │── egg_dispatch ─→│ Lote #8  │        │ Lote #12 │ │
-│  │ (huevos) │  egg_reception   │(incubac.)│─chick─→│(engorde) │ │
-│  └──────────┘                  └──────────┘ dispatch└──────────┘ │
-│       │                             │          bird_reception    │
-│       │      EggBatch               │      ChickBatch            │
-│       └─────────────────────────────┴─────────────────────────── │
-│              source_lot → hatchery_lot → broiler_lot             │
-└─────────────────────────────────────────────────────────────────┘
+┌──────────────────────────────────────────────────────────────────────────────┐
+│                      CADENA GENERACIONAL COMPLETA                              │
+│                                                                               │
+│  Progenitoras (Prod.)    Incubadora 1      Reproductoras (Cría)                │
+│  ┌──────────┐           ┌──────────┐       ┌──────────┐                       │
+│  │ Lote GP  │──eggs──→  │ Lote H1  │──chicks→│ Lote BR │                       │
+│  │(huevos)  │           │(incub.)  │       │(cría)   │                       │
+│  └──────────┘           └──────────┘       └──────────┘                       │
+│       │                      │                   │                            │
+│    EggBatch              ChickBatch           ...cría...                       │
+│    gen=grandparent       destination=breeder                                   │
+│                                │                   │                            │
+│                          Reproductoras (Prod.)   Incubadora 2    Pollo Engorde │
+│                          ┌──────────┐           ┌──────────┐    ┌──────────┐  │
+│                          │ Lote BR  │──eggs──→  │ Lote H2  │─chicks→│ Lote BL│  │
+│                          │(huevos)  │           │(incub.)  │       │(engorde)│  │
+│                          └──────────┘           └──────────┘    └──────────┘  │
+│                               │                      │               │        │
+│                            EggBatch              ChickBatch          │        │
+│                            gen=breeder           destination=broiler          │
+└──────────────────────────────────────────────────────────────────────────────┘
 ```
 
-**EggBatch** — Puente entre un lote de Reproductoras/Progenitoras (Producción)
-y un lote de Incubadora. Se crea al despachar huevos fértiles.
+**EggBatch** — Puente entre un lote de Progenitoras/Reproductoras (Producción)
+y un lote de Incubadora. El campo `generation` discrimina huevos de abuelas
+(`"grandparent"`, producen reproductoras) de huevos de reproductoras
+(`"breeder"`, producen pollos de engorde).
 
 ```
 EggBatch
 ├── id: Integer PK
 ├── source_lot_id: FK → Lot (lote productor de huevos, NOT NULL)
 ├── hatchery_lot_id: FK → Lot (lote de incubadora receptor, nullable)
+├── generation: String(20) — "grandparent" | "breeder" (nullable)
 ├── dispatch_event_id: FK → OperationalEvent (egg_dispatch)
 ├── reception_event_id: FK → OperationalEvent (egg_reception_hatchery)
 ├── quantity_dispatched: Integer (default 0)
@@ -337,15 +347,17 @@ EggBatch
 └── created_at: DateTime(tz)
 ```
 
-**ChickBatch** — Puente entre un lote de Incubadora y un lote de Engorde.
-Se crea al despachar pollitos nacidos. Referencia el EggBatch del que provienen
-los huevos incubados.
+**ChickBatch** — Puente entre un lote de Incubadora y un lote destino
+(Reproductoras Cría o Pollo Engorde). `destination_lot_id` generaliza el antiguo
+`broiler_lot_id` para soportar ambas rutas. Referencia el `EggBatch` del que
+provienen los huevos incubados.
 
 ```
 ChickBatch
 ├── id: Integer PK
 ├── hatchery_lot_id: FK → Lot (lote de incubadora, NOT NULL)
-├── broiler_lot_id: FK → Lot (lote de engorde receptor, nullable)
+├── destination_lot_id: FK → Lot (lote destino: breeder o broiler, nullable)
+├── broiler_lot_id: FK → Lot (legacy, sincronizado con destination, nullable)
 ├── dispatch_event_id: FK → OperationalEvent (chick_dispatch)
 ├── reception_event_id: FK → OperationalEvent (bird_reception)
 ├── egg_batch_id: FK → EggBatch (lote de huevos origen, nullable)
@@ -359,10 +371,12 @@ ChickBatch
 
 **Reglas de trazabilidad:**
 - Un `EggBatch` vincula exactamente un lote origen (producción) con un lote destino (incubadora)
-- Un `ChickBatch` vincula un lote de incubadora con un lote de engorde, y opcionalmente referencia el `EggBatch` del que provienen los huevos
+- Un `ChickBatch` vincula un lote de incubadora con un lote destino (cría de reproductoras o engorde)
+- `ChickBatch.destination_lot_id` acepta cualquier tipo de lote; `broiler_lot_id` se mantiene por compatibilidad
+- `EggBatch.generation` permite filtrar/filtrar huevos de progenitoras vs reproductoras
 - La trazabilidad es bidireccional: desde cualquier lote se puede navegar a sus lotes padre e hijo
 - Los endpoints `GET /lots/{id}/traceability` devuelven el árbol genealógico completo
-- La creación de lotes puede ser manual (vía `POST /lots/egg-batches`, `POST /lots/chick-batches`) o automática al registrarse los eventos operativos correspondientes
+- La creación de batches puede ser manual (vía `POST /lots/egg-batches`, `POST /lots/chick-batches`) o automática al registrarse los eventos operativos correspondientes
 
 ---
 

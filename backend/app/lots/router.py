@@ -167,7 +167,16 @@ async def get_lot_traceability(
     egg_recv = egg_recv_r.scalars().all()
     chick_sent_r = await db.execute(select(ChickBatch).where(ChickBatch.hatchery_lot_id == lot_id))
     chick_sent = chick_sent_r.scalars().all()
-    chick_recv_r = await db.execute(select(ChickBatch).where(ChickBatch.broiler_lot_id == lot_id))
+    # Received chicks: destination_lot_id (generalized) OR legacy broiler_lot_id
+    from sqlalchemy import or_
+    chick_recv_r = await db.execute(
+        select(ChickBatch).where(
+            or_(
+                ChickBatch.destination_lot_id == lot_id,
+                ChickBatch.broiler_lot_id == lot_id,
+            )
+        )
+    )
     chick_recv = chick_recv_r.scalars().all()
 
     lot_ref = schemas.LotRef(
@@ -205,9 +214,15 @@ async def create_chick_batch(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    """Link a hatchery lot → broiler lot via chick batch."""
+    """Link a hatchery lot → destination lot (breeder or broiler) via chick batch."""
     from .models import ChickBatch
-    batch = ChickBatch(**data.model_dump())
+    payload = data.model_dump()
+    # Sync: if destination_lot_id provided, also set broiler_lot_id for backward compat
+    if payload.get("destination_lot_id") and not payload.get("broiler_lot_id"):
+        payload["broiler_lot_id"] = payload["destination_lot_id"]
+    elif payload.get("broiler_lot_id") and not payload.get("destination_lot_id"):
+        payload["destination_lot_id"] = payload["broiler_lot_id"]
+    batch = ChickBatch(**payload)
     db.add(batch)
     await db.flush()
     await db.refresh(batch)

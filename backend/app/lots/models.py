@@ -98,7 +98,9 @@ from ..masters.models import ProductivePhase  # noqa: E402, F811
 class EggBatch(Base):
     """
     Tracks fertilized egg batches from breeder/grandparent lot → hatchery lot.
-    Bridges the production chain: REPRODUCTORAS → INCUBADORA.
+    Bridges the production chain: PROGENITORAS/REPRODUCTORAS → INCUBADORA.
+    generation discriminates grandparent-egg batches (→ breeder chicks)
+    from breeder-egg batches (→ broiler chicks).
     """
     __tablename__ = "egg_batches"
 
@@ -107,6 +109,8 @@ class EggBatch(Base):
     source_lot_id: Mapped[int] = mapped_column(Integer, ForeignKey("lots.id"), index=True)
     # Destination: hatchery lot that receives these eggs
     hatchery_lot_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("lots.id"), nullable=True, index=True)
+    # Generation discriminator: "grandparent" (→ breeder chicks) or "breeder" (→ broiler chicks)
+    generation: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     # Reference to the egg_dispatch operational event
     dispatch_event_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("operational_events.id"), nullable=True)
     # Reference to the egg_reception_hatchery operational event
@@ -125,24 +129,27 @@ class EggBatch(Base):
     hatchery_lot: Mapped[Optional["Lot"]] = relationship("Lot", foreign_keys=[hatchery_lot_id], lazy="selectin")
 
     def __repr__(self) -> str:
-        return f"<EggBatch id={self.id} source={self.source_lot_id} → hatchery={self.hatchery_lot_id}>"
+        return f"<EggBatch id={self.id} source={self.source_lot_id} → hatchery={self.hatchery_lot_id} gen={self.generation}>"
 
 
 class ChickBatch(Base):
     """
-    Tracks chick batches from hatchery lot → broiler lot.
-    Bridges the production chain: INCUBADORA → ENGORDE.
+    Tracks chick batches from hatchery lot → destination lot (breeder or broiler).
+    Bridges the production chain: INCUBADORA → REPRODUCTORAS (cría) or ENGORDE.
+    destination_lot_id generalizes the old broiler_lot_id to support both paths.
     """
     __tablename__ = "chick_batches"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     # Source: hatchery lot
     hatchery_lot_id: Mapped[int] = mapped_column(Integer, ForeignKey("lots.id"), index=True)
-    # Destination: broiler lot that receives these chicks
+    # Destination: breeder (rearing) lot or broiler lot (generalized from broiler-only)
+    destination_lot_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("lots.id"), nullable=True, index=True)
+    # Legacy: kept for backward compatibility, synced with destination_lot_id on write
     broiler_lot_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("lots.id"), nullable=True, index=True)
     # Reference to the chick_dispatch operational event
     dispatch_event_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("operational_events.id"), nullable=True)
-    # Reference to the bird_reception (broiler) operational event
+    # Reference to the bird_reception operational event
     reception_event_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("operational_events.id"), nullable=True)
     # Back-link to the egg batch that produced these chicks
     egg_batch_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("egg_batches.id"), nullable=True)
@@ -157,5 +164,6 @@ class ChickBatch(Base):
 
     # Relationships
     hatchery_lot: Mapped["Lot"] = relationship("Lot", foreign_keys=[hatchery_lot_id], lazy="selectin")
+    destination_lot: Mapped[Optional["Lot"]] = relationship("Lot", foreign_keys=[destination_lot_id], lazy="selectin")
     broiler_lot: Mapped[Optional["Lot"]] = relationship("Lot", foreign_keys=[broiler_lot_id], lazy="selectin")
     egg_batch: Mapped[Optional["EggBatch"]] = relationship("EggBatch", lazy="selectin")

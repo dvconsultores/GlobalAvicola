@@ -139,6 +139,7 @@ class EggBatchRead(BaseModel):
     id: int
     source_lot_id: int
     hatchery_lot_id: Optional[int] = None
+    generation: Optional[str] = None  # "grandparent" | "breeder"
     quantity_dispatched: int
     quantity_received: Optional[int] = None
     dispatch_date: date
@@ -151,13 +152,15 @@ class EggBatchRead(BaseModel):
 class ChickBatchRead(BaseModel):
     id: int
     hatchery_lot_id: int
-    broiler_lot_id: Optional[int] = None
+    destination_lot_id: Optional[int] = None  # Generalized: breeder or broiler
+    broiler_lot_id: Optional[int] = None  # Legacy, synced with destination
     egg_batch_id: Optional[int] = None
     quantity_dispatched: int
     quantity_received: Optional[int] = None
     dispatch_date: date
     reception_date: Optional[date] = None
     hatchery_lot: Optional[LotRef] = None
+    destination_lot: Optional[LotRef] = None
     broiler_lot: Optional[LotRef] = None
     model_config = {"from_attributes": True}
 
@@ -165,6 +168,7 @@ class ChickBatchRead(BaseModel):
 class EggBatchCreate(BaseModel):
     source_lot_id: int
     hatchery_lot_id: Optional[int] = None
+    generation: Optional[str] = None  # "grandparent" | "breeder"
     dispatch_event_id: Optional[int] = None
     quantity_dispatched: int
     dispatch_date: date
@@ -173,7 +177,8 @@ class EggBatchCreate(BaseModel):
 
 class ChickBatchCreate(BaseModel):
     hatchery_lot_id: int
-    broiler_lot_id: Optional[int] = None
+    destination_lot_id: Optional[int] = None  # Generalized: breeder or broiler lot
+    broiler_lot_id: Optional[int] = None  # Legacy, synced if destination not set
     dispatch_event_id: Optional[int] = None
     egg_batch_id: Optional[int] = None
     quantity_dispatched: int
