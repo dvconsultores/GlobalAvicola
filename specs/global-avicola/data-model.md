@@ -97,6 +97,25 @@ ConsolidatedMovement(id, company_id→Company, review_batch_id→ReviewBatch,
                      status:enum, consolidated_by→User, consolidated_at, sent_to_sap_at)
 ```
 
+### 1.10 Traceability Bridges (Trazabilidad Generacional)
+
+Cross-lot bridge entities that connect production generations.
+
+```
+EggBatch(source_lot_id→Lot, hatchery_lot_id→Lot, dispatch_event_id→OperationalEvent,
+         reception_event_id→OperationalEvent, quantity_dispatched:int,
+         quantity_received:int?, dispatch_date, reception_date?, notes?, created_at)
+
+ChickBatch(hatchery_lot_id→Lot, broiler_lot_id→Lot, dispatch_event_id→OperationalEvent,
+           reception_event_id→OperationalEvent, egg_batch_id→EggBatch,
+           quantity_dispatched:int, quantity_received:int?, dispatch_date,
+           reception_date?, notes?, created_at)
+```
+
+**Generational chain:** `Lot(production)` → `EggBatch` → `Lot(hatchery)` → `ChickBatch` → `Lot(broiler)`
+
+Endpoints: `GET /lots/{id}/traceability` returns the full ancestry tree.
+
 ---
 
 ## 2. Event Types Enum
