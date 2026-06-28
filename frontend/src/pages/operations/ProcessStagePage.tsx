@@ -57,7 +57,7 @@ export default function ProcessStagePage() {
  }
 
  return (
- <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
+ <div className="min-h-screen bg-slate-100 dark:bg-slate-950 pb-24 lg:pb-8 transition-colors duration-200">
  {/* Page header */}
  <div className="max-w-2xl mx-auto px-4 pt-5 pb-4">
  <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300 mb-3 transition-colors">
@@ -91,14 +91,14 @@ export default function ProcessStagePage() {
  <div className="inline-flex bg-slate-100 dark:bg-slate-700 rounded-xl p-1">
  <button
  onClick={() => setView('grid')}
- className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'grid' ? 'bg-white dark:bg-slate-800 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
+ className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'grid' ? 'bg-white dark:bg-slate-800 text-[#5a9bba] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
  aria-pressed={view === 'grid'}
  >
  <LayoutGrid size={15} /> {t('process.stage.viewGrid', 'Cuadrícula')}
  </button>
  <button
  onClick={() => setView('sequence')}
- className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'sequence' ? 'bg-white dark:bg-slate-800 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
+ className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'sequence' ? 'bg-white dark:bg-slate-800 text-[#5a9bba] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
  aria-pressed={view === 'sequence'}
  >
  <ListOrdered size={15} /> {t('process.stage.viewSequence', 'Secuencia')}

@@ -165,7 +165,7 @@ export default function ReportsPage() {
  <YAxis fontSize={11} />
  <Tooltip />
  <Legend />
- <Line type="monotone" dataKey="weight_g" stroke="#2563EB" name={t('reports.weightG')} strokeWidth={2} dot={{ r: 4 }} />
+ <Line type="monotone" dataKey="weight_g" stroke="#5a9bba" name={t('reports.weightG')} strokeWidth={2} dot={{ r: 4 }} />
  </LineChart>
  </ResponsiveContainer>
  </div>

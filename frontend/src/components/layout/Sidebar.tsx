@@ -70,7 +70,7 @@ export default function Sidebar() {
  return (
  <aside
  className="hidden lg:flex flex-col w-64 min-h-screen fixed left-0 top-0 z-30"
- style={{ background: 'linear-gradient(180deg, #071829 0%, #0F3361 100%)' }}
+ style={{ background: 'linear-gradient(180deg, #162e3a 0%, #264c5f 50%, #3d748f 100%)' }}
  >
  {/* Subtle inner highlight */}
  <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(90deg, rgba(255,255,255,0.03) 0%, transparent 100%)' }} />
@@ -80,7 +80,7 @@ export default function Sidebar() {
  <div className="flex items-center gap-3">
  <div
  className="w-9 h-9 rounded-xl flex items-center justify-center shrink-0"
- style={{ background: 'linear-gradient(135deg, #1A6DCC 0%, #3B82F6 100%)', boxShadow: '0 2px 8px rgba(26,109,204,0.4)' }}
+ style={{ background: 'linear-gradient(135deg, #5a9bba 0%, #6fabc5 100%)', boxShadow: '0 2px 8px rgba(90,155,186,0.4)' }}
  >
  <Bird size={19} className="text-white" strokeWidth={2} />
  </div>
@@ -88,7 +88,7 @@ export default function Sidebar() {
  <h1 className="text-white text-[13px] font-bold leading-none tracking-tight truncate">
  {t('brand.name', 'Global Avícola')}
  </h1>
- <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(147,197,253,0.7)' }}>
+ <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(111,171,197,0.7)' }}>
  {t('brand.tagline', 'Gestión Operativa')}
  </p>
  </div>
@@ -124,7 +124,7 @@ export default function Sidebar() {
  {/* Avatar */}
  <div
  className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
- style={{ background: 'linear-gradient(135deg, #1A6DCC 0%, #3B82F6 100%)' }}
+ style={{ background: 'linear-gradient(135deg, #5a9bba 0%, #6fabc5 100%)' }}
  >
  {initials}
  </div>
@@ -132,7 +132,7 @@ export default function Sidebar() {
  <p className="text-[13px] font-semibold text-white truncate leading-none">
  {user?.first_name ? `${user.first_name} ${user.last_name ?? ''}`.trim() : user?.username ?? ''}
  </p>
- <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(147,197,253,0.6)' }}>
+ <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(111,171,197,0.6)' }}>
  {user?.username ?? ''}
  </p>
  </div>
@@ -142,9 +142,9 @@ export default function Sidebar() {
  <Link
  to="/profile"
  className="flex-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all"
- style={{ color: 'rgba(147,197,253,0.8)' }}
+ style={{ color: 'rgba(111,171,197,0.8)' }}
  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLElement).style.color = 'white' }}
- onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.8)' }}
+ onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(111,171,197,0.8)' }}
  >
  <Settings size={13} />
  {t('nav.profile')}
@@ -152,9 +152,9 @@ export default function Sidebar() {
  <button
  onClick={logout}
  className="flex-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all"
- style={{ color: 'rgba(147,197,253,0.8)' }}
+ style={{ color: 'rgba(111,171,197,0.8)' }}
  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.15)'; (e.currentTarget as HTMLElement).style.color = '#FCA5A5' }}
- onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(147,197,253,0.8)' }}
+ onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(111,171,197,0.8)' }}
  >
  <LogOut size={13} />
  {t('auth.logout')}

@@ -105,7 +105,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  </button>
  ) : (
  <div className="flex items-center gap-2.5">
- <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#1A6DCC] to-[#3B82F6] flex items-center justify-center">
+ <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#5a9bba] to-[#6fabc5] flex items-center justify-center">
  <Bird size={15} className="text-white" />
  </div>
  <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">{t('brand.name', 'Global Avícola')}</span>

@@ -214,7 +214,7 @@ export default function LotDetailPage() {
  {/* ── Quick Actions: stage-specific operations ── */}
  <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
  <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
- <Plus size={18} className="text-[#2563EB]" />
+ <Plus size={18} className="text-[#5a9bba]" />
  {t('lots.registerOperation')}
  {phaseLabel && (
  <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300">
@@ -229,9 +229,9 @@ export default function LotDetailPage() {
  <Link
  key={eventType}
  to={`/operations/new?type=${eventType}&lot_id=${lot.id}`}
- className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50 transition-colors text-center group"
+ className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 hover:border-[#5a9bba] hover:bg-blue-50 transition-colors text-center group"
  >
- <Icon size={20} className="text-[#2563EB] group-hover:scale-110 transition-transform" />
+ <Icon size={20} className="text-[#5a9bba] group-hover:scale-110 transition-transform" />
  <span className="text-xs text-slate-600 dark:text-slate-300 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
  </Link>
  )
@@ -268,7 +268,7 @@ export default function LotDetailPage() {
  return (
  <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5 mt-4">
  <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
- <Calendar size={18} className="text-[#2563EB]" /> {t('lots.weeklyView')}</h2>
+ <Calendar size={18} className="text-[#5a9bba]" /> {t('lots.weeklyView')}</h2>
  <div className="overflow-x-auto">
  <table className="w-full text-xs">
  <thead className="bg-slate-50 dark:bg-slate-800">

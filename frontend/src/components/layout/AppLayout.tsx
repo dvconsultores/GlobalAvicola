@@ -9,7 +9,7 @@ export default function AppLayout() {
  const isMobileUser = user?.view_type === 'mobile'
 
  return (
- <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg">
+ <div className="min-h-screen bg-slate-100 dark:bg-slate-950">
  {!isMobileUser && <Sidebar />}
  <Header />
  <main className={`pb-24 lg:pb-0 ${!isMobileUser ? 'lg:ml-64' : ''}`}>

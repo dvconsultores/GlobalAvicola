@@ -124,7 +124,7 @@ export default function MasterListPage({
  placeholder={`${t('common.search')}...`}
  value={search}
  onChange={e => { setSearch(e.target.value); setPage(0) }}
- className="h-10 pl-9 pr-3 border border-slate-300 rounded-lg text-sm focus:border-[#2563EB] focus:ring-2 focus:ring-blue-200 outline-none"
+ className="h-10 pl-9 pr-3 border border-slate-300 rounded-lg text-sm focus:border-[#5a9bba] focus:ring-2 focus:ring-blue-200 outline-none"
  />
  </div>
  <Button leftIcon={<Plus size={15} />} onClick={openCreate}>

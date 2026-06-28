@@ -46,14 +46,14 @@ export default function LoginPage() {
  const toggleLang = () => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
 
  return (
- <div className="min-h-screen bg-[#F4F6F9] dark:bg-dark-bg flex flex-col items-center justify-center px-4">
+ <div className="min-h-screen bg-slate-100 dark:bg-slate-950 flex flex-col items-center justify-center px-4">
  <div className="w-full max-w-[380px]">
 
  {/* Brand mark */}
  <div className="flex flex-col items-center mb-8">
  <div
  className="w-12 h-12 rounded-2xl flex items-center justify-center mb-4"
- style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)', boxShadow: '0 4px 16px -4px rgba(11,35,64,0.4)' }}
+ style={{ background: 'linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%)', boxShadow: '0 4px 16px -4px rgba(38,76,95,0.4)' }}
  >
  <Bird size={24} className="text-white" strokeWidth={1.8} />
  </div>
@@ -66,7 +66,7 @@ export default function LoginPage() {
  </div>
 
  {/* Form card */}
- <div className="bg-white dark:bg-dark-card rounded-2xl shadow-card-md p-7">
+ <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-card-md p-7">
  <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
 
  {/* Error */}
@@ -91,7 +91,7 @@ export default function LoginPage() {
  {...register('username')}
  autoComplete="username"
  autoFocus
- className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-dark-surface placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+ className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
  placeholder={t('auth.usernamePlaceholder', 'username')}
  />
  </div>
@@ -112,7 +112,7 @@ export default function LoginPage() {
  {...register('password')}
  type="password"
  autoComplete="current-password"
- className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-dark-surface placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+ className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
  placeholder="••••••••"
  />
  </div>
@@ -124,7 +124,7 @@ export default function LoginPage() {
  type="submit"
  disabled={loading}
  className="group w-full h-11 flex items-center justify-center gap-2 rounded-xl text-sm font-semibold text-white mt-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
- style={{ background: 'linear-gradient(135deg, #0B2340 0%, #1A6DCC 100%)', boxShadow: loading ? 'none' : '0 2px 12px -2px rgba(26,109,204,0.45)' }}
+ style={{ background: 'linear-gradient(135deg, #305e75 0%, #5a9bba 100%)', boxShadow: loading ? 'none' : '0 2px 12px -2px rgba(90,155,186,0.45)' }}
  >
  {loading ? (
  <>

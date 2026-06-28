@@ -48,7 +48,7 @@ export default function KpiCard({
  role={onClick ? 'button' : undefined}
  tabIndex={onClick ? 0 : undefined}
  className={[
- 'bg-white dark:bg-dark-card rounded-xl border border-slate-200/80 dark:border-dark-border',
+ 'bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700',
  onClick ? 'cursor-pointer transition-shadow hover:shadow-card' : '',
  className,
  ].join(' ')}
@@ -81,7 +81,7 @@ export default function KpiCard({
 
  {/* Trend */}
  {trend && (
- <div className="flex items-center gap-1 mt-3 pt-3 border-t border-slate-100 dark:border-dark-border">
+ <div className="flex items-center gap-1 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
  {trend.direction === 'up' && <TrendingUp size={12} className="text-emerald-500 shrink-0" />}
  {trend.direction === 'down' && <TrendingDown size={12} className="text-red-500 shrink-0" />}
  {trend.direction === 'stable' && <Minus size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />}

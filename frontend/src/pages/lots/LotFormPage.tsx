@@ -99,7 +99,7 @@ export default function LotFormPage() {
  }
  }
 
- const selectClass = 'w-full h-10 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-[#2563EB] disabled:bg-slate-50 disabled:text-slate-400'
+ const selectClass = 'w-full h-10 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-[#5a9bba] disabled:bg-slate-50 disabled:text-slate-400'
 
  return (
  <div className="p-4 sm:p-6 max-w-2xl mx-auto">

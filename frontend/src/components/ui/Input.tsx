@@ -51,13 +51,13 @@ export function Input({
  aria-describedby={error ? errorId : helperText ? helpId : undefined}
  className={[
  'w-full h-10 border rounded-xl text-sm text-slate-900 dark:text-slate-100',
- 'bg-slate-50 dark:bg-dark-card',
+ 'bg-slate-50 dark:bg-slate-800',
  'placeholder:text-slate-400',
  'transition-all duration-150',
  'focus:outline-none focus:ring-2 focus:ring-offset-0 focus:bg-white dark:focus:bg-dark-surface',
  error
  ? 'border-red-400 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-800'
- : 'border-slate-200 dark:border-dark-border focus:border-brand-500 focus:ring-brand-400/25',
+ : 'border-slate-200 dark:border-slate-700 focus:border-brand-500 focus:ring-brand-400/25',
  leadingIcon ? 'pl-10' : 'pl-3.5',
  trailingIcon ? 'pr-10' : 'pr-3.5',
  'disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed',

@@ -172,7 +172,7 @@ export default function OperationDetailPage() {
  {/* Evidence Section */}
  <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
  <div className="flex items-center gap-2 mb-4">
- <Paperclip size={18} className="text-[#1A6DCC]" />
+ <Paperclip size={18} className="text-[#5a9bba]" />
  <h2 className="text-base font-bold text-slate-800 dark:text-slate-200">{t('evidence.title')}</h2>
  <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{t('evidence.allowedTypes')}</span>
  </div>
@@ -232,7 +232,7 @@ export default function OperationDetailPage() {
  className="w-full h-9 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
  <label className={`flex items-center gap-2 cursor-pointer w-full justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
- ${uploading ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-[#1A6DCC] text-white hover:bg-[#155bb5]'}`}>
+ ${uploading ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-[#5a9bba] text-white hover:bg-[#155bb5]'}`}>
  <Upload size={16} />
  {uploading ? t('evidence.uploading') : t('evidence.uploadButton')}
  <input

@@ -48,7 +48,7 @@ export default function MyPendingPage() {
  {/* Page header */}
  <div className="bg-white dark:bg-slate-800 border-b border-slate-200 px-4 py-4 flex items-center justify-between">
  <div className="flex items-center gap-2">
- <Clock size={18} className="text-[#2563EB]" />
+ <Clock size={18} className="text-[#5a9bba]" />
  <h1 className="text-base font-semibold text-slate-800 dark:text-slate-200">
  {t('nav.myPending', 'Mis Pendientes')}
  </h1>

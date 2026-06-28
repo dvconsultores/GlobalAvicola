@@ -51,7 +51,7 @@ export default function Header() {
  return (
  <>
  {/* ── Desktop Header ───────────────────────────────── */}
- <header className="hidden lg:flex h-12 bg-white dark:bg-slate-800/95 dark:bg-dark-surface backdrop-blur border-b border-slate-200/70 dark:border-dark-border items-center justify-end px-5 gap-2.5 sticky top-0 z-20">
+ <header className="hidden lg:flex h-12 bg-white dark:bg-slate-800/95 dark:bg-slate-900 backdrop-blur border-b border-slate-200/70 dark:border-slate-700 items-center justify-end px-5 gap-2.5 sticky top-0 z-20">
  {/* Language toggle */}
  <button
  onClick={toggleLang}
@@ -82,7 +82,7 @@ export default function Header() {
  <button
  onClick={() => setCompanyOpen(v => !v)}
  disabled={isSwitching}
- className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border hover:bg-slate-100 dark:hover:bg-dark-card/80 transition-colors disabled:opacity-60"
+ className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-dark-card/80 transition-colors disabled:opacity-60"
  title={t('company.selector')}
  >
  <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
@@ -93,7 +93,7 @@ export default function Header() {
  </button>
  ) : (
  /* ── Static badge for regular users ── */
- <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border">
+ <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
  <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
  <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 max-w-[140px] truncate">
  {activeCompanyName || user?.company_name}
@@ -103,8 +103,8 @@ export default function Header() {
 
  {/* Dropdown panel */}
  {companyOpen && isSuperAdmin && (
- <div className="absolute right-0 top-9 z-50 w-52 rounded-xl bg-white dark:bg-dark-surface border border-slate-200 dark:border-dark-border shadow-lg overflow-hidden">
- <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-dark-border">
+ <div className="absolute right-0 top-9 z-50 w-52 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden">
+ <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
  {t('company.selector')}
  </p>
  {companies.length === 0 ? (
@@ -138,7 +138,7 @@ export default function Header() {
  {/* Avatar */}
  <div
  className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
- style={{ background: 'linear-gradient(135deg, #0B2340 0%, #154F94 100%)' }}
+ style={{ background: 'linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%)' }}
  >
  {initials}
  </div>
@@ -161,18 +161,18 @@ export default function Header() {
  {/* ── Mobile Header ────────────────────────────────── */}
  <header
  className="lg:hidden text-white px-4 py-0 flex items-center justify-between sticky top-0 z-20"
- style={{ background: 'linear-gradient(135deg, #071829 0%, #0F3361 100%)', height: '56px' }}
+ style={{ background: 'linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%)', height: '56px' }}
  >
  <div className="flex items-center gap-2">
  <div
  className="w-7 h-7 rounded-lg flex items-center justify-center"
- style={{ background: 'rgba(26,109,204,0.7)' }}
+ style={{ background: 'rgba(90,155,186,0.7)' }}
  >
  <Bird size={15} className="text-white" strokeWidth={1.8} />
  </div>
  <div>
  <h1 className="text-[13px] font-bold leading-none">{t('brand.name')}</h1>
- <p className="text-[10px] mt-0.5 leading-none" style={{ color: 'rgba(147,197,253,0.7)' }}>
+ <p className="text-[10px] mt-0.5 leading-none" style={{ color: 'rgba(111,171,197,0.7)' }}>
  {t('brand.tagline')}
  </p>
  </div>
@@ -183,7 +183,7 @@ export default function Header() {
  <button
  onClick={toggleLang}
  className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all"
- style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(147,197,253,0.9)' }}
+ style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(111,171,197,0.9)' }}
  title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
  >
  <Globe size={15} />
@@ -194,7 +194,7 @@ export default function Header() {
  <button
  onClick={toggleDarkMode}
  className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
- style={{ color: 'rgba(147,197,253,0.8)' }}
+ style={{ color: 'rgba(111,171,197,0.8)' }}
  aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
  >
  {isDark ? <Sun size={18} /> : <Moon size={18} />}

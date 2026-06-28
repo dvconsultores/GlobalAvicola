@@ -63,7 +63,7 @@ export default function MobileNav() {
  {active && (
  <span
  className="w-1 h-1 rounded-full"
- style={{ background: 'linear-gradient(135deg, #0B2340, #154F94)' }}
+ style={{ background: 'linear-gradient(135deg, #305e75, #4e8fad)' }}
  />
  )}
  </Link>

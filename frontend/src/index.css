@@ -1,98 +1,50 @@
 /* ============================================================
-   Global Avícola — Corporate Design System v2
-   "Precision Azul" — Enterprise-grade, world-class UI
+   Global Avícola — Design System (basado en Atenea)
+   Marca: Teal-Azul corporativo
    ============================================================ */
 
-/* A-06: Self-host Inter — multiple weights for hierarchy */
 @import '@fontsource/inter/300.css';
 @import '@fontsource/inter/400.css';
 @import '@fontsource/inter/500.css';
 @import '@fontsource/inter/600.css';
 @import '@fontsource/inter/700.css';
 
-/* TailwindCSS v4 — utility engine */
 @import 'tailwindcss';
 
-/* Tailwind v4: force dark variant to follow html.dark class (not media query) */
 @custom-variant dark (&:where(.dark, .dark *));
 
-/* ── Design Tokens ────────────────────────────────────────── */
-:root {
-  /* Brand — Deep Midnight Navy */
-  --brand-950: #030C18;
-  --brand-900: #071829;
-  --brand-800: #0B2340;
-  --brand-700: #0F3361;
-  --brand-600: #154F94;
-  --brand-500: #1A6DCC;
-  --brand-400: #3B82F6;
-  --brand-300: #60A5FA;
-  --brand-200: #BFDBFE;
-  --brand-100: #DBEAFE;
-  --brand-50:  #EFF6FF;
-
-  /* Semantic */
-  --color-primary:     var(--brand-800);
-  --color-accent:      var(--brand-500);
-  --color-success:     #059669;
-  --color-warning:     #D97706;
-  --color-danger:      #DC2626;
-  --color-info:        #0891B2;
-
-  /* Surfaces */
-  --color-bg:          #F7F8FA;
-  --color-surface:     #FFFFFF;
-  --color-surface-alt: #FAFAFA;
-  --color-border:      #E4E7EC;
-  --color-border-subtle: #F1F3F6;
-
-  /* Text */
-  --color-text:         #0F172A;
-  --color-text-secondary: #475569;
-  --color-text-muted:   #94A3B8;
-
-  /* Sidebar */
-  --sidebar-from:   #071829;
-  --sidebar-to:     #0F3361;
-  --sidebar-width:  256px;
-
-  /* Shadows — clean, non-decorative */
-  --shadow-xs:   0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-sm:   0 1px 3px 0 rgb(0 0 0 / 0.06), 0 1px 2px -1px rgb(0 0 0 / 0.04);
-  --shadow-md:   0 4px 12px -2px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-  --shadow-lg:   0 8px 24px -4px rgb(0 0 0 / 0.10), 0 4px 8px -4px rgb(0 0 0 / 0.06);
-  --shadow-card: 0 1px 3px 0 rgb(15 23 42 / 0.05), 0 0 0 1px rgb(15 23 42 / 0.04);
-
-  /* Radius */
-  --radius-sm:  6px;
-  --radius-md:  10px;
-  --radius-lg:  14px;
-  --radius-xl:  18px;
-  --radius-2xl: 24px;
-
-  /* Transitions */
-  --transition-fast:   150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+/* ── Atenea Brand Gradients ─────────────────────────────── */
+.gradient-brand {
+  background: linear-gradient(145deg, #4e8fad 0%, #6fabc5 50%, #8fb5d2 100%);
+}
+.gradient-brand-soft {
+  background: linear-gradient(145deg, #b3d5e8 0%, #6fabc5 40%, #5a9bba 100%);
+}
+.gradient-brand-header {
+  background: linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%);
 }
 
-/* Dark mode */
-.dark {
-  --brand-800: #0B2340;
-  --color-bg:          #0A0F1A;
-  --color-surface:     #111827;
-  --color-surface-alt: #1C2533;
-  --color-border:      #1E293B;
-  --color-border-subtle: #162032;
-  --color-text:         #F1F5F9;
-  --color-text-secondary: #94A3B8;
-  --color-text-muted:   #475569;
-  --shadow-card: 0 1px 4px 0 rgb(0 0 0 / 0.25);
+.dark .gradient-brand {
+  background: linear-gradient(145deg, #3d748f 0%, #4e8fad 50%, #5a9bba 100%);
+}
+.dark .gradient-brand-soft {
+  background: linear-gradient(145deg, #6fabc5 0%, #5a9bba 40%, #4e8fad 100%);
+}
+.dark .gradient-brand-header {
+  background: linear-gradient(135deg, #162e3a 0%, #264c5f 50%, #3d748f 100%);
+}
+
+/* ── Glass morphism ─────────────────────────────────────── */
+.glass {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}
+.dark .glass {
+  background: rgba(15, 23, 42, 0.8);
 }
 
 /* ── Base Reset ──────────────────────────────────────────── */
-*, *::before, *::after {
-  box-sizing: border-box;
-}
+*, *::before, *::after { box-sizing: border-box; }
 
 html {
   -webkit-font-smoothing: antialiased;
@@ -103,18 +55,13 @@ html {
   -webkit-tap-highlight-color: transparent;
 }
 
-/* ── Mobile native-app optimizations ────────────────────── */
 @media (max-width: 1023px) {
-  html {
-    font-size: 17px;
-  }
+  html { font-size: 17px; }
   body {
     overscroll-behavior: none;
     -webkit-overflow-scrolling: touch;
   }
-  input, select, textarea {
-    font-size: 16px !important;
-  }
+  input, select, textarea { font-size: 16px !important; }
 }
 
 body {
@@ -123,41 +70,36 @@ body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   font-size: 14px;
   line-height: 1.6;
-  color: var(--color-text);
-  background-color: var(--color-bg);
 }
 
-#root {
-  min-height: 100vh;
-}
-
+#root { min-height: 100vh; }
 p { margin: 0; }
 
-/* ── Scrollbar refinement ─────────────────────────────────── */
+/* ── Scrollbar (atenea style) ───────────────────────────── */
 ::-webkit-scrollbar { width: 5px; height: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-text-muted); }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+.dark ::-webkit-scrollbar-thumb { background: #475569; }
+.dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
-/* ── Sidebar scrollbar ────────────────────────────────────── */
+/* ── Sidebar scrollbar ──────────────────────────────────── */
 .sidebar-scroll::-webkit-scrollbar { width: 3px; }
 .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
 .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
 
 /* ── Focus ring ──────────────────────────────────────────── */
-:focus-visible {
-  outline: 2px solid var(--brand-400);
-  outline-offset: 2px;
-}
+:focus-visible { outline: 2px solid #5a9bba; outline-offset: 2px; }
+
+/* ── Selection ───────────────────────────────────────────── */
+::selection { background: rgba(90, 155, 186, 0.2); color: inherit; }
 
 /* ── Toast animation ─────────────────────────────────────── */
 @keyframes slide-in {
   from { transform: translateX(calc(100% + 16px)); opacity: 0; }
   to   { transform: translateX(0);              opacity: 1; }
 }
-.animate-slide-in {
-  animation: slide-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
+.animate-slide-in { animation: slide-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
 
 /* ── Modal slide-up ──────────────────────────────────────── */
 @keyframes slide-up {

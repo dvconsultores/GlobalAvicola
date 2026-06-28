@@ -1078,17 +1078,17 @@ export default function OperationFormPage() {
  <div className="py-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
  {/* Stepper */}
  <nav className="flex items-center gap-1.5 text-sm font-semibold mb-5 select-none">
- <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'}>
+ <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#5a9bba]' : 'text-slate-900 dark:text-slate-100'}>
  {t('process.step1', '1 · Proceso')}
  </button>
  <span className="text-slate-900 dark:text-slate-100">/</span>
  <button type="button" disabled={!stage} onClick={() => stage && setStep(2)}
- className={`${step >= 2 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
+ className={`${step >= 2 ? 'text-[#5a9bba]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
  {t('process.step2', '2 · Operación')}
  </button>
  <span className="text-slate-900 dark:text-slate-100">/</span>
  <button type="button" disabled={!eventType} onClick={() => eventType && setStep(3)}
- className={`${step >= 3 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
+ className={`${step >= 3 ? 'text-[#5a9bba]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
  {t('process.step3', '3 · Datos')}
  </button>
  </nav>
@@ -1122,7 +1122,7 @@ export default function OperationFormPage() {
  {step === 2 && stage && selectedStageMeta && (
  <div>
  <button type="button" onClick={() => setStep(1)}
- className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#2563EB] mb-3">
+ className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#5a9bba] mb-3">
  <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
  </button>
  <div className="flex items-center gap-3 mb-5">
@@ -1149,8 +1149,8 @@ export default function OperationFormPage() {
  const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
  return (
  <button key={evt} type="button" onClick={() => chooseOperation(evt)}
- className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 bg-white dark:bg-slate-800 hover:border-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
- {EvIcon && <EvIcon size={22} className="text-[#2563EB] group-hover:scale-110 transition-transform" />}
+ className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 bg-white dark:bg-slate-800 hover:border-[#5a9bba] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
+ {EvIcon && <EvIcon size={22} className="text-[#5a9bba] group-hover:scale-110 transition-transform" />}
  <span className="text-sm text-slate-700 dark:text-slate-200 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
  </button>
  )
@@ -1180,14 +1180,14 @@ export default function OperationFormPage() {
  }
  setStep(stage ? 2 : 1)
  }}
- className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#2563EB] mb-3"
+ className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#5a9bba] mb-3"
  >
  <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
  </button>
 
  {eventType && (
  <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-800">
- {SelectedEventIcon && <SelectedEventIcon size={22} className="text-[#2563EB]" />}
+ {SelectedEventIcon && <SelectedEventIcon size={22} className="text-[#5a9bba]" />}
  <div>
  <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{t(`events.${eventType}`, eventType)}</p>
  {selectedStageMeta && (

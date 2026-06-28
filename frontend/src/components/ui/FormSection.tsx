@@ -34,7 +34,7 @@ export default function FormSection({
  const [open, setOpen] = useState(defaultOpen)
 
  return (
- <div className={`border border-slate-200 rounded-xl bg-white dark:bg-dark-card overflow-hidden ${className}`}>
+ <div className={`border border-slate-200 rounded-xl bg-white dark:bg-slate-800 overflow-hidden ${className}`}>
  {/* Header */}
  <div
  className={`flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 ${

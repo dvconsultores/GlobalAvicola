@@ -75,7 +75,7 @@ export default function LotListPage() {
  {!loading && lots.length === 0 && <p className="text-slate-500 dark:text-slate-400 text-center py-8">{t('lots.noLots')}</p>}
  {lots.map((lot: any) => (
  <Link key={lot.id} to={`/lots/${lot.id}`}
- className="block bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-4 hover:border-[#2563EB] transition">
+ className="block bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-4 hover:border-[#5a9bba] transition">
  <div className="flex items-center justify-between mb-2">
  <span className="font-mono font-semibold text-[#1E3A5F]">{lot.lot_code || `L-${lot.id}`}</span>
  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 dark:bg-slate-700'}`}>

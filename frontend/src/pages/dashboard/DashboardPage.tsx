@@ -167,9 +167,9 @@ export default function DashboardPage() {
  ]
 
  return (
- <div className="min-h-screen bg-[#F4F6F9] dark:bg-dark-bg pb-24">
+ <div className="min-h-screen bg-slate-100 dark:bg-slate-950 pb-24">
  {/* Welcome header — slim, corporate */}
- <div className="bg-gradient-to-r from-[#071829] to-[#0F3361] text-white px-4 py-4">
+ <div className="bg-gradient-to-r from-[#264c5f] to-[#3d748f] text-white px-4 py-4">
  <div className="flex items-center gap-2">
  <Sparkles size={16} className="text-blue-300" />
  <div>
@@ -289,7 +289,7 @@ export default function DashboardPage() {
  <span className="font-semibold text-slate-800 dark:text-slate-200">{count as number}</span>
  </div>
  <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
- <div className="h-full bg-[#2563EB] rounded-full transition-all" style={{ width: `${pct}%` }} />
+ <div className="h-full bg-[#5a9bba] rounded-full transition-all" style={{ width: `${pct}%` }} />
  </div>
  </div>
  )
@@ -451,7 +451,7 @@ export default function DashboardPage() {
  {summaryCards.map((card, i) => {
  const ac = CARD_ACCENT_COLORS[i]
  return (
- <div key={i} className="bg-white dark:bg-dark-card rounded-xl border border-slate-200/80 dark:border-dark-border p-4">
+ <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-4">
  <div className="flex items-center gap-1.5 mb-2">
  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ac.dot}`} />
  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 leading-none truncate">{card.label}</p>
@@ -563,7 +563,7 @@ export default function DashboardPage() {
  </div>
  <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
  <div
- className="h-full bg-[#2563EB] rounded-full transition-all"
+ className="h-full bg-[#5a9bba] rounded-full transition-all"
  style={{ width: `${pct}%` }}
  />
  </div>

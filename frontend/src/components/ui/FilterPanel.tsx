@@ -27,7 +27,7 @@ export default function FilterPanel({
  const [open, setOpen] = useState(true)
 
  return (
- <div className="bg-white dark:bg-dark-card rounded-xl border border-slate-200 mb-4 overflow-hidden">
+ <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 mb-4 overflow-hidden">
  {/* Header clickeable */}
  <button
  onClick={() => setOpen(!open)}

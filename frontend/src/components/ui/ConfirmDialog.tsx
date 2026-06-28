@@ -69,7 +69,7 @@ export default function ConfirmDialog({
  />
 
  {/* Modal */}
- <div className="relative bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
+ <div className="relative bg-white dark:bg-slate-800 rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
  role="dialog"
  aria-modal="true"
  aria-labelledby="confirm-title"

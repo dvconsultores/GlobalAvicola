@@ -16,7 +16,7 @@ export default function ProcessHubPage() {
  const totalOps = PROCESS_STAGES.reduce((acc, s) => acc + flowForStage(s.key).length, 0)
 
  return (
- <div className="min-h-screen bg-[#F7F8FA] pb-24 lg:pb-8 transition-colors duration-200">
+ <div className="min-h-screen bg-slate-100 pb-24 lg:pb-8 transition-colors duration-200">
  {/* Page header */}
  <div className="max-w-5xl mx-auto px-4 pt-5 pb-4">
  <div className="flex items-start justify-between gap-4">
