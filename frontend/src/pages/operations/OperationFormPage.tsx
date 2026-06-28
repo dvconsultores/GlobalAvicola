@@ -51,7 +51,7 @@ function RangeIndicator({ value, min, max, unit, weekLabel }: {
   const s = getRangeStatus(value, min, max)
   if (s === 'none') return null
   const cfg: Record<RangeStatus, { bg: string; text: string; icon: string }> = {
-    ok:    { bg: 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', icon: '✅' },
+    ok:    { bg: 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300 dark:text-emerald-400', icon: '✅' },
     warn:  { bg: 'bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800',    text: 'text-amber-700 dark:text-amber-300',   icon: '⚠️' },
     error: { bg: 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800',         text: 'text-red-700 dark:text-red-300',    icon: '❌' },
     none:  { bg: '', text: '', icon: '' },
@@ -148,7 +148,7 @@ const operationSchema = z.object({
 type OperationFormData = z.infer<typeof operationSchema>
 
 // Shared CSS helpers (module-level to avoid recreating on each render)
-const ic = 'w-full h-11 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-base text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
+const ic = 'w-full h-11 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-base text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none'
 const lc = 'block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5'
 
 // ============================================================
@@ -326,12 +326,12 @@ export default function OperationFormPage() {
   const renderMFRows = (showWeight = true) => (
     <div>
       <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2 border-b border-slate-200 dark:border-slate-700`}>
-        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.sex', 'Sexo')}</span>
-        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.quantity', 'Cantidad')}</span>
-        {showWeight && <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
+        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.sex', 'Sexo')}</span>
+        <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
+        {showWeight && <span className="text-sm font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
       </div>
       {[
-        { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700 dark:text-blue-300' },
+        { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:text-blue-300 dark:text-blue-400' },
         { idx: 1, defaultSex: 'female', label: t('operations.females', 'Hembras'), color: 'text-pink-700' },
       ].map(({ idx, defaultSex, label, color }) => (
         <div key={idx} className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0`}>
@@ -491,7 +491,7 @@ export default function OperationFormPage() {
 
       case 'bird_distribution': return (
         <div className="space-y-3">
-          <p className="text-xs text-slate-500 dark:text-slate-400">{t('operations.addHouseRows', 'Añade una fila por galpón destino')}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.addHouseRows', 'Añade una fila por galpón destino')}</p>
           {birdFields.map((field, i) => (
             <div key={field.id} className="grid grid-cols-[1fr_90px_90px_auto] gap-2 items-end">
               <div>
@@ -511,13 +511,13 @@ export default function OperationFormPage() {
                 <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
               </div>
               <button type="button" onClick={() => removeBird(i)}
-                className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 dark:text-red-400 border border-red-200 rounded-lg mt-4">
+                className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 dark:text-red-400 border border-red-200 dark:border-red-800 rounded-lg mt-4">
                 <Trash2 size={13} />
               </button>
             </div>
           ))}
           <button type="button" onClick={() => appendBird({ sex: 'mixed', quantity: 0 })}
-            className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
+            className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:text-blue-200 dark:text-blue-300 font-medium">
             <Plus size={14} /> {t('operations.addRow', 'Añadir galpón')}
           </button>
         </div>
@@ -631,8 +631,8 @@ export default function OperationFormPage() {
             )}
             <div>
               <div className="grid grid-cols-2 px-1 py-2 border-b border-slate-200 dark:border-slate-700">
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{t('operations.eggType', 'Tipo de huevo')}</span>
-                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{t('operations.quantity', 'Cantidad')}</span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
+                <span className="text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
               </div>
               {eggTypes.map(({ key, label }, i) => (
                 <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0">
@@ -646,7 +646,7 @@ export default function OperationFormPage() {
             </div>
             {eventType === 'egg_collection' && (
               <div className="flex flex-col gap-3">
-                <label className="text-sm font-medium text-slate-600 dark:text-slate-300">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
+                <label className="text-sm font-medium text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
                 <input type="number" step="0.1" min="0" {...register('egg_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="60.0" />
               </div>
             )}
@@ -695,11 +695,11 @@ export default function OperationFormPage() {
       case 'farm_inspection': {
         return (
           <div className="space-y-4">
-            <p className="text-xs text-slate-500 dark:text-slate-400">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
+            <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
             {houseInspFields.map((field, i) => (
               <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 dark:border-slate-700 last:border-0">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.house', 'Galpón')} {i + 1}</span>
+                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('operations.house', 'Galpón')} {i + 1}</span>
                   {i > 0 && (
                     <button type="button" onClick={() => removeHouseInsp(i)}
                       className="text-red-400 hover:text-red-600 dark:text-red-400 p-1"><Trash2 size={16} /></button>
@@ -767,7 +767,7 @@ export default function OperationFormPage() {
             ))}
             <button type="button"
               onClick={() => appendHouseInsp({ litter_condition: '' })}
-              className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
+              className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:text-blue-200 dark:text-blue-300 font-medium">
               <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
             </button>
           </div>
@@ -792,13 +792,13 @@ export default function OperationFormPage() {
             {params.map((param, i) => (
               <div key={param.key} className="flex items-center gap-3">
                 <input type="hidden" {...register(`inspection_details.${i}.parameter`)} defaultValue={param.key} />
-                <span className="text-sm text-slate-600 dark:text-slate-300 w-44 shrink-0">{param.label}</span>
+                <span className="text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 w-44 shrink-0">{param.label}</span>
                 {param.numeric ? (
                   <input type="number" step="0.1" {...register(`inspection_details.${i}.value`)}
-                    className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none" placeholder="--" />
+                    className="flex-1 h-11 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:border-blue-500 dark:border-blue-400 outline-none" placeholder="--" />
                 ) : (
                   <select {...register(`inspection_details.${i}.status`)}
-                    className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none">
+                    className="flex-1 h-11 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:border-blue-500 dark:border-blue-400 outline-none">
                     <option value="">{t('operations.selectState', 'Seleccionar...')}</option>
                     <option value="good">✅ {t('operations.good', 'Bueno')}</option>
                     <option value="regular">⚠️ {t('operations.regular', 'Regular')}</option>
@@ -813,12 +813,12 @@ export default function OperationFormPage() {
 
       case 'hatchery_inspection': return (
         <div className="space-y-4">
-          <p className="text-xs text-slate-500 dark:text-slate-400">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina (incubadora o nacedora)')}</p>
+          <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina (incubadora o nacedora)')}</p>
           {incubatorFields.map((field, i) => {
             const machineType = watch(`hatchery_params.${i}.machine_type` as any)
             return (
               <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 dark:border-slate-700 last:border-0">
-                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('operations.machine', 'Máquina')} {i + 1}</p>
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
                   <div>
                     <label className={lc}>{t('operations.machineType', 'Tipo de máquina')}</label>
@@ -871,7 +871,7 @@ export default function OperationFormPage() {
             )
           })}
           <button type="button" onClick={() => appendIncubator({ machine_type: 'incubator' } as any)}
-            className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
+            className="flex items-center gap-1.5 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:text-blue-200 dark:text-blue-300 font-medium">
             <Plus size={14} /> {t('operations.addMachine', 'Añadir máquina')}
           </button>
         </div>
@@ -1104,7 +1104,7 @@ export default function OperationFormPage() {
                   </div>
                   <div className="min-w-0">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{t(s.labelKey, s.fallback)}</p>
-                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
                   </div>
                 </button>
               )
@@ -1135,7 +1135,7 @@ export default function OperationFormPage() {
                 <div key={category.key}>
                   <div className="flex items-center gap-2 mb-2">
                     <CatIcon size={16} className={category.color} />
-                    <span className="text-sm font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+                    <span className="text-sm font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">
                       {t(category.labelKey, category.fallback)}
                     </span>
                   </div>
@@ -1144,7 +1144,7 @@ export default function OperationFormPage() {
                       const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
                       return (
                         <button key={evt} type="button" onClick={() => chooseOperation(evt)}
-                          className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
+                          className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] hover:bg-blue-50 dark:bg-blue-950 dark:hover:bg-blue-900/20 transition-colors text-center group">
                           {EvIcon && <EvIcon size={22} className="text-[#2563EB] group-hover:scale-110 transition-transform" />}
                           <span className="text-sm text-slate-700 dark:text-slate-200 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
                         </button>
@@ -1193,7 +1193,7 @@ export default function OperationFormPage() {
           )}
 
           {result && (
-            <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300'}`}>
+            <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300 dark:text-green-300' : 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300'}`}>
               {result.message}
             </div>
           )}
@@ -1202,7 +1202,7 @@ export default function OperationFormPage() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
               <select {...register('lot_id', { valueAsNumber: true })}
-                className="w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
+                className="w-full h-11 px-3 border border-slate-300 dark:border-slate-600 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 dark:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none">
                 <option value="">{t('operations.selectLot')}</option>
                 {lots.map((l: any) => (
                   <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
@@ -1215,7 +1215,7 @@ export default function OperationFormPage() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.date')}</label>
               <input type="date" {...register('event_date')}
-                className="w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
+                className="w-full h-11 px-3 border border-slate-300 dark:border-slate-600 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 dark:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none" />
             </div>
 
             {/* Operation-specific fields */}
@@ -1226,7 +1226,7 @@ export default function OperationFormPage() {
             <div>
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.observations')}</label>
               <textarea {...register('observations')} rows={2}
-                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
+                className="w-full px-3 py-2 border border-slate-300 dark:border-slate-600 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 dark:border-blue-400 focus:ring-2 focus:ring-blue-200 outline-none" />
             </div>
 
             <button type="submit" disabled={submitting || !eventType}

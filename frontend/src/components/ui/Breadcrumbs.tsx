@@ -39,7 +39,7 @@ export default function Breadcrumbs({
     <nav aria-label="Breadcrumb" className={`flex items-center gap-1 text-xs font-medium ${className}`}>
       {showHomeIcon && items.length > 1 && (
         <>
-          <Link to="/" className="text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors shrink-0">
+          <Link to="/" className="text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-colors shrink-0">
             <Home size={14} />
           </Link>
           <ChevronRight size={12} className="text-slate-900 dark:text-slate-100 shrink-0" />
@@ -52,13 +52,13 @@ export default function Breadcrumbs({
         return (
           <Fragment key={index}>
             {isLast ? (
-              <span className="text-slate-900 dark:text-slate-50 font-semibold truncate max-w-[200px]" aria-current="page">
+              <span className="text-slate-900 dark:text-slate-100 dark:text-slate-50 font-semibold truncate max-w-[200px]" aria-current="page">
                 {label}
               </span>
             ) : (
               <Link
                 to={item.to || '#'}
-                className="text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:hover:text-blue-400 transition-colors truncate max-w-[160px] shrink-0"
+                className="text-slate-900 dark:text-slate-100 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-400 transition-colors truncate max-w-[160px] shrink-0"
               >
                 {label}
               </Link>

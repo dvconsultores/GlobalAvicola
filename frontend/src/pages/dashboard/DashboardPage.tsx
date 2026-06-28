@@ -13,9 +13,9 @@ import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/proces
 
 // ── Alert severity styles ───────────────────────────────────────────────────
 const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
-  critical: { bar: 'bg-red-50 dark:bg-red-9500',    bg: 'bg-red-50 dark:bg-red-950',    text: 'text-red-800 dark:text-red-200',    badge: 'bg-red-100 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800' },
-  warning:  { bar: 'bg-amber-400',  bg: 'bg-amber-50 dark:bg-amber-950',  text: 'text-amber-800 dark:text-amber-200',  badge: 'bg-amber-100 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800' },
-  info:     { bar: 'bg-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950',   text: 'text-blue-800 dark:text-blue-200 dark:text-blue-300',   badge: 'bg-blue-100 text-blue-700 dark:text-blue-300 dark:text-blue-400 border-blue-200 dark:border-blue-800' },
+  critical: { bar: 'bg-red-50 dark:bg-red-9500',    bg: 'bg-red-50 dark:bg-red-950',    text: 'text-red-800 dark:text-red-200',    badge: 'bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800' },
+  warning:  { bar: 'bg-amber-400',  bg: 'bg-amber-50 dark:bg-amber-950',  text: 'text-amber-800 dark:text-amber-200',  badge: 'bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800' },
+  info:     { bar: 'bg-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950',   text: 'text-blue-800 dark:text-blue-200 dark:text-blue-300 dark:text-blue-200 dark:text-blue-300 dark:text-blue-400',   badge: 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:text-blue-300 dark:text-blue-400 border-blue-200 dark:border-blue-800' },
 }
 
 function AlertsWidget({ alerts, onResolve }: {
@@ -43,7 +43,7 @@ function AlertsWidget({ alerts, onResolve }: {
                     <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
                       {String(t(`alerts.severity.${a.severity}`, a.severity))}
                     </span>
-                    <span className="text-xs text-slate-500 dark:text-slate-400">
+                    <span className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">
                       {String(t(`alerts.type.${a.alert_type}`, a.alert_type.replace(/_/g, ' ')))}
                     </span>
                     {a.lot_id && (
@@ -56,7 +56,7 @@ function AlertsWidget({ alerts, onResolve }: {
                 </div>
                 <button
                   onClick={() => onResolve(a.id)}
-                  className="shrink-0 text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 dark:text-slate-400 p-1 rounded"
+                  className="shrink-0 text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 p-1 rounded"
                   title={t('alerts.resolve', 'Marcar como resuelta')}
                 >
                   <X size={14} />
@@ -113,7 +113,7 @@ export default function DashboardPage() {
       <div className="p-4 sm:p-6 max-w-6xl mx-auto">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           {[1,2,3,4].map(i => (
-            <div key={i} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 p-4 h-24 animate-pulse bg-slate-100 dark:bg-slate-700" />
+            <div key={i} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 p-4 h-24 animate-pulse bg-slate-100 dark:bg-slate-700" />
           ))}
         </div>
       </div>
@@ -174,7 +174,7 @@ export default function DashboardPage() {
             <Sparkles size={16} className="text-blue-300 dark:text-blue-400" />
             <div>
               <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
-              <p className="text-sm text-blue-200 dark:text-blue-300/80">
+              <p className="text-sm text-blue-200 dark:text-blue-300 dark:text-blue-400/80">
                 {isKpiRoute
                   ? t('dashboard.todayMetrics', 'Hoy')
                   : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
@@ -188,24 +188,24 @@ export default function DashboardPage() {
             <>
               {/* KPI summary for poultry processes */}
               <div className="space-y-2">
-                <h2 className="text-sm font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider">
+                <h2 className="text-sm font-bold uppercase text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 tracking-wider">
                   {t('dashboard.processKpi', 'KPIs de Procesos Avicolas')}
                 </h2>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
-                    <p className="text-xs text-slate-400 dark:text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
                     <p className="text-xl font-bold text-slate-800 dark:text-slate-200 mt-1">{data?.total_events ?? 0}</p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
-                    <p className="text-xs text-slate-400 dark:text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
-                    <p className="text-xl font-bold text-blue-700 dark:text-blue-300 dark:text-blue-400 mt-1">{data?.last_7_days ?? 0}</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
+                    <p className="text-xl font-bold text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:text-blue-300 dark:text-blue-400 mt-1">{data?.last_7_days ?? 0}</p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
-                    <p className="text-xs text-slate-400 dark:text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
                     <p className="text-xl font-bold text-amber-600 dark:text-amber-400 mt-1">{data?.pending_review ?? 0}</p>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
-                    <p className="text-xs text-slate-400 dark:text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
                     <p className="text-xl font-bold text-emerald-600 dark:text-emerald-400 mt-1">{data?.pending_approval ?? 0}</p>
                   </div>
                 </div>
@@ -220,20 +220,20 @@ export default function DashboardPage() {
                 />
                 <CardBody>
                   {totalActiveLots === 0 ? (
-                    <p className="text-sm text-slate-400 dark:text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
+                    <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
                   ) : (
                     <div className="grid grid-cols-2 gap-2">
                       {[
-                        { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-50 dark:bg-purple-950' },
-                        { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700 dark:text-blue-300 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950' },
+                        { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700 dark:text-purple-300 dark:text-purple-300', bg: 'bg-purple-50 dark:bg-purple-950' },
+                        { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:text-blue-300 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950' },
                         { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-50 dark:bg-amber-950' },
-                        { key: 'broiler', dot: 'bg-emerald-400', text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-50 dark:bg-emerald-950' },
+                        { key: 'broiler', dot: 'bg-emerald-400', text: 'text-emerald-700 dark:text-emerald-300 dark:text-emerald-400', bg: 'bg-emerald-50 dark:bg-emerald-950' },
                       ].map(({ key, dot, text, bg }) => (
                         <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-2.5`}>
                           <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
                           <div className="min-w-0">
                             <p className={`text-lg font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
-                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{t(`birdTypes.${key}`, key)}</p>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
                           </div>
                         </div>
                       ))}
@@ -285,7 +285,7 @@ export default function DashboardPage() {
                         return (
                           <div key={etype}>
                             <div className="flex justify-between text-xs mb-1">
-                              <span className="text-slate-600 dark:text-slate-300 dark:text-slate-400">{t(`events.${etype}`, etype)}</span>
+                              <span className="text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t(`events.${etype}`, etype)}</span>
                               <span className="font-semibold text-slate-800 dark:text-slate-200">{count as number}</span>
                             </div>
                             <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">
@@ -303,25 +303,25 @@ export default function DashboardPage() {
             <>
               {/* KPI Section */}
               <div className="space-y-2">
-                <h2 className="text-sm font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider">
+                <h2 className="text-sm font-bold uppercase text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 tracking-wider">
                   {t('dashboard.todayMetrics', 'Hoy')}
                 </h2>
                 <div className="grid grid-cols-3 gap-2.5">
-                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3 text-center">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-700 p-3 text-center">
                     <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data?.today_events ?? 0}</div>
-                    <div className="text-xs text-slate-400 dark:text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                    <div className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.todayEvents', 'Registros')}
                     </div>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3 text-center">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-700 p-3 text-center">
                     <div className="text-xl font-bold text-amber-600 dark:text-amber-400">{data?.pending_corrections ?? 0}</div>
-                    <div className="text-xs text-slate-400 dark:text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                    <div className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.pendingCorrections', 'Pendientes')}
                     </div>
                   </div>
-                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3 text-center">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-700 p-3 text-center">
                     <div className="text-xl font-bold text-emerald-600 dark:text-emerald-400">{data?.approved_today ?? 0}</div>
-                    <div className="text-xs text-slate-400 dark:text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                    <div className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.approvedToday', 'Aprobados')}
                     </div>
                   </div>
@@ -340,7 +340,7 @@ export default function DashboardPage() {
               )}
 
             <div className="space-y-2">
-              <h2 className="text-sm font-bold uppercase text-slate-400 dark:text-slate-400 tracking-wider">
+              <h2 className="text-sm font-bold uppercase text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 tracking-wider">
                 {t('process.hub.title', 'Procesos')}
               </h2>
               <div className="space-y-2.5">
@@ -352,40 +352,40 @@ export default function DashboardPage() {
                       {hasSubPhases ? (
                         <button
                           onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
-                          className="w-full bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
+                          className="w-full bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-700 p-3.5 flex items-center gap-3 active:bg-slate-50 dark:bg-slate-800 transition-colors text-left"
                         >
                           <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
                             <group.icon size={18} className="text-white" />
                           </span>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{t(group.labelKey, group.fallback)}</h3>
-                            <p className="text-sm text-slate-400 dark:text-slate-400 mt-0.5">
+                            <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">
                               {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
                             </p>
                           </div>
-                          {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400 dark:text-slate-400" /> : <ChevronRight size={16} className="text-slate-400 dark:text-slate-400" />}
+                          {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500" /> : <ChevronRight size={16} className="text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500" />}
                         </button>
                       ) : (
                         <Link
                           to={stagePathForKey(group.stages[0].key)}
-                          className="w-full bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
+                          className="w-full bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-slate-700 p-3.5 flex items-center gap-3 active:bg-slate-50 dark:bg-slate-800 transition-colors"
                         >
                           <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
                             <group.icon size={18} className="text-white" />
                           </span>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{t(group.labelKey, group.fallback)}</h3>
-                            <p className="text-sm text-slate-400 dark:text-slate-400 mt-0.5">
+                            <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">
                               {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
                             </p>
                           </div>
-                          <ChevronRight size={16} className="text-slate-400 dark:text-slate-400" />
+                          <ChevronRight size={16} className="text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500" />
                         </Link>
                       )}
 
                       {/* Sub-phase cards (Cría / Producción) */}
                       {hasSubPhases && expandedBird === group.id && (
-                        <div className="pl-2 space-y-2 border-l-2 border-slate-200 ml-5">
+                        <div className="pl-2 space-y-2 border-l-2 border-slate-200 dark:border-slate-700 ml-5">
                           {group.stages.map((stage) => {
                             const count = flowForStage(stage.key).length
                             const isRearing = stage.key.includes('rearing')
@@ -393,16 +393,16 @@ export default function DashboardPage() {
                               <Link
                                 key={stage.key}
                                 to={stagePathForKey(stage.key)}
-                                className="flex items-center gap-2.5 p-3 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-lg active:bg-slate-50 transition-colors"
+                                className="flex items-center gap-2.5 p-3 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700/80 dark:border-slate-700 rounded-lg active:bg-slate-50 dark:bg-slate-800 transition-colors"
                               >
                                 <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400' : 'bg-amber-50 dark:bg-amber-950 text-amber-600 dark:text-amber-400'}`}>
                                   {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
                                 </span>
                                 <div className="flex-1 min-w-0">
                                   <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t(stage.labelKey, stage.fallback)}</span>
-                                  <span className="text-xs text-slate-400 dark:text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
+                                  <span className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
                                 </div>
-                                <ChevronRight size={14} className="text-slate-300 dark:text-slate-400" />
+                                <ChevronRight size={14} className="text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500" />
                               </Link>
                             )
                           })}
@@ -432,7 +432,7 @@ export default function DashboardPage() {
   const CARD_ACCENT_COLORS = [
     { dot: 'bg-blue-50 dark:bg-blue-9500',    icon: 'text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-950' },
     { dot: 'bg-amber-50 dark:bg-amber-9500',   icon: 'text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950' },
-    { dot: 'bg-teal-50 dark:bg-teal-9500',    icon: 'text-teal-600 bg-teal-50 dark:bg-teal-950' },
+    { dot: 'bg-teal-50 dark:bg-teal-950 dark:bg-teal-9500',    icon: 'text-teal-600 dark:text-teal-400 bg-teal-50 dark:bg-teal-950 dark:bg-teal-950' },
     { dot: 'bg-emerald-50 dark:bg-emerald-9500', icon: 'text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950' },
   ]
 
@@ -440,8 +440,8 @@ export default function DashboardPage() {
     <div className="max-w-5xl mx-auto space-y-5">
       {/* Page header */}
       <div>
-        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white">{t('nav.dashboard')}</h1>
-        <p className="text-sm text-slate-400 dark:text-slate-400 dark:text-slate-500 mt-0.5">
+        <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-white">{t('nav.dashboard')}</h1>
+        <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">
           {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
       </div>
@@ -451,13 +451,13 @@ export default function DashboardPage() {
         {summaryCards.map((card, i) => {
           const ac = CARD_ACCENT_COLORS[i]
           return (
-            <div key={i} className="bg-white dark:bg-dark-card rounded-xl border border-slate-200/80 dark:border-dark-border p-4">
+            <div key={i} className="bg-white dark:bg-slate-800 dark:bg-dark-card rounded-xl border border-slate-200 dark:border-slate-700/80 dark:border-dark-border p-4">
               <div className="flex items-center gap-1.5 mb-2">
                 <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ac.dot}`} />
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-400 leading-none truncate">{card.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 leading-none truncate">{card.label}</p>
               </div>
               <div className="flex items-end justify-between gap-2">
-                <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white stat-value">{card.value}</p>
+                <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-white stat-value">{card.value}</p>
                 <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ac.icon}`}>
                   {card.icon}
                 </div>
@@ -476,20 +476,20 @@ export default function DashboardPage() {
         />
         <CardBody>
           {totalActiveLots === 0 ? (
-            <p className="text-sm text-slate-400 dark:text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
-                { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-50 dark:bg-purple-950' },
-                { key: 'breeder',     dot: 'bg-blue-400',   text: 'text-blue-700 dark:text-blue-300 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950' },
+                { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700 dark:text-purple-300 dark:text-purple-300', bg: 'bg-purple-50 dark:bg-purple-950' },
+                { key: 'breeder',     dot: 'bg-blue-400',   text: 'text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:text-blue-300 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950' },
                 { key: 'hatchery',    dot: 'bg-amber-400',  text: 'text-amber-700 dark:text-amber-300',  bg: 'bg-amber-50 dark:bg-amber-950' },
-                { key: 'broiler',     dot: 'bg-emerald-400',text: 'text-emerald-700 dark:text-emerald-300',bg: 'bg-emerald-50 dark:bg-emerald-950' },
+                { key: 'broiler',     dot: 'bg-emerald-400',text: 'text-emerald-700 dark:text-emerald-300 dark:text-emerald-400',bg: 'bg-emerald-50 dark:bg-emerald-950' },
               ].map(({ key, dot, text, bg }) => (
                 <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-3`}>
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
                   <div className="min-w-0">
                     <p className={`text-xl font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
-                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{t(`birdTypes.${key}`, key)}</p>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
                   </div>
                 </div>
               ))}
@@ -558,7 +558,7 @@ export default function DashboardPage() {
                   return (
                     <div key={etype}>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-slate-600 dark:text-slate-300 dark:text-slate-400">{t(`events.${etype}`, etype)}</span>
+                        <span className="text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t(`events.${etype}`, etype)}</span>
                         <span className="font-semibold text-slate-800 dark:text-slate-200">{count as number}</span>
                       </div>
                       <div className="h-1.5 bg-slate-100 dark:bg-slate-700 rounded-full overflow-hidden">

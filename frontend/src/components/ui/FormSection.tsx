@@ -25,7 +25,7 @@ export default function FormSection({
   title,
   description,
   icon: Icon,
-  iconColor = 'text-blue-600',
+  iconColor = 'text-blue-600 dark:text-blue-400',
   defaultOpen = true,
   collapsible = false,
   children,
@@ -34,11 +34,11 @@ export default function FormSection({
   const [open, setOpen] = useState(defaultOpen)
 
   return (
-    <div className={`border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-dark-card overflow-hidden ${className}`}>
+    <div className={`border border-slate-200 dark:border-slate-700 rounded-xl bg-white dark:bg-slate-800 dark:bg-dark-card overflow-hidden ${className}`}>
       {/* Header */}
       <div
         className={`flex items-center gap-2.5 px-4 py-3 border-b border-slate-100 dark:border-slate-700 ${
-          collapsible ? 'cursor-pointer hover:bg-slate-50 select-none' : ''
+          collapsible ? 'cursor-pointer hover:bg-slate-50 dark:bg-slate-800 select-none' : ''
         }`}
         onClick={collapsible ? () => setOpen(!open) : undefined}
       >
@@ -48,15 +48,15 @@ export default function FormSection({
           </div>
         )}
         <div className="flex-1 min-w-0">
-          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 dark:text-slate-300">{title}</h3>
+          <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 dark:text-slate-300 dark:text-slate-500">{title}</h3>
           {description && (
-            <p className="text-xs text-slate-400 mt-0.5">{description}</p>
+            <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{description}</p>
           )}
         </div>
         {collapsible && (
           <ChevronDown
             size={16}
-            className={`text-slate-400 transition-transform duration-200 ${
+            className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
               open ? 'rotate-0' : '-rotate-90'
             }`}
           />

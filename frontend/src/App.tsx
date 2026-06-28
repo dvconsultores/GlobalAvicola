@@ -36,8 +36,8 @@ function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNod
   
   // Show nothing while restoring session
   if (isLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-50">
-      <p className="text-slate-500 text-lg">{t('common.loading')}</p>
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-800">
+      <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 text-lg">{t('common.loading')}</p>
     </div>
   }
   

@@ -28,24 +28,24 @@ export default function StageTimeline({
 
   const STAGE_COLORS = [
     'from-blue-50 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950',
-    'from-teal-50 border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950',
+    'from-teal-50 border-teal-200 dark:border-teal-800 dark:border-teal-800 bg-teal-50 dark:bg-teal-950 dark:bg-teal-950',
     'from-amber-50 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950',
-    'from-orange-50 border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950',
-    'from-indigo-50 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950',
-    'from-green-50 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950',
-    'from-rose-50 border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950',
-    'from-violet-50 border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950',
+    'from-orange-50 border-orange-200 dark:border-orange-800 dark:border-orange-800 bg-orange-50 dark:bg-orange-950 dark:bg-orange-950',
+    'from-indigo-50 border-indigo-200 dark:border-indigo-800 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950 dark:bg-indigo-950',
+    'from-green-50 border-green-200 dark:border-green-800 dark:border-green-800 bg-green-50 dark:bg-green-950',
+    'from-rose-50 border-rose-200 dark:border-rose-800 dark:border-rose-800 bg-rose-50 dark:bg-rose-950 dark:bg-rose-950',
+    'from-violet-50 border-violet-200 dark:border-violet-800 dark:border-violet-800 bg-violet-50 dark:bg-violet-950 dark:bg-violet-950',
   ]
 
   const STAGE_BORDER_COLORS = [
-    'border-blue-300',
-    'border-teal-300',
-    'border-amber-300',
-    'border-orange-300',
-    'border-indigo-300',
-    'border-green-300',
-    'border-rose-300',
-    'border-violet-300',
+    'border-blue-300 dark:border-blue-700',
+    'border-teal-300 dark:border-teal-700',
+    'border-amber-300 dark:border-amber-700',
+    'border-orange-300 dark:border-orange-700',
+    'border-indigo-300 dark:border-indigo-700',
+    'border-green-300 dark:border-green-700',
+    'border-rose-300 dark:border-rose-700',
+    'border-violet-300 dark:border-violet-700',
   ]
 
   return (
@@ -70,7 +70,7 @@ export default function StageTimeline({
               onClick={() => setExpandedIndex(isExpanded ? null : index)}
               className={`w-full relative group transition-all rounded-xl border-2 overflow-hidden ${
                 isExpanded ? 'ring-2 ring-blue-400 shadow-md' : 'hover:shadow-sm'
-              } ${isCompleted ? 'border-green-300 bg-green-50 dark:bg-green-950 dark:bg-green-900/20 dark:border-green-700' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200 dark:border-slate-700'}`}
+              } ${isCompleted ? 'border-green-300 dark:border-green-700 bg-green-50 dark:bg-green-950 dark:bg-green-900/20 dark:border-green-700' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200 dark:border-slate-700'}`}
               aria-expanded={isExpanded}
               aria-controls={`stage-content-${index}`}
               aria-label={`${t(`events.${stage.event}`, stage.event)} - ${t('common.' + (isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'), isCompleted ? 'Completado' : isCurrent ? 'En progreso' : 'Pendiente')}`}
@@ -85,7 +85,7 @@ export default function StageTimeline({
                           ? 'bg-green-50 dark:bg-green-9500 dark:bg-green-600 text-white'
                           : isCurrent
                             ? 'bg-blue-600 dark:bg-blue-50 dark:bg-blue-9500 scale-110 shadow-md text-white'
-                          : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300'
+                          : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500'
                       }`}
                       aria-hidden="true"
                     >
@@ -106,30 +106,30 @@ export default function StageTimeline({
                             size={20}
                             className={
                               isCompleted
-                                ? 'text-green-600 dark:text-green-400'
+                                ? 'text-green-600 dark:text-green-400 dark:text-green-400'
                                 : isCurrent
                                   ? 'text-blue-600 dark:text-blue-400'
-                                  : 'text-slate-600 dark:text-slate-400'
+                                  : 'text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500'
                             }
                             aria-hidden="true"
                           />
                         </div>
                       )}
-                      <h4 className={`font-semibold text-slate-800 dark:text-slate-100 leading-tight dark:text-slate-100`}>
+                      <h4 className={`font-semibold text-slate-800 dark:text-slate-200 dark:text-slate-100 leading-tight dark:text-slate-100`}>
                         {t(`events.${stage.event}`, stage.event)}
                       </h4>
                       {isCompleted && (
-                        <span className="inline-flex items-center text-[11px] font-bold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/50 px-2 py-0.5 rounded-full" aria-label="Completado">
+                        <span className="inline-flex items-center text-[11px] font-bold text-green-700 dark:text-green-300 dark:text-green-400 bg-green-100 dark:bg-green-950 dark:bg-green-900/50 px-2 py-0.5 rounded-full" aria-label="Completado">
                           ✓ {t('common.completed', 'Completado')}
                         </span>
                       )}
                       {isCurrent && !isCompleted && (
-                        <span className="inline-flex items-center text-[11px] font-bold text-blue-700 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/50 px-2 py-0.5 rounded-full" aria-label="En progreso">
+                        <span className="inline-flex items-center text-[11px] font-bold text-blue-700 dark:text-blue-300 dark:text-blue-400 bg-blue-100 dark:bg-blue-950 dark:bg-blue-900/50 px-2 py-0.5 rounded-full" aria-label="En progreso">
                           → {t('common.current', 'En progreso')}
                         </span>
                       )}
                     </div>
-                    <p className={`text-xs text-slate-600 dark:text-slate-400 leading-snug`}>
+                    <p className={`text-xs text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 leading-snug`}>
                       {t(stage.descKey, stage.descFallback)}
                     </p>
                   </div>
@@ -137,7 +137,7 @@ export default function StageTimeline({
                   {/* Chevron indicator */}
                   <ChevronDown
                     size={18}
-                    className={`shrink-0 text-slate-400 dark:text-slate-400 transition-transform ${
+                    className={`shrink-0 text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 transition-transform ${
                       isExpanded ? 'rotate-180' : ''
                     }`}
                     aria-hidden="true"
@@ -146,7 +146,7 @@ export default function StageTimeline({
 
                 {/* Expanded content */}
                 {isExpanded && (
-                  <div id={`stage-content-${index}`} className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-600">
+                  <div id={`stage-content-${index}`} className="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700 dark:border-slate-600">
                     <button
                       onClick={(e) => {
                         e.stopPropagation()

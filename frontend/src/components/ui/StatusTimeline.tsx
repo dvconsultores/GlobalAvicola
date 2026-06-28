@@ -50,7 +50,7 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
   return (
     <div className={`relative ${className}`}>
       {/* Línea vertical conectora */}
-      <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-slate-200 rounded-full" />
+      <div className="absolute left-[19px] top-3 bottom-3 w-0.5 bg-slate-200 dark:bg-slate-600 rounded-full" />
 
       <div className="space-y-0">
         {events.map((event) => {
@@ -72,20 +72,20 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
               <div className="flex-1 min-w-0 pt-1">
                 <div className="flex items-center gap-2 flex-wrap">
                   <span className="text-sm font-bold text-slate-800 dark:text-slate-200">{event.action}</span>
-                  <span className="text-[11px] text-slate-400 dark:text-slate-400 font-medium">{event.date}</span>
+                  <span className="text-[11px] text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 font-medium">{event.date}</span>
                 </div>
 
                 {event.description && (
-                  <p className="text-sm text-slate-600 dark:text-slate-300 dark:text-slate-400 dark:text-slate-300 dark:text-slate-400 mt-0.5">{event.description}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-0.5">{event.description}</p>
                 )}
 
                 {event.detail && (
-                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-1.5 border border-slate-100">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1 bg-slate-50 dark:bg-slate-800 rounded-lg px-3 py-1.5 border border-slate-100">
                     {event.detail}
                   </p>
                 )}
 
-                <p className="text-xs text-slate-400 dark:text-slate-400 mt-1">
+                <p className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                   {t('common.by', 'por')} {event.user}
                 </p>
               </div>

@@ -86,9 +86,9 @@ export default function SignaturePad({
   }
 
   return (
-    <div className="border-2 border-dashed border-slate-300 rounded-xl p-3 bg-slate-50">
+    <div className="border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl p-3 bg-slate-50 dark:bg-slate-800">
       {label && (
-        <p className="text-xs font-semibold text-slate-600 mb-2 flex items-center gap-1.5">
+        <p className="text-xs font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 mb-2 flex items-center gap-1.5">
           <Pen size={13} /> {label}
         </p>
       )}
@@ -96,7 +96,7 @@ export default function SignaturePad({
         ref={canvasRef}
         width={width}
         height={height}
-        className="w-full bg-white rounded-lg border border-slate-200 cursor-crosshair touch-none"
+        className="w-full bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 cursor-crosshair touch-none"
         onPointerDown={startDrawing}
         onPointerMove={draw}
         onPointerUp={stopDrawing}
@@ -106,7 +106,7 @@ export default function SignaturePad({
         <button
           type="button"
           onClick={handleClear}
-          className="text-xs text-slate-500 hover:text-red-600 transition-colors"
+          className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-red-600 dark:text-red-400 transition-colors"
         >
           {t('common.clear', 'Limpiar')}
         </button>
@@ -114,7 +114,7 @@ export default function SignaturePad({
           <button
             type="button"
             onClick={onCancel}
-            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:text-slate-800 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 transition-colors"
+            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 hover:text-slate-800 dark:text-slate-200 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:bg-slate-800 transition-colors"
           >
             <X size={13} /> {t('common.cancel', 'Cancelar')}
           </button>

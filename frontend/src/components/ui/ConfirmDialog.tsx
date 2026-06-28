@@ -69,7 +69,7 @@ export default function ConfirmDialog({
       />
 
       {/* Modal */}
-      <div className="relative bg-white dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
+      <div className="relative bg-white dark:bg-slate-800 dark:bg-dark-card rounded-2xl shadow-xl w-full max-w-md p-6 animate-in fade-in zoom-in-95 duration-200"
         role="dialog"
         aria-modal="true"
         aria-labelledby="confirm-title"
@@ -78,7 +78,7 @@ export default function ConfirmDialog({
         <button
           onClick={onClose}
           disabled={loading}
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50"
+          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700 transition-colors disabled:opacity-50"
           aria-label={t('common.close', 'Cerrar')}
         >
           <X size={18} />
@@ -86,18 +86,18 @@ export default function ConfirmDialog({
 
         {/* Icono de advertencia */}
         {showWarning && (
-          <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 flex items-center justify-center mb-4">
-            <AlertTriangle size={24} className="text-amber-600" />
+          <div className="mx-auto w-12 h-12 rounded-full bg-amber-100 dark:bg-amber-950 flex items-center justify-center mb-4">
+            <AlertTriangle size={24} className="text-amber-600 dark:text-amber-400" />
           </div>
         )}
 
         {/* Title */}
-        <h2 id="confirm-title" className="text-lg font-bold text-slate-900 dark:text-slate-50 dark:text-slate-200 text-center mb-2">
+        <h2 id="confirm-title" className="text-lg font-bold text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-slate-200 text-center mb-2">
           {title}
         </h2>
 
         {/* Message */}
-        <p className="text-sm text-slate-600 dark:text-slate-400 text-center mb-6">
+        <p className="text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-center mb-6">
           {message}
         </p>
 
@@ -106,7 +106,7 @@ export default function ConfirmDialog({
           <button
             onClick={onClose}
             disabled={loading}
-            className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
+            className="flex-1 h-11 rounded-lg border border-slate-300 dark:border-slate-600 text-sm font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 dark:text-slate-500 hover:bg-slate-50 dark:bg-slate-800 dark:hover:bg-slate-700 transition-colors disabled:opacity-50"
           >
             {cancelLabel || t('common.cancel', 'Cancelar')}
           </button>

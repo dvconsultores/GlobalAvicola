@@ -113,18 +113,18 @@ export default function MasterListPage({
     <div className="p-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-800">{t(titleKey)}</h1>
-          <p className="text-sm text-slate-500 mt-1">{total} {t('common.results')}</p>
+          <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-200">{t(titleKey)}</h1>
+          <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">{total} {t('common.results')}</p>
         </div>
         <div className="flex gap-3">
           <div className="relative">
-            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
+            <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none" />
             <input
               type="text"
               placeholder={`${t('common.search')}...`}
               value={search}
               onChange={e => { setSearch(e.target.value); setPage(0) }}
-              className="h-10 pl-9 pr-3 border border-slate-300 rounded-lg text-sm focus:border-[#2563EB] focus:ring-2 focus:ring-blue-200 outline-none"
+              className="h-10 pl-9 pr-3 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:border-[#2563EB] focus:ring-2 focus:ring-blue-200 outline-none"
             />
           </div>
           <Button leftIcon={<Plus size={15} />} onClick={openCreate}>
@@ -133,7 +133,7 @@ export default function MasterListPage({
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none overflow-hidden">
         <DataTable
           columns={tableColumns}
           data={items}
@@ -149,7 +149,7 @@ export default function MasterListPage({
           <Button variant="outline" size="sm" disabled={page === 0} onClick={() => setPage(page - 1)}>
             ← {t('common.back')}
           </Button>
-          <span className="text-slate-500">{t('common.page')} {page + 1}</span>
+          <span className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.page')} {page + 1}</span>
           <Button variant="outline" size="sm" disabled={items.length < pageSize} onClick={() => setPage(page + 1)}>
             {t('common.next')} →
           </Button>
@@ -182,7 +182,7 @@ export default function MasterListPage({
             />
           ))}
           {formError && (
-            <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
+            <p className="text-sm text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 rounded-lg px-3 py-2">
               {formError}
             </p>
           )}
@@ -206,7 +206,7 @@ export default function MasterListPage({
           </>
         }
       >
-        <p className="text-sm text-slate-600">
+        <p className="text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500">
           {t('common.deleteWarning', 'Esta acción no se puede deshacer.')}{' '}
           {deleteTarget?.name && <strong>"{deleteTarget.name}"</strong>}
         </p>

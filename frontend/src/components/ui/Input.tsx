@@ -32,15 +32,15 @@ export function Input({
   return (
     <div className={`flex flex-col gap-1.5 ${wrapperClassName}`}>
       {label && (
-        <label htmlFor={inputId} className="text-xs font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 uppercase tracking-wide">
+        <label htmlFor={inputId} className="text-xs font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 dark:text-slate-500 uppercase tracking-wide">
           {label}
-          {props.required && <span className="text-red-500 ml-0.5" aria-hidden>*</span>}
+          {props.required && <span className="text-red-500 dark:text-red-400 ml-0.5" aria-hidden>*</span>}
         </label>
       )}
 
       <div className="relative">
         {leadingIcon && (
-          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+          <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
             {leadingIcon}
           </span>
         )}
@@ -50,24 +50,24 @@ export function Input({
           aria-invalid={!!error}
           aria-describedby={error ? errorId : helperText ? helpId : undefined}
           className={[
-            'w-full h-10 border rounded-xl text-sm text-slate-900 dark:text-slate-50 dark:text-slate-100',
-            'bg-slate-50 dark:bg-dark-card',
-            'placeholder:text-slate-400 dark:placeholder:text-slate-500',
+            'w-full h-10 border rounded-xl text-sm text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-slate-100',
+            'bg-slate-50 dark:bg-slate-800 dark:bg-dark-card',
+            'placeholder:text-slate-400 dark:text-slate-500 dark:placeholder:text-slate-500 dark:text-slate-400 dark:text-slate-500',
             'transition-all duration-150',
-            'focus:outline-none focus:ring-2 focus:ring-offset-0 focus:bg-white dark:focus:bg-dark-surface',
+            'focus:outline-none focus:ring-2 focus:ring-offset-0 focus:bg-white dark:bg-slate-800 dark:focus:bg-dark-surface',
             error
               ? 'border-red-400 dark:border-red-700 focus:border-red-500 focus:ring-red-200 dark:focus:ring-red-800'
-              : 'border-slate-200 dark:border-dark-border focus:border-brand-500 focus:ring-brand-400/25',
+              : 'border-slate-200 dark:border-slate-700 dark:border-dark-border focus:border-brand-500 focus:ring-brand-400/25',
             leadingIcon ? 'pl-10' : 'pl-3.5',
             trailingIcon ? 'pr-10' : 'pr-3.5',
-            'disabled:bg-slate-100 disabled:text-slate-400 disabled:cursor-not-allowed',
+            'disabled:bg-slate-100 dark:bg-slate-700 disabled:text-slate-400 dark:text-slate-500 disabled:cursor-not-allowed',
             className,
           ].join(' ')}
           {...props}
         />
 
         {trailingIcon && (
-          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+          <span className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-500 pointer-events-none">
             {trailingIcon}
           </span>
         )}
@@ -79,7 +79,7 @@ export function Input({
           {error}
         </p>
       ) : helperText ? (
-        <p id={helpId} className="text-xs text-slate-400 dark:text-slate-500">{helperText}</p>
+        <p id={helpId} className="text-xs text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{helperText}</p>
       ) : null}
     </div>
   )

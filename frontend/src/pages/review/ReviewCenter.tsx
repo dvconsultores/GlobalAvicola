@@ -30,11 +30,11 @@ const STATUS_VARIANT: Record<string, string> = {
 
 // Tabs de estado
 const STATUS_TABS = [
-  { key: 'pending_review', labelKey: 'review.pending', icon: Clock, color: 'text-amber-600' },
-  { key: 'in_review', labelKey: 'review.inReview', icon: Search, color: 'text-indigo-600' },
-  { key: 'returned', labelKey: 'review.returned', icon: Undo2, color: 'text-orange-600' },
-  { key: 'approved', labelKey: 'review.approved', icon: CheckCircle, color: 'text-emerald-600' },
-  { key: 'consolidated', labelKey: 'review.consolidated', icon: ListChecks, color: 'text-teal-600' },
+  { key: 'pending_review', labelKey: 'review.pending', icon: Clock, color: 'text-amber-600 dark:text-amber-400' },
+  { key: 'in_review', labelKey: 'review.inReview', icon: Search, color: 'text-indigo-600 dark:text-indigo-400' },
+  { key: 'returned', labelKey: 'review.returned', icon: Undo2, color: 'text-orange-600 dark:text-orange-300' },
+  { key: 'approved', labelKey: 'review.approved', icon: CheckCircle, color: 'text-emerald-600 dark:text-emerald-400' },
+  { key: 'consolidated', labelKey: 'review.consolidated', icon: ListChecks, color: 'text-teal-600 dark:text-teal-400' },
 ] as const
 
 type StatusTab = typeof STATUS_TABS[number]['key']
@@ -188,7 +188,7 @@ export default function ReviewCenter() {
                 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
                 ${isActive
                   ? 'bg-[#1E3A5F] text-white shadow-md'
-                  : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+                  : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:text-slate-500 border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:bg-slate-800 hover:border-slate-300 dark:border-slate-600'
                 }
               `}
             >
@@ -210,7 +210,7 @@ export default function ReviewCenter() {
             placeholder="ID"
             value={lotId}
             onChange={e => { setLotId(e.target.value); setPage(0) }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
           />
         </FilterGroup>
 
@@ -218,7 +218,7 @@ export default function ReviewCenter() {
           <select
             value={farmId}
             onChange={e => { setFarmId(e.target.value); setPage(0) }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
           >
             <option value="">{t('review.allFarms', 'Todas')}</option>
             {farms.map((f: any) => (
@@ -231,7 +231,7 @@ export default function ReviewCenter() {
           <select
             value={eventType}
             onChange={e => { setEventType(e.target.value); setPage(0) }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
           >
             <option value="">{t('common.allTypes', 'Todos')}</option>
             {EVT_KEYS.map((k) => (
@@ -244,7 +244,7 @@ export default function ReviewCenter() {
           <select
             value={operatorId}
             onChange={e => { setOperatorId(e.target.value); setPage(0) }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
           >
             <option value="">{t('review.allOperators', 'Todos')}</option>
             {users.map((u: any) => (
@@ -258,14 +258,14 @@ export default function ReviewCenter() {
             type="date"
             value={dateFrom}
             onChange={e => { setDateFrom(e.target.value); setPage(0) }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
           />
-          <span className="text-xs text-slate-400">—</span>
+          <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
           <input
             type="date"
             value={dateTo}
             onChange={e => { setDateTo(e.target.value); setPage(0) }}
-            className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+            className="border border-slate-300 dark:border-slate-600 rounded-lg px-3 py-2 text-sm focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
           />
         </FilterGroup>
       </FilterPanel>
@@ -275,38 +275,38 @@ export default function ReviewCenter() {
         {loading && (
           <div className="space-y-3">
             {[1,2,3].map(i => (
-              <div key={i} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 p-4 animate-pulse">
-                <div className="h-4 bg-slate-100 rounded w-1/3 mb-3" />
-                <div className="h-3 bg-slate-100 rounded w-2/3 mb-2" />
-                <div className="h-3 bg-slate-100 rounded w-1/2" />
+              <div key={i} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 p-4 animate-pulse">
+                <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded w-1/3 mb-3" />
+                <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-2/3 mb-2" />
+                <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-1/2" />
               </div>
             ))}
           </div>
         )}
         {!loading && events.length === 0 && (
           <div className="text-center py-12">
-            <Search size={32} className="mx-auto text-slate-300 mb-3" />
-            <p className="text-sm text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
+            <Search size={32} className="mx-auto text-slate-300 dark:text-slate-500 mb-3" />
+            <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
           </div>
         )}
         {events.map((event: any) => (
-          <div key={event.id} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+          <div key={event.id} className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm hover:shadow-md transition-shadow">
             <div className="flex items-start gap-3">
               <input
                 type="checkbox"
                 checked={!!event._checked}
                 onChange={() => toggleCheck(event.id)}
-                className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                className="mt-1 h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 mb-1.5">
-                  <span className="font-semibold text-slate-800 dark:text-slate-100 font-mono text-xs">#{event.id}</span>
+                  <span className="font-semibold text-slate-800 dark:text-slate-200 dark:text-slate-100 font-mono text-xs">#{event.id}</span>
                   <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
                     {String(t(`status.${event.status}`, event.status))}
                   </Badge>
                 </div>
-                <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{getEventLabel(t, event.event_type)}</p>
+                <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
                   {String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}
                 </p>
               </div>
@@ -314,24 +314,24 @@ export default function ReviewCenter() {
             <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
               {event.status === 'pending_review' && (
                 <button onClick={() => handleAction(event.id, 'start')}
-                  className="flex-1 bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition flex items-center justify-center gap-1.5">
+                  className="flex-1 bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-100 dark:bg-indigo-950 transition flex items-center justify-center gap-1.5">
                   <Play size={14} /> {t('review.start', 'Iniciar')}
                 </button>
               )}
               {event.status === 'in_review' && (
                 <>
                   <button onClick={() => handleAction(event.id, 'complete')}
-                    className="flex-1 bg-teal-50 text-teal-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-teal-100 transition flex items-center justify-center gap-1.5">
+                    className="flex-1 bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-teal-100 dark:bg-teal-950 transition flex items-center justify-center gap-1.5">
                     <Check size={14} /> {t('review.complete', 'Completar')}
                   </button>
                   <button onClick={() => handleAction(event.id, 'return')}
-                    className="flex-1 bg-orange-50 text-orange-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-orange-100 transition flex items-center justify-center gap-1.5">
+                    className="flex-1 bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-orange-100 dark:bg-orange-950 transition flex items-center justify-center gap-1.5">
                     <Undo2 size={14} /> {t('review.return', 'Devolver')}
                   </button>
                 </>
               )}
               <Link to={`/review/${event.id}`}
-                className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
+                className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:bg-slate-700 transition text-center flex items-center justify-center gap-1.5">
                 <ZoomIn size={14} /> {t('review.detail', 'Detalle')}
               </Link>
             </div>
@@ -340,31 +340,31 @@ export default function ReviewCenter() {
       </div>
 
       {/* Desktop Table */}
-      <div className="hidden lg:block bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+      <div className="hidden lg:block bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden shadow-sm">
         <table className="w-full text-sm">
-          <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
+          <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
             <tr>
               <th className="w-12 px-4 py-3.5 text-left">
                 <input
                   type="checkbox"
                   onChange={e => setEvents(prev => prev.map(ev => ({ ...ev, _checked: e.target.checked })))}
-                  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                  className="rounded border-slate-300 dark:border-slate-600 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                 />
               </th>
-              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.id', 'ID')}</th>
-              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
-              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
-              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
-              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
-              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
+              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 text-xs uppercase tracking-wider">{t('review.id', 'ID')}</th>
+              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
+              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
+              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
+              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
+              <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100">
             {loading && (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center">
-                  <div className="flex items-center justify-center gap-2 text-slate-400">
-                    <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
+                  <div className="flex items-center justify-center gap-2 text-slate-400 dark:text-slate-500">
+                    <div className="w-4 h-4 border-2 border-blue-600 dark:border-blue-400 border-t-transparent rounded-full animate-spin" />
                     <span className="text-sm">{t('common.loading', 'Cargando...')}</span>
                   </div>
                 </td>
@@ -373,36 +373,36 @@ export default function ReviewCenter() {
             {!loading && events.length === 0 && (
               <tr>
                 <td colSpan={7} className="px-4 py-12 text-center">
-                  <Search size={24} className="mx-auto text-slate-300 mb-2" />
-                  <p className="text-sm text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
+                  <Search size={24} className="mx-auto text-slate-300 dark:text-slate-500 mb-2" />
+                  <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
                 </td>
               </tr>
             )}
             {events.map((event: any) => {
               const EvIcon = EVENT_ICON_MAP[event.event_type]
               return (
-                <tr key={event.id} className="hover:bg-blue-50/40 transition-colors">
+                <tr key={event.id} className="hover:bg-blue-50 dark:bg-blue-950/40 transition-colors">
                   <td className="px-4 py-3">
                     <input
                       type="checkbox"
                       checked={!!event._checked}
                       onChange={() => toggleCheck(event.id)}
-                      className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                      className="rounded border-slate-300 dark:border-slate-600 text-blue-600 dark:text-blue-400 focus:ring-blue-500"
                     />
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs text-slate-500">#{event.id}</td>
+                  <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500">#{event.id}</td>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
-                      {EvIcon && <EvIcon size={14} className="text-slate-400 shrink-0" />}
-                      <span className="text-slate-700">{getEventLabel(t, event.event_type)}</span>
+                      {EvIcon && <EvIcon size={14} className="text-slate-400 dark:text-slate-500 shrink-0" />}
+                      <span className="text-slate-700 dark:text-slate-200">{getEventLabel(t, event.event_type)}</span>
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
+                    <span className="font-mono text-xs font-medium text-slate-600 dark:text-slate-300 dark:text-slate-500 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
                       #{event.lot_id}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
+                  <td className="px-4 py-3 text-slate-500 dark:text-slate-400 dark:text-slate-500 text-sm">{event.event_date}</td>
                   <td className="px-4 py-3">
                     <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
                       {String(t(`status.${event.status}`, event.status))}
@@ -412,24 +412,24 @@ export default function ReviewCenter() {
                     <div className="flex gap-1.5">
                       {event.status === 'pending_review' && (
                         <button onClick={() => handleAction(event.id, 'start')}
-                          className="bg-indigo-50 text-indigo-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition flex items-center gap-1">
+                          className="bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-100 dark:bg-indigo-950 transition flex items-center gap-1">
                           <Play size={12} /> {t('review.start', 'Iniciar')}
                         </button>
                       )}
                       {event.status === 'in_review' && (
                         <>
                           <button onClick={() => handleAction(event.id, 'complete')}
-                            className="bg-teal-50 text-teal-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-teal-100 transition flex items-center gap-1">
+                            className="bg-teal-50 dark:bg-teal-950 text-teal-700 dark:text-teal-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-teal-100 dark:bg-teal-950 transition flex items-center gap-1">
                             <Check size={12} /> {t('review.complete', 'Completar')}
                           </button>
                           <button onClick={() => handleAction(event.id, 'return')}
-                            className="bg-orange-50 text-orange-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-orange-100 transition flex items-center gap-1">
+                            className="bg-orange-50 dark:bg-orange-950 text-orange-700 dark:text-orange-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-orange-100 dark:bg-orange-950 transition flex items-center gap-1">
                             <Undo2 size={12} /> {t('review.return', 'Devolver')}
                           </button>
                         </>
                       )}
                       <Link to={`/review/${event.id}`}
-                        className="bg-slate-50 dark:bg-slate-800 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1">
+                        className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 dark:text-slate-500 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 dark:bg-slate-700 transition flex items-center gap-1">
                         <ZoomIn size={12} />
                       </Link>
                     </div>
@@ -445,10 +445,10 @@ export default function ReviewCenter() {
       {total > limit && (
         <div className="flex justify-center gap-2 mt-4">
           <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
-            className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 disabled:opacity-40">←</button>
-          <span className="px-3 py-1.5 text-sm text-slate-600">{page + 1} / {Math.ceil(total / limit)}</span>
+            className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 dark:border-slate-600 disabled:opacity-40">←</button>
+          <span className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500">{page + 1} / {Math.ceil(total / limit)}</span>
           <button disabled={(page + 1) * limit >= total} onClick={() => setPage(p => p + 1)}
-            className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 disabled:opacity-40">→</button>
+            className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 dark:border-slate-600 disabled:opacity-40">→</button>
         </div>
       )}
     </div>

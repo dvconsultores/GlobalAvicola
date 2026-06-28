@@ -24,28 +24,28 @@ export default function DataTable<T extends { id: number }>({
   const { t } = useTranslation()
 
   if (loading) {
-    return <p className="text-slate-500 dark:text-slate-400 text-sm py-8 text-center">{t('common.loading')}</p>
+    return <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-sm py-8 text-center">{t('common.loading')}</p>
   }
 
   if (!data.length) {
-    return <p className="text-slate-400 dark:text-slate-500 text-sm py-8 text-center">{t('common.noResults')}</p>
+    return <p className="text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-sm py-8 text-center">{t('common.noResults')}</p>
   }
 
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-sm">
         <thead>
-          <tr className="bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-700">
+          <tr className="bg-slate-50 dark:bg-slate-800 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-700">
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="text-left px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 whitespace-nowrap"
+                className="text-left px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 dark:text-slate-500 whitespace-nowrap"
               >
                 {col.label}
               </th>
             ))}
             {(onEdit || onDelete) && (
-              <th className="text-right px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300">
+              <th className="text-right px-4 py-3 font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-300 dark:text-slate-500">
                 {t('common.actions')}
               </th>
             )}
@@ -55,10 +55,10 @@ export default function DataTable<T extends { id: number }>({
           {data.map((item) => (
             <tr
               key={item.id}
-              className="border-b border-slate-100 dark:border-slate-700 hover:bg-blue-50 dark:hover:bg-slate-800 transition-colors"
+              className="border-b border-slate-100 dark:border-slate-700 hover:bg-blue-50 dark:bg-blue-950 dark:hover:bg-slate-800 transition-colors"
             >
               {columns.map((col) => (
-                <td key={col.key} className="px-4 py-3 text-slate-600 whitespace-nowrap">
+                <td key={col.key} className="px-4 py-3 text-slate-600 dark:text-slate-300 dark:text-slate-500 whitespace-nowrap">
                   {col.render ? col.render(item) : String((item as any)[col.key] ?? '')}
                 </td>
               ))}
@@ -68,7 +68,7 @@ export default function DataTable<T extends { id: number }>({
                     {onEdit && (
                       <button
                         onClick={() => onEdit(item)}
-                        className="text-xs px-2 py-1 text-blue-600 hover:bg-blue-50 rounded transition"
+                        className="text-xs px-2 py-1 text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-950 rounded transition"
                       >
                         {t('common.edit')}
                       </button>
@@ -76,7 +76,7 @@ export default function DataTable<T extends { id: number }>({
                     {onDelete && (
                       <button
                         onClick={() => onDelete(item)}
-                        className="text-xs px-2 py-1 text-red-600 hover:bg-red-50 rounded transition"
+                        className="text-xs px-2 py-1 text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-950 rounded transition"
                       >
                         {t('common.delete')}
                       </button>

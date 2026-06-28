@@ -77,7 +77,7 @@ export default function SidebarSubmenu({
           w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150
           ${anyChildActive
             ? 'text-white/90'
-            : 'text-white/65 hover:text-white hover:bg-white/[0.07]'
+            : 'text-white/65 hover:text-white hover:bg-white dark:bg-slate-800/[0.07]'
           }
         `}
         aria-expanded={isExpanded}

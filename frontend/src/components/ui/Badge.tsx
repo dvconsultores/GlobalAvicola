@@ -41,13 +41,13 @@ export function Badge({
       className={[
         'inline-flex items-center gap-1 rounded-full font-medium',
         STATUS_STYLES[variant]?.bg || 'bg-slate-100 dark:bg-slate-700',
-        STATUS_STYLES[variant]?.text || 'text-slate-600 dark:text-slate-300',
+        STATUS_STYLES[variant]?.text || 'text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500',
         SIZE_CLASSES[size],
         className,
       ].join(' ')}
     >
       {dot && (
-        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_STYLES[variant]?.dot || 'bg-slate-400'}`} />
+        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_STYLES[variant]?.dot || 'bg-slate-400 dark:bg-slate-600'}`} />
       )}
       {children}
     </span>

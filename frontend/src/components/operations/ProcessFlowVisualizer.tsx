@@ -24,14 +24,14 @@ export default function ProcessFlowVisualizer({
   const progressPercent = Math.round((completedCount / total) * 100)
 
   const MINI_COLORS = [
-    'bg-blue-100 text-blue-600',
-    'bg-teal-100 text-teal-600',
-    'bg-amber-100 text-amber-600',
-    'bg-orange-100 text-orange-600',
-    'bg-indigo-100 text-indigo-600',
-    'bg-green-100 text-green-600',
-    'bg-rose-100 text-rose-600',
-    'bg-violet-100 text-violet-600',
+    'bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400',
+    'bg-teal-100 dark:bg-teal-950 text-teal-600 dark:text-teal-400',
+    'bg-amber-100 dark:bg-amber-950 text-amber-600 dark:text-amber-400',
+    'bg-orange-100 dark:bg-orange-950 text-orange-600 dark:text-orange-300',
+    'bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400',
+    'bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400',
+    'bg-rose-100 dark:bg-rose-950 text-rose-600 dark:text-rose-400',
+    'bg-violet-100 dark:bg-violet-950 text-violet-600 dark:text-violet-400',
   ]
 
   return (
@@ -42,18 +42,18 @@ export default function ProcessFlowVisualizer({
           <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
             {t('process.progress', 'Progreso del proceso')}
           </h3>
-          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
             {completedCount} de {total} {t('process.stagesCompleted', 'etapas completadas')}
           </p>
         </div>
         <div className="text-right">
-          <div className="text-2xl font-bold text-blue-600">{progressPercent}%</div>
-          <div className="text-xs text-slate-500 dark:text-slate-400">{t('common.complete', 'Completado')}</div>
+          <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">{progressPercent}%</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.complete', 'Completado')}</div>
         </div>
       </div>
 
       {/* Progress bar */}
-      <div className="relative h-2 bg-slate-200 rounded-full overflow-hidden">
+      <div className="relative h-2 bg-slate-200 dark:bg-slate-600 rounded-full overflow-hidden">
         <div
           className="absolute top-0 left-0 h-full bg-gradient-to-r from-blue-400 to-blue-600 transition-all duration-500 progress-animated"
           style={{ width: `${progressPercent}%` }}
@@ -73,7 +73,7 @@ export default function ProcessFlowVisualizer({
               <div
                 className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 transition-all ${
                   isCompleted
-                    ? 'bg-green-100 text-green-600 scale-110'
+                    ? 'bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400 scale-110'
                     : MINI_COLORS[colorIndex]
                 }`}
                 title={t(`events.${stage.event}`, stage.event)}
@@ -89,7 +89,7 @@ export default function ProcessFlowVisualizer({
 
               {/* Connector (not on last) */}
               {index < stages.length - 1 && (
-                <ChevronRight size={16} className="text-slate-300 dark:text-slate-400 shrink-0" />
+                <ChevronRight size={16} className="text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 shrink-0" />
               )}
             </div>
           )

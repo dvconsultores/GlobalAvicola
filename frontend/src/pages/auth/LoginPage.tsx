@@ -57,16 +57,16 @@ export default function LoginPage() {
           >
             <Bird size={24} className="text-white" strokeWidth={1.8} />
           </div>
-          <h1 className="text-[22px] font-bold text-slate-900 dark:text-slate-50 dark:text-white tracking-tight">
+          <h1 className="text-[22px] font-bold text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-white tracking-tight">
             {t('brand.name', 'Global Avícola')}
           </h1>
-          <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
+          <p className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
             {t('auth.loginSubtitle', 'Ingresa tus credenciales para continuar')}
           </p>
         </div>
 
         {/* Form card */}
-        <div className="bg-white dark:bg-dark-card rounded-2xl shadow-card-md p-7">
+        <div className="bg-white dark:bg-slate-800 dark:bg-dark-card rounded-2xl shadow-card-md p-7">
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4" noValidate>
 
             {/* Error */}
@@ -79,11 +79,11 @@ export default function LoginPage() {
 
             {/* Username */}
             <div className="space-y-1.5">
-              <label htmlFor="login-username" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              <label htmlFor="login-username" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                 {t('auth.username', 'Usuario')}
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 pointer-events-none">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-500 dark:text-slate-600 dark:text-slate-300 dark:text-slate-500 pointer-events-none">
                   <User size={15} />
                 </span>
                 <input
@@ -91,7 +91,7 @@ export default function LoginPage() {
                   {...register('username')}
                   autoComplete="username"
                   autoFocus
-                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-slate-50 dark:text-white bg-slate-50 dark:bg-slate-800 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-slate-700 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-white bg-slate-50 dark:bg-slate-800 dark:bg-dark-surface placeholder:text-slate-300 dark:text-slate-500 dark:placeholder:text-slate-600 dark:text-slate-300 dark:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
                   placeholder={t('auth.usernamePlaceholder', 'username')}
                 />
               </div>
@@ -100,11 +100,11 @@ export default function LoginPage() {
 
             {/* Password */}
             <div className="space-y-1.5">
-              <label htmlFor="login-password" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+              <label htmlFor="login-password" className="block text-xs font-semibold text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 uppercase tracking-wide">
                 {t('auth.password', 'Contraseña')}
               </label>
               <div className="relative">
-                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-600 pointer-events-none">
+                <span className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-300 dark:text-slate-500 dark:text-slate-600 dark:text-slate-300 dark:text-slate-500 pointer-events-none">
                   <Lock size={15} />
                 </span>
                 <input
@@ -112,7 +112,7 @@ export default function LoginPage() {
                   {...register('password')}
                   type="password"
                   autoComplete="current-password"
-                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-slate-50 dark:text-white bg-slate-50 dark:bg-slate-800 dark:bg-dark-surface placeholder:text-slate-300 dark:placeholder:text-slate-600 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+                  className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-slate-700 dark:border-dark-border rounded-xl text-sm text-slate-900 dark:text-slate-100 dark:text-slate-50 dark:text-white bg-slate-50 dark:bg-slate-800 dark:bg-dark-surface placeholder:text-slate-300 dark:text-slate-500 dark:placeholder:text-slate-600 dark:text-slate-300 dark:text-slate-500 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
                   placeholder="••••••••"
                 />
               </div>
@@ -148,7 +148,7 @@ export default function LoginPage() {
         <div className="flex justify-center mt-6">
           <button
             onClick={toggleLang}
-            className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+            className="inline-flex items-center gap-1.5 text-xs text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:hover:text-slate-300 dark:text-slate-500 transition-colors"
           >
             <Globe size={12} />
             {i18n.language === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}

@@ -39,8 +39,8 @@ export default function SidebarItem({
         flex items-center gap-2 py-1.5 rounded-lg text-[13px] transition-colors duration-100
         ${paddingByDepth[depth] ?? paddingByDepth[0]}
         ${active
-          ? 'bg-white/[0.12] text-white font-medium'
-          : 'text-white/55 font-normal hover:text-white/90 hover:bg-white/[0.06]'
+          ? 'bg-white dark:bg-slate-800/[0.12] text-white font-medium'
+          : 'text-white/55 font-normal hover:text-white/90 hover:bg-white dark:bg-slate-800/[0.06]'
         }
       `}
       aria-current={active ? 'page' : undefined}
@@ -52,7 +52,7 @@ export default function SidebarItem({
       )}
       <span className="flex-1 truncate">{t(labelKey, fallback)}</span>
       {badge !== undefined && badge > 0 && (
-        <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full text-[10px] font-semibold bg-white/20 text-white/90">
+        <span className="inline-flex items-center justify-center min-w-[18px] h-4 px-1 rounded-full text-[10px] font-semibold bg-white dark:bg-slate-800/20 text-white/90">
           {badge > 99 ? '99+' : badge}
         </span>
       )}

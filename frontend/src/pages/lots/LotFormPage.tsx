@@ -99,7 +99,7 @@ export default function LotFormPage() {
     }
   }
 
-  const selectClass = 'w-full h-10 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 dark:text-slate-50 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-[#2563EB] disabled:bg-slate-50 disabled:text-slate-400'
+  const selectClass = 'w-full h-10 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-sm text-slate-900 dark:text-slate-100 dark:text-slate-50 bg-white dark:bg-slate-800 focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-[#2563EB] disabled:bg-slate-50 dark:bg-slate-800 disabled:text-slate-400 dark:text-slate-500'
 
   return (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
@@ -107,7 +107,7 @@ export default function LotFormPage() {
       <div className="flex items-center gap-3 mb-6">
         <button
           onClick={() => navigate('/lots')}
-          className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:bg-slate-700 transition-colors"
           aria-label={t('common.back', 'Volver')}
         >
           <ArrowLeft size={18} />
@@ -133,9 +133,9 @@ export default function LotFormPage() {
 
             {/* Tipo de ave */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-slate-700">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {t('lots.type', 'Tipo de producción')}
-                <span className="text-red-500 ml-0.5" aria-hidden>*</span>
+                <span className="text-red-500 dark:text-red-400 ml-0.5" aria-hidden>*</span>
               </label>
               <select className={selectClass} {...register('bird_type')}>
                 <option value="">{t('lots.selectType', 'Seleccionar tipo...')}</option>
@@ -144,7 +144,7 @@ export default function LotFormPage() {
                 ))}
               </select>
               {errors.bird_type && (
-                <p className="text-xs text-red-600">{errors.bird_type.message}</p>
+                <p className="text-xs text-red-600 dark:text-red-400">{errors.bird_type.message}</p>
               )}
             </div>
 
@@ -163,9 +163,9 @@ export default function LotFormPage() {
           <CardBody className="space-y-4">
             {/* Granja */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-slate-700">
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">
                 {t('masters.farms', 'Granja')}
-                <span className="text-red-500 ml-0.5" aria-hidden>*</span>
+                <span className="text-red-500 dark:text-red-400 ml-0.5" aria-hidden>*</span>
               </label>
               <select
                 className={selectClass}
@@ -175,12 +175,12 @@ export default function LotFormPage() {
                 <option value="">{loadingMasters ? t('common.loading') : t('lots.selectFarm', 'Seleccionar granja...')}</option>
                 {farms.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
               </select>
-              {errors.farm_id && <p className="text-xs text-red-600">{errors.farm_id.message}</p>}
+              {errors.farm_id && <p className="text-xs text-red-600 dark:text-red-400">{errors.farm_id.message}</p>}
             </div>
 
             {/* Galpón */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-slate-700">{t('masters.houses', 'Galpón')}</label>
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t('masters.houses', 'Galpón')}</label>
               <select className={selectClass} {...register('house_id')}>
                 <option value="">{t('lots.selectHouse', 'Seleccionar galpón...')}</option>
                 {filteredHouses.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
@@ -194,7 +194,7 @@ export default function LotFormPage() {
           <CardBody className="space-y-4">
             {/* Línea genética */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-slate-700">{t('masters.geneticLines', 'Línea genética')}</label>
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t('masters.geneticLines', 'Línea genética')}</label>
               <select className={selectClass} {...register('genetic_line_id')}>
                 <option value="">{t('lots.selectLine', 'Seleccionar línea...')}</option>
                 {lines.map(l => <option key={l.id} value={l.id}>{l.name}{l.code ? ` (${l.code})` : ''}</option>)}
@@ -203,7 +203,7 @@ export default function LotFormPage() {
 
             {/* Raza */}
             <div className="flex flex-col gap-1">
-              <label className="text-sm font-semibold text-slate-700">{t('masters.breeds', 'Raza')}</label>
+              <label className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t('masters.breeds', 'Raza')}</label>
               <select className={selectClass} {...register('breed_id')}>
                 <option value="">{t('lots.selectBreed', 'Seleccionar raza...')}</option>
                 {breeds.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}

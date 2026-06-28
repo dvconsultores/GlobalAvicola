@@ -28,7 +28,7 @@ export default function OperationTile({ step, index, lotId, readOnly }: Operatio
   const inner = (
     <>
       {/* Sequence number badge */}
-      <span className="absolute top-2 left-2 w-6 h-6 rounded-full bg-white/90 dark:bg-slate-800/90 text-xs font-extrabold text-slate-700 dark:text-slate-100 flex items-center justify-center shadow-sm ring-1 ring-black/5">
+      <span className="absolute top-2 left-2 w-6 h-6 rounded-full bg-white dark:bg-slate-800/90 dark:bg-slate-800/90 text-xs font-extrabold text-slate-700 dark:text-slate-200 dark:text-slate-100 flex items-center justify-center shadow-sm ring-1 ring-black/5">
         {index}
       </span>
 
@@ -40,14 +40,14 @@ export default function OperationTile({ step, index, lotId, readOnly }: Operatio
       </span>
 
       {/* Label */}
-      <span className="mt-3 text-sm font-bold leading-tight text-center text-slate-700 dark:text-slate-100 line-clamp-2">
+      <span className="mt-3 text-sm font-bold leading-tight text-center text-slate-700 dark:text-slate-200 dark:text-slate-100 line-clamp-2">
         {label}
       </span>
     </>
   )
 
   const base =
-    'group relative flex flex-col items-center justify-start p-4 pt-9 rounded-3xl bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg hover:border-slate-200 dark:hover:border-slate-600 transition-all min-h-[150px]'
+    'group relative flex flex-col items-center justify-start p-4 pt-9 rounded-3xl bg-white dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 shadow-sm hover:shadow-lg hover:border-slate-200 dark:border-slate-700 dark:hover:border-slate-600 transition-all min-h-[150px]'
 
   if (readOnly) {
     return (

@@ -12,7 +12,7 @@ import { useToast, getErrorMessage } from '../../components/Toast'
 // ─── Status badge colours ────────────────────────────────────────────────────
 const STATUS_COLORS: Record<string, string> = {
   active: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 dark:text-emerald-200',
-  closed: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400',
+  closed: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500',
   cancelled: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200',
 }
 
@@ -79,8 +79,8 @@ export default function LotDetailPage() {
     }
   }
 
-  if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('common.loading')}</div>
-  if (!lot) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('lots.lotNotFound')}</div>
+  if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.loading')}</div>
+  if (!lot) return <div className="p-6 text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.lotNotFound')}</div>
 
   const birdType: string = lot.bird_type || 'broiler'
   const activePhase = phases.find((p: any) => p.is_active)
@@ -146,7 +146,7 @@ export default function LotDetailPage() {
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* ── Header ── */}
       <div className="flex items-center gap-3 mb-6">
-        <Link to="/lots" className="text-slate-400 hover:text-slate-600 dark:text-slate-300 transition-colors">
+        <Link to="/lots" className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 transition-colors">
           <ArrowLeft size={20} />
         </Link>
         <div className="flex-1 min-w-0">
@@ -154,14 +154,14 @@ export default function LotDetailPage() {
             {lot.lot_code || `${t('lots.title')} #${lot.id}`}
           </h1>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            <span className="text-sm text-slate-500 dark:text-slate-400">{stageLabel}</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{stageLabel}</span>
             {phaseLabel && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:bg-blue-950 dark:text-blue-300 dark:text-blue-400">
                 {phaseLabel}
               </span>
             )}
-            <span className="text-slate-300 dark:text-slate-400">·</span>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400'}`}>
+            <span className="text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">·</span>
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500'}`}>
               {t(`lotStatus.${lot.status}`, String(lot.status))}
             </span>
           </div>
@@ -194,16 +194,16 @@ export default function LotDetailPage() {
 
       {/* Close summary */}
       {closeResult && (
-        <div className="mb-6 p-5 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+        <div className="mb-6 p-5 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 dark:border-emerald-800 rounded-xl">
           <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-3">{t('lots.closedSummary')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalMortality')}:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalFeed')}:</span> <strong>{closeResult.total_feed_kg} {t('lots.kg')}</strong></div>
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalEggs')}:</span> <strong>{closeResult.total_eggs}</strong></div>
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalEvents')}:</span> <strong>{closeResult.total_events}</strong></div>
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.approvedEvents')}:</span> <strong className="text-emerald-600">{closeResult.approved_events}</strong></div>
-            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.closure')}:</span> <strong>{closeResult.end_date}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.totalMortality')}:</span> <strong className="text-red-600 dark:text-red-400">{closeResult.total_mortality}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.totalFeed')}:</span> <strong>{closeResult.total_feed_kg} {t('lots.kg')}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.totalEggs')}:</span> <strong>{closeResult.total_eggs}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.totalEvents')}:</span> <strong>{closeResult.total_events}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.approvedEvents')}:</span> <strong className="text-emerald-600 dark:text-emerald-400">{closeResult.approved_events}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.closure')}:</span> <strong>{closeResult.end_date}</strong></div>
           </div>
         </div>
       )}
@@ -212,12 +212,12 @@ export default function LotDetailPage() {
         {/* Left: Operations Panel */}
         <div className="lg:col-span-2 space-y-6">
           {/* ── Quick Actions: stage-specific operations ── */}
-          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
             <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
               <Plus size={18} className="text-[#2563EB]" />
               {t('lots.registerOperation')}
               {phaseLabel && (
-                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:bg-blue-950 dark:text-blue-300 dark:text-blue-400">
                   {phaseLabel}
                 </span>
               )}
@@ -229,10 +229,10 @@ export default function LotDetailPage() {
                   <Link
                     key={eventType}
                     to={`/operations/new?type=${eventType}&lot_id=${lot.id}`}
-                    className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50 transition-colors text-center group"
+                    className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 dark:border-slate-700 hover:border-[#2563EB] hover:bg-blue-50 dark:bg-blue-950 transition-colors text-center group"
                   >
                     <Icon size={20} className="text-[#2563EB] group-hover:scale-110 transition-transform" />
-                    <span className="text-xs text-slate-600 dark:text-slate-300 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
                   </Link>
                 )
               })}
@@ -266,20 +266,20 @@ export default function LotDetailPage() {
             const weeks = Object.values(weekly).sort((a: any, b: any) => a.week - b.week)
             if (weeks.length === 0) return null
             return (
-              <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5 mt-4">
+              <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5 mt-4">
                 <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <Calendar size={18} className="text-[#2563EB]" /> {t('lots.weeklyView')}</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
                     <thead className="bg-slate-50 dark:bg-slate-800">
                       <tr>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.weekNumber')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.maleWeight')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.femaleWeight')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.maleMort')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.femaleMort')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.feed')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.date')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.weekNumber')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.maleWeight')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.femaleWeight')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.maleMort')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.femaleMort')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.feed')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">{t('weekly.date')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -288,10 +288,10 @@ export default function LotDetailPage() {
                           <td className="px-3 py-2 font-mono font-medium">{w.week || '—'}</td>
                           <td className="px-3 py-2">{w.male_weight > 0 ? w.male_weight : '—'}</td>
                           <td className="px-3 py-2">{w.female_weight > 0 ? w.female_weight : '—'}</td>
-                          <td className="px-3 py-2 text-red-600">{w.male_mort > 0 ? w.male_mort : '—'}</td>
-                          <td className="px-3 py-2 text-red-600">{w.female_mort > 0 ? w.female_mort : '—'}</td>
+                          <td className="px-3 py-2 text-red-600 dark:text-red-400">{w.male_mort > 0 ? w.male_mort : '—'}</td>
+                          <td className="px-3 py-2 text-red-600 dark:text-red-400">{w.female_mort > 0 ? w.female_mort : '—'}</td>
                           <td className="px-3 py-2">{w.feed_kg > 0 ? w.feed_kg.toFixed(1) : '—'}</td>
-                          <td className="px-3 py-2 text-slate-400">{w.date || '—'}</td>
+                          <td className="px-3 py-2 text-slate-400 dark:text-slate-500">{w.date || '—'}</td>
                         </tr>
                       ))}
                     </tbody>
@@ -302,24 +302,24 @@ export default function LotDetailPage() {
           })()}
 
           {/* Recent Events */}
-          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
             <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <Activity size={18} /> {t('lots.lastRecords')}
             </h2>
             {events.length === 0 ? (
-              <p className="text-sm text-slate-400">{t('lots.noOperationalRecords')}</p>
+              <p className="text-sm text-slate-400 dark:text-slate-500">{t('lots.noOperationalRecords')}</p>
             ) : (
               <div className="space-y-2 max-h-80 overflow-y-auto">
                 {events.slice(0, 15).map((ev: any) => (
                   <div key={ev.id} className="flex items-center justify-between text-sm py-2 border-b border-slate-50 last:border-0">
                     <div>
-                      <span className="font-medium text-slate-700">{ev.event_type}</span>
-                      <span className="text-slate-400 ml-2">{ev.event_date}</span>
+                      <span className="font-medium text-slate-700 dark:text-slate-200">{ev.event_type}</span>
+                      <span className="text-slate-400 dark:text-slate-500 ml-2">{ev.event_date}</span>
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                      ev.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
-                      ev.status === 'registered' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300' :
-                      'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400'
+                      ev.status === 'approved' ? 'bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 dark:text-emerald-400' :
+                      ev.status === 'registered' ? 'bg-blue-100 dark:bg-blue-950 text-blue-700 dark:text-blue-300 dark:text-blue-400 dark:bg-blue-950 dark:text-blue-300 dark:text-blue-400' :
+                      'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500'
                     }`}>{ev.status}</span>
                   </div>
                 ))}
@@ -331,49 +331,49 @@ export default function LotDetailPage() {
         {/* Right: KPIs + Info */}
         <div className="space-y-4">
           {/* Lot Info */}
-          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
             <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
               <Calendar size={18} /> {t('lots.info')}
             </h2>
             <dl className="space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
             </dl>
           </div>
 
           {/* KPIs */}
           {kpis && (
-            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
               <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
                 <TrendingUp size={18} /> {t('lots.kpis')}
               </h2>
               <div className="space-y-3">
                 {kpis.mortality && (
-                  <div className="p-3 bg-red-50 rounded-lg">
-                    <p className="text-xs text-red-600 font-medium">{t('lots.mortalityKpi')}</p>
-                    <p className="text-lg font-bold text-red-700">{kpis.mortality.mortality_rate_pct}%</p>
-                    <p className="text-xs text-red-500">{kpis.mortality.total_deaths} {t('lots.bajas')}</p>
+                  <div className="p-3 bg-red-50 dark:bg-red-950 rounded-lg">
+                    <p className="text-xs text-red-600 dark:text-red-400 font-medium">{t('lots.mortalityKpi')}</p>
+                    <p className="text-lg font-bold text-red-700 dark:text-red-300">{kpis.mortality.mortality_rate_pct}%</p>
+                    <p className="text-xs text-red-500 dark:text-red-400">{kpis.mortality.total_deaths} {t('lots.bajas')}</p>
                   </div>
                 )}
                 {kpis.feed_conversion && (
-                  <div className="p-3 bg-amber-50 rounded-lg">
-                    <p className="text-xs text-amber-600 font-medium">{t('lots.feedConversionKpi')}</p>
-                    <p className="text-lg font-bold text-amber-700">{kpis.feed_conversion.total_feed_kg} {t('lots.kg')}</p>
+                  <div className="p-3 bg-amber-50 dark:bg-amber-950 rounded-lg">
+                    <p className="text-xs text-amber-600 dark:text-amber-400 font-medium">{t('lots.feedConversionKpi')}</p>
+                    <p className="text-lg font-bold text-amber-700 dark:text-amber-300">{kpis.feed_conversion.total_feed_kg} {t('lots.kg')}</p>
                   </div>
                 )}
                 {kpis.egg_production && kpis.egg_production.total_eggs > 0 && (
-                  <div className="p-3 bg-blue-50 rounded-lg">
-                    <p className="text-xs text-blue-600 font-medium">{t('lots.eggProdKpi')}</p>
-                    <p className="text-lg font-bold text-blue-700">{kpis.egg_production.total_eggs}</p>
-                    <p className="text-xs text-blue-500">{kpis.egg_production.hen_day_production_pct}% {t('lots.henDay')}</p>
+                  <div className="p-3 bg-blue-50 dark:bg-blue-950 rounded-lg">
+                    <p className="text-xs text-blue-600 dark:text-blue-400 font-medium">{t('lots.eggProdKpi')}</p>
+                    <p className="text-lg font-bold text-blue-700 dark:text-blue-300 dark:text-blue-400">{kpis.egg_production.total_eggs}</p>
+                    <p className="text-xs text-blue-500 dark:text-blue-400">{kpis.egg_production.hen_day_production_pct}% {t('lots.henDay')}</p>
                   </div>
                 )}
                 {kpis.hatchery_yield && kpis.hatchery_yield.total_chicks_born > 0 && (
-                  <div className="p-3 bg-purple-50 rounded-lg">
-                    <p className="text-xs text-purple-600 font-medium">{t('lots.birthsKpi')}</p>
-                    <p className="text-lg font-bold text-purple-700">{kpis.hatchery_yield.total_chicks_born}</p>
+                  <div className="p-3 bg-purple-50 dark:bg-purple-950 rounded-lg">
+                    <p className="text-xs text-purple-600 dark:text-purple-400 font-medium">{t('lots.birthsKpi')}</p>
+                    <p className="text-lg font-bold text-purple-700 dark:text-purple-300">{kpis.hatchery_yield.total_chicks_born}</p>
                   </div>
                 )}
               </div>
@@ -382,16 +382,16 @@ export default function LotDetailPage() {
 
           {/* IPE */}
           {kpiIpe && kpiIpe.ipe != null && (
-            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
               <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
-                <TrendingUp size={18} className="text-emerald-600" /> IPE
+                <TrendingUp size={18} className="text-emerald-600 dark:text-emerald-400" /> IPE
               </h2>
-              <p className="text-3xl font-bold text-emerald-700">{kpiIpe.ipe}</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-3xl font-bold text-emerald-700 dark:text-emerald-300 dark:text-emerald-400">{kpiIpe.ipe}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                 {kpiIpe.ipe >= 300 ? '🟢' : kpiIpe.ipe >= 250 ? '🟡' : '🔴'}{' '}
                 {kpiIpe.ipe >= 300 ? t('kpi.excellent', 'Excelente') : kpiIpe.ipe >= 250 ? t('kpi.good', 'Bueno') : t('kpi.average', 'Regular')}
               </p>
-              <div className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500 dark:text-slate-400">
+              <div className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">
                 <span>{t('kpi.viability', 'Viab.')} {kpiIpe.viabilidad_pct}%</span>
                 <span>{t('kpi.fcr', 'FCR')} {kpiIpe.fcr}</span>
                 <span>{t('kpi.avgWeight', 'Peso')} {kpiIpe.avg_weight_g}g</span>
@@ -402,15 +402,15 @@ export default function LotDetailPage() {
 
           {/* Weight Uniformity */}
           {kpiUniformity && kpiUniformity.cv_pct != null && (
-            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+            <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
               <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-3 flex items-center gap-2">
-                <Activity size={18} className="text-blue-600" /> {t('kpi.uniformity', 'Uniformidad')}
+                <Activity size={18} className="text-blue-600 dark:text-blue-400" /> {t('kpi.uniformity', 'Uniformidad')}
               </h2>
               <p className={`text-2xl font-bold ${
-                kpiUniformity.uniformity_status === 'excellent' ? 'text-emerald-700' :
-                kpiUniformity.uniformity_status === 'acceptable' ? 'text-amber-700' : 'text-red-700'
+                kpiUniformity.uniformity_status === 'excellent' ? 'text-emerald-700 dark:text-emerald-300 dark:text-emerald-400' :
+                kpiUniformity.uniformity_status === 'acceptable' ? 'text-amber-700 dark:text-amber-300' : 'text-red-700 dark:text-red-300'
               }`}>CV {kpiUniformity.cv_pct}%</p>
-              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mt-1">
                 {kpiUniformity.uniformity_status === 'excellent' ? '🟢 ' : kpiUniformity.uniformity_status === 'acceptable' ? '🟡 ' : '🔴 '}
                 {t(`kpi.${kpiUniformity.uniformity_status}`, kpiUniformity.uniformity_status)}
                 {' · '}{kpiUniformity.n_samples} {t('kpi.samples', 'muestras')}
@@ -420,24 +420,24 @@ export default function LotDetailPage() {
 
           {/* Lot Alerts */}
           {lotAlerts.length > 0 && (
-            <div className="bg-white rounded-xl shadow-sm border border-amber-200 p-5">
-              <h2 className="font-semibold text-amber-700 mb-3 flex items-center gap-2">
-                <AlertTriangle size={18} className="text-amber-500" />
+            <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-amber-200 dark:border-amber-800 p-5">
+              <h2 className="font-semibold text-amber-700 dark:text-amber-300 mb-3 flex items-center gap-2">
+                <AlertTriangle size={18} className="text-amber-500 dark:text-amber-400" />
                 {t('alerts.activeTitle', 'Alertas activas')}
-                <span className="ml-auto text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">{lotAlerts.length}</span>
+                <span className="ml-auto text-xs font-bold bg-amber-100 dark:bg-amber-950 text-amber-700 dark:text-amber-300 px-2 py-0.5 rounded-full">{lotAlerts.length}</span>
               </h2>
               <div className="space-y-2">
                 {lotAlerts.map((a: any) => (
                   <div key={a.id} className={`flex items-start gap-2 rounded-lg p-2.5 text-xs ${
-                    a.severity === 'critical' ? 'bg-red-50 border border-red-200' : 'bg-amber-50 border border-amber-200'
+                    a.severity === 'critical' ? 'bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800' : 'bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800'
                   }`}>
                     <div className="flex-1 min-w-0">
-                      <span className={`font-bold uppercase ${a.severity === 'critical' ? 'text-red-700' : 'text-amber-700'}`}>
+                      <span className={`font-bold uppercase ${a.severity === 'critical' ? 'text-red-700 dark:text-red-300' : 'text-amber-700 dark:text-amber-300'}`}>
                         {String(t(`alerts.severity.${a.severity}`, a.severity))}
                       </span>
                       <p className="text-slate-700 dark:text-slate-200 mt-0.5 leading-snug">{a.message}</p>
                     </div>
-                    <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
+                    <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500 shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
                       <X size={12} />
                     </button>
                   </div>
@@ -447,9 +447,9 @@ export default function LotDetailPage() {
           )}
 
           {/* ── Traceability Tree (T-083) ── */}
-          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-5">
+          <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-5">
             <h2 className="font-semibold text-slate-700 dark:text-slate-200 mb-4 flex items-center gap-2">
-              <Activity size={18} className="text-teal-600" />
+              <Activity size={18} className="text-teal-600 dark:text-teal-400" />
               {t('traceability.title', 'Trazabilidad Generacional')}
             </h2>
             <TraceabilityTree lotId={Number(id)} birdType={birdType} />
@@ -518,7 +518,7 @@ export default function LotDetailPage() {
         </>
       }
     >
-      <p className="text-sm text-slate-600 dark:text-slate-300">
+      <p className="text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500">
         {t('lots.closeWarning', 'Se generará un resumen final con todas las métricas del lote.')}
       </p>
     </Modal>

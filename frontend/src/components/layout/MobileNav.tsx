@@ -36,7 +36,7 @@ export default function MobileNav() {
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 grid grid-cols-3 bg-white dark:bg-slate-900 safe-area-bottom"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 grid grid-cols-3 bg-white dark:bg-slate-800 dark:bg-slate-900 safe-area-bottom"
       style={{
         borderTop: '1px solid rgba(15,23,42,0.07)',
         boxShadow: '0 -4px 20px -4px rgba(15,23,42,0.08)',
