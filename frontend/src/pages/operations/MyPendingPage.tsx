@@ -11,99 +11,99 @@ import api from '../../services/api'
 import { Badge, statusToVariant } from '../../components/ui'
 
 interface Operation {
-  id: number
-  event_type: string
-  event_date: string
-  status: string
-  lot?: { name: string }
-  notes?: string
+ id: number
+ event_type: string
+ event_date: string
+ status: string
+ lot?: { name: string }
+ notes?: string
 }
 
 export default function MyPendingPage() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const [ops, setOps] = useState<Operation[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+ const { t } = useTranslation()
+ const navigate = useNavigate()
+ const [ops, setOps] = useState<Operation[]>([])
+ const [loading, setLoading] = useState(true)
+ const [error, setError] = useState<string | null>(null)
 
-  const fetch = useCallback(async () => {
-    setLoading(true)
-    setError(null)
-    try {
-      const res = await api.get('/operations', {
-        params: { registered_by_me: true, status: 'draft,registered', limit: 50 },
-      })
-      setOps(res.data?.items ?? res.data ?? [])
-    } catch {
-      setError(t('errors.loadFailed', 'Error al cargar'))
-    } finally {
-      setLoading(false)
-    }
-  }, [t])
+ const fetch = useCallback(async () => {
+ setLoading(true)
+ setError(null)
+ try {
+ const res = await api.get('/operations', {
+ params: { registered_by_me: true, status: 'draft,registered', limit: 50 },
+ })
+ setOps(res.data?.items ?? res.data ?? [])
+ } catch {
+ setError(t('errors.loadFailed', 'Error al cargar'))
+ } finally {
+ setLoading(false)
+ }
+ }, [t])
 
-  useEffect(() => { fetch() }, [fetch])
+ useEffect(() => { fetch() }, [fetch])
 
-  return (
-    <div className="min-h-screen bg-slate-50 dark:bg-slate-800 pb-24">
-      {/* Page header */}
-      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-4 py-4 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Clock size={18} className="text-[#2563EB]" />
-          <h1 className="text-base font-semibold text-slate-800 dark:text-slate-200">
-            {t('nav.myPending', 'Mis Pendientes')}
-          </h1>
-        </div>
-        <button
-          onClick={fetch}
-          disabled={loading}
-          aria-label={t('common.refresh', 'Actualizar')}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 hover:bg-slate-100 dark:bg-slate-700 transition-colors disabled:opacity-50"
-        >
-          <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
-        </button>
-      </div>
+ return (
+ <div className="min-h-screen bg-slate-50 dark:bg-slate-800 pb-24">
+ {/* Page header */}
+ <div className="bg-white dark:bg-slate-800 border-b border-slate-200 px-4 py-4 flex items-center justify-between">
+ <div className="flex items-center gap-2">
+ <Clock size={18} className="text-[#2563EB]" />
+ <h1 className="text-base font-semibold text-slate-800 dark:text-slate-200">
+ {t('nav.myPending', 'Mis Pendientes')}
+ </h1>
+ </div>
+ <button
+ onClick={fetch}
+ disabled={loading}
+ aria-label={t('common.refresh', 'Actualizar')}
+ className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50"
+ >
+ <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
+ </button>
+ </div>
 
-      <div className="px-4 py-4 space-y-3">
-        {loading && (
-          <div className="text-center py-12 text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-sm">
-            {t('common.loading', 'Cargando...')}
-          </div>
-        )}
+ <div className="px-4 py-4 space-y-3">
+ {loading && (
+ <div className="text-center py-12 text-slate-400 dark:text-slate-500 text-sm">
+ {t('common.loading', 'Cargando...')}
+ </div>
+ )}
 
-        {error && (
-          <div className="rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-300">
-            {error}
-          </div>
-        )}
+ {error && (
+ <div className="rounded-xl bg-red-50 dark:bg-red-950 border border-red-200 dark:border-red-800 px-4 py-3 text-sm text-red-700 dark:text-red-300">
+ {error}
+ </div>
+ )}
 
-        {!loading && !error && ops.length === 0 && (
-          <div className="text-center py-16">
-            <Clock size={40} className="mx-auto text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 mb-3" />
-            <p className="text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500 text-sm">{t('operations.noPending', 'No tienes registros pendientes')}</p>
-          </div>
-        )}
+ {!loading && !error && ops.length === 0 && (
+ <div className="text-center py-16">
+ <Clock size={40} className="mx-auto text-slate-300 dark:text-slate-500 mb-3" />
+ <p className="text-slate-500 dark:text-slate-400 text-sm">{t('operations.noPending', 'No tienes registros pendientes')}</p>
+ </div>
+ )}
 
-        {ops.map(op => (
-          <button
-            key={op.id}
-            onClick={() => navigate(`/operations/${op.id}`)}
-            className="w-full text-left bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 dark:border-slate-700 px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-200 dark:border-blue-800 transition-all"
-          >
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-200 dark:text-slate-100 leading-snug">
-                {t(`events.${op.event_type}`, op.event_type)}
-              </p>
-              <Badge variant={statusToVariant(op.status)} size="sm">
-                {t(`status.${op.status}`, op.status)}
-              </Badge>
-            </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 dark:text-slate-500">
-              {op.lot && <span>{op.lot.name}</span>}
-              <span>{new Date(op.event_date).toLocaleDateString()}</span>
-            </div>
-          </button>
-        ))}
-      </div>
-    </div>
-  )
+ {ops.map(op => (
+ <button
+ key={op.id}
+ onClick={() => navigate(`/operations/${op.id}`)}
+ className="w-full text-left bg-white dark:bg-slate-800 rounded-xl border border-slate-200 px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
+ >
+ <div className="flex items-start justify-between gap-2 mb-1">
+ <p className="text-sm font-medium text-slate-800 dark:text-slate-200 leading-snug">
+ {t(`events.${op.event_type}`, op.event_type)}
+ </p>
+ <Badge variant={statusToVariant(op.status)} size="sm">
+ {t(`status.${op.status}`, op.status)}
+ </Badge>
+ </div>
+ <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
+ {op.lot && <span>{op.lot.name}</span>}
+ <span>{new Date(op.event_date).toLocaleDateString()}</span>
+ </div>
+ </button>
+ ))}
+ </div>
+ </div>
+ )
 }

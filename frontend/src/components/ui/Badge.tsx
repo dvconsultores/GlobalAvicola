@@ -12,44 +12,44 @@ type BadgeVariant = StatusKey
 type BadgeSize = 'sm' | 'md'
 
 interface BadgeProps {
-  variant?: BadgeVariant
-  size?: BadgeSize
-  children: ReactNode
-  className?: string
-  dot?: boolean
+ variant?: BadgeVariant
+ size?: BadgeSize
+ children: ReactNode
+ className?: string
+ dot?: boolean
 }
 
 const SIZE_CLASSES: Record<BadgeSize, string> = {
-  sm: 'px-1.5 py-0.5 text-xs',
-  md: 'px-2.5 py-1 text-xs',
+ sm: 'px-1.5 py-0.5 text-xs',
+ md: 'px-2.5 py-1 text-xs',
 }
 
 /** Map API status string to Badge variant using shared resolveStatus */
 export function statusToVariant(status: string): BadgeVariant {
-  return resolveStatus(status)
+ return resolveStatus(status)
 }
 
 export function Badge({
-  variant = 'neutral',
-  size = 'md',
-  children,
-  className = '',
-  dot = false,
+ variant = 'neutral',
+ size = 'md',
+ children,
+ className = '',
+ dot = false,
 }: BadgeProps) {
-  return (
-    <span
-      className={[
-        'inline-flex items-center gap-1 rounded-full font-medium',
-        STATUS_STYLES[variant]?.bg || 'bg-slate-100 dark:bg-slate-700',
-        STATUS_STYLES[variant]?.text || 'text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-300 dark:text-slate-500',
-        SIZE_CLASSES[size],
-        className,
-      ].join(' ')}
-    >
-      {dot && (
-        <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_STYLES[variant]?.dot || 'bg-slate-400 dark:bg-slate-600'}`} />
-      )}
-      {children}
-    </span>
-  )
+ return (
+ <span
+ className={[
+ 'inline-flex items-center gap-1 rounded-full font-medium',
+ STATUS_STYLES[variant]?.bg || 'bg-slate-100 dark:bg-slate-700',
+ STATUS_STYLES[variant]?.text || 'text-slate-600 dark:text-slate-300',
+ SIZE_CLASSES[size],
+ className,
+ ].join(' ')}
+ >
+ {dot && (
+ <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${STATUS_STYLES[variant]?.dot || 'bg-slate-400'}`} />
+ )}
+ {children}
+ </span>
+ )
 }

@@ -6,268 +6,268 @@ import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 const STATUS_COLORS: Record<string, string> = {
-  draft: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-500', registered: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-200 dark:text-blue-300',
-  pending_review: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200', in_review: 'bg-indigo-100 dark:bg-indigo-950 text-indigo-800 dark:text-indigo-200',
-  returned: 'bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-200', corrected: 'bg-teal-100 dark:bg-teal-950 text-teal-800 dark:text-teal-200',
-  approved: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200', rejected: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200',
-  consolidated: 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-200', sent_to_sap: 'bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-200',
-  sap_confirmed: 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-200',
+ draft: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300', registered: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-200',
+ pending_review: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200', in_review: 'bg-indigo-100 text-indigo-800 dark:text-indigo-200',
+ returned: 'bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-200', corrected: 'bg-teal-100 text-teal-800 dark:text-teal-200',
+ approved: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200', rejected: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200',
+ consolidated: 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-200', sent_to_sap: 'bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-200',
+ sap_confirmed: 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-200',
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
 const MAX_SIZE_MB = 10
 
 function formatBytes(bytes: number) {
-  if (bytes < 1024) return `${bytes} B`
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
-  return `${(bytes / 1024 / 1024).toFixed(1)} MB`
+ if (bytes < 1024) return `${bytes} B`
+ if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`
+ return `${(bytes / 1024 / 1024).toFixed(1)} MB`
 }
 
 interface Evidence {
-  id: number
-  file_name: string
-  file_size: number | null
-  mime_type: string | null
-  evidence_type: string
-  description: string | null
-  uploaded_by_id: number
-  created_at: string
+ id: number
+ file_name: string
+ file_size: number | null
+ mime_type: string | null
+ evidence_type: string
+ description: string | null
+ uploaded_by_id: number
+ created_at: string
 }
 
 export default function OperationDetailPage() {
-  const { t } = useTranslation()
-  const { id } = useParams<{ id: string }>()
-  const [event, setEvent] = useState<any>(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-  const [evidences, setEvidences] = useState<Evidence[]>([])
-  const [uploading, setUploading] = useState(false)
-  const [description, setDescription] = useState('')
-  const [deletingId, setDeletingId] = useState<number | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const fileRef = useRef<HTMLInputElement>(null)
-  const toast = useToast()
+ const { t } = useTranslation()
+ const { id } = useParams<{ id: string }>()
+ const [event, setEvent] = useState<any>(null)
+ const [loading, setLoading] = useState(true)
+ const [error, setError] = useState('')
+ const [evidences, setEvidences] = useState<Evidence[]>([])
+ const [uploading, setUploading] = useState(false)
+ const [description, setDescription] = useState('')
+ const [deletingId, setDeletingId] = useState<number | null>(null)
+ const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+ const fileRef = useRef<HTMLInputElement>(null)
+ const toast = useToast()
 
-  const loadEvent = () => {
-    api.get(`/operations/${id}`).then(({ data }) => {
-      setEvent(data)
-      setEvidences(data.evidences || [])
-    }).catch((e: any) => {
-      const msg = getErrorMessage(e, t('operations.errorLoadingEvent'))
-      setError(msg)
-      toast.error(msg)
-    }).finally(() => setLoading(false))
-  }
+ const loadEvent = () => {
+ api.get(`/operations/${id}`).then(({ data }) => {
+ setEvent(data)
+ setEvidences(data.evidences || [])
+ }).catch((e: any) => {
+ const msg = getErrorMessage(e, t('operations.errorLoadingEvent'))
+ setError(msg)
+ toast.error(msg)
+ }).finally(() => setLoading(false))
+ }
 
-  useEffect(() => { loadEvent() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
+ useEffect(() => { loadEvent() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!ALLOWED_TYPES.includes(file.type)) {
-      toast.error(t('evidence.invalidType'))
-      return
-    }
-    if (file.size > MAX_SIZE_MB * 1024 * 1024) {
-      toast.error(t('evidence.tooLarge', { max: MAX_SIZE_MB }))
-      return
-    }
-    setUploading(true)
-    try {
-      const fd = new FormData()
-      fd.append('file', file)
-      fd.append('description', description)
-      const { data } = await api.post(`/operations/${id}/evidences`, fd, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      })
-      setEvidences(prev => [...prev, data])
-      setDescription('')
-      if (fileRef.current) fileRef.current.value = ''
-      toast.success(t('evidence.uploadSuccess'))
-    } catch (err: any) {
-      toast.error(getErrorMessage(err, t('evidence.uploadError')))
-    } finally { setUploading(false) }
-  }
+ const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+ const file = e.target.files?.[0]
+ if (!file) return
+ if (!ALLOWED_TYPES.includes(file.type)) {
+ toast.error(t('evidence.invalidType'))
+ return
+ }
+ if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+ toast.error(t('evidence.tooLarge', { max: MAX_SIZE_MB }))
+ return
+ }
+ setUploading(true)
+ try {
+ const fd = new FormData()
+ fd.append('file', file)
+ fd.append('description', description)
+ const { data } = await api.post(`/operations/${id}/evidences`, fd, {
+ headers: { 'Content-Type': 'multipart/form-data' },
+ })
+ setEvidences(prev => [...prev, data])
+ setDescription('')
+ if (fileRef.current) fileRef.current.value = ''
+ toast.success(t('evidence.uploadSuccess'))
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('evidence.uploadError')))
+ } finally { setUploading(false) }
+ }
 
-  const handleDelete = async (evidenceId: number) => {
-    setDeletingId(evidenceId)
-    try {
-      await api.delete(`/operations/${id}/evidences/${evidenceId}`)
-      setEvidences(prev => prev.filter(e => e.id !== evidenceId))
-      toast.success(t('evidence.deleteSuccess'))
-    } catch (err: any) {
-      toast.error(getErrorMessage(err, t('evidence.deleteError')))
-    } finally { setDeletingId(null) }
-  }
+ const handleDelete = async (evidenceId: number) => {
+ setDeletingId(evidenceId)
+ try {
+ await api.delete(`/operations/${id}/evidences/${evidenceId}`)
+ setEvidences(prev => prev.filter(e => e.id !== evidenceId))
+ toast.success(t('evidence.deleteSuccess'))
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('evidence.deleteError')))
+ } finally { setDeletingId(null) }
+ }
 
-  const handleDownload = async (ev: Evidence) => {
-    try {
-      const response = await api.get(`/operations/${id}/evidences/${ev.id}/download`, { responseType: 'blob' })
-      const url = URL.createObjectURL(response.data)
-      const a = document.createElement('a')
-      a.href = url; a.download = ev.file_name; a.click()
-      URL.revokeObjectURL(url)
-    } catch (err: any) {
-      toast.error(getErrorMessage(err, t('evidence.downloadError')))
-    }
-  }
+ const handleDownload = async (ev: Evidence) => {
+ try {
+ const response = await api.get(`/operations/${id}/evidences/${ev.id}/download`, { responseType: 'blob' })
+ const url = URL.createObjectURL(response.data)
+ const a = document.createElement('a')
+ a.href = url; a.download = ev.file_name; a.click()
+ URL.revokeObjectURL(url)
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('evidence.downloadError')))
+ }
+ }
 
-  const handlePreview = async (ev: Evidence) => {
-    if (!ev.mime_type?.startsWith('image/')) { handleDownload(ev); return }
-    try {
-      const response = await api.get(`/operations/${id}/evidences/${ev.id}/download`, { responseType: 'blob' })
-      setPreviewUrl(URL.createObjectURL(response.data))
-    } catch { handleDownload(ev) }
-  }
+ const handlePreview = async (ev: Evidence) => {
+ if (!ev.mime_type?.startsWith('image/')) { handleDownload(ev); return }
+ try {
+ const response = await api.get(`/operations/${id}/evidences/${ev.id}/download`, { responseType: 'blob' })
+ setPreviewUrl(URL.createObjectURL(response.data))
+ } catch { handleDownload(ev) }
+ }
 
-  if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.loading')}</div>
-  if (error) return <div className="p-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 rounded-lg">{error}</div>
-  if (!event) return <div className="p-6 text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.eventNotFound')}</div>
+ if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('common.loading')}</div>
+ if (error) return <div className="p-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 rounded-lg">{error}</div>
+ if (!event) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('operations.eventNotFound')}</div>
 
-  return (
-    <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-4">
-      <Link to="/operations" className="text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 flex items-center gap-1 text-sm">
-        <ArrowLeft size={16} /> {t('operations.backToOperations')}
-      </Link>
+ return (
+ <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-4">
+ <Link to="/operations" className="text-slate-400 dark:text-slate-500 hover:text-slate-600 flex items-center gap-1 text-sm">
+ <ArrowLeft size={16} /> {t('operations.backToOperations')}
+ </Link>
 
-      {/* Event Card */}
-      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-bold text-[#1E3A5F]">{t('operations.eventDetail', { id: event.id })}</h1>
-          <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100 dark:bg-slate-700'}`}>{event.status}</span>
-        </div>
-        <dl className="grid grid-cols-2 gap-4 text-sm">
-          <div><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
-          <div><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
-          <div><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('lots.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
-          <div><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.version')}</dt><dd>v{event.version}</dd></div>
-          <div className="col-span-2"><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('common.observations')}</dt><dd>{event.observations || '—'}</dd></div>
-          {event.sap_document_ref && <div className="col-span-2"><dt className="text-slate-500 dark:text-slate-400 dark:text-slate-500">{t('operations.sapRef')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>}
-        </dl>
+ {/* Event Card */}
+ <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
+ <div className="flex items-center justify-between mb-4">
+ <h1 className="text-xl font-bold text-[#1E3A5F]">{t('operations.eventDetail', { id: event.id })}</h1>
+ <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100 dark:bg-slate-700'}`}>{event.status}</span>
+ </div>
+ <dl className="grid grid-cols-2 gap-4 text-sm">
+ <div><dt className="text-slate-500 dark:text-slate-400">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
+ <div><dt className="text-slate-500 dark:text-slate-400">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
+ <div><dt className="text-slate-500 dark:text-slate-400">{t('lots.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
+ <div><dt className="text-slate-500 dark:text-slate-400">{t('common.version')}</dt><dd>v{event.version}</dd></div>
+ <div className="col-span-2"><dt className="text-slate-500 dark:text-slate-400">{t('common.observations')}</dt><dd>{event.observations || '—'}</dd></div>
+ {event.sap_document_ref && <div className="col-span-2"><dt className="text-slate-500 dark:text-slate-400">{t('operations.sapRef')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>}
+ </dl>
 
-        {event.bird_movements?.length > 0 && (
-          <div className="mt-4 pt-4 border-t">
-            <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 mb-2 flex items-center gap-1">
-              <Activity size={14} /> {t('review.birdMovements')}
-            </h3>
-            {event.bird_movements.map((bm: any, i: number) => (
-              <div key={i} className="text-xs text-slate-600 dark:text-slate-300 dark:text-slate-500">{bm.quantity} {t('review.aves')} {bm.sex || ''} {bm.avg_weight ? `· ${bm.avg_weight}g` : ''}</div>
-            ))}
-          </div>
-        )}
-        {event.feed_movements?.length > 0 && (
-          <div className="mt-4 pt-4 border-t">
-            <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 mb-2">{t('operations.feed')}</h3>
-            {event.feed_movements.map((fm: any, i: number) => <div key={i} className="text-xs text-slate-600 dark:text-slate-300 dark:text-slate-500">{fm.quantity_kg} kg</div>)}
-          </div>
-        )}
-        {event.egg_movements?.length > 0 && (
-          <div className="mt-4 pt-4 border-t">
-            <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 dark:text-slate-500 mb-2">{t('operations.eggs')}</h3>
-            {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600 dark:text-slate-300 dark:text-slate-500">{em.quantity} · {em.egg_type}</div>)}
-          </div>
-        )}
-      </div>
+ {event.bird_movements?.length > 0 && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 mb-2 flex items-center gap-1">
+ <Activity size={14} /> {t('review.birdMovements')}
+ </h3>
+ {event.bird_movements.map((bm: any, i: number) => (
+ <div key={i} className="text-xs text-slate-600 dark:text-slate-300">{bm.quantity} {t('review.aves')} {bm.sex || ''} {bm.avg_weight ? `· ${bm.avg_weight}g` : ''}</div>
+ ))}
+ </div>
+ )}
+ {event.feed_movements?.length > 0 && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 mb-2">{t('operations.feed')}</h3>
+ {event.feed_movements.map((fm: any, i: number) => <div key={i} className="text-xs text-slate-600 dark:text-slate-300">{fm.quantity_kg} kg</div>)}
+ </div>
+ )}
+ {event.egg_movements?.length > 0 && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 mb-2">{t('operations.eggs')}</h3>
+ {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600 dark:text-slate-300">{em.quantity} · {em.egg_type}</div>)}
+ </div>
+ )}
+ </div>
 
-      {/* Evidence Section */}
-      <div className="bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 dark:shadow-none p-6">
-        <div className="flex items-center gap-2 mb-4">
-          <Paperclip size={18} className="text-[#1A6DCC]" />
-          <h2 className="text-base font-bold text-slate-800 dark:text-slate-200">{t('evidence.title')}</h2>
-          <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{t('evidence.allowedTypes')}</span>
-        </div>
+ {/* Evidence Section */}
+ <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
+ <div className="flex items-center gap-2 mb-4">
+ <Paperclip size={18} className="text-[#1A6DCC]" />
+ <h2 className="text-base font-bold text-slate-800 dark:text-slate-200">{t('evidence.title')}</h2>
+ <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{t('evidence.allowedTypes')}</span>
+ </div>
 
-        {/* Existing evidences */}
-        {evidences.length > 0 ? (
-          <ul className="space-y-2 mb-4">
-            {evidences.map((ev) => {
-              const isImage = ev.mime_type?.startsWith('image/')
-              return (
-                <li key={ev.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 group">
-                  <div className="shrink-0 text-slate-400 dark:text-slate-500">
-                    {isImage ? <Image size={20} className="text-blue-500 dark:text-blue-400" /> : <FileText size={20} className="text-red-500 dark:text-red-400" />}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{ev.file_name}</p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">
-                      {ev.file_size ? formatBytes(ev.file_size) : ''}
-                      {ev.description ? ` · ${ev.description}` : ''}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button
-                      type="button"
-                      onClick={() => handlePreview(ev)}
-                      title={t('evidence.download')}
-                      className="p-1.5 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:bg-blue-950 rounded-md"
-                    >
-                      <Download size={14} />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDelete(ev.id)}
-                      disabled={deletingId === ev.id}
-                      title={t('common.delete')}
-                      className="p-1.5 text-slate-500 dark:text-slate-400 dark:text-slate-500 hover:text-red-600 dark:text-red-400 hover:bg-red-50 dark:bg-red-950 rounded-md disabled:opacity-40"
-                    >
-                      <Trash2 size={14} />
-                    </button>
-                  </div>
-                </li>
-              )
-            })}
-          </ul>
-        ) : (
-          <p className="text-sm text-slate-400 dark:text-slate-500 mb-4 italic">{t('evidence.noFiles')}</p>
-        )}
+ {/* Existing evidences */}
+ {evidences.length > 0 ? (
+ <ul className="space-y-2 mb-4">
+ {evidences.map((ev) => {
+ const isImage = ev.mime_type?.startsWith('image/')
+ return (
+ <li key={ev.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 group">
+ <div className="shrink-0 text-slate-400 dark:text-slate-500">
+ {isImage ? <Image size={20} className="text-blue-500" /> : <FileText size={20} className="text-red-500" />}
+ </div>
+ <div className="flex-1 min-w-0">
+ <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{ev.file_name}</p>
+ <p className="text-xs text-slate-400 dark:text-slate-500">
+ {ev.file_size ? formatBytes(ev.file_size) : ''}
+ {ev.description ? ` · ${ev.description}` : ''}
+ </p>
+ </div>
+ <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+ <button
+ type="button"
+ onClick={() => handlePreview(ev)}
+ title={t('evidence.download')}
+ className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md"
+ >
+ <Download size={14} />
+ </button>
+ <button
+ type="button"
+ onClick={() => handleDelete(ev.id)}
+ disabled={deletingId === ev.id}
+ title={t('common.delete')}
+ className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md disabled:opacity-40"
+ >
+ <Trash2 size={14} />
+ </button>
+ </div>
+ </li>
+ )
+ })}
+ </ul>
+ ) : (
+ <p className="text-sm text-slate-400 dark:text-slate-500 mb-4 italic">{t('evidence.noFiles')}</p>
+ )}
 
-        {/* Upload area */}
-        <div className="border-2 border-dashed border-slate-200 dark:border-slate-700 rounded-lg p-4 space-y-3">
-          <input
-            ref={fileRef}
-            type="text"
-            placeholder={t('evidence.descriptionPlaceholder')}
-            value={description}
-            onChange={e => setDescription(e.target.value)}
-            className="w-full h-9 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-sm focus:border-blue-500 dark:border-blue-400 focus:ring-1 focus:ring-blue-500 outline-none"
-          />
-          <label className={`flex items-center gap-2 cursor-pointer w-full justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
-            ${uploading ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-[#1A6DCC] text-white hover:bg-[#155bb5]'}`}>
-            <Upload size={16} />
-            {uploading ? t('evidence.uploading') : t('evidence.uploadButton')}
-            <input
-              type="file"
-              className="hidden"
-              accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
-              disabled={uploading}
-              onChange={handleFileChange}
-            />
-          </label>
-          <p className="text-xs text-center text-slate-400 dark:text-slate-500">{t('evidence.maxSize', { max: MAX_SIZE_MB })}</p>
-        </div>
-      </div>
+ {/* Upload area */}
+ <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 space-y-3">
+ <input
+ ref={fileRef}
+ type="text"
+ placeholder={t('evidence.descriptionPlaceholder')}
+ value={description}
+ onChange={e => setDescription(e.target.value)}
+ className="w-full h-9 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+ />
+ <label className={`flex items-center gap-2 cursor-pointer w-full justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
+ ${uploading ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-[#1A6DCC] text-white hover:bg-[#155bb5]'}`}>
+ <Upload size={16} />
+ {uploading ? t('evidence.uploading') : t('evidence.uploadButton')}
+ <input
+ type="file"
+ className="hidden"
+ accept=".jpg,.jpeg,.png,.gif,.webp,.pdf"
+ disabled={uploading}
+ onChange={handleFileChange}
+ />
+ </label>
+ <p className="text-xs text-center text-slate-400 dark:text-slate-500">{t('evidence.maxSize', { max: MAX_SIZE_MB })}</p>
+ </div>
+ </div>
 
-      {/* Image Preview Modal */}
-      {previewUrl && (
-        <div
-          className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
-          onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }}
-        >
-          <button
-            className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/80"
-            onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }}
-          >
-            <X size={20} />
-          </button>
-          <img
-            src={previewUrl}
-            alt="preview"
-            className="max-w-full max-h-[90vh] rounded-lg shadow-xl object-contain"
-            onClick={e => e.stopPropagation()}
-          />
-        </div>
-      )}
-    </div>
-  )
+ {/* Image Preview Modal */}
+ {previewUrl && (
+ <div
+ className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4"
+ onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }}
+ >
+ <button
+ className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2 hover:bg-black/80"
+ onClick={() => { URL.revokeObjectURL(previewUrl); setPreviewUrl(null) }}
+ >
+ <X size={20} />
+ </button>
+ <img
+ src={previewUrl}
+ alt="preview"
+ className="max-w-full max-h-[90vh] rounded-lg shadow-xl object-contain"
+ onClick={e => e.stopPropagation()}
+ />
+ </div>
+ )}
+ </div>
+ )
 }
 

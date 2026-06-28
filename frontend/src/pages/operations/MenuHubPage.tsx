@@ -12,14 +12,14 @@ const MENU_STACK_KEY_PREFIX = 'menuHubStack:'
 
 /** Busca recursivamente un NavItem por su clave dentro de NAV_ITEMS. */
 function findNavItem(key: string, items: NavItem[] = NAV_ITEMS): NavItem | null {
-  for (const it of items) {
-    if (it.key === key) return it
-    if (it.children) {
-      const found = findNavItem(key, it.children)
-      if (found) return found
-    }
-  }
-  return null
+ for (const it of items) {
+ if (it.key === key) return it
+ if (it.children) {
+ const found = findNavItem(key, it.children)
+ if (found) return found
+ }
+ }
+ return null
 }
 
 /**
@@ -33,114 +33,114 @@ function findNavItem(key: string, items: NavItem[] = NAV_ITEMS): NavItem | null 
  * Es una capa de presentación: no cambia rutas ni lógica existentes.
  */
 export default function MenuHubPage() {
-  const { t } = useTranslation()
-  const navigate = useNavigate()
-  const { menuKey } = useParams<{ menuKey: string }>()
-  const { user } = useAuthStore()
-  const isMobileUser = user?.view_type === 'mobile'
+ const { t } = useTranslation()
+ const navigate = useNavigate()
+ const { menuKey } = useParams<{ menuKey: string }>()
+ const { user } = useAuthStore()
+ const isMobileUser = user?.view_type === 'mobile'
 
-  const root = useMemo(() => (menuKey ? findNavItem(menuKey) : null), [menuKey])
-  // Pila de navegación interna (drill-in dentro del hub)
-  const [stack, setStack] = useState<NavItem[]>([])
+ const root = useMemo(() => (menuKey ? findNavItem(menuKey) : null), [menuKey])
+ // Pila de navegación interna (drill-in dentro del hub)
+ const [stack, setStack] = useState<NavItem[]>([])
 
-  const restoreStack = (key: string) => {
-    try {
-      const raw = sessionStorage.getItem(`${MENU_STACK_KEY_PREFIX}${key}`)
-      if (!raw) return []
-      const keys = JSON.parse(raw) as string[]
-      if (!Array.isArray(keys)) return []
-      const resolved = keys
-        .map((k) => findNavItem(k))
-        .filter(Boolean) as NavItem[]
-      return resolved
-    } catch {
-      return []
-    }
-  }
+ const restoreStack = (key: string) => {
+ try {
+ const raw = sessionStorage.getItem(`${MENU_STACK_KEY_PREFIX}${key}`)
+ if (!raw) return []
+ const keys = JSON.parse(raw) as string[]
+ if (!Array.isArray(keys)) return []
+ const resolved = keys
+ .map((k) => findNavItem(k))
+ .filter(Boolean) as NavItem[]
+ return resolved
+ } catch {
+ return []
+ }
+ }
 
-  const persistStack = (key: string, items: NavItem[]) => {
-    const keys = items.map((it) => it.key)
-    sessionStorage.setItem(`${MENU_STACK_KEY_PREFIX}${key}`, JSON.stringify(keys))
-  }
+ const persistStack = (key: string, items: NavItem[]) => {
+ const keys = items.map((it) => it.key)
+ sessionStorage.setItem(`${MENU_STACK_KEY_PREFIX}${key}`, JSON.stringify(keys))
+ }
 
-  useEffect(() => {
-    // Evita arrastrar historial al cambiar de un hub a otro.
-    if (!menuKey) return
-    setStack(restoreStack(menuKey))
-  }, [menuKey])
+ useEffect(() => {
+ // Evita arrastrar historial al cambiar de un hub a otro.
+ if (!menuKey) return
+ setStack(restoreStack(menuKey))
+ }, [menuKey])
 
-  useEffect(() => {
-    if (!menuKey) return
-    persistStack(menuKey, stack)
-  }, [menuKey, stack])
+ useEffect(() => {
+ if (!menuKey) return
+ persistStack(menuKey, stack)
+ }, [menuKey, stack])
 
-  if (!root) return <Navigate to="/" replace />
-  if (isMobileUser && root.key !== 'poultry') return <Navigate to="/menu/poultry" replace />
+ if (!root) return <Navigate to="/" replace />
+ if (isMobileUser && root.key !== 'poultry') return <Navigate to="/menu/poultry" replace />
 
-  const current = stack.length ? stack[stack.length - 1] : root
-  const items = current.children ?? []
+ const current = stack.length ? stack[stack.length - 1] : root
+ const items = current.children ?? []
 
-  const handleSelect = (item: NavItem) => {
-    if (item.children && item.children.length > 0) {
-      setStack((prev) => [...prev, item])
-    } else if (item.to) {
-      navigate(item.to)
-    }
-  }
+ const handleSelect = (item: NavItem) => {
+ if (item.children && item.children.length > 0) {
+ setStack((prev) => [...prev, item])
+ } else if (item.to) {
+ navigate(item.to)
+ }
+ }
 
-  const handleBack = () => {
-    if (stack.length > 0) {
-      setStack((prev) => prev.slice(0, -1))
-    } else {
-      navigate('/')
-    }
-  }
+ const handleBack = () => {
+ if (stack.length > 0) {
+ setStack((prev) => prev.slice(0, -1))
+ } else {
+ navigate('/')
+ }
+ }
 
-  // Migas: raíz → ...drill → actual
-  const path = [root, ...stack]
-  const breadcrumbs: BreadcrumbItem[] = [
-    { label: 'nav.dashboard', fallback: 'Dashboard', to: '/' },
-    ...path.map((node, index) => ({
-      label: node.labelKey,
-      fallback: node.fallback,
-      to: index === 0 ? `/menu/${root.key}` : undefined,
-    })),
-  ]
+ // Migas: raíz → ...drill → actual
+ const path = [root, ...stack]
+ const breadcrumbs: BreadcrumbItem[] = [
+ { label: 'nav.dashboard', fallback: 'Dashboard', to: '/' },
+ ...path.map((node, index) => ({
+ label: node.labelKey,
+ fallback: node.fallback,
+ to: index === 0 ? `/menu/${root.key}` : undefined,
+ })),
+ ]
 
-  return (
-    <div className="max-w-5xl mx-auto">
-      <SubNavHeader
-        title={t(current.labelKey, current.fallback)}
-        breadcrumbs={breadcrumbs}
-        onBack={handleBack}
-        hideBack={stack.length === 0}
-      />
+ return (
+ <div className="max-w-5xl mx-auto">
+ <SubNavHeader
+ title={t(current.labelKey, current.fallback)}
+ breadcrumbs={breadcrumbs}
+ onBack={handleBack}
+ hideBack={stack.length === 0}
+ />
 
-      <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-4 -mt-2">
-        <LayoutGrid size={13} />
-        {t('process.hub.chooseOption', 'Elige una opción')}
-      </p>
+ <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-900 dark:text-slate-100 uppercase tracking-wider mb-4 -mt-2">
+ <LayoutGrid size={13} />
+ {t('process.hub.chooseOption', 'Elige una opción')}
+ </p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {items.map((item, index) => {
-          const childCount = item.children?.length ?? 0
-          const description =
-            childCount > 0
-              ? t('nav.optionsCount', `${childCount} opciones`, { count: childCount })
-              : t('process.hub.open', 'Abrir')
-          return (
-            <MenuCard
-              key={item.key}
-              icon={item.icon}
-              title={t(item.labelKey, item.fallback)}
-              description={description}
-              step={index + 1}
-              badge={item.badge}
-              onClick={() => handleSelect(item)}
-            />
-          )
-        })}
-      </div>
-    </div>
-  )
+ <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+ {items.map((item, index) => {
+ const childCount = item.children?.length ?? 0
+ const description =
+ childCount > 0
+ ? t('nav.optionsCount', `${childCount} opciones`, { count: childCount })
+ : t('process.hub.open', 'Abrir')
+ return (
+ <MenuCard
+ key={item.key}
+ icon={item.icon}
+ title={t(item.labelKey, item.fallback)}
+ description={description}
+ step={index + 1}
+ badge={item.badge}
+ onClick={() => handleSelect(item)}
+ />
+ )
+ })}
+ </div>
+ </div>
+ )
 }

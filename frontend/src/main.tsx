@@ -11,20 +11,20 @@ import App from './App'
 
 // Dark mode initialization — apply class before first render to avoid FOUC
 try {
-  const stored = JSON.parse(localStorage.getItem('theme-storage') || '{}')
-  if (stored?.state?.isDark) {
-    document.documentElement.classList.add('dark')
-  }
+ const stored = JSON.parse(localStorage.getItem('theme-storage') || '{}')
+ if (stored?.state?.isDark) {
+ document.documentElement.classList.add('dark')
+ }
 } catch { /* ignore */ }
 registerTokenAccessors(
-  () => useAuthStore.getState().token,
-  () => useAuthStore.getState().refreshToken,
-  (access, refresh) => useAuthStore.getState().setTokens(access, refresh),
-  () => useAuthStore.getState().logout(),
+ () => useAuthStore.getState().token,
+ () => useAuthStore.getState().refreshToken,
+ (access, refresh) => useAuthStore.getState().setTokens(access, refresh),
+ () => useAuthStore.getState().logout(),
 )
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <App />
-  </StrictMode>,
+ <StrictMode>
+ <App />
+ </StrictMode>,
 )
