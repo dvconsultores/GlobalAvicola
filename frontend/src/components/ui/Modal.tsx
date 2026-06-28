@@ -76,7 +76,7 @@ export function Modal({
  ref={dialogRef}
  tabIndex={-1}
  className={[
- 'relative w-full bg-white dark:bg-slate-800 rounded-2xl shadow-xl',
+ 'relative w-full bg-white rounded-2xl shadow-xl',
  'outline-none overflow-hidden',
  'max-h-[90dvh] flex flex-col',
  SIZE_CLASSES[size],
@@ -87,17 +87,17 @@ export function Modal({
  {/* Header */}
  <div className="flex items-start justify-between gap-3 px-5 py-4 border-b border-slate-100 shrink-0">
  <div>
- <h2 id={titleId} className="font-semibold text-slate-800 dark:text-slate-200 text-base leading-snug">
+ <h2 id={titleId} className="font-semibold text-slate-800 text-base leading-snug">
  {title}
  </h2>
  {description && (
- <p className="text-sm text-slate-500 dark:text-slate-400 mt-0.5">{description}</p>
+ <p className="text-sm text-slate-500 mt-0.5">{description}</p>
  )}
  </div>
  <button
  onClick={onClose}
  aria-label="Cerrar"
- className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-500 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+ className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover hover:bg-slate-100 transition-colors"
  >
  <X size={16} />
  </button>

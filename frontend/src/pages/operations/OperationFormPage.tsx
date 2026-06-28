@@ -52,9 +52,9 @@ function RangeIndicator({ value, min, max, unit, weekLabel }: {
  const s = getRangeStatus(value, min, max)
  if (s === 'none') return null
  const cfg: Record<RangeStatus, { bg: string; text: string; icon: string }> = {
- ok: { bg: 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', icon: '✅' },
- warn: { bg: 'bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800', text: 'text-amber-700 dark:text-amber-300', icon: '⚠️' },
- error: { bg: 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800', text: 'text-red-700 dark:text-red-300', icon: '❌' },
+ ok: { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', icon: '✅' },
+ warn: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', icon: '⚠️' },
+ error: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', icon: '❌' },
  none: { bg: '', text: '', icon: '' },
  }
  const { bg, text, icon } = cfg[s]
@@ -149,8 +149,8 @@ const operationSchema = z.object({
 type OperationFormData = z.infer<typeof operationSchema>
 
 // Shared CSS helpers (module-level to avoid recreating on each render)
-const ic = 'w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
-const lc = 'block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5'
+const ic = 'w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
+const lc = 'block text-sm font-semibold text-slate-700 mb-1.5'
 
 // ============================================================
 // Component
@@ -327,12 +327,12 @@ export default function OperationFormPage() {
  const renderMFRows = (showWeight = true) => (
  <div>
  <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2 border-b border-slate-200`}>
- <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.sex', 'Sexo')}</span>
- <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.quantity', 'Cantidad')}</span>
- {showWeight && <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
+ <span className="text-sm font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
+ <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
+ {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
  </div>
  {[
- { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700 dark:text-blue-300' },
+ { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
  { idx: 1, defaultSex: 'female', label: t('operations.females', 'Hembras'), color: 'text-pink-700' },
  ].map(({ idx, defaultSex, label, color }) => (
  <div key={idx} className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0`}>
@@ -492,7 +492,7 @@ export default function OperationFormPage() {
 
  case 'bird_distribution': return (
  <div className="space-y-3">
- <p className="text-xs text-slate-500 dark:text-slate-400">{t('operations.addHouseRows', 'Añade una fila por galpón destino')}</p>
+ <p className="text-xs text-slate-500">{t('operations.addHouseRows', 'Añade una fila por galpón destino')}</p>
  {birdFields.map((field, i) => (
  <div key={field.id} className="grid grid-cols-[1fr_90px_90px_auto] gap-2 items-end">
  <div>
@@ -512,7 +512,7 @@ export default function OperationFormPage() {
  <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
  <button type="button" onClick={() => removeBird(i)}
- className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 border border-red-200 dark:border-red-800 rounded-lg mt-4">
+ className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 border border-red-200 rounded-lg mt-4">
  <Trash2 size={13} />
  </button>
  </div>
@@ -636,14 +636,14 @@ export default function OperationFormPage() {
  )}
  <div>
  <div className="grid grid-cols-2 px-1 py-2 border-b border-slate-200">
- <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{t('operations.eggType', 'Tipo de huevo')}</span>
- <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">{t('operations.quantity', 'Cantidad')}</span>
+ <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
+ <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
  </div>
  {eggTypes.map(({ key, label }, i) => (
  <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
- <span className="text-sm text-slate-700 dark:text-slate-200">{label}</span>
+ <span className="text-sm text-slate-700">{label}</span>
  </div>
  <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
@@ -651,7 +651,7 @@ export default function OperationFormPage() {
  </div>
  {eventType === 'egg_collection' && (
  <div className="flex flex-col gap-3">
- <label className="text-sm font-medium text-slate-600 dark:text-slate-300">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
+ <label className="text-sm font-medium text-slate-600">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
  <input type="number" step="0.1" min="0" {...register('egg_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="60.0" />
  </div>
  )}
@@ -700,11 +700,11 @@ export default function OperationFormPage() {
  case 'farm_inspection': {
  return (
  <div className="space-y-4">
- <p className="text-xs text-slate-500 dark:text-slate-400">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
+ <p className="text-xs text-slate-500">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
  {houseInspFields.map((field, i) => (
  <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">
  <div className="flex items-center justify-between mb-1">
- <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.house', 'Galpón')} {i + 1}</span>
+ <span className="text-sm font-semibold text-slate-600">{t('operations.house', 'Galpón')} {i + 1}</span>
  {i > 0 && (
  <button type="button" onClick={() => removeHouseInsp(i)}
  className="text-red-400 hover:text-red-600 p-1"><Trash2 size={16} /></button>
@@ -797,7 +797,7 @@ export default function OperationFormPage() {
  {params.map((param, i) => (
  <div key={param.key} className="flex items-center gap-3">
  <input type="hidden" {...register(`inspection_details.${i}.parameter`)} defaultValue={param.key} />
- <span className="text-sm text-slate-600 dark:text-slate-300 w-44 shrink-0">{param.label}</span>
+ <span className="text-sm text-slate-600 w-44 shrink-0">{param.label}</span>
  {param.numeric ? (
  <input type="number" step="0.1" {...register(`inspection_details.${i}.value`)}
  className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none" placeholder="--" />
@@ -818,12 +818,12 @@ export default function OperationFormPage() {
 
  case 'hatchery_inspection': return (
  <div className="space-y-4">
- <p className="text-xs text-slate-500 dark:text-slate-400">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina (incubadora o nacedora)')}</p>
+ <p className="text-xs text-slate-500">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina (incubadora o nacedora)')}</p>
  {incubatorFields.map((field, i) => {
  const machineType = watch(`hatchery_params.${i}.machine_type` as any)
  return (
  <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">
- <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
+ <p className="text-sm font-semibold text-slate-600">{t('operations.machine', 'Máquina')} {i + 1}</p>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
  <div>
  <label className={lc}>{t('operations.machineType', 'Tipo de máquina')}</label>
@@ -908,7 +908,7 @@ export default function OperationFormPage() {
  <div className="flex items-center gap-2 pt-5">
  <input type="checkbox" id="turning" {...register('hatchery_params.0.turning')}
  className="h-4 w-4 rounded border-slate-300 text-blue-600" />
- <label htmlFor="turning" className="text-sm text-slate-700 dark:text-slate-200">{t('operations.turning', 'Volteo activo')}</label>
+ <label htmlFor="turning" className="text-sm text-slate-700">{t('operations.turning', 'Volteo activo')}</label>
  </div>
  </div>
  </div>
@@ -935,7 +935,7 @@ export default function OperationFormPage() {
  <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
- <span className="text-sm text-slate-700 dark:text-slate-200">{label}</span>
+ <span className="text-sm text-slate-700">{label}</span>
  </div>
  <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
@@ -985,7 +985,7 @@ export default function OperationFormPage() {
  <div key={idx} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={sex} />
- <span className="text-sm text-slate-700 dark:text-slate-200">{label}</span>
+ <span className="text-sm text-slate-700">{label}</span>
  </div>
  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
@@ -1063,7 +1063,7 @@ export default function OperationFormPage() {
  )
 
  default: return (
- <div className="py-6 text-sm text-slate-900 dark:text-slate-100 text-center italic">
+ <div className="py-6 text-sm text-slate-900 text-center italic">
  {t('operations.noSpecificFields', 'Registra tus observaciones en el campo de abajo.')}
  </div>
  )
@@ -1075,20 +1075,20 @@ export default function OperationFormPage() {
  const SelectedStageIcon = selectedStageMeta?.Icon
 
  return (
- <div className="py-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
+ <div className="py-4 sm:p-6 max-w-2xl mx-auto text-slate-900">
  {/* Stepper */}
  <nav className="flex items-center gap-1.5 text-sm font-semibold mb-5 select-none">
- <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#5a9bba]' : 'text-slate-900 dark:text-slate-100'}>
+ <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#5a9bba]' : 'text-slate-900'}>
  {t('process.step1', '1 · Proceso')}
  </button>
- <span className="text-slate-900 dark:text-slate-100">/</span>
+ <span className="text-slate-900">/</span>
  <button type="button" disabled={!stage} onClick={() => stage && setStep(2)}
- className={`${step >= 2 ? 'text-[#5a9bba]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
+ className={`${step >= 2 ? 'text-[#5a9bba]' : 'text-slate-900'} disabled:cursor-not-allowed`}>
  {t('process.step2', '2 · Operación')}
  </button>
- <span className="text-slate-900 dark:text-slate-100">/</span>
+ <span className="text-slate-900">/</span>
  <button type="button" disabled={!eventType} onClick={() => eventType && setStep(3)}
- className={`${step >= 3 ? 'text-[#5a9bba]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
+ className={`${step >= 3 ? 'text-[#5a9bba]' : 'text-slate-900'} disabled:cursor-not-allowed`}>
  {t('process.step3', '3 · Datos')}
  </button>
  </nav>
@@ -1096,20 +1096,20 @@ export default function OperationFormPage() {
  {/* ===================== STEP 1 — PROCESS ===================== */}
  {step === 1 && (
  <div>
- <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t('process.title', 'Registrar Operación')}</h1>
- <p className="text-sm text-slate-900 dark:text-slate-100 mt-1 mb-5">{t('process.subtitle', '¿Qué proceso vas a registrar?')}</p>
+ <h1 className="text-xl font-bold text-slate-900">{t('process.title', 'Registrar Operación')}</h1>
+ <p className="text-sm text-slate-900 mt-1 mb-5">{t('process.subtitle', '¿Qué proceso vas a registrar?')}</p>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  {PROCESS_STAGES.map(s => {
  const Icon = s.Icon
  return (
  <button key={s.key} type="button" onClick={() => goToStep2(s.key)}
- className={`flex items-center gap-3 p-4 min-h-[5rem] rounded-xl border border-slate-200 bg-white dark:bg-slate-800 text-left active:bg-slate-50 transition-colors ${s.accent}`}>
+ className={`flex items-center gap-3 p-4 min-h-[5rem] rounded-xl border border-slate-200 bg-white text-left active:bg-slate-50 transition-colors ${s.accent}`}>
  <div className={`shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${s.iconBg}`}>
  <Icon size={26} className={s.iconColor} />
  </div>
  <div className="min-w-0">
- <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{t(s.labelKey, s.fallback)}</p>
- <p className="text-sm text-slate-500 dark:text-slate-400 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
+ <p className="font-semibold text-slate-900 leading-tight">{t(s.labelKey, s.fallback)}</p>
+ <p className="text-sm text-slate-500 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
  </div>
  </button>
  )
@@ -1122,17 +1122,17 @@ export default function OperationFormPage() {
  {step === 2 && stage && selectedStageMeta && (
  <div>
  <button type="button" onClick={() => setStep(1)}
- className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#5a9bba] mb-3">
+ className="inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3">
  <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
  </button>
  <div className="flex items-center gap-3 mb-5">
  <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selectedStageMeta.iconBg}`}>
  {SelectedStageIcon && <SelectedStageIcon size={22} className={selectedStageMeta.iconColor} />}
  </div>
- <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
+ <h1 className="text-lg font-bold text-slate-900">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
  </div>
 
- <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-1 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
+ <p className="text-sm font-semibold text-slate-700 mt-1 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
  <div className="space-y-5 mt-3">
  {categoriesForStage(stage).map(({ category, events }) => {
  const CatIcon = category.Icon
@@ -1140,7 +1140,7 @@ export default function OperationFormPage() {
  <div key={category.key}>
  <div className="flex items-center gap-2 mb-2">
  <CatIcon size={16} className={category.color} />
- <span className="text-sm font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
+ <span className="text-sm font-bold uppercase tracking-wide text-slate-600">
  {t(category.labelKey, category.fallback)}
  </span>
  </div>
@@ -1149,9 +1149,9 @@ export default function OperationFormPage() {
  const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
  return (
  <button key={evt} type="button" onClick={() => chooseOperation(evt)}
- className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 bg-white dark:bg-slate-800 hover:border-[#5a9bba] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
+ className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 bg-white hover:border-[#5a9bba] hover:bg-blue-50:bg-blue-900/20 transition-colors text-center group">
  {EvIcon && <EvIcon size={22} className="text-[#5a9bba] group-hover:scale-110 transition-transform" />}
- <span className="text-sm text-slate-700 dark:text-slate-200 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
+ <span className="text-sm text-slate-700 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
  </button>
  )
  })}
@@ -1180,32 +1180,32 @@ export default function OperationFormPage() {
  }
  setStep(stage ? 2 : 1)
  }}
- className="inline-flex items-center gap-1 text-sm text-slate-900 dark:text-slate-100 hover:text-[#5a9bba] mb-3"
+ className="inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"
  >
  <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
  </button>
 
  {eventType && (
- <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-800">
+ <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100">
  {SelectedEventIcon && <SelectedEventIcon size={22} className="text-[#5a9bba]" />}
  <div>
- <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{t(`events.${eventType}`, eventType)}</p>
+ <p className="text-sm font-bold text-slate-900">{t(`events.${eventType}`, eventType)}</p>
  {selectedStageMeta && (
- <p className="text-xs text-slate-900 dark:text-slate-100">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</p>
+ <p className="text-xs text-slate-900">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</p>
  )}
  </div>
  </div>
  )}
 
  {result && (
- <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 dark:bg-green-950 text-green-700' : 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300'}`}>
+ <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
  {result.message}
  </div>
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
  <div>
- <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
  <SearchSelect
  value={lotId}
  onChange={(v) => setValue('lot_id', v ? Number(v) : undefined as any)}
@@ -1215,14 +1215,14 @@ export default function OperationFormPage() {
  renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${l.status}` : ''}`}
  error={!!errors.lot_id}
  />
- {lotsLoadError && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
- {errors.lot_id && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
+ {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
+ {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
  </div>
 
  <div>
- <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.date')}</label>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.date')}</label>
  <input type="date" {...register('event_date')}
- className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
+ className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
  </div>
 
  {/* Operation-specific fields */}
@@ -1231,9 +1231,9 @@ export default function OperationFormPage() {
  </div>
 
  <div>
- <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.observations')}</label>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.observations')}</label>
  <textarea {...register('observations')} rows={2}
- className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
+ className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
  </div>
 
  <button type="submit" disabled={submitting || !eventType}

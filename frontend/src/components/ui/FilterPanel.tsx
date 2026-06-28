@@ -27,17 +27,17 @@ export default function FilterPanel({
  const [open, setOpen] = useState(true)
 
  return (
- <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 mb-4 overflow-hidden">
+ <div className="bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden">
  {/* Header clickeable */}
  <button
  onClick={() => setOpen(!open)}
- className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+ className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"
  aria-expanded={open}
  >
  <div className="flex items-center gap-2">
  <ChevronDown
  size={16}
- className={`text-slate-400 dark:text-slate-500 transition-transform duration-200 ${
+ className={`text-slate-400 transition-transform duration-200 ${
  open ? 'rotate-0' : '-rotate-90'
  }`}
  />
@@ -45,7 +45,7 @@ export default function FilterPanel({
  </div>
  <div className="flex items-center gap-3">
  {totalResults !== undefined && (
- <span className="text-xs text-slate-400 dark:text-slate-500 font-normal">
+ <span className="text-xs text-slate-400 font-normal">
  {totalResults} {t('common.results', 'resultados')}
  </span>
  )}
@@ -82,7 +82,7 @@ export default function FilterPanel({
 export function FilterGroup({ label, children }: { label: string; children: React.ReactNode }) {
  return (
  <div className="flex flex-col gap-1.5">
- <span className="text-[11px] font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wide">{label}</span>
+ <span className="text-[11px] font-semibold text-slate-500 uppercase tracking-wide">{label}</span>
  <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2">
  {children}
  </div>

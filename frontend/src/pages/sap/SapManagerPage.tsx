@@ -75,7 +75,7 @@ export default function SapManagerPage() {
  actions={
  conn && (
  <div className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
- conn.connected ? 'bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300' : 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300'
+ conn.connected ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
  }`}>
  {conn.connected ? <CheckCircle size={14} /> : <XCircle size={14} />}
  {conn.adapter || (conn.connected ? t('sap.connected', 'Conectado') : t('sap.disconnected', 'Desconectado'))}
@@ -139,7 +139,7 @@ export default function SapManagerPage() {
  inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
  ${isActive
  ? 'bg-[#1E3A5F] text-white shadow-md'
- : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 hover:bg-slate-50'
+ : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
  }
  `}
  >
@@ -151,24 +151,24 @@ export default function SapManagerPage() {
  </div>
 
  {/* Tab Content */}
- <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+ <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
  {activeTab === 'overview' && (
  <div className="p-5">
- <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.recentActivity', 'Actividad reciente')}</h3>
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.recentActivity', 'Actividad reciente')}</h3>
  {jobs.length === 0 && payloads.length === 0 ? (
  <div className="text-center py-8">
- <RefreshCw size={32} className="mx-auto text-slate-300 dark:text-slate-500 mb-2" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('sap.noActivity', 'Sin actividad reciente')}</p>
+ <RefreshCw size={32} className="mx-auto text-slate-300 mb-2" />
+ <p className="text-sm text-slate-500">{t('sap.noActivity', 'Sin actividad reciente')}</p>
  </div>
  ) : (
  <div className="space-y-3">
  {jobs.slice(0, 5).map((j: any) => (
- <div key={j.id} className="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800 rounded-lg">
+ <div key={j.id} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
  <div>
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+ <p className="text-sm font-medium text-slate-700">
  {t('sap.syncJob', 'Trabajo de sincronización')} #{j.id}
  </p>
- <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
+ <p className="text-xs text-slate-500 mt-0.5">
  {j.direction} · {j.success_count}/{j.total_records} {t('sap.records', 'registros')}
  </p>
  </div>
@@ -184,19 +184,19 @@ export default function SapManagerPage() {
 
  {activeTab === 'pending' && (
  <div className="p-5">
- <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.pendingDocuments', 'Documentos Pendientes')}</h3>
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.pendingDocuments', 'Documentos Pendientes')}</h3>
  {payloads.filter(p => p.status === 'pending' || p.status === 'draft').length === 0 ? (
  <div className="text-center py-8">
  <CheckCircle size={32} className="mx-auto text-emerald-300 mb-2" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('sap.noPending', 'Sin documentos pendientes')}</p>
+ <p className="text-sm text-slate-500">{t('sap.noPending', 'Sin documentos pendientes')}</p>
  </div>
  ) : (
  <div className="divide-y divide-slate-100">
  {payloads.filter(p => p.status === 'pending' || p.status === 'draft').map((p: any) => (
  <div key={p.id} className="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
  <div>
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{p.sap_document_id || `#${p.id}`}</p>
- <p className="text-xs text-slate-500 dark:text-slate-400">{p.event_type || t('sap.document', 'Documento')}</p>
+ <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
+ <p className="text-xs text-slate-500">{p.event_type || t('sap.document', 'Documento')}</p>
  </div>
  <Badge variant="pending" size="sm">{p.status}</Badge>
  </div>
@@ -208,19 +208,19 @@ export default function SapManagerPage() {
 
  {activeTab === 'sent' && (
  <div className="p-5">
- <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.sentDocuments', 'Enviados a SAP')}</h3>
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.sentDocuments', 'Enviados a SAP')}</h3>
  {payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').length === 0 ? (
  <div className="text-center py-8">
- <Send size={32} className="mx-auto text-slate-300 dark:text-slate-500 mb-2" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('sap.noSent', 'Sin envíos a SAP')}</p>
+ <Send size={32} className="mx-auto text-slate-300 mb-2" />
+ <p className="text-sm text-slate-500">{t('sap.noSent', 'Sin envíos a SAP')}</p>
  </div>
  ) : (
  <div className="divide-y divide-slate-100">
  {payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').map((p: any) => (
  <div key={p.id} className="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
  <div>
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{p.sap_document_id || `#${p.id}`}</p>
- <p className="text-xs text-slate-500 dark:text-slate-400">{new Date(p.created_at).toLocaleString()}</p>
+ <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
+ <p className="text-xs text-slate-500">{new Date(p.created_at).toLocaleString()}</p>
  </div>
  <Badge variant={p.status === 'confirmed' ? 'approved' : 'sent_sap'} size="sm">{p.status}</Badge>
  </div>
@@ -232,22 +232,22 @@ export default function SapManagerPage() {
 
  {activeTab === 'errors' && (
  <div className="p-5">
- <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.errorDocuments', 'Errores SAP')}</h3>
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.errorDocuments', 'Errores SAP')}</h3>
  {payloads.filter(p => p.status === 'error').length === 0 ? (
  <div className="text-center py-8">
  <CheckCircle size={32} className="mx-auto text-emerald-300 mb-2" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('sap.noErrors', 'Sin errores SAP')}</p>
+ <p className="text-sm text-slate-500">{t('sap.noErrors', 'Sin errores SAP')}</p>
  </div>
  ) : (
  <div className="divide-y divide-slate-100">
  {payloads.filter(p => p.status === 'error').map((p: any) => (
  <div key={p.id} className="py-3 hover:bg-red-50 px-2 rounded-lg transition">
  <div className="flex items-center justify-between">
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{p.sap_document_id || `#${p.id}`}</p>
+ <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
  <Badge variant="error_sap" size="sm">{t('sap.error', 'Error')}</Badge>
  </div>
  {p.error_message && (
- <p className="text-xs text-red-600 dark:text-red-400 mt-1 font-mono">{p.error_message}</p>
+ <p className="text-xs text-red-600 mt-1 font-mono">{p.error_message}</p>
  )}
  </div>
  ))}
@@ -258,25 +258,25 @@ export default function SapManagerPage() {
 
  {activeTab === 'log' && (
  <div className="p-5">
- <h3 className="text-sm font-bold text-slate-700 dark:text-slate-200 mb-4">{t('sap.syncJobs', 'Trabajos de Sincronización')}</h3>
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.syncJobs', 'Trabajos de Sincronización')}</h3>
  {jobs.length === 0 ? (
  <div className="text-center py-8">
- <FileText size={32} className="mx-auto text-slate-300 dark:text-slate-500 mb-2" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('sap.noJobs', 'Sin trabajos de sincronización')}</p>
+ <FileText size={32} className="mx-auto text-slate-300 mb-2" />
+ <p className="text-sm text-slate-500">{t('sap.noJobs', 'Sin trabajos de sincronización')}</p>
  </div>
  ) : (
  <div className="divide-y divide-slate-100">
  {jobs.map((j: any) => (
  <div key={j.id} className="py-3 hover:bg-slate-50 px-2 rounded-lg transition">
  <div className="flex items-center justify-between">
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
+ <p className="text-sm font-medium text-slate-700">
  {t('sap.syncJob', 'Sincronización')} #{j.id}
  </p>
  <Badge variant={j.status === 'completed' ? 'approved' : j.status === 'error' ? 'rejected' : 'pending'} size="sm">
  {j.status}
  </Badge>
  </div>
- <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+ <p className="text-xs text-slate-500 mt-1">
  {j.direction} · {j.success_count}/{j.total_records} {t('sap.records', 'registros')}
  {j.created_at && ` · ${new Date(j.created_at).toLocaleString()}`}
  </p>

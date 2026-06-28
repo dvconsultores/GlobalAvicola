@@ -47,17 +47,17 @@ export function ToastProvider({ children }: { children: ReactNode }) {
  }
 
  const bgColors: Record<ToastType, string> = {
- success: 'border-emerald-300 bg-emerald-50 dark:bg-emerald-950',
- error: 'border-red-300 bg-red-50 dark:bg-red-950',
- warning: 'border-amber-300 bg-amber-50 dark:bg-amber-950',
- info: 'border-blue-300 bg-blue-50 dark:bg-blue-950',
+ success: 'border-emerald-300 bg-emerald-50',
+ error: 'border-red-300 bg-red-50',
+ warning: 'border-amber-300 bg-amber-50',
+ info: 'border-blue-300 bg-blue-50',
  }
 
  const textColors: Record<ToastType, string> = {
- success: 'text-emerald-800 dark:text-emerald-200',
- error: 'text-red-800 dark:text-red-200',
- warning: 'text-amber-800 dark:text-amber-200',
- info: 'text-blue-800 dark:text-blue-200',
+ success: 'text-emerald-800',
+ error: 'text-red-800',
+ warning: 'text-amber-800',
+ info: 'text-blue-800',
  }
 
  return (

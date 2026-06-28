@@ -21,11 +21,11 @@ const COLOR_CONFIG: Record<KpiColor, {
  iconBg: string
  iconColor: string
 }> = {
- blue: { dot: 'bg-blue-500', iconBg: 'bg-blue-50 dark:bg-blue-950/40', iconColor: 'text-blue-600' },
- green: { dot: 'bg-emerald-500', iconBg: 'bg-emerald-50 dark:bg-emerald-950/40', iconColor: 'text-emerald-600' },
- amber: { dot: 'bg-amber-500', iconBg: 'bg-amber-50 dark:bg-amber-950/40', iconColor: 'text-amber-600' },
- red: { dot: 'bg-red-500', iconBg: 'bg-red-50 dark:bg-red-950/40', iconColor: 'text-red-600 dark:text-red-400' },
- slate: { dot: 'bg-slate-400', iconBg: 'bg-slate-100 dark:bg-slate-700', iconColor: 'text-slate-600 dark:text-slate-300' },
+ blue: { dot: 'bg-blue-500', iconBg: 'bg-blue-50', iconColor: 'text-blue-600' },
+ green: { dot: 'bg-emerald-500', iconBg: 'bg-emerald-50', iconColor: 'text-emerald-600' },
+ amber: { dot: 'bg-amber-500', iconBg: 'bg-amber-50', iconColor: 'text-amber-600' },
+ red: { dot: 'bg-red-500', iconBg: 'bg-red-50', iconColor: 'text-red-600' },
+ slate: { dot: 'bg-slate-400', iconBg: 'bg-slate-100', iconColor: 'text-slate-600' },
  indigo: { dot: 'bg-indigo-500', iconBg: 'bg-indigo-50/40', iconColor: 'text-indigo-600' },
  teal: { dot: 'bg-teal-500', iconBg: 'bg-teal-50/40', iconColor: 'text-teal-600' },
 }
@@ -48,7 +48,7 @@ export default function KpiCard({
  role={onClick ? 'button' : undefined}
  tabIndex={onClick ? 0 : undefined}
  className={[
- 'bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700',
+ 'bg-white rounded-xl border border-slate-200/80',
  onClick ? 'cursor-pointer transition-shadow hover:shadow-card' : '',
  className,
  ].join(' ')}
@@ -59,16 +59,16 @@ export default function KpiCard({
  {/* Label + dot indicator */}
  <div className="flex items-center gap-1.5 mb-2">
  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${cfg.dot}`} />
- <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 dark:text-slate-500 leading-none">
+ <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 leading-none">
  {label}
  </p>
  </div>
  {/* Value */}
- <p className="text-2xl font-semibold text-slate-900 dark:text-white stat-value">
+ <p className="text-2xl font-semibold text-slate-900 stat-value">
  {value}
  </p>
  {subtitle && (
- <p className="text-[11px] text-slate-400 dark:text-slate-500 mt-1">{subtitle}</p>
+ <p className="text-[11px] text-slate-400 mt-1">{subtitle}</p>
  )}
  </div>
  {/* Icon */}
@@ -81,14 +81,14 @@ export default function KpiCard({
 
  {/* Trend */}
  {trend && (
- <div className="flex items-center gap-1 mt-3 pt-3 border-t border-slate-100 dark:border-slate-700">
+ <div className="flex items-center gap-1 mt-3 pt-3 border-t border-slate-100">
  {trend.direction === 'up' && <TrendingUp size={12} className="text-emerald-500 shrink-0" />}
  {trend.direction === 'down' && <TrendingDown size={12} className="text-red-500 shrink-0" />}
- {trend.direction === 'stable' && <Minus size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />}
+ {trend.direction === 'stable' && <Minus size={12} className="text-slate-400 shrink-0" />}
  <span className={`text-[11px] font-semibold ${
  trend.direction === 'up' ? 'text-emerald-600' :
- trend.direction === 'down' ? 'text-red-600 dark:text-red-400' :
- 'text-slate-500 dark:text-slate-400'
+ trend.direction === 'down' ? 'text-red-600' :
+ 'text-slate-500'
  }`}>
  {trend.value}
  </span>

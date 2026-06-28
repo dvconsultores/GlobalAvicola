@@ -14,7 +14,7 @@ export default function DarkModeToggle() {
  className={`p-2.5 rounded-lg transition-all hover:shadow-md ${
  isDark
  ? 'bg-slate-800 text-yellow-400 hover:bg-slate-700'
- : 'bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-200'
+ : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
  }`}
  title={isDark ? 'Light mode' : 'Dark mode'}
  aria-label={isDark ? 'Light mode' : 'Dark mode'}

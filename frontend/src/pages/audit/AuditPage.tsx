@@ -83,7 +83,7 @@ export default function AuditPage() {
  title={t('nav.audit', 'Auditoría')}
  hideBack
  actions={
- <span className="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full font-medium">
+ <span className="text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium">
  {total} {t('audit.records', 'registros')}
  </span>
  }
@@ -103,7 +103,7 @@ export default function AuditPage() {
  inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
  ${isActive
  ? 'bg-[#1E3A5F] text-white shadow-md'
- : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 hover:bg-slate-50'
+ : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50'
  }
  `}
  >
@@ -132,7 +132,7 @@ export default function AuditPage() {
  onChange={e => setDateFrom(e.target.value)}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
- <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
+ <span className="text-xs text-slate-400">—</span>
  <input
  type="date"
  value={dateTo}
@@ -143,15 +143,15 @@ export default function AuditPage() {
  </FilterPanel>
 
  {/* Content */}
- <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+ <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
  {loading ? (
  <div className="p-8 space-y-4">
  {[1, 2, 3, 4].map(i => (
  <div key={i} className="flex gap-4 animate-pulse">
- <div className="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 shrink-0" />
+ <div className="w-10 h-10 rounded-full bg-slate-100 shrink-0" />
  <div className="flex-1 space-y-2">
- <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded w-1/3" />
- <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-2/3" />
+ <div className="h-4 bg-slate-100 rounded w-1/3" />
+ <div className="h-3 bg-slate-100 rounded w-2/3" />
  </div>
  </div>
  ))}
@@ -170,19 +170,19 @@ export default function AuditPage() {
  /* Vista de correcciones: mostrar cambios lado a lado */
  <div className="space-y-4">
  {timelineEvents.map((event) => (
- <div key={event.id} className="p-4 bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl">
+ <div key={event.id} className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
  <div className="flex items-center gap-2 mb-2">
  <Badge variant="corrected" size="sm">{t('audit.correction', 'Corrección')}</Badge>
- <span className="text-xs text-slate-500 dark:text-slate-400">{event.date}</span>
+ <span className="text-xs text-slate-500">{event.date}</span>
  </div>
- <p className="text-sm font-medium text-slate-800 dark:text-slate-200">{event.action}</p>
- <p className="text-xs text-slate-500 dark:text-slate-400">{event.description}</p>
+ <p className="text-sm font-medium text-slate-800">{event.action}</p>
+ <p className="text-xs text-slate-500">{event.description}</p>
  {event.detail && (
- <div className="mt-2 p-2 bg-white dark:bg-slate-800 rounded-lg border border-amber-100 text-xs font-mono text-slate-600 dark:text-slate-300">
+ <div className="mt-2 p-2 bg-white rounded-lg border border-amber-100 text-xs font-mono text-slate-600">
  {event.detail}
  </div>
  )}
- <p className="text-xs text-slate-400 dark:text-slate-500 mt-2">{t('common.by', 'por')} {event.user}</p>
+ <p className="text-xs text-slate-400 mt-2">{t('common.by', 'por')} {event.user}</p>
  </div>
  ))}
  </div>

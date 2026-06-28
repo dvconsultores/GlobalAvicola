@@ -6,12 +6,12 @@ import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 const STATUS_COLORS: Record<string, string> = {
- draft: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300', registered: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-200',
- pending_review: 'bg-amber-100 dark:bg-amber-950 text-amber-800 dark:text-amber-200', in_review: 'bg-indigo-100 text-indigo-800 dark:text-indigo-200',
- returned: 'bg-orange-100 dark:bg-orange-950 text-orange-800 dark:text-orange-200', corrected: 'bg-teal-100 text-teal-800 dark:text-teal-200',
- approved: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200', rejected: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200',
- consolidated: 'bg-purple-100 dark:bg-purple-950 text-purple-800 dark:text-purple-200', sent_to_sap: 'bg-cyan-100 dark:bg-cyan-950 text-cyan-800 dark:text-cyan-200',
- sap_confirmed: 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-200',
+ draft: 'bg-slate-100 text-slate-600', registered: 'bg-blue-100 text-blue-800',
+ pending_review: 'bg-amber-100 text-amber-800', in_review: 'bg-indigo-100 text-indigo-800',
+ returned: 'bg-orange-100 text-orange-800', corrected: 'bg-teal-100 text-teal-800',
+ approved: 'bg-emerald-100 text-emerald-800', rejected: 'bg-red-100 text-red-800',
+ consolidated: 'bg-purple-100 text-purple-800', sent_to_sap: 'bg-cyan-100 text-cyan-800',
+ sap_confirmed: 'bg-green-100 text-green-800',
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
@@ -120,61 +120,61 @@ export default function OperationDetailPage() {
  } catch { handleDownload(ev) }
  }
 
- if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('common.loading')}</div>
- if (error) return <div className="p-6 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-950 rounded-lg">{error}</div>
- if (!event) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('operations.eventNotFound')}</div>
+ if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
+ if (error) return <div className="p-6 text-red-600 bg-red-50 rounded-lg">{error}</div>
+ if (!event) return <div className="p-6 text-slate-500">{t('operations.eventNotFound')}</div>
 
  return (
  <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-4">
- <Link to="/operations" className="text-slate-400 dark:text-slate-500 hover:text-slate-600 flex items-center gap-1 text-sm">
+ <Link to="/operations" className="text-slate-400 hover flex items-center gap-1 text-sm">
  <ArrowLeft size={16} /> {t('operations.backToOperations')}
  </Link>
 
  {/* Event Card */}
- <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
  <div className="flex items-center justify-between mb-4">
  <h1 className="text-xl font-bold text-[#1E3A5F]">{t('operations.eventDetail', { id: event.id })}</h1>
- <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100 dark:bg-slate-700'}`}>{event.status}</span>
+ <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100'}`}>{event.status}</span>
  </div>
  <dl className="grid grid-cols-2 gap-4 text-sm">
- <div><dt className="text-slate-500 dark:text-slate-400">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
- <div><dt className="text-slate-500 dark:text-slate-400">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
- <div><dt className="text-slate-500 dark:text-slate-400">{t('lots.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
- <div><dt className="text-slate-500 dark:text-slate-400">{t('common.version')}</dt><dd>v{event.version}</dd></div>
- <div className="col-span-2"><dt className="text-slate-500 dark:text-slate-400">{t('common.observations')}</dt><dd>{event.observations || '—'}</dd></div>
- {event.sap_document_ref && <div className="col-span-2"><dt className="text-slate-500 dark:text-slate-400">{t('operations.sapRef')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>}
+ <div><dt className="text-slate-500">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
+ <div><dt className="text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
+ <div><dt className="text-slate-500">{t('lots.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
+ <div><dt className="text-slate-500">{t('common.version')}</dt><dd>v{event.version}</dd></div>
+ <div className="col-span-2"><dt className="text-slate-500">{t('common.observations')}</dt><dd>{event.observations || '—'}</dd></div>
+ {event.sap_document_ref && <div className="col-span-2"><dt className="text-slate-500">{t('operations.sapRef')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>}
  </dl>
 
  {event.bird_movements?.length > 0 && (
  <div className="mt-4 pt-4 border-t">
- <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 mb-2 flex items-center gap-1">
+ <h3 className="font-semibold text-sm text-slate-600 mb-2 flex items-center gap-1">
  <Activity size={14} /> {t('review.birdMovements')}
  </h3>
  {event.bird_movements.map((bm: any, i: number) => (
- <div key={i} className="text-xs text-slate-600 dark:text-slate-300">{bm.quantity} {t('review.aves')} {bm.sex || ''} {bm.avg_weight ? `· ${bm.avg_weight}g` : ''}</div>
+ <div key={i} className="text-xs text-slate-600">{bm.quantity} {t('review.aves')} {bm.sex || ''} {bm.avg_weight ? `· ${bm.avg_weight}g` : ''}</div>
  ))}
  </div>
  )}
  {event.feed_movements?.length > 0 && (
  <div className="mt-4 pt-4 border-t">
- <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 mb-2">{t('operations.feed')}</h3>
- {event.feed_movements.map((fm: any, i: number) => <div key={i} className="text-xs text-slate-600 dark:text-slate-300">{fm.quantity_kg} kg</div>)}
+ <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.feed')}</h3>
+ {event.feed_movements.map((fm: any, i: number) => <div key={i} className="text-xs text-slate-600">{fm.quantity_kg} kg</div>)}
  </div>
  )}
  {event.egg_movements?.length > 0 && (
  <div className="mt-4 pt-4 border-t">
- <h3 className="font-semibold text-sm text-slate-600 dark:text-slate-300 mb-2">{t('operations.eggs')}</h3>
- {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600 dark:text-slate-300">{em.quantity} · {em.egg_type}</div>)}
+ <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.eggs')}</h3>
+ {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600">{em.quantity} · {em.egg_type}</div>)}
  </div>
  )}
  </div>
 
  {/* Evidence Section */}
- <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:shadow-none p-6">
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
  <div className="flex items-center gap-2 mb-4">
  <Paperclip size={18} className="text-[#5a9bba]" />
- <h2 className="text-base font-bold text-slate-800 dark:text-slate-200">{t('evidence.title')}</h2>
- <span className="ml-auto text-xs text-slate-400 dark:text-slate-500">{t('evidence.allowedTypes')}</span>
+ <h2 className="text-base font-bold text-slate-800">{t('evidence.title')}</h2>
+ <span className="ml-auto text-xs text-slate-400">{t('evidence.allowedTypes')}</span>
  </div>
 
  {/* Existing evidences */}
@@ -183,13 +183,13 @@ export default function OperationDetailPage() {
  {evidences.map((ev) => {
  const isImage = ev.mime_type?.startsWith('image/')
  return (
- <li key={ev.id} className="flex items-center gap-3 p-3 bg-slate-50 dark:bg-slate-800 rounded-lg border border-slate-200 group">
- <div className="shrink-0 text-slate-400 dark:text-slate-500">
+ <li key={ev.id} className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200 group">
+ <div className="shrink-0 text-slate-400">
  {isImage ? <Image size={20} className="text-blue-500" /> : <FileText size={20} className="text-red-500" />}
  </div>
  <div className="flex-1 min-w-0">
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200 truncate">{ev.file_name}</p>
- <p className="text-xs text-slate-400 dark:text-slate-500">
+ <p className="text-sm font-medium text-slate-700 truncate">{ev.file_name}</p>
+ <p className="text-xs text-slate-400">
  {ev.file_size ? formatBytes(ev.file_size) : ''}
  {ev.description ? ` · ${ev.description}` : ''}
  </p>
@@ -199,7 +199,7 @@ export default function OperationDetailPage() {
  type="button"
  onClick={() => handlePreview(ev)}
  title={t('evidence.download')}
- className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-blue-600 hover:bg-blue-50 rounded-md"
+ className="p-1.5 text-slate-500 hover:text-blue-600 hover:bg-blue-50 rounded-md"
  >
  <Download size={14} />
  </button>
@@ -208,7 +208,7 @@ export default function OperationDetailPage() {
  onClick={() => handleDelete(ev.id)}
  disabled={deletingId === ev.id}
  title={t('common.delete')}
- className="p-1.5 text-slate-500 dark:text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-md disabled:opacity-40"
+ className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-md disabled:opacity-40"
  >
  <Trash2 size={14} />
  </button>
@@ -218,7 +218,7 @@ export default function OperationDetailPage() {
  })}
  </ul>
  ) : (
- <p className="text-sm text-slate-400 dark:text-slate-500 mb-4 italic">{t('evidence.noFiles')}</p>
+ <p className="text-sm text-slate-400 mb-4 italic">{t('evidence.noFiles')}</p>
  )}
 
  {/* Upload area */}
@@ -232,7 +232,7 @@ export default function OperationDetailPage() {
  className="w-full h-9 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
  <label className={`flex items-center gap-2 cursor-pointer w-full justify-center px-4 py-2.5 rounded-lg text-sm font-medium transition-colors
- ${uploading ? 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-500 cursor-not-allowed' : 'bg-[#5a9bba] text-white hover:bg-[#155bb5]'}`}>
+ ${uploading ? 'bg-slate-100 text-slate-400 cursor-not-allowed' : 'bg-[#5a9bba] text-white hover:bg-[#155bb5]'}`}>
  <Upload size={16} />
  {uploading ? t('evidence.uploading') : t('evidence.uploadButton')}
  <input
@@ -243,7 +243,7 @@ export default function OperationDetailPage() {
  onChange={handleFileChange}
  />
  </label>
- <p className="text-xs text-center text-slate-400 dark:text-slate-500">{t('evidence.maxSize', { max: MAX_SIZE_MB })}</p>
+ <p className="text-xs text-center text-slate-400">{t('evidence.maxSize', { max: MAX_SIZE_MB })}</p>
  </div>
  </div>
 

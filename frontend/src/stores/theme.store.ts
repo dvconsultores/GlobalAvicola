@@ -8,57 +8,30 @@ interface ThemeStore {
 }
 
 /**
- * Dark Mode Store
- * Persists user's theme preference
+ * Theme Store — Modo claro único (dark mode deshabilitado por requerimiento)
  */
 export const useThemeStore = create<ThemeStore>()(
   persist(
     (set) => ({
       isDark: false,
-      setIsDark: (isDark) => {
-        set({ isDark })
-        // Aplicar clase 'dark' al elemento html
-        if (isDark) {
-          document.documentElement.classList.add('dark')
-        } else {
-          document.documentElement.classList.remove('dark')
-        }
+      setIsDark: () => {
+        set({ isDark: false })
+        document.documentElement.classList.remove('dark')
       },
       toggleDarkMode: () => {
-        set((state) => {
-          const newDarkState = !state.isDark
-          if (newDarkState) {
-            document.documentElement.classList.add('dark')
-          } else {
-            document.documentElement.classList.remove('dark')
-          }
-          return { isDark: newDarkState }
-        })
+        // Deshabilitado — siempre modo claro
+        set({ isDark: false })
+        document.documentElement.classList.remove('dark')
       },
     }),
     {
       name: 'theme-storage',
-      partialize: (state) => ({ isDark: state.isDark }),
+      partialize: () => ({ isDark: false }),
     }
   )
 )
 
-/**
- * Hook para usar dark mode
- */
 export const useDarkMode = () => {
-  const { isDark, setIsDark, toggleDarkMode } = useThemeStore()
-
-  // Aplicar tema al cargar
-  if (typeof window !== 'undefined') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-    const storedDark = localStorage.getItem('theme-storage')
-    const initialDark = storedDark ? JSON.parse(storedDark).isDark : prefersDark
-
-    if (initialDark !== isDark) {
-      setIsDark(initialDark)
-    }
-  }
-
-  return { isDark, setIsDark, toggleDarkMode }
+  const { isDark } = useThemeStore()
+  return { isDark, setIsDark: () => {}, toggleDarkMode: () => {} }
 }

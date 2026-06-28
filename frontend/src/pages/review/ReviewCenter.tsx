@@ -188,7 +188,7 @@ export default function ReviewCenter() {
  inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
  ${isActive
  ? 'bg-[#1E3A5F] text-white shadow-md'
- : 'bg-white dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
+ : 'bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300'
  }
  `}
  >
@@ -260,7 +260,7 @@ export default function ReviewCenter() {
  onChange={e => { setDateFrom(e.target.value); setPage(0) }}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
- <span className="text-xs text-slate-400 dark:text-slate-500">—</span>
+ <span className="text-xs text-slate-400">—</span>
  <input
  type="date"
  value={dateTo}
@@ -275,22 +275,22 @@ export default function ReviewCenter() {
  {loading && (
  <div className="space-y-3">
  {[1,2,3].map(i => (
- <div key={i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 p-4 animate-pulse">
- <div className="h-4 bg-slate-100 dark:bg-slate-700 rounded w-1/3 mb-3" />
- <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-2/3 mb-2" />
- <div className="h-3 bg-slate-100 dark:bg-slate-700 rounded w-1/2" />
+ <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 animate-pulse">
+ <div className="h-4 bg-slate-100 rounded w-1/3 mb-3" />
+ <div className="h-3 bg-slate-100 rounded w-2/3 mb-2" />
+ <div className="h-3 bg-slate-100 rounded w-1/2" />
  </div>
  ))}
  </div>
  )}
  {!loading && events.length === 0 && (
  <div className="text-center py-12">
- <Search size={32} className="mx-auto text-slate-300 dark:text-slate-500 mb-3" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('common.noResults', 'Sin resultados')}</p>
+ <Search size={32} className="mx-auto text-slate-300 mb-3" />
+ <p className="text-sm text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
  </div>
  )}
  {events.map((event: any) => (
- <div key={event.id} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
+ <div key={event.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
  <div className="flex items-start gap-3">
  <input
  type="checkbox"
@@ -300,13 +300,13 @@ export default function ReviewCenter() {
  />
  <div className="flex-1 min-w-0">
  <div className="flex items-center gap-2 mb-1.5">
- <span className="font-semibold text-slate-800 dark:text-slate-200 font-mono text-xs">#{event.id}</span>
+ <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
  <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
  {String(t(`status.${event.status}`, event.status))}
  </Badge>
  </div>
- <p className="text-sm font-medium text-slate-700 dark:text-slate-200">{getEventLabel(t, event.event_type)}</p>
- <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">
+ <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
+ <p className="text-xs text-slate-400 mt-0.5">
  {String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}
  </p>
  </div>
@@ -331,7 +331,7 @@ export default function ReviewCenter() {
  </>
  )}
  <Link to={`/review/${event.id}`}
- className="flex-1 bg-slate-50 dark:bg-slate-800 text-slate-700 dark:text-slate-200 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
+ className="flex-1 bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
  <ZoomIn size={14} /> {t('review.detail', 'Detalle')}
  </Link>
  </div>
@@ -340,9 +340,9 @@ export default function ReviewCenter() {
  </div>
 
  {/* Desktop Table */}
- <div className="hidden lg:block bg-white dark:bg-slate-800 rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+ <div className="hidden lg:block bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
  <table className="w-full text-sm">
- <thead className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
+ <thead className="bg-slate-50 border-b border-slate-200">
  <tr>
  <th className="w-12 px-4 py-3.5 text-left">
  <input
@@ -351,19 +351,19 @@ export default function ReviewCenter() {
  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
  />
  </th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider">{t('review.id', 'ID')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 dark:text-slate-300 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.id', 'ID')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-100">
  {loading && (
  <tr>
  <td colSpan={7} className="px-4 py-12 text-center">
- <div className="flex items-center justify-center gap-2 text-slate-400 dark:text-slate-500">
+ <div className="flex items-center justify-center gap-2 text-slate-400">
  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
  <span className="text-sm">{t('common.loading', 'Cargando...')}</span>
  </div>
@@ -373,8 +373,8 @@ export default function ReviewCenter() {
  {!loading && events.length === 0 && (
  <tr>
  <td colSpan={7} className="px-4 py-12 text-center">
- <Search size={24} className="mx-auto text-slate-300 dark:text-slate-500 mb-2" />
- <p className="text-sm text-slate-500 dark:text-slate-400">{t('common.noResults', 'Sin resultados')}</p>
+ <Search size={24} className="mx-auto text-slate-300 mb-2" />
+ <p className="text-sm text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
  </td>
  </tr>
  )}
@@ -390,19 +390,19 @@ export default function ReviewCenter() {
  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
  />
  </td>
- <td className="px-4 py-3 font-mono text-xs text-slate-500 dark:text-slate-400">#{event.id}</td>
+ <td className="px-4 py-3 font-mono text-xs text-slate-500">#{event.id}</td>
  <td className="px-4 py-3">
  <div className="flex items-center gap-2">
- {EvIcon && <EvIcon size={14} className="text-slate-400 dark:text-slate-500 shrink-0" />}
- <span className="text-slate-700 dark:text-slate-200">{getEventLabel(t, event.event_type)}</span>
+ {EvIcon && <EvIcon size={14} className="text-slate-400 shrink-0" />}
+ <span className="text-slate-700">{getEventLabel(t, event.event_type)}</span>
  </div>
  </td>
  <td className="px-4 py-3">
- <span className="font-mono text-xs font-medium text-slate-600 dark:text-slate-300 bg-slate-50 dark:bg-slate-800 px-2 py-1 rounded">
+ <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded">
  #{event.lot_id}
  </span>
  </td>
- <td className="px-4 py-3 text-slate-500 dark:text-slate-400 text-sm">{event.event_date}</td>
+ <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
  <td className="px-4 py-3">
  <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
  {String(t(`status.${event.status}`, event.status))}
@@ -429,7 +429,7 @@ export default function ReviewCenter() {
  </>
  )}
  <Link to={`/review/${event.id}`}
- className="bg-slate-50 dark:bg-slate-800 text-slate-600 dark:text-slate-300 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1">
+ className="bg-slate-50 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1">
  <ZoomIn size={12} />
  </Link>
  </div>
@@ -446,7 +446,7 @@ export default function ReviewCenter() {
  <div className="flex justify-center gap-2 mt-4">
  <button disabled={page === 0} onClick={() => setPage(p => p - 1)}
  className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 disabled:opacity-40">←</button>
- <span className="px-3 py-1.5 text-sm text-slate-600 dark:text-slate-300">{page + 1} / {Math.ceil(total / limit)}</span>
+ <span className="px-3 py-1.5 text-sm text-slate-600">{page + 1} / {Math.ceil(total / limit)}</span>
  <button disabled={(page + 1) * limit >= total} onClick={() => setPage(p => p + 1)}
  className="px-3 py-1.5 rounded-lg text-sm border border-slate-300 disabled:opacity-40">→</button>
  </div>

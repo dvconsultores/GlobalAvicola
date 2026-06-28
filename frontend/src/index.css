@@ -11,8 +11,6 @@
 
 @import 'tailwindcss';
 
-@custom-variant dark (&:where(.dark, .dark *));
-
 /* ── Atenea Brand Gradients ─────────────────────────────── */
 .gradient-brand {
   background: linear-gradient(145deg, #4e8fad 0%, #6fabc5 50%, #8fb5d2 100%);
@@ -24,23 +22,10 @@
   background: linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%);
 }
 
-.dark .gradient-brand {
-  background: linear-gradient(145deg, #3d748f 0%, #4e8fad 50%, #5a9bba 100%);
-}
-.dark .gradient-brand-soft {
-  background: linear-gradient(145deg, #6fabc5 0%, #5a9bba 40%, #4e8fad 100%);
-}
-.dark .gradient-brand-header {
-  background: linear-gradient(135deg, #162e3a 0%, #264c5f 50%, #3d748f 100%);
-}
-
 /* ── Glass morphism ─────────────────────────────────────── */
 .glass {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
-}
-.dark .glass {
-  background: rgba(15, 23, 42, 0.8);
 }
 
 /* ── Base Reset ──────────────────────────────────────────── */
@@ -80,8 +65,6 @@ p { margin: 0; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
-.dark ::-webkit-scrollbar-thumb { background: #475569; }
-.dark ::-webkit-scrollbar-thumb:hover { background: #64748b; }
 
 /* ── Sidebar scrollbar ──────────────────────────────────── */
 .sidebar-scroll::-webkit-scrollbar { width: 3px; }
@@ -155,10 +138,6 @@ p { margin: 0; }
   background: linear-gradient(90deg, #f0f2f5 25%, #e4e7eb 50%, #f0f2f5 75%);
   background-size: 800px 100%;
   animation: shimmer 1.5s infinite;
-}
-.dark .skeleton {
-  background: linear-gradient(90deg, #1C2533 25%, #232E3E 50%, #1C2533 75%);
-  background-size: 800px 100%;
 }
 
 /* ── Safe area for mobile ────────────────────────────────── */

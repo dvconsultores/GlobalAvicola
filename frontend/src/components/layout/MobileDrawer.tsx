@@ -90,12 +90,12 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  className={`lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
 
  {/* Panel */}
- <nav className={`lg:hidden fixed top-0 left-0 h-full w-[88vw] max-w-[340px] z-50 flex flex-col bg-white dark:bg-slate-800 transition-transform duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+ <nav className={`lg:hidden fixed top-0 left-0 h-full w-[88vw] max-w-[340px] z-50 flex flex-col bg-white transition-transform duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
  {/* Header */}
  <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100">
  {selectedSection ? (
  <button onClick={handleBack}
- className="flex items-center gap-2 text-slate-900 dark:text-slate-100">
+ className="flex items-center gap-2 text-slate-900">
  <ArrowLeft size={18} />
  <span className="text-sm font-semibold">
  {currentNode
@@ -108,10 +108,10 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#5a9bba] to-[#6fabc5] flex items-center justify-center">
  <Bird size={15} className="text-white" />
  </div>
- <span className="font-bold text-slate-900 dark:text-slate-100 text-sm">{t('brand.name', 'Global Avícola')}</span>
+ <span className="font-bold text-slate-900 text-sm">{t('brand.name', 'Global Avícola')}</span>
  </div>
  )}
- <button ref={closeRef} onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 dark:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800">
+ <button ref={closeRef} onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 hover:bg-slate-100:bg-slate-800">
  <X size={18} />
  </button>
  </div>
@@ -123,9 +123,9 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  <div className="grid grid-cols-2 gap-2.5">
  {/* Dashboard shortcut */}
  <Link to="/" onClick={onClose}
- className="col-span-2 flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 active:bg-slate-100 transition-colors">
+ className="col-span-2 flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100 active:bg-slate-100 transition-colors">
  <Home size={20} className="text-blue-600 shrink-0" />
- <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t('nav.home', 'Inicio')}</span>
+ <span className="text-sm font-semibold text-slate-900">{t('nav.home', 'Inicio')}</span>
  </Link>
 
  {sectionEntries.map(([key, items]) => {
@@ -134,11 +134,11 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  const Icon = SECTION_ICONS[key]
  return (
  <button key={key} onClick={() => setSelectedSection(key)}
- className="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 dark:bg-slate-800 border border-slate-100 active:bg-slate-100 dark:active:bg-slate-700 transition-colors text-center">
+ className="flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 border border-slate-100 active:bg-slate-100:bg-slate-700 transition-colors text-center">
  {Icon && <Icon size={22} className="text-blue-600" />}
  <div>
- <span className="text-xs font-semibold text-slate-900 dark:text-slate-100 block">{t(section.labelKey, section.fallback)}</span>
- <span className="text-[10px] text-slate-900 dark:text-slate-100">{items.length} {t('common.options', 'opciones')}</span>
+ <span className="text-xs font-semibold text-slate-900 block">{t(section.labelKey, section.fallback)}</span>
+ <span className="text-[10px] text-slate-900">{items.length} {t('common.options', 'opciones')}</span>
  </div>
  </button>
  )
@@ -155,14 +155,14 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  <button
  type="button"
  onClick={() => setItemStack((prev) => [...prev, item])}
- className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 active:bg-slate-100 dark:active:bg-slate-700 transition-colors"
+ className="w-full flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100 active:bg-slate-100:bg-slate-700 transition-colors"
  >
  {Icon && <Icon size={18} className="text-blue-600 shrink-0" />}
  <div className="flex-1 min-w-0 text-left">
- <span className="text-sm font-semibold text-slate-900 dark:text-slate-100 block truncate">{t(item.labelKey, item.fallback)}</span>
- <span className="text-[10px] text-slate-900 dark:text-slate-100">{item.children.length} {t('common.options', 'opciones')}</span>
+ <span className="text-sm font-semibold text-slate-900 block truncate">{t(item.labelKey, item.fallback)}</span>
+ <span className="text-[10px] text-slate-900">{item.children.length} {t('common.options', 'opciones')}</span>
  </div>
- <ArrowLeft size={14} className="text-slate-900 dark:text-slate-100 rotate-180" />
+ <ArrowLeft size={14} className="text-slate-900 rotate-180" />
  </button>
  </div>
  )
@@ -172,12 +172,12 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
 
  return (
  <Link key={item.key} to={item.to || '#'} onClick={onClose}
- className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800 border border-slate-100 active:bg-slate-100 dark:active:bg-slate-700 transition-colors">
+ className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 border border-slate-100 active:bg-slate-100:bg-slate-700 transition-colors">
  {Icon && <Icon size={18} className="text-blue-600 shrink-0" />}
  <div className="flex-1 min-w-0">
- <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t(item.labelKey, item.fallback)}</span>
+ <span className="text-sm font-semibold text-slate-900">{t(item.labelKey, item.fallback)}</span>
  </div>
- {item.badge && <span className="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
+ {item.badge && <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
  </Link>
  )
  })}
@@ -188,17 +188,17 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  {/* Footer */}
  <div className="border-t border-slate-100 px-3 py-2 space-y-1">
  <button onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
- className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-900 dark:text-slate-100 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+ className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-900 hover:bg-slate-50:bg-slate-800 transition-colors">
  <Globe size={14} />
  {i18n.language === 'es' ? t('lang.toggleEn', 'English') : t('lang.toggleEs', 'Español')}
  </button>
  {user && (
- <p className="text-[10px] text-slate-900 dark:text-slate-100 px-3 text-center">
+ <p className="text-[10px] text-slate-900 px-3 text-center">
  {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.username}
  </p>
  )}
  <button onClick={logout}
- className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50 dark:hover:bg-red-950/30 transition-colors">
+ className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50:bg-red-950/30 transition-colors">
  <LogOut size={14} />
  {t('auth.logout', 'Cerrar sesión')}
  </button>

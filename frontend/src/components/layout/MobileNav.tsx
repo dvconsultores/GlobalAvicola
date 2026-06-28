@@ -36,7 +36,7 @@ export default function MobileNav() {
 
  return (
  <nav
- className="lg:hidden fixed bottom-0 left-0 right-0 z-30 grid grid-cols-3 bg-white dark:bg-slate-800 safe-area-bottom"
+ className="lg:hidden fixed bottom-0 left-0 right-0 z-30 grid grid-cols-3 bg-white safe-area-bottom"
  style={{
  borderTop: '1px solid rgba(15,23,42,0.07)',
  boxShadow: '0 -4px 20px -4px rgba(15,23,42,0.08)',
@@ -55,9 +55,9 @@ export default function MobileNav() {
  <item.Icon
  size={22}
  strokeWidth={active ? 2.3 : 1.8}
- className={active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-slate-100'}
+ className={active ? 'text-brand-700' : 'text-slate-900'}
  />
- <span className={`text-xs leading-none font-semibold transition-all ${active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-slate-100'}`}>
+ <span className={`text-xs leading-none font-semibold transition-all ${active ? 'text-brand-700' : 'text-slate-900'}`}>
  {t(item.labelKey, item.fallback)}
  </span>
  {active && (

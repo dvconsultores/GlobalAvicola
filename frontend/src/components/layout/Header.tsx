@@ -2,13 +2,11 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
-import { Globe, Sun, Moon, Bird, Building2, ChevronDown, Check } from 'lucide-react'
-import { useThemeStore } from '../../stores/theme.store'
+import { Globe, Bird, Building2, ChevronDown, Check } from 'lucide-react'
 
 export default function Header() {
  const { t, i18n } = useTranslation()
  const { user, logout } = useAuthStore()
- const { isDark, toggleDarkMode } = useThemeStore()
  const { activeCompanyId, activeCompanyName, companies, isSwitching, fetchCompanies, switchCompany } = useCompanyStore()
  const [companyOpen, setCompanyOpen] = useState(false)
  const companyRef = useRef<HTMLDivElement>(null)
@@ -33,11 +31,6 @@ export default function Header() {
  return () => document.removeEventListener('mousedown', handleClick)
  }, [])
 
- // Keep html.dark in sync with persisted/theme-store state.
- useEffect(() => {
- document.documentElement.classList.toggle('dark', isDark)
- }, [isDark])
-
  const handleSwitchCompany = async (id: number, name: string) => {
  setCompanyOpen(false)
  await switchCompany(id, name)
@@ -51,28 +44,19 @@ export default function Header() {
  return (
  <>
  {/* ── Desktop Header ───────────────────────────────── */}
- <header className="hidden lg:flex h-12 bg-white dark:bg-slate-800/95 dark:bg-slate-900 backdrop-blur border-b border-slate-200/70 dark:border-slate-700 items-center justify-end px-5 gap-2.5 sticky top-0 z-20">
+ <header className="hidden lg:flex h-12 bg-white backdrop-blur border-b border-slate-200/70 items-center justify-end px-5 gap-2.5 sticky top-0 z-20">
  {/* Language toggle */}
  <button
  onClick={toggleLang}
- className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[11px] font-semibold text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-card hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
+ className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[11px] font-semibold text-slate-400 hover:bg-slate-100:bg-dark-card hover:text-slate-600:text-slate-300 transition-colors"
  title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
  >
  <Globe size={12} />
  {i18n.language === 'es' ? 'EN' : 'ES'}
  </button>
 
- {/* Dark mode toggle */}
- <button
- onClick={toggleDarkMode}
- className="w-7 h-7 flex items-center justify-center rounded-md text-slate-400 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-dark-card transition-colors"
- aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
- >
- {isDark ? <Sun size={14} /> : <Moon size={14} />}
- </button>
-
  {/* Divider */}
- <div className="w-px h-4 bg-slate-200/80 dark:bg-dark-border" />
+ <div className="w-px h-4 bg-slate-200/80" />
 
  {/* Company selector (super_admin) or badge (regular user) */}
  {(activeCompanyName || user?.company_name) && (
@@ -82,20 +66,20 @@ export default function Header() {
  <button
  onClick={() => setCompanyOpen(v => !v)}
  disabled={isSwitching}
- className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-dark-card/80 transition-colors disabled:opacity-60"
+ className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 border border-slate-200/80 hover:bg-slate-100:bg-dark-card/80 transition-colors disabled:opacity-60"
  title={t('company.selector')}
  >
- <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
- <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 max-w-[130px] truncate">
+ <Building2 size={11} className="text-slate-400 shrink-0" />
+ <span className="text-[11px] font-medium text-slate-600 max-w-[130px] truncate">
  {isSwitching ? t('company.switching') : (activeCompanyName || user?.company_name)}
  </span>
- <ChevronDown size={10} className={`text-slate-400 dark:text-slate-500 transition-transform ${companyOpen ? 'rotate-180' : ''}`} />
+ <ChevronDown size={10} className={`text-slate-400 transition-transform ${companyOpen ? 'rotate-180' : ''}`} />
  </button>
  ) : (
  /* ── Static badge for regular users ── */
- <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700">
- <Building2 size={11} className="text-slate-400 dark:text-slate-500 shrink-0" />
- <span className="text-[11px] font-medium text-slate-600 dark:text-slate-300 max-w-[140px] truncate">
+ <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 border border-slate-200/80">
+ <Building2 size={11} className="text-slate-400 shrink-0" />
+ <span className="text-[11px] font-medium text-slate-600 max-w-[140px] truncate">
  {activeCompanyName || user?.company_name}
  </span>
  </div>
@@ -103,22 +87,22 @@ export default function Header() {
 
  {/* Dropdown panel */}
  {companyOpen && isSuperAdmin && (
- <div className="absolute right-0 top-9 z-50 w-52 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 shadow-lg overflow-hidden">
- <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 dark:text-slate-500 uppercase tracking-wider border-b border-slate-100 dark:border-slate-700">
+ <div className="absolute right-0 top-9 z-50 w-52 rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
+ <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-100">
  {t('company.selector')}
  </p>
  {companies.length === 0 ? (
- <p className="px-3 py-3 text-xs text-slate-400 dark:text-slate-500">{t('common.loading', 'Cargando...')}</p>
+ <p className="px-3 py-3 text-xs text-slate-400">{t('common.loading', 'Cargando...')}</p>
  ) : (
  <ul>
  {companies.map(c => (
  <li key={c.id}>
  <button
  onClick={() => handleSwitchCompany(c.id, c.name)}
- className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50 dark:hover:bg-dark-card transition-colors"
+ className="w-full flex items-center gap-2 px-3 py-2 text-left text-xs hover:bg-slate-50:bg-dark-card transition-colors"
  >
- <Building2 size={12} className="text-slate-400 dark:text-slate-500 shrink-0" />
- <span className="flex-1 text-slate-700 dark:text-slate-200 truncate">{c.name}</span>
+ <Building2 size={12} className="text-slate-400 shrink-0" />
+ <span className="flex-1 text-slate-700 truncate">{c.name}</span>
  {c.id === activeCompanyId && (
  <Check size={12} className="text-blue-500 shrink-0" />
  )}
@@ -143,14 +127,14 @@ export default function Header() {
  {initials}
  </div>
  <div className="text-xs">
- <p className="font-semibold text-slate-700 dark:text-slate-200 leading-none">
+ <p className="font-semibold text-slate-700 leading-none">
  {user.first_name ? `${user.first_name} ${user.last_name ?? ''}`.trim() : user.username}
  </p>
- <p className="text-slate-400 dark:text-slate-500 mt-0.5 leading-none">{user.username}</p>
+ <p className="text-slate-400 mt-0.5 leading-none">{user.username}</p>
  </div>
  <button
  onClick={logout}
- className="h-7 px-2.5 text-xs font-medium text-slate-400 dark:text-slate-500 hover:text-red-600 dark:hover:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-lg transition-all"
+ className="h-7 px-2.5 text-xs font-medium text-slate-400 hover:text-red-600:text-red-400 hover:bg-red-50:bg-red-950/20 rounded-lg transition-all"
  >
  {t('auth.logout')}
  </button>
@@ -188,16 +172,6 @@ export default function Header() {
  >
  <Globe size={15} />
  {i18n.language === 'es' ? 'EN' : 'ES'}
- </button>
-
- {/* Dark mode */}
- <button
- onClick={toggleDarkMode}
- className="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
- style={{ color: 'rgba(111,171,197,0.8)' }}
- aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
- >
- {isDark ? <Sun size={18} /> : <Moon size={18} />}
  </button>
  </div>
  </header>
