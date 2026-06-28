@@ -8,9 +8,9 @@ import { PROCESS_STAGES, flowForStage, type StageKey } from '../../data/processC
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
 const STATUS_COLORS: Record<string, string> = {
-  registered: 'bg-blue-100 text-blue-800', pending_review: 'bg-yellow-100 text-yellow-800',
-  approved: 'bg-green-100 text-green-800', rejected: 'bg-red-100 text-red-800',
-  cancelled: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400',
+  registered: 'bg-blue-100 dark:bg-blue-950 text-blue-800 dark:text-blue-200', pending_review: 'bg-yellow-100 dark:bg-yellow-950 text-yellow-800 dark:text-yellow-200',
+  approved: 'bg-green-100 dark:bg-green-950 text-green-800 dark:text-green-200', rejected: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200',
+  cancelled: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400',
 }
 
 export default function OperationListPage() {
@@ -82,7 +82,7 @@ export default function OperationListPage() {
                 <div className="flex items-center gap-2 mb-1">
                   <ClipboardList size={20} className="text-slate-400 dark:text-slate-400" aria-hidden="true" />
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-200">{getEventLabel(t, ev.event_type)}</span>
-                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400'}`}>{ev.status}</span>
+                  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400'}`}>{ev.status}</span>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400">{t('review.lot')} #{ev.lot_id} — {ev.event_date}</p>
               </div>

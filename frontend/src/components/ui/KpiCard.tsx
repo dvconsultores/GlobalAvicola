@@ -88,7 +88,7 @@ export default function KpiCard({
             <span className={`text-[11px] font-semibold ${
               trend.direction === 'up'   ? 'text-emerald-600 dark:text-emerald-400' :
               trend.direction === 'down' ? 'text-red-600 dark:text-red-400' :
-              'text-slate-500 dark:text-slate-400 dark:text-slate-400'
+              'text-slate-500 dark:text-slate-400'
             }`}>
               {trend.value}
             </span>

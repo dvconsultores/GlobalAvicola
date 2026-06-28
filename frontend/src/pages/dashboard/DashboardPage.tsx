@@ -15,7 +15,7 @@ import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/proces
 const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
   critical: { bar: 'bg-red-50 dark:bg-red-9500',    bg: 'bg-red-50 dark:bg-red-950',    text: 'text-red-800 dark:text-red-200',    badge: 'bg-red-100 text-red-700 dark:text-red-300 border-red-200 dark:border-red-800' },
   warning:  { bar: 'bg-amber-400',  bg: 'bg-amber-50 dark:bg-amber-950',  text: 'text-amber-800 dark:text-amber-200',  badge: 'bg-amber-100 text-amber-700 dark:text-amber-300 border-amber-200 dark:border-amber-800' },
-  info:     { bar: 'bg-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950',   text: 'text-blue-800 dark:text-blue-200',   badge: 'bg-blue-100 text-blue-700 dark:text-blue-300 border-blue-200 dark:border-blue-800' },
+  info:     { bar: 'bg-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950',   text: 'text-blue-800 dark:text-blue-200 dark:text-blue-300',   badge: 'bg-blue-100 text-blue-700 dark:text-blue-300 dark:text-blue-400 border-blue-200 dark:border-blue-800' },
 }
 
 function AlertsWidget({ alerts, onResolve }: {
@@ -29,7 +29,7 @@ function AlertsWidget({ alerts, onResolve }: {
       <CardHeader
         title={t('alerts.activeTitle', 'Alertas activas')}
         subtitle={`${alerts.length} ${t('alerts.unresolved', 'sin resolver')}`}
-        action={<AlertTriangle size={18} className="text-amber-500" />}
+        action={<AlertTriangle size={18} className="text-amber-500 dark:text-amber-400" />}
       />
       <CardBody>
         <div className="space-y-2">
@@ -171,10 +171,10 @@ export default function DashboardPage() {
         {/* Welcome header — slim, corporate */}
         <div className="bg-gradient-to-r from-[#071829] to-[#0F3361] text-white px-4 py-4">
           <div className="flex items-center gap-2">
-            <Sparkles size={16} className="text-blue-300" />
+            <Sparkles size={16} className="text-blue-300 dark:text-blue-400" />
             <div>
               <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
-              <p className="text-sm text-blue-200/80">
+              <p className="text-sm text-blue-200 dark:text-blue-300/80">
                 {isKpiRoute
                   ? t('dashboard.todayMetrics', 'Hoy')
                   : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
@@ -198,7 +198,7 @@ export default function DashboardPage() {
                   </div>
                   <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 dark:text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
-                    <p className="text-xl font-bold text-blue-700 dark:text-blue-300 mt-1">{data?.last_7_days ?? 0}</p>
+                    <p className="text-xl font-bold text-blue-700 dark:text-blue-300 dark:text-blue-400 mt-1">{data?.last_7_days ?? 0}</p>
                   </div>
                   <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 dark:text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
@@ -225,7 +225,7 @@ export default function DashboardPage() {
                     <div className="grid grid-cols-2 gap-2">
                       {[
                         { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-50 dark:bg-purple-950' },
-                        { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700 dark:text-blue-300', bg: 'bg-blue-50 dark:bg-blue-950' },
+                        { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700 dark:text-blue-300 dark:text-blue-400', bg: 'bg-blue-50 dark:bg-blue-950' },
                         { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700 dark:text-amber-300', bg: 'bg-amber-50 dark:bg-amber-950' },
                         { key: 'broiler', dot: 'bg-emerald-400', text: 'text-emerald-700 dark:text-emerald-300', bg: 'bg-emerald-50 dark:bg-emerald-950' },
                       ].map(({ key, dot, text, bg }) => (
@@ -333,7 +333,7 @@ export default function DashboardPage() {
                 <div className="bg-amber-50 dark:bg-amber-950 border border-amber-200 dark:border-amber-800 rounded-xl p-3 flex items-start gap-2">
                   <AlertCircle size={16} className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
                   <div>
-                    <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
+                    <p className="text-xs font-semibold text-amber-900 dark:text-amber-200">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
                     <p className="text-sm text-amber-700 dark:text-amber-300 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
                   </div>
                 </div>
@@ -481,7 +481,7 @@ export default function DashboardPage() {
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700 dark:text-purple-300', bg: 'bg-purple-50 dark:bg-purple-950' },
-                { key: 'breeder',     dot: 'bg-blue-400',   text: 'text-blue-700 dark:text-blue-300',   bg: 'bg-blue-50 dark:bg-blue-950' },
+                { key: 'breeder',     dot: 'bg-blue-400',   text: 'text-blue-700 dark:text-blue-300 dark:text-blue-400',   bg: 'bg-blue-50 dark:bg-blue-950' },
                 { key: 'hatchery',    dot: 'bg-amber-400',  text: 'text-amber-700 dark:text-amber-300',  bg: 'bg-amber-50 dark:bg-amber-950' },
                 { key: 'broiler',     dot: 'bg-emerald-400',text: 'text-emerald-700 dark:text-emerald-300',bg: 'bg-emerald-50 dark:bg-emerald-950' },
               ].map(({ key, dot, text, bg }) => (

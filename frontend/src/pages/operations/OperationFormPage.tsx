@@ -331,7 +331,7 @@ export default function OperationFormPage() {
         {showWeight && <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
       </div>
       {[
-        { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
+        { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700 dark:text-blue-300' },
         { idx: 1, defaultSex: 'female', label: t('operations.females', 'Hembras'), color: 'text-pink-700' },
       ].map(({ idx, defaultSex, label, color }) => (
         <div key={idx} className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0`}>
@@ -902,7 +902,7 @@ export default function OperationFormPage() {
             </div>
             <div className="flex items-center gap-2 pt-5">
               <input type="checkbox" id="turning" {...register('hatchery_params.0.turning')}
-                className="h-4 w-4 rounded border-slate-300 text-blue-600" />
+                className="h-4 w-4 rounded border-slate-300 dark:border-slate-600 text-blue-600 dark:text-blue-400" />
               <label htmlFor="turning" className="text-sm text-slate-700 dark:text-slate-200">{t('operations.turning', 'Volteo activo')}</label>
             </div>
           </div>
@@ -1209,7 +1209,7 @@ export default function OperationFormPage() {
                 ))}
               </select>
               {lotsLoadError && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
-              {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
+              {errors.lot_id && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
             </div>
 
             <div>

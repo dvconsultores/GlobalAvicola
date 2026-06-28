@@ -11,9 +11,9 @@ import { useToast, getErrorMessage } from '../../components/Toast'
 
 // ─── Status badge colours ────────────────────────────────────────────────────
 const STATUS_COLORS: Record<string, string> = {
-  active: 'bg-emerald-100 text-emerald-800',
-  closed: 'bg-slate-100 text-slate-600',
-  cancelled: 'bg-red-100 text-red-800',
+  active: 'bg-emerald-100 dark:bg-emerald-950 text-emerald-800 dark:text-emerald-200 dark:text-emerald-200',
+  closed: 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400',
+  cancelled: 'bg-red-100 dark:bg-red-950 text-red-800 dark:text-red-200',
 }
 
 
@@ -79,8 +79,8 @@ export default function LotDetailPage() {
     }
   }
 
-  if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
-  if (!lot) return <div className="p-6 text-slate-500">{t('lots.lotNotFound')}</div>
+  if (loading) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('common.loading')}</div>
+  if (!lot) return <div className="p-6 text-slate-500 dark:text-slate-400">{t('lots.lotNotFound')}</div>
 
   const birdType: string = lot.bird_type || 'broiler'
   const activePhase = phases.find((p: any) => p.is_active)
@@ -146,7 +146,7 @@ export default function LotDetailPage() {
     <div className="p-4 sm:p-6 max-w-6xl mx-auto">
       {/* ── Header ── */}
       <div className="flex items-center gap-3 mb-6">
-        <Link to="/lots" className="text-slate-400 hover:text-slate-600 transition-colors">
+        <Link to="/lots" className="text-slate-400 hover:text-slate-600 dark:text-slate-300 transition-colors">
           <ArrowLeft size={20} />
         </Link>
         <div className="flex-1 min-w-0">
@@ -154,14 +154,14 @@ export default function LotDetailPage() {
             {lot.lot_code || `${t('lots.title')} #${lot.id}`}
           </h1>
           <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-            <span className="text-sm text-slate-500">{stageLabel}</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">{stageLabel}</span>
             {phaseLabel && (
-              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+              <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
                 {phaseLabel}
               </span>
             )}
-            <span className="text-slate-300">·</span>
-            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 text-slate-600'}`}>
+            <span className="text-slate-300 dark:text-slate-400">·</span>
+            <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400'}`}>
               {t(`lotStatus.${lot.status}`, String(lot.status))}
             </span>
           </div>
@@ -194,16 +194,16 @@ export default function LotDetailPage() {
 
       {/* Close summary */}
       {closeResult && (
-        <div className="mb-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl">
-          <h3 className="text-lg font-bold text-emerald-800 mb-3">{t('lots.closedSummary')}</h3>
+        <div className="mb-6 p-5 bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800 rounded-xl">
+          <h3 className="text-lg font-bold text-emerald-800 dark:text-emerald-200 mb-3">{t('lots.closedSummary')}</h3>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
-            <div><span className="text-slate-500">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
-            <div><span className="text-slate-500">{t('lots.totalMortality')}:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
-            <div><span className="text-slate-500">{t('lots.totalFeed')}:</span> <strong>{closeResult.total_feed_kg} {t('lots.kg')}</strong></div>
-            <div><span className="text-slate-500">{t('lots.totalEggs')}:</span> <strong>{closeResult.total_eggs}</strong></div>
-            <div><span className="text-slate-500">{t('lots.totalEvents')}:</span> <strong>{closeResult.total_events}</strong></div>
-            <div><span className="text-slate-500">{t('lots.approvedEvents')}:</span> <strong className="text-emerald-600">{closeResult.approved_events}</strong></div>
-            <div><span className="text-slate-500">{t('lots.closure')}:</span> <strong>{closeResult.end_date}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalMortality')}:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalFeed')}:</span> <strong>{closeResult.total_feed_kg} {t('lots.kg')}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalEggs')}:</span> <strong>{closeResult.total_eggs}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.totalEvents')}:</span> <strong>{closeResult.total_events}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.approvedEvents')}:</span> <strong className="text-emerald-600">{closeResult.approved_events}</strong></div>
+            <div><span className="text-slate-500 dark:text-slate-400">{t('lots.closure')}:</span> <strong>{closeResult.end_date}</strong></div>
           </div>
         </div>
       )}
@@ -217,7 +217,7 @@ export default function LotDetailPage() {
               <Plus size={18} className="text-[#2563EB]" />
               {t('lots.registerOperation')}
               {phaseLabel && (
-                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+                <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300">
                   {phaseLabel}
                 </span>
               )}
@@ -232,7 +232,7 @@ export default function LotDetailPage() {
                     className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 hover:border-[#2563EB] hover:bg-blue-50 transition-colors text-center group"
                   >
                     <Icon size={20} className="text-[#2563EB] group-hover:scale-110 transition-transform" />
-                    <span className="text-xs text-slate-600 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
+                    <span className="text-xs text-slate-600 dark:text-slate-300 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
                   </Link>
                 )
               })}
@@ -271,20 +271,20 @@ export default function LotDetailPage() {
                 <Calendar size={18} className="text-[#2563EB]" /> {t('lots.weeklyView')}</h2>
                 <div className="overflow-x-auto">
                   <table className="w-full text-xs">
-                    <thead className="bg-slate-50">
+                    <thead className="bg-slate-50 dark:bg-slate-800">
                       <tr>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.weekNumber')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.maleWeight')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.femaleWeight')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.maleMort')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.femaleMort')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.feed')}</th>
-                        <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.date')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.weekNumber')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.maleWeight')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.femaleWeight')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.maleMort')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.femaleMort')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.feed')}</th>
+                        <th className="px-3 py-2 text-left font-semibold text-slate-600 dark:text-slate-300">{t('weekly.date')}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {weeks.map((w: any) => (
-                        <tr key={w.week} className="border-b border-slate-50 hover:bg-slate-50">
+                        <tr key={w.week} className="border-b border-slate-50 hover:bg-slate-50 dark:bg-slate-800">
                           <td className="px-3 py-2 font-mono font-medium">{w.week || '—'}</td>
                           <td className="px-3 py-2">{w.male_weight > 0 ? w.male_weight : '—'}</td>
                           <td className="px-3 py-2">{w.female_weight > 0 ? w.female_weight : '—'}</td>
@@ -318,8 +318,8 @@ export default function LotDetailPage() {
                     </div>
                     <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
                       ev.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
-                      ev.status === 'registered' ? 'bg-blue-100 text-blue-700' :
-                      'bg-slate-100 text-slate-600'
+                      ev.status === 'registered' ? 'bg-blue-100 text-blue-700 dark:bg-blue-950 dark:text-blue-300' :
+                      'bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 dark:text-slate-400'
                     }`}>{ev.status}</span>
                   </div>
                 ))}
@@ -336,10 +336,10 @@ export default function LotDetailPage() {
               <Calendar size={18} /> {t('lots.info')}
             </h2>
             <dl className="space-y-2 text-sm">
-              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
-              <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
+              <div className="flex justify-between"><dt className="text-slate-500 dark:text-slate-400">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
             </dl>
           </div>
 
@@ -387,11 +387,11 @@ export default function LotDetailPage() {
                 <TrendingUp size={18} className="text-emerald-600" /> IPE
               </h2>
               <p className="text-3xl font-bold text-emerald-700">{kpiIpe.ipe}</p>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {kpiIpe.ipe >= 300 ? '🟢' : kpiIpe.ipe >= 250 ? '🟡' : '🔴'}{' '}
                 {kpiIpe.ipe >= 300 ? t('kpi.excellent', 'Excelente') : kpiIpe.ipe >= 250 ? t('kpi.good', 'Bueno') : t('kpi.average', 'Regular')}
               </p>
-              <div className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500">
+              <div className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500 dark:text-slate-400">
                 <span>{t('kpi.viability', 'Viab.')} {kpiIpe.viabilidad_pct}%</span>
                 <span>{t('kpi.fcr', 'FCR')} {kpiIpe.fcr}</span>
                 <span>{t('kpi.avgWeight', 'Peso')} {kpiIpe.avg_weight_g}g</span>
@@ -410,7 +410,7 @@ export default function LotDetailPage() {
                 kpiUniformity.uniformity_status === 'excellent' ? 'text-emerald-700' :
                 kpiUniformity.uniformity_status === 'acceptable' ? 'text-amber-700' : 'text-red-700'
               }`}>CV {kpiUniformity.cv_pct}%</p>
-              <p className="text-xs text-slate-500 mt-1">
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                 {kpiUniformity.uniformity_status === 'excellent' ? '🟢 ' : kpiUniformity.uniformity_status === 'acceptable' ? '🟡 ' : '🔴 '}
                 {t(`kpi.${kpiUniformity.uniformity_status}`, kpiUniformity.uniformity_status)}
                 {' · '}{kpiUniformity.n_samples} {t('kpi.samples', 'muestras')}
@@ -437,7 +437,7 @@ export default function LotDetailPage() {
                       </span>
                       <p className="text-slate-700 dark:text-slate-200 mt-0.5 leading-snug">{a.message}</p>
                     </div>
-                    <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover:text-slate-600 shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
+                    <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover:text-slate-600 dark:text-slate-300 shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
                       <X size={12} />
                     </button>
                   </div>
@@ -518,7 +518,7 @@ export default function LotDetailPage() {
         </>
       }
     >
-      <p className="text-sm text-slate-600">
+      <p className="text-sm text-slate-600 dark:text-slate-300">
         {t('lots.closeWarning', 'Se generará un resumen final con todas las métricas del lote.')}
       </p>
     </Modal>

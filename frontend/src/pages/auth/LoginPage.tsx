@@ -95,7 +95,7 @@ export default function LoginPage() {
                   placeholder={t('auth.usernamePlaceholder', 'username')}
                 />
               </div>
-              {errors.username && <p className="text-red-500 text-xs">{t(errors.username.message ?? '')}</p>}
+              {errors.username && <p className="text-red-500 dark:text-red-400 text-xs">{t(errors.username.message ?? '')}</p>}
             </div>
 
             {/* Password */}
@@ -116,7 +116,7 @@ export default function LoginPage() {
                   placeholder="••••••••"
                 />
               </div>
-              {errors.password && <p className="text-red-500 text-xs">{t(errors.password.message ?? '')}</p>}
+              {errors.password && <p className="text-red-500 dark:text-red-400 text-xs">{t(errors.password.message ?? '')}</p>}
             </div>
 
             {/* Submit */}

@@ -150,7 +150,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
 
   if (error) {
     return (
-      <p className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-400 flex items-center gap-1">
+      <p className="text-xs text-slate-400 dark:text-slate-400 flex items-center gap-1">
         {t('traceability.loadError', 'Error al cargar trazabilidad')}
         <button onClick={load} className="text-blue-500 hover:underline ml-1">{t('common.retry', 'Reintentar')}</button>
       </p>
@@ -159,7 +159,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
 
   if (!hasData) {
     return (
-      <p className="text-sm text-slate-400 dark:text-slate-400 dark:text-slate-400 italic">
+      <p className="text-sm text-slate-400 dark:text-slate-400 italic">
         {t('traceability.noLinks', 'Sin vínculos de trazabilidad generacional registrados.')}
       </p>
     )
@@ -179,9 +179,9 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
               <div key={b.id} className="flex items-center gap-2 text-sm">
                 <span className="text-slate-500 dark:text-slate-400">{new Date(b.dispatch_date).toLocaleDateString()}</span>
                 <span className="font-semibold text-slate-700 dark:text-slate-200">{b.quantity_dispatched.toLocaleString()}</span>
-                <span className="text-slate-400 dark:text-slate-400 dark:text-slate-400">{t('traceability.eggs', 'huevos')}</span>
+                <span className="text-slate-400 dark:text-slate-400">{t('traceability.eggs', 'huevos')}</span>
                 {b.quantity_received != null && (
-                  <span className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
                 )}
                 {b.hatchery_lot && (
                   <>
@@ -213,7 +213,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
                 )}
                 <span className="text-slate-500 dark:text-slate-400">{new Date(b.dispatch_date).toLocaleDateString()}</span>
                 <span className="font-semibold text-slate-700 dark:text-slate-200">{b.quantity_dispatched.toLocaleString()}</span>
-                <span className="text-slate-400 dark:text-slate-400 dark:text-slate-400">{t('traceability.eggs', 'huevos')}</span>
+                <span className="text-slate-400 dark:text-slate-400">{t('traceability.eggs', 'huevos')}</span>
               </div>
             ))}
           </div>
@@ -232,9 +232,9 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
               <div key={b.id} className="flex items-center gap-2 text-sm">
                 <span className="text-slate-500 dark:text-slate-400">{new Date(b.dispatch_date).toLocaleDateString()}</span>
                 <span className="font-semibold text-slate-700 dark:text-slate-200">{b.quantity_dispatched.toLocaleString()}</span>
-                <span className="text-slate-400 dark:text-slate-400 dark:text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
+                <span className="text-slate-400 dark:text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
                 {b.quantity_received != null && (
-                  <span className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
+                  <span className="text-xs text-slate-400 dark:text-slate-400">({t('traceability.received', 'recibidos')}: {b.quantity_received.toLocaleString()})</span>
                 )}
                 {(b.destination_lot || b.broiler_lot) && (
                   <>
@@ -266,7 +266,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
                 )}
                 <span className="text-slate-500 dark:text-slate-400">{new Date(b.dispatch_date).toLocaleDateString()}</span>
                 <span className="font-semibold text-slate-700 dark:text-slate-200">{b.quantity_dispatched.toLocaleString()}</span>
-                <span className="text-slate-400 dark:text-slate-400 dark:text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
+                <span className="text-slate-400 dark:text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
               </div>
             ))}
           </div>
@@ -276,7 +276,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
       <button
         onClick={load}
         disabled={loading}
-        className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 dark:text-slate-400 dark:text-slate-300 dark:text-slate-400 flex items-center gap-1 transition-colors"
+        className="text-xs text-slate-400 dark:text-slate-400 hover:text-slate-600 dark:text-slate-300 dark:text-slate-400 dark:text-slate-300 dark:text-slate-400 flex items-center gap-1 transition-colors"
       >
         <RefreshCw size={11} className={loading ? 'animate-spin' : ''} />
         {t('common.refresh', 'Actualizar')}
