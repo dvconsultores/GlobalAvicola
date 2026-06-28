@@ -441,7 +441,7 @@ export default function DashboardPage() {
       {/* Page header */}
       <div>
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white">{t('nav.dashboard')}</h1>
-        <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 mt-0.5">
+        <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
           {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
       </div>

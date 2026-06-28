@@ -85,7 +85,7 @@ export default function StageTimeline({
                           ? 'bg-green-500 dark:bg-green-600 text-white'
                           : isCurrent
                             ? 'bg-blue-600 dark:bg-blue-500 scale-110 shadow-md text-white'
-                          : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-400 dark:text-slate-300'
+                          : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300'
                       }`}
                       aria-hidden="true"
                     >
@@ -109,13 +109,13 @@ export default function StageTimeline({
                                 ? 'text-green-600 dark:text-green-400'
                                 : isCurrent
                                   ? 'text-blue-600 dark:text-blue-400'
-                                  : 'text-slate-600 dark:text-slate-300 dark:text-slate-400'
+                                  : 'text-slate-600 dark:text-slate-400'
                             }
                             aria-hidden="true"
                           />
                         </div>
                       )}
-                      <h4 className={`font-semibold text-slate-800 dark:text-slate-200 dark:text-slate-100 leading-tight dark:text-slate-100`}>
+                      <h4 className={`font-semibold text-slate-800 dark:text-slate-100 leading-tight dark:text-slate-100`}>
                         {t(`events.${stage.event}`, stage.event)}
                       </h4>
                       {isCompleted && (
@@ -129,7 +129,7 @@ export default function StageTimeline({
                         </span>
                       )}
                     </div>
-                    <p className={`text-xs text-slate-600 dark:text-slate-300 dark:text-slate-400 leading-snug`}>
+                    <p className={`text-xs text-slate-600 dark:text-slate-400 leading-snug`}>
                       {t(stage.descKey, stage.descFallback)}
                     </p>
                   </div>
@@ -137,7 +137,7 @@ export default function StageTimeline({
                   {/* Chevron indicator */}
                   <ChevronDown
                     size={18}
-                    className={`shrink-0 text-slate-400 dark:text-slate-500 dark:text-slate-400 transition-transform ${
+                    className={`shrink-0 text-slate-400 dark:text-slate-400 transition-transform ${
                       isExpanded ? 'rotate-180' : ''
                     }`}
                     aria-hidden="true"
