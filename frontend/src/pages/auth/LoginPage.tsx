@@ -6,22 +6,23 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useTranslation } from 'react-i18next'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { Globe, Bird, ArrowRight, Lock, User } from 'lucide-react'
+import { Globe, Bird, ArrowRight, Lock, User, Eye, EyeOff } from 'lucide-react'
 
 const loginSchema = z.object({
- username: z.string().min(3, 'auth.usernameMinLength'),
- password: z.string().min(6, 'auth.passwordMinLength'),
+  username: z.string().min(3, 'auth.usernameMinLength'),
+  password: z.string().min(6, 'auth.passwordMinLength'),
 })
 
 type LoginForm = z.infer<typeof loginSchema>
 
 export default function LoginPage() {
- const { t, i18n } = useTranslation()
- const navigate = useNavigate()
- const { login } = useAuthStore()
- const toast = useToast()
- const [error, setError] = useState('')
- const [loading, setLoading] = useState(false)
+  const { t, i18n } = useTranslation()
+  const navigate = useNavigate()
+  const { login } = useAuthStore()
+  const toast = useToast()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
  resolver: zodResolver(loginSchema),
@@ -110,11 +111,20 @@ export default function LoginPage() {
  <input
  id="login-password"
  {...register('password')}
- type="password"
+ type={showPassword ? 'text' : 'password'}
  autoComplete="current-password"
- className="w-full h-11 pl-10 pr-4 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
+ className="w-full h-11 pl-10 pr-10 border border-slate-200 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-white bg-slate-50 dark:bg-slate-900 placeholder:text-slate-300 focus:outline-none focus:ring-2 focus:ring-brand-400/30 focus:border-brand-500 transition-all"
  placeholder="••••••••"
  />
+ <button
+ type="button"
+ onClick={() => setShowPassword(v => !v)}
+ className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+ tabIndex={-1}
+ aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+ >
+ {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
+ </button>
  </div>
  {errors.password && <p className="text-red-500 text-xs">{t(errors.password.message ?? '')}</p>}
  </div>
