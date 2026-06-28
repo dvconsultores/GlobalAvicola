@@ -50,14 +50,14 @@ export default function MobileNav() {
             key={item.id}
             to={item.path}
             onClick={() => handleNavClick(item.id)}
-            className="flex flex-col items-center gap-1 px-3 py-2 transition-all"
+            className="flex flex-col items-center gap-1 px-3 py-2.5 transition-all"
           >
             <item.Icon
-              size={20}
+              size={22}
               strokeWidth={active ? 2.3 : 1.8}
               className={active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-slate-100'}
             />
-            <span className={`text-[10px] leading-none font-semibold transition-all ${active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-slate-100'}`}>
+            <span className={`text-xs leading-none font-semibold transition-all ${active ? 'text-brand-700 dark:text-brand-400' : 'text-slate-900 dark:text-slate-100'}`}>
               {t(item.labelKey, item.fallback)}
             </span>
             {active && (

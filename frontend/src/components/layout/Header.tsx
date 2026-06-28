@@ -173,7 +173,7 @@ export default function Header() {
             style={{ background: 'rgba(255,255,255,0.08)' }}
             aria-label={t('nav.menu', 'Menú')}
           >
-            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+            {menuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
           <div className="flex items-center gap-2">
@@ -200,7 +200,7 @@ export default function Header() {
             style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(147,197,253,0.9)' }}
             title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
           >
-            <Globe size={12} />
+            <Globe size={15} />
             {i18n.language === 'es' ? 'EN' : 'ES'}
           </button>
 
@@ -211,7 +211,7 @@ export default function Header() {
             style={{ color: 'rgba(147,197,253,0.8)' }}
             aria-label={isDark ? 'Modo claro' : 'Modo oscuro'}
           >
-            {isDark ? <Sun size={15} /> : <Moon size={15} />}
+            {isDark ? <Sun size={18} /> : <Moon size={18} />}
           </button>
         </div>
       </header>
@@ -225,29 +225,29 @@ export default function Header() {
             style={{ background: 'linear-gradient(180deg, #071829 0%, #0F3361 100%)' }}
           >
             <div className="flex items-center justify-between mb-6">
-              <span className="text-sm font-bold text-white">{t('nav.menu', 'Menú')}</span>
+              <span className="text-base font-bold text-white">{t('nav.menu', 'Menú')}</span>
               <button onClick={() => setMenuOpen(false)} className="text-white/60 hover:text-white">
-                <X size={18} />
+                <X size={22} />
               </button>
             </div>
             <div className="space-y-1">
               <Link to="/" onClick={() => setMenuOpen(false)}
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors">
-                <Home size={16} /> {t('nav.home', 'Inicio')}
+                <Home size={20} /> {t('nav.home', 'Inicio')}
               </Link>
               <Link to="/menu/poultry" onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors">
-                <Bird size={16} /> {t('nav.poultry', 'Gestión Avícola')}
+                className="flex items-center gap-3 px-3 py-3 rounded-lg text-base text-white/80 hover:bg-white/10 transition-colors">
+                <Bird size={20} /> {t('nav.poultry', 'Gestión Avícola')}
               </Link>
               <Link to="/kpi" onClick={() => setMenuOpen(false)}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors">
-                <BarChart3 size={16} /> {t('nav.kpi', 'KPI')}
+                className="flex items-center gap-3 px-3 py-3 rounded-lg text-base text-white/80 hover:bg-white/10 transition-colors">
+                <BarChart3 size={20} /> {t('nav.kpi', 'KPI')}
               </Link>
             </div>
             <div className="mt-6 pt-4 border-t border-white/10">
               <button
                 onClick={() => { logout(); setMenuOpen(false); }}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-300 hover:bg-white/10 transition-colors w-full text-left"
+                className="flex items-center gap-3 px-3 py-3 rounded-lg text-base text-red-300 hover:bg-white/10 transition-colors w-full text-left"
               >
                 {t('auth.logout')}
               </button>
