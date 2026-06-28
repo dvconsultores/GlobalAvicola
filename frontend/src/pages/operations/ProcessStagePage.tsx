@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
+import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered } from 'lucide-react'
 import { useAuthStore } from '../../stores/auth.store'
 import {
  PROCESS_STAGES, flowForStage,
@@ -42,15 +42,6 @@ export default function ProcessStagePage() {
 
  const StageIcon = stageMeta.Icon
 
- // Determinar badge de fase (Cría/Producción/Incubación/Engorde)
- const phaseBadge = (() => {
- if (stageKey.includes('rearing')) return { label: 'Cría', icon: Sprout, color: 'bg-emerald-50 text-emerald-700' }
- if (stageKey.includes('production')) return { label: 'Producción', icon: Egg, color: 'bg-amber-50 text-amber-700' }
- if (stageKey === 'hatchery') return { label: 'Incubación', icon: Flame, color: 'bg-orange-50 text-orange-700' }
- if (stageKey === 'broiler') return { label: 'Engorde', icon: Drumstick, color: 'bg-teal-50 text-teal-700' }
- return null
- })()
-
  const goToOperation = (event: string) => {
  sessionStorage.setItem('operationBackTarget', location.pathname)
  navigate(`/operations/new?type=${event}`)
@@ -63,22 +54,11 @@ export default function ProcessStagePage() {
  <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover mb-3 transition-colors">
  <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
  </Link>
- <div className="flex items-start gap-3">
- <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0 mt-0.5">
+ <div className="flex items-center gap-3">
+ <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
  <StageIcon size={18} strokeWidth={2} />
  </span>
- <div className="min-w-0">
- <div className="flex items-center gap-2 flex-wrap">
  <h1 className="text-xl font-bold text-slate-900 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
- {phaseBadge && (
- <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${phaseBadge.color}`}>
- <phaseBadge.icon size={11} />
- {phaseBadge.label}
- </span>
- )}
- </div>
- <p className="text-sm text-slate-400 mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
- </div>
  </div>
  </div>
 
