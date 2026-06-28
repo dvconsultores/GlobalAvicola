@@ -51,9 +51,9 @@ function RangeIndicator({ value, min, max, unit, weekLabel }: {
   const s = getRangeStatus(value, min, max)
   if (s === 'none') return null
   const cfg: Record<RangeStatus, { bg: string; text: string; icon: string }> = {
-    ok:    { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', icon: '✅' },
-    warn:  { bg: 'bg-amber-50 border-amber-200',    text: 'text-amber-700',   icon: '⚠️' },
-    error: { bg: 'bg-red-50 border-red-200',         text: 'text-red-700',    icon: '❌' },
+    ok:    { bg: 'bg-emerald-50 dark:bg-emerald-950 border-emerald-200 dark:border-emerald-800', text: 'text-emerald-700 dark:text-emerald-300', icon: '✅' },
+    warn:  { bg: 'bg-amber-50 dark:bg-amber-950 border-amber-200 dark:border-amber-800',    text: 'text-amber-700 dark:text-amber-300',   icon: '⚠️' },
+    error: { bg: 'bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800',         text: 'text-red-700 dark:text-red-300',    icon: '❌' },
     none:  { bg: '', text: '', icon: '' },
   }
   const { bg, text, icon } = cfg[s]
@@ -1193,7 +1193,7 @@ export default function OperationFormPage() {
           )}
 
           {result && (
-            <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
+            <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 dark:bg-green-950 text-green-700 dark:text-green-300' : 'bg-red-50 dark:bg-red-950 text-red-700 dark:text-red-300'}`}>
               {result.message}
             </div>
           )}
