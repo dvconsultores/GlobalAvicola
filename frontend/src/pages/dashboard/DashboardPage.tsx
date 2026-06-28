@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { Bird, FileText, Clock, CheckCircle, TrendingDown, Egg, Sparkles, AlertCircle, AlertTriangle, X, Sprout, Feather, ChevronRight, ChevronDown } from 'lucide-react'
 import {
@@ -72,8 +72,10 @@ function AlertsWidget({ alerts, onResolve }: {
 
 export default function DashboardPage() {
   const { t, i18n } = useTranslation()
+  const location = useLocation()
   const { user } = useAuthStore()
   const isMobileUser = user?.view_type === 'mobile'
+  const isKpiRoute = location.pathname === '/kpi'
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -167,9 +169,11 @@ export default function DashboardPage() {
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-blue-300" />
             <div>
-              <h1 className="text-base font-bold leading-tight">{t('nav.home', 'Inicio')}</h1>
+              <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
               <p className="text-[11px] text-blue-200/80">
-                {t('dashboard.welcome')}, {user?.first_name || 'Operador'}
+                {isKpiRoute
+                  ? t('dashboard.todayMetrics', 'Hoy')
+                  : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
               </p>
             </div>
           </div>
@@ -214,81 +218,82 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* Procesos — Bird Type → Phase hierarchy */}
-          <div className="space-y-2">
-            <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
-              {t('process.hub.title', 'Procesos')}
-            </h2>
-            <div className="space-y-2.5">
-              {birdTypeGroups.map((group) => {
-                const hasSubPhases = group.stages.length > 1
-                return (
-                  <div key={group.id} className="space-y-2">
-                    {/* Bird type card */}
-                    {hasSubPhases ? (
-                      <button
-                        onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
-                        className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
-                      >
-                        <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
-                          <group.icon size={18} className="text-white" />
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
-                          <p className="text-[11px] text-slate-400 mt-0.5">
-                            {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
-                          </p>
-                        </div>
-                        {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronRight size={16} className="text-slate-400" />}
-                      </button>
-                    ) : (
-                      <Link
-                        to={stagePathForKey(group.stages[0].key)}
-                        className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
-                      >
-                        <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
-                          <group.icon size={18} className="text-white" />
-                        </span>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
-                          <p className="text-[11px] text-slate-400 mt-0.5">
-                            {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
-                          </p>
-                        </div>
-                        <ChevronRight size={16} className="text-slate-400" />
-                      </Link>
-                    )}
+          {!isKpiRoute && (
+            <div className="space-y-2">
+              <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                {t('process.hub.title', 'Procesos')}
+              </h2>
+              <div className="space-y-2.5">
+                {birdTypeGroups.map((group) => {
+                  const hasSubPhases = group.stages.length > 1
+                  return (
+                    <div key={group.id} className="space-y-2">
+                      {/* Bird type card */}
+                      {hasSubPhases ? (
+                        <button
+                          onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
+                          className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
+                        >
+                          <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
+                            <group.icon size={18} className="text-white" />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
+                            <p className="text-[11px] text-slate-400 mt-0.5">
+                              {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
+                            </p>
+                          </div>
+                          {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronRight size={16} className="text-slate-400" />}
+                        </button>
+                      ) : (
+                        <Link
+                          to={stagePathForKey(group.stages[0].key)}
+                          className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
+                        >
+                          <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
+                            <group.icon size={18} className="text-white" />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
+                            <p className="text-[11px] text-slate-400 mt-0.5">
+                              {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
+                            </p>
+                          </div>
+                          <ChevronRight size={16} className="text-slate-400" />
+                        </Link>
+                      )}
 
-                    {/* Sub-phase cards (Cría / Producción) */}
-                    {hasSubPhases && expandedBird === group.id && (
-                      <div className="pl-2 space-y-2 border-l-2 border-slate-200 ml-5">
-                        {group.stages.map((stage) => {
-                          const count = flowForStage(stage.key).length
-                          const isRearing = stage.key.includes('rearing')
-                          return (
-                            <Link
-                              key={stage.key}
-                              to={stagePathForKey(stage.key)}
-                              className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
-                            >
-                              <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
-                                {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
-                              </span>
-                              <div className="flex-1 min-w-0">
-                                <span className="text-[13px] font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
-                                <span className="text-[10px] text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
-                              </div>
-                              <ChevronRight size={14} className="text-slate-300" />
-                            </Link>
-                          )
-                        })}
-                      </div>
-                    )}
-                  </div>
-                )
-              })}
+                      {/* Sub-phase cards (Cría / Producción) */}
+                      {hasSubPhases && expandedBird === group.id && (
+                        <div className="pl-2 space-y-2 border-l-2 border-slate-200 ml-5">
+                          {group.stages.map((stage) => {
+                            const count = flowForStage(stage.key).length
+                            const isRearing = stage.key.includes('rearing')
+                            return (
+                              <Link
+                                key={stage.key}
+                                to={stagePathForKey(stage.key)}
+                                className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
+                              >
+                                <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
+                                  {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
+                                </span>
+                                <div className="flex-1 min-w-0">
+                                  <span className="text-[13px] font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
+                                  <span className="text-[10px] text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
+                                </div>
+                                <ChevronRight size={14} className="text-slate-300" />
+                              </Link>
+                            )
+                          })}
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     )

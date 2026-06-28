@@ -14,6 +14,13 @@ export default function MobileNav() {
   const { t } = useTranslation()
   const location = useLocation()
 
+  const handleNavClick = (itemId: string) => {
+    if (itemId === 'poultry') {
+      // Siempre abrir Gestión Avícola desde su nivel inicial.
+      sessionStorage.removeItem('menuHubStack:poultry')
+    }
+  }
+
   const items: MobileNavItem[] = [
     { id: 'poultry', path: '/menu/poultry', labelKey: 'nav.poultry', fallback: 'Gestión Avícola', Icon: Sprout },
     { id: 'kpi', path: '/kpi', labelKey: 'nav.kpi', fallback: 'KPI', Icon: BarChart3 },
@@ -40,6 +47,7 @@ export default function MobileNav() {
           <Link
             key={item.id}
             to={item.path}
+            onClick={() => handleNavClick(item.id)}
             className="flex flex-col items-center gap-1 px-3 py-2 transition-all"
           >
             <item.Icon
