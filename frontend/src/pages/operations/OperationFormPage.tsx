@@ -364,7 +364,7 @@ export default function OperationFormPage() {
 
       case 'mortality_recording': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.mortalityCause', 'Causa de mortalidad')}</label>
               {sel(register('cause_id', { valueAsNumber: true }), mortalityCauses, t('operations.selectCause', 'Seleccionar causa...'))}
@@ -380,7 +380,7 @@ export default function OperationFormPage() {
 
       case 'cull_recording': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.cullCause', 'Causa de descarte')}</label>
               {sel(register('cull_cause_id', { valueAsNumber: true }), cullCauses, t('operations.selectCause', 'Seleccionar causa...'))}
@@ -396,7 +396,7 @@ export default function OperationFormPage() {
 
       case 'vaccination': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.vaccine', 'Vacuna')}</label>
               {sel(register('vaccine_id', { valueAsNumber: true }), vaccines, t('operations.selectVaccine', 'Seleccionar vacuna...'))}
@@ -427,7 +427,7 @@ export default function OperationFormPage() {
 
       case 'medication': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.medication', 'Medicamento')}</label>
               {sel(register('medication_id', { valueAsNumber: true }), medications, t('operations.selectMedication', 'Seleccionar medicamento...'))}
@@ -447,7 +447,7 @@ export default function OperationFormPage() {
 
       case 'weight_recording': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3">
             <div>
               <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
               <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
@@ -463,7 +463,7 @@ export default function OperationFormPage() {
 
       case 'bird_reception': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.supplier', 'Proveedor')}</label>
               {sel(register('supplier_id', { valueAsNumber: true }), suppliers, t('operations.selectSupplier', 'Seleccionar proveedor...'))}
@@ -525,7 +525,7 @@ export default function OperationFormPage() {
 
       case 'bird_transfer': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.sourceHouse', 'Galpón origen')}</label>
               {sel(register('bird_movements.0.source_house_id', { valueAsNumber: true }), houses, t('operations.selectHouse', 'Seleccionar galpón...'))}
@@ -541,7 +541,7 @@ export default function OperationFormPage() {
 
       case 'bird_exit': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.destinationFarm', 'Granja destino')}</label>
               {sel(register('destination_farm_id', { valueAsNumber: true }), farms, t('operations.selectType', 'Seleccionar...'))}
@@ -565,7 +565,7 @@ export default function OperationFormPage() {
 
       case 'feed_registration': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.feedPhase', 'Fase de alimento')}</label>
               <select {...register('extra_data.feed_phase' as any)} className={ic}>
@@ -585,7 +585,7 @@ export default function OperationFormPage() {
               <input type="number" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
             </div>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
             <div>
               <label className={lc}>{t('operations.quantityKg', 'Cantidad (kg)')}</label>
               <input type="number" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} placeholder="0.0" />
@@ -619,7 +619,7 @@ export default function OperationFormPage() {
         return (
           <div className="space-y-4">
             {eventType === 'egg_dispatch' && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
                 <div>
                   <label className={lc}>{t('operations.destinationIncubator', 'Incubadora destino')}</label>
                   {sel(register('hatchery_params.0.incubator_id', { valueAsNumber: true }), incubators, t('operations.selectType', 'Seleccionar...'))}                </div>
@@ -645,7 +645,7 @@ export default function OperationFormPage() {
               ))}
             </div>
             {eventType === 'egg_collection' && (
-              <div className="grid grid-cols-2 gap-3 items-end">
+              <div className="flex flex-col gap-3">
                 <label className="text-sm font-medium text-slate-600">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
                 <input type="number" step="0.1" min="0" {...register('egg_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="60.0" />
               </div>
@@ -656,7 +656,7 @@ export default function OperationFormPage() {
 
       case 'egg_reception_hatchery': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.sourceOriginFarm', 'Granja de origen')}</label>
               {sel(register('extra_data.source_farm_id' as any), farms, t('operations.selectType', 'Seleccionar...'))}            </div>
@@ -716,7 +716,7 @@ export default function OperationFormPage() {
                   </select>
                 </div>
                 {/* T° and H° row */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="flex flex-col gap-3">
                   <div>
                     <label className={lc}>{t('operations.tempC', 'Temperatura (°C)')}</label>
                     <input type="number" step="0.1" min="0" max="60"
@@ -819,7 +819,7 @@ export default function OperationFormPage() {
             return (
               <div key={field.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-3 space-y-3 relative bg-slate-50/50 dark:bg-slate-800/40">
                 <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
                   <div>
                     <label className={lc}>{t('operations.machineType', 'Tipo de máquina')}</label>
                     <select {...register(`hatchery_params.${i}.machine_type` as any)} className={ic}>
@@ -879,7 +879,7 @@ export default function OperationFormPage() {
 
       case 'incubation_load': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.incubator', 'Incubadora')}</label>
               {sel(register('hatchery_params.0.incubator_id', { valueAsNumber: true }), incubators, t('operations.selectType', 'Seleccionar...'))}
@@ -942,7 +942,7 @@ export default function OperationFormPage() {
 
       case 'transfer_to_hatcher': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.hatcher', 'Nacedora')}</label>
               {sel(register('hatchery_params.0.hatcher_id', { valueAsNumber: true }), hatchers, t('operations.selectType', 'Seleccionar...'))}
@@ -991,7 +991,7 @@ export default function OperationFormPage() {
 
       case 'chick_dispatch': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.destinationFarm', 'Granja destino')}</label>
               {sel(register('destination_farm_id', { valueAsNumber: true }), farms, t('operations.selectType', 'Seleccionar...'))}
@@ -1011,7 +1011,7 @@ export default function OperationFormPage() {
 
       case 'lot_closure': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.finalPopulation', 'Población final')}</label>
               <input type="number" min="0" {...register('bird_movements.0.quantity', { valueAsNumber: true })} className={ic} placeholder="0" />
@@ -1035,7 +1035,7 @@ export default function OperationFormPage() {
 
       case 'grandparent_import': return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             <div>
               <label className={lc}>{t('operations.importCountry', 'País de origen')}</label>
               <input {...register('extra_data.origin_country' as any)} className={ic} placeholder="Ej. Francia" />
@@ -1070,7 +1070,7 @@ export default function OperationFormPage() {
   const SelectedStageIcon = selectedStageMeta?.Icon
 
   return (
-    <div className="p-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
+    <div className="px-3 py-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
       {/* Stepper */}
       <nav className="flex items-center gap-1.5 text-xs font-semibold mb-5 select-none">
         <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'}>
@@ -1093,7 +1093,7 @@ export default function OperationFormPage() {
         <div>
           <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100">{t('process.title', 'Registrar Operación')}</h1>
           <p className="text-sm text-slate-900 dark:text-slate-100 mt-1 mb-5">{t('process.subtitle', '¿Qué proceso vas a registrar?')}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
             {PROCESS_STAGES.map(s => {
               const Icon = s.Icon
               return (

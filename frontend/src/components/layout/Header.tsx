@@ -1,8 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { Link } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
-import { Globe, Sun, Moon, Bird, Building2, ChevronDown, Check } from 'lucide-react'
+import { Globe, Sun, Moon, Bird, Building2, ChevronDown, Check, Menu, X, Home, BarChart3 } from 'lucide-react'
 import { useThemeStore } from '../../stores/theme.store'
 
 export default function Header() {
@@ -11,6 +12,7 @@ export default function Header() {
   const { isDark, toggleDarkMode } = useThemeStore()
   const { activeCompanyId, activeCompanyName, companies, isSwitching, fetchCompanies, switchCompany } = useCompanyStore()
   const [companyOpen, setCompanyOpen] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
   const companyRef = useRef<HTMLDivElement>(null)
 
   const isSuperAdmin = user?.is_super_admin === true
@@ -163,7 +165,17 @@ export default function Header() {
         className="lg:hidden text-white px-4 py-0 flex items-center justify-between sticky top-0 z-20"
         style={{ background: 'linear-gradient(135deg, #071829 0%, #0F3361 100%)', height: '56px' }}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2">
+          {/* Hamburger */}
+          <button
+            onClick={() => setMenuOpen(v => !v)}
+            className="w-8 h-8 flex items-center justify-center rounded-lg"
+            style={{ background: 'rgba(255,255,255,0.08)' }}
+            aria-label={t('nav.menu', 'Menú')}
+          >
+            {menuOpen ? <X size={18} /> : <Menu size={18} />}
+          </button>
+
           <div className="flex items-center gap-2">
             <div
               className="w-7 h-7 rounded-lg flex items-center justify-center"
@@ -203,6 +215,46 @@ export default function Header() {
           </button>
         </div>
       </header>
+
+      {/* ── Mobile Slide-in Menu ────────────────────────── */}
+      {menuOpen && (
+        <>
+          <div className="lg:hidden fixed inset-0 z-30 bg-black/40" onClick={() => setMenuOpen(false)} />
+          <nav
+            className="lg:hidden fixed top-0 left-0 bottom-0 w-64 z-40 p-4 overflow-y-auto"
+            style={{ background: 'linear-gradient(180deg, #071829 0%, #0F3361 100%)' }}
+          >
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-sm font-bold text-white">{t('nav.menu', 'Menú')}</span>
+              <button onClick={() => setMenuOpen(false)} className="text-white/60 hover:text-white">
+                <X size={18} />
+              </button>
+            </div>
+            <div className="space-y-1">
+              <Link to="/" onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors">
+                <Home size={16} /> {t('nav.home', 'Inicio')}
+              </Link>
+              <Link to="/menu/poultry" onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors">
+                <Bird size={16} /> {t('nav.poultry', 'Gestión Avícola')}
+              </Link>
+              <Link to="/kpi" onClick={() => setMenuOpen(false)}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/80 hover:bg-white/10 transition-colors">
+                <BarChart3 size={16} /> {t('nav.kpi', 'KPI')}
+              </Link>
+            </div>
+            <div className="mt-6 pt-4 border-t border-white/10">
+              <button
+                onClick={() => { logout(); setMenuOpen(false); }}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-red-300 hover:bg-white/10 transition-colors w-full text-left"
+              >
+                {t('auth.logout')}
+              </button>
+            </div>
+          </nav>
+        </>
+      )}
 
     </>
   )

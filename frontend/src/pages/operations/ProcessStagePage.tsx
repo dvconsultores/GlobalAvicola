@@ -2,6 +2,7 @@ import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
+import { useAuthStore } from '../../stores/auth.store'
 import {
   PROCESS_STAGES, flowForStage,
   type StageKey,
@@ -24,6 +25,8 @@ export default function ProcessStagePage() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const location = useLocation()
+  const { user } = useAuthStore()
+  const isMobileUser = user?.view_type === 'mobile'
   const { stage: stageParam, birdType, phase } = useParams<{ stage?: string; birdType?: string; phase?: string }>()
   // Compatibilidad: soporta tanto :stage (legacy) como :birdType/:phase? (nuevo ruteo)
   const stage = stageParam || (birdType && phase ? `${birdType}_${phase}` : birdType || '')
@@ -88,14 +91,14 @@ export default function ProcessStagePage() {
           <div className="inline-flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
             <button
               onClick={() => setView('grid')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'grid' ? 'bg-white dark:bg-dark-card text-[#2563EB] shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'grid' ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
               aria-pressed={view === 'grid'}
             >
               <LayoutGrid size={15} /> {t('process.stage.viewGrid', 'Cuadrícula')}
             </button>
             <button
               onClick={() => setView('sequence')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'sequence' ? 'bg-white dark:bg-dark-card text-[#2563EB] shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'sequence' ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
               aria-pressed={view === 'sequence'}
             >
               <ListOrdered size={15} /> {t('process.stage.viewSequence', 'Secuencia')}
@@ -121,12 +124,14 @@ export default function ProcessStagePage() {
           </div>
         )}
 
-        {/* History shortcut */}
+        {/* History shortcut — web only */}
+        {!isMobileUser && (
         <div className="text-center pt-4 border-t border-slate-200 dark:border-slate-700">
           <Link to="/operations" className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-blue-600 transition-colors">
             {t('process.stage.viewHistory', 'Ver historial de operaciones')} <ArrowRight size={14} />
           </Link>
         </div>
+        )}
       </div>
     </div>
   )

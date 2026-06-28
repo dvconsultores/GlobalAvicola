@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { BarChart3, Sprout } from 'lucide-react'
+import { BarChart3, Home, Sprout } from 'lucide-react'
 
 interface MobileNavItem {
   id: string
@@ -23,18 +23,20 @@ export default function MobileNav() {
 
   const items: MobileNavItem[] = [
     { id: 'poultry', path: '/menu/poultry', labelKey: 'nav.poultry', fallback: 'Gestión Avícola', Icon: Sprout },
+    { id: 'home', path: '/', labelKey: 'nav.home', fallback: 'Home', Icon: Home },
     { id: 'kpi', path: '/kpi', labelKey: 'nav.kpi', fallback: 'KPI', Icon: BarChart3 },
   ]
 
   const isActive = (path: string) => {
     if (path === '/menu/poultry') return location.pathname.startsWith('/menu/poultry') || location.pathname.startsWith('/poultry')
+    if (path === '/') return location.pathname === '/'
     if (path === '/kpi') return location.pathname === '/kpi'
     return location.pathname.startsWith(path)
   }
 
   return (
     <nav
-      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 grid grid-cols-2 bg-white dark:bg-slate-900 safe-area-bottom"
+      className="lg:hidden fixed bottom-0 left-0 right-0 z-30 grid grid-cols-3 bg-white dark:bg-slate-900 safe-area-bottom"
       style={{
         borderTop: '1px solid rgba(15,23,42,0.07)',
         boxShadow: '0 -4px 20px -4px rgba(15,23,42,0.08)',

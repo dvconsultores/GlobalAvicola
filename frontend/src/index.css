@@ -98,6 +98,23 @@ html {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  -webkit-text-size-adjust: 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ── Mobile native-app optimizations ────────────────────── */
+@media (max-width: 1023px) {
+  html {
+    font-size: 17px;
+  }
+  body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
 body {
