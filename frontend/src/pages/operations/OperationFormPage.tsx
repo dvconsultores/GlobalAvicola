@@ -168,6 +168,10 @@ export default function OperationFormPage() {
  const [submitting, setSubmitting] = useState(false)
  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null)
 
+ // Multi-company: farm/hatchery filter for lot narrowing
+ const [selectedFarmId, setSelectedFarmId] = useState<number | null>(null)
+ const [selectedHatcheryId, setSelectedHatcheryId] = useState<number | null>(null)
+
  // Catalogs
  const [vaccines, setVaccines] = useState<any[]>([])
  const [medications, setMedications] = useState<any[]>([])
@@ -182,6 +186,7 @@ export default function OperationFormPage() {
  const [feedTypes, setFeedTypes] = useState<any[]>([])
  const [incubators, setIncubators] = useState<any[]>([])
  const [hatchers, setHatchers] = useState<any[]>([])
+ const [hatcheries, setHatcheries] = useState<any[]>([])
 
  const toast = useToast()
 
@@ -203,6 +208,22 @@ export default function OperationFormPage() {
 
  const eventType = watch('event_type')
  const lotId = watch('lot_id')
+
+ // Hatchery event types (for determining whether to show Farm or Hatchery selector)
+ const HATCHERY_EVENTS = new Set([
+ 'egg_reception_classification', 'egg_reception_hatchery', 'incubation_load',
+ 'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
+ 'hatchery_inspection',
+ ])
+ const isHatcheryStage = eventType ? HATCHERY_EVENTS.has(eventType) : false
+
+ // Lots filtered by selected farm
+ const filteredLots = useMemo(() => {
+ if (!isHatcheryStage && selectedFarmId) {
+ return lots.filter((l: any) => l.farm_id === selectedFarmId)
+ }
+ return lots
+ }, [lots, selectedFarmId, isHatcheryStage])
 
  // Houses filtered to the farm of the selected lot (for farm_inspection per-house rows)
  const farmHouses = useMemo(() => {
@@ -272,6 +293,7 @@ export default function OperationFormPage() {
  api.get('/masters/feed-types?limit=100'),
  api.get('/masters/incubators?limit=100'),
  api.get('/masters/hatchers?limit=100'),
+ api.get('/masters/hatcheries?limit=100'),
  ]).then(results => {
  const get = (r: PromiseSettledResult<any>) => r.status === 'fulfilled' ? (r.value.data || []) : []
  setVaccines(get(results[0])); setMedications(get(results[1]))
@@ -280,7 +302,7 @@ export default function OperationFormPage() {
  setProcessingPlants(get(results[6])); setSuppliers(get(results[7]))
  setBreeds(get(results[8])); setHouses(get(results[9]))
  setFeedTypes(get(results[10])); setIncubators(get(results[11]))
- setHatchers(get(results[12]))
+ setHatchers(get(results[12])); setHatcheries(get(results[13]))
  })
  }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1204,12 +1226,48 @@ export default function OperationFormPage() {
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+ {/* ── Farm or Hatchery selector (multi-company scoped) ── */}
+ {isHatcheryStage ? (
+ <div>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('masters.hatcheries', 'Incubadora')}</label>
+ <SearchSelect
+ value={selectedHatcheryId ?? ''}
+ onChange={(v) => {
+ const id = v ? Number(v) : null
+ setSelectedHatcheryId(id)
+ setValue('lot_id', undefined as any)
+ }}
+ items={hatcheries}
+ placeholder={t('operations.selectHatchery', 'Seleccionar incubadora...')}
+ searchPlaceholder="Buscar incubadora..."
+ renderLabel={(h: any) => h.name}
+ />
+ </div>
+ ) : (
+ <div>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('masters.farms', 'Granja')}</label>
+ <SearchSelect
+ value={selectedFarmId ?? ''}
+ onChange={(v) => {
+ const id = v ? Number(v) : null
+ setSelectedFarmId(id)
+ setValue('lot_id', undefined as any)
+ }}
+ items={farms}
+ placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
+ searchPlaceholder="Buscar granja..."
+ renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
+ />
+ </div>
+ )}
+
+ {/* ── Lot selector (filtered by farm/hatchery) ── */}
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
  <SearchSelect
  value={lotId}
  onChange={(v) => setValue('lot_id', v ? Number(v) : undefined as any)}
- items={lots}
+ items={filteredLots}
  placeholder={t('operations.selectLot', 'Seleccionar lote...')}
  searchPlaceholder="Buscar lote..."
  renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${l.status}` : ''}`}
