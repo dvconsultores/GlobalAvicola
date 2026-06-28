@@ -1070,7 +1070,7 @@ export default function OperationFormPage() {
   const SelectedStageIcon = selectedStageMeta?.Icon
 
   return (
-    <div className="px-3 py-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
+    <div className="py-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
       {/* Stepper */}
       <nav className="flex items-center gap-1.5 text-sm font-semibold mb-5 select-none">
         <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'}>
