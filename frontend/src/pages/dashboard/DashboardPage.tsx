@@ -84,7 +84,7 @@ export default function DashboardPage() {
   const toast = useToast()
 
   useEffect(() => {
-    const endpoint = isMobileUser ? '/dashboard/mobile' : '/dashboard/admin'
+    const endpoint = isMobileUser && !isKpiRoute ? '/dashboard/mobile' : '/dashboard/admin'
     api.get(endpoint)
       .then(r => {
         setData(r.data)
@@ -96,7 +96,7 @@ export default function DashboardPage() {
         toast.error(msg)
       })
       .finally(() => setLoading(false))
-  }, [isMobileUser])
+  }, [isMobileUser, isKpiRoute])
 
   const handleResolveAlert = async (alertId: number) => {
     try {
@@ -135,6 +135,10 @@ export default function DashboardPage() {
       </div>
     )
   }
+
+  const lotsByType: Record<string, number> = data?.lots_by_type ?? {}
+  const totalActiveLots = Object.values(lotsByType).reduce((a, b) => a + (b as number), 0)
+  const mortalityTrend: { week: string; mortality: number }[] = data?.mortality_trend ?? []
 
   // ── MOBILE OPERATOR DASHBOARD — BIRD TYPE → PHASE → OPERATIONS ─────────────
   if (isMobileUser) {
@@ -180,45 +184,161 @@ export default function DashboardPage() {
         </div>
 
         <div className="p-4 space-y-5">
-          {/* KPI Section */}
-          <div className="space-y-2">
-            <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
-              {t('dashboard.todayMetrics', 'Hoy')}
-            </h2>
-            <div className="grid grid-cols-3 gap-2.5">
-              <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
-                <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
-                  {t('dashboard.todayEvents', 'Registros')}
+          {isKpiRoute ? (
+            <>
+              {/* KPI summary for poultry processes */}
+              <div className="space-y-2">
+                <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                  {t('dashboard.processKpi', 'KPIs de Procesos Avicolas')}
+                </h2>
+                <div className="grid grid-cols-2 gap-2.5">
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
+                    <p className="text-xl font-bold text-slate-800 mt-1">{data?.total_events ?? 0}</p>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
+                    <p className="text-xl font-bold text-blue-700 mt-1">{data?.last_7_days ?? 0}</p>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
+                    <p className="text-xl font-bold text-amber-600 mt-1">{data?.pending_review ?? 0}</p>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
+                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
+                    <p className="text-xl font-bold text-emerald-600 mt-1">{data?.pending_approval ?? 0}</p>
+                  </div>
                 </div>
               </div>
-              <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
-                <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
-                  {t('dashboard.pendingCorrections', 'Pendientes')}
-                </div>
-              </div>
-              <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
-                <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
-                <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
-                  {t('dashboard.approvedToday', 'Aprobados')}
-                </div>
-              </div>
-            </div>
-          </div>
 
-          {/* Alerts */}
-          {data?.pending_corrections && data.pending_corrections > 0 && (
-            <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
-              <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
-              <div>
-                <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
-                <p className="text-[11px] text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
-              </div>
-            </div>
-          )}
+              {/* Active lots by stage */}
+              <Card>
+                <CardHeader
+                  title={t('dashboard.activeLotsByStage', 'Lotes activos por etapa')}
+                  subtitle={`${totalActiveLots} ${t('dashboard.totalActive', 'lotes activos')}`}
+                  action={<Bird size={16} />}
+                />
+                <CardBody>
+                  {totalActiveLots === 0 ? (
+                    <p className="text-sm text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-2">
+                      {[
+                        { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700', bg: 'bg-purple-50' },
+                        { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50' },
+                        { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50' },
+                        { key: 'broiler', dot: 'bg-emerald-400', text: 'text-emerald-700', bg: 'bg-emerald-50' },
+                      ].map(({ key, dot, text, bg }) => (
+                        <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-2.5`}>
+                          <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
+                          <div className="min-w-0">
+                            <p className={`text-lg font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
+                            <p className="text-[10px] font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardBody>
+              </Card>
 
-          {!isKpiRoute && (
+              {/* Mortality trend */}
+              {mortalityTrend.length > 0 && (
+                <Card>
+                  <CardHeader
+                    title={t('dashboard.mortalityTrend', 'Tendencia de mortalidad')}
+                    subtitle={t('dashboard.last8Weeks', 'Ultimas 8 semanas')}
+                  />
+                  <CardBody>
+                    <ResponsiveContainer width="100%" height={190}>
+                      <LineChart data={mortalityTrend} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                        <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                        <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                        <Tooltip
+                          contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}
+                          labelStyle={{ fontWeight: 600 }}
+                        />
+                        <Line
+                          type="monotone"
+                          dataKey="mortality"
+                          stroke="#DC2626"
+                          strokeWidth={2}
+                          dot={{ r: 3, fill: '#DC2626' }}
+                          activeDot={{ r: 5 }}
+                        />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </CardBody>
+                </Card>
+              )}
+
+              {/* Events generated by process */}
+              {data?.top_event_types && Object.keys(data.top_event_types).length > 0 && (
+                <Card>
+                  <CardHeader title={t('dashboard.topEventTypes', 'Eventos generados por tipo')} />
+                  <CardBody>
+                    <div className="space-y-2">
+                      {Object.entries(data.top_event_types).map(([etype, count]) => {
+                        const max = Math.max(...Object.values(data.top_event_types) as number[])
+                        const pct = Math.round(((count as number) / max) * 100)
+                        return (
+                          <div key={etype}>
+                            <div className="flex justify-between text-xs mb-1">
+                              <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
+                              <span className="font-semibold text-slate-800">{count as number}</span>
+                            </div>
+                            <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-[#2563EB] rounded-full transition-all" style={{ width: `${pct}%` }} />
+                            </div>
+                          </div>
+                        )
+                      })}
+                    </div>
+                  </CardBody>
+                </Card>
+              )}
+            </>
+          ) : (
+            <>
+              {/* KPI Section */}
+              <div className="space-y-2">
+                <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                  {t('dashboard.todayMetrics', 'Hoy')}
+                </h2>
+                <div className="grid grid-cols-3 gap-2.5">
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                    <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                      {t('dashboard.todayEvents', 'Registros')}
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                    <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                      {t('dashboard.pendingCorrections', 'Pendientes')}
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                    <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
+                    <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                      {t('dashboard.approvedToday', 'Aprobados')}
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Alerts */}
+              {data?.pending_corrections && data.pending_corrections > 0 && (
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
+                  <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
+                    <p className="text-[11px] text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
+                  </div>
+                </div>
+              )}
+
             <div className="space-y-2">
               <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
                 {t('process.hub.title', 'Procesos')}
@@ -293,6 +413,7 @@ export default function DashboardPage() {
                 })}
               </div>
             </div>
+            </>
           )}
         </div>
       </div>
@@ -300,10 +421,6 @@ export default function DashboardPage() {
   }
 
   // ── ADMIN / WEB DASHBOARD ──────────────────────────────────
-
-  const lotsByType: Record<string, number> = data?.lots_by_type ?? {}
-  const totalActiveLots = Object.values(lotsByType).reduce((a, b) => a + (b as number), 0)
-  const mortalityTrend: { week: string; mortality: number }[] = data?.mortality_trend ?? []
 
   const summaryCards = [
     { label: t('dashboard.totalEvents'),    value: data?.total_events    ?? 0, icon: <FileText size={16} /> },
