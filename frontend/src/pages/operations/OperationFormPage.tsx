@@ -148,8 +148,8 @@ const operationSchema = z.object({
 type OperationFormData = z.infer<typeof operationSchema>
 
 // Shared CSS helpers (module-level to avoid recreating on each render)
-const ic = 'w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
-const lc = 'block text-xs font-medium text-slate-900 dark:text-slate-100 mb-1'
+const ic = 'w-full h-11 px-3 border border-slate-300 dark:border-slate-600 rounded-lg text-base text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
+const lc = 'block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1.5'
 
 // ============================================================
 // Component
@@ -324,17 +324,17 @@ export default function OperationFormPage() {
 
   // ── M+F rows helper ──────────────────────────────────────────────
   const renderMFRows = (showWeight = true) => (
-    <div className="border border-slate-200 rounded-lg overflow-hidden">
-      <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-3 py-2 bg-slate-50 dark:bg-slate-800 border-b border-slate-200`}>
-        <span className="text-xs font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
-        <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
-        {showWeight && <span className="text-xs font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
+    <div>
+      <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2 border-b border-slate-200 dark:border-slate-700`}>
+        <span className="text-sm font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
+        <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
+        {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
       </div>
       {[
         { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
         { idx: 1, defaultSex: 'female', label: t('operations.females', 'Hembras'), color: 'text-pink-700' },
       ].map(({ idx, defaultSex, label, color }) => (
-        <div key={idx} className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-3 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0`}>
+        <div key={idx} className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0`}>
           <div className="flex items-center gap-1.5">
             <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={defaultSex} />
             <span className={`text-sm font-semibold ${color}`}>{label}</span>
@@ -629,13 +629,13 @@ export default function OperationFormPage() {
                 </div>
               </div>
             )}
-            <div className="border border-slate-200 rounded-lg overflow-hidden">
-              <div className="grid grid-cols-2 px-3 py-2 bg-slate-50 dark:bg-slate-800 border-b border-slate-200">
+            <div>
+              <div className="grid grid-cols-2 px-1 py-2 border-b border-slate-200 dark:border-slate-700">
                 <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
                 <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
               </div>
               {eggTypes.map(({ key, label }, i) => (
-                <div key={key} className="grid grid-cols-2 px-3 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+                <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0">
                   <div>
                     <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
                     <span className="text-sm text-slate-700">{label}</span>
@@ -697,12 +697,12 @@ export default function OperationFormPage() {
           <div className="space-y-4">
             <p className="text-xs text-slate-500">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
             {houseInspFields.map((field, i) => (
-              <div key={field.id} className="border border-slate-200 rounded-xl p-4 space-y-3 relative bg-slate-50">
+              <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 dark:border-slate-700 last:border-0">
                 <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">{t('operations.house', 'Galpón')} {i + 1}</span>
+                  <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.house', 'Galpón')} {i + 1}</span>
                   {i > 0 && (
                     <button type="button" onClick={() => removeHouseInsp(i)}
-                      className="text-red-400 hover:text-red-600 p-1"><Trash2 size={14} /></button>
+                      className="text-red-400 hover:text-red-600 p-1"><Trash2 size={16} /></button>
                   )}
                 </div>
                 {/* House selector */}
@@ -817,8 +817,8 @@ export default function OperationFormPage() {
           {incubatorFields.map((field, i) => {
             const machineType = watch(`hatchery_params.${i}.machine_type` as any)
             return (
-              <div key={field.id} className="border border-slate-200 dark:border-slate-700 rounded-xl p-3 space-y-3 relative bg-slate-50/50 dark:bg-slate-800/40">
-                <p className="text-xs font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
+              <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 dark:border-slate-700 last:border-0">
+                <p className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.machine', 'Máquina')} {i + 1}</p>
                 <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
                   <div>
                     <label className={lc}>{t('operations.machineType', 'Tipo de máquina')}</label>
@@ -925,9 +925,9 @@ export default function OperationFormPage() {
               <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
               <input type="hidden" {...register('bird_movements.0.quantity')} defaultValue="0" />
             </div>
-            <div className="border border-slate-200 rounded-lg overflow-hidden">
+            <div>
               {types.map(({ key, label }, i) => (
-                <div key={key} className="grid grid-cols-2 px-3 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+                <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0">
                   <div>
                     <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
                     <span className="text-sm text-slate-700">{label}</span>
@@ -975,9 +975,9 @@ export default function OperationFormPage() {
           { sex: 'mixed', label: t('operations.weak', 'Débiles'),             idx: 3 },
         ]
         return (
-          <div className="border border-slate-200 rounded-lg overflow-hidden">
+          <div>
             {rows.map(({ sex, label, idx }) => (
-              <div key={idx} className="grid grid-cols-2 px-3 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+              <div key={idx} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 dark:border-slate-700 last:border-0">
                 <div>
                   <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={sex} />
                   <span className="text-sm text-slate-700">{label}</span>
@@ -1072,7 +1072,7 @@ export default function OperationFormPage() {
   return (
     <div className="px-3 py-4 sm:p-6 max-w-2xl mx-auto text-slate-900 dark:text-slate-100">
       {/* Stepper */}
-      <nav className="flex items-center gap-1.5 text-xs font-semibold mb-5 select-none">
+      <nav className="flex items-center gap-1.5 text-sm font-semibold mb-5 select-none">
         <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'}>
           {t('process.step1', '1 · Proceso')}
         </button>
@@ -1098,13 +1098,13 @@ export default function OperationFormPage() {
               const Icon = s.Icon
               return (
                 <button key={s.key} type="button" onClick={() => goToStep2(s.key)}
-                  className={`flex items-center gap-4 p-4 min-h-[5rem] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-left shadow-sm transition-colors ${s.accent}`}>
+                  className={`flex items-center gap-3 p-4 min-h-[5rem] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-left active:bg-slate-50 transition-colors ${s.accent}`}>
                   <div className={`shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${s.iconBg}`}>
                     <Icon size={26} className={s.iconColor} />
                   </div>
                   <div className="min-w-0">
                     <p className="font-semibold text-slate-900 dark:text-slate-100 leading-tight">{t(s.labelKey, s.fallback)}</p>
-                    <p className="text-xs text-slate-900 dark:text-slate-100 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
                   </div>
                 </button>
               )
@@ -1135,7 +1135,7 @@ export default function OperationFormPage() {
                 <div key={category.key}>
                   <div className="flex items-center gap-2 mb-2">
                     <CatIcon size={16} className={category.color} />
-                    <span className="text-xs font-bold uppercase tracking-wide text-slate-900 dark:text-slate-100">
+                    <span className="text-sm font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                       {t(category.labelKey, category.fallback)}
                     </span>
                   </div>
@@ -1146,7 +1146,7 @@ export default function OperationFormPage() {
                         <button key={evt} type="button" onClick={() => chooseOperation(evt)}
                           className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
                           {EvIcon && <EvIcon size={22} className="text-[#2563EB] group-hover:scale-110 transition-transform" />}
-                          <span className="text-xs text-slate-900 dark:text-slate-100 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
+                          <span className="text-sm text-slate-700 dark:text-slate-200 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
                         </button>
                       )
                     })}
@@ -1219,7 +1219,7 @@ export default function OperationFormPage() {
             </div>
 
             {/* Operation-specific fields */}
-            <div className="rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-4 shadow-sm">
+            <div>
               {renderOperationFields()}
             </div>
 

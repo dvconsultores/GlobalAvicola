@@ -40,14 +40,14 @@ function AlertsWidget({ alerts, onResolve }: {
                 <div className={`w-1 self-stretch rounded-full shrink-0 ${s.bar}`} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap mb-0.5">
-                    <span className={`text-[10px] font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
+                    <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
                       {String(t(`alerts.severity.${a.severity}`, a.severity))}
                     </span>
-                    <span className="text-[10px] text-slate-500">
+                    <span className="text-xs text-slate-500">
                       {String(t(`alerts.type.${a.alert_type}`, a.alert_type.replace(/_/g, ' ')))}
                     </span>
                     {a.lot_id && (
-                      <Link to={`/lots/${a.lot_id}`} className="text-[10px] text-blue-600 hover:underline">
+                      <Link to={`/lots/${a.lot_id}`} className="text-xs text-blue-600 hover:underline">
                         {t('lots.lot', 'Lote')} #{a.lot_id}
                       </Link>
                     )}
@@ -174,7 +174,7 @@ export default function DashboardPage() {
             <Sparkles size={16} className="text-blue-300" />
             <div>
               <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
-              <p className="text-[11px] text-blue-200/80">
+              <p className="text-sm text-blue-200/80">
                 {isKpiRoute
                   ? t('dashboard.todayMetrics', 'Hoy')
                   : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
@@ -188,24 +188,24 @@ export default function DashboardPage() {
             <>
               {/* KPI summary for poultry processes */}
               <div className="space-y-2">
-                <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
                   {t('dashboard.processKpi', 'KPIs de Procesos Avicolas')}
                 </h2>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
-                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
+                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
                     <p className="text-xl font-bold text-slate-800 mt-1">{data?.total_events ?? 0}</p>
                   </div>
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
-                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
+                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
                     <p className="text-xl font-bold text-blue-700 mt-1">{data?.last_7_days ?? 0}</p>
                   </div>
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
-                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
+                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
                     <p className="text-xl font-bold text-amber-600 mt-1">{data?.pending_review ?? 0}</p>
                   </div>
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3">
-                    <p className="text-[10px] text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
+                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                    <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
                     <p className="text-xl font-bold text-emerald-600 mt-1">{data?.pending_approval ?? 0}</p>
                   </div>
                 </div>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                           <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
                           <div className="min-w-0">
                             <p className={`text-lg font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
-                            <p className="text-[10px] font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
+                            <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
                           </div>
                         </div>
                       ))}
@@ -303,25 +303,25 @@ export default function DashboardPage() {
             <>
               {/* KPI Section */}
               <div className="space-y-2">
-                <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+                <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
                   {t('dashboard.todayMetrics', 'Hoy')}
                 </h2>
                 <div className="grid grid-cols-3 gap-2.5">
                   <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
                     <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                    <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.todayEvents', 'Registros')}
                     </div>
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
                     <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                    <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.pendingCorrections', 'Pendientes')}
                     </div>
                   </div>
                   <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
                     <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
+                    <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.approvedToday', 'Aprobados')}
                     </div>
                   </div>
@@ -334,13 +334,13 @@ export default function DashboardPage() {
                   <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
                   <div>
                     <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
-                    <p className="text-[11px] text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
+                    <p className="text-sm text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
                   </div>
                 </div>
               )}
 
             <div className="space-y-2">
-              <h2 className="text-[11px] font-bold uppercase text-slate-400 tracking-wider">
+              <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
                 {t('process.hub.title', 'Procesos')}
               </h2>
               <div className="space-y-2.5">
@@ -359,7 +359,7 @@ export default function DashboardPage() {
                           </span>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
-                            <p className="text-[11px] text-slate-400 mt-0.5">
+                            <p className="text-sm text-slate-400 mt-0.5">
                               {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
                             </p>
                           </div>
@@ -375,7 +375,7 @@ export default function DashboardPage() {
                           </span>
                           <div className="flex-1 min-w-0">
                             <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
-                            <p className="text-[11px] text-slate-400 mt-0.5">
+                            <p className="text-sm text-slate-400 mt-0.5">
                               {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
                             </p>
                           </div>
@@ -399,8 +399,8 @@ export default function DashboardPage() {
                                   {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
                                 </span>
                                 <div className="flex-1 min-w-0">
-                                  <span className="text-[13px] font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
-                                  <span className="text-[10px] text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
+                                  <span className="text-sm font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
+                                  <span className="text-xs text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
                                 </div>
                                 <ChevronRight size={14} className="text-slate-300" />
                               </Link>
@@ -454,7 +454,7 @@ export default function DashboardPage() {
             <div key={i} className="bg-white dark:bg-dark-card rounded-xl border border-slate-200/80 dark:border-dark-border p-4">
               <div className="flex items-center gap-1.5 mb-2">
                 <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ac.dot}`} />
-                <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400 leading-none truncate">{card.label}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none truncate">{card.label}</p>
               </div>
               <div className="flex items-end justify-between gap-2">
                 <p className="text-2xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white stat-value">{card.value}</p>
@@ -489,7 +489,7 @@ export default function DashboardPage() {
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
                   <div className="min-w-0">
                     <p className={`text-xl font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
-                    <p className="text-[10px] font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
+                    <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
                   </div>
                 </div>
               ))}

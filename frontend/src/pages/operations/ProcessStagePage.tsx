@@ -71,7 +71,7 @@ export default function ProcessStagePage() {
             <div className="flex items-center gap-2 flex-wrap">
               <h1 className="text-xl font-bold text-slate-900 dark:text-slate-50 dark:text-slate-100 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
               {phaseBadge && (
-                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-semibold ${phaseBadge.color}`}>
+                <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-semibold ${phaseBadge.color}`}>
                   <phaseBadge.icon size={11} />
                   {phaseBadge.label}
                 </span>
