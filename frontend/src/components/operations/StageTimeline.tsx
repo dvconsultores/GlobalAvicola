@@ -27,14 +27,14 @@ export default function StageTimeline({
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null)
 
   const STAGE_COLORS = [
-    'from-blue-50 border-blue-200 bg-blue-50',
-    'from-teal-50 border-teal-200 bg-teal-50',
-    'from-amber-50 border-amber-200 bg-amber-50',
-    'from-orange-50 border-orange-200 bg-orange-50',
-    'from-indigo-50 border-indigo-200 bg-indigo-50',
-    'from-green-50 border-green-200 bg-green-50',
-    'from-rose-50 border-rose-200 bg-rose-50',
-    'from-violet-50 border-violet-200 bg-violet-50',
+    'from-blue-50 border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-950',
+    'from-teal-50 border-teal-200 dark:border-teal-800 bg-teal-50 dark:bg-teal-950',
+    'from-amber-50 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-950',
+    'from-orange-50 border-orange-200 dark:border-orange-800 bg-orange-50 dark:bg-orange-950',
+    'from-indigo-50 border-indigo-200 dark:border-indigo-800 bg-indigo-50 dark:bg-indigo-950',
+    'from-green-50 border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-950',
+    'from-rose-50 border-rose-200 dark:border-rose-800 bg-rose-50 dark:bg-rose-950',
+    'from-violet-50 border-violet-200 dark:border-violet-800 bg-violet-50 dark:bg-violet-950',
   ]
 
   const STAGE_BORDER_COLORS = [
@@ -70,7 +70,7 @@ export default function StageTimeline({
               onClick={() => setExpandedIndex(isExpanded ? null : index)}
               className={`w-full relative group transition-all rounded-xl border-2 overflow-hidden ${
                 isExpanded ? 'ring-2 ring-blue-400 shadow-md' : 'hover:shadow-sm'
-              } ${isCompleted ? 'border-green-300 bg-green-50 dark:bg-green-900/20 dark:border-green-700' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200 dark:border-slate-700'}`}
+              } ${isCompleted ? 'border-green-300 bg-green-50 dark:bg-green-950 dark:bg-green-900/20 dark:border-green-700' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200 dark:border-slate-700'}`}
               aria-expanded={isExpanded}
               aria-controls={`stage-content-${index}`}
               aria-label={`${t(`events.${stage.event}`, stage.event)} - ${t('common.' + (isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'), isCompleted ? 'Completado' : isCurrent ? 'En progreso' : 'Pendiente')}`}
@@ -82,9 +82,9 @@ export default function StageTimeline({
                     <div
                       className={`w-10 h-10 rounded-full flex items-center justify-center font-bold transition-all transform group-hover:scale-110 ${
                         isCompleted
-                          ? 'bg-green-500 dark:bg-green-600 text-white'
+                          ? 'bg-green-50 dark:bg-green-9500 dark:bg-green-600 text-white'
                           : isCurrent
-                            ? 'bg-blue-600 dark:bg-blue-500 scale-110 shadow-md text-white'
+                            ? 'bg-blue-600 dark:bg-blue-50 dark:bg-blue-9500 scale-110 shadow-md text-white'
                           : 'bg-slate-200 dark:bg-slate-600 text-slate-500 dark:text-slate-300'
                       }`}
                       aria-hidden="true"

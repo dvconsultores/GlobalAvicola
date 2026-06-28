@@ -511,7 +511,7 @@ export default function OperationFormPage() {
                 <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
               </div>
               <button type="button" onClick={() => removeBird(i)}
-                className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 border border-red-200 rounded-lg mt-4">
+                className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 dark:text-red-400 border border-red-200 rounded-lg mt-4">
                 <Trash2 size={13} />
               </button>
             </div>
@@ -702,7 +702,7 @@ export default function OperationFormPage() {
                   <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">{t('operations.house', 'Galpón')} {i + 1}</span>
                   {i > 0 && (
                     <button type="button" onClick={() => removeHouseInsp(i)}
-                      className="text-red-400 hover:text-red-600 p-1"><Trash2 size={16} /></button>
+                      className="text-red-400 hover:text-red-600 dark:text-red-400 p-1"><Trash2 size={16} /></button>
                   )}
                 </div>
                 {/* House selector */}
@@ -863,7 +863,7 @@ export default function OperationFormPage() {
                 </div>
                 {i > 0 && (
                   <button type="button" onClick={() => removeIncubator(i)}
-                    className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1">
+                    className="absolute top-2 right-2 text-red-400 hover:text-red-600 dark:text-red-400 p-1">
                     <Trash2 size={14} />
                   </button>
                 )}
@@ -1098,7 +1098,7 @@ export default function OperationFormPage() {
               const Icon = s.Icon
               return (
                 <button key={s.key} type="button" onClick={() => goToStep2(s.key)}
-                  className={`flex items-center gap-3 p-4 min-h-[5rem] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-left active:bg-slate-50 transition-colors ${s.accent}`}>
+                  className={`flex items-center gap-3 p-4 min-h-[5rem] rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-left active:bg-slate-50 dark:bg-slate-800 transition-colors ${s.accent}`}>
                   <div className={`shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${s.iconBg}`}>
                     <Icon size={26} className={s.iconColor} />
                   </div>
@@ -1181,7 +1181,7 @@ export default function OperationFormPage() {
           </button>
 
           {eventType && (
-            <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100">
+            <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 dark:bg-blue-950 border border-blue-100 dark:border-blue-800">
               {SelectedEventIcon && <SelectedEventIcon size={22} className="text-[#2563EB]" />}
               <div>
                 <p className="text-sm font-bold text-slate-900 dark:text-slate-100">{t(`events.${eventType}`, eventType)}</p>
@@ -1208,7 +1208,7 @@ export default function OperationFormPage() {
                   <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
                 ))}
               </select>
-              {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
+              {lotsLoadError && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
               {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
             </div>
 
