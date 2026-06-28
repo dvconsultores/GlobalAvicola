@@ -64,7 +64,7 @@ export default function ProcessStagePage() {
  <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
  </Link>
  <div className="flex items-start gap-3">
- <span className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shrink-0 mt-0.5">
+ <span className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shrink-0 mt-0.5">
  <StageIcon size={18} strokeWidth={2} />
  </span>
  <div className="min-w-0">

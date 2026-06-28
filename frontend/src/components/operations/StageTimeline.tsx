@@ -70,7 +70,7 @@ export default function StageTimeline({
  onClick={() => setExpandedIndex(isExpanded ? null : index)}
  className={`w-full relative group transition-all rounded-xl border-2 overflow-hidden ${
  isExpanded ? 'ring-2 ring-blue-400 shadow-md' : 'hover:shadow-sm'
- } ${isCompleted ? 'border-green-300 bg-green-50 dark:bg-green-950 dark:bg-green-900/20' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200'}`}
+ } ${isCompleted ? 'border-green-300 bg-green-50 dark:bg-green-900/20' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200'}`}
  aria-expanded={isExpanded}
  aria-controls={`stage-content-${index}`}
  aria-label={`${t(`events.${stage.event}`, stage.event)} - ${t('common.' + (isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'), isCompleted ? 'Completado' : isCurrent ? 'En progreso' : 'Pendiente')}`}
@@ -119,12 +119,12 @@ export default function StageTimeline({
  {t(`events.${stage.event}`, stage.event)}
  </h4>
  {isCompleted && (
- <span className="inline-flex items-center text-[11px] font-bold text-green-700 bg-green-100 dark:bg-green-950 dark:bg-green-900/50 px-2 py-0.5 rounded-full" aria-label="Completado">
+ <span className="inline-flex items-center text-[11px] font-bold text-green-700 bg-green-100 dark:bg-green-900/50 px-2 py-0.5 rounded-full" aria-label="Completado">
  ✓ {t('common.completed', 'Completado')}
  </span>
  )}
  {isCurrent && !isCompleted && (
- <span className="inline-flex items-center text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-950 dark:bg-blue-900/50 px-2 py-0.5 rounded-full" aria-label="En progreso">
+ <span className="inline-flex items-center text-[11px] font-bold text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900/50 px-2 py-0.5 rounded-full" aria-label="En progreso">
  → {t('common.current', 'En progreso')}
  </span>
  )}

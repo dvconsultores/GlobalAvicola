@@ -22,7 +22,7 @@ const VARIANT_CLASSES: Record<Variant, string> = {
  primary:
  'bg-brand-500 text-white hover:bg-brand-600 active:bg-brand-700 focus-visible:ring-brand-400 shadow-sm hover:shadow-md',
  secondary:
- 'bg-slate-100 dark:bg-slate-700 dark:bg-dark-card text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 dark:border-dark-border',
+ 'bg-slate-100 dark:bg-dark-card text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 dark:border-dark-border',
  danger:
  'bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-400 shadow-sm hover:shadow-md',
  ghost:

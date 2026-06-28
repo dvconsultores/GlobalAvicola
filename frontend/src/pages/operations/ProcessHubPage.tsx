@@ -61,7 +61,7 @@ export default function ProcessHubPage() {
  <div className="p-4">
  {/* Icon + title */}
  <div className="flex items-start gap-3 mb-3">
- <span className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-950 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shrink-0">
+ <span className="w-9 h-9 rounded-lg bg-blue-50 dark:bg-blue-900/30 flex items-center justify-center text-blue-600 shrink-0">
  <stage.Icon size={20} strokeWidth={2} />
  </span>
  <div className="min-w-0 pt-0.5">
@@ -79,7 +79,7 @@ export default function ProcessHubPage() {
  {preview.map((label, i) => (
  <span
  key={i}
- className="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-950 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+ className="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
  >
  {label}
  </span>

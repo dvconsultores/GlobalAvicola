@@ -177,7 +177,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  <div className="flex-1 min-w-0">
  <span className="text-sm font-semibold text-slate-900 dark:text-slate-100">{t(item.labelKey, item.fallback)}</span>
  </div>
- {item.badge && <span className="text-[10px] font-bold bg-blue-100 dark:bg-blue-950 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
+ {item.badge && <span className="text-[10px] font-bold bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
  </Link>
  )
  })}
