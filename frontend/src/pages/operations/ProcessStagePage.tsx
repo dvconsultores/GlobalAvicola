@@ -91,14 +91,14 @@ export default function ProcessStagePage() {
           <div className="inline-flex bg-slate-100 dark:bg-slate-800 rounded-xl p-1">
             <button
               onClick={() => setView('grid')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'grid' ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'grid' ? 'bg-white dark:bg-slate-800 dark:bg-slate-700 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
               aria-pressed={view === 'grid'}
             >
               <LayoutGrid size={15} /> {t('process.stage.viewGrid', 'Cuadrícula')}
             </button>
             <button
               onClick={() => setView('sequence')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'sequence' ? 'bg-white dark:bg-slate-700 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${view === 'sequence' ? 'bg-white dark:bg-slate-800 dark:bg-slate-700 text-[#2563EB] dark:text-brand-400 shadow-sm' : 'text-slate-500 dark:text-slate-400'}`}
               aria-pressed={view === 'sequence'}
             >
               <ListOrdered size={15} /> {t('process.stage.viewSequence', 'Secuencia')}

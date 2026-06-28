@@ -192,19 +192,19 @@ export default function DashboardPage() {
                   {t('dashboard.processKpi', 'KPIs de Procesos Avicolas')}
                 </h2>
                 <div className="grid grid-cols-2 gap-2.5">
-                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
                     <p className="text-xl font-bold text-slate-800 dark:text-slate-200 mt-1">{data?.total_events ?? 0}</p>
                   </div>
-                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
                     <p className="text-xl font-bold text-blue-700 mt-1">{data?.last_7_days ?? 0}</p>
                   </div>
-                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
                     <p className="text-xl font-bold text-amber-600 mt-1">{data?.pending_review ?? 0}</p>
                   </div>
-                  <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
+                  <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
                     <p className="text-xl font-bold text-emerald-600 mt-1">{data?.pending_approval ?? 0}</p>
                   </div>
@@ -307,19 +307,19 @@ export default function DashboardPage() {
                   {t('dashboard.todayMetrics', 'Hoy')}
                 </h2>
                 <div className="grid grid-cols-3 gap-2.5">
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3 text-center">
                     <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data?.today_events ?? 0}</div>
                     <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.todayEvents', 'Registros')}
                     </div>
                   </div>
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3 text-center">
                     <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
                     <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.pendingCorrections', 'Pendientes')}
                     </div>
                   </div>
-                  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
+                  <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3 text-center">
                     <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
                     <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.approvedToday', 'Aprobados')}
@@ -352,7 +352,7 @@ export default function DashboardPage() {
                       {hasSubPhases ? (
                         <button
                           onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
-                          className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
+                          className="w-full bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
                         >
                           <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
                             <group.icon size={18} className="text-white" />
@@ -368,7 +368,7 @@ export default function DashboardPage() {
                       ) : (
                         <Link
                           to={stagePathForKey(group.stages[0].key)}
-                          className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
+                          className="w-full bg-white dark:bg-slate-800 rounded-xl border border-slate-200/80 dark:border-slate-700 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
                         >
                           <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
                             <group.icon size={18} className="text-white" />
@@ -393,7 +393,7 @@ export default function DashboardPage() {
                               <Link
                                 key={stage.key}
                                 to={stagePathForKey(stage.key)}
-                                className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
+                                className="flex items-center gap-2.5 p-3 bg-white dark:bg-slate-800 border border-slate-200/80 dark:border-slate-700 rounded-lg active:bg-slate-50 transition-colors"
                               >
                                 <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
                                   {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
