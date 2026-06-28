@@ -1197,11 +1197,11 @@ export default function OperationFormPage() {
             onClick={() => {
               if (prefillType && !stage) {
                 const target = sessionStorage.getItem('operationBackTarget')
-                if (target) {
+                if (target && (target.startsWith('/poultry') || target.startsWith('/menu/poultry'))) {
                   navigate(target)
                   return
                 }
-                navigate(-1)
+                navigate('/menu/poultry')
                 return
               }
               setStep(stage ? 2 : 1)

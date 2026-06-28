@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { EVENT_ICON_MAP, eventColor, type FlowStep } from '../../data/processCatalog'
 
 interface OperationTileProps {
@@ -20,6 +20,7 @@ interface OperationTileProps {
  */
 export default function OperationTile({ step, index, lotId, readOnly }: OperationTileProps) {
   const { t } = useTranslation()
+  const location = useLocation()
   const Icon = EVENT_ICON_MAP[step.event] ?? EVENT_ICON_MAP.feed_registration
   const color = eventColor(step.event)
   const label = t(`events.${step.event}`, step.event)
@@ -61,7 +62,12 @@ export default function OperationTile({ step, index, lotId, readOnly }: Operatio
     : `/operations/new?type=${step.event}`
 
   return (
-    <Link to={href} className={`${base} active:scale-[0.97]`} aria-label={label}>
+    <Link
+      to={href}
+      className={`${base} active:scale-[0.97]`}
+      aria-label={label}
+      onClick={() => sessionStorage.setItem('operationBackTarget', location.pathname)}
+    >
       {inner}
     </Link>
   )

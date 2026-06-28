@@ -72,7 +72,7 @@ function HomeRoute() {
 
 /**
  * ProcessStageRedirect — mapea rutas legacy /processes/:stage a /poultry/:birdType/:phase
- * Usa useParams directamente en el componente (sin wrapper innecesario)
+ * Si no existe mapeo, vuelve al menú jerárquico de Gestión Avícola.
  */
 const STAGE_ROUTE_MAP: Record<string, string> = { ...STAGE_PATH_MAP }
 
@@ -80,7 +80,13 @@ function ProcessStageRedirect() {
   const { stage } = useParams<{ stage: string }>()
   const target = stage ? STAGE_ROUTE_MAP[stage] : null
   if (target) return <Navigate to={target} replace />
-  return <Navigate to="/poultry" replace />
+  return <Navigate to="/menu/poultry" replace />
+}
+
+function PoultryHubLegacyRoute({ children }: { children: React.ReactNode }) {
+  const { user } = useAuthStore()
+  if (user?.view_type === 'mobile') return <Navigate to="/menu/poultry" replace />
+  return <>{children}</>
 }
 
 const masterEntities = [
@@ -143,10 +149,10 @@ export default function App() {
             />
           ))}
           {/* Shared: Poultry (new) + Processes (legacy redirects) */}
-          <Route path="/poultry" element={<PoultryHubPage />} />
+          <Route path="/poultry" element={<PoultryHubLegacyRoute><PoultryHubPage /></PoultryHubLegacyRoute>} />
           <Route path="/poultry/:birdType/:phase?" element={<PoultryStagePage />} />
           {/* Legacy redirects — keep for backward compatibility */}
-          <Route path="/processes" element={<Navigate to="/poultry" replace />} />
+          <Route path="/processes" element={<Navigate to="/menu/poultry" replace />} />
           <Route path="/processes/:stage" element={<ProcessStageRedirect />} />
           {/* Operations, Lots, Reports — accessible by both web and mobile */}
           <Route path="/operations" element={<OperationListPage />} />
