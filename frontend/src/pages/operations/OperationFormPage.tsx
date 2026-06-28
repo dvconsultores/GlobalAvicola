@@ -7,6 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast } from '../../components/Toast'
+import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
  PROCESS_STAGES, EVENT_ICON_MAP, categoriesForStage,
@@ -596,10 +597,14 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.sapOrder', 'Orden SAP')}</label>
- <select {...register('feed_movements.0.sap_order_id')} className={ic}>
- <option value="">{t('operations.noOrder', 'Sin orden')}</option>
- {sapOrders.map((s: any) => <option key={s.id} value={s.sap_code}>{s.sap_code}</option>)}
- </select>
+ <SearchSelect
+ value={watch('feed_movements.0.sap_order_id' as any)}
+ onChange={(v) => setValue('feed_movements.0.sap_order_id' as any, v || undefined)}
+ items={sapOrders}
+ placeholder={t('operations.noOrder', 'Sin orden')}
+ searchPlaceholder="Buscar orden SAP..."
+ renderLabel={(s: any) => s.sap_code || s.reference || s.id}
+ />
  </div>
  </div>
  </div>
@@ -1201,15 +1206,17 @@ export default function OperationFormPage() {
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
  <div>
  <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
- <select {...register('lot_id', { valueAsNumber: true })}
- className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
- <option value="">{t('operations.selectLot')}</option>
- {lots.map((l: any) => (
- <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
- ))}
- </select>
+ <SearchSelect
+ value={lotId}
+ onChange={(v) => setValue('lot_id', v ? Number(v) : undefined as any)}
+ items={lots}
+ placeholder={t('operations.selectLot', 'Seleccionar lote...')}
+ searchPlaceholder="Buscar lote..."
+ renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${l.status}` : ''}`}
+ error={!!errors.lot_id}
+ />
  {lotsLoadError && <p className="text-xs text-red-600 dark:text-red-400 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
- {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
+ {errors.lot_id && <p className="text-red-500 dark:text-red-400 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
  </div>
 
  <div>
