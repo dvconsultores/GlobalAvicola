@@ -60,7 +60,7 @@ export default function ProcessStagePage() {
     <div className="min-h-screen bg-[#F7F8FA] dark:bg-dark-bg pb-24 lg:pb-8 transition-colors duration-200">
       {/* Page header */}
       <div className="max-w-2xl mx-auto px-4 pt-5 pb-4">
-        <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-300 mb-3 transition-colors">
+        <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-slate-600 dark:text-slate-300 dark:text-slate-500 dark:text-slate-400 dark:hover:text-slate-300 mb-3 transition-colors">
           <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
         </Link>
         <div className="flex items-start gap-3">
@@ -77,7 +77,7 @@ export default function ProcessStagePage() {
                 </span>
               )}
             </div>
-            <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
+            <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
           </div>
         </div>
       </div>

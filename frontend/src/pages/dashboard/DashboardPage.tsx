@@ -43,7 +43,7 @@ function AlertsWidget({ alerts, onResolve }: {
                     <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
                       {String(t(`alerts.severity.${a.severity}`, a.severity))}
                     </span>
-                    <span className="text-xs text-slate-500">
+                    <span className="text-xs text-slate-500 dark:text-slate-400">
                       {String(t(`alerts.type.${a.alert_type}`, a.alert_type.replace(/_/g, ' ')))}
                     </span>
                     {a.lot_id && (
@@ -56,7 +56,7 @@ function AlertsWidget({ alerts, onResolve }: {
                 </div>
                 <button
                   onClick={() => onResolve(a.id)}
-                  className="shrink-0 text-slate-400 hover:text-slate-600 p-1 rounded"
+                  className="shrink-0 text-slate-400 hover:text-slate-600 dark:text-slate-300 p-1 rounded"
                   title={t('alerts.resolve', 'Marcar como resuelta')}
                 >
                   <X size={14} />
@@ -194,7 +194,7 @@ export default function DashboardPage() {
                 <div className="grid grid-cols-2 gap-2.5">
                   <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
-                    <p className="text-xl font-bold text-slate-800 mt-1">{data?.total_events ?? 0}</p>
+                    <p className="text-xl font-bold text-slate-800 dark:text-slate-200 mt-1">{data?.total_events ?? 0}</p>
                   </div>
                   <div className="bg-white rounded-lg border border-slate-200/60 dark:border-slate-700 p-3">
                     <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
@@ -233,7 +233,7 @@ export default function DashboardPage() {
                           <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
                           <div className="min-w-0">
                             <p className={`text-lg font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
-                            <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
+                            <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{t(`birdTypes.${key}`, key)}</p>
                           </div>
                         </div>
                       ))}
@@ -285,8 +285,8 @@ export default function DashboardPage() {
                         return (
                           <div key={etype}>
                             <div className="flex justify-between text-xs mb-1">
-                              <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
-                              <span className="font-semibold text-slate-800">{count as number}</span>
+                              <span className="text-slate-600 dark:text-slate-300">{t(`events.${etype}`, etype)}</span>
+                              <span className="font-semibold text-slate-800 dark:text-slate-200">{count as number}</span>
                             </div>
                             <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                               <div className="h-full bg-[#2563EB] rounded-full transition-all" style={{ width: `${pct}%` }} />
@@ -308,7 +308,7 @@ export default function DashboardPage() {
                 </h2>
                 <div className="grid grid-cols-3 gap-2.5">
                   <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
-                    <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
+                    <div className="text-xl font-bold text-slate-800 dark:text-slate-200">{data?.today_events ?? 0}</div>
                     <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
                       {t('dashboard.todayEvents', 'Registros')}
                     </div>
@@ -358,7 +358,7 @@ export default function DashboardPage() {
                             <group.icon size={18} className="text-white" />
                           </span>
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
+                            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{t(group.labelKey, group.fallback)}</h3>
                             <p className="text-sm text-slate-400 mt-0.5">
                               {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
                             </p>
@@ -374,7 +374,7 @@ export default function DashboardPage() {
                             <group.icon size={18} className="text-white" />
                           </span>
                           <div className="flex-1 min-w-0">
-                            <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
+                            <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">{t(group.labelKey, group.fallback)}</h3>
                             <p className="text-sm text-slate-400 mt-0.5">
                               {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
                             </p>
@@ -399,7 +399,7 @@ export default function DashboardPage() {
                                   {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
                                 </span>
                                 <div className="flex-1 min-w-0">
-                                  <span className="text-sm font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
+                                  <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">{t(stage.labelKey, stage.fallback)}</span>
                                   <span className="text-xs text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
                                 </div>
                                 <ChevronRight size={14} className="text-slate-300" />
@@ -441,7 +441,7 @@ export default function DashboardPage() {
       {/* Page header */}
       <div>
         <h1 className="text-xl font-semibold text-slate-900 dark:text-slate-50 dark:text-white">{t('nav.dashboard')}</h1>
-        <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+        <p className="text-sm text-slate-400 dark:text-slate-500 dark:text-slate-400 mt-0.5">
           {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
       </div>
@@ -489,7 +489,7 @@ export default function DashboardPage() {
                   <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
                   <div className="min-w-0">
                     <p className={`text-xl font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
-                    <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
+                    <p className="text-xs font-medium text-slate-500 dark:text-slate-400 truncate">{t(`birdTypes.${key}`, key)}</p>
                   </div>
                 </div>
               ))}
@@ -558,8 +558,8 @@ export default function DashboardPage() {
                   return (
                     <div key={etype}>
                       <div className="flex justify-between text-xs mb-1">
-                        <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
-                        <span className="font-semibold text-slate-800">{count as number}</span>
+                        <span className="text-slate-600 dark:text-slate-300">{t(`events.${etype}`, etype)}</span>
+                        <span className="font-semibold text-slate-800 dark:text-slate-200">{count as number}</span>
                       </div>
                       <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                         <div
