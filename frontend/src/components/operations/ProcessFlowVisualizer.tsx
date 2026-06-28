@@ -39,16 +39,16 @@ export default function ProcessFlowVisualizer({
       {/* Progress header */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-bold text-slate-800">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-slate-200">
             {t('process.progress', 'Progreso del proceso')}
           </h3>
-          <p className="text-xs text-slate-500 mt-1">
+          <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
             {completedCount} de {total} {t('process.stagesCompleted', 'etapas completadas')}
           </p>
         </div>
         <div className="text-right">
           <div className="text-2xl font-bold text-blue-600">{progressPercent}%</div>
-          <div className="text-xs text-slate-500">{t('common.complete', 'Completado')}</div>
+          <div className="text-xs text-slate-500 dark:text-slate-400">{t('common.complete', 'Completado')}</div>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ export default function ProcessFlowVisualizer({
 
               {/* Connector (not on last) */}
               {index < stages.length - 1 && (
-                <ChevronRight size={16} className="text-slate-300 shrink-0" />
+                <ChevronRight size={16} className="text-slate-300 dark:text-slate-400 shrink-0" />
               )}
             </div>
           )

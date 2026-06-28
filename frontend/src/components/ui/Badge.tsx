@@ -40,8 +40,8 @@ export function Badge({
     <span
       className={[
         'inline-flex items-center gap-1 rounded-full font-medium',
-        STATUS_STYLES[variant]?.bg || 'bg-slate-100',
-        STATUS_STYLES[variant]?.text || 'text-slate-600',
+        STATUS_STYLES[variant]?.bg || 'bg-slate-100 dark:bg-slate-700',
+        STATUS_STYLES[variant]?.text || 'text-slate-600 dark:text-slate-300',
         SIZE_CLASSES[size],
         className,
       ].join(' ')}

@@ -46,10 +46,10 @@ export default function MyPendingPage() {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-800 pb-24">
       {/* Page header */}
-      <div className="bg-white border-b border-slate-200 px-4 py-4 flex items-center justify-between">
+      <div className="bg-white dark:bg-slate-800 border-b border-slate-200 px-4 py-4 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Clock size={18} className="text-[#2563EB]" />
-          <h1 className="text-base font-semibold text-slate-800">
+          <h1 className="text-base font-semibold text-slate-800 dark:text-slate-200">
             {t('nav.myPending', 'Mis Pendientes')}
           </h1>
         </div>
@@ -57,7 +57,7 @@ export default function MyPendingPage() {
           onClick={fetch}
           disabled={loading}
           aria-label={t('common.refresh', 'Actualizar')}
-          className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors disabled:opacity-50"
+          className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 dark:text-slate-400 hover:text-slate-600 hover:bg-slate-100 dark:bg-slate-700 transition-colors disabled:opacity-50"
         >
           <RefreshCw size={16} className={loading ? 'animate-spin' : ''} />
         </button>
@@ -65,7 +65,7 @@ export default function MyPendingPage() {
 
       <div className="px-4 py-4 space-y-3">
         {loading && (
-          <div className="text-center py-12 text-slate-400 text-sm">
+          <div className="text-center py-12 text-slate-400 dark:text-slate-400 text-sm">
             {t('common.loading', 'Cargando...')}
           </div>
         )}
@@ -78,8 +78,8 @@ export default function MyPendingPage() {
 
         {!loading && !error && ops.length === 0 && (
           <div className="text-center py-16">
-            <Clock size={40} className="mx-auto text-slate-300 mb-3" />
-            <p className="text-slate-500 text-sm">{t('operations.noPending', 'No tienes registros pendientes')}</p>
+            <Clock size={40} className="mx-auto text-slate-300 dark:text-slate-400 mb-3" />
+            <p className="text-slate-500 dark:text-slate-400 text-sm">{t('operations.noPending', 'No tienes registros pendientes')}</p>
           </div>
         )}
 
@@ -90,14 +90,14 @@ export default function MyPendingPage() {
             className="w-full text-left bg-white dark:bg-slate-800 dark:border-slate-700 rounded-xl border border-slate-200 px-4 py-3 shadow-sm hover:shadow-md hover:border-blue-200 transition-all"
           >
             <div className="flex items-start justify-between gap-2 mb-1">
-              <p className="text-sm font-medium text-slate-800 dark:text-slate-100 leading-snug">
+              <p className="text-sm font-medium text-slate-800 dark:text-slate-200 dark:text-slate-100 leading-snug">
                 {t(`events.${op.event_type}`, op.event_type)}
               </p>
               <Badge variant={statusToVariant(op.status)} size="sm">
                 {t(`status.${op.status}`, op.status)}
               </Badge>
             </div>
-            <div className="flex items-center gap-3 text-xs text-slate-500">
+            <div className="flex items-center gap-3 text-xs text-slate-500 dark:text-slate-400">
               {op.lot && <span>{op.lot.name}</span>}
               <span>{new Date(op.event_date).toLocaleDateString()}</span>
             </div>

@@ -24,9 +24,9 @@ interface CardBodyProps {
 }
 
 const VARIANT_CLASSES: Record<CardVariant, string> = {
-  default:  'bg-white dark:bg-dark-card border border-slate-200/80 dark:border-dark-border',
-  flat:     'bg-white dark:bg-dark-card border border-slate-200/80 dark:border-dark-border',
-  elevated: 'bg-white dark:bg-dark-card border border-slate-200/80 dark:border-dark-border shadow-card',
+  default:  'bg-white dark:bg-slate-800 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border',
+  flat:     'bg-white dark:bg-slate-800 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border',
+  elevated: 'bg-white dark:bg-slate-800 dark:bg-dark-card border border-slate-200/80 dark:border-dark-border shadow-card',
 }
 
 const PADDING_CLASSES = {
@@ -63,13 +63,13 @@ export function CardHeader({ title, subtitle, action, className = '' }: CardHead
     <div className={`flex items-center justify-between gap-3 px-4 py-3 border-b border-slate-100 dark:border-dark-border ${className}`}>
       <div>
         {typeof title === 'string' ? (
-          <h3 className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100 text-sm">{title}</h3>
+          <h3 className="font-semibold text-slate-800 dark:text-slate-200 dark:text-slate-100 dark:text-slate-100 text-sm">{title}</h3>
         ) : title}
         {subtitle && (
-          <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5">{subtitle}</p>
+          <p className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 mt-0.5">{subtitle}</p>
         )}
       </div>
-      {action && <div className="shrink-0 text-slate-400">{action}</div>}
+      {action && <div className="shrink-0 text-slate-400 dark:text-slate-400">{action}</div>}
     </div>
   )
 }

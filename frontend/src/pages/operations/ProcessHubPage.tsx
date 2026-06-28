@@ -21,26 +21,26 @@ export default function ProcessHubPage() {
       <div className="max-w-5xl mx-auto px-4 pt-5 pb-4">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
+            <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 dark:text-slate-400 uppercase tracking-wider mb-1">
               <LayoutGrid size={13} />
               {t('process.hub.eyebrow', 'Centro de Operaciones')}
             </p>
             <h1 className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-tight">
               {t('process.hub.title', 'Elige un Proceso')}
             </h1>
-            <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5">
+            <p className="text-sm text-slate-400 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 mt-0.5">
               {t('process.hub.subtitle', 'Toca un proceso para ver su secuencia de operaciones')}
             </p>
           </div>
           <div className="hidden sm:flex items-center gap-4 shrink-0 pt-1">
             <div className="text-right">
               <div className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-none">6</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.processes', 'Procesos')}</div>
+              <div className="text-[11px] text-slate-400 dark:text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.processes', 'Procesos')}</div>
             </div>
             <div className="w-px h-8 bg-slate-200 dark:bg-slate-700" />
             <div className="text-right">
               <div className="text-xl font-bold text-slate-900 dark:text-slate-100 leading-none">{totalOps}</div>
-              <div className="text-[11px] text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.operations', 'Operaciones')}</div>
+              <div className="text-[11px] text-slate-400 dark:text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.operations', 'Operaciones')}</div>
             </div>
           </div>
         </div>
@@ -65,10 +65,10 @@ export default function ProcessHubPage() {
                       <stage.Icon size={20} strokeWidth={2} />
                     </span>
                     <div className="min-w-0 pt-0.5">
-                      <h2 className="text-sm font-bold text-slate-800 dark:text-slate-100 leading-tight">
+                      <h2 className="text-sm font-bold text-slate-800 dark:text-slate-200 dark:text-slate-100 leading-tight">
                         {t(stage.labelKey, stage.fallback)}
                       </h2>
-                      <p className="text-xs text-slate-400 dark:text-slate-500 mt-0.5 line-clamp-2">
+                      <p className="text-xs text-slate-400 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400 mt-0.5 line-clamp-2">
                         {t(stage.descKey, stage.descFallback)}
                       </p>
                     </div>
@@ -85,7 +85,7 @@ export default function ProcessHubPage() {
                       </span>
                     ))}
                     {flow.length > 3 && (
-                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500">
+                      <span className="text-[10px] font-bold text-slate-400 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400">
                         +{flow.length - 3}
                       </span>
                     )}
@@ -93,7 +93,7 @@ export default function ProcessHubPage() {
 
                   {/* Footer */}
                   <div className="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
-                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-500">
+                    <span className="text-xs font-semibold text-slate-400 dark:text-slate-400 dark:text-slate-500 dark:text-slate-400">
                       {flow.length} {t('process.hub.steps', 'pasos')}
                     </span>
                     <span className="inline-flex items-center gap-0.5 text-xs font-bold text-blue-600 group-hover:gap-1.5 transition-all">
