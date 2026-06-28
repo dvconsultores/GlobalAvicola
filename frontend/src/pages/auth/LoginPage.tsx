@@ -58,7 +58,7 @@ export default function LoginPage() {
  >
  <Bird size={24} className="text-white" strokeWidth={1.8} />
  </div>
- <h1 className="text-[22px] font-bold text-slate-900 tracking-tight">
+ <h1 className="text-2xl font-bold text-slate-900 tracking-tight">
  {t('brand.name', 'Global Avícola')}
  </h1>
  <p className="text-sm text-slate-500 mt-1">

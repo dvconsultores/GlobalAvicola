@@ -59,7 +59,7 @@ export default function KpiCard({
  {/* Label + dot indicator */}
  <div className="flex items-center gap-1.5 mb-2">
  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${cfg.dot}`} />
- <p className="text-[11px] font-semibold uppercase tracking-wide text-slate-400 leading-none">
+ <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none">
  {label}
  </p>
  </div>
@@ -68,7 +68,7 @@ export default function KpiCard({
  {value}
  </p>
  {subtitle && (
- <p className="text-[11px] text-slate-400 mt-1">{subtitle}</p>
+ <p className="text-xs text-slate-400 mt-1">{subtitle}</p>
  )}
  </div>
  {/* Icon */}
@@ -85,7 +85,7 @@ export default function KpiCard({
  {trend.direction === 'up' && <TrendingUp size={12} className="text-emerald-500 shrink-0" />}
  {trend.direction === 'down' && <TrendingDown size={12} className="text-red-500 shrink-0" />}
  {trend.direction === 'stable' && <Minus size={12} className="text-slate-400 shrink-0" />}
- <span className={`text-[11px] font-semibold ${
+ <span className={`text-xs font-semibold ${
  trend.direction === 'up' ? 'text-emerald-600' :
  trend.direction === 'down' ? 'text-red-600' :
  'text-slate-500'

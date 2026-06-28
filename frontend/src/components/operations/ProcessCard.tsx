@@ -21,7 +21,7 @@ export default function ProcessCard({ process, operationCount }: ProcessCardProp
  return (
  <Link
  to={stagePathForKey(process.key)}
- className={`group block relative overflow-hidden rounded-2xl border-2 border-slate-200 bg-gradient-to-br shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:-translate-y-1 ${process.accent} animate-scale-in hover-lift`}
+ className={`group block relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br shadow-sm transition-all hover:shadow-lg hover:scale-105 hover:-translate-y-1 ${process.accent} animate-scale-in hover-lift`}
  >
  {/* Background accent */}
  <div className={`absolute top-0 right-0 w-32 h-32 opacity-10 rounded-full -translate-y-16 translate-x-16 ${process.iconBg}`} />

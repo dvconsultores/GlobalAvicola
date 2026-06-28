@@ -38,7 +38,7 @@ export default function MenuCard({
  <button
  type="button"
  onClick={onClick}
- className={`group relative flex flex-col items-start text-left p-5 rounded-2xl border-2 transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5
+ className={`group relative flex flex-col items-start text-left p-5 rounded-2xl border transition-all duration-200 active:scale-[0.98] hover:-translate-y-0.5
  ${isActive
  ? 'bg-blue-50 border-blue-500 shadow-lg shadow-blue-500/10'
  : 'bg-white border-slate-200 hover:border-blue-300:border-blue-700 shadow-sm hover:shadow-md'
@@ -53,7 +53,7 @@ export default function MenuCard({
 
  {/* Count badge */}
  {badge !== undefined && badge > 0 && step === undefined && (
- <span className="absolute top-3 right-3 inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-rose-500 text-white text-[11px] font-bold">
+ <span className="absolute top-3 right-3 inline-flex items-center justify-center min-w-[22px] h-5 px-1.5 rounded-full bg-rose-500 text-white text-xs font-bold">
  {badge > 99 ? '99+' : badge}
  </span>
  )}

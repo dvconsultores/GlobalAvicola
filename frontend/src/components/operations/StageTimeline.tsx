@@ -68,7 +68,7 @@ export default function StageTimeline({
  <button
  type="button"
  onClick={() => setExpandedIndex(isExpanded ? null : index)}
- className={`w-full relative group transition-all rounded-xl border-2 overflow-hidden ${
+ className={`w-full relative group transition-all rounded-xl border overflow-hidden ${
  isExpanded ? 'ring-2 ring-blue-400 shadow-md' : 'hover:shadow-sm'
  } ${isCompleted ? 'border-green-300 bg-green-50' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200'}`}
  aria-expanded={isExpanded}
@@ -119,12 +119,12 @@ export default function StageTimeline({
  {t(`events.${stage.event}`, stage.event)}
  </h4>
  {isCompleted && (
- <span className="inline-flex items-center text-[11px] font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full" aria-label="Completado">
+ <span className="inline-flex items-center text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full" aria-label="Completado">
  ✓ {t('common.completed', 'Completado')}
  </span>
  )}
  {isCurrent && !isCompleted && (
- <span className="inline-flex items-center text-[11px] font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full" aria-label="En progreso">
+ <span className="inline-flex items-center text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full" aria-label="En progreso">
  → {t('common.current', 'En progreso')}
  </span>
  )}

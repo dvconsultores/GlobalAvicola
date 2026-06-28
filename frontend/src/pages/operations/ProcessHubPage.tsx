@@ -35,12 +35,12 @@ export default function ProcessHubPage() {
  <div className="hidden sm:flex items-center gap-4 shrink-0 pt-1">
  <div className="text-right">
  <div className="text-xl font-bold text-slate-900 leading-none">6</div>
- <div className="text-[11px] text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.processes', 'Procesos')}</div>
+ <div className="text-xs text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.processes', 'Procesos')}</div>
  </div>
  <div className="w-px h-8 bg-slate-200" />
  <div className="text-right">
  <div className="text-xl font-bold text-slate-900 leading-none">{totalOps}</div>
- <div className="text-[11px] text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.operations', 'Operaciones')}</div>
+ <div className="text-xs text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.operations', 'Operaciones')}</div>
  </div>
  </div>
  </div>
@@ -79,13 +79,13 @@ export default function ProcessHubPage() {
  {preview.map((label, i) => (
  <span
  key={i}
- className="inline-flex items-center text-[10px] font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700"
+ className="inline-flex items-center text-xs font-semibold px-2 py-0.5 rounded-full bg-blue-50 text-blue-700"
  >
  {label}
  </span>
  ))}
  {flow.length > 3 && (
- <span className="text-[10px] font-bold text-slate-400">
+ <span className="text-xs font-bold text-slate-400">
  +{flow.length - 3}
  </span>
  )}

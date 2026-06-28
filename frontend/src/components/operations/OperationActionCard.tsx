@@ -35,7 +35,7 @@ export default function OperationActionCard({
  <button
  onClick={onClick}
  disabled={disabled}
- className={`group w-full text-left transition-all rounded-xl border-2 overflow-hidden ${
+ className={`group w-full text-left transition-all rounded-xl border overflow-hidden ${
  disabled
  ? 'opacity-50 cursor-not-allowed'
  : `hover:shadow-lg hover:scale-102 active:scale-98 ${borderColor}`
@@ -55,7 +55,7 @@ export default function OperationActionCard({
  <div className="flex items-center gap-2 mb-0.5">
  <h4 className="font-bold text-slate-800 leading-tight">{title}</h4>
  {badge && (
- <span className="inline-flex text-[10px] font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded-full">
+ <span className="inline-flex text-xs font-bold text-blue-700 bg-blue-100 px-1.5 py-0.5 rounded-full">
  {badge}
  </span>
  )}

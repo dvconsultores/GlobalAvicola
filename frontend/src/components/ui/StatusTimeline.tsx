@@ -72,7 +72,7 @@ export default function StatusTimeline({ events, className = '' }: StatusTimelin
  <div className="flex-1 min-w-0 pt-1">
  <div className="flex items-center gap-2 flex-wrap">
  <span className="text-sm font-bold text-slate-800">{event.action}</span>
- <span className="text-[11px] text-slate-400 font-medium">{event.date}</span>
+ <span className="text-xs text-slate-400 font-medium">{event.date}</span>
  </div>
 
  {event.description && (

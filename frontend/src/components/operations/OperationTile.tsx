@@ -47,7 +47,7 @@ export default function OperationTile({ step, index, lotId, readOnly }: Operatio
  )
 
  const base =
- 'group relative flex flex-col items-center justify-start p-4 pt-9 rounded-3xl bg-white border-2 border-slate-100 shadow-sm hover:shadow-lg hover:border-slate-200:border-slate-600 transition-all min-h-[150px]'
+ 'group relative flex flex-col items-center justify-start p-4 pt-9 rounded-3xl bg-white border border-slate-100 shadow-sm hover:shadow-lg hover:border-slate-200:border-slate-600 transition-all min-h-[150px]'
 
  if (readOnly) {
  return (

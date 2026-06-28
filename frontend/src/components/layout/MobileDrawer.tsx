@@ -138,7 +138,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  {Icon && <Icon size={22} className="text-blue-600" />}
  <div>
  <span className="text-xs font-semibold text-slate-900 block">{t(section.labelKey, section.fallback)}</span>
- <span className="text-[10px] text-slate-900">{items.length} {t('common.options', 'opciones')}</span>
+ <span className="text-xs text-slate-900">{items.length} {t('common.options', 'opciones')}</span>
  </div>
  </button>
  )
@@ -160,7 +160,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  {Icon && <Icon size={18} className="text-blue-600 shrink-0" />}
  <div className="flex-1 min-w-0 text-left">
  <span className="text-sm font-semibold text-slate-900 block truncate">{t(item.labelKey, item.fallback)}</span>
- <span className="text-[10px] text-slate-900">{item.children.length} {t('common.options', 'opciones')}</span>
+ <span className="text-xs text-slate-900">{item.children.length} {t('common.options', 'opciones')}</span>
  </div>
  <ArrowLeft size={14} className="text-slate-900 rotate-180" />
  </button>
@@ -177,7 +177,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  <div className="flex-1 min-w-0">
  <span className="text-sm font-semibold text-slate-900">{t(item.labelKey, item.fallback)}</span>
  </div>
- {item.badge && <span className="text-[10px] font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
+ {item.badge && <span className="text-xs font-bold bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded-full">{item.badge}</span>}
  </Link>
  )
  })}
@@ -193,7 +193,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  {i18n.language === 'es' ? t('lang.toggleEn', 'English') : t('lang.toggleEs', 'Español')}
  </button>
  {user && (
- <p className="text-[10px] text-slate-900 px-3 text-center">
+ <p className="text-xs text-slate-900 px-3 text-center">
  {[user.first_name, user.last_name].filter(Boolean).join(' ') || user.username}
  </p>
  )}

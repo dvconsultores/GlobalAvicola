@@ -14,7 +14,7 @@ export default function AppLayout() {
  <Header />
  <main className={`pb-24 lg:pb-0 ${!isMobileUser ? 'lg:ml-64' : ''}`}>
  {/* Mobile: edge-to-edge for native feel. Desktop: generous padding */}
- <div className={isMobileUser ? 'px-1 page-enter' : 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 lg:py-5 page-enter'}>
+ <div className={isMobileUser ? 'px-3 page-enter' : 'max-w-7xl mx-auto px-6 py-4 page-enter'}>
  <Outlet />
  </div>
  </main>

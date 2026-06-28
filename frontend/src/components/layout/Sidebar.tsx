@@ -85,10 +85,10 @@ export default function Sidebar() {
  <Bird size={19} className="text-white" strokeWidth={2} />
  </div>
  <div className="min-w-0">
- <h1 className="text-white text-[13px] font-bold leading-none tracking-tight truncate">
+ <h1 className="text-white text-sm font-bold leading-none tracking-tight truncate">
  {t('brand.name', 'Global Avícola')}
  </h1>
- <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(111,171,197,0.7)' }}>
+ <p className="text-xs mt-0.5 truncate" style={{ color: 'rgba(111,171,197,0.7)' }}>
  {t('brand.tagline', 'Gestión Operativa')}
  </p>
  </div>
@@ -129,10 +129,10 @@ export default function Sidebar() {
  {initials}
  </div>
  <div className="flex-1 min-w-0">
- <p className="text-[13px] font-semibold text-white truncate leading-none">
+ <p className="text-sm font-semibold text-white truncate leading-none">
  {user?.first_name ? `${user.first_name} ${user.last_name ?? ''}`.trim() : user?.username ?? ''}
  </p>
- <p className="text-[11px] mt-0.5 truncate" style={{ color: 'rgba(111,171,197,0.6)' }}>
+ <p className="text-xs mt-0.5 truncate" style={{ color: 'rgba(111,171,197,0.6)' }}>
  {user?.username ?? ''}
  </p>
  </div>
@@ -141,7 +141,7 @@ export default function Sidebar() {
  <div className="flex gap-1">
  <Link
  to="/profile"
- className="flex-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all"
+ className="flex-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
  style={{ color: 'rgba(111,171,197,0.8)' }}
  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(255,255,255,0.07)'; (e.currentTarget as HTMLElement).style.color = 'white' }}
  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(111,171,197,0.8)' }}
@@ -151,7 +151,7 @@ export default function Sidebar() {
  </Link>
  <button
  onClick={logout}
- className="flex-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium transition-all"
+ className="flex-1 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-medium transition-all"
  style={{ color: 'rgba(111,171,197,0.8)' }}
  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.background = 'rgba(239,68,68,0.15)'; (e.currentTarget as HTMLElement).style.color = '#FCA5A5' }}
  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.background = 'transparent'; (e.currentTarget as HTMLElement).style.color = 'rgba(111,171,197,0.8)' }}

@@ -48,7 +48,7 @@ export default function Header() {
  {/* Language toggle */}
  <button
  onClick={toggleLang}
- className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-[11px] font-semibold text-slate-400 hover:bg-slate-100:bg-dark-card hover:text-slate-600:text-slate-300 transition-colors"
+ className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-xs font-semibold text-slate-400 hover:bg-slate-100:bg-dark-card hover:text-slate-600:text-slate-300 transition-colors"
  title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
  >
  <Globe size={12} />
@@ -70,7 +70,7 @@ export default function Header() {
  title={t('company.selector')}
  >
  <Building2 size={11} className="text-slate-400 shrink-0" />
- <span className="text-[11px] font-medium text-slate-600 max-w-[130px] truncate">
+ <span className="text-xs font-medium text-slate-600 max-w-[130px] truncate">
  {isSwitching ? t('company.switching') : (activeCompanyName || user?.company_name)}
  </span>
  <ChevronDown size={10} className={`text-slate-400 transition-transform ${companyOpen ? 'rotate-180' : ''}`} />
@@ -79,7 +79,7 @@ export default function Header() {
  /* ── Static badge for regular users ── */
  <div className="flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 border border-slate-200/80">
  <Building2 size={11} className="text-slate-400 shrink-0" />
- <span className="text-[11px] font-medium text-slate-600 max-w-[140px] truncate">
+ <span className="text-xs font-medium text-slate-600 max-w-[140px] truncate">
  {activeCompanyName || user?.company_name}
  </span>
  </div>
@@ -88,7 +88,7 @@ export default function Header() {
  {/* Dropdown panel */}
  {companyOpen && isSuperAdmin && (
  <div className="absolute right-0 top-9 z-50 w-52 rounded-xl bg-white border border-slate-200 shadow-lg overflow-hidden">
- <p className="px-3 py-2 text-[10px] font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-100">
+ <p className="px-3 py-2 text-xs font-semibold text-slate-400 uppercase tracking-wider border-b border-slate-100">
  {t('company.selector')}
  </p>
  {companies.length === 0 ? (
@@ -121,7 +121,7 @@ export default function Header() {
  <div className="flex items-center gap-2">
  {/* Avatar */}
  <div
- className="w-7 h-7 rounded-lg flex items-center justify-center text-[10px] font-bold text-white shrink-0"
+ className="w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
  style={{ background: 'linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%)' }}
  >
  {initials}
@@ -155,8 +155,8 @@ export default function Header() {
  <Bird size={15} className="text-white" strokeWidth={1.8} />
  </div>
  <div>
- <h1 className="text-[13px] font-bold leading-none">{t('brand.name')}</h1>
- <p className="text-[10px] mt-0.5 leading-none" style={{ color: 'rgba(111,171,197,0.7)' }}>
+ <h1 className="text-sm font-bold leading-none">{t('brand.name')}</h1>
+ <p className="text-xs mt-0.5 leading-none" style={{ color: 'rgba(111,171,197,0.7)' }}>
  {t('brand.tagline')}
  </p>
  </div>
@@ -166,7 +166,7 @@ export default function Header() {
  {/* Language */}
  <button
  onClick={toggleLang}
- className="text-[11px] font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all"
+ className="text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all"
  style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(111,171,197,0.9)' }}
  title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
  >
