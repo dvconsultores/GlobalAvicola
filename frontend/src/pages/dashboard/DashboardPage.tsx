@@ -183,7 +183,7 @@ export default function DashboardPage() {
  </div>
  </div>
 
- <div className="py-4 space-y-5">
+ <div className="pt-4 pb-4 space-y-5">
  {isKpiRoute ? (
  <>
  {/* KPI summary for poultry processes */}
