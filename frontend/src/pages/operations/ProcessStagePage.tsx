@@ -1,23 +1,12 @@
-import { useState, useEffect, useMemo } from 'react'
+import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, ArrowRight, Info, Bird, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
-import api from '../../services/api'
+import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered, Sprout, Egg, Flame, Drumstick } from 'lucide-react'
 import {
   PROCESS_STAGES, flowForStage,
   type StageKey,
 } from '../../data/processCatalog'
 import { StageTimeline, OperationTile } from '../../components/operations'
-
-// Which lot bird_type(s) each stage draws from
-const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
-  grandparent_rearing: ['grandparent'],
-  grandparent_production: ['grandparent'],
-  breeder_rearing: ['breeder'],
-  breeder_production: ['breeder'],
-  hatchery: ['hatchery'],
-  broiler: ['broiler'],
-}
 
 const VALID_STAGES = PROCESS_STAGES.map(s => s.key)
 
@@ -38,31 +27,13 @@ export default function ProcessStagePage() {
   const { stage: stageParam, birdType, phase } = useParams<{ stage?: string; birdType?: string; phase?: string }>()
   // Compatibilidad: soporta tanto :stage (legacy) como :birdType/:phase? (nuevo ruteo)
   const stage = stageParam || (birdType && phase ? `${birdType}_${phase}` : birdType || '')
-  const [lots, setLots] = useState<any[]>([])
-  const [lotId, setLotId] = useState('')
   const [view, setView] = useState<ViewMode>('grid')
 
   const stageKey = stage as StageKey
   const isValid = !!stage && VALID_STAGES.includes(stageKey)
 
-  useEffect(() => {
-    if (!isValid) return
-    api.get('/lots?limit=100')
-      .then(r => setLots(Array.isArray(r.data) ? r.data : []))
-      .catch(() => setLots([]))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isValid])
-
   const stageMeta = PROCESS_STAGES.find(s => s.key === stageKey)
   const flow = useMemo(() => (isValid ? flowForStage(stageKey) : []), [isValid, stageKey])
-  const stageLots = useMemo(() => {
-    const allowed = STAGE_BIRD_TYPES[stageKey] ?? []
-    return lots.filter((l: any) => allowed.includes(l.bird_type))
-  }, [lots, stageKey])
-  const selectedLot = useMemo(
-    () => stageLots.find((l: any) => String(l.id) === lotId),
-    [stageLots, lotId],
-  )
 
   if (!isValid || !stageMeta) return <Navigate to="/menu/poultry" replace />
 
@@ -79,9 +50,7 @@ export default function ProcessStagePage() {
 
   const goToOperation = (event: string) => {
     sessionStorage.setItem('operationBackTarget', location.pathname)
-    const q = new URLSearchParams({ type: event })
-    if (lotId) q.set('lot_id', lotId)
-    navigate(`/operations/new?${q.toString()}`)
+    navigate(`/operations/new?type=${event}`)
   }
 
   return (
@@ -108,47 +77,9 @@ export default function ProcessStagePage() {
             <p className="text-sm text-slate-400 dark:text-slate-500 mt-0.5 leading-snug">{t(stageMeta.descKey, stageMeta.descFallback)}</p>
           </div>
         </div>
-        {/* Selected lot chip */}
-        {selectedLot && (
-          <div className="mt-3 inline-flex items-center gap-2.5 bg-white dark:bg-dark-card border border-slate-200 dark:border-slate-700 rounded-lg px-3 py-2 text-sm">
-            <Bird size={14} className="text-slate-400" />
-            <span className="font-semibold text-slate-800 dark:text-slate-100 dark:text-slate-100">{selectedLot.lot_code}</span>
-            {selectedLot.current_quantity != null && (
-              <span className="text-slate-400">{Number(selectedLot.current_quantity).toLocaleString()} {t('process.stage.birds', 'aves')}</span>
-            )}
-            {selectedLot.status && (
-              <span className="text-slate-400 capitalize">{String(selectedLot.status)}</span>
-            )}
-          </div>
-        )}
       </div>
 
       <div className="max-w-2xl mx-auto px-4">
-        {/* Lot selector */}
-        <div className="bg-white dark:bg-dark-card rounded-2xl border border-slate-100 dark:border-slate-700 shadow-sm p-4 mb-4">
-          <label className="block text-xs font-bold text-slate-600 dark:text-slate-300 mb-2 uppercase tracking-wide">
-            {t('process.stage.lotLabel', 'Lote (opcional)')}
-          </label>
-          <select
-            value={lotId}
-            onChange={e => setLotId(e.target.value)}
-            className="w-full h-12 px-4 bg-slate-50 dark:bg-slate-700 border-2 border-slate-200 dark:border-slate-700 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-200 dark:text-slate-100 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all"
-          >
-            <option value="">{t('process.stage.allLots', 'Sin lote — elegir al registrar')}</option>
-            {stageLots.map((l: any) => (
-              <option key={l.id} value={l.id}>
-                {l.lot_code} {l.status && l.status !== 'active' ? `(${String(l.status)})` : ''}
-              </option>
-            ))}
-          </select>
-          {stageLots.length === 0 && (
-            <div className="flex items-start gap-2 mt-3 p-3 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-200 dark:border-amber-800">
-              <Info size={16} className="text-amber-600 shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-700 dark:text-amber-300 font-medium">{t('process.noLots', 'No hay lotes activos para este proceso.')}</p>
-            </div>
-          )}
-        </div>
-
         {/* View toggle + step count */}
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-bold text-slate-700 dark:text-slate-200 dark:text-slate-200">
@@ -176,7 +107,7 @@ export default function ProcessStagePage() {
         {view === 'grid' ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
             {flow.map((s, i) => (
-              <OperationTile key={s.event} step={s} index={i + 1} lotId={lotId || undefined} />
+              <OperationTile key={s.event} step={s} index={i + 1} />
             ))}
           </div>
         ) : (

@@ -13,16 +13,6 @@ import {
   type StageKey,
 } from '../../data/processCatalog'
 
-// Map a process stage to the lot bird_type(s) it draws lots from
-const STAGE_BIRD_TYPES: Record<StageKey, string[]> = {
-  grandparent_rearing: ['grandparent'],
-  grandparent_production: ['grandparent'],
-  breeder_rearing: ['breeder'],
-  breeder_production: ['breeder'],
-  hatchery: ['hatchery'],
-  broiler: ['broiler'],
-}
-
 // ============================================================
 // Technical ranges — Ross/Cobb guidelines
 // ============================================================
@@ -238,12 +228,6 @@ export default function OperationFormPage() {
 
   const [stage, setStage] = useState<StageKey | null>(null)
   const [step, setStep] = useState<1 | 2 | 3>(prefillType ? 3 : 1)
-
-  const stageLots = useMemo(() => {
-    if (!stage) return lots
-    const allowed = STAGE_BIRD_TYPES[stage]
-    return lots.filter((l: any) => allowed.includes(l.bird_type))
-  }, [lots, stage])
 
   const goToStep2 = (s: StageKey) => { setStage(s); setValue('event_type', ''); setStep(2) }
   const chooseOperation = (evt: string) => { setValue('event_type', evt); setStep(3) }
@@ -1095,7 +1079,7 @@ export default function OperationFormPage() {
         <span className="text-slate-900 dark:text-slate-100">/</span>
         <button type="button" disabled={!stage} onClick={() => stage && setStep(2)}
           className={`${step >= 2 ? 'text-[#2563EB]' : 'text-slate-900 dark:text-slate-100'} disabled:cursor-not-allowed`}>
-          {t('process.step2', '2 · Lote y Operación')}
+          {t('process.step2', '2 · Operación')}
         </button>
         <span className="text-slate-900 dark:text-slate-100">/</span>
         <button type="button" disabled={!eventType} onClick={() => eventType && setStep(3)}
@@ -1129,7 +1113,7 @@ export default function OperationFormPage() {
         </div>
       )}
 
-      {/* ============== STEP 2 — LOT + OPERATION ============== */}
+      {/* ============== STEP 2 — OPERATION ============== */}
       {step === 2 && stage && selectedStageMeta && (
         <div>
           <button type="button" onClick={() => setStep(1)}
@@ -1143,23 +1127,8 @@ export default function OperationFormPage() {
             <h1 className="text-lg font-bold text-slate-900 dark:text-slate-100">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
           </div>
 
-          <label className="block text-sm font-semibold text-slate-700 dark:text-slate-200 mb-1">{t('operations.lot')}</label>
-          <select {...register('lot_id', { valueAsNumber: true })}
-            className="w-full h-11 px-3 border border-slate-300 dark:border-slate-700 rounded-lg text-sm text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none">
-            <option value="">{t('operations.selectLot')}</option>
-            {stageLots.map((l: any) => (
-              <option key={l.id} value={l.id}>{l.lot_code}{l.status && l.status !== 'active' ? ` · ${String(l.status)}` : ''}</option>
-            ))}
-          </select>
-          {lotsLoadError ? (
-            <p className="text-xs text-red-600 mt-2">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>
-          ) : stageLots.length === 0 && (
-            <p className="text-xs text-amber-600 mt-2">{t('process.noLots', 'No hay lotes activos para este proceso.')}</p>
-          )}
-
-          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-6 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
-          {!lotId && <p className="text-xs text-slate-900 dark:text-slate-100 mb-3">{t('process.selectLotFirst', 'Selecciona un lote primero.')}</p>}
-          <div className={`space-y-5 ${!lotId ? 'opacity-50 pointer-events-none' : ''} mt-3`}>
+          <p className="text-sm font-semibold text-slate-700 dark:text-slate-200 mt-1 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
+          <div className="space-y-5 mt-3">
             {categoriesForStage(stage).map(({ category, events }) => {
               const CatIcon = category.Icon
               return (
@@ -1174,7 +1143,7 @@ export default function OperationFormPage() {
                     {events.map(evt => {
                       const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
                       return (
-                        <button key={evt} type="button" disabled={!lotId} onClick={() => chooseOperation(evt)}
+                        <button key={evt} type="button" onClick={() => chooseOperation(evt)}
                           className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#2563EB] hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors text-center group">
                           {EvIcon && <EvIcon size={22} className="text-[#2563EB] group-hover:scale-110 transition-transform" />}
                           <span className="text-xs text-slate-900 dark:text-slate-100 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
