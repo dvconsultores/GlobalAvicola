@@ -60,6 +60,17 @@ class LotService:
                 detail="Ya existe un lote con ese código",
             )
 
+        # Validate farm belongs to user's company (or is global)
+        if data.farm_id:
+            from ..masters.models import Farm
+            farm_result = await self.db.execute(select(Farm).where(Farm.id == data.farm_id))
+            farm = farm_result.scalar_one_or_none()
+            if farm and farm.company_id is not None and farm.company_id != self.company_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="La granja no pertenece a su compañía",
+                )
+
         lot = Lot(
             company_id=self.company_id,
             lot_code=data.lot_code,

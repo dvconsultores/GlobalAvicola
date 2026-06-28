@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import {
  RefreshCw, CheckCircle, XCircle, Package, Upload, Clock,
- Send, AlertTriangle, FileText,
+ Send, AlertTriangle, FileText, Building2,
 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { KpiCard, Badge } from '../../components/ui'
+import { useCompanyStore } from '../../stores/company.store'
+import { useAuthStore } from '../../stores/auth.store'
 
 type SapTab = 'overview' | 'pending' | 'sent' | 'errors' | 'log'
 
@@ -22,6 +24,8 @@ const SAP_TABS = [
 export default function SapManagerPage() {
  const { t } = useTranslation()
  const toast = useToast()
+ const { user } = useAuthStore()
+ const { activeCompanyName } = useCompanyStore()
  const [activeTab, setActiveTab] = useState<SapTab>('overview')
  const [refs, setRefs] = useState<any[]>([])
  const [jobs, setJobs] = useState<any[]>([])
@@ -69,20 +73,30 @@ export default function SapManagerPage() {
  <div>
  {/* Header */}
  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
+ <div className="min-w-0">
  <SubNavHeader
  title={t('nav.sap', 'Integración SAP')}
  hideBack
  actions={
- conn && (
+ <div className="flex items-center gap-2 flex-wrap">
+ {(activeCompanyName || user?.company_name) && (
+ <span className="inline-flex items-center gap-1 text-xs font-medium text-slate-500 px-2 py-1 rounded-full bg-slate-100">
+ <Building2 size={11} />
+ {activeCompanyName || user?.company_name}
+ </span>
+ )}
+ {conn && (
  <div className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
  conn.connected ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
  }`}>
  {conn.connected ? <CheckCircle size={14} /> : <XCircle size={14} />}
  {conn.adapter || (conn.connected ? t('sap.connected', 'Conectado') : t('sap.disconnected', 'Desconectado'))}
  </div>
- )
+ )}
+ </div>
  }
  />
+ </div>
  </div>
 
  {/* KPI Cards */}

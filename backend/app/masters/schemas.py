@@ -16,6 +16,7 @@ class CompanyBase(BaseModel):
     tax_id: Optional[str] = None
     country: Optional[str] = None
     currency: Optional[str] = "USD"
+    sap_config: Optional[dict] = None
     approval_levels: int = Field(default=2, ge=1, le=3)
 
 
@@ -28,6 +29,7 @@ class CompanyUpdate(BaseModel):
     tax_id: Optional[str] = None
     country: Optional[str] = None
     currency: Optional[str] = None
+    sap_config: Optional[dict] = None
     approval_levels: Optional[int] = None
     is_active: Optional[bool] = None
 
@@ -35,6 +37,7 @@ class CompanyUpdate(BaseModel):
 class CompanyRead(CompanyBase):
     id: int
     is_active: bool
+    sap_config: Optional[dict] = None
     created_at: datetime
     updated_at: datetime
     model_config = {"from_attributes": True}

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Pencil, Trash2, X, Users, Monitor, Smartphone } from 'lucide-react'
+import { Plus, Pencil, Trash2, X, Users, Monitor, Smartphone, Building2 } from 'lucide-react'
 import api from '../../services/api'
 
 
@@ -11,13 +11,14 @@ export default function UsersPage() {
  const { t } = useTranslation()
  const [users, setUsers] = useState<any[]>([])
  const [roles, setRoles] = useState<any[]>([])
+ const [companies, setCompanies] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [showModal, setShowModal] = useState(false)
  const [editingId, setEditingId] = useState<number | null>(null)
  const [form, setForm] = useState<UserForm>(emptyForm)
  const [saving, setSaving] = useState(false)
 
- const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr] = await Promise.all([api.get('/users'), api.get('/roles')]); setUsers(ur.data || []); setRoles(rr.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
+ const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr, cr] = await Promise.all([api.get('/users'), api.get('/roles'), api.get('/masters/companies?limit=200')]); setUsers(ur.data || []); setRoles(rr.data || []); setCompanies(cr.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
  // eslint-disable-next-line react-hooks/set-state-in-effect
  useEffect(() => { fetchData() }, [fetchData])
 
@@ -52,6 +53,10 @@ export default function UsersPage() {
  <input placeholder={t('users.phonePlaceholder')} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <input placeholder={editingId ? t('users.newPasswordHint') : t('users.passwordPlaceholder')} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <select value={form.role_id || ''} onChange={e => setForm({ ...form, role_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noRole')}</option>{roles.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}</select>
+ <div>
+ <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-1.5"><Building2 size={14} /> {t('masters.companies', 'Empresa')}</label>
+ <select value={form.company_id || ''} onChange={e => setForm({ ...form, company_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('company.allCompanies', 'Sin empresa')}</option>{companies.filter((c: any) => c.is_active !== false).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
+ </div>
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.viewType')}</label><div className="flex gap-3"><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'mobile' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="mobile" checked={form.view_type === 'mobile'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Smartphone size={20} className={form.view_type === 'mobile' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.mobile')}</span></label><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'web' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="web" checked={form.view_type === 'web'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Monitor size={20} className={form.view_type === 'web' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.web')}</span></label></div></div>
  </div><div className="flex gap-3 mt-5"><button onClick={handleSave} disabled={saving} className="flex-1 bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">{saving ? t('common.saving') : t('common.save')}</button><button onClick={() => setShowModal(false)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel')}</button></div></div></div>}
  </div>)

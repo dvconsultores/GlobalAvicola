@@ -147,22 +147,26 @@ export default function Header() {
  className="lg:hidden text-white px-4 py-0 flex items-center justify-between sticky top-0 z-20"
  style={{ background: 'linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%)', height: '56px' }}
  >
- <div className="flex items-center gap-2">
+ <div className="flex items-center gap-2 min-w-0 flex-1">
  <div
- className="w-7 h-7 rounded-lg flex items-center justify-center"
+ className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
  style={{ background: 'rgba(90,155,186,0.7)' }}
  >
  <Bird size={15} className="text-white" strokeWidth={1.8} />
  </div>
- <div>
- <h1 className="text-sm font-bold leading-none">{t('brand.name')}</h1>
- <p className="text-xs mt-0.5 leading-none" style={{ color: 'rgba(111,171,197,0.7)' }}>
- {t('brand.tagline')}
+ <div className="min-w-0">
+ <h1 className="text-sm font-bold leading-none truncate">{t('brand.name')}</h1>
+ {/* Company badge — multi-company indicator */}
+ {(activeCompanyName || user?.company_name) && (
+ <p className="text-xs mt-0.5 leading-none truncate flex items-center gap-1" style={{ color: 'rgba(180,210,230,0.9)' }}>
+ <Building2 size={10} className="shrink-0" />
+ {activeCompanyName || user?.company_name}
  </p>
+ )}
  </div>
  </div>
 
- <div className="flex items-center gap-1.5">
+ <div className="flex items-center gap-1.5 shrink-0">
  {/* Language */}
  <button
  onClick={toggleLang}

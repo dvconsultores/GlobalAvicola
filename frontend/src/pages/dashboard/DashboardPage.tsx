@@ -2,7 +2,8 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useLocation } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
-import { Bird, FileText, Clock, CheckCircle, TrendingDown, Egg, Sparkles, AlertCircle, AlertTriangle, X, Sprout, Feather, ChevronRight, ChevronDown } from 'lucide-react'
+import { useCompanyStore } from '../../stores/company.store'
+import { Bird, FileText, Clock, CheckCircle, TrendingDown, Egg, Sparkles, AlertCircle, AlertTriangle, X, Sprout, Feather, ChevronRight, ChevronDown, Building2 } from 'lucide-react'
 import {
  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
@@ -74,6 +75,7 @@ export default function DashboardPage() {
  const { t, i18n } = useTranslation()
  const location = useLocation()
  const { user } = useAuthStore()
+ const { activeCompanyName } = useCompanyStore()
  const isMobileUser = user?.view_type === 'mobile'
  const isKpiRoute = location.pathname === '/kpi'
  const [data, setData] = useState<any>(null)
@@ -172,13 +174,21 @@ export default function DashboardPage() {
  <div className="bg-gradient-to-r from-[#264c5f] to-[#3d748f] text-white px-4 py-4">
  <div className="flex items-center gap-2">
  <Sparkles size={16} className="text-blue-300" />
- <div>
+ <div className="min-w-0 flex-1">
  <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
+ <div className="flex items-center gap-2">
  <p className="text-sm text-blue-200/80">
  {isKpiRoute
  ? t('dashboard.todayMetrics', 'Hoy')
  : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
  </p>
+ {(activeCompanyName || user?.company_name) && (
+ <span className="text-xs px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(180,210,230,0.95)' }}>
+ <Building2 size={10} />
+ {activeCompanyName || user?.company_name}
+ </span>
+ )}
+ </div>
  </div>
  </div>
  </div>

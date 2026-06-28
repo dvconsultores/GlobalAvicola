@@ -1,12 +1,14 @@
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
-import { User, Lock, Save } from 'lucide-react'
+import { useCompanyStore } from '../../stores/company.store'
+import { User, Lock, Save, Building2 } from 'lucide-react'
 import api from '../../services/api'
 
 export default function ProfilePage() {
  const { t } = useTranslation()
  const { user } = useAuthStore()
+ const { activeCompanyName } = useCompanyStore()
  const [currentPassword, setCurrentPassword] = useState('')
  const [newPassword, setNewPassword] = useState('')
  const [confirmPassword, setConfirmPassword] = useState('')
@@ -37,6 +39,12 @@ export default function ProfilePage() {
  <div className="flex justify-between py-2 border-b border-slate-50"><dt className="text-slate-500">{t('profile.username')}</dt><dd className="font-medium">{user?.username}</dd></div>
  <div className="flex justify-between py-2 border-b border-slate-50"><dt className="text-slate-500">{t('profile.name')}</dt><dd className="font-medium">{user?.first_name} {user?.last_name}</dd></div>
  <div className="flex justify-between py-2 border-b border-slate-50"><dt className="text-slate-500">{t('profile.email')}</dt><dd className="font-medium">{user?.email}</dd></div>
+ {(activeCompanyName || user?.company_name) && (
+ <div className="flex justify-between py-2 border-b border-slate-50">
+ <dt className="text-slate-500 flex items-center gap-1.5"><Building2 size={14} /> {t('company.selector', 'Empresa')}</dt>
+ <dd className="font-medium text-[#5a9bba]">{activeCompanyName || user?.company_name}</dd>
+ </div>
+ )}
  </dl>
  </div>
 

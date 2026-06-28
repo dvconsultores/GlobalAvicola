@@ -1,8 +1,9 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered } from 'lucide-react'
+import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered, Building2 } from 'lucide-react'
 import { useAuthStore } from '../../stores/auth.store'
+import { useCompanyStore } from '../../stores/company.store'
 import {
  PROCESS_STAGES, flowForStage,
  type StageKey,
@@ -26,6 +27,7 @@ export default function ProcessStagePage() {
  const navigate = useNavigate()
  const location = useLocation()
  const { user } = useAuthStore()
+ const { activeCompanyName } = useCompanyStore()
  const isMobileUser = user?.view_type === 'mobile'
  const { stage: stageParam, birdType, phase } = useParams<{ stage?: string; birdType?: string; phase?: string }>()
  // Compatibilidad: soporta tanto :stage (legacy) como :birdType/:phase? (nuevo ruteo)
@@ -58,7 +60,15 @@ export default function ProcessStagePage() {
  <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
  <StageIcon size={18} strokeWidth={2} />
  </span>
+ <div className="min-w-0">
  <h1 className="text-xl font-bold text-slate-900 leading-tight">{t(stageMeta.labelKey, stageMeta.fallback)}</h1>
+ {(activeCompanyName || user?.company_name) && (
+ <span className="inline-flex items-center gap-1 text-xs text-slate-500 mt-0.5">
+ <Building2 size={11} />
+ {activeCompanyName || user?.company_name}
+ </span>
+ )}
+ </div>
  </div>
  </div>
 

@@ -153,13 +153,10 @@ async def get_lot_traceability(
     """Return full generational traceability tree for a lot (egg batches + chick batches)."""
     from sqlalchemy import select
     from .models import EggBatch, ChickBatch
-    from ..masters.models import Lot
 
-    result = await db.execute(select(Lot).where(Lot.id == lot_id))
-    lot = result.scalar_one_or_none()
-    if not lot:
-        from fastapi import HTTPException
-        raise HTTPException(status_code=404, detail="Lote no encontrado")
+    # Use LotService to validate company isolation
+    svc = _service(db, current_user)
+    lot = await svc.get_lot(lot_id)
 
     egg_sent_r = await db.execute(select(EggBatch).where(EggBatch.source_lot_id == lot_id))
     egg_sent = egg_sent_r.scalars().all()
