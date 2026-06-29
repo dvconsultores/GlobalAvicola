@@ -425,7 +425,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.mortalityCause', 'Causa de mortalidad')}</label>
- {sel(register('cause_id', { valueAsNumber: true }), mortalityCauses, t('operations.selectCause', 'Seleccionar causa...'))}
+ <SearchSelect
+ value={watch('cause_id' as any) ?? ''}
+ onChange={(v) => setValue('cause_id' as any, v ? Number(v) : undefined)}
+ items={mortalityCauses}
+ placeholder={t('operations.selectCause', 'Seleccionar causa...')}
+ searchPlaceholder="Buscar causa..."
+ renderLabel={(x: any) => x.name}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
@@ -441,7 +448,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.cullCause', 'Causa de descarte')}</label>
- {sel(register('cull_cause_id', { valueAsNumber: true }), cullCauses, t('operations.selectCause', 'Seleccionar causa...'))}
+ <SearchSelect
+ value={watch('cull_cause_id' as any) ?? ''}
+ onChange={(v) => setValue('cull_cause_id' as any, v ? Number(v) : undefined)}
+ items={cullCauses}
+ placeholder={t('operations.selectCause', 'Seleccionar causa...')}
+ searchPlaceholder="Buscar causa..."
+ renderLabel={(x: any) => x.name}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
@@ -457,7 +471,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.vaccine', 'Vacuna')}</label>
- {sel(register('vaccine_id', { valueAsNumber: true }), vaccines, t('operations.selectVaccine', 'Seleccionar vacuna...'))}
+ <SearchSelect
+ value={watch('vaccine_id' as any) ?? ''}
+ onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
+ items={vaccines}
+ placeholder={t('operations.selectVaccine', 'Seleccionar vacuna...')}
+ searchPlaceholder="Buscar vacuna..."
+ renderLabel={(x: any) => x.name}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.vaccinationRoute', 'Vía de administración')}</label>
@@ -488,7 +509,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.medication', 'Medicamento')}</label>
- {sel(register('medication_id', { valueAsNumber: true }), medications, t('operations.selectMedication', 'Seleccionar medicamento...'))}
+ <SearchSelect
+ value={watch('medication_id' as any) ?? ''}
+ onChange={(v) => setValue('medication_id' as any, v ? Number(v) : undefined)}
+ items={medications}
+ placeholder={t('operations.selectMedication', 'Seleccionar medicamento...')}
+ searchPlaceholder="Buscar medicamento..."
+ renderLabel={(x: any) => x.name}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave (mL/mg)')}</label>
@@ -722,11 +750,25 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.sourceHouse', 'Galpón origen')}</label>
- {sel(register('bird_movements.0.source_house_id', { valueAsNumber: true }), houses, t('operations.selectHouse', 'Seleccionar galpón...'))}
+ <SearchSelect
+ value={watch('bird_movements.0.source_house_id' as any) ?? ''}
+ onChange={(v) => setValue('bird_movements.0.source_house_id' as any, v ? Number(v) : undefined)}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
+ searchPlaceholder="Buscar galpón..."
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.targetHouse', 'Galpón destino')}</label>
- {sel(register('bird_movements.0.target_house_id', { valueAsNumber: true }), houses, t('operations.selectHouse', 'Seleccionar galpón...'))}
+ <SearchSelect
+ value={watch('bird_movements.0.target_house_id' as any) ?? ''}
+ onChange={(v) => setValue('bird_movements.0.target_house_id' as any, v ? Number(v) : undefined)}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
+ searchPlaceholder="Buscar galpón..."
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ />
  </div>
  </div>
  {renderMFRows(true)}
@@ -1198,7 +1240,14 @@ export default function OperationFormPage() {
  <div className="space-y-4">
  <div>
  <label className={lc}>{t('operations.transport', 'Vehículo / Transporte')}</label>
- {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar...'), (x: any) => `${x.plate} — ${x.name}`)}
+ <SearchSelect
+ value={watch('transport_id' as any) ?? ''}
+ onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
+ items={transports}
+ placeholder={t('operations.selectTransport', 'Seleccionar...')}
+ searchPlaceholder="Buscar transporte..."
+ renderLabel={(x: any) => `${x.plate} — ${x.name}`}
+ />
  </div>
  {params.map((param, i) => (
  <div key={param.key} className="flex items-center gap-3">
