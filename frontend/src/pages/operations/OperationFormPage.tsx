@@ -93,6 +93,7 @@ const operationSchema = z.object({
  sex: z.string().optional(),
  quantity: z.number().min(0).optional(),
  avg_weight: z.number().optional(),
+ sample_size: z.number().optional(),
  week_number: z.number().optional(),
  breed_id: z.number().optional(),
  source_house_id: z.number().optional(),
@@ -343,8 +344,23 @@ export default function OperationFormPage() {
  }
  }
 
+ // ── Bird reception: ±10% validation against SAP declared quantity ──
+ let observations = data.observations || ''
+ if (data.event_type === 'bird_reception' && data.extra_data?.declared_quantity) {
+ const declared = Number(data.extra_data.declared_quantity)
+ const received = (data.bird_movements || []).reduce((sum, m) => sum + (m.quantity || 0), 0)
+ if (declared > 0) {
+ const pct = ((received - declared) / declared) * 100
+ if (Math.abs(pct) > 10) {
+ const alertMsg = `⚠️ ALERTA: Cantidad recibida (${received}) difiere en ${pct.toFixed(1)}% de la orden SAP (${declared}).`
+ observations = observations ? `${observations}\n${alertMsg}` : alertMsg
+ }
+ }
+ }
+
  const payload: any = {
  ...data,
+ observations,
  bird_movements: (data.bird_movements || []).filter(m => (m.quantity ?? 0) > 0),
  egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
  feed_movements: data.feed_movements || [],
@@ -503,33 +519,138 @@ export default function OperationFormPage() {
  </div>
  )
 
- case 'bird_reception': return (
+ case 'bird_reception': {
+ const sapOrderRef = watch('extra_data.sap_order_ref' as any)
+ const sapOrder = sapPurchaseOrders.find((o: any) =>
+ (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === sapOrderRef
+ )
+ const declaredQty = sapOrder?.quantity || (watch('extra_data.declared_quantity' as any) || 0)
+ const declaredAvgM = sapOrder?.extra_data?.avg_weight_male || (watch('extra_data.declared_avg_weight_m' as any) || 0)
+ const declaredAvgF = sapOrder?.extra_data?.avg_weight_female || (watch('extra_data.declared_avg_weight_f' as any) || 0)
+ const dispatchDate = sapOrder?.extra_data?.dispatch_date || watch('extra_data.dispatch_date' as any) || ''
+ const vendorName = sapOrder?.extra_data?.vendor_name || watch('extra_data.vendor_name' as any) || ''
+
+ // Calculate total received across all houses
+ const totalReceived = birdFields.reduce((sum, _, i) => {
+ const qty = watch(`bird_movements.${i}.quantity` as any) || 0
+ return sum + Number(qty)
+ }, 0)
+ const pctDiff = declaredQty > 0 ? ((totalReceived - declaredQty) / declaredQty) * 100 : 0
+ const outOfRange = declaredQty > 0 && Math.abs(pctDiff) > 10
+
+ return (
  <div className="space-y-4">
- <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+ {/* SAP Order info card */}
+ {sapOrder && (
+ <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm space-y-1">
+ <p className="font-semibold text-blue-800">{t('operations.sapOrderInfo', 'Información de la orden SAP')}</p>
+ <p><strong>OC:</strong> {sapOrder.sap_code || sapOrder.ref_id} {vendorName ? `— ${vendorName}` : ''}</p>
+ {sapOrder.description && <p className="text-slate-600">{sapOrder.description}</p>}
+ <div className="grid grid-cols-2 gap-1 mt-1">
+ {declaredQty > 0 && <p><strong>{t('operations.declaredQty', 'Cantidad declarada')}:</strong> {declaredQty} aves</p>}
+ {dispatchDate && <p><strong>{t('operations.dispatchDate', 'Fecha despacho')}:</strong> {dispatchDate}</p>}
+ {declaredAvgM > 0 && <p><strong>{t('operations.declaredAvgWeightM', 'Peso prom. machos')}:</strong> {declaredAvgM}g</p>}
+ {declaredAvgF > 0 && <p><strong>{t('operations.declaredAvgWeightF', 'Peso prom. hembras')}:</strong> {declaredAvgF}g</p>}
+ </div>
+ </div>
+ )}
+
+ {/* Supplier & Breed */}
+ <div className="grid grid-cols-2 gap-3">
  <div>
  <label className={lc}>{t('operations.supplier', 'Proveedor')}</label>
- {sel(register('supplier_id', { valueAsNumber: true }), suppliers, t('operations.selectSupplier', 'Seleccionar proveedor...'))}
+ <SearchSelect
+ value={watch('supplier_id' as any) ?? ''}
+ onChange={(v) => setValue('supplier_id' as any, v ? Number(v) : undefined)}
+ items={suppliers}
+ placeholder={t('operations.selectSupplier', 'Seleccionar proveedor...')}
+ searchPlaceholder="Buscar proveedor..."
+ renderLabel={(s: any) => s.name}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.breed', 'Línea / Raza')}</label>
- {sel(register('bird_movements.0.breed_id', { valueAsNumber: true }), breeds, t('operations.selectBreed', 'Seleccionar línea...'))}
+ <SearchSelect
+ value={watch('bird_movements.0.breed_id' as any) ?? ''}
+ onChange={(v) => setValue('bird_movements.0.breed_id' as any, v ? Number(v) : undefined)}
+ items={breeds}
+ placeholder={t('operations.selectBreed', 'Seleccionar línea...')}
+ searchPlaceholder="Buscar raza..."
+ renderLabel={(b: any) => b.name}
+ />
+ </div>
+ </div>
+
+ {/* Per-house distribution */}
+ <div className="bg-slate-50 rounded-lg p-3 space-y-3">
+ <p className="text-sm font-semibold text-slate-700">{t('operations.houseDistribution', 'Distribución por galpón')}</p>
+ {birdFields.map((field, i) => (
+ <div key={field.id} className="space-y-2 pb-3 mb-2 border-b border-slate-200 last:border-0">
+ <div className="flex items-center justify-between">
+ <span className="text-xs font-semibold text-slate-500">{t('operations.house', 'Galpón')} {i + 1}</span>
+ {i > 0 && (
+ <button type="button" onClick={() => removeBird(i)}
+ className="text-red-400 hover:text-red-600 p-0.5"><Trash2 size={14} /></button>
+ )}
  </div>
  <div>
- <label className={lc}>{t('operations.targetHouse', 'Galpón destino')}</label>
- {sel(register('bird_movements.0.target_house_id', { valueAsNumber: true }), houses, t('operations.selectHouse', 'Seleccionar galpón...'))}
+ <label className="text-xs font-medium text-slate-500">{t('operations.targetHouse', 'Galpón')}</label>
+ <SearchSelect
+ value={watch(`bird_movements.${i}.target_house_id` as any) ?? ''}
+ onChange={(v) => setValue(`bird_movements.${i}.target_house_id` as any, v ? Number(v) : undefined)}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
+ searchPlaceholder="Buscar galpón..."
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ />
+ </div>
+ <div className="grid grid-cols-2 gap-2">
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.sex', 'Sexo')}</label>
+ <select {...register(`bird_movements.${i}.sex`)} className={ic}>
+ <option value="male">{t('operations.male', 'Macho')}</option>
+ <option value="female">{t('operations.female', 'Hembra')}</option>
+ <option value="mixed">{t('operations.mixed', 'Mixto')}</option>
+ </select>
  </div>
  <div>
- <label className={lc}>{t('operations.weekNumber', 'Semana de vida')}</label>
- <input type="number" min="0" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="0" />
+ <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
+ <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
  <div>
- <label className={lc}>{t('operations.sapOrderRef', 'Ref. OC SAP')}</label>
- <input {...register('extra_data.sap_order_ref' as any)} className={ic} placeholder="OC-SAP-001" />
+ <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
+ <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.sampleSize', 'Muestra')}</label>
+ <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
  </div>
- {renderMFRows(true)}
  </div>
- )
+ ))}
+ <button type="button" onClick={() => appendBird({ sex: 'female', quantity: 0 })}
+ className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
+ <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
+ </button>
+ </div>
+
+ {/* Validation alert */}
+ {outOfRange && (
+ <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
+ <p className="font-semibold flex items-center gap-1">
+ ⚠️ {t('operations.qtyOutOfRange', 'Diferencia superior al 10%')}
+ </p>
+ <p className="mt-1">
+ {t('operations.qtyOutOfRangeDetail', 'Recibido: {received} vs Declarado: {declared} ({pct}%)',
+ { received: totalReceived, declared: declaredQty, pct: pctDiff.toFixed(1) })}
+ </p>
+ </div>
+ )}
+
+ {/* Week number (hidden, default 0 for day-old chicks) */}
+ <input type="hidden" {...register('bird_movements.0.week_number', { valueAsNumber: true })} value="0" />
+ </div>
+ )}
 
  case 'bird_distribution': return (
  <div className="space-y-3">
@@ -1274,17 +1395,29 @@ export default function OperationFormPage() {
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
- {/* ── SAP Purchase Order (grandparent_import: must be first) ── */}
- {eventType === 'grandparent_import' && (
+ {/* ── SAP Purchase Order (grandparent_import & bird_reception: must be first) ── */}
+ {(eventType === 'grandparent_import' || eventType === 'bird_reception') && (
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.sapImportOrder', 'Orden de compra / importación SAP')}</label>
  <SearchSelect
  value={watch('extra_data.sap_order_ref' as any) ?? ''}
- onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
+ onChange={(v) => {
+ setValue('extra_data.sap_order_ref' as any, v)
+ // Auto-populate declared data from SAP order
+ const order = sapPurchaseOrders.find((o: any) => (o.doc_number || o.ref_id || String(o.id)) === v)
+ if (order) {
+ if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
+ if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
+ if (order.extra_data?.breed_name) setValue('extra_data.breed_name' as any, order.extra_data.breed_name)
+ if (order.extra_data?.dispatch_date) setValue('extra_data.dispatch_date' as any, order.extra_data.dispatch_date)
+ if (order.extra_data?.avg_weight_male) setValue('extra_data.declared_avg_weight_m' as any, order.extra_data.avg_weight_male)
+ if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
+ }
+ }}
  items={sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
  searchPlaceholder="Buscar orden de compra..."
- renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.id}${o.vendor_name ? ` — ${o.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
+ renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
  />
  </div>
  )}
