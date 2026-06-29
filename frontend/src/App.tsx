@@ -1,7 +1,8 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
+import { useTelegramBackHandler } from './hooks/useTelegram'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
@@ -106,6 +107,8 @@ const masterEntities = [
 
 export default function App() {
  const { token, isLoading, fetchMe } = useAuthStore()
+ const navigate = useNavigate()
+ const location = useLocation()
 
  // Restore full session on app load — fetchMe always runs when token exists
  useEffect(() => {
@@ -113,6 +116,16 @@ export default function App() {
  fetchMe()
  }
  }, [token, isLoading, fetchMe])
+
+ // Telegram Mini App: back button navigates within app instead of closing
+ // At root level, the closing confirmation dialog fires instead
+ useTelegramBackHandler(() => {
+   if (location.pathname === '/' || location.pathname === '/menu/poultry') {
+     // At root — let Telegram show the closing confirmation
+     return
+   }
+   navigate(-1)
+ })
 
  return (
  <ToastProvider>

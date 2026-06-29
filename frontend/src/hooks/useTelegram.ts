@@ -143,6 +143,11 @@ export function useTelegram(): TelegramState {
 
       // Tell Telegram the app is ready
       miniAppReady.then(() => {
+        // Enable closing confirmation — prevents accidental exit
+        if (miniApp.enableClosingConfirmation.isAvailable()) {
+          miniApp.enableClosingConfirmation()
+        }
+
         miniApp.ready()
         setIsReady(true)
       })
@@ -241,7 +246,7 @@ export function useTelegram(): TelegramState {
 /**
  * Initialize Telegram SDK as early as possible (before React renders).
  * Call this in main.tsx before createRoot().
- * Sets dark mode class and applies theme colors immediately.
+ * Sets dark mode class, applies theme colors, enables closing confirmation.
  */
 export function initTelegramEarly(): void {
   if (!isTMA()) return
@@ -263,7 +268,53 @@ export function initTelegramEarly(): void {
         miniApp.setBackgroundColor('#F1F5F9')
       }
 
+      // 🔒 Enable closing confirmation — prevents accidental exit
+      //    when swiping down or pressing back at root level
+      if (miniApp.enableClosingConfirmation.isAvailable()) {
+        miniApp.enableClosingConfirmation()
+      }
+
       miniApp.ready()
     })
   } catch { /* ignore */ }
+}
+
+
+// ── Back navigation helper (integrates with react-router) ─────
+
+let _backCallback: (() => void) | null = null
+
+/**
+ * Register a global back-navigation handler for Telegram.
+ * Call this once in your root component with a function that
+ * navigates back in the app's history. If there's no history
+ * (at root), the closing confirmation will fire instead.
+ *
+ * Usage in App.tsx:
+ *   const navigate = useNavigate()
+ *   useTelegramBackHandler(() => navigate(-1))
+ */
+export function useTelegramBackHandler(onBack: () => void) {
+  const { isTelegram } = useTelegram()
+
+  useEffect(() => {
+    if (!isTelegram) return
+
+    _backCallback = onBack
+
+    // Show native back button and wire it to our handler
+    try {
+      const bb = backButton()
+      bb.onClick(() => _backCallback?.())
+      bb.show()
+    } catch { /* ignore */ }
+
+    return () => {
+      _backCallback = null
+      try {
+        backButton().hide()
+        backButton().offClick(() => {})
+      } catch { /* ignore */ }
+    }
+  }, [isTelegram, onBack])
 }
