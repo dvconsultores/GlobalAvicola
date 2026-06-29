@@ -1386,7 +1386,10 @@ export default function OperationFormPage() {
  { sex: 'mixed', label: t('operations.weak', 'Débiles'), idx: 3 },
  ]
  return (
+ <div className="space-y-5">
+ {/* Birth counts */}
  <div>
+ <p className="text-sm font-semibold text-slate-700 mb-2">{t('operations.birthCounts', 'Conteo de nacimientos')}</p>
  {rows.map(({ sex, label, idx }) => (
  <div key={idx} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
@@ -1396,6 +1399,44 @@ export default function OperationFormPage() {
  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
  ))}
+ </div>
+
+ {/* Vaccination at birth */}
+ <div className="bg-green-50 border border-green-100 rounded-lg p-3 space-y-3">
+ <p className="text-sm font-semibold text-green-800">{t('operations.birthVaccination', 'Vacunación al nacimiento')}</p>
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+ <div>
+ <label className="text-xs font-medium text-green-700">{t('operations.vaccine', 'Vacuna')}</label>
+ <SearchSelect
+ value={watch('vaccine_id' as any) ?? ''}
+ onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
+ items={vaccines}
+ placeholder={t('operations.selectVaccine', 'Seleccionar vacuna...')}
+ searchPlaceholder="Buscar vacuna..."
+ renderLabel={(v: any) => v.name}
+ />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-green-700">{t('operations.vaccinationRoute', 'Vía de aplicación')}</label>
+ <select {...register('vaccination_route' as any)} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white">
+ <option value="">{t('operations.selectRoute', 'Seleccionar vía...')}</option>
+ <option value="spray">{t('operations.routeSpray', 'Spray')}</option>
+ <option value="water">{t('operations.routeWater', 'Agua de bebida')}</option>
+ <option value="injection">{t('operations.routeInjection', 'Inyección')}</option>
+ <option value="eye">{t('operations.routeEye', 'Ocular')}</option>
+ <option value="gel">{t('operations.routeGel', 'Gel')}</option>
+ </select>
+ </div>
+ <div>
+ <label className="text-xs font-medium text-green-700">{t('operations.vaccineLotNumber', 'Lote de la vacuna')}</label>
+ <input type="text" {...register('vaccine_lot_number' as any)} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="L-001" />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-green-700">{t('operations.dosePerBird', 'Dosis por ave')}</label>
+ <input type="number" step="0.001" min="0" {...register('dosage_per_bird' as any)} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="0.2" />
+ </div>
+ </div>
+ </div>
  </div>
  )
  }
