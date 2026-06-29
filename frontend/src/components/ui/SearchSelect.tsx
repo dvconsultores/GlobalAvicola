@@ -33,6 +33,7 @@ export default function SearchSelect({
  const { t } = useTranslation()
  const _placeholder = placeholder ?? t('common.select', 'Seleccionar...')
  const _searchPlaceholder = searchPlaceholder ?? t('common.search', 'Buscar...')
+ const [open, setOpen] = useState(false)
  const [search, setSearch] = useState('')
  const containerRef = useRef<HTMLDivElement>(null)
  const inputRef = useRef<HTMLInputElement>(null)
