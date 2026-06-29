@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom'
+import { Routes, Route, Navigate, useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
@@ -129,7 +129,6 @@ export default function App() {
 
  return (
  <ToastProvider>
- <BrowserRouter>
  <Routes>
  <Route path="/login" element={<LoginPage />} />
  <Route
@@ -190,7 +189,6 @@ export default function App() {
  <Route path="*" element={<Navigate to="/" replace />} />
  </Route>
  </Routes>
- </BrowserRouter>
  </ToastProvider>
  )
 }
