@@ -733,29 +733,119 @@ export default function OperationFormPage() {
  </div>
  )
 
- case 'bird_exit': return (
+ case 'bird_exit': {
+ const transportId = watch('transport_id' as any)
+ return (
  <div className="space-y-4">
- <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+ <p className="text-xs text-slate-500">{t('operations.birdExitHint', 'Registra la salida de aves para traslado o cierre de ciclo de cría. Si las aves no se mueven físicamente, deja los campos de destino y transporte vacíos para el cierre de ciclo.')}</p>
+
+ {/* Destination & Transport */}
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
  <label className={lc}>{t('operations.destinationFarm', 'Granja destino')}</label>
- {sel(register('destination_farm_id', { valueAsNumber: true }), farms, t('operations.selectType', 'Seleccionar...'))}
+ <SearchSelect
+ value={watch('destination_farm_id' as any) ?? ''}
+ onChange={(v) => setValue('destination_farm_id' as any, v ? Number(v) : undefined)}
+ items={farms}
+ placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
+ searchPlaceholder="Buscar granja destino..."
+ renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.destinationPlant', 'Planta procesadora')}</label>
- {sel(register('destination_plant_id', { valueAsNumber: true }), processingPlants, t('operations.selectType', 'Seleccionar...'))}
+ <SearchSelect
+ value={watch('destination_plant_id' as any) ?? ''}
+ onChange={(v) => setValue('destination_plant_id' as any, v ? Number(v) : undefined)}
+ items={processingPlants}
+ placeholder={t('operations.selectType', 'Seleccionar planta...')}
+ searchPlaceholder="Buscar planta..."
+ renderLabel={(p: any) => p.name}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
- {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar transporte...'), (x: any) => `${x.plate} — ${x.name}`)}
+ <SearchSelect
+ value={transportId ?? ''}
+ onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
+ items={transports}
+ placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
+ searchPlaceholder="Buscar transporte..."
+ renderLabel={(x: any) => `${x.plate} — ${x.name}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.sapOrderRef', 'Ref. OC SAP')}</label>
- <input {...register('extra_data.sap_order_ref' as any)} className={ic} placeholder="OC-SAP-001" />
+ <SearchSelect
+ value={watch('extra_data.sap_order_ref' as any) ?? ''}
+ onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
+ items={sapPurchaseOrders}
+ placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
+ searchPlaceholder="Buscar orden..."
+ renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}`}
+ />
  </div>
  </div>
+
+ {/* ── Transport inspection (only when transport is selected) ── */}
+ {transportId && (
+ <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 space-y-3">
+ <p className="text-sm font-semibold text-amber-800">{t('operations.transportInspection', 'Inspección del transporte')}</p>
+ <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+ <div>
+ <label className="text-xs font-medium text-amber-700">{t('operations.cageCondition', 'Estado de jaulas')}</label>
+ <select {...register('extra_data.transport_cage_condition' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
+ <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
+ <option value="good">{t('operations.good', 'Bueno')}</option>
+ <option value="regular">{t('operations.regular', 'Regular')}</option>
+ <option value="bad">{t('operations.bad', 'Malo')}</option>
+ </select>
+ </div>
+ <div>
+ <label className="text-xs font-medium text-amber-700">{t('operations.densityBirdsM2', 'Densidad (aves/m²)')}</label>
+ <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="0" />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
+ <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="22" />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
+ <select {...register('extra_data.transport_ventilation' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
+ <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
+ <option value="good">{t('operations.good', 'Buena')}</option>
+ <option value="regular">{t('operations.regular', 'Regular')}</option>
+ <option value="bad">{t('operations.bad', 'Mala')}</option>
+ </select>
+ </div>
+ <div>
+ <label className="text-xs font-medium text-amber-700">{t('operations.hygiene', 'Higiene del vehículo')}</label>
+ <select {...register('extra_data.transport_hygiene' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
+ <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
+ <option value="good">{t('operations.good', 'Buena')}</option>
+ <option value="regular">{t('operations.regular', 'Regular')}</option>
+ <option value="bad">{t('operations.bad', 'Mala')}</option>
+ </select>
+ </div>
+ <div>
+ <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
+ <input type="number" min="0" {...register('extra_data.transport_duration_min' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
+ </div>
+ </div>
+ </div>
+ )}
+
+ {/* Same-house transition note */}
+ {!transportId && (
+ <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-xs text-blue-700">
+ {t('operations.sameHouseTransition', 'Sin transporte ni destino = cierre de ciclo de cría e inicio de producción en el mismo galpón. Las aves saldrán y reingresarán al mismo lote para marcar la transición.')}
+ </div>
+ )}
+
+ {/* M/F rows */}
  {renderMFRows(true)}
  </div>
- )
+ )}
 
  case 'feed_registration': return (
  <div className="space-y-4">
@@ -1426,8 +1516,8 @@ export default function OperationFormPage() {
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
- {/* ── SAP Order selector (grandparent_import & bird_reception: must be first) ── */}
- {(eventType === 'grandparent_import' || eventType === 'bird_reception') && (
+ {/* ── SAP Order selector (grandparent_import, bird_reception & bird_exit: must be first) ── */}
+ {(eventType === 'grandparent_import' || eventType === 'bird_reception' || eventType === 'bird_exit') && (
  <div>
  {/* For breeder bird_reception: source type selector (transfer vs purchase) */}
  {eventType === 'bird_reception' && stage?.startsWith('breeder') ? (
