@@ -76,12 +76,22 @@ async def get_event(
     current_user: dict = Depends(get_current_user),
 ):
     event = await _service(db, current_user).get_event(event_id)
-    result = schemas.OperationalEventDetailRead.model_validate(event)
+    # Convert ORM object to dict excluding relationships to avoid Pydantic validation errors
+    event_dict = {
+        k: v for k, v in event.__dict__.items()
+        if not k.startswith("_") and not k.startswith("__")
+    }
+    # Remove SQLAlchemy relationship/sa_instance_state attributes
+    for rel_key in ("bird_movements", "egg_movements", "feed_movements",
+                     "hatchery_params", "inspection_details", "egg_storage_records",
+                     "evidences", "alerts"):
+        event_dict.pop(rel_key, None)
+    result = schemas.OperationalEventDetailRead.model_validate(event_dict, from_attributes=True)
     result.bird_movements = [schemas.BirdMovementSchema.model_validate(bm) for bm in event.bird_movements]
     result.egg_movements = [schemas.EggMovementSchema.model_validate(em) for em in event.egg_movements]
     result.feed_movements = [schemas.FeedMovementSchema.model_validate(fm) for fm in event.feed_movements]
     result.hatchery_params = [schemas.HatcheryParamsSchema.model_validate(hp) for hp in event.hatchery_params]
-    result.inspection_details = [schemas.InspectionDetailSchema.model_validate(id) for id in event.inspection_details]
+    result.inspection_details = [schemas.InspectionDetailSchema.model_validate(detail) for detail in event.inspection_details]
     return result
 
 

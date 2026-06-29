@@ -6,6 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..audit.helpers import audit_approval_action, audit_state_transition
 from ..operations.models import EventStatus, OperationalEvent
 from . import models, schemas
 
@@ -149,6 +150,12 @@ class ReviewService:
         ))
         await self.db.flush()
         await self.db.refresh(event)
+
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user,
+                                     "pending_review", "in_review",
+                                     comments="Revisión iniciada por supervisor")
+
         return event
 
     async def return_to_operator(self, event_id: int, observations: str) -> OperationalEvent:
@@ -172,6 +179,12 @@ class ReviewService:
         ))
         await self.db.flush()
         await self.db.refresh(event)
+
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user,
+                                     "in_review", "returned",
+                                     comments=observations)
+
         return event
 
     async def complete_review(self, event_id: int, observations: Optional[str] = None) -> OperationalEvent:
@@ -185,14 +198,17 @@ class ReviewService:
 
         # Check company approval configuration
         approval_levels = await self._get_company_approval_levels()
+        old_status = "in_review"
 
         if approval_levels <= 1:
             # Single level: review = approval
             event.status = EventStatus.APPROVED
             event.approved_by_id = self.current_user["id"]
+            new_status = "approved"
         else:
             # Multi-level: mark as corrected (awaiting approval step)
             event.status = EventStatus.CORRECTED
+            new_status = "corrected"
 
         event.observations = observations or event.observations
         await self.db.flush()
@@ -205,6 +221,12 @@ class ReviewService:
         ))
         await self.db.flush()
         await self.db.refresh(event)
+
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user,
+                                     old_status, new_status,
+                                     comments=observations)
+
         return event
 
     # ============================================================
@@ -311,6 +333,12 @@ class ApprovalService:
         ))
         await self.db.flush()
         await self.db.refresh(event)
+
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user,
+                                     "corrected", "approved",
+                                     comments=observations)
+
         return event
 
     async def reject(self, event_id: int, observations: str) -> OperationalEvent:
@@ -329,6 +357,12 @@ class ApprovalService:
         ))
         await self.db.flush()
         await self.db.refresh(event)
+
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user,
+                                     "corrected", "rejected",
+                                     comments=observations)
+
         return event
 
     async def batch_approve(self, event_ids: list[int], observations: Optional[str] = None) -> list[OperationalEvent]:

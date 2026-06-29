@@ -32,9 +32,9 @@ export default function OperationTile({ step, index, lotId, readOnly }: Operatio
  {index}
  </span>
 
- {/* Big colored icon */}
+ {/* Big colored icon — border matches the grid card for visual consistency */}
  <span
- className={`w-16 h-16 rounded-2xl ${color.bg} text-white flex items-center justify-center shadow-md border border-white/20 transition-transform group-hover:scale-110 group-active:scale-95`}
+ className={`w-16 h-16 rounded-3xl ${color.bg} text-white flex items-center justify-center shadow-md border border-slate-200/30 transition-transform group-hover:scale-110 group-active:scale-95`}
  >
  <Icon size={30} strokeWidth={2.2} />
  </span>

@@ -86,7 +86,7 @@ class AuditLog(Base):
     new_state: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     change_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     comments: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    sap_reference_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("sap_references.id"), nullable=True)
+    sap_reference_id: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # SAP document ref (no FK — audit is decoupled)
     ip_address: Mapped[Optional[str]] = mapped_column(String(45), nullable=True)
     user_agent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     is_sensitive: Mapped[bool] = mapped_column(default=False)

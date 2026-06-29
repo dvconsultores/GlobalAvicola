@@ -50,9 +50,9 @@ export default function ProcessStagePage() {
  }
 
  return (
- <div className="min-h-screen bg-slate-100 pb-24 lg:pb-8 transition-colors duration-200">
- {/* Page header */}
- <div className="max-w-2xl mx-auto pt-5 pb-4">
+ <>
+ {/* Page header — uses global layout margins, centered consistently */}
+ <div className="max-w-5xl mx-auto pt-5 pb-4">
  <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover mb-3 transition-colors">
  <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
  </Link>
@@ -72,7 +72,7 @@ export default function ProcessStagePage() {
  </div>
  </div>
 
- <div className="max-w-2xl mx-auto">
+ <div className="max-w-5xl mx-auto">
  {/* View toggle + step count */}
  <div className="flex items-center justify-between mb-4">
  <span className="text-sm font-bold text-slate-700">
@@ -123,6 +123,6 @@ export default function ProcessStagePage() {
  </div>
  )}
  </div>
- </div>
+ </>
  )
 }

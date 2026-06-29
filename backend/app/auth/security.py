@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..config import settings
 from ..database import get_db
+from ..audit.context import set_current_audit_user
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 bearer_scheme = HTTPBearer(auto_error=False)
@@ -115,7 +116,7 @@ async def get_current_user(
                     is_super_admin = True
                     break
 
-    return {
+    user_dict = {
         "id": user.id,
         "username": user.username,
         "first_name": user.first_name,
@@ -126,6 +127,11 @@ async def get_current_user(
         "role_name": role_name,
         "is_super_admin": is_super_admin,
     }
+
+    # Store user in context variable for audit listeners
+    set_current_audit_user(user_dict)
+
+    return user_dict
 
 
 def get_company_filter(current_user: dict = Depends(get_current_user)) -> int | None:

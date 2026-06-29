@@ -10,6 +10,7 @@ from pydantic import BaseModel, Field
 # ============================================================
 
 class BirdMovementSchema(BaseModel):
+    model_config = {"from_attributes": True}
     sex: Optional[str] = None
     quantity: int = Field(default=0, ge=0)
     avg_weight: Optional[float] = None
@@ -20,6 +21,7 @@ class BirdMovementSchema(BaseModel):
 
 
 class EggMovementSchema(BaseModel):
+    model_config = {"from_attributes": True}
     egg_type: str  # fertile, dirty, broken, infertile, discarded, commercial
     quantity: int = Field(default=0, ge=0)
     avg_weight: Optional[float] = None
@@ -30,6 +32,7 @@ class EggMovementSchema(BaseModel):
 
 
 class FeedMovementSchema(BaseModel):
+    model_config = {"from_attributes": True}
     feed_type_id: Optional[int] = None
     quantity_kg: float = Field(default=0.0, gt=0)
     sacks_count: Optional[int] = None
@@ -38,6 +41,7 @@ class FeedMovementSchema(BaseModel):
 
 
 class EggStorageSchema(BaseModel):
+    model_config = {"from_attributes": True}
     arrival_date: date
     eggs_received: int = Field(default=0, ge=0)
     storage_temp_c: Optional[float] = None
@@ -51,6 +55,7 @@ class EggStorageSchema(BaseModel):
 
 
 class HatcheryParamsSchema(BaseModel):
+    model_config = {"from_attributes": True}
     hatchery_id: Optional[int] = None
     incubator_id: Optional[int] = None
     hatcher_id: Optional[int] = None
@@ -63,6 +68,7 @@ class HatcheryParamsSchema(BaseModel):
 
 
 class InspectionDetailSchema(BaseModel):
+    model_config = {"from_attributes": True}
     house_id: Optional[int] = None  # Scopes record to a specific house; NULL = farm-level
     parameter: str
     value: Optional[str] = None

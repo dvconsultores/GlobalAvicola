@@ -32,6 +32,9 @@ def rate_limit(limit_value: str):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Register SQLAlchemy audit listeners on startup
+    from .audit import register_audit_listeners
+    register_audit_listeners()
     yield
 
 

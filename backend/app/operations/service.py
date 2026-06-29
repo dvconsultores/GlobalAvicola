@@ -6,6 +6,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..audit.helpers import audit_event_created, audit_state_transition
 from ..masters.service import MasterService
 from . import models, schemas
 from .validators import (
@@ -97,6 +98,9 @@ class OperationsService:
 
         # Phase 5.4: auto-create generational traceability batches
         await self._auto_create_traceability_batches(event, data)
+
+        # Audit: event created
+        await audit_event_created(self.db, event, self.current_user)
 
         return event
 
@@ -433,6 +437,7 @@ class OperationsService:
 
     async def update_event(self, event_id: int, data: schemas.OperationalEventUpdate) -> models.OperationalEvent:
         event = await self.get_event(event_id)
+        old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         # BR-15: Records sent to SAP cannot be edited
         validate_sap_edit_lock(event.status.value)
         if event.status not in [models.EventStatus.DRAFT, models.EventStatus.REGISTERED, models.EventStatus.RETURNED]:
@@ -442,24 +447,34 @@ class OperationsService:
         event.version += 1
         await self.db.flush()
         await self.db.refresh(event)
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user, old_status, old_status, comments="Evento actualizado")
         return event
 
     async def submit_to_review(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
         if event.status != models.EventStatus.REGISTERED:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo eventos registrados pueden enviarse a revisión")
+        old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         event.status = models.EventStatus.PENDING_REVIEW
         await self.db.flush()
         await self.db.refresh(event)
+        # Audit: submitted to review
+        new_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
+        await audit_state_transition(self.db, event, self.current_user, old_status, new_status, comments="Enviado a revisión")
         return event
 
     async def cancel_event(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
         if event.status in [models.EventStatus.APPROVED, models.EventStatus.CONSOLIDATED, models.EventStatus.SENT_TO_SAP]:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se puede cancelar un evento ya aprobado o enviado a SAP")
+        old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         event.status = models.EventStatus.CANCELLED
         await self.db.flush()
         await self.db.refresh(event)
+        # Audit: cancelled
+        new_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
+        await audit_state_transition(self.db, event, self.current_user, old_status, new_status, comments="Evento cancelado")
         return event
 
     # ============================================================

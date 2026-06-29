@@ -169,7 +169,7 @@ export default function DashboardPage() {
  ]
 
  return (
- <div className="min-h-screen bg-slate-100 pb-24">
+ <>
  {/* Welcome header — slim, corporate */}
  <div className="bg-gradient-to-r from-[#264c5f] to-[#3d748f] text-white px-4 py-4">
  <div className="flex items-center gap-2">
@@ -588,6 +588,6 @@ export default function DashboardPage() {
 
  {/* Active operational alerts */}
  <AlertsWidget alerts={activeAlerts} onResolve={handleResolveAlert} />
- </div>
+ </>
  )
 }

@@ -13,8 +13,15 @@ export default function AppLayout() {
  {!isMobileUser && <Sidebar />}
  <Header />
  <main className={`pb-24 lg:pb-0 ${!isMobileUser ? 'lg:ml-64' : ''}`}>
- {/* Mobile: edge-to-edge for native feel. Desktop: generous padding */}
- <div className={isMobileUser ? 'px-3 pt-6 page-enter' : 'max-w-7xl mx-auto px-6 pt-6 pb-4 page-enter'}>
+ {/* 
+   Global content wrapper — consistent margins for ALL web views.
+   Mobile: tight edge-to-edge (12px). Desktop: generous centered (24px).
+   Pattern matches the approvals panel reference.
+ */}
+ <div className={isMobileUser
+   ? 'px-3 pt-6 page-enter'
+   : 'max-w-7xl mx-auto px-4 sm:px-5 lg:px-6 pt-6 pb-4 page-enter'
+ }>
  <Outlet />
  </div>
  </main>

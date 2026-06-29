@@ -5,6 +5,7 @@ from fastapi import HTTPException, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from ..audit.helpers import audit_correction
 from ..operations.models import EventStatus, OperationalEvent
 from . import models, schemas
 
@@ -52,6 +53,17 @@ class CorrectionService:
         event.status = EventStatus.CORRECTED
         await self.db.flush()
         await self.db.refresh(correction)
+
+        # Audit: field-level correction
+        await audit_correction(
+            self.db, data.event_id, self.current_user,
+            field_name=data.field_name,
+            original_value=data.original_value,
+            corrected_value=data.corrected_value,
+            reason=data.reason,
+            lot_id=event.lot_id,
+        )
+
         return correction
 
     async def get_corrections_for_event(self, event_id: int) -> list[models.CorrectionLog]:
