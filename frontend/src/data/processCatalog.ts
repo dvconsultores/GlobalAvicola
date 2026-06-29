@@ -178,7 +178,7 @@ export const OPERATION_CATEGORIES: OperationCategory[] = [
     fallback: 'Huevos',
     Icon: Egg,
     color: 'text-indigo-600',
-    events: ['egg_collection', 'egg_classification', 'egg_dispatch', 'egg_reception_hatchery'],
+    events: ['egg_collection', 'egg_dispatch', 'egg_reception_hatchery'],
   },
   {
     key: 'incubation',
@@ -211,7 +211,7 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
   grandparent_production: [
     'farm_inspection', 'bird_transfer', 'transport_inspection', 'feed_registration',
     'weight_recording', 'mortality_recording', 'cull_recording', 'vaccination',
-    'medication', 'egg_collection', 'egg_classification', 'egg_dispatch', 'bird_exit',
+    'medication', 'egg_collection', 'egg_dispatch', 'bird_exit',
   ],
   breeder_rearing: [
     'farm_inspection', 'bird_reception', 'bird_distribution', 'bird_transfer',
@@ -221,7 +221,7 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
   breeder_production: [
     'farm_inspection', 'bird_transfer', 'transport_inspection', 'feed_registration',
     'weight_recording', 'mortality_recording', 'cull_recording', 'vaccination',
-    'medication', 'egg_collection', 'egg_classification', 'egg_dispatch', 'bird_exit',
+    'medication', 'egg_collection', 'egg_dispatch', 'bird_exit',
   ],
   hatchery: [
     'hatchery_inspection', 'egg_reception_hatchery', 'egg_reception_classification', 'transport_inspection',
@@ -368,8 +368,7 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
     step('medication', 'Aplicar y registrar medicación'),
     step('mortality_recording', 'Registrar mortalidad diaria'),
     step('cull_recording', 'Registrar descarte de aves'),
-    step('egg_collection', 'Recolectar los huevos producidos'),
-    step('egg_classification', 'Clasificar los huevos por tipo y calidad'),
+    step('egg_collection', 'Recolectar y clasificar los huevos producidos (tipo, cantidad y peso)'),
     step('egg_dispatch', 'Despachar los huevos a su destino'),
     step('bird_exit', 'Registrar la salida o cierre del lote'),
   ],
@@ -393,8 +392,7 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
     step('medication', 'Aplicar y registrar medicación'),
     step('mortality_recording', 'Registrar mortalidad diaria'),
     step('cull_recording', 'Registrar descarte de aves'),
-    step('egg_collection', 'Recolectar el huevo fértil diario'),
-    step('egg_classification', 'Clasificar los huevos por tipo y calidad'),
+    step('egg_collection', 'Recolectar y clasificar el huevo fértil diario (tipo, cantidad y peso)'),
     step('egg_dispatch', 'Despachar el huevo fértil a la incubadora'),
     step('bird_exit', 'Registrar la salida o cierre del lote'),
   ],
