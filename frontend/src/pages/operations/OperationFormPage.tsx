@@ -170,6 +170,7 @@ export default function OperationFormPage() {
  const [lots, setLots] = useState<any[]>([])
  const [lotsLoadError, setLotsLoadError] = useState(false)
  const [sapOrders, setSapOrders] = useState<any[]>([])
+ const [sapPurchaseOrders, setSapPurchaseOrders] = useState<any[]>([])
  const [submitting, setSubmitting] = useState(false)
  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null)
 
@@ -284,6 +285,7 @@ export default function OperationFormPage() {
  setLotsLoadError(true)
  })
  api.get('/sap/references?ref_type=transfer_order&limit=50').then(r => setSapOrders(r.data?.references || [])).catch(() => {})
+ api.get('/sap/references?ref_type=purchase_order&limit=50').then(r => setSapPurchaseOrders(r.data?.references || [])).catch(() => {})
  Promise.allSettled([
  api.get('/masters/vaccines?limit=100'),
  api.get('/masters/medications?limit=100'),
@@ -1108,6 +1110,18 @@ export default function OperationFormPage() {
 
  case 'grandparent_import': return (
  <div className="space-y-4">
+ {/* SAP Purchase Order */}
+ <div>
+ <label className={lc}>{t('operations.sapImportOrder', 'Orden de compra / importación SAP')}</label>
+ <SearchSelect
+ value={watch('extra_data.sap_order_ref' as any) ?? ''}
+ onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
+ items={sapPurchaseOrders}
+ placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
+ searchPlaceholder="Buscar orden de compra..."
+ renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.id}${o.vendor_name ? ` — ${o.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
+ />
+ </div>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.importCountry', 'País de origen')}</label>
