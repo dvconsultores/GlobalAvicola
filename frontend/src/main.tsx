@@ -3,8 +3,12 @@ import { createRoot } from 'react-dom/client'
 import './i18n'
 import { useAuthStore } from './stores/auth.store'
 import { registerTokenAccessors } from './services/api'
+import { initTelegramEarly } from './hooks/useTelegram'
 import './index.css'
 import App from './App'
+
+// Telegram Mini App: initialize SDK early to set header color and expand
+initTelegramEarly()
 
 // S-01/02: Wire in-memory token accessors so api.ts can read/refresh tokens
 // without touching localStorage. Must happen before any API call.
