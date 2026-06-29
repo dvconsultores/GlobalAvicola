@@ -1080,13 +1080,29 @@ export default function OperationFormPage() {
 
  case 'egg_reception_hatchery': return (
  <div className="space-y-4">
- <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+ <p className="text-xs text-slate-500">{t('operations.eggReceptionHint', 'Registra la recepción de huevos en la incubadora. Referencia la orden de traslado SAP del despacho.')}</p>
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
  <label className={lc}>{t('operations.sourceOriginFarm', 'Granja de origen')}</label>
- {sel(register('extra_data.source_farm_id' as any), farms, t('operations.selectType', 'Seleccionar...'))} </div>
+ <SearchSelect
+ value={watch('extra_data.source_farm_id' as any) ?? ''}
+ onChange={(v) => setValue('extra_data.source_farm_id' as any, v ? Number(v) : undefined)}
+ items={farms}
+ placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
+ searchPlaceholder="Buscar granja..."
+ renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
+ />
+ </div>
  <div>
  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
- {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar...'), (x: any) => `${x.plate} — ${x.name}`)}
+ <SearchSelect
+ value={watch('transport_id' as any) ?? ''}
+ onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
+ items={transports}
+ placeholder={t('operations.selectTransport', 'Seleccionar...')}
+ searchPlaceholder="Buscar transporte..."
+ renderLabel={(x: any) => `${x.plate} — ${x.name}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.dispatchOrder', 'No. de orden de despacho')}</label>
@@ -1290,8 +1306,26 @@ export default function OperationFormPage() {
  <div>
  <label className={lc}>{machineType === 'hatcher' ? t('operations.hatcher', 'Nacedora') : t('operations.incubator', 'Incubadora')}</label>
  {machineType === 'hatcher'
- ? sel(register(`hatchery_params.${i}.hatcher_id`, { valueAsNumber: true }), hatchers, '---')
- : sel(register(`hatchery_params.${i}.incubator_id`, { valueAsNumber: true }), incubators, '---')
+ ? (
+ <SearchSelect
+ value={watch(`hatchery_params.${i}.hatcher_id` as any) ?? ''}
+ onChange={(v) => setValue(`hatchery_params.${i}.hatcher_id` as any, v ? Number(v) : undefined)}
+ items={hatchers}
+ placeholder={t('operations.selectHatcher', 'Seleccionar nacedora...')}
+ searchPlaceholder="Buscar nacedora..."
+ renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
+ />
+ )
+ : (
+ <SearchSelect
+ value={watch(`hatchery_params.${i}.incubator_id` as any) ?? ''}
+ onChange={(v) => setValue(`hatchery_params.${i}.incubator_id` as any, v ? Number(v) : undefined)}
+ items={incubators}
+ placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
+ searchPlaceholder="Buscar incubadora..."
+ renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
+ />
+ )
  }
  </div>
  <div>
@@ -1342,7 +1376,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.incubator', 'Incubadora')}</label>
- {sel(register('hatchery_params.0.incubator_id', { valueAsNumber: true }), incubators, t('operations.selectType', 'Seleccionar...'))}
+ <SearchSelect
+ value={watch('hatchery_params.0.incubator_id' as any) ?? ''}
+ onChange={(v) => setValue('hatchery_params.0.incubator_id' as any, v ? Number(v) : undefined)}
+ items={incubators}
+ placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
+ searchPlaceholder="Buscar incubadora..."
+ renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.quantityLoaded', 'Cantidad cargada')}</label>
@@ -1405,7 +1446,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.hatcher', 'Nacedora')}</label>
- {sel(register('hatchery_params.0.hatcher_id', { valueAsNumber: true }), hatchers, t('operations.selectType', 'Seleccionar...'))}
+ <SearchSelect
+ value={watch('hatchery_params.0.hatcher_id' as any) ?? ''}
+ onChange={(v) => setValue('hatchery_params.0.hatcher_id' as any, v ? Number(v) : undefined)}
+ items={hatchers}
+ placeholder={t('operations.selectHatcher', 'Seleccionar nacedora...')}
+ searchPlaceholder="Buscar nacedora..."
+ renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.incubationDay', 'Día de incubación')}</label>
@@ -1492,14 +1540,29 @@ export default function OperationFormPage() {
 
  case 'chick_dispatch': return (
  <div className="space-y-4">
- <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+ <p className="text-xs text-slate-500">{t('operations.chickDispatchHint', 'Registra el despacho de pollitos desde la incubadora a la granja de engorde')}</p>
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
  <label className={lc}>{t('operations.destinationFarm', 'Granja destino')}</label>
- {sel(register('destination_farm_id', { valueAsNumber: true }), farms, t('operations.selectType', 'Seleccionar...'))}
+ <SearchSelect
+ value={watch('destination_farm_id' as any) ?? ''}
+ onChange={(v) => setValue('destination_farm_id' as any, v ? Number(v) : undefined)}
+ items={farms}
+ placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
+ searchPlaceholder="Buscar granja..."
+ renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
- {sel(register('transport_id', { valueAsNumber: true }), transports, t('operations.selectTransport', 'Seleccionar transporte...'), (x: any) => `${x.plate} — ${x.name}`)}
+ <SearchSelect
+ value={watch('transport_id' as any) ?? ''}
+ onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
+ items={transports}
+ placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
+ searchPlaceholder="Buscar transporte..."
+ renderLabel={(x: any) => `${x.plate} — ${x.name}`}
+ />
  </div>
  <div>
  <label className={lc}>{t('operations.sanitaryCert', 'Certificado sanitario')}</label>
@@ -1700,8 +1763,8 @@ export default function OperationFormPage() {
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
- {/* ── SAP Order selector (grandparent_import, bird_reception, bird_exit & egg_dispatch: must be first) ── */}
- {(eventType === 'grandparent_import' || eventType === 'bird_reception' || eventType === 'bird_exit' || eventType === 'egg_dispatch') && (
+ {/* ── SAP Order selector (grandparent_import, bird_reception, bird_exit, egg_dispatch, egg_reception_hatchery & chick_dispatch: must be first) ── */}
+ {(eventType === 'grandparent_import' || eventType === 'bird_reception' || eventType === 'bird_exit' || eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery' || eventType === 'chick_dispatch') && (
  <div>
  {/* For breeder bird_reception: source type selector (transfer vs purchase) */}
  {eventType === 'bird_reception' && stage?.startsWith('breeder') ? (
@@ -1760,7 +1823,7 @@ export default function OperationFormPage() {
  ) : (
  <>
  <label className="block text-sm font-semibold text-slate-700 mb-1">
- {eventType === 'egg_dispatch'
+ {(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery')
  ? t('operations.sapTransferOrder', 'Orden de traslado SAP')
  : t('operations.sapImportOrder', 'Orden de compra / importación SAP')}
  </label>
@@ -1768,7 +1831,7 @@ export default function OperationFormPage() {
  value={watch('extra_data.sap_order_ref' as any) ?? ''}
  onChange={(v) => {
  setValue('extra_data.sap_order_ref' as any, v)
- const orderList = eventType === 'egg_dispatch' ? sapOrders : sapPurchaseOrders
+ const orderList = (eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders
  const order = orderList.find((o: any) => (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === v)
  if (order) {
  if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
@@ -1779,9 +1842,9 @@ export default function OperationFormPage() {
  if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
  }
  }}
- items={eventType === 'egg_dispatch' ? sapOrders : sapPurchaseOrders}
+ items={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder={eventType === 'egg_dispatch' ? 'Buscar orden de traslado...' : 'Buscar orden de compra...'}
+ searchPlaceholder={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? 'Buscar orden de traslado...' : 'Buscar orden de compra...'}
  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
  />
  </>
