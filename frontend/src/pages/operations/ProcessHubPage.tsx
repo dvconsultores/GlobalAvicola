@@ -18,7 +18,7 @@ export default function ProcessHubPage() {
  return (
  <div className="min-h-screen bg-slate-100 pb-24 lg:pb-8 transition-colors duration-200">
  {/* Page header */}
- <div className="max-w-5xl mx-auto px-4 pt-5 pb-4">
+ <div className="max-w-5xl mx-auto pt-5 pb-4">
  <div className="flex items-start justify-between gap-4">
  <div>
  <p className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">
@@ -47,7 +47,7 @@ export default function ProcessHubPage() {
  </div>
 
  {/* Process grid */}
- <div className="max-w-5xl mx-auto px-4">
+ <div className="max-w-5xl mx-auto">
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
  {PROCESS_STAGES.map((stage) => {
  const flow = flowForStage(stage.key)

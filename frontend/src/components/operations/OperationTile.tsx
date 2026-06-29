@@ -34,7 +34,7 @@ export default function OperationTile({ step, index, lotId, readOnly }: Operatio
 
  {/* Big colored icon */}
  <span
- className={`w-16 h-16 rounded-2xl ${color.bg} text-white flex items-center justify-center shadow-md ring-4 ${color.ring} transition-transform group-hover:scale-110 group-active:scale-95`}
+ className={`w-16 h-16 rounded-2xl ${color.bg} text-white flex items-center justify-center shadow-md border border-white/20 transition-transform group-hover:scale-110 group-active:scale-95`}
  >
  <Icon size={30} strokeWidth={2.2} />
  </span>
