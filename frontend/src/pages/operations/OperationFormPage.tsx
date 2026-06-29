@@ -654,34 +654,65 @@ export default function OperationFormPage() {
 
  case 'bird_distribution': return (
  <div className="space-y-3">
- <p className="text-xs text-slate-500">{t('operations.addHouseRows', 'Añade una fila por galpón destino')}</p>
+ <p className="text-xs text-slate-500">{t('operations.distributionHint', 'Confirma la distribución de la recepción o registra movimiento de aves entre galpones')}</p>
  {birdFields.map((field, i) => (
- <div key={field.id} className="grid grid-cols-[1fr_90px_90px_auto] gap-2 items-end">
- <div>
- <label className={lc}>{t('operations.targetHouse', 'Galpón')}</label>
- {sel(register(`bird_movements.${i}.target_house_id`, { valueAsNumber: true }), houses, '---')}
+ <div key={field.id} className="space-y-2 pb-3 mb-2 border-b border-slate-200 last:border-0">
+ <div className="flex items-center justify-between">
+ <span className="text-xs font-semibold text-slate-500">{t('operations.house', 'Galpón')} {i + 1}</span>
+ {i > 0 && (
+ <button type="button" onClick={() => removeBird(i)}
+ className="text-red-400 hover:text-red-600 p-0.5"><Trash2 size={14} /></button>
+ )}
  </div>
  <div>
- <label className={lc}>{t('operations.sex', 'Sexo')}</label>
+ <label className="text-xs font-medium text-slate-500">{t('operations.sourceHouse', 'Galpón origen (si hubo movimiento)')}</label>
+ <SearchSelect
+ value={watch(`bird_movements.${i}.source_house_id` as any) ?? ''}
+ onChange={(v) => setValue(`bird_movements.${i}.source_house_id` as any, v ? Number(v) : undefined)}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.selectSourceHouse', 'Opcional — solo si moviste aves...')}
+ searchPlaceholder="Buscar galpón origen..."
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.targetHouse', 'Galpón destino')}</label>
+ <SearchSelect
+ value={watch(`bird_movements.${i}.target_house_id` as any) ?? ''}
+ onChange={(v) => setValue(`bird_movements.${i}.target_house_id` as any, v ? Number(v) : undefined)}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
+ searchPlaceholder="Buscar galpón..."
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ />
+ </div>
+ <div className="grid grid-cols-2 gap-2">
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.sex', 'Sexo')}</label>
  <select {...register(`bird_movements.${i}.sex`)} className={ic}>
- <option value="male">M</option>
- <option value="female">H</option>
- <option value="mixed">Mix</option>
+ <option value="male">{t('operations.male', 'Macho')}</option>
+ <option value="female">{t('operations.female', 'Hembra')}</option>
+ <option value="mixed">{t('operations.mixed', 'Mixto')}</option>
  </select>
  </div>
  <div>
- <label className={lc}>{t('operations.quantity', 'Qty')}</label>
+ <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
  <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
  </div>
- <button type="button" onClick={() => removeBird(i)}
- className="h-11 w-10 flex items-center justify-center text-red-400 hover:text-red-600 border border-red-200 rounded-lg mt-4">
- <Trash2 size={13} />
- </button>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
+ <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.sampleSize', 'Muestra')}</label>
+ <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ </div>
+ </div>
  </div>
  ))}
  <button type="button" onClick={() => appendBird({ sex: 'mixed', quantity: 0 })}
  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
- <Plus size={14} /> {t('operations.addRow', 'Añadir galpón')}
+ <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
  </button>
  </div>
  )
