@@ -1395,16 +1395,71 @@ export default function OperationFormPage() {
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
- {/* ── SAP Purchase Order (grandparent_import & bird_reception: must be first) ── */}
+ {/* ── SAP Order selector (grandparent_import & bird_reception: must be first) ── */}
  {(eventType === 'grandparent_import' || eventType === 'bird_reception') && (
  <div>
+ {/* For breeder bird_reception: source type selector (transfer vs purchase) */}
+ {eventType === 'bird_reception' && stage?.startsWith('breeder') ? (
+ <>
+ <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('operations.receptionSource', 'Origen de las aves')}</label>
+ <div className="flex gap-3 mb-3">
+ <label className={`flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg border-2 cursor-pointer transition text-sm font-medium ${
+ watch('extra_data.reception_source' as any) === 'transfer'
+ ? 'border-[#5a9bba] bg-blue-50 text-[#5a9bba]'
+ : 'border-slate-200 text-slate-600'
+ }`}>
+ <input type="radio" name="reception_source" value="transfer"
+ checked={watch('extra_data.reception_source' as any) === 'transfer'}
+ onChange={() => { setValue('extra_data.reception_source' as any, 'transfer'); setValue('extra_data.sap_order_ref' as any, '') }}
+ className="sr-only" />
+ <span>{t('operations.receptionTransfer', 'Transferencia')}</span>
+ </label>
+ <label className={`flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg border-2 cursor-pointer transition text-sm font-medium ${
+ (watch('extra_data.reception_source' as any) || 'purchase') === 'purchase'
+ ? 'border-[#5a9bba] bg-blue-50 text-[#5a9bba]'
+ : 'border-slate-200 text-slate-600'
+ }`}>
+ <input type="radio" name="reception_source" value="purchase"
+ checked={!watch('extra_data.reception_source' as any) || watch('extra_data.reception_source' as any) === 'purchase'}
+ onChange={() => { setValue('extra_data.reception_source' as any, 'purchase'); setValue('extra_data.sap_order_ref' as any, '') }}
+ className="sr-only" />
+ <span>{t('operations.receptionPurchase', 'Orden de compra')}</span>
+ </label>
+ </div>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">
+ {watch('extra_data.reception_source' as any) === 'transfer'
+ ? t('operations.sapTransferOrder', 'Orden de transferencia SAP')
+ : t('operations.sapImportOrder', 'Orden de compra / importación SAP')}
+ </label>
+ <SearchSelect
+ value={watch('extra_data.sap_order_ref' as any) ?? ''}
+ onChange={(v) => {
+ setValue('extra_data.sap_order_ref' as any, v)
+ const sourceList = watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders
+ const order = sourceList.find((o: any) => (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === v)
+ if (order) {
+ if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
+ if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
+ if (order.extra_data?.breed_name) setValue('extra_data.breed_name' as any, order.extra_data.breed_name)
+ if (order.extra_data?.dispatch_date) setValue('extra_data.dispatch_date' as any, order.extra_data.dispatch_date)
+ if (order.extra_data?.avg_weight_male) setValue('extra_data.declared_avg_weight_m' as any, order.extra_data.avg_weight_male)
+ if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
+ }
+ }}
+ items={watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders}
+ placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
+ searchPlaceholder={watch('extra_data.reception_source' as any) === 'transfer' ? 'Buscar transferencia...' : 'Buscar orden de compra...'}
+ renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
+ />
+ </>
+ ) : (
+ <>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.sapImportOrder', 'Orden de compra / importación SAP')}</label>
  <SearchSelect
  value={watch('extra_data.sap_order_ref' as any) ?? ''}
  onChange={(v) => {
  setValue('extra_data.sap_order_ref' as any, v)
- // Auto-populate declared data from SAP order
- const order = sapPurchaseOrders.find((o: any) => (o.doc_number || o.ref_id || String(o.id)) === v)
+ const order = sapPurchaseOrders.find((o: any) => (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === v)
  if (order) {
  if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
  if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
@@ -1419,6 +1474,8 @@ export default function OperationFormPage() {
  searchPlaceholder="Buscar orden de compra..."
  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
  />
+ </>
+ )}
  </div>
  )}
  {/* ── Farm or Hatchery selector (multi-company scoped) ── */}
