@@ -207,7 +207,7 @@ export default function ReviewCenter() {
  <FilterGroup label={t('review.lot', 'Lote')}>
  <input
  type="text"
- placeholder="ID"
+ placeholder={t('common.id', 'ID')}
  value={lotId}
  onChange={e => { setLotId(e.target.value); setPage(0) }}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"

@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { Search, ChevronDown, X } from 'lucide-react'
 
 interface SearchSelectProps {
@@ -20,8 +21,8 @@ export default function SearchSelect({
  value,
  onChange,
  items,
- placeholder = 'Seleccionar...',
- searchPlaceholder = 'Buscar...',
+ placeholder,
+ searchPlaceholder,
  renderLabel = (x: any) => x.name || x.lot_code || x.code || String(x.id),
  renderSub,
  disabled = false,
@@ -29,7 +30,9 @@ export default function SearchSelect({
  className = '',
  minSearchLength = 0,
 }: SearchSelectProps) {
- const [open, setOpen] = useState(false)
+ const { t } = useTranslation()
+ const _placeholder = placeholder ?? t('common.select', 'Seleccionar...')
+ const _searchPlaceholder = searchPlaceholder ?? t('common.search', 'Buscar...')
  const [search, setSearch] = useState('')
  const containerRef = useRef<HTMLDivElement>(null)
  const inputRef = useRef<HTMLInputElement>(null)
@@ -85,7 +88,7 @@ export default function SearchSelect({
  type="text"
  value={search}
  onChange={e => setSearch(e.target.value)}
- placeholder={searchPlaceholder}
+ placeholder={_searchPlaceholder}
  className="flex-1 bg-transparent text-sm text-slate-900 outline-none placeholder"
  />
  <button type="button" onClick={() => { setOpen(false); setSearch('') }}
@@ -99,7 +102,7 @@ export default function SearchSelect({
  className={`flex items-center w-full h-11 px-3 border ${borderColor} rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left`}>
  <Search size={15} className="text-slate-400 shrink-0 mr-2" />
  <span className={`flex-1 truncate ${selectedLabel ? 'text-slate-900' : 'text-slate-400'}`}>
- {selectedLabel || placeholder}
+ {selectedLabel || _placeholder}
  </span>
  <ChevronDown size={15} className="text-slate-400 shrink-0 ml-2" />
  </button>

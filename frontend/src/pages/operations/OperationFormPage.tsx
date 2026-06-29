@@ -352,7 +352,8 @@ export default function OperationFormPage() {
  if (declared > 0) {
  const pct = ((received - declared) / declared) * 100
  if (Math.abs(pct) > 10) {
- const alertMsg = `⚠️ ALERTA: Cantidad recibida (${received}) difiere en ${pct.toFixed(1)}% de la orden SAP (${declared}).`
+ const alertMsg = t('operations.sapQtyAlert', '⚠️ ALERTA: Cantidad recibida ({{received}}) difiere en {{pct}}% de la orden SAP ({{declared}}).',
+   { received, pct: pct.toFixed(1), declared })
  observations = observations ? `${observations}\n${alertMsg}` : alertMsg
  }
  }
@@ -430,7 +431,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('cause_id' as any, v ? Number(v) : undefined)}
  items={mortalityCauses}
  placeholder={t('operations.selectCause', 'Seleccionar causa...')}
- searchPlaceholder="Buscar causa..."
+
  renderLabel={(x: any) => x.name}
  />
  </div>
@@ -453,7 +454,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('cull_cause_id' as any, v ? Number(v) : undefined)}
  items={cullCauses}
  placeholder={t('operations.selectCause', 'Seleccionar causa...')}
- searchPlaceholder="Buscar causa..."
+
  renderLabel={(x: any) => x.name}
  />
  </div>
@@ -476,7 +477,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
  items={vaccines}
  placeholder={t('operations.selectVaccine', 'Seleccionar vacuna...')}
- searchPlaceholder="Buscar vacuna..."
+
  renderLabel={(x: any) => x.name}
  />
  </div>
@@ -514,7 +515,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('medication_id' as any, v ? Number(v) : undefined)}
  items={medications}
  placeholder={t('operations.selectMedication', 'Seleccionar medicamento...')}
- searchPlaceholder="Buscar medicamento..."
+
  renderLabel={(x: any) => x.name}
  />
  </div>
@@ -592,7 +593,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('supplier_id' as any, v ? Number(v) : undefined)}
  items={suppliers}
  placeholder={t('operations.selectSupplier', 'Seleccionar proveedor...')}
- searchPlaceholder="Buscar proveedor..."
+
  renderLabel={(s: any) => s.name}
  />
  </div>
@@ -603,7 +604,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('bird_movements.0.breed_id' as any, v ? Number(v) : undefined)}
  items={breeds}
  placeholder={t('operations.selectBreed', 'Seleccionar línea...')}
- searchPlaceholder="Buscar raza..."
+
  renderLabel={(b: any) => b.name}
  />
  </div>
@@ -628,7 +629,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue(`bird_movements.${i}.target_house_id` as any, v ? Number(v) : undefined)}
  items={farmHouses.length > 0 ? farmHouses : houses}
  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
- searchPlaceholder="Buscar galpón..."
+
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
@@ -699,7 +700,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue(`bird_movements.${i}.source_house_id` as any, v ? Number(v) : undefined)}
  items={farmHouses.length > 0 ? farmHouses : houses}
  placeholder={t('operations.selectSourceHouse', 'Opcional — solo si moviste aves...')}
- searchPlaceholder="Buscar galpón origen..."
+
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
@@ -710,7 +711,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue(`bird_movements.${i}.target_house_id` as any, v ? Number(v) : undefined)}
  items={farmHouses.length > 0 ? farmHouses : houses}
  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
- searchPlaceholder="Buscar galpón..."
+
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
@@ -755,7 +756,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('bird_movements.0.source_house_id' as any, v ? Number(v) : undefined)}
  items={farmHouses.length > 0 ? farmHouses : houses}
  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
- searchPlaceholder="Buscar galpón..."
+
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
@@ -766,7 +767,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('bird_movements.0.target_house_id' as any, v ? Number(v) : undefined)}
  items={farmHouses.length > 0 ? farmHouses : houses}
  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
- searchPlaceholder="Buscar galpón..."
+
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
@@ -790,7 +791,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('destination_farm_id' as any, v ? Number(v) : undefined)}
  items={farms}
  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
- searchPlaceholder="Buscar granja destino..."
+
  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
  />
  </div>
@@ -801,7 +802,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('destination_plant_id' as any, v ? Number(v) : undefined)}
  items={processingPlants}
  placeholder={t('operations.selectType', 'Seleccionar planta...')}
- searchPlaceholder="Buscar planta..."
+
  renderLabel={(p: any) => p.name}
  />
  </div>
@@ -812,7 +813,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
  items={transports}
  placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
- searchPlaceholder="Buscar transporte..."
+
  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
  />
  </div>
@@ -823,7 +824,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
  items={sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder="Buscar orden..."
+
  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}`}
  />
  </div>
@@ -927,7 +928,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('feed_movements.0.sap_order_id' as any, v || undefined)}
  items={sapOrders}
  placeholder={t('operations.noOrder', 'Sin orden')}
- searchPlaceholder="Buscar orden SAP..."
+
  renderLabel={(s: any) => s.sap_code || s.reference || s.id}
  />
  </div>
@@ -987,7 +988,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('hatchery_params.0.incubator_id' as any, v ? Number(v) : undefined)}
  items={incubators}
  placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
- searchPlaceholder="Buscar incubadora..."
+
  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
  />
  </div>
@@ -998,7 +999,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
  items={transports}
  placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
- searchPlaceholder="Buscar transporte..."
+
  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
  />
  </div>
@@ -1089,7 +1090,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('extra_data.source_farm_id' as any, v ? Number(v) : undefined)}
  items={farms}
  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
- searchPlaceholder="Buscar granja..."
+
  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
  />
  </div>
@@ -1100,7 +1101,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
  items={transports}
  placeholder={t('operations.selectTransport', 'Seleccionar...')}
- searchPlaceholder="Buscar transporte..."
+
  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
  />
  </div>
@@ -1159,7 +1160,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue(`house_inspections.${i}.house_id` as any, v ? Number(v) : undefined as any)}
  items={farmHouses.length > 0 ? farmHouses : houses}
  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
- searchPlaceholder="Buscar galpón..."
+
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
@@ -1261,7 +1262,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
  items={transports}
  placeholder={t('operations.selectTransport', 'Seleccionar...')}
- searchPlaceholder="Buscar transporte..."
+
  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
  />
  </div>
@@ -1312,7 +1313,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue(`hatchery_params.${i}.hatcher_id` as any, v ? Number(v) : undefined)}
  items={hatchers}
  placeholder={t('operations.selectHatcher', 'Seleccionar nacedora...')}
- searchPlaceholder="Buscar nacedora..."
+
  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
  />
  )
@@ -1322,7 +1323,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue(`hatchery_params.${i}.incubator_id` as any, v ? Number(v) : undefined)}
  items={incubators}
  placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
- searchPlaceholder="Buscar incubadora..."
+
  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
  />
  )
@@ -1381,7 +1382,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('hatchery_params.0.incubator_id' as any, v ? Number(v) : undefined)}
  items={incubators}
  placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
- searchPlaceholder="Buscar incubadora..."
+
  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
  />
  </div>
@@ -1451,7 +1452,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('hatchery_params.0.hatcher_id' as any, v ? Number(v) : undefined)}
  items={hatchers}
  placeholder={t('operations.selectHatcher', 'Seleccionar nacedora...')}
- searchPlaceholder="Buscar nacedora..."
+
  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
  />
  </div>
@@ -1509,7 +1510,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
  items={vaccines}
  placeholder={t('operations.selectVaccine', 'Seleccionar vacuna...')}
- searchPlaceholder="Buscar vacuna..."
+
  renderLabel={(v: any) => v.name}
  />
  </div>
@@ -1549,7 +1550,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('destination_farm_id' as any, v ? Number(v) : undefined)}
  items={farms}
  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
- searchPlaceholder="Buscar granja..."
+
  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
  />
  </div>
@@ -1560,7 +1561,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
  items={transports}
  placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
- searchPlaceholder="Buscar transporte..."
+
  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
  />
  </div>
@@ -1864,7 +1865,7 @@ export default function OperationFormPage() {
  }}
  items={hatcheries}
  placeholder={t('operations.selectHatchery', 'Seleccionar incubadora...')}
- searchPlaceholder="Buscar incubadora..."
+
  renderLabel={(h: any) => h.name}
  />
  </div>
@@ -1880,7 +1881,7 @@ export default function OperationFormPage() {
  }}
  items={farms}
  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
- searchPlaceholder="Buscar granja..."
+
  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
  />
  </div>
@@ -1894,7 +1895,7 @@ export default function OperationFormPage() {
  onChange={(v) => setValue('lot_id', v ? Number(v) : undefined as any)}
  items={filteredLots}
  placeholder={t('operations.selectLot', 'Seleccionar lote...')}
- searchPlaceholder="Buscar lote..."
+
  renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${l.status}` : ''}`}
  error={!!errors.lot_id}
  />

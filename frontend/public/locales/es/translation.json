@@ -51,7 +51,8 @@
     "current": "En progreso",
     "complete": "Completado",
     "by": "por",
-    "unknown": "Desconocido"
+    "unknown": "Desconocido",
+    "id": "ID"
   },
   "ui": {
     "filterPanel": {
@@ -706,7 +707,8 @@
     "tempTransport": "Temp. transporte (°C)",
     "durationTransport": "Duración transporte (min)",
     "storageTemp": "Temp. almacén (°C)",
-    "storageHumidity": "Humedad almacén (%)"
+    "storageHumidity": "Humedad almacén (%)",
+    "sapQtyAlert": "⚠️ ALERTA: Cantidad recibida ({{received}}) difiere en {{pct}}% de la orden SAP ({{declared}})."
   },
   "weekly": {
     "weekNumber": "N° Sem",
