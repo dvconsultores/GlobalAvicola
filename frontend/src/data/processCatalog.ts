@@ -178,7 +178,7 @@ export const OPERATION_CATEGORIES: OperationCategory[] = [
     fallback: 'Huevos',
     Icon: Egg,
     color: 'text-indigo-600',
-    events: ['egg_collection', 'egg_dispatch', 'egg_reception_hatchery'],
+    events: ['egg_collection', 'egg_dispatch', 'egg_reception_hatchery', 'egg_reception_classification'],
   },
   {
     key: 'incubation',
