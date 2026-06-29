@@ -1110,18 +1110,6 @@ export default function OperationFormPage() {
 
  case 'grandparent_import': return (
  <div className="space-y-4">
- {/* SAP Purchase Order */}
- <div>
- <label className={lc}>{t('operations.sapImportOrder', 'Orden de compra / importación SAP')}</label>
- <SearchSelect
- value={watch('extra_data.sap_order_ref' as any) ?? ''}
- onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
- items={sapPurchaseOrders}
- placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder="Buscar orden de compra..."
- renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.id}${o.vendor_name ? ` — ${o.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
- />
- </div>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.importCountry', 'País de origen')}</label>
@@ -1286,6 +1274,20 @@ export default function OperationFormPage() {
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+ {/* ── SAP Purchase Order (grandparent_import: must be first) ── */}
+ {eventType === 'grandparent_import' && (
+ <div>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.sapImportOrder', 'Orden de compra / importación SAP')}</label>
+ <SearchSelect
+ value={watch('extra_data.sap_order_ref' as any) ?? ''}
+ onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
+ items={sapPurchaseOrders}
+ placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
+ searchPlaceholder="Buscar orden de compra..."
+ renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.id}${o.vendor_name ? ` — ${o.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
+ />
+ </div>
+ )}
  {/* ── Farm or Hatchery selector (multi-company scoped) ── */}
  {isHatcheryStage ? (
  <div>
