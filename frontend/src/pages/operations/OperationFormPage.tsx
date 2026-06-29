@@ -977,7 +977,7 @@ export default function OperationFormPage() {
  </select>
  </div>
  <div>
- <label className="text-xs font-medium text-amber-700">{t('operations.densityBirdsM2', 'Densidad (huevos/bandeja)')}</label>
+ <label className="text-xs font-medium text-amber-700">{t('operations.eggDensity', 'Huevos por bandeja')}</label>
  <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="0" />
  </div>
  <div>
