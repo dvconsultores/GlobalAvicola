@@ -732,15 +732,17 @@ export default function OperationFormPage() {
  className="text-red-400 hover:text-red-600 p-1"><Trash2 size={16} /></button>
  )}
  </div>
- {/* House selector */}
+ {/* House selector — SearchSelect for large farm lists */}
  <div>
  <label className={lc}>{t('operations.selectHouse', 'Galpón')}</label>
- <select {...register(`house_inspections.${i}.house_id`, { valueAsNumber: true })} className={ic}>
- <option value="">{t('operations.selectHouse', 'Seleccionar galpón...')}</option>
- {(farmHouses.length > 0 ? farmHouses : houses).map((h: any) => (
- <option key={h.id} value={h.id}>{h.name}{h.capacity ? ` (cap. ${h.capacity})` : ''}</option>
- ))}
- </select>
+ <SearchSelect
+ value={watch(`house_inspections.${i}.house_id` as any) ?? ''}
+ onChange={(v) => setValue(`house_inspections.${i}.house_id` as any, v ? Number(v) : undefined as any)}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
+ searchPlaceholder="Buscar galpón..."
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ />
  </div>
  {/* T° and H° row */}
  <div className="flex flex-col gap-3">
