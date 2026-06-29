@@ -583,8 +583,8 @@ export default function OperationFormPage() {
  </div>
  )}
 
- {/* Supplier & Breed */}
- <div className="grid grid-cols-2 gap-3">
+ {/* Supplier & Breed — stacked on mobile, side-by-side on desktop */}
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
  <div>
  <label className={lc}>{t('operations.supplier', 'Proveedor')}</label>
  <SearchSelect
