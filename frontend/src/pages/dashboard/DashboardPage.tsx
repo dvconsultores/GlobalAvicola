@@ -588,6 +588,6 @@ export default function DashboardPage() {
 
  {/* Active operational alerts */}
  <AlertsWidget alerts={activeAlerts} onResolve={handleResolveAlert} />
- </>
+ </div>
  )
 }
