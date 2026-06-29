@@ -135,6 +135,11 @@ const operationSchema = z.object({
  litter_condition: z.string().optional(),
  litter_notes: z.string().optional(),
  equipment_notes: z.string().optional(),
+ equipment_count: z.number().optional(),
+ equipment_items: z.array(z.object({
+ equipment_type: z.string(),
+ observation: z.string().optional(),
+ })).optional(),
  })).optional(),
  egg_storage_records: z.array(z.object({
  eggs_received: z.number().optional(),
@@ -322,6 +327,18 @@ export default function OperationFormPage() {
  houseDetails.push({ house_id: h.house_id, parameter: 'litter_notes', value: h.litter_notes })
  if (h.equipment_notes)
  houseDetails.push({ house_id: h.house_id, parameter: 'equipment_notes', value: h.equipment_notes })
+ // Equipment items → individual inspection_details per equipment type
+ if (h.equipment_items) {
+ for (const item of h.equipment_items) {
+ if (item.equipment_type) {
+ houseDetails.push({
+ house_id: h.house_id,
+ parameter: `equipment_${item.equipment_type}`,
+ value: item.observation || '',
+ })
+ }
+ }
+ }
  }
 
  const payload: any = {
@@ -720,10 +737,16 @@ export default function OperationFormPage() {
  )
 
  case 'farm_inspection': {
+ const EQUIPMENT_TYPES = [
+ 'bebedero', 'comedero', 'ventilador', 'calefactor',
+ 'nebulizador', 'iluminación', 'cortina', 'extractor', 'otro',
+ ]
  return (
  <div className="space-y-4">
  <p className="text-xs text-slate-500">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
- {houseInspFields.map((field, i) => (
+ {houseInspFields.map((field, i) => {
+ const eqCount = watch(`house_inspections.${i}.equipment_count` as any) || 0
+ return (
  <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">
  <div className="flex items-center justify-between mb-1">
  <span className="text-sm font-semibold text-slate-600">{t('operations.house', 'Galpón')} {i + 1}</span>
@@ -786,14 +809,35 @@ export default function OperationFormPage() {
  <input type="text" {...register(`house_inspections.${i}.litter_notes`)}
  className={ic} placeholder={t('operations.litterNotesPlaceholder', 'Profundidad, renovación, etc.')} />
  </div>
- {/* Equipment notes */}
- <div>
- <label className={lc}>{t('operations.equipmentNotes', 'Estado de equipos (bebederos, comederos, ventiladores)')}</label>
- <input type="text" {...register(`house_inspections.${i}.equipment_notes`)}
- className={ic} placeholder={t('operations.equipmentNotesPlaceholder', 'Observaciones de equipos')} />
+ {/* ── Equipment items per house ── */}
+ <div className="bg-slate-50 rounded-lg p-3 space-y-3">
+ <label className={lc}>{t('operations.equipmentCount', '¿Cuántos equipos inspeccionar?')}</label>
+ <input type="number" min="0" max="20"
+ {...register(`house_inspections.${i}.equipment_count`, { valueAsNumber: true })}
+ className={ic} placeholder="0" />
+ {Array.from({ length: Math.min(eqCount, 20) }).map((_, j) => (
+ <div key={j} className="flex items-start gap-2 pl-2 border-l-2 border-blue-200">
+ <span className="text-xs font-bold text-blue-500 mt-3 shrink-0 w-5">{j + 1}</span>
+ <div className="flex-1 space-y-2">
+ <select {...register(`house_inspections.${i}.equipment_items.${j}.equipment_type`)} className={ic}>
+ <option value="">{t('operations.selectEquipment', 'Tipo de equipo...')}</option>
+ {EQUIPMENT_TYPES.map(eq => (
+ <option key={eq} value={eq}>{eq.charAt(0).toUpperCase() + eq.slice(1)}</option>
+ ))}
+ </select>
+ <input type="text"
+ {...register(`house_inspections.${i}.equipment_items.${j}.observation`)}
+ className={ic}
+ placeholder={t('operations.equipmentObservation', 'Observación del equipo...')} />
  </div>
  </div>
  ))}
+ {eqCount > 0 && (
+ <p className="text-xs text-slate-400">{t('operations.equipmentHint', 'Selecciona el tipo de equipo y registra su estado para cada uno')}</p>
+ )}
+ </div>
+ </div>
+ )})}
  <button type="button"
  onClick={() => appendHouseInsp({ litter_condition: '' })}
  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
