@@ -611,6 +611,31 @@ SAP_REFS = [
     {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001007",
      "description": "OC Vacunas Newcastle B1 — 10,000 dosis",
      "quantity": 10000, "unit": "DS"},
+    # Purchase Orders por etapa (cobertura para pruebas en vivo)
+    {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001011",
+     "description": "OC Progenitoras Producción — alimento fase postura",
+     "quantity": 12000, "unit": "KG",
+     "extra_data": {"stage": "grandparent_production", "process": "progenitoras"}},
+    {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001012",
+     "description": "OC Reproductoras Cría — reposición de aves",
+     "quantity": 6200, "unit": "UN",
+     "extra_data": {"stage": "breeder_rearing", "process": "reproductoras"}},
+    {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001013",
+     "description": "OC Reproductoras Producción — alimento fase pico",
+     "quantity": 16000, "unit": "KG",
+     "extra_data": {"stage": "breeder_production", "process": "reproductoras"}},
+    {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001014",
+     "description": "OC Incubadora — insumos de incubación",
+     "quantity": 8000, "unit": "UN",
+     "extra_data": {"stage": "hatchery", "process": "incubadora"}},
+    {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001015",
+     "description": "OC Engorde — alimento crecimiento lote BO",
+     "quantity": 22000, "unit": "KG",
+     "extra_data": {"stage": "broiler", "process": "engorde"}},
+    {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001016",
+     "description": "OC Engorde — medicamento preventivo de lote",
+     "quantity": 5000, "unit": "DS",
+     "extra_data": {"stage": "broiler", "process": "engorde"}},
     # Transfer Orders (transferencias entre granjas/plantas)
     {"ref_type": SapReferenceType.TRANSFER_ORDER, "sap_code": "STO-4800002001",
      "description": "Transferencia huevos fértiles GP → Incubadora",
@@ -621,6 +646,12 @@ SAP_REFS = [
     {"ref_type": SapReferenceType.TRANSFER_ORDER, "sap_code": "STO-4800002003",
      "description": "Transferencia pollitos engorde → Granja E1",
      "quantity": 19000, "unit": "UN"},
+    {"ref_type": SapReferenceType.TRANSFER_ORDER, "sap_code": "STO-4800002004",
+     "description": "Transferencia huevos fértiles BR → Incubadora",
+     "quantity": 12000, "unit": "UN"},
+    {"ref_type": SapReferenceType.TRANSFER_ORDER, "sap_code": "STO-4800002005",
+     "description": "Transferencia pollitos incubadora → Granja E2",
+     "quantity": 18000, "unit": "UN"},
     # Materials
     {"ref_type": SapReferenceType.MATERIAL, "sap_code": "MAT-100001",
      "description": "Alimento Iniciador BB pellet", "unit": "KG"},
@@ -650,13 +681,19 @@ async def seed_sap_references(session: AsyncSession):
     admin_id = await _get_id(session, User, username="admin")
     count = 0
     for ref in SAP_REFS:
-        if await _exists(session, SapReference, sap_code=ref["sap_code"], ref_type=ref["ref_type"]):
+        if await _exists(
+            session,
+            SapReference,
+            company_id=COMPANY_ID,
+            sap_code=ref["sap_code"],
+            ref_type=ref["ref_type"],
+        ):
             count += 1
             continue
         sr = SapReference(
             company_id=COMPANY_ID, ref_type=ref["ref_type"], sap_code=ref["sap_code"],
             description=ref["description"], quantity=ref.get("quantity"),
-            unit=ref.get("unit"), imported_by_id=admin_id,
+            unit=ref.get("unit"), extra_data=ref.get("extra_data"), imported_by_id=admin_id,
         )
         session.add(sr)
         count += 1
