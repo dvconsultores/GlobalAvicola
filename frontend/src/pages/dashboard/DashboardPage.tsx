@@ -11,6 +11,7 @@ import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
 import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
+import { normalizeLanguage } from '../../i18n'
 
 // ── Alert severity styles ───────────────────────────────────────────────────
 const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
@@ -73,6 +74,7 @@ function AlertsWidget({ alerts, onResolve }: {
 
 export default function DashboardPage() {
  const { t, i18n } = useTranslation()
+ const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
  const location = useLocation()
  const { user } = useAuthStore()
  const { activeCompanyName } = useCompanyStore()
@@ -452,7 +454,7 @@ export default function DashboardPage() {
  <div>
  <h1 className="text-xl font-semibold text-slate-900">{t('nav.dashboard')}</h1>
  <p className="text-sm text-slate-400 mt-0.5">
- {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(i18n.language === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
+ {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(currentLang === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
  </p>
  </div>
 

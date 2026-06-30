@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
 import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
+import { normalizeLanguage } from './i18n'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
@@ -106,10 +107,12 @@ const masterEntities = [
 ]
 
 export default function App() {
+ const { i18n } = useTranslation()
  const { token, isLoading, fetchMe } = useAuthStore()
  const navigate = useNavigate()
  const location = useLocation()
  const { enableClosingConfirmation } = useTelegram()
+ const appLanguage = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
  // Restore full session on app load — fetchMe always runs when token exists
  useEffect(() => {
@@ -141,7 +144,7 @@ export default function App() {
 
  return (
  <ToastProvider>
- <Routes>
+ <Routes key={appLanguage}>
  <Route path="/login" element={<LoginPage />} />
  <Route
  element={

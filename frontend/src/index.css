@@ -89,6 +89,35 @@ body {
   background: #f1f5f9;
 }
 
+:root {
+  --app-content-max-width: 1280px;
+  --app-content-mobile-x: 12px;
+  --app-content-web-x: 16px;
+}
+
+@media (min-width: 640px) {
+  :root { --app-content-web-x: 20px; }
+}
+
+@media (min-width: 1024px) {
+  :root { --app-content-web-x: 24px; }
+}
+
+/* Global page shell: one place to control margins for every routed page. */
+.app-content-shell > * {
+  width: 100%;
+  max-width: var(--app-content-max-width) !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  padding-left: var(--app-content-mobile-x) !important;
+  padding-right: var(--app-content-mobile-x) !important;
+}
+
+.app-content-shell.app-content-shell-web > * {
+  padding-left: var(--app-content-web-x) !important;
+  padding-right: var(--app-content-web-x) !important;
+}
+
 #root { min-height: 100vh; }
 p { margin: 0; }
 

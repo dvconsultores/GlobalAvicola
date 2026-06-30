@@ -6,6 +6,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { useLocation, Link } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
+import { normalizeLanguage, nextLanguage } from '../../i18n'
 import { X, Globe, LogOut, ArrowLeft, Bird, Sprout, Home, ShieldCheck, RefreshCw, BarChart3, Database, Settings, Users, ClipboardList, CheckCircle } from 'lucide-react'
 import { getNavItemsForViewType, getNavSectionsForItems, type NavItem } from '../../data/navigationConfig'
 
@@ -40,6 +41,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  const [selectedSection, setSelectedSection] = useState<string | null>(null)
  const [itemStack, setItemStack] = useState<NavItem[]>([])
  const closeRef = useRef<HTMLButtonElement>(null)
+ const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
  const navItems = useMemo(() => getNavItemsForViewType(user?.view_type), [user?.view_type])
  const navSections = useMemo(
@@ -187,10 +189,10 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
 
  {/* Footer */}
  <div className="border-t border-slate-100 px-3 py-2 space-y-1">
- <button onClick={() => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')}
+ <button onClick={() => i18n.changeLanguage(nextLanguage(i18n.resolvedLanguage || i18n.language))}
  className="w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-900 hover:bg-slate-50:bg-slate-800 transition-colors">
  <Globe size={14} />
- {i18n.language === 'es' ? t('lang.toggleEn', 'English') : t('lang.toggleEs', 'Español')}
+ {currentLang === 'es' ? t('lang.toggleEn', 'English') : t('lang.toggleEs', 'Español')}
  </button>
  {user && (
  <p className="text-xs text-slate-900 px-3 text-center">

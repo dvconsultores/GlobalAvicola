@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
+import { normalizeLanguage, nextLanguage } from '../../i18n'
 import { Globe, Bird, Building2, ChevronDown, Check } from 'lucide-react'
 
 export default function Header() {
@@ -10,6 +11,7 @@ export default function Header() {
  const { activeCompanyId, activeCompanyName, companies, isSwitching, fetchCompanies, switchCompany } = useCompanyStore()
  const [companyOpen, setCompanyOpen] = useState(false)
  const companyRef = useRef<HTMLDivElement>(null)
+ const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
  const isSuperAdmin = user?.is_super_admin === true
 
@@ -36,7 +38,7 @@ export default function Header() {
  await switchCompany(id, name)
  }
 
- const toggleLang = () => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
+ const toggleLang = () => i18n.changeLanguage(nextLanguage(i18n.resolvedLanguage || i18n.language))
 
  const initials = [user?.first_name?.charAt(0), user?.last_name?.charAt(0)]
  .filter(Boolean).join('').toUpperCase() || user?.username?.charAt(0)?.toUpperCase() || '?'
@@ -49,10 +51,10 @@ export default function Header() {
  <button
  onClick={toggleLang}
  className="inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-xs font-semibold text-slate-400 hover:bg-slate-100:bg-dark-card hover:text-slate-600:text-slate-300 transition-colors"
- title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+ title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
  >
  <Globe size={12} />
- {i18n.language === 'es' ? 'EN' : 'ES'}
+ {currentLang === 'es' ? 'EN' : 'ES'}
  </button>
 
  {/* Divider */}
@@ -172,10 +174,10 @@ export default function Header() {
  onClick={toggleLang}
  className="text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all"
  style={{ background: 'rgba(255,255,255,0.08)', color: 'rgba(111,171,197,0.9)' }}
- title={i18n.language === 'es' ? 'Switch to English' : 'Cambiar a Español'}
+ title={currentLang === 'es' ? 'Switch to English' : 'Cambiar a Español'}
  >
  <Globe size={15} />
- {i18n.language === 'es' ? 'EN' : 'ES'}
+ {currentLang === 'es' ? 'EN' : 'ES'}
  </button>
  </div>
  </header>

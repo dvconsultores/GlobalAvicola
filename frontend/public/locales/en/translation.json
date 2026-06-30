@@ -52,7 +52,11 @@
     "complete": "Complete",
     "by": "by",
     "unknown": "Unknown",
-    "id": "ID"
+    "id": "ID",
+    "clear": "Clear",
+    "confirmSignature": "Sign",
+    "options": "options",
+    "pending": "Pending"
   },
   "ui": {
     "filterPanel": {
@@ -138,7 +142,8 @@
       "integration": "INTEGRATION",
       "reports": "REPORTS",
       "administration": "ADMINISTRATION"
-    }
+    },
+    "kpi": "KPI"
   },
   "lang": {
     "toggleEs": "Español",
@@ -245,7 +250,8 @@
       "chooseOption": "Choose an option",
       "totalProcesses": "6 main processes",
       "totalOperations": "operations",
-      "hint": "Tap any process to see the available operations flow"
+      "hint": "Tap any process to see the available operations flow",
+      "phases": "phases"
     },
     "stage": {
       "lotLabel": "Select a lot (optional)",
@@ -423,7 +429,8 @@
     "todayMetrics": "Today",
     "quickActions": "Quick Actions",
     "hasPendingCorrections": "You have pending corrections",
-    "checkAndReview": "Review your rejected operations"
+    "checkAndReview": "Review your rejected operations",
+    "processKpi": "Poultry process KPIs"
   },
   "reports": {
     "mortality": "Mortality",
@@ -708,7 +715,48 @@
     "durationTransport": "Transport duration (min)",
     "storageTemp": "Storage temp. (°C)",
     "storageHumidity": "Storage humidity (%)",
-    "sapQtyAlert": "⚠️ ALERT: Received quantity ({{received}}) differs by {{pct}}% from SAP order ({{declared}})."
+    "sapQtyAlert": "⚠️ ALERT: Received quantity ({{received}}) differs by {{pct}}% from SAP order ({{declared}}).",
+    "sapOrderInfo": "SAP order information",
+    "declaredQty": "Declared quantity",
+    "dispatchDate": "Dispatch date",
+    "declaredAvgWeightM": "Avg male weight",
+    "declaredAvgWeightF": "Avg female weight",
+    "houseDistribution": "Distribution by house",
+    "avgWeightG": "Avg weight (g)",
+    "qtyOutOfRange": "Difference greater than 10%",
+    "qtyOutOfRangeDetail": "Received: {{received}} vs Declared: {{declared}} ({{pct}}%)",
+    "distributionHint": "Confirm reception distribution or register bird movement between houses",
+    "selectSourceHouse": "Optional - only if you moved birds...",
+    "birdExitHint": "Register bird exit for transfer or rearing cycle closure. If birds are not physically moved, leave destination and transport fields empty to close the cycle.",
+    "selectFarm": "Select farm...",
+    "selectSapOrder": "Select SAP document...",
+    "transportInspection": "Transport inspection",
+    "sameHouseTransition": "No transport and no destination = rearing cycle closure and production start in the same house. Birds will exit and re-enter the same lot to mark the transition.",
+    "eggDispatchHint": "Register fertile egg dispatch to hatchery or classification.",
+    "selectIncubator": "Select incubator...",
+    "eggDensity": "Density (eggs/tray)",
+    "eggReceptionHint": "Register egg reception at hatchery. Reference the SAP transfer order from dispatch.",
+    "equipmentCount": "How many equipment items to inspect?",
+    "selectEquipment": "Select equipment...",
+    "equipmentObservation": "Equipment observation...",
+    "equipmentHint": "Record status and observations for each inspected equipment item.",
+    "selectHatcher": "Select hatcher...",
+    "birthCounts": "Birth counts",
+    "birthVaccination": "At-birth vaccination",
+    "selectRoute": "Select route...",
+    "routeSpray": "Spray",
+    "routeWater": "Drinking water",
+    "routeInjection": "Injection",
+    "routeEye": "Ocular",
+    "routeGel": "Gel",
+    "vaccineLotNumber": "Vaccine lot number",
+    "chickDispatchHint": "Register chick dispatch to destination lot.",
+    "receptionSource": "Reception source",
+    "receptionTransfer": "SAP transfer",
+    "receptionPurchase": "Purchase / import",
+    "sapTransferOrder": "SAP transfer order",
+    "sapImportOrder": "SAP purchase/import order",
+    "selectHatchery": "Select hatchery..."
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -814,7 +862,8 @@
     "hatcheryLotId": "Target hatchery lot",
     "broilerLotId": "Target broiler lot",
     "quantity": "Quantity",
-    "dispatchDate": "Dispatch date"
+    "dispatchDate": "Dispatch date",
+    "destinationLotId": "Destination lot (breeder or broiler)"
   },
   "company": {
     "selector": "Active company",
@@ -873,6 +922,9 @@
     "uniformity": "Uniformity",
     "samples": "Samples",
     "meanWeight": "Mean weight",
-    "europeanProductionIndex": "European Production Index"
+    "europeanProductionIndex": "European Production Index",
+    "afcr": "Adjusted FCR",
+    "totalFeed": "Total feed",
+    "totalWeight": "Total weight"
   }
 }

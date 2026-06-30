@@ -1,7 +1,8 @@
 import { create } from 'zustand'
 import { persist } from 'zustand/middleware'
+import i18n, { normalizeLanguage, nextLanguage, type AppLanguage } from '../i18n'
 
-type SupportedLocale = 'es' | 'en'
+type SupportedLocale = AppLanguage
 
 interface I18nState {
   /** Currently selected locale */
@@ -20,24 +21,19 @@ interface I18nState {
 export const useI18nStore = create<I18nState>()(
   persist(
     (set) => ({
-      locale: 'es',
+      locale: normalizeLanguage(i18n.resolvedLanguage || i18n.language),
       setLocale: (locale) => {
         set({ locale })
-        // Sync with i18next instance if available
-        if (typeof window !== 'undefined') {
-          const i18n = (window as any).__i18n
-          i18n?.changeLanguage(locale)
+        const current = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
+        if (current !== locale) {
+          void i18n.changeLanguage(locale)
         }
       },
-      toggleLocale: () =>
-        set((state) => {
-          const next = state.locale === 'es' ? 'en' : 'es'
-          if (typeof window !== 'undefined') {
-            const i18n = (window as any).__i18n
-            i18n?.changeLanguage(next)
-          }
-          return { locale: next }
-        }),
+      toggleLocale: () => {
+        const next = nextLanguage(i18n.resolvedLanguage || i18n.language)
+        set({ locale: next })
+        void i18n.changeLanguage(next)
+      },
     }),
     { name: 'locale-storage' },
   ),

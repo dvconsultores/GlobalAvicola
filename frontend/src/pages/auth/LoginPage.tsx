@@ -5,6 +5,7 @@ import { z } from 'zod'
 import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useTranslation } from 'react-i18next'
+import { normalizeLanguage, nextLanguage } from '../../i18n'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Globe, Bird, ArrowRight, Lock, User, Eye, EyeOff } from 'lucide-react'
 
@@ -23,6 +24,7 @@ export default function LoginPage() {
  const [error, setError] = useState('')
  const [loading, setLoading] = useState(false)
  const [showPassword, setShowPassword] = useState(false)
+ const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
  const { register, handleSubmit, formState: { errors } } = useForm<LoginForm>({
  resolver: zodResolver(loginSchema),
@@ -44,7 +46,7 @@ export default function LoginPage() {
  }
  }
 
- const toggleLang = () => i18n.changeLanguage(i18n.language === 'es' ? 'en' : 'es')
+ const toggleLang = () => i18n.changeLanguage(nextLanguage(i18n.resolvedLanguage || i18n.language))
 
  return (
  <div className="min-h-screen bg-slate-100 flex flex-col items-center justify-center px-4">
@@ -161,7 +163,7 @@ export default function LoginPage() {
  className="inline-flex items-center gap-1.5 text-xs text-slate-400 hover transition-colors"
  >
  <Globe size={12} />
- {i18n.language === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}
+ {currentLang === 'es' ? t('lang.toggleEn') : t('lang.toggleEs')}
  </button>
  </div>
 

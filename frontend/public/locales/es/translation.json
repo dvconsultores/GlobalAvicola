@@ -52,7 +52,11 @@
     "complete": "Completado",
     "by": "por",
     "unknown": "Desconocido",
-    "id": "ID"
+    "id": "ID",
+    "clear": "Limpiar",
+    "confirmSignature": "Firmar",
+    "options": "opciones",
+    "pending": "Pendiente"
   },
   "ui": {
     "filterPanel": {
@@ -138,7 +142,8 @@
       "integration": "INTEGRACIÓN",
       "reports": "REPORTES",
       "administration": "ADMINISTRACIÓN"
-    }
+    },
+    "kpi": "KPI"
   },
   "lang": {
     "toggleEs": "Español",
@@ -245,7 +250,8 @@
       "chooseOption": "Elige una opción",
       "totalProcesses": "6 procesos principales",
       "totalOperations": "operaciones",
-      "hint": "Toca cualquier proceso para ver el flujo de operaciones disponibles"
+      "hint": "Toca cualquier proceso para ver el flujo de operaciones disponibles",
+      "phases": "fases"
     },
     "stage": {
       "lotLabel": "Selecciona un lote (opcional)",
@@ -423,7 +429,8 @@
     "todayMetrics": "Hoy",
     "quickActions": "Acciones Rápidas",
     "hasPendingCorrections": "Tienes correcciones pendientes",
-    "checkAndReview": "Revisa tus operaciones rechazadas"
+    "checkAndReview": "Revisa tus operaciones rechazadas",
+    "processKpi": "KPIs de procesos avicolas"
   },
   "reports": {
     "mortality": "Mortalidad",
@@ -708,7 +715,48 @@
     "durationTransport": "Duración transporte (min)",
     "storageTemp": "Temp. almacén (°C)",
     "storageHumidity": "Humedad almacén (%)",
-    "sapQtyAlert": "⚠️ ALERTA: Cantidad recibida ({{received}}) difiere en {{pct}}% de la orden SAP ({{declared}})."
+    "sapQtyAlert": "⚠️ ALERTA: Cantidad recibida ({{received}}) difiere en {{pct}}% de la orden SAP ({{declared}}).",
+    "sapOrderInfo": "Informacion de la orden SAP",
+    "declaredQty": "Cantidad declarada",
+    "dispatchDate": "Fecha despacho",
+    "declaredAvgWeightM": "Peso prom. machos",
+    "declaredAvgWeightF": "Peso prom. hembras",
+    "houseDistribution": "Distribucion por galpon",
+    "avgWeightG": "Peso prom. (g)",
+    "qtyOutOfRange": "Diferencia superior al 10%",
+    "qtyOutOfRangeDetail": "Recibido: {{received}} vs Declarado: {{declared}} ({{pct}}%)",
+    "distributionHint": "Confirma la distribucion de la recepcion o registra movimiento de aves entre galpones",
+    "selectSourceHouse": "Opcional - solo si moviste aves...",
+    "birdExitHint": "Registra la salida de aves para traslado o cierre de ciclo de cria. Si las aves no se mueven fisicamente, deja los campos de destino y transporte vacios para el cierre de ciclo.",
+    "selectFarm": "Seleccionar granja...",
+    "selectSapOrder": "Seleccionar documento SAP...",
+    "transportInspection": "Inspeccion del transporte",
+    "sameHouseTransition": "Sin transporte ni destino = cierre de ciclo de cria e inicio de produccion en el mismo galpon. Las aves saldran y reingresaran al mismo lote para marcar la transicion.",
+    "eggDispatchHint": "Registra el despacho de huevos fertiles hacia la incubadora o clasificacion.",
+    "selectIncubator": "Seleccionar incubadora...",
+    "eggDensity": "Densidad (huevos/bandeja)",
+    "eggReceptionHint": "Registra la recepcion de huevos en la incubadora. Referencia la orden de traslado SAP del despacho.",
+    "equipmentCount": "Cuantos equipos inspeccionar?",
+    "selectEquipment": "Seleccionar equipo...",
+    "equipmentObservation": "Observacion del equipo...",
+    "equipmentHint": "Registra estado y observaciones de cada equipo inspeccionado.",
+    "selectHatcher": "Seleccionar nacedora...",
+    "birthCounts": "Conteo de nacimientos",
+    "birthVaccination": "Vacunacion al nacimiento",
+    "selectRoute": "Seleccionar via...",
+    "routeSpray": "Aspersion (spray)",
+    "routeWater": "Agua de bebida",
+    "routeInjection": "Inyeccion",
+    "routeEye": "Ocular",
+    "routeGel": "Gel",
+    "vaccineLotNumber": "Lote de vacuna",
+    "chickDispatchHint": "Registra el despacho de pollitos hacia el lote destino.",
+    "receptionSource": "Origen de la recepcion",
+    "receptionTransfer": "Transferencia SAP",
+    "receptionPurchase": "Compra / importacion",
+    "sapTransferOrder": "Orden de traslado SAP",
+    "sapImportOrder": "Orden de compra / importacion SAP",
+    "selectHatchery": "Seleccionar incubadora..."
   },
   "weekly": {
     "weekNumber": "N° Sem",
@@ -814,7 +862,8 @@
     "hatcheryLotId": "Lote de incubadora destino",
     "broilerLotId": "Lote de engorde destino",
     "quantity": "Cantidad",
-    "dispatchDate": "Fecha de despacho"
+    "dispatchDate": "Fecha de despacho",
+    "destinationLotId": "Lote destino (reproductoras o engorde)"
   },
   "company": {
     "selector": "Empresa activa",
@@ -873,6 +922,9 @@
     "uniformity": "Uniformidad",
     "samples": "Muestras",
     "meanWeight": "Peso medio",
-    "europeanProductionIndex": "Índice Europeo de Producción"
+    "europeanProductionIndex": "Índice Europeo de Producción",
+    "afcr": "FCR ajustado",
+    "totalFeed": "Alimento total",
+    "totalWeight": "Peso total"
   }
 }

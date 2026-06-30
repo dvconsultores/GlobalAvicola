@@ -56,6 +56,11 @@ export default function StageTimeline({
  const isCurrent = currentStage === stage.event
  const isExpanded = expandedIndex === index
  const colorIndex = index % STAGE_COLORS.length
+ const statusLabel = isCompleted
+ ? t('common.completed', 'Completed')
+ : isCurrent
+ ? t('common.current', 'In progress')
+ : t('common.pending', 'Pending')
 
  return (
  <div key={stage.event} className="relative">
@@ -73,7 +78,7 @@ export default function StageTimeline({
  } ${isCompleted ? 'border-green-300 bg-green-50' : isCurrent ? STAGE_BORDER_COLORS[colorIndex] : 'border-slate-200'}`}
  aria-expanded={isExpanded}
  aria-controls={`stage-content-${index}`}
- aria-label={`${t(`events.${stage.event}`, stage.event)} - ${t('common.' + (isCompleted ? 'completed' : isCurrent ? 'current' : 'pending'), isCompleted ? 'Completado' : isCurrent ? 'En progreso' : 'Pendiente')}`}
+ aria-label={`${t(`events.${stage.event}`, stage.event)} - ${statusLabel}`}
  >
  <div className={`relative p-4 ${isCompleted ? 'bg-gradient-to-br from-green-50 to-emerald-50' : ''}`}>
  <div className="flex items-start gap-4">
