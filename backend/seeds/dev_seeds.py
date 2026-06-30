@@ -117,7 +117,10 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
     for role_data in roles_data:
         # Check if role already exists
         existing = await session.execute(select(Role).where(Role.name == role_data["name"]))
-        if existing.scalar_one_or_none():
+        existing_role = existing.scalar_one_or_none()
+        if existing_role:
+            created_roles[role_data["name"]] = existing_role
+            print(f"  ⏭️  Rol: {existing_role.name} (ya existe)")
             continue
 
         role = Role(name=role_data["name"], description=role_data["description"])
@@ -231,17 +234,36 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
     for user_data in users_data:
         existing = await session.execute(select(User).where(User.username == user_data["username"]))
         existing_user = existing.scalar_one_or_none()
+        desired_view = user_data.get("view_type", "web")
+        desired_company = user_data.get("company_id")
+        desired_role = roles.get(user_data["role_name"])
+
         if existing_user:
-            desired_view = user_data.get("view_type", "web")
+            updates = []
             if existing_user.view_type != desired_view:
                 existing_user.view_type = desired_view
+                updates.append(f"view_type={desired_view}")
+
+            if desired_role and existing_user.role_id != desired_role.id:
+                existing_user.role_id = desired_role.id
+                updates.append(f"role_id={desired_role.id}")
+
+            if existing_user.company_id != desired_company:
+                existing_user.company_id = desired_company
+                updates.append(f"company_id={desired_company}")
+
+            if updates:
                 session.add(existing_user)
-                print(f"  🔄 Usuario '{user_data['username']}' ya existe, view_type actualizado a '{desired_view}'")
+                print(f"  🔄 Usuario '{user_data['username']}' actualizado: {', '.join(updates)}")
             else:
                 print(f"  ⏭️  Usuario '{user_data['username']}' ya existe, saltando...")
             continue
 
-        role = roles.get(user_data["role_name"])
+        role = desired_role
+        if not role:
+            print(f"  ❌ Usuario '{user_data['username']}' no creado: rol '{user_data['role_name']}' no encontrado")
+            continue
+
         user = User(
             first_name=user_data["first_name"],
             last_name=user_data["last_name"],
@@ -249,9 +271,9 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             username=user_data["username"],
             phone=None,
             hashed_password=hash_password(user_data["password"]),
-            role_id=role.id if role else None,
-            company_id=user_data.get("company_id"),
-            view_type=user_data.get("view_type", "web"),
+            role_id=role.id,
+            company_id=desired_company,
+            view_type=desired_view,
         )
         session.add(user)
         print(f"  ✅ Usuario: {user.username} ({user_data['role_name']}) [empresa_id={user_data.get('company_id')}]")
