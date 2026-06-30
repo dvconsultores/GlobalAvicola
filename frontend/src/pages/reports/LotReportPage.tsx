@@ -50,10 +50,10 @@ export default function LotReportPage() {
  }
  }
 
- if (!report) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
+ if (!report) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
 
  return (
- <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+ <div className="py-4 sm:py-6">
  <Link to="/reports" className="text-slate-400 hover flex items-center gap-1 mb-4"><ArrowLeft size={16} /> {t('nav.reports')}</Link>
  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
  <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('reports.lotReport')}: {report.lot?.lot_code || `${t('lots.title')} #${report.lot?.id}`}</h1>
@@ -135,8 +135,8 @@ export default function LotReportPage() {
  <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
  <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.meanWeight', 'Peso medio')}</dt><dd className="font-medium">{kpiUniformity.mean_weight_g?.toFixed(1) ?? '—'}g</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.samples', 'Muestras')}</dt><dd className="font-medium">{kpiUniformity.n_samples}</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">Min</dt><dd className="font-medium">{kpiUniformity.min_weight_g?.toFixed(1) ?? '—'}g</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">Max</dt><dd className="font-medium">{kpiUniformity.max_weight_g?.toFixed(1) ?? '—'}g</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('common.min')}</dt><dd className="font-medium">{kpiUniformity.min_weight_g?.toFixed(1) ?? '—'}g</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('common.max')}</dt><dd className="font-medium">{kpiUniformity.max_weight_g?.toFixed(1) ?? '—'}g</dd></div>
  </dl>
  </div>
  )}

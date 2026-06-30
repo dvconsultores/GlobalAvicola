@@ -81,7 +81,7 @@ class InspectionDetailSchema(BaseModel):
 # ============================================================
 
 class OperationalEventBase(BaseModel):
-    lot_id: int
+    lot_id: Optional[int] = None
     farm_id: Optional[int] = None
     house_id: Optional[int] = None
     event_type: str

@@ -79,8 +79,8 @@ export default function LotDetailPage() {
  }
  }
 
- if (loading) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
- if (!lot) return <div className="p-6 text-slate-500">{t('lots.lotNotFound')}</div>
+ if (loading) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
+ if (!lot) return <div className="py-4 sm:py-6 text-slate-500">{t('lots.lotNotFound')}</div>
 
  const birdType: string = lot.bird_type || 'broiler'
  const activePhase = phases.find((p: any) => p.is_active)
@@ -143,7 +143,7 @@ export default function LotDetailPage() {
 
  return (
  <>
- <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+ <div className="py-4 sm:py-6">
  {/* ── Header ── */}
  <div className="flex items-center gap-3 mb-6">
  <Link to="/lots" className="text-slate-400 hover transition-colors">

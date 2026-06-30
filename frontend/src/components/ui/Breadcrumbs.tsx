@@ -36,7 +36,7 @@ export default function Breadcrumbs({
  if (!items || items.length === 0) return null
 
  return (
- <nav aria-label="Breadcrumb" className={`flex items-center gap-1 text-xs font-medium ${className}`}>
+ <nav aria-label={t('common.breadcrumb')} className={`flex items-center gap-1 text-xs font-medium ${className}`}>
  {showHomeIcon && items.length > 1 && (
  <>
  <Link to="/" className="text-slate-900 hover:text-blue-600:text-blue-400 transition-colors shrink-0">

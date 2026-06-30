@@ -124,12 +124,12 @@ export default function StageTimeline({
  {t(`events.${stage.event}`, stage.event)}
  </h4>
  {isCompleted && (
- <span className="inline-flex items-center text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full" aria-label="Completado">
+ <span className="inline-flex items-center text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded-full" aria-label={t('common.completed')}>
  ✓ {t('common.completed', 'Completado')}
  </span>
  )}
  {isCurrent && !isCompleted && (
- <span className="inline-flex items-center text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full" aria-label="En progreso">
+ <span className="inline-flex items-center text-xs font-bold text-blue-700 bg-blue-100 px-2 py-0.5 rounded-full" aria-label={t('common.current')}>
  → {t('common.current', 'En progreso')}
  </span>
  )}

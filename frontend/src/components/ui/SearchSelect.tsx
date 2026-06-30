@@ -153,7 +153,7 @@ export default function SearchSelect({
  {open && (
  <div className="absolute z-50 left-0 right-0 mt-1 max-h-52 overflow-y-auto bg-white border border-slate-200 rounded-lg shadow-lg">
  {filtered.length === 0 ? (
- <p className="px-3 py-3 text-xs text-slate-400 text-center">Sin resultados</p>
+ <p className="px-3 py-3 text-xs text-slate-400 text-center">{t('common.noResults')}</p>
  ) : (
  filtered.map((item: any) => {
  const isSelected = String(item.id) === String(value)

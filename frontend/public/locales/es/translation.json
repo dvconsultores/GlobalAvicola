@@ -54,6 +54,9 @@
     "unknown": "Desconocido",
     "id": "ID",
     "clear": "Limpiar",
+    "breadcrumb": "Ruta de navegación",
+    "min": "Mín",
+    "max": "Máx",
     "confirmSignature": "Firmar",
     "options": "opciones",
     "pending": "Pendiente"
@@ -90,7 +93,9 @@
     "passwordMinLength": "Contraseña debe tener al menos 6 caracteres",
     "loginSubtitle": "Ingresa tus credenciales para continuar",
     "usernamePlaceholder": "usuario",
-    "passwordPlaceholder": "contraseña"
+    "passwordPlaceholder": "contraseña",
+    "showPassword": "Mostrar contraseña",
+    "hidePassword": "Ocultar contraseña"
   },
   "brand": {
     "name": "Global Avícola",
@@ -668,9 +673,12 @@
     "fcr": "FCR (Conversión alimenticia)",
     "totalMortality": "Mortalidad total (%)",
     "importCountry": "País de origen",
+    "importCountryPlaceholder": "Ej. Francia",
     "sanitaryCert": "Certificado sanitario",
+    "sanitaryCertPlaceholder": "No. de certificado",
     "quarantineDays": "Días de cuarentena",
     "importDoc": "Documento de importación",
+    "importDocPlaceholder": "No. de guía",
     "addRow": "Añadir fila",
     "addMachine": "Añadir máquina",
     "addHouseRows": "Una fila por galpón destino",
@@ -717,6 +725,7 @@
     "storageHumidity": "Humedad almacén (%)",
     "sapQtyAlert": "⚠️ ALERTA: Cantidad recibida ({{received}}) difiere en {{pct}}% de la orden SAP ({{declared}}).",
     "sapOrderInfo": "Informacion de la orden SAP",
+    "purchaseOrderAbbrev": "OC",
     "declaredQty": "Cantidad declarada",
     "dispatchDate": "Fecha despacho",
     "declaredAvgWeightM": "Peso prom. machos",
@@ -863,7 +872,9 @@
     "broilerLotId": "Lote de engorde destino",
     "quantity": "Cantidad",
     "dispatchDate": "Fecha de despacho",
-    "destinationLotId": "Lote destino (reproductoras o engorde)"
+    "destinationLotId": "Lote destino (reproductoras o engorde)",
+    "hatcheryLotIdPlaceholder": "ID del lote de incubadora",
+    "destinationLotIdPlaceholder": "ID del lote destino"
   },
   "company": {
     "selector": "Empresa activa",
@@ -871,7 +882,8 @@
     "switching": "Cambiando empresa...",
     "switchSuccess": "Empresa cambiada correctamente",
     "switchError": "No se pudo cambiar de empresa",
-    "allCompanies": "Todas las empresas"
+    "allCompanies": "Todas las empresas",
+    "noCompany": "Sin empresa"
   },
   "evidence": {
     "title": "Evidencias adjuntas",

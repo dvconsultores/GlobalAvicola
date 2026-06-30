@@ -108,7 +108,7 @@ export default function MenuHubPage() {
  ]
 
  return (
- <div className="max-w-5xl mx-auto">
+ <div>
  <SubNavHeader
  title={t(current.labelKey, current.fallback)}
  breadcrumbs={breadcrumbs}

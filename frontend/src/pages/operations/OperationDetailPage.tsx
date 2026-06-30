@@ -125,7 +125,7 @@ export default function OperationDetailPage() {
  if (!event) return <div className="p-6 text-slate-500">{t('operations.eventNotFound')}</div>
 
  return (
- <div className="p-4 sm:p-6 max-w-3xl mx-auto space-y-4">
+ <div className="py-4 sm:py-6 space-y-4">
  <Link to="/operations" className="text-slate-400 hover flex items-center gap-1 text-sm">
  <ArrowLeft size={16} /> {t('operations.backToOperations')}
  </Link>

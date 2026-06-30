@@ -46,7 +46,7 @@ export default function OperationListPage() {
  useEffect(() => { fetchEvents() }, [fetchEvents])
 
  return (
- <div className="p-6">
+ <div className="py-4 sm:py-6">
  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
  <div>
  <h1 className="text-2xl font-bold text-slate-800">{t('nav.operations')}</h1>

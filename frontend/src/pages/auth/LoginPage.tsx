@@ -123,7 +123,7 @@ export default function LoginPage() {
  onClick={() => setShowPassword(v => !v)}
  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover"
  tabIndex={-1}
- aria-label={showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+ aria-label={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
  >
  {showPassword ? <EyeOff size={16} /> : <Eye size={16} />}
  </button>

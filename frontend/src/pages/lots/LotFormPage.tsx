@@ -102,7 +102,7 @@ export default function LotFormPage() {
  const selectClass = 'w-full h-10 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-[#5a9bba] disabled:bg-slate-50 disabled'
 
  return (
- <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+ <div className="py-4 sm:py-6">
  {/* Header */}
  <div className="flex items-center gap-3 mb-6">
  <button

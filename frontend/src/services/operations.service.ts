@@ -2,7 +2,7 @@ import api from './api'
 
 export interface OperationEvent {
   id: number
-  lot_id: number
+  lot_id?: number
   event_type: string
   event_date: string
   status: string

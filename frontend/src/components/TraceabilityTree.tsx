@@ -327,7 +327,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  label={t('traceability.hatcheryLotId', 'Lote de incubadora destino')}
  type="number"
  min={1}
- placeholder="ID del lote HATCHERY"
+ placeholder={t('traceability.hatcheryLotIdPlaceholder')}
  value={eggForm.hatcheryLotId}
  onChange={e => setEggForm(prev => ({ ...prev, hatcheryLotId: e.target.value }))}
  />
@@ -369,7 +369,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  label={t('traceability.destinationLotId', 'Lote destino (reproductoras o engorde)')}
  type="number"
  min={1}
- placeholder="ID del lote destino"
+ placeholder={t('traceability.destinationLotIdPlaceholder')}
  value={chickForm.destinationLotId}
  onChange={e => setChickForm(prev => ({ ...prev, destinationLotId: e.target.value }))}
  />

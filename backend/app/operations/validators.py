@@ -349,14 +349,20 @@ async def validate_period_open(db: AsyncSession, event_date) -> None:
 
 async def validate_farm_house(event_type: str, farm_id: int | None, house_id: int | None) -> None:
     """F-03 / BR-08: Movements require farm/house when applicable."""
+    # Hatchery inspections are machine-scoped and can be recorded without lot/farm/house.
+    if event_type == "hatchery_inspection":
+        return
+
     location_events = {
         "bird_reception", "bird_distribution", "bird_transfer", "bird_exit",
         "farm_inspection", "transport_inspection", "egg_collection",
-        "egg_dispatch", "egg_reception_hatchery", "chick_dispatch", "hatchery_inspection",
+        "egg_dispatch", "egg_reception_hatchery", "chick_dispatch",
     }
     if event_type in location_events:
         if farm_id is None or farm_id <= 0:
             raise BusinessRuleViolation(f"El evento '{event_type}' requiere una granja asignada", "BR-08")
         if house_id is None or house_id <= 0:
+            if event_type == "farm_inspection":
+                raise BusinessRuleViolation("La inspección de granja requiere al menos un galpón", "BR-08")
             raise BusinessRuleViolation(f"El evento '{event_type}' requiere un galpón asignado", "BR-08")
 

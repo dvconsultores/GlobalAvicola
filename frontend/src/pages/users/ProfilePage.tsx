@@ -30,7 +30,7 @@ export default function ProfilePage() {
  }
 
  return (
- <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+ <div className="py-4 sm:py-6">
  <h1 className="text-2xl font-bold text-[#1E3A5F] flex items-center gap-2 mb-6"><User size={24} aria-hidden="true" /> {t('profile.title')}</h1>
 
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 mb-6">

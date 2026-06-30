@@ -106,7 +106,7 @@ export interface Lot {
 
 export interface OperationEvent {
   id: number
-  lot_id: number
+  lot_id?: number
   company_id: number
   event_type: EventType
   event_date: string

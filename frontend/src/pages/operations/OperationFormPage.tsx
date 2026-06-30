@@ -25,6 +25,11 @@ const HATCHER_TEMP_RANGE: [number, number] = [37.0, 37.5]
 const INCUBATOR_HUM_RANGE: [number, number] = [55, 62]
 const HATCHER_HUM_RANGE: [number, number] = [65, 75]
 
+const LOT_OPTIONAL_INSPECTION_EVENTS = new Set([
+ 'farm_inspection',
+ 'hatchery_inspection',
+])
+
 function getTempRange(birdType: string, ageWeeks: number): [number, number] {
  const zone = getThermalZone(birdType, 'rearing', ageWeeks)
  if (zone) return [zone.tempMin, zone.tempMax]
@@ -69,7 +74,9 @@ function RangeIndicator({ value, min, max, unit, weekLabel }: {
 // Zod Schema — covers all 24 operation types
 // ============================================================
 const operationSchema = z.object({
- lot_id: z.number({ message: 'operations.selectLot' }).min(1),
+ lot_id: z.number({ message: 'operations.selectLot' }).min(1).optional(),
+ farm_id: z.number().optional(),
+ house_id: z.number().optional(),
  event_type: z.string().min(1),
  event_date: z.string().min(1),
  observations: z.string().optional(),
@@ -150,6 +157,15 @@ const operationSchema = z.object({
  transport_duration_min: z.number().optional(),
  notes: z.string().optional(),
  })).optional(),
+}).superRefine((data, ctx) => {
+ if (!data.event_type) return
+ if (!LOT_OPTIONAL_INSPECTION_EVENTS.has(data.event_type) && (!data.lot_id || data.lot_id < 1)) {
+ ctx.addIssue({
+ code: z.ZodIssueCode.custom,
+ path: ['lot_id'],
+ message: 'operations.selectLot',
+ })
+ }
 })
 
 type OperationFormData = z.infer<typeof operationSchema>
@@ -223,6 +239,7 @@ export default function OperationFormPage() {
  'hatchery_inspection',
  ])
  const isHatcheryStage = eventType ? HATCHERY_EVENTS.has(eventType) : false
+ const isLotOptionalInspection = eventType ? LOT_OPTIONAL_INSPECTION_EVENTS.has(eventType) : false
 
  // Lots filtered by selected farm
  const filteredLots = useMemo(() => {
@@ -234,10 +251,13 @@ export default function OperationFormPage() {
 
  // Houses filtered to the farm of the selected lot (for farm_inspection per-house rows)
  const farmHouses = useMemo(() => {
+ if (selectedFarmId) {
+ return houses.filter((h: any) => h.farm_id === selectedFarmId)
+ }
  const lot = lots.find((l: any) => l.id === lotId)
  if (!lot?.farm_id) return houses
  return houses.filter((h: any) => h.farm_id === lot.farm_id)
- }, [lots, lotId, houses])
+ }, [selectedFarmId, lots, lotId, houses])
 
  // Age of selected lot in weeks (for technical range indicators)
  const { lotAgeWeeks, lotBirdType } = useMemo(() => {
@@ -274,6 +294,12 @@ export default function OperationFormPage() {
  appendIncubator({ machine_type: 'incubator' } as any)
  }
  }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
+
+ useEffect(() => {
+ if (isLotOptionalInspection && lotId) {
+ setValue('lot_id', undefined as any)
+ }
+ }, [isLotOptionalInspection, lotId, setValue])
 
  useEffect(() => {
  api.get('/lots?limit=100')
@@ -317,6 +343,13 @@ export default function OperationFormPage() {
  const onSubmit = async (data: OperationFormData) => {
  setSubmitting(true); setResult(null)
  try {
+ const selectedLot = data.lot_id ? lots.find((l: any) => l.id === data.lot_id) : null
+ const firstInspectedHouseId = data.house_inspections?.find((h: any) => h?.house_id)?.house_id
+ const derivedFarmId = selectedFarmId ?? selectedLot?.farm_id ?? undefined
+ const derivedHouseId = data.event_type === 'farm_inspection'
+ ? (firstInspectedHouseId ?? selectedLot?.house_id ?? undefined)
+ : (selectedLot?.house_id ?? undefined)
+
  // Convert per-house inspection rows into inspection_details records with house_id
  const houseDetails: any[] = []
  for (const h of data.house_inspections || []) {
@@ -361,6 +394,8 @@ export default function OperationFormPage() {
 
  const payload: any = {
  ...data,
+ farm_id: data.farm_id ?? (!isHatcheryStage ? derivedFarmId : undefined),
+ house_id: data.house_id ?? derivedHouseId,
  observations,
  bird_movements: (data.bird_movements || []).filter(m => (m.quantity ?? 0) > 0),
  egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
@@ -573,7 +608,7 @@ export default function OperationFormPage() {
  {sapOrder && (
  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm space-y-1">
  <p className="font-semibold text-blue-800">{t('operations.sapOrderInfo', 'Información de la orden SAP')}</p>
- <p><strong>OC:</strong> {sapOrder.sap_code || sapOrder.ref_id} {vendorName ? `— ${vendorName}` : ''}</p>
+ <p><strong>{t('operations.purchaseOrderAbbrev')}:</strong> {sapOrder.sap_code || sapOrder.ref_id} {vendorName ? `— ${vendorName}` : ''}</p>
  {sapOrder.description && <p className="text-slate-600">{sapOrder.description}</p>}
  <div className="grid grid-cols-2 gap-1 mt-1">
  {declaredQty > 0 && <p><strong>{t('operations.declaredQty', 'Cantidad declarada')}:</strong> {declaredQty} aves</p>}
@@ -1567,7 +1602,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.sanitaryCert', 'Certificado sanitario')}</label>
- <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder="No. de certificado" />
+ <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder={t('operations.sanitaryCertPlaceholder')} />
  </div>
  </div>
  {renderMFRows(false)}
@@ -1603,11 +1638,11 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.importCountry', 'País de origen')}</label>
- <input {...register('extra_data.origin_country' as any)} className={ic} placeholder="Ej. Francia" />
+ <input {...register('extra_data.origin_country' as any)} className={ic} placeholder={t('operations.importCountryPlaceholder')} />
  </div>
  <div>
  <label className={lc}>{t('operations.sanitaryCert', 'Certificado sanitario')}</label>
- <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder="No. de certificado" />
+ <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder={t('operations.sanitaryCertPlaceholder')} />
  </div>
  <div>
  <label className={lc}>{t('operations.quarantineDays', 'Días de cuarentena')}</label>
@@ -1615,7 +1650,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.importDoc', 'Documento de importación')}</label>
- <input {...register('extra_data.import_doc' as any)} className={ic} placeholder="No. de guía" />
+ <input {...register('extra_data.import_doc' as any)} className={ic} placeholder={t('operations.importDocPlaceholder')} />
  </div>
  </div>
  {renderMFRows(true)}
@@ -1635,7 +1670,7 @@ export default function OperationFormPage() {
  const SelectedStageIcon = selectedStageMeta?.Icon
 
  return (
- <div className="py-4 sm:p-6 max-w-2xl mx-auto text-slate-900">
+ <div className="py-4 sm:py-6 text-slate-900">
  {/* Stepper */}
  <nav className="flex items-center gap-1.5 text-sm font-semibold mb-5 select-none">
  <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#5a9bba]' : 'text-slate-900'}>
@@ -1887,7 +1922,8 @@ export default function OperationFormPage() {
  </div>
  )}
 
- {/* ── Lot selector (filtered by farm/hatchery) ── */}
+ {/* ── Lot selector (optional for inspection forms) ── */}
+ {!isLotOptionalInspection && (
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
  <SearchSelect
@@ -1902,6 +1938,7 @@ export default function OperationFormPage() {
  {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
  {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
  </div>
+ )}
 
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.date')}</label>

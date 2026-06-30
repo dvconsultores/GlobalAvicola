@@ -54,6 +54,9 @@
     "unknown": "Unknown",
     "id": "ID",
     "clear": "Clear",
+    "breadcrumb": "Breadcrumb",
+    "min": "Min",
+    "max": "Max",
     "confirmSignature": "Sign",
     "options": "options",
     "pending": "Pending"
@@ -90,7 +93,9 @@
     "passwordMinLength": "Password must be at least 6 characters",
     "loginSubtitle": "Enter your credentials to continue",
     "usernamePlaceholder": "username",
-    "passwordPlaceholder": "password"
+    "passwordPlaceholder": "password",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password"
   },
   "brand": {
     "name": "Global Avícola",
@@ -668,9 +673,12 @@
     "fcr": "FCR (Feed conversion)",
     "totalMortality": "Total mortality (%)",
     "importCountry": "Country of origin",
+    "importCountryPlaceholder": "e.g. France",
     "sanitaryCert": "Sanitary certificate",
+    "sanitaryCertPlaceholder": "Certificate no.",
     "quarantineDays": "Quarantine days",
     "importDoc": "Import document",
+    "importDocPlaceholder": "Waybill no.",
     "addRow": "Add row",
     "addMachine": "Add machine",
     "addHouseRows": "One row per target house",
@@ -717,6 +725,7 @@
     "storageHumidity": "Storage humidity (%)",
     "sapQtyAlert": "⚠️ ALERT: Received quantity ({{received}}) differs by {{pct}}% from SAP order ({{declared}}).",
     "sapOrderInfo": "SAP order information",
+    "purchaseOrderAbbrev": "PO",
     "declaredQty": "Declared quantity",
     "dispatchDate": "Dispatch date",
     "declaredAvgWeightM": "Avg male weight",
@@ -863,7 +872,9 @@
     "broilerLotId": "Target broiler lot",
     "quantity": "Quantity",
     "dispatchDate": "Dispatch date",
-    "destinationLotId": "Destination lot (breeder or broiler)"
+    "destinationLotId": "Destination lot (breeder or broiler)",
+    "hatcheryLotIdPlaceholder": "Hatchery lot ID",
+    "destinationLotIdPlaceholder": "Destination lot ID"
   },
   "company": {
     "selector": "Active company",
@@ -871,7 +882,8 @@
     "switching": "Switching company...",
     "switchSuccess": "Company switched successfully",
     "switchError": "Could not switch company",
-    "allCompanies": "All companies"
+    "allCompanies": "All companies",
+    "noCompany": "No company"
   },
   "evidence": {
     "title": "Attached evidence",

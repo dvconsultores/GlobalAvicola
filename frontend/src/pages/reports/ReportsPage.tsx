@@ -65,7 +65,7 @@ export default function ReportsPage() {
  }
 
  return (
- <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+ <div className="py-4 sm:py-6">
  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
  <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('nav.reports')}</h1>
  <div className="flex gap-2 items-center">

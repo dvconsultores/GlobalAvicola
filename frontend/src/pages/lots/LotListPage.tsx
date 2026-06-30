@@ -40,7 +40,7 @@ export default function LotListPage() {
  const closedLots = lots.filter(l => l.status === 'closed').length
 
  return (
- <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+ <div className="py-4 sm:py-6">
  <div className="flex items-center justify-between mb-6">
  <div>
  <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('lots.title')}</h1>

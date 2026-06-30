@@ -14,10 +14,10 @@ export default function SapComparisonPage() {
  api.get('/reports/sap-comparison').then(r => setData(r.data)).catch((e: any) => toast.error(getErrorMessage(e, t('reports.errorLoading'))))
  }, [])
 
- if (!data) return <div className="p-6 text-slate-500">{t('common.loading')}</div>
+ if (!data) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
 
  return (
- <div className="p-4 sm:p-6 max-w-4xl mx-auto">
+ <div className="py-4 sm:py-6">
  <Link to="/reports" className="text-slate-400 hover flex items-center gap-1 mb-4"><ArrowLeft size={16} /> {t('nav.reports')}</Link>
  <h1 className="text-2xl font-bold text-[#1E3A5F] mb-6">{t('reports.sapComparison')}</h1>
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">

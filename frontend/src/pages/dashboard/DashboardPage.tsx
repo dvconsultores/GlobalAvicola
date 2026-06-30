@@ -114,7 +114,7 @@ export default function DashboardPage() {
 
  if (loading) {
  return (
- <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+ <div className="py-4 sm:py-6">
  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
  {[1,2,3,4].map(i => (
  <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 h-24 animate-pulse bg-slate-100" />
@@ -126,7 +126,7 @@ export default function DashboardPage() {
 
  if (error) {
  return (
- <div className="p-4 sm:p-6 max-w-6xl mx-auto">
+ <div className="py-4 sm:py-6">
  <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
  <p className="text-red-600 mb-3">{error}</p>
  <button
@@ -449,7 +449,7 @@ export default function DashboardPage() {
  ]
 
  return (
- <div className="max-w-5xl mx-auto space-y-5">
+ <div className="space-y-5">
  {/* Page header */}
  <div>
  <h1 className="text-xl font-semibold text-slate-900">{t('nav.dashboard')}</h1>

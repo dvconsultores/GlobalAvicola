@@ -78,11 +78,11 @@ export default function ReviewDetail() {
  }
  }
 
- if (loading) return <div className="max-w-4xl mx-auto px-4 py-8 text-center text-slate-500">{t('common.loading')}</div>
- if (!event) return <div className="max-w-4xl mx-auto px-4 py-8 text-center text-slate-500">{t('review.eventNotFound')}</div>
+ if (loading) return <div className="py-8 text-center text-slate-500">{t('common.loading')}</div>
+ if (!event) return <div className="py-8 text-center text-slate-500">{t('review.eventNotFound')}</div>
 
  return (
- <div className="max-w-4xl mx-auto px-4 py-6">
+ <div className="py-4 sm:py-6">
  {/* Header */}
  <div className="flex items-center gap-3 mb-6">
  <Link to="/review" className="text-slate-400 hover">← {t('common.back')}</Link>

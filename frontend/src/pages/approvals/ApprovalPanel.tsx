@@ -260,7 +260,7 @@ export default function ApprovalPanel() {
  onChange={e => setEvents(prev => prev.map(ev => ({ ...ev, _checked: e.target.checked })))}
  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
  </th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">ID</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.id')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>

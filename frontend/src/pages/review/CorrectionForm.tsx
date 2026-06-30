@@ -64,15 +64,15 @@ export default function CorrectionForm() {
  }
  }
 
- if (loading) return <div className="max-w-2xl mx-auto px-4 py-8 text-center text-slate-500">{t('common.loading')}</div>
- if (!event) return <div className="max-w-2xl mx-auto px-4 py-8 text-center text-slate-500">{t('review.eventNotFound')}</div>
+ if (loading) return <div className="py-8 text-center text-slate-500">{t('common.loading')}</div>
+ if (!event) return <div className="py-8 text-center text-slate-500">{t('review.eventNotFound')}</div>
 
  const fields = [
  { key: 'observations', label: t('common.observations'), current: event.observations || '' },
  ]
 
  return (
- <div className="max-w-2xl mx-auto px-4 py-6">
+ <div className="py-4 sm:py-6">
  <div className="flex items-center gap-3 mb-6">
  <Link to={`/review/${id}`} className="text-slate-400 hover">← {t('common.back')}</Link>
  <h1 className="text-xl font-bold text-[#1E3A5F] flex items-center gap-2">

@@ -4,6 +4,7 @@
  * Cross-browser: works on Chrome, Edge, Firefox, Safari, iOS Safari, Android Chrome
  */
 import { type ReactNode, useEffect, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
 import { createPortal } from 'react-dom'
 
@@ -33,6 +34,7 @@ export function Modal({
  footer,
  size = 'md',
 }: ModalProps) {
+ const { t } = useTranslation()
  const dialogRef = useRef<HTMLDivElement>(null)
  const titleId = `modal-title-${title.replace(/\s+/g, '-').toLowerCase()}`
 
@@ -96,7 +98,7 @@ export function Modal({
  </div>
  <button
  onClick={onClose}
- aria-label="Cerrar"
+ aria-label={t('common.close')}
  className="shrink-0 w-8 h-8 flex items-center justify-center rounded-lg text-slate-400 hover hover:bg-slate-100 transition-colors"
  >
  <X size={16} />

@@ -28,6 +28,12 @@ from .validators import (
 )
 
 
+LOT_OPTIONAL_EVENTS = {
+    models.EventType.FARM_INSPECTION,
+    models.EventType.HATCHERY_INSPECTION,
+}
+
+
 class OperationsService:
     def __init__(self, db: AsyncSession, current_user: dict[str, Any]):
         self.db = db
@@ -117,6 +123,9 @@ class OperationsService:
         ChickBatch: chick_dispatch (hatchery → breeder/broiler) matched with
                     bird_reception for the same lot.
         """
+        if data.lot_id is None:
+            return
+
         from ..lots.models import EggBatch, ChickBatch
         from ..masters.models import Lot
 
@@ -227,7 +236,7 @@ class OperationsService:
         alerts: list[models.OperationalAlert] = []
 
         # Alert 1: High mortality (>= 3% of current bird balance triggers warning; >= 8% critical)
-        if event.event_type == models.EventType.MORTALITY_RECORDING:
+        if event.event_type == models.EventType.MORTALITY_RECORDING and event.lot_id is not None:
             total_mortality = sum(bm.quantity for bm in data.bird_movements)
             if total_mortality > 0:
                 balance = await get_current_bird_balance(self.db, event.lot_id, self.company_id)
@@ -254,7 +263,7 @@ class OperationsService:
                         ))
 
         # Alert 2: Temperature / humidity extremes during farm inspection
-        if event.event_type == models.EventType.FARM_INSPECTION:
+        if event.event_type == models.EventType.FARM_INSPECTION and event.lot_id is not None:
             TEMP_MIN, TEMP_MAX = 18.0, 35.0
             HUMI_MIN, HUMI_MAX = 40.0, 90.0
             for ins in data.inspection_details:
@@ -297,16 +306,20 @@ class OperationsService:
 
     async def _apply_business_rules(self, event_type: models.EventType, data: schemas.OperationalEventCreate):
         """Apply business rules based on event type."""
-        # BR-07: Lot must be active
-        await validate_lot_active(self.db, data.lot_id)
-        # BR-06: Event date cannot be before lot activation date
-        await validate_event_date(self.db, data.lot_id, data.event_date)
+        lot_required = event_type not in LOT_OPTIONAL_EVENTS
+        if lot_required and data.lot_id is None:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El evento requiere lote")
+
+        # BR-07 / BR-06: Validate lot status/date when event is lot-scoped.
+        if data.lot_id is not None:
+            await validate_lot_active(self.db, data.lot_id)
+            await validate_event_date(self.db, data.lot_id, data.event_date)
         # BR-08: Movements require farm/house when applicable
         await validate_farm_house(data.event_type.value if hasattr(data.event_type, 'value') else str(data.event_type), data.farm_id, data.house_id)
         # BR-19: Date not in closed period
         await validate_period_open(self.db, data.event_date)
         # BR-10: SAP document must not be duplicated
-        if data.sap_document_ref:
+        if data.sap_document_ref and data.lot_id is not None:
             await validate_sap_document_unique(self.db, data.lot_id, event_type, data.sap_document_ref)
 
         total_qty = sum(bm.quantity for bm in data.bird_movements) + sum(em.quantity for em in data.egg_movements)
@@ -321,19 +334,29 @@ class OperationsService:
         try:
             if event_type == models.EventType.MORTALITY_RECORDING:
                 if total_qty > 0:
+                    if data.lot_id is None:
+                        raise BusinessRuleViolation("El evento requiere lote", "BR-07")
                     await validate_mortality(self.db, data.lot_id, total_qty)
             elif event_type == models.EventType.EGG_DISPATCH:
                 total = sum(em.quantity for em in data.egg_movements)
                 if total > 0:
+                    if data.lot_id is None:
+                        raise BusinessRuleViolation("El evento requiere lote", "BR-07")
                     await validate_egg_dispatch(self.db, data.lot_id, total)
             elif event_type == models.EventType.INCUBATION_LOAD:
                 total = sum(hp.quantity_loaded or 0 for hp in data.hatchery_params)
                 if total > 0:
+                    if data.lot_id is None:
+                        raise BusinessRuleViolation("El evento requiere lote", "BR-07")
                     await validate_incubation_load(self.db, data.lot_id, total)
             elif event_type == models.EventType.CHICK_DISPATCH:
                 if total_qty > 0:
+                    if data.lot_id is None:
+                        raise BusinessRuleViolation("El evento requiere lote", "BR-07")
                     await validate_chick_dispatch(self.db, data.lot_id, total_qty)
             elif event_type == models.EventType.LOT_CLOSURE:
+                if data.lot_id is None:
+                    raise BusinessRuleViolation("El evento requiere lote", "BR-07")
                 await validate_lot_closure(self.db, data.lot_id)
         except BusinessRuleViolation as e:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=e.message)
