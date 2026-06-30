@@ -237,31 +237,18 @@ export function initTelegramEarly(): void {
 // ── Back navigation helper (react-router integration) ──────────
 
 /**
- * Intercepts the Telegram Mini App back button (header + hardware)
- * and routes it to react-router navigation instead of closing the app.
+ * Intercepts the Telegram Mini App back button and routes it to
+ * react-router navigation on non-root routes.
  *
- * **Always** mounts and shows the native Telegram back button so that
- * Telegram never auto-closes the mini app on hardware back press.
- *
- * When `isAtRoot` is true, pressing back calls `onRootClose` which should
- * invoke `miniApp.close()` — the closing confirmation dialog (if enabled)
- * will fire before the app actually closes.
- *
- * When `isAtRoot` is false, pressing back calls `onBack` which should
- * perform a react-router `navigate(-1)`.
+ * At root routes (`enabled=false`) the Telegram back button is hidden,
+ * so the native close UI is visible and closing confirmation can fire.
  */
-export function useTelegramBackHandler(
-  onBack: () => void,
-  onRootClose: () => void,
-  isAtRoot: boolean,
-) {
+export function useTelegramBackHandler(onBack: () => void, enabled = true) {
   const { isTelegram } = useTelegram()
 
   // Keep latest callbacks in refs to avoid re-running the effect on every render
   const onBackRef = useRef(onBack)
-  const onRootCloseRef = useRef(onRootClose)
   onBackRef.current = onBack
-  onRootCloseRef.current = onRootClose
 
   useEffect(() => {
     if (!isTelegram) return
@@ -270,9 +257,13 @@ export function useTelegramBackHandler(
     // If already mounted this is a no-op (mount restores previous state).
     try { backButton.mount() } catch { /* ignore */ }
 
-    // Always show the Telegram back button — this is the signal to Telegram
-    // that the mini app handles its own back navigation. Without this, the
-    // hardware back button closes the app immediately.
+    if (!enabled) {
+      // Root route: keep native Telegram close UI (X) visible.
+      try { backButton.hide() } catch { /* ignore */ }
+      return
+    }
+
+    // Non-root route: show back and route back presses into SPA navigation.
     try { backButton.show() } catch { /* ignore */ }
 
     // Wire the back button press to our handler.
@@ -280,11 +271,7 @@ export function useTelegramBackHandler(
     let unsubscribe: (() => void) | null = null
     try {
       const result = backButton.onClick(() => {
-        if (isAtRoot) {
-          onRootCloseRef.current()
-        } else {
-          onBackRef.current()
-        }
+        onBackRef.current()
       })
       if (typeof result === 'function') unsubscribe = result
     } catch { /* ignore */ }
@@ -294,5 +281,5 @@ export function useTelegramBackHandler(
         try { unsubscribe() } catch { /* ignore */ }
       }
     }
-  }, [isTelegram, isAtRoot])
+  }, [isTelegram, enabled])
 }

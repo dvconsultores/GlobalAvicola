@@ -3,7 +3,6 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
 import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
-import { miniApp } from '@telegram-apps/sdk'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
@@ -126,23 +125,19 @@ export default function App() {
  }, [enableClosingConfirmation])
 
  // Determine if we are at a root/home route where the back button
- // should trigger the exit confirmation instead of router navigation.
+ // should remain hidden so Telegram shows the native close icon.
+ const normalizedPath = location.pathname.replace(/\/+$/, '') || '/'
  const isAtRoot =
-   location.pathname === '/' ||
-   location.pathname === '/login' ||
-   location.pathname === '/menu/poultry'
+   normalizedPath === '/' ||
+   normalizedPath === '/login' ||
+   normalizedPath === '/kpi' ||
+   normalizedPath === '/menu/poultry'
 
- // Telegram Mini App: hardware back button always intercepted.
- // - On sub-routes: navigate(-1) (react-router back).
- // - On root routes: miniApp.close() which, with closing confirmation
- //   enabled, shows the "Are you sure?" dialog before exiting.
- useTelegramBackHandler(
-   () => { navigate(-1) },
-   () => {
-     try { if (miniApp.close.isAvailable()) miniApp.close() } catch { /* ignore */ }
-   },
-   isAtRoot,
- )
+ // Telegram Mini App:
+ // - On sub-routes: native back routes within SPA (navigate -1).
+ // - On root routes: hide native back so Telegram close UI is visible,
+ //   and closing confirmation remains managed natively.
+ useTelegramBackHandler(() => { navigate(-1) }, !isAtRoot)
 
  return (
  <ToastProvider>

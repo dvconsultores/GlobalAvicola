@@ -25,18 +25,11 @@ def _validate_bot_settings() -> tuple[str, str]:
 def _build_start_keyboard(mini_app_url: str) -> types.InlineKeyboardMarkup:
     keyboard = types.InlineKeyboardMarkup(row_width=1)
 
-    # Primary action: native Mini App launch button.
+    # Single reliable fallback button: opens Mini App URL directly.
+    # This works even when WebApp launch constraints are not configured.
     keyboard.add(
         types.InlineKeyboardButton(
             text="Open Global Avicola Mini App",
-            web_app=types.WebAppInfo(url=mini_app_url),
-        )
-    )
-
-    # Fallback action: plain URL button for clients that do not support WebApp launch.
-    keyboard.add(
-        types.InlineKeyboardButton(
-            text="Open in Browser (Fallback)",
             url=mini_app_url,
         )
     )
