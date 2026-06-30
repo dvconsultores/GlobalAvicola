@@ -35,6 +35,9 @@ export default function SearchSelect({
  const _searchPlaceholder = searchPlaceholder ?? t('common.search', 'Buscar...')
  const [open, setOpen] = useState(false)
  const [search, setSearch] = useState('')
+ const [isMobileView, setIsMobileView] = useState(() =>
+ typeof window !== 'undefined' ? window.matchMedia('(max-width: 1023px)').matches : false,
+ )
  const containerRef = useRef<HTMLDivElement>(null)
  const inputRef = useRef<HTMLInputElement>(null)
 
@@ -69,6 +72,20 @@ export default function SearchSelect({
  if (open && inputRef.current) inputRef.current.focus()
  }, [open])
 
+ useEffect(() => {
+ if (typeof window === 'undefined') return
+ const mq = window.matchMedia('(max-width: 1023px)')
+ const onChange = (e: MediaQueryListEvent) => setIsMobileView(e.matches)
+ setIsMobileView(mq.matches)
+ try {
+ mq.addEventListener('change', onChange)
+ return () => mq.removeEventListener('change', onChange)
+ } catch {
+ mq.addListener(onChange)
+ return () => mq.removeListener(onChange)
+ }
+ }, [])
+
  const handleSelect = (item: any) => {
  onChange(String(item.id))
  setSearch('')
@@ -78,6 +95,30 @@ export default function SearchSelect({
  const borderColor = error
  ? 'border-red-300'
  : 'border-slate-300'
+
+ if (isMobileView) {
+ return (
+ <div className={`relative ${className}`}>
+ <select
+ value={value === undefined || value === null ? '' : String(value)}
+ onChange={(e) => onChange(e.target.value)}
+ disabled={disabled}
+ className={`w-full h-11 px-3 border ${borderColor} rounded-lg text-sm text-slate-900 bg-white disabled:opacity-50`}
+ >
+ <option value="">{_placeholder}</option>
+ {items.map((item: any) => {
+ const label = renderLabel(item)
+ const sub = renderSub ? renderSub(item) : ''
+ return (
+ <option key={item.id} value={String(item.id)}>
+ {sub ? `${label} (${sub})` : label}
+ </option>
+ )
+ })}
+ </select>
+ </div>
+ )
+ }
 
  return (
  <div ref={containerRef} className={`relative ${className}`}>

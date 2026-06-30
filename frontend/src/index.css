@@ -52,6 +52,31 @@ input, textarea, select {
     -webkit-overflow-scrolling: touch;
     touch-action: pan-x pan-y;
   }
+
+  /* Mobile Mini App: use native-like controls for better platform consistency */
+  input:not([type='checkbox']):not([type='radio']),
+  select,
+  textarea {
+    -webkit-appearance: auto;
+    appearance: auto;
+    background-color: #ffffff !important;
+    color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+    border-radius: 10px !important;
+    box-shadow: none !important;
+  }
+
+  input:not([type='checkbox']):not([type='radio']):focus,
+  select:focus,
+  textarea:focus {
+    border-color: #5a9bba !important;
+    box-shadow: 0 0 0 2px rgba(90, 155, 186, 0.18) !important;
+  }
+
+  select {
+    background-image: none !important;
+    padding-right: 0.75rem !important;
+  }
 }
 
 body {
