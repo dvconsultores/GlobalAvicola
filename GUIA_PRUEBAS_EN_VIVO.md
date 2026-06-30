@@ -35,16 +35,41 @@
 | `web.contralor` | `contra123` | Contralor Avícola | Revisa, aprueba, rechaza, audita |
 | `admin` | `admin123` | Super Administrador | Control total |
 
-### 1.2 Datos precargados
+### 1.2 Cobertura mínima de datos (obligatoria)
 
-| Recurso | Cantidad | Detalle |
+Antes de convocar testers, la base debe cumplir como mínimo lo siguiente:
+
+| Recurso | Mínimo requerido | Para qué se usa en pruebas |
 |---|---|---|
-| **Granjas** | 4 | Progenitoras G1, Reproductoras R1, Engorde E1, Engorde E2 |
-| **Galpones** | 10 | 3 en GP, 3 en BR, 2 en BO-E1, 2 en BO-E2 |
-| **Planta Incubadora** | 1 | 3 incubadoras + 2 nacedoras |
-| **Lotes activos** | 6 | GP Cría, GP Producción, BR Cría, BR Producción, BO E1, BO E2 |
-| **Referencias SAP** | 19 | 7 OCs, 3 transferencias, materiales, proveedores, plantas |
-| **Eventos iniciales** | 10 | Alimento histórico + recolección de huevos (algunos pendientes de revisión) |
+| **Compañías operativas** | 2 con lotes + eventos + refs SAP | Validar segregación multiempresa real |
+| **Usuarios por compañía** | Operador, Supervisor, Contralor/Aprobador | Flujo completo registro → revisión → aprobación |
+| **Granjas/Galpones** | Al menos 3 granjas y 10+ galpones por compañía operativa | Cobertura por proceso y ubicación |
+| **Lotes activos** | 4 o más por compañía operativa | Pruebas por proceso y concurrencia |
+| **Lotes cerrados** | 1 o más por compañía operativa | Validar filtros, reportes e histórico |
+| **Referencias SAP** | OCs + transferencias por compañía operativa | Pruebas BR-10 y trazabilidad SAP |
+| **Estados de eventos** | `registered`, `pending_review`, `in_review`, `corrected`, `approved`, `rejected` | Ver evolución real de información |
+| **Tipos de evento** | Recepción aves, alimento, huevos, despacho, incubación, mortalidad | Cobertura funcional de escenarios A-F |
+
+### 1.3 Preflight de readiness (NO iniciar sin esto)
+
+Ejecutar en backend:
+
+```bash
+cd backend
+PYTHONPATH=. python3 seeds/live_readiness_check.py
+```
+
+Resultado esperado: `READY: live testing dataset meets minimum coverage.`
+
+Si el resultado es `NOT READY`, cargar/reparar data y volver a validar:
+
+```bash
+cd backend
+PYTHONPATH=. python3 seeds/dev_seeds.py
+PYTHONPATH=. python3 seeds/integration_seeds.py
+PYTHONPATH=. python3 seeds/live_data_boost.py
+PYTHONPATH=. python3 seeds/live_readiness_check.py
+```
 
 ---
 
@@ -432,16 +457,25 @@ GET /api/v1/corrections/event/{event_id}
 
 ---
 
-## 9. REINICIO DE DATOS DE PRUEBA
+## 9. REINICIO Y VALIDACIÓN DE DATOS DE PRUEBA
 
-Si necesitan reiniciar los datos a un estado limpio:
+Si necesitan reiniciar o reparar la data antes de un ciclo de pruebas en vivo:
 
 ```bash
 cd backend
+PYTHONPATH=. python3 seeds/dev_seeds.py
 PYTHONPATH=. python3 seeds/integration_seeds.py
+PYTHONPATH=. python3 seeds/live_data_boost.py
+PYTHONPATH=. python3 seeds/live_readiness_check.py
 ```
 
-Este script es **idempotente** — no duplica datos existentes, solo crea lo que falta.
+Notas importantes:
+
+1. `dev_seeds.py` crea/actualiza compañías, roles, usuarios y catálogos base.
+2. `integration_seeds.py` agrega lotes, referencias SAP y eventos para escenarios funcionales.
+3. `live_data_boost.py` cierra brechas de cobertura (multiempresa, estados y tipos de evento faltantes).
+4. `live_readiness_check.py` es el criterio de salida para decidir si se puede arrancar con testers.
+5. No iniciar pruebas en vivo si el check termina en `NOT READY`.
 
 ---
 
