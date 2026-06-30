@@ -29,6 +29,9 @@ backend-migrate: ## Run database migrations
 backend-migrate-new: ## Create new migration (usage: make backend-migrate-new MSG="description")
 	cd backend && uv run alembic revision --autogenerate -m "$(MSG)"
 
+backend-telegram-bot: ## Run Telegram bot (requires TELEGRAM_API_KEY and TELEGRAM_MINI_APP_URL)
+	cd backend && uv run python -m app.integrations.telegram.bot
+
 # ----- Frontend -----
 frontend-install: ## Install frontend dependencies
 	cd frontend && npm install

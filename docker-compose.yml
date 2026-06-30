@@ -55,6 +55,31 @@ services:
       retries: 3
       start_period: 5s
 
+  # ----- Telegram Bot (pyTelegramBotAPI) -----
+  telegram-bot:
+    image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-backend:latest
+    pull_policy: always
+    container_name: globalavicola-telegram-bot
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+    depends_on:
+      - backend
+    environment:
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      PROJECT_NAME: ${PROJECT_NAME:-Global Avícola}
+      DEBUG: "false"
+      DATABASE_URL: ${DATABASE_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ALGORITHM: ${JWT_ALGORITHM:-HS256}
+      JWT_ACCESS_TOKEN_EXPIRE_MINUTES: ${JWT_ACCESS_TOKEN_EXPIRE_MINUTES:-30}
+      JWT_REFRESH_TOKEN_EXPIRE_DAYS: ${JWT_REFRESH_TOKEN_EXPIRE_DAYS:-7}
+      TELEGRAM_API_KEY: ${TELEGRAM_API_KEY}
+      TELEGRAM_MINI_APP_URL: ${TELEGRAM_MINI_APP_URL}
+    command: ["python", "-m", "app.integrations.telegram.bot"]
+    networks:
+      - avicola-network
+
   # ----- Watchtower — Auto-update containers -----
   watchtower:
     image: containrrr/watchtower

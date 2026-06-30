@@ -1,4 +1,5 @@
 import { create } from 'zustand'
+import { isTMA } from '@telegram-apps/sdk'
 import api from '../services/api'
 
 interface JwtClaims {
@@ -46,11 +47,19 @@ interface AuthState {
   getRefreshToken: () => string | null
 }
 
-// S-01: Tokens stored in memory for runtime. sessionStorage used only for
-// page-refresh survival (cleared on tab close — better than localStorage).
-// Access token expiry reduced to 15min recommendation from security audit.
-let accessToken: string | null = sessionStorage.getItem('access_token')
-let refreshToken: string | null = sessionStorage.getItem('refresh_token')
+// S-01: Tokens stored in memory for runtime.
+// In Telegram Mini App use localStorage so closing/reopening the mini app keeps session.
+// Outside Telegram keep sessionStorage behavior.
+const tokenStorage: Storage = (() => {
+  try {
+    return isTMA() ? localStorage : sessionStorage
+  } catch {
+    return sessionStorage
+  }
+})()
+
+let accessToken: string | null = tokenStorage.getItem('access_token')
+let refreshToken: string | null = tokenStorage.getItem('refresh_token')
 
 // Hydrate initial user from sessionStorage if available
 function getInitialUser(): User | null {
@@ -80,9 +89,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   setTokens: (access: string, refresh: string) => {
     accessToken = access
     refreshToken = refresh
-    // sessionStorage backup for page-refresh survival
-    sessionStorage.setItem('access_token', access)
-    sessionStorage.setItem('refresh_token', refresh)
+    tokenStorage.setItem('access_token', access)
+    tokenStorage.setItem('refresh_token', refresh)
     const claims = decodeJWT(access)
     const immediateUser: User = {
       id: Number(claims?.sub) || 0,
@@ -112,8 +120,8 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   logout: () => {
     accessToken = null
     refreshToken = null
-    sessionStorage.removeItem('access_token')
-    sessionStorage.removeItem('refresh_token')
+    tokenStorage.removeItem('access_token')
+    tokenStorage.removeItem('refresh_token')
     set({ user: null, token: null, refreshToken: null, isAuthenticated: false, isLoading: false })
   },
 

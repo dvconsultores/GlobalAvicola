@@ -93,5 +93,9 @@ class Settings(BaseSettings):
     # En desarrollo se puede desactivar para agilizar pruebas.
     FEATURE_REVIEW_ENABLED: bool = True
 
+    # Telegram Bot
+    TELEGRAM_API_KEY: str = ""
+    TELEGRAM_MINI_APP_URL: str = ""
+
 
 settings = Settings()

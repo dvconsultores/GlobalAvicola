@@ -70,6 +70,22 @@ services:
     healthcheck:
       disable: true
 
+  # ----- Telegram Bot (desarrollo local) -----
+  telegram-bot:
+    image: globalavicola-backend:dev
+    pull_policy: never
+    user: root
+    command: python -m app.integrations.telegram.bot
+    env_file:
+      - .env
+    environment:
+      ENVIRONMENT: development
+      DEBUG: "true"
+    volumes:
+      - ./backend/app:/app/app
+    depends_on:
+      - backend
+
   # ----- Watchtower deshabilitado en desarrollo -----
   watchtower:
     profiles:
