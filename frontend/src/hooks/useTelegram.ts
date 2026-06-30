@@ -9,7 +9,7 @@
  * Usage:
  *   const { isTelegram, tgUser, theme } = useTelegram()
  */
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import {
   init,
   miniApp,
@@ -228,48 +228,71 @@ export function initTelegramEarly(): void {
     try { miniApp.setBackgroundColor('#F1F5F9') } catch { /* ignore */ }
     // Pre-mount closing behavior so enableClosingConfirmation works immediately
     try { mountClosingBehavior() } catch { /* ignore */ }
+    // Pre-mount back button so Telegram knows the mini app handles its own back navigation
+    try { backButton.mount() } catch { /* ignore */ }
     miniApp.ready()
   } catch { /* ignore */ }
 }
 
 // ── Back navigation helper (react-router integration) ──────────
 
-let _backCallback: (() => void) | null = null
-
 /**
  * Intercepts the Telegram Mini App back button (header + hardware)
  * and routes it to react-router navigation instead of closing the app.
- * 
- * When `enabled` is false (e.g., at root), the native back behavior is
- * preserved so that the closing confirmation dialog can fire.
+ *
+ * **Always** mounts and shows the native Telegram back button so that
+ * Telegram never auto-closes the mini app on hardware back press.
+ *
+ * When `isAtRoot` is true, pressing back calls `onRootClose` which should
+ * invoke `miniApp.close()` — the closing confirmation dialog (if enabled)
+ * will fire before the app actually closes.
+ *
+ * When `isAtRoot` is false, pressing back calls `onBack` which should
+ * perform a react-router `navigate(-1)`.
  */
-export function useTelegramBackHandler(onBack: () => void, enabled = true) {
+export function useTelegramBackHandler(
+  onBack: () => void,
+  onRootClose: () => void,
+  isAtRoot: boolean,
+) {
   const { isTelegram } = useTelegram()
+
+  // Keep latest callbacks in refs to avoid re-running the effect on every render
+  const onBackRef = useRef(onBack)
+  const onRootCloseRef = useRef(onRootClose)
+  onBackRef.current = onBack
+  onRootCloseRef.current = onRootClose
 
   useEffect(() => {
     if (!isTelegram) return
 
-    if (!enabled) {
-      // At root: hide the Telegram back button, let hardware back
-      // trigger the native closing confirmation (if enabled).
-      try { backButton.hide() } catch { /* ignore */ }
-      // Also remove any stale callback so the hardware back
-      // button falls through to native behavior.
-      _backCallback = null
-      try { backButton.onClick(() => {}) } catch { /* ignore */ }
-      return
-    }
+    // Ensure the back button component is mounted so show() works.
+    // If already mounted this is a no-op (mount restores previous state).
+    try { backButton.mount() } catch { /* ignore */ }
 
-    // On sub-routes: intercept back button for router navigation
-    _backCallback = onBack
+    // Always show the Telegram back button — this is the signal to Telegram
+    // that the mini app handles its own back navigation. Without this, the
+    // hardware back button closes the app immediately.
+    try { backButton.show() } catch { /* ignore */ }
+
+    // Wire the back button press to our handler.
+    // In SDK v3, onClick returns an unsubscribe function — use it for cleanup.
+    let unsubscribe: (() => void) | null = null
     try {
-      backButton.onClick(() => _backCallback?.())
-      backButton.show()
+      const result = backButton.onClick(() => {
+        if (isAtRoot) {
+          onRootCloseRef.current()
+        } else {
+          onBackRef.current()
+        }
+      })
+      if (typeof result === 'function') unsubscribe = result
     } catch { /* ignore */ }
+
     return () => {
-      _backCallback = null
-      try { backButton.hide() } catch { /* ignore */ }
-      try { backButton.onClick(() => {}) } catch { /* ignore */ }
+      if (unsubscribe) {
+        try { unsubscribe() } catch { /* ignore */ }
+      }
     }
-  }, [isTelegram, onBack, enabled])
+  }, [isTelegram, isAtRoot])
 }

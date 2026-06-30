@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
 import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
+import { miniApp } from '@telegram-apps/sdk'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
@@ -131,11 +132,17 @@ export default function App() {
    location.pathname === '/login' ||
    location.pathname === '/menu/poultry'
 
- // Telegram Mini App: hardware back button acts as router back on sub-routes.
- // At root routes, the native closing confirmation dialog fires instead.
- useTelegramBackHandler(() => {
-   navigate(-1)
- }, !isAtRoot)
+ // Telegram Mini App: hardware back button always intercepted.
+ // - On sub-routes: navigate(-1) (react-router back).
+ // - On root routes: miniApp.close() which, with closing confirmation
+ //   enabled, shows the "Are you sure?" dialog before exiting.
+ useTelegramBackHandler(
+   () => { navigate(-1) },
+   () => {
+     try { if (miniApp.close.isAvailable()) miniApp.close() } catch { /* ignore */ }
+   },
+   isAtRoot,
+ )
 
  return (
  <ToastProvider>
