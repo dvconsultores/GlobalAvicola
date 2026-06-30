@@ -2,7 +2,7 @@ import { Routes, Route, Navigate, useParams, useNavigate, useLocation } from 're
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
-import { useTelegramBackHandler } from './hooks/useTelegram'
+import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
@@ -109,6 +109,7 @@ export default function App() {
  const { token, isLoading, fetchMe } = useAuthStore()
  const navigate = useNavigate()
  const location = useLocation()
+ const { enableClosingConfirmation } = useTelegram()
 
  // Restore full session on app load — fetchMe always runs when token exists
  useEffect(() => {
@@ -117,15 +118,24 @@ export default function App() {
  }
  }, [token, isLoading, fetchMe])
 
- // Telegram Mini App: back button navigates within app instead of closing
- // At root level, the closing confirmation dialog fires instead
+ // Telegram Mini App: enable native closing confirmation so the user is
+ // alerted before exiting the app (swipe down or hardware back at root).
+ useEffect(() => {
+   enableClosingConfirmation()
+ }, [enableClosingConfirmation])
+
+ // Determine if we are at a root/home route where the back button
+ // should trigger the exit confirmation instead of router navigation.
+ const isAtRoot =
+   location.pathname === '/' ||
+   location.pathname === '/login' ||
+   location.pathname === '/menu/poultry'
+
+ // Telegram Mini App: hardware back button acts as router back on sub-routes.
+ // At root routes, the native closing confirmation dialog fires instead.
  useTelegramBackHandler(() => {
-   if (location.pathname === '/' || location.pathname === '/menu/poultry') {
-     // At root — let Telegram show the closing confirmation
-     return
-   }
    navigate(-1)
- })
+ }, !isAtRoot)
 
  return (
  <ToastProvider>

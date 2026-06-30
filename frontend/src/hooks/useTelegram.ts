@@ -17,6 +17,10 @@ import {
   backButton,
   retrieveLaunchParams,
   isTMA,
+  enableClosingConfirmation as enableCC,
+  disableClosingConfirmation as disableCC,
+  isClosingConfirmationEnabled,
+  mountClosingBehavior,
 } from '@telegram-apps/sdk'
 
 // ── Types ──────────────────────────────────────────────────────
@@ -50,6 +54,9 @@ interface TelegramState {
   showBackButton: (onClick: () => void) => void
   hideBackButton: () => void
   applyTheme: () => void
+  enableClosingConfirmation: () => void
+  disableClosingConfirmation: () => void
+  isClosingConfirmationEnabled: () => boolean
 }
 
 // ── Default light theme ────────────────────────────────────────
@@ -169,7 +176,46 @@ export function useTelegram(): TelegramState {
     try { if (isTMA()) backButton.hide() } catch { /* ignore */ }
   }, [])
 
-  return { isTelegram: isTMA(), isReady, theme, tgUser, showBackButton, hideBackButton, applyTheme }
+  // ── Closing Confirmation ────────────────────────────────────
+
+  const enableClosingConfirmation = useCallback(() => {
+    try {
+      if (isTMA()) {
+        if (mountClosingBehavior.isAvailable()) mountClosingBehavior()
+        if (enableCC.isAvailable()) enableCC()
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  const disableClosingConfirmation = useCallback(() => {
+    try {
+      if (isTMA() && disableCC.isAvailable()) {
+        disableCC()
+      }
+    } catch { /* ignore */ }
+  }, [])
+
+  const checkClosingConfirmationEnabled = useCallback((): boolean => {
+    try {
+      if (isTMA()) {
+        return isClosingConfirmationEnabled() as boolean
+      }
+    } catch { /* ignore */ }
+    return false
+  }, [])
+
+  return {
+    isTelegram: isTMA(),
+    isReady,
+    theme,
+    tgUser,
+    showBackButton,
+    hideBackButton,
+    applyTheme,
+    enableClosingConfirmation,
+    disableClosingConfirmation,
+    isClosingConfirmationEnabled: checkClosingConfirmationEnabled,
+  }
 }
 
 // ── Early init for main.tsx ────────────────────────────────────
@@ -180,6 +226,8 @@ export function initTelegramEarly(): void {
     init()
     try { miniApp.setHeaderColor('#1E3A5F') } catch { /* ignore */ }
     try { miniApp.setBackgroundColor('#F1F5F9') } catch { /* ignore */ }
+    // Pre-mount closing behavior so enableClosingConfirmation works immediately
+    try { mountClosingBehavior() } catch { /* ignore */ }
     miniApp.ready()
   } catch { /* ignore */ }
 }
@@ -188,11 +236,31 @@ export function initTelegramEarly(): void {
 
 let _backCallback: (() => void) | null = null
 
-export function useTelegramBackHandler(onBack: () => void) {
+/**
+ * Intercepts the Telegram Mini App back button (header + hardware)
+ * and routes it to react-router navigation instead of closing the app.
+ * 
+ * When `enabled` is false (e.g., at root), the native back behavior is
+ * preserved so that the closing confirmation dialog can fire.
+ */
+export function useTelegramBackHandler(onBack: () => void, enabled = true) {
   const { isTelegram } = useTelegram()
 
   useEffect(() => {
     if (!isTelegram) return
+
+    if (!enabled) {
+      // At root: hide the Telegram back button, let hardware back
+      // trigger the native closing confirmation (if enabled).
+      try { backButton.hide() } catch { /* ignore */ }
+      // Also remove any stale callback so the hardware back
+      // button falls through to native behavior.
+      _backCallback = null
+      try { backButton.onClick(() => {}) } catch { /* ignore */ }
+      return
+    }
+
+    // On sub-routes: intercept back button for router navigation
     _backCallback = onBack
     try {
       backButton.onClick(() => _backCallback?.())
@@ -200,7 +268,8 @@ export function useTelegramBackHandler(onBack: () => void) {
     } catch { /* ignore */ }
     return () => {
       _backCallback = null
-      try { backButton.hide(); backButton.onClick(() => {}) } catch { /* ignore */ }
+      try { backButton.hide() } catch { /* ignore */ }
+      try { backButton.onClick(() => {}) } catch { /* ignore */ }
     }
-  }, [isTelegram, onBack])
+  }, [isTelegram, onBack, enabled])
 }
