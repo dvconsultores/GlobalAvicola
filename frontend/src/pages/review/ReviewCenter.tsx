@@ -30,11 +30,11 @@ const STATUS_VARIANT: Record<string, string> = {
 
 // Tabs de estado
 const STATUS_TABS = [
- { key: 'pending_review', labelKey: 'review.pending', icon: Clock, color: 'text-amber-600' },
- { key: 'in_review', labelKey: 'review.inReview', icon: Search, color: 'text-indigo-600' },
- { key: 'returned', labelKey: 'review.returned', icon: Undo2, color: 'text-orange-600' },
- { key: 'approved', labelKey: 'review.approved', icon: CheckCircle, color: 'text-emerald-600' },
- { key: 'consolidated', labelKey: 'review.consolidated', icon: ListChecks, color: 'text-teal-600' },
+ { key: 'pending_review', labelKey: 'review.pending', fallback: 'Pendientes', icon: Clock, color: 'text-amber-600' },
+ { key: 'in_review', labelKey: 'review.inReview', fallback: 'En revisión', icon: Search, color: 'text-indigo-600' },
+ { key: 'returned', labelKey: 'review.returned', fallback: 'Devueltos', icon: Undo2, color: 'text-orange-600' },
+ { key: 'approved', labelKey: 'review.approved', fallback: 'Aprobados', icon: CheckCircle, color: 'text-emerald-600' },
+ { key: 'consolidated', labelKey: 'review.consolidated', fallback: 'Consolidados', icon: ListChecks, color: 'text-teal-600' },
 ] as const
 
 type StatusTab = typeof STATUS_TABS[number]['key']
@@ -193,7 +193,7 @@ export default function ReviewCenter() {
  `}
  >
  <Icon size={16} className={isActive ? 'text-white' : tab.color} />
- {t(tab.labelKey)}
+ {t(tab.labelKey, tab.fallback)}
  </button>
  )
  })}
