@@ -219,9 +219,9 @@ export default function OperationFormPage() {
  event_date: new Date().toISOString().split('T')[0],
  lot_id: prefillLotId ? Number(prefillLotId) : undefined,
  event_type: prefillType || '',
- bird_movements: [{ sex: 'male', quantity: 0 }, { sex: 'female', quantity: 0 }],
+ bird_movements: [{ sex: 'male' }, { sex: 'female' }],
  egg_movements: [],
- feed_movements: [{ quantity_kg: 0 }],
+ feed_movements: [{}],
  hatchery_params: [{}],
  inspection_details: [],
  house_inspections: [],
@@ -392,12 +392,19 @@ export default function OperationFormPage() {
  }
  }
 
+ const normalizedBirdMovements = (data.bird_movements || []).map((m) => {
+ if (data.event_type === 'bird_reception' && (m.week_number == null || Number.isNaN(m.week_number))) {
+ return { ...m, week_number: 0 }
+ }
+ return m
+ })
+
  const payload: any = {
  ...data,
  farm_id: data.farm_id ?? (!isHatcheryStage ? derivedFarmId : undefined),
  house_id: data.house_id ?? derivedHouseId,
  observations,
- bird_movements: (data.bird_movements || []).filter(m => (m.quantity ?? 0) > 0),
+ bird_movements: normalizedBirdMovements.filter(m => (m.quantity ?? 0) > 0),
  egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
  feed_movements: data.feed_movements || [],
  hatchery_params: (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
@@ -419,7 +426,7 @@ export default function OperationFormPage() {
  // ── M+F rows helper ──────────────────────────────────────────────
  const renderMFRows = (showWeight = true) => (
  <div>
- <div className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2 border-b border-slate-200`}>
+ <div className={`grid ${showWeight ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} px-1 py-2 border-b border-slate-200`}>
  <span className="text-sm font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
  <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
  {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
@@ -428,16 +435,16 @@ export default function OperationFormPage() {
  { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
  { idx: 1, defaultSex: 'female', label: t('operations.females', 'Hembras'), color: 'text-pink-700' },
  ].map(({ idx, defaultSex, label, color }) => (
- <div key={idx} className={`grid ${showWeight ? 'grid-cols-3' : 'grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0`}>
+ <div key={idx} className={`grid ${showWeight ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0`}>
  <div className="flex items-center gap-1.5">
  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={defaultSex} />
  <span className={`text-sm font-semibold ${color}`}>{label}</span>
  </div>
  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })}
- className={ic} placeholder="0" />
+ className={ic} />
  {showWeight && (
  <input type="number" step="0.001" {...register(`bird_movements.${idx}.avg_weight`, { valueAsNumber: true })}
- className={ic} placeholder="0.000" />
+ className={ic} />
  )}
  </div>
  ))}
@@ -533,7 +540,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave')}</label>
- <input type="number" step="0.01" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} placeholder="0.00" />
+ <input type="number" step="0.01" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  {renderMFRows(false)}
@@ -556,7 +563,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave (mL/mg)')}</label>
- <input type="number" step="0.001" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} placeholder="0.000" />
+ <input type="number" step="0.001" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.treatmentDays', 'Días de tratamiento')}</label>
@@ -610,7 +617,7 @@ export default function OperationFormPage() {
  <p className="font-semibold text-blue-800">{t('operations.sapOrderInfo', 'Información de la orden SAP')}</p>
  <p><strong>{t('operations.purchaseOrderAbbrev')}:</strong> {sapOrder.sap_code || sapOrder.ref_id} {vendorName ? `— ${vendorName}` : ''}</p>
  {sapOrder.description && <p className="text-slate-600">{sapOrder.description}</p>}
- <div className="grid grid-cols-2 gap-1 mt-1">
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-1">
  {declaredQty > 0 && <p><strong>{t('operations.declaredQty', 'Cantidad declarada')}:</strong> {declaredQty} aves</p>}
  {dispatchDate && <p><strong>{t('operations.dispatchDate', 'Fecha despacho')}:</strong> {dispatchDate}</p>}
  {declaredAvgM > 0 && <p><strong>{t('operations.declaredAvgWeightM', 'Peso prom. machos')}:</strong> {declaredAvgM}g</p>}
@@ -668,7 +675,7 @@ export default function OperationFormPage() {
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
- <div className="grid grid-cols-2 gap-2">
+ <div className="grid grid-cols-1 gap-2">
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.sex', 'Sexo')}</label>
  <select {...register(`bird_movements.${i}.sex`)} className={ic}>
@@ -679,20 +686,20 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
- <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.sampleSize', 'Muestra')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  </div>
  ))}
- <button type="button" onClick={() => appendBird({ sex: 'female', quantity: 0 })}
+ <button type="button" onClick={() => appendBird({ sex: 'female' })}
  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
  <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
  </button>
@@ -711,8 +718,6 @@ export default function OperationFormPage() {
  </div>
  )}
 
- {/* Week number (hidden, default 0 for day-old chicks) */}
- <input type="hidden" {...register('bird_movements.0.week_number', { valueAsNumber: true })} value="0" />
  </div>
  )}
 
@@ -750,7 +755,7 @@ export default function OperationFormPage() {
  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
  />
  </div>
- <div className="grid grid-cols-2 gap-2">
+ <div className="grid grid-cols-1 gap-2">
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.sex', 'Sexo')}</label>
  <select {...register(`bird_movements.${i}.sex`)} className={ic}>
@@ -761,20 +766,20 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
- <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.sampleSize', 'Muestra')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  </div>
  ))}
- <button type="button" onClick={() => appendBird({ sex: 'mixed', quantity: 0 })}
+ <button type="button" onClick={() => appendBird({ sex: 'mixed' })}
  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
  <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
  </button>
@@ -869,7 +874,7 @@ export default function OperationFormPage() {
  {transportId && (
  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 space-y-3">
  <p className="text-sm font-semibold text-amber-800">{t('operations.transportInspection', 'Inspección del transporte')}</p>
- <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+ <div className="grid grid-cols-1 gap-3">
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.cageCondition', 'Estado de jaulas')}</label>
  <select {...register('extra_data.transport_cage_condition' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
@@ -881,7 +886,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.densityBirdsM2', 'Densidad (aves/m²)')}</label>
- <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="0" />
+ <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
@@ -950,11 +955,11 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
  <div>
  <label className={lc}>{t('operations.quantityKg', 'Cantidad (kg)')}</label>
- <input type="number" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} placeholder="0.0" />
+ <input type="number" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.sacks', 'Sacos / bultos')}</label>
- <input type="number" min="0" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.sapOrder', 'Orden SAP')}</label>
@@ -984,17 +989,17 @@ export default function OperationFormPage() {
  return (
  <div className="space-y-4">
  <div>
- <div className="grid grid-cols-2 px-1 py-2 border-b border-slate-200">
+ <div className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2 border-b border-slate-200">
  <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
  <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
  </div>
  {eggTypes.map(({ key, label }, i) => (
- <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+ <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
@@ -1044,7 +1049,7 @@ export default function OperationFormPage() {
  {transportId && (
  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 space-y-3">
  <p className="text-sm font-semibold text-amber-800">{t('operations.transportInspection', 'Inspección del transporte')}</p>
- <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+ <div className="grid grid-cols-1 gap-3">
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.cageCondition', 'Estado de jaulas')}</label>
  <select {...register('extra_data.transport_cage_condition' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
@@ -1056,7 +1061,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.eggDensity', 'Huevos por bandeja')}</label>
- <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="0" />
+ <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
@@ -1090,7 +1095,7 @@ export default function OperationFormPage() {
 
  {/* Egg type rows */}
  <div>
- <div className="grid grid-cols-2 px-1 py-2 border-b border-slate-200">
+ <div className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2 border-b border-slate-200">
  <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
  <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
  </div>
@@ -1101,12 +1106,12 @@ export default function OperationFormPage() {
  { key: 'infertile', label: t('operations.infertile', 'Infértiles') },
  { key: 'discarded', label: t('operations.discarded', 'Descartados') },
  ].map(({ key, label }, i) => (
- <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+ <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
@@ -1146,7 +1151,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.quantity', 'Huevos recibidos')}</label>
- <input type="number" min="0" {...register('egg_storage_records.0.eggs_received', { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register('egg_storage_records.0.eggs_received', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.tempTransport', 'Temp. transporte (°C)')}</label>
@@ -1246,7 +1251,7 @@ export default function OperationFormPage() {
  <label className={lc}>{t('operations.equipmentCount', '¿Cuántos equipos inspeccionar?')}</label>
  <input type="number" min="0" max="20"
  {...register(`house_inspections.${i}.equipment_count`, { valueAsNumber: true })}
- className={ic} placeholder="0" />
+ className={ic} />
  {Array.from({ length: Math.min(eqCount, 20) }).map((_, j) => (
  <div key={j} className="flex items-start gap-2 pl-2 border-l-2 border-blue-200">
  <span className="text-xs font-bold text-blue-500 mt-3 shrink-0 w-5">{j + 1}</span>
@@ -1423,7 +1428,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.quantityLoaded', 'Cantidad cargada')}</label>
- <input type="number" min="0" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.temp', 'Temperatura (°C)')}</label>
@@ -1460,16 +1465,15 @@ export default function OperationFormPage() {
  <label className={lc}>{t('operations.candlingDay', 'Día de ovoscopía')}</label>
  <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="10" />
  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
- <input type="hidden" {...register('bird_movements.0.quantity')} defaultValue="0" />
  </div>
  <div>
  {types.map(({ key, label }, i) => (
- <div key={key} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+ <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
@@ -1497,7 +1501,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.qtyTransferred', 'Cantidad transferida')}</label>
- <input type="number" min="0" {...register('hatchery_params.0.quantity_transferred', { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register('hatchery_params.0.quantity_transferred', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.temp', 'Temperatura (°C)')}</label>
@@ -1524,12 +1528,12 @@ export default function OperationFormPage() {
  <div>
  <p className="text-sm font-semibold text-slate-700 mb-2">{t('operations.birthCounts', 'Conteo de nacimientos')}</p>
  {rows.map(({ sex, label, idx }) => (
- <div key={idx} className="grid grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
+ <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={sex} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
@@ -1614,12 +1618,12 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.finalPopulation', 'Población final')}</label>
- <input type="number" min="0" {...register('bird_movements.0.quantity', { valueAsNumber: true })} className={ic} placeholder="0" />
+ <input type="number" min="0" {...register('bird_movements.0.quantity', { valueAsNumber: true })} className={ic} />
  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
  </div>
  <div>
  <label className={lc}>{t('operations.avgWeight', 'Peso final prom. (kg)')}</label>
- <input type="number" step="0.001" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="0.000" />
+ <input type="number" step="0.001" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.fcr', 'FCR (Conversión alimenticia)')}</label>
@@ -1627,7 +1631,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.totalMortality', 'Mortalidad total (%)')}</label>
- <input type="number" step="0.01" {...register('extra_data.mortality_pct' as any)} className={ic} placeholder="0.00" />
+ <input type="number" step="0.01" {...register('extra_data.mortality_pct' as any)} className={ic} />
  </div>
  </div>
  </div>
@@ -1739,7 +1743,7 @@ export default function OperationFormPage() {
  {t(category.labelKey, category.fallback)}
  </span>
  </div>
- <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+ <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
  {events.map(evt => {
  const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
  return (
