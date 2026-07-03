@@ -214,10 +214,22 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
         existing = await session.execute(select(User).where(User.username == udef["username"]))
         user = existing.scalar_one_or_none()
         if user:
+            updates = []
             if user.view_type != udef["view_type"]:
                 user.view_type = udef["view_type"]
+                updates.append(f"view_type={udef['view_type']}")
+            if user.role_id != role.id:
+                user.role_id = role.id
+                updates.append(f"role_id={role.id}")
+            if user.company_id != COMPANY_ID:
+                user.company_id = COMPANY_ID
+                updates.append(f"company_id={COMPANY_ID}")
+
+            if updates:
                 session.add(user)
-            print(f"  ⏭️  {udef['username']} ({udef['view_type']}) ya existe")
+                print(f"  🔄 {udef['username']} actualizado: {', '.join(updates)}")
+            else:
+                print(f"  ⏭️  {udef['username']} ({udef['view_type']}) ya existe")
             continue
         user = User(
             first_name=udef["first_name"], last_name=udef["last_name"],
@@ -592,10 +604,12 @@ SAP_REFS = [
     # Purchase Orders (órdenes de compra) — para importación/recepción de aves
     {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001001",
      "description": "OC Importación Abuelas Ross 308 — 5,280 aves GP",
-     "quantity": 5280, "unit": "UN"},
+    "quantity": 5280, "unit": "UN",
+    "extra_data": {"stage": "grandparent_rearing", "process": "progenitoras", "reception_source": "purchase"}},
     {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001002",
      "description": "OC Importación Abuelas Cobb 500 — 4,620 aves GP",
-     "quantity": 4620, "unit": "UN"},
+    "quantity": 4620, "unit": "UN",
+    "extra_data": {"stage": "grandparent_rearing", "process": "progenitoras", "reception_source": "purchase"}},
     {"ref_type": SapReferenceType.PURCHASE_ORDER, "sap_code": "PO-4500001003",
      "description": "OC Reproductoras Ross 308 PS — 5,800 aves",
      "quantity": 5800, "unit": "UN"},
@@ -679,26 +693,52 @@ SAP_REFS = [
 async def seed_sap_references(session: AsyncSession):
     print("\n─── REFERENCIAS SAP ───")
     admin_id = await _get_id(session, User, username="admin")
-    count = 0
+    created = 0
+    updated = 0
     for ref in SAP_REFS:
-        if await _exists(
-            session,
-            SapReference,
-            company_id=COMPANY_ID,
-            sap_code=ref["sap_code"],
-            ref_type=ref["ref_type"],
-        ):
-            count += 1
+        existing_q = await session.execute(
+            select(SapReference).where(
+                SapReference.company_id == COMPANY_ID,
+                SapReference.sap_code == ref["sap_code"],
+                SapReference.ref_type == ref["ref_type"],
+            )
+        )
+        existing_ref = existing_q.scalar_one_or_none()
+        if existing_ref:
+            changed = False
+
+            for field in ("description", "quantity", "unit"):
+                new_value = ref.get(field)
+                if new_value is not None and getattr(existing_ref, field) != new_value:
+                    setattr(existing_ref, field, new_value)
+                    changed = True
+
+            incoming_extra_data = ref.get("extra_data")
+            if incoming_extra_data:
+                current_extra_data = existing_ref.extra_data or {}
+                merged_extra_data = {**current_extra_data, **incoming_extra_data}
+                if merged_extra_data != current_extra_data:
+                    existing_ref.extra_data = merged_extra_data
+                    changed = True
+
+            if existing_ref.imported_by_id is None and admin_id:
+                existing_ref.imported_by_id = admin_id
+                changed = True
+
+            if changed:
+                session.add(existing_ref)
+                updated += 1
             continue
+
         sr = SapReference(
             company_id=COMPANY_ID, ref_type=ref["ref_type"], sap_code=ref["sap_code"],
             description=ref["description"], quantity=ref.get("quantity"),
             unit=ref.get("unit"), extra_data=ref.get("extra_data"), imported_by_id=admin_id,
         )
         session.add(sr)
-        count += 1
+        created += 1
     await session.flush()
-    print(f"  ✅ {count} referencias SAP creadas/verificadas")
+    print(f"  ✅ {created} referencias SAP creadas | {updated} actualizadas | {len(SAP_REFS)} verificadas")
     # Print summary
     for rt in SapReferenceType:
         q = await session.execute(

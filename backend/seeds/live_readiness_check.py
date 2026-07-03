@@ -52,6 +52,15 @@ REQUIRED_SAP_REF_TYPES = {
     "TRANSFER_ORDER",
 }
 
+REQUIRED_PURCHASE_ORDER_STAGES = {
+    "grandparent_rearing",
+    "grandparent_production",
+    "breeder_rearing",
+    "breeder_production",
+    "hatchery",
+    "broiler",
+}
+
 
 def _print_check(ok: bool, label: str, details: str = "") -> None:
     prefix = "PASS" if ok else "FAIL"
@@ -148,6 +157,19 @@ async def main() -> int:
             )
         ).all()
 
+        sap_po_stage_rows = (
+            await session.execute(
+                text(
+                    """
+                    SELECT company_id, COALESCE(extra_data->>'stage', '') AS stage, count(*)
+                    FROM sap_references
+                    WHERE ref_type::text = 'PURCHASE_ORDER'
+                    GROUP BY company_id, COALESCE(extra_data->>'stage', '')
+                    """
+                )
+            )
+        ).all()
+
         users_without_role = (
             await session.execute(
                 select(func.count(User.id)).where(User.company_id.is_not(None), User.role_id.is_(None))
@@ -169,6 +191,12 @@ async def main() -> int:
     sap_ref_map: dict[int, dict[str, int]] = defaultdict(dict)
     for company_id, ref_type, count in sap_ref_rows:
         sap_ref_map[company_id][str(ref_type)] = count
+
+    sap_po_stage_map: dict[int, dict[str, int]] = defaultdict(dict)
+    for company_id, stage, count in sap_po_stage_rows:
+        stage_key = str(stage).strip()
+        if stage_key:
+            sap_po_stage_map[company_id][stage_key] = count
 
     print("=" * 72)
     print("Global Avicola - Live Test Data Readiness")
@@ -277,6 +305,17 @@ async def main() -> int:
             f"purchase_orders={purchase_orders}",
         )
         if not po_ok:
+            checks_failed += 1
+
+        po_stages_present = set(sap_po_stage_map.get(cid, {}).keys())
+        missing_po_stages = sorted(REQUIRED_PURCHASE_ORDER_STAGES - po_stages_present)
+        po_stage_ok = not missing_po_stages
+        _print_check(
+            po_stage_ok,
+            f"{cname}: purchase order stage coverage",
+            "missing=" + (", ".join(missing_po_stages) if missing_po_stages else "none"),
+        )
+        if not po_stage_ok:
             checks_failed += 1
 
         transfer_orders = sap_ref_map.get(cid, {}).get("TRANSFER_ORDER", 0)
