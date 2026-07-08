@@ -37,16 +37,33 @@ class SapService:
             self._adapter = ManualSapAdapter()
         return self._adapter
 
+    def _require_company_id(self) -> int:
+        """Return the company_id, raising an error if None (e.g. for write operations)."""
+        if self.company_id is None:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Operación requiere una empresa asignada. Los super administradores deben seleccionar una empresa.",
+            )
+        return self.company_id
+
+    def _company_filter(self, model_column):
+        """Return a where clause for company_id, or a no-op (True) for super admins."""
+        if self.company_id is not None:
+            return model_column == self.company_id
+        from sqlalchemy import true
+        return true()  # No filter for super admins — sees all companies
+
     # ============================================================
     # SAP References Import
     # ============================================================
 
     async def import_references(self, data: schemas.SapReferenceImportRequest) -> list[models.SapReference]:
         """Bulk import SAP references."""
+        cid = self._require_company_id()
         refs = []
         for item in data.references:
             ref = models.SapReference(
-                company_id=self.company_id,
+                company_id=cid,
                 ref_type=models.SapReferenceType(item.ref_type),
                 sap_code=item.sap_code,
                 description=item.description,
@@ -58,7 +75,7 @@ class SapService:
 
         # Create sync job for audit
         job = models.SapSyncJob(
-            company_id=self.company_id,
+            company_id=cid,
             direction=models.SyncDirection.IMPORT,
             status=models.SyncStatus.COMPLETED,
             total_records=len(refs),
@@ -75,11 +92,11 @@ class SapService:
         self, ref_type: Optional[str] = None, limit: int = 50, offset: int = 0
     ) -> tuple[list[models.SapReference], int]:
         base = select(models.SapReference).where(
-            models.SapReference.company_id == self.company_id,
+            self._company_filter(models.SapReference.company_id),
             models.SapReference.is_active == True,
         )
         cq = select(func_count()).select_from(models.SapReference).where(
-            models.SapReference.company_id == self.company_id,
+            self._company_filter(models.SapReference.company_id),
             models.SapReference.is_active == True,
         )
         if ref_type:
@@ -105,7 +122,7 @@ class SapService:
 
         # Find approved events not yet consolidated
         base = select(OperationalEvent).where(
-            OperationalEvent.company_id == self.company_id,
+            self._company_filter(OperationalEvent.company_id),
             OperationalEvent.status == EventStatus.APPROVED,
         )
         if lot_id:
@@ -154,7 +171,7 @@ class SapService:
             period_end = max(dates) if dates else datetime.now(timezone.utc)
 
             cm = models.ConsolidatedMovement(
-                company_id=self.company_id,
+                company_id=self._require_company_id(),
                 lot_id=lot_id_key,
                 event_type=ev_type,
                 period_start=period_start,
@@ -186,7 +203,7 @@ class SapService:
 
         # Find consolidated movements not yet exported
         base = select(models.ConsolidatedMovement).where(
-            models.ConsolidatedMovement.company_id == self.company_id,
+            self._company_filter(models.ConsolidatedMovement.company_id),
             models.ConsolidatedMovement.sap_payload_id == None,  # not yet exported
         )
         if consolidated_ids:
@@ -204,7 +221,7 @@ class SapService:
 
         # Create sync job
         job = models.SapSyncJob(
-            company_id=self.company_id,
+            company_id=self._require_company_id(),
             direction=models.SyncDirection.EXPORT,
             status=models.SyncStatus.IN_PROGRESS,
             total_records=len(movements),
@@ -256,7 +273,7 @@ class SapService:
 
             # Create SapPayload record
             sap_payload = models.SapPayload(
-                company_id=self.company_id,
+                company_id=self._require_company_id(),
                 sync_job_id=job.id,
                 consolidated_movement_id=cm.id,
                 idempotency_key=idem_key,
@@ -327,7 +344,7 @@ class SapService:
     async def retry_failed(self, payload_ids: Optional[list[int]] = None, max_retries: int = 3) -> dict:
         """Retry failed SAP payloads with exponential backoff."""
         base = select(models.SapPayload).where(
-            models.SapPayload.company_id == self.company_id,
+            self._company_filter(models.SapPayload.company_id),
             models.SapPayload.status == models.PayloadStatus.FAILED,
             models.SapPayload.retry_count < max_retries,
         )
@@ -394,10 +411,10 @@ class SapService:
 
     async def list_sync_jobs(self, limit: int = 20, offset: int = 0) -> tuple[list[models.SapSyncJob], int]:
         q = select(models.SapSyncJob).where(
-            models.SapSyncJob.company_id == self.company_id
+            self._company_filter(models.SapSyncJob.company_id)
         ).order_by(models.SapSyncJob.created_at.desc()).offset(offset).limit(limit)
         cq = select(func_count()).select_from(models.SapSyncJob).where(
-            models.SapSyncJob.company_id == self.company_id
+            self._company_filter(models.SapSyncJob.company_id)
         )
         result = await self.db.execute(q)
         jobs = list(result.scalars().all())
@@ -409,10 +426,10 @@ class SapService:
         self, lot_id: Optional[int] = None, limit: int = 50, offset: int = 0
     ) -> tuple[list[models.ConsolidatedMovement], int]:
         base = select(models.ConsolidatedMovement).where(
-            models.ConsolidatedMovement.company_id == self.company_id
+            self._company_filter(models.ConsolidatedMovement.company_id)
         )
         cq = select(func_count()).select_from(models.ConsolidatedMovement).where(
-            models.ConsolidatedMovement.company_id == self.company_id
+            self._company_filter(models.ConsolidatedMovement.company_id)
         )
         if lot_id:
             base = base.where(models.ConsolidatedMovement.lot_id == lot_id)
@@ -426,7 +443,7 @@ class SapService:
 
     async def list_errors(self, limit: int = 50, offset: int = 0) -> list[schemas.SapErrorItem]:
         q = select(models.SapPayload).where(
-            models.SapPayload.company_id == self.company_id,
+            self._company_filter(models.SapPayload.company_id),
             models.SapPayload.status == models.PayloadStatus.FAILED,
         ).order_by(models.SapPayload.updated_at.desc()).offset(offset).limit(limit)
         result = await self.db.execute(q)
@@ -443,8 +460,8 @@ class SapService:
         ]
 
     async def list_payloads(self, status: Optional[str] = None, limit: int = 50, offset: int = 0) -> tuple[list[models.SapPayload], int]:
-        base = select(models.SapPayload).where(models.SapPayload.company_id == self.company_id)
-        cq = select(func_count()).select_from(models.SapPayload).where(models.SapPayload.company_id == self.company_id)
+        base = select(models.SapPayload).where(self._company_filter(models.SapPayload.company_id))
+        cq = select(func_count()).select_from(models.SapPayload).where(self._company_filter(models.SapPayload.company_id))
         if status:
             base = base.where(models.SapPayload.status == status)
             cq = cq.where(models.SapPayload.status == status)
