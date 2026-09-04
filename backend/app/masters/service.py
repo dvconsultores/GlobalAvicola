@@ -97,6 +97,30 @@ class MasterService:
             )
         return item
 
+    #: Claves foráneas estructurales de los maestros: definen de quién es el dato.
+    #: Los catálogos con `company_id` anulable quedan fuera a proposito — su diseño
+    #: admite el uso compartido entre empresas.
+    _PADRES_TENANT = {"farm_id": "Farm", "hatchery_id": "Hatchery"}
+
+    async def _verificar_padres(self, item_data: dict) -> None:
+        """El recurso padre debe pertenecer a la misma compañía (`GA-REM-002 AC10`).
+
+        Sin esto, un galpón podía crearse bajo la granja de otra empresa: el hijo quedaba
+        asignado a una compañía y colgando de la estructura de otra. Es la misma clase de
+        defecto que `R-42`, en el árbol de maestros (`R-59`).
+        """
+        from ..tenancy import verificar_pertenencia
+        from . import models as masters_models
+
+        for campo, nombre_modelo in self._PADRES_TENANT.items():
+            valor = item_data.get(campo)
+            if valor is None:
+                continue
+            await verificar_pertenencia(
+                self.db, getattr(masters_models, nombre_modelo), valor,
+                self.user_company_id, nombre_modelo,
+            )
+
     async def create(self, data: Any) -> Any:
         """Create a new item. Auto-assigns company_id from current user."""
         item_data = data.model_dump()
@@ -105,6 +129,8 @@ class MasterService:
         if hasattr(self.model, "company_id") and "company_id" in item_data:
             if item_data["company_id"] is None and self.user_company_id:
                 item_data["company_id"] = self.user_company_id
+
+        await self._verificar_padres(item_data)
 
         item = self.model(**item_data)
         self.db.add(item)
@@ -116,6 +142,9 @@ class MasterService:
         """Update an existing item. Respects company isolation."""
         item = await self.get_by_id(item_id)
         update_data = data.model_dump(exclude_unset=True)
+        # Mover un maestro bajo un padre ajeno es la misma escritura entre inquilinos que
+        # crearlo ahi (`R-59`).
+        await self._verificar_padres(update_data)
         for key, value in update_data.items():
             setattr(item, key, value)
         await self.db.flush()
