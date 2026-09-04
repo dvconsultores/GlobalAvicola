@@ -77,3 +77,25 @@ madrugada, nadie se entera hasta que alguien lo mire. `GA-TD-013` es la demostra
 despliegue llevaba meses sin aplicar migraciones y **nadie lo supo**.
 
 Clasificación: **`PRE-PRODUCTION`**, no `RELEASE_BLOCKER`.
+
+---
+
+## 6. Estado tras el push de `4fcc9a6` (2026-09-04)
+
+El despliegue automático se activó y el código está en producción. Eso **no** cierra
+ningún bloqueante. Detalle en
+[`POST_PUSH_PRODUCTION_STATE_REPORT.md`](POST_PUSH_PRODUCTION_STATE_REPORT.md).
+
+```
+DEPLOYMENT OCCURRED UNDER EX-01
+FORMAL RELEASE GATE NOT YET CERTIFIED
+READY_FOR_RELEASE = NO
+```
+
+| Pendiente | Estado | Cambio |
+|---|---|---|
+| `GA-TD-040` copia verificada | **ABIERTO** — único bloqueante formal | agravado: las migraciones ya corrieron **sin** copia previa; cualquier copia nueva es `CURRENT_STATE_BACKUP` |
+| `R-44` efecto de la reconciliación | **`NOT_VERIFIED`** | la migración se ejecutó; su efecto exige entrar con una cuenta no Super Admin |
+| `R-52` volumen `avicola-media` | **PENDING** | sin cambio; Watchtower no relee el compose, así que `GA-REM-009` sigue inactiva en producción |
+| `R-58` entrypoint en Docker real | **`PASS_BY_INFERENCE`** | el backend sirve tras un entrypoint con `set -e`, luego migró; falta la lectura de `docker logs` |
+| `GA-TD-013` despliegue sin migraciones | **CERRADO en la práctica** | el despliegue ya aplica migraciones |

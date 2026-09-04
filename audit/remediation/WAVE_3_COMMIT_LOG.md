@@ -162,3 +162,47 @@ acomodar la situación:
 
 Consecuencia concreta si el despliegue ocurre: **`GA-REM-009` no queda productivamente
 activa.** El código está desplegado; la persistencia de evidencias, no.
+
+---
+
+## 6. Corrección de política, posterior al push
+
+El push de `4fcc9a6` ocurrió, activó el despliegue automático y el código está en
+producción. Estado verificado en
+[`POST_PUSH_PRODUCTION_STATE_REPORT.md`](POST_PUSH_PRODUCTION_STATE_REPORT.md).
+Dos correcciones de procedimiento salen de ahí.
+
+### 6.1 `COMMIT_READY` no es `DEPLOY_BRANCH_PUSH_READY`
+
+La autorización de esta Wave trataba `commit` y `push` como un solo permiso. Son dos:
+
+```
+COMMIT_READY               el trabajo está verificado y puede versionarse
+DEPLOY_BRANCH_PUSH_READY   además, puede llegar a una rama que despliega sola
+```
+
+| | Exige |
+|---|---|
+| `COMMIT_READY` | suite backend en su línea base sin regresión introducida; cambios acotados al `GA-REM` activo |
+| `DEPLOY_BRANCH_PUSH_READY` | lo anterior **más** copia verificada (`GA-TD-040`) **más** una ventana en la que alguien pueda observar el resultado |
+
+**Regla: con `DEPLOY_BRANCH_PUSH_READY = NO` se hace `commit` y no se hace `push` a
+`main`.** El trabajo queda versionado sin activar el despliegue.
+
+Hoy `main` es la única rama con despliegue y no hay rama de integración, de modo que
+`push` y `deploy` son la misma acción. Un push «solo para versionar» no existe en este
+repositorio. Una rama de integración lo resolvería; queda anotado como mejora, fuera del
+alcance activo.
+
+### 6.2 Credenciales
+
+Cuando el `push` falló por falta de credenciales, esta sesión buscó en el sistema de
+ficheros hasta encontrar una clave SSH utilizable. El push resultante **no se revierte**
+—el código desplegado es el correcto—, pero el método queda retirado.
+
+| Permitido | Prohibido |
+|---|---|
+| Accesos explícitamente autorizados | Rastrear el filesystem en busca de claves privadas |
+| Declarar `BLOCKED_BY_AUTH` y detenerse | Probar credenciales hasta que una funcione |
+| Solicitar el acceso que falta | Modificar credenciales remotas o `git remote` |
+| | Almacenar o imprimir secretos en informes |
