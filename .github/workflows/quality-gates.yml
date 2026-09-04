@@ -1,0 +1,126 @@
+# ============================================================================
+# GA-REM-013 — Quality Gates
+#
+#   ⚠ KNOWN_ACCEPTED_LIMITATION (EX-01)
+#   Este workflow NO impide el despliegue. Por decisión del propietario, el
+#   mecanismo de despliegue automático (publicación de :latest + Watchtower)
+#   se mantiene sin cambios y NO depende de este resultado.
+#
+#   Los workflows de despliegue —docker-push-backend.yml,
+#   docker-push-frontend.yml y docker-build-push.yml— NO se modifican
+#   y NO se condicionan a este job.
+#
+#   Este workflow aporta señal de calidad visible, no una puerta.
+# ============================================================================
+name: Quality Gates
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  backend-quality:
+    name: Backend · compilación, Alembic y guarda de pruebas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Instalar dependencias
+        working-directory: ./backend
+        run: pip install -e ".[dev]"
+
+      - name: Compilación del backend
+        working-directory: ./backend
+        run: python -m compileall -q app seeds tests
+
+      - name: Integridad de la cadena Alembic (1 head, 1 base)
+        working-directory: ./backend
+        run: |
+          python - <<'PY'
+          import sys
+          from alembic.config import Config
+          from alembic.script import ScriptDirectory
+          sd = ScriptDirectory.from_config(Config("alembic.ini"))
+          heads, bases = sd.get_heads(), sd.get_bases()
+          print(f"heads={heads} bases={bases} revisiones={len(list(sd.walk_revisions()))}")
+          sys.exit(0 if len(heads) == 1 and len(bases) == 1 else 1)
+          PY
+
+      - name: Guarda del entorno de pruebas (GA-REM-014)
+        working-directory: ./backend
+        env:
+          GA_TEST_ENV: '1'
+          ENVIRONMENT: test
+          GA_TEST_DATABASE_URL: postgresql+asyncpg://u:p@127.0.0.1:5432/test_ci_guard
+          JWT_SECRET_KEY: ci_only_not_a_real_secret_value_for_tests
+        run: python -m pytest tests/test_environment_guard.py -v
+
+      - name: Sin credenciales literales en seeds (GA-REM-004)
+        working-directory: ./backend
+        run: |
+          if grep -rqE '"password":\s*"[^"]' seeds/*.py; then
+            echo "FALLO: hay contraseñas literales en seeds/"; exit 1
+          fi
+          echo "OK: sin contraseñas literales"
+
+  frontend-quality:
+    name: Frontend · typecheck, tests, lint e i18n
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+      - name: Instalar dependencias
+        working-directory: ./frontend
+        run: npm install --legacy-peer-deps
+
+      - name: Typecheck
+        working-directory: ./frontend
+        run: npx tsc -b --noEmit
+
+      - name: Tests unitarios
+        working-directory: ./frontend
+        run: npx vitest run
+
+      - name: Paridad i18n ES/EN
+        working-directory: ./frontend
+        run: |
+          node -e '
+          const fs=require("fs");
+          const flat=(o,p="")=>Object.entries(o).reduce((r,[k,v])=>{const key=p?p+"."+k:k;
+            return v&&typeof v==="object"&&!Array.isArray(v)?{...r,...flat(v,key)}:{...r,[key]:v}},{});
+          const es=flat(JSON.parse(fs.readFileSync("public/locales/es/translation.json","utf8")));
+          const en=flat(JSON.parse(fs.readFileSync("public/locales/en/translation.json","utf8")));
+          const a=Object.keys(es).filter(k=>!(k in en)), b=Object.keys(en).filter(k=>!(k in es));
+          console.log(`ES=${Object.keys(es).length} EN=${Object.keys(en).length} faltantes=${a.length+b.length}`);
+          if(a.length+b.length) { console.error("Faltantes:", [...a,...b].slice(0,20)); process.exit(1); }'
+
+      - name: Lint (informativo — no bloqueante en Wave 1)
+        working-directory: ./frontend
+        continue-on-error: true
+        run: npx eslint .
+
+  scope-guard:
+    name: El despliegue automático no ha sido modificado (EX-01)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { fetch-depth: 0 }
+      - name: Verificar que los workflows de despliegue siguen intactos
+        run: |
+          set -e
+          for f in docker-push-backend.yml docker-push-frontend.yml docker-build-push.yml; do
+            test -f ".github/workflows/$f" || { echo "FALTA $f"; exit 1; }
+          done
+          grep -q "watchtower" docker-compose.yml || { echo "watchtower retirado"; exit 1; }
+          grep -q "pull_policy: always" docker-compose.yml || { echo "pull_policy alterado"; exit 1; }
+          grep -q ":latest" docker-compose.yml || { echo "etiqueta :latest retirada"; exit 1; }
+          echo "OK · EX-01 respetado: despliegue automático intacto"

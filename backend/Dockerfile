@@ -43,6 +43,9 @@ ENV PYTHONDONTWRITEBYTECODE=1
 # Expose port
 EXPOSE 8000
 
+# GA-REM-024: el entrypoint aplica las migraciones antes de ceder el control al servidor.
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+
 # Run as non-root
 USER avicola
 
@@ -50,5 +53,10 @@ USER avicola
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
     CMD python -c "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')" || exit 1
 
-# Start server
+# Start server.
+#
+# El ENTRYPOINT migra y ejecuta el CMD. Los servicios que declaran su propio `command`
+# —el bot de Telegram, que comparte esta imagen— pasan igualmente por la migracion, que es
+# idempotente y por tanto inocua para ellos.
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]

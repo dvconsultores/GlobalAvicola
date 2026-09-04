@@ -25,8 +25,22 @@ services:
       BACKEND_CORS_ORIGINS: ${BACKEND_CORS_ORIGINS:-http://localhost,https://avicola.globaldv.net}
       FEATURE_SAP_ENABLED: ${FEATURE_SAP_ENABLED:-true}
       FEATURE_TELEGRAM_ENABLED: ${FEATURE_TELEGRAM_ENABLED:-false}
+      # GA-REM-004: rate limiting activo en producción (anti fuerza bruta en /login)
+      FEATURE_RATE_LIMIT_ENABLED: ${FEATURE_RATE_LIMIT_ENABLED:-true}
+      # GA-REM-009: directorio de evidencias, respaldado por volumen persistente
+      MEDIA_DIR: ${MEDIA_DIR:-/app/media}
+      SAP_EXPORT_DIR: ${SAP_EXPORT_DIR:-/app/media/sap_exports}
+      # GA-REM-005 AC08: `docs/02 §3.14` exige que el umbral de mortalidad sea
+      # configurable. Se expone aquí para que ajustarlo no requiera tocar código ni
+      # reconstruir la imagen; los valores por defecto son los históricos.
+      MORTALITY_ALERT_WARNING_PCT: ${MORTALITY_ALERT_WARNING_PCT:-3.0}
+      MORTALITY_ALERT_CRITICAL_PCT: ${MORTALITY_ALERT_CRITICAL_PCT:-8.0}
     ports:
       - "${BACKEND_PORT:-8002}:8000"
+    # GA-REM-009: las evidencias y las exportaciones SAP deben sobrevivir
+    # a la recreación del contenedor.
+    volumes:
+      - avicola-media:/app/media
     networks:
       - avicola-network
     healthcheck:
@@ -94,6 +108,10 @@ services:
       - WATCHTOWER_POLL_INTERVAL=60
       - WATCHTOWER_LIFECYCLE_HOOKS=true
       - WATCHTOWER_LABEL_ENABLE=true
+
+volumes:
+  # GA-REM-009: almacenamiento persistente de evidencias y exportaciones SAP.
+  avicola-media:
 
 networks:
   avicola-network:
