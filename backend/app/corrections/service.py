@@ -37,11 +37,27 @@ class CorrectionService:
                 detail=f"El evento no se puede corregir en estado '{event.status.value}'",
             )
 
-        # Create immutable correction log
+        # P0-2: aplicar el valor corregido al dato.
+        #
+        # Hasta ahora se creaba el registro de correccion, se cambiaba el estado a
+        # CORRECTED y **no se escribia nada**: el dato erroneo era el que se aprobaba, el
+        # que alimentaba los KPI y el que se consolidaba hacia SAP. El sistema quedaba con
+        # dos verdades divergentes.
+        #
+        # Regla vigente `RR-01` (Wave 1.5): la correccion escribe el valor en el acto,
+        # conserva el original en el `CorrectionLog` y deja el registro pendiente de
+        # aprobacion.
+        valor_original = _leer_valor(event, data.field_name)
+        valor_aplicado = _convertir(event, data.field_name, data.corrected_value)
+        setattr(event, data.field_name, valor_aplicado)
+        event.version += 1
+
+        # El log guarda lo que **habia**, no lo que el cliente dijera que habia: si el
+        # valor original lo aporta quien corrige, la auditoria deja de ser evidencia.
         correction = models.CorrectionLog(
             event_id=data.event_id,
             field_name=data.field_name,
-            original_value=data.original_value,
+            original_value=valor_original,
             corrected_value=data.corrected_value,
             corrected_by_id=self.current_user["id"],
             correction_type_id=data.correction_type_id,
@@ -53,12 +69,13 @@ class CorrectionService:
         event.status = EventStatus.CORRECTED
         await self.db.flush()
         await self.db.refresh(correction)
+        await self.db.refresh(event)
 
         # Audit: field-level correction
         await audit_correction(
             self.db, data.event_id, self.current_user,
             field_name=data.field_name,
-            original_value=data.original_value,
+            original_value=valor_original,
             corrected_value=data.corrected_value,
             reason=data.reason,
             lot_id=event.lot_id,
@@ -109,3 +126,66 @@ class CorrectionService:
 def func_count():
     from sqlalchemy import func
     return func.count()
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Aplicacion del valor corregido — P0-2 / RR-01
+# ═══════════════════════════════════════════════════════════════════════════
+
+def campos_corregibles() -> set[str]:
+    """Campos del evento que una correccion puede modificar.
+
+    Lista blanca explicita, no `setattr` sobre lo que llegue. `field_name` lo elige el
+    cliente: sin acotarlo, una correccion podria escribir `status`, `company_id`,
+    `registered_by_id` o `approved_by_id` y convertirse en la misma escalada de
+    privilegios que `R-32`.
+    """
+    from ..operations.schemas import OperationalEventUpdate
+
+    return set(OperationalEventUpdate.model_fields)
+
+
+def _leer_valor(event, campo: str) -> str | None:
+    valor = getattr(event, campo, None)
+    return None if valor is None else str(valor)
+
+
+def _convertir(event, campo: str, valor: str | None):
+    """Convierte el valor recibido al tipo de la columna.
+
+    `corrected_value` llega como texto. Escribirlo tal cual en una columna numerica o de
+    fecha produciria un error de base de datos —un 500— en lugar de un mensaje util.
+    """
+    from datetime import date as _date
+
+    if campo not in campos_corregibles():
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"El campo '{campo}' no es corregible. "
+                f"Campos admitidos: {', '.join(sorted(campos_corregibles()))}"
+            ),
+        )
+    if valor is None or valor == "":
+        return None
+
+    columna = OperationalEvent.__table__.columns.get(campo)
+    tipo = columna.type.python_type if columna is not None else str
+    try:
+        if tipo is _date:
+            return _date.fromisoformat(valor)
+        if tipo is bool:
+            return valor.strip().lower() in ("true", "1", "si", "sí")
+        if tipo is dict:
+            import json
+
+            return json.loads(valor)
+        return tipo(valor)
+    except (ValueError, TypeError):
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=(
+                f"El valor '{valor}' no es valido para el campo '{campo}' "
+                f"(se esperaba {tipo.__name__})"
+            ),
+        ) from None

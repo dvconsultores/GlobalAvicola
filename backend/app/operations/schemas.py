@@ -106,6 +106,22 @@ class OperationalEventBase(BaseModel):
     idempotency_key: Optional[str] = None  # Client-generated UUID to prevent duplicate submissions
 
 
+# Submovimientos: viajan en el mismo cuerpo pero no son columnas del evento.
+SUBMOVEMENT_FIELDS: frozenset[str] = frozenset({
+    "bird_movements",
+    "egg_movements",
+    "feed_movements",
+    "hatchery_params",
+    "inspection_details",
+    "egg_storage_records",
+})
+
+# Campos que identifican el envío y no pueden cambiar una vez creado el evento:
+# alterar el tipo invalidaría las reglas que se le aplicaron al registrarlo, y la clave
+# de idempotencia identifica el envío original (BR-12).
+IMMUTABLE_AFTER_CREATE: frozenset[str] = frozenset({"event_type", "idempotency_key"})
+
+
 class OperationalEventCreate(OperationalEventBase):
     bird_movements: list[BirdMovementSchema] = []
     egg_movements: list[EggMovementSchema] = []
@@ -116,9 +132,54 @@ class OperationalEventCreate(OperationalEventBase):
 
 
 class OperationalEventUpdate(BaseModel):
+    """Edición del evento antes de enviarlo a revisión.
+
+    Admite los mismos campos operativos que la creación (`R-34`): hasta ahora solo dejaba
+    tocar `event_date` y `observations`, de modo que un operador que erraba la vacuna tenía
+    que cancelar y volver a registrar, pese a que `docs/12 §3` le reconoce la edición
+    mientras el registro no ha salido de sus manos.
+
+    Dos ausencias son deliberadas:
+
+    * **`status`**. El estado solo cambia por las transiciones del flujo. Aceptarlo aquí
+      permitía aprobar un evento con un `PUT`, sin revisión, sin segregación y sin dejar
+      aprobador (`R-32`).
+    * **`event_type` e `idempotency_key`**. Cambiar el tipo invalidaría las reglas que se
+      aplicaron al registrar; la clave identifica el envío original (`BR-12`).
+
+    Las restricciones de estado que hacen cumplir `BR-15`, `BR-16` y `RR-01` viven en
+    `update_event` y no se relajan: solo se edita en `DRAFT`, `REGISTERED` y `RETURNED`.
+
+    `extra="forbid"` es la diferencia entre rechazar y descartar en silencio: quien envíe
+    `status` recibe un 422 explícito, no un 200 que no hizo nada. Es la clase de fallo de
+    `P0-13` y `P0-14`, y aquí se cierra por contrato.
+
+    El conjunto de campos se mantiene alineado con `OperationalEventBase` mediante
+    `test_p014_persistence.py::test_update_cubre_el_contrato_operativo`.
+    """
+
+    model_config = {"extra": "forbid"}
+
+    lot_id: Optional[int] = None
+    farm_id: Optional[int] = None
+    house_id: Optional[int] = None
     event_date: Optional[date] = None
     observations: Optional[str] = None
-    status: Optional[str] = None
+    sap_document_ref: Optional[str] = None
+    supplier_id: Optional[int] = None
+    cause_id: Optional[int] = None
+    cull_cause_id: Optional[int] = None
+    vaccine_id: Optional[int] = None
+    vaccination_route: Optional[str] = None
+    vaccine_lot_number: Optional[str] = None
+    medication_id: Optional[int] = None
+    dosage_per_bird: Optional[float] = None
+    treatment_days: Optional[int] = None
+    destination_farm_id: Optional[int] = None
+    destination_plant_id: Optional[int] = None
+    transport_id: Optional[int] = None
+    sample_size: Optional[int] = None
+    extra_data: Optional[dict] = None
 
 
 class OperationalEventRead(OperationalEventBase):

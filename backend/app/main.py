@@ -1,13 +1,15 @@
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, Request
+from fastapi import FastAPI, Request, status
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from slowapi import Limiter, _rate_limit_exceeded_handler
 from slowapi.util import get_remote_address
 from slowapi.errors import RateLimitExceeded
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from .config import settings
+from .operations.validators import BusinessRuleViolation
 
 # S-05: Rate limiting — always instantiated, but limits are
 # effectively disabled when FEATURE_RATE_LIMIT_ENABLED=false
@@ -52,6 +54,31 @@ app = FastAPI(
 app.state.limiter = limiter
 if _limiter_active:
     app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
+
+# R-26: contrato de error de las reglas de negocio.
+#
+# `BusinessRuleViolation` señala que la petición es válida pero el dominio la rechaza:
+# eso es un 400, no un 500. Hasta ahora solo se convertía en las cinco reglas que caían
+# dentro de un `try/except` local de `OperationsService._apply_business_rules`; las otras
+# ocho —BR-06, BR-07, BR-08, BR-10, BR-15, BR-17, BR-19 y G-R05— escapaban sin manejar y
+# el operador que olvidaba la granja veía «Internal Server Error» en lugar del motivo.
+#
+# Un manejador tipado y único da un contrato consistente a las 23 reglas y a cualquiera
+# que se añada después. Deliberadamente NO se captura `Exception`: un fallo inesperado
+# debe seguir siendo un 500, porque esconderlo tras un 400 es peor que el defecto que se
+# está corrigiendo.
+@app.exception_handler(BusinessRuleViolation)
+async def _business_rule_violation_handler(request: Request, exc: BusinessRuleViolation):
+    """Traduce una violación de regla de negocio a `400` citando la regla.
+
+    `detail` se mantiene como cadena por compatibilidad con los clientes existentes;
+    `rule` se añade para que la interfaz pueda identificar la regla sin analizar el texto.
+    """
+    return JSONResponse(
+        status_code=status.HTTP_400_BAD_REQUEST,
+        content={"detail": exc.message, "rule": exc.rule_id or None},
+    )
 
 # CORS
 app.add_middleware(
@@ -114,3 +141,11 @@ app.include_router(dashboard_router, prefix="/api/v1", tags=["Dashboard"])
 
 if settings.FEATURE_SAP_ENABLED:
     app.include_router(sap_router, prefix="/api/v1", tags=["SAP Integration"])
+
+
+# GA-REM-002 AC08: ninguna ruta puede quedarse sin decisión de autorización. Se comprueba
+# al importar la aplicación, de modo que un olvido rompe el arranque en lugar de abrir un
+# agujero silencioso.
+from .authorization_coverage import verificar as _verificar_autorizacion  # noqa: E402
+
+_verificar_autorizacion(app)

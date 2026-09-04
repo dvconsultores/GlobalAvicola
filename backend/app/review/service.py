@@ -11,7 +11,61 @@ from ..operations.models import EventStatus, OperationalEvent
 from . import models, schemas
 
 
-class ReviewService:
+class SegregacionMixin:
+    """`BR-14` en un unico sitio, para todo el que apruebe.
+
+    La auditoria encontro tres vias distintas de saltarse la regla: `complete_review` no
+    la comprobaba, `approve` la aplicaba de forma incondicional ignorando la bandera de
+    configuracion, y `PUT /operations/{id}` permitia fijar el estado sin pasar por
+    ninguna de las dos (`R-32`, corregido en el Stage 1).
+
+    Una regla de control interno aplicada en un sitio y ausente en otro no es un control:
+    es una casualidad. De ahi que viva aqui y no incrustada en cada servicio.
+    """
+
+    async def _exigir_segregacion(self, event, accion: str = "aprobar") -> None:
+        """Aplica `BR-14` en un unico sitio, consultando la configuracion del paso.
+
+        Regla vigente `RR-03` (Wave 1.5): `BR-14` es **configurable por paso de
+        aprobacion** mediante `ApprovalStep.require_segregation`, con valor por defecto
+        `True`. La bandera existia en el modelo desde el principio, se sembraba con cada
+        paso y **nunca se leia**: la comprobacion estaba incrustada en `approve()` y
+        `complete_review()` la eludia por completo.
+
+        Centralizarla importa porque la auditoria encontro tres vias distintas de
+        saltarse la regla. Una regla de control interno aplicada en un sitio y ausente en
+        otros no es un control: es una casualidad.
+        """
+        from ..operations.validators import BusinessRuleViolation, validate_segregation
+
+        if not await self._segregacion_configurada():
+            return
+        try:
+            validate_segregation(event.registered_by_id, self.current_user["id"], accion)
+        except BusinessRuleViolation as e:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message)
+
+    async def _segregacion_configurada(self) -> bool:
+        """`True` salvo que la empresa la haya desactivado explicitamente.
+
+        Sin pasos configurados se exige segregacion: el valor por defecto de la columna es
+        `True` y una empresa que no ha configurado nada no puede haber renunciado a un
+        control interno sin saberlo.
+        """
+        resultado = await self.db.execute(
+            select(models.ApprovalStep.require_segregation)
+            .where(
+                models.ApprovalStep.company_id == self.company_id,
+                models.ApprovalStep.can_approve.is_(True),
+            )
+            .order_by(models.ApprovalStep.step_order.desc())
+        )
+        configurado = resultado.scalars().first()
+        return True if configurado is None else bool(configurado)
+
+
+
+class ReviewService(SegregacionMixin):
     """Handles review workflow: batch creation, start/return/complete review."""
 
     def __init__(self, db: AsyncSession, current_user: dict[str, Any]):
@@ -201,7 +255,11 @@ class ReviewService:
         old_status = "in_review"
 
         if approval_levels <= 1:
-            # Single level: review = approval
+            # Nivel unico: completar la revision equivale a aprobar. Y si equivale a
+            # aprobar, `BR-14` rige igual: esta ruta fijaba `APPROVED` y `approved_by_id`
+            # **sin comprobar la segregacion** (`R-23`), de modo que bastaba configurar un
+            # solo nivel para que quien registraba aprobara lo suyo.
+            await self._exigir_segregacion(event, "aprobar")
             event.status = EventStatus.APPROVED
             event.approved_by_id = self.current_user["id"]
             new_status = "approved"
@@ -259,7 +317,7 @@ def func_count():
     return func.count()
 
 
-class ApprovalService:
+class ApprovalService(SegregacionMixin):
     """Handles approval workflow: approve, reject, batch operations."""
 
     def __init__(self, db: AsyncSession, current_user: dict[str, Any]):
@@ -311,13 +369,8 @@ class ApprovalService:
         """Approve a single event."""
         event = await self._get_event_for_approval(event_id)
 
-        # BR-14: Operator cannot approve own data (segregation of duties)
-        from ..operations.validators import validate_segregation, BusinessRuleViolation
-        from fastapi import HTTPException, status as http_status
-        try:
-            validate_segregation(event.registered_by_id, self.current_user["id"], "aprobar")
-        except BusinessRuleViolation as e:
-            raise HTTPException(status_code=http_status.HTTP_403_FORBIDDEN, detail=e.message)
+        # BR-14 (RR-03): segregacion de funciones, configurable por paso.
+        await self._exigir_segregacion(event, "aprobar")
 
         event.status = EventStatus.APPROVED
         event.approved_by_id = self.current_user["id"]
@@ -502,8 +555,14 @@ class ApprovalStepService:
         result = await self.db.execute(select(Role).where(Role.name == name))
         role = result.scalar_one_or_none()
         if not role:
+            # R-27: un requisito de configuración no satisfecho no es un fallo del
+            # servidor. El 500 impedía distinguir «falta configurar los roles» de «algo
+            # se ha roto», y no decía qué hacer.
             raise HTTPException(
-                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-                detail=f"Rol '{name}' no encontrado en el sistema",
+                status_code=status.HTTP_422_UNPROCESSABLE_CONTENT,
+                detail=(
+                    f"El rol '{name}' no existe en el sistema. Cree los roles del flujo "
+                    "de aprobación antes de sembrar los pasos por defecto."
+                ),
             )
         return role

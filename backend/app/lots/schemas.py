@@ -25,11 +25,24 @@ class LotCreate(LotBase):
 
 
 class LotUpdate(BaseModel):
+    """Edición de un lote. **No** incluye `status`.
+
+    `R-51`, misma clase que `R-32`: con `status` en el contrato, un `PUT` podía cerrar un
+    lote saltándose `close_lot` —sin la precondición de que estuviera activo, sin resumen
+    final y sin fijar `end_date`— y también **reabrir** uno cerrado, con lo que volvían a
+    admitirse movimientos contra él (`BR-07`).
+
+    El estado del lote cambia por su transición: `POST /lots/{id}/close`.
+
+    `extra="forbid"` para que enviarlo sea un error explícito y no un descarte silencioso.
+    """
+
+    model_config = {"extra": "forbid"}
+
     farm_id: Optional[int] = None
     house_id: Optional[int] = None
     genetic_line_id: Optional[int] = None
     breed_id: Optional[int] = None
-    status: Optional[str] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
 

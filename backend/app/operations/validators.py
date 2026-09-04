@@ -260,10 +260,27 @@ async def validate_event_date(db: AsyncSession, lot_id: int, event_date) -> None
             )
 
 
-async def validate_lot_active(db: AsyncSession, lot_id: int) -> None:
-    """BR-07: Movements require active lot."""
+async def validate_lot_active(db: AsyncSession, lot_id: int, company_id: int | None = None) -> None:
+    """BR-07: Movements require active lot, and the lot must belong to the caller.
+
+    `R-42`: la consulta no filtraba por compañía. Como `create_event` fija
+    `company_id = self.company_id` —la de quien pide— y el `lot_id` no se comprobaba, un
+    usuario de la empresa A podía **registrar operaciones contra un lote de la empresa
+    B**. El evento quedaba archivado bajo A pero ligado a un lote de B, y como el saldo de
+    aves se calcula por `lot_id` sin filtro de compañía, contaminaba los balances de B.
+
+    No era una fuga de lectura sino una **escritura entre inquilinos**, que es peor: los
+    filtros de listado protegían la consulta y nadie comprobaba la referencia.
+
+    `company_id` es opcional para no romper a los llamadores que aún no lo aportan; cuando
+    llega, un lote ajeno se comporta como inexistente, que es lo que debe parecerle a
+    quien no tiene derecho a verlo.
+    """
     from ..masters.models import Lot, LotStatus
-    result = await db.execute(select(Lot).where(Lot.id == lot_id))
+    consulta = select(Lot).where(Lot.id == lot_id)
+    if company_id is not None:
+        consulta = consulta.where(Lot.company_id == company_id)
+    result = await db.execute(consulta)
     lot = result.scalar_one_or_none()
     if not lot:
         raise BusinessRuleViolation("Lote no encontrado", "BR-07")
@@ -343,6 +360,16 @@ async def validate_period_open(db: AsyncSession, event_date) -> None:
         raise BusinessRuleViolation(
             f"La fecha del evento ({event_date}) está en un período cerrado (+90 días). "
             "Requiere autorización especial.",
+            "BR-19",
+        )
+    # R-30: la comparación `> 90` dejaba pasar cualquier fecha futura, porque `days_ago`
+    # se vuelve negativo. Un evento operativo que todavía no ha ocurrido no puede
+    # registrarse. Se admite un día de holgura porque el servidor mide en su propia zona
+    # horaria y un operador al este puede estar viviendo ya el día siguiente.
+    if days_ago < -1:
+        raise BusinessRuleViolation(
+            f"La fecha del evento ({event_date}) es futura. "
+            "Solo pueden registrarse operaciones ya ocurridas.",
             "BR-19",
         )
 

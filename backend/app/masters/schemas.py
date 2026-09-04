@@ -2,7 +2,7 @@
 Pydantic schemas for master data entities.
 """
 from datetime import datetime
-from typing import Optional
+from typing import Any, Optional
 
 from pydantic import BaseModel, Field
 
@@ -409,3 +409,84 @@ class CorrectionTypeRead(CorrectionTypeBase):
     is_active: bool
     created_at: datetime
     model_config = {"from_attributes": True}
+
+
+# ============================================================
+# GA-REM-011 C-17 — Esquemas de actualización de catálogos maestros
+# ============================================================
+# El frontend ofrece 'Editar' en 12 catálogos y el backend solo había
+# registrado PUT para 4, devolviendo 405 en las otras 8 pantallas.
+
+class SupplierUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    sap_code: Optional[Any] = None
+    country: Optional[Any] = None
+    supplier_type: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class GeneticLineUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    code: Optional[Any] = None
+    supplier: Optional[Any] = None
+    description: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class BreedUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    genetic_line_id: Optional[Any] = None
+    name: Optional[Any] = None
+    bird_type: Optional[Any] = None
+    description: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class FeedTypeUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    code: Optional[Any] = None
+    presentation: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class VaccineUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    laboratory: Optional[Any] = None
+    vaccine_type: Optional[Any] = None
+    standard_dosage: Optional[Any] = None
+    application_route: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class MortalityCauseUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    category: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class TransportUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    plate: Optional[Any] = None
+    transport_type: Optional[Any] = None
+    capacity: Optional[Any] = None
+    is_active: Optional[bool] = None
+
+
+class ProcessingPlantUpdate(BaseModel):
+    """GA-REM-011 C-17: la UI ofrece editar este catálogo; faltaba el método PUT."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    location: Optional[Any] = None
+    is_active: Optional[bool] = None

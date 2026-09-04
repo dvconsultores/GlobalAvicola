@@ -75,6 +75,20 @@ class Settings(BaseSettings):
     RATE_LIMIT_LOGIN: str = "5/minute"
     RATE_LIMIT_GLOBAL: str = "60/minute"
 
+    # ── Umbrales de alerta operativa ─────────────────────────────────────────
+    # `docs/02-functional-spec.md:516` exige «Mortalidad > umbral **configurable**», y la
+    # auditoría lo registró como hueco: estaba fijo en el código (`audit/06:259`).
+    #
+    # Se hace configurable por el mismo mecanismo que todo lo demás en este sistema
+    # —variables de entorno vía `Settings`— y no por empresa: ninguna fuente pide ese
+    # alcance, y añadir una columna y una pantalla para algo que nadie ha solicitado sería
+    # inventar requisitos. La configurabilidad por empresa queda como mejora opcional en
+    # `GA-REM-019`.
+    #
+    # Porcentaje del saldo de aves previo al evento.
+    MORTALITY_ALERT_WARNING_PCT: float = 3.0
+    MORTALITY_ALERT_CRITICAL_PCT: float = 8.0
+
     # ============================================================
     # Feature Flags — controlan qué se habilita en cada entorno
     # ============================================================
@@ -92,6 +106,15 @@ class Settings(BaseSettings):
     # Review & Approval workflow: true en producción.
     # En desarrollo se puede desactivar para agilizar pruebas.
     FEATURE_REVIEW_ENABLED: bool = True
+
+    # ============================================================
+    # SAP — selección de adaptador (GA-REM-010)
+    # ============================================================
+    # "manual": genera un artefacto para carga por el analista. NO entrega a SAP.
+    # "mock"  : simulación para pruebas. NO entrega a SAP.
+    # "real"  : entrega verificada a SAP S/4HANA — NO IMPLEMENTADO (GA-REM-017).
+    # Un adaptador sin entrega verificada nunca marca un evento como enviado a SAP.
+    SAP_ADAPTER: str = "manual"
 
     # Telegram Bot
     TELEGRAM_API_KEY: str = ""
