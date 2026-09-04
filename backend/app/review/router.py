@@ -5,13 +5,14 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
+from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import ApprovalService, ApprovalStepService, ReviewService
 
-router = APIRouter(prefix="/review", tags=["Review"])
-approval_router = APIRouter(prefix="/approvals", tags=["Approvals"])
-steps_router = APIRouter(prefix="/approval-steps", tags=["Approval Steps"])
+router = APIRouter(route_class=RutaTransaccional, prefix="/review", tags=["Review"])
+approval_router = APIRouter(route_class=RutaTransaccional, prefix="/approvals", tags=["Approvals"])
+steps_router = APIRouter(route_class=RutaTransaccional, prefix="/approval-steps", tags=["Approval Steps"])
 
 
 # ============================================================

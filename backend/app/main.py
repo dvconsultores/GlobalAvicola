@@ -149,3 +149,10 @@ if settings.FEATURE_SAP_ENABLED:
 from .authorization_coverage import verificar as _verificar_autorizacion  # noqa: E402
 
 _verificar_autorizacion(app)
+
+# GA-REM-026 AC11: ninguna ruta puede usar la base fuera de la frontera transaccional. Un
+# router que olvide `route_class=RutaTransaccional` perdería sus escrituras en silencio;
+# esto lo convierte en un fallo de arranque.
+from .transaction import verificar as _verificar_transaccion  # noqa: E402
+
+_verificar_transaccion(app)

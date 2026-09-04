@@ -10,11 +10,12 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
+from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import OperationsService
 
-router = APIRouter(prefix="/operations", tags=["Operations"])
+router = APIRouter(route_class=RutaTransaccional, prefix="/operations", tags=["Operations"])
 
 MEDIA_DIR = os.environ.get("MEDIA_DIR", "/app/media")
 _ALLOWED_MIME = {"image/jpeg", "image/png", "image/gif", "image/webp", "application/pdf"}

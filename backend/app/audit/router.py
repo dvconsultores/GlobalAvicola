@@ -5,11 +5,12 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
+from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import AuditService
 
-router = APIRouter(prefix="/audit", tags=["Audit"])
+router = APIRouter(route_class=RutaTransaccional, prefix="/audit", tags=["Audit"])
 
 
 @router.get("")

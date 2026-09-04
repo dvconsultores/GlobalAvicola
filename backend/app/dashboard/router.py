@@ -3,10 +3,11 @@ from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
+from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from .service import DashboardService
 
-router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+router = APIRouter(route_class=RutaTransaccional, prefix="/dashboard", tags=["Dashboard"])
 
 
 @router.get("/mobile")

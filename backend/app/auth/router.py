@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
+from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from ..main import limiter, rate_limit  # S-05: rate limiting
 from .schemas import (
@@ -19,7 +20,7 @@ from .schemas import (
 )
 from .service import AuthService
 
-router = APIRouter()
+router = APIRouter(route_class=RutaTransaccional)
 
 
 # ------------------- Auth Endpoints -------------------
