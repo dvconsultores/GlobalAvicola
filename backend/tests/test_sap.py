@@ -76,10 +76,18 @@ async def test_list_payloads(auth_headers, client):
 
 @pytest.mark.asyncio
 async def test_sap_connection_check(auth_headers, client):
+    """El adaptador manual no está conectado a SAP, y debe decirlo.
+
+    El test esperaba `connected == True` cuando `check_connection()` devolvía un
+    optimismo sin respaldo. `GA-REM-010` lo hizo honesto: `ManualSapAdapter` genera un
+    artefacto para envío manual y **no entrega nada a SAP**, de modo que declararse
+    conectado sería exactamente el falso positivo que esa remediación eliminó.
+    """
     resp = await client.get("/api/v1/sap/connection-check", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert data["connected"] == True
+    assert data["connected"] is False, (
+        "El adaptador manual no entrega a SAP: no puede declararse conectado (GA-REM-010)")
     assert "ManualSapAdapter" in data["adapter"]
 
 

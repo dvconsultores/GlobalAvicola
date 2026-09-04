@@ -8,6 +8,7 @@ logging.getLogger("sqlalchemy").setLevel(logging.ERROR)
 
 from httpx import ASGITransport, AsyncClient
 from app.main import app
+from tests.time_reference import recent_event_date
 
 
 async def main():
@@ -23,7 +24,7 @@ async def main():
         # ─── 2. CREATE BIRD RECEPTION ───
         r = await c.post("/api/v1/operations", headers=h, json={
             "lot_id": 2, "farm_id": 1, "house_id": 1,
-            "event_type": "bird_reception", "event_date": "2026-06-29",
+            "event_type": "bird_reception", "event_date": recent_event_date(),
             "bird_movements": [{"sex": "female", "quantity": 1200, "avg_weight": 42.0}],
             "observations": "TEST FUNCIONAL E2E — Recepción de aves"
         })
@@ -97,7 +98,7 @@ async def main():
         # Create a 2nd event to test rejection
         r = await c.post("/api/v1/operations", headers=h, json={
             "lot_id": 2, "farm_id": 1, "house_id": 1,
-            "event_type": "feed_registration", "event_date": "2026-06-29",
+            "event_type": "feed_registration", "event_date": recent_event_date(),
             "feed_movements": [{"quantity_kg": 200.0}],
             "observations": "TEST E2E — Rechazo"
         })

@@ -43,6 +43,16 @@ select = ["E", "F", "I", "N", "W", "UP"]
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
+# GA-REM-014/015 — Aislamiento asíncrono.
+# Sin un ámbito explícito, pytest-asyncio puede ejecutar una fixture asíncrona
+# y el test que la consume en bucles de eventos distintos. Las conexiones de
+# asyncpg quedan ligadas a su bucle y la reutilización falla con
+# "got Future attached to a different loop".
+markers = [
+    "upgrade: camino de actualización de una instalación existente (scripts/upgrade_test.sh)",
+]
+asyncio_default_fixture_loop_scope = "function"
+asyncio_default_test_loop_scope = "function"
 
 [dependency-groups]
 dev = [

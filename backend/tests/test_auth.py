@@ -3,11 +3,17 @@ import pytest
 
 
 @pytest.mark.asyncio
-async def test_login_success(client):
-    """Admin login should return access + refresh tokens."""
+async def test_login_success(client, test_credentials):
+    """Admin login should return access + refresh tokens.
+
+    Usaba `admin/admin123`, credencial pública eliminada por `GA-REM-004`. Las
+    credenciales de prueba se generan por ejecución y llegan por *fixture*: nunca
+    literales en el código.
+    """
+    username, password = test_credentials
     resp = await client.post("/api/v1/login", json={
-        "username": "admin",
-        "password": "admin123",
+        "username": username,
+        "password": password,
     })
     assert resp.status_code == 200
     data = resp.json()
@@ -37,13 +43,15 @@ async def test_login_invalid_user(client):
 
 
 @pytest.mark.asyncio
-async def test_get_me(auth_headers, client):
+async def test_get_me(auth_headers, client, test_credentials):
     """Authenticated user should get their profile."""
-    resp = await client.get("/api/v1/auth/me", headers=auth_headers)
+    # El router de auth se monta con prefijo `/api/v1` y la ruta es `/me`
+    # (`main.py:103`, `auth/router.py:37`). `/api/v1/auth/me` nunca existió.
+    resp = await client.get("/api/v1/me", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert data["username"] == "admin"
-    assert data["is_super_admin"] == True
+    assert data["username"] == test_credentials[0]
+    assert data["is_super_admin"] is True
 
 
 @pytest.mark.asyncio

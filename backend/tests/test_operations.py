@@ -1,5 +1,6 @@
 """Tests for Operations module — events, business rules."""
 import pytest
+from tests.time_reference import recent_event_date
 
 
 @pytest.mark.asyncio
@@ -15,15 +16,17 @@ async def test_list_event_types(auth_headers, client):
     resp = await client.get("/api/v1/operations/event-types", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 24  # 24 event types documented
+    assert len(data) == 25  # egg_reception_classification, añadido en 939fd14
 
 
 @pytest.mark.asyncio
 async def test_create_bird_reception(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "bird_reception",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 500, "avg_weight": 40.0}],
     })
     assert resp.status_code == 201
@@ -37,7 +40,7 @@ async def test_create_feed_registration(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "feed_movements": [{"quantity_kg": 250.0}],
     })
     assert resp.status_code == 201
@@ -51,7 +54,7 @@ async def test_mortality_exceeds_balance_blocked(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "mortality_recording",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 99999, "avg_weight": 2000.0}],
     })
     assert resp.status_code == 400
@@ -87,8 +90,10 @@ async def test_farm_inspection_numeric_values_per_house(auth_headers, client):
     """farm_inspection debe aceptar inspection_details con house_id y valores numéricos reales."""
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "farm_inspection",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "inspection_details": [
             {"house_id": 1, "parameter": "temperature", "value": "28.5"},
             {"house_id": 1, "parameter": "humidity",    "value": "65.0"},
@@ -99,7 +104,12 @@ async def test_farm_inspection_numeric_values_per_house(auth_headers, client):
         ],
     })
     assert resp.status_code == 201
-    data = resp.json()
+    # `POST` devuelve la cabecera del evento; los submovimientos viven en el detalle
+    # (`GET /{id}` -> OperationalEventDetailRead). El test los buscaba en la respuesta
+    # de creación, donde el contrato nunca los prometió.
+    detalle = await client.get(f"/api/v1/operations/{resp.json()['id']}", headers=auth_headers)
+    assert detalle.status_code == 200
+    data = detalle.json()
     assert data["event_type"] == "farm_inspection"
     # All 6 inspection_details records stored
     assert len(data["inspection_details"]) == 6
@@ -118,15 +128,18 @@ async def test_farm_inspection_without_house_id_still_accepted(auth_headers, cli
     """Backward compat: farm_inspection sin house_id (legacy) debe seguir funcionando."""
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "farm_inspection",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "inspection_details": [
             {"parameter": "temperature", "value": "27.0"},
             {"parameter": "humidity",    "value": "60.0"},
         ],
     })
     assert resp.status_code == 201
-    data = resp.json()
+    detalle = await client.get(f"/api/v1/operations/{resp.json()['id']}", headers=auth_headers)
+    data = detalle.json()
     assert data["event_type"] == "farm_inspection"
     for detail in data["inspection_details"]:
         assert detail["house_id"] is None  # NULL = farm-level record
@@ -138,14 +151,17 @@ async def test_farm_inspection_rejects_qualitative_only(auth_headers, client):
     (no bloqueamos el legacy), pero el campo value debe quedar NULL."""
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "farm_inspection",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "inspection_details": [
             {"parameter": "litter_condition", "status": "good"},
         ],
     })
     assert resp.status_code == 201
-    data = resp.json()
+    detalle = await client.get(f"/api/v1/operations/{resp.json()['id']}", headers=auth_headers)
+    data = detalle.json()
     detail = data["inspection_details"][0]
     assert detail["status"] == "good"
     assert detail["value"] is None
@@ -157,7 +173,7 @@ async def test_vaccination_stores_vaccine_id(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "vaccination",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "vaccine_id": 1,
         "vaccination_route": "water",
         "vaccine_lot_number": "LOT-2026-01",
@@ -180,7 +196,7 @@ async def test_medication_stores_medication_id(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "medication",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "medication_id": 1,
         "dosage_per_bird": 2.0,
         "treatment_days": 5,
@@ -209,15 +225,17 @@ async def test_list_event_types(auth_headers, client):
     resp = await client.get("/api/v1/operations/event-types", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 24  # 24 event types documented
+    assert len(data) == 25  # egg_reception_classification, añadido en 939fd14
 
 
 @pytest.mark.asyncio
 async def test_create_bird_reception(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "bird_reception",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 500, "avg_weight": 40.0}],
     })
     assert resp.status_code == 201
@@ -231,7 +249,7 @@ async def test_create_feed_registration(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "feed_movements": [{"quantity_kg": 250.0}],
     })
     assert resp.status_code == 201
@@ -245,7 +263,7 @@ async def test_mortality_exceeds_balance_blocked(auth_headers, client):
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "mortality_recording",
-        "event_date": "2026-06-23",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 99999, "avg_weight": 2000.0}],
     })
     assert resp.status_code == 400

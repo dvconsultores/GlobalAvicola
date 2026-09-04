@@ -22,6 +22,7 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
+from tests.time_reference import recent_event_date
 
 
 # ============================================================
@@ -58,19 +59,47 @@ async def _try_login(client: AsyncClient, username: str, password: str):
 # ============================================================
 
 @pytest_asyncio.fixture
-async def admin_client():
-    """Super Admin client — authenticated with full access."""
-    transport = ASGITransport(app=app)
-    async with AsyncClient(transport=transport, base_url="http://test") as client:
-        auth = await login_as(client, "admin", "admin123")
-        assert auth is not None, "Admin login failed — check DB has admin/admin123"
-        client.headers.update(auth["headers"])
-        yield client
+async def admin_client(client, auth_headers):
+    """Cliente autenticado como administrador de pruebas.
+
+    GA-REM-004 / GA-REM-015: antes creaba su propio `AsyncClient` y se
+    autenticaba con las credenciales `admin/admin123` publicadas en la
+    documentación. Esas credenciales fueron retiradas del repositorio.
+
+    Ahora reutiliza las fixtures `client` y `auth_headers` de `conftest.py`,
+    que se autentican con el administrador que siembra `seeds/test_seeds.py`
+    con contraseña generada por ejecución. Reutilizarlas —en vez de crear un
+    cliente propio— garantiza además que la conexión asíncrona pertenece al
+    mismo bucle de eventos que el cuerpo del test.
+    """
+    client.headers.update(auth_headers)
+    yield client
 
 
 # ============================================================
 # FASE 1: REGISTRO DE OPERACIONES
 # ============================================================
+
+
+async def _cliente_aprobador(client):
+    """Cliente autenticado como aprobador, distinto de quien registra.
+
+    `BR-14` (regla vigente `RR-03`) exige segregacion de funciones: quien registra no
+    aprueba. Un test que use la misma identidad para registrar y aprobar no verifica el
+    flujo de aprobacion: verifica que la regla no exista.
+    """
+    import os
+
+    from seeds.test_seeds import TEST_APPROVER_PASSWORD_ENV, TEST_APPROVER_USERNAME
+
+    respuesta = await client.post("/api/v1/login", json={
+        "username": TEST_APPROVER_USERNAME,
+        "password": os.environ[TEST_APPROVER_PASSWORD_ENV],
+    })
+    assert respuesta.status_code == 200, f"Login del aprobador: {respuesta.text}"
+    client.headers.update({"Authorization": f"Bearer {respuesta.json()['access_token']}"})
+    return client
+
 
 @pytest.mark.asyncio
 async def test_f1_create_bird_reception(admin_client):
@@ -86,7 +115,7 @@ async def test_f1_create_bird_reception(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "bird_reception",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "farm_id": 1,
         "house_id": 1,
         "bird_movements": [
@@ -127,7 +156,7 @@ async def test_f1_create_feed_registration(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "feed_movements": [
             {"quantity_kg": 250.0, "sacks_count": 5, "feed_type_id": 1},
         ],
@@ -149,8 +178,10 @@ async def test_f1_create_egg_collection(admin_client):
     """
     payload = {
         "lot_id": 1,  # Asumimos lote 1 = reproductoras
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "egg_collection",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "egg_movements": [
             {"egg_type": "fertile", "quantity": 4500, "avg_weight": 62.0},
             {"egg_type": "dirty", "quantity": 120},
@@ -181,8 +212,10 @@ async def test_f1_create_farm_inspection(admin_client):
     """
     payload = {
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "farm_inspection",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "inspection_details": [
             {"house_id": 1, "parameter": "temperature", "value": "28.5"},
             {"house_id": 1, "parameter": "humidity", "value": "65.0"},
@@ -194,7 +227,11 @@ async def test_f1_create_farm_inspection(admin_client):
     }
     resp = await admin_client.post("/api/v1/operations", json=payload)
     assert resp.status_code == 201, f"F1d CREATE failed: {resp.text}"
-    data = resp.json()
+    # Los submovimientos viven en el detalle (`OperationalEventDetailRead`); la creación
+    # devuelve la cabecera.
+    detalle = await admin_client.get(f"/api/v1/operations/{resp.json()['id']}")
+    assert detalle.status_code == 200
+    data = detalle.json()
     assert data["event_type"] == "farm_inspection"
     assert data["status"] == "registered"
     assert len(data["inspection_details"]) == 5
@@ -214,7 +251,7 @@ async def test_f1_create_vaccination(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "vaccination",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "vaccine_id": 1,
         "vaccination_route": "drinking_water",
         "vaccine_lot_number": "VAC-2026-001",
@@ -242,8 +279,10 @@ async def test_f1_create_egg_dispatch(admin_client):
     """
     payload = {
         "lot_id": 1,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "egg_dispatch",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "egg_movements": [
             {"egg_type": "fertile", "quantity": 2000, "avg_weight": 62.0},
         ],
@@ -272,7 +311,7 @@ async def test_f1_idempotency_prevention(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "feed_movements": [{"quantity_kg": 100.0}],
         "idempotency_key": key,
     }
@@ -303,8 +342,10 @@ async def test_f2_submit_to_review(admin_client):
     # Crear un evento fresh
     payload = {
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "bird_reception",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 1000, "avg_weight": 40.0}],
         "observations": "Evento para prueba de revisión",
     }
@@ -347,8 +388,10 @@ async def test_f3_start_review_and_correct(admin_client):
     # Crear y enviar a revisión
     payload = {
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "bird_reception",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 800, "avg_weight": 40.0}],
         "observations": "Evento para corrección",
     }
@@ -367,7 +410,10 @@ async def test_f3_start_review_and_correct(admin_client):
     # Registrar corrección: el operador digitó 800 pero eran 850
     correction_payload = {
         "event_id": event_id,
-        "field_name": "bird_movements[0].quantity",
+        # `bird_movements[0].quantity` no es corregible: el contrato solo admite
+        # campos del evento. Corregir un submovimiento exige poder
+        # identificarlo, y el esquema no lo permite (`R-46`).
+        "field_name": "observations",
         "original_value": "800",
         "corrected_value": "850",
         "reason": "Error de digitación: se recibieron 850 aves, no 800",
@@ -376,10 +422,14 @@ async def test_f3_start_review_and_correct(admin_client):
     assert corr_resp.status_code == 201, f"F3 CORRECTION failed: {corr_resp.text}"
     corr_data = corr_resp.json()
 
-    # Validar corrección
-    assert corr_data["field_name"] == "bird_movements[0].quantity"
-    assert corr_data["original_value"] == "800"
+    # Validar corrección. `original_value` lo lee el servidor del dato: si lo aportara
+    # quien corrige, la auditoría dejaría de ser evidencia. El valor enviado en el
+    # payload se ignora a propósito.
+    assert corr_data["field_name"] == "observations"
+    assert corr_data["original_value"] != "800", (
+        "El registro debe guardar lo que había en el campo, no lo que declare el cliente")
     assert corr_data["corrected_value"] == "850"
+    assert corr_data["original_value"] is not None
     assert corr_data["corrected_by_id"] is not None
     assert "Error de digitación" in corr_data["reason"]
 
@@ -392,7 +442,7 @@ async def test_f3_start_review_and_correct(admin_client):
     corrections_resp = await admin_client.get(f"/api/v1/corrections/event/{event_id}")
     corrections = corrections_resp.json()
     assert len(corrections) >= 1
-    assert corrections[0]["field_name"] == "bird_movements[0].quantity"
+    assert corrections[0]["field_name"] == "observations"
 
     return event_id
 
@@ -412,7 +462,7 @@ async def test_f3b_correction_not_allowed_on_approved(admin_client):
     # Intentar corregir con estado inválido
     correction_payload = {
         "event_id": 99999,  # ID inexistente
-        "field_name": "quantity",
+        "field_name": "observations",
         "original_value": "100",
         "corrected_value": "200",
         "reason": "Prueba de bloqueo de corrección",
@@ -426,7 +476,7 @@ async def test_f3b_correction_not_allowed_on_approved(admin_client):
 # ============================================================
 
 @pytest.mark.asyncio
-async def test_f4_approve_event(admin_client):
+async def test_f4_approve_event(admin_client, client):
     """
     F4 — Aprobación:
     El aprobador aprueba un evento corregido.
@@ -444,7 +494,7 @@ async def test_f4_approve_event(admin_client):
         payload = {
             "lot_id": 2,
             "event_type": "feed_registration",
-            "event_date": "2026-06-29",
+            "event_date": recent_event_date(),
             "feed_movements": [{"quantity_kg": 300.0}],
             "observations": "Evento para aprobación",
         }
@@ -455,19 +505,24 @@ async def test_f4_approve_event(admin_client):
         await admin_client.post(f"/api/v1/operations/{event_id}/submit")
         await admin_client.post(f"/api/v1/review/start/{event_id}")
 
-        # Corregir
+        # Corregir. El campo era `feed_movements[0].quantity_kg`, una ruta anidada que
+        # el contrato de correcciones no admite: solo se corrigen campos del evento
+        # (lista blanca en `corrections/service.py`). Corregir un submovimiento requiere
+        # poder identificarlo, y el esquema no ofrece forma de hacerlo (`R-46`).
         await admin_client.post("/api/v1/corrections", json={
             "event_id": event_id,
-            "field_name": "feed_movements[0].quantity_kg",
-            "original_value": "300.0",
-            "corrected_value": "350.0",
+            "field_name": "observations",
+            "corrected_value": "Ajuste por peso real del bulto",
             "reason": "Ajuste por peso real del bulto",
         })
     else:
         event_id = pending["events"][0]["id"]
 
-    # Aprobar
-    approve_resp = await admin_client.post("/api/v1/approvals/approve", json={
+    # Aprobar con una identidad distinta de la que registro: `BR-14` prohibe que un
+    # operador apruebe su propia carga, y el test usaba el mismo cliente para ambas
+    # cosas. Comprobaba, sin saberlo, que la regla NO se aplicara.
+    aprobador = await _cliente_aprobador(client)
+    approve_resp = await aprobador.post("/api/v1/approvals/approve", json={
         "event_id": event_id,
         "observations": "Aprobado — datos verificados contra guía de despacho",
     })
@@ -494,8 +549,10 @@ async def test_f4b_segregation_enforcement(admin_client):
     # Crear evento como admin
     payload = {
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "bird_reception",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 500, "avg_weight": 40.0}],
     }
     create_resp = await admin_client.post("/api/v1/operations", json=payload)
@@ -507,7 +564,10 @@ async def test_f4b_segregation_enforcement(admin_client):
     await admin_client.post(f"/api/v1/review/start/{event_id}")
     await admin_client.post("/api/v1/corrections", json={
         "event_id": event_id,
-        "field_name": "bird_movements[0].quantity",
+        # `bird_movements[0].quantity` no es corregible: el contrato solo admite
+        # campos del evento. Corregir un submovimiento exige poder
+        # identificarlo, y el esquema no lo permite (`R-46`).
+        "field_name": "observations",
         "original_value": "500",
         "corrected_value": "550",
         "reason": "Corrección de cantidad",
@@ -544,8 +604,10 @@ async def test_f5_reject_event(admin_client):
     # Crear evento → enviar → revisar → corregir → rechazar
     payload = {
         "lot_id": 2,
+        "farm_id": 1,
+        "house_id": 1,
         "event_type": "bird_reception",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 300, "avg_weight": 40.0}],
         "observations": "Evento para prueba de rechazo",
     }
@@ -557,7 +619,10 @@ async def test_f5_reject_event(admin_client):
     await admin_client.post(f"/api/v1/review/start/{event_id}")
     await admin_client.post("/api/v1/corrections", json={
         "event_id": event_id,
-        "field_name": "bird_movements[0].quantity",
+        # `bird_movements[0].quantity` no es corregible: el contrato solo admite
+        # campos del evento. Corregir un submovimiento exige poder
+        # identificarlo, y el esquema no lo permite (`R-46`).
+        "field_name": "observations",
         "original_value": "300",
         "corrected_value": "320",
         "reason": "Corrección menor",
@@ -630,7 +695,7 @@ async def test_f6_audit_trail_complete(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "feed_movements": [{"quantity_kg": 500.0}],
         "observations": "Evento para auditoría completa",
     }
@@ -674,7 +739,7 @@ async def test_f6_audit_trail_complete(admin_client):
     # Corregir
     await admin_client.post("/api/v1/corrections", json={
         "event_id": event_id,
-        "field_name": "feed_movements[0].quantity_kg",
+        "field_name": "observations",
         "original_value": "500.0",
         "corrected_value": "525.0",
         "reason": "Ajuste por diferencia de báscula",
@@ -800,7 +865,7 @@ async def test_f7_full_workflow_simulated_multirole(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "bird_reception",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "farm_id": 1,
         "house_id": 1,
         "bird_movements": [
@@ -834,14 +899,17 @@ async def test_f7_full_workflow_simulated_multirole(admin_client):
     print("     4️⃣  Supervisor corrige error de digitación...")
     resp = await admin_client.post("/api/v1/corrections", json={
         "event_id": event_id,
-        "field_name": "bird_movements[0].quantity",
+        # `bird_movements[0].quantity` no es corregible: el contrato solo admite
+        # campos del evento. Corregir un submovimiento exige poder
+        # identificarlo, y el esquema no lo permite (`R-46`).
+        "field_name": "observations",
         "original_value": "3000",
         "corrected_value": "3200",
         "reason": "Error de digitación: guía de despacho indica 3200 aves hembra",
     })
     assert resp.status_code == 201
     corr = resp.json()
-    assert corr["original_value"] == "3000"
+    assert corr["original_value"] != "3000"  # lo lee el servidor del dato, no del payload
     assert corr["corrected_value"] == "3200"
     print(f"        ✅ Corrección registrada: {corr['original_value']} → {corr['corrected_value']}")
 
@@ -905,7 +973,7 @@ async def test_f8_cancel_event_with_audit(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "feed_movements": [{"quantity_kg": 100.0}],
         "observations": "Evento para cancelación",
     }
@@ -944,7 +1012,7 @@ async def test_f8b_duplicate_sap_document_blocked(admin_client):
     payload = {
         "lot_id": 2,
         "event_type": "feed_registration",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "feed_movements": [{"quantity_kg": 100.0}],
         "sap_document_ref": sap_ref,
     }
@@ -970,7 +1038,7 @@ async def test_f8c_business_rule_mortality_exceeds_balance(admin_client):
     resp = await admin_client.post("/api/v1/operations", json={
         "lot_id": 2,
         "event_type": "mortality_recording",
-        "event_date": "2026-06-29",
+        "event_date": recent_event_date(),
         "bird_movements": [{"sex": "female", "quantity": 999999}],
     })
     assert resp.status_code == 400, f"BR-01 debe bloquear mortalidad excesiva. Got {resp.status_code}"
@@ -1028,7 +1096,7 @@ async def test_f10_all_event_types_registered(admin_client):
     resp = await admin_client.get("/api/v1/operations/event-types")
     assert resp.status_code == 200
     event_types = resp.json()
-    assert len(event_types) == 24, f"Expected 24 event types, got {len(event_types)}"
+    assert len(event_types) == 25, f"Expected 25 event types, got {len(event_types)}"
 
     # Lista esperada de tipos
     expected_types = {
@@ -1040,7 +1108,8 @@ async def test_f10_all_event_types_registered(admin_client):
         "incubation_load", "ovoscopy", "transfer_to_hatcher", "birth_registration",
         "chick_dispatch", "lot_closure", "grandparent_import",
     }
-    registered_types = {et["value"] for et in event_types}
+    # El catálogo expone `type`/`label` (`schemas.ALL_EVENT_TYPES`), no `value`.
+    registered_types = {et["type"] for et in event_types}
     missing = expected_types - registered_types
     assert not missing, f"Faltan tipos de evento: {missing}"
     print(f"  ✅ {len(event_types)} tipos de evento registrados correctamente")
