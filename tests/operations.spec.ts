@@ -134,7 +134,12 @@ test.describe('Operations Redesign', () => {
 
   test.describe('Mobile Dashboard', () => {
     
-    test.use({ ...test.use(), viewport: { width: 390, height: 844 } })
+    // `test.use()` sin argumentos no devuelve la configuración vigente: devuelve
+    // `undefined`, y esparcirlo rompía el descubrimiento de **todo** el directorio
+    // (`Cannot convert undefined or null to object`). Ningún ejecutor cargaba esta
+    // suite, de modo que el defecto llevaba desde junio de 2026 sin verse.
+    // Corregido bajo `GA-REM-016 AC01`: las suites deben ser ejecutables.
+    test.use({ viewport: { width: 390, height: 844 } })
 
     test('should show welcome header on mobile', async ({ page }) => {
       await page.goto('/')
