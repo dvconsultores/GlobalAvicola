@@ -50,9 +50,20 @@ class SapImportData(BaseModel):
 
 class SapIntegrationAdapter(ABC):
     """Abstract interface for SAP integration.
-    
+
     The domain calls these methods without knowing which SAP mechanism is used.
+
+    GA-REM-010 — Semántica de entrega
+    ---------------------------------
+    `delivers_to_sap` declara si el adaptador realiza una **entrega verificada**
+    a SAP. Un adaptador manual o simulado devuelve False, y en ese caso el
+    dominio NO puede marcar los eventos como enviados a SAP.
+
+        NO VERIFIED SAP DELIVERY = NO TRUE sent_to_sap
     """
+
+    #: True solo si el adaptador obtiene confirmación real del sistema SAP.
+    delivers_to_sap: bool = False
 
     @abstractmethod
     async def export_consolidated(self, payload: SapExportPayload) -> SapExportResult:
@@ -80,8 +91,16 @@ class ManualSapAdapter(SapIntegrationAdapter):
     Does NOT connect to SAP directly. The analyst handles file transfer manually.
     """
 
-    def __init__(self, export_dir: str = "/tmp/sap_exports"):
-        self.export_dir = export_dir
+    #: GA-REM-010 — el modo manual NO entrega a SAP: genera un artefacto que
+    #: un analista debe cargar. No puede producir estado "enviado a SAP".
+    delivers_to_sap = False
+
+    def __init__(self, export_dir: str | None = None):
+        import os
+        # GA-REM-009 — el artefacto debe sobrevivir a la recreación del contenedor.
+        self.export_dir = export_dir or os.environ.get(
+            "SAP_EXPORT_DIR", "/app/media/sap_exports"
+        )
         self._exported: list[SapExportPayload] = []  # in-memory for dev
 
     async def export_consolidated(self, payload: SapExportPayload) -> SapExportResult:
@@ -95,19 +114,23 @@ class ManualSapAdapter(SapIntegrationAdapter):
 
         self._exported.append(payload)
 
+        # GA-REM-010: NO se devuelve ningún sap_document_id. Un identificador
+        # ficticio haría que el sistema aparentase una confirmación de SAP que
+        # no existe, y BR-15 bloquearía el registro sin contrapartida real.
         return SapExportResult(
             success=True,
-            message=f"Archivo generado: {file_path}",
-            sap_document_id=f"MANUAL-{payload.idempotency_key[:12]}",
+            message=f"Artefacto generado para carga manual: {file_path}",
+            sap_document_id=None,
             status_code=200,
+            raw_response={"artifact_path": file_path, "delivery": "manual_pending"},
         )
 
     async def check_connection(self) -> bool:
-        """Manual mode is always 'connected'."""
-        return True
+        """GA-REM-010: el modo manual no tiene conexión con SAP. No la finge."""
+        return False
 
     async def get_adapter_name(self) -> str:
-        return "ManualSapAdapter (File-based)"
+        return "ManualSapAdapter (archivo, sin entrega verificada a SAP)"
 
 
 # ============================================================
@@ -119,6 +142,9 @@ class MockSapAdapter(SapIntegrationAdapter):
     Mock adapter for development and testing.
     Simulates SAP responses including errors, latency, and idempotency.
     """
+
+    #: GA-REM-010 — simulación: nunca entrega realmente a SAP.
+    delivers_to_sap = False
 
     def __init__(self, simulate_errors: bool = False, error_rate: float = 0.0):
         self.simulate_errors = simulate_errors
@@ -159,6 +185,7 @@ class MockSapAdapter(SapIntegrationAdapter):
         )
 
     async def check_connection(self) -> bool:
+        import random  # GA-REM-010: faltaba el import a nivel de función
         return not self.simulate_errors or random.random() > self.error_rate
 
     async def get_adapter_name(self) -> str:

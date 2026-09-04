@@ -2,7 +2,7 @@
 SAP Integration Service — consolidation, import/export, idempotency, retries.
 """
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -31,10 +31,35 @@ class SapService:
         # Default: Manual adapter. Can be swapped via config.
         self._adapter: Optional[SapIntegrationAdapter] = None
 
+    #: GA-REM-010 — adaptadores disponibles, seleccionables por configuración.
+    #: "real" queda registrado y aún no implementado (GA-REM-017, BLOCKED_EXTERNAL).
+    _ADAPTERS = {
+        "manual": ManualSapAdapter,
+        "mock": MockSapAdapter,
+    }
+
     def get_adapter(self) -> SapIntegrationAdapter:
+        """GA-REM-010: el adaptador se elige por configuración, no por código."""
         if self._adapter is None:
-            # TODO: read from config/env which adapter to use
-            self._adapter = ManualSapAdapter()
+            from ...config import settings
+
+            name = (getattr(settings, "SAP_ADAPTER", None) or "manual").strip().lower()
+            if name == "real":
+                raise HTTPException(
+                    status_code=status.HTTP_501_NOT_IMPLEMENTED,
+                    detail=(
+                        "El adaptador SAP real no está implementado (GA-REM-017). "
+                        "Configure SAP_ADAPTER=manual mientras tanto."
+                    ),
+                )
+            adapter_cls = self._ADAPTERS.get(name)
+            if adapter_cls is None:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail=f"SAP_ADAPTER='{name}' no es un adaptador válido. "
+                           f"Válidos: {', '.join(self._ADAPTERS)}.",
+                )
+            self._adapter = adapter_cls()
         return self._adapter
 
     def _require_company_id(self) -> int:
@@ -298,26 +323,45 @@ class SapService:
             self.db.add(response)
 
             if result.success:
-                sap_payload.status = models.PayloadStatus.CONFIRMED
+                # GA-REM-059 / R-21: identificación externa exigida por el cliente
+                # (Recomendación central §19) para evitar duplicados en SAP.
+                sap_payload.external_transaction_id = (
+                    f"AVICOLA-{cm.event_type.upper()}-{idem_key[:16]}"
+                )
+                sap_payload.source_system = "APP_AVICOLA"
                 sap_payload.sap_document_id = result.sap_document_id
                 cm.sap_payload_id = sap_payload.id
-                # Mark original events as SENT_TO_SAP
-                for ev_id in cm.event_ids:
-                    await self.db.execute(
-                        update(OperationalEvent)
-                        .where(OperationalEvent.id == ev_id)
-                        .values(status=EventStatus.SENT_TO_SAP, sap_document_ref=result.sap_document_id)
-                    )
+
+                # ── GA-REM-010 · REGLA ABSOLUTA ──────────────────────────────
+                #   NO VERIFIED SAP DELIVERY = NO TRUE sent_to_sap
+                # Un adaptador manual o simulado genera un artefacto, no una
+                # entrega. Los eventos permanecen en CONSOLIDATED —listos para
+                # SAP— y siguen siendo corregibles, porque BR-15 no debe
+                # bloquear registros que nunca llegaron a SAP.
+                if adapter.delivers_to_sap and result.sap_document_id:
+                    sap_payload.status = models.PayloadStatus.CONFIRMED
+                    for ev_id in cm.event_ids:
+                        await self.db.execute(
+                            update(OperationalEvent)
+                            .where(OperationalEvent.id == ev_id)
+                            .values(
+                                status=EventStatus.SENT_TO_SAP,
+                                sap_document_ref=result.sap_document_id,
+                            )
+                        )
+                else:
+                    # Artefacto preparado, pendiente de carga y confirmación.
+                    sap_payload.status = models.PayloadStatus.PREPARED
+                    # Los eventos NO cambian de estado y NO reciben referencia SAP.
                 success_count += 1
             else:
                 sap_payload.status = models.PayloadStatus.FAILED
                 sap_payload.error_message = result.message
                 sap_payload.retry_count = 1
                 # Exponential backoff: 1 min
-                sap_payload.next_retry_at = datetime.now(timezone.utc).replace(second=0, microsecond=0)
-                sap_payload.next_retry_at = sap_payload.next_retry_at.replace(
-                    minute=(sap_payload.next_retry_at.minute + 1) % 60
-                )
+                # GA-REM-010: retroceso con timedelta. La aritmética anterior
+                # ((minuto + n) % 60) podía producir una fecha en el pasado.
+                sap_payload.next_retry_at = datetime.now(timezone.utc) + timedelta(minutes=1)
                 error_count += 1
 
             payloads_created += 1
@@ -395,10 +439,7 @@ class SapService:
                 sp.error_message = sap_result.message
                 # Exponential backoff: 1min, 5min, 15min
                 minutes = {1: 1, 2: 5, 3: 15}.get(sp.retry_count, 15)
-                sp.next_retry_at = datetime.now(timezone.utc).replace(second=0, microsecond=0)
-                sp.next_retry_at = sp.next_retry_at.replace(
-                    minute=(sp.next_retry_at.minute + minutes) % 60
-                )
+                sp.next_retry_at = datetime.now(timezone.utc) + timedelta(minutes=minutes)
 
             retried += 1
             await self.db.flush()
