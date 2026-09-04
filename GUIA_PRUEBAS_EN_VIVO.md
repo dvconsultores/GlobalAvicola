@@ -10,30 +10,39 @@
 
 ### 1.1 Credenciales de prueba
 
+> ⚠ **GA-REM-004 — Credenciales retiradas del repositorio.**
+> Las contraseñas de las cuentas de prueba **ya no se publican aquí**. Se entregan
+> por el canal seguro acordado y se rotan periódicamente.
+> Los seeds las leen de variables de entorno (`GA_SEED_PWD_<USUARIO>` o
+> `GA_SEED_DEFAULT_PASSWORD`); no existe ninguna contraseña literal en el código.
+> Ver `specs/remediation/GA-REM-004-CREDENTIALS-AND-TEST-ACCOUNTS.md`.
+
+
+
 #### 📱 Usuarios MÓVILES (vista app / Telegram Mini App)
 
 | Usuario | Contraseña | Rol | ¿Qué ve? |
 |---|---|---|---|
-| `movil.progenitoras` | `proge123` | Operador Progenitoras | Solo granjas de abuelas |
-| `movil.reproductoras` | `repro123` | Operador Reproductoras | Solo granjas de reproductoras |
-| `movil.incubadora` | `incu1234` | Operador Incubadora | Solo planta de incubación |
-| `movil.engorde` | `engorde12` | Operador Engorde | Solo granjas de engorde |
-| `movil.multiproceso` | `multi123` | Operador Multi-Proceso | **TODOS** los procesos |
-| `movil.supervisor` | `super123` | Supervisor General | Revisa y corrige todo |
-| `movil.contralor` | `contra123` | Contralor Avícola | Revisa, aprueba, rechaza, audita |
+| `movil.progenitoras` | *(ver almacén de credenciales)* | Operador Progenitoras | Solo granjas de abuelas |
+| `movil.reproductoras` | *(ver almacén de credenciales)* | Operador Reproductoras | Solo granjas de reproductoras |
+| `movil.incubadora` | *(ver almacén de credenciales)* | Operador Incubadora | Solo planta de incubación |
+| `movil.engorde` | *(ver almacén de credenciales)* | Operador Engorde | Solo granjas de engorde |
+| `movil.multiproceso` | *(ver almacén de credenciales)* | Operador Multi-Proceso | **TODOS** los procesos |
+| `movil.supervisor` | *(ver almacén de credenciales)* | Supervisor General | Revisa y corrige todo |
+| `movil.contralor` | *(ver almacén de credenciales)* | Contralor Avícola | Revisa, aprueba, rechaza, audita |
 
 #### 🖥️ Usuarios WEB (vista escritorio)
 
 | Usuario | Contraseña | Rol | ¿Qué ve? |
 |---|---|---|---|
-| `web.progenitoras` | `proge123` | Operador Progenitoras | Solo granjas de abuelas |
-| `web.reproductoras` | `repro123` | Operador Reproductoras | Solo granjas de reproductoras |
-| `web.incubadora` | `incu1234` | Operador Incubadora | Solo planta de incubación |
-| `web.engorde` | `engorde12` | Operador Engorde | Solo granjas de engorde |
-| `web.multiproceso` | `multi123` | Operador Multi-Proceso | **TODOS** los procesos |
-| `web.supervisor` | `super123` | Supervisor General | Revisa y corrige todo |
-| `web.contralor` | `contra123` | Contralor Avícola | Revisa, aprueba, rechaza, audita |
-| `admin` | `admin123` | Super Administrador | Control total |
+| `web.progenitoras` | *(ver almacén de credenciales)* | Operador Progenitoras | Solo granjas de abuelas |
+| `web.reproductoras` | *(ver almacén de credenciales)* | Operador Reproductoras | Solo granjas de reproductoras |
+| `web.incubadora` | *(ver almacén de credenciales)* | Operador Incubadora | Solo planta de incubación |
+| `web.engorde` | *(ver almacén de credenciales)* | Operador Engorde | Solo granjas de engorde |
+| `web.multiproceso` | *(ver almacén de credenciales)* | Operador Multi-Proceso | **TODOS** los procesos |
+| `web.supervisor` | *(ver almacén de credenciales)* | Supervisor General | Revisa y corrige todo |
+| `web.contralor` | *(ver almacén de credenciales)* | Contralor Avícola | Revisa, aprueba, rechaza, audita |
+| `admin` | *(ver almacén de credenciales)* | Super Administrador | Control total |
 
 ### 1.2 Cobertura mínima de datos (obligatoria)
 

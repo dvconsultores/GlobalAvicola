@@ -19,6 +19,28 @@ from app.masters.models import (
 import app.lots.models  # noqa: F401 — register LotPhase/OpeningBalance mappers
 
 
+# ── GA-REM-004: las contraseñas nunca se versionan ──────────────────────────
+# Se leen del entorno. Si falta la variable, el seed aborta en lugar de crear
+# usuarios con credenciales conocidas y publicadas.
+def _seed_password(username: str) -> str:
+    """Contraseña del usuario sembrado, tomada del entorno.
+
+    Convención de la variable: GA_SEED_PWD_<USERNAME en mayúsculas, sin puntos>.
+    Alternativa global para desarrollo local: GA_SEED_DEFAULT_PASSWORD.
+    """
+    import os
+    key = "GA_SEED_PWD_" + username.upper().replace(".", "_").replace("-", "_")
+    value = os.environ.get(key) or os.environ.get("GA_SEED_DEFAULT_PASSWORD")
+    if not value:
+        raise SystemExit(
+            f"[seeds] Falta la contraseña del usuario '{username}'.\n"
+            f"        Defina {key} o GA_SEED_DEFAULT_PASSWORD.\n"
+            "        GA-REM-004: no se siembran credenciales literales."
+        )
+    return value
+
+
+
 async def seed_companies(session: AsyncSession) -> dict[str, int]:
     """Ensure both dev companies exist. Returns {name: id} mapping."""
     companies_data = [
@@ -41,6 +63,16 @@ async def seed_companies(session: AsyncSession) -> dict[str, int]:
 
 
 async def seed_roles(session: AsyncSession) -> dict[str, Role]:
+    # GA-REM-002: el catalogo de permisos se completo al activar el enforcement.
+    #
+    # Mientras nada comprobaba los permisos, las definiciones de rol eran decorativas y
+    # podian estar incompletas sin que se notara: ningun rol declaraba `masters:read`,
+    # que hace falta para cargar granjas, galpones, vacunas o tipos de alimento en
+    # practicamente todas las pantallas. Con el enforcement activo, esa ausencia deja
+    # inutilizable la aplicacion para cualquiera que no sea Super Admin.
+    #
+    # Los permisos que siguen se derivan de la funcion documentada de cada rol en
+    # `docs/12-approval-workflow.md §3`, no de lo que resulte comodo.
     roles_data = [
         {
             "name": "Super Administrador",
@@ -65,8 +97,14 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 {"module": "lots", "action": PermissionAction.READ},
                 {"module": "review", "action": PermissionAction.REVIEW},
                 {"module": "review", "action": PermissionAction.CORRECT},
+                {"module": "review", "action": PermissionAction.READ},
                 {"module": "approvals", "action": PermissionAction.READ},
                 {"module": "reports", "action": PermissionAction.READ},
+                {"module": "masters", "action": PermissionAction.READ},
+                {"module": "corrections", "action": PermissionAction.READ},
+                {"module": "corrections", "action": PermissionAction.CORRECT},
+                {"module": "operations", "action": PermissionAction.UPDATE},
+                {"module": "dashboard", "action": PermissionAction.READ},
             ],
         },
         {
@@ -75,7 +113,12 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
             "permissions": [
                 {"module": "operations", "action": PermissionAction.CREATE},
                 {"module": "operations", "action": PermissionAction.READ},
+                {"module": "operations", "action": PermissionAction.UPDATE},
                 {"module": "lots", "action": PermissionAction.READ},
+                # Sin lectura de maestros no puede elegir granja, galpon, vacuna ni
+                # tipo de alimento: el formulario de registro queda inservible.
+                {"module": "masters", "action": PermissionAction.READ},
+                {"module": "dashboard", "action": PermissionAction.READ},
             ],
         },
         {
@@ -89,6 +132,11 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 {"module": "approvals", "action": PermissionAction.REVIEW},
                 {"module": "approvals", "action": PermissionAction.CORRECT},
                 {"module": "reports", "action": PermissionAction.READ},
+                {"module": "masters", "action": PermissionAction.READ},
+                {"module": "lots", "action": PermissionAction.READ},
+                {"module": "corrections", "action": PermissionAction.READ},
+                {"module": "corrections", "action": PermissionAction.CORRECT},
+                {"module": "dashboard", "action": PermissionAction.READ},
             ],
         },
         {
@@ -100,6 +148,9 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 {"module": "sap", "action": PermissionAction.SEND_SAP},
                 {"module": "operations", "action": PermissionAction.READ},
                 {"module": "reports", "action": PermissionAction.READ},
+                {"module": "masters", "action": PermissionAction.READ},
+                {"module": "lots", "action": PermissionAction.READ},
+                {"module": "dashboard", "action": PermissionAction.READ},
             ],
         },
         {
@@ -109,6 +160,11 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 {"module": "audit", "action": PermissionAction.READ},
                 {"module": "reports", "action": PermissionAction.READ},
                 {"module": "operations", "action": PermissionAction.READ},
+                {"module": "masters", "action": PermissionAction.READ},
+                {"module": "lots", "action": PermissionAction.READ},
+                {"module": "corrections", "action": PermissionAction.READ},
+                {"module": "review", "action": PermissionAction.READ},
+                {"module": "dashboard", "action": PermissionAction.READ},
             ],
         },
     ]
@@ -151,7 +207,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Sistema",
             "email": "admin@globalavicola.com",
             "username": "admin",
-            "password": "admin123",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Super Administrador",
             "company_id": None,  # super admin no está limitado a empresa
         },
@@ -160,7 +216,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Supervisora",
             "email": "supervisora@globalavicola.com",
             "username": "supervisora",
-            "password": "super123",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Supervisor Avícola",
             "company_id": c1,
         },
@@ -169,7 +225,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Operador",
             "email": "operador@globalavicola.com",
             "username": "operador",
-            "password": "oper123",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Operador de Granja",
             "company_id": c1,
         },
@@ -178,7 +234,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Aprobador",
             "email": "aprobador@globalavicola.com",
             "username": "aprobador",
-            "password": "aprob123",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Aprobador",
             "company_id": c1,
         },
@@ -187,7 +243,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "SAP",
             "email": "sap@globalavicola.com",
             "username": "sap_analyst",
-            "password": "sap123",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Analista SAP",
             "company_id": c1,
         },
@@ -196,7 +252,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Interno",
             "email": "auditor@globalavicola.com",
             "username": "auditor",
-            "password": "audit123",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Auditor",
             "company_id": c1,
         },
@@ -205,7 +261,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Móvil",
             "email": "operador.mobile@globalavicola.com",
             "username": "operador.mobile",
-            "password": "mobile123456",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Operador de Granja",
             "view_type": "mobile",
             "company_id": c1,
@@ -216,7 +272,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Supervisor Sur",
             "email": "supervisor@avicola-sur.com",
             "username": "supervisor_sur",
-            "password": "sur123456",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Supervisor Avícola",
             "company_id": c2,
         },
@@ -225,7 +281,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             "last_name": "Operador Sur",
             "email": "operador@avicola-sur.com",
             "username": "operador_sur",
-            "password": "sur123456",
+            "password": None,  # GA-REM-004: se resuelve en tiempo de ejecución
             "role_name": "Operador de Granja",
             "company_id": c2,
         },
@@ -270,7 +326,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role], companies: d
             email=user_data["email"],
             username=user_data["username"],
             phone=None,
-            hashed_password=hash_password(user_data["password"]),
+            hashed_password=hash_password(_seed_password(user_data["username"])),
             role_id=role.id,
             company_id=desired_company,
             view_type=desired_view,

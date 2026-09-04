@@ -46,6 +46,26 @@ TODAY = date.today()
 # HELPERS
 # ═══════════════════════════════════════════════════════════
 
+# ── GA-REM-004: las contraseñas nunca se versionan ──────────────────────────
+def _seed_password(username: str) -> str:
+    """Contraseña del usuario sembrado, tomada del entorno.
+
+    Convención: GA_SEED_PWD_<USERNAME en mayúsculas, sin puntos ni guiones>.
+    Alternativa global para desarrollo local: GA_SEED_DEFAULT_PASSWORD.
+    """
+    import os
+    key = "GA_SEED_PWD_" + username.upper().replace(".", "_").replace("-", "_")
+    value = os.environ.get(key) or os.environ.get("GA_SEED_DEFAULT_PASSWORD")
+    if not value:
+        raise SystemExit(
+            f"[seeds] Falta la contraseña del usuario '{username}'.\n"
+            f"        Defina {key} o GA_SEED_DEFAULT_PASSWORD.\n"
+            "        GA-REM-004: no se siembran credenciales literales."
+        )
+    return value
+
+
+
 async def _exists(session: AsyncSession, model, **filters) -> bool:
     q = select(model.id).where(*[getattr(model, k) == v for k, v in filters.items()]).limit(1)
     r = await session.execute(q)
@@ -171,35 +191,35 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
 
 USERS_DEF = [
     # ── MOBILE ──
-    {"username": "movil.progenitoras", "password": "proge123", "role_name": "Operador Progenitoras",
+    {"username": "movil.progenitoras", "password": None,  # GA-REM-004 "role_name": "Operador Progenitoras",
      "first_name": "Pedro", "last_name": "Móvil Proge", "view_type": "mobile"},
-    {"username": "movil.reproductoras", "password": "repro123", "role_name": "Operador Reproductoras",
+    {"username": "movil.reproductoras", "password": None,  # GA-REM-004 "role_name": "Operador Reproductoras",
      "first_name": "Rosa", "last_name": "Móvil Repro", "view_type": "mobile"},
-    {"username": "movil.incubadora", "password": "incu1234", "role_name": "Operador Incubadora",
+    {"username": "movil.incubadora", "password": None,  # GA-REM-004 "role_name": "Operador Incubadora",
      "first_name": "Iván", "last_name": "Móvil Incu", "view_type": "mobile"},
-    {"username": "movil.engorde", "password": "engorde12", "role_name": "Operador Engorde",
+    {"username": "movil.engorde", "password": None,  # GA-REM-004 "role_name": "Operador Engorde",
      "first_name": "Elena", "last_name": "Móvil Engorde", "view_type": "mobile"},
-    {"username": "movil.multiproceso", "password": "multi123", "role_name": "Operador Multi-Proceso",
+    {"username": "movil.multiproceso", "password": None,  # GA-REM-004 "role_name": "Operador Multi-Proceso",
      "first_name": "Miguel", "last_name": "Móvil Multi", "view_type": "mobile"},
-    {"username": "movil.supervisor", "password": "super123", "role_name": "Supervisor General",
+    {"username": "movil.supervisor", "password": None,  # GA-REM-004 "role_name": "Supervisor General",
      "first_name": "Sara", "last_name": "Móvil Super", "view_type": "mobile"},
-    {"username": "movil.contralor", "password": "contra123", "role_name": "Contralor Avícola",
+    {"username": "movil.contralor", "password": None,  # GA-REM-004 "role_name": "Contralor Avícola",
      "first_name": "Carlos", "last_name": "Móvil Contralor", "view_type": "mobile"},
 
     # ── WEB ──
-    {"username": "web.progenitoras", "password": "proge123", "role_name": "Operador Progenitoras",
+    {"username": "web.progenitoras", "password": None,  # GA-REM-004 "role_name": "Operador Progenitoras",
      "first_name": "Patricia", "last_name": "Web Proge", "view_type": "web"},
-    {"username": "web.reproductoras", "password": "repro123", "role_name": "Operador Reproductoras",
+    {"username": "web.reproductoras", "password": None,  # GA-REM-004 "role_name": "Operador Reproductoras",
      "first_name": "Roberto", "last_name": "Web Repro", "view_type": "web"},
-    {"username": "web.incubadora", "password": "incu1234", "role_name": "Operador Incubadora",
+    {"username": "web.incubadora", "password": None,  # GA-REM-004 "role_name": "Operador Incubadora",
      "first_name": "Inés", "last_name": "Web Incu", "view_type": "web"},
-    {"username": "web.engorde", "password": "engorde12", "role_name": "Operador Engorde",
+    {"username": "web.engorde", "password": None,  # GA-REM-004 "role_name": "Operador Engorde",
      "first_name": "Ernesto", "last_name": "Web Engorde", "view_type": "web"},
-    {"username": "web.multiproceso", "password": "multi123", "role_name": "Operador Multi-Proceso",
+    {"username": "web.multiproceso", "password": None,  # GA-REM-004 "role_name": "Operador Multi-Proceso",
      "first_name": "Mónica", "last_name": "Web Multi", "view_type": "web"},
-    {"username": "web.supervisor", "password": "super123", "role_name": "Supervisor General",
+    {"username": "web.supervisor", "password": None,  # GA-REM-004 "role_name": "Supervisor General",
      "first_name": "Sergio", "last_name": "Web Super", "view_type": "web"},
-    {"username": "web.contralor", "password": "contra123", "role_name": "Contralor Avícola",
+    {"username": "web.contralor", "password": None,  # GA-REM-004 "role_name": "Contralor Avícola",
      "first_name": "Cecilia", "last_name": "Web Contralor", "view_type": "web"},
 ]
 
@@ -234,7 +254,7 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
         user = User(
             first_name=udef["first_name"], last_name=udef["last_name"],
             email=f"{udef['username']}@testing.local",
-            username=udef["username"], hashed_password=hash_password(udef["password"]),
+            username=udef["username"], hashed_password=hash_password(_seed_password(udef["username"])),
             role_id=role.id, company_id=COMPANY_ID, view_type=udef["view_type"],
         )
         session.add(user)
@@ -895,7 +915,7 @@ async def main():
             print("📋 CREDENCIALES DE PRUEBA:")
             print("─" * 40)
             for udef in USERS_DEF:
-                print(f"  {udef['username']:25s} | {udef['password']:10s} | {udef['view_type']:6s} | {udef['role_name']}")
+                print(f"  {udef['username']:25s} | <oculta> | {udef['view_type']:6s} | {udef['role_name']}")
             print(f"  {'admin':25s} | {'admin123':10s} | web    | Super Administrador")
             print()
             print("🏭 DATOS DISPONIBLES PARA PRUEBAS:")
