@@ -1,0 +1,188 @@
+# MAPA DE DEPENDENCIAS DEL PROGRAMA DE REMEDIACIÓN
+
+## 1. Grafo de dependencias
+
+```
+                         ┌──────────────────────────────┐
+                         │ GA-REM-001  GOBIERNO         │ ✅ CERTIFIED
+                         │ Constitución ratificada      │
+                         └──────────────┬───────────────┘
+                                        │ habilita TODAS
+        ┌───────────────────────────────┼───────────────────────────────┐
+        ▼                               ▼                               ▼
+┌───────────────────┐         ┌───────────────────┐         ┌───────────────────┐
+│ GA-REM-014        │         │ VÍA PARALELA      │         │ GA-REM-020        │
+│ Entorno de test   │         │ 004 · 009 · 010   │         │ Validación de     │
+│ aislado           │         │ (riesgo activo)   │         │ cobertura         │
+└─────────┬─────────┘         └───────────────────┘         └─────────┬─────────┘
+          │ habilita el cierre de 11 specs                            │ INFORMA
+          │                                                           │ (no bloquea)
+   ┌──────┼──────────┬──────────────┬──────────────┐                  │
+   ▼      ▼          ▼              ▼              ▼                  │
+┌──────┐┌──────┐ ┌────────┐   ┌────────┐    ┌────────┐                │
+│ 005  ││ 002  │ │  011   │   │  015   │    │  013   │                │
+│Mortal││ RBAC │ │Contrat.│   │Tests BE│    │ Gates  │                │
+└──┬───┘└──┬───┘ └───┬────┘   └───┬────┘    └────────┘                │
+   │       │         │            │                                   │
+   │  ┌────┴────┐    │            │                                   │
+   │  ▼         ▼    │            │                                   │
+   │┌──────┐┌──────┐ │            │                                   │
+   ││ 007  ││ 003  │ │            │                                   │
+   ││BR-14 ││ Auth │ │            │                                   │
+   │└──────┘└──┬───┘ │            │                                   │
+   │           ▼     │            │                                   │
+   │       ┌──────┐  │            │                                   │
+   │       │ 012  │  │            │                                   │
+   │       │Passwd│  │            │                                   │
+   │       └──────┘  │            │                                   │
+   │                 │            │                                   │
+   │      ┌──────────┼────────┐   │                                   │
+   │      ▼          ▼        ▼   │                                   │
+   │  ┌──────┐  ┌──────┐ ┌──────┐ │                                   │
+   │  │ 006  │  │ 008  │ │ 022  │ │                                   │
+   │  │Correc│  │Trazab│ │ KPI  │ │                                   │
+   │  └──┬───┘  └──┬───┘ └──┬───┘ │                                   │
+   │     │         │        │     │                                   │
+   └─────┴────┬────┴────────┴─────┘                                   │
+              ▼                                                       │
+      ┌───────────────┐  ◀──────────── insumo de cobertura ───────────┘
+      │  GA-REM-016   │
+      │ Certificación │            ┌──────────────────┐   ┌──────────┐
+      │ E2E+procesos  │            │   GA-REM-017     │   │  021     │
+      └───────┬───────┘            │   SAP real       │   │  Agua    │
+              ▼                    │ BLOCKED_EXTERNAL │   └──────────┘
+      ┌───────────────┐            └──────────────────┘   (independiente,
+      │  GA-REM-018   │                    ▲               informada por 020)
+      │ Trazabilidad  │                    │
+      │ Spec Dev      │              GA-REM-010
+      └───────┬───────┘              (semántica SAP)
+              ▼
+      ┌───────────────┐
+      │  GA-REM-019   │
+      │  Deuda P2/P3  │
+      └───────────────┘
+```
+
+**Cambio respecto a la versión inicial:** `GA-REM-020` deja de ser bloqueante. Por decisión del propietario, la documentación del cliente es **fuente de validación**, no estructura a adoptar; la taxonomía del proyecto se conserva y sigue siendo la unidad de certificación. `020` **informa** a `016`, `021` y `022`, y alimenta el backlog con los huecos que encuentre.
+
+## 2. Tabla de dependencias
+
+| GA-REM | Depende de | Habilita | Tipo de dependencia |
+|---|---|---|---|
+| `001` Gobierno | — | todas | **bloqueante absoluta** — sin constitución no hay regla que aplicar |
+| `020` Validación de cobertura | `001` | *informa a* `016`, `021`, `022` | **no bloqueante** — aporta verificación de completitud |
+| `014` Entorno de test | `001` | `002,003,005,006,007,008,011,012,013,015,016` | **bloqueante de cierre** — sin ella ningún AC ejecutable se puede verificar |
+| `004` Credenciales | `001` | — | independiente |
+| `009` Evidencias | `001` | — | independiente |
+| `010` Semántica SAP | `001` | `017` | independiente para ejecutar |
+| `005` Mortalidad | `001`, `014` | `016` (proceso de control diario) | de cierre |
+| `002` RBAC | `001`, `014` | `007`, `012`, cierre de seguridad | de cierre |
+| `003` Auth/token | `001`, `014` | `012` | de cierre |
+| `007` BR-14 | `001`, `002`, `014` | `016` | funcional — necesita saber quién puede aprobar |
+| `012` Contraseña | `001`, `002`, `003`, `014` | — | funcional — política de sesión y permisos |
+| `011` Contratos | `001`, `014` | `006`, `008`, `016`, `022` | funcional — repara las pantallas que otras specs necesitan |
+| `006` Correcciones | `001`, `011`, `014` | `016` | funcional — su pantalla está rota |
+| `008` Trazabilidad | `001`, `011`, `014` | `016` | funcional |
+| `021` Agua | `001` | — | independiente; `020` le indica en qué etapas capturar |
+| `022` KPI | `001`, `011` | `016` | funcional — 4 KPI son endpoints huérfanos |
+| `013` Quality gates | `001`, `014` | — | de cierre — el gate de backend necesita el entorno |
+| `015` Tests backend | **`014`** | `016` | **bloqueante absoluta** |
+| `016` Certificación | `002`, `005`, `006`, `007`, `011`, `014`, `015` | `018` | **de convergencia**; `020` aporta la columna de cobertura validada |
+| `017` SAP real | `010`, `011` + **externo** | — | `BLOCKED_EXTERNAL` |
+| `018` Trazabilidad Spec Dev | `001` + estabilización | `019` | de secuencia |
+| `019` Deuda P2/P3 | Fases A–G | — | de secuencia |
+
+## 3. Rutas críticas
+
+**Ruta crítica principal** (la más larga hasta certificar un proceso):
+```
+001 → 014 → 011 → 006 → 016
+```
+Cuatro specs encadenadas antes de poder certificar el proceso de revisión y aprobación. **Se acortó en un paso** al dejar de bloquear con `GA-REM-020`.
+
+**Ruta crítica de seguridad**:
+```
+001 → 014 → 002 → 007 → 012
+```
+
+**Ruta crítica de la operación diaria** (la más corta hasta valor operativo):
+```
+001 → 014 → 005
+```
+Tres specs para desbloquear el registro de mortalidad. **Es la ruta de mayor retorno inmediato.**
+
+## 4. Trabajos paralelizables
+
+Tras cerrar `GA-REM-001` (ya certificada), estos bloques no compiten entre sí:
+
+| Vía | Specs | Perfil |
+|---|---|---|
+| **V1 · Habilitante** | `014` | infraestructura de pruebas |
+| **V1b · Validación** | `020` | documental; sin tocar código |
+| **V2 · Infraestructura y datos** | `004` · `009` · `010` | configuración; sin dependencias cruzadas |
+| **V3 · Contratos** | `011` | frontend + backend |
+| **V4 · Proceso** | `013` (parcialmente; su gate de backend espera a `014`) | CI |
+
+`004`, `009` y `010` pueden ejecutarse **en paralelo desde el primer día**, sin esperar a `014`, porque sus AC no requieren la suite de tests de backend.
+
+## 5. Bloqueos activos
+
+| Bloqueo | Specs afectadas | Naturaleza | Acción |
+|---|---|---|---|
+| ~~`RC-01`~~ flujo de corrección | ~~`006`~~ | **RESUELTO** por evidencia (`RR-01`, Wave 1.5) — la corrección se aplica en el acto y el registro sigue requiriendo aprobación | — |
+| ~~`RC-02`~~ semántica de `bird_transfer` | ~~`005`~~ | **RESUELTO** por evidencia (`RR-02`) — intra-lote entre galpones, neutro en el balance; el esquema no admite otra lectura | — |
+| ~~`RC-03`~~ ¿BR-14 absoluta o configurable? | ~~`007`~~ | **RESUELTO** por evidencia (`RR-03`) — configurable por paso, `require_segregation` por defecto `True` | — |
+| **`RC-04`** «el mismo lote de huevos» en `spec.md §4.9` | `008` | ambigüedad de spec | corrección de spec — **único `RC` técnico abierto** |
+| ~~`RC-05`~~ política de contraseñas | ~~`012`~~ | **RESUELTO** por evidencia (`RR-05`) — política única de longitud 8; el conflicto era aparente | — |
+| **`RC-07`** política de mortalidad frente a SAP | `017` (solo el mapeo) | **`OWNER_DECISION_REQUIRED`** — el propio cliente la declara pendiente (§25.4). Acotado por `RR-07`: **ya no bloquea `005`** | decisión contable del propietario (`OD-02`) |
+| **`023` → `005`** (nueva) | `005` | dependencia técnica: sin `cause_id` persistido, la mortalidad no puede registrar la causa | ejecutar `023` antes que `005` |
+| ~~`RC-06`~~ | ~~`020`, `016`~~ | **CERRADO** — desaparece: no se adopta la granularidad del cliente, y la validación preliminar confirma que el «Desalojo» está cubierto funcionalmente por `bird_exit` y `lot_closure` | — |
+| **Contrato técnico SAP** | `017` | dependencia externa | **solicitar al cliente** |
+| Confirmación de cobertura con el cliente | `020` | deseable, no bloqueante | validar el resultado de `020` con el negocio |
+
+**Tras la Wave 1.5 solo queda un `RC` técnico abierto (`RC-04`) y una decisión de negocio acotada (`RC-07` → `OD-02`).** Cuatro de los cinco conflictos que bloqueaban `005`, `006`, `007` y `012` se resolvieron leyendo las fuentes en el orden de la jerarquía: no hacía falta ninguna decisión. Detalle en `REQUIREMENT_CONFLICT_RESOLUTION.md`.
+
+Dependencia nueva de Wave 1.5: **`GA-REM-023` precede a `GA-REM-005`**, y `R-28` (fechas relativas en los tests) precede a todo, porque expira el 2026-09-21.
+
+## 6. Ajustes de orden respecto al encargo
+
+| Ajuste | Justificación |
+|---|---|
+| `GA-REM-020` se ejecuta pronto pero **sin bloquear** | no es prerequisito de nadie: informa. Se ejecuta temprano porque puede revelar más huecos como R-13 y R-14, y conviene tenerlos en el backlog antes de comprometer el alcance de certificación |
+| `GA-REM-014` se adelanta por delante de `GA-REM-005` | los AC de `005`, `006` y `007` exigen tests ejecutables; sin entorno aislado esas tres specs no pueden cerrarse |
+| `GA-REM-012` se agrupa en la Fase B | comparte superficie con `002` y `003`; su AC depende de la política de sesión de `003` |
+| `GA-REM-004`, `009` y `010` se adelantan como vía paralela | no dependen de `014`; su cierre reduce riesgo activo en producción desde el primer día |
+
+
+---
+
+# Grafo tras la Wave 2 (2026-09-04)
+
+Las dependencias técnicas del programa están **resueltas**. Lo que queda no es un grafo de
+trabajo encadenado sino una condición de entorno y dos esperas externas.
+
+```
+R-44  (permisos en produccion)  --->  despliegue del RBAC  --->  GA-REM-016 (E2E)
+                                                                      ^
+GA-REM-011 (8 contratos)  ----------------------------------------- |
+GA-REM-021 / 022  ------------------------------------------------- |
+
+OD-02 (RC-07)  ----->  mapeo SAP de mortalidad  ----->  GA-REM-017
+Contrato tecnico SAP  -------------------------------->  GA-REM-017
+```
+
+## Dependencias que dejaron de existir
+
+| Dependencia | Por qué desaparece |
+|---|---|
+| `RC-01`, `RC-02`, `RC-03`, `RC-05` → `005`, `006`, `007`, `012`, `018` | resueltas por evidencia en la Wave 1.5 |
+| **`RC-04` → `008`** | resuelta por evidencia en la Wave 2 (`RR-04`) |
+| **`023` → `005`** | `023` certificada; `005` pudo ejecutarse |
+| **`002`/`003` → `007`, `012`** | ambas ejecutadas en la Wave 2 |
+| `RC-07` → `005` | acotada por `RR-07`: solo alcanza al mapeo SAP |
+
+## Dependencia nueva
+
+**`R-44` precede a `GA-REM-016`.** Certificar procesos E2E contra un sistema cuyo catálogo
+de permisos en producción no admite a los roles que esos procesos requieren produciría una
+certificación que no se sostiene fuera del entorno de pruebas.

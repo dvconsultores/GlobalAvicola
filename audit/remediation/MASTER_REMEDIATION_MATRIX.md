@@ -1,0 +1,85 @@
+# MATRIZ MAESTRA DE REMEDIACIÓN
+
+Documento vivo. Se actualiza tras el cierre de cada `GA-REM`.
+
+**Última actualización:** 2026-09-04 (cierre de **Wave 3**) · **Commit base:** `bfccdfb`
+
+---
+
+## 1. Matriz
+
+| GA-REM | Problema | Prior. | Dependencias | Spec | Implementación | Tests | E2E | Estado |
+|---|---|---|---|---|---|---|---|---|
+| `001` | Constitución sin ratificar | P0 | — | ✅ | ✅ | ✅ 6/6 | n/a | **`CERTIFIED`** |
+| `020` | Documentación del cliente sin usar para validar (R-15) | P1 | 001 | ✅ | ✅ | ✅ 4/4 | n/a | **`CERTIFIED`** |
+| `014` | Sin entorno de test aislado | P0 | 001 | ✅ | ✅ | ✅ 6/6 + 25 | n/a | **`CERTIFIED`** |
+| `004` | Credenciales públicas · rate limit off | P0 | 001 | ✅ | ✅ | ✅ | n/a | **`CERTIFIED`** |
+| `009` | Evidencias se pierden en cada despliegue | P0 | 001 | ✅ | ✅ | ✅ | ⬜ | **`CERTIFIED`** |
+| `010` | SAP simulado marca `sent_to_sap` | P0 | 001 | ✅ | ✅ | ✅ | ⬜ | **`CERTIFIED`** |
+| `011` | 18 desajustes de contrato · 5 pantallas caídas | P0 | 001, 014 | ✅ | ✅ 10/18 | ✅ | ⬜ | **`PARTIALLY CERTIFIED`** |
+| `013` | CI nunca ejecutado | P1 | 001, 014 | ✅ | ✅ | ✅ 8/8 | n/a | **`CERTIFIED`** |
+| `005` | Mortalidad → 500 · `R-38`…`R-41` | P0 | 001, 014, 023 | ✅ *(enmendada)* | ✅ | ✅ 16/16 | ⬜ | **`CERTIFIED`** |
+| `002` | RBAC no aplicado · `R-36` `R-44` `R-48` | P0 | 001, 014, **024** | ✅ | ✅ | ✅ 21+35 | ⬜ | **`CERTIFIED`** |
+| `003` | Refresh degrada la identidad · **`R-43`** el refresco nunca funcionó | P0 | 001, 014 | ✅ | ✅ | ✅ | ⬜ | **`CERTIFIED`** |
+| `007` | BR-14 eludible · `R-23` | P0 | 001, 002, 014 | ✅ | ✅ | ✅ | ⬜ | **`CERTIFIED`** |
+| `012` | Cambio de contraseña inoperante (`P0-13`) | P0 | 001, 002, 003, 014 | ✅ | ✅ | ✅ 11/11 | ⬜ | **`CERTIFIED`** |
+| `006` | Correcciones no aplican el valor (`P0-2`) | P0 | 001, 011, 014 | ✅ | ✅ | ✅ 18/18 | ⬜ | **`CERTIFIED`** |
+| `008` | Trazabilidad auto-referencial | P0 | 001, 011, 014 | ✅ | ✅ | ✅ 4/4 | ⬜ | **`CERTIFIED`** — `RC-04` resuelto (`RR-04`) |
+| `015` | 101 tests nunca ejecutados · addendum **`R-28`** | P1 | 014 | ✅ | ✅ | ✅ 5/5 + 7/7 | n/a | **`CERTIFIED`** |
+| `021` | Consumo de agua no capturado (R-13) | P1 | 001 | ✅ | ⬜ | ⬜ | ⬜ | `SPEC_READY` — Wave 2 |
+| `022` | KPI incompletos (R-14, R-17) | P1 | 001, 011 | ✅ | ⬜ | ⬜ | ⬜ | `SPEC_READY` — Wave 2 |
+| `016` | 0 procesos certificados | P1 | 7 specs | ⚠ draft | ⬜ | ⬜ | ⬜ | `SPEC_DRAFT` |
+| `018` | Trazabilidad metodológica perdida | P1 | 001 | ✅ | ⬜ | n/a | n/a | `SPEC_READY` |
+| `017` | Sin integración SAP real | P1 | externo | ⚠ prelim | ⬜ | ⬜ | ⬜ | **`BLOCKED_EXTERNAL`** |
+| **`023`** | `P0-14` 14 columnas descartadas · `R-26` 7 reglas devuelven 500 · `R-27` `R-30` `R-32` `R-34` | **P0** | 001, 014 | ✅ | ✅ | ✅ 33/33 | ⬜ | **`CERTIFIED`** |
+| **`024`** | **`GA-TD-013`** el despliegue no ejecutaba migraciones | **P0** | — | ✅ | ✅ | ✅ 4 escenarios de arranque real | n/a | **`CERTIFIED`** |
+| `019` | Deuda P2/P3 + hallazgos de W1, W1.5, W2 y W2.5 | P2 | Fases A–G | ✅ | ⬜ | n/a | n/a | `DEFERRED` |
+
+⚠ = bloqueada por un `REQUIREMENT_CONFLICT` pendiente de decisión. **Tras Wave 1.5 no queda ninguna.**
+
+`RC-01`, `RC-02`, `RC-03` y `RC-05` resueltos por evidencia; `RC-07` acotado a `GA-REM-017`.
+Detalle → `REQUIREMENT_CONFLICT_RESOLUTION.md`.
+
+## 2. Marcador de métricas
+
+Se actualiza tras cada cierre. **No se espera al final del programa para volver a medir.**
+
+| Métrica | Baseline | W1 | W1.5 | W2 | W2.5 | W2.75 | **Wave 3** | Objetivo |
+|---|---|---|---|---|---|---|---|---|
+| Requerimientos vigentes | 56 | 60 (baseline V1.1) | 60 | 60 | 60 | 60 | 60 | 60 |
+| Requerimientos E2E completos | 12 / 56 | 12 / 60 | 12 / 60 | **12 / 60** *(sin cambio: E2E no ejecutado)* | 12 / 60 *(sin cambio: E2E no ejecutado)* | 12 / 60 *(sin cambio: E2E no ejecutado)* | **21 / 60** | ≥ 30 |
+| **Cobertura funcional E2E** | 21,4 % | 20,0 % | 20,0 % | **20,0 %** *(no se aumenta sin certificación real)* | 20,0 % *(no se aumenta sin certificación real)* | 20,0 % *(no se aumenta sin certificación real)* | **35 %** | ≥ 50 % |
+| Procesos certificados | 0 / 15 | 0 / 15 | 0 / 15 | **0 / 15** | 0 / 15 | 0 / 15 | **1 / 15** *(+3 de 9 pasos del orden)* | ≥ 3 |
+| Tests backend PASS | 0 (nunca ejecutados) | 0 | 74 / 101 | 211 / 211 | **229 / 229** + **35 / 35** (actualización) | **253 / 253** + 35 + 14 | **265 / 265** | 100 % |
+| Tests backend existentes | 76 | 100 | 101 | 211 | **264** (229 + 35) | **302** | 302 | — |
+| Tests frontend PASS | 61 / 61 | 61 / 61 | 61 / 61 | **61 / 61** | 61 / 61 | 61 / 61 | 61 / 61 | mantener |
+| Tests E2E PASS | 0 | 0 | 0 | **0** *(no ejecutados por encargo)* | 0 *(no ejecutados por encargo)* | 0 *(no ejecutados por encargo)* | **21 / 21** | > 0 |
+| **Bloqueadores P0 abiertos** | 12 | 8 | 10 | 0 | **0** | 0 | 0 | 0 |
+| Riesgos P1 abiertos | 16 | 13 | 16 | 4 | **3** *(`R-42`, `R-45`, `R-47`)* | 3 *(`R-42`, `R-45`, `R-47`)* | 3 *(`R-42`, `R-45`, `R-47`)* | ≤ 4 |
+| Desajustes de contrato FE↔BE | 13 (18 al inventariar) | 8 | 8 | **8** | 8 | 8 | 8 | 0 |
+| Pantallas caídas | 5 | 0 | 0 | **0** | 0 | 0 | 0 | 0 |
+| Endpoints con PUT de maestros | 4 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 / 12 | 12 |
+| Operaciones OpenAPI | 168 | 176 | 176 | **178** (+ cambio de contraseña) | 178 (+ cambio de contraseña) | 178 (+ cambio de contraseña) | 178 (+ cambio de contraseña) | — |
+| Deriva de esquema | 0 | 0 | 0 | 0 | **0** tablas · **0** columnas · **0** enums | 0 tablas · 0 columnas · 0 enums | 0 tablas · 0 columnas · 0 enums | 0 |
+| Paridad i18n | 865 = 865 | 865 = 865 | 865 = 865 | **866 = 866** | 866 = 866 | 866 = 866 | 866 = 866 | mantener |
+| `TODO` en el backend | 1 | 0 | 0 | **0** | 0 | 0 | 0 | 0 |
+| Deuda Spec Development | 16 | 14 | 13 | **9** | 9 | 9 | 9 | ≤ 4 |
+| Quality gates ejecutándose | no | sí — 8/8 | sí — 8/8 | **sí — 8/8** | sí — 8/8 | sí — 8/8 | sí — 8/8 | sí |
+| **Rutas con autorización declarada** | 0 / 78 | 0 / 78 | 0 / 78 | 177 / 177 | **177 / 177** | **177 / 177** | 177 / 177 | 100 % |
+| **Camino de actualización certificado** | no | no | no | no | **sí** | **sí, en arranque real** | sí, en arranque real | sí |
+| **Migraciones aplicadas en el despliegue** | **no** | no | no | no | **sí** (`GA-REM-024`) | **sí, certificado en runtime** | sí, certificado en runtime | sí |
+| Madurez | NIVEL 3 | NIVEL 3 | NIVEL 3 | NIVEL 3 | **NIVEL 3** *(NIVEL 4 exige E2E certificado)* | NIVEL 3 *(NIVEL 4 exige E2E certificado)* | **NIVEL 4 — OPERATIONAL BETA** | NIVEL 4 |
+
+
+---
+
+## 3. Nota sobre el aumento de P0 tras Wave 1.5
+
+Los bloqueadores P0 subieron de 8 a 10 y los riesgos P1 de 13 a 16. **Esto no es un
+retroceso.** `P0-13`, `P0-14`, `R-23`, `R-26` y `R-28` no se crearon en esta Wave: ya
+estaban en el producto. Se hicieron visibles porque, por primera vez, la suite backend se
+ejecuta contra una base de datos real y porque se persiguió cada `RC` hasta su evidencia.
+
+Un programa de remediación honesto sube su recuento de defectos cuando mejora su capacidad
+de detección. El indicador sano no es «P0 bajando siempre», sino «P0 conocidos, trazados y
+con spec de destino»: **10 / 10**.
