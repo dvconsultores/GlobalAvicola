@@ -1,5 +1,22 @@
 # RELEASE BLOCKERS
 
+> ### OWNER CLARIFICATION / ENV-01
+>
+> The currently deployed environment was previously referred to as
+> "production" in technical reports.
+>
+> It is not a real business production environment.
+>
+> It is a shared development, testing and certification environment
+> containing only test/certification data.
+>
+> No real business production deployment currently exists.
+>
+> **Anotación añadida el 2026-09-04.** No se ha modificado la fecha, el hallazgo, la
+> evidencia ni la decisión de este documento. Reclasificación de urgencia en
+> [`ENVIRONMENT_NORMALIZATION_REPORT.md §6`](ENVIRONMENT_NORMALIZATION_REPORT.md).
+
+
 **Fecha** 2026-09-04 · **Wave** 2.75
 
 Un bloqueante de publicación cumple **al menos una** de estas condiciones: puede dejar la
@@ -99,3 +116,52 @@ READY_FOR_RELEASE = NO
 | `R-52` volumen `avicola-media` | **PENDING** | sin cambio; Watchtower no relee el compose, así que `GA-REM-009` sigue inactiva en producción |
 | `R-58` entrypoint en Docker real | **`PASS_BY_INFERENCE`** | el backend sirve tras un entrypoint con `set -e`, luego migró; falta la lectura de `docker logs` |
 | `GA-TD-013` despliegue sin migraciones | **CERRADO en la práctica** | el despliegue ya aplica migraciones |
+
+---
+
+## 7. Reclasificación por `ENV-01` (2026-09-04)
+
+El entorno desplegado no es producción real. Los gates se separan en dos conjuntos; nada
+se elimina, todo cambia de destino.
+
+### `SHARED TEST GATES` — lo que debe cumplirse para desplegar al entorno compartido
+
+| Gate | Estado |
+|---|---|
+| Regresión backend | **PASS** — 283 pasados, 49 omitidos, 0 fallos |
+| Regresión frontend | **PASS** — tsc, 61/61 vitest, ESLint, i18n 866=866 |
+| Migraciones sin deriva | **PASS** — esquema, tablas, columnas y enums en 0 |
+| Baseline limpio reproducible | **PASS** — `GA-REM-025` |
+| `R-58` entrypoint en Docker real | **`PASS_BY_INFERENCE`** — falta `docker logs`; `BLOCKED_BY_AUTH` |
+| `R-52` volumen de evidencias | **PENDING** — `docker compose up -d backend`; `BLOCKED_BY_AUTH` |
+| Salud del entorno compartido | backend y frontend sirviendo |
+| E2E | 23 fallos heredados sin clasificar → `GA-REM-016` |
+
+```
+READY_FOR_SHARED_TEST = YES
+```
+
+### `FUTURE REAL PRODUCTION GATES` — lo que hará falta antes del primer cliente
+
+| Gate | Estado |
+|---|---|
+| `GA-TD-040` copia y restauración verificadas | **`PRE-REAL-PRODUCTION`** — ya no bloquea el desarrollo |
+| `GA-TD-039` observabilidad completa | **`PRE-REAL-PRODUCTION`** |
+| `R-67` saldo de apertura → saldo de aves | **abierto**, P1 — rompe la incorporación de lotes en marcha |
+| `R-68` visibilidad de escrituras | **abierto**, P0 — intermitente, afecta a todo endpoint de escritura |
+| Certificación E2E completa | `GA-REM-016` |
+| Cero P0 abiertos | no |
+| Decisión sobre SAP real | `GA-REM-017` `BLOCKED_EXTERNAL` |
+| Runbook de despliegue y estrategia de reversión | pendiente |
+
+```
+READY_FOR_REAL_PRODUCTION = NOT_YET_CERTIFIED
+```
+
+### Sobre `GA-TD-040` y `GA-TD-039`
+
+**Ninguno se cierra.** `GA-TD-040` baja de bloqueante de publicación a
+`PRE-REAL-PRODUCTION`: una copia verificada sigue siendo imprescindible antes de que
+existan datos de un cliente, y deja de ser razón para detener el desarrollo sobre datos de
+prueba. `GA-TD-039` mantiene la misma lectura: la observabilidad mínima del entorno
+compartido ya es útil hoy; la completa es gate futuro.

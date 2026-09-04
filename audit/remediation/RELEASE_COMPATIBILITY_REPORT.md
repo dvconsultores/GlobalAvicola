@@ -1,5 +1,22 @@
 # RELEASE COMPATIBILITY REPORT
 
+> ### OWNER CLARIFICATION / ENV-01
+>
+> The currently deployed environment was previously referred to as
+> "production" in technical reports.
+>
+> It is not a real business production environment.
+>
+> It is a shared development, testing and certification environment
+> containing only test/certification data.
+>
+> No real business production deployment currently exists.
+>
+> **Anotación añadida el 2026-09-04.** No se ha modificado la fecha, el hallazgo, la
+> evidencia ni la decisión de este documento. Reclasificación de urgencia en
+> [`ENVIRONMENT_NORMALIZATION_REPORT.md §6`](ENVIRONMENT_NORMALIZATION_REPORT.md).
+
+
 **Fecha** 2026-09-04 · **Wave** 2.5
 **Pregunta que responde:** ¿puede el código actualmente verde actualizar de forma segura
 una instalación existente de Global Avícola sin romper la base, los permisos, las sesiones

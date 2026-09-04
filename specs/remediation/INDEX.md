@@ -27,19 +27,28 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-018` | Recuperación de trazabilidad Spec Development | METHODOLOGY | P1 | `SPEC_READY` | I | [GA-REM-018](GA-REM-018-SPEC-TRACEABILITY-RECOVERY.md) |
 | `GA-REM-017` | Integración SAP real | INTEGRATION | P1 | **`BLOCKED_EXTERNAL`** | H | [GA-REM-017](GA-REM-017-SAP-REAL-INTEGRATION.md) |
 | `GA-REM-019` | Reevaluación de deuda P2/P3 | TECHNICAL DEBT | P2 | `DEFERRED` | J | [GA-REM-019](GA-REM-019-P2-P3-DEBT-REASSESSMENT.md) |
+| `GA-REM-024` | Ejecución de migraciones antes de servir | INFRASTRUCTURE + RELEASE SAFETY | **P0** | **`IMPLEMENTED`** ⚠ `R-58` | — | [GA-REM-024](GA-REM-024-MIGRATION-ON-DEPLOY.md) |
+| `GA-REM-025` | Baseline limpio del entorno compartido | ENVIRONMENT + TEST DATA STRATEGY | P1 | **`CERTIFIED`** | — | [GA-REM-025](GA-REM-025-CLEAN-DEVELOPMENT-BASELINE.md) |
+
+## Decisiones normativas
+
+No son specs de remediación y no cuentan en el total: fijan el marco en el que las specs
+se interpretan.
+
+| ID | Título | Estado | Documento |
+|---|---|---|---|
+| `ENV-01` | Clasificación de entorno — el desplegado es compartido de desarrollo/test/certificación, no producción | **VIGENTE** | [ENV-01](ENV-01-ENVIRONMENT-CLASSIFICATION.md) |
 
 ## Resumen
 ```
-Total ................. 22
-CERTIFIED .............  1   (GA-REM-001)
-SPEC_READY ............ 15
-SPEC_DRAFT ............  4   (bloqueadas por conflictos de requerimiento o por dependencia)
-BLOCKED_EXTERNAL ......  1   (GA-REM-017)
-DEFERRED ..............  1   (GA-REM-019)
-
-P0 .................... 13
-P1 ....................  8
-P2 ....................  1
+Total ................. 25
+CERTIFIED ............. 10
+PARTIALLY CERTIFIED ... 1
+IMPLEMENTED ........... 2
+SPEC_READY ............ 9
+SPEC_DRAFT ............ 1
+BLOCKED_EXTERNAL ...... 1
+DEFERRED .............. 1
 ```
 
 ## Specs nuevas respecto al índice propuesto en el encargo
