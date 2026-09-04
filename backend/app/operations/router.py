@@ -10,7 +10,7 @@ from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import OperationsService
 
@@ -45,15 +45,22 @@ async def list_events(
     lot_id: Optional[int] = Query(None),
     farm_id: Optional[int] = Query(None),
     event_type: Optional[str] = Query(None, description="Filter by event type"),
-    status: Optional[str] = Query(None),
+    status: Optional[str] = Query(
+        None,
+        description="Estado, o varios separados por coma (p. ej. 'draft,registered')",
+    ),
+    registered_by_me: bool = Query(
+        False, description="Solo los eventos registrados por el usuario autenticado"
+    ),
     date_from: Optional[date] = Query(None),
     date_to: Optional[date] = Query(None),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "read")),
 ):
     items, total = await _service(db, current_user).get_events(
         skip=skip, limit=limit, lot_id=lot_id, farm_id=farm_id,
         event_type=event_type, status=status,
+        registered_by_me=registered_by_me,
         date_from=date_from, date_to=date_to,
     )
     return [schemas.OperationalEventRead.model_validate(item) for item in items]
@@ -63,17 +70,48 @@ async def list_events(
 async def create_event(
     data: schemas.OperationalEventCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "create")),
 ):
     event = await _service(db, current_user).create_event(data)
     return schemas.OperationalEventRead.model_validate(event)
+
+
+# ─── Alertas ──────────────────────────────────────────────────────────────────
+# Estas rutas van ANTES de las que llevan `{event_id}`: FastAPI resuelve en orden de
+# declaración, de modo que `/{event_id}` capturaba `/alerts` e intentaba interpretar
+# "alerts" como un entero. El endpoint de alertas era inalcanzable (`R-38`).
+# ============================================================
+
+@router.get("/alerts", response_model=list[schemas.OperationalAlertRead])
+async def list_alerts(
+    lot_id: Optional[int] = Query(None),
+    is_resolved: Optional[bool] = Query(None),
+    skip: int = Query(0, ge=0),
+    limit: int = Query(50, ge=1, le=200),
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("operations", "read")),
+):
+    """Return auto-generated alerts filtered by lot and resolution status."""
+    return await _service(db, current_user).get_alerts(
+        lot_id=lot_id, is_resolved=is_resolved, skip=skip, limit=limit
+    )
+
+
+@router.patch("/alerts/{alert_id}/resolve", response_model=schemas.OperationalAlertRead)
+async def resolve_alert(
+    alert_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("operations", "update")),
+):
+    """Mark an alert as resolved."""
+    return await _service(db, current_user).resolve_alert(alert_id)
 
 
 @router.get("/{event_id}", response_model=schemas.OperationalEventDetailRead)
 async def get_event(
     event_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "read")),
 ):
     event = await _service(db, current_user).get_event(event_id)
     # Convert ORM object to dict excluding relationships to avoid Pydantic validation errors
@@ -100,7 +138,7 @@ async def update_event(
     event_id: int,
     data: schemas.OperationalEventUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "update")),
 ):
     event = await _service(db, current_user).update_event(event_id, data)
     return schemas.OperationalEventRead.model_validate(event)
@@ -114,7 +152,7 @@ async def update_event(
 async def submit_to_review(
     event_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "create")),
 ):
     event = await _service(db, current_user).submit_to_review(event_id)
     return schemas.OperationalEventRead.model_validate(event)
@@ -124,7 +162,7 @@ async def submit_to_review(
 async def cancel_event(
     event_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "create")),
 ):
     event = await _service(db, current_user).cancel_event(event_id)
     return schemas.OperationalEventRead.model_validate(event)
@@ -138,7 +176,7 @@ async def cancel_event(
 async def list_evidences(
     event_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "read")),
 ):
     evidences = await _service(db, current_user).get_evidences(event_id)
     return [schemas.EvidenceRead.model_validate(e) for e in evidences]
@@ -150,7 +188,7 @@ async def upload_evidence(
     file: UploadFile = File(...),
     description: str = Form(""),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "create")),
 ):
     if file.content_type not in _ALLOWED_MIME:
         raise HTTPException(
@@ -189,7 +227,7 @@ async def download_evidence(
     event_id: int,
     evidence_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "read")),
 ):
     evidence = await _service(db, current_user).get_evidence_for_download(event_id, evidence_id)
     if not os.path.exists(evidence.file_path):
@@ -206,35 +244,10 @@ async def delete_evidence(
     event_id: int,
     evidence_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("operations", "delete")),
 ):
     await _service(db, current_user).delete_evidence(event_id, evidence_id)
 
 
 # ============================================================
 # Alerts
-# ============================================================
-
-@router.get("/alerts", response_model=list[schemas.OperationalAlertRead])
-async def list_alerts(
-    lot_id: Optional[int] = Query(None),
-    is_resolved: Optional[bool] = Query(None),
-    skip: int = Query(0, ge=0),
-    limit: int = Query(50, ge=1, le=200),
-    db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    """Return auto-generated alerts filtered by lot and resolution status."""
-    return await _service(db, current_user).get_alerts(
-        lot_id=lot_id, is_resolved=is_resolved, skip=skip, limit=limit
-    )
-
-
-@router.patch("/alerts/{alert_id}/resolve", response_model=schemas.OperationalAlertRead)
-async def resolve_alert(
-    alert_id: int,
-    db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
-):
-    """Mark an alert as resolved."""
-    return await _service(db, current_user).resolve_alert(alert_id)

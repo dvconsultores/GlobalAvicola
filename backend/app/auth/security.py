@@ -108,13 +108,37 @@ async def get_current_user(
     role_id = user.role_id
     role_name = None
 
+    permisos: set[tuple[str, str]] = set()
+
     if user.role:
         role_name = user.role.name
         if user.role.permissions:
             for perm in user.role.permissions:
+                accion = perm.action.value if hasattr(perm.action, "value") else str(perm.action)
+                permisos.add((perm.module, accion))
                 if perm.module == "*" and perm.scope_type == "all":
                     is_super_admin = True
-                    break
+
+    # R-48: contexto de compania.
+    #
+    # Para un usuario normal manda **siempre** la base: un token no puede reclamar una
+    # compania ajena, y esa propiedad es la que hace que el aislamiento multiempresa se
+    # sostenga (verificado en `test_rbac.py`).
+    #
+    # El Super Admin es el caso distinto. No pertenece a ninguna compania —asi lo siembra
+    # el sistema— y `switch-company` existe precisamente para que pueda situarse en una.
+    # Ese endpoint emitia el token con la compania elegida y aqui se descartaba, de modo
+    # que el cambio no tenia ningun efecto: con RBAC activo eso dejaba a **nadie** en
+    # condiciones de crear un lote, porque solo el Super Admin tiene `lots:create` y no
+    # tenia compania en la que crearlo.
+    #
+    # Honrar el claim solo para quien ya puede operar sobre cualquier compania no concede
+    # ningun privilegio nuevo: unicamente acota donde escribe.
+    company_id = user.company_id
+    if is_super_admin:
+        reclamada = payload.get("company_id")
+        if reclamada is not None:
+            company_id = int(reclamada)
 
     user_dict = {
         "id": user.id,
@@ -122,10 +146,14 @@ async def get_current_user(
         "first_name": user.first_name,
         "last_name": user.last_name,
         "email": user.email,
-        "company_id": user.company_id,
+        "company_id": company_id,
         "role_id": role_id,
         "role_name": role_name,
         "is_super_admin": is_super_admin,
+        # GA-REM-002: los permisos viajan en el contexto para que la autorizacion se
+        # decida en el backend. Antes se cargaban solo para deducir `is_super_admin` y
+        # se descartaban, de modo que el unico control real vivia en la interfaz.
+        "permissions": permisos,
     }
 
     # Store user in context variable for audit listeners
@@ -157,3 +185,44 @@ def require_company(current_user: dict = Depends(get_current_user)) -> int:
             detail="Usuario no asignado a ninguna empresa",
         )
     return company_id
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+# Autorizacion — GA-REM-002
+# ═══════════════════════════════════════════════════════════════════════════
+
+def tiene_permiso(current_user: dict, modulo: str, accion: str) -> bool:
+    """Decide si el usuario puede ejecutar `accion` sobre `modulo`.
+
+    El Super Admin —quien tiene el permiso comodin `("*", ...)` con alcance `all`— pasa
+    siempre. Para el resto se admite el comodin de modulo, de modo que un rol puede
+    declarar `("*", "read")` sin enumerar los modulos uno a uno.
+    """
+    if current_user.get("is_super_admin"):
+        return True
+    permisos = current_user.get("permissions") or set()
+    return (modulo, accion) in permisos or ("*", accion) in permisos
+
+
+def require_permission(modulo: str, accion: str):
+    """Dependencia que exige un permiso concreto.
+
+    Sin cabecera de autorizacion el resultado es 401 —lo produce `get_current_user`—; con
+    sesion valida pero sin permiso, 403. Esa distincion importa: decirle a un cliente
+    «no estas autenticado» cuando si lo esta le hace reintentar el login en balde.
+
+    La autorizacion se decide aqui y no en la interfaz. Ocultar un boton no es un control
+    de seguridad: quien invoque el endpoint con `curl` lo alcanza igual.
+    """
+
+    def _dependencia(current_user: dict = Depends(get_current_user)) -> dict:
+        if not tiene_permiso(current_user, modulo, accion):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Permiso requerido: {modulo}:{accion}",
+            )
+        return current_user
+
+    # Marca legible para el verificador de cobertura (AC08).
+    _dependencia.__ga_permission__ = (modulo, accion)  # type: ignore[attr-defined]
+    return _dependencia

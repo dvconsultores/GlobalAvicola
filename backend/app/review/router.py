@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import ApprovalService, ApprovalStepService, ReviewService
 
@@ -28,7 +28,7 @@ async def list_pending_review(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "read")),
 ):
     """Get events pending review (registered / pending_review)."""
     svc = ReviewService(db, current_user)
@@ -47,7 +47,7 @@ async def list_pending_review(
 async def create_review_batch(
     data: schemas.ReviewBatchCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "review")),
 ):
     """Create a review batch from event IDs."""
     return await ReviewService(db, current_user).create_review_batch(data)
@@ -58,7 +58,7 @@ async def list_review_batches(
     limit: int = Query(20, ge=1, le=100),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "read")),
 ):
     """List review batches for current company."""
     batches, total = await ReviewService(db, current_user).get_batches(limit=limit, offset=offset)
@@ -73,7 +73,7 @@ async def list_review_batches(
 async def start_review(
     event_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "review")),
 ):
     """Start reviewing a single event."""
     return await ReviewService(db, current_user).start_review(event_id)
@@ -83,7 +83,7 @@ async def start_review(
 async def return_to_operator(
     data: schemas.ReturnToOperatorRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "review")),
 ):
     """Return event to operator with observations."""
     return await ReviewService(db, current_user).return_to_operator(data.event_id, data.observations)
@@ -93,7 +93,7 @@ async def return_to_operator(
 async def complete_review(
     data: schemas.CompleteReviewRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "review")),
 ):
     """Complete review (auto-approve if single-level, else move to approval)."""
     return await ReviewService(db, current_user).complete_review(data.event_id, data.observations)
@@ -110,7 +110,7 @@ async def list_pending_approvals(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("approvals", "approve")),
 ):
     """Get events pending approval (status=corrected)."""
     events, total = await ApprovalService(db, current_user).get_pending_approvals(
@@ -123,7 +123,7 @@ async def list_pending_approvals(
 async def approve_event(
     data: schemas.ApproveRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("approvals", "approve")),
 ):
     """Approve a single event."""
     return await ApprovalService(db, current_user).approve(data.event_id, data.observations)
@@ -133,7 +133,7 @@ async def approve_event(
 async def reject_event(
     data: schemas.RejectRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("approvals", "reject")),
 ):
     """Reject a single event (reason mandatory)."""
     return await ApprovalService(db, current_user).reject(data.event_id, data.observations)
@@ -143,7 +143,7 @@ async def reject_event(
 async def batch_approve(
     data: schemas.BatchApproveRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "review")),
 ):
     """Approve multiple events."""
     return await ApprovalService(db, current_user).batch_approve(data.event_ids, data.observations)
@@ -153,7 +153,7 @@ async def batch_approve(
 async def batch_reject(
     data: schemas.BatchRejectRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "review")),
 ):
     """Reject multiple events (reason mandatory)."""
     return await ApprovalService(db, current_user).batch_reject(data.event_ids, data.observations)
@@ -166,7 +166,7 @@ async def batch_reject(
 @steps_router.get("")
 async def list_approval_steps(
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "read")),
 ):
     """Get approval steps for current company."""
     return await ApprovalStepService(db, current_user).get_steps()
@@ -176,7 +176,7 @@ async def list_approval_steps(
 async def create_approval_step(
     data: schemas.ApprovalStepCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "create")),
 ):
     """Create an approval step for current company."""
     return await ApprovalStepService(db, current_user).create_step(data)
@@ -187,7 +187,7 @@ async def update_approval_step(
     step_id: int,
     data: schemas.ApprovalStepUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "update")),
 ):
     """Update an approval step."""
     return await ApprovalStepService(db, current_user).update_step(step_id, data)
@@ -197,7 +197,7 @@ async def update_approval_step(
 async def delete_approval_step(
     step_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "delete")),
 ):
     """Delete an approval step."""
     await ApprovalStepService(db, current_user).delete_step(step_id)
@@ -207,7 +207,7 @@ async def delete_approval_step(
 async def seed_default_steps(
     approval_levels: int = Query(2, ge=1, le=3),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("review", "create")),
 ):
     """Seed default approval steps based on levels (1/2/3)."""
     return await ApprovalStepService(db, current_user).seed_default_steps(approval_levels)

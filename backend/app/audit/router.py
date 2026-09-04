@@ -5,7 +5,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import AuditService
 
@@ -26,7 +26,7 @@ async def list_audit_logs(
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("audit", "read")),
 ):
     """List audit logs with advanced filters. Read-only."""
     logs, total = await AuditService(db, current_user).list_logs(
@@ -41,7 +41,7 @@ async def list_audit_logs(
 async def get_audit_log(
     log_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("audit", "read")),
 ):
     """Get a single audit log entry."""
     return await AuditService(db, current_user).get_log(log_id)
@@ -52,7 +52,7 @@ async def get_entity_timeline(
     entity_type: str,
     entity_id: str,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("audit", "read")),
 ):
     """Get complete audit timeline for a specific entity (chronological)."""
     logs = await AuditService(db, current_user).get_entity_timeline(entity_type, entity_id)

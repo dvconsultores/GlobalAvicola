@@ -3,7 +3,7 @@ from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_permission
 from . import schemas
 from .service import LotService
 
@@ -26,7 +26,7 @@ async def list_lots(
     farm_id: int | None = Query(None),
     status: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "read")),
 ):
     items, total = await _service(db, current_user).get_lots(
         skip=skip, limit=limit, search=search, farm_id=farm_id, status=status,
@@ -38,7 +38,7 @@ async def list_lots(
 async def create_lot(
     data: schemas.LotCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "create")),
 ):
     lot = await _service(db, current_user).create_lot(data)
     return schemas.LotRead.model_validate(lot)
@@ -48,7 +48,7 @@ async def create_lot(
 async def get_lot(
     lot_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "read")),
 ):
     service = _service(db, current_user)
     lot = await service.get_lot(lot_id)
@@ -69,7 +69,7 @@ async def update_lot(
     lot_id: int,
     data: schemas.LotUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "update")),
 ):
     lot = await _service(db, current_user).update_lot(lot_id, data)
     return schemas.LotRead.model_validate(lot)
@@ -79,7 +79,7 @@ async def update_lot(
 async def close_lot(
     lot_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "create")),
 ):
     lot = await _service(db, current_user).close_lot(lot_id)
     return schemas.LotRead.model_validate(lot)
@@ -93,7 +93,7 @@ async def close_lot(
 async def activate_manual(
     data: schemas.OpeningBalanceCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "create")),
 ):
     ob = await _service(db, current_user).activate_manual(data)
     return schemas.OpeningBalanceRead.model_validate(ob)
@@ -103,7 +103,7 @@ async def activate_manual(
 async def get_opening_balance(
     lot_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "read")),
 ):
     ob = await _service(db, current_user).get_opening_balance(lot_id)
     if not ob:
@@ -120,7 +120,7 @@ async def get_opening_balance(
 async def get_lot_phases(
     lot_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "read")),
 ):
     phases = await _service(db, current_user).get_lot_phases(lot_id)
     return [schemas.LotPhaseRead.model_validate(p) for p in phases]
@@ -131,7 +131,7 @@ async def add_lot_phase(
     lot_id: int,
     data: schemas.LotPhaseCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "create")),
 ):
     if data.lot_id != lot_id:
         from fastapi import HTTPException
@@ -148,7 +148,7 @@ async def add_lot_phase(
 async def get_lot_traceability(
     lot_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "read")),
 ):
     """Return full generational traceability tree for a lot (egg batches + chick batches)."""
     from sqlalchemy import select
@@ -194,7 +194,7 @@ async def get_lot_traceability(
 async def create_egg_batch(
     data: schemas.EggBatchCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "create")),
 ):
     """Link a breeder/grandparent lot → hatchery lot via egg batch."""
     from .models import EggBatch
@@ -209,7 +209,7 @@ async def create_egg_batch(
 async def create_chick_batch(
     data: schemas.ChickBatchCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("lots", "create")),
 ):
     """Link a hatchery lot → destination lot (breeder or broiler) via chick batch."""
     from .models import ChickBatch

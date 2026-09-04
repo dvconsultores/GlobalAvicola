@@ -39,7 +39,38 @@ class UserCreate(UserBase):
     password: str = Field(..., min_length=8)
 
 
+class PasswordChangeRequest(BaseModel):
+    """Cambio de contraseña — `GA-REM-012`, regla `RR-05`.
+
+    Endpoint dedicado y no un campo más de `UserUpdate`: enviar `password` a
+    `PUT /users/{id}` era aceptado con `200` y descartado en silencio (`P0-13`), y
+    admitirlo allí sin control abriría además un vector de toma de cuentas.
+
+    `current_password` es obligatoria cuando el titular cambia la suya y se omite cuando
+    un administrador restablece la de otro. La comprobación vive en el servicio, que es
+    quien sabe quién pide qué.
+    """
+
+    model_config = {"extra": "forbid"}
+
+    current_password: Optional[str] = None
+    # RR-05: política única de longitud mínima 8, idéntica en alta, cambio y
+    # restablecimiento. El `min_length=6` del login no es una política: restringe un
+    # intento de autenticación, no la creación de un secreto.
+    new_password: str = Field(..., min_length=8)
+
+
 class UserUpdate(BaseModel):
+    """Edición de los datos de un usuario. **No** incluye la contraseña.
+
+    `extra="forbid"` convierte en error explícito lo que antes era un descarte
+    silencioso: `ProfilePage` enviaba `{password}` aquí, recibía `200` y mostraba
+    «contraseña actualizada» sin que nada cambiara (`P0-13`). La contraseña se cambia por
+    `POST /users/{id}/password`.
+    """
+
+    model_config = {"extra": "forbid"}
+
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     email: Optional[EmailStr] = None

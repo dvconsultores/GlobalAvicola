@@ -2,10 +2,11 @@ from fastapi import APIRouter, Depends, Query, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_permission
 from ..main import limiter, rate_limit  # S-05: rate limiting
 from .schemas import (
     LoginRequest,
+    PasswordChangeRequest,
     RefreshRequest,
     RoleCreate,
     RoleRead,
@@ -62,7 +63,7 @@ async def list_users(
     limit: int = Query(20, ge=1, le=100),
     search: str = Query(""),
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "read")),
 ):
     return await AuthService(db).get_users(skip=skip, limit=limit, search=search)
 
@@ -71,7 +72,7 @@ async def list_users(
 async def create_user(
     data: UserCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "create")),
 ):
     return await AuthService(db).create_user(data)
 
@@ -80,7 +81,7 @@ async def create_user(
 async def get_user(
     user_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "read")),
 ):
     return await AuthService(db).get_user(user_id)
 
@@ -90,16 +91,31 @@ async def update_user(
     user_id: int,
     data: UserUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "update")),
 ):
     return await AuthService(db).update_user(user_id, data)
+
+
+@router.post("/users/{user_id}/password", status_code=204, tags=["Users"])
+async def change_password(
+    user_id: int,
+    data: PasswordChangeRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(get_current_user),
+):
+    """Cambia la contraseña de un usuario.
+
+    Endpoint dedicado (`GA-REM-012`). Enviar `password` a `PUT /users/{id}` devolvía
+    `200` sin cambiar nada: `P0-13`.
+    """
+    await AuthService(db).change_password(user_id, data, current_user)
 
 
 @router.delete("/users/{user_id}", status_code=204, tags=["Users"])
 async def deactivate_user(
     user_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "delete")),
 ):
     await AuthService(db).deactivate_user(user_id)
 
@@ -109,7 +125,7 @@ async def deactivate_user(
 @router.get("/roles", response_model=list[RoleRead], tags=["Roles"])
 async def list_roles(
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "read")),
 ):
     return await AuthService(db).get_roles()
 
@@ -118,7 +134,7 @@ async def list_roles(
 async def create_role(
     data: RoleCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "create")),
 ):
     return await AuthService(db).create_role(data)
 
@@ -128,6 +144,6 @@ async def update_role(
     role_id: int,
     data: RoleUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("users", "update")),
 ):
     return await AuthService(db).update_role(role_id, data)

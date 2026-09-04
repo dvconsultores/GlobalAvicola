@@ -8,7 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
-from ..dependencies import get_current_user
+from ..dependencies import get_current_user, require_permission
 from . import models, schemas
 from .service import MasterService
 
@@ -31,7 +31,7 @@ def register_crud(
         limit: int = Query(20, ge=1, le=100),
         search: str = Query(""),
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(require_permission("masters", "read")),
     ):
         service = MasterService(db, model, current_user)
         items, total = await service.get_all(
@@ -43,7 +43,7 @@ def register_crud(
     async def create_item(
         data: create_schema,
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(require_permission("masters", "create")),
     ):
         service = MasterService(db, model, current_user)
         item = await service.create(data)
@@ -52,7 +52,7 @@ def register_crud(
     async def get_item(
         item_id: int,
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(require_permission("masters", "read")),
     ):
         service = MasterService(db, model, current_user)
         item = await service.get_by_id(item_id)
@@ -61,7 +61,7 @@ def register_crud(
     async def deactivate_item(
         item_id: int,
         db: AsyncSession = Depends(get_db),
-        current_user: dict = Depends(get_current_user),
+        current_user: dict = Depends(require_permission("masters", "delete")),
     ):
         service = MasterService(db, model, current_user)
         await service.deactivate(item_id)
@@ -77,7 +77,7 @@ def register_crud(
             item_id: int,
             data: update_schema,
             db: AsyncSession = Depends(get_db),
-            current_user: dict = Depends(get_current_user),
+            current_user: dict = Depends(require_permission("masters", "update")),
         ):
             service = MasterService(db, model, current_user)
             item = await service.update(item_id, data)
@@ -96,17 +96,17 @@ register_crud("houses", models.House, schemas.HouseCreate, schemas.HouseRead, sc
 register_crud("hatcheries", models.Hatchery, schemas.HatcheryCreate, schemas.HatcheryRead, schemas.HatcheryUpdate, ["name", "code"])
 register_crud("incubators", models.Incubator, schemas.IncubatorCreate, schemas.IncubatorRead, None, ["name"])
 register_crud("hatchers", models.Hatcher, schemas.HatcherCreate, schemas.HatcherRead, None, ["name"])
-register_crud("genetic-lines", models.GeneticLine, schemas.GeneticLineCreate, schemas.GeneticLineRead, None, ["name", "code", "supplier"])
-register_crud("breeds", models.Breed, schemas.BreedCreate, schemas.BreedRead, None, ["name"])
+register_crud("genetic-lines", models.GeneticLine, schemas.GeneticLineCreate, schemas.GeneticLineRead, schemas.GeneticLineUpdate, ["name", "code", "supplier"])
+register_crud("breeds", models.Breed, schemas.BreedCreate, schemas.BreedRead, schemas.BreedUpdate, ["name"])
 register_crud("productive-phases", models.ProductivePhase, schemas.ProductivePhaseCreate, schemas.ProductivePhaseRead, None, ["name", "code"])
-register_crud("suppliers", models.Supplier, schemas.SupplierCreate, schemas.SupplierRead, None, ["name", "sap_code"])
-register_crud("feed-types", models.FeedType, schemas.FeedTypeCreate, schemas.FeedTypeRead, None, ["name", "code"])
-register_crud("vaccines", models.Vaccine, schemas.VaccineCreate, schemas.VaccineRead, None, ["name", "laboratory"])
+register_crud("suppliers", models.Supplier, schemas.SupplierCreate, schemas.SupplierRead, schemas.SupplierUpdate, ["name", "sap_code"])
+register_crud("feed-types", models.FeedType, schemas.FeedTypeCreate, schemas.FeedTypeRead, schemas.FeedTypeUpdate, ["name", "code"])
+register_crud("vaccines", models.Vaccine, schemas.VaccineCreate, schemas.VaccineRead, schemas.VaccineUpdate, ["name", "laboratory"])
 register_crud("medications", models.Medication, schemas.MedicationCreate, schemas.MedicationRead, None, ["name", "laboratory"])
-register_crud("mortality-causes", models.MortalityCause, schemas.MortalityCauseCreate, schemas.MortalityCauseRead, None, ["name", "category"])
+register_crud("mortality-causes", models.MortalityCause, schemas.MortalityCauseCreate, schemas.MortalityCauseRead, schemas.MortalityCauseUpdate, ["name", "category"])
 register_crud("cull-causes", models.CullCause, schemas.CullCauseCreate, schemas.CullCauseRead, None, ["name", "category"])
-register_crud("transports", models.Transport, schemas.TransportCreate, schemas.TransportRead, None, ["name", "plate"])
-register_crud("processing-plants", models.ProcessingPlant, schemas.ProcessingPlantCreate, schemas.ProcessingPlantRead, None, ["name", "location"])
+register_crud("transports", models.Transport, schemas.TransportCreate, schemas.TransportRead, schemas.TransportUpdate, ["name", "plate"])
+register_crud("processing-plants", models.ProcessingPlant, schemas.ProcessingPlantCreate, schemas.ProcessingPlantRead, schemas.ProcessingPlantUpdate, ["name", "location"])
 register_crud("rejection-reasons", models.RejectionReason, schemas.RejectionReasonCreate, schemas.RejectionReasonRead, None, ["name", "category"])
 register_crud("correction-types", models.CorrectionType, schemas.CorrectionTypeCreate, schemas.CorrectionTypeRead, None, ["name"])
 
@@ -119,7 +119,7 @@ register_crud("correction-types", models.CorrectionType, schemas.CorrectionTypeC
 async def get_houses_by_farm(
     farm_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("masters", "read")),
 ):
     """Get houses belonging to a specific farm. Validates farm belongs to user's company."""
     company_id = current_user.get("company_id")
@@ -141,7 +141,7 @@ async def get_houses_by_farm(
 async def get_incubators_by_hatchery(
     hatchery_id: int,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(get_current_user),
+    current_user: dict = Depends(require_permission("masters", "read")),
 ):
     """Get incubators belonging to a specific hatchery. Validates hatchery belongs to user's company."""
     company_id = current_user.get("company_id")

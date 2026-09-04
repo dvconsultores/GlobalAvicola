@@ -9,6 +9,7 @@ from ..masters.models import Company
 from .security import create_access_token, create_refresh_token, decode_token, hash_password, verify_password
 from .schemas import (
     LoginRequest,
+    PasswordChangeRequest,
     PermissionCreate,
     RoleCreate,
     RoleRead,
@@ -18,6 +19,26 @@ from .schemas import (
     UserRead,
     UserUpdate,
 )
+
+
+def _claims_de(user: User, company_id: int | None = None) -> dict:
+    """Claims del token a partir del usuario en base de datos.
+
+    Un único sitio para el login, la renovación y el cambio de empresa: mientras
+    estuvieron duplicados, la renovación se quedó atrás y emitía la mitad de los campos
+    (`GA-REM-003`).
+
+    `company_id` permite conservar un contexto desplazado por `switch-company`. Sin él, un
+    Super Admin que estuviera trabajando en otra empresa volvía en silencio a la suya al
+    renovar la sesión, a los treinta minutos y sin aviso (`R-54`).
+    """
+    return {
+        "sub": user.id,
+        "username": user.username,
+        "company_id": user.company_id if company_id is None else company_id,
+        "role_id": user.role_id,
+        "view_type": user.view_type or "web",
+    }
 
 
 class AuthService:
@@ -43,19 +64,30 @@ class AuthService:
                 detail="Cuenta desactivada. Contacte al administrador.",
             )
 
-        # Build token payload with multi-company data
-        token_data = {
-            "sub": user.id,
-            "username": user.username,
-            "company_id": user.company_id,
-            "role_id": user.role_id,
-            "view_type": user.view_type or "web",
-        }
+        # El login parte siempre de la compañía del usuario: es una sesión nueva y no
+        # arrastra ningún contexto anterior.
+        token_data = _claims_de(user)
         return TokenResponse(
             access_token=create_access_token(token_data),
             refresh_token=create_refresh_token(token_data),
             expires_in=30 * 60,
         )
+
+    async def _es_super_admin(self, user: User) -> bool:
+        """Comodín `("*", …)` con alcance `all`, la misma señal que usa `get_current_user`."""
+        from .models import Permission, Role
+
+        resultado = await self.db.execute(
+            select(Permission.id)
+            .join(Role, Role.id == Permission.role_id)
+            .where(
+                Role.id == user.role_id,
+                Permission.module == "*",
+                Permission.scope_type == "all",
+            )
+            .limit(1)
+        )
+        return resultado.scalar_one_or_none() is not None
 
     async def refresh_token(self, refresh_token: str) -> TokenResponse:
         payload = decode_token(refresh_token)
@@ -65,13 +97,40 @@ class AuthService:
                 detail="Token inválido: no es refresh token",
             )
 
-        user_id = payload.get("sub")
+        # R-43: `sub` viaja como cadena en el JWT y aquí se comparaba tal cual contra
+        # `User.id`, que es entero. PostgreSQL rechazaba la comparación
+        # (`operator does not exist: integer = character varying`) y **el refresco nunca
+        # funcionó**: toda sesión moría al expirar el token de acceso, a los 30 minutos.
+        # `get_current_user` sí convertía (`security.py:93`); esta ruta se quedó atrás.
+        bruto = payload.get("sub")
+        try:
+            user_id = int(bruto)
+        except (TypeError, ValueError):
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token inválido: subject no reconocido",
+            ) from None
         result = await self.db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
         if not user or not user.is_active:
             raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Usuario no encontrado")
 
-        token_data = {"sub": user.id, "username": user.username}
+        # GA-REM-003: el contexto se reconstruye desde la base, que es la fuente de
+        # verdad, y no se copian los claims del token anterior. Antes se emitía
+        # `{sub, username}` a secas y el frontend perdía vista y compañía al renovar.
+        #
+        # R-54: la única excepción es el contexto de empresa que `switch-company` hubiera
+        # fijado, y solo para quien puede tenerlo. Sin esto, un Super Admin que estuviera
+        # trabajando en otra empresa volvía a la suya en silencio a los treinta minutos.
+        # Para el resto manda la base, que es lo que sostiene el aislamiento
+        # multiempresa: un token no reclama compañías ajenas.
+        contexto = None
+        reclamada = payload.get("company_id")
+        if reclamada is not None and str(reclamada) != str(user.company_id):
+            if await self._es_super_admin(user):
+                contexto = int(reclamada)
+
+        token_data = _claims_de(user, contexto)
         return TokenResponse(
             access_token=create_access_token(token_data),
             refresh_token=create_refresh_token(token_data),
@@ -141,6 +200,74 @@ class AuthService:
         await self.db.refresh(user)
         return UserRead.model_validate(user)
 
+    async def change_password(
+        self, user_id: int, data: "PasswordChangeRequest", current_user: dict
+    ) -> None:
+        """Cambia la contraseña de un usuario — `GA-REM-012`, regla `RR-05`.
+
+        Dos caminos, con reglas distintas y deliberadas:
+
+        * **el titular cambia la suya**: debe aportar la contraseña actual y acertarla;
+        * **un administrador restablece la de otro**: no necesita la anterior —no la
+          conoce— pero sí autorización.
+
+        Cualquier otro caso es un 403. Hoy la autorización se apoya en `is_super_admin`,
+        la única señal disponible: `GA-REM-002` la sustituirá por el permiso
+        `users:update` cuando exista el enforcement de RBAC.
+
+        Nunca responde con éxito sin haber cambiado nada: ese silencio era `P0-13`.
+        """
+        from ..audit.helpers import _insert_audit_log
+        from ..audit.models import AuditAction, AuditModule
+
+        result = await self.db.execute(select(User).where(User.id == user_id))
+        user = result.scalar_one_or_none()
+        if not user:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+
+        es_el_titular = current_user["id"] == user_id
+        es_administrador = bool(current_user.get("is_super_admin"))
+
+        if not es_el_titular and not es_administrador:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No tiene autorización para cambiar la contraseña de otro usuario",
+            )
+
+        if es_el_titular:
+            if not data.current_password:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Debe aportar su contraseña actual para cambiarla",
+                )
+            if not verify_password(data.current_password, user.hashed_password):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="La contraseña actual no es correcta",
+                )
+
+        user.hashed_password = hash_password(data.new_password)
+        await self.db.flush()
+
+        # La auditoría registra el hecho y los dos usuarios implicados. Nunca la
+        # contraseña ni su hash.
+        await _insert_audit_log(
+            db=self.db,
+            user_id=current_user["id"],
+            # La compañía del titular, no la de quien actúa: un administrador puede
+            # restablecer la contraseña de un usuario de otra empresa. `0` no vale como
+            # relleno — es una clave foránea y no existe la compañía 0 (`R-37`).
+            company_id=user.company_id or current_user.get("company_id"),
+            action=AuditAction.UPDATED,
+            entity_type="user_password",
+            entity_id=str(user_id),
+            module=AuditModule.AUTH,
+            comments=(
+                "Cambio de contraseña propia" if es_el_titular
+                else f"Restablecimiento de la contraseña del usuario {user_id} por un administrador"
+            ),
+        )
+
     async def deactivate_user(self, user_id: int) -> None:
         result = await self.db.execute(select(User).where(User.id == user_id))
         user = result.scalar_one_or_none()
@@ -164,13 +291,8 @@ class AuthService:
         user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-        token_data = {
-            "sub": user.id,
-            "username": user.username,
-            "company_id": company_id,
-            "role_id": user.role_id,
-            "view_type": user.view_type or "web",
-        }
+        # El mismo constructor que el login y la renovación, con el contexto desplazado.
+        token_data = _claims_de(user, company_id)
         return TR(
             access_token=create_access_token(token_data),
             refresh_token=create_refresh_token(token_data),
