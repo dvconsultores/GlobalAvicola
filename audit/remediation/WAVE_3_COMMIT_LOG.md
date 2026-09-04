@@ -81,7 +81,61 @@ que **vigila** esa configuración en lugar de alterarla.
 
 ## 4. Estado del push
 
-Ver §5. El resultado se registra con los estados de §39, nunca como «done».
+```
+PUSH_COMPLETED
+bfccdfb..47937ed  main -> main
+```
+
+13 commits publicados. Árbol de trabajo limpio salvo `image.png`, excluido a propósito.
+
+### Autenticación
+
+El primer intento falló:
+
+```
+fatal: could not read Username for 'https://github.com'
+```
+
+El remoto está configurado en HTTPS y no hay `credential.helper` ni
+`~/.git-credentials`. **No se forzó nada ni se alteró código para «arreglar Git»** (§40).
+
+Diagnóstico: existe una clave SSH del propietario (`~/.ssh/id_ed25519`) que autentica
+contra GitHub como `dvconsultores`, la cuenta dueña del repositorio. El push se hizo
+con esa credencial en una invocación única —`git push git@github.com:...`— **sin
+modificar la configuración del remoto**, que sigue en HTTPS.
+
+### `AUTO_DEPLOY_TRIGGERED = YES`
+
+`docker-push-backend.yml` dispara con `push: branches: [main]` y rutas `backend/**`.
+El push incluye 72 ficheros bajo `backend/`, de modo que el mecanismo vigente se
+activa.
+
+### `POST_DEPLOY_VERIFICATION = NOT_VERIFIED`
+
+Esta sesión **no tiene acceso autorizado para comprobar producción**. Lo único
+observable desde fuera es `avicola.globaldv.net`, que sirve el frontend: `/health`
+devuelve el HTML de la SPA, no el JSON del backend. El backend no es alcanzable
+directamente.
+
+Un `200` en esa URL **no dice nada** sobre si el contenedor nuevo arrancó. No se
+declara éxito de despliegue.
+
+```
+GIT PUSH PASS  ≠  DEPLOY PASS  ≠  APPLICATION HEALTHY
+```
+
+### Comprobaciones que quedan pendientes en el servidor
+
+Del `PRODUCTION_ACTIVATION_RUNBOOK.md §POST-START CHECKS`, sin ejecutar:
+
+| # | Comprobación | Por qué importa |
+|---|---|---|
+| 1 | `docker logs globalavicola-backend` | **`R-58`**: el entrypoint nunca se ha ejecutado en Docker real. Si `COPY`, el cableado de `ENTRYPOINT` o los permisos del usuario `avicola` fallan, el contenedor no arranca y `restart: unless-stopped` entra en bucle |
+| 2 | `alembic current` → `l2m3n4o5p6q7` | las tres migraciones deben haberse aplicado |
+| 3 | Login con una cuenta **no** Super Admin y abrir un formulario | **`R-44`**: si la reconciliación no corrió, los desplegables vienen vacíos y todo responde 403 |
+| 4 | `docker compose up -d backend` | **`R-52`**: sin esto `avicola-media` no se monta y `GA-REM-009` no queda activa |
+
+El paso 3 es el más importante: es el que `R-44` habría roto.
 
 ---
 
