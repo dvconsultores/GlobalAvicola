@@ -42,8 +42,9 @@ export default function LotDetailPage() {
  useEffect(() => {
  const fetchAll = async () => {
  try {
- const { data: lots } = await api.get('/lots?limit=200')
- const found = (lots as any[]).find((l: any) => l.id === Number(id))
+ // GA-REM-011 C-03: se consulta el lote por identificador en lugar de
+ // listar 200 (el backend acepta le=100 y devolvía 422, abortando la pantalla).
+ const { data: found } = await api.get(`/lots/${id}`)
  setLot(found || null)
 
  const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes] = await Promise.allSettled([

@@ -18,14 +18,24 @@ export default function ProfilePage() {
  const handleChangePassword = async (e: React.FormEvent) => {
  e.preventDefault()
  if (newPassword !== confirmPassword) return setMessage(t('profile.passwordMismatch'))
- if (newPassword.length < 6) return setMessage(t('profile.passwordMinLength'))
+ // RR-05: política única de longitud mínima 8, la misma que exige el alta. El 6 anterior
+ // permitía degradar la contraseña por debajo de lo que el sistema exige al crearla.
+ if (newPassword.length < 8) return setMessage(t('profile.passwordMinLength'))
+ if (!currentPassword) return setMessage(t('profile.currentPasswordRequired'))
  setSaving(true)
  try {
- await api.put(`/users/${user?.id}`, { password: newPassword })
+ // Endpoint dedicado. `PUT /users/{id}` con `{password}` devolvía 200 y no cambiaba
+ // nada: la interfaz anunciaba un éxito que no había ocurrido (P0-13).
+ await api.post(`/users/${user?.id}/password`, {
+ current_password: currentPassword,
+ new_password: newPassword,
+ })
  setMessage(t('profile.passwordUpdated'))
  setCurrentPassword(''); setNewPassword(''); setConfirmPassword('')
  } catch (err: any) {
- setMessage(t('profile.passwordError'))
+ // El servidor es la fuente de verdad: si rechaza, el usuario debe ver por qué y
+ // nunca «contraseña actualizada».
+ setMessage(err?.response?.data?.detail || t('profile.passwordError'))
  } finally { setSaving(false) }
  }
 

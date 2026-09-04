@@ -52,7 +52,7 @@ export function useOperationDetail(id: number | undefined) {
     setError(null)
     try {
       // The API uses list with filters, so search by ID
-      const res = await operationsService.list({ limit: 200 })
+      const res = await operationsService.list({ limit: 100 })
       const events = Array.isArray(res.data) ? res.data : []
       const found = events.find((e: any) => String(e.id) === String(id))
       if (found) setEvent(found)

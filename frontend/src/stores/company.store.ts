@@ -35,7 +35,8 @@ export const useCompanyStore = create<CompanyState>((set, get) => ({
 
   fetchCompanies: async () => {
     try {
-      const { data } = await api.get('/masters/companies', { params: { limit: 200 } })
+      // GA-REM-011 C-01: el backend acepta como máximo limit=100; con 200 devolvía 422.
+      const { data } = await api.get('/masters/companies', { params: { limit: 100 } })
       const list: CompanyOption[] = (data.items ?? data).filter((c: CompanyOption) => c.is_active !== false)
       set({ companies: list })
     } catch {

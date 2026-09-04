@@ -18,7 +18,7 @@ export default function UsersPage() {
  const [form, setForm] = useState<UserForm>(emptyForm)
  const [saving, setSaving] = useState(false)
 
- const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr, cr] = await Promise.all([api.get('/users'), api.get('/roles'), api.get('/masters/companies?limit=200')]); setUsers(ur.data || []); setRoles(rr.data || []); setCompanies(cr.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
+ const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr, cr] = await Promise.all([api.get('/users'), api.get('/roles'), api.get('/masters/companies?limit=100')]); setUsers(ur.data || []); setRoles(rr.data || []); setCompanies(cr.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
  // eslint-disable-next-line react-hooks/set-state-in-effect
  useEffect(() => { fetchData() }, [fetchData])
 
@@ -28,13 +28,25 @@ export default function UsersPage() {
  const handleSave = async () => {
  if (!form.username || !form.first_name || !form.email) return alert(t('users.fieldsRequired'))
  setSaving(true)
- try { const payload: any = { ...form }; if (!payload.password) delete payload.password; if (!payload.role_id) payload.role_id = null
- if (editingId) { await api.put(`/users/${editingId}`, payload) } else { if (!form.password) return alert(t('users.passwordRequired')); await api.post('/users', payload) }
+ try {
+ // La contraseña no viaja en el cuerpo de edición: `UserUpdate` la rechaza. Enviarla ahí
+ // devolvía 200 sin cambiar nada (P0-13). El restablecimiento tiene endpoint propio.
+ const { password, ...datos } = form
+ const payload: any = { ...datos, role_id: form.role_id || null }
+ if (editingId) {
+ await api.put(`/users/${editingId}`, payload)
+ if (password) await api.post(`/users/${editingId}/password`, { new_password: password })
+ } else {
+ if (!password) return alert(t('users.passwordRequired'))
+ await api.post('/users', { ...payload, password })
+ }
  setShowModal(false); fetchData() } catch (err: any) { alert(err.response?.data?.detail || t('common.error')) } finally { setSaving(false) }
  }
 
  const handleDelete = async (userId: number) => { if (!confirm(t('users.deleteConfirm'))) return; try { await api.delete(`/users/${userId}`); fetchData() } catch { alert(t('users.deleteError')) } }
- const handleToggleActive = async (user: any) => { try { await api.put(`/users/${user.id}`, { ...user, is_active: !user.is_active, password: undefined }); fetchData() } catch { alert(t('common.error')) } }
+ // Solo se envían los campos que `UserUpdate` admite: propagar el usuario entero
+ // arrastraba `id`, `created_at` y demás, que el contrato rechaza.
+ const handleToggleActive = async (user: any) => { try { await api.put(`/users/${user.id}`, { is_active: !user.is_active }); fetchData() } catch { alert(t('common.error')) } }
 
  if (loading) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
 

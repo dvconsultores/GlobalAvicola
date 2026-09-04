@@ -56,10 +56,10 @@ export function useMasterOptions() {
     setLoading(true)
     try {
       const [f, h, gl, b, ft] = await Promise.all([
-        mastersService.listFarms({ limit: 200 }),
-        mastersService.listHouses({ limit: 200 }),
-        mastersService.listGeneticLines({ limit: 200 }),
-        mastersService.listBreeds({ limit: 200 }),
+        mastersService.listFarms({ limit: 100 }),
+        mastersService.listHouses({ limit: 100 }),
+        mastersService.listGeneticLines({ limit: 100 }),
+        mastersService.listBreeds({ limit: 100 }),
         mastersService.listFeedTypes({ limit: 100 }),
       ])
       setFarms(f.data ?? [])

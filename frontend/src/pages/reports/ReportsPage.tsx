@@ -16,7 +16,7 @@ export default function ReportsPage() {
  useEffect(() => {
  api.get(`/reports/kpis?lot_id=${lotId}`).then(r => setKpis(r.data)).catch(() => {})
  // G-12: Fetch events for chart visualization
- api.get(`/operations?lot_id=${lotId}&limit=200`).then(r => {
+ api.get(`/operations?lot_id=${lotId}&limit=100`  /* GA-REM-011 C-06 */).then(r => {
  const events = r.data?.events || r.data || []
  const byDate: Record<string, any> = {}
  events.forEach((e: any) => {

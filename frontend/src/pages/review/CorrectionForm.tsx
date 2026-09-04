@@ -24,8 +24,8 @@ export default function CorrectionForm() {
  useEffect(() => {
  const fetch = async () => {
  try {
- const { data: all } = await api.get('/operations?limit=200')
- const ev = (all as any[]).find((e: any) => e.id === Number(id))
+ // GA-REM-011 C-05: consulta por identificador en lugar de listar 200.
+ const { data: ev } = await api.get(`/operations/${id}`)
  setEvent(ev || null)
  if (ev) {
  setOriginalValue(ev.observations || '')

@@ -570,9 +570,10 @@
     "confirmPassword": "Confirm new password",
     "updatePassword": "Update Password",
     "passwordMismatch": "Passwords do not match",
-    "passwordMinLength": "Minimum 6 characters",
+    "passwordMinLength": "Minimum 8 characters",
     "passwordUpdated": "Password updated successfully",
-    "passwordError": "Error changing password"
+    "passwordError": "Error changing password",
+    "currentPasswordRequired": "You must enter your current password"
   },
   "operations": {
     "title": "Operations",
