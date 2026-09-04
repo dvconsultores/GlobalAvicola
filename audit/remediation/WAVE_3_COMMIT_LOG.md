@@ -1,0 +1,110 @@
+# WAVE 3 — COMMIT LOG
+
+**Fecha** 2026-09-04 · **Rama** `main` · **Base** `bfccdfb`
+**Política** «Política de commits, push y trazabilidad», vigente desde Wave 3
+
+> **`main` activa el despliegue automático.** `docker-push-backend.yml` dispara con
+> `push: branches: [main]`, de modo que todo push a esta rama es, además de una
+> sincronización de Git, **un release potencial**. Se trata como tal.
+
+---
+
+## 1. Clasificación previa del worktree (§34)
+
+88 entradas sin versionar al empezar:
+
+| Clasificación | Nº | Decisión |
+|---|---:|---|
+| `CURRENT WAVE CHANGE` · `PREVIOUS CERTIFIED CHANGE` | 87 | comprometidos, agrupados por unidad de ingeniería |
+| **`UNRELATED USER CHANGE`** | 1 | `image.png` (3 jul 2026, anterior a esta sesión) — **no se compromete y no se toca** |
+| `UNKNOWN` | 0 | — |
+
+`GUIA_PRUEBAS_EN_VIVO.md` se verificó antes de asignarlo: su diff es la retirada de
+credenciales de `GA-REM-004`, no un cambio ajeno.
+
+Artefactos excluidos por `.gitignore`, confirmado: `test-results/`,
+`frontend/test-results/`, `.env`, `backend/.env`, `__pycache__/`, `node_modules/`.
+**No se usó `git add .`** en ningún momento.
+
+---
+
+## 2. Commits
+
+| Commit | GA-REM | Finding / Process | AC | Tests | Push | Verification |
+|---|---|---|---|---|---|---|
+| `94d736c` | `001` | constitución sin ratificar | AC01–AC06 | 6/6 gobernanza | ver §4 | n/a (documental) |
+| `542146b` | — | evidencia de auditoría y 5 waves | — | — | ver §4 | n/a (documental) |
+| `234f76d` | `004` | P0-8 credenciales públicas | AC01, AC02, AC06 | verify.sh 5/8 | ver §4 | n/a |
+| `a1d08d9` | `010` | P0-3 `sent_to_sap` falso | AC01–AC05 | test_sap 9/9 | ver §4 | pendiente |
+| `f7b13e8` | `011`, `012` | 5 pantallas caídas · P0-13 | AC01–AC08 | tsc · vitest 61/61 · i18n | ver §4 | pendiente |
+| `96f2235` | `005`, `002` | **R-40, R-41, R-44** | — | upgrade 35/35 · deriva 0 | ver §4 | pendiente |
+| `b6a4836` | **`002`** | **R-42 ampliado, R-59** | **AC10, AC11** | security 12/12 | ver §4 | pendiente |
+| `54e74d0` | `002`, `003`, `012` | R-25, R-36, **R-43, R-48, R-54**, P0-13 | AC01–AC09 | rbac 21/21 · p013 11/11 | ver §4 | pendiente |
+| `c1ca266` | `023`, `005`, `006`, `007`, `008` | **P0-1, P0-2, P0-14**, R-26…R-51 | AC01–AC13 | 73 tests | ver §4 | pendiente |
+| `012d8c2` | `024`, `009`, `013` | **GA-TD-013** | AC01–AC07 | 4 escenarios de arranque | ver §4 | **R-58 pendiente** |
+| `7b22c4c` | `014`, `015` | suite nunca ejecutada · **R-28** | AC01–AC14 | 265/265 · 2028 idéntico | ver §4 | n/a |
+| `e72ab76` | `016` | **R-62** · 3 procesos certificados | AC01–AC05 | e2e 21/21 | ver §4 | n/a |
+
+`b6a4836` va **aparte y con su propia trazabilidad**, como exige §23: el aislamiento
+multiempresa no se esconde dentro de un commit genérico de Wave 3.
+
+---
+
+## 3. Gate ejecutado antes del push (§12, §13)
+
+```
+[x] Spec vigente                      GA-REM-016 + dependientes
+[x] AC cumplidos                      documentados por commit
+[x] Tests específicos PASS            por unidad, arriba
+[x] Backend regression PASS           265/265 · 0 fallos
+[x] Frontend regression PASS          tsc · vitest 61/61 · i18n 866=866
+[x] Migration integrity PASS          1 head · cadena íntegra
+[x] Table drift = 0                   47 = 47
+[x] Column drift = 0
+[x] Enum drift = 0                    16 enums
+[x] Multitenant regression PASS       12/12
+[x] E2E de procesos PASS              21/21
+[x] Caminos de base PASS              fresh · upgrade 35/35 · restart · fail-closed
+[x] No secrets                        solo citas documentales del hallazgo P0-8
+[x] No production DB touched          guarda rechazó avicolav2
+[x] git diff reviewed                 195 ficheros, +26 460 / −601
+[x] git status understood             solo image.png fuera, deliberadamente
+[x] Certification report actualizado  WAVE_3_E2E_PROCESS_CERTIFICATION_REPORT.md
+```
+
+**Scope-guard `EX-01` (§46):** watchtower 6 · `pull_policy` 3 · `:latest` 3 · 5
+workflows de despliegue. `git diff bfccdfb..HEAD` sobre `docker-compose.yml` no toca
+ninguna línea de despliegue, y el único workflow modificado es `quality-gates.yml`,
+que **vigila** esa configuración en lugar de alterarla.
+
+---
+
+## 4. Estado del push
+
+Ver §5. El resultado se registra con los estados de §39, nunca como «done».
+
+---
+
+## 5. Contradicción declarada (§21)
+
+El propietario ha autorizado commits y push **conservando** el despliegue automático,
+mientras el gate formal de publicación sigue abierto:
+
+```
+PUSH AUTHORIZED           ≠  FORMAL RELEASE CERTIFIED
+GIT PUSH PASS             ≠  DEPLOY PASS  ≠  APPLICATION HEALTHY
+READY_FOR_RELEASE = NO       (falta pg_dump + pg_restore verificado — GA-TD-040)
+```
+
+Si el push alcanza `main`, el despliegue se activará por el mecanismo vigente. Eso
+**no** convierte la publicación en certificada. Las métricas no se ajustan para
+acomodar la situación:
+
+| Pendiente | Estado |
+|---|---|
+| `GA-TD-040` copia verificada | **ABIERTO** — único bloqueante formal |
+| `R-52` activación de `avicola-media` | **NO EJECUTADO** — `docker compose up -d` es necesario; Watchtower no relee el compose |
+| `R-58` arranque con Docker real | **NO VERIFICADO** — esta máquina no tiene Docker |
+
+Consecuencia concreta si el despliegue ocurre: **`GA-REM-009` no queda productivamente
+activa.** El código está desplegado; la persistencia de evidencias, no.
