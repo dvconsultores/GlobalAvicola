@@ -457,3 +457,34 @@ de seguridad, 1 de 15 procesos certificados no sostiene una declaración de prod
 | `processes/PROCESS-07-*.md` · `PROCESS-ORDEN-01/02-*.md` | informes por proceso |
 | `specs/remediation/GA-REM-002-*.md` | enmienda con `AC10`/`AC11` |
 | `BACKEND_TEST_BASELINE_RUN_01.md` | **congelado, no sobrescrito** |
+
+
+---
+
+## Cierre de `R-62` (2026-09-05)
+
+`R-62` se registró como «23 tests heredados rotos por una interfaz de junio de 2026». La
+recuperación permite cerrarlo con números en lugar de con una hipótesis.
+
+```
+R-62 era un defecto de DESCUBRIMIENTO
+    → al ejecutarse la suite por primera vez, expuso 23 fallos
+
+23 fallos, con disposición razonada:
+     8  REPAIR                autenticación recuperada; afirmaciones intactas
+     1  CORRECT_EXPECTATION   esperaba un <nav> en /login
+    12  REWRITE               el requisito vive, el flujo cambió
+     2  RETIRED_SUPERSEDED    con evidencia y cobertura sustituta
+     0  BLOCKED_BY_SPEC_GAP
+     0  defectos de aplicación descubiertos al desenmascarar
+
+Y además, fuera de los 23:
+    12  RETIRED_VACUOUS       pasaban sin poder fallar (R-72)
+```
+
+La hipótesis inicial —«todos obsoletos por la interfaz»— explica **12 de 23**, no los 23.
+Once fallaban por credenciales o por falta de autenticación, y seis de ellos comprobaban
+funcionalidad perfectamente viva que ninguna otra prueba tocaba.
+
+Estado: **`R-62` CERRADO**. Baseline nuevo en
+[`PLAYWRIGHT_RECOVERY_RUN_01.md`](PLAYWRIGHT_RECOVERY_RUN_01.md): **43/43**.

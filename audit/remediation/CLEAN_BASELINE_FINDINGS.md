@@ -193,6 +193,32 @@ y [`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).
 
 ---
 
+## `R-72` — Doce tests heredados pasaban sin poder fallar
+
+**P2** · credibilidad de la suite · **`RESUELTO` 2026-09-05**
+
+De los 26 casos de `tests/operations.spec.ts`, doce figuraban como `PASS` en el baseline
+congelado. Ninguno se autenticaba, igual que los catorce que fallaban. La diferencia era que
+sus afirmaciones no podían fallar:
+
+```ts
+expect(progressBar).toBeTruthy()          // un Locator siempre es truthy
+expect(focusedElement).toBeTruthy()       // ídem
+expect(count).toBeGreaterThanOrEqual(0)   // un recuento nunca es negativo
+```
+
+Los demás medían la pantalla de login: su `h1`, su tiempo de carga, sus traducciones.
+
+**Doce de los quince `PASS` del baseline eran ilusorios.** La suite heredada no cubría
+quince requisitos, cubría tres. Retirados bajo `GA-REM-016` con la disposición
+`RETIRED_VACUOUS`; lo que sí querían comprobar vive en los diez casos reescritos, ahora con
+afirmaciones que fallan cuando deben.
+
+Deja una regla: un test que pasa no es evidencia hasta que se demuestra que puede fallar.
+Es la razón de `AC12`.
+
+---
+
 ## Resumen
 
 | ID | Título | Prior. | Estado |
@@ -206,3 +232,4 @@ y [`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).
 | `R-66` | `/me` no refleja la empresa activa | P3 | abierto → `GA-REM-019` |
 | `R-69` | La validación del saldo de apertura rechaza datos legítimos | P2 | abierto → `GA-REM-019` |
 | `R-70` | 500 en `activate-manual` con una fase inexistente | P2 | abierto → `GA-REM-019` |
+| `R-72` | Doce tests heredados pasaban sin poder fallar | P2 | **`RESUELTO`** — `GA-REM-016` |
