@@ -219,6 +219,32 @@ Es la razón de `AC12`.
 
 ---
 
+## `R-73` — El cierre de lote nunca ha funcionado
+
+**P1** · descubierto al certificar `R-47`
+
+`POST /lots/{id}/close` responde **500 siempre**, por dos causas independientes:
+
+```
+1) TypeError: unsupported operand type(s) for -: 'date' and 'datetime'
+   lots/service.py → age_days = (date.today() - lot.start_date).days
+   `start_date` nunca es nulo, de modo que la rama se ejecuta siempre.
+
+2) El modelo de respuesta de la ruta no encaja con el resumen que devuelve el
+   servicio: faltan `created_at` y `updated_at`.
+```
+
+La primera **queda resuelta** dentro de `GA-REM-028`: es la misma confusión entre fecha de
+negocio y marca temporal que originó `R-47`, y `AC07` no podía comprobarse sin ella.
+
+La segunda **sigue abierta**: es un desajuste de contrato, no de semántica temporal, y
+merece su propia decisión —qué debe devolver el cierre, el lote o el resumen—. Destino:
+`GA-REM-019`.
+
+Afecta al paso `lot_closure` de las cadenas de `P-06` y `P-07`.
+
+---
+
 ## Resumen
 
 | ID | Título | Prior. | Estado |
@@ -233,3 +259,4 @@ Es la razón de `AC12`.
 | `R-69` | La validación del saldo de apertura rechaza datos legítimos | P2 | abierto → `GA-REM-019` |
 | `R-70` | 500 en `activate-manual` con una fase inexistente | P2 | abierto → `GA-REM-019` |
 | `R-72` | Doce tests heredados pasaban sin poder fallar | P2 | **`RESUELTO`** — `GA-REM-016` |
+| `R-73` | El cierre de lote responde 500 siempre | P1 | **parcial** — causa temporal resuelta en `GA-REM-028`; modelo de respuesta abierto → `GA-REM-019` |

@@ -21,7 +21,19 @@ class LotBase(BaseModel):
 
 
 class LotCreate(LotBase):
-    pass
+    """Alta de lote.
+
+    `GA-REM-028` / `R-47`. `start_date` no figuraba en el contrato de creación, de modo que
+    pydantic la descartaba **en la capa de esquema**: el cliente la enviaba, recibía un 201 y
+    la fecha no llegaba a ninguna parte. Mismo patrón que `P0-14`, donde catorce campos de
+    evento se aceptaban y se perdían en silencio.
+
+    `docs/02 §3.5.1` la lista entre los campos del registro de lote, y `docs/02 §3.9.1` la
+    exige —«fecha real de inicio»— al incorporar un lote ya en marcha. Sin ella, `P-11` no
+    puede existir.
+    """
+
+    start_date: Optional[datetime] = None
 
 
 class LotUpdate(BaseModel):

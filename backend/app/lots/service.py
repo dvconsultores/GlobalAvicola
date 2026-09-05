@@ -1,7 +1,30 @@
 """
 Lot service with business rules for lot lifecycle management.
 """
-from datetime import date
+from datetime import date, datetime, time, timezone
+
+
+def _dia(valor: datetime | date) -> date:
+    """Día del calendario de un valor que puede venir como fecha o como instante."""
+    return valor.date() if isinstance(valor, datetime) else valor
+
+
+def _inicio_declarado(valor: datetime | date | None) -> datetime:
+    """Inicio del ciclo, anclado a medianoche UTC.
+
+    `GA-REM-028 AC01/AC02`. La columna es `DateTime(timezone=True)` y la base corre en
+    `CET`, de modo que una fecha sin zona se guardaba a medianoche local y volvía como el
+    **día anterior** en UTC. Afectaba también al valor por omisión: un lote creado hoy se
+    leía como iniciado ayer.
+
+    Anclar el día declarado a medianoche UTC hace que la petición, la persistencia y la
+    respuesta hablen del mismo día del calendario, que es lo que `§46` exige. No se cambia
+    el tipo de la columna: eso sería una migración que `R-47` no necesita.
+    """
+    if valor is None:
+        valor = date.today()
+    dia = _dia(valor)
+    return datetime.combine(dia, time.min, tzinfo=timezone.utc)
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -83,7 +106,17 @@ class LotService:
             sex=data.sex,
             status="active",
             activation_type="normal",
-            start_date=date.today(),
+            # `GA-REM-028` / `R-47`. La fecha que envía quien registra el lote se
+            # descartaba y se ponía la de hoy, de modo que un lote ya en marcha nacía con
+            # edad cero: `age_days`, el índice productivo y la ganancia diaria salían mal,
+            # y `BR-06` rechazaba cualquier evento retroactivo. Es lo que bloqueaba `P-11`.
+            #
+            # `RR-09`: `start_date` es el inicio del ciclo según el negocio y lo aporta el
+            # usuario; `created_at` —que el servidor sigue fijando— es el alta en el
+            # software. Para un lote incorporado, las dos difieren legítimamente.
+            #
+            # Omitirla mantiene el comportamiento de siempre: hoy.
+            start_date=_inicio_declarado(data.start_date),
         )
         self.db.add(lot)
         await self.db.flush()
@@ -159,7 +192,12 @@ class LotService:
         approved_events = approved_result.scalar() or 0
 
         # Age in days
-        age_days = (date.today() - lot.start_date).days if lot.start_date else 0
+        # `R-73`. Restaba un `datetime` de un `date` y reventaba con `TypeError`, de modo
+        # que **el cierre de lote respondía 500 siempre**: `start_date` nunca es nulo. Es la
+        # misma confusión entre fecha de negocio y marca temporal que originó `R-47`, y por
+        # eso se resuelve con él (`GA-REM-028 AC07`): la edad es la única consumidora
+        # alcanzable de `start_date`, y sin esto el criterio no puede comprobarse.
+        age_days = (date.today() - _dia(lot.start_date)).days if lot.start_date else 0
 
         summary = {
             "lot_id": lot_id,
@@ -272,7 +310,11 @@ class LotService:
 
         # Mark lot as manually activated
         lot.activation_type = "manual"
-        lot.start_date = data.activation_date
+        # Misma normalización que en el alta: la columna es `DateTime(timezone=True)` y la
+        # base corre en `CET`, de modo que una fecha sin zona se guardaba a medianoche local
+        # y volvía como el día anterior. La semántica no cambia —`docs/02 §3.9` pide la
+        # «fecha real de inicio» y eso es lo que se guarda—, solo deja de derivar un día.
+        lot.start_date = _inicio_declarado(data.activation_date)
 
         await self.db.flush()
         await self.db.refresh(ob)
