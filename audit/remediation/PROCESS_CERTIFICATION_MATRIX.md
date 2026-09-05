@@ -41,7 +41,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
-| **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
+| **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` **Wave 3** | ✅ | ✅ | **5/5 cadena** | `COVERED` | **`PARTIAL`** — `GA-TD-014` · `GA-REQ-037` |
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | **P-09** Auditoría interna | spec §4.11 | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
@@ -136,3 +136,22 @@ Estuvo bloqueado por dos defectos, ambos resueltos antes de certificarlo:
 | `R-47` la fecha de inicio se descartaba | `GA-REM-028` | `CERTIFIED` |
 
 Informe: [PROCESS-11](PROCESS-11-CERTIFICATION.md).
+
+---
+
+## Reevaluación tras `GA-REM-029` (2026-09-05)
+
+`R-73`, `R-74` y `R-75` quedaron certificados y el paso terminal de `P-06` —el cierre de
+lote, roto desde siempre— ya funciona, con la cadena recorrida de extremo a extremo
+(`e2e/proceso-p06-pollo-de-engorde.spec.ts`, 5/5).
+
+**Ningún proceso cambia de estado.** `P-06` sigue `PARTIAL` porque dos de sus once pasos
+siguen incompletos:
+
+| Paso | Hueco | Por qué no se cierra aquí |
+|---|---|---|
+| `bird_reception` | `GA-TD-014` · `BR-18` inerte por el campo equivocado | diferido en `C-15`, pendiente de `RC-07` |
+| `weight_recording` | `GA-REQ-037` · sin alerta de peso fuera de curva | abierto en el backlog |
+
+`P-01` y `P-03` comparten el primero de los dos, así que tampoco se mueven. Detalle en
+`R-73-LOT-CLOSE-CERTIFICATION.md` §5.

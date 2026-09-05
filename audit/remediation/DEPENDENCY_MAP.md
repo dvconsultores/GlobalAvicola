@@ -284,3 +284,26 @@ se **detiene `GA-REM-016`** y `GA-REM-027` se reabre como bloqueante. No se cert
 sobre un proxy defectuoso conocido. El gate
 `backend/scripts/runtime_connectivity_check.py` distingue esos dos niveles precisamente
 para que la condición sea comprobable en un solo comando.
+
+
+---
+
+## `GA-TD-014` · la dependencia que gobierna tres procesos
+
+```
+RC-07  (decisión del propietario, ABIERTA)
+  │
+  └─→ GA-TD-014 · la OC de SAP al campo tipado
+        │           activa BR-11 y BR-18, hoy inertes
+        ├─→ P-01  Progenitoras — Cría
+        ├─→ P-03  Reproductoras — Cría
+        └─→ P-06  Pollo de engorde        (su otro hueco: GA-REQ-037)
+```
+
+Es el único bloqueante conocido con fan-out mayor que uno, y su raíz **no es técnica**: la
+corrección está clara y `C-15` la dejó diferida porque cambia el comportamiento para los
+operadores. Mientras `RC-07` siga abierta, esos tres procesos no pueden certificarse por
+mucho que se remedie alrededor.
+
+`GA-REM-029` cerró `R-73`, `R-74` y `R-75` —el paso terminal de `P-06`— sin mover ninguno de
+los tres de `PARTIAL`, que es exactamente lo que este mapa predecía.

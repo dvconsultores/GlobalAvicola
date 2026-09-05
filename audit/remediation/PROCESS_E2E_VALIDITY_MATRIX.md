@@ -88,3 +88,31 @@ de compañía, el escenario se creaba en la empresa equivocada y producía un
 `Farm no encontrado` desconcertante. Ahora la empresa activa se lee del token, que es lo que
 el backend usa. El hallazgo estaba registrado como P3 documental; en la práctica cuesta
 tiempo de diagnóstico.
+
+
+---
+
+## `P-06` · cadena de engorde (`GA-REM-029`)
+
+`e2e/proceso-p06-pollo-de-engorde.spec.ts` · **5/5** · por API contra el backend en marcha.
+
+| Caso | Qué comprueba | ¿Podría fallar? |
+|---|---|:--:|
+| la cadena completa cierra con su resumen | nueve pasos operativos y el cierre; mortalidad, alimento y número de eventos por **igualdad** contra lo registrado | sí — sin el contrato, 500 |
+| el cierre se persiste con la fecha del día | se **relee** el lote: importa lo guardado, no lo devuelto | sí — sin `R-75`, devuelve el día anterior |
+| `BR-05` impide cerrar sin pesaje ni alimento | 400 citando la regla, y el lote sigue `active` | sí — sin `R-74`, cierra |
+| un lote cerrado no se cierra otra vez | 400, y la fecha del primer cierre no cambia | sí |
+| `GA-TD-014` sigue abierto | `sap_document_ref` nulo tras enviar la OC | sí — **por diseño** |
+
+### El último caso merece explicación
+
+No es una prueba de éxito: **fija un hueco conocido**. Si algún día falla será porque
+`GA-TD-014` se resolvió, y entonces obliga a revisar la certificación de `P-06` en vez de
+dejarla envejecer en silencio. Un hueco documentado en prosa se olvida; uno documentado en
+una aserción avisa.
+
+### Ninguna cuenta vacua
+
+Las cifras del escenario son distintas entre sí y de cero (`40` bajas, `850.5` kg, `9`
+eventos), de modo que confundirlas o devolver ceros hace fallar la comprobación. No hay
+ningún `>= 0` en esta suite.

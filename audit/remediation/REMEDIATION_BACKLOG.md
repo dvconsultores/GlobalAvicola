@@ -261,6 +261,20 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-66` | `/me` devuelve la empresa persistida, no la activa | P3 |
 | `R-69` | La validación del saldo de apertura rechaza datos legítimos | P2 |
 | `R-70` | 500 en `activate-manual` con una fase inexistente | P2 |
+| `R-73` | El cierre de lote respondía 500 siempre | P1 — **`CERTIFIED`** `GA-REM-029` |
+| `R-74` | `BR-05` validaba el evento `lot_closure`, que no cierra el lote | P1 — **`CERTIFIED`** `GA-REM-029` |
+| `R-75` | `end_date` se guardaba a medianoche local y se releía como del día anterior | P1 — **`CERTIFIED`** `GA-REM-029` |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.
+
+## Frente de mayor palanca pendiente
+
+`GA-TD-014` bloquea **tres** procesos (`P-01`, `P-03`, `P-06`): la OC de SAP se guarda en
+`extra_data.sap_order_ref` en vez de `sap_document_ref`, de modo que `validate_oc_limit` sale
+por su primera línea y `BR-11` y `BR-18` nunca se aplican.
+
+No es un problema técnico pendiente sino una **decisión de negocio abierta**: activarlo
+cambia el comportamiento para los operadores y `C-15` lo dejó diferido a la espera de
+`RC-07`. Es lo que conviene preguntar al propietario antes que cualquier otra cosa del
+backlog — ningún otro bloqueante accionable pasa de fan-out 1.

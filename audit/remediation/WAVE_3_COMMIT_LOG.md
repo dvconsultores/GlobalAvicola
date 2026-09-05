@@ -326,3 +326,26 @@ Pasan once de los doce criterios. Falta `AC08`: un solo ciclo, y el cambio efect
 es observable sin acceso al host. Se documenta en lugar de inflarlo.
 
 Regresión: backend 307 pasados / 0 fallos; tsc, vitest 61/61, i18n 866=866, deriva 0.
+
+
+---
+
+## `94f6112` · `fix(lots)` · contrato de cierre de lote
+
+```
+GA-REM-029  ·  R-73 + R-74 + R-75  =  CERTIFIED
+P-06                                =  PARTIAL (sin cambio)
+```
+
+`POST /lots/{id}/close` respondía 500 siempre y es el único punto del backend que cierra un
+lote. El contrato se derivó de cinco fuentes concordantes, no de la comodidad de callar el
+500. Al reconstruirlo aparecieron dos defectos más: `BR-05` vigilaba el evento que no cierra
+nada, y la fecha de cierre se guardaba desplazada un día.
+
+Puerta de validez con mutación controlada: sin el contrato caen 5 de 8; sin `BR-05`, 2; sin
+la normalización de `end_date`, 2. Restaurado vuelve a 8/8.
+
+Regresión: backend **321 pasan · 49 omitidas · 0 fallos** (antes 313). E2E **80/80**
+(antes 75). El cambio de comportamiento de `AC05` no rompió nada existente.
+
+`P-06` **no** se certifica: `GA-TD-014` y `GA-REQ-037` siguen abiertos.

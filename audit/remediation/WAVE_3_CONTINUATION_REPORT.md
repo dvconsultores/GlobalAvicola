@@ -322,3 +322,52 @@ marcha**, eso es un bloqueo de fondo, no un detalle.
 
 `R-47` vive en `GA-REM-019` y no se corrige aquí. **No se avanza sobre `P-11`** mientras siga
 abierto.
+
+
+---
+
+# Recuperación de procesos `PARTIAL` — selección por evidencia
+
+## Cómo se eligió el frente
+
+Antes de tocar código se levantó `PARTIAL_PROCESS_BLOCKER_MATRIX.md`, con el alcance real de
+cada bloqueante sobre los **10** procesos `PARTIAL` (no 9: `P-08` figura como `PARTIAL` con
+bloqueo externo, no como categoría aparte).
+
+Hizo falta depurar la fuente: `audit/06` es anterior a las Waves 1–3 y varios de sus huecos
+ya no existen —`mortality_recording` 500, `LotDetailPage` rota, permisos sin enforcement—.
+Contarlos habría inflado el alcance de bloqueantes ya resueltos.
+
+**La hipótesis de partida no se sostuvo.** `lot_closure` figura como paso obligatorio en un
+solo proceso (`spec.md §4.8`), así que `R-73` tiene **fan-out 1**. El de mayor alcance es
+`GA-TD-014`, con **3**.
+
+## Por qué no se eligió el de mayor alcance
+
+`GA-TD-014` está diferido por `C-15` con una razón explícita: enviarlo activa `BR-11` y
+`BR-18`, hoy inertes, lo que cambia el comportamiento para los operadores y depende de
+`RC-07`, decisión del propietario que sigue abierta. Elegirlo habría sido tomar por mi cuenta
+una decisión de negocio ya deliberada.
+
+Entre los bloqueantes **accionables** todos tienen fan-out 1, así que decidió el criterio
+siguiente: corrección y criticidad de ciclo. `R-73` era el único que dejaba un endpoint
+devolviendo 500 siempre, en el paso terminal del ciclo productivo.
+
+```
+SELECTED_NEXT_BLOCKER = R-73   ·   por corrección, no por alcance
+```
+
+## Resultado
+
+`R-73`, `R-74` y `R-75` certificados. Backend 321/0. E2E 80/80.
+
+**Ningún proceso pasó a `CERTIFIED`.** `P-06` sigue `PARTIAL` por `GA-TD-014` y
+`GA-REQ-037`. Se declara sin adornos: el trabajo cerró tres defectos reales —uno de ellos
+llevaba roto desde siempre el único camino de cierre de lote del sistema— pero no movió la
+cuenta de procesos, y la matriz de alcance ya lo anticipaba.
+
+## Lo que conviene decidir ahora
+
+`GA-TD-014` es el único bloqueante conocido con fan-out mayor que uno y su raíz no es
+técnica. Mientras `RC-07` siga abierta, `P-01`, `P-03` y `P-06` no pueden certificarse por
+mucho que se remedie a su alrededor.

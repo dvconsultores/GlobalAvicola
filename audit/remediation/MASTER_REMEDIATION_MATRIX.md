@@ -83,3 +83,23 @@ ejecuta contra una base de datos real y porque se persiguió cada `RC` hasta su 
 Un programa de remediación honesto sube su recuento de defectos cuando mejora su capacidad
 de detección. El indicador sano no es «P0 bajando siempre», sino «P0 conocidos, trazados y
 con spec de destino»: **10 / 10**.
+
+---
+
+## 4. `GA-REM-029` · Contrato de cierre de lote (2026-09-05)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-73` · `POST /lots/{id}/close` respondía 500 siempre | P1 | **`CERTIFIED`** |
+| `R-74` · `BR-05` colgaba del evento `lot_closure`, que no cierra el lote | P1 | **`CERTIFIED`** |
+| `R-75` · `end_date` a medianoche local → el cierre se releía con la fecha de ayer | P1 | **`CERTIFIED`** |
+
+El endpoint es el único punto del backend que asigna `status = "closed"`, así que ningún
+lote pudo cerrarse nunca hasta ahora.
+
+**No certificó ningún proceso.** El frente se eligió con evidencia y la propia matriz de
+alcance ya avisaba: `R-73` tenía fan-out 1. `P-06` sigue `PARTIAL` por `GA-TD-014` y
+`GA-REQ-037`. Sirve de recordatorio de que cerrar un defecto real y certificar un proceso
+son cosas distintas.
+
+Evidencia: `R-73-LOT-CLOSE-CERTIFICATION.md` · `R73_CLOSE_LOT_CONTRACT_MATRIX.md`.
