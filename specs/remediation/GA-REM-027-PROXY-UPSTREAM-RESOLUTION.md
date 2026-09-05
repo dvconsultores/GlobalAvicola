@@ -95,6 +95,33 @@ repositorio · `R-52` · cualquier cambio en el backend.
 | **AC06** | Mientras el backend esté realmente caído, el proxy sigue devolviendo `502` —no lo enmascara— y se recupera solo cuando vuelve | comportamiento por diseño del `resolver` |
 | **AC07** | No se modifica el despliegue automático | revisión del diff |
 
+### Ampliación de criterios (2026-09-05)
+
+Los siete anteriores describían el arreglo. Estos cinco describen **su demostración**, que
+es lo que faltaba: el primer despliegue recuperó el servicio, pero en la misma publicación
+se reconstruyó el frontend, y recrear ese contenedor limpia la caché de DNS por sí solo.
+Aquella recuperación, por tanto, **no prueba nada sobre el arreglo**.
+
+| AC | Criterio | Verificación |
+|---|---|---|
+| **AC08** | Recreaciones repetidas del backend siguen funcionando, no solo la primera | varios ciclos observados |
+| **AC09** | El contenedor de frontend **no** se reinicia durante la demostración | `Last-Modified` de `index.html` invariable a lo largo del ciclo |
+| **AC10** | No se introduce ninguna IP de contenedor fija | revisión del diff |
+| **AC11** | La salud directa del backend y la salud a través del proxy se miden por separado | `L2` y `L3` en cada ciclo |
+| **AC12** | La configuración valida sin errores de sintaxis ni de contexto | analizador oficial de nginx |
+
+### Sobre qué constituye prueba suficiente
+
+Una recreación de backend en la que Docker reasigne **la misma** dirección IP no demuestra
+nada: es exactamente lo que ocurrió el 2026-09-04, cuando un `502` de cuatro minutos se
+resolvió solo y el defecto siguió ahí. Por eso `AC08` pide varios ciclos.
+
+La condición ideal —observar `IP anterior ≠ IP posterior`— **exige acceso al host Docker**.
+Sin él, lo demostrable desde fuera es más débil y debe declararse como tal: que el backend
+se recreó, que el frontend no, y que la API pública siguió respondiendo. Si el arreglo no
+estuviera surtiendo efecto, bastaría una sola reasignación distinta para volver a romperlo
+de forma permanente y visible.
+
 ## Riesgos
 
 | Riesgo | Mitigación |
