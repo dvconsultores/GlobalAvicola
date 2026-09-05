@@ -1,12 +1,16 @@
 import { test, expect } from '@playwright/test'
+import { credenciales, entrar } from '../test-support/auth'
 
-// Helper: login and return page ready for use
-async function loginAs(page: any, username = 'admin', password = 'admin123') {
-  await page.goto('/login')
-  await page.fill('input[name="username"]', username)
-  await page.fill('input[name="password"]', password)
-  await page.click('button[type="submit"]')
-  await page.waitForURL(/\/(dashboard|$)/, { timeout: 8000 }).catch(() => {})
+/**
+ * `GA-REM-016 AC06`. El ayudante anterior entraba como `admin` / `admin123`, un usuario que
+ * no existe: la siembra crea `test_admin`, `test_operator` y `test_approver` con
+ * contraseñas del entorno. Por eso estos casos se quedaban en la pantalla de login y sus
+ * afirmaciones funcionales nunca llegaban a ejecutarse.
+ *
+ * Solo cambia la precondición. Las afirmaciones no se tocan (`AC07`).
+ */
+async function loginAs(page: any) {
+  await entrar(page, 'admin')
 }
 
 test.describe('Global Avícola E2E', () => {
@@ -15,12 +19,15 @@ test.describe('Global Avícola E2E', () => {
     await expect(page.locator('h1')).toContainText(/global avícola|iniciar sesión/i)
   })
 
+  // Este caso comprueba la autenticación en sí, así que conserva su login explícito
+  // (`GA-REM-016` §17); lo que cambia es de dónde salen las credenciales.
   test('login redirects to dashboard on success', async ({ page }) => {
+    const { usuario, clave } = credenciales('admin')
     await page.goto('/login')
-    await page.fill('input[name="username"]', 'admin')
-    await page.fill('input[name="password"]', 'admin')
+    await page.fill('input[name="username"]', usuario)
+    await page.fill('input[name="password"]', clave)
     await page.click('button[type="submit"]')
-    await page.waitForURL('**/login', { timeout: 5000 }).catch(() => {})
+    await page.waitForURL((u) => !u.pathname.includes('/login'), { timeout: 20_000 })
     const url = page.url()
     expect(url).not.toContain('/login')
   })
@@ -31,19 +38,28 @@ test.describe('Global Avícola E2E', () => {
     expect(page.url()).toContain('/login')
   })
 
+  // La afirmación original es correcta y se conserva (`GA-REM-016 AC07`): el panel sí
+  // tiene un encabezado «Dashboard». Solo cambia el selector, porque `locator('h1')`
+  // resuelve a tres encabezados una vez dentro —el de la barra, el de la cabecera y el de
+  // la página— y Playwright lo rechaza por ambigüedad. Se apunta al encabezado por su
+  // nombre, que es lo que el test siempre quiso comprobar.
   test('dashboard loads for authenticated user', async ({ page }) => {
-    await page.goto('/login')
-    await page.fill('input[name="username"]', 'admin')
-    await page.fill('input[name="password"]', 'admin')
-    await page.click('button[type="submit"]')
-    await page.waitForURL('**/', { timeout: 5000 }).catch(() => {})
-    await expect(page.locator('h1')).toContainText(/dashboard|panel/i)
+    await entrar(page, 'admin')
+    await expect(page.getByRole('heading', { name: /dashboard|panel/i })).toBeVisible({
+      timeout: 15_000,
+    })
   })
 
+  // `TEST_INVALID_EXPECTATION` corregido (`GA-REM-016` §24-25). La afirmación anterior
+  // esperaba una navegación en `/login`, donde no la hay ni debe haberla: aún no se ha
+  // entrado. El requisito que quería expresar sí existe —`spec.md:286` y `docs/02:594`
+  // exigen navegación inferior en la aplicación móvil— y se comprueba donde corresponde:
+  // con sesión iniciada y un usuario de vista móvil, que es la condición bajo la que
+  // `AppLayout` monta `MobileNav`.
   test('mobile viewport shows bottom nav', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 })
-    await page.goto('/login')
-    await expect(page.locator('nav')).toBeVisible()
+    await entrar(page, 'operator')
+    await expect(page.locator('nav').first()).toBeVisible({ timeout: 15_000 })
   })
 
   test('cross-browser: page renders without errors', async ({ page }) => {
@@ -105,17 +121,26 @@ test.describe('Global Avícola E2E', () => {
     await expect(page.locator('text=Galpón 2')).toBeVisible({ timeout: 3000 })
   })
 
+  // La afirmación anterior —«Galpón 2 deja de verse»— solo era cierta si el formulario
+  // arrancaba con exactamente una fila. Arranca con dos, de modo que al añadir hay tres y
+  // al borrar quedan dos: el borrado funciona y «Galpón 2» sigue ahí porque la tercera
+  // tarjeta se reindexa. El requisito que el test representa es que una fila se puede
+  // borrar, y eso se comprueba por el recuento, que no depende de un estado inicial que el
+  // test no controla.
   test('farm_inspection: second house row can be deleted', async ({ page }) => {
     await loginAs(page)
     await page.goto('/operations/new?type=farm_inspection')
     await page.waitForLoadState('networkidle')
+
+    const filas = page.locator('span').filter({ hasText: /^Galpón \d+$/ })
+    await expect(filas.first()).toBeVisible({ timeout: 5000 })
     await page.click('button:has-text("Añadir galpón")')
-    await expect(page.locator('text=Galpón 2')).toBeVisible()
-    // Delete the second row (trash button, first occurrence after index 0)
-    const trashButtons = page.locator('button[type="button"]').filter({ hasText: '' })
-    // The delete button uses Trash2 icon — locate by aria or position after second card
+
+    const antes = await filas.count()
+    expect(antes).toBeGreaterThan(1)
+
     await page.locator('text=Galpón 2').locator('..').locator('button').click()
-    await expect(page.locator('text=Galpón 2')).not.toBeVisible({ timeout: 2000 })
+    await expect(filas).toHaveCount(antes - 1, { timeout: 5000 })
   })
 
   test('farm_inspection: 375px mobile viewport renders correctly', async ({ page }) => {
