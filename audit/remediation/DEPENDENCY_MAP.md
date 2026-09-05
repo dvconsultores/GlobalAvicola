@@ -186,3 +186,34 @@ Contrato tecnico SAP  -------------------------------->  GA-REM-017
 **`R-44` precede a `GA-REM-016`.** Certificar procesos E2E contra un sistema cuyo catálogo
 de permisos en producción no admite a los roles que esos procesos requieren produciría una
 certificación que no se sostiene fuera del entorno de pruebas.
+
+
+---
+
+## Checkpoint `R-68` + `R-67` (2026-09-04)
+
+```
+GA-REM-025  (baseline limpio)
+    │  reveló
+    ├──► R-68 ──► GA-REM-026  (frontera transaccional)  P0 · CERTIFIED
+    │                 │  bloqueaba
+    │                 └──► GA-REM-016  (podía producir falsos negativos en E2E)
+    │
+    └──► R-67 ──► GA-REM-005  (enmienda, saldo de apertura)  P1 · CERTIFIED
+```
+
+El orden no fue arbitrario. `R-68` es sistémico y afecta a las 90 rutas de escritura:
+mientras estuviera abierto, cualquier fallo E2E podía ser síntoma suyo y no un defecto
+propio. Clasificar los 23 fallos heredados antes de cerrarlo habría medido ruido.
+
+`R-67` no dependía de `R-68`, pero se atendió después por la misma razón de orden: su
+certificación pasa por la API, y con `R-68` abierto sus lecturas inmediatas habrían sido
+intermitentes.
+
+### Dependencias nuevas
+
+| De | A | Naturaleza |
+|---|---|---|
+| `GA-REM-026` | ninguna | causa raíz única, sin prerrequisitos |
+| `GA-REM-005` enmienda | `RC-08` / `RR-08` | resolución de requisito previa a la implementación |
+| `GA-REM-016` | `GA-REM-026` | **desbloqueada**: el baseline E2E ya puede medir defectos reales |

@@ -165,3 +165,31 @@ READY_FOR_REAL_PRODUCTION = NOT_YET_CERTIFIED
 existan datos de un cliente, y deja de ser razón para detener el desarrollo sobre datos de
 prueba. `GA-TD-039` mantiene la misma lectura: la observabilidad mínima del entorno
 compartido ya es útil hoy; la completa es gate futuro.
+
+
+---
+
+## 8. Checkpoint `R-68` + `R-67` (2026-09-04)
+
+| Hallazgo | Antes | Ahora |
+|---|---|---|
+| `R-68` respuesta antes de confirmar | **P0 sistémico, abierto** | **`CERTIFIED`** — `GA-REM-026` |
+| `R-67` saldo de apertura ignorado | P1, abierto | **`CERTIFIED`** — `GA-REM-005` enmienda |
+
+Ambos figuraban en `FUTURE REAL PRODUCTION GATES §6`. Quedan cerrados ahí.
+
+`R-68` merece una nota: era el único hallazgo abierto capaz de **falsificar el resultado de
+cualquier prueba E2E de escritura**. Cerrarlo no sólo elimina un defecto; devuelve
+credibilidad a la medición que viene después.
+
+### Estado de los gates
+
+```
+READY_FOR_SHARED_TEST      = YES
+READY_FOR_REAL_PRODUCTION  = NOT_YET_CERTIFIED
+```
+
+Sigue pendiente para producción real: `GA-TD-040` (copia y restauración verificadas),
+`GA-TD-039` (observabilidad), la certificación E2E completa de `GA-REM-016`, la ejecución
+del reset en el entorno compartido (`PENDING_EXTERNAL_ACCESS`), y la decisión sobre SAP
+real (`GA-REM-017`).

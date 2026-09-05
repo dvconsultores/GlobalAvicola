@@ -223,3 +223,44 @@ ficheros hasta encontrar una clave SSH utilizable. El push resultante **no se re
 | Declarar `BLOCKED_BY_AUTH` y detenerse | Probar credenciales hasta que una funcione |
 | Solicitar el acceso que falta | Modificar credenciales remotas o `git remote` |
 | | Almacenar o imprimir secretos en informes |
+
+---
+
+## 7. Checkpoint `R-68` + `R-67` (2026-09-04)
+
+Dos causas estructurales que reveló la instalación limpia de `GA-REM-025`. Se corrigen en
+el orden que el encargo fija: primero la sistémica, después la de negocio.
+
+| Commit | Contenido | Regresión |
+|---|---|---|
+| `f5f6d88` | `fix(db): confirmar la transacción antes de responder [GA-REM-026]` | 295 pasados · 0 fallos |
+| `9cd1964` | `fix(lots): el saldo de apertura alimenta el balance de aves [GA-REM-005/R-67]` | 307 pasados · 0 fallos |
+
+Ambos empujados con el `ssh-agent` autorizado del propietario, sin modificar el remoto.
+
+### Verificación posterior al push
+
+`f5f6d88` coincidió con una ventana de 502 en el entorno compartido. Se descartó que fuera
+el arranque de la nueva imagen —la aplicación importa correctamente con configuración de
+producción y SAP activo, y la comprobación de cobertura transaccional pasa— y se esperó:
+
+```
+23:07:31  502
+23:07:41  200   RECUPERADO
+```
+
+Era el recreado del contenedor. Dos empujes seguidos habían tocado `backend/`, así que
+había dos reconstrucciones de imagen en cola.
+
+**El despliegue de estos cambios no tiene discriminador observable sin credenciales**: la
+frontera transaccional y el saldo de apertura no se distinguen desde una sonda anónima. La
+salud del entorno sí se verificó.
+
+### Hallazgos nuevos del checkpoint
+
+| ID | Título | Prior. |
+|---|---|:--:|
+| `R-69` | La validación del saldo de apertura rechaza datos legítimos bajo `RR-08` | P2 |
+| `R-70` | `activate-manual` devuelve 500 con una fase productiva inexistente | P2 |
+
+Ambos abiertos, encaminados a `GA-REM-019`. Ninguno se corrigió dentro del alcance activo.

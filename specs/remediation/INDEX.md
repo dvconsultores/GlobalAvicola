@@ -9,7 +9,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-004` | Credenciales y cuentas de prueba | SECURITY | P0 | `SPEC_READY` | B | [GA-REM-004](GA-REM-004-CREDENTIALS-AND-TEST-ACCOUNTS.md) |
 | `GA-REM-009` | Persistencia de evidencias y archivos | INFRASTRUCTURE | P0 | `SPEC_READY` | D | [GA-REM-009](GA-REM-009-EVIDENCE-PERSISTENCE.md) |
 | `GA-REM-010` | Semántica de estados SAP | INTEGRATION SEMANTICS | P0 | `SPEC_READY` | D | [GA-REM-010](GA-REM-010-SAP-STATE-SEMANTICS.md) |
-| `GA-REM-005` | Mortalidad y balance de aves | BUGFIX + BUSINESS RULE | P0 | **`PARTIALLY CERTIFIED`** | C | [GA-REM-005](GA-REM-005-MORTALITY-AND-BIRD-BALANCE.md) |
+| `GA-REM-005` | Mortalidad y balance de aves (+ enmienda `R-67`) | BUGFIX + BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-005](GA-REM-005-MORTALITY-AND-BIRD-BALANCE.md) |
 | `GA-REM-007` | BR-14: segregación y centralización de reglas | BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-007](GA-REM-007-BR14-SEGREGATION-CENTRALIZATION.md) |
 | `GA-REM-011` | Alineación de contratos FE ↔ BE | CONTRACT | P0 | `SPEC_READY` | E | [GA-REM-011](GA-REM-011-FE-BE-CONTRACT-ALIGNMENT.md) |
 | `GA-REM-012` | Cambio de contraseña | SECURITY + BUGFIX | P0 | **`CERTIFIED`** | B | [GA-REM-012](GA-REM-012-PASSWORD-CHANGE.md) |
@@ -29,6 +29,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-019` | Reevaluación de deuda P2/P3 | TECHNICAL DEBT | P2 | `DEFERRED` | J | [GA-REM-019](GA-REM-019-P2-P3-DEBT-REASSESSMENT.md) |
 | `GA-REM-024` | Ejecución de migraciones antes de servir | INFRASTRUCTURE + RELEASE SAFETY | **P0** | **`IMPLEMENTED`** ⚠ `R-58` | — | [GA-REM-024](GA-REM-024-MIGRATION-ON-DEPLOY.md) |
 | `GA-REM-025` | Baseline limpio del entorno compartido | ENVIRONMENT + TEST DATA STRATEGY | P1 | **`CERTIFIED`** | — | [GA-REM-025](GA-REM-025-CLEAN-DEVELOPMENT-BASELINE.md) |
+| `GA-REM-026` | Frontera transaccional de la petición | DATA INTEGRITY + REQUEST LIFECYCLE | **P0** | **`CERTIFIED`** | — | [GA-REM-026](GA-REM-026-TRANSACTION-BOUNDARY.md) |
 
 ## Decisiones normativas
 
@@ -41,9 +42,9 @@ se interpretan.
 
 ## Resumen
 ```
-Total ................. 25
-CERTIFIED ............. 10
-PARTIALLY CERTIFIED ... 1
+Total ................. 26
+CERTIFIED ............. 12
+PARTIALLY CERTIFIED ... 0
 IMPLEMENTED ........... 2
 SPEC_READY ............ 9
 SPEC_DRAFT ............ 1

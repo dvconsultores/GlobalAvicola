@@ -235,3 +235,32 @@ los `RC` pusieron sobre la mesa.
 | `OD-02` (`RC-07`) | decisión contable del propietario sobre mortalidad frente a SAP | mapeo SAP dentro de `GA-REM-017` |
 | Contrato técnico SAP | el cliente | `GA-REM-017` |
 | `OD-01`, `OD-03` | decisiones de endurecimiento, sin urgencia | nada |
+
+
+---
+
+## Checkpoint `R-68` + `R-67` (2026-09-04)
+
+Dos specs cerradas, ambas nacidas del baseline limpio de `GA-REM-025`:
+
+| GA-REM | Título | Prior. | Estado |
+|---|---|:--:|---|
+| `GA-REM-026` | Frontera transaccional de la petición (`R-68`) | **P0** | **`CERTIFIED`** |
+| `GA-REM-005` | Enmienda `R-67`: el saldo de apertura alimenta el balance | P1 | **`CERTIFIED`** |
+
+`GA-REM-005` pasa de `PARTIALLY CERTIFIED` a `CERTIFIED`: su alcance §2 —«reconstruir y
+documentar la regla de balance de aves»— queda completo con `R-67`.
+
+### Deuda añadida a `GA-REM-019`
+
+| ID | Título | Prior. |
+|---|---|:--:|
+| `R-63` | Tabla de credenciales falsa impresa por `dev_seeds.py` | P2 |
+| `R-64` | `integration_seeds.py` roto (`KeyError: 'role_name'`) | P2 |
+| `R-65` | 500 en `/audit/{log_id}` con identificador no-UUID | P2 |
+| `R-66` | `/me` devuelve la empresa persistida, no la activa | P3 |
+| `R-69` | La validación del saldo de apertura rechaza datos legítimos | P2 |
+| `R-70` | 500 en `activate-manual` con una fase inexistente | P2 |
+
+`R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
+tratarlos juntos.

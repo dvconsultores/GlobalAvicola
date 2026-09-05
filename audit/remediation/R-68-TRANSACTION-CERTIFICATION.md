@@ -176,8 +176,14 @@ de `GA-REM-025` generó un `BR-07 «Farm no encontrado»` al crear un galpón in
 después de su granja, y el primer diagnóstico —haber reseteado con el backend en marcha—
 fue **equivocado**.
 
-Por eso el siguiente paso del encargo es medir de nuevo el baseline de Playwright sin tocar
-sus tests: parte de los 23 fallos heredados pueden ser síntoma de esto y no defectos.
+Por eso el encargo pedía medir de nuevo el baseline de Playwright sin tocar sus tests.
+**Ya está medido: `R-68` no explicaba ninguno de los 23 fallos heredados** —siguen siendo
+23, los mismos casos—. La hipótesis queda descartada, que era el objetivo de medir.
+Detalle en [`PLAYWRIGHT_POST_R68_R67_BASELINE.md`](PLAYWRIGHT_POST_R68_R67_BASELINE.md).
+
+Tiene sentido: el efecto de `R-68` aparece en secuencias escritura→lectura inmediata que
+esos tests no ejecutan. Se descubrió por el recorrido de instalación limpia, no por
+Playwright.
 
 ## 10. Veredicto
 

@@ -13,7 +13,7 @@ entorno y su baseline, no la lógica de negocio ni la capa transaccional.
 
 ## `R-68` — Una escritura no es visible para la petición inmediatamente siguiente
 
-**P0** · intermitente · afecta a **todos** los endpoints de escritura
+**P0** · intermitente · afecta a **todos** los endpoints de escritura · **`CERTIFIED` 2026-09-04**
 
 `get_db` confirma la transacción en el cierre de la dependencia
 (`app/database.py:24-33`), y FastAPI ejecuta ese cierre **después** de enviar la respuesta.
@@ -41,13 +41,13 @@ tres veces sin motivo aparente.
 Conexión probable con `R-62`: conviene descartarlo antes de clasificar los 23 fallos
 heredados de Playwright.
 
-Destino: spec propia. Es un cambio en la capa transaccional, no un parche local.
+**Resuelto** por `GA-REM-026`: la confirmación pasa a la capa de ruta, que se ejecuta dentro del manejo de excepciones y antes de que la respuesta salga. Certificación en [`R-68-TRANSACTION-CERTIFICATION.md`](R-68-TRANSACTION-CERTIFICATION.md).
 
 ---
 
 ## `R-67` — El saldo de apertura no alimenta el saldo de aves
 
-**P1** · afecta a la instalación de un cliente nuevo
+**P1** · afecta a la instalación de un cliente nuevo · **`CERTIFIED` 2026-09-04**
 
 `POST /lots/activate-manual` guarda un `OpeningBalance` con la población inicial, y
 `get_current_bird_balance` (`app/operations/validators.py:21-52`) **no lo consulta**: suma
@@ -66,7 +66,7 @@ cuando se instala el sistema. Es decir: **es exactamente lo que hará el primer 
 real**, y produce lotes inservibles. Era invisible porque todos los lotes del entorno
 compartido venían de eventos de recepción sembrados.
 
-Destino: spec propia, relacionada con `GA-REM-005`.
+**Resuelto** por la enmienda `R-67` de `GA-REM-005`, con `RC-08`/`RR-08` fijando qué significa «saldo inicial». Certificación en [`R-67-OPENING-BALANCE-CERTIFICATION.md`](R-67-OPENING-BALANCE-CERTIFICATION.md).
 
 ---
 
@@ -134,13 +134,42 @@ midiendo —le ocurrió a esta certificación—. Destino: `GA-REM-019`, documen
 
 ---
 
+---
+
+## `R-70` — `activate-manual` devuelve 500 con una fase productiva inexistente
+
+**P2** · robustez · descubierto al certificar `R-67`
+
+`phase_at_activation_id` viaja sin comprobar que exista, y la violación de clave foránea
+sale como `500`. Misma familia que `R-65`: entrada no validada que termina en error del
+servidor en vez de en un `400` o `422`. Destino: `GA-REM-019`.
+
+---
+
+## `R-69` — La validación del saldo de apertura rechaza datos legítimos
+
+**P2** · regla de negocio · descubierto al resolver `RC-08`
+
+`lots/service.py:209` exige `accumulated_mortality_* ≤ initial_*_count`. Bajo `RR-08`
+—donde `initial_*_count` es el saldo vivo y los acumulados son histórico— esa comprobación
+rechaza un caso perfectamente real: un lote reproductor con 5 000 aves vivas que acumuló
+6 000 bajas a lo largo de su ciclo, habiendo empezado con 11 000.
+
+No se corrige dentro de `R-67`: cambiar una validación de negocio merece su propia
+decisión, y el propietario puede haber querido exactamente esa restricción. Destino:
+`GA-REM-019`.
+
+---
+
 ## Resumen
 
-| ID | Título | Prior. | Destino |
+| ID | Título | Prior. | Estado |
 |---|---|:--:|---|
-| `R-68` | Escritura no visible para la petición inmediata | **P0** | spec propia |
-| `R-67` | El saldo de apertura no alimenta el saldo de aves | **P1** | spec propia |
-| `R-65` | 500 en `/audit/{log_id}` no-UUID | P2 | `GA-REM-019` |
-| `R-64` | `integration_seeds.py` roto | P2 | `GA-REM-019` |
-| `R-63` | Tabla de credenciales falsa en `dev_seeds.py` | P2 | `GA-REM-019` |
-| `R-66` | `/me` no refleja la empresa activa | P3 | `GA-REM-019` |
+| `R-68` | Escritura no visible para la petición inmediata | **P0** | **`CERTIFIED`** — `GA-REM-026` |
+| `R-67` | El saldo de apertura no alimenta el saldo de aves | **P1** | **`CERTIFIED`** — `GA-REM-005` enmienda |
+| `R-65` | 500 en `/audit/{log_id}` no-UUID | P2 | abierto → `GA-REM-019` |
+| `R-64` | `integration_seeds.py` roto | P2 | abierto → `GA-REM-019` |
+| `R-63` | Tabla de credenciales falsa en `dev_seeds.py` | P2 | abierto → `GA-REM-019` |
+| `R-66` | `/me` no refleja la empresa activa | P3 | abierto → `GA-REM-019` |
+| `R-69` | La validación del saldo de apertura rechaza datos legítimos | P2 | abierto → `GA-REM-019` |
+| `R-70` | 500 en `activate-manual` con una fase inexistente | P2 | abierto → `GA-REM-019` |
