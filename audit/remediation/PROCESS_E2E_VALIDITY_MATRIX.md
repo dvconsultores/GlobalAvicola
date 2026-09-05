@@ -116,3 +116,33 @@ una aserción avisa.
 Las cifras del escenario son distintas entre sí y de cero (`40` bajas, `850.5` kg, `9`
 eventos), de modo que confundirlas o devolver ceros hace fallar la comprobación. No hay
 ningún `>= 0` en esta suite.
+
+
+---
+
+## `P-10` · trazabilidad generacional (`GA-REM-030`)
+
+`e2e/proceso-p10-trazabilidad-generacional.spec.ts` · 5 casos · `API_E2E`.
+
+| Caso | Qué comprueba | ¿Podría fallar? |
+|---|---|:--:|
+| la cadena une tres generaciones | los 12 pasos, con cantidades y fechas por igualdad y el back-link `egg_batch_id` | **falla hoy** — `test.fail()`, `R-78` |
+| sin destino declarado no se inventa | ausencia de vínculo | sí, pero **hoy pasa por el motivo equivocado** (§ abajo) |
+| ningún lote consigo mismo | `source ≠ destino` en todo vínculo | sí |
+| el enlace manual sigue disponible | vínculo creado y visible en el árbol | sí |
+| `R-60` · no se cruzan compañías | 400 `BR-07`, CONTROL 201, sin efectos | sí — sin la guarda daba 201 |
+
+### El caso marcado como fallo esperado
+
+Dice lo que `spec.md §4.9` exige y hoy no ocurre. Se marca en vez de borrarse o suavizarse:
+cuando `R-78` se corrija pasará **inesperadamente** y obligará a revisar la certificación.
+
+### Un negativo que hoy no prueba lo que dice
+
+Mientras `R-78` siga abierto, «sin destino declarado no se inventa el vínculo» pasa porque
+**no se crea ninguno en ningún caso**. Se conserva y se anota; no se cuenta como evidencia.
+
+### Precondiciones construidas, no supuestas
+
+El escenario registra `egg_collection` y `birth_registration` para satisfacer `BR-02` y
+`BR-04`. Son precondiciones reales del negocio: se construyen, no se sortean.

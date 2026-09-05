@@ -440,3 +440,67 @@ NEXT_ACTIONABLE_BLOCKER = P-10 · trazabilidad generacional
 Único proceso `PARTIAL` con los defectos funcionales ya corregidos: le falta endurecer
 `R-60` y **escribir su E2E de proceso**. Los demás exigen desarrollo de interfaz o
 funcionalidad nueva, o no cierran su proceso aunque se resuelvan.
+
+
+---
+
+# `P-10` + `R-60` · `GA-REM-030` (2026-09-05)
+
+## Resultado
+
+```
+R-60 = CERTIFIED          P-10 = PARTIAL — BLOCKED_BY_DEFECT (R-78)
+CERTIFIED = 5/15          PARTIAL = 10/15        (sin cambio)
+```
+
+## `R-60`, en su forma real
+
+No era «claves sin comprobar pertenencia» sino algo más ancho: los dos endpoints de enlace
+manual construían la entidad **directamente desde el cuerpo**, sin pertenencia y sin
+existencia. Como `EggBatch` y `ChickBatch` no declaran `company_id`, un vínculo entre
+compañías produce un registro sin dueño posible — y es la puerta de escritura capaz de
+fabricar el estado que `GA-REM-008 AC06`, ya certificado, promete imposible.
+
+La regla se resolvió por norma: pertenencia del actor (patrón existente, con la exención del
+Super Admin sin contexto intacta) **y** coherencia del par, que vincula a todo actor porque es
+integridad del dato y no autorización. No se tocó el RBAC.
+
+## Lo que la puerta de sensibilidad descubrió
+
+La primera pasada de mutación **no rompió nada** al retirar dos de las tres reglas: mis
+sujetos tenían empresa, de modo que la pertenencia del actor rechazaba antes y las otras dos
+podían desaparecer sin que ninguna prueba lo notara. Se rehicieron con un Super Admin **sin
+contexto**, el único actor para el que esa regla se abstiene. Ahora las tres son sensibles.
+
+Vale la pena decirlo porque es el caso que justifica la puerta: nueve pruebas en verde no
+probaban dos de las tres reglas que decían proteger.
+
+## Por qué `P-10` no se certifica
+
+Al recorrer la cadena entera —no un endpoint suelto— apareció `R-78`: el vínculo generacional
+automático **no se crea en el orden natural**. La creación vive solo en la rama del despacho,
+que exige una recepción previa; las dos ramas de recepción se limitan a actualizar un vínculo
+que no existe. En la operación real se despacha antes de recibir, así que no se crea ninguno.
+
+Y con él `R-79`: la prueba que certificaba `GA-REM-008 AC01` afirma
+`"egg_batch" in crudo.lower()`, cierto siempre porque la respuesta contiene la clave
+`egg_batches_sent`. Esa es la razón de que `R-78` sobreviviera a una certificación.
+
+```
+GA-REM-008 AC01 = NOT_EVIDENCED    (informe histórico conservado sin modificar)
+```
+
+## Sobre mi recomendación anterior
+
+Señalé `P-10` como la menor distancia a la certificación porque sus defectos figuraban como
+corregidos y certificados. Era correcto con la evidencia disponible y ha resultado falso. La
+distancia real no era visible en ninguna matriz, y solo se supo ejecutando el proceso
+completo. Es el argumento de por qué se certifica el proceso y no la capacidad.
+
+## Regresión
+
+```
+backend  330 pasan · 49 omitidas · 0 fallos    (antes 321)
+E2E       85/85                                 (antes 80)
+frontend  no reejecutado — ningún cambio de frontend
+```

@@ -45,7 +45,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | **P-09** Auditoría interna | spec §4.11 | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
-| **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ⚠ `R-60` | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** |
+| **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ✅ **`R-60` cerrado** | ✅ | **5/5** (1 fallo esperado) | `PARTIAL` | **`PARTIAL`** — `R-78` |
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ **Wave 3** | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-13** Usuarios, roles y permisos | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
@@ -186,3 +186,28 @@ dijo nunca «UI E2E»** —los informes de certificación dicen textualmente que
 proceso, no la pantalla—.
 
 No se crean pruebas de interfaz para conservar vocabulario: sería trabajo artificial.
+
+---
+
+## `P-10` tras `GA-REM-030` (2026-09-05)
+
+```
+R-60 = CERTIFIED        P-10 = PARTIAL — BLOCKED_BY_DEFECT (R-78)
+CERTIFIED = 5 / 15      PARTIAL = 10 / 15      (sin cambio)
+```
+
+Cerrar `R-60` **no certificó el proceso**. Al ejercitar la cadena completa —12 pasos— apareció
+`R-78`: el vínculo generacional automático **no se crea en el orden natural** (despacho antes
+de recepción), porque la creación vive solo en la rama del despacho y las dos ramas de
+recepción se limitan a actualizar un vínculo previo.
+
+| Pasos | PASS 7 · FAIL 1 · BLOCKED 3 |
+|---|---|
+
+Y con él `R-79`: la prueba que certificaba `GA-REM-008 AC01` contiene
+`"egg_batch" in crudo.lower()`, cierto siempre. **`GA-REM-008 AC01` queda `NOT_EVIDENCED`** —
+el informe histórico se conserva sin modificar—, que es cómo `R-78` sobrevivió a una
+certificación.
+
+La recomendación del checkpoint anterior —`P-10` como la menor distancia— era correcta con la
+evidencia de entonces y ha resultado falsa. Solo se supo recorriendo el proceso entero.

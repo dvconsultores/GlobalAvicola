@@ -6,6 +6,7 @@ from ..database import get_db
 from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
+from ..tenancy import verificar_vinculo_generacional
 from .service import LotService
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/lots", tags=["Lots"])
@@ -204,6 +205,12 @@ async def create_egg_batch(
 ):
     """Link a breeder/grandparent lot → hatchery lot via egg batch."""
     from .models import EggBatch
+    # `GA-REM-030 AC01/AC02/AC03`. El cuerpo entraba tal cual: cualquiera con `lots:create`
+    # podía enlazar lotes ajenos o de dos compañías distintas (`R-60`).
+    await verificar_vinculo_generacional(db, _service(db, current_user).company_id, [
+        (data.source_lot_id, "Lote origen"),
+        (data.hatchery_lot_id, "Lote de incubadora"),
+    ])
     batch = EggBatch(**data.model_dump())
     db.add(batch)
     await db.flush()
@@ -219,6 +226,12 @@ async def create_chick_batch(
 ):
     """Link a hatchery lot → destination lot (breeder or broiler) via chick batch."""
     from .models import ChickBatch
+    # `GA-REM-030 AC06`. La misma guarda en las dos puertas: una regla aplicada en una y
+    # ausente en la otra no es una regla.
+    await verificar_vinculo_generacional(db, _service(db, current_user).company_id, [
+        (data.hatchery_lot_id, "Lote de incubadora"),
+        (data.destination_lot_id or data.broiler_lot_id, "Lote destino"),
+    ])
     payload = data.model_dump()
     # Sync: if destination_lot_id provided, also set broiler_lot_id for backward compat
     if payload.get("destination_lot_id") and not payload.get("broiler_lot_id"):

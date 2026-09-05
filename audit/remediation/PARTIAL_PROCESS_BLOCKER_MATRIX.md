@@ -228,3 +228,44 @@ seguiría detenido por `GA-TD-014`).
 Se prefiere la corrección acotada al desarrollo nuevo, conforme al criterio del encargo.
 
 **No se inicia en este checkpoint**, que es documental.
+
+
+---
+
+# REVISIÓN · tras `GA-REM-030` (2026-09-05)
+
+`R-60` queda `CERTIFIED`, y **`P-10` no**. La fila que lo daba por «único proceso con los
+defectos funcionales ya corregidos» era correcta con la evidencia de entonces y ha resultado
+falsa: esa evidencia se apoyaba en una aserción que no puede fallar (`R-79`).
+
+| Bloqueante | Fan-out | Naturaleza | Accionable | Cierra proceso |
+|---|:--:|---|---|---|
+| `GA-TD-014` | **3** | corrección + decisión acotada | **no** — `OD-04` | no por sí solo |
+| **`R-78`** · el vínculo automático no se crea en el orden natural | **1** | **corrección P1** | **sí** | **sí — `P-10`** |
+| `R-79` · evidencia vacua de `GA-REM-008 AC01` | 0 | validez de prueba | sí | no |
+| `GA-REQ-037` peso fuera de curva | 2 | funcionalidad nueva | sí | no (`P-06` con `GA-TD-014`) |
+| `P-09` cobertura de auditoría | 1 | corrección acotada | sí | probablemente |
+| `P-12` 7 pantallas + contador | 1 | desarrollo de interfaz | sí | sí, con más trabajo |
+| `P-13` 2 pantallas | 1 | desarrollo de interfaz | sí | sí, con más trabajo |
+| `P-14` notificaciones | 1 | desarrollo nuevo, sin canal | sí | sí, mucho más trabajo |
+| `P-15` 4 KPI huérfanos | 1 | corrección P2 | sí | probablemente |
+| `R-76` cierre con registros sin aprobar | 1 | corrección P1 | sí | no (`P-06` bloqueado) |
+| `R-77` regla mal numerada | 0 | corrección P2 | sí | no |
+| `GA-REM-017` SAP real | 1 | externo | no | no |
+| `R-69` · `R-70` | 0 | correcciones P2 | sí | no |
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = R-78   (con R-79 en el mismo movimiento)
+```
+
+**Motivo.** Sigue siendo `P-10` el proceso más cercano, ahora con el obstáculo real
+identificado y medido en la pila. `R-78` es P1, de causa conocida y acotada —hacer que la
+rama de recepción cree el vínculo cuando no existe, igual que ya hace la del despacho—, y es
+lo único que separa a `P-10` de la certificación: los pasos 1, 2, 5, 6, 9, 11 y 12 ya pasan.
+
+`R-79` va en el mismo movimiento porque es su causa de supervivencia: mientras esa aserción no
+pueda fallar, cualquier corrección de `R-78` podría volver a certificarse sin evidencia.
+
+**No se inicia aquí**, conforme al encargo.

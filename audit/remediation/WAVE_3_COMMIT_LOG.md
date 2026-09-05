@@ -367,3 +367,24 @@ Documentos: `E2E_EVIDENCE_MODALITY_MATRIX.md` y `RC-07_BUSINESS_DECISION_DOSSIER
 `WAVE_3_CONTINUATION_REPORT` con sección de corrección.
 
 Hallazgos nuevos `R-76` (P1) y `R-77` (P2), abiertos.
+
+
+---
+
+## `GA-REM-030` · pertenencia en los vínculos de trazabilidad
+
+```
+R-60 = CERTIFIED     P-10 = PARTIAL — BLOCKED_BY_DEFECT (R-78)
+```
+
+Spec comprometida antes del código (`ff7a156`). Hallazgo reproducido con pruebas válidas
+—6 de 8 fallando por la causa correcta, con los CONTROL en verde— antes de corregir.
+
+Sensibilidad: la primera pasada no rompió nada al retirar dos reglas de tres, porque los
+sujetos tenían empresa. Rehechas con un Super Admin sin contexto, las tres son sensibles
+(2 · 1 · 2 fallos). `git diff` limpio tras revertir.
+
+Hallazgos nuevos: `R-78` (P1, el vínculo automático no se crea en el orden natural) y `R-79`
+(P2, la prueba de `GA-REM-008 AC01` no puede fallar). Ninguno se corrige aquí.
+
+Regresión: backend **330 · 49 omitidas · 0 fallos**; E2E **85/85**; frontend sin cambios.

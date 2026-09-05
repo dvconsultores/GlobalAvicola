@@ -335,3 +335,25 @@ cliente (`G-R02`, Fase 10A) de la validación de cantidad contra la orden (`G-R0
 La consecuencia práctica no cambia —`P-01`, `P-03` y `P-06` siguen `PARTIAL` a la espera de
 una decisión— pero **la decisión es otra, es más pequeña y es respondible en una frase**:
 `RC-07_BUSINESS_DECISION_DOSSIER.md`.
+
+
+---
+
+## `P-10` · lo que realmente lo bloquea
+
+```
+R-78  ·  el vínculo automático no se crea en el orden natural      (P1, ABIERTO)
+  └─→ P-10 pasos 3, 4, 7, 8
+        └─→ P-10 = PARTIAL
+
+R-79  ·  la prueba de GA-REM-008 AC01 no puede fallar              (P2, ABIERTO)
+  └─→ explica por qué R-78 sobrevivió a una certificación
+        └─→ GA-REM-008 AC01 = NOT_EVIDENCED
+
+R-60  ·  pertenencia en los vínculos manuales                      CERTIFIED (GA-REM-030)
+```
+
+El mapa anterior daba `R-60` como lo único que separaba a `P-10` de la certificación. Era
+cierto según los artefactos de entonces y ha resultado falso: la certificación de
+`GA-REM-008 AC01` se apoyaba en una aserción vacua, así que la distancia real nunca fue
+visible en ninguna matriz.
