@@ -216,3 +216,56 @@ se abre un hallazgo (`AC11`).
 
 Refactorizar la suite más allá de lo necesario · añadir cobertura nueva no exigida por un
 requisito · pruebas de accesibilidad automatizadas, que siguen en el backlog.
+
+---
+
+# Enmienda F · La validez alcanza a toda evidencia de certificación (`R-79`)
+
+## F.1 Por qué hace falta
+
+`AC12` exige que las afirmaciones **recuperadas** no sean vacías. Nació con el tramo de
+recuperación de Playwright y su letra se ciñe a él.
+
+`R-79` cae fuera de esa letra y dentro del mismo peligro: `test_traceability.py:67` afirmaba
+
+```python
+assert str(destino) in crudo or "egg_batch" in crudo.lower()
+```
+
+y el segundo término es cierto **siempre**, porque la respuesta de trazabilidad contiene la
+clave `egg_batches_sent`. Esa prueba no era heredada ni recuperada: la escribió `GA-REM-008`
+y fue **la evidencia de su `AC01`**.
+
+El resultado es lo que esta enmienda quiere impedir: un defecto de dominio (`R-78`) sobrevivió
+a una certificación porque la prueba que debía detectarlo no podía fallar.
+
+## F.2 El principio
+
+```
+Una prueba usada como evidencia de certificación vale lo que valga su capacidad
+de fallar. Da igual quién la escribiera y en qué tramo.
+```
+
+## F.3 Criterio de aceptación
+
+| AC | Criterio | Verificación |
+|---|---|---|
+| **AC13** | Toda prueba invocada como evidencia de un `AC` —de cualquier spec, recuperada o de nueva escritura— demuestra que **puede fallar**: existe una mutación controlada del comportamiento que la vuelve roja, y se revierte. Una aserción que pasa con el comportamiento ausente no es evidencia, y el `AC` que la citaba queda `NOT_EVIDENCED` hasta que se sustituya | prueba de mortalidad registrada en el informe de certificación |
+
+## F.4 Alcance de la revisión
+
+`AC13` **no** abre una auditoría global de la suite. Se aplica:
+
+- a toda evidencia nueva, desde ahora;
+- a la evidencia de un `AC` cuando un hallazgo demuestre que era vacua, como en `R-79`.
+
+Revisar de oficio las 400 pruebas del repositorio sería otro trabajo y no es este.
+
+## F.5 Efecto inmediato
+
+```
+GA-REM-008 AC01 = NOT_EVIDENCED   hasta que R-78 tenga prueba capaz de fallar
+```
+
+El informe histórico de `GA-REM-008` se conserva sin modificar; la anotación vive en las
+matrices vigentes y en `PROCESS-10-CERTIFICATION.md`.
