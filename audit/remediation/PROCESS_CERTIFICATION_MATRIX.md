@@ -155,3 +155,34 @@ siguen incompletos:
 
 `P-01` y `P-03` comparten el primero de los dos, así que tampoco se mueven. Detalle en
 `R-73-LOT-CLOSE-CERTIFICATION.md` §5.
+
+
+---
+
+## Gate A · modalidad de evidencia (2026-09-05)
+
+Se comprobó, criterio por criterio, si la evidencia que sostiene cada certificación es de la
+clase que su spec exige. Detalle en `E2E_EVIDENCE_MODALITY_MATRIX.md`.
+
+`GA-REM-016 AC05` es explícito: *«ninguna unidad certificada es una pantalla, un endpoint o
+un componente»*. La spec de certificación **no pide interfaz**; pide `E2E` de proceso, y
+prohíbe justamente lo contrario de lo que se temía.
+
+| Proceso | Exigido | Disponible | ¿Válida? |
+|---|---|---|:--:|
+| `P-02` | `E2E` de proceso | `API_E2E` 9/9 | sí |
+| `P-04` | `E2E` de proceso | `API_E2E` 9/9 | sí |
+| `P-05` | `E2E` de proceso | `API_E2E` 8/8 | sí |
+| `P-07` | `E2E` de proceso | `API_E2E` 7/7 | sí |
+| `P-11` | `E2E` de proceso | `API_E2E` 6/6 | sí |
+
+```
+CERTIFIED = 5 / 15   ·   sin degradación
+```
+
+Se corrige solo la etiqueta: esas suites son `API_E2E`, no `UI_E2E`. La afirmación errónea
+vivió en la salida de consola de un checkpoint anterior; **ningún documento del repositorio
+dijo nunca «UI E2E»** —los informes de certificación dicen textualmente que la unidad es el
+proceso, no la pantalla—.
+
+No se crean pruebas de interfaz para conservar vocabulario: sería trabajo artificial.

@@ -371,3 +371,72 @@ cuenta de procesos, y la matriz de alcance ya lo anticipaba.
 `GA-TD-014` es el único bloqueante conocido con fan-out mayor que uno y su raíz no es
 técnica. Mientras `RC-07` siga abierta, `P-01`, `P-03` y `P-06` no pueden certificarse por
 mucho que se remedie a su alrededor.
+
+
+---
+
+# Gate A + Gate B · gobierno de la certificación (2026-09-05)
+
+Checkpoint documental. **No se modificó código de aplicación.**
+
+## Gate A · ¿la evidencia es de la clase que la spec exige?
+
+`GA-REM-016 AC05` prohíbe certificar por pantalla. No pide interfaz: pide `E2E` de proceso.
+Ninguna regla obligatoria de los cinco procesos certificados —`docs/12 R1`…`R9` para `P-07`,
+`docs/02 §3.9.2` para `P-11`, `BR-02`/`BR-03` para los demás— menciona la interfaz.
+
+```
+CERTIFIED = 5 / 15   (sin cambio)
+```
+
+Corrección de etiqueta: `API_E2E`, no `UI_E2E`. Y una precisión sobre mi propia corrección
+anterior, que fue más amplia de lo debido: **ningún documento del repositorio afirmó nunca
+«UI E2E»**. El error estuvo en la consola. Los informes archivados dicen desde el principio
+que la unidad es el proceso, no la pantalla.
+
+## Gate B · ¿qué decisión falta exactamente?
+
+La respuesta esperada era «`RC-07`». **Las fuentes dicen otra cosa.**
+
+`RC-07` es la política de mortalidad frente a SAP, y `RR-07` la acotó por escrito al mapeo de
+mortalidad dentro de `GA-REM-017`. No cubre la orden de compra. `docs/16` separa además las
+cinco decisiones del cliente de la validación de cantidad contra la orden, y las pone en
+fases distintas del plan. `GA-REM-010`, la otra dependencia citada por `C-15`, está
+`CERTIFIED`.
+
+La decisión que sí falta es más estrecha y se registra como `OD-04`: **¿existen entregas
+parciales contra una misma orden de compra?** De eso depende activar una regla o dos.
+
+```
+RC-07  = OWNER_DECISION_REQUIRED   (mortalidad · sin cambio)
+OD-04  = OWNER_DECISION_REQUIRED   (orden de compra · nueva)
+```
+
+## Tres correcciones a la matriz de ayer
+
+Leer las fuentes una por una invalidó tres entradas propias: `GA-TD-014` no depende de
+`RC-07`; el hueco de `PUT` de `P-12` ya estaba cerrado; y `R-60` no es el auto-enlace
+—corregido por `GA-REM-008`— sino un endurecimiento P2 alcanzable solo por Super Admin.
+
+## Dos hallazgos nuevos, salidos de leer la spec
+
+```
+R-76 · docs/12 R7 «un lote no puede cerrarse si tiene registros sin aprobar» no está
+       implementado. P1. El E2E de P-06 cierra lotes con nueve eventos sin aprobar y
+       recibe 200.
+
+R-77 · la regla de no duplicar documentos SAP es BR-11 en la spec y BR-10 en el código;
+       el contrato de error devuelve una regla equivocada. P2.
+```
+
+Ninguno se corrige aquí. Quedan abiertos y registrados.
+
+## Siguiente frente
+
+```
+NEXT_ACTIONABLE_BLOCKER = P-10 · trazabilidad generacional
+```
+
+Único proceso `PARTIAL` con los defectos funcionales ya corregidos: le falta endurecer
+`R-60` y **escribir su E2E de proceso**. Los demás exigen desarrollo de interfaz o
+funcionalidad nueva, o no cierran su proceso aunque se resuelvan.

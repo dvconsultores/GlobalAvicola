@@ -124,3 +124,107 @@ dice explícitamente para que nadie lea después que se eligió por alcance.
 | `R-60` trazabilidad automática | 1 | accionable, `GA-REM-008` |
 | `P-14` notificaciones | 1 | requiere canal: es desarrollo nuevo, no una corrección |
 | `P-08` SAP real | 1 | `BLOCKED_EXTERNAL` |
+
+---
+
+# REVISIÓN · Gate A y Gate B (2026-09-05, mismo día)
+
+La tabla de §3 se escribió antes de leer las fuentes normativas una por una. Al hacerlo
+—`Gate B`— **tres entradas resultaron equivocadas**. No se borran: se corrigen aquí para que
+se vea qué se creyó y por qué dejó de creerse.
+
+## Corrección 1 · `GA-TD-014` no depende de `RC-07`
+
+Lo escrito: *«`BLOQUEADO POR DECISIÓN DEL PROPIETARIO (RC-07)`»*, tomado de la justificación
+de `C-15`.
+
+Lo que dicen las fuentes:
+
+| Fuente | Dice |
+|---|---|
+| `REQUIREMENT_CONFLICT_RESOLUTION §7` | `RC-07` es **la política de mortalidad frente a SAP**, no la orden de compra |
+| `RR-07` (literal) | «**solo** el mapeo de mortalidad a un documento SAP queda supeditado a la decisión del propietario» |
+| `docs/16 §13` | `G-R05` «cantidad ≤ OC» es un hueco crítico **distinto** de `G-R02` «5 decisiones no definidas» |
+| `docs/16 §14` | las cinco decisiones van a la **Fase 10A**; `G-R05` va a la **Fase 10B**, validaciones técnicas |
+| `GA-REM-010` | la otra dependencia que citaba `C-15`: **`CERTIFIED`** desde la Wave 2 |
+
+`C-15` citó una decisión que no cubre su caso. `RC-07` sigue abierta —y sigue siendo del
+propietario— pero **sobre mortalidad**.
+
+Queda una decisión real y más estrecha sobre `GA-TD-014`, registrada como **`OD-04`** en
+`RC-07_BUSINESS_DECISION_DOSSIER.md §11`: si existen entregas parciales contra una misma
+orden de compra. De eso depende activar una regla o dos.
+
+```
+GA-TD-014  fan-out 3  ·  BLOQUEADO POR OD-04  (no por RC-07)
+```
+
+## Corrección 2 · `P-12` ya no tiene el hueco de `PUT`
+
+Lo escrito: *«8 de 19 maestros no registran `PUT`; `MasterListPage` lo emite para todos →
+405»*, tomado de `audit/06`.
+
+Verificado en el código de hoy: los ocho maestros que el audit señalaba —`suppliers`,
+`genetic-lines`, `breeds`, `feed-types`, `vaccines`, `mortality-causes`, `transports`,
+`processing-plants`— **tienen `PUT`**. El hueco se cerró en una wave anterior.
+
+Los 7 que siguen sin esquema de actualización (`incubators`, `hatchers`,
+`productive-phases`, `medications`, `cull-causes`, `rejection-reasons`, `correction-types`)
+son exactamente **los 7 que no tienen pantalla**, así que nadie les emite `PUT` y no hay 405.
+
+Lo que a `P-12` le queda de verdad:
+
+```
+7 catálogos sin pantalla        → desarrollo de interfaz, no corrección
+contador de resultados erróneo  → MasterListPage.tsx:45 setTotal(response.data.length)
+sin E2E de proceso
+```
+
+## Corrección 3 · `R-60` no es lo que decía la fila
+
+Lo escrito: *«la trazabilidad automática busca el evento complementario con el **mismo**
+`lot_id`, de modo que nunca encuentra el par»*.
+
+Eso **ya se corrigió**: `GA-REM-008` está `CERTIFIED` — *«la trazabilidad enlaza lotes
+distintos, usa el destino que el operador declaró y se abstiene cuando no lo hay»*—.
+
+El `R-60` que sigue abierto es otro y más estrecho (`TENANT_RESOURCE_CLASSIFICATION §4`): las
+claves de trazabilidad no comprueban pertenencia. **P2**, alcanzable solo por Super Admin,
+que opera legítimamente entre compañías. No explotable por ningún otro rol.
+
+## Tabla vigente tras la revisión
+
+| Bloqueante | Fan-out | Naturaleza | Accionable | Cierra proceso |
+|---|:--:|---|---|---|
+| `GA-TD-014` | **3** | corrección + decisión acotada | **no** — `OD-04` | no por sí solo (`P-06` necesita más) |
+| `R-60` | 1 | endurecimiento P2 | **sí** — pequeño, con precedente | contribuye a `P-10` |
+| falta E2E de `P-10` | 1 | evidencia, no defecto | **sí** | **sí — `P-10`** |
+| `GA-REQ-037` peso fuera de curva | 2 | funcionalidad nueva | sí | no (`P-06` sigue con `GA-TD-014`) |
+| `P-09` cobertura de auditoría | 1 | corrección acotada | sí | probablemente |
+| `P-12` 7 pantallas + contador | 1 | **desarrollo de interfaz** | sí | sí, con más trabajo |
+| `P-13` 2 pantallas | 1 | **desarrollo de interfaz** | sí | sí, con más trabajo |
+| `P-14` notificaciones | 1 | **desarrollo nuevo**, sin canal | sí | sí, mucho más trabajo |
+| `P-15` 4 KPI huérfanos | 1 | corrección P2 | sí | probablemente |
+| `R-76` cierre con registros sin aprobar | 1 | corrección P1 **nueva** | sí | no (`P-06` bloqueado) |
+| `R-77` regla mal numerada | 0 | corrección P2 **nueva** | sí | no |
+| `GA-REM-017` SAP real | 1 | externo | no | no |
+| `R-69` · `R-70` | 0 | correcciones P2 | sí | no |
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = P-10 · trazabilidad generacional
+```
+
+**Motivo.** Es el único proceso `PARTIAL` cuyos defectos funcionales **ya están corregidos**:
+`GA-REM-008` certificó el enlace automático y `C-03` reparó `LotDetailPage`. Le falta
+endurecer `R-60` —pequeño, con el patrón `verificar_pertenencia` ya usado en `P-11`— y
+**escribir su E2E de proceso**, que es lo que `GA-REM-016` pide.
+
+Los demás exigen desarrollo de interfaz o funcionalidad nueva (`P-12`, `P-13`, `P-14`), o no
+pueden cerrar su proceso aunque se resuelvan (`GA-REQ-037` y `R-76`, ambos en `P-06`, que
+seguiría detenido por `GA-TD-014`).
+
+Se prefiere la corrección acotada al desarrollo nuevo, conforme al criterio del encargo.
+
+**No se inicia en este checkpoint**, que es documental.

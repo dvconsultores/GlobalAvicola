@@ -307,3 +307,31 @@ mucho que se remedie alrededor.
 
 `GA-REM-029` cerró `R-73`, `R-74` y `R-75` —el paso terminal de `P-06`— sin mover ninguno de
 los tres de `PARTIAL`, que es exactamente lo que este mapa predecía.
+
+
+---
+
+## Corrección · `GA-TD-014` no cuelga de `RC-07`
+
+El mapa anterior hacía descender `GA-TD-014` de `RC-07`. **Es incorrecto**, y la corrección
+sale de las fuentes, no de una reinterpretación:
+
+```
+RC-07  ·  política de mortalidad frente a SAP        (OD-02, ABIERTA)
+  └─→ mapeo de mortalidad dentro de GA-REM-017        ← su ÚNICO bloqueo residual
+                                                        (GA-REM-017 ya BLOCKED_EXTERNAL)
+
+OD-04  ·  ¿entregas parciales contra una misma orden?  (NUEVA, ABIERTA)
+  └─→ GA-TD-014 · la OC al campo tipado
+        ├─→ P-01   ├─→ P-03   └─→ P-06
+```
+
+`RR-07` lo acotó por escrito: *«solo el mapeo de mortalidad a un documento SAP queda
+supeditado a la decisión del propietario»*. Y `docs/16` separa las cinco decisiones del
+cliente (`G-R02`, Fase 10A) de la validación de cantidad contra la orden (`G-R05`, Fase 10B).
+
+`GA-REM-010`, la otra dependencia que citaba `C-15`, está `CERTIFIED`.
+
+La consecuencia práctica no cambia —`P-01`, `P-03` y `P-06` siguen `PARTIAL` a la espera de
+una decisión— pero **la decisión es otra, es más pequeña y es respondible en una frase**:
+`RC-07_BUSINESS_DECISION_DOSSIER.md`.

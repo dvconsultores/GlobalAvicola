@@ -349,3 +349,21 @@ Regresión: backend **321 pasan · 49 omitidas · 0 fallos** (antes 313). E2E **
 (antes 75). El cambio de comportamiento de `AC05` no rompió nada existente.
 
 `P-06` **no** se certifica: `GA-TD-014` y `GA-REQ-037` siguen abiertos.
+
+
+---
+
+## Gate A + Gate B · checkpoint documental
+
+Sin cambios en código de aplicación. Regresión sin reejecutar: nada que pudiera alterarla.
+
+```
+Gate A   CERTIFIED = 5/15 · sin degradación · etiqueta corregida a API_E2E
+Gate B   GA-TD-014 NO depende de RC-07 · decisión real registrada como OD-04
+```
+
+Documentos: `E2E_EVIDENCE_MODALITY_MATRIX.md` y `RC-07_BUSINESS_DECISION_DOSSIER.md` nuevos;
+`PARTIAL_PROCESS_BLOCKER_MATRIX`, `PROCESS_CERTIFICATION_MATRIX`, `DEPENDENCY_MAP` y
+`WAVE_3_CONTINUATION_REPORT` con sección de corrección.
+
+Hallazgos nuevos `R-76` (P1) y `R-77` (P2), abiertos.

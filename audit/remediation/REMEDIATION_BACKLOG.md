@@ -264,6 +264,8 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-73` | El cierre de lote respondía 500 siempre | P1 — **`CERTIFIED`** `GA-REM-029` |
 | `R-74` | `BR-05` validaba el evento `lot_closure`, que no cierra el lote | P1 — **`CERTIFIED`** `GA-REM-029` |
 | `R-75` | `end_date` se guardaba a medianoche local y se releía como del día anterior | P1 — **`CERTIFIED`** `GA-REM-029` |
+| `R-76` | `docs/12 R7` sin implementar: un lote se cierra con registros sin aprobar | P1 — **abierto** |
+| `R-77` | «no duplicar documentos SAP» es `BR-11` en la spec y `BR-10` en el código | P2 — **abierto** |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.
