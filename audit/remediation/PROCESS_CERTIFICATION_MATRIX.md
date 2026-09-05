@@ -46,7 +46,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | **P-09** Auditoría interna | spec §4.11 | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ⚠ `R-60` | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** |
-| **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | ⬜ | `COVERED` | `READY_FOR_E2E` ⚠ `R-47` |
+| **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ **Wave 3** | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-13** Usuarios, roles y permisos | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-14** Notificaciones y alertas | func §3.14 | ✅ | ⚠ | ⚠ | ✅ | umbral configurable | ✅ | ✅ | **parcial** | **`PARTIAL`** | **`PARTIAL`** |
@@ -119,3 +119,20 @@ Toda la evidencia atraviesa el filtro de
 [`PROCESS_E2E_VALIDITY_MATRIX.md`](PROCESS_E2E_VALIDITY_MATRIX.md), derivado de `R-72`: un
 `PASS` no cuenta hasta demostrar que puede fallar. Se demostró mutando `BR-02`, `BR-03` y
 las guardas de pertenencia; nueve casos fallaron y se revirtió el código en el acto.
+
+
+---
+
+## `P-11` · Activación manual de lotes (2026-09-05)
+
+Pasa de `READY_FOR_E2E ⚠ R-47` a **`CERTIFIED`**, 6/6 casos, con las seis reglas de
+`docs/02 §3.9.2` ejecutadas.
+
+Estuvo bloqueado por dos defectos, ambos resueltos antes de certificarlo:
+
+| Hallazgo | Spec | Estado |
+|---|---|---|
+| `R-67` el saldo de apertura no alimentaba el balance | `GA-REM-005` enmienda | `CERTIFIED` |
+| `R-47` la fecha de inicio se descartaba | `GA-REM-028` | `CERTIFIED` |
+
+Informe: [PROCESS-11](PROCESS-11-CERTIFICATION.md).
