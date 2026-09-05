@@ -9,8 +9,29 @@ import { expect, type APIRequestContext } from '@playwright/test'
 
 export const API = 'http://127.0.0.1:8099/api/v1'
 
-/** Fecha de hoy en ISO. Nunca literales: caducan solas por `BR-19` (`R-28`). */
+/** Fecha de hoy en ISO. Nunca literales: caducan solas por `BR-19` (`R-28`).
+ *
+ * `R-80`. Usaba `toISOString()`, que da el día **UTC**, mientras el backend llama «hoy» al
+ * día **local del servidor** (`date.today()` en `BR-06` y `BR-19`). Entre la medianoche
+ * local y la UTC los dos no coinciden y la suite se rechazaba a sí misma con `BR-06`:
+ * «fecha anterior a la activación del lote». No era un defecto del producto sino de esta
+ * utilidad, y se manifestaba solo durante esa franja.
+ *
+ * `sv-SE` produce `YYYY-MM-DD` en hora local, que es el mismo día del calendario que el
+ * servidor está viviendo.
+ */
 export function hoy(): string {
+  return new Date().toLocaleDateString('sv-SE')
+}
+
+/** Día en curso **en UTC**, para contrastar columnas que guardan instantes UTC.
+ *
+ * `R-80`. `created_at` se fija con `func.now()` y viaja como instante UTC, mientras que
+ * `hoy()` da el día local del servidor —que es lo que el producto llama «hoy» en `BR-06`—.
+ * Cada comparación debe hacerse en el marco de lo que mira; mezclarlos rompe la suite entre
+ * una medianoche y la otra.
+ */
+export function hoyUtc(): string {
   return new Date().toISOString().slice(0, 10)
 }
 

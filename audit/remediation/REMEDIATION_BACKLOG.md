@@ -267,8 +267,9 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-76` | `docs/12 R7` sin implementar: un lote se cierra con registros sin aprobar | P1 — **abierto** |
 | `R-77` | «no duplicar documentos SAP» es `BR-11` en la spec y `BR-10` en el código | P2 — **abierto** |
 | `R-60` | Los vínculos de trazabilidad no comprobaban pertenencia ni existencia | P2 — **`CERTIFIED`** `GA-REM-030` |
-| `R-78` | El vínculo generacional automático no se crea en el orden natural (despacho → recepción) | **P1 — abierto** |
-| `R-79` | La prueba de `GA-REM-008 AC01` no puede fallar; `AC01` queda `NOT_EVIDENCED` | P2 — **abierto** |
+| `R-78` | El vínculo generacional automático no se crea en el orden natural (despacho → recepción) | P1 — **`CERTIFIED`** `GA-REM-031` |
+| `R-79` | La prueba de `GA-REM-008 AC01` no podía fallar | P2 — **`CERTIFIED`** `GA-REM-016` enm. F |
+| `R-80` | La fecha de negocio se ancla al día local del servidor y `created_at` a UTC: entre una medianoche y otra, `start_date` queda por delante del alta | P2 — **abierto** |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.

@@ -504,3 +504,53 @@ backend  330 pasan · 49 omitidas · 0 fallos    (antes 321)
 E2E       85/85                                 (antes 80)
 frontend  no reejecutado — ningún cambio de frontend
 ```
+
+
+---
+
+# `P-10` certificado · `R-78` + `R-79` · `GA-REM-031` (2026-09-05)
+
+```
+R-78 = CERTIFIED    R-79 = CERTIFIED    P-10 = CERTIFIED (12 de 12 pasos)
+CERTIFIED 6 / 15    PARTIAL 9 / 15
+```
+
+## El orden importó
+
+`spec.md §4.9` dice que el vínculo se crea al registrar despacho **+** recepción. La
+conjunción es simétrica; la implementación no lo era. La creación vivía solo en la rama del
+despacho, que busca una recepción ya registrada, y las dos ramas de recepción se limitaban a
+actualizar un vínculo previo. En el orden natural —se despacha antes de recibir— no se creaba
+ninguno **nunca**.
+
+## Por qué nadie lo había visto
+
+`test_traceability.py` afirmaba `"egg_batch" in crudo.lower()`, cierto siempre porque la
+respuesta contiene la clave `egg_batches_sent`. Esa prueba era la evidencia de
+`GA-REM-008 AC01`. Un `PASS` que no puede fallar no es evidencia, y por eso el defecto
+atravesó una certificación intacto.
+
+Se corrigió **la prueba antes que la aplicación**, deliberadamente: reparada, se puso roja
+por la causa exacta —«hay 0 vínculos»— y eso reprodujo `R-78` con evidencia fuerte.
+
+## La sensibilidad certificó las dos cosas a la vez
+
+Al desactivar la creación en recepción fallaron 3 pruebas de recepción **y la de
+`GA-REM-008 AC01`**, que antes pasaba con el comportamiento ausente. Las 9 de pertenencia
+siguieron verdes: la mutación era específica. No hizo falta una segunda mutación artificial.
+
+## Un hallazgo aparecido al cruzar la medianoche
+
+`R-80`: la fecha de negocio se ancla al día **local del servidor** y `created_at` se guarda
+como instante **UTC**. Entre una medianoche y otra difieren, y un lote recién creado tiene
+`start_date` posterior a su propio alta. Se manifestó como tres fallos de suite —dos en
+backend, uno en E2E—, **verificados como previos a este cambio**. Las pruebas se repararon en
+el marco de lo que cada una mira; el producto no se tocó y `R-80` queda abierto.
+
+## Regresión
+
+```
+backend  335 pasan · 49 omitidas · 0 fallos    (antes 330)
+E2E       85/85
+frontend  sin cambios — no reejecutado
+```

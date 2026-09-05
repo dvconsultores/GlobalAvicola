@@ -103,3 +103,24 @@ alcance ya avisaba: `R-73` tenía fan-out 1. `P-06` sigue `PARTIAL` por `GA-TD-0
 son cosas distintas.
 
 Evidencia: `R-73-LOT-CLOSE-CERTIFICATION.md` · `R73_CLOSE_LOT_CONTRACT_MATRIX.md`.
+
+
+---
+
+## 5. `GA-REM-030` · `GA-REM-031` · `P-10` certificado (2026-09-05)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-60` · los vínculos de trazabilidad no comprobaban pertenencia ni existencia | P2 | **`CERTIFIED`** |
+| `R-78` · el vínculo no se creaba desde la recepción: en el orden natural no se creaba ninguno | **P1** | **`CERTIFIED`** |
+| `R-79` · la evidencia de `GA-REM-008 AC01` no podía fallar | P2 | **`CERTIFIED`** |
+| `R-80` · el día de negocio es local y `created_at` es UTC | P2 | abierto |
+
+```
+P-10 = CERTIFIED        CERTIFIED 6 / 15        PARTIAL 9 / 15
+```
+
+La cadena de causas es la lección del tramo: una afirmación que no podía fallar dejó pasar un
+defecto de dominio, y ese defecto mantuvo un proceso en `PARTIAL` sin que ninguna matriz lo
+mostrara. De ahí la enmienda F de `GA-REM-016`: la validez de la evidencia alcanza a toda
+prueba invocada como tal, la escribiera quien la escribiera.

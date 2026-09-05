@@ -6,7 +6,7 @@ from typing import Any, Optional
 from fastapi import HTTPException
 from fastapi import status
 from fastapi import status as status_mod
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..audit.helpers import audit_event_created, audit_state_transition
@@ -217,6 +217,51 @@ class OperationsService:
         )
         return (await self.db.execute(consulta)).scalar_one_or_none()
 
+    async def _cantidad_movida(self, event_id: int, modelo, campo: str = "quantity") -> int:
+        """Suma los movimientos de un evento ya persistido.
+
+        `GA-REM-031`. La rama del despacho conoce las cantidades porque tiene la carga de
+        la petición delante; la de la recepción solo tiene la fila del despacho, así que
+        las lee de sus movimientos. Es la única diferencia real de información entre las
+        dos, y por eso vive aquí y no duplicada.
+        """
+        resultado = await self.db.execute(
+            select(func.coalesce(func.sum(getattr(modelo, campo)), 0))
+            .where(modelo.event_id == event_id)
+        )
+        return int(resultado.scalar() or 0)
+
+    async def _generacion_del_lote(self, lot_id: int) -> str | None:
+        from ..masters.models import Lot
+
+        lote = (await self.db.execute(select(Lot).where(Lot.id == lot_id))).scalar_one_or_none()
+        if lote is None or not lote.bird_type:
+            return None
+        return lote.bird_type.value if hasattr(lote.bird_type, "value") else str(lote.bird_type)
+
+    async def _vincular_generaciones(
+        self, modelo, despacho, recepcion, cantidad_despachada: int, **campos,
+    ):
+        """Crea el vínculo generacional de un par despacho/recepción.
+
+        `GA-REM-031`. Un solo sitio para el mapeo de campos, invocado desde las dos ramas.
+        Tenerlo duplicado era el riesgo real de extender la creación a la recepción: dos
+        implementaciones del mismo vínculo divergen a la primera corrección que solo se
+        aplique a una.
+
+        `dispatch_event_id` es la clave del par, y por eso quien llama comprueba antes si
+        el vínculo ya existe: **exactamente uno** por envío, cree quien cree.
+        """
+        vinculo = modelo(
+            dispatch_event_id=despacho.id,
+            reception_event_id=recepcion.id,
+            quantity_dispatched=cantidad_despachada,
+            dispatch_date=despacho.event_date,
+            **campos,
+        )
+        self.db.add(vinculo)
+        return vinculo
+
     async def _auto_create_traceability_batches(
         self,
         event: models.OperationalEvent,
@@ -265,11 +310,22 @@ class OperationsService:
                     select(EggBatch).where(EggBatch.dispatch_event_id == dispatch.id)
                 )
                 batch = batch_result.scalar_one_or_none()
-                if batch:
-                    total_qty = sum(em.quantity for em in data.egg_movements)
-                    batch.quantity_received = total_qty
-                    batch.reception_event_id = event.id
-                    batch.reception_date = event.event_date
+                # `R-78`. Antes esta rama **solo actualizaba**: si el vínculo no existía se
+                # ignoraba en silencio. Como la creación vivía únicamente en la rama del
+                # despacho —que busca una recepción ya registrada—, en el orden natural de
+                # la operación, que despacha antes de recibir, no se creaba ninguno nunca.
+                # `spec.md §4.9` no impone orden: la conjunción es simétrica.
+                if batch is None:
+                    batch = await self._vincular_generaciones(
+                        EggBatch, dispatch, event,
+                        await self._cantidad_movida(dispatch.id, models.EggMovement),
+                        source_lot_id=dispatch.lot_id,
+                        hatchery_lot_id=event.lot_id,
+                        generation=await self._generacion_del_lote(dispatch.lot_id),
+                    )
+                batch.quantity_received = sum(em.quantity for em in data.egg_movements)
+                batch.reception_event_id = event.id
+                batch.reception_date = event.event_date
 
         elif event.event_type == models.EventType.CHICK_DISPATCH:
             reception = await self._recepcion_en_el_destino_declarado(
@@ -300,11 +356,21 @@ class OperationsService:
                     select(ChickBatch).where(ChickBatch.dispatch_event_id == dispatch.id)
                 )
                 batch = batch_result.scalar_one_or_none()
-                if batch:
-                    total_qty = sum(bm.quantity for bm in data.bird_movements)
-                    batch.quantity_received = total_qty
-                    batch.reception_event_id = event.id
-                    batch.reception_date = event.event_date
+                if batch is None:                                          # `R-78`
+                    egg_batch = (await self.db.execute(
+                        select(EggBatch).where(EggBatch.hatchery_lot_id == dispatch.lot_id)
+                    )).scalars().first()
+                    batch = await self._vincular_generaciones(
+                        ChickBatch, dispatch, event,
+                        await self._cantidad_movida(dispatch.id, models.BirdMovement),
+                        hatchery_lot_id=dispatch.lot_id,
+                        destination_lot_id=event.lot_id,
+                        broiler_lot_id=event.lot_id,
+                        egg_batch_id=egg_batch.id if egg_batch else None,
+                    )
+                batch.quantity_received = sum(bm.quantity for bm in data.bird_movements)
+                batch.reception_event_id = event.id
+                batch.reception_date = event.event_date
 
     async def _check_and_create_alerts(
         self,

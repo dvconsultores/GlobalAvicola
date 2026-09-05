@@ -38,6 +38,21 @@ def reference_today() -> _dt.date:
     return _dt.date.today()
 
 
+def reference_today_utc() -> _dt.date:
+    """Día en curso **en UTC**, para comparar contra columnas que guardan instantes UTC.
+
+    `R-80`. `created_at` se fija con `func.now()` y se almacena como instante UTC, mientras
+    que `reference_today()` da el día local del servidor —que es lo que el producto llama
+    «hoy» en `BR-06` y `BR-19`—. Entre la medianoche local y la UTC los dos difieren, y
+    comparar uno con otro hacía fallar la suite durante esa franja por un error de marco de
+    la propia prueba, no del producto.
+
+    La inconsistencia de marcos **del producto** queda registrada aparte como `R-80`: no se
+    resuelve cambiando esta utilidad.
+    """
+    return _dt.datetime.now(_dt.timezone.utc).date()
+
+
 def days_ago(n: int) -> _dt.date:
     """Fecha `n` días antes de la referencia."""
     return reference_today() - _dt.timedelta(days=n)

@@ -269,3 +269,44 @@ lo único que separa a `P-10` de la certificación: los pasos 1, 2, 5, 6, 9, 11 
 pueda fallar, cualquier corrección de `R-78` podría volver a certificarse sin evidencia.
 
 **No se inicia aquí**, conforme al encargo.
+
+
+---
+
+# REVISIÓN · tras `GA-REM-031` (2026-09-05)
+
+`P-10` sale de la lista: **`CERTIFIED`**. Quedan **9** procesos `PARTIAL`.
+
+| Bloqueante | Fan-out | Naturaleza | Accionable | Cierra proceso |
+|---|:--:|---|---|---|
+| `GA-TD-014` | **3** | corrección + decisión acotada | **no** — `OD-04` | no por sí solo |
+| `P-09` cobertura de auditoría | 1 | corrección acotada | **sí** | **probablemente** |
+| `P-15` 4 KPI huérfanos | 1 | corrección P2 | sí | probablemente |
+| `P-12` 7 pantallas + contador | 1 | desarrollo de interfaz | sí | sí, con más trabajo |
+| `P-13` 2 pantallas | 1 | desarrollo de interfaz | sí | sí, con más trabajo |
+| `P-14` notificaciones | 1 | desarrollo nuevo, sin canal | sí | sí, mucho más trabajo |
+| `GA-REQ-037` peso fuera de curva | 2 | funcionalidad nueva | sí | no (`P-06` con `GA-TD-014`) |
+| `R-76` cierre con registros sin aprobar | 1 | corrección P1 | sí | no (`P-06` bloqueado) |
+| `R-80` marcos horarios mezclados | 0 | corrección P2 **nueva** | sí | no |
+| `R-77` regla mal numerada | 0 | corrección P2 | sí | no |
+| `GA-REM-017` SAP real | 1 | externo | no | no |
+| `R-69` · `R-70` | 0 | correcciones P2 | sí | no |
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = P-09 · cobertura de auditoría interna
+```
+
+**Motivo.** Es la única remediación **acotada** que queda con posibilidad de cerrar su
+proceso: 6 de las 21 acciones del enum `AuditAction` se escriben —faltan login, permisos,
+maestros e importación/exportación— y `AuditPage` envía tres parámetros que el backend no
+admite. Backend y modelo existen; falta emitir y filtrar.
+
+Los demás candidatos exigen desarrollo de interfaz (`P-12`, `P-13`) o funcionalidad nueva
+sin canal (`P-14`), y `P-01`/`P-03`/`P-06` siguen esperando `OD-04`.
+
+Advertencia aprendida en `P-10`: la distancia aparente de un proceso vale lo que valga la
+evidencia que la sostiene. La de `P-09` no se ha auditado con `AC13` en la mano.
+
+**No se inicia aquí.**

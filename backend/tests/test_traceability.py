@@ -66,9 +66,24 @@ async def test_rc04_el_vinculo_une_dos_lotes_distintos(auth_headers, client, see
 
     arbol = await client.get(f"/api/v1/lots/{origen}/traceability", headers=auth_headers)
     assert arbol.status_code == 200, arbol.text
-    crudo = arbol.text
-    assert str(destino) in crudo or "egg_batch" in crudo.lower(), (
-        "El lote origen debe poder ver su destino")
+
+    # `R-79` / `GA-REM-016 AC13`. Antes se afirmaba
+    #
+    #     assert str(destino) in crudo or "egg_batch" in crudo.lower()
+    #
+    # y el segundo término es cierto **siempre**: la respuesta contiene la clave
+    # `egg_batches_sent` pase lo que pase. El primero tampoco servía —el identificador del
+    # lote es un número corto que aparece en cualquier parte del JSON—. La afirmación no
+    # podía fallar, y por eso `R-78` sobrevivió a la certificación de este mismo `AC01`.
+    #
+    # Ahora se comprueba lo que el criterio dice: que existe **un** vínculo y que apunta al
+    # destino declarado.
+    enviados = arbol.json()["egg_batches_sent"]
+    assert len(enviados) == 1, (
+        f"`AC01` exige un vínculo entre lotes distintos; hay {len(enviados)}: {enviados}"
+    )
+    assert enviados[0]["source_lot_id"] == origen, enviados[0]
+    assert enviados[0]["hatchery_lot_id"] == destino, enviados[0]
 
 
 @pytest.mark.asyncio

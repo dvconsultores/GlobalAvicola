@@ -45,7 +45,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | **P-09** Auditoría interna | spec §4.11 | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
-| **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ✅ **`R-60` cerrado** | ✅ | **5/5** (1 fallo esperado) | `PARTIAL` | **`PARTIAL`** — `R-78` |
+| **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **5/5** | `COVERED` | **`CERTIFIED`** |
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ **Wave 3** | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-13** Usuarios, roles y permisos | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
@@ -211,3 +211,26 @@ certificación.
 
 La recomendación del checkpoint anterior —`P-10` como la menor distancia— era correcta con la
 evidencia de entonces y ha resultado falsa. Solo se supo recorriendo el proceso entero.
+
+---
+
+## `P-10` certificado tras `GA-REM-031` (2026-09-05)
+
+```
+CERTIFIED = 6 / 15      PARTIAL = 9 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-02` · `P-04` · `P-05` · `P-07` · `P-10` · `P-11` |
+| `PARTIAL` | `P-01` · `P-03` · `P-06` · `P-08` · `P-09` · `P-12` · `P-13` · `P-14` · `P-15` |
+
+Los 12 pasos de la cadena pasan. Costó tres hallazgos: `R-60` (pertenencia en los vínculos
+manuales), `R-78` (el vínculo no se creaba desde la recepción, de modo que en el orden natural
+no se creaba ninguno) y `R-79` (la evidencia de `GA-REM-008 AC01` no podía fallar, que es
+cómo `R-78` sobrevivió a una certificación previa).
+
+`GA-REM-008 AC01` vuelve a estar `EVIDENCED`: su afirmación demuestra por mutación que puede
+fallar.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

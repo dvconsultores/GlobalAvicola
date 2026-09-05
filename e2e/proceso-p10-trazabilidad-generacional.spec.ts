@@ -18,6 +18,10 @@
  * `GA-REM-030` cerró `R-60`: los vínculos manuales no comprobaban pertenencia, de modo que
  * podía fabricarse un vínculo entre dos compañías —un registro sin dueño posible, porque
  * `EggBatch` y `ChickBatch` no declaran `company_id`—.
+ *
+ * `GA-REM-031` cerró `R-78`: la creación vivía solo en la rama del despacho, que busca una
+ * recepción ya registrada, de modo que en el orden natural —se despacha antes de recibir—
+ * no se creaba ningún vínculo nunca.
  */
 import { test, expect } from '@playwright/test'
 import {
@@ -66,16 +70,7 @@ async function arbol(request: any, cab: any, lotId: number) {
 }
 
 test.describe('P-10 · cadena generacional completa', () => {
-  // `R-78`. La cadena que la spec describe **no funciona en el orden natural**. El vínculo
-  // se crea solo en la rama del despacho, que busca una recepción ya existente; las dos
-  // ramas de recepción se limitan a *actualizar* un vínculo previo (`if batch:`). Como en la
-  // operación real se despacha antes de recibir, no se crea ninguno.
-  //
-  // Se marca como fallo esperado en vez de borrarse o suavizarse: la prueba dice lo que la
-  // spec exige, y el día que `R-78` se corrija pasará inesperadamente y obligará a revisar
-  // esta certificación. Un hallazgo escrito en una aserción avisa; en prosa se olvida.
   test('la cadena une tres generaciones y queda navegable en ambos sentidos', async ({ request }) => {
-    test.fail()
     const cab = await cabeceraAdmin(request)
     const { repro, incub, engorde } = await tresGeneraciones(request, cab)
 
@@ -147,9 +142,6 @@ test.describe('P-10 · cadena generacional completa', () => {
       .toContain(incub.lotId)
   })
 
-  // Mientras `R-78` siga abierto este negativo pasa **por el motivo equivocado** —no se crea
-  // ningún vínculo en ningún caso—, así que hoy no demuestra la abstención que pretende.
-  // Se conserva porque volverá a ser significativo en cuanto el positivo funcione.
   test('un despacho sin destino declarado no inventa el vínculo', async ({ request }) => {
     const cab = await cabeceraAdmin(request)
     const { repro, incub } = await tresGeneraciones(request, cab)

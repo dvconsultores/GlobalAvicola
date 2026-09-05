@@ -357,3 +357,24 @@ El mapa anterior daba `R-60` como lo único que separaba a `P-10` de la certific
 cierto según los artefactos de entonces y ha resultado falso: la certificación de
 `GA-REM-008 AC01` se apoyaba en una aserción vacua, así que la distancia real nunca fue
 visible en ninguna matriz.
+
+
+---
+
+## `P-10` · resuelto (2026-09-05)
+
+```
+R-60  pertenencia en los vínculos manuales     CERTIFIED (GA-REM-030)
+R-78  la recepción no creaba el vínculo        CERTIFIED (GA-REM-031)
+R-79  la evidencia de AC01 no podía fallar     CERTIFIED (GA-REM-016 enm. F)
+  └─→ P-10 = CERTIFIED · 12 de 12 pasos
+```
+
+La cadena de causas merece quedar dicha, porque es la lección del tramo:
+
+```
+R-79 (evidencia vacua)  permitió que  R-78 (defecto de dominio)  sobreviviera a
+GA-REM-008, y R-78 mantenía P-10 en PARTIAL sin que ninguna matriz lo mostrara.
+```
+
+Ninguna de las tres se veía desde fuera. Solo aparecieron al recorrer el proceso entero.

@@ -126,21 +126,22 @@ ningún `>= 0` en esta suite.
 
 | Caso | Qué comprueba | ¿Podría fallar? |
 |---|---|:--:|
-| la cadena une tres generaciones | los 12 pasos, con cantidades y fechas por igualdad y el back-link `egg_batch_id` | **falla hoy** — `test.fail()`, `R-78` |
-| sin destino declarado no se inventa | ausencia de vínculo | sí, pero **hoy pasa por el motivo equivocado** (§ abajo) |
+| la cadena une tres generaciones | los 12 pasos, con cantidades y fechas por igualdad y el back-link `egg_batch_id` | sí — sin `R-78` corregido, 0 vínculos |
+| sin destino declarado no se inventa | ausencia de vínculo | sí — recuperó su significado al funcionar el positivo |
 | ningún lote consigo mismo | `source ≠ destino` en todo vínculo | sí |
 | el enlace manual sigue disponible | vínculo creado y visible en el árbol | sí |
 | `R-60` · no se cruzan compañías | 400 `BR-07`, CONTROL 201, sin efectos | sí — sin la guarda daba 201 |
 
-### El caso marcado como fallo esperado
+### El caso que estuvo marcado como fallo esperado
 
-Dice lo que `spec.md §4.9` exige y hoy no ocurre. Se marca en vez de borrarse o suavizarse:
-cuando `R-78` se corrija pasará **inesperadamente** y obligará a revisar la certificación.
+Mientras `R-78` estuvo abierto llevó `test.fail()`, para que la exigencia de la spec viviera
+en una aserción y no solo en prosa. Al corregirse pasó **inesperadamente** —lo que se
+buscaba— y la marca se retiró.
 
-### Un negativo que hoy no prueba lo que dice
+### Un negativo que recuperó su significado
 
-Mientras `R-78` siga abierto, «sin destino declarado no se inventa el vínculo» pasa porque
-**no se crea ninguno en ningún caso**. Se conserva y se anota; no se cuenta como evidencia.
+«Sin destino declarado no se inventa el vínculo» pasaba antes porque no se creaba ninguno en
+ningún caso. Con el positivo funcionando, comprueba una abstención real.
 
 ### Precondiciones construidas, no supuestas
 

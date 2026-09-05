@@ -25,7 +25,9 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
-from tests.time_reference import days_ago, iso_days_ago, reference_today
+from tests.time_reference import (
+    days_ago, iso_days_ago, reference_today, reference_today_utc,
+)
 
 PREFIJO = "SD-TEST-"
 
@@ -101,7 +103,10 @@ async def test_t_047_01_la_fecha_declarada_se_persiste(client, auth_headers, see
     assert lote.start_date.date() == days_ago(DIAS_DE_VIDA)
 
     # `AC04` y `AC11` · el alta en el software es hoy, y es otra cosa.
-    assert lote.created_at.date() == reference_today()
+    # `R-80` · `created_at` es un instante UTC; se compara con el día UTC. Antes se
+    # contrastaba con el día local del servidor y la prueba se rompía sola entre una
+    # medianoche y otra. La intención —«el alta es de hoy»— no cambia.
+    assert lote.created_at.date() == reference_today_utc()
     assert lote.start_date.date() != lote.created_at.date(), (
         "para un lote ya en marcha, el inicio del ciclo y el alta deben diferir"
     )
@@ -256,7 +261,10 @@ async def test_t_047_05_la_activacion_manual_no_pisa_la_fecha_con_hoy(
         "la activación no puede sustituir el inicio del ciclo por la fecha de hoy"
     )
     assert lote.start_date.date() != reference_today()
-    assert lote.created_at.date() == reference_today(), "el alta sigue siendo hoy"
+    # `R-80` · `created_at` es un instante UTC; se compara con el día UTC. Antes se
+    # contrastaba con el día local del servidor y la prueba se rompía sola entre una
+    # medianoche y otra. La intención —«el alta es de hoy»— no cambia.
+    assert lote.created_at.date() == reference_today_utc(), "el alta sigue siendo hoy"
 
     # `AC06` · el saldo de apertura de `R-67` sigue intacto.
     assert apertura.initial_male_count == 1_000

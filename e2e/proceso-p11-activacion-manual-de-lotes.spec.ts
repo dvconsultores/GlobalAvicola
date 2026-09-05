@@ -21,7 +21,7 @@
 import { test, expect } from '@playwright/test'
 import {
   API, cabeceraAdmin, cabeceraAdminEnOtraEmpresa, cabeceraAprobador, cabeceraOtraEmpresa,
-  crearMaestros, empresaActiva, hoy, registrar, sufijo,
+  crearMaestros, empresaActiva, hoy, hoyUtc, registrar, sufijo,
 } from '../test-support/e2e-api'
 
 /** Un lote de reproductoras a mitad de ciclo: la situación real que se incorpora. */
@@ -102,7 +102,10 @@ test.describe('P-11 · Activación manual de lotes existentes', () => {
     // TEMPORALIDAD · el lote representa uno ya en marcha, no uno recién iniciado (`R-47`).
     const antes = await (await request.get(`${API}/lots/${esc.lotId}`, { headers: cab })).json()
     expect(antes.start_date.slice(0, 10), 'el inicio del ciclo es histórico').toBe(haceDias(DIAS_DE_VIDA))
-    expect(antes.created_at.slice(0, 10), 'el alta en el software es hoy').toBe(hoy())
+    // `R-80` · `created_at` es un instante UTC y se contrasta con el día UTC; `start_date`
+    // es una fecha de negocio y va con `hoy()`. Mezclar los marcos rompía la prueba sola
+    // entre la medianoche local y la UTC.
+    expect(antes.created_at.slice(0, 10), 'el alta en el software es hoy').toBe(hoyUtc())
     expect(antes.start_date.slice(0, 10)).not.toBe(antes.created_at.slice(0, 10))
 
     const activacion = await activar(request, cab, esc.lotId, fase, {

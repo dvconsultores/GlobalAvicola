@@ -3,11 +3,13 @@
 2026-09-05 · `spec.md §4.9` · `GA-REM-016`
 
 ```
-P-10 = PARTIAL — BLOCKED_BY_DEFECT (R-78)
+P-10 = CERTIFIED     (2026-09-05, tras GA-REM-031)
 ```
 
-**No se certifica.** El proceso tiene un defecto que impide su requisito central, descubierto
-precisamente al ejercitar la cadena entera en vez de un endpoint suelto.
+> **Historia de este informe.** Su primera versión declaró `PARTIAL — BLOCKED_BY_DEFECT`
+> porque al ejercitar la cadena entera apareció `R-78`. Se conserva la estructura y se
+> actualiza el veredicto; el diagnóstico de entonces no se borra, porque es la razón de que
+> este proceso se certifique de verdad y no por capacidad.
 
 ---
 
@@ -33,14 +35,14 @@ Engorde      · bird_reception         ┘
 |:--:|---|:--:|---|
 | 1 | `egg_dispatch` | **PASS** | E2E `P-10` |
 | 2 | `egg_reception_hatchery` | **PASS** | E2E `P-10` |
-| 3 | `EggBatch` automático entre lotes distintos | **FAIL** | **`R-78`** |
-| 4 | La recepción completa el `EggBatch` | **BLOCKED** | depende del 3 |
+| 3 | `EggBatch` automático entre lotes distintos | **PASS** | `GA-REM-031 AC01` · E2E |
+| 4 | La recepción completa el `EggBatch` | **PASS** | `GA-REM-031 AC04` |
 | 5 | `chick_dispatch` | **PASS** | E2E `P-10` |
 | 6 | `bird_reception` | **PASS** | E2E `P-10` |
-| 7 | `ChickBatch` con `egg_batch_id` | **BLOCKED** | depende del 3 |
-| 8 | Navegación bidireccional | **BLOCKED** | sin vínculos que navegar |
+| 7 | `ChickBatch` con `egg_batch_id` | **PASS** | `GA-REM-031 AC05` |
+| 8 | Navegación bidireccional | **PASS** | E2E `P-10` |
 | 9 | Ningún vínculo auto-referencial | **PASS** | E2E `P-10` |
-| 10 | Sin destino declarado no se inventa | **PASS**, pero sin valor hoy (§5) | E2E `P-10` |
+| 10 | Sin destino declarado no se inventa | **PASS** | E2E `P-10` |
 | 11 | Enlace manual + pertenencia | **PASS** | E2E + `R-60-CERTIFICATION.md` |
 | 12 | Aislamiento por compañía | **PASS** | `GA-REM-008 AC06` + `R-60` |
 
@@ -115,35 +117,37 @@ GA-REM-008 · AC01 = NOT_EVIDENCED  (el informe histórico se conserva sin modif
 Es la clase exacta de defecto que `R-72` describió y que la Puerta de Validez existe para
 atrapar. Aquí la atrapó.
 
-## 5. Una prueba que hoy pasa por el motivo equivocado
+## 5. El negativo vuelve a significar algo
 
-El paso 10 —«sin destino declarado no se inventa el vínculo»— pasa, pero mientras `R-78` siga
-abierto **no demuestra nada**: no se crea ningún vínculo en ningún caso. Vuelve a ser
-significativa en cuanto el positivo funcione. Se conserva y se anota, en lugar de contarla
-como evidencia.
+El paso 10 —«sin destino declarado no se inventa el vínculo»— pasaba mientras `R-78` estaba
+abierto **por el motivo equivocado**: no se creaba ningún vínculo en ningún caso. Con el
+positivo funcionando, la abstención que comprueba vuelve a ser una propiedad y no una
+casualidad.
 
 ## 6. La cadena, marcada donde falla
 
 `e2e/proceso-p10-trazabilidad-generacional.spec.ts` · 5 casos · `API_E2E`.
 
-El caso de la cadena completa lleva `test.fail()`: dice lo que la spec exige y hoy no ocurre.
-No se borra ni se suaviza. El día que `R-78` se corrija, pasará **inesperadamente** y obligará
-a revisar esta certificación en lugar de dejarla envejecer en silencio.
+El caso de la cadena completa llevó `test.fail()` mientras `R-78` estuvo abierto, para que la
+spec siguiera dicha en una aserción y no solo en prosa. Al corregirse pasó **inesperadamente**
+—que es justo lo que se buscaba— y la marca se retiró.
 
-## 7. Lo que sí queda certificado
+## 7. Los tres hallazgos que costó certificar este proceso
 
-```
-R-60 = CERTIFIED
-```
+| | |
+|---|---|
+| `R-60` | pertenencia y coherencia en los vínculos manuales · `GA-REM-030` · `R-60-CERTIFICATION.md` |
+| `R-78` | el vínculo no se creaba desde la recepción · `GA-REM-031` |
+| `R-79` | la evidencia de `GA-REM-008 AC01` no podía fallar · `GA-REM-016` enmienda F |
 
-Pertenencia y coherencia en los vínculos manuales, con sensibilidad demostrada sobre las tres
-reglas. Detalle en `R-60-CERTIFICATION.md`.
+Los tres con sensibilidad demostrada por mutación controlada y revertida.
 
-## 8. Qué falta para certificar `P-10`
+## 8. Modalidad de la evidencia
 
-1. `R-78` — que el vínculo se cree también desde la recepción. Necesita spec propia.
-2. Reejecutar la cadena y retirar el `test.fail()`.
-3. Cubrir los pasos 4, 7 y 8, hoy bloqueados.
+`API_E2E` de proceso, conforme a `GA-REM-016 AC05`: la unidad certificada es el proceso de
+negocio, nunca una pantalla, un endpoint o un componente. `spec.md §4.9` no exige interfaz
+para ninguna de sus reglas, así que **no se fabricaron pruebas de interfaz** para conservar
+vocabulario.
 
 ## 9. Sobre la recomendación anterior
 

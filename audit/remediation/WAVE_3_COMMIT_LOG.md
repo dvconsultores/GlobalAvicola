@@ -388,3 +388,24 @@ Hallazgos nuevos: `R-78` (P1, el vínculo automático no se crea en el orden nat
 (P2, la prueba de `GA-REM-008 AC01` no puede fallar). Ninguno se corrige aquí.
 
 Regresión: backend **330 · 49 omitidas · 0 fallos**; E2E **85/85**; frontend sin cambios.
+
+
+---
+
+## `GA-REM-031` · el vínculo generacional desde la recepción
+
+```
+R-78 = CERTIFIED   R-79 = CERTIFIED   P-10 = CERTIFIED
+CERTIFIED 6 / 15   PARTIAL 9 / 15
+```
+
+Spec y enmienda comprometidas y publicadas antes del código (`8060c2c`). Prueba corregida
+antes que la aplicación: roja por la causa exacta —0 vínculos tras una recepción válida—.
+
+Sensibilidad: al desactivar la creación fallan 3 pruebas de recepción y la de
+`GA-REM-008 AC01`, que es la certificación simultánea de `R-79`; las 9 de pertenencia siguen
+verdes. `git diff` limpio tras revertir.
+
+Hallazgo nuevo `R-80` (P2, abierto): día de negocio local frente a `created_at` en UTC.
+
+Regresión: backend **335 · 49 omitidas · 0 fallos**; E2E **85/85**; frontend sin cambios.
