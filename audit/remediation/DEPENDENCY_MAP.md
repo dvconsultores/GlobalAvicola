@@ -217,3 +217,70 @@ intermitentes.
 | `GA-REM-026` | ninguna | causa raíz única, sin prerrequisitos |
 | `GA-REM-005` enmienda | `RC-08` / `RR-08` | resolución de requisito previa a la implementación |
 | `GA-REM-016` | `GA-REM-026` | **desbloqueada**: el baseline E2E ya puede medir defectos reales |
+
+
+---
+
+## Decisión de continuidad (2026-09-05) — `GA-REM-027` → `GA-REM-016`
+
+El propietario autoriza reanudar `GA-REM-016` sin que `GA-REM-027` esté `CERTIFIED`.
+
+```
+GA-REM-027 → GA-REM-016
+DEPENDENCY STATUS = DEFERRED_VERIFICATION
+```
+
+Se usa `DEFERRED` —vocabulario ya presente en el registro— cualificado como verificación
+diferida. No se inventa un estado nuevo.
+
+### La regla que sustituye a la anterior
+
+Antes: `GA-REM-027` debía estar `CERTIFIED` para reanudar. Ahora `GA-REM-016` puede
+reanudarse cuando:
+
+| # | Condición | Estado |
+|--:|---|---|
+| 1 | La implementación de `GA-REM-027` está desplegada | **sí** — `f46cb13` |
+| 2 | La validación estática de configuración pasa | **sí** — analizador oficial, status ok |
+| 3 | La API pública está sana | **sí** — `L2` y `L3` en 200 |
+| 4 | No se reproduce ningún defecto conocido de resolución | **sí** — 0/60 muestreos |
+| 5 | Una recreación controlada de backend no deja «backend sano + proxy roto» | **sí** — ciclo del 14:34 |
+| 6 | El trabajo restante de `GA-REM-027` es **solo de verificación** | **sí** — `AC08` |
+| 7 | Esa verificación pendiente no invalida el entorno E2E aislado de `GA-REM-016` | **sí** — el arnés no atraviesa ese proxy |
+
+La séptima es la que hace defendible la decisión: `scripts_e2e.sh` levanta backend y
+frontend con puertos propios y **no usa el nginx del contenedor**, de modo que el hueco de
+verificación de `GA-REM-027` no puede contaminar la certificación E2E.
+
+### Clasificación del hueco
+
+```
+DEFECTO DE IMPLEMENTACIÓN CONOCIDO ABIERTO ...... NO
+FALLO DE EJECUCIÓN OBSERVADO ACTUALMENTE ....... NO
+API PÚBLICA .................................... SANA
+VALIDACIÓN ESTÁTICA DE CONFIGURACIÓN ........... PASS
+RECREACIÓN CONTROLADA DE BACKEND ............... PASS
+MUESTREOS «BACKEND SANO + PROXY ROTO» .......... 0 / 60
+CAMBIO DE IP DEL BACKEND VERIFICADO ............ NO
+CICLOS DE RE-IP REPETIDOS EXIGIDOS ............. NO VERIFICADOS
+
+GA-REM-027 = PARTIAL — HUECO DE VERIFICACIÓN
+```
+
+La evidencia de comportamiento es fuerte; la evidencia completa de `AC08` falta. Son cosas
+distintas y se registran por separado.
+
+### Condición de interrupción
+
+Mientras `GA-REM-027` siga `PARTIAL`, si durante la Wave 3 vuelve a observarse:
+
+```
+salud directa del backend = PASS
++
+ruta pública / proxy      = FAIL
+```
+
+se **detiene `GA-REM-016`** y `GA-REM-027` se reabre como bloqueante. No se certifica E2E
+sobre un proxy defectuoso conocido. El gate
+`backend/scripts/runtime_connectivity_check.py` distingue esos dos niveles precisamente
+para que la condición sea comprobable en un solo comando.

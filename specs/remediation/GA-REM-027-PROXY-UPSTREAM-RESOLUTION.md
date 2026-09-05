@@ -136,3 +136,35 @@ de forma permanente y visible.
 - `AC01`…`AC07` con evidencia.
 - Informe del incidente publicado.
 - `L3` —la ruta pública hacia la API— verificada en verde tras el despliegue.
+
+
+---
+
+## Decisión de continuidad (2026-09-05)
+
+El propietario autoriza reanudar `GA-REM-016` sin declarar esta spec `CERTIFIED`.
+
+```
+GA-REM-027 = PARTIAL — HUECO DE VERIFICACIÓN
+```
+
+**`AC08` sigue abierto y no se relaja.** No se elimina, no se reescribe y una recreación
+correcta de backend **no** equivale a un cambio de IP verificado.
+
+### Trabajo pendiente, cuando exista acceso al host
+
+```
+1.  docker inspect → IP del backend ANTES
+2.  recrear exclusivamente el backend
+3.  confirmar que el frontend sigue intacto
+4.  docker inspect → IP del backend DESPUÉS
+5.  demostrar que las direcciones difieren
+6.  comprobar la salud directa del backend
+7.  comprobar la ruta pública a través del proxy
+8.  repetir los ciclos que exige esta spec
+9.  registrar los tiempos de recuperación
+10. solo entonces reevaluar como CERTIFIED
+```
+
+También pendiente: `nginx -t` y `nginx -T` dentro del contenedor, para comprobar que la
+configuración **efectiva** coincide con la del repositorio. Publicar no es desplegar.

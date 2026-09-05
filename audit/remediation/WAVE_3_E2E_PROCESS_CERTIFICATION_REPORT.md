@@ -315,7 +315,7 @@ casos que se ejecutan y pasan.
 | **`R-59`** | Un maestro hijo admitía un padre de otra empresa | **P1** | **corregido** (`GA-REM-002 AC10`) |
 | `R-60` | Las claves de trazabilidad no comprueban pertenencia | P2 | abierto → `GA-REM-008`. Solo alcanzable por Super Admin |
 | `R-61` | Dos instalaciones de Playwright con versiones distintas | P3 | abierto → `GA-REM-019` |
-| `R-62` | 23 tests heredados rotos por una interfaz de junio de 2026 | P2 | abierto → `GA-REM-019` |
+| `R-62` | 23 tests heredados fallando | P2 | **clasificado** 2026-09-05 → [`PLAYWRIGHT_FAILURE_CLASSIFICATION.md`](PLAYWRIGHT_FAILURE_CLASSIFICATION.md). El diagnóstico preliminar («interfaz de junio de 2026») se cumple en **12 de 23**; los otros 11 fallan por credenciales o falta de autenticación |
 
 Todos `PRE_EXISTING_NEWLY_DISCOVERED`. **`INTRODUCED_BY_REMEDIATION`: 0.**
 

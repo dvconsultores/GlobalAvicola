@@ -115,3 +115,18 @@ caso.
 El arnés levanta la aplicación con el entrypoint de producción y ejecuta las 59 pruebas
 contra ella. Que los 21 casos de `procesos` sigan en verde tras dos cambios en la capa
 transaccional y en la regla de balance es, por sí solo, una regresión superada.
+
+
+---
+
+## 9. Clasificación (2026-09-05)
+
+Los 23 casos que este documento congela están clasificados uno a uno en
+[`PLAYWRIGHT_FAILURE_CLASSIFICATION.md`](PLAYWRIGHT_FAILURE_CLASSIFICATION.md).
+
+```
+DEFECTOS DE APLICACIÓN ....  0 / 23
+DEFECTOS DE LOS TESTS ..... 23 / 23
+```
+
+Este baseline **no se modifica**: es evidencia histórica. La clasificación vive aparte.
