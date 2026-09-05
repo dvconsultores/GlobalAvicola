@@ -76,3 +76,38 @@ Los sondeos de puertos de la verificación posterior al push iban al host de la 
 datos**, no al de la aplicación. Por eso daban tiempos de espera agotados y se leyeron como
 «no alcanzable». Corregido aquí; la conclusión anterior sobre la base de datos —inalcanzable
 desde esta red— sigue siendo válida, pero era sobre otra máquina.
+
+
+---
+
+## Modelo de dos máquinas
+
+Explícito, porque confundirlas ya costó un diagnóstico equivocado.
+
+| | Host de aplicación | Host de base de datos |
+|---|---|---|
+| Dirección | **84.247.161.106** | **64.225.104.69** |
+| Nombre | `avicola.globaldv.net` | — |
+| Qué ejecuta | `openresty` → contenedor frontend (nginx) → contenedor backend (uvicorn) → Watchtower | PostgreSQL |
+| Puertos observados desde fuera | 443 (público), 8002 (backend directo), 3005 (frontend directo) | 5432 |
+| Alcanzable desde esta red | sí | **no** — acepta TCP y corta el intercambio |
+| Fuente | resolución DNS del dominio | `backend/.env` `DATABASE_URL` |
+
+**Regla operativa**: cualquier sondeo nuevo deriva su host de la topología real —resolución
+del dominio o configuración— y **nunca** de una IP recordada de un informe anterior. Los
+sondeos de puertos del informe posterior al push iban al host de la base de datos y se
+leyeron como «la aplicación no responde».
+
+## Gate de conectividad de ejecución
+
+`backend/scripts/runtime_connectivity_check.py` (`GA-REM-027`) mide los tres niveles por
+separado y deja constancia explícita de que la SPA no es evidencia del backend:
+
+```
+python -m scripts.runtime_connectivity_check \
+    --public https://avicola.globaldv.net \
+    --direct http://84.247.161.106:8002
+```
+
+Cierra el hueco de la fila «Resolución del upstream por el proxy» de la matriz anterior: el
+salto que ninguna prueba recorría.

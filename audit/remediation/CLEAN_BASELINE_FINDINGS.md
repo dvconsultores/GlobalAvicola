@@ -163,7 +163,7 @@ decisión, y el propietario puede haber querido exactamente esa restricción. De
 
 ## `R-71` — El proxy resolvía el backend una sola vez, al arrancar
 
-**P0** · dejó la API inalcanzable ocho horas · **`CERTIFIED` 2026-09-05**
+**P0** · dejó la API inalcanzable ocho horas · **`PARTIAL` 2026-09-05**
 
 No lo descubrió el baseline limpio sino el incidente del `502`, pero se registra aquí por
 continuidad del numerado.
@@ -183,8 +183,13 @@ Llevaba ahí desde que existe el despliegue automático. Lo tapaba la suerte: si
 reasigna la misma IP, la caché sigue siendo válida por casualidad — que es lo que ocurrió en
 la publicación inmediatamente anterior, con un `502` de cuatro minutos que se resolvió solo.
 
-**Resuelto** por `GA-REM-027`. Detalle en
-[`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).
+**Corregido** por `GA-REM-027`, con la corrección desplegada y un ciclo de recreación
+observado: el backend se destruyó y recreó, el frontend siguió intacto y la API se recuperó
+sola. Queda `PARTIAL` porque el cambio efectivo de IP no es observable sin acceso al host, y
+sin eso no se puede afirmar que el ciclo demostrara el arreglo y no una reasignación
+afortunada. Detalle en
+[`GA-REM-027-PROXY-RESOLUTION-CERTIFICATION.md`](GA-REM-027-PROXY-RESOLUTION-CERTIFICATION.md)
+y [`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).
 
 ---
 
@@ -192,7 +197,7 @@ la publicación inmediatamente anterior, con un `502` de cuatro minutos que se r
 
 | ID | Título | Prior. | Estado |
 |---|---|:--:|---|
-| `R-71` | El proxy resolvía el backend una sola vez, al arrancar | **P0** | **`CERTIFIED`** — `GA-REM-027` |
+| `R-71` | El proxy resolvía el backend una sola vez, al arrancar | **P0** | **`PARTIAL`** — `GA-REM-027`, corregido y desplegado |
 | `R-68` | Escritura no visible para la petición inmediata | **P0** | **`CERTIFIED`** — `GA-REM-026` |
 | `R-67` | El saldo de apertura no alimenta el saldo de aves | **P1** | **`CERTIFIED`** — `GA-REM-005` enmienda |
 | `R-65` | 500 en `/audit/{log_id}` no-UUID | P2 | abierto → `GA-REM-019` |

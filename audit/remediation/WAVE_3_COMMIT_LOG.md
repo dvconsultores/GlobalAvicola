@@ -292,3 +292,37 @@ la recuperación exige código versionado— y porque el backend no estaba caíd
 
 Estado: `RESOLVED`. Detalle en
 [`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).
+
+
+---
+
+## 9. `GA-REM-027` — certificación de la resolución del upstream (2026-09-05)
+
+| Commit | Contenido | Imagen reconstruida |
+|---|---|---|
+| `f46cb13` | `fix(proxy): resolver el upstream en cada petición` | **frontend** |
+| `a9c90a4` | `test(runtime): gate de conectividad de los tres niveles` | **backend** |
+
+El segundo commit es deliberadamente de solo `backend/`: da la recreación de backend con el
+frontend intacto que la certificación necesitaba. El primero no servía como prueba, porque
+reconstruía el frontend y recrear ese contenedor limpia la caché de DNS por sí solo.
+
+### Ciclo observado
+
+```
+14:33:09  imagen de backend publicada
+14:34:18  L2=000  L3=502   contenedor de backend destruido
+14:34:39  L2=200  L3=200   recuperación automática
+frontend  imagen y ETag invariables durante todo el ciclo
+```
+
+### Estado
+
+```
+GA-REM-027 = PARTIAL
+```
+
+Pasan once de los doce criterios. Falta `AC08`: un solo ciclo, y el cambio efectivo de IP no
+es observable sin acceso al host. Se documenta en lugar de inflarlo.
+
+Regresión: backend 307 pasados / 0 fallos; tsc, vitest 61/61, i18n 866=866, deriva 0.

@@ -199,7 +199,8 @@ real (`GA-REM-017`).
 
 ## 9. Incidente del 502 (2026-09-05) — `R-71`
 
-`R-71` queda **`CERTIFIED`** por `GA-REM-027`. No añade bloqueante; sí deja una lección para
+`R-71` queda **`PARTIAL`** por `GA-REM-027`: corregido y desplegado, con un ciclo de
+recreación observado; la confirmación del cambio de IP exige acceso al host. No añade bloqueante; sí deja una lección para
 el gate de producción real.
 
 **Ninguna prueba de este repositorio recorría el salto proxy → backend.** `startup_test.sh`
@@ -213,4 +214,17 @@ posterior al despliegue que atraviese el proxy, no solo el arranque del contened
 ```
 READY_FOR_SHARED_TEST      = YES
 READY_FOR_REAL_PRODUCTION  = NOT_YET_CERTIFIED
+```
+
+
+### Gate de conectividad de ejecución
+
+El hueco anotado arriba ya tiene herramienta: `backend/scripts/runtime_connectivity_check.py`
+mide `L2` y `L3` por separado y deja constancia de que la SPA no es evidencia del backend.
+
+Para producción real conviene incorporarlo al procedimiento posterior al despliegue. No es
+una prueba E2E funcional; es un **gate de conectividad de ejecución**:
+
+```
+CONTAINER START → DIRECT BACKEND HEALTH → PUBLIC API HEALTH
 ```

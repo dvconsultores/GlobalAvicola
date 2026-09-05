@@ -22,6 +22,7 @@ CATEGORÍA DE CAUSA RAÍZ = REVERSE_PROXY
 DISPARADOR              = recreación del contenedor por Watchtower
 COMMIT CULPABLE         = ninguno
 ESTADO DEL INCIDENTE    = RESOLVED
+CAUSA RAÍZ              = CONFIRMED  (ciclo de recreación observado)
 ```
 
 ## 2. Clasificación del entorno
@@ -342,3 +343,44 @@ READY_TO_RESUME_GA_REM_016 = YES
 | Dos máquinas distintas | resolución DNS del dominio frente a `backend/.env` |
 | Caché de DNS en nginx | ausencia de `resolver` en `frontend/nginx.conf` |
 | Recuperación espontánea previa | observación del `502` de 4 min tras `sha-f5f6d88` |
+
+
+---
+
+## 24. Confirmación posterior (2026-09-05, 14:34 UTC)
+
+La causa raíz pasa de **hipótesis sostenida por evidencia** a **`CONFIRMED`**.
+
+Y hay que corregir algo de este mismo informe: la recuperación de las 14:10 **no demostraba
+que el arreglo funcionase**. Aquel push tocaba `frontend/nginx.conf`, así que reconstruyó la
+imagen de frontend y Watchtower recreó ese contenedor — y recrear el contenedor limpia la
+caché de DNS por sí solo. Es el caso que el encargo advierte en su §49.
+
+La demostración correcta exigía lo contrario: recrear el **backend** dejando el frontend
+intacto. Se hizo publicando un cambio que solo toca `backend/`:
+
+```
+14:33:09  imagen de backend publicada; la de frontend no cambia
+14:34:13  L2=200  L3=200
+14:34:18  L2=000  L3=502   ← contenedor de backend destruido
+14:34:34  L2=000  L3=502
+14:34:39  L2=200  L3=200   ← recuperación automática, sin tocar el frontend
+```
+
+El ETag de `index.html` y la imagen de frontend permanecieron invariables durante todo el
+ciclo: el contenedor de frontend nunca se reinició.
+
+`L2=000` prueba que el contenedor fue destruido y no recargado. `L3=502` **solo** mientras
+`L2=000`: el proxy falló durante la ausencia real del backend y ni un muestreo más.
+
+Contraste con el mismo disparador antes del arreglo:
+
+```
+09-05 05:25   recreación → 502 durante más de 8 horas
+09-05 14:34   recreación → 502 durante ~25 s, solo mientras el contenedor no existía
+```
+
+Lo que **sigue sin demostrarse** es que la IP cambiara en este ciclo concreto: no es
+observable sin acceso al host. Por eso `GA-REM-027` queda **`PARTIAL`** y no `CERTIFIED`.
+Detalle en
+[`GA-REM-027-PROXY-RESOLUTION-CERTIFICATION.md`](GA-REM-027-PROXY-RESOLUTION-CERTIFICATION.md).
