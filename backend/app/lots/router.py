@@ -76,14 +76,19 @@ async def update_lot(
     return schemas.LotRead.model_validate(lot)
 
 
-@router.post("/{lot_id}/close")
+@router.post("/{lot_id}/close", response_model=schemas.LotClosureSummary)
 async def close_lot(
     lot_id: int,
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("lots", "create")),
 ):
-    lot = await _service(db, current_user).close_lot(lot_id)
-    return schemas.LotRead.model_validate(lot)
+    """
+    `BR-05` / `G-09`. Cierra el lote y devuelve su resumen final.
+
+    `GA-REM-029 AC02`. Antes validaba el resultado como `LotRead`, pero el servicio
+    devuelve un resumen, no el lote: eran cuatro fuentes concordantes contra una línea.
+    """
+    return await _service(db, current_user).close_lot(lot_id)
 
 
 # ============================================================

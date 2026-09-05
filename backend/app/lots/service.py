@@ -9,6 +9,15 @@ def _dia(valor: datetime | date) -> date:
     return valor.date() if isinstance(valor, datetime) else valor
 
 
+def _fecha_de_negocio(valor: datetime | date) -> datetime:
+    """Un día del calendario anclado a medianoche UTC, listo para una columna con zona.
+
+    `R-75`. Vale para cualquier fecha de negocio del lote, no solo la de inicio: `end_date`
+    es la misma columna `DateTime(timezone=True)` y arrastraba el mismo desfase.
+    """
+    return datetime.combine(_dia(valor), time.min, tzinfo=timezone.utc)
+
+
 def _inicio_declarado(valor: datetime | date | None) -> datetime:
     """Inicio del ciclo, anclado a medianoche UTC.
 
@@ -23,8 +32,7 @@ def _inicio_declarado(valor: datetime | date | None) -> datetime:
     """
     if valor is None:
         valor = date.today()
-    dia = _dia(valor)
-    return datetime.combine(dia, time.min, tzinfo=timezone.utc)
+    return _fecha_de_negocio(valor)
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -33,6 +41,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..masters.models import Lot
 from ..tenancy import verificar_pertenencia
+from ..operations.validators import validate_lot_closure
 from ..operations.models import (
     OperationalEvent, EventType, EventStatus,
     BirdMovement, FeedMovement, EggMovement,
@@ -139,6 +148,13 @@ class LotService:
                 detail="Solo se pueden cerrar lotes activos",
             )
 
+        # `R-74` / `GA-REM-029 AC05`. `BR-05` exige pesaje y alimento antes de cerrar, sin
+        # los cuales el resumen final no tiene base para el FCR. La guarda existía, pero
+        # colgaba del evento `lot_closure`, que **no cierra el lote**: este endpoint es el
+        # único sitio del backend que asigna `status = "closed"`. Vigilaba la puerta
+        # equivocada, y el audit la daba por vigente justamente aquí.
+        await validate_lot_closure(self.db, lot_id)
+
         # Calculate final summary
         # Total mortality
         mort_q = select(func.coalesce(func.sum(BirdMovement.quantity), 0)).join(
@@ -213,7 +229,11 @@ class LotService:
         }
 
         lot.status = "closed"
-        lot.end_date = date.today()
+        # `R-75`. Escribir `date.today()` en una columna con zona lo guardaba a medianoche
+        # **local**, de modo que el lote cerrado hoy se releía como cerrado ayer: el resumen
+        # decía una fecha y el registro otra. Es el mismo desfase que `GA-REM-028` corrigió
+        # en `start_date`, que quedó sin aplicar al campo hermano.
+        lot.end_date = _fecha_de_negocio(date.today())
         await self.db.flush()
         await self.db.refresh(lot)
 

@@ -218,3 +218,28 @@ class TraceabilityNode(BaseModel):
     egg_batches_received: list[EggBatchRead] = []    # batches received (hatchery)
     chick_batches_sent: list[ChickBatchRead] = []    # chicks dispatched to broiler
     chick_batches_received: list[ChickBatchRead] = []  # chicks received (broiler)
+
+
+# ============================================================
+# Cierre de lote
+# ============================================================
+
+class LotClosureSummary(BaseModel):
+    """
+    `GA-REM-029 AC02`. El resumen final que exige `BR-05`, declarado.
+
+    La ruta no tenía `response_model`, así que nadie fijó nunca el contrato: el servicio
+    devolvía este resumen y la ruta lo validaba como `LotRead`, de modo que **el cierre
+    respondía 500 siempre** (`R-73`). Tipado aquí, cualquier divergencia futura entre
+    servicio y ruta rompe en validación en vez de pasar inadvertida.
+    """
+    lot_id: int
+    lot_code: str
+    age_days: int
+    total_mortality: int
+    total_feed_kg: float
+    total_eggs: int
+    total_events: int
+    approved_events: int
+    status: str
+    end_date: date
