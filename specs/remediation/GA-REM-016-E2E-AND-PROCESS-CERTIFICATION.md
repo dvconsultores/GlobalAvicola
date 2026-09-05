@@ -122,3 +122,97 @@ Then  ninguna unidad certificada es una pantalla, un endpoint o un componente
 
 **Pasos 4–9 del orden pendientes.** El arnés (`scripts_e2e.sh`) y el patrón de casos están
 establecidos; continuar es trabajo de ejecución, no de diseño.
+
+
+---
+
+# ENMIENDA · RECUPERACIÓN DE LA SUITE HEREDADA
+
+**2026-09-05** · origen: clasificación de los 23 fallos de Playwright
+
+## E.1 Por qué hace falta enmendar
+
+El alcance §1 de esta spec dice «reparar la ejecutabilidad de las suites E2E (config,
+ubicación, datos)». Eso cubrió lo que la Wave 3 necesitaba: que los ficheros se
+descubrieran y se ejecutaran. Y `AC01` se cumple: los 59 casos se descubren y se ejecutan.
+
+Lo que no cubre —y por tanto no autoriza— es lo que ahora toca:
+
+```
+reparar la autenticación obsoleta de los tests
+reescribir tests contra el flujo vigente
+retirar tests superados por un cambio normativo de requisito
+```
+
+Un test que se ejecuta y falla **sí** es ejecutable. `AC01` no dice nada sobre si su
+contenido sigue siendo válido. Modificar veintitrés tests bajo esa cobertura sería estirar
+la spec para que quepa lo que ya se ha decidido hacer, que es exactamente lo que
+`NO SPEC = NO DEVELOPMENT` existe para impedir.
+
+## E.2 Qué establece la clasificación
+
+De los 23 fallos del baseline congelado (`15 PASS / 23 FAIL`):
+
+```
+DEFECTOS DE APLICACIÓN ....  0 / 23
+DEFECTOS DE LOS TESTS ..... 23 / 23
+```
+
+| Causa | Casos |
+|---|--:|
+| `TEST_CREDENTIAL_OBSOLETE` | 8 |
+| `TEST_MISSING_AUTHENTICATION` | 14 |
+| `TEST_OBSOLETE_UI_CONTRACT` | 12 |
+| `TEST_INVALID_EXPECTATION` | 1 |
+
+Los grupos se solapan: doce casos tienen dos causas. El universo sigue siendo **23**.
+
+Detalle en [`PLAYWRIGHT_FAILURE_CLASSIFICATION.md`](../../audit/remediation/PLAYWRIGHT_FAILURE_CLASSIFICATION.md).
+
+## E.3 El objetivo, dicho con precisión
+
+```
+NO ES:  hacer que Playwright se ponga verde
+ES:     restaurar cobertura válida de requisitos
+```
+
+Un test verde sin requisito detrás no certifica nada. Y un test que se retira sin sustituto
+**pierde** cobertura aunque la consola mejore. Las dos cosas son formas de engañarse.
+
+## E.4 Criterios de aceptación de la enmienda
+
+| AC | Criterio | Verificación |
+|---|---|---|
+| **AC06** | La suite heredada se autentica por el mecanismo E2E vigente: usuarios `test_*` y contraseñas del entorno. Ninguna credencial literal entra al repositorio | revisión del diff + ejecución |
+| **AC07** | Las afirmaciones funcionales de un test reparado **no se modifican** mientras representen un requisito vigente. Repararlo es quitarle el bloqueo, no reescribir lo que comprueba | comparación antes/después |
+| **AC08** | Todo test que se reescriba conserva la **intención funcional** del original y se ejecuta contra el flujo actual, nunca contra la ruta heredada | matriz de disposición |
+| **AC09** | Ningún test se retira sin evidencia normativa de que su requisito desapareció o fue sustituido, y sin comprobar que no se pierde cobertura obligatoria | matriz de disposición |
+| **AC10** | Cada uno de los 23 casos queda con una disposición razonada, no con un resultado | matriz de disposición, 23/23 |
+| **AC11** | Un test recuperado que descubra un desajuste entre spec y aplicación genera un **hallazgo**, no una corrección de código dentro del mismo cambio | registro de hallazgos |
+| **AC12** | Las afirmaciones recuperadas no son vacías: se demuestra que pueden fallar | prueba de mortalidad |
+
+## E.5 Disposiciones admitidas
+
+```
+REPAIR                 quitar el bloqueo; las afirmaciones no se tocan
+REWRITE                el requisito sigue vigente; el flujo cambió
+CORRECT_EXPECTATION    la afirmación nunca fue correcta
+RETIRED_SUPERSEDED     el requisito desapareció o fue sustituido, con evidencia
+BLOCKED_BY_SPEC_GAP    la spec no permite decidir; escala
+```
+
+## E.6 Restricciones
+
+No se corrige `TEST_CREDENTIAL_OBSOLETE` sembrando un usuario `admin` con contraseña
+`admin`: reintroduciría lo que `GA-REM-004` retiró. No se desactiva la autenticación de la
+aplicación, ni se añaden rutas públicas, ni se introduce ningún rodeo para que un test pase.
+La corrección vive en el test.
+
+Durante esta tanda **no se modifica código de negocio**: la clasificación establece 0
+defectos de aplicación. Si un test recuperado demuestra lo contrario, se detiene ese test y
+se abre un hallazgo (`AC11`).
+
+## E.7 Fuera del alcance de la enmienda
+
+Refactorizar la suite más allá de lo necesario · añadir cobertura nueva no exigida por un
+requisito · pruebas de accesibilidad automatizadas, que siguen en el backlog.
