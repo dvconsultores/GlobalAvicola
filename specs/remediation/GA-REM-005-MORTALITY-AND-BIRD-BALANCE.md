@@ -260,3 +260,120 @@ verificado por `tests/test_mortality.py::test_ac08_*` (3 tests).
 humedad. `docs/02 §3.14` no los enumera entre los tipos de alerta exigidos, de modo que
 quedan **fuera del alcance** de esta spec y se registran como `R-49` (P3) en
 `GA-REM-019`. No se amplía el alcance por simetría estética.
+
+
+---
+
+# ENMIENDA · `R-67` — EL SALDO DE APERTURA COMO FUENTE DEL BALANCE
+
+**2026-09-04** · origen: baseline limpio de `GA-REM-025` · prioridad **P1**
+
+Esta enmienda vive aquí y no en una spec nueva porque el alcance §2 de `GA-REM-005` es
+literalmente «reconstruir y documentar la regla de balance de aves». `R-67` es un hueco de
+esa misma regla.
+
+## E.1 El defecto
+
+`POST /lots/activate-manual` guarda un `OpeningBalance` con la población del lote, y
+`get_current_bird_balance` **no lo consulta**: suma únicamente movimientos de eventos de
+entrada. Ningún otro punto del código lo lee tampoco.
+
+```
+activate-manual → 201, initial_male=1000 initial_female=4000
+mortalidad de 12 → 400 «Mortalidad (12) excede el saldo de aves disponibles (0)»
+```
+
+Un lote incorporado manualmente queda **inoperable**: no admite mortalidad, ni descarte, ni
+salida. La regla vigente de esta spec lo describe sin advertirlo, en su tabla de casos
+límite: «primer evento del lote sin recepción previa → saldo 0 → rechazo coherente». Ese
+«coherente» sólo es cierto para un lote nuevo; para uno incorporado es un bloqueo.
+
+Importa porque la activación manual es el mecanismo previsto para incorporar **lotes ya en
+marcha cuando el sistema se instale en un cliente** (`docs/02 §3.9`, prioridad «Crítica
+(para implantación)»). Era invisible mientras todos los lotes del entorno compartido venían
+de eventos de recepción sembrados.
+
+## E.2 `RC-08` — qué significa «saldo inicial»
+
+Al resolverlo apareció una contradicción entre dos piezas existentes, y se resolvió por la
+jerarquía de evidencia de `REQUIREMENT_CONFLICT_RESOLUTION.md §1`.
+
+| Alternativa | Sostenida por |
+|---|---|
+| **A** · `initial_*_count` es el **saldo vivo** al activar; los acumulados son histórico para KPI | `docs/02 §3.9.1` distingue «**Saldos iniciales de aves** (machos/hembras)» de «**Mortalidad acumulada previa**» y «Descartes acumulados» · `docs/02 §3.9.2` «Se permite **continuar operación desde el saldo inicial**» y «**Se evita doble conteo**» · `reports/service.py:193` ya lo calcula así |
+| **B** · `initial_*_count` es la población original y hay que restarle los acumulados | el mensaje de `lots/service.py:209` «Mortalidad acumulada no puede exceder **población inicial**» |
+
+**Decisión: A · `RESOLVED_BY_EVIDENCE`, nivel 3 (documento de proceso operativo).**
+
+> **`RR-08`.** El saldo de apertura de un lote activado manualmente es
+> `initial_male_count + initial_female_count`. Los campos `accumulated_*` son **histórico
+> acumulado previo a la implantación**, capturados para continuidad de indicadores, y
+> **no se restan** del saldo: restarlos sería exactamente el doble conteo que
+> `docs/02 §3.9.2` prohíbe.
+
+La alternativa B se apoya sólo en el nivel 5 (implementación) y no puede contradecir al
+nivel 3.
+
+## E.3 Regla de balance, corregida
+
+```
+SALDO = saldo_de_apertura + Σ(entradas) − Σ(salidas)
+
+Saldo de apertura : initial_male_count + initial_female_count   (0 si no hay activación manual)
+Entradas          : bird_reception · birth_registration
+Salidas           : mortality_recording · cull_recording · bird_exit · chick_dispatch
+Neutros           : bird_transfer · bird_distribution            (RR-02, intra-lote)
+No participan     : accumulated_mortality_* · accumulated_culls_*  (histórico, RR-08)
+```
+
+## E.4 Cómo se evita el doble conteo
+
+`docs/02 §3.9.2` exige «Se evita doble conteo» y hasta ahora **nada lo implementaba**.
+Un lote que ya tuviera eventos de recepción y recibiera además un saldo de apertura
+contaría dos veces las mismas aves.
+
+La activación manual pasa a rechazarse si el lote ya tiene eventos que afectan al balance.
+Es coherente con su propósito: sirve para lotes que existían **antes** de la implantación,
+no para corregir lotes ya operando en el sistema.
+
+## E.5 Casos límite, revisados
+
+| Caso | Comportamiento exigido |
+|---|---|
+| lote nuevo sin recepción **ni** saldo de apertura | saldo 0 → rechazo, como hasta ahora |
+| lote activado manualmente con saldo N | saldo N; admite mortalidad ≤ N |
+| lote activado manualmente + recepción posterior de M | saldo N + M — aves nuevas, no las mismas |
+| lote con eventos previos al que se le intenta activar manualmente | **rechazo**: evitaría el doble conteo |
+| saldo de apertura 0 | permitido; el lote queda con saldo 0 y BR-01 rechaza toda mortalidad |
+| valores negativos | ya rechazados por `OpeningBalanceBase.validate_positive` |
+| doble activación manual del mismo lote | ya rechazada con 409 |
+
+## E.6 Acceptance Criteria de la enmienda
+
+| AC | Criterio | Verificación |
+|---|---|---|
+| **AC-R67-01** | Una activación manual con cantidad N produce saldo N de inmediato | consulta del balance |
+| **AC-R67-02** | No hace falta ningún evento histórico ficticio para establecer el saldo | no se crea ningún `OperationalEvent` en la activación |
+| **AC-R67-03** | La mortalidad posterior reduce el saldo correctamente | N − muertos |
+| **AC-R67-04** | Las entradas posteriores lo aumentan correctamente | N + recibidos |
+| **AC-R67-05** | El saldo de apertura no se cuenta dos veces | activación rechazada si ya hay eventos; acumulados no restados |
+| **AC-R67-06** | El flujo normal de un lote nuevo no cambia | saldo idéntico al anterior sin saldo de apertura |
+| **AC-R67-07** | Las correcciones y ajustes siguen las reglas vigentes | sin cambios; ninguna regla nueva |
+| **AC-R67-08** | Un lote cerrado o inactivo se comporta igual que antes | `BR-07` intacta |
+| **AC-R67-09** | `BR-01` usa el saldo correcto | mortalidad > saldo rechazada con el saldo real en el mensaje |
+| **AC-R67-10** | La auditoría de la activación manual se conserva | `is_manual_activation`, `activated_by_id` |
+| **AC-R67-11** | El aislamiento entre empresas se mantiene | `R-42`/`R-59` verdes |
+| **AC-R67-12** | La regresión completa sigue en verde | suite |
+
+## E.7 Fuera del alcance de la enmienda
+
+El saldo **de huevos y pollitos** de un lote incorporado en fase de producción. `docs/02
+§3.9.1` pide capturar «Producción acumulada de huevos», «Huevos enviados a incubadora» y
+«Pollitos nacidos/transferidos», que son **producción acumulada**, no saldo disponible; el
+modelo no tiene campo para el disponible y ninguna fuente lo exige. Queda anotado como
+hueco, no se inventa.
+
+También queda fuera —y se registra como `R-69`— la validación
+`accumulated_mortality_* ≤ initial_*_count` de `lots/service.py:209`: bajo `RR-08` rechaza
+datos legítimos (un lote de 5 000 aves vivas que acumuló 6 000 bajas a lo largo de su
+ciclo). Cambiar una validación de negocio merece su propia decisión.

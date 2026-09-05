@@ -9,6 +9,7 @@ from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..masters.models import Lot
+from ..tenancy import verificar_pertenencia
 from ..operations.models import (
     OperationalEvent, EventType, EventStatus,
     BirdMovement, FeedMovement, EggMovement,
@@ -195,6 +196,13 @@ class LotService:
         if not lot:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Lote no encontrado")
 
+        # `AC-R67-11`. Hasta aquí lo único que impedía activar el lote de otra empresa era
+        # carecer del permiso `lots:create`; quien lo tuviera en su propia empresa podía
+        # fijar el saldo de apertura de un lote ajeno. Existir no es pertenecer: se usa la
+        # misma comprobación que el resto del sistema (`GA-REM-002 AC10`).
+        if not self.is_super_admin:
+            await verificar_pertenencia(self.db, Lot, data.lot_id, self.company_id, "Lote")
+
         # Validate no existing opening balance
         existing = await self.db.execute(
             select(models.OpeningBalance).where(models.OpeningBalance.lot_id == data.lot_id)
@@ -203,6 +211,27 @@ class LotService:
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
                 detail="Este lote ya tiene un balance de apertura registrado",
+            )
+
+        # `docs/02 §3.9.2` exige «Se evita doble conteo» y nada lo implementaba: un lote
+        # que ya tuviera eventos de recepción y recibiera además un saldo de apertura
+        # contaría dos veces las mismas aves. La activación manual sirve para lotes que
+        # existían **antes** de la implantación, no para corregir lotes ya operando.
+        con_historia = await self.db.execute(
+            select(OperationalEvent.id)
+            .where(
+                OperationalEvent.lot_id == data.lot_id,
+                OperationalEvent.status != EventStatus.CANCELLED,
+            )
+            .limit(1)
+        )
+        if con_historia.scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=(
+                    "El lote ya tiene operaciones registradas: activarlo manualmente "
+                    "contaría dos veces las mismas aves"
+                ),
             )
 
         # Business rules for opening balance

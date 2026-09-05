@@ -204,10 +204,13 @@ def main() -> int:
 
         # El saldo derivado debe ser 5.000 recibidas − 12 muertas.
         listado = c.get("/api/v1/operations", headers=cab, params={"lot_id": lot_id})
-        # Dos: la recepción y la mortalidad. La sonda de R-67 no llega a crearse.
-        registrar("las dos operaciones aparecen en el lote",
-                  listado.status_code == 200 and len(listado.json()) == 2,
-                  f"HTTP {listado.status_code}, {len(listado.json()) if listado.status_code == 200 else '-'} eventos")
+        # La recepción y la mortalidad, más la sonda de R-67 si el saldo de apertura
+        # alimenta el balance: con R-67 resuelto esa sonda es una operación real.
+        esperados = 3 if saldo_apertura_cuenta else 2
+        registrar(f"las operaciones aparecen en el lote ({esperados})",
+                  listado.status_code == 200 and len(listado.json()) == esperados,
+                  f"HTTP {listado.status_code}, "
+                  f"{len(listado.json()) if listado.status_code == 200 else '-'} eventos")
 
         lote_detalle = c.get(f"/api/v1/lots/{lot_id}", headers=cab)
         registrar("releer el lote con su historia", lote_detalle.status_code == 200,

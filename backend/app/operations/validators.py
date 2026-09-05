@@ -19,10 +19,25 @@ class BusinessRuleViolation(Exception):
 # ─── Balance helpers ──────────────────────────────────────────────────────────
 
 async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
-    """
-    Current live bird count for a lot.
-    IN:  BIRD_RECEPTION, BIRTH_REGISTRATION
-    OUT: MORTALITY_RECORDING, CULL_RECORDING, BIRD_EXIT, CHICK_DISPATCH
+    """Saldo vivo de aves del lote.
+
+        SALDO = saldo de apertura + Σ(entradas) − Σ(salidas)
+
+        Apertura : `initial_male_count` + `initial_female_count` del `OpeningBalance`
+        Entradas : BIRD_RECEPTION, BIRTH_REGISTRATION
+        Salidas  : MORTALITY_RECORDING, CULL_RECORDING, BIRD_EXIT, CHICK_DISPATCH
+        Neutros  : BIRD_TRANSFER, BIRD_DISTRIBUTION  (intra-lote, `RR-02`)
+
+    El saldo de apertura es `R-67`. Sin él, un lote incorporado con
+    `POST /lots/activate-manual` tenía saldo 0 y `BR-01` rechazaba toda mortalidad,
+    descarte y salida: quedaba inoperable. Y ese es justamente el mecanismo previsto para
+    incorporar lotes ya en marcha cuando el sistema se instala en un cliente
+    (`docs/02 §3.9`, prioridad «Crítica (para implantación)»).
+
+    Los campos `accumulated_mortality_*` y `accumulated_culls_*` **no se restan**: son
+    histórico previo a la implantación, capturado para continuidad de indicadores.
+    Restarlos sería el doble conteo que `docs/02 §3.9.2` prohíbe. Resuelto como `RC-08`
+    por evidencia de nivel 3, regla `RR-08` (`GA-REM-005`, enmienda `R-67`).
     """
     in_types = [EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION]
     out_types = [
@@ -49,7 +64,16 @@ async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
-    return (res_in.scalar() or 0) - (res_out.scalar() or 0)
+    from ..lots.models import OpeningBalance
+
+    apertura = await db.execute(
+        select(
+            func.coalesce(OpeningBalance.initial_male_count, 0)
+            + func.coalesce(OpeningBalance.initial_female_count, 0)
+        ).where(OpeningBalance.lot_id == lot_id)
+    )
+
+    return (apertura.scalar() or 0) + (res_in.scalar() or 0) - (res_out.scalar() or 0)
 
 
 async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
