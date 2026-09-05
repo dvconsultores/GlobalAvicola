@@ -90,7 +90,29 @@ reescrito que lleva de la etapa al formulario.
 Al reescribir apareció una tercera suposición equivocada de los tests originales: la vista
 por omisión de una etapa es una **rejilla** de operaciones, no la cronología.
 
-## 8. `R-72` — doce tests pasaban sin poder fallar
+## 8. Reinterpretación de la evidencia E2E histórica — `R-72`
+
+```
+Resultado histórico de Playwright:      15 PASS / 23 FAIL
+Evidencia válida entre esos PASS:        3 con cobertura efectiva
+                                        12 ilusorios / sin valor probatorio
+Baseline histórico modificado:          NO
+```
+
+El fichero histórico **no se toca**: `15 PASS / 23 FAIL` es lo que la herramienta reportó, y
+seguirá diciéndolo. Lo que se corrige es su **interpretación**, no el dato. Sustituirlo por
+`3 PASS` sería falsificar evidencia.
+
+```
+RESULTADO DE LA HERRAMIENTA  =  15 PASS
+VALOR DE CERTIFICACIÓN       =  3 PASS validados
+```
+
+Una nota sobre el 35 % anterior (`21 / 60`): **no estaba contaminado por `R-72`**. Aquellos
+21 venían del proyecto `procesos` —`proceso-01`, `02`, `03`—, que sí se ejecutaban y pasaban
+de verdad. `R-72` afectó únicamente a la suite `heredada`.
+
+### El detalle
 
 El hallazgo más incómodo de esta tanda.
 
@@ -226,3 +248,77 @@ SÍ — la recuperación de la suite está completa y el siguiente paso es la
 | [`PLAYWRIGHT_POST_R68_R67_BASELINE.md`](PLAYWRIGHT_POST_R68_R67_BASELINE.md) | baseline anterior — **inmutable** |
 | `specs/remediation/GA-REM-016*` | enmienda con `AC06`…`AC12` |
 | `test-support/auth.ts` | mecanismo de autenticación centralizado |
+
+
+---
+
+# TRANCHE `P-02` · `P-04` · `P-05` (2026-09-05)
+
+## 21. Resultado
+
+| Proceso | Antes | Ahora | Casos | Cadena |
+|---|---|---|:--:|:--:|
+| `P-02` Progenitoras — producción de huevo | `READY_FOR_E2E` | **`CERTIFIED`** | 9/9 | 10 pasos |
+| `P-04` Reproductoras — huevo fértil | `READY_FOR_E2E` | **`CERTIFIED`** | 9/9 | 10 pasos |
+| `P-05` Incubación | `READY_FOR_E2E` | **`CERTIFIED`** | 8/8 | 8 pasos |
+
+Cada uno con su cadena documentada completa, no solo su tramo distintivo. `§48` no admite
+certificar un proceso porque sus capacidades compartidas estén certificadas, y aplicarlo
+cambió el alcance de esta tanda: la primera versión de las specs cubría solo el segmento de
+huevo y habría dado una certificación falsa.
+
+## 22. Filtro de validez de los tests
+
+Derivado de `R-72`. Ningún `PASS` cuenta como evidencia sin atravesarlo.
+
+```
+P-02   9 revisados · 9 válidos · 0 vacíos
+P-04   9 revisados · 9 válidos · 0 vacíos
+P-05   8 revisados · 8 válidos · 0 vacíos
+```
+
+Sensibilidad demostrada mutando `BR-02`, `BR-03` y las guardas de pertenencia: **nueve casos
+fallaron**, código revertido en el acto con `git diff` limpio.
+
+Y el filtro se cobró dos correcciones en mi propio trabajo. La primera afirmación de
+aislamiento que escribí decía `not.toBe(201)`, que pasa con cualquier rechazo y no demuestra
+pertenencia: el mismo vicio de `R-72`, en un test nuevo. Se reescribió con control y
+tratamiento. La segunda: `R-66` —`/me` devuelve la empresa persistida y no la activa— hizo
+que los fixtures se crearan en la empresa equivocada. Estaba registrado como P3 documental;
+en la práctica cuesta tiempo de diagnóstico.
+
+## 23. Defectos de aplicación descubiertos
+
+```
+P0: 0   ·   P1: 0   ·   P2/P3: 0
+```
+
+Ninguno. Los tres procesos operan conforme a su spec.
+
+## 24. Cobertura
+
+**Nivel de proceso** —la unidad de certificación que fija `GA-REM-016`:
+
+```
+Procesos certificados / procesos aplicables  =  4 / 15  =  26,7 %
+Antes de esta tanda                          =  1 / 15  =   6,7 %
+```
+
+**Nivel de requisito**: no se recalcula el `21 / 60` anterior. Ese numerador no está
+desglosado por requisito en ningún artefacto, de modo que sumarle los pasos de los tres
+procesos sería aritmética inventada. `§59` exige mapeo `TEST → REQUIREMENT → AC → EVIDENCE`
+y ese mapeo no existe todavía. Queda anotado como trabajo pendiente, no rellenado a ojo.
+
+Lo que sí puede afirmarse: los tres procesos aportan **28 pasos documentados** con evidencia
+E2E ejecutada y validada.
+
+## 25. Siguiente candidato
+
+`P-11` (activación manual de lotes) es el único que queda en `READY_FOR_E2E`. `R-67` mejoró
+su posición —un lote activado manualmente ya puede operar—, pero arrastra **`R-47`**:
+`POST /lots` ignora el `start_date` recibido, lo que impide registrar eventos retroactivos
+en un lote recién creado. Para un proceso cuyo propósito es incorporar lotes **ya en
+marcha**, eso es un bloqueo de fondo, no un detalle.
+
+`R-47` vive en `GA-REM-019` y no se corrige aquí. **No se avanza sobre `P-11`** mientras siga
+abierto.

@@ -37,10 +37,10 @@ evidencia. Se certificaron los tres primeros.
 | Proceso | Req | Specs | FE | BE | DB | Reglas | Seguridad | Tests | E2E | Cobertura validada | Estado |
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | **P-01** Progenitoras — Cría | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-01/06/07/08/17/19` | ✅ | ✅ | **parcial** | `COVERED` (`GA-REM-020`) | **`PARTIAL`** |
-| **P-02** Progenitoras — Producción de huevo | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | ⬜ | `COVERED` | `READY_FOR_E2E` |
+| **P-02** Progenitoras — Producción de huevo | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
-| **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | ⬜ | `COVERED` | `READY_FOR_E2E` |
-| **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | ⬜ | `PARTIAL` | `READY_FOR_E2E` |
+| **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
+| **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
 | **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
@@ -99,3 +99,23 @@ que atraviesan P-01 a P-06 sin agotar ninguno. Están certificados como procesos
 
 Es una distinción incómoda y deliberada: inflar el recuento diciendo «P-01 certificado»
 convertiría la matriz en propaganda.
+
+
+---
+
+## Tranche `P-02` · `P-04` · `P-05` (2026-09-05)
+
+Los tres pasan de `READY_FOR_E2E` a **`CERTIFIED`**, cada uno con evidencia propia y su
+cadena documentada completa —no solo su tramo distintivo, que §48 no admite como
+certificación.
+
+| Proceso | Casos | Cadena | Regla | Informe |
+|---|:--:|:--:|---|---|
+| `P-02` Progenitoras — producción de huevo | 9/9 | 10 pasos | `BR-02` | [PROCESS-02](PROCESS-02-CERTIFICATION.md) |
+| `P-04` Reproductoras — huevo fértil | 9/9 | 10 pasos | `BR-02` | [PROCESS-04](PROCESS-04-CERTIFICATION.md) |
+| `P-05` Incubación | 8/8 | 8 pasos | `BR-03` | [PROCESS-05](PROCESS-05-CERTIFICATION.md) |
+
+Toda la evidencia atraviesa el filtro de
+[`PROCESS_E2E_VALIDITY_MATRIX.md`](PROCESS_E2E_VALIDITY_MATRIX.md), derivado de `R-72`: un
+`PASS` no cuenta hasta demostrar que puede fallar. Se demostró mutando `BR-02`, `BR-03` y
+las guardas de pertenencia; nueve casos fallaron y se revirtió el código en el acto.
