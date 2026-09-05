@@ -193,3 +193,24 @@ Sigue pendiente para producción real: `GA-TD-040` (copia y restauración verifi
 `GA-TD-039` (observabilidad), la certificación E2E completa de `GA-REM-016`, la ejecución
 del reset en el entorno compartido (`PENDING_EXTERNAL_ACCESS`), y la decisión sobre SAP
 real (`GA-REM-017`).
+
+
+---
+
+## 9. Incidente del 502 (2026-09-05) — `R-71`
+
+`R-71` queda **`CERTIFIED`** por `GA-REM-027`. No añade bloqueante; sí deja una lección para
+el gate de producción real.
+
+**Ninguna prueba de este repositorio recorría el salto proxy → backend.** `startup_test.sh`
+certifica el entrypoint y el arranque, y lo hace bien, pero llama al backend directamente:
+por eso pasaba con 0 fallos mientras la API pública llevaba ocho horas caída. Entre «el
+backend arranca» y «la API responde» hay un salto sin cobertura.
+
+Anotado como hueco. Para producción real conviene una comprobación de extremo a extremo
+posterior al despliegue que atraviese el proxy, no solo el arranque del contenedor.
+
+```
+READY_FOR_SHARED_TEST      = YES
+READY_FOR_REAL_PRODUCTION  = NOT_YET_CERTIFIED
+```

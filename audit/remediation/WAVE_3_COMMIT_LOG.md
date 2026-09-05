@@ -264,3 +264,31 @@ salud del entorno sí se verificó.
 | `R-70` | `activate-manual` devuelve 500 con una fase productiva inexistente | P2 |
 
 Ambos abiertos, encaminados a `GA-REM-019`. Ninguno se corrigió dentro del alcance activo.
+
+
+---
+
+## 8. Incidente del 502 en el backend compartido (2026-09-05)
+
+| Commit | Contenido | Verificación posterior |
+|---|---|---|
+| `f46cb13` | `fix(proxy): resolver el upstream en cada petición, no al arrancar [GA-REM-027]` | **`L3` recuperado en menos de un minuto** |
+
+Hallazgo `R-71`. El nginx del frontend resolvía `backend` una sola vez al arrancar; tras
+recrear el contenedor de backend, apuntaba a una IP inexistente y toda la API respondía
+`502` **con el backend sano**, respondiendo `200` por su puerto publicado.
+
+```
+14:08:29  push de f46cb13
+14:09:31  imagen de frontend publicada
+14:10:24  /api/v1/... → 200   RECUPERADO
+```
+
+`9cd1964` no fue la causa: fue el disparador, como lo habría sido cualquier otra
+publicación de imagen de backend.
+
+Se empujó durante la caída porque el arreglo **era** la recuperación —§60 lo permite cuando
+la recuperación exige código versionado— y porque el backend no estaba caído.
+
+Estado: `RESOLVED`. Detalle en
+[`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).

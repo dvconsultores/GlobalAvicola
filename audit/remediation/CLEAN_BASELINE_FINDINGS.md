@@ -161,10 +161,38 @@ decisión, y el propietario puede haber querido exactamente esa restricción. De
 
 ---
 
+## `R-71` — El proxy resolvía el backend una sola vez, al arrancar
+
+**P0** · dejó la API inalcanzable ocho horas · **`CERTIFIED` 2026-09-05**
+
+No lo descubrió el baseline limpio sino el incidente del `502`, pero se registra aquí por
+continuidad del numerado.
+
+`frontend/nginx.conf` hacía `proxy_pass http://backend:8000` sin directiva `resolver`, de
+modo que nginx resolvía el nombre al arrancar y conservaba esa IP mientras viviera el
+proceso. Watchtower recrea el backend en cada publicación de imagen; cuando el contenedor
+recreado no recupera su dirección anterior, nginx apunta a una IP inexistente y toda la API
+responde `502` de forma permanente **con el backend perfectamente sano**.
+
+```
+http://<host>:8002/health                → 200 {"status":"ok"}
+https://avicola.globaldv.net/api/v1/...  → 502
+```
+
+Llevaba ahí desde que existe el despliegue automático. Lo tapaba la suerte: si Docker
+reasigna la misma IP, la caché sigue siendo válida por casualidad — que es lo que ocurrió en
+la publicación inmediatamente anterior, con un `502` de cuatro minutos que se resolvió solo.
+
+**Resuelto** por `GA-REM-027`. Detalle en
+[`SHARED_BACKEND_502_INCIDENT.md`](SHARED_BACKEND_502_INCIDENT.md).
+
+---
+
 ## Resumen
 
 | ID | Título | Prior. | Estado |
 |---|---|:--:|---|
+| `R-71` | El proxy resolvía el backend una sola vez, al arrancar | **P0** | **`CERTIFIED`** — `GA-REM-027` |
 | `R-68` | Escritura no visible para la petición inmediata | **P0** | **`CERTIFIED`** — `GA-REM-026` |
 | `R-67` | El saldo de apertura no alimenta el saldo de aves | **P1** | **`CERTIFIED`** — `GA-REM-005` enmienda |
 | `R-65` | 500 en `/audit/{log_id}` no-UUID | P2 | abierto → `GA-REM-019` |
