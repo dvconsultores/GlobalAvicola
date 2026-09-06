@@ -246,7 +246,7 @@ Los cinco restantes **no son trabajo técnico pendiente**:
 
 ```
 P-01 = CERTIFIED        CERTIFIED 11 / 15        PARTIAL 4 / 15
-P-03 = PARTIAL (GA-REQ-037)     P-06 = PARTIAL (R-76)
+P-03 = PARTIAL (GA-REQ-037)     P-06 = PARTIAL (R-76)      ← estado en ese momento; §11 y §12 los cierran
 ```
 
 Tres cosas que conviene conservar de este tramo.
@@ -289,3 +289,44 @@ y no es terminal—; `sap_error` no —solo se alcanza tras aprobar—. `AC04` c
 suites certificadas dejaron de poder cerrar sus lotes. Se les añadió la aprobación; lo que
 miden no cambió. El caso más delicado distinguía dos contadores dejando un evento sin aprobar:
 ahora lo distingue con uno **anulado**, que `R7` no gobierna.
+
+
+---
+
+## 12. `GA-REM-037` · `OD-06`, `GA-REQ-037` y `P-03` (2026-09-06)
+
+| | Sev. | Estado |
+|---|:--:|---|
+| `OD-06` · ¿de dónde sale la curva estándar de peso? | — | **`RESOLVED`** — la administra Global Avícola |
+| `GA-REQ-037` · alerta de peso fuera de curva | **P1** | **`CERTIFIED`** |
+| `R-96` · no hay pantalla para administrar curvas | P2 | `OPEN` — sin spec de frontend |
+
+```
+P-03 = CERTIFIED        CERTIFIED 13 / 15        PARTIAL 2 / 15
+```
+
+Cuatro cosas que conviene conservar de este tramo.
+
+**No era un defecto, era un dato que no existía.** `spec.md §4.5` exige comparar el peso contra
+«la curva estándar», y en el repositorio entero no había curva: ni tabla, ni versión, ni forma
+de que un lote apuntara a una. Ninguna de las seis fuentes de la jerarquía la definía. Por eso
+se elevó como `OD-06` en vez de programarse: cualquier umbral que se hubiera escrito habría
+sido inventado, y un umbral inventado da veredictos que **parecen** correctos.
+
+**Seis de las once capacidades ya existían.** `GeneticLine` era un maestro con pantalla desde
+`GA-REM-033`, de modo que el «debe ser posible añadir líneas nuevas» de `OD-06` estaba
+satisfecho antes de empezar; introducir el enum fijo que el enunciado parecía sugerir habría
+sido una **regresión**. Se contaron una a una antes de escribir código
+(`P03_GENETIC_CURVE_MODEL_MATRIX.md`).
+
+**La guarda `R-32` disparó, y tenía razón.** El campo de versión de la curva se llamaba
+`version`, que este proyecto reserva para lo que fija el servidor. Aquí lo escribe el
+administrador y es lo que publica el proveedor: dos conceptos opuestos con la misma palabra. Se
+renombró a `version_label` en vez de eximir la guarda, que es lo que habría sido cómodo. Otras
+dos guardas —clasificación de datos y cobertura de la purga— detuvieron que las tablas nuevas
+quedaran fuera del inventario y que el `CASCADE` las vaciara a espaldas de él.
+
+**La ausencia de referencia se declara, no se adivina.** Sin curva cargada, fuera del rango de
+edades de la tabla, o sin línea genética, el motor responde `NO_REFERENCE` y no se emite
+alerta. Es la traducción literal de «sin tolerancia global»: no hay un ±10 % de reserva para
+cuando falta el dato.

@@ -376,5 +376,7 @@ Cada lote queda asociado a una VERSIÓN concreta de la curva
 - **Sembrar curvas de producción.** Se siembran los nombres de las tres líneas; los pesos
   reales los carga el administrador. No hay fuente para inventarlos.
 - **Extrapolar** fuera del rango de la tabla.
-- **Abrir `P-14`.** La alerta de `§4.5` es interna (`OperationalAlert`); el canal de
-  notificación sigue siendo `OD-05`, pendiente.
+- **Abrir `P-14`.** La alerta de `§4.5` es interna (`OperationalAlert`). Elegir un canal de
+  notificación —correo, push, centro de avisos— es una decisión de negocio distinta, todavía
+  sin plantear al propietario y **sin número de `OD` asignado**. No es `OD-05`, que pregunta
+  por la escalada de privilegios en `P-13`.

@@ -31,6 +31,16 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-025` | Baseline limpio del entorno compartido | ENVIRONMENT + TEST DATA STRATEGY | P1 | **`CERTIFIED`** | — | [GA-REM-025](GA-REM-025-CLEAN-DEVELOPMENT-BASELINE.md) |
 | `GA-REM-026` | Frontera transaccional de la petición | DATA INTEGRITY + REQUEST LIFECYCLE | **P0** | **`CERTIFIED`** | — | [GA-REM-026](GA-REM-026-TRANSACTION-BOUNDARY.md) |
 | `GA-REM-027` | Resolución del upstream en el proxy | RUNTIME CONFIGURATION | **P0** | **`PARTIALLY CERTIFIED`** | — | [GA-REM-027](GA-REM-027-PROXY-UPSTREAM-RESOLUTION.md) |
+| `GA-REM-028` | Fecha de inicio del lote | DOMAIN SEMANTICS + BUGFIX | P1 | **`CERTIFIED`** | — | [GA-REM-028](GA-REM-028-LOT-START-DATE.md) |
+| `GA-REM-029` | Contrato de cierre de lote | CONTRACT + BUSINESS RULE | P1 | **`CERTIFIED`** | — | [GA-REM-029](GA-REM-029-LOT-CLOSURE-CONTRACT.md) |
+| `GA-REM-030` | Pertenencia en los vínculos de trazabilidad | TENANCY HARDENING | P2 | **`CERTIFIED`** | — | [GA-REM-030](GA-REM-030-TRACEABILITY-LINK-OWNERSHIP.md) |
+| `GA-REM-031` | Creación del vínculo generacional desde la recepción | DOMAIN DEFECT | P1 | **`CERTIFIED`** | — | [GA-REM-031](GA-REM-031-RECEPTION-LINEAGE-CREATION.md) |
+| `GA-REM-032` | Cobertura de auditoría y contrato de consulta | DOMAIN + CONTRACT | P1 | **`CERTIFIED`** | — | [GA-REM-032](GA-REM-032-AUDIT-COVERAGE-AND-QUERY-CONTRACT.md) |
+| `GA-REM-033` | Gestión de datos maestros | CAPABILITY + CONTRACT | P1 | **`CERTIFIED`** | — | [GA-REM-033](GA-REM-033-MASTER-DATA-MANAGEMENT.md) |
+| `GA-REM-034` | Administración de roles y permisos | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-034](GA-REM-034-ROLE-ADMINISTRATION.md) |
+| `GA-REM-035` | Recepción contra orden de compra | BUSINESS RULE ACTIVATION | P1 | **`CERTIFIED`** | — | [GA-REM-035](GA-REM-035-PURCHASE-ORDER-RECEIPT-LIMIT.md) |
+| `GA-REM-036` | Aprobación obligatoria antes del cierre de lote | BUSINESS RULE | P1 | **`CERTIFIED`** | — | [GA-REM-036](GA-REM-036-LOT-CLOSE-APPROVAL-GUARD.md) |
+| `GA-REM-037` | Curvas estándar de peso y alerta por desviación | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 
 ## Decisiones normativas
 
@@ -43,8 +53,8 @@ se interpretan.
 
 ## Resumen
 ```
-Total ................. 27
-CERTIFIED ............. 12
+Total ................. 37
+CERTIFIED ............. 22
 PARTIALLY CERTIFIED ... 1
 IMPLEMENTED ........... 2
 SPEC_READY ............ 9
@@ -52,6 +62,11 @@ SPEC_DRAFT ............ 1
 BLOCKED_EXTERNAL ...... 1
 DEFERRED .............. 1
 ```
+
+> **Deriva de registro corregida el 2026-09-06.** Las specs `GA-REM-028`…`GA-REM-037` se
+> crearon y certificaron entre el 2026-09-04 y el 2026-09-06 sin darse de alta aquí, de modo
+> que este índice declaraba 27 specs cuando el repositorio tenía 37. Se añaden con el estado
+> que tienen, no con el que habrían tenido al crearse.
 
 ## Specs nuevas respecto al índice propuesto en el encargo
 | ID | Motivo |

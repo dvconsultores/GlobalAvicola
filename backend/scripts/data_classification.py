@@ -94,6 +94,19 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
             "processing_plants", "rejection_reasons", "correction_types",
         )
     },
+    # `GA-REM-037` / `OD-06`. La curva la carga el administrador de cada cliente desde la
+    # publicación de su proveedor genético, igual que crea la línea a la que cuelga. Va en
+    # la misma categoría que `genetic_lines` por necesidad además de por naturaleza: si la
+    # línea se vacía y la curva se conservara, el CASCADE la borraría a espaldas del
+    # inventario, que es justamente lo que `T-025-04` vigila.
+    "genetic_weight_curves": (
+        Categoria.CLIENT_MASTER_DATA,
+        "Versiones de curva estándar cargadas por el cliente. Cuelgan de `genetic_lines`.",
+    ),
+    "genetic_weight_curve_points": (
+        Categoria.CLIENT_MASTER_DATA,
+        "Filas de la tabla de una curva. Sin su versión no significan nada.",
+    ),
     # ── Historia operativa ficticia ──────────────────────────────────────────
     **{
         tabla: (Categoria.TEST_BUSINESS_DATA, motivo)

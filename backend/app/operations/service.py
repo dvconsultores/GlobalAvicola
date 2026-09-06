@@ -450,9 +450,87 @@ class OperationsService:
                         actual_value=humi,
                     ))
 
+        # Alerta 3: peso fuera de la curva estándar de la línea genética.
+        # `GA-REM-037` / `OD-06`, que resuelve de dónde sale el rango: la tabla del
+        # proveedor que el administrador cargó, en la versión que este lote tiene fijada.
+        # `docs/03 spec.md §4.5` pedía esta alerta desde el principio; lo que faltaba no
+        # era el aviso sino la referencia contra la que emitirlo.
+        if event.event_type == models.EventType.WEIGHT_RECORDING and event.lot_id is not None:
+            alerts.extend(await self._alertas_de_peso(event, data))
+
         if alerts:
             self.db.add_all(alerts)
             await self.db.flush()
+
+    async def _alertas_de_peso(
+        self,
+        event: models.OperationalEvent,
+        data: schemas.OperationalEventCreate,
+    ) -> list[models.OperationalAlert]:
+        """Una alerta por cada pesaje fuera del rango esperado. `AC20`, `AC21`.
+
+        Sin curva asignada, sin línea genética o con una edad que la tabla no cubre, el
+        motor responde `NO_REFERENCE` y **no se emite nada**: avisar sin referencia sería
+        inventarse un veredicto (`AC19`).
+
+        `AC22`: esto crea un registro `OperationalAlert` y nada más. No hay correo, ni
+        push, ni centro de notificaciones — eso es `P-14`, y sigue sin implementarse.
+        """
+        from datetime import date as _date, datetime as _datetime
+
+        from ..masters.models import GeneticWeightCurve, Lot
+        from .weight_curve import WeightStatus, evaluar
+
+        lot = (await self.db.execute(
+            select(Lot).where(Lot.id == event.lot_id)
+        )).scalar_one_or_none()
+        if lot is None or lot.weight_curve_id is None or lot.start_date is None:
+            return []
+
+        curva = (await self.db.execute(
+            select(GeneticWeightCurve).where(GeneticWeightCurve.id == lot.weight_curve_id)
+        )).scalar_one_or_none()
+        if curva is None or not curva.points:
+            return []
+
+        def _dia(valor):
+            return valor.date() if isinstance(valor, _datetime) else valor
+
+        # La edad del lote **el día del pesaje**, no hoy: un registro retroactivo debe
+        # juzgarse contra el tramo de curva que le tocaba entonces.
+        referencia = _dia(event.event_date) if event.event_date else _date.today()
+        age_days = (referencia - _dia(lot.start_date)).days
+        if age_days < 0:
+            return []
+
+        alertas: list[models.OperationalAlert] = []
+        for movimiento in data.bird_movements:
+            peso = getattr(movimiento, "avg_weight", None)
+            if peso is None or peso <= 0:
+                continue
+            evaluacion = evaluar(curva.points, age_days, peso)
+            if evaluacion.status in (WeightStatus.WITHIN_STANDARD, WeightStatus.NO_REFERENCE):
+                continue
+            rango = evaluacion.rango
+            debajo = evaluacion.status is WeightStatus.BELOW_STANDARD
+            alertas.append(models.OperationalAlert(
+                company_id=event.company_id,
+                lot_id=event.lot_id,
+                event_id=event.id,
+                alert_type="weight_deviation",
+                severity="warning",
+                message=(
+                    f"Peso {peso} g "
+                    f"{'por debajo del' if debajo else 'por encima del'} rango estándar "
+                    f"[{rango.min_weight:g}–{rango.max_weight:g} g] "
+                    f"a {age_days} días "
+                    f"(curva {curva.version_label})."
+                ),
+                # El umbral que se cruzó, que es el que explica la alerta.
+                threshold_value=rango.min_weight if debajo else rango.max_weight,
+                actual_value=peso,
+            ))
+        return alertas
 
     async def _apply_business_rules(self, event_type: models.EventType, data: schemas.OperationalEventCreate):
         """Apply business rules based on event type."""

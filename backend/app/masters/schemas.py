@@ -552,3 +552,59 @@ class CorrectionTypeUpdate(BaseModel):
     name: Optional[str] = Field(None, min_length=1, max_length=200)
     description: Optional[str] = None
     is_active: Optional[bool] = None
+
+
+# ============================================================
+# Curvas estándar de peso por línea genética · `GA-REM-037` / `OD-06`
+# ============================================================
+
+class WeightCurvePointIn(BaseModel):
+    """Una fila de la tabla del proveedor.
+
+    `target_weight` es opcional porque no todas las tablas publican el peso objetivo; el
+    rango sí es obligatorio, porque sin él no hay nada contra lo que juzgar un pesaje.
+    """
+    age_days: int = Field(..., ge=0)
+    min_weight: float = Field(..., gt=0)
+    max_weight: float = Field(..., gt=0)
+    target_weight: Optional[float] = Field(default=None, gt=0)
+
+
+class WeightCurvePointRead(BaseModel):
+    id: int
+    age_days: int
+    min_weight: float
+    max_weight: float
+    target_weight: Optional[float] = None
+    model_config = {"from_attributes": True}
+
+
+class WeightCurveCreate(BaseModel):
+    """Alta de una versión de curva junto con su tabla completa.
+
+    La tabla viaja en el alta y no por endpoint aparte a propósito: `AC06` exige que una
+    tabla inválida no deje **nada** persistido, y una versión vacía a la espera de puntos
+    sería exactamente ese residuo.
+    """
+    genetic_line_id: int
+    # Ver `GeneticWeightCurve.version_label`: es la etiqueta que publica el proveedor, no
+    # un contador del servidor.
+    version_label: str = Field(..., min_length=1, max_length=50)
+    source: Optional[str] = Field(default=None, max_length=200)
+    is_active: bool = False
+    points: list[WeightCurvePointIn] = Field(..., min_length=1)
+
+
+class WeightCurveRead(BaseModel):
+    id: int
+    genetic_line_id: int
+    version_label: str
+    is_active: bool
+    source: Optional[str] = None
+    created_at: datetime
+    points: list[WeightCurvePointRead] = []
+    model_config = {"from_attributes": True}
+
+
+class WeightCurveActivate(BaseModel):
+    is_active: bool

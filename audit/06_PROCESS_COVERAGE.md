@@ -12,7 +12,7 @@ Clasificación: `CUBIERTO` (E2E completo) · `PARCIAL` · `MANUAL` (existe pero 
 |---|---|---|---|
 | P-01 | Progenitoras (Abuelas) — Cría | spec §4.4 / `STAGE_FLOWS.grandparent_rearing` | PARCIAL |
 | P-02 | Progenitoras — Producción de huevo | spec §4.4 / `STAGE_FLOWS.grandparent_production` | PARCIAL |
-| P-03 | Reproductoras — Cría | spec §4.5 | PARCIAL |
+| P-03 | Reproductoras — Cría | spec §4.5 | **CUBIERTO** |
 | P-04 | Reproductoras — Producción de huevo fértil | spec §4.6 | PARCIAL |
 | P-05 | Incubación | spec §4.7 | PARCIAL |
 | P-06 | Pollo de engorde | spec §4.8 | PARCIAL |
@@ -79,7 +79,7 @@ FIN
 | bird_reception | operations | OperationFormPage | idem | + `validate_house_capacity`, `validate_oc_limit` | bird_movements | PARCIAL | §4.4 | `validate_oc_limit` nunca se dispara (sin `sap_document_ref`) |
 | bird_distribution | operations | OperationFormPage | idem | idem | bird_movements | CUBIERTO | §4.4 | — |
 | feed_registration | operations | OperationFormPage | idem | idem | feed_movements | CUBIERTO | §4.4 | — |
-| weight_recording | operations | OperationFormPage | idem | idem | bird_movements | CUBIERTO | §4.4 | sin alerta de peso fuera de curva (spec §4.5) |
+| weight_recording | operations | OperationFormPage | idem | idem | bird_movements | CUBIERTO | §4.4 | la alerta de `§4.5` existe desde `GA-REM-037`; `§4.4` no la exigía |
 | **mortality_recording** | operations | OperationFormPage | idem | `validate_mortality` + generador de alertas | bird_movements | **ROTO** | §4.4, BR-01 | `NameError` → HTTP 500 |
 | cull_recording | operations | OperationFormPage | idem | idem | bird_movements | CUBIERTO | §4.4 | — |
 | vaccination / medication | operations | OperationFormPage | idem | idem | operational_events | CUBIERTO | §4.4 | — |
@@ -111,7 +111,18 @@ farm_inspection → feed_registration → weight_recording → vaccination → m
 
 ### P-03 · Reproductoras — Cría
 
-Idéntico a P-01 sin `grandparent_import`. Mismo bloqueo por `mortality_recording`. La transición Cría→Producción (`POST /lots/{id}/phases`) está implementada en backend y su UI vive en `LotDetailPage`, **rota**. **PARCIAL.**
+Idéntico a P-01 sin `grandparent_import` en la cadena operativa. Lo que **no** era idéntico es
+lo normativo: `P-03` se rige por `§4.5`, que exige un paso que `§4.4` no pide —«alertas por
+desviaciones (peso fuera de curva estándar, mortalidad > umbral)»—.
+
+La de mortalidad existía. La de peso no podía existir: la curva estándar no era un dato del
+sistema. `OD-06` resolvió de dónde sale y `GA-REM-037` la implementó —curvas por línea
+genética, versionadas, interpoladas linealmente, sin tolerancia global—.
+
+`mortality_recording` se arregló en `P0-1`; `GA-TD-014` en `GA-REM-035` tras `OD-04`. La
+cadena completa se recorre en `e2e/proceso-p03-reproductoras-cria.spec.ts` (5/5).
+
+**Cobertura: 14 de 14 pasos → CUBIERTO.** Detalle en `audit/remediation/P03_PROCESS_CHAIN_MATRIX.md`.
 
 ### P-05 · Incubación
 

@@ -38,7 +38,7 @@ evidencia. Se certificaron los tres primeros.
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | **P-01** Progenitoras — Cría | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-01/06/07/08/17/18/19` | ✅ | ✅ | **3/3** | `COVERED` | **`CERTIFIED`** |
 | **P-02** Progenitoras — Producción de huevo | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
-| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** — `GA-REQ-037` |
+| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 · `§4.5` alertas | ✅ | ✅ | **5/5** | `COVERED` | **`CERTIFIED`** |
 | **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
 | **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` · `R7` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
@@ -377,5 +377,38 @@ CERTIFIED = 12 / 15      PARTIAL = 3 / 15      READY_FOR_E2E = 0
 `P-06` cerró sus tres bloqueantes históricos uno a uno: `GA-TD-014` (`GA-REM-035`), `R-76`
 (`GA-REM-036`) y `GA-REQ-037`, que **no aplica** — `§4.8` no exige alertas por desviación, y se
 reverificó leyendo la sección entera en vez de heredarlo de `P-03`.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+
+---
+
+## `OD-06` resuelta · `GA-REQ-037` cerrado · `P-03` certificado (2026-09-06)
+
+```
+CERTIFIED = 13 / 15      PARTIAL = 2 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-01` · `P-02` · `P-03` · `P-04` · `P-05` · `P-06` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · `P-15` |
+| `PARTIAL` | `P-08` · `P-14` |
+
+`P-03` era el último proceso bloqueado por un **requisito** y no por una dependencia externa
+ni por una decisión pendiente. `spec.md §4.5` exige alertar cuando el peso se sale de la curva
+estándar, y la curva no existía como dato: no había tabla, ni versión, ni forma de que un lote
+apuntara a una. `OD-06` resolvió de dónde sale —una tabla por línea genética, versionada, que
+carga el administrador— y `GA-REM-037` la implementó.
+
+Lo que **no** se hizo, y conviene que conste: no se inventó ninguna tolerancia global. `OD-06`
+fue explícita, y sin curva cargada el sistema responde `NO_REFERENCE` y calla, en lugar de
+aplicar un ±10 % que ninguna fuente respalda.
+
+Los dos `PARTIAL` que quedan no son tareas técnicas:
+
+| Proceso | Qué falta | Naturaleza |
+|---|---|---|
+| `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
+| `P-14` | elegir canal de notificación y construirlo | **decisión + desarrollo** |
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

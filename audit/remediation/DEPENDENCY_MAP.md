@@ -305,6 +305,11 @@ corrección está clara y `C-15` la dejó diferida porque cambia el comportamien
 operadores. Mientras `RC-07` siga abierta, esos tres procesos no pueden certificarse por
 mucho que se remedie alrededor.
 
+> **Superado (2026-09-06).** La premisa de que `GA-TD-014` dependía de `RC-07` resultó falsa:
+> el propietario resolvió `OD-04` —una OC admite varias entregas parciales— sin tocar `RC-07`,
+> que sigue abierta y es un asunto distinto. Los tres procesos están hoy certificados. Se
+> conserva el análisis porque su predicción de fan-out fue correcta y ordenó el trabajo.
+
 `GA-REM-029` cerró `R-73`, `R-74` y `R-75` —el paso terminal de `P-06`— sin mover ninguno de
 los tres de `PARTIAL`, que es exactamente lo que este mapa predecía.
 
@@ -497,4 +502,57 @@ lote activo   GA-REM-029 AC06
 BR-05         GA-REM-029 (R-74: la regla vigilaba la puerta equivocada)
 R7            GA-REM-036 (R-76)
 resumen       GA-REM-029 (R-73) con la fecha de R-75
+```
+
+
+---
+
+## `P-03` · resuelto (2026-09-06) — y con él, la última dependencia de requisito
+
+```
+GA-TD-014   CERTIFIED (GA-REM-035, tras OD-04)
+GA-REQ-037  CERRADO   (GA-REM-037, tras OD-06)
+  └─→ P-03 = CERTIFIED · 14 de 14 pasos
+```
+
+`GA-REQ-037` era de una clase distinta a todo lo demás de este mapa. No era un defecto ni una
+regla desactivada: era un requisito que pedía comparar contra un dato que el sistema **no
+tenía ni podía derivar**.
+
+```
+spec.md §4.5  «alertas por desviaciones (peso fuera de curva estándar …)»
+                                              │
+                          ¿de dónde sale la curva estándar?  ← no había respuesta en el repositorio
+```
+
+Ni la spec, ni los documentos de proceso, ni la implementación definían esa curva. Por eso la
+única salida honesta era elevarla, y por eso `OD-06` la desbloquea sin una sola línea de código
+de por medio:
+
+```
+OD-06 (decisión del propietario, RESUELTA 2026-09-06)
+  │
+  └─→ GA-REM-037 · curvas por línea genética, versionadas
+        ├─→ genetic_weight_curves + puntos      el dato que faltaba
+        ├─→ lots.weight_curve_id               la versión fijada al lote
+        ├─→ weight_curve.py                    el motor, en un solo sitio
+        └─→ alerta weight_deviation            el paso normativo de §4.5
+              └─→ P-03 = CERTIFIED
+```
+
+### Lo que queda, y de qué clase es
+
+Ningún bloqueante técnico pendiente alcanza fan-out 2. Los dos procesos `PARTIAL` restantes no
+esperan trabajo:
+
+```
+P-08   contrato SAP real            dependencia externa   GA-REM-017 BLOCKED_EXTERNAL
+P-14   canal de notificación        decisión sin plantear + desarrollo
+```
+
+Y dos decisiones siguen abiertas sin bloquear ningún proceso:
+
+```
+RC-07  ¿la mortalidad se envía a SAP?          ABIERTA
+OD-05  ¿quién puede conceder qué permiso?      ABIERTA — no bloquea (P-13 ya certificado)
 ```

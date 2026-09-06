@@ -38,7 +38,7 @@ import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.models import Permission, PermissionAction, Role, User
 from app.auth.security import hash_password
-from app.masters.models import Company, ProductivePhase
+from app.masters.models import Company, GeneticLine, ProductivePhase
 
 # ── Fuente única de la matriz RBAC ────────────────────────────────────────────
 
@@ -83,6 +83,16 @@ FASES = [
     ("Producción", "PROD", 2, 280, False, False),
     ("Incubación", "INCUB", 3, 21, False, False),
     ("Engorde", "ENGORDE", 4, 42, False, True),
+]
+
+#: Las tres líneas genéticas iniciales de `OD-06`. Se siembran **solo los nombres**: la
+#: curva estándar de cada una la carga el administrador desde la tabla del proveedor, y
+#: inventarle valores aquí sería fabricar la referencia contra la que se juzga un lote.
+#: La lista no es un enum — `AC01` exige que se puedan añadir otras por la API.
+LINEAS_GENETICAS = [
+    ("Cobb 500", "COBB500", "Cobb-Vantress"),
+    ("Ross 308", "ROSS308", "Aviagen"),
+    ("Hubbard", "HUBBARD", "Hubbard"),
 ]
 
 #: Cuenta administradora del baseline.
@@ -192,6 +202,33 @@ async def sembrar_empresas(session: AsyncSession) -> dict[str, int]:
     return resultado
 
 
+async def sembrar_lineas_geneticas(session: AsyncSession, empresas: dict[str, int]) -> int:
+    """Siembra las tres líneas de `OD-06` en cada empresa. Nombres, nunca curvas.
+
+    Por empresa y no globales porque el filtro de tenencia de maestros compara
+    `company_id == user_company_id`: una línea con `company_id = NULL` sería invisible
+    para todo usuario con empresa, que son todos menos el Super Administrador.
+    """
+    creadas = 0
+    for company_id in empresas.values():
+        for nombre, code, proveedor in LINEAS_GENETICAS:
+            existe = (
+                await session.execute(
+                    select(GeneticLine).where(
+                        GeneticLine.company_id == company_id, GeneticLine.name == nombre
+                    )
+                )
+            ).scalar_one_or_none()
+            if existe is None:
+                session.add(GeneticLine(company_id=company_id, name=nombre,
+                                        code=code, supplier=proveedor))
+                creadas += 1
+    await session.flush()
+    if creadas:
+        print(f"  ✅ {creadas} líneas genéticas (nombres; sin curvas)")
+    return creadas
+
+
 async def sembrar_admin(session: AsyncSession, roles: dict[str, Role]) -> None:
     existe = (
         await session.execute(select(User).where(User.username == ADMIN["username"]))
@@ -220,6 +257,7 @@ async def sembrar_baseline(session: AsyncSession) -> dict[str, int]:
     roles = await sembrar_roles(session)
     await sembrar_fases(session)
     empresas = await sembrar_empresas(session)
+    await sembrar_lineas_geneticas(session, empresas)
     await sembrar_admin(session, roles)
     await session.commit()
 

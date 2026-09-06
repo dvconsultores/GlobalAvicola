@@ -287,17 +287,23 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-94` | No había catálogo de permisos | P2 — **`CERTIFIED`** `GA-REM-034` |
 | `GA-TD-014` | La OC no llegaba al campo tipado; el límite no era acumulado | P1 — **`CERTIFIED`** `GA-REM-035` |
 | `R-95` | `SapReferenceCreate` no declaraba `quantity`: `BR-18` era inaplicable | P1 — **`CERTIFIED`** `GA-REM-035` |
+| `R-96` | No hay pantalla para administrar curvas de peso: solo se cargan por API | P2 — **`OPEN`** · sin spec de frontend |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.
 
 ## Frente de mayor palanca pendiente
 
-`GA-TD-014` bloquea **tres** procesos (`P-01`, `P-03`, `P-06`): la OC de SAP se guarda en
-`extra_data.sap_order_ref` en vez de `sap_document_ref`, de modo que `validate_oc_limit` sale
-por su primera línea y `BR-11` y `BR-18` nunca se aplican.
+`GA-TD-014` fue el frente de mayor palanca —bloqueaba `P-01`, `P-03` y `P-06`— y está
+**cerrado** desde `OD-04` y `GA-REM-035`. Con `OD-06` resuelta y `GA-REM-037` entregada, `P-03`
+queda certificado y ningún bloqueante técnico pendiente alcanza fan-out 2.
 
-No es un problema técnico pendiente sino una **decisión de negocio abierta**: activarlo
-cambia el comportamiento para los operadores y `C-15` lo dejó diferido a la espera de
-`RC-07`. Es lo que conviene preguntar al propietario antes que cualquier otra cosa del
-backlog — ningún otro bloqueante accionable pasa de fan-out 1.
+Lo que queda de mayor alcance es una **decisión de negocio abierta**, no una tarea:
+
+```
+RC-07  · ¿la mortalidad se envía a SAP?   sigue sin resolver, y es un asunto distinto de OD-04
+OD-05  · política de escalada de privilegios   abierta desde P-13
+```
+
+El resto del backlog son hallazgos de fan-out 1: `R-69`, `R-70`, `R-77`, `R-80`, `R-83`,
+`R-96`.

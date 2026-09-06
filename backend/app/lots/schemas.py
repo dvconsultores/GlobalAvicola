@@ -14,6 +14,10 @@ class LotBase(BaseModel):
     farm_id: Optional[int] = None
     house_id: Optional[int] = None
     genetic_line_id: Optional[int] = None
+    # `GA-REM-037 AC07`. La **versión concreta** de la curva estándar, no solo la línea:
+    # publicar una revisión no puede cambiar la referencia contra la que ya se juzgó a
+    # este lote. Si se omite, el alta toma la versión activa de su línea (`AC09`).
+    weight_curve_id: Optional[int] = None
     breed_id: Optional[int] = None
     lot_code: str = Field(..., min_length=1, max_length=100)
     bird_type: Optional[str] = None

@@ -10,7 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..database import get_db
 from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
-from . import models, schemas
+from . import curves, models, schemas
 from .service import MasterService
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/masters", tags=["Masters"])
@@ -165,3 +165,71 @@ async def get_incubators_by_hatchery(
         select(models.Incubator).where(models.Incubator.hatchery_id == hatchery_id)
     )
     return [schemas.IncubatorRead.model_validate(i) for i in result.scalars().all()]
+
+
+# ============================================================
+# Curvas estándar de peso · `GA-REM-037` / `OD-06`
+# ============================================================
+# No pasan por `register_crud` porque la carga no es un alta: es una importación atómica
+# con informe de rechazo por fila (`AC06`), y la activación es exclusiva por línea.
+
+@router.get("/genetic-lines/{genetic_line_id}/weight-curves",
+            response_model=list[schemas.WeightCurveRead])
+async def list_weight_curves(
+    genetic_line_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("masters", "read")),
+):
+    """Versiones de curva de una línea genética."""
+    await curves._linea_del_usuario(db, genetic_line_id, current_user)
+    result = await db.execute(
+        select(models.GeneticWeightCurve)
+        .where(models.GeneticWeightCurve.genetic_line_id == genetic_line_id)
+        .order_by(models.GeneticWeightCurve.created_at.desc())
+    )
+    return [schemas.WeightCurveRead.model_validate(c) for c in result.scalars().all()]
+
+
+@router.post("/weight-curves", response_model=schemas.WeightCurveRead, status_code=201)
+async def create_weight_curve(
+    data: schemas.WeightCurveCreate,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("masters", "create")),
+):
+    """Carga una versión de curva con su tabla completa. Todo o nada."""
+    curva = await curves.crear_version(db, data, current_user)
+    return schemas.WeightCurveRead.model_validate(curva)
+
+
+@router.get("/weight-curves/{curve_id}", response_model=schemas.WeightCurveRead)
+async def get_weight_curve(
+    curve_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("masters", "read")),
+):
+    curva = (await db.execute(
+        select(models.GeneticWeightCurve).where(models.GeneticWeightCurve.id == curve_id)
+    )).scalar_one_or_none()
+    if curva is None:
+        raise HTTPException(status_code=404, detail="Curva no encontrada")
+    # La tenencia se comprueba sobre la línea, que es donde vive.
+    await curves._linea_del_usuario(db, curva.genetic_line_id, current_user)
+    return schemas.WeightCurveRead.model_validate(curva)
+
+
+@router.put("/weight-curves/{curve_id}/activate", response_model=schemas.WeightCurveRead)
+async def activate_weight_curve(
+    curve_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("masters", "update")),
+):
+    """Hace de esta versión la que tomarán los lotes nuevos. No toca los existentes."""
+    curva = (await db.execute(
+        select(models.GeneticWeightCurve).where(models.GeneticWeightCurve.id == curve_id)
+    )).scalar_one_or_none()
+    if curva is None:
+        raise HTTPException(status_code=404, detail="Curva no encontrada")
+    await curves._linea_del_usuario(db, curva.genetic_line_id, current_user)
+    await curves.activar(db, curva)
+    await db.refresh(curva)
+    return schemas.WeightCurveRead.model_validate(curva)

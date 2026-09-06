@@ -6,7 +6,9 @@ import enum
 from datetime import datetime
 from typing import Optional
 
-from sqlalchemy import Boolean, DateTime, Enum, Float, ForeignKey, Integer, String, Text, func
+from sqlalchemy import (
+    Boolean, DateTime, Enum, Float, ForeignKey, Integer, String, Text, UniqueConstraint, func,
+)
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
@@ -156,6 +158,65 @@ class GeneticLine(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
 
+class GeneticWeightCurve(Base):
+    """Una versión de la curva estándar de peso de una línea genética.
+
+    `GA-REM-037` / `OD-06`. Versionada a propósito: una curva nueva **no** puede cambiar la
+    referencia de los lotes existentes, o se destruiría la trazabilidad histórica. El lote
+    guarda la versión con la que nació (`Lot.weight_curve_id`) y la conserva.
+
+    El alcance de inquilino lo hereda de la línea, igual que `Incubator` de `Hatchery`.
+    """
+    __tablename__ = "genetic_weight_curves"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    genetic_line_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("genetic_lines.id"), index=True)
+    # `version_label` y no `version`: lo escribe el administrador —«2019», «rev. B»— y es
+    # el identificador que el proveedor le da a su tabla publicada. `version` está
+    # reservado en este proyecto para los campos que fija el servidor
+    # (`UPDATE_SCHEMA_SECURITY_MATRIX`), y `R-32` barre los esquemas de escritura buscando
+    # justamente ese nombre. Dos conceptos opuestos no pueden compartir palabra.
+    version_label: Mapped[str] = mapped_column(String(50))
+    #: Sirve de referencia por defecto para los lotes nuevos. Los ya asignados no se mueven.
+    is_active: Mapped[bool] = mapped_column(Boolean, default=False)
+    source: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now())
+
+    genetic_line: Mapped["GeneticLine"] = relationship("GeneticLine", lazy="selectin")
+    points: Mapped[list["GeneticWeightCurvePoint"]] = relationship(
+        "GeneticWeightCurvePoint", lazy="selectin",
+        order_by="GeneticWeightCurvePoint.age_days", cascade="all, delete-orphan")
+
+    __table_args__ = (
+        UniqueConstraint("genetic_line_id", "version_label", name="uq_curve_line_version"),
+    )
+
+
+class GeneticWeightCurvePoint(Base):
+    """Un punto de la curva: la edad y el rango esperado a esa edad.
+
+    Los pesos van en **gramos**, la unidad canónica del sistema (`mean_weight_g`,
+    `avg_weight_g`). `min_weight` y `max_weight` son la fuente de la alerta;
+    `target_weight` es referencia y no decide nada.
+    """
+    __tablename__ = "genetic_weight_curve_points"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    curve_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("genetic_weight_curves.id", ondelete="CASCADE"), index=True)
+    age_days: Mapped[int] = mapped_column(Integer)
+    target_weight: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    min_weight: Mapped[float] = mapped_column(Float)
+    max_weight: Mapped[float] = mapped_column(Float)
+
+    __table_args__ = (
+        #: Dos valores contradictorios para el mismo día harían la curva ambigua.
+        UniqueConstraint("curve_id", "age_days", name="uq_curve_point_age"),
+    )
+
+
 class Breed(Base):
     __tablename__ = "breeds"
 
@@ -198,6 +259,12 @@ class Lot(Base):
     house_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("houses.id"), nullable=True)
     genetic_line_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("genetic_lines.id"), nullable=True)
     breed_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("breeds.id"), nullable=True)
+    #: `GA-REM-037` / `OD-06`. La **versión concreta** de curva con la que se evalúa este
+    #: lote, no la activa del momento: publicar una curva nueva no puede reescribir la
+    #: referencia histórica de los lotes ya en marcha. Nulable porque hay lotes anteriores a
+    #: esta capacidad y no se les inventa genética.
+    weight_curve_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("genetic_weight_curves.id"), nullable=True)
     lot_code: Mapped[str] = mapped_column(String(100), unique=True, index=True)
     bird_type: Mapped[Optional[BirdTypeEnum]] = mapped_column(Enum(BirdTypeEnum), nullable=True)
     # For hatchery-type lots: distinguishes grandparent-egg incubation (→ breeder chicks)

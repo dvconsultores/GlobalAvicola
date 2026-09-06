@@ -108,3 +108,34 @@ Las pruebas sí usan curvas ficticias deterministas, que es otra cosa y queda de
 Una migración nueva sobre la cabeza única `l2m3n4o5p6q7`: dos tablas y una columna nulable en
 `lots`. Nada obligatorio, así que **no rompe a los lotes existentes ni a los clientes de la
 API** (`§133`-`§134`).
+
+---
+
+## Resultado (2026-09-06)
+
+Las cinco capacidades ausentes se construyeron; las seis existentes no se tocaron. `GA-REM-037`
+queda `CERTIFIED` y `P-03` con ella.
+
+| Capacidad ausente | Dónde quedó |
+|---|---|
+| Versión de curva | `genetic_weight_curves` · migración `m3n4o5p6q7r8` |
+| Puntos de la tabla | `genetic_weight_curve_points` |
+| Referencia del lote a la versión | `lots.weight_curve_id` · `LotService._curva_del_lote` |
+| Motor de evaluación | `app/operations/weight_curve.py` — **una** implementación, sin copia en el frontend |
+| Alerta de desviación | `OperationsService._alertas_de_peso` → `weight_deviation` |
+
+Dos supuestos de esta matriz se confirmaron al implementar:
+
+**La tenencia se hereda, no se duplica.** La curva no lleva `company_id`: se comprueba sobre la
+`GeneticLine` a la que cuelga, como `Incubator` bajo `Hatchery`. Dos fuentes de tenencia para
+el mismo dato acaban discrepando, y `T-037-15` comprueba el aislamiento con un operador real y
+no con el Super Administrador, cuya exención habría hecho pasar la prueba sin medir nada.
+
+**La unidad es el gramo.** `BirdMovement.avg_weight` alimenta `avg_weight_g` en los KPI, de modo
+que la tabla se carga en gramos y no se convierte en ningún punto del recorrido.
+
+Un supuesto **no** se confirmó y merece constar: se anotó que las líneas genéticas podrían
+sembrarse como catálogo global sin `company_id`, al modo de `ProductivePhase`. No sirve. El
+filtro de maestros compara `company_id == user_company_id` sin contemplar el nulo, así que una
+línea global sería invisible para todo usuario con empresa —es decir, para todos menos el
+Super Administrador—. Se siembran por empresa.

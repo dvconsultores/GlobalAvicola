@@ -82,6 +82,40 @@ class LotService:
         master_service = MasterService(self.db, Lot, self.current_user)
         return await master_service.get_by_id(lot_id)
 
+    async def _curva_del_lote(
+        self, genetic_line_id: Optional[int], weight_curve_id: Optional[int]
+    ) -> Optional[int]:
+        """La versión de curva que le corresponde a un lote nuevo. `AC09`, `AC10`.
+
+        Sin línea genética no hay curva posible, y no se inventa ninguna: el motor
+        devolverá `NO_REFERENCE`, que es la respuesta honesta (`AC19`).
+        """
+        from ..masters.curves import version_activa
+        from ..masters.models import GeneticWeightCurve
+
+        if weight_curve_id is None:
+            if genetic_line_id is None:
+                return None
+            activa = await version_activa(self.db, genetic_line_id)
+            return activa.id if activa else None
+
+        curva = (await self.db.execute(
+            select(GeneticWeightCurve).where(GeneticWeightCurve.id == weight_curve_id)
+        )).scalar_one_or_none()
+        if curva is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Curva de peso no encontrada",
+            )
+        # `AC10`. Juzgar un Ross 308 contra la tabla de un Cobb 500 produce un veredicto
+        # con toda la apariencia de ser correcto y ninguna de las garantías.
+        if curva.genetic_line_id != genetic_line_id:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="La curva de peso pertenece a otra línea genética",
+            )
+        return curva.id
+
     async def create_lot(self, data: schemas.LotCreate) -> Lot:
         """Create a new lot."""
         existing = await self.db.execute(
@@ -104,12 +138,20 @@ class LotService:
                     detail="La granja no pertenece a su compañía",
                 )
 
+        # `GA-REM-037` / `OD-06`. La curva estándar contra la que se juzgará este lote se
+        # fija ahora y no se recalcula: es lo que separa una referencia histórica de una
+        # que cambia bajo los pies del dato ya registrado (`AC07`, `AC08`).
+        weight_curve_id = await self._curva_del_lote(
+            data.genetic_line_id, getattr(data, "weight_curve_id", None)
+        )
+
         lot = Lot(
             company_id=self.company_id,
             lot_code=data.lot_code,
             farm_id=data.farm_id,
             house_id=data.house_id,
             genetic_line_id=data.genetic_line_id,
+            weight_curve_id=weight_curve_id,
             breed_id=data.breed_id,
             bird_type=data.bird_type,
             sex=data.sex,

@@ -502,7 +502,7 @@ bloquea una certificación.
 | **`P-06`** | **`R-76`** — un lote se cierra con registros sin aprobar (`docs/12 R7`) | **corrección P1** | **sí** |
 | `P-03` | `GA-REQ-037` — alerta de peso fuera de curva | funcionalidad nueva: exige una curva estándar por línea genética y edad, que no existe como dato | sí, con más trabajo |
 | `P-08` | contrato SAP | **externo** — `GA-REM-017` | no |
-| `P-14` | canal de notificación | **decisión** — `OD-05` + desarrollo | no |
+| `P-14` | canal de notificación | **decisión** sin plantear + desarrollo | no |
 
 ## Siguiente frente recomendado
 
@@ -530,7 +530,7 @@ con requisito propio, no una corrección.
 |---|---|---|:--:|
 | `P-03` | `GA-REQ-037` — alerta de peso fuera de curva | **funcionalidad nueva**: exige una curva estándar por línea genética y edad, que no existe como dato | parcialmente — falta definir la curva |
 | `P-08` | contrato SAP | **externo** — `GA-REM-017` | no |
-| `P-14` | canal de notificación | **decisión** — `OD-05` | no |
+| `P-14` | canal de notificación | **decisión** sin plantear | no |
 
 ```
 NEXT_ACTIONABLE_BLOCKER = GA-REQ-037, con una salvedad
@@ -547,3 +547,17 @@ aportar. **No se inicia aquí.**
 ## Hallazgos técnicos que siguen abiertos
 
 `R-69` · `R-70` · `R-77` · `R-80` · `R-83` — ninguno bloquea una certificación.
+
+
+---
+
+## Corrección · `P-14` no depende de `OD-05` (2026-09-06)
+
+Dos filas de esta matriz atribuían el bloqueo de `P-14` a `OD-05`. Es un error de
+identificador, no de diagnóstico: `P-14` sí está bloqueado por una decisión, pero `OD-05`
+pregunta *«¿puede un administrador conceder permisos que él mismo no posee?»* y sale de
+`P-13`. La elección del canal de notificación no se ha planteado nunca al propietario y no
+tiene número de `OD`.
+
+Se corrigen las dos filas en vez de reescribirlas en silencio, porque la confusión llegó a
+citarse desde otros documentos.
