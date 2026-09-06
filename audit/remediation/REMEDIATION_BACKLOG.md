@@ -290,6 +290,7 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-96` | La capacidad de cargar la tabla de curva **no existe en el producto**: solo por API | **P1** — **`CERTIFIED`** `GA-REM-037` enmienda A |
 | `R-97` | La evaluación de curva solo es observable cuando genera alerta: `WITHIN` y `NO_REFERENCE` son indistinguibles | **P1** — **`CERTIFIED`** `GA-REM-037` enmienda A |
 | `R-98` | Ninguna pantalla oculta acciones de escritura por permiso: no hay modelo de permisos en el frontend | P2 — `OPEN` · transversal, pertenece a `P-13` |
+| `R-99` | El frontend del entorno compartido no sigue a `main`: 866 claves servidas frente a 917, con 10 de un checkpoint anterior | P2 — `OPEN` · despliegue, no producto |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.

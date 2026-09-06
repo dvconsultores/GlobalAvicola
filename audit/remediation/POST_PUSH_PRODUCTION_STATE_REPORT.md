@@ -393,3 +393,82 @@ pruebas aislada y no toca producción, así que nada de lo que queda abierto la 
 que sí exige es no volver a hacer `push` a `main` hasta que §19.3 esté hecho.
 
 Estado de producción en una frase: **funcionando y no certificado**.
+
+---
+
+# ADDENDUM · salud del servicio ≠ versión desplegada (2026-09-06)
+
+`§1` de este informe fijó el principio:
+
+```
+GIT PUSH PASS  ≠  DEPLOY PASS  ≠  APPLICATION HEALTHY
+```
+
+La verificación posterior al push de `f2c50f7` lo confirma con números, y añade un tercer
+término que faltaba: **el backend y el frontend se despliegan por separado y no van al mismo
+ritmo**.
+
+## Lo que se midió, y cómo
+
+Las primeras sondas dieron `SPA = 200` y `/health = 200`, y las dos eran engañosas: el SPA
+sirve su HTML para cualquier ruta que no sea de la API, de modo que `/health` y
+`/openapi.json` devolvían `200` **sin que respondiera backend alguno**. Un `200` no dice qué
+contestó.
+
+La lectura que sí distingue es el código de una ruta protegida:
+
+```
+401 / 403  →  la ruta existe y exige credenciales   →  ese código está desplegado
+404        →  la ruta no existe                     →  ese código NO está desplegado
+```
+
+## Resultado
+
+| Comprobación | Resultado |
+|---|:--:|
+| `SPA` responde | **HEALTHY** |
+| `API` responde (`/api/v1/lots` → `401`) | **HEALTHY** |
+| `GA-REM-027` · backend directo sano y API pública rota | **NO** — no procede interrumpir |
+| Backend de esta entrega (`/api/v1/operations/{id}/weight-evaluation`) | **DESPLEGADO** — pasó de `404` a `502` a `401` |
+| Frontend de esta entrega | **NO DESPLEGADO** |
+
+El backend tardó unos minutos: la sonda lo vio pasar por `404` → `502` (reinicio) → `401`. Eso
+**es** la traza de un despliegue en curso, y por eso se esperó a que se estabilizara en vez de
+declarar el resultado con la primera lectura.
+
+## El frontend va por detrás, y no por culpa de esta entrega
+
+```
+frontend local, tras esta entrega ....... 917 claves i18n
+frontend local, antes de esta entrega ... 876
+frontend desplegado ..................... 866
+```
+
+De las 51 claves que faltan en el entorno compartido, 41 son de esta entrega. Las otras diez
+son **`roles.*`**, es decir, la pantalla de administración de roles que `GA-REM-034` entregó en
+un checkpoint anterior. El desfase del frontend, por tanto, **precede** a este trabajo.
+
+`docker-push-frontend.yml` dispara con `push: branches: [main]` y rutas `frontend/**`, y esta
+entrega toca `frontend/**`, de modo que el mecanismo debería haberse activado. Tras nueve
+minutos de sondeo la versión servida seguía siendo la misma. No hay acceso a los registros de
+ejecución del flujo desde este entorno (`gh` no está disponible), así que **no se afirma la
+causa**: se registra el hecho medido.
+
+```
+R-99 = el frontend del entorno compartido no sigue a `main`
+       medido: 866 claves servidas frente a 917 en `main`, con 10 de un checkpoint anterior
+```
+
+## Qué NO se concluye de esto
+
+`P-03` se certifica contra el **entorno de certificación aislado**, que es donde el programa
+ejecuta sus suites desde `GA-REM-014`. Que el compartido vaya por detrás no invalida la
+certificación ni la sostiene: son dos afirmaciones distintas y se dejan separadas.
+
+```
+CERTIFICADO      en el entorno aislado, con evidencia propia
+DESPLEGADO       backend sí · frontend no
+```
+
+Nadie debe leer «`P-03` certificado» como «la capacidad está disponible hoy en
+`avicola.globaldv.net`». Lo estará cuando `R-99` se cierre.
