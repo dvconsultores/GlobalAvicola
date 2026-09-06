@@ -111,3 +111,89 @@ Then  la interfaz lo indica, en lugar de mostrar cero sin explicación
 
 ## Definition of Done
 - [ ] AC01–AC05 verificados · [ ] Contraste completo documentado · [ ] Tests con datos conocidos por KPI expuesto · [ ] Certification report
+
+---
+
+# Enmienda A · terminología de incubadora y fertilidad (2026-09-06)
+
+## A.1 Por qué
+
+Al contrastar `AC01` con la fuente superior apareció un conflicto que la spec original no
+podía ver, porque partía del campo que había en el código.
+
+`docs/02 §3.12.1` —documento de proceso, **nivel 3** de la jerarquía de evidencia— separa
+**tres** cocientes de incubadora con denominadores distintos:
+
+```
+Eclosión                = eclosionados ÷ FÉRTILES
+Nacimiento              = nacidos      ÷ CARGADOS
+Rendimiento incubadora  = viables      ÷ CARGADOS
+```
+
+`AC01` llama «Tasa de Eclosión» a *«nacidos viables dividido entre huevos cargados»*, que en
+esa nomenclatura es **Nacimiento / Rendimiento**. No es un matiz de vocabulario: son
+denominadores distintos y dan cifras distintas.
+
+Una spec de remediación es **nivel 4**. Manda `docs/02`.
+
+```
+R-85 · P2 · conflicto terminológico entre AC01 y docs/02 §3.12.1
+R-86 · P2 · «Fertilidad» (% huevos fértiles) es normativo y no tiene productor
+```
+
+## A.2 Criterios que sustituyen y amplían
+
+### `AC01-bis` · Los tres cocientes de incubadora, con su nombre
+```
+Given un lote de incubadora con carga de incubación y nacimiento registrados y aprobados
+When  se consulta GET /api/v1/reports/kpis/hatchery
+Then  se devuelven tres valores numéricos con los nombres de `docs/02 §3.12.1`:
+        nacimiento_pct  = nacidos  ÷ huevos cargados × 100
+        eclosion_pct    = nacidos  ÷ huevos FÉRTILES × 100
+        rendimiento_pct = viables  ÷ huevos cargados × 100
+And   `hatchability_pct` se conserva como alias de `nacimiento_pct` para no romper a la
+      interfaz existente, documentado como tal
+```
+
+> **Por qué se conserva el alias.** `AC01` original fijó ese nombre y la pantalla ya lo lee.
+> Retirarlo sería una ruptura de contrato que ningún requisito pide (`§51` del encargo:
+> `P-15` no es excusa para un refactor general). Se mantiene, con su equivalencia dicha.
+
+> **De dónde salen los fértiles.** `EggMovement.egg_type` distingue `fertile` de `infertile`.
+> Los fértiles del lote de incubadora son los recibidos con `egg_type = 'fertile'`. No se
+> inventa nada: es el mismo dato que ya usa `get_hatchery_egg_balance`.
+
+### `AC06` · Fertilidad
+```
+Given un lote de producción con huevos recolectados y clasificados
+When  se consulta el indicador de fertilidad
+Then  fertilidad_pct = huevos fértiles ÷ huevos totales × 100, numérico
+And   nulo con indicador explícito cuando no hay huevos aprobados
+```
+
+### `AC07` · Los KPI exigidos por el cliente están expuestos
+`Eficiencia de Vacunación` y `Eficiencia de Traslado` —calculados y sin consumidor— quedan
+accesibles desde la pantalla de indicadores del lote.
+
+**No** se exponen `animal-welfare`, `production-index` ni `afcr`: no aparecen entre los trece
+de `docs/02 §3.12.1` ni en la lista del cliente. Están implementados y nadie los pidió;
+exponerlos sería convertir una lista interna en requisito.
+
+### `AC08` · Los agregados no cruzan empresas
+Un usuario de la empresa A obtiene indicadores calculados **solo** con datos de A.
+
+**Puerta de validez.** Datos deliberadamente distintos en ambas empresas y comprobación del
+valor **exacto**, no de que la respuesta no falle. Un agregado puede filtrar mal aunque las
+filas individuales estén protegidas.
+
+### `AC09` · La evidencia puede fallar
+`GA-REM-016 AC13`. Mutación controlada y revertida sobre la fórmula, sobre el filtro de
+estado y sobre el filtro de empresa.
+
+## A.3 Fuera de alcance de esta enmienda
+
+`R-87` (reporte de estados) y `R-88` (exportación Excel/PDF) son la **otra mitad** de `P-15`
+—los reportes de `docs/02 §3.12.2`— y ninguna spec los cubre. `R-88` es desarrollo nuevo:
+exige elegir biblioteca, formato y contenido, y nada de eso está especificado.
+
+Se registran y se dejan fuera. **`P-15` no puede certificarse mientras sigan abiertos.**
