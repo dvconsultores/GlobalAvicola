@@ -100,3 +100,40 @@ vacía, lo que choca con `spec.md §8.15` —«Super Admin ve todas las compañ�
 
 No se eleva a hallazgo sin comprobarlo en ejecución: se verificará durante la fase de
 pruebas y, si se confirma, tendrá su propia entrada.
+
+
+---
+
+# ESTADO FINAL · tras `GA-REM-032` (2026-09-06)
+
+| Capacidad | Interfaz | Backend | Norma | Estado |
+|---|---|:--:|:--:|---|
+| usuario | — | `user_id` | sí | backend listo |
+| lote | — | `lot_id` | sí | backend listo |
+| fecha | `date_from` `date_to` | **corregido** (`R-84`) | sí | **alineado** |
+| tipo de operación | **`action`** | `action` | sí | **alineado** |
+| módulo | **`module`** | `module` | sí | **alineado** |
+| estado | — | **`state`** nuevo | sí | backend listo |
+| documento SAP | — | **`sap_reference_id`** nuevo | sí | backend listo |
+| búsqueda libre | **retirada** | — | no | **resuelto** |
+| contiene acción | **retirada** | — | no | **resuelto** |
+| agrupación | **retirada** | — | no | **resuelto** |
+
+```
+7 de 7 filtros normativos implementados y aplicados en servidor
+0 parámetros inertes
+```
+
+## Lo que se retiró de la interfaz, y por qué
+
+Las pestañas «por lote» y «por usuario» no enviaban filtro alguno y mostraban el registro
+entero. La de «Correcciones» ahora envía `action=corrected`, que sí acota. La caja de
+búsqueda libre se sustituyó por dos desplegables —tipo de operación y módulo— que son
+filtros normativos y funcionan.
+
+Retirar un control que nunca filtró no pierde cobertura: la aparentaba.
+
+## `R-84`, descubierto al escribir la prueba de fecha
+
+`created_at >= date_from` comparaba `timestamptz` con texto: **500**. Era el único filtro que
+la pantalla enviaba. Corregido con conversión a instante; `date_to` cubre el día completo.

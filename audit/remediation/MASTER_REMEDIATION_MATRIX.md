@@ -124,3 +124,23 @@ La cadena de causas es la lección del tramo: una afirmación que no podía fall
 defecto de dominio, y ese defecto mantuvo un proceso en `PARTIAL` sin que ninguna matriz lo
 mostrara. De ahí la enmienda F de `GA-REM-016`: la validez de la evidencia alcanza a toda
 prueba invocada como tal, la escribiera quien la escribiera.
+
+
+---
+
+## 6. `GA-REM-032` · `P-09` certificado (2026-09-06)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-81` · seis de once módulos sin un solo registro de auditoría | **P1** | **`CERTIFIED`** |
+| `R-82` · la vista aparentaba filtrar y no filtraba | **P1** | **`CERTIFIED`** |
+| `R-84` · el filtro de fecha devolvía 500 | **P1** | **`CERTIFIED`** |
+| `R-83` · una acción sin empresa no puede auditarse | P2 | abierto |
+
+```
+P-09 = CERTIFIED        CERTIFIED 7 / 15        PARTIAL 8 / 15
+```
+
+Dos correcciones de medición que conviene conservar: las acciones emitidas eran **12**, no 6;
+y **21 valores de enum no son 21 requisitos** — dos quedan fuera por no tener superficie que
+auditar, y decirlo es más honesto que completarlas por estética.

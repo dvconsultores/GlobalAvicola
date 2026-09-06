@@ -6,13 +6,29 @@ import SubNavHeader from '../../components/layout/SubNavHeader'
 import { FilterPanel, FilterGroup, Badge, StatusTimeline, EmptyState } from '../../components/ui'
 import type { TimelineEvent, TimelineEventType } from '../../components/ui/StatusTimeline'
 
-type AuditTab = 'all' | 'by_lot' | 'by_user' | 'corrections'
+type AuditTab = 'all' | 'corrections'
 
 const AUDIT_TABS = [
+ // `GA-REM-032 AC11`. Se retiran «por lote» y «por usuario»: no enviaban filtro alguno
+ // —una `group_by` que el backend nunca declaró— y mostraban todo el registro haciendo
+ // creer al auditor que estaba viendo un subconjunto. Un control que aparenta filtrar sin
+ // filtrar induce a conclusiones falsas sobre el propio registro de rendición de cuentas.
  { key: 'all' as AuditTab, labelKey: 'audit.all', icon: Shield },
- { key: 'by_lot' as AuditTab, labelKey: 'audit.byLot', icon: Database },
- { key: 'by_user' as AuditTab, labelKey: 'audit.byUser', icon: User },
  { key: 'corrections' as AuditTab, labelKey: 'audit.corrections', icon: RotateCcw },
+]
+
+//: Los valores que el backend acepta en `action` y `module`, que son los de `AuditAction`
+//: y `AuditModule`. Se enumeran aquí para que el desplegable no ofrezca nada que la
+//: consulta no sepa atender.
+const AUDIT_ACTIONS = [
+ 'created', 'updated', 'corrected', 'review_started', 'review_completed', 'returned',
+ 'approved', 'rejected', 'consolidated', 'sent_to_sap', 'sap_confirmed', 'sap_error',
+ 'cancelled', 'login', 'login_failed', 'permission_change', 'import', 'export', 'deleted',
+]
+
+const AUDIT_MODULES = [
+ 'auth', 'masters', 'lots', 'operations', 'review', 'approvals', 'corrections', 'sap',
+ 'reports', 'users',
 ]
 
 // Mapeo de acciones a tipos de timeline
@@ -35,27 +51,33 @@ export default function AuditPage() {
  const [total, setTotal] = useState(0)
  const [loading, setLoading] = useState(true)
  const [activeTab, setActiveTab] = useState<AuditTab>('all')
- const [searchTerm, setSearchTerm] = useState('')
+ const [accion, setAccion] = useState('')
+ const [modulo, setModulo] = useState('')
  const [dateFrom, setDateFrom] = useState('')
  const [dateTo, setDateTo] = useState('')
 
  useEffect(() => {
  setLoading(true)
  const params = new URLSearchParams({ limit: '50' })
- if (searchTerm) params.set('search', searchTerm)
+ // `GA-REM-032 AC11`. `search`, `action_contains` y `group_by` no aparecen en ninguna
+ // fuente normativa y FastAPI los descartaba en silencio: la caja de búsqueda no buscaba y
+ // la pestaña de correcciones mostraba todo. Ahora solo viajan filtros que el backend
+ // declara y aplica, y que `docs/02 §3.11.2` exige.
+ if (accion) params.set('action', accion)
+ if (modulo) params.set('module', modulo)
  if (dateFrom) params.set('date_from', dateFrom)
  if (dateTo) params.set('date_to', dateTo)
- if (activeTab === 'corrections') params.set('action_contains', 'correct')
- if (activeTab === 'by_user') params.set('group_by', 'user')
+ if (activeTab === 'corrections') params.set('action', 'corrected')
 
  api.get(`/audit?${params}`)
  .then(r => { setLogs(r.data.logs || []); setTotal(r.data.total || 0) })
  .catch(() => {})
  .finally(() => setLoading(false))
- }, [activeTab, searchTerm, dateFrom, dateTo])
+ }, [activeTab, accion, modulo, dateFrom, dateTo])
 
  const clearFilters = () => {
- setSearchTerm('')
+ setAccion('')
+ setModulo('')
  setDateFrom('')
  setDateTo('')
  }
@@ -116,14 +138,30 @@ export default function AuditPage() {
 
  {/* Filter Panel */}
  <FilterPanel onClear={clearFilters} totalResults={total}>
- <FilterGroup label={t('common.search', 'Buscar')}>
- <input
- type="text"
- placeholder={t('audit.searchPlaceholder', 'Buscar en auditoría...')}
- value={searchTerm}
- onChange={e => setSearchTerm(e.target.value)}
- className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-56 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
- />
+ <FilterGroup label={t('audit.action', 'Tipo de operación')}>
+ <select
+ value={accion}
+ onChange={e => setAccion(e.target.value)}
+ disabled={activeTab === 'corrections'}
+ className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"
+ >
+ <option value="">{t('common.all', 'Todas')}</option>
+ {AUDIT_ACTIONS.map(a => (
+ <option key={a} value={a}>{t(`audit.actions.${a}`, a)}</option>
+ ))}
+ </select>
+ </FilterGroup>
+ <FilterGroup label={t('audit.module', 'Módulo')}>
+ <select
+ value={modulo}
+ onChange={e => setModulo(e.target.value)}
+ className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+ >
+ <option value="">{t('common.all', 'Todos')}</option>
+ {AUDIT_MODULES.map(m => (
+ <option key={m} value={m}>{t(`audit.modules.${m}`, m)}</option>
+ ))}
+ </select>
  </FilterGroup>
  <FilterGroup label={t('common.date', 'Fecha')}>
  <input

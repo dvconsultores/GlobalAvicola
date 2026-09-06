@@ -1,11 +1,26 @@
 """Audit service — query-only. AuditLogs are created automatically by event listeners."""
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from . import models, schemas
+
+
+def _instante(valor: Optional[str], fin_del_dia: bool = False) -> Optional[datetime]:
+    """Convierte `YYYY-MM-DD` —o un ISO completo— en un instante UTC comparable."""
+    if not valor:
+        return None
+    try:
+        momento = datetime.fromisoformat(valor.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    if momento.tzinfo is None:
+        momento = momento.replace(tzinfo=timezone.utc)
+    if fin_del_dia and len(valor) == 10:
+        momento = momento + timedelta(days=1) - timedelta(microseconds=1)
+    return momento
 
 
 class AuditService:
@@ -25,6 +40,8 @@ class AuditService:
         farm_id: Optional[int] = None,
         date_from: Optional[str] = None,
         date_to: Optional[str] = None,
+        state: Optional[str] = None,
+        sap_reference_id: Optional[int] = None,
         limit: int = 50,
         offset: int = 0,
     ) -> tuple[list[models.AuditLog], int]:
@@ -52,12 +69,28 @@ class AuditService:
         if farm_id:
             base = base.where(models.AuditLog.farm_id == farm_id)
             cq = cq.where(models.AuditLog.farm_id == farm_id)
-        if date_from:
-            base = base.where(models.AuditLog.created_at >= date_from)
-            cq = cq.where(models.AuditLog.created_at >= date_from)
-        if date_to:
-            base = base.where(models.AuditLog.created_at <= date_to)
-            cq = cq.where(models.AuditLog.created_at <= date_to)
+        # `R-84`. Se comparaba la cadena directamente contra una columna `timestamptz` y
+        # PostgreSQL respondía «operator does not exist», es decir **500**. El filtro de
+        # fecha es además el único que la interfaz enviaba, de modo que estrenarlo rompía la
+        # pantalla. Se convierte a instante antes de comparar; `date_to` cubre el día
+        # entero, que es lo que un auditor espera al escribir una fecha.
+        desde = _instante(date_from)
+        if desde is not None:
+            base = base.where(models.AuditLog.created_at >= desde)
+            cq = cq.where(models.AuditLog.created_at >= desde)
+        hasta = _instante(date_to, fin_del_dia=True)
+        if hasta is not None:
+            base = base.where(models.AuditLog.created_at <= hasta)
+            cq = cq.where(models.AuditLog.created_at <= hasta)
+
+        # `GA-REM-032 AC09`. «Estado» y «documento SAP» son dos de los siete filtros que
+        # `docs/02 §3.11.2` exige y no existían, aunque sus columnas ya estaban.
+        if state:
+            base = base.where(models.AuditLog.new_state == state)
+            cq = cq.where(models.AuditLog.new_state == state)
+        if sap_reference_id:
+            base = base.where(models.AuditLog.sap_reference_id == sap_reference_id)
+            cq = cq.where(models.AuditLog.sap_reference_id == sap_reference_id)
 
         base = base.order_by(models.AuditLog.created_at.desc()).offset(offset).limit(limit)
         result = await self.db.execute(base)

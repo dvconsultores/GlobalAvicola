@@ -378,3 +378,21 @@ GA-REM-008, y R-78 mantenía P-10 en PARTIAL sin que ninguna matriz lo mostrara.
 ```
 
 Ninguna de las tres se veía desde fuera. Solo aparecieron al recorrer el proceso entero.
+
+
+---
+
+## `P-09` · resuelto (2026-09-06)
+
+```
+R-81  seis módulos sin registro de auditoría      CERTIFIED (GA-REM-032)
+R-82  la vista aparentaba filtrar                 CERTIFIED (GA-REM-032)
+R-84  el filtro de fecha devolvía 500             CERTIFIED (GA-REM-032)
+  └─→ P-09 = CERTIFIED · 14 de 14 pasos
+
+R-83  una acción sin empresa no puede auditarse   ABIERTO — no bloquea P-09
+```
+
+`R-84` no estaba en ninguna matriz: apareció al escribir la prueba del filtro de fecha. Es el
+tercer tramo consecutivo en que un defecto real sale a la luz **solo** al exigirle a una
+prueba que pueda fallar.

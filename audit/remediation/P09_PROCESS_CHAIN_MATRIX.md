@@ -43,7 +43,8 @@ Son procesos distintos y ninguno sustituye al otro.
 | 14 | Contenido del registro | — | cualquiera de las anteriores | usuario, acción, fecha, módulo, entidad, antes → después, motivo | `§3.11.1` | por verificar |
 
 ```
-14 pasos · PASS 6 · FAIL 6 · por verificar 2
+14 pasos · PASS 6 · FAIL 6 · por verificar 2      ← análisis inicial
+14 pasos · PASS 14 · FAIL 0                      ← tras GA-REM-032
 ```
 
 ## 3. Los dos hallazgos y por qué son dos

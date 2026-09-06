@@ -44,7 +44,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` **Wave 3** | ✅ | ✅ | **5/5 cadena** | `COVERED` | **`PARTIAL`** — `GA-TD-014` · `GA-REQ-037` |
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
-| **P-09** Auditoría interna | spec §4.11 | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
+| **P-09** Auditoría interna | spec §4.11 · `docs/02 §3.11` | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **5/5** | `COVERED` | **`CERTIFIED`** |
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ **Wave 3** | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
@@ -232,5 +232,28 @@ cómo `R-78` sobrevivió a una certificación previa).
 
 `GA-REM-008 AC01` vuelve a estar `EVIDENCED`: su afirmación demuestra por mutación que puede
 fallar.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+---
+
+## `P-09` certificado tras `GA-REM-032` (2026-09-06)
+
+```
+CERTIFIED = 7 / 15      PARTIAL = 8 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-02` · `P-04` · `P-05` · `P-07` · `P-09` · `P-10` · `P-11` |
+| `PARTIAL` | `P-01` · `P-03` · `P-06` · `P-08` · `P-12` · `P-13` · `P-14` · `P-15` |
+
+Los 14 pasos de la cadena pasan. **19 de 19** acciones obligatorias se emiten —dos del enum
+quedan fuera por no tener superficie que auditar— y **7 de 7** filtros normativos se aplican
+en servidor.
+
+Costó tres hallazgos: `R-81` (seis módulos sin un solo registro), `R-82` (la vista aparentaba
+filtrar) y `R-84` (el único filtro que la interfaz enviaba devolvía 500). `R-83` queda
+abierto y declarado: una acción no atribuible a ninguna empresa no puede auditarse.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

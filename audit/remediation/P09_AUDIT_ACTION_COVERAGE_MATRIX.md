@@ -122,3 +122,38 @@ R-81 · P1 · seis de los once módulos declarados no producen ningún registro 
 
 **Severidad P1 y no P2**: es un hueco de rendición de cuentas, no de comodidad. Un cambio de
 permisos sin rastro deja sin respuesta la pregunta «quién concedió esto y cuándo».
+
+
+---
+
+# ESTADO FINAL · tras `GA-REM-032` (2026-09-06)
+
+```
+Obligatorias 19 · IMPLEMENTADAS 19 · PROBADAS 19 · CERTIFICADAS 19
+Fuera de alcance 2 · sin superficie que auditar
+```
+
+| Acción | Antes | Ahora | Cómo |
+|---|:--:|:--:|---|
+| `LOGIN` `LOGIN_FAILED` | no | **sí** | `AuthService.login` |
+| `CREATED` `UPDATED` `DELETED` en `masters` | no | **sí** | `MasterService._auditar` |
+| `CREATED` en `lots` | no | **sí** | `LotService.create_lot` — no pasa por `MasterService` |
+| `PERMISSION_CHANGE` | no | **sí** | `AuthService.create_role` · `update_role` |
+| `IMPORT` `EXPORT` | no | **sí** | `SapService` |
+| `REVIEW_COMPLETED` | no | **sí** | `ReviewService.complete_review` |
+| las 12 anteriores | sí | sí | sin cambios |
+
+## Las dos exclusiones, justificadas
+
+| Acción | Por qué no |
+|---|---|
+| `CONFIG_CHANGE` | `AuditModule.CONFIG` está declarado sin ninguna superficie de configuración detrás |
+| `LOGOUT` | no existe endpoint de cierre de sesión: el cliente descarta el token |
+
+Auditar algo que no ocurre no es cobertura. Ambas vuelven a la lista el día que exista la
+superficie correspondiente.
+
+## Limitación registrada
+
+`R-83` — `AuditLog.company_id` no es nulable, así que una acción no atribuible a ninguna
+empresa no puede auditarse. Detalle en `PROCESS-09-CERTIFICATION.md §8`.

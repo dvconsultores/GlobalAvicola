@@ -9,6 +9,18 @@ from sqlalchemy import select, func, or_
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import Base
+from ..audit.models import AuditAction
+
+
+def _serializable(valor: Any) -> Any:
+    """Lo que cabe en una columna JSON; el resto se guarda por su representación."""
+    if valor is None or isinstance(valor, (str, int, float, bool)):
+        return valor
+    return str(valor)
+
+
+def _limpio(datos: dict | None) -> dict | None:
+    return {k: _serializable(v) for k, v in datos.items()} if datos else None
 
 
 class MasterService:
@@ -121,6 +133,25 @@ class MasterService:
                 self.user_company_id, nombre_modelo,
             )
 
+    async def _auditar(self, accion, item, previos=None, nuevos=None) -> None:
+        """`GA-REM-032 AC02`. Alta, edición y baja lógica de un maestro o un lote.
+
+        Los listeners solo vigilan el ciclo del evento operativo, de modo que crear una
+        granja o editar un lote no dejaba rastro alguno. Vive aquí, en el servicio común de
+        los maestros, y no repartido por diecinueve routers.
+        """
+        from ..audit.helpers import audit_accion
+        from ..audit.models import AuditModule
+        from .models import Lot
+
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=accion,
+            modulo=AuditModule.LOTS if self.model is Lot else AuditModule.MASTERS,
+            entity_type=self.model.__name__.lower(), entity_id=item.id,
+            company_id=getattr(item, "company_id", None) or self.user_company_id,
+            previous_values=_limpio(previos), new_values=_limpio(nuevos),
+        )
+
     async def create(self, data: Any) -> Any:
         """Create a new item. Auto-assigns company_id from current user."""
         item_data = data.model_dump()
@@ -136,6 +167,7 @@ class MasterService:
         self.db.add(item)
         await self.db.flush()
         await self.db.refresh(item)
+        await self._auditar(AuditAction.CREATED, item, nuevos=item_data)
         return item
 
     async def update(self, item_id: int, data: Any) -> Any:
@@ -145,10 +177,13 @@ class MasterService:
         # Mover un maestro bajo un padre ajeno es la misma escritura entre inquilinos que
         # crearlo ahi (`R-59`).
         await self._verificar_padres(update_data)
+        previos = {k: _serializable(getattr(item, k, None)) for k in update_data}
         for key, value in update_data.items():
             setattr(item, key, value)
         await self.db.flush()
         await self.db.refresh(item)
+        await self._auditar(AuditAction.UPDATED, item,
+                            previos=previos, nuevos=update_data)
         return item
 
     async def deactivate(self, item_id: int) -> None:
@@ -156,3 +191,4 @@ class MasterService:
         item = await self.get_by_id(item_id)
         item.is_active = False
         await self.db.flush()
+        await self._auditar(AuditAction.DELETED, item)

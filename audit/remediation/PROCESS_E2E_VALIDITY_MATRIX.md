@@ -147,3 +147,31 @@ ningún caso. Con el positivo funcionando, comprueba una abstención real.
 
 El escenario registra `egg_collection` y `birth_registration` para satisfacer `BR-02` y
 `BR-04`. Son precondiciones reales del negocio: se construyen, no se sortean.
+
+
+---
+
+## `P-09` · auditoría interna (`GA-REM-032`)
+
+`e2e/proceso-p09-auditoria-interna.spec.ts` · 6 casos · `API_E2E`.
+
+| Caso | Qué comprueba | ¿Podría fallar? |
+|---|---|:--:|
+| el acceso deja rastro | registro de `login` con actor y módulo | sí — antes no existía |
+| el alta de un maestro deja rastro | el registro de **esa** granja, y el lote en su propio módulo | sí |
+| el cambio de permisos deja rastro | el registro de **ese** rol | sí |
+| los filtros acotan y se componen | **todos** los resultados cumplen la condición, y las dos juntas | sí |
+| el filtro de fecha responde | 200 y las fechas dentro de la ventana | sí — antes daba 500 (`R-84`) |
+| sin permiso no se consulta | 403 con un operador real | sí |
+
+### Ninguna cuenta vacua
+
+Los filtros se comprueban con `every(...)` sobre el resultado y con la pertenencia del
+identificador concreto creado en el escenario, no con `length > 0`. En las pruebas de
+integración se exige el **subconjunto exacto** (`== ["a", "c"]`), que es más fuerte todavía.
+
+### Una separación deliberada
+
+Las pruebas de consulta insertan sus registros directamente en vez de provocarlos con
+acciones reales. Miden la **consulta**; mezclarlas con la emisión haría que un fallo no
+dijera cuál de las dos falló. La emisión tiene sus propias seis pruebas.

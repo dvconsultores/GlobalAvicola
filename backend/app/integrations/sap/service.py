@@ -10,6 +10,8 @@ from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...operations.models import EventStatus, OperationalEvent
+from ...audit.helpers import audit_accion
+from ...audit.models import AuditAction, AuditModule
 from . import models, schemas
 from .adapter import (
     ManualSapAdapter,
@@ -111,6 +113,12 @@ class SapService:
         )
         self.db.add(job)
         await self.db.flush()
+        # `GA-REM-032 AC04`. Importar referencias es una acción del sistema y no dejaba rastro.
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.IMPORT,
+            modulo=AuditModule.SAP, entity_type="sap_reference",
+            new_values={"referencias": len(data.references)},
+        )
         return refs
 
     async def list_references(
@@ -374,6 +382,10 @@ class SapService:
         job.completed_at = datetime.now(timezone.utc)
         await self.db.flush()
 
+        await audit_accion(                               # `GA-REM-032 AC04`
+            self.db, usuario=self.current_user, accion=AuditAction.EXPORT,
+            modulo=AuditModule.SAP, entity_type="sap_export",
+        )
         return schemas.SapExportResponse(
             sync_job_id=job.id,
             payloads_created=payloads_created,

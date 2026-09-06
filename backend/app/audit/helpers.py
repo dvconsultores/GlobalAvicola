@@ -211,3 +211,43 @@ def _status_str(event: Any) -> str:
     if hasattr(status, "value"):
         return status.value
     return str(status)
+
+
+async def audit_accion(
+    db: AsyncSession,
+    *,
+    usuario: dict[str, Any] | None,
+    accion: AuditAction,
+    modulo: AuditModule,
+    entity_type: str,
+    entity_id: str | None = None,
+    company_id: int | None = None,
+    **extra: Any,
+) -> AuditLog | None:
+    """Registro de auditoría para acciones fuera del ciclo del evento operativo.
+
+    `GA-REM-032` / `R-81`. Los listeners solo vigilan `OperationalEvent`, `CorrectionLog` y
+    `ApprovalAction`, de modo que seis de los once módulos declarados no producían ningún
+    registro. Esta función cubre el resto —acceso, maestros, lotes, permisos, importación y
+    exportación— reutilizando el mismo insertor y, por tanto, la misma transacción que la
+    operación de negocio (`GA-REM-026`).
+
+    `company_id` no es nulable en el modelo. Cuando la acción no puede atribuirse a ninguna
+    empresa —un Super Admin sin contexto, o un intento de acceso con un usuario inexistente—
+    **no se escribe** y se devuelve `None`. Es una limitación conocida y registrada como
+    `R-83`; se prefiere dejarla visible antes que hacer nulable la columna y crear registros
+    que ninguna consulta podría recuperar.
+    """
+    empresa = company_id if company_id is not None else (usuario or {}).get("company_id")
+    if empresa is None:
+        return None
+    return await _insert_audit_log(
+        db,
+        user_id=(usuario or {}).get("id"),
+        company_id=empresa,
+        action=accion,
+        entity_type=entity_type,
+        entity_id=str(entity_id) if entity_id is not None else None,
+        module=modulo,
+        **extra,
+    )

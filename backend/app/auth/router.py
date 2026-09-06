@@ -137,7 +137,7 @@ async def create_role(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "create")),
 ):
-    return await AuthService(db).create_role(data)
+    return await AuthService(db).create_role(data, current_user)
 
 
 @router.put("/roles/{role_id}", response_model=RoleRead, tags=["Roles"])
@@ -147,4 +147,4 @@ async def update_role(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "update")),
 ):
-    return await AuthService(db).update_role(role_id, data)
+    return await AuthService(db).update_role(role_id, data, current_user)

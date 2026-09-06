@@ -24,6 +24,8 @@ async def list_audit_logs(
     farm_id: Optional[int] = Query(None),
     date_from: Optional[str] = Query(None),
     date_to: Optional[str] = Query(None),
+    state: Optional[str] = Query(None),
+    sap_reference_id: Optional[int] = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
@@ -33,7 +35,8 @@ async def list_audit_logs(
     logs, total = await AuditService(db, current_user).list_logs(
         user_id=user_id, action=action, entity_type=entity_type, entity_id=entity_id,
         module=module, lot_id=lot_id, farm_id=farm_id,
-        date_from=date_from, date_to=date_to, limit=limit, offset=offset,
+        date_from=date_from, date_to=date_to, state=state,
+        sap_reference_id=sap_reference_id, limit=limit, offset=offset,
     )
     return {"logs": logs, "total": total}
 

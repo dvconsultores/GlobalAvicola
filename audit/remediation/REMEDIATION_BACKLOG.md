@@ -270,6 +270,10 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-78` | El vínculo generacional automático no se crea en el orden natural (despacho → recepción) | P1 — **`CERTIFIED`** `GA-REM-031` |
 | `R-79` | La prueba de `GA-REM-008 AC01` no podía fallar | P2 — **`CERTIFIED`** `GA-REM-016` enm. F |
 | `R-80` | La fecha de negocio se ancla al día local del servidor y `created_at` a UTC: entre una medianoche y otra, `start_date` queda por delante del alta | P2 — **abierto** |
+| `R-81` | Seis de los once módulos declarados no producían ningún registro de auditoría | P1 — **`CERTIFIED`** `GA-REM-032` |
+| `R-82` | La vista de auditoría aparentaba filtrar y no filtraba | P1 — **`CERTIFIED`** `GA-REM-032` |
+| `R-83` | `AuditLog.company_id` no es nulable: una acción no atribuible a ninguna empresa no puede auditarse | P2 — **abierto** |
+| `R-84` | El filtro de fecha comparaba `timestamptz` con texto y devolvía 500 | P1 — **`CERTIFIED`** `GA-REM-032` |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.

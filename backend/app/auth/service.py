@@ -41,6 +41,10 @@ def _claims_de(user: User, company_id: int | None = None) -> dict:
     }
 
 
+from ..audit.helpers import audit_accion
+from ..audit.models import AuditAction, AuditModule
+
+
 class AuthService:
     def __init__(self, db: AsyncSession):
         self.db = db
@@ -54,6 +58,24 @@ class AuthService:
         user = result.scalar_one_or_none()
 
         if not user or not verify_password(data.password, user.hashed_password):
+            # `GA-REM-032 AC01`. El intento fallido sobre una cuenta existente es lo primero
+            # que un auditor busca, y no se registraba. Nunca se guarda la credencial
+            # intentada: auditar el fallo conservando la contraseña sería peor que no
+            # auditarlo. Un usuario inexistente no puede atribuirse a ninguna empresa y
+            # queda sin registro (`R-83`).
+            if user is not None:
+                await audit_accion(
+                    self.db, usuario={"id": user.id, "company_id": user.company_id},
+                    accion=AuditAction.LOGIN_FAILED, modulo=AuditModule.AUTH,
+                    entity_type="user", entity_id=user.id,
+                    comments="Credenciales incorrectas",
+                )
+                # El 401 provoca el `rollback` de la petición (`GA-REM-026`), que se
+                # llevaría por delante este registro. La auditoría de una acción
+                # **rechazada** tiene que sobrevivir al rechazo: si no, el único rastro que
+                # queda de un intento de acceso es ninguno. Se confirma aquí, y solo aquí,
+                # porque en esta rama no hay ninguna otra escritura pendiente.
+                await self.db.commit()
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED,
                 detail="Usuario o contraseña incorrectos",
@@ -66,6 +88,12 @@ class AuthService:
 
         # El login parte siempre de la compañía del usuario: es una sesión nueva y no
         # arrastra ningún contexto anterior.
+        await audit_accion(                                   # `GA-REM-032 AC01`
+            self.db, usuario={"id": user.id, "company_id": user.company_id},
+            accion=AuditAction.LOGIN, modulo=AuditModule.AUTH,
+            entity_type="user", entity_id=user.id,
+        )
+
         token_data = _claims_de(user)
         return TokenResponse(
             access_token=create_access_token(token_data),
@@ -306,7 +334,7 @@ class AuthService:
         roles = result.scalars().all()
         return [RoleRead.model_validate(r) for r in roles]
 
-    async def create_role(self, data: RoleCreate) -> RoleRead:
+    async def create_role(self, data: RoleCreate, current_user: dict | None = None) -> RoleRead:
         role = Role(name=data.name, description=data.description)
         self.db.add(role)
         await self.db.flush()
@@ -323,9 +351,18 @@ class AuthService:
 
         await self.db.flush()
         await self.db.refresh(role)
+        # `GA-REM-032 AC03`. «Quién concedió esto y cuándo» no tenía respuesta: ni el alta de
+        # un rol ni el cambio de sus permisos dejaban rastro. Se emite **después** de
+        # persistir los permisos, para que el registro diga lo concedido y no lo pedido.
+        await audit_accion(
+            self.db, usuario=current_user, accion=AuditAction.PERMISSION_CHANGE,
+            modulo=AuditModule.USERS, entity_type="role", entity_id=role.id,
+            new_values={"nombre": role.name,
+                        "permisos": [f"{p.module}:{p.action}" for p in (data.permissions or [])]},
+        )
         return RoleRead.model_validate(role)
 
-    async def update_role(self, role_id: int, data: RoleUpdate) -> RoleRead:
+    async def update_role(self, role_id: int, data: RoleUpdate, current_user: dict | None = None) -> RoleRead:
         result = await self.db.execute(select(Role).where(Role.id == role_id))
         role = result.scalar_one_or_none()
         if not role:
@@ -337,4 +374,9 @@ class AuthService:
 
         await self.db.flush()
         await self.db.refresh(role)
+        await audit_accion(                                   # `GA-REM-032 AC03`
+            self.db, usuario=current_user, accion=AuditAction.PERMISSION_CHANGE,
+            modulo=AuditModule.USERS, entity_type="role", entity_id=role.id,
+            new_values={"nombre": role.name},
+        )
         return RoleRead.model_validate(role)

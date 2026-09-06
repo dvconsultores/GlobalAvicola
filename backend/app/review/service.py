@@ -6,7 +6,8 @@ from fastapi import HTTPException, status
 from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..audit.helpers import audit_approval_action, audit_state_transition
+from ..audit.helpers import audit_accion, audit_approval_action, audit_state_transition
+from ..audit.models import AuditAction, AuditModule
 from ..operations.models import EventStatus, OperationalEvent
 from . import models, schemas
 
@@ -285,6 +286,13 @@ class ReviewService(SegregacionMixin):
                                      old_status, new_status,
                                      comments=observations)
 
+        # `GA-REM-032 AC05`. `REVIEW_COMPLETED` estaba declarada y no la escribía nadie, de
+        # modo que el cierre de la revisión era el único paso del ciclo sin rastro propio.
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.REVIEW_COMPLETED,
+            modulo=AuditModule.REVIEW, entity_type="operational_event",
+            entity_id=event.id, lot_id=event.lot_id, comments=observations,
+        )
         return event
 
     # ============================================================

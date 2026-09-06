@@ -310,3 +310,43 @@ Advertencia aprendida en `P-10`: la distancia aparente de un proceso vale lo que
 evidencia que la sostiene. La de `P-09` no se ha auditado con `AC13` en la mano.
 
 **No se inicia aquí.**
+
+
+---
+
+# REVISIÓN · tras `GA-REM-032` (2026-09-06)
+
+`P-09` sale de la lista: **`CERTIFIED`**. Quedan **8** procesos `PARTIAL`.
+
+| Bloqueante | Fan-out | Naturaleza | Accionable | Cierra proceso |
+|---|:--:|---|---|---|
+| `GA-TD-014` | **3** | corrección + decisión acotada | **no** — `OD-04` | no por sí solo |
+| `P-15` 4 KPI huérfanos | 1 | corrección P2 | **sí** | **probablemente** |
+| `P-12` 7 pantallas + contador | 1 | desarrollo de interfaz | sí | sí, con más trabajo |
+| `P-13` 2 pantallas | 1 | desarrollo de interfaz | sí | sí, con más trabajo |
+| `P-14` notificaciones | 1 | desarrollo nuevo, sin canal | sí | sí, mucho más trabajo |
+| `GA-REQ-037` peso fuera de curva | 2 | funcionalidad nueva | sí | no (`P-06` con `GA-TD-014`) |
+| `R-76` cierre con registros sin aprobar | 1 | corrección P1 | sí | no (`P-06` bloqueado) |
+| `R-80` `R-83` marcos y atribución | 0 | correcciones P2 | sí | no |
+| `R-77` regla mal numerada | 0 | corrección P2 | sí | no |
+| `GA-REM-017` SAP real | 1 | externo | no | no |
+| `R-69` · `R-70` | 0 | correcciones P2 | sí | no |
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = P-15 · reportes e indicadores
+```
+
+**Motivo.** Es la última remediación acotada que puede cerrar un proceso sin desarrollo de
+interfaz nuevo: cuatro KPI huérfanos y la advertencia documental de que los indicadores son
+cero hasta aprobar. Backend y modelo existen.
+
+Los tres candidatos restantes —`P-12`, `P-13`, `P-14`— exigen pantallas o un canal de
+notificación que no existe, y `P-01`/`P-03`/`P-06` siguen esperando `OD-04`.
+
+**Advertencia que ya lleva tres tramos cumpliéndose**: la distancia aparente de un proceso
+vale lo que valga la evidencia que la sostiene. La de `P-15` no se ha auditado con `AC13` en
+la mano, y en `P-09` esa auditoría descubrió un 500 que nadie había visto.
+
+**No se inicia aquí.**

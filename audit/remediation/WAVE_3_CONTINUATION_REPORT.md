@@ -554,3 +554,60 @@ backend  335 pasan · 49 omitidas · 0 fallos    (antes 330)
 E2E       85/85
 frontend  sin cambios — no reejecutado
 ```
+
+
+---
+
+# `P-09` certificado · `R-81` + `R-82` + `R-84` · `GA-REM-032` (2026-09-06)
+
+```
+P-09 = CERTIFIED     CERTIFIED 7 / 15     PARTIAL 8 / 15
+```
+
+## Dos correcciones de medición antes de tocar nada
+
+El encargo daba «6 de 21 acciones emitidas» y trataba `AC13` como catálogo de auditoría.
+Ninguna de las dos cosas se sostuvo: eran **12** las emitidas, y `AC13` es la puerta de
+validez de pruebas que se escribió el día anterior. La fuente normativa es `docs/02 §3.11`.
+
+Y **21 valores de enum no son 21 requisitos**: `CONFIG_CHANGE` y `LOGOUT` quedan fuera porque
+no existe superficie que auditar —no hay configuración, y el cierre de sesión ocurre en el
+cliente—. Decirlo es más honesto que completarlas por estética.
+
+## Lo que faltaba
+
+Los listeners vigilaban tres tipos de modelo, de modo que seis de los once módulos declarados
+no producían **ni un registro**: entrar al sistema, crear una granja, editar un lote, cambiar
+los permisos de un rol o exportar un informe no dejaban rastro alguno.
+
+Y la vista de auditoría aparentaba filtrar sin filtrar: enviaba tres parámetros que FastAPI
+descartaba en silencio. Un auditor que abría «Correcciones» y sacaba conclusiones estaba
+leyendo el registro entero.
+
+## Un tercer defecto que solo apareció al exigir una prueba capaz de fallar
+
+`R-84`: el filtro de fecha comparaba `timestamptz` con texto y devolvía **500**. Era el único
+filtro que la pantalla enviaba. No figuraba en ninguna matriz; salió al escribir su prueba.
+
+Es el tercer tramo consecutivo en que ocurre lo mismo, y ya no parece casualidad.
+
+## Una decisión de arquitectura tomada explícitamente
+
+El registro del acceso fallido se escribía y el 401 lo revertía. Si el único rastro de un
+intento fallido desaparece con el propio fallo, no hay auditoría: se confirma ese registro
+antes de propagar el error, y solo ése.
+
+## Una limitación declarada, no escondida
+
+`R-83`: `AuditLog.company_id` no es nulable, así que una acción no atribuible a ninguna
+empresa no puede auditarse. Se prefirió dejarlo visible antes que crear registros que ninguna
+consulta podría recuperar. El caso que importa para seguridad —el ataque contra una cuenta
+existente— sí queda registrado.
+
+## Regresión
+
+```
+backend  352 pasan · 49 omitidas · 0 fallos   (antes 335)
+E2E       91/91                                (antes 85)
+tsc PASS · vitest 61/61 · i18n 866 = 866
+```

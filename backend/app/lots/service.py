@@ -130,6 +130,19 @@ class LotService:
         self.db.add(lot)
         await self.db.flush()
         await self.db.refresh(lot)
+        # `GA-REM-032 AC02`. El alta de un lote no pasa por `MasterService`, así que la
+        # instrumentación de los maestros no la alcanzaba: sin esto, crear un lote seguiría
+        # sin dejar rastro.
+        from ..audit.helpers import audit_accion
+        from ..audit.models import AuditAction, AuditModule
+
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.CREATED,
+            modulo=AuditModule.LOTS, entity_type="lot", entity_id=lot.id,
+            company_id=lot.company_id, lot_id=lot.id,
+            new_values={"lot_code": lot.lot_code,
+                        "bird_type": str(getattr(lot.bird_type, "value", lot.bird_type))},
+        )
         return lot
 
     async def update_lot(self, lot_id: int, data: schemas.LotUpdate) -> Lot:

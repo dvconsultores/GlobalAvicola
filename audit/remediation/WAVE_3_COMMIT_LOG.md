@@ -409,3 +409,22 @@ verdes. `git diff` limpio tras revertir.
 Hallazgo nuevo `R-80` (P2, abierto): día de negocio local frente a `created_at` en UTC.
 
 Regresión: backend **335 · 49 omitidas · 0 fallos**; E2E **85/85**; frontend sin cambios.
+
+
+---
+
+## `GA-REM-032` · cobertura de auditoría y contrato de consulta
+
+```
+R-81 = CERTIFIED   R-82 = CERTIFIED   R-84 = CERTIFIED   R-83 = ABIERTO
+P-09 = CERTIFIED   ·   CERTIFIED 7 / 15   ·   PARTIAL 8 / 15
+```
+
+Spec y tres matrices comprometidas y publicadas antes del código (`2055d2b`). Seis pruebas
+rojas por la causa exacta —el registro no existe— antes de tocar la aplicación.
+
+Sensibilidad específica: sin la emisión genérica caen las 6 de cobertura y ninguna de
+consulta; sin el filtro de estado cae 1; sin la conversión de fecha cae 1. `git diff` limpio.
+
+Regresión: backend **352 · 49 omitidas · 0 fallos**; E2E **91/91**; `tsc`, vitest 61/61,
+i18n 866 = 866.

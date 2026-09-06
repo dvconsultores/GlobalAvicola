@@ -36,6 +36,7 @@ PREFIJO = "TO-TEST-"
 async def motor(test_database_url):
     e = create_async_engine(test_database_url)
     yield e
+    from app.audit.models import AuditLog
     from app.lots.models import ChickBatch, EggBatch, LotPhase, OpeningBalance
 
     async with e.begin() as c:
@@ -46,6 +47,9 @@ async def motor(test_database_url):
                 ChickBatch.hatchery_lot_id.in_(ids) | ChickBatch.destination_lot_id.in_(ids)))
             await c.execute(delete(EggBatch).where(
                 EggBatch.source_lot_id.in_(ids) | EggBatch.hatchery_lot_id.in_(ids)))
+            # `GA-REM-032`. El alta de un lote deja ahora su registro de auditoría, que
+            # referencia el lote: hay que retirarlo antes de borrarlo.
+            await c.execute(delete(AuditLog).where(AuditLog.lot_id.in_(ids)))
             await c.execute(delete(OpeningBalance).where(OpeningBalance.lot_id.in_(ids)))
             await c.execute(delete(LotPhase).where(LotPhase.lot_id.in_(ids)))
             await c.execute(delete(Lot).where(Lot.id.in_(ids)))
