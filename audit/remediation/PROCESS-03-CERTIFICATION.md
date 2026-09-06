@@ -3,9 +3,13 @@
 `spec.md §4.4` + `§4.5` · `docs/02 §3.5` · `GA-REM-037` · `OD-06` · 2026-09-06
 
 ```
-P-03        = CERTIFIED
-GA-REQ-037  = CERRADO       OD-06 = RESOLVED
+P-03        = PARTIAL       ← corregido el 2026-09-06, ver ADDENDUM A
+GA-REQ-037  = PARCIAL       OD-06 = RESOLVED
 ```
+
+> **`ADDENDUM A` (2026-09-06).** Este informe declaró `P-03 = CERTIFIED`. La declaración era
+> **prematura** y se corrige al final del documento. El backend certificado sigue siéndolo; lo
+> que faltaba es la capacidad de producto que `OD-06` exige.
 
 > Este archivo **sustituye** a la reevaluación del 2026-09-06 que declaraba
 > `P-03 = PARTIAL — BLOCKED_BY_REQUIREMENT`. Aquel diagnóstico era correcto y su bloqueo se
@@ -153,3 +157,51 @@ tabla de notificaciones o de suscripciones sería la huella inevitable de haber 
 por la puerta de atrás.
 
 **`RC-07` no se toca.** Mortalidad → SAP sigue abierta y es un asunto distinto.
+
+
+---
+
+# ADDENDUM A · la certificación era prematura (2026-09-06)
+
+## Lo que este informe concluyó mal
+
+En su §8 —«Lo que queda fuera, dicho»— este informe declaró:
+
+> *No hay pantalla de administración de curvas. `GA-REM-037` no tiene ningún criterio de
+> frontend y la modalidad de evidencia es `API_E2E`, de modo que construirla sería trabajo sin
+> spec.*
+
+El razonamiento va al revés. `OD-06` dice que cada línea genética puede tener su tabla y que
+**esa tabla debe poder cargarse dentro de Global Avícola**. Que `GA-REM-037` no desarrollara
+ese punto no elimina el requisito del propietario: demuestra que la spec estaba incompleta.
+
+```
+OWNER REQUIREMENT  >  INCOMPLETE SPEC
+```
+
+Y `GA-REM-016 AC05` ya daba el criterio de proceso: *«ninguna unidad certificada es una
+pantalla, un endpoint o un componente»*. Certificar `P-03` porque
+`POST /masters/weight-curves` responde `201` es certificar un endpoint.
+
+```
+P-03 = PARTIAL
+R-96 = MISSING PRODUCT CAPABILITY + SPEC COVERAGE GAP     (era P2 "backlog"; se reclasifica a P1)
+```
+
+## Y un hueco que apareció al mirar de cerca
+
+Al derivar el contrato de esa pantalla —`R96_WEIGHT_CURVE_FRONTEND_CONTRACT_MATRIX.md`— salió
+`R-97`: el motor de evaluación tiene un solo consumidor, el generador de alertas, y solo actúa
+cuando el peso queda fuera de rango. `WITHIN_STANDARD` y `NO_REFERENCE` **no son distinguibles**
+desde fuera: los dos se ven como «ninguna alerta».
+
+## Qué se conserva y qué no
+
+**Se conserva toda la evidencia.** Los 38 tests de backend, los 5 `API_E2E` y las diez
+mutaciones siguen en verde y siguen siendo válidos. Nada de lo medido era falso.
+
+**Se retira la conclusión.** Lo que estaba mal no era ninguna medición: era el salto de
+«el backend hace lo que `OD-06` describe» a «el proceso está certificado».
+
+Los dos hallazgos se cierran por la **enmienda A de `GA-REM-037`**, que añade `AC26`…`AC28` de
+backend y `AC-FE01`…`AC-FE20` de producto.

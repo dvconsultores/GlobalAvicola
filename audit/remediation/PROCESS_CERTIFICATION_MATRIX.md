@@ -38,7 +38,7 @@ evidencia. Se certificaron los tres primeros.
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | **P-01** Progenitoras — Cría | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-01/06/07/08/17/18/19` | ✅ | ✅ | **3/3** | `COVERED` | **`CERTIFIED`** |
 | **P-02** Progenitoras — Producción de huevo | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
-| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 · `§4.5` alertas | ✅ | ✅ | **5/5** | `COVERED` | **`CERTIFIED`** |
+| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ⚠ | ✅ | ✅ | ídem P-01 · `§4.5` alertas | ✅ | ✅ | **5/5** `API_E2E` | `PARTIAL` | **`PARTIAL`** — `R-96` |
 | **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
 | **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` · `R7` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
@@ -410,5 +410,39 @@ Los dos `PARTIAL` que quedan no son tareas técnicas:
 |---|---|---|
 | `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | `P-14` | elegir canal de notificación y construirlo | **decisión + desarrollo** |
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+
+---
+
+## Corrección · `P-03` vuelve a `PARTIAL` (2026-09-06)
+
+```
+CERTIFIED = 12 / 15      PARTIAL = 3 / 15
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-01` · `P-02` · `P-04` · `P-05` · `P-06` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · `P-15` |
+| `PARTIAL` | **`P-03`** · `P-08` · `P-14` |
+
+La entrada anterior declaró `P-03 = CERTIFIED` con la cadena `API_E2E` en verde y anotó, como
+alcance excluido, que no había pantalla para administrar curvas. **Ese excluido no era
+excluible.**
+
+`OD-06` exige que la tabla de curva pueda cargarse **dentro de Global Avícola**. Esa es una
+capacidad de producto, y `GA-REM-016 AC05` es explícito en que la unidad certificada es el
+proceso de negocio y no un endpoint. Que `POST /masters/weight-curves` responda `201` demuestra
+que el backend funciona, no que el administrador pueda hacer su trabajo.
+
+```
+R-96 = MISSING PRODUCT CAPABILITY + SPEC COVERAGE GAP
+R-97 = CONTRACT GAP · la evaluación no es observable salvo cuando alerta
+```
+
+No se retira la evidencia obtenida: los 38 tests de backend, los 5 `API_E2E` y las diez
+mutaciones siguen siendo válidos y siguen en verde. Lo que se retira es la **conclusión** de
+que con eso bastaba. `GA-REM-037` vuelve a `SPEC_READY` con su enmienda A abierta.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

@@ -287,7 +287,8 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-94` | No había catálogo de permisos | P2 — **`CERTIFIED`** `GA-REM-034` |
 | `GA-TD-014` | La OC no llegaba al campo tipado; el límite no era acumulado | P1 — **`CERTIFIED`** `GA-REM-035` |
 | `R-95` | `SapReferenceCreate` no declaraba `quantity`: `BR-18` era inaplicable | P1 — **`CERTIFIED`** `GA-REM-035` |
-| `R-96` | No hay pantalla para administrar curvas de peso: solo se cargan por API | P2 — **`OPEN`** · sin spec de frontend |
+| `R-96` | La capacidad de cargar la tabla de curva **no existe en el producto**: solo por API | **P1** — `OPEN` · `MISSING PRODUCT CAPABILITY` + `SPEC COVERAGE GAP` |
+| `R-97` | La evaluación de curva solo es observable cuando genera alerta: `WITHIN` y `NO_REFERENCE` son indistinguibles | **P1** — `OPEN` · `CONTRACT GAP` |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.
@@ -305,5 +306,44 @@ RC-07  · ¿la mortalidad se envía a SAP?   sigue sin resolver, y es un asunto 
 OD-05  · política de escalada de privilegios   abierta desde P-13
 ```
 
-El resto del backlog son hallazgos de fan-out 1: `R-69`, `R-70`, `R-77`, `R-80`, `R-83`,
-`R-96`.
+El resto del backlog son hallazgos de fan-out 1: `R-69`, `R-70`, `R-77`, `R-80`, `R-83`.
+
+`R-96` y `R-97` sí tienen consecuencia de proceso: **`P-03` vuelve a `PARTIAL`** hasta que
+cierren. Ver la corrección de gobernanza al final de este documento.
+
+
+---
+
+## Corrección de gobernanza · `R-96` reclasificado (2026-09-06)
+
+`R-96` se registró como `P2 · sin spec de frontend`, apoyándose en que `GA-REM-037` no tenía
+criterios de interfaz. **El razonamiento estaba invertido.**
+
+`OD-06` dice que cada línea genética puede tener su tabla de curva y que esa tabla **debe poder
+cargarse dentro de Global Avícola**. Que la spec no desarrollara ese punto no elimina el
+requisito: demuestra que la spec estaba incompleta.
+
+```
+OWNER REQUIREMENT  >  INCOMPLETE SPEC
+```
+
+De modo que:
+
+```
+R-96 = MISSING PRODUCT CAPABILITY + SPEC COVERAGE GAP     no "deuda técnica", no "backlog"
+```
+
+Y su consecuencia sobre el proceso:
+
+```
+P-03 = PARTIAL     hasta que la capacidad exista en el producto
+```
+
+Certificar `P-03` porque `POST /masters/weight-curves` responde `201` habría sido exactamente
+lo que `GA-REM-016 AC05` prohíbe: *«ninguna unidad certificada es una pantalla, un endpoint o
+un componente»*. El endpoint funciona; el proceso no está completo mientras el administrador no
+pueda ejecutarlo desde el producto.
+
+`R-97` apareció al derivar el contrato de esa pantalla y es de otra clase —el backend calcula
+la evaluación y no la expone salvo cuando alerta—. Los dos se cierran por la enmienda A de
+`GA-REM-037`, que es la autoridad natural de `OD-06`.

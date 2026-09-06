@@ -529,3 +529,74 @@ limpio.
 Fixtures reparadas en tres suites certificadas, sin tocar sus aserciones.
 
 Regresión: backend **401 · 49 omitidas · 0 fallos**; E2E **106/106**; frontend sin cambios.
+
+---
+
+## ADDENDUM · la referencia de seguimiento miente cuando se empuja por URL explícita (2026-09-06)
+
+### Lo que se afirmó mal
+
+El cierre del checkpoint de `P-03` informó:
+
+> *`main` está **60 commits por delante** de `origin/main`, que sigue en `bfccdfb` del
+> 2026-07-08. Ningún commit de esta remediación ha llegado al remoto.*
+
+**Era falso.** El remoto estaba en `28ce8cc`, del mismo día. Los pushes de esta remediación sí
+se habían publicado, incluidos los que este mismo documento registra.
+
+### Por qué la afirmación parecía respaldada
+
+La evidencia usada fue `git status`, `git branch -vv` y `git log origin/main..main`, y las tres
+decían «adelante 60». Las tres leen `refs/remotes/origin/main`, que es una **caché local**.
+
+La política de esta Wave —§8 del encargo, y la práctica descrita en §4 de este documento— es
+empujar por URL SSH explícita para no modificar el remoto configurado en HTTPS:
+
+```
+git push git@github.com:dvconsultores/GlobalAvicola.git main:main
+```
+
+Ese push **funciona** y publica. Lo que no hace es actualizar `refs/remotes/origin/main`, que
+solo se refresca con un `fetch` sobre el remoto llamado `origin` — y ese remoto es HTTPS sin
+credenciales, de modo que nunca se refrescó. La caché se quedó congelada en `bfccdfb`, la
+última vez que alguien pudo hacer `fetch origin`, el 2026-07-08.
+
+```
+git push por URL explícita   →  publica
+                             →  NO actualiza refs/remotes/origin/*
+git status                   →  compara contra la caché rancia
+                             →  informa un desfase que no existe
+```
+
+Es la misma clase de defecto que este programa persigue en el producto: un indicador que
+**parece** medir el estado real y mide otra cosa. Aquí lo padeció el propio informe.
+
+### El estado real, verificado
+
+```
+git fetch git@github.com:dvconsultores/GlobalAvicola.git main
+
+FETCH_HEAD    28ce8cc  2026-09-06 16:39  spec(GA-REM-037): OD-06 resuelta y curvas estandar
+LOCAL AHEAD   1        (1055599, el backend de curvas)
+REMOTE AHEAD  0
+DIVERGENCIA   ninguna — fast-forward posible
+```
+
+La caché se refrescó con `fetch` por la misma URL explícita hacia
+`refs/remotes/origin/main`. **`origin` no se modificó**: sigue en HTTPS, comprobado con
+`git remote -v`.
+
+### Lo que NO cambia
+
+Las afirmaciones `PUSH_COMPLETED` de §4 de este documento **siguen siendo correctas** y no se
+retiran. Lo que se retira es la afirmación posterior de que no lo eran.
+
+Y sigue en pie la distinción que §1 del informe post-push estableció:
+
+```
+GIT PUSH PASS  ≠  DEPLOY PASS  ≠  APPLICATION HEALTHY
+```
+
+Que el commit esté en el remoto no demuestra que esté desplegado, y un `SPA = 200` con
+`API = HEALTHY` **no** demuestra que el servicio esté sirviendo este código. Son tres
+comprobaciones distintas y se registran por separado.

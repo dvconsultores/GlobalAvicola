@@ -3,13 +3,14 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-037` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** **`CERTIFIED`** (2026-09-06) |
+| **Prioridad** | **P1** · **Estado** `SPEC_READY` — enmienda A abierta (`R-96`, `R-97`) |
 | **Requisito** | `GA-REQ-037` · `spec.md §4.5` |
 | **Decisión** | **`OD-06` `RESOLVED`** (2026-09-06) |
 | **Proceso** | `P-03` · Reproductoras — Cría |
 | **Dependencias** | `GA-REM-028` `CERTIFIED` (`age_days` desde `start_date`) · `GA-REM-033` `CERTIFIED` (maestros) |
 | **Antecedente** | `audit/remediation/P03_GENETIC_CURVE_MODEL_MATRIX.md` |
-| **Certificación** | `audit/remediation/PROCESS-03-CERTIFICATION.md` |
+| **Certificación** | `audit/remediation/PROCESS-03-CERTIFICATION.md` — **parcial**: backend sí, capacidad de producto no |
+| **Contrato de UI** | `audit/remediation/R96_WEIGHT_CURVE_FRONTEND_CONTRACT_MATRIX.md` |
 
 ---
 
@@ -184,3 +185,169 @@ la interpolación, el versionado y la coincidencia de línea.
 - Migración con cabeza única y sin deriva de esquema.
 - Los pasos de `§4.5` se recorren.
 - Regresión completa sin fallos nuevos.
+
+---
+
+# ENMIENDA A · CAPACIDAD DE PRODUCTO Y OBSERVABILIDAD DE LA EVALUACIÓN
+
+`2026-09-06` · hallazgos `R-96` y `R-97` · estado de la spec: vuelve a `SPEC_READY`
+
+## A.1 Por qué existe esta enmienda
+
+La versión original de esta spec **no tenía ningún criterio de frontend**, y de esa ausencia
+se concluyó que la pantalla quedaba fuera de alcance. La conclusión era incorrecta y aquí se
+corrige. `OD-06` dice, con todas sus palabras, que cada línea genética puede tener su tabla de
+curva estándar y que **esa tabla debe poder cargarse dentro de Global Avícola**.
+
+```
+OWNER REQUIREMENT  >  INCOMPLETE SPEC
+```
+
+La ausencia de criterios de frontend no demostraba ausencia de requisito: demostraba que esta
+spec estaba **incompleta**. Es un `SPEC COVERAGE GAP`, y la spec es la responsable de cerrarlo
+porque es la autoridad natural de `OD-06`; crear una spec nueva partiría en dos la misma
+decisión del propietario.
+
+```
+R-96 = MISSING PRODUCT CAPABILITY + SPEC COVERAGE GAP
+```
+
+Mientras `R-96` siga abierto, **`P-03` es `PARTIAL`**. Que `POST /masters/weight-curves`
+responda `201` no significa que el administrador pueda cargar la curva, y `GA-REM-016 AC05` ya
+fijaba el criterio: la unidad certificada es el proceso de negocio, nunca un endpoint.
+
+## A.2 `R-97` · la evaluación no es observable
+
+Al derivar el contrato de la pantalla (`audit/remediation/R96_WEIGHT_CURVE_FRONTEND_CONTRACT_MATRIX.md`)
+apareció un hueco que no es de interfaz sino de contrato:
+
+```
+El motor de evaluación tiene UN SOLO consumidor —el generador de alertas—
+y solo actúa cuando el peso queda FUERA de rango.
+```
+
+| Situación | ¿Observable hoy? |
+|---|:--:|
+| `BELOW_STANDARD` · `ABOVE_STANDARD` | sí, vía `OperationalAlert` |
+| `WITHIN_STANDARD` | **no** |
+| `NO_REFERENCE` | **no** — indistinguible de «dentro de norma» |
+| Rango esperado a una edad | **no** — solo dentro del texto del mensaje |
+
+«Sin alerta» significa hoy dos cosas incompatibles a la vez. Deducir cuál exigiría interpolar
+en el cliente, que crearía un segundo motor y contradice `AC-FE14`. Por eso la enmienda añade
+un criterio de **backend**: exponer lo que el motor ya calcula, sin recalcular nada.
+
+```
+R-97 = CONTRACT GAP · la evaluación de curva no es observable salvo cuando alerta
+```
+
+## A.3 Criterios de aceptación añadidos
+
+### Grupo E · observabilidad de la evaluación (backend)
+
+**`AC26`** · Existe una lectura que, dado un lote y una edad o un peso, devuelve la evaluación
+que el motor ya calcula: el estado, el rango esperado y la versión de curva empleada. **No se
+duplica el motor**: la lectura llama a `app/operations/weight_curve.py`.
+
+**`AC27`** · La lectura distingue `WITHIN_STANDARD` de `NO_REFERENCE`. Un lote sin curva, sin
+línea genética o con una edad fuera de la tabla devuelve `NO_REFERENCE` **declarado**, nunca la
+ausencia de dato ni un estado normal.
+
+**`AC28`** · La lectura respeta la tenencia: un lote de otra empresa no es legible.
+
+### Grupo F · capacidad de producto (frontend)
+
+**`AC-FE01`** · Un usuario autorizado alcanza la administración de curvas **desde la línea
+genética**, sin escribir una URL a mano y sin conocer la API.
+
+**`AC-FE02`** · Ve todas las versiones de curva de la línea seleccionada, y solo de ésa.
+
+**`AC-FE03`** · Puede iniciar la carga de una versión nueva desde esa vista.
+
+**`AC-FE04`** · La carga usa el contrato real del backend: `POST /masters/weight-curves` con
+`genetic_line_id`, `version_label` y `points`. No se inventa multipart, ni `version`, ni
+ningún campo que el esquema no declare.
+
+**`AC-FE05`** · Un rechazo del backend se presenta de forma utilizable: la fila, el campo y el
+motivo, legibles. Nunca JSON crudo, nunca trazas.
+
+**`AC-FE06`** · Tras una carga válida, la versión aparece en la lista sin recargar el navegador.
+
+**`AC-FE07`** · La versión activa se distingue de las demás por **texto**, no solo por color.
+
+**`AC-FE08`** · Las versiones históricas siguen visibles tras activar una nueva.
+
+**`AC-FE09`** · La interfaz **no ofrece** ninguna acción que reasigne lotes existentes a una
+curva nueva. `OD-06` lo prohíbe.
+
+**`AC-FE10`** · El alta de lote muestra la línea genética y **qué versión de curva** quedará
+asociada, incluido el caso de que no haya ninguna activa.
+
+**`AC-FE11`** · La pantalla del pesaje muestra la evaluación **del backend** (`AC26`).
+
+**`AC-FE12`** · `BELOW_STANDARD`, `WITHIN_STANDARD` y `ABOVE_STANDARD` se representan de forma
+distinguible entre sí.
+
+**`AC-FE13`** · `NO_REFERENCE` se representa **explícitamente** y jamás como normal, como cero
+ni como ausencia.
+
+**`AC-FE14`** · No hay interpolación, clasificación ni tolerancia en el cliente. El motor sigue
+viviendo en un solo sitio.
+
+**`AC-FE15`** · No se introduce ningún canal de notificación. `P-14` sigue intacto.
+
+**`AC-FE16`** · La interfaz respeta `RBAC`: quien solo lee no ve acciones de escritura, y el
+backend sigue siendo la autoridad —ocultar un botón no es autorizar—.
+
+**`AC-FE17`** · Todo texto nuevo pasa por `i18n`, con paridad `es`/`en` mantenida.
+
+**`AC-FE18`** · El flujo es utilizable en escritorio y en móvil, con el patrón responsive ya
+existente.
+
+**`AC-FE19`** · Las pruebas satisfacen `GA-REM-016 AC13`: ninguna se invoca como evidencia sin
+demostrar que puede fallar. Aserciones no vacuas.
+
+**`AC-FE20`** · La sensibilidad demuestra que las pruebas detectan la retirada de la capacidad:
+del control de carga, del mapeo de la petición, de la representación de `NO_REFERENCE` y de la
+alerta.
+
+## A.4 Alcance — lo que la enmienda NO autoriza
+
+- **Una página de primer nivel nueva.** El requisito es la capacidad operativa. Se integra en
+  el maestro `GeneticLine` que ya existe (`GA-REM-033`), reutilizando el patrón de `P-12`.
+- **Un segundo sistema de administración.** Lista, diálogos, paginación, estados de carga,
+  vacío y error salen del patrón certificado.
+- **Borrado físico de curvas.** El backend no lo ofrece y el histórico se conserva.
+- **Un endpoint de *preview*.** No existe; no se inventa.
+- **Parsear reglas de negocio en el cliente.** La conversión de la tabla a filas es aritmética
+  de formato; toda regla la valida el backend.
+- **Tocar el motor certificado**, sus modelos, su migración o sus alertas.
+
+## A.5 Trazabilidad añadida
+
+| `AC` | Prueba | Nivel |
+|---|---|---|
+| `AC26`…`AC28` | `backend/tests/test_weight_evaluation_endpoint.py` | integración HTTP |
+| `AC-FE01`…`AC-FE08` | `e2e/proceso-p03-curvas-ui.spec.ts` | **`UI_E2E`** |
+| `AC-FE10`…`AC-FE13` | `e2e/proceso-p03-curvas-ui.spec.ts` | **`UI_E2E`** |
+| `AC-FE05`, `AC-FE07`, `AC-FE12`, `AC-FE13`, `AC-FE16` | `frontend/src/**/__tests__` | `vitest` |
+| `AC-FE14` | inspección + `vitest` | estático |
+| `AC-FE17` | paridad de `translation.json` | conteo |
+| `AC-FE19`, `AC-FE20` | informe de certificación | mutación |
+
+> **Sobre la modalidad — corrección.** La nota original decía que `§4.5` no exige que el
+> usuario vea nada en pantalla, y por eso fijaba `API_E2E`. Para las alertas eso sigue siendo
+> cierto. **No lo es para la carga de la curva**: `OD-06` exige que el usuario pueda cargar la
+> tabla dentro del producto, y una capacidad operativa de producto no se demuestra por API.
+> `AC-FE01`…`AC-FE13` exigen `UI_E2E`. Esto no contradice `§124` del encargo —no se fabrica
+> `UI_E2E` por vocabulario—: se exige porque el requisito del propietario es de producto.
+
+## A.6 Definición de terminado — ampliada
+
+- Los veinticinco criterios originales siguen pasando.
+- `AC26`…`AC28` y `AC-FE01`…`AC-FE20` pasan.
+- `R-96` y `R-97` cerrados con evidencia propia.
+- Sensibilidad demostrada sobre la capacidad de carga, el mapeo, `NO_REFERENCE` y la alerta.
+- Paridad `i18n` mantenida.
+- Sin migración nueva: el trabajo de frontend no la necesita.
+- `P-03` recertificado de extremo a extremo, no por «el endpoint responde».
