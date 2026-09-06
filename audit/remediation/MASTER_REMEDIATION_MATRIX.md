@@ -166,3 +166,29 @@ Dos lecciones del tramo. La primera: **21 valores de enum no son 21 requisitos**
 cuatro KPI «huérfanos» solo dos los exigía el cliente. La segunda es propia y menos cómoda:
 registré dos hallazgos —`R-87` y `R-88`— buscando **solo en el backend**, y los dos estaban
 implementados en el cliente. Retirados y anotados, no borrados.
+
+
+---
+
+## 8. `GA-REM-033` · `P-12` certificado (2026-09-06)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-90` · siete maestros normativos sin capacidad de gestión | **P1** | **`CERTIFIED`** |
+| `R-91` · esos mismos siete no admitían edición | P2 | **`CERTIFIED`** |
+| `R-89` · el listado descartaba el total que calculaba | P2 | **`CERTIFIED`** |
+
+```
+P-12 = CERTIFIED        CERTIFIED 9 / 15        PARTIAL 6 / 15
+```
+
+Dos cosas que conviene conservar. La primera: **la auditoría bidireccional funcionó**. Tras el
+error de `R-87`/`R-88` —dos huecos falsos por mirar un solo lado— aquí se comprobó cada uno en
+backend y frontend antes de anotarlo, y la hipótesis se confirmó con dos matices que cambiaron
+el trabajo: no eran siete pantallas sino siete entradas en una lista, y faltaba también la
+capacidad de edición.
+
+La segunda: **una spec puede necesitar enmienda al implementarla**. `AC01` pedía cambiar la
+forma del cuerpo del listado; contar los consumidores reveló 43 puntos de llamada, y un
+defecto P2 de contador no justifica moverlos. Se enmendó el criterio antes de escribir el
+código, no después.

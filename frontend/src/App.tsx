@@ -104,6 +104,21 @@ const masterEntities = [
  { entity: 'mortality-causes', title: 'masters.mortalityCauses', cols: [{ key: 'name', labelKey: 'masters.mortalityCauses' }, { key: 'category', labelKey: 'common.edit' }] },
  { entity: 'transports', title: 'masters.transports', cols: [{ key: 'name', labelKey: 'masters.transports' }, { key: 'plate', labelKey: 'common.edit' }] },
  { entity: 'processing-plants', title: 'masters.processingPlants', cols: [{ key: 'name', labelKey: 'masters.processingPlants' }, { key: 'location', labelKey: 'common.save' }] },
+ // `GA-REM-033 AC04` / `R-90`. Siete maestros que `docs/02 §3.2` exige no tenían ninguna
+ // forma de gestionarse: no estaban en esta lista, que es la única fuente de rutas de
+ // maestros, así que solo podían poblarse por API o por SQL. `productive-phases` gobierna la
+ // fase de un lote, `cull-causes` es obligatoria al registrar un descarte y
+ // `correction-types` al corregir.
+ //
+ // Se añaden como entradas, no como pantallas: la administración está parametrizada sobre
+ // `MasterListPage` y sus claves i18n ya existían para los diecinueve.
+ { entity: 'incubators', title: 'masters.incubators', cols: [{ key: 'name', labelKey: 'masters.incubators' }, { key: 'capacity', labelKey: 'common.edit' }] },
+ { entity: 'hatchers', title: 'masters.hatchers', cols: [{ key: 'name', labelKey: 'masters.hatchers' }, { key: 'capacity', labelKey: 'common.edit' }] },
+ { entity: 'productive-phases', title: 'masters.productivePhases', cols: [{ key: 'name', labelKey: 'masters.productivePhases' }, { key: 'code', labelKey: 'common.edit' }, { key: 'order', labelKey: 'common.save' }] },
+ { entity: 'medications', title: 'masters.medications', cols: [{ key: 'name', labelKey: 'masters.medications' }, { key: 'laboratory', labelKey: 'common.edit' }] },
+ { entity: 'cull-causes', title: 'masters.cullCauses', cols: [{ key: 'name', labelKey: 'masters.cullCauses' }, { key: 'category', labelKey: 'common.edit' }] },
+ { entity: 'rejection-reasons', title: 'masters.rejectionReasons', cols: [{ key: 'name', labelKey: 'masters.rejectionReasons' }, { key: 'category', labelKey: 'common.edit' }] },
+ { entity: 'correction-types', title: 'masters.correctionTypes', cols: [{ key: 'name', labelKey: 'masters.correctionTypes' }, { key: 'description', labelKey: 'common.edit' }] },
 ]
 
 export default function App() {

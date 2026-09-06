@@ -279,6 +279,9 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-86` | «Fertilidad» era normativa y no tenía productor | P2 — **`CERTIFIED`** `GA-REM-022` |
 | ~~`R-87`~~ | ~~El reporte de estados no tiene productor~~ | **RETIRADO** — existe en `event_summary.by_status` |
 | ~~`R-88`~~ | ~~La exportación Excel/PDF no existe~~ | **RETIRADO** — existe en el cliente (`utils/export.ts`) |
+| `R-89` | El listado de maestros descarta el total y el contador muestra el tamaño de página | P2 — **`CERTIFIED`** `GA-REM-033` |
+| `R-90` | Siete maestros normativos sin capacidad de gestión | P1 — **`CERTIFIED`** `GA-REM-033` |
+| `R-91` | Esos mismos siete no admitían edición: sin esquema, no hay `PUT` | P2 — **`CERTIFIED`** `GA-REM-033` |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.

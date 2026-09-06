@@ -660,3 +660,54 @@ backend  359 pasan · 49 omitidas · 0 fallos   (antes 352)
 E2E       95/95                                (antes 91)
 tsc PASS · vitest 61/61 · i18n 866 = 866
 ```
+
+
+---
+
+# `P-12` certificado · `R-89` + `R-90` + `R-91` · `GA-REM-033` (2026-09-06)
+
+```
+P-12 = CERTIFIED     CERTIFIED 9 / 15     PARTIAL 6 / 15
+```
+
+## La auditoría bidireccional funcionó
+
+Tras el error de `R-87`/`R-88` —dos huecos registrados por mirar un solo lado, ambos falsos—
+aquí cada supuesto hueco se comprobó en backend **y** frontend antes de anotarlo.
+
+La hipótesis se confirmó: siete maestros sin gestión. Pero con dos matices que cambiaron el
+trabajo: **no eran siete pantallas** —la administración está parametrizada y añadir un
+catálogo es añadir una entrada a una lista— y **faltaba también la edición**, porque los
+mismos siete pasaban `None` como esquema y `register_crud` no registraba su `PUT`.
+
+## Una spec enmendada al implementarla
+
+`AC01` pedía devolver `{items, total}` como hacen `/audit` y `/review`. Contar los
+consumidores reveló **43 puntos** del frontend leyendo `/masters/*` como lista. Un defecto
+P2 de contador no justifica moverlos, así que el total viaja en `X-Total-Count` — y el
+criterio se enmendó **antes** de escribir el código.
+
+## Primera certificación con prueba de interfaz
+
+`AC03` es el primer criterio del programa que exige `UI_E2E`, y por requisito: lo que `R-89`
+rompía es el número que el usuario **lee**. El conjunto tiene 25 registros con páginas de 20,
+porque con menos la aserción no podría fallar.
+
+## Regresión
+
+```
+backend  370 pasan · 49 omitidas · 0 fallos   (antes 359)
+E2E       99/99                                (antes 95)
+tsc PASS · vitest 61/61 · i18n 866 = 866
+```
+
+La paridad i18n no cambió: **las claves de los diecinueve maestros ya existían**, incluidas
+las de los siete sin pantalla.
+
+## Dónde queda el programa
+
+```
+3 procesos esperan OD-04 · 1 espera SAP · 2 requieren desarrollo
+```
+
+Ya no quedan defectos que corregir para certificar.

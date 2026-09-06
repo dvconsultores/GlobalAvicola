@@ -3,7 +3,7 @@ REST API router for master data entities.
 """
 from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Response
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -28,6 +28,7 @@ def register_crud(
     """Register standard CRUD endpoints for a master entity using add_api_route."""
 
     async def list_items(
+        response: Response,
         skip: int = Query(0, ge=0),
         limit: int = Query(20, ge=1, le=100),
         search: str = Query(""),
@@ -39,6 +40,12 @@ def register_crud(
             skip=skip, limit=limit, search=search,
             search_fields=search_fields or ["name"],
         )
+        # `GA-REM-033 AC01` / `R-89`. El total se calculaba y se tiraba, de modo que la
+        # interfaz mostraba el tamaño de la página donde promete «resultados». Viaja en
+        # cabecera y no en el cuerpo: 43 puntos del frontend leen este endpoint como lista, y
+        # un defecto de contador no justifica cambiarlos todos.
+        response.headers["X-Total-Count"] = str(total)
+        response.headers["Access-Control-Expose-Headers"] = "X-Total-Count"
         return [read_schema.model_validate(item) for item in items]
 
     async def create_item(
@@ -95,21 +102,21 @@ register_crud("companies", models.Company, schemas.CompanyCreate, schemas.Compan
 register_crud("farms", models.Farm, schemas.FarmCreate, schemas.FarmRead, schemas.FarmUpdate, ["name", "code", "location"])
 register_crud("houses", models.House, schemas.HouseCreate, schemas.HouseRead, schemas.HouseUpdate, ["name"])
 register_crud("hatcheries", models.Hatchery, schemas.HatcheryCreate, schemas.HatcheryRead, schemas.HatcheryUpdate, ["name", "code"])
-register_crud("incubators", models.Incubator, schemas.IncubatorCreate, schemas.IncubatorRead, None, ["name"])
-register_crud("hatchers", models.Hatcher, schemas.HatcherCreate, schemas.HatcherRead, None, ["name"])
+register_crud("incubators", models.Incubator, schemas.IncubatorCreate, schemas.IncubatorRead, schemas.IncubatorUpdate, ["name"])
+register_crud("hatchers", models.Hatcher, schemas.HatcherCreate, schemas.HatcherRead, schemas.HatcherUpdate, ["name"])
 register_crud("genetic-lines", models.GeneticLine, schemas.GeneticLineCreate, schemas.GeneticLineRead, schemas.GeneticLineUpdate, ["name", "code", "supplier"])
 register_crud("breeds", models.Breed, schemas.BreedCreate, schemas.BreedRead, schemas.BreedUpdate, ["name"])
-register_crud("productive-phases", models.ProductivePhase, schemas.ProductivePhaseCreate, schemas.ProductivePhaseRead, None, ["name", "code"])
+register_crud("productive-phases", models.ProductivePhase, schemas.ProductivePhaseCreate, schemas.ProductivePhaseRead, schemas.ProductivePhaseUpdate, ["name", "code"])
 register_crud("suppliers", models.Supplier, schemas.SupplierCreate, schemas.SupplierRead, schemas.SupplierUpdate, ["name", "sap_code"])
 register_crud("feed-types", models.FeedType, schemas.FeedTypeCreate, schemas.FeedTypeRead, schemas.FeedTypeUpdate, ["name", "code"])
 register_crud("vaccines", models.Vaccine, schemas.VaccineCreate, schemas.VaccineRead, schemas.VaccineUpdate, ["name", "laboratory"])
-register_crud("medications", models.Medication, schemas.MedicationCreate, schemas.MedicationRead, None, ["name", "laboratory"])
+register_crud("medications", models.Medication, schemas.MedicationCreate, schemas.MedicationRead, schemas.MedicationUpdate, ["name", "laboratory"])
 register_crud("mortality-causes", models.MortalityCause, schemas.MortalityCauseCreate, schemas.MortalityCauseRead, schemas.MortalityCauseUpdate, ["name", "category"])
-register_crud("cull-causes", models.CullCause, schemas.CullCauseCreate, schemas.CullCauseRead, None, ["name", "category"])
+register_crud("cull-causes", models.CullCause, schemas.CullCauseCreate, schemas.CullCauseRead, schemas.CullCauseUpdate, ["name", "category"])
 register_crud("transports", models.Transport, schemas.TransportCreate, schemas.TransportRead, schemas.TransportUpdate, ["name", "plate"])
 register_crud("processing-plants", models.ProcessingPlant, schemas.ProcessingPlantCreate, schemas.ProcessingPlantRead, schemas.ProcessingPlantUpdate, ["name", "location"])
-register_crud("rejection-reasons", models.RejectionReason, schemas.RejectionReasonCreate, schemas.RejectionReasonRead, None, ["name", "category"])
-register_crud("correction-types", models.CorrectionType, schemas.CorrectionTypeCreate, schemas.CorrectionTypeRead, None, ["name"])
+register_crud("rejection-reasons", models.RejectionReason, schemas.RejectionReasonCreate, schemas.RejectionReasonRead, schemas.RejectionReasonUpdate, ["name", "category"])
+register_crud("correction-types", models.CorrectionType, schemas.CorrectionTypeCreate, schemas.CorrectionTypeRead, schemas.CorrectionTypeUpdate, ["name"])
 
 
 # ============================================================

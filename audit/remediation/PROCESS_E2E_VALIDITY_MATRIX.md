@@ -198,3 +198,33 @@ redonda —800 fértiles de 1.000, 600 nacidos, 60 descartes— y comparan por i
 
 La prueba de `R-85` es la que más dice: exige que eclosión y nacimiento **no coincidan**. Si
 los denominadores se confundieran, coincidirían.
+
+
+---
+
+## `P-12` · gestión de datos maestros (`GA-REM-033`)
+
+`e2e/proceso-p12-datos-maestros.spec.ts` · 4 casos · **3 `API_E2E` + 1 `UI_E2E`**.
+
+| Caso | Modalidad | Qué comprueba | ¿Podría fallar? |
+|---|---|---|:--:|
+| los siete tienen ruta de gestión | `UI_E2E` | navega a cada ruta y exige el botón de alta **visible** | sí — antes la ruta no existía |
+| el contador muestra el total | `UI_E2E` | 25 registros, páginas de 20, y el panel debe decir «25 resultados» | sí — antes decía 20 |
+| alta, edición y baja | `API_E2E` | los cinco maestros, con lectura inmediata entre medias | sí — antes `405` |
+| el maestro se usa en la operación | `API_E2E` | la causa creada se selecciona en un `cull_recording` real | sí |
+
+### Por qué aquí sí hay interfaz
+
+Es el primer proceso del programa cuya certificación la exige, y se decidió **por requisito**:
+`R-89` rompía el número que el usuario **lee**, y ninguna prueba de API puede comprobar algo
+renderizado. Los demás criterios se quedan en API, que es donde vive la persistencia.
+
+### El conjunto excede el tamaño de página a propósito
+
+Con menos de 20 registros, el tamaño de la página y el total coinciden y la aserción del
+contador **no podría fallar**. Es exactamente la evidencia vacua que `AC13` prohíbe.
+
+### Nada de `toBeTruthy`
+
+El caso de interfaz usa `toBeVisible` sobre un rol y un nombre accesible, no la verdad de un
+localizador — que siempre es cierta.

@@ -47,7 +47,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-09** Auditoría interna | spec §4.11 · `docs/02 §3.11` | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **5/5** | `COVERED` | **`CERTIFIED`** |
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
-| **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ **Wave 3** | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
+| **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ | ✅ | **4/4** (1 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
 | **P-13** Usuarios, roles y permisos | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-14** Notificaciones y alertas | func §3.14 | ✅ | ⚠ | ⚠ | ✅ | umbral configurable | ✅ | ✅ | **parcial** | **`PARTIAL`** | **`PARTIAL`** |
 | **P-15** Reportes y KPI | spec §4.12 · `docs/02 §3.12` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **4/4** | `COVERED` | **`CERTIFIED`** |
@@ -277,5 +277,26 @@ Costó `R-14` (la eclosión devolvía texto), `R-85` (tres cocientes con denomin
 fundidos en uno) y `R-86` (fertilidad sin productor). `R-87` y `R-88` se registraron y
 resultaron **falsos**: la exportación y el reporte de estados existían en el cliente y se
 buscaron solo en el backend. Retirados y anotados.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+---
+
+## `P-12` certificado tras `GA-REM-033` (2026-09-06)
+
+```
+CERTIFIED = 9 / 15      PARTIAL = 6 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-02` · `P-04` · `P-05` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-15` |
+| `PARTIAL` | `P-01` · `P-03` · `P-06` · `P-08` · `P-13` · `P-14` |
+
+Los 8 pasos pasan y los **19** maestros son gestionables. Costó `R-90` (siete sin gestión),
+`R-91` (siete sin edición) y `R-89` (el total descartado).
+
+Primera certificación del programa que incluye un caso **`UI_E2E`**, y por requisito: lo que
+`R-89` rompía es el número que el usuario lee.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

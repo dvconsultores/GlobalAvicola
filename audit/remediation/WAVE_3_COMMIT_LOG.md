@@ -449,3 +449,26 @@ porque una mutación mal dirigida puede hacer pasar por insensible a una prueba 
 
 Regresión: backend **359 · 49 omitidas · 0 fallos**; E2E **95/95**; `tsc`, vitest 61/61,
 i18n 866 = 866.
+
+
+---
+
+## `GA-REM-033` · gestión de datos maestros
+
+```
+R-89 · R-90 · R-91 = CERTIFIED
+P-12 = CERTIFIED   ·   CERTIFIED 9 / 15   ·   PARTIAL 6 / 15
+```
+
+Spec y seis matrices publicadas antes del código (`04d7388`), con auditoría bidireccional.
+Seis pruebas rojas por `405` y una por la cabecera ausente.
+
+`AC01` enmendado durante la implementación: 43 consumidores del listado desaconsejan cambiar
+la forma del cuerpo. El total viaja en `X-Total-Count`, y la enmienda se versionó antes del
+código.
+
+Sensibilidad: sin el total cae 1; con un maestro de vuelta a `None` cae 1; sin el campo en el
+esquema cae 1. `git diff` limpio.
+
+Regresión: backend **370 · 49 omitidas · 0 fallos**; E2E **99/99**; `tsc`, vitest 61/61,
+i18n 866 = 866.

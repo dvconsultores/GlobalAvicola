@@ -406,3 +406,49 @@ en el backend cuando la capacidad vivía en el cliente. **`P-12` merece que se c
 ambos lados antes de dimensionarlo.**
 
 **No se inicia aquí.**
+
+
+---
+
+# REVISIÓN · tras `GA-REM-033` (2026-09-06)
+
+`P-12` sale de la lista: **`CERTIFIED`**. Quedan **6** procesos `PARTIAL`.
+
+| Proceso | Qué falta | Naturaleza | Accionable |
+|---|---|---|---|
+| `P-01` `P-03` `P-06` | `GA-TD-014` | **decisión del propietario** (`OD-04`) | **no** |
+| `P-06` | además `GA-REQ-037` y `R-76` | funcionalidad nueva · corrección | sí, pero no cierra |
+| `P-08` | SAP real | **externo** | **no** — `GA-REM-017` |
+| `P-13` | pantallas de roles y de permisos | **desarrollo de interfaz** | sí |
+| `P-14` | 5 de 6 tipos de notificación y **ningún canal** | **desarrollo nuevo** | sí, con decisión |
+
+## Lo que queda, dicho sin rodeos
+
+```
+3 procesos esperan una decisión del propietario (OD-04)
+1 proceso espera un contrato externo (SAP)
+2 procesos requieren desarrollo, no remediación
+```
+
+**Ya no quedan defectos que corregir para certificar.** Los nueve certificados agotaron esa
+vía; lo que resta es construir capacidad o decidir.
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = P-13 · usuarios, roles y permisos
+```
+
+**Motivo.** Es el único de los dos de desarrollo que **no exige una decisión previa**. `P-14`
+necesita elegir canal —correo, push, Telegram—, y eso no me corresponde.
+
+`P-13` tiene el backend hecho —`GA-REM-002` certificó el enforcement de permisos, y los
+endpoints de roles existen y ahora se auditan (`GA-REM-032`)— y le faltan las pantallas de
+roles y de permisos. Es el mismo perfil que `P-12`: capacidad de interfaz sobre un backend
+que ya cumple.
+
+**Con la advertencia de siempre, que aquí acertó**: la dimensión de `P-13` procede de
+`audit/06`, que se ha demostrado obsoleto cuatro veces —su nota «permisos sin enforcement» ya
+lo era—. Debe auditarse en ambos lados antes de dimensionarlo.
+
+**No se inicia aquí.**

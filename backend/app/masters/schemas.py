@@ -490,3 +490,65 @@ class ProcessingPlantUpdate(BaseModel):
     name: Optional[Any] = None
     location: Optional[Any] = None
     is_active: Optional[bool] = None
+
+
+# ============================================================
+# Esquemas de actualización — `GA-REM-033 AC05` / `R-91`
+# ============================================================
+#
+# `register_crud` registra la ruta `PUT` **solo si se le pasa un esquema de actualización**.
+# Estos siete maestros pasaban `None`, de modo que respondían `405`: podían crearse y darse
+# de baja, pero no corregirse. Una errata obligaba a duplicar el registro.
+#
+# Ninguno expone `company_id`, `hatchery_id` ni `id`: `UPDATE_SCHEMA_SECURITY_MATRIX` los
+# clasifica como `ADMIN_ONLY` o estructurales, y mover un maestro de empresa —o de planta—
+# por la puerta de la edición es la escritura entre inquilinos que `R-42` y `R-59`
+# describieron. Cambiar de padre es un traslado, no una corrección de datos.
+
+
+class IncubatorUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    capacity: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
+class HatcherUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    capacity: Optional[int] = None
+    is_active: Optional[bool] = None
+
+
+class ProductivePhaseUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=100)
+    code: Optional[str] = None
+    order: Optional[int] = None
+    duration_days: Optional[int] = None
+    is_initial: Optional[bool] = None
+    is_final: Optional[bool] = None
+    is_active: Optional[bool] = None
+
+
+class MedicationUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    laboratory: Optional[str] = None
+    presentation: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class CullCauseUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    category: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class RejectionReasonUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    description: Optional[str] = None
+    category: Optional[str] = None
+    is_active: Optional[bool] = None
+
+
+class CorrectionTypeUpdate(BaseModel):
+    name: Optional[str] = Field(None, min_length=1, max_length=200)
+    description: Optional[str] = None
+    is_active: Optional[bool] = None

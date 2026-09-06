@@ -62,9 +62,23 @@ ese número equivocado si enseña la paginación.
 
 ## 4. Criterios de aceptación — grupo A · el total (`R-89`)
 
-### `AC01` · El listado devuelve el total que calcula
-`GET /masters/{entidad}` responde `{"items": [...], "total": n}`, siguiendo el contrato que
-ya usan `/audit`, `/corrections` y `/review`. No se inventa forma nueva.
+### `AC01` · El listado expone el total que calcula
+`GET /masters/{entidad}` devuelve el total en la cabecera **`X-Total-Count`**, y el cuerpo
+sigue siendo la lista.
+
+> **Enmienda, y por qué.** Este criterio decía `{"items": [...], "total": n}`, siguiendo el
+> contrato de `/audit`, `/corrections` y `/review`. Al ir a implementarlo se contaron los
+> consumidores: **43 puntos del frontend** leen `/masters/*` como lista —los desplegables de
+> los formularios operativos, entre ellos—, mientras que los endpoints con envoltorio tienen
+> un consumidor cada uno.
+>
+> Cambiar la forma del cuerpo convertiría un defecto **P2 de contador** en un cambio de 43
+> puntos de llamada, y `§51` del encargo lo prohíbe expresamente: `P-12` no es excusa para un
+> refactor general. `X-Total-Count` es la convención estándar para exactamente esto: el total
+> de una colección paginada sin tocar el cuerpo.
+>
+> La divergencia del contrato de la casa es **consciente y acotada a este endpoint**, y queda
+> dicha aquí en lugar de descubrirse leyendo el código.
 
 ### `AC02` · El total respeta el filtro
 Con `search` aplicado, `total` es el número de coincidencias, no el del catálogo entero.

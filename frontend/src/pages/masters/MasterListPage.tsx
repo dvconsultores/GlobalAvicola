@@ -42,7 +42,12 @@ export default function MasterListPage({
  params: { skip: page * pageSize, limit: pageSize, search },
  })
  setItems(response.data)
- setTotal(response.data.length)
+ // `GA-REM-033 AC03` / `R-89`. Antes se usaba `response.data.length`, que es el tamaño de
+ // la página: con 45 registros y páginas de 20 el panel decía «20 resultados». No era un
+ // fallo de aquí — el backend calculaba el total y lo descartaba —, y ahora lo expone en
+ // `X-Total-Count`. Se conserva la longitud como reserva por si la cabecera no viaja.
+ const totalHeader = response.headers['x-total-count']
+ setTotal(totalHeader !== undefined ? Number(totalHeader) : response.data.length)
  } catch (err) {
  console.error(`Error fetching ${entity}:`, err)
  } finally {

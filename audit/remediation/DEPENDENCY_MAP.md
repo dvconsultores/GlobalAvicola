@@ -414,3 +414,19 @@ R-87 · R-88  RETIRADOS — no eran hallazgos
 `R-88` merece quedar en el mapa aunque se retire: la exportación Excel/PDF **no depende del
 backend**; vive en el cliente con SheetJS y jsPDF. Quien busque esa capacidad en el servidor
 no la encontrará, y esa es exactamente la trampa en la que caí.
+
+
+---
+
+## `P-12` · resuelto (2026-09-06)
+
+```
+R-90  siete maestros sin gestión        CERTIFIED (GA-REM-033)
+R-91  siete sin capacidad de edición    CERTIFIED
+R-89  el total descartado               CERTIFIED
+  └─→ P-12 = CERTIFIED · 8 de 8 pasos
+```
+
+Una dependencia que conviene dejar dicha: `/masters/*` tiene **43 consumidores** en el
+frontend, muchos más que cualquier otro listado de la aplicación. Es la razón de que el total
+viaje en cabecera y no en el cuerpo, y quien vaya a tocar ese contrato debe contarlos antes.
