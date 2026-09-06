@@ -287,8 +287,9 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-94` | No había catálogo de permisos | P2 — **`CERTIFIED`** `GA-REM-034` |
 | `GA-TD-014` | La OC no llegaba al campo tipado; el límite no era acumulado | P1 — **`CERTIFIED`** `GA-REM-035` |
 | `R-95` | `SapReferenceCreate` no declaraba `quantity`: `BR-18` era inaplicable | P1 — **`CERTIFIED`** `GA-REM-035` |
-| `R-96` | La capacidad de cargar la tabla de curva **no existe en el producto**: solo por API | **P1** — `OPEN` · `MISSING PRODUCT CAPABILITY` + `SPEC COVERAGE GAP` |
-| `R-97` | La evaluación de curva solo es observable cuando genera alerta: `WITHIN` y `NO_REFERENCE` son indistinguibles | **P1** — `OPEN` · `CONTRACT GAP` |
+| `R-96` | La capacidad de cargar la tabla de curva **no existe en el producto**: solo por API | **P1** — **`CERTIFIED`** `GA-REM-037` enmienda A |
+| `R-97` | La evaluación de curva solo es observable cuando genera alerta: `WITHIN` y `NO_REFERENCE` son indistinguibles | **P1** — **`CERTIFIED`** `GA-REM-037` enmienda A |
+| `R-98` | Ninguna pantalla oculta acciones de escritura por permiso: no hay modelo de permisos en el frontend | P2 — `OPEN` · transversal, pertenece a `P-13` |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.
@@ -308,8 +309,13 @@ OD-05  · política de escalada de privilegios   abierta desde P-13
 
 El resto del backlog son hallazgos de fan-out 1: `R-69`, `R-70`, `R-77`, `R-80`, `R-83`.
 
-`R-96` y `R-97` sí tienen consecuencia de proceso: **`P-03` vuelve a `PARTIAL`** hasta que
-cierren. Ver la corrección de gobernanza al final de este documento.
+`R-96` y `R-97` tuvieron consecuencia de proceso —`P-03` volvió a `PARTIAL`— y están cerrados
+desde el 2026-09-06. Ver la corrección de gobernanza al final de este documento.
+
+`R-98` es su residuo: al verificar `AC-FE16` se comprobó que **ninguna** pantalla de la
+aplicación oculta acciones de escritura según el permiso del usuario, porque `/me` no expone la
+lista de permisos. No es un defecto de las curvas sino transversal, y pertenece a `P-13`. No
+impide el acceso: el backend niega y la interfaz presenta la negativa.
 
 
 ---

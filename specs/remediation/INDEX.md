@@ -40,7 +40,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-034` | Administración de roles y permisos | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-034](GA-REM-034-ROLE-ADMINISTRATION.md) |
 | `GA-REM-035` | Recepción contra orden de compra | BUSINESS RULE ACTIVATION | P1 | **`CERTIFIED`** | — | [GA-REM-035](GA-REM-035-PURCHASE-ORDER-RECEIPT-LIMIT.md) |
 | `GA-REM-036` | Aprobación obligatoria antes del cierre de lote | BUSINESS RULE | P1 | **`CERTIFIED`** | — | [GA-REM-036](GA-REM-036-LOT-CLOSE-APPROVAL-GUARD.md) |
-| `GA-REM-037` | Curvas estándar de peso y alerta por desviación | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
+| `GA-REM-037` | Curvas estándar de peso y alerta por desviación (+ enmienda A: capacidad de producto) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 
 ## Decisiones normativas
 

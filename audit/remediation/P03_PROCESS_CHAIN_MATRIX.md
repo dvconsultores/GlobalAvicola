@@ -81,20 +81,42 @@ peso medio en `BirdMovement.avg_weight`. El detalle está en `P03_GENETIC_CURVE_
 El sujeto negativo es un operador con empresa propia, **no** el Super Administrador: su
 exención de tenencia haría que la prueba pasara sin comprobar nada.
 
-## 5. Recuento
+## 5. La capacidad de producto · `R-96` y `R-97`
+
+Los catorce pasos anteriores estaban en verde y **`P-03` seguía sin poder certificarse**.
+`OD-06` no solo dice que exista una curva: dice que la tabla **debe poder cargarse dentro de
+Global Avícola**. Con la primera entrega, el único camino era llamar a la API a mano.
+
+| # | Paso | Actor | Entrada | Salida | Requisito | Estado |
+|:--:|---|---|---|---|---|:--:|
+| 15 | Cargar la tabla desde la línea genética | administrador | archivo del proveedor | versión creada | `OD-06` · `AC-FE01`…`AC-FE06` | **PASS** — `R-96` |
+| 16 | Activar una versión, conservando las históricas | administrador | versión | activa cambiada | `AC-FE07`, `AC-FE08` | **PASS** |
+| 17 | Ver qué versión tomará un lote nuevo | supervisor | línea genética | versión o aviso | `AC-FE10` | **PASS** |
+| 18 | Leer el veredicto de un pesaje en pantalla | supervisor | evento de pesaje | estado y rango | `AC-FE11`…`AC-FE13` | **PASS** — `R-97` |
+
+El paso 18 exigió abrir el motor: su único consumidor era el generador de alertas, que solo
+actúa fuera de rango, de modo que «dentro de norma» y «sin referencia» eran indistinguibles
+desde fuera. Se expuso lo que ya se calculaba —`GET /operations/{id}/weight-evaluation`— sin
+duplicar la interpolación en ninguna parte.
+
+## 6. Recuento
 
 ```
-14 pasos · PASS 14 · FAIL 0
+18 pasos · PASS 18 · FAIL 0
    11 de la cadena operativa (§4.4)
     2 de alertas normativas   (§4.5)
     1 de tenencia             (spec.md §8.14)
+    4 de capacidad de producto (OD-06)  ← UI_E2E
 ```
 
-## 6. Evidencia
+## 7. Evidencia
 
 | Nivel | Archivo | Resultado |
 |---|---|:--:|
 | Cadena `API_E2E` | `e2e/proceso-p03-reproductoras-cria.spec.ts` | 5/5 |
+| Capacidad de producto `UI_E2E` | `e2e/proceso-p03-curvas-ui.spec.ts` | 13/13 |
 | Modelo y carga | `backend/tests/test_genetic_curves.py` | 16/16 |
 | Motor | `backend/tests/test_weight_curve_evaluation.py` | 14/14 |
 | Alerta | `backend/tests/test_weight_alert.py` | 8/8 |
+| Lectura de la evaluación | `backend/tests/test_weight_evaluation_endpoint.py` | 10/10 |
+| Cliente y presentación | `vitest` | 13/13 |

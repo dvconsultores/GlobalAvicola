@@ -3,13 +3,13 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-037` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** `SPEC_READY` — enmienda A abierta (`R-96`, `R-97`) |
+| **Prioridad** | **P1** · **Estado** **`CERTIFIED`** (2026-09-06, enmienda A incluida) |
 | **Requisito** | `GA-REQ-037` · `spec.md §4.5` |
 | **Decisión** | **`OD-06` `RESOLVED`** (2026-09-06) |
 | **Proceso** | `P-03` · Reproductoras — Cría |
 | **Dependencias** | `GA-REM-028` `CERTIFIED` (`age_days` desde `start_date`) · `GA-REM-033` `CERTIFIED` (maestros) |
 | **Antecedente** | `audit/remediation/P03_GENETIC_CURVE_MODEL_MATRIX.md` |
-| **Certificación** | `audit/remediation/PROCESS-03-CERTIFICATION.md` — **parcial**: backend sí, capacidad de producto no |
+| **Certificación** | `audit/remediation/PROCESS-03-CERTIFICATION.md` · `R-96-WEIGHT-CURVE-CAPABILITY-CERTIFICATION.md` |
 | **Contrato de UI** | `audit/remediation/R96_WEIGHT_CURVE_FRONTEND_CONTRACT_MATRIX.md` |
 
 ---

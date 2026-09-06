@@ -330,3 +330,37 @@ quedaran fuera del inventario y que el `CASCADE` las vaciara a espaldas de él.
 edades de la tabla, o sin línea genética, el motor responde `NO_REFERENCE` y no se emite
 alerta. Es la traducción literal de «sin tolerancia global»: no hay un ±10 % de reserva para
 cuando falta el dato.
+
+
+---
+
+## 13. `R-96` · `R-97` · la capacidad, no el endpoint (2026-09-06)
+
+| | Sev. | Estado |
+|---|:--:|---|
+| `R-96` · la tabla de curva no podía cargarse desde el producto | **P1** | **`CERTIFIED`** |
+| `R-97` · la evaluación solo era observable cuando alertaba | **P1** | **`CERTIFIED`** |
+| `R-98` · ninguna pantalla oculta escritura por permiso | P2 | `OPEN` — transversal, `P-13` |
+
+```
+P-03 = CERTIFIED        CERTIFIED 13 / 15        PARTIAL 2 / 15
+```
+
+Tres cosas que conviene conservar de este tramo.
+
+**Una spec incompleta no es un requisito ausente.** Se concluyó que, al no tener `GA-REM-037`
+criterios de frontend, la pantalla quedaba fuera de alcance. El razonamiento iba al revés:
+`OD-06` exige que la tabla pueda cargarse **dentro de Global Avícola**, y la ausencia de
+criterios demostraba que la spec estaba incompleta, no que el requisito no existiera. Se
+enmendó `GA-REM-037` —autoridad natural de `OD-06`— en lugar de abrir una spec nueva que
+habría partido en dos la misma decisión del propietario.
+
+**Derivar el contrato del `openapi()` y no de la memoria encontró un hueco.** `R-97` no se
+descubrió leyendo código sino preguntando qué puede saber una pantalla: el motor tenía un solo
+consumidor y solo hablaba al salirse del rango, de modo que la ausencia de alerta significaba
+«bien» y «no sé» a la vez. Deducirlo en React habría creado el segundo motor que todo este
+tramo evita.
+
+**Una reversión con `git checkout` destruyó trabajo sin confirmar y la guarda de residuo lo dio
+por limpio**, porque el código sospechoso ya no existía. Lo delató la suite completa con diez
+fallos. Las reversiones se hacen desde una salvaguarda previa, no desde el último commit.

@@ -139,9 +139,14 @@ actual, «sin alerta» significa las dos cosas a la vez. Deducirlo en React exig
 en el cliente, que es precisamente lo que `§38` prohíbe y lo que produciría dos motores.
 
 ```
-R-97 = CONTRACT GAP
-       la evaluación de curva no es observable salvo cuando genera alerta
+R-97 = CONTRACT GAP  →  CERTIFIED (2026-09-06)
+       la evaluación de curva no era observable salvo cuando generaba alerta
 ```
+
+> **Cerrado.** `GET /operations/{event_id}/weight-evaluation` devuelve estado, rango esperado,
+> versión de curva, edad y el motivo cuando falta la referencia. No recalcula: la alerta pasó a
+> consumir la misma función, y `T-037-28` compara los dos resultados para que no puedan
+> divergir en silencio.
 
 Se resuelve por el camino que `§74` fija —`FINDING → SPEC → AC → backend change`—: se añade a
 la enmienda de `GA-REM-037` un criterio de backend que exponga la evaluación, sin duplicar el

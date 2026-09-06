@@ -122,7 +122,11 @@ genética, versionadas, interpoladas linealmente, sin tolerancia global—.
 `mortality_recording` se arregló en `P0-1`; `GA-TD-014` en `GA-REM-035` tras `OD-04`. La
 cadena completa se recorre en `e2e/proceso-p03-reproductoras-cria.spec.ts` (5/5).
 
-**Cobertura: 14 de 14 pasos → CUBIERTO.** Detalle en `audit/remediation/P03_PROCESS_CHAIN_MATRIX.md`.
+`R-96` añadió lo que faltaba y no era backend: la tabla **debe poder cargarse dentro del
+producto**, no solo por API. `R-97`, descubierto al derivar esa pantalla, abrió el motor para
+que «dentro de norma» y «sin referencia» dejaran de ser indistinguibles desde fuera.
+
+**Cobertura: 18 de 18 pasos → CUBIERTO.** Detalle en `audit/remediation/P03_PROCESS_CHAIN_MATRIX.md`.
 
 ### P-05 · Incubación
 

@@ -3,13 +3,15 @@
 `spec.md §4.4` + `§4.5` · `docs/02 §3.5` · `GA-REM-037` · `OD-06` · 2026-09-06
 
 ```
-P-03        = PARTIAL       ← corregido el 2026-09-06, ver ADDENDUM A
-GA-REQ-037  = PARCIAL       OD-06 = RESOLVED
+P-03        = CERTIFIED     ← tras cerrar R-96 y R-97, ver ADDENDUM B
+GA-REQ-037  = CERRADO       OD-06 = RESOLVED
 ```
 
-> **`ADDENDUM A` (2026-09-06).** Este informe declaró `P-03 = CERTIFIED`. La declaración era
-> **prematura** y se corrige al final del documento. El backend certificado sigue siéndolo; lo
-> que faltaba es la capacidad de producto que `OD-06` exige.
+> **`ADDENDUM A` (2026-09-06).** Este informe declaró `P-03 = CERTIFIED` cuando solo el backend
+> lo estaba. La declaración era **prematura**; se corrigió y el proceso volvió a `PARTIAL`.
+>
+> **`ADDENDUM B` (2026-09-06).** Cerrados `R-96` y `R-97`, `P-03` vuelve a `CERTIFIED` — esta
+> vez con la capacidad en el producto y no solo en la API.
 
 > Este archivo **sustituye** a la reevaluación del 2026-09-06 que declaraba
 > `P-03 = PARTIAL — BLOCKED_BY_REQUIREMENT`. Aquel diagnóstico era correcto y su bloqueo se
@@ -205,3 +207,70 @@ mutaciones siguen en verde y siguen siendo válidos. Nada de lo medido era falso
 
 Los dos hallazgos se cierran por la **enmienda A de `GA-REM-037`**, que añade `AC26`…`AC28` de
 backend y `AC-FE01`…`AC-FE20` de producto.
+
+
+---
+
+# ADDENDUM B · ahora sí, y por qué la diferencia importa (2026-09-06)
+
+## Qué faltaba
+
+`ADDENDUM A` dejó `P-03` en `PARTIAL` porque `OD-06` exige que la tabla de curva pueda cargarse
+**dentro de Global Avícola**, y solo podía cargarse llamando a la API a mano. Al derivar el
+contrato de esa pantalla apareció además `R-97`: la evaluación de curva no era observable salvo
+cuando generaba alerta, de modo que «dentro de norma» y «sin referencia» se veían igual —sin
+nada—.
+
+## Qué se hizo
+
+```
+GA-REM-037 enmienda A
+  ├─ AC26…AC28      la evaluación se lee, sin duplicar el motor
+  └─ AC-FE01…FE20   la capacidad existe en el producto, sobre el maestro GeneticLine
+```
+
+Cinco superficies nuevas y ninguna arquitectura nueva: la pantalla de curvas cuelga de la línea
+genética, reutiliza el patrón que `P-12` certificó, y el veredicto del pesaje lo calcula el
+backend y lo pinta React sin recalcular nada.
+
+Detalle completo en `R-96-WEIGHT-CURVE-CAPABILITY-CERTIFICATION.md`.
+
+## La cadena de `§4.5`, ahora completa
+
+| # | Paso | Nivel | Estado |
+|:--:|---|---|:--:|
+| 1–11 | Cadena operativa de cría | `API_E2E` | **PASS** |
+| 12 | Alerta por mortalidad sobre umbral | `API_E2E` | **PASS** |
+| 13 | Alerta por peso fuera de curva | `API_E2E` | **PASS** |
+| 14 | Aislamiento entre empresas | `API_E2E` | **PASS** |
+| 15 | **La curva se carga desde el producto** | **`UI_E2E`** | **PASS** — `R-96` |
+| 16 | **El veredicto del pesaje se lee en pantalla** | **`UI_E2E`** | **PASS** — `R-97` |
+
+```
+16 pasos · PASS 16 · FAIL 0
+```
+
+## Evidencia acumulada
+
+| Nivel | Resultado |
+|---|:--:|
+| `backend/tests/test_genetic_curves.py` | 16/16 |
+| `backend/tests/test_weight_curve_evaluation.py` | 14/14 |
+| `backend/tests/test_weight_alert.py` | 8/8 |
+| `backend/tests/test_weight_evaluation_endpoint.py` | 10/10 |
+| `e2e/proceso-p03-reproductoras-cria.spec.ts` | 5/5 `API_E2E` |
+| `e2e/proceso-p03-curvas-ui.spec.ts` | 13/13 `UI_E2E` |
+| `vitest` de curvas y evaluación | 13/13 |
+| Regresión backend | 449 passed · 49 skipped |
+| Regresión `E2E` | 124 passed |
+| Regresión `vitest` | 74 passed |
+| Sensibilidad | 10 + 7 mutaciones, revertidas |
+
+## Lo que sigue fuera, dicho
+
+`R-98`: ninguna pantalla de esta aplicación oculta acciones de escritura según el permiso del
+usuario —no hay modelo de permisos en el frontend—. Es transversal y pertenece a `P-13`. Lo que
+sí se verificó es que el backend niega y la interfaz presenta la negativa, que es lo que impide
+el acceso de verdad.
+
+`P-14` intacto. `RC-07` sin tocar.

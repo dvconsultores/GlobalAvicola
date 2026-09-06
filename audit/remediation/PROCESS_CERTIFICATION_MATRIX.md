@@ -38,7 +38,7 @@ evidencia. Se certificaron los tres primeros.
 |---|---|---|---|---|---|---|---|---|---|---|---|
 | **P-01** Progenitoras — Cría | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-01/06/07/08/17/18/19` | ✅ | ✅ | **3/3** | `COVERED` | **`CERTIFIED`** |
 | **P-02** Progenitoras — Producción de huevo | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
-| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ⚠ | ✅ | ✅ | ídem P-01 · `§4.5` alertas | ✅ | ✅ | **5/5** `API_E2E` | `PARTIAL` | **`PARTIAL`** — `R-96` |
+| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 · `§4.5` alertas | ✅ | ✅ | **5/5** `API_E2E` + **13/13** `UI_E2E` | `COVERED` | **`CERTIFIED`** |
 | **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
 | **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` · `R7` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
@@ -444,5 +444,42 @@ R-97 = CONTRACT GAP · la evaluación no es observable salvo cuando alerta
 No se retira la evidencia obtenida: los 38 tests de backend, los 5 `API_E2E` y las diez
 mutaciones siguen siendo válidos y siguen en verde. Lo que se retira es la **conclusión** de
 que con eso bastaba. `GA-REM-037` vuelve a `SPEC_READY` con su enmienda A abierta.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+
+---
+
+## `R-96` y `R-97` cerrados · `P-03` certificado de verdad (2026-09-06)
+
+```
+CERTIFIED = 13 / 15      PARTIAL = 2 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-01` · `P-02` · **`P-03`** · `P-04` · `P-05` · `P-06` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · `P-15` |
+| `PARTIAL` | `P-08` · `P-14` |
+
+Esta entrada sustituye a la corrección anterior, que devolvió `P-03` a `PARTIAL`. La secuencia
+completa, porque la lección está en ella y no en el resultado:
+
+```
+1ª  P-03 = CERTIFIED   backend en verde, 5/5 API_E2E          ← prematura
+2ª  P-03 = PARTIAL     OD-06 exige la capacidad en el producto ← corrección
+3ª  P-03 = CERTIFIED   R-96 y R-97 cerrados, 13/13 UI_E2E      ← esta
+```
+
+Lo que separaba la primera de la tercera no era ninguna medición falsa: los 38 tests de backend
+y los 5 `API_E2E` de la primera siguen en verde y siguen siendo válidos. Lo que estaba mal era
+el **salto** de «el backend hace lo que `OD-06` describe» a «el proceso está certificado».
+`GA-REM-016 AC05` lo decía desde el principio: ninguna unidad certificada es un endpoint.
+
+Los dos `PARTIAL` que quedan no esperan trabajo técnico:
+
+| Proceso | Qué falta | Naturaleza |
+|---|---|---|
+| `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
+| `P-14` | elegir canal de notificación y construirlo | **decisión sin plantear** + desarrollo |
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
