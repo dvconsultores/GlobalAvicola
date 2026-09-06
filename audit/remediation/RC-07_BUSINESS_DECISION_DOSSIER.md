@@ -330,3 +330,51 @@ RC-07 = OWNER_DECISION_REQUIRED
 Sin cambios. Es la política **contable de la mortalidad frente a SAP** y no tiene relación con
 las entregas parciales. La separación entre ambas se estableció en §5 de este dossier y se
 mantiene.
+
+---
+
+# RESOLUCIÓN · `OD-06` (2026-09-06)
+
+```
+OD-06 = RESOLVED
+```
+
+| | |
+|---|---|
+| **Decidido por** | el propietario |
+| **Fecha** | 2026-09-06 |
+| **Pregunta** | ¿de dónde sale la «curva estándar» que `spec.md §4.5` exige comparar? |
+| **Requisito** | `GA-REQ-037` — pasa de bloqueado por dato ausente a **`ACTIONABLE`** |
+| **Spec** | `GA-REM-037` |
+| **Proceso** | `P-03` |
+
+## La decisión
+
+```
+Global Avícola manejará curvas estándar de peso configurables por línea genética.
+
+Líneas iniciales:  Cobb 500 · Ross 308 · Hubbard
+Se pueden añadir más:  sí
+Cada línea puede tener su tabla de curva
+Cada lote tiene línea genética asignada
+Cada lote queda asociado a una VERSIÓN concreta de la curva
+```
+
+## Parámetros derivados de la decisión
+
+| | |
+|---|---|
+| Unidad de edad | **días** |
+| Origen del rango de alerta | **`min` y `max` de la tabla cargada** |
+| Interpolación | **lineal** entre puntos vecinos |
+| Tolerancia porcentual global | **ninguna** |
+| Curvas versionadas | **sí** |
+| Lote fijado a su versión | **sí** — una curva nueva no reescribe la historia |
+
+## Lo que la decisión NO autoriza
+
+- **Sembrar curvas de producción.** Se siembran los nombres de las tres líneas; los pesos
+  reales los carga el administrador. No hay fuente para inventarlos.
+- **Extrapolar** fuera del rango de la tabla.
+- **Abrir `P-14`.** La alerta de `§4.5` es interna (`OperationalAlert`); el canal de
+  notificación sigue siendo `OD-05`, pendiente.
