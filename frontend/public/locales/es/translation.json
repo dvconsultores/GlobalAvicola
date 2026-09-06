@@ -944,5 +944,17 @@
     "afcr": "FCR ajustado",
     "totalFeed": "Alimento total",
     "totalWeight": "Peso total"
+  },
+  "roles": {
+    "title": "Roles y permisos",
+    "createRole": "Nuevo rol",
+    "editRole": "Editar rol",
+    "name": "Nombre",
+    "description": "Descripción",
+    "permissions": "Permisos",
+    "module": "Módulo",
+    "noRoles": "Sin roles",
+    "deactivate": "Desactivar rol",
+    "deactivateConfirm": "¿Desactivar este rol?"
   }
 }

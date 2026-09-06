@@ -452,3 +452,40 @@ que ya cumple.
 lo era—. Debe auditarse en ambos lados antes de dimensionarlo.
 
 **No se inicia aquí.**
+
+
+---
+
+# REVISIÓN FINAL · tras `GA-REM-034` (2026-09-06)
+
+`P-13` sale de la lista. Quedan **5**, y ninguno es trabajo técnico accionable.
+
+| Proceso | Qué falta | Naturaleza | ¿Accionable sin decisión externa? |
+|---|---|---|:--:|
+| `P-01` | `GA-TD-014` | **decisión** — `OD-04` | **no** |
+| `P-03` | `GA-TD-014` | **decisión** — `OD-04` | **no** |
+| `P-06` | `GA-TD-014` + `GA-REQ-037` + `R-76` | **decisión** + funcionalidad | **no** |
+| `P-08` | contrato SAP | **externo** — `GA-REM-017` | **no** |
+| `P-14` | canal de notificación y 5 de 6 tipos | **decisión** + desarrollo | **no** |
+
+```
+NEXT_ACTIONABLE_BLOCKER = NINGUNO SIN DECISIÓN EXTERNA
+```
+
+## Lo que hace falta ahora, y no es código
+
+| # | Decisión | Desbloquea |
+|:--:|---|---|
+| **`OD-04`** | ¿existen entregas parciales contra una misma orden de compra? | `P-01` `P-03` `P-06` — tres procesos |
+| **canal de `P-14`** | correo · push · Telegram · en la propia aplicación | `P-14` |
+| **`OD-05`** | ¿puede un administrador conceder permisos que no posee? | nada — endurece `P-13` |
+| **contrato SAP** | acceso al entorno S/4HANA | `P-08` |
+
+`OD-04` es la de mayor alcance: **tres procesos** dependen de una respuesta que cabe en una
+frase. Su dossier está en `RC-07_BUSINESS_DECISION_DOSSIER.md`, escrito para decidirse sin
+leer código.
+
+## Trabajo técnico que queda, sin cerrar ningún proceso
+
+`R-69` · `R-70` · `R-76` · `R-77` · `R-80` · `R-83` — correcciones P1/P2 abiertas, ninguna
+bloquea una certificación.

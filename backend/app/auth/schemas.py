@@ -108,9 +108,31 @@ class RoleCreate(RoleBase):
 
 
 class RoleUpdate(BaseModel):
+    """`GA-REM-034 AC02` / `R-93`.
+
+    `permissions` faltaba, de modo que un rol nacía con los suyos y **no podía cambiarlos
+    nunca**: `docs/02 §3.1.3` pide «CRUD de roles con permisos granulares» y sin esto se
+    quedaba en «alta con permisos granulares».
+
+    Cuando viaja, **sustituye** el conjunto entero —la misma semántica que ya tiene el alta—.
+    Es la única que permite **quitar** un permiso, que es la mitad de administrarlos.
+    Omitirlo deja los permisos intactos, para que editar el nombre no los borre.
+    """
     name: Optional[str] = None
     description: Optional[str] = None
     is_active: Optional[bool] = None
+    permissions: Optional[list["PermissionCreate"]] = None
+
+
+class PermissionCatalog(BaseModel):
+    """`GA-REM-034 AC01` / `R-94`.
+
+    Sin esto, una interfaz de roles tendría que repetir a mano los módulos y las acciones, y
+    quedarían desincronizados el día que se añada un módulo. Se derivan de las fuentes de
+    verdad: el enum de acciones y los módulos que el enforcement reconoce.
+    """
+    modules: list[str]
+    actions: list[str]
 
 
 class RoleRead(RoleBase):

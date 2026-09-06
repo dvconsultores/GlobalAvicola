@@ -9,6 +9,7 @@ import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
 import MasterListPage from './pages/masters/MasterListPage'
+import RolesPage from './pages/users/RolesPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
@@ -215,6 +216,9 @@ export default function App() {
  <Route path="/audit" element={<WebOnlyRoute><AuditPage /></WebOnlyRoute>} />
  <Route path="/sap" element={<WebOnlyRoute><SapManagerPage /></WebOnlyRoute>} />
  <Route path="/users" element={<WebOnlyRoute><UsersPage /></WebOnlyRoute>} />
+ {/* `GA-REM-034 AC04` / `R-92`. `docs/02 §3.1.3` exige administrar roles con permisos
+ granulares y no había ninguna superficie: ni ruta ni componente. */}
+ <Route path="/roles" element={<WebOnlyRoute><RolesPage /></WebOnlyRoute>} />
  <Route path="/profile" element={<ProfilePage />} />
  <Route path="*" element={<Navigate to="/" replace />} />
  </Route>

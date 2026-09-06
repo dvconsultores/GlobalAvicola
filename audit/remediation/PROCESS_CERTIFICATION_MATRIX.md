@@ -48,7 +48,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-10** Trazabilidad generacional | spec §4.9 · `RR-02` · `RR-04` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **5/5** | `COVERED` | **`CERTIFIED`** |
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ | ✅ | **4/4** (1 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
-| **P-13** Usuarios, roles y permisos | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
+| **P-13** Autenticación y gestión de usuarios | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **3/3** (2 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
 | **P-14** Notificaciones y alertas | func §3.14 | ✅ | ⚠ | ⚠ | ✅ | umbral configurable | ✅ | ✅ | **parcial** | **`PARTIAL`** | **`PARTIAL`** |
 | **P-15** Reportes y KPI | spec §4.12 · `docs/02 §3.12` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **4/4** | `COVERED` | **`CERTIFIED`** |
 
@@ -300,3 +300,36 @@ Primera certificación del programa que incluye un caso **`UI_E2E`**, y por requ
 `R-89` rompía es el número que el usuario lee.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+---
+
+## `P-13` certificado tras `GA-REM-034` (2026-09-06)
+
+```
+CERTIFIED = 10 / 15      PARTIAL = 5 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-02` · `P-04` · `P-05` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · `P-15` |
+| `PARTIAL` | `P-01` · `P-03` · `P-06` · `P-08` · `P-14` |
+
+Nombre normativo corregido: `docs/02 §3.1` lo llama **Autenticación y Gestión de Usuarios**,
+más ancho que «usuarios, roles y permisos». 14 pasos, todos en verde.
+
+Costó `R-92` (sin superficie de administración), `R-93` (los permisos de un rol no se podían
+editar) y `R-94` (sin catálogo de permisos). Queda abierta `OD-05`, que **no bloquea**.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+---
+
+## Los cinco que quedan, por naturaleza
+
+| Categoría | Procesos | Qué hace falta |
+|---|---|---|
+| **decisión del propietario** | `P-01` · `P-03` · `P-06` | `OD-04` — `GA-TD-014` |
+| **dependencia externa** | `P-08` | contrato SAP · `GA-REM-017` |
+| **decisión + desarrollo** | `P-14` | elegir canal de notificación, y construirlo |
+
+**Ya no queda ningún proceso puramente técnico accionable sin decisión externa.**

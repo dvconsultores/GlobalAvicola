@@ -192,3 +192,43 @@ La segunda: **una spec puede necesitar enmienda al implementarla**. `AC01` pedí
 forma del cuerpo del listado; contar los consumidores reveló 43 puntos de llamada, y un
 defecto P2 de contador no justifica moverlos. Se enmendó el criterio antes de escribir el
 código, no después.
+
+
+---
+
+## 9. `GA-REM-034` · `P-13` certificado (2026-09-06)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-92` · no existía superficie para administrar roles | **P1** | **`CERTIFIED`** |
+| `R-93` · `RoleUpdate` no incluía permisos | P2 | **`CERTIFIED`** |
+| `R-94` · no había catálogo de permisos | P2 | **`CERTIFIED`** |
+| `OD-05` · ¿quién puede conceder qué permiso? | — | **`OWNER_DECISION_REQUIRED`** |
+
+```
+P-13 = CERTIFIED        CERTIFIED 10 / 15        PARTIAL 5 / 15
+```
+
+Se separó **enforcement** de **administración**: `GA-REM-002` certificó lo primero y no se
+tocó; lo que faltaba era lo segundo. Confundirlos habría llevado a reabrir una spec cerrada.
+
+Y `OD-05` quedó abierta sin bloquear: nada impide que quien tiene `users:create` se conceda
+`module="*"`. No hay regla normativa y **no se inventó una política de seguridad**.
+
+---
+
+# ESTADO DEL PROGRAMA · 2026-09-06
+
+```
+CERTIFIED 10 / 15        PARTIAL 5 / 15
+```
+
+Los cinco restantes **no son trabajo técnico pendiente**:
+
+| Categoría | Procesos | Qué falta |
+|---|---|---|
+| decisión del propietario | `P-01` `P-03` `P-06` | `OD-04` |
+| dependencia externa | `P-08` | contrato SAP |
+| decisión + desarrollo | `P-14` | elegir canal de notificación |
+
+**El cierre de procesos por corrección de defectos está agotado.**

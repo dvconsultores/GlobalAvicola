@@ -1,7 +1,7 @@
 from typing import Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import delete as sa_delete, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Permission, PermissionAction, Role, User
@@ -329,6 +329,20 @@ class AuthService:
 
     # ---- Role CRUD ----
 
+    #: Módulos que el enforcement reconoce, recogidos de las llamadas a `require_permission`.
+    #: Se enumeran aquí y no en el frontend para que no puedan desincronizarse.
+    MODULOS = [
+        "approvals", "audit", "corrections", "dashboard", "lots", "masters",
+        "operations", "reports", "review", "sap", "users",
+    ]
+
+    def get_permission_catalog(self) -> dict[str, list[str]]:
+        """`GA-REM-034 AC01`. Qué se puede conceder, desde la fuente de verdad."""
+        return {
+            "modules": list(self.MODULOS),
+            "actions": [a.value for a in PermissionAction],
+        }
+
     async def get_roles(self) -> list[RoleRead]:
         result = await self.db.execute(select(Role).where(Role.is_active == True))
         roles = result.scalars().all()
@@ -368,12 +382,27 @@ class AuthService:
         if not role:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
 
-        update_data = data.model_dump(exclude_unset=True)
+        # `permissions` se excluye del asignador genérico: es una relación y se sustituye
+        # abajo. Asignarle una lista de diccionarios revienta el mapeador.
+        update_data = data.model_dump(exclude_unset=True, exclude={"permissions"})
         for key, value in update_data.items():
             setattr(role, key, value)
 
+        # `GA-REM-034 AC02` / `R-93`. Sustituye el conjunto entero cuando viaja: se retiran
+        # los que sobran y se crean los que faltan. Omitirlo deja los permisos intactos.
+        if data.permissions is not None:
+            await self.db.execute(
+                sa_delete(Permission).where(Permission.role_id == role.id)
+            )
+            for perm in data.permissions:
+                self.db.add(Permission(
+                    role_id=role.id, module=perm.module,
+                    action=PermissionAction(perm.action),
+                    scope_type=perm.scope_type, scope_id=perm.scope_id,
+                ))
+
         await self.db.flush()
-        await self.db.refresh(role)
+        await self.db.refresh(role, ["permissions"])
         await audit_accion(                                   # `GA-REM-032 AC03`
             self.db, usuario=current_user, accion=AuditAction.PERMISSION_CHANGE,
             modulo=AuditModule.USERS, entity_type="role", entity_id=role.id,

@@ -123,6 +123,19 @@ async def deactivate_user(
 
 # ------------------- Role Endpoints -------------------
 
+@router.get("/roles/permissions-catalog", tags=["Roles"])
+async def get_permissions_catalog(
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("users", "read")),
+):
+    """`GA-REM-034 AC01`. Módulos y acciones que se pueden conceder.
+
+    Va **antes** de `/roles` a propósito: una ruta con segmento fijo debe declararse antes que
+    cualquier otra que pudiera capturarla.
+    """
+    return AuthService(db).get_permission_catalog()
+
+
 @router.get("/roles", response_model=list[RoleRead], tags=["Roles"])
 async def list_roles(
     db: AsyncSession = Depends(get_db),

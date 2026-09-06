@@ -282,6 +282,9 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-89` | El listado de maestros descarta el total y el contador muestra el tamaño de página | P2 — **`CERTIFIED`** `GA-REM-033` |
 | `R-90` | Siete maestros normativos sin capacidad de gestión | P1 — **`CERTIFIED`** `GA-REM-033` |
 | `R-91` | Esos mismos siete no admitían edición: sin esquema, no hay `PUT` | P2 — **`CERTIFIED`** `GA-REM-033` |
+| `R-92` | No existía superficie para administrar roles | P1 — **`CERTIFIED`** `GA-REM-034` |
+| `R-93` | `RoleUpdate` no incluía permisos: un rol no podía cambiarlos nunca | P2 — **`CERTIFIED`** `GA-REM-034` |
+| `R-94` | No había catálogo de permisos | P2 — **`CERTIFIED`** `GA-REM-034` |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.

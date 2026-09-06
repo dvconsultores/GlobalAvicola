@@ -944,5 +944,17 @@
     "afcr": "Adjusted FCR",
     "totalFeed": "Total feed",
     "totalWeight": "Total weight"
+  },
+  "roles": {
+    "title": "Roles and permissions",
+    "createRole": "New role",
+    "editRole": "Edit role",
+    "name": "Name",
+    "description": "Description",
+    "permissions": "Permissions",
+    "module": "Module",
+    "noRoles": "No roles",
+    "deactivate": "Deactivate role",
+    "deactivateConfirm": "Deactivate this role?"
   }
 }

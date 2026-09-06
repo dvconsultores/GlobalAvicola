@@ -430,3 +430,27 @@ R-89  el total descartado               CERTIFIED
 Una dependencia que conviene dejar dicha: `/masters/*` tiene **43 consumidores** en el
 frontend, muchos más que cualquier otro listado de la aplicación. Es la razón de que el total
 viaje en cabecera y no en el cuerpo, y quien vaya a tocar ese contrato debe contarlos antes.
+
+
+---
+
+## `P-13` · resuelto (2026-09-06)
+
+```
+R-92  sin superficie de administración   CERTIFIED (GA-REM-034)
+R-93  los permisos no se podían editar   CERTIFIED
+R-94  sin catálogo de permisos           CERTIFIED
+  └─→ P-13 = CERTIFIED · 14 de 14 pasos
+
+OD-05  ¿quién puede conceder qué permiso?   ABIERTO — no bloquea
+```
+
+La distinción que ordenó este tramo:
+
+```
+GA-REM-002  ENFORCEMENT      que el permiso se aplique      CERTIFIED, intacto
+GA-REM-034  ADMINISTRACIÓN   que pueda concederse           CERTIFIED
+```
+
+Son dos cosas. Tratarlas como una habría llevado a reabrir una spec cerrada para construir
+una pantalla.

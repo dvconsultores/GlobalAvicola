@@ -472,3 +472,22 @@ esquema cae 1. `git diff` limpio.
 
 Regresión: backend **370 · 49 omitidas · 0 fallos**; E2E **99/99**; `tsc`, vitest 61/61,
 i18n 866 = 866.
+
+
+---
+
+## `GA-REM-034` · administración de roles y permisos
+
+```
+R-92 · R-93 · R-94 = CERTIFIED     OD-05 = OWNER_DECISION_REQUIRED
+P-13 = CERTIFIED   ·   CERTIFIED 10 / 15   ·   PARTIAL 5 / 15
+```
+
+Spec y cuatro matrices publicadas antes del código (`fe83c1a`), con auditoría bidireccional.
+Fase roja: `405` en el catálogo y un `200` con los permisos descartados en silencio.
+
+Sensibilidad: sin la sustitución caen 3; sin las acciones del catálogo, 1; sin persistir los
+permisos, 2. `git diff` limpio.
+
+Regresión: backend **377 · 49 omitidas · 0 fallos**; E2E **102/102**; `tsc`, vitest 61/61,
+i18n **876 = 876**.

@@ -711,3 +711,51 @@ las de los siete sin pantalla.
 ```
 
 Ya no quedan defectos que corregir para certificar.
+
+
+---
+
+# `P-13` certificado · `R-92` + `R-93` + `R-94` · `GA-REM-034` (2026-09-06)
+
+```
+P-13 = CERTIFIED     CERTIFIED 10 / 15     PARTIAL 5 / 15
+```
+
+## La distinción que ordenó el tramo
+
+`GA-REM-002` certificó el **enforcement** —que el permiso se aplique—. Lo que faltaba era la
+**administración** —que pueda concederse desde el producto—. Son dos cosas; confundirlas
+habría llevado a reabrir una spec cerrada para construir una pantalla.
+
+## `audit/06`, obsoleto por quinta vez
+
+Daba `UsersPage` por rota. Hoy crea, edita, cambia contraseña, activa, desactiva y asigna rol.
+Lo que sí confirmó es la ausencia de roles — y la auditoría bidireccional encontró dos huecos
+más que el audit no veía: los permisos de un rol no se podían editar y no había catálogo.
+
+También una asimetría que solo aparece mirando ambos lados: el **cliente de API de roles ya
+existía**; faltaba la pantalla, y `createRole` ni siquiera declaraba `permissions`.
+
+## Una decisión que no tomé
+
+`OD-05`: nada impide que quien tiene `users:create` se conceda `module="*"`. No hay regla
+normativa en ninguna fuente, así que **no implementé una restricción de escalada**. Inventarla
+sería inventar seguridad. Queda declarada para que no se lea como descuido.
+
+## Regresión
+
+```
+backend  377 pasan · 49 omitidas · 0 fallos   (antes 370)
+E2E       102/102                              (antes 99)
+tsc PASS · vitest 61/61 · i18n 876 = 876       (diez claves nuevas, paridad preservada)
+```
+
+## Dónde queda el programa
+
+```
+CERTIFIED 10 / 15 · PARTIAL 5 / 15
+```
+
+Los cinco restantes esperan `OD-04` (tres), el contrato SAP (uno) y una decisión de producto
+sobre el canal de notificación (uno). **El cierre de procesos por corrección de defectos está
+agotado.**

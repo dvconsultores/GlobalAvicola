@@ -228,3 +228,27 @@ contador **no podría fallar**. Es exactamente la evidencia vacua que `AC13` pro
 
 El caso de interfaz usa `toBeVisible` sobre un rol y un nombre accesible, no la verdad de un
 localizador — que siempre es cierta.
+
+
+---
+
+## `P-13` · administración de roles y permisos (`GA-REM-034`)
+
+`e2e/proceso-p13-roles-y-permisos.spec.ts` · 3 casos · **2 `UI_E2E` + 1 `API_E2E`**.
+
+| Caso | Modalidad | Qué comprueba | ¿Podría fallar? |
+|---|---|---|:--:|
+| la superficie existe y muestra el catálogo | `UI_E2E` | la ruta abre y aparecen casillas concretas: `lots:read`, `audit:read`, `operations:approve` | sí — antes no había ruta |
+| un rol se crea con los permisos marcados | `UI_E2E` + API | marca dos casillas, guarda, y **comprueba por API** el par exacto persistido | sí — antes `createRole` no enviaba permisos |
+| editar sustituye el conjunto | `API_E2E` | de dos permisos a uno distinto: el resultado debe ser **exactamente** el nuevo | sí |
+
+### La interfaz se prueba porque la interfaz era el hueco
+
+No por vocabulario: `R-92` era la ausencia de superficie. La persistencia se comprueba por
+API, que es donde vive — el segundo caso hace ambas cosas y ese cruce es lo que demuestra
+`AC05`: lo que la pantalla envía llega al dominio.
+
+### Nada de `toBeTruthy`
+
+`getByRole('checkbox', { name: 'lots:read' })` con `toBeVisible`. El nombre accesible es el par
+módulo:acción, así que la aserción falla si el catálogo cambia de forma.
