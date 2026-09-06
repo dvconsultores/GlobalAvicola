@@ -36,12 +36,12 @@ evidencia. Se certificaron los tres primeros.
 
 | Proceso | Req | Specs | FE | BE | DB | Reglas | Seguridad | Tests | E2E | Cobertura validada | Estado |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| **P-01** Progenitoras — Cría | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-01/06/07/08/17/19` | ✅ | ✅ | **parcial** | `COVERED` (`GA-REM-020`) | **`PARTIAL`** |
+| **P-01** Progenitoras — Cría | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-01/06/07/08/17/18/19` | ✅ | ✅ | **3/3** | `COVERED` | **`CERTIFIED`** |
 | **P-02** Progenitoras — Producción de huevo | spec §4.4 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
-| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
+| **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** — `GA-REQ-037` |
 | **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
-| **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` **Wave 3** | ✅ | ✅ | **5/5 cadena** | `COVERED` | **`PARTIAL`** — `GA-TD-014` · `GA-REQ-037` |
+| **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` | ✅ | ✅ | **5/5 cadena** | `COVERED` | **`PARTIAL`** — `R-76` |
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | **P-09** Auditoría interna | spec §4.11 · `docs/02 §3.11` | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
@@ -333,3 +333,30 @@ editar) y `R-94` (sin catálogo de permisos). Queda abierta `OD-05`, que **no bl
 | **decisión + desarrollo** | `P-14` | elegir canal de notificación, y construirlo |
 
 **Ya no queda ningún proceso puramente técnico accionable sin decisión externa.**
+
+---
+
+## `OD-04` resuelta · `GA-TD-014` certificado (2026-09-06)
+
+```
+CERTIFIED = 11 / 15      PARTIAL = 4 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-01` · `P-02` · `P-04` · `P-05` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · `P-15` |
+| `PARTIAL` | `P-03` · `P-06` · `P-08` · `P-14` |
+
+**Los tres procesos que dependían de `OD-04` divergieron**, y se reevaluaron uno a uno en
+lugar de certificarse por alcance:
+
+| Proceso | Resultado | Motivo |
+|---|---|---|
+| `P-01` | **`CERTIFIED`** | `GA-TD-014` era su único hueco; `§4.4` no exige alertas |
+| `P-03` | `PARTIAL` | `§4.5` **sí** exige la alerta de peso fuera de curva — `GA-REQ-037` |
+| `P-06` | `PARTIAL` | `§4.8` no exige alertas, pero `R-76` bloquea su paso de cierre |
+
+Se verificó leyendo `§4.4`, `§4.5` y `§4.8` por separado, en vez de arrastrar la anotación que
+trataba `GA-REQ-037` como si afectara a los tres por igual.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

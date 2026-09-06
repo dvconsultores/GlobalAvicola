@@ -491,3 +491,22 @@ permisos, 2. `git diff` limpio.
 
 Regresión: backend **377 · 49 omitidas · 0 fallos**; E2E **102/102**; `tsc`, vitest 61/61,
 i18n **876 = 876**.
+
+
+---
+
+## `GA-REM-035` · recepción contra orden de compra
+
+```
+OD-04 = RESOLVED   GA-TD-014 = CERTIFIED   R-95 = CERTIFIED
+P-01 = CERTIFIED   ·   CERTIFIED 11 / 15   ·   PARTIAL 4 / 15
+```
+
+Decisión y spec publicadas antes del código (`88d3033`). Fase roja: la segunda entrega parcial
+rechazada por duplicidad, y el exceso repartido aceptado.
+
+Sensibilidad: con la unicidad de vuelta caen 4; con el límite no acumulado, 2; con el borde en
+`>=`, 4. `git diff` limpio.
+
+Regresión: backend **384 · 49 omitidas · 0 fallos**; E2E **105/105**; `tsc`, vitest 61/61,
+i18n 876 = 876.

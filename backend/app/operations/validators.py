@@ -351,21 +351,68 @@ async def validate_house_capacity(db: AsyncSession, house_id: int, quantity: int
         )
 
 
-async def validate_oc_limit(db: AsyncSession, sap_document_ref: str | None, quantity_received: int) -> None:
-    """G-R05 / BR-18: Quantity received cannot exceed Purchase Order without authorization."""
+async def validate_oc_limit(
+    db: AsyncSession,
+    sap_document_ref: str | None,
+    quantity_received: int,
+    company_id: int | None = None,
+    exclude_event_id: int | None = None,
+) -> None:
+    """`G-R05` / `BR-18`. La cantidad **acumulada** no puede exceder la orden de compra.
+
+    `OD-04`, resuelta por el propietario: *una misma orden de compra puede recibirse mediante
+    múltiples entregas parciales*. De ahí que repetir la referencia no sea un error y que la
+    protección recaiga sobre el acumulado.
+
+    Antes se comparaba **solo la recepción en curso**, de modo que tres entregas de 400 contra
+    una orden de 1000 pasaban las tres y sumaban 1200: el límite nunca llegó a comprobarse.
+
+    Qué cuenta para el acumulado no se decide aquí por criterio. Los ocho saldos de este mismo
+    fichero excluyen exactamente `CANCELLED` y nada más, y se sigue ese precedente. **No** se
+    traslada la semántica de los indicadores de `P-15`, que solo cuentan lo aprobado: un
+    control de recepción no puede esperar a la aprobación, porque si tres entregas sin aprobar
+    suman más que la orden el exceso ya ocurrió físicamente.
+
+    Sin tolerancia: ninguna fuente normativa la establece. Y sin cierre automático de la
+    orden: `OD-04` respondió si caben entregas parciales, no qué ocurre al completarla.
+    """
     if not sap_document_ref:
         return
     from ..integrations.sap.models import SapReference, SapReferenceType
-    result = await db.execute(
-        select(SapReference).where(
-            SapReference.sap_code == sap_document_ref,
-            SapReference.ref_type == SapReferenceType.PURCHASE_ORDER,
+
+    consulta = select(SapReference).where(
+        SapReference.sap_code == sap_document_ref,
+        SapReference.ref_type == SapReferenceType.PURCHASE_ORDER,
+    )
+    # La orden se busca **dentro de la compañía del actor**: una referencia ajena se comporta
+    # como inexistente, en lugar de imponer su cantidad sobre una recepción que no le toca.
+    if company_id is not None:
+        consulta = consulta.where(SapReference.company_id == company_id)
+    oc = (await db.execute(consulta)).scalar_one_or_none()
+    if oc is None or oc.quantity is None:
+        return
+
+    acumulado_q = (
+        select(func.coalesce(func.sum(BirdMovement.quantity), 0))
+        .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
+        .where(
+            OperationalEvent.sap_document_ref == sap_document_ref,
+            OperationalEvent.event_type == EventType.BIRD_RECEPTION,
+            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
-    oc = result.scalar_one_or_none()
-    if oc and oc.quantity is not None and quantity_received > oc.quantity:
+    if company_id is not None:
+        acumulado_q = acumulado_q.where(OperationalEvent.company_id == company_id)
+    if exclude_event_id is not None:
+        acumulado_q = acumulado_q.where(OperationalEvent.id != exclude_event_id)
+
+    acumulado = int((await db.execute(acumulado_q)).scalar() or 0)
+    total = acumulado + quantity_received
+    if total > oc.quantity:
         raise BusinessRuleViolation(
-            f"Cantidad recibida ({quantity_received}) excede la OC {sap_document_ref} ({oc.quantity})",
+            f"La recepción de {quantity_received} elevaría lo recibido contra la OC "
+            f"{sap_document_ref} a {total}, por encima de las {int(oc.quantity)} ordenadas "
+            f"(ya recibidas: {acumulado}).",
             "BR-18",
         )
 

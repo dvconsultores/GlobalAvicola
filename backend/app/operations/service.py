@@ -480,8 +480,19 @@ class OperationsService:
         await validate_farm_house(data.event_type.value if hasattr(data.event_type, 'value') else str(data.event_type), data.farm_id, data.house_id)
         # BR-19: Date not in closed period
         await validate_period_open(self.db, data.event_date)
-        # BR-10: SAP document must not be duplicated
-        if data.sap_document_ref and data.lot_id is not None:
+        # `BR-10`/`BR-11`: un documento SAP no se duplica — **salvo en la recepción de aves**.
+        #
+        # `OD-04`, decidida por el propietario: una misma orden de compra puede recibirse en
+        # varias entregas parciales. Aplicar aquí la unicidad prohibiría exactamente eso. La
+        # protección de la recepción es el límite **acumulado** (`BR-18`), unas líneas abajo.
+        #
+        # Se deja intacta para los demás tipos de evento: `OD-04` responde sobre órdenes de
+        # compra y recepciones, y extender su alcance sería inventar política.
+        if (
+            data.sap_document_ref
+            and data.lot_id is not None
+            and event_type != models.EventType.BIRD_RECEPTION
+        ):
             await validate_sap_document_unique(self.db, data.lot_id, event_type, data.sap_document_ref)
 
         total_qty = sum(bm.quantity for bm in data.bird_movements) + sum(em.quantity for em in data.egg_movements)
@@ -491,7 +502,9 @@ class OperationsService:
             if data.house_id and total_qty > 0:
                 await validate_house_capacity(self.db, data.house_id, total_qty)
             # G-R05: Validate quantity ≤ OC
-            await validate_oc_limit(self.db, data.sap_document_ref, total_qty)
+            await validate_oc_limit(
+                self.db, data.sap_document_ref, total_qty, company_id=self.company_id,
+            )
 
         # Reglas por tipo de evento. No hay `try/except` local: el manejador tipado de
         # `BusinessRuleViolation` registrado en `app/main.py` da un único contrato de

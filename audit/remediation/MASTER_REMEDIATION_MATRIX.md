@@ -232,3 +232,34 @@ Los cinco restantes **no son trabajo técnico pendiente**:
 | decisión + desarrollo | `P-14` | elegir canal de notificación |
 
 **El cierre de procesos por corrección de defectos está agotado.**
+
+
+---
+
+## 10. `OD-04` resuelta · `GA-REM-035` · `P-01` certificado (2026-09-06)
+
+| | Sev. | Estado |
+|---|:--:|---|
+| `OD-04` · ¿entregas parciales contra una misma OC? | — | **`RESOLVED`** — sí |
+| `GA-TD-014` · la OC al campo tipado, con límite acumulado | **P1** | **`CERTIFIED`** |
+| `R-95` · `SapReferenceCreate` no declaraba `quantity` | **P1** | **`CERTIFIED`** |
+
+```
+P-01 = CERTIFIED        CERTIFIED 11 / 15        PARTIAL 4 / 15
+P-03 = PARTIAL (GA-REQ-037)     P-06 = PARTIAL (R-76)
+```
+
+Tres cosas que conviene conservar de este tramo.
+
+**Activar el campo no habría bastado.** `validate_oc_limit` comparaba solo la recepción en
+curso, de modo que tres entregas de 400 contra una orden de 1000 pasaban las tres. El límite
+acumulado —que es lo que la decisión del propietario protege— nunca se había comprobado.
+
+**Y ni siquiera eso habría bastado.** `SapReferenceCreate` no declaraba `quantity`: toda orden
+importada quedaba sin cantidad ordenada y `BR-18` era inaplicable estuviera o no poblado el
+campo. Es el patrón de `R-47` por tercera vez en el programa — el cliente envía, el esquema
+descarta, la respuesta es `2xx`.
+
+**Los tres procesos divergieron.** Compartían bloqueante y se reevaluaron uno a uno: `§4.4` no
+exige alertas, `§4.5` sí y `§4.8` no. Certificar por alcance habría dado tres certificaciones
+falsas.

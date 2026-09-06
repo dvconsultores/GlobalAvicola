@@ -454,3 +454,25 @@ GA-REM-034  ADMINISTRACIÓN   que pueda concederse           CERTIFIED
 
 Son dos cosas. Tratarlas como una habría llevado a reabrir una spec cerrada para construir
 una pantalla.
+
+
+---
+
+## `OD-04` resuelta (2026-09-06)
+
+```
+OD-04  RESOLVED — una OC admite varias entregas parciales
+  └─→ GA-TD-014  CERTIFIED (GA-REM-035)
+        ├─→ P-01  CERTIFIED     · era su único hueco
+        ├─→ P-03  PARTIAL       · §4.5 exige la alerta de peso — GA-REQ-037
+        └─→ P-06  PARTIAL       · §4.8 no exige alertas, pero R-76 bloquea el cierre
+```
+
+La lección del nodo: **un bloqueante compartido no implica un desbloqueo compartido**. Los
+tres colgaban de `OD-04` y solo uno quedó libre; los otros dos tenían huecos propios que el
+fan-out ocultaba.
+
+```
+R-95  la cantidad ordenada se descartaba en la importación   CERTIFIED
+      └─→ sin esto, BR-18 era inaplicable aunque el campo estuviera poblado
+```

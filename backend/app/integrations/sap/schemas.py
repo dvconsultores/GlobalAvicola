@@ -10,9 +10,21 @@ from pydantic import BaseModel, Field
 # ============================================================
 
 class SapReferenceCreate(BaseModel):
+    """`R-95` / `GA-REM-035`. `quantity` faltaba.
+
+    `SapReference.quantity` existe en el modelo con el comentario «`G-R05`: OC/STO expected
+    quantity», pero el esquema de importación no la declaraba: Pydantic la descartaba en
+    silencio y toda orden importada quedaba sin cantidad ordenada. Con ella nula,
+    `validate_oc_limit` sale por su primera línea, de modo que **`BR-18` no podía dispararse
+    nunca**, poblado o no el campo tipado.
+
+    Es el mismo patrón de `R-47` y `P0-14`: el cliente envía, el esquema descarta, la
+    respuesta es `2xx` y el dominio nunca se entera.
+    """
     ref_type: str = Field(..., examples=["purchase_order"])
     sap_code: str = Field(..., max_length=100)
     description: Optional[str] = None
+    quantity: Optional[float] = None
     extra_data: Optional[dict[str, Any]] = None
 
 

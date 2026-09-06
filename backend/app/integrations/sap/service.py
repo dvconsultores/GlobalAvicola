@@ -94,6 +94,7 @@ class SapService:
                 ref_type=models.SapReferenceType(item.ref_type),
                 sap_code=item.sap_code,
                 description=item.description,
+                quantity=item.quantity,          # `R-95`: sin esto `BR-18` es inaplicable
                 extra_data=item.extra_data,
                 imported_by_id=self.current_user["id"],
             )

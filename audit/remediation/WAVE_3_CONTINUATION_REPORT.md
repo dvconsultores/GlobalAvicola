@@ -759,3 +759,55 @@ CERTIFIED 10 / 15 · PARTIAL 5 / 15
 Los cinco restantes esperan `OD-04` (tres), el contrato SAP (uno) y una decisión de producto
 sobre el canal de notificación (uno). **El cierre de procesos por corrección de defectos está
 agotado.**
+
+
+---
+
+# `OD-04` resuelta · `GA-TD-014` certificado · `P-01` certificado (2026-09-06)
+
+```
+CERTIFIED 11 / 15     PARTIAL 4 / 15
+```
+
+## La decisión y lo que hizo falta después
+
+El propietario resolvió que **una misma orden de compra puede recibirse en varias entregas
+parciales**. Eso movió la protección del identificador a la cantidad acumulada.
+
+Pero activar el campo tipado no habría bastado, y hubo que descubrirlo leyendo el código:
+
+- `validate_oc_limit` comparaba **solo la recepción en curso**: tres entregas de 400 contra
+  una orden de 1000 pasaban las tres.
+- `validate_sap_document_unique` habría **prohibido** la segunda entrega, que es justo lo que
+  la decisión autoriza. Se exime la recepción y se deja intacta en los demás eventos.
+- **`R-95`**, encontrado al ejecutar: `SapReferenceCreate` no declaraba `quantity`, de modo
+  que toda orden importada quedaba sin cantidad ordenada y `BR-18` era inaplicable. Tercer
+  caso del patrón `R-47` en el programa.
+
+## Los tres procesos divergieron
+
+Compartían bloqueante; se reevaluaron **uno a uno**:
+
+| | Sección | ¿Alertas por desviación? | Resultado |
+|---|---|:--:|---|
+| `P-01` | `§4.4` | no | **`CERTIFIED`** |
+| `P-03` | `§4.5` | **sí** | `PARTIAL` — `GA-REQ-037` |
+| `P-06` | `§4.8` | no | `PARTIAL` — `R-76` |
+
+Certificar por alcance habría producido tres certificaciones y dos de ellas falsas. **Un
+bloqueante compartido no implica un desbloqueo compartido.**
+
+## Lo que no se introdujo
+
+Ninguna tolerancia de sobre-recepción; ningún cierre automático de la orden —`AC12` lo
+comprueba explícitamente—; ninguna llamada a SAP real. Y la concurrencia queda anotada: dos
+recepciones simultáneas podrían leer el mismo acumulado, pero **todos** los saldos del sistema
+tienen esa propiedad y resolverlo es transversal.
+
+## Regresión
+
+```
+backend  384 pasan · 49 omitidas · 0 fallos   (antes 377)
+E2E       105/105                              (antes 102)
+tsc PASS · vitest 61/61 · i18n 876 = 876
+```

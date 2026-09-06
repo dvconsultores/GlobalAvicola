@@ -489,3 +489,32 @@ leer código.
 
 `R-69` · `R-70` · `R-76` · `R-77` · `R-80` · `R-83` — correcciones P1/P2 abiertas, ninguna
 bloquea una certificación.
+
+
+---
+
+# REVISIÓN · tras `OD-04` y `GA-REM-035` (2026-09-06)
+
+`P-01` sale de la lista. Quedan **4**.
+
+| Proceso | Qué falta | Naturaleza | ¿Accionable? |
+|---|---|---|:--:|
+| **`P-06`** | **`R-76`** — un lote se cierra con registros sin aprobar (`docs/12 R7`) | **corrección P1** | **sí** |
+| `P-03` | `GA-REQ-037` — alerta de peso fuera de curva | funcionalidad nueva: exige una curva estándar por línea genética y edad, que no existe como dato | sí, con más trabajo |
+| `P-08` | contrato SAP | **externo** — `GA-REM-017` | no |
+| `P-14` | canal de notificación | **decisión** — `OD-05` + desarrollo | no |
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = R-76 · el cierre de lote admite registros sin aprobar
+```
+
+**Motivo.** Es lo único que separa a `P-06` de la certificación, es una corrección acotada
+—`docs/12 R7` está escrito y la guarda tiene dónde vivir: `close_lot` ya aplica `BR-05`— y no
+depende de ninguna decisión externa.
+
+`P-03` requiere una curva estándar de referencia que hoy no existe como dato: es desarrollo
+con requisito propio, no una corrección.
+
+**No se inicia aquí.**

@@ -591,7 +591,7 @@ export default function OperationFormPage() {
  )
 
  case 'bird_reception': {
- const sapOrderRef = watch('extra_data.sap_order_ref' as any)
+ const sapOrderRef = watch('sap_document_ref' as any) ?? watch('extra_data.sap_order_ref' as any)
  const sapOrder = sapPurchaseOrders.find((o: any) =>
  (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === sapOrderRef
  )
@@ -859,9 +859,17 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.sapOrderRef', 'Ref. OC SAP')}</label>
+ {/* `GA-TD-014` / `GA-REM-035 AC13`. El selector escribía en `extra_data.sap_order_ref`
+ y el campo tipado `sap_document_ref` quedaba nulo, de modo que `BR-18` salía por su
+ primera línea y el comparativo SAP salía vacío. Se escriben ambos: el tipado, que es
+ el que el dominio mira, y el de `extra_data`, que otras partes del formulario leen
+ para mostrar la cantidad declarada. */}
  <SearchSelect
- value={watch('extra_data.sap_order_ref' as any) ?? ''}
- onChange={(v) => setValue('extra_data.sap_order_ref' as any, v)}
+ value={watch('sap_document_ref' as any) ?? watch('extra_data.sap_order_ref' as any) ?? ''}
+ onChange={(v) => {
+ setValue('sap_document_ref' as any, v)
+ setValue('extra_data.sap_order_ref' as any, v)
+ }}
  items={sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
 

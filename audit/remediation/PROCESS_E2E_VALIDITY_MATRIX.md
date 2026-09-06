@@ -252,3 +252,28 @@ API, que es donde vive — el segundo caso hace ambas cosas y ese cruce es lo qu
 
 `getByRole('checkbox', { name: 'lots:read' })` con `toBeVisible`. El nombre accesible es el par
 módulo:acción, así que la aserción falla si el catálogo cambia de forma.
+
+
+---
+
+## `P-01` · progenitoras, cría (`GA-REM-035`)
+
+`e2e/proceso-p01-progenitoras-cria.spec.ts` · 3 casos · `API_E2E`.
+
+| Caso | Qué comprueba | ¿Podría fallar? |
+|---|---|:--:|
+| la cadena completa | doce pasos, y el **conjunto exacto** de tipos registrados | sí |
+| `OD-04` en la cadena | 3.000 + 2.000 aceptados contra la misma orden; una más rechazada con `BR-18` | sí — antes la segunda daba 400 por duplicidad |
+| la referencia en el campo tipado | `sap_document_ref` en la respuesta | sí — antes era nulo |
+
+### Conjunto exacto, no recuento
+
+La primera versión de la aserción comparaba un tamaño aproximado con `>=`. Se reescribió para
+comparar el **conjunto ordenado** de tipos contra la lista de pasos: un recuento aproximado
+habría pasado aunque faltara un paso, que es la clase de evidencia que `AC13` prohíbe.
+
+### El motivo del rechazo, comprobado
+
+El caso de `OD-04` no se conforma con un 400: exige `rule == "BR-18"` y que el mensaje **no**
+contenga «duplic». Si volviera la regla de unicidad, el rechazo llegaría por la causa
+equivocada y la prueba lo detectaría.
