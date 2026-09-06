@@ -476,43 +476,21 @@ class OperationsService:
         `AC22`: esto crea un registro `OperationalAlert` y nada más. No hay correo, ni
         push, ni centro de notificaciones — eso es `P-14`, y sigue sin implementarse.
         """
-        from datetime import date as _date, datetime as _datetime
+        from .weight_curve import WeightStatus
 
-        from ..masters.models import GeneticWeightCurve, Lot
-        from .weight_curve import WeightStatus, evaluar
-
-        lot = (await self.db.execute(
-            select(Lot).where(Lot.id == event.lot_id)
-        )).scalar_one_or_none()
-        if lot is None or lot.weight_curve_id is None or lot.start_date is None:
-            return []
-
-        curva = (await self.db.execute(
-            select(GeneticWeightCurve).where(GeneticWeightCurve.id == lot.weight_curve_id)
-        )).scalar_one_or_none()
-        if curva is None or not curva.points:
-            return []
-
-        def _dia(valor):
-            return valor.date() if isinstance(valor, _datetime) else valor
-
-        # La edad del lote **el día del pesaje**, no hoy: un registro retroactivo debe
-        # juzgarse contra el tramo de curva que le tocaba entonces.
-        referencia = _dia(event.event_date) if event.event_date else _date.today()
-        age_days = (referencia - _dia(lot.start_date)).days
-        if age_days < 0:
-            return []
+        lectura = await self.evaluar_pesajes(
+            event, [getattr(m, "avg_weight", None) for m in data.bird_movements]
+        )
+        age_days = lectura["age_days"]
+        version = lectura["curve_version_label"]
 
         alertas: list[models.OperationalAlert] = []
-        for movimiento in data.bird_movements:
-            peso = getattr(movimiento, "avg_weight", None)
-            if peso is None or peso <= 0:
+        for fila in lectura["evaluations"]:
+            estado = fila["status"]
+            if estado in (WeightStatus.WITHIN_STANDARD.value, WeightStatus.NO_REFERENCE.value):
                 continue
-            evaluacion = evaluar(curva.points, age_days, peso)
-            if evaluacion.status in (WeightStatus.WITHIN_STANDARD, WeightStatus.NO_REFERENCE):
-                continue
-            rango = evaluacion.rango
-            debajo = evaluacion.status is WeightStatus.BELOW_STANDARD
+            peso = fila["avg_weight"]
+            debajo = estado == WeightStatus.BELOW_STANDARD.value
             alertas.append(models.OperationalAlert(
                 company_id=event.company_id,
                 lot_id=event.lot_id,
@@ -522,15 +500,97 @@ class OperationsService:
                 message=(
                     f"Peso {peso} g "
                     f"{'por debajo del' if debajo else 'por encima del'} rango estándar "
-                    f"[{rango.min_weight:g}–{rango.max_weight:g} g] "
+                    f"[{fila['expected_min']:g}–{fila['expected_max']:g} g] "
                     f"a {age_days} días "
-                    f"(curva {curva.version_label})."
+                    f"(curva {version})."
                 ),
                 # El umbral que se cruzó, que es el que explica la alerta.
-                threshold_value=rango.min_weight if debajo else rango.max_weight,
+                threshold_value=(fila["expected_min"] if debajo else fila["expected_max"]),
                 actual_value=peso,
             ))
         return alertas
+
+    async def evaluar_pesajes(self, event, pesos: list) -> dict:
+        """La evaluación de unos pesos contra la curva del lote. `AC26`, `AC27`.
+
+        `R-97`. Este cálculo existía desde `GA-REM-037` pero **no era observable**: su único
+        consumidor era el generador de alertas, que solo actúa cuando el peso queda fuera de
+        rango. Desde fuera, «dentro de norma» y «sin referencia» se veían igual —sin alerta—,
+        y una interfaz no puede distinguir dos cosas opuestas por la ausencia de una señal.
+
+        No recalcula nada: llama al mismo motor (`weight_curve.evaluar`) que la alerta. Es la
+        misma lectura vista dos veces, no dos implementaciones.
+        """
+        from datetime import date as _date, datetime as _datetime
+
+        from ..masters.models import GeneticWeightCurve, Lot
+        from .weight_curve import WeightStatus, evaluar
+
+        def _sin_referencia(motivo: str) -> dict:
+            """`AC27`. La ausencia de referencia se declara; callar sería afirmar normalidad."""
+            return {
+                "event_id": event.id,
+                "lot_id": event.lot_id,
+                "age_days": None,
+                "curve_version_label": None,
+                "reason": motivo,
+                "evaluations": [
+                    {"avg_weight": p, "status": WeightStatus.NO_REFERENCE.value,
+                     "expected_min": None, "expected_target": None, "expected_max": None}
+                    for p in pesos if p is not None and p > 0
+                ],
+            }
+
+        lot = (await self.db.execute(
+            select(Lot).where(Lot.id == event.lot_id)
+        )).scalar_one_or_none()
+        if lot is None or lot.start_date is None:
+            return _sin_referencia("lot_without_start_date")
+        if lot.genetic_line_id is None:
+            return _sin_referencia("lot_without_genetic_line")
+        if lot.weight_curve_id is None:
+            return _sin_referencia("no_curve_assigned")
+
+        curva = (await self.db.execute(
+            select(GeneticWeightCurve).where(GeneticWeightCurve.id == lot.weight_curve_id)
+        )).scalar_one_or_none()
+        if curva is None or not curva.points:
+            return _sin_referencia("curve_without_points")
+
+        def _dia(valor):
+            return valor.date() if isinstance(valor, _datetime) else valor
+
+        # La edad del lote **el día del pesaje**, no hoy: un registro retroactivo debe
+        # juzgarse contra el tramo de curva que le tocaba entonces.
+        referencia = _dia(event.event_date) if event.event_date else _date.today()
+        age_days = (referencia - _dia(lot.start_date)).days
+        if age_days < 0:
+            return _sin_referencia("event_before_lot_start")
+
+        evaluaciones = []
+        for peso in pesos:
+            if peso is None or peso <= 0:
+                continue
+            e = evaluar(curva.points, age_days, peso)
+            evaluaciones.append({
+                "avg_weight": peso,
+                "status": e.status.value,
+                "expected_min": e.rango.min_weight if e.rango else None,
+                "expected_target": e.rango.target_weight if e.rango else None,
+                "expected_max": e.rango.max_weight if e.rango else None,
+            })
+
+        return {
+            "event_id": event.id,
+            "lot_id": event.lot_id,
+            "age_days": age_days,
+            "curve_version_label": curva.version_label,
+            # Fuera del rango de edades de la tabla no hay extrapolación: el motor ya
+            # devolvió `NO_REFERENCE` por fila, y aquí se nombra el porqué.
+            "reason": None if any(f["expected_min"] is not None for f in evaluaciones)
+                      else "age_outside_curve_table",
+            "evaluations": evaluaciones,
+        }
 
     async def _apply_business_rules(self, event_type: models.EventType, data: schemas.OperationalEventCreate):
         """Apply business rules based on event type."""

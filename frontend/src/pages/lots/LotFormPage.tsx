@@ -52,6 +52,28 @@ export default function LotFormPage() {
  } = useForm<FormInput, unknown, FormValues>({ resolver: zodResolver(schema) })
 
  const selectedFarmId = watch('farm_id')
+ const selectedLineId = watch('genetic_line_id')
+
+ // `AC-FE10` / `OD-06`. El lote queda fijado a una **versión concreta** de curva, y esa
+ // versión es la activa de su línea en el momento del alta. Quien crea el lote debe verla
+ // antes de guardar: si la línea no tiene ninguna, se dice — callar equivale a insinuar que
+ // habrá referencia y luego no haberla.
+ const [curvaActiva, setCurvaActiva] = useState<{ version_label: string } | null>(null)
+ const [curvaConsultada, setCurvaConsultada] = useState(false)
+
+ useEffect(() => {
+ let vigente = true
+ if (!selectedLineId) { setCurvaActiva(null); setCurvaConsultada(false); return }
+ setCurvaConsultada(false)
+ api.get(`/masters/genetic-lines/${selectedLineId}/weight-curves`)
+ .then(r => {
+ if (!vigente) return
+ setCurvaActiva((r.data ?? []).find((c: any) => c.is_active) ?? null)
+ setCurvaConsultada(true)
+ })
+ .catch(() => { if (vigente) { setCurvaActiva(null); setCurvaConsultada(true) } })
+ return () => { vigente = false }
+ }, [selectedLineId])
 
  // Load masters
  useEffect(() => {
@@ -194,11 +216,22 @@ export default function LotFormPage() {
  <CardBody className="space-y-4">
  {/* Línea genética */}
  <div className="flex flex-col gap-1">
- <label className="text-sm font-semibold text-slate-700">{t('masters.geneticLines', 'Línea genética')}</label>
- <select className={selectClass} {...register('genetic_line_id')}>
+ <label htmlFor="lot-genetic-line" className="text-sm font-semibold text-slate-700">{t('masters.geneticLines', 'Línea genética')}</label>
+ <select id="lot-genetic-line" className={selectClass} {...register('genetic_line_id')}>
  <option value="">{t('lots.selectLine', 'Seleccionar línea...')}</option>
  {lines.map(l => <option key={l.id} value={l.id}>{l.name}{l.code ? ` (${l.code})` : ''}</option>)}
  </select>
+ {curvaConsultada && (
+ curvaActiva ? (
+ <p className="text-xs text-slate-600">
+ {t('curves.lotWillUse')}: <strong className="font-mono">{curvaActiva.version_label}</strong>
+ </p>
+ ) : (
+ <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+ {t('curves.noActiveCurve')}
+ </p>
+ )
+ )}
  </div>
 
  {/* Raza */}

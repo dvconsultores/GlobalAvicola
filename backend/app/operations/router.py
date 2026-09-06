@@ -108,6 +108,28 @@ async def resolve_alert(
     return await _service(db, current_user).resolve_alert(alert_id)
 
 
+@router.get("/{event_id}/weight-evaluation",
+            response_model=schemas.WeightEvaluationRead)
+async def get_weight_evaluation(
+    event_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("operations", "read")),
+):
+    """La evaluación de los pesos del evento contra la curva del lote. `AC26`…`AC28`.
+
+    Va declarada **antes** de `/{event_id}` no por casualidad: `R-38` costó un endpoint
+    inalcanzable porque una ruta genérica se declaró primero y capturó a la específica.
+
+    La tenencia la impone `get_event`, que ya filtra por empresa (`AC28`).
+    """
+    servicio = _service(db, current_user)
+    event = await servicio.get_event(event_id)
+    pesos = [bm.avg_weight for bm in event.bird_movements]
+    return schemas.WeightEvaluationRead.model_validate(
+        await servicio.evaluar_pesajes(event, pesos)
+    )
+
+
 @router.get("/{event_id}", response_model=schemas.OperationalEventDetailRead)
 async def get_event(
     event_id: int,

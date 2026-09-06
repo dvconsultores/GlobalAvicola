@@ -6,12 +6,25 @@ interface Column<T> {
  render?: (item: T) => React.ReactNode
 }
 
+/** Acción propia de una entidad, además de editar y borrar. */
+export interface RowAction<T> {
+ /** Etiqueta ya traducida: la tabla no decide el idioma de nadie. */
+ label: string
+ onClick: (item: T) => void
+}
+
 interface DataTableProps<T> {
  columns: Column<T>[]
  data: T[]
  loading?: boolean
  onEdit?: (item: T) => void
  onDelete?: (item: T) => void
+ /**
+  * `R-96`. Las curvas de peso cuelgan de la línea genética y se administran desde ella
+  * (`OD-06`), pero la tabla solo ofrecía editar y borrar. Se abre a acciones propias en vez
+  * de duplicar la tabla para un caso.
+  */
+ rowActions?: RowAction<T>[]
 }
 
 export default function DataTable<T extends { id: number }>({
@@ -20,6 +33,7 @@ export default function DataTable<T extends { id: number }>({
  loading,
  onEdit,
  onDelete,
+ rowActions = [],
 }: DataTableProps<T>) {
  const { t } = useTranslation()
 
@@ -44,7 +58,7 @@ export default function DataTable<T extends { id: number }>({
  {col.label}
  </th>
  ))}
- {(onEdit || onDelete) && (
+ {(onEdit || onDelete || rowActions.length > 0) && (
  <th className="text-right px-4 py-3 font-semibold text-slate-700">
  {t('common.actions')}
  </th>
@@ -62,9 +76,18 @@ export default function DataTable<T extends { id: number }>({
  {col.render ? col.render(item) : String((item as any)[col.key] ?? '')}
  </td>
  ))}
- {(onEdit || onDelete) && (
+ {(onEdit || onDelete || rowActions.length > 0) && (
  <td className="px-4 py-3 text-right">
  <div className="flex justify-end gap-2">
+ {rowActions.map((accion) => (
+ <button
+ key={accion.label}
+ onClick={() => accion.onClick(item)}
+ className="text-xs px-2 py-1 text-slate-700 border border-slate-300 hover:bg-slate-50 rounded transition"
+ >
+ {accion.label}
+ </button>
+ ))}
  {onEdit && (
  <button
  onClick={() => onEdit(item)}

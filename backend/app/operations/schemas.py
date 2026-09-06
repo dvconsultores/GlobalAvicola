@@ -265,3 +265,33 @@ ALL_EVENT_TYPES = [
     {"type": "lot_closure", "label": "Cierre de Lote"},
     {"type": "grandparent_import", "label": "Importación de Abuelas"},
 ]
+
+
+# ============================================================
+# Evaluación de peso contra la curva estándar · `GA-REM-037` enmienda A · `R-97`
+# ============================================================
+
+class WeightEvaluationRow(BaseModel):
+    """Un peso juzgado contra el rango que le corresponde por edad."""
+    avg_weight: float
+    #: `below_standard` · `within_standard` · `above_standard` · `no_reference`
+    status: str
+    #: `None` cuando no hay referencia. **No** es cero: cero sería un rango de verdad.
+    expected_min: Optional[float] = None
+    expected_target: Optional[float] = None
+    expected_max: Optional[float] = None
+
+
+class WeightEvaluationRead(BaseModel):
+    """Lo que el motor de curva concluyó sobre los pesos de un evento.
+
+    `AC26`. Existe porque el cálculo no era observable: su único consumidor emitía alerta
+    solo al salirse del rango, de modo que «dentro de norma» y «sin referencia» eran
+    indistinguibles desde fuera. `reason` nombra por qué falta la referencia cuando falta.
+    """
+    event_id: int
+    lot_id: Optional[int] = None
+    age_days: Optional[int] = None
+    curve_version_label: Optional[str] = None
+    reason: Optional[str] = None
+    evaluations: list[WeightEvaluationRow] = []

@@ -9,6 +9,7 @@ import AppLayout from './components/layout/AppLayout'
 import LoginPage from './pages/auth/LoginPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
 import MasterListPage from './pages/masters/MasterListPage'
+import WeightCurvesPage from './pages/masters/WeightCurvesPage'
 import RolesPage from './pages/users/RolesPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
@@ -123,7 +124,7 @@ const masterEntities = [
 ]
 
 export default function App() {
- const { i18n } = useTranslation()
+ const { t, i18n } = useTranslation()
  const { token, isLoading, fetchMe } = useAuthStore()
  const navigate = useNavigate()
  const location = useLocation()
@@ -175,6 +176,15 @@ export default function App() {
  <Route path="/menu/:menuKey" element={<MenuHubPage />} />
  {/* Web-only: Masters */}
  <Route path="/masters" element={<WebOnlyRoute><Navigate to="/masters/farms" replace /></WebOnlyRoute>} />
+ {/*
+ `R-96` / `OD-06`. Las curvas de peso cuelgan de la línea genética: se llega a ellas
+ desde su fila, no desde un módulo nuevo de primer nivel. La capacidad es lo que el
+ propietario exige; una página aparte habría sido decisión nuestra.
+ */}
+ <Route
+ path="/masters/genetic-lines/:id/weight-curves"
+ element={<WebOnlyRoute><WeightCurvesPage /></WebOnlyRoute>}
+ />
  {masterEntities.map((m) => (
  <Route
  key={m.entity}
@@ -186,6 +196,10 @@ export default function App() {
  titleKey={m.title}
  columns={m.cols}
  searchFields={['name']}
+ rowActions={m.entity === 'genetic-lines' ? [{
+ label: t('curves.manage'),
+ onClick: (item: any) => navigate(`/masters/genetic-lines/${item.id}/weight-curves`),
+ }] : undefined}
  />
  </WebOnlyRoute>
  }

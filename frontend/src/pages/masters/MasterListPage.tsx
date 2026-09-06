@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import api from '../../services/api'
-import DataTable from '../../components/data-table/DataTable'
+import DataTable, { type RowAction } from '../../components/data-table/DataTable'
 import { Button, Modal, Input } from '../../components/ui'
 
 interface MasterListPageProps {
@@ -10,6 +10,11 @@ interface MasterListPageProps {
  titleKey: string
  columns: { key: string; labelKey: string }[]
  searchFields?: string[]
+ /**
+  * `R-96`. Acciones propias de la entidad. `genetic-lines` las necesita para llegar a sus
+  * curvas de peso (`OD-06`), y parametrizar esta pantalla es preferible a duplicarla.
+  */
+ rowActions?: RowAction<any>[]
 }
 
 export default function MasterListPage({
@@ -17,6 +22,7 @@ export default function MasterListPage({
  titleKey,
  columns,
  searchFields: _searchFields,
+ rowActions,
 }: MasterListPageProps) {
  const { t } = useTranslation()
  const [items, setItems] = useState<any[]>([])
@@ -145,6 +151,7 @@ export default function MasterListPage({
  loading={loading}
  onEdit={openEdit}
  onDelete={(item: any) => setDeleteTarget(item)}
+ rowActions={rowActions}
  />
  </div>
 
