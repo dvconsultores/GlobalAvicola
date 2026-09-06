@@ -510,3 +510,22 @@ Sensibilidad: con la unicidad de vuelta caen 4; con el límite no acumulado, 2; 
 
 Regresión: backend **384 · 49 omitidas · 0 fallos**; E2E **105/105**; `tsc`, vitest 61/61,
 i18n 876 = 876.
+
+
+---
+
+## `GA-REM-036` · aprobación antes del cierre de lote
+
+```
+R-76 = CERTIFIED   ·   P-06 = CERTIFIED   ·   CERTIFIED 12 / 15
+```
+
+Spec y matriz publicadas antes del código (`a572472`). Fase roja aislada a `R7`: el lote
+cerraba con un registro en cada uno de los siete estados bloqueantes, con `BR-05` satisfecho.
+
+Sensibilidad: sin la guarda caen 8; con `sap_error` fuera del conjunto aprobado, 1. `git diff`
+limpio.
+
+Fixtures reparadas en tres suites certificadas, sin tocar sus aserciones.
+
+Regresión: backend **401 · 49 omitidas · 0 fallos**; E2E **106/106**; frontend sin cambios.

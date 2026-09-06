@@ -263,3 +263,29 @@ descarta, la respuesta es `2xx`.
 **Los tres procesos divergieron.** Compartían bloqueante y se reevaluaron uno a uno: `§4.4` no
 exige alertas, `§4.5` sí y `§4.8` no. Certificar por alcance habría dado tres certificaciones
 falsas.
+
+
+---
+
+## 11. `GA-REM-036` · `R-76` y `P-06` certificados (2026-09-06)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-76` · `docs/12 R7` sin implementar | **P1** | **`CERTIFIED`** |
+
+```
+P-06 = CERTIFIED        CERTIFIED 12 / 15        PARTIAL 3 / 15
+```
+
+Dos cosas que conviene conservar.
+
+**Acotar antes de programar.** `R7` dice «registros sin aprobar», y ninguna de las dos palabras
+se resolvió por atajo: «registro» es el `OperationalEvent` porque `docs/12 §4` trata de esa
+entidad, y «sin aprobar» son siete de los trece estados. `rejected` bloquea —no está aprobado
+y no es terminal—; `sap_error` no —solo se alcanza tras aprobar—. `AC04` comprueba los seis que
+**no** bloquean, porque una regla que bloquea de más es tan defectuosa como una que no bloquea.
+
+**Cambiar una precondición rompe fixtures ajenas, y eso se repara sin tocar aserciones.** Tres
+suites certificadas dejaron de poder cerrar sus lotes. Se les añadió la aprobación; lo que
+miden no cambió. El caso más delicado distinguía dos contadores dejando un evento sin aprobar:
+ahora lo distingue con uno **anulado**, que `R7` no gobierna.

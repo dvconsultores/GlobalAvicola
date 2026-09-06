@@ -241,6 +241,71 @@ async def validate_lot_closure(db: AsyncSession, lot_id: int) -> None:
         )
 
 
+#: `docs/12 §4`. Estados en los que un registro **ya fue aprobado**: la aprobación es el
+#: séptimo del ciclo y todo lo posterior la presupone. `sap_error` entra aquí porque solo se
+#: alcanza desde `sent_to_sap`, que solo se alcanza desde `consolidated`, que solo se alcanza
+#: desde `approved`: un fallo de integración no vuelve el registro «sin aprobar».
+#:
+#: Se aparta del conjunto que usan los indicadores de `P-15` —que omite `sap_error`— y a
+#: propósito: aquél cuenta eventos para mostrar; éste decide si algo está aprobado.
+ESTADOS_APROBADOS = (
+    EventStatus.APPROVED,
+    EventStatus.CONSOLIDATED,
+    EventStatus.SENT_TO_SAP,
+    EventStatus.SAP_CONFIRMED,
+    EventStatus.SAP_ERROR,
+)
+
+
+async def validate_lot_records_approved(
+    db: AsyncSession, lot_id: int, company_id: int | None = None,
+) -> None:
+    """`docs/12 §6 R7`: un lote no puede cerrarse si tiene registros sin aprobar.
+
+    `R-76`. La regla estaba escrita en la documentación del ciclo de revisión y no existía en
+    el código: `close_lot` comprobaba que el lote estuviera activo y que `BR-05` se cumpliera,
+    y nada más. Un lote podía cerrarse con todos sus eventos en `registered`.
+
+    **Registro** es el `OperationalEvent` del lote: `docs/12 §4` se titula «Estados del
+    registro operativo» y el documento entero trata de esa entidad. No se generaliza a otras
+    tablas —correcciones y aprobaciones son artefactos del propio flujo, y los lotes de
+    trazabilidad o las fases no tienen estado que aprobar—.
+
+    **`cancelled` no cuenta**: un registro anulado no representa operación alguna, y es lo que
+    excluyen los ocho saldos de este mismo fichero.
+
+    **`rejected` sí cuenta**: no está aprobado. Y no atrapa el lote, porque `docs/12 §4`
+    muestra que no es terminal — el operador lo reenvía corregido.
+
+    Es una regla distinta de `BR-05`, con la que solo comparte el momento de ejecución: aquélla
+    pregunta si hay base para el resumen final; ésta, si todo está aprobado.
+    """
+    consulta = (
+        select(OperationalEvent.status, func.count(OperationalEvent.id))
+        .where(
+            OperationalEvent.lot_id == lot_id,
+            OperationalEvent.status.not_in(
+                (*ESTADOS_APROBADOS, EventStatus.CANCELLED)
+            ),
+        )
+        .group_by(OperationalEvent.status)
+    )
+    if company_id is not None:
+        consulta = consulta.where(OperationalEvent.company_id == company_id)
+
+    pendientes = (await db.execute(consulta)).all()
+    if not pendientes:
+        return
+
+    total = sum(n for _, n in pendientes)
+    detalle = ", ".join(f"{n} en «{estado.value}»" for estado, n in pendientes)
+    raise BusinessRuleViolation(
+        f"No se puede cerrar el lote: {total} registro(s) sin aprobar ({detalle}). "
+        "Apruébelos o anúlelos antes de cerrar.",
+        "R7",
+    )
+
+
 async def validate_sap_document_unique(
     db: AsyncSession,
     lot_id: int,

@@ -476,3 +476,25 @@ fan-out ocultaba.
 R-95  la cantidad ordenada se descartaba en la importación   CERTIFIED
       └─→ sin esto, BR-18 era inaplicable aunque el campo estuviera poblado
 ```
+
+
+---
+
+## `P-06` · resuelto (2026-09-06)
+
+```
+GA-TD-014  CERTIFIED (GA-REM-035, tras OD-04)
+R-76       CERTIFIED (GA-REM-036, docs/12 R7)
+GA-REQ-037 NO APLICA — §4.8 no exige alertas; las exige §4.5, que es P-03
+  └─→ P-06 = CERTIFIED · 11 de 11 pasos
+```
+
+El cierre de lote tiene ahora tres guardas y un resumen, y las cuatro piezas vienen de tramos
+distintos:
+
+```
+lote activo   GA-REM-029 AC06
+BR-05         GA-REM-029 (R-74: la regla vigilaba la puerta equivocada)
+R7            GA-REM-036 (R-76)
+resumen       GA-REM-029 (R-73) con la fecha de R-75
+```

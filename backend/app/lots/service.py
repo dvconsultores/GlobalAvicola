@@ -41,7 +41,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..masters.models import Lot
 from ..tenancy import verificar_pertenencia
-from ..operations.validators import validate_lot_closure
+from ..operations.validators import validate_lot_closure, validate_lot_records_approved
 from ..operations.models import (
     OperationalEvent, EventType, EventStatus,
     BirdMovement, FeedMovement, EggMovement,
@@ -167,6 +167,15 @@ class LotService:
         # único sitio del backend que asigna `status = "closed"`. Vigilaba la puerta
         # equivocada, y el audit la daba por vigente justamente aquí.
         await validate_lot_closure(self.db, lot_id)
+
+        # `R-76` / `GA-REM-036`. `docs/12 §6 R7`: un lote no puede cerrarse con registros sin
+        # aprobar. Estaba escrita en la documentación del ciclo de revisión y no existía aquí,
+        # de modo que un lote se cerraba con todos sus eventos en `registered`.
+        #
+        # Va **antes** de tocar `status` y `end_date`: una negativa no puede dejar el cierre a
+        # medias. Es una regla distinta de `BR-05` y se cita como `R7`, que es como la norma
+        # la llama; no se amplía `BR-05` ni se inventa un `BR-` nuevo.
+        await validate_lot_records_approved(self.db, lot_id, self.company_id)
 
         # Calculate final summary
         # Total mortality

@@ -518,3 +518,32 @@ depende de ninguna decisión externa.
 con requisito propio, no una corrección.
 
 **No se inicia aquí.**
+
+
+---
+
+# REVISIÓN · tras `GA-REM-036` (2026-09-06)
+
+`P-06` sale de la lista. Quedan **3**, y ninguno es trabajo técnico sin dependencia externa.
+
+| Proceso | Qué falta | Naturaleza | ¿Accionable sin decisión externa? |
+|---|---|---|:--:|
+| `P-03` | `GA-REQ-037` — alerta de peso fuera de curva | **funcionalidad nueva**: exige una curva estándar por línea genética y edad, que no existe como dato | parcialmente — falta definir la curva |
+| `P-08` | contrato SAP | **externo** — `GA-REM-017` | no |
+| `P-14` | canal de notificación | **decisión** — `OD-05` | no |
+
+```
+NEXT_ACTIONABLE_BLOCKER = GA-REQ-037, con una salvedad
+```
+
+`P-03` es el único de los tres que no depende de un tercero, pero **no es una corrección**:
+`spec.md §4.5` pide «alerta por peso fuera de **curva estándar**» y esa curva —por línea
+genética y edad— no existe en el modelo ni en ninguna fuente del proyecto. Antes de
+implementar habría que saber de dónde sale.
+
+Es previsible que eso sea otra decisión del propietario, o un dato que el cliente deba
+aportar. **No se inicia aquí.**
+
+## Hallazgos técnicos que siguen abiertos
+
+`R-69` · `R-70` · `R-77` · `R-80` · `R-83` — ninguno bloquea una certificación.

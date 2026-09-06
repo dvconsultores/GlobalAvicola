@@ -811,3 +811,56 @@ backend  384 pasan · 49 omitidas · 0 fallos   (antes 377)
 E2E       105/105                              (antes 102)
 tsc PASS · vitest 61/61 · i18n 876 = 876
 ```
+
+
+---
+
+# `R-76` certificado · `P-06` certificado · `GA-REM-036` (2026-09-06)
+
+```
+CERTIFIED 12 / 15     PARTIAL 3 / 15
+```
+
+## Acotar antes de programar
+
+`docs/12 R7` dice «un lote no puede cerrarse si tiene registros sin aprobar». Ninguna de las
+dos palabras se resolvió por atajo: «registro» es el `OperationalEvent` —`docs/12 §4` trata de
+esa entidad y solo de ella—, y «sin aprobar» son **siete de los trece estados**.
+
+Los dos casos que hubo que razonar: `rejected` **bloquea**, porque no está aprobado y `§4`
+muestra que no es terminal; `sap_error` **no**, porque solo se alcanza tras haber sido
+aprobado y `R7` está en la sección de reglas de aprobación, no de integración.
+
+`AC04` comprueba los seis estados que **no** bloquean, uno a uno: una regla que bloquea de más
+es tan defectuosa como una que no bloquea.
+
+## Cambiar una precondición rompe fixtures ajenas
+
+Tres suites ya certificadas dejaron de poder cerrar sus lotes. Se repararon **las fixtures**,
+no las afirmaciones: aprueban sus eventos antes de cerrar, y lo que miden —el resumen,
+`BR-05`, la fecha, la edad— no cambió.
+
+El caso más delicado distinguía `approved_events` de `total_events` dejando un evento sin
+aprobar. Eso ahora impide cerrar, así que la distinción se consigue con un evento **anulado**,
+que `R7` no gobierna. La intención se conserva.
+
+## Y una prueba que dejó de decir algo
+
+El caso que documentaba `GA-TD-014` como hueco abierto **seguía pasando** tras cerrarse el
+hueco, porque su fixture no enviaba el campo. Se sustituyó por el comportamiento certificado.
+
+Es la contrapartida de marcar huecos con aserciones: cuando el hueco se cierra hay que volver
+y comprobar que la prueba sigue midiendo algo.
+
+## `P-06`, reevaluado sin transitividad
+
+Se releyó `§4.8` entero. `GA-REQ-037` **no aparece**: las alertas por desviación las exige
+`§4.5`, que es `P-03`. Los tres bloqueantes históricos se cerraron uno a uno.
+
+## Regresión
+
+```
+backend  401 pasan · 49 omitidas · 0 fallos   (antes 384)
+E2E       106/106                              (antes 105)
+frontend  sin cambios — no reejecutado
+```

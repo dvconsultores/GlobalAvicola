@@ -41,7 +41,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-03** Reproductoras — Cría | spec §4.5 | ✅ | ✅ | ✅ | ✅ | ídem P-01 | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** — `GA-REQ-037` |
 | **P-04** Reproductoras — Producción de huevo fértil | spec §4.6 | ✅ | ✅ | ✅ | ✅ | `BR-02` | ✅ | ✅ | **9/9** | `COVERED` | **`CERTIFIED`** |
 | **P-05** Incubación | spec §4.7 | ✅ | ✅ | ✅ | ✅ | `BR-03` | ✅ | ✅ | **8/8** | `PARTIAL` | **`CERTIFIED`** |
-| **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` | ✅ | ✅ | **5/5 cadena** | `COVERED` | **`PARTIAL`** — `R-76` |
+| **P-06** Pollo de engorde | spec §4.8 | ✅ | ✅ | ✅ | ✅ | `BR-04` · `BR-05` · `R7` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-07** Revisión → Corrección → Aprobación | spec §4.10 · `docs/12` | ✅ | ✅ | ✅ | ✅ | `BR-09/13/14/15/16` · `RR-01` · `RR-03` | ✅ | ✅ | **7/7** | `COVERED` | **`CERTIFIED`** |
 | **P-08** Consolidación y envío a SAP | spec §4.3/§4.10 | ✅ | ✅ | ✅ | ✅ | `BR-10/12/13` | ✅ | ✅ | ⬜ | `PARTIAL` | **`PARTIAL`** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | **P-09** Auditoría interna | spec §4.11 · `docs/02 §3.11` | ✅ | ✅ | ✅ | ✅ | inmutabilidad | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
@@ -358,5 +358,24 @@ lugar de certificarse por alcance:
 
 Se verificó leyendo `§4.4`, `§4.5` y `§4.8` por separado, en vez de arrastrar la anotación que
 trataba `GA-REQ-037` como si afectara a los tres por igual.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+---
+
+## `R-76` certificado · `P-06` certificado (2026-09-06)
+
+```
+CERTIFIED = 12 / 15      PARTIAL = 3 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-01` · `P-02` · `P-04` · `P-05` · `P-06` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · `P-15` |
+| `PARTIAL` | `P-03` · `P-08` · `P-14` |
+
+`P-06` cerró sus tres bloqueantes históricos uno a uno: `GA-TD-014` (`GA-REM-035`), `R-76`
+(`GA-REM-036`) y `GA-REQ-037`, que **no aplica** — `§4.8` no exige alertas por desviación, y se
+reverificó leyendo la sección entera en vez de heredarlo de `P-03`.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

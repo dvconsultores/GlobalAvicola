@@ -277,3 +277,34 @@ habría pasado aunque faltara un paso, que es la clase de evidencia que `AC13` p
 El caso de `OD-04` no se conforma con un 400: exige `rule == "BR-18"` y que el mensaje **no**
 contenga «duplic». Si volviera la regla de unicidad, el rechazo llegaría por la causa
 equivocada y la prueba lo detectaría.
+
+
+---
+
+## `P-06` · reevaluado tras `R-76` (`GA-REM-036`)
+
+`e2e/proceso-p06-pollo-de-engorde.spec.ts` · **6 casos** · `API_E2E`.
+
+| Caso | Qué comprueba | ¿Podría fallar? |
+|---|---|:--:|
+| la cadena completa cierra con su resumen | nueve pasos **aprobados por el ciclo real**, cifras por igualdad | sí |
+| la fecha del cierre se persiste | se relee el lote | sí — `R-75` |
+| **`R7` · un registro sin aprobar impide cerrar** | 400 citando `R7`, y el lote sigue `active` | sí — antes cerraba |
+| `BR-05` sin pesaje ni alimento | 400 citando `BR-05` | sí |
+| no se cierra dos veces | 400, y la fecha del primer cierre no cambia | sí |
+| `GA-TD-014` · la OC en el campo tipado | entregas parciales aceptadas, exceso con `BR-18` | sí |
+
+### El happy path aprueba por el camino normativo
+
+No se manipula la base: enviar → tomar la revisión → aprobar con el **aprobador**, porque
+`BR-14` impide que apruebe quien registró. `R7` es una regla de aprobación, y comprobarla
+saltándose la aprobación no probaría el proceso.
+
+### Una prueba que dejó de decir algo, sustituida
+
+El caso «`GA-TD-014` sigue sin llegar al campo tipado» se escribió para fallar cuando el hueco
+se resolviera. Se resolvió, pero **seguía pasando**: su fixture no enviaba el campo, así que ya
+no documentaba nada. Sustituido por el comportamiento certificado.
+
+Es la contrapartida honesta de marcar huecos con aserciones: cuando el hueco se cierra, hay
+que volver y comprobar que la prueba sigue midiendo algo.

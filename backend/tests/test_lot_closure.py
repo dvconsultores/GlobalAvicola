@@ -116,9 +116,29 @@ async def _requisitos_br05(client, cabecera, ids, lot_id):
                   feed_movements=[{"quantity_kg": ALIMENTO_KG}])
 
 
-async def _lote_cerrable(client, cabecera, ids, **extra):
+async def _aprobar_todo(motor, lot_id):
+    """Deja los eventos del lote en `approved`.
+
+    `R-76` / `docs/12 R7`: desde `GA-REM-036`, un lote no puede cerrarse con registros sin
+    aprobar. Lo que estas pruebas comprueban —el resumen, `BR-05`, la fecha— no cambia; lo
+    que cambia es la precondición para llegar al cierre, así que se satisface aquí.
+    """
+    from app.operations.models import EventStatus, OperationalEvent
+
+    fabrica = async_sessionmaker(motor, expire_on_commit=False)
+    async with fabrica() as s:
+        eventos = (await s.execute(select(OperationalEvent).where(
+            OperationalEvent.lot_id == lot_id))).scalars().all()
+        for e in eventos:
+            e.status = EventStatus.APPROVED
+        await s.commit()
+
+
+async def _lote_cerrable(client, cabecera, ids, motor=None, **extra):
     lot_id = await _crear_lote(client, cabecera, ids, **extra)
     await _requisitos_br05(client, cabecera, ids, lot_id)
+    if motor is not None:
+        await _aprobar_todo(motor, lot_id)
     return lot_id
 
 
@@ -129,9 +149,14 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
 ):
     """`AC01`, `AC03`, `AC08` · 200 con cifras ciertas, no un 500.
 
-    El escenario fija mortalidad, alimento y huevos en valores distintos entre sí, y
-    aprueba **uno solo** de los eventos: así `approved_events` y `total_events` no pueden
+    El escenario fija mortalidad, alimento y huevos en valores distintos entre sí, y deja
+    **uno de los cinco eventos anulado**: así `approved_events` y `total_events` no pueden
     coincidir por casualidad y se comprueba que son dos cuentas distintas.
+
+    Antes se distinguían dejando un evento sin aprobar. Desde `GA-REM-036` eso impide cerrar
+    —`docs/12 R7`—, así que la distinción se consigue con un anulado, que `R7` no gobierna.
+    La intención de la prueba no cambia: sigue midiendo que los dos contadores son consultas
+    distintas.
     """
     from app.auth.security import create_access_token
 
@@ -146,19 +171,18 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
     await _evento(client, auth_headers, seeded_ids, lot_id, "egg_collection",
                   egg_movements=[{"quantity": HUEVOS, "egg_type": "fertile"}])
 
-    # Un evento aprobado, y solo uno. `BR-14` impide que lo apruebe quien lo registró, así
-    # que interviene el aprobador: es el camino real de `P-07`, ya certificado.
-    enviado = await client.post(
-        f"/api/v1/operations/{id_mortalidad}/submit", headers=auth_headers)
-    assert enviado.status_code in (200, 201), enviado.text
-    aprobador = {"Authorization": "Bearer " + create_access_token(
-        data={"sub": str(seeded_ids["user_approver_id"])})}
-    revision = await client.post(
-        f"/api/v1/review/start/{id_mortalidad}", headers=aprobador)
-    assert revision.status_code in (200, 201), revision.text
-    aprobado = await client.post("/api/v1/approvals/approve", headers=aprobador,
-                                 json={"event_id": id_mortalidad})
-    assert aprobado.status_code == 200, aprobado.text
+    # Cuatro aprobados y uno anulado. `R7` exige que no quede ninguno sin aprobar; lo anulado
+    # queda fuera de su alcance, y es lo que hace que las dos cuentas difieran.
+    from app.operations.models import EventStatus, OperationalEvent
+
+    fabrica = async_sessionmaker(motor, expire_on_commit=False)
+    async with fabrica() as s:
+        eventos = (await s.execute(select(OperationalEvent).where(
+            OperationalEvent.lot_id == lot_id).order_by(OperationalEvent.id))).scalars().all()
+        for e in eventos:
+            e.status = EventStatus.APPROVED
+        eventos[-1].status = EventStatus.CANCELLED
+        await s.commit()
 
     # `AC01` · responde.
     r = await client.post(f"/api/v1/lots/{lot_id}/close", headers=auth_headers)
@@ -171,7 +195,7 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
     assert resumen["total_feed_kg"] == pytest.approx(ALIMENTO_KG), resumen
     assert resumen["total_eggs"] == HUEVOS, resumen
     assert resumen["total_events"] == 5, resumen
-    assert resumen["approved_events"] == 1, resumen
+    assert resumen["approved_events"] == 4, resumen
     assert resumen["approved_events"] != resumen["total_events"], (
         "aprobados y totales no pueden ser la misma cuenta"
     )
@@ -213,7 +237,7 @@ async def test_t_073_03_el_lote_queda_cerrado_y_persistido(
     client, auth_headers, seeded_ids, motor
 ):
     """`AC04` · el cierre se guarda; se relee por HTTP, no sobre el objeto en memoria."""
-    lot_id = await _lote_cerrable(client, auth_headers, seeded_ids)
+    lot_id = await _lote_cerrable(client, auth_headers, seeded_ids, motor)
 
     r = await client.post(f"/api/v1/lots/{lot_id}/close", headers=auth_headers)
     assert r.status_code == 200, r.text
@@ -250,6 +274,8 @@ async def test_t_074_04_br05_bloquea_el_cierre_incompleto(
         await _evento(client, auth_headers, seeded_ids, lot_id, "weight_recording",
                       bird_movements=[{"sex": "mixed", "quantity": 10, "avg_weight": 2000}])
 
+    # `BR-05` se comprueba **antes** que `R7`, de modo que un lote sin pesaje da `BR-05`
+    # aunque además tenga registros sin aprobar. Las dos guardas conviven y no se pisan.
     r = await client.post(f"/api/v1/lots/{lot_id}/close", headers=auth_headers)
     assert r.status_code == 400, f"se cerró un lote sin {ausente}: {r.text}"
     assert r.json().get("rule") == "BR-05", r.json()
@@ -265,7 +291,7 @@ async def test_t_073_05_el_segundo_cierre_se_rechaza(
     client, auth_headers, seeded_ids, motor
 ):
     """`AC06` · el segundo intento da 400 y **no** toca la fecha del primero."""
-    lot_id = await _lote_cerrable(client, auth_headers, seeded_ids)
+    lot_id = await _lote_cerrable(client, auth_headers, seeded_ids, motor)
 
     primero = await client.post(f"/api/v1/lots/{lot_id}/close", headers=auth_headers)
     assert primero.status_code == 200, primero.text
@@ -326,7 +352,7 @@ async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
     sujeto = {"Authorization": f"Bearer {entrada.json()['access_token']}"}
 
     # El lote ajeno: de la empresa 1, cerrable, listo para que nadie de fuera lo toque.
-    ajeno = await _lote_cerrable(client, auth_headers, seeded_ids)
+    ajeno = await _lote_cerrable(client, auth_headers, seeded_ids, motor)
 
     # TRATAMIENTO · el sujeto va contra el lote de otra empresa.
     cruzado = await http_client.post(f"/api/v1/lots/{ajeno}/close", headers=sujeto)
@@ -358,7 +384,7 @@ async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
     assert galpon.status_code in (200, 201), galpon.text
     propios["house_id"] = galpon.json()["id"]
 
-    propio = await _lote_cerrable(http_client, sujeto, propios)
+    propio = await _lote_cerrable(http_client, sujeto, propios, motor)
     control = await http_client.post(f"/api/v1/lots/{propio}/close", headers=sujeto)
     assert control.status_code == 200, (
         f"CONTROL falló: el sujeto no puede cerrar ni su propio lote, "
@@ -374,7 +400,7 @@ async def test_t_073_07_sin_permiso_no_se_cierra(
     """`AC09` · `lots:create` es obligatorio; el lote sobrevive al intento."""
     from app.auth.security import create_access_token
 
-    lot_id = await _lote_cerrable(client, auth_headers, seeded_ids)
+    lot_id = await _lote_cerrable(client, auth_headers, seeded_ids, motor)
 
     # El operador de pruebas tiene `lots:READ`, no `CREATE`.
     operador = {"Authorization": "Bearer " + create_access_token(

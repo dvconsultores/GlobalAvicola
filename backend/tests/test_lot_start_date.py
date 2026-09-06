@@ -157,7 +157,19 @@ async def test_t_047_03_la_edad_deriva_del_inicio_declarado(
         )
         assert ev.status_code == 201, f"{tipo}: {ev.text}"
 
+    # `R-76` / `docs/12 R7`: desde `GA-REM-036` un lote no puede cerrarse con registros sin
+    # aprobar. Lo que esta prueba mide —que la edad derive del inicio declarado— no cambia;
+    # se satisface la precondición nueva para poder llegar al cierre.
+    from app.operations.models import EventStatus, OperationalEvent
+
     fabrica = async_sessionmaker(motor, expire_on_commit=False)
+    async with fabrica() as s:
+        eventos = (await s.execute(select(OperationalEvent).where(
+            OperationalEvent.lot_id == lot_id))).scalars().all()
+        for e in eventos:
+            e.status = EventStatus.APPROVED
+        await s.commit()
+
     async with fabrica() as s:
         resumen = await LotService(
             s, {"id": seeded_ids["user_admin_id"], "company_id": seeded_ids["company_id"],

@@ -14,20 +14,19 @@
  * fecha de cierre se guardaba a medianoche local y se releía como la del día anterior—.
  *
  * ══════════════════════════════════════════════════════════════════════════════
- * ESTO NO CERTIFICA `P-06`. Quedan dos huecos, y ninguno se cierra aquí:
+ * Estado de los bloqueantes históricos de este proceso:
  *
- *   GA-TD-014  `bird_reception` · la OC SAP viaja en `extra_data.sap_order_ref` y no en
- *              `sap_document_ref`, de modo que `validate_oc_limit` sale por la primera
- *              línea y `BR-18` nunca se aplica. Diferido en `C-15`, pendiente de `RC-07`.
- *   GA-REQ-037 `weight_recording` · sin alerta de peso fuera de curva.
+ *   GA-TD-014  cerrado: `OD-04` autorizó las entregas parciales y `GA-REM-035` implantó el
+ *              límite acumulado. La recepción lleva la OC al campo tipado.
+ *   R-76       cerrado: `GA-REM-036` implantó `docs/12 R7`, la aprobación previa al cierre.
+ *   GA-REQ-037 **no aplica a `P-06`**: `§4.8` no exige alertas por desviación; las exige
+ *              `§4.5`, que es `P-03`.
  *
- * Lo que sí demuestra: que la cadena se recorre entera contra la pila real y que el paso
- * terminal, roto desde siempre, ahora funciona.
  * ══════════════════════════════════════════════════════════════════════════════
  */
 import { test, expect } from '@playwright/test'
 import {
-  API, cabeceraAdmin, crearEscenario, crearMaestros, hoy, registrar,
+  API, cabeceraAdmin, cabeceraAprobador, crearEscenario, crearMaestros, hoy, registrar,
 } from '../test-support/e2e-api'
 
 const RECIBIDAS = 5_000
@@ -35,8 +34,25 @@ const MORTALIDAD = 40
 const DESCARTES = 15
 const ALIMENTO_KG = 850.5
 
+/** Lleva un evento por el ciclo real de `P-07` hasta quedar aprobado.
+ *
+ * `BR-14` impide que lo apruebe quien lo registró, así que interviene el aprobador. No se
+ * toca la base: `docs/12 R7` es una regla de aprobación y comprobarla saltándose la
+ * aprobación no probaría el proceso.
+ */
+async function aprobar(request: any, cab: any, aprobador: any, eventId: number) {
+  const enviado = await request.post(`${API}/operations/${eventId}/submit`, { headers: cab })
+  expect(enviado.status(), await enviado.text()).toBeLessThan(300)
+  const revision = await request.post(`${API}/review/start/${eventId}`, { headers: aprobador })
+  expect(revision.status(), await revision.text()).toBeLessThan(300)
+  const aprobado = await request.post(`${API}/approvals/approve`, {
+    headers: aprobador, data: { event_id: eventId },
+  })
+  expect(aprobado.status(), await aprobado.text()).toBe(200)
+}
+
 /** Recorre la cadena hasta dejar el lote listo para cerrar. Devuelve lo registrado. */
-async function cadenaDeEngorde(request: any, cab: any) {
+async function cadenaDeEngorde(request: any, cab: any, aprobarTodo = true) {
   const esc = await crearEscenario(request, cab, 'P06', 'broiler')
   const m = await crearMaestros(request, cab, 'P06')
   const base = { lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId, event_date: hoy() }
@@ -53,11 +69,20 @@ async function cadenaDeEngorde(request: any, cab: any) {
     ['medication', { medication_id: m.medicamentoId }],
   ]
 
+  const ids: number[] = []
   for (const [tipo, extra] of pasos) {
     const r = await registrar(request, cab, { ...base, event_type: tipo, ...extra })
     expect(r.status(), `${tipo}: ${await r.text()}`).toBe(201)
+    ids.push((await r.json()).id)
   }
-  return esc
+
+  // `R-76` / `docs/12 R7`: el lote no puede cerrarse con registros sin aprobar. El happy
+  // path los aprueba por el camino normativo, no manipulando la base.
+  if (aprobarTodo) {
+    const aprobador = await cabeceraAprobador(request)
+    for (const id of ids) await aprobar(request, cab, aprobador, id)
+  }
+  return { ...esc, eventos: ids }
 }
 
 test.describe('P-06 · cadena de engorde hasta el cierre', () => {
@@ -90,6 +115,21 @@ test.describe('P-06 · cadena de engorde hasta el cierre', () => {
     const lote = await leido.json()
     expect(lote.status).toBe('closed')
     expect(String(lote.end_date).slice(0, 10)).toBe(hoy())
+  })
+
+  test('R7 · un registro sin aprobar impide cerrar el lote', async ({ request }) => {
+    // `R-76`. Evidencia negativa permanente del proceso: la cadena entera registrada, `BR-05`
+    // satisfecho, y un solo registro sin aprobar basta para impedir el cierre.
+    const cab = await cabeceraAdmin(request)
+    const esc = await cadenaDeEngorde(request, cab, false)   // nada aprobado
+
+    const cierre = await request.post(`${API}/lots/${esc.lotId}/close`, { headers: cab })
+    expect(cierre.status(), await cierre.text()).toBe(400)
+    expect((await cierre.json()).rule).toBe('R7')
+
+    // El lote sigue operativo: una negativa no deja el cierre a medias.
+    const leido = await request.get(`${API}/lots/${esc.lotId}`, { headers: cab })
+    expect((await leido.json()).status).toBe('active')
   })
 
   test('BR-05 impide cerrar sin pesaje ni alimento', async ({ request }) => {
@@ -127,22 +167,36 @@ test.describe('P-06 · cadena de engorde hasta el cierre', () => {
     expect(String((await leido.json()).end_date).slice(0, 10)).toBe(String(fecha).slice(0, 10))
   })
 
-  test('GA-TD-014 · la OC de la recepción sigue sin llegar al campo tipado', async ({ request }) => {
-    // No es una prueba de éxito: **documenta el hueco abierto** que impide certificar
-    // `P-06`. Si algún día empieza a fallar, será porque `GA-TD-014` se resolvió, y
-    // entonces hay que revisar la certificación del proceso, no silenciar esto.
+  test('GA-TD-014 · la recepción lleva la OC al campo tipado y respeta su límite', async ({ request }) => {
+    // Esta prueba documentaba un hueco abierto y decía que fallaría el día que se resolviera.
+    // `OD-04` se resolvió y `GA-REM-035` lo cerró, así que ahora comprueba el comportamiento
+    // certificado: la orden viaja al campo tipado y el límite es **acumulado**.
     const cab = await cabeceraAdmin(request)
     const esc = await crearEscenario(request, cab, 'P06OC', 'broiler')
-
-    const r = await registrar(request, cab, {
-      lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId, event_date: hoy(),
-      event_type: 'bird_reception', bird_movements: [{ sex: 'mixed', quantity: RECIBIDAS }],
-      extra_data: { sap_order_ref: 'OC-P06-INERTE' },
+    const codigo = `P06-OC-${Date.now()}`
+    const orden = await request.post(`${API}/sap/references/import`, {
+      headers: cab,
+      data: { references: [{ ref_type: 'purchase_order', sap_code: codigo, quantity: 1000 }] },
     })
-    expect(r.status()).toBe(201)
+    expect(orden.status(), await orden.text()).toBe(201)
 
-    const evento = await r.json()
-    expect(evento.sap_document_ref ?? null,
-      'si esto deja de ser nulo, GA-TD-014 se resolvió y BR-18 pasa a aplicarse').toBeNull()
+    const base = {
+      lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId,
+      event_date: hoy(), event_type: 'bird_reception', sap_document_ref: codigo,
+    }
+
+    const primera = await registrar(request, cab, { ...base, bird_movements: [{ sex: 'mixed', quantity: 600 }] })
+    expect(primera.status(), await primera.text()).toBe(201)
+    expect((await primera.json()).sap_document_ref,
+      'la orden debe viajar al campo tipado').toBe(codigo)
+
+    // `OD-04`: la segunda entrega parcial contra la misma orden se acepta.
+    const segunda = await registrar(request, cab, { ...base, bird_movements: [{ sex: 'mixed', quantity: 400 }] })
+    expect(segunda.status(), await segunda.text()).toBe(201)
+
+    // Y el acumulado ya iguala lo ordenado: una más sobra.
+    const tercera = await registrar(request, cab, { ...base, bird_movements: [{ sex: 'mixed', quantity: 1 }] })
+    expect(tercera.status()).toBe(400)
+    expect((await tercera.json()).rule).toBe('BR-18')
   })
 })
