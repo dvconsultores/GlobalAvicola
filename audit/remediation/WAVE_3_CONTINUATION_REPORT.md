@@ -611,3 +611,52 @@ backend  352 pasan · 49 omitidas · 0 fallos   (antes 335)
 E2E       91/91                                (antes 85)
 tsc PASS · vitest 61/61 · i18n 866 = 866
 ```
+
+
+---
+
+# `P-15` certificado · `R-14` + `R-85` + `R-86` · `GA-REM-022` enmienda A (2026-09-06)
+
+```
+P-15 = CERTIFIED     CERTIFIED 8 / 15     PARTIAL 7 / 15
+```
+
+## No hizo falta spec nueva
+
+`GA-REM-022` existía, estaba `SPEC_READY` y ya cubría los cuatro endpoints huérfanos y la
+eclosión que devolvía texto. Sus criterios además resolvían lo que el encargo daba por
+abierto: `AC02` fija **nulo con indicador explícito** —no cero, no texto— y `AC05` exige que
+la interfaz declare que los KPI solo cuentan eventos aprobados.
+
+Solo hizo falta enmendarla por un conflicto con la fuente superior.
+
+## Los cuatro huérfanos no eran cuatro requisitos
+
+Dos los exige el cliente —vacunación y traslado— y dos salen de `docs/15` con prioridad media
+y baja. Se expusieron los dos primeros. Exponer los otros «para completar los cuatro» habría
+sido convertir una lista interna en requisito.
+
+## El conflicto que la spec original no podía ver
+
+`docs/02 §3.12.1` separa **eclosión** (sobre fértiles), **nacimiento** (sobre cargados) y
+**rendimiento** (viables sobre cargados). `GA-REM-022 AC01` llamaba «eclosión» a la segunda,
+porque partía del campo que había en el código. Un documento de proceso es nivel 3 y una
+spec de remediación nivel 4: mandó `docs/02`.
+
+## Dos hallazgos míos que resultaron falsos
+
+Registré `R-87` («el reporte de estados no tiene productor») y `R-88` («la exportación
+Excel/PDF no existe») y anuncié que `P-15` no podría certificarse. **Los dos eran erróneos**:
+busqué solo en el backend y ambos están implementados en el cliente —`utils/export.ts` con
+SheetJS y jsPDF; `event_summary.by_status` en el reporte de lote—.
+
+Es el atajo que este programa lleva tres tramos reprochando a los documentos heredados.
+Retirados y anotados, no borrados.
+
+## Regresión
+
+```
+backend  359 pasan · 49 omitidas · 0 fallos   (antes 352)
+E2E       95/95                                (antes 91)
+tsc PASS · vitest 61/61 · i18n 866 = 866
+```

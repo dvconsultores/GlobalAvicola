@@ -396,3 +396,21 @@ R-83  una acción sin empresa no puede auditarse   ABIERTO — no bloquea P-09
 `R-84` no estaba en ninguna matriz: apareció al escribir la prueba del filtro de fecha. Es el
 tercer tramo consecutivo en que un defecto real sale a la luz **solo** al exigirle a una
 prueba que pueda fallar.
+
+
+---
+
+## `P-15` · resuelto (2026-09-06)
+
+```
+R-14  la eclosión devolvía texto                CERTIFIED (GA-REM-022 enm. A)
+R-85  tres cocientes fundidos en uno            CERTIFIED
+R-86  fertilidad sin productor                  CERTIFIED
+  └─→ P-15 = CERTIFIED · 16 de 16 pasos
+
+R-87 · R-88  RETIRADOS — no eran hallazgos
+```
+
+`R-88` merece quedar en el mapa aunque se retire: la exportación Excel/PDF **no depende del
+backend**; vive en el cliente con SheetJS y jsPDF. Quien busque esa capacidad en el servidor
+no la encontrará, y esa es exactamente la trampa en la que caí.

@@ -120,8 +120,18 @@ class ReportsService:
             "total_eggs": total_eggs,
             "initial_females": initial_females,
             "hen_day_production_pct": round(hen_day, 2),
+            # `R-86` / `AC06`. «Fertilidad» es uno de los trece indicadores de
+            # `docs/02 §3.12.1` y no lo calculaba nadie, aunque el dato estaba:
+            # `EggMovement.egg_type` distingue `fertile` de `infertile`.
+            "fertilidad_pct": await self._fertilidad(lot_id),
             "unit": "%",
         }
+
+    async def _fertilidad(self, lot_id: Optional[int]) -> float | None:
+        """% de huevos fértiles sobre el total recibido en incubadora."""
+        totales = await self._huevos_por_tipo(lot_id, EventType.EGG_RECEPTION_HATCHERY)
+        fertiles = await self._huevos_fertiles(lot_id, EventType.EGG_RECEPTION_HATCHERY)
+        return self._porcentaje(fertiles, totales)
 
     async def get_kpi_hatchery(self, lot_id: Optional[int] = None) -> dict:
         base = select(
@@ -140,12 +150,106 @@ class ReportsService:
         result = await self.db.execute(base)
         born = result.scalar() or 0
 
+        # `R-14` / `GA-REM-022 AC01-bis`. El campo devolvía una frase en español alegando que
+        # faltaban los datos de carga. **La alegación era falsa**: `HatcheryParams` los
+        # guarda y `get_hatchery_egg_balance` ya los sumaba desde antes.
+        cargados = await self._huevos_cargados(lot_id)
+        fertiles = await self._huevos_fertiles(lot_id, EventType.EGG_RECEPTION_HATCHERY)
+
+        # `R-85`. `docs/02 §3.12.1` separa dos cocientes con **denominadores distintos**, y el
+        # endpoint los fundía en uno solo mal llamado. Un documento de proceso manda sobre una
+        # spec de remediación, así que se devuelven ambos con su nombre.
+        nacimiento = self._porcentaje(born, cargados)
+        eclosion = self._porcentaje(born, fertiles)
+
+        # `docs/02 §3.12.1` pide además «Rendimiento incubadora = pollitos viables ÷ huevos
+        # cargados». «Viables» no es un campo del modelo, y la única representación de
+        # pollitos no viables es el descarte, así que se toma **nacidos − descartados**.
+        # El supuesto queda declarado en `GA-REM-022` enmienda A: sin descartes registrados
+        # el rendimiento coincide con el nacimiento, que es lo correcto, y se afina a medida
+        # que se registran. No se usa `get_viable_chick_balance`, que resta **despachos** y
+        # mide otra cosa: cuántos quedan disponibles, no cuántos nacieron viables.
+        descartados = await self._descartados(lot_id)
+        rendimiento = self._porcentaje(max(born - descartados, 0), cargados)
+
         return {
             "total_chicks_born": born,
-            "hatchability_pct": "N/A (requiere datos de carga de incubación)",
+            "eggs_loaded": cargados,
+            "fertile_eggs": fertiles,
+            "nacimiento_pct": nacimiento,
+            "eclosion_pct": eclosion,
+            "rendimiento_pct": rendimiento,
+            # Alias histórico. `AC01` fijó este nombre y la pantalla ya lo lee; retirarlo
+            # sería romper un contrato que ningún requisito pide.
+            "hatchability_pct": nacimiento,
             "unit": "%",
-            "note": "Para hatchability completa se necesitan datos de huevos cargados en incubadoras",
+            # `AC02`. Cero significa «se midió y dio cero»; la ausencia de base es nula y se
+            # declara. Confundirlas hace que un lote sin datos y uno con eclosión nula se
+            # vean igual.
+            "insufficient_data": nacimiento is None and eclosion is None,
         }
+
+    @staticmethod
+    def _porcentaje(numerador: int, denominador: int) -> float | None:
+        """Porcentaje, o `None` cuando no hay base sobre la que medir (`AC02`)."""
+        if not denominador:
+            return None
+        return round(numerador * 100.0 / denominador, 2)
+
+    def _aprobados(self, consulta):
+        """Los KPI solo cuentan eventos aprobados (`GA-REM-022 AC05`)."""
+        return consulta.where(OperationalEvent.status.in_([
+            EventStatus.APPROVED, EventStatus.CONSOLIDATED,
+            EventStatus.SENT_TO_SAP, EventStatus.SAP_CONFIRMED,
+        ]))
+
+    async def _huevos_cargados(self, lot_id: Optional[int]) -> int:
+        from ..operations.models import HatcheryParams
+
+        q = self._aprobados(
+            select(func.coalesce(func.sum(HatcheryParams.quantity_loaded), 0))
+            .join(OperationalEvent, HatcheryParams.event_id == OperationalEvent.id)
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.event_type == EventType.INCUBATION_LOAD,
+            )
+        )
+        if lot_id:
+            q = q.where(OperationalEvent.lot_id == lot_id)
+        return int((await self.db.execute(q)).scalar() or 0)
+
+    async def _huevos_por_tipo(
+        self, lot_id: Optional[int], evento: "EventType", tipo: Optional[str] = None,
+    ) -> int:
+        q = self._aprobados(
+            select(func.coalesce(func.sum(EggMovement.quantity), 0))
+            .join(OperationalEvent, EggMovement.event_id == OperationalEvent.id)
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.event_type == evento,
+            )
+        )
+        if tipo:
+            q = q.where(EggMovement.egg_type == tipo)
+        if lot_id:
+            q = q.where(OperationalEvent.lot_id == lot_id)
+        return int((await self.db.execute(q)).scalar() or 0)
+
+    async def _huevos_fertiles(self, lot_id: Optional[int], evento: "EventType") -> int:
+        return await self._huevos_por_tipo(lot_id, evento, "fertile")
+
+    async def _descartados(self, lot_id: Optional[int]) -> int:
+        q = self._aprobados(
+            select(func.coalesce(func.sum(BirdMovement.quantity), 0))
+            .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.event_type == EventType.CULL_RECORDING,
+            )
+        )
+        if lot_id:
+            q = q.where(OperationalEvent.lot_id == lot_id)
+        return int((await self.db.execute(q)).scalar() or 0)
 
     # ============================================================
     # Lot Complete Report

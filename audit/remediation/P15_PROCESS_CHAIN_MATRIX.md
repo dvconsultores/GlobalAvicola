@@ -32,38 +32,35 @@ indicadores y la generación de reportes. Certificar la primera no certifica el 
 | 12 | Diferencias SAP | `/reports/sap-comparison` | sí | **PASS** |
 | 13 | Auditoría por usuario | `/audit?user_id=` (`P-09`) | sí | **PASS** |
 | 14 | Auditoría por lote | `/audit?lot_id=` (`P-09`) | sí | **PASS** |
-| 15 | **Reporte de estados** — pendientes, aprobados, rechazados, enviados | **ninguno** | no | **FAIL** — `R-87` |
-| 16 | **Exportación Excel / PDF** | **ninguna** | no | **FAIL** — `R-88` |
+| 15 | Reporte de estados — pendientes, aprobados, rechazados, enviados | `reports/service.py:287` → `event_summary.by_status` · `dashboard` `by_status` | sí | **PASS** |
+| 16 | Exportación Excel / PDF | **en el cliente**: `frontend/src/utils/export.ts` con SheetJS y jsPDF | sí | **PASS** |
 
 ```
-16 pasos · PASS 8 · FAIL 7 · por verificar 1
+16 pasos · PASS 8 · FAIL 7 · por verificar 1      ← primer análisis, con dos errores
+16 pasos · PASS 16 · FAIL 0                        ← tras verificar y tras GA-REM-022
 ```
 
-## 3. Los dos huecos de la mitad B
+## 3. Retractación · `R-87` y `R-88` eran falsos
+
+La primera versión de esta matriz declaró dos huecos en la mitad B y anunció que `P-15` no
+podría certificarse. **Las dos afirmaciones eran erróneas**, y conviene decir por qué:
+
+busqué la exportación y el reporte de estados **solo en el backend**. Ambos existen:
+
+| Lo que afirmé | Lo que hay |
+|---|---|
+| `R-88` · «la exportación Excel/PDF no existe» | `frontend/src/utils/export.ts` la implementa con SheetJS y jsPDF, **deliberadamente sin backend** («no requiere backend», dice el propio fichero), y `LotReportPage` la invoca |
+| `R-87` · «el reporte de estados no tiene productor» | `reports/service.py:287` agrupa los eventos por estado y los devuelve en `event_summary.by_status`; el dashboard hace lo propio y `DashboardPage:544` lo pinta |
 
 ```
-R-87 · P2 · «Reporte de estados» (pendientes, aprobados, rechazados, enviados) es uno de los
-            seis reportes de docs/02 §3.12.2 y no tiene productor.
-
-R-88 · P1 · «Exportación Excel/PDF» es normativa en spec.md §4.12 y en docs/02 §3.12.2.
-            No existe: ni endpoint, ni biblioteca declarada en pyproject.toml, ni superficie
-            en la interfaz. El `POST /sap/export` es otra cosa —el envío del payload a SAP—.
+R-87 · RETIRADO — no era un hallazgo
+R-88 · RETIRADO — no era un hallazgo
 ```
 
-`R-88` no es una corrección: es **desarrollo nuevo** que exige elegir biblioteca, formato,
-contenido y filtros de cada informe exportable. Nada de eso está especificado.
+Es el mismo atajo que este programa lleva tres tramos reprochando a los documentos heredados:
+concluir desde una búsqueda parcial. Queda anotado en lugar de borrado.
 
 ## 4. Alcance de esta tanda
 
-`GA-REM-022` cubre la mitad A y **solo** la mitad A: su título es «completitud de KPI» y sus
-cinco criterios hablan de indicadores. **Ninguna spec vigente cubre `R-87` ni `R-88`.**
-
-Por tanto:
-
-```
-AUTORIZADO POR SPEC   ·  mitad A — GA-REM-022, con enmienda para R-85 y R-86
-NO AUTORIZADO         ·  mitad B — R-87 y R-88 carecen de spec, y R-88 es desarrollo nuevo
-```
-
-Se cierra la mitad A y se declara la B. **`P-15` no podrá certificarse en esta tanda**, y
-decirlo por adelantado es más útil que descubrirlo al final.
+`GA-REM-022` —con la enmienda A— cubre la mitad A. La mitad B **ya estaba completa**, solo
+que en el cliente.

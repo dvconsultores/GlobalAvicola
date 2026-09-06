@@ -274,6 +274,11 @@ documentar la regla de balance de aves»— queda completo con `R-67`.
 | `R-82` | La vista de auditoría aparentaba filtrar y no filtraba | P1 — **`CERTIFIED`** `GA-REM-032` |
 | `R-83` | `AuditLog.company_id` no es nulable: una acción no atribuible a ninguna empresa no puede auditarse | P2 — **abierto** |
 | `R-84` | El filtro de fecha comparaba `timestamptz` con texto y devolvía 500 | P1 — **`CERTIFIED`** `GA-REM-032` |
+| `R-14` | La tasa de eclosión devolvía texto en un campo numérico | P1 — **`CERTIFIED`** `GA-REM-022` |
+| `R-85` | Eclosión, nacimiento y rendimiento tienen denominadores distintos y se fundían en uno | P2 — **`CERTIFIED`** `GA-REM-022` |
+| `R-86` | «Fertilidad» era normativa y no tenía productor | P2 — **`CERTIFIED`** `GA-REM-022` |
+| ~~`R-87`~~ | ~~El reporte de estados no tiene productor~~ | **RETIRADO** — existe en `event_summary.by_status` |
+| ~~`R-88`~~ | ~~La exportación Excel/PDF no existe~~ | **RETIRADO** — existe en el cliente (`utils/export.ts`) |
 
 `R-65` y `R-70` son el mismo patrón —entrada no validada que termina en 500— y conviene
 tratarlos juntos.

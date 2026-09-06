@@ -175,3 +175,26 @@ integración se exige el **subconjunto exacto** (`== ["a", "c"]`), que es más f
 Las pruebas de consulta insertan sus registros directamente en vez de provocarlos con
 acciones reales. Miden la **consulta**; mezclarlas con la emisión haría que un fallo no
 dijera cuál de las dos falló. La emisión tiene sus propias seis pruebas.
+
+
+---
+
+## `P-15` · reportes e indicadores (`GA-REM-022` enmienda A)
+
+`e2e/proceso-p15-reportes-e-indicadores.spec.ts` · 4 casos · `API_E2E`.
+
+| Caso | Qué comprueba | ¿Podría fallar? |
+|---|---|:--:|
+| indicadores de incubadora | sin aprobar, `insufficient_data` y `null` — no cero | sí |
+| fertilidad y reporte de estados | los campos forman parte del contrato | sí |
+| ningún `_pct` devuelve texto | recorre **todos** los campos `_pct` de cuatro endpoints | sí — era exactamente `R-14` |
+| indicadores exigidos por el cliente | vacunación y traslado responden | sí |
+
+### Valores exactos, no «mayor que cero»
+
+Las pruebas de integración calculan el resultado **a mano** desde una fixture pequeña y
+redonda —800 fértiles de 1.000, 600 nacidos, 60 descartes— y comparan por igualdad: 75 %,
+60 % y 54 %. No se replica la función de producción, que podría contener el mismo error.
+
+La prueba de `R-85` es la que más dice: exige que eclosión y nacimiento **no coincidan**. Si
+los denominadores se confundieran, coincidirían.

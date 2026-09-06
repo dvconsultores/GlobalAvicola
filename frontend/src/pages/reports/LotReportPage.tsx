@@ -14,6 +14,11 @@ export default function LotReportPage() {
  const [kpiIpe, setKpiIpe] = useState<any>(null)
  const [kpiUniformity, setKpiUniformity] = useState<any>(null)
  const [kpiAfcr, setKpiAfcr] = useState<any>(null)
+ // `GA-REM-022 AC07`. «Eficiencia de Vacunación» y «Eficiencia de Traslado» son KPI que el
+ // cliente exige: estaban calculados en el backend y no los consumía nadie.
+ const [kpiVacunacion, setKpiVacunacion] = useState<any>(null)
+ const [kpiTraslado, setKpiTraslado] = useState<any>(null)
+ const [kpiIncubadora, setKpiIncubadora] = useState<any>(null)
  const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
  const toast = useToast()
 
@@ -23,10 +28,16 @@ export default function LotReportPage() {
  api.get(`/reports/kpi/ipe/${id}`),
  api.get(`/reports/kpi/weight-uniformity/${id}`),
  api.get(`/reports/kpis/afcr?lot_id=${id}`),
- ]).then(([ipeRes, uniformRes, afcrRes]) => {
+ api.get(`/reports/kpis/vaccination-efficiency?lot_id=${id}`),
+ api.get(`/reports/kpis/transfer-efficiency?lot_id=${id}`),
+ api.get(`/reports/kpis/hatchery?lot_id=${id}`),
+ ]).then(([ipeRes, uniformRes, afcrRes, vacRes, traRes, incRes]) => {
  if (ipeRes.status === 'fulfilled') setKpiIpe(ipeRes.value.data)
  if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
  if (afcrRes.status === 'fulfilled') setKpiAfcr(afcrRes.value.data)
+ if (vacRes.status === 'fulfilled') setKpiVacunacion(vacRes.value.data)
+ if (traRes.status === 'fulfilled') setKpiTraslado(traRes.value.data)
+ if (incRes.status === 'fulfilled') setKpiIncubadora(incRes.value.data)
  })
  }, [id])
 
@@ -96,6 +107,54 @@ export default function LotReportPage() {
  </div>
  )}
  </div>
+
+ {/* `GA-REM-022 AC05`. Los indicadores solo cuentan eventos aprobados, de modo que un
+ lote con actividad sin aprobar los muestra en cero. Decirlo es parte del requisito:
+ sin este aviso, un cero indistinguible de «no hay nada que medir» induce a error. */}
+ {kpiIncubadora?.insufficient_data && (
+ <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+ <p className="text-sm font-semibold text-amber-900">
+ {t('reports.onlyApproved', 'Los indicadores se calculan solo con datos aprobados')}
+ </p>
+ <p className="text-xs text-amber-800 mt-1">
+ {t('reports.onlyApprovedDetail', 'Este lote todavía no tiene registros aprobados suficientes, por lo que sus indicadores aparecen sin valor en lugar de en cero.')}
+ </p>
+ </div>
+ )}
+
+ {/* Incubadora: nacimiento, eclosión y rendimiento (`docs/02 §3.12.1`) */}
+ {kpiIncubadora && kpiIncubadora.nacimiento_pct != null && (
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+ <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+ <TrendingUp size={16} className="text-amber-600" /> {t('kpi.hatchery', 'Incubadora')}
+ </h2>
+ <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
+ <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.birthRate', 'Nacimiento')}</dt><dd className="font-medium">{kpiIncubadora.nacimiento_pct}%</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.hatchRate', 'Eclosión')}</dt><dd className="font-medium">{kpiIncubadora.eclosion_pct ?? '—'}%</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.hatcheryYield', 'Rendimiento')}</dt><dd className="font-medium">{kpiIncubadora.rendimiento_pct}%</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.chicksBorn', 'Nacidos')}</dt><dd className="font-medium">{kpiIncubadora.total_chicks_born}</dd></div>
+ </dl>
+ </div>
+ )}
+
+ {/* Eficiencia de vacunación y de traslado — exigidos por el cliente (`AC07`) */}
+ {kpiVacunacion && kpiVacunacion.vaccination_coverage_pct != null && (
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+ <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+ <Activity size={16} className="text-indigo-600" /> {t('kpi.vaccinationEfficiency', 'Eficiencia de Vacunación')}
+ </h2>
+ <p className="text-3xl font-black text-indigo-700">{kpiVacunacion.vaccination_coverage_pct}%</p>
+ </div>
+ )}
+
+ {kpiTraslado && kpiTraslado.transfer_efficiency_pct != null && (
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+ <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
+ <TrendingUp size={16} className="text-teal-600" /> {t('kpi.transferEfficiency', 'Eficiencia de Traslado')}
+ </h2>
+ <p className="text-3xl font-black text-teal-700">{kpiTraslado.transfer_efficiency_pct}%</p>
+ </div>
+ )}
 
  {/* IPE KPI */}
  {kpiIpe && kpiIpe.ipe != null && (

@@ -428,3 +428,24 @@ consulta; sin el filtro de estado cae 1; sin la conversión de fecha cae 1. `git
 
 Regresión: backend **352 · 49 omitidas · 0 fallos**; E2E **91/91**; `tsc`, vitest 61/61,
 i18n 866 = 866.
+
+
+---
+
+## `GA-REM-022` enmienda A · completitud de indicadores
+
+```
+R-14 · R-85 · R-86 = CERTIFIED     R-87 · R-88 = RETIRADOS
+P-15 = CERTIFIED   ·   CERTIFIED 8 / 15   ·   PARTIAL 7 / 15
+```
+
+Enmienda y cuatro matrices publicadas antes del código (`a7dce4a`). Pruebas rojas por
+`KeyError`: los campos no existían.
+
+Sensibilidad: confundir el denominador de la eclosión hace caer 2; quitar el filtro de
+aprobación, 1; quitar el de compañía, 1. La primera pasada de la mutación de aprobación no
+rompió nada porque muté un ayudante nuevo en vez del filtro que la prueba recorre — se anota,
+porque una mutación mal dirigida puede hacer pasar por insensible a una prueba que no lo es.
+
+Regresión: backend **359 · 49 omitidas · 0 fallos**; E2E **95/95**; `tsc`, vitest 61/61,
+i18n 866 = 866.

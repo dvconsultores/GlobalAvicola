@@ -350,3 +350,59 @@ vale lo que valga la evidencia que la sostiene. La de `P-15` no se ha auditado c
 la mano, y en `P-09` esa auditoría descubrió un 500 que nadie había visto.
 
 **No se inicia aquí.**
+
+
+---
+
+# REVISIÓN · tras `GA-REM-022` enmienda A (2026-09-06)
+
+`P-15` sale de la lista: **`CERTIFIED`**. Quedan **7** procesos `PARTIAL`.
+
+| Bloqueante | Fan-out | Naturaleza | Accionable | Cierra proceso |
+|---|:--:|---|---|---|
+| `GA-TD-014` | **3** | corrección + decisión acotada | **no** — `OD-04` | no por sí solo |
+| `P-12` 7 pantallas + contador | 1 | **desarrollo de interfaz** | sí | sí |
+| `P-13` 2 pantallas | 1 | **desarrollo de interfaz** | sí | sí |
+| `P-14` notificaciones | 1 | **desarrollo nuevo**, sin canal | sí | sí, mucho más trabajo |
+| `GA-REQ-037` peso fuera de curva | 2 | funcionalidad nueva | sí | no (`P-06` con `GA-TD-014`) |
+| `R-76` cierre con registros sin aprobar | 1 | corrección P1 | sí | no (`P-06` bloqueado) |
+| `R-80` `R-83` marcos y atribución | 0 | correcciones P2 | sí | no |
+| `R-77` regla mal numerada | 0 | corrección P2 | sí | no |
+| `GA-REM-017` SAP real | 1 | externo | no | no |
+| `R-69` · `R-70` | 0 | correcciones P2 | sí | no |
+
+## El punto de inflexión
+
+**Se acabaron las remediaciones acotadas.** Los cuatro tramos anteriores —`P-10`, `P-09`,
+`P-15`— cerraban defectos: cosas que la spec exigía y el código hacía mal. Lo que queda es de
+otra naturaleza:
+
+| Proceso | Qué falta | Naturaleza |
+|---|---|---|
+| `P-12` | 7 catálogos sin pantalla + un contador erróneo | **construir interfaz** |
+| `P-13` | pantallas de roles y de permisos | **construir interfaz** |
+| `P-14` | 5 de 6 tipos de notificación y **ningún canal** | **desarrollo nuevo** |
+| `P-01` `P-03` `P-06` | `GA-TD-014` | **decisión del propietario** |
+| `P-08` | SAP real | **externo** |
+
+## Siguiente frente recomendado
+
+```
+NEXT_ACTIONABLE_BLOCKER = P-12 · gestión de datos maestros
+```
+
+**Motivo.** Entre los tres que exigen interfaz es el más acotado y el de menor riesgo: siete
+pantallas de catálogo sobre un patrón que ya existe —`MasterListPage` sirve a doce— más un
+contador que usa el tamaño de la página en lugar del total. No hay reglas de negocio nuevas
+que decidir.
+
+`P-13` es comparable pero toca permisos, y `P-14` no tiene canal: elegir uno —correo, push,
+Telegram— es una decisión que no me corresponde.
+
+**Antes de empezarlo conviene un aviso**, y esta vez por experiencia propia: la distancia de
+`P-12` procede de `audit/06`, que ya se ha demostrado obsoleto tres veces —el hueco de `PUT`
+que declaraba ya estaba cerrado—. Y en este mismo tramo registré dos hallazgos buscando solo
+en el backend cuando la capacidad vivía en el cliente. **`P-12` merece que se compruebe en
+ambos lados antes de dimensionarlo.**
+
+**No se inicia aquí.**

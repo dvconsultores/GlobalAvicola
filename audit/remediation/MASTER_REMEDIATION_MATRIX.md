@@ -144,3 +144,25 @@ P-09 = CERTIFIED        CERTIFIED 7 / 15        PARTIAL 8 / 15
 Dos correcciones de medición que conviene conservar: las acciones emitidas eran **12**, no 6;
 y **21 valores de enum no son 21 requisitos** — dos quedan fuera por no tener superficie que
 auditar, y decirlo es más honesto que completarlas por estética.
+
+
+---
+
+## 7. `GA-REM-022` enmienda A · `P-15` certificado (2026-09-06)
+
+| Hallazgo | Sev. | Estado |
+|---|:--:|---|
+| `R-14` · la tasa de eclosión devolvía texto en un campo numérico | **P1** | **`CERTIFIED`** |
+| `R-85` · tres cocientes de incubadora con denominadores distintos, fundidos en uno | P2 | **`CERTIFIED`** |
+| `R-86` · «Fertilidad» normativa y sin productor | P2 | **`CERTIFIED`** |
+| ~~`R-87`~~ · ~~reporte de estados ausente~~ | — | **RETIRADO** |
+| ~~`R-88`~~ · ~~exportación ausente~~ | — | **RETIRADO** |
+
+```
+P-15 = CERTIFIED        CERTIFIED 8 / 15        PARTIAL 7 / 15
+```
+
+Dos lecciones del tramo. La primera: **21 valores de enum no son 21 requisitos**, y de los
+cuatro KPI «huérfanos» solo dos los exigía el cliente. La segunda es propia y menos cómoda:
+registré dos hallazgos —`R-87` y `R-88`— buscando **solo en el backend**, y los dos estaban
+implementados en el cliente. Retirados y anotados, no borrados.

@@ -192,8 +192,12 @@ estado y sobre el filtro de empresa.
 
 ## A.3 Fuera de alcance de esta enmienda
 
-`R-87` (reporte de estados) y `R-88` (exportación Excel/PDF) son la **otra mitad** de `P-15`
-—los reportes de `docs/02 §3.12.2`— y ninguna spec los cubre. `R-88` es desarrollo nuevo:
-exige elegir biblioteca, formato y contenido, y nada de eso está especificado.
+**Corrección de esta enmienda.** Al redactarla se registraron `R-87` (reporte de estados) y
+`R-88` (exportación Excel/PDF) como huecos, y se anunció que `P-15` no podría certificarse.
+**Ambos eran falsos**: se buscaron solo en el backend, y los dos están implementados en el
+cliente —`frontend/src/utils/export.ts` con SheetJS y jsPDF; `event_summary.by_status` en el
+reporte de lote y en el dashboard—. Los dos quedan **retirados**, y la anotación se conserva
+en `P15_PROCESS_CHAIN_MATRIX §3` en lugar de borrarse.
 
-Se registran y se dejan fuera. **`P-15` no puede certificarse mientras sigan abiertos.**
+Queda fuera de esta enmienda el supuesto sobre «pollitos viables» de `AC01-bis`, declarado
+allí: el modelo no tiene ese campo y se deriva como nacidos menos descartados.

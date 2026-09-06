@@ -50,7 +50,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ **Wave 3** | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-13** Usuarios, roles y permisos | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **parcial** | `COVERED` | **`PARTIAL`** |
 | **P-14** Notificaciones y alertas | func §3.14 | ✅ | ⚠ | ⚠ | ✅ | umbral configurable | ✅ | ✅ | **parcial** | **`PARTIAL`** | **`PARTIAL`** |
-| **P-15** Reportes y KPI | spec §4.12 | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | ⬜ | **`PARTIAL`** — `GA-REM-022` | **`PARTIAL`** |
+| **P-15** Reportes y KPI | spec §4.12 · `docs/02 §3.12` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **4/4** | `COVERED` | **`CERTIFIED`** |
 
 ### Nota sobre «parcial» en la columna E2E
 
@@ -255,5 +255,27 @@ en servidor.
 Costó tres hallazgos: `R-81` (seis módulos sin un solo registro), `R-82` (la vista aparentaba
 filtrar) y `R-84` (el único filtro que la interfaz enviaba devolvía 500). `R-83` queda
 abierto y declarado: una acción no atribuible a ninguna empresa no puede auditarse.
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+---
+
+## `P-15` certificado tras `GA-REM-022` enmienda A (2026-09-06)
+
+```
+CERTIFIED = 8 / 15      PARTIAL = 7 / 15      READY_FOR_E2E = 0
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-02` · `P-04` · `P-05` · `P-07` · `P-09` · `P-10` · `P-11` · `P-15` |
+| `PARTIAL` | `P-01` · `P-03` · `P-06` · `P-08` · `P-12` · `P-13` · `P-14` |
+
+Los 16 pasos pasan: **15 de 15** indicadores obligatorios y **6 de 6** reportes.
+
+Costó `R-14` (la eclosión devolvía texto), `R-85` (tres cocientes con denominadores distintos
+fundidos en uno) y `R-86` (fertilidad sin productor). `R-87` y `R-88` se registraron y
+resultaron **falsos**: la exportación y el reporte de estados existían en el cliente y se
+buscaron solo en el backend. Retirados y anotados.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
