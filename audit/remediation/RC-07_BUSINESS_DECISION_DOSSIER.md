@@ -283,3 +283,50 @@ OD-02  ·  RC-07, mortalidad frente a SAP. Sigue pendiente, sin urgencia:
 
 **No se implementa nada de `GA-TD-014` hasta que `OD-04` esté decidida.** `BR-11` y `BR-18`
 siguen inertes.
+
+---
+
+# RESOLUCIÓN · `OD-04` (2026-09-06)
+
+```
+OD-04 = RESOLVED
+```
+
+| | |
+|---|---|
+| **Decidido por** | el propietario |
+| **Fecha** | 2026-09-06 |
+| **Decisión** | **Una misma orden de compra puede recibirse mediante múltiples entregas parciales.** |
+| **Opción elegida** | la **B** de §11 — se activa el límite de cantidad, **no** la regla de no duplicar |
+| **Requisito afectado** | `G-R05` («sin validación cantidad ≤ OC», `docs/16 §13`, crítico) |
+| **Deuda afectada** | `GA-TD-014` — pasa de `DIFERIDO` a **`ACTIONABLE`** |
+| **Contrato afectado** | `C-15` de `FE_BE_CONTRACT_MATRIX` |
+| **Spec** | `GA-REM-035` |
+| **Procesos** | `P-01` · `P-03` · `P-06` |
+
+## Consecuencia técnica
+
+```
+Repetir la referencia de una OC       →  NO es un error
+Superar la cantidad acumulada         →  SÍ es un error
+```
+
+La protección se traslada del **identificador** a la **cantidad acumulada**. Una regla del
+tipo «esta OC ya se usó» sería contraria a la decisión.
+
+## Lo que la decisión NO autoriza
+
+| | |
+|---|---|
+| **Tolerancia de sobre-recepción** | **no** — ningún margen porcentual ni absoluto. Sin fuente normativa, `acumulado > cantidad de la OC` se rechaza |
+| **Cierre automático de la OC** | **no decidido**. La pregunta era si caben entregas parciales, no qué ocurre al llegar al 100 %. No se introduce ningún estado de cierre |
+
+## Lo que sigue abierto
+
+```
+RC-07 = OWNER_DECISION_REQUIRED
+```
+
+Sin cambios. Es la política **contable de la mortalidad frente a SAP** y no tiene relación con
+las entregas parciales. La separación entre ambas se estableció en §5 de este dossier y se
+mantiene.
