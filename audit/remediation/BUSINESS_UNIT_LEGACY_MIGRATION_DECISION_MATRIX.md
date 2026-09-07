@@ -131,6 +131,10 @@ operación vacía, con un aviso claro, es diagnosticable.
 
 Requiere decidir **qué es «transversal»** —§3.7—.
 
+> **`RESUELTA` · 2026-09-07 · `OD-09.c`.** El propietario eligió esta opción. El usuario sin
+> unidades **entra**, usa lo transversal que su rol permita y no ve ni opera dato productivo.
+> Nunca se retrocede a «toda la empresa» como valor por defecto.
+
 ### 3.4 ¿Qué pasa con los registros clasificables?
 
 Los que tienen `bird_type`, directo o vía raza (§2.3). Se clasifican y no hay decisión que tomar,
@@ -180,6 +184,11 @@ por unidad         lots · operations · reports · dashboards · traceability �
 
 **Recomendación:** ratificar esta frontera como parte de la decisión, no derivarla en la
 implementación. Es lo que define qué puede hacer el usuario de §3.3.
+
+> **`RESUELTA` · 2026-09-07 · `OD-09.b`.** Frontera por planos, con los veintidós maestros
+> clasificados **una vez en el catálogo** y no pantalla por pantalla. Administrar el acceso no
+> concede acceso al dato: un administrador puede asignar Incubadora a otro usuario sin poder
+> consultar sus lotes.
 
 ### 3.8 ¿Quién administra la transición?
 
@@ -232,17 +241,18 @@ y se corrige sin que nadie se haya quedado fuera.
 |:--:|---|---|---|:--:|
 | 1 | Empresas existentes | A · B · C · D | **C** real · **A** entorno compartido | no |
 | 2 | Usuarios existentes | A · B · C | **A** actuales · **C** cliente real | no |
-| 3 | Usuario sin unidad *(nueva)* | denegar · transversal | **transversal** | **SÍ** |
+| 3 | Usuario sin unidad *(nueva)* | denegar · transversal | **`RESUELTA` · transversal → `OD-09.c`** | ~~SÍ~~ |
 | 4 | Registros clasificables | — | clasificar; ratificar vía raza | no |
 | 5 | Registros ambiguos | fail open · fail closed · cuarentena | **cuarentena** | **SÍ** |
 | 6 | Registros de doble unidad | — | **no existen**: son bilaterales | no |
-| 7 | Capacidades transversales | — | ratificar la frontera | **SÍ** |
+| 7 | Capacidades transversales | — | **`RESUELTA` · frontera por planos → `OD-09.b`** | ~~SÍ~~ |
 | 8 | Quién administra | — | comercial vs operativo; depende de `OD-05` | no |
 | 9 | Evitar `fail open` | — | denegar por defecto · agregados incluidos | no |
 | 10 | No parar la operación | — | modo informe antes del filtro | no |
 
 ```
-BLOQUEANTES DE LA SPEC       3   (usuario sin unidad · registros ambiguos · frontera transversal)
+BLOQUEANTES DE LA SPEC       1   (registros ambiguos)   — eran 3
+RESUELTOS POR OD-09          2   usuario sin unidad · frontera transversal   (2026-09-07)
 BLOQUEANTES DEL ALTA REAL    2   (empresas y usuarios de un cliente real)
 DESAPARECIDOS POR ENV-01     0   ninguno desaparece; dos cambian de gate
 FALSOS BLOQUEANTES           1   «registros de doble unidad»

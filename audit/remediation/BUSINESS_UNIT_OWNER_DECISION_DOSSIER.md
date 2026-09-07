@@ -277,7 +277,10 @@ usuario no tiene forma de saber qué le falta.
 **Si no se decide.** Se resolverá en el código, probablemente denegando, y nadie sabrá que se
 decidió.
 
-**Estado · `PENDIENTE DE PROPIETARIO` · BLOQUEANTE**
+**Estado · `RESUELTA` — el propietario eligió la **opción B** el 2026-09-07.
+Formalizada en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md` como
+`OD-09.c`.** El usuario sin unidades **entra**, usa lo transversal que su rol permita y
+no ve ni opera dato productivo. Sin retroceso a «toda la empresa».
 
 ---
 
@@ -322,7 +325,10 @@ contralor con dos líneas de cuatro dejaría de recibir en silencio los avisos d
 **Recomendación · transversales por definición, y declarado.** Controlar es mirar lo que uno no
 opera. Y debe decidirse **antes** de implementar, no después de romperlo.
 
-**Estado · `PENDIENTE DE PROPIETARIO` · BLOQUEANTE**
+**Estado · `RESUELTA` — el propietario eligió la **opción C** el 2026-09-07.
+Formalizada como `OD-09.a`.** Visibilidad de control de toda la empresa; autoridad
+operativa acotada a las unidades concedidas. `OD-08` se preserva y `P-14` sigue
+`CERTIFIED`: los avisos **no** se filtran en silencio por concesión de unidad.
 
 ---
 
@@ -345,7 +351,9 @@ por línea     lotes · operación · reportes · paneles · trazabilidad · SAP
 
 **Si no se decide.** Cada pantalla elegirá por su cuenta y acabarán discrepando.
 
-**Estado · `PENDIENTE DE PROPIETARIO` · BLOQUEANTE**
+**Estado · `RESUELTA` — el propietario eligió la **opción B** el 2026-09-07.
+Formalizada como `OD-09.b`.** Frontera por planos: el de control es de la empresa, el
+operativo es de la línea. Los veintidós maestros se clasifican una vez, en el catálogo.
 
 ---
 
@@ -367,4 +375,7 @@ que más fácil se olvida al construir, y la única cuya fuga **no deja rastro y
 - No crea `GA-REM-040`. Se recomienda; no se escribe.
 - No modifica ninguna certificación. **`FUNCIONAL 14/15` sigue igual.**
 - No asigna identificadores `OD-` definitivos.
-- **No decide nada.** Las doce quedan `PENDIENTE DE PROPIETARIO`.
+- **Ya no es cierto que no decida nada.** El 2026-09-07 el propietario resolvió `BU-D09`,
+  `BU-D11` y `BU-D12`, formalizadas en `OD-09`. **Las otras nueve siguen
+  `PENDIENTE DE PROPIETARIO`**, y de ellas `BU-D01` y `BU-D02` son las dos que aún bloquean
+  la spec.

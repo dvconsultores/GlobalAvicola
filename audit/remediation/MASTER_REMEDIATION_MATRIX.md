@@ -470,3 +470,33 @@ llevado a los usuarios. Un organigrama es estructura, no historia ficticia.
 **`tsc` no es un build.** Dio limpio sobre un JSX con elementos adyacentes sin envolver y la
 aplicación no arrancaba: 46 pruebas de navegador en rojo. Lo delató `vite build`, que pasa a
 formar parte de la verificación.
+
+---
+
+## `OD-09` · plano de control frente a unidad de negocio (2026-09-07)
+
+| Decisión del dosier | Pregunta | Respuesta | Parte |
+|---|---|:--:|---|
+| `BU-D11` | ¿Contraloría y administración ven las cuatro líneas aunque solo tengan dos? | **C** | `OD-09.a` |
+| `BU-D12` | ¿Administrar usuarios y roles pertenece a alguna línea? | **B** | `OD-09.b` |
+| `BU-D09` | ¿Puede entrar alguien sin ninguna línea asignada? | **B** | `OD-09.c` |
+
+```
+CONTROL VISIBILITY  y  OPERATIONAL ACCESS  SON CAPACIDADES DISTINTAS
+```
+
+Formalizadas en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md`. Un solo `OD` porque
+son una sola resolución —el mismo patrón de `OD-08`—, y porque cambiar una obligaría a revisar
+las otras dos.
+
+**`OD-08` y `P-14` se preservan.** Los avisos de administración y contraloría **no** se filtran
+por concesión de unidad: recibir un aviso es visibilidad de control, no autoridad operativa.
+
+```
+BLOQUEANTES DE LA SPEC GA-REM-040     5  →  2        quedan BU-D01 y BU-D02
+DECISIONES DEL DOSIER RESUELTAS       3 / 12
+CERTIFICACIÓN FUNCIONAL               14 / 15        sin cambios
+CÓDIGO MODIFICADO                     ninguno
+```
+
+`OD-05` sigue abierta y no se resuelve aquí: de ella depende quién puede conceder qué.

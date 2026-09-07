@@ -52,6 +52,7 @@ se interpretan.
 | ID | Título | Estado | Documento |
 |---|---|---|---|
 | `ENV-01` | Clasificación de entorno — el desplegado es compartido de desarrollo/test/certificación, no producción | **VIGENTE** | [ENV-01](ENV-01-ENVIRONMENT-CLASSIFICATION.md) |
+| `OD-09` | Plano de control frente a unidad de negocio — visibilidad de control y acceso operativo son capacidades distintas | **VIGENTE** | [OD-09](OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md) |
 
 ## Resumen
 ```

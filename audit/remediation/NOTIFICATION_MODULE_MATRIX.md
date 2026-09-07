@@ -57,3 +57,60 @@ destinatario actual  =  empresa  ∩  (originador ∪ rol ∪ área)
 destinatario futuro  =  lo anterior  ∩  tiene la unidad del evento
                         salvo excepción normativa (Analista SAP)
 ```
+
+---
+
+## Resolución · `OD-09.a` (2026-09-07)
+
+La pregunta de `§1` —«¿un destinatario que califica por rol debe recibir avisos de una unidad de
+negocio que no tiene concedida?»— está contestada por el propietario:
+
+```
+SÍ, si su función es de control.        BU-D11 = C  →  OD-09.a
+```
+
+### La distinción que hay que conservar al implementar
+
+```
+DESTINATARIO OPERATIVO             DESTINATARIO DE CONTROL
+recibe por su vínculo con el       recibe por su función de control
+dato: lo registró, lo opera,       sobre la EMPRESA
+lo supervisa en su área
+
+originador · operador              administración · contraloría
+gerente y supervisor del área      `Analista SAP` para el error de SAP
+
+→ acotado por unidad, cuando       → toda la empresa, sin filtrar por
+  exista el eje                      concesión de unidad
+```
+
+**Recibir un aviso es visibilidad de control, no autoridad operativa.** Que a un contralor le
+llegue la alerta de un lote de incubadora no le da permiso para modificarlo: el aviso lo entera,
+no lo autoriza.
+
+### Lo que queda prohibido
+
+```
+FILTRAR EN SILENCIO los avisos de administración y contraloría
+por concesión de unidad de negocio
+```
+
+Sería incumplir `OD-08` sin que ninguna prueba actual lo detectara, y es exactamente el riesgo
+que esta matriz señaló. Un aviso que no llega es indistinguible de un problema que no ocurrió.
+
+### Alcance
+
+```
+SIEMPRE DENTRO DE LA MISMA EMPRESA
+```
+
+El `Super Administrador` global —sin empresa— sigue sin resolverse como destinatario de ninguna,
+tal como `OD-08` y `AC-A09` ya exigían. `OD-09` no lo cambia.
+
+### Estado
+
+```
+P-14                          CERTIFIED · sin cambios · no se reabre
+Código modificado             ninguno
+Impacto registrado            documental, para cuando exista GA-REM-040
+```

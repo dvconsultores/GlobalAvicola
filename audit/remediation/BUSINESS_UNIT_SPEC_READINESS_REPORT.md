@@ -10,16 +10,25 @@
 NOT_READY_FOR_GA-REM-040_SPEC
 ```
 
-Faltan **cinco decisiones del propietario** sin las cuales la spec tendría que inventarlas, y
+Faltan **dos decisiones del propietario** sin las cuales la spec tendría que inventarlas, y
 `NO SPEC = NO DEVELOPMENT` no se cumple escribiendo una spec que adivina.
 
 ```
-BU-D11   ¿contraloría y administración son transversales?
-BU-D12   ¿qué permisos quedan fuera del filtro por línea?
-BU-D09   ¿qué puede hacer un usuario sin ninguna línea?
 BU-D01   ¿qué ve cada línea cuando el producto cambia de manos?   (siete flujos)
 BU-D02   ¿quién ve un registro cuya línea no se puede determinar?
 ```
+
+**Actualización del 2026-09-07.** Eran cinco. El propietario resolvió tres —`BU-D11 = C`,
+`BU-D12 = B`, `BU-D09 = B`—, formalizadas en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md`:
+
+```
+BU-D11  →  OD-09.a   visibilidad de control de empresa · operación por unidad
+BU-D12  →  OD-09.b   plano de control transversal · plano operativo por unidad
+BU-D09  →  OD-09.c   entra sin unidades · lo transversal que su rol permita · nada productivo
+```
+
+Con ellas quedan resueltas las fases 1, 2 y 3 de la hoja de ruta en lo que dependía de decisión.
+`BU-D05` sigue sin bloquear la spec: `ENV-01` lo sitúa en el alta del primer cliente real.
 
 ## 2. Lo que sí está listo
 
@@ -115,11 +124,13 @@ impide que un `PASS` signifique «no lo probamos».
 ## 6. Riesgo de construir antes de decidir
 
 ```
-BU-D11 sin decidir    P-14 deja de cumplir OD-08 en silencio y ninguna prueba lo ve
-BU-D12 sin decidir    cada pantalla elige su frontera y acaban discrepando
 BU-D02 sin decidir    o puerta abierta, o inspecciones que desaparecen
 BU-D01 sin decidir    P-10 se rompe al cortar la cadena generacional
-BU-D09 sin decidir    se denegará el acceso sin que conste que se decidió
+
+RESUELTOS (OD-09, 2026-09-07)
+BU-D11    P-14 conserva OD-08: los avisos no se filtran por concesión de unidad
+BU-D12    la frontera es una decisión, no una deducción de cada pantalla
+BU-D09    entrar sin unidades queda escrito, y con ello el primer día de cada cliente
 ```
 
 El primero es el que más pesa: es el único que **rompe algo que hoy está certificado**, y lo hace
@@ -128,7 +139,7 @@ sin ruido.
 ## 7. Recomendación
 
 ```
-1   decidir BU-D11 · BU-D12 · BU-D09          desbloquea la mitad de la hoja de ruta
+1   decidir BU-D11 · BU-D12 · BU-D09          HECHO — OD-09, 2026-09-07
 2   decidir BU-D01 con su matriz de flujos    la más larga, y la de más valor de negocio
 3   decidir BU-D02
 4   escribir GA-REM-040 y reservar GA-REM-041

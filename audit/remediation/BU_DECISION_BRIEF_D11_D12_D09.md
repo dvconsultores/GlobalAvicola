@@ -6,8 +6,20 @@
 QUÉ ES ESTO       un documento para decidir
 QUÉ NO ES         no es spec · no contiene tareas de implementación
                   no crea tablas · no cambia código · no cambia certificaciones
-ESTADO            las tres PENDING_OWNER
+ESTADO            CONTESTADO el 2026-09-07
 ```
+
+> ## Respondido
+>
+> ```
+> BU-D11 = C     →  OD-09.a
+> BU-D12 = B     →  OD-09.b
+> BU-D09 = B     →  OD-09.c
+> ```
+>
+> Las tres recomendaciones de este documento fueron las elegidas. La formalización normativa
+> está en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md`, que es **la fuente
+> vigente**; este documento se conserva como el análisis que llevó a ellas.
 
 ---
 

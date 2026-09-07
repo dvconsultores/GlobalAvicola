@@ -23,19 +23,39 @@ UNIDAD DE NEGOCIO  una línea        Progenitoras · Reproductora ·     NO EXIS
 | `BU-D06` | Lotes sin tipo de ave | auditoría 6 | segunda fuente: la raza, si se ratifica | — | `PENDIENTE` |
 | `BU-D07` | Quién habilita a la empresa y quién concede | auditoría 7 | comercial vs operativo · toca `OD-05` | — | `PENDIENTE` |
 | `BU-D08` | Contratado ≠ habilitado | auditoría 8 | separarlos ahora | — | `PENDIENTE` |
-| `BU-D09` | Usuario sin ninguna línea | **nueva** | entra, ve lo transversal | **spec** | `PENDIENTE` |
+| `BU-D09` | Usuario sin ninguna línea | **nueva** | entra, ve lo transversal | ~~spec~~ | **`RESUELTA` · B → `OD-09.c`** |
 | `BU-D10` | La empresa deja de tener una línea | **nueva** | revocar escritura · conservar histórico | — | `PENDIENTE` |
-| `BU-D11` | Contraloría y administración transversales | **nueva** | sí, declarado · **protege `P-14`** | **spec** | `PENDIENTE` |
-| `BU-D12` | Qué permisos quedan fuera del filtro | **nueva** | ratificar la frontera | **spec** | `PENDIENTE` |
+| `BU-D11` | Contraloría y administración transversales | **nueva** | sí, declarado · **protege `P-14`** | ~~spec~~ | **`RESUELTA` · C → `OD-09.a`** |
+| `BU-D12` | Qué permisos quedan fuera del filtro | **nueva** | ratificar la frontera | ~~spec~~ | **`RESUELTA` · B → `OD-09.b`** |
 
 ```
 DECISIONES              12       la auditoría había enumerado 8
 NUEVAS                   4       D09 · D10 · D11 · D12
 DESAPARECIDAS            0       ninguna de las ocho se cae
-BLOQUEAN LA SPEC         5       D01 · D02 · D09 · D11 · D12
+BLOQUEAN LA SPEC         2       D01 · D02          (eran 5, el 2026-09-07)
 BLOQUEAN EL ALTA REAL    1       D05
-DECIDIDAS                0
+DECIDIDAS                3       D09 · D11 · D12  →  OD-09  (2026-09-07)
+PENDIENTES               9
 ```
+
+## 1 bis. Lo que el propietario resolvió el 2026-09-07
+
+```
+BU-D11 = C     visibilidad de control de toda la empresa
+               autoridad operativa acotada a las unidades concedidas
+
+BU-D12 = B     administrar acceso ≠ acceder al dato
+               plano de control transversal · plano operativo por unidad
+
+BU-D09 = B     sin unidades: entra, usa lo transversal que su rol permita
+               y no ve ni opera dato productivo
+```
+
+Formalizadas juntas en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md`, bajo un solo
+identificador porque son una sola resolución: **visibilidad de control y acceso operativo son
+capacidades distintas.** Es el patrón de `OD-08`, que también agrupó tres sub-decisiones.
+
+`OD-08` y la certificación funcional de `P-14` se conservan intactos.
 
 ## 2. Por qué el número cambió de 8 a 12
 
