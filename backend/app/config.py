@@ -89,6 +89,20 @@ class Settings(BaseSettings):
     MORTALITY_ALERT_WARNING_PCT: float = 3.0
     MORTALITY_ALERT_CRITICAL_PCT: float = 8.0
 
+    # `GA-REM-038` enmienda A. «Registro pendiente de revisión > 24h» necesita que algo
+    # evalúe la condición: es el único de los seis tipos cuyo disparador es el paso del
+    # tiempo y tiene umbral normativo.
+    #
+    # Se resuelve con una tarea del propio proceso —el `lifespan` que ya existe— y no con
+    # `Celery`, `Redis` ni colas: ninguna fuente pide infraestructura, y la más simple que
+    # cumple es la correcta. La reevaluación es idempotente, de modo que varios procesos
+    # ejecutándola a la vez no duplican avisos.
+    #
+    # El intervalo NO es el umbral: el umbral son 24 h y lo fija `docs/02 §3.14`. Esto es
+    # cada cuánto se mira, y una hora basta para un aviso diario.
+    NOTIFICATION_SLA_SCAN_ENABLED: bool = True
+    NOTIFICATION_SLA_SCAN_SECONDS: int = 3600
+
     # ============================================================
     # Feature Flags — controlan qué se habilita en cada entorno
     # ============================================================

@@ -7,8 +7,16 @@
  */
 import api from './api'
 
-/** Los dos tipos con requisito. `OD-08` decidirá si hay más. */
-export type NotificationType = 'record_rejected' | 'sap_send_failed'
+/**
+ * Los cinco tipos accionables de `docs/02 §3.14`. Falta el sexto —«lote próximo a cierre»—
+ * porque «próximo» no está definido en ninguna fuente y `OD-08` sigue abierta en esa mitad.
+ */
+export type NotificationType =
+  | 'record_rejected'
+  | 'sap_send_failed'
+  | 'mortality_over_threshold'
+  | 'weight_out_of_standard'
+  | 'review_pending_24h'
 
 export interface Notification {
   id: number

@@ -1,3 +1,4 @@
+import os
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, Request, status
@@ -34,10 +35,26 @@ def rate_limit(limit_value: str):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    import asyncio
+
     # Register SQLAlchemy audit listeners on startup
     from .audit import register_audit_listeners
     register_audit_listeners()
+
+    # Se desactiva en las pruebas: la suite llama al evaluador directamente para que el
+    # resultado sea determinista, y una tarea de fondo compitiendo con ella lo haría
+    # depender del reloj.
+    from .notifications.sla import vigilar_revisiones_pendientes
+
+    vigilante = None
+    if settings.NOTIFICATION_SLA_SCAN_ENABLED and os.environ.get("GA_TEST_ENV") != "1":
+        vigilante = asyncio.create_task(vigilar_revisiones_pendientes(
+            settings.NOTIFICATION_SLA_SCAN_SECONDS))
+
     yield
+
+    if vigilante is not None:
+        vigilante.cancel()
 
 
 app = FastAPI(

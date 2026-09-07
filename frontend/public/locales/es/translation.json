@@ -1015,7 +1015,10 @@
     "daysAgo": "hace {{count}} d",
     "types": {
       "record_rejected": "Su registro fue rechazado",
-      "sap_send_failed": "Falló el envío a SAP"
+      "sap_send_failed": "Falló el envío a SAP",
+      "mortality_over_threshold": "Mortalidad sobre el umbral",
+      "weight_out_of_standard": "Peso fuera del estándar",
+      "review_pending_24h": "Registro pendiente de revisión hace más de 24 h"
     }
   }
 }

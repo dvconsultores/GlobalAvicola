@@ -430,21 +430,33 @@ class ApprovalService(SegregacionMixin):
         #
         # Va dentro de la misma transacción: si el rechazo revierte, el aviso revierte con
         # él. Notificar algo que no llegó a ocurrir es peor que no notificar.
+        #
+        # `OD-08` amplía los destinatarios: además del operador, los administradores, la
+        # contraloría y los supervisores de esa empresa. **El operador no se pierde**: entra
+        # como originador y su fuente sigue exigiéndolo. Una decisión que amplía no retira.
+        from ..notifications.recipients import resolver_destinatarios
         from ..notifications.service import RECORD_REJECTED, crear_notificacion
 
-        await crear_notificacion(
+        destinatarios = await resolver_destinatarios(
             self.db,
             company_id=event.company_id,
-            recipient_user_id=event.registered_by_id,
-            notification_type=RECORD_REJECTED,
-            payload={
-                "event_type": str(getattr(event.event_type, "value", event.event_type)),
-                "lot_id": event.lot_id,
-                "observations": observations,
-            },
-            related_entity_type="operational_event",
-            related_entity_id=event.id,
+            originadores=[event.registered_by_id],
+            explicitos=[event.registered_by_id],   # `docs/02 §3.14`, literal
         )
+        for user_id in destinatarios:
+            await crear_notificacion(
+                self.db,
+                company_id=event.company_id,
+                recipient_user_id=user_id,
+                notification_type=RECORD_REJECTED,
+                payload={
+                    "event_type": str(getattr(event.event_type, "value", event.event_type)),
+                    "lot_id": event.lot_id,
+                    "observations": observations,
+                },
+                related_entity_type="operational_event",
+                related_entity_id=event.id,
+            )
 
         return event
 

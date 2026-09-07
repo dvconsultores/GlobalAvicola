@@ -18,10 +18,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Notification
 
-#: Los dos tipos de `docs/02 §3.14` con disparador **y** destinatario escritos. Los otros
-#: cuatro esperan a `OD-08`; añadirlos aquí sin decidir a quién avisan sería inventar.
+#: Los cinco tipos accionables. El sexto de `docs/02 §3.14` —«lote próximo a cierre»— no
+#: figura: «próximo» no está definido en ninguna fuente y `OD-08` sigue abierta en esa mitad.
 RECORD_REJECTED = "record_rejected"
 SAP_SEND_FAILED = "sap_send_failed"
+MORTALITY_OVER_THRESHOLD = "mortality_over_threshold"
+WEIGHT_OUT_OF_STANDARD = "weight_out_of_standard"
+REVIEW_PENDING_24H = "review_pending_24h"
 
 
 async def crear_notificacion(

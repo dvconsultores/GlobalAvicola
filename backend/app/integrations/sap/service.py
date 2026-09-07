@@ -476,13 +476,35 @@ class SapService:
         Que no haya ningún analista en la empresa **no es un error**: no se avisa a nadie y el
         envío sigue su curso. La integración no puede depender de que la plantilla esté
         completa.
+
+        `OD-08` añade a los administradores, la contraloría, los supervisores y a **quienes
+        registraron los eventos** que iban en esa carga —el originador del dato, que aquí son
+        varios porque un movimiento consolidado agrupa eventos—. El `Analista SAP` no se
+        pierde: sigue exigido por su fuente y entra como destinatario explícito.
         """
+        from ...notifications.recipients import (
+            originadores_de_eventos, resolver_destinatarios,
+        )
         from ...notifications.service import (
             SAP_SEND_FAILED, crear_notificacion, usuarios_con_rol,
         )
 
-        destinatarios = await usuarios_con_rol(
+        analistas = await usuarios_con_rol(
             self.db, "Analista SAP", sap_payload.company_id)
+
+        # Quiénes cargaron los datos que se intentaba enviar. Sale del dato persistido, no de
+        # quien lanzó la exportación: pueden ser personas distintas.
+        cm = await self.db.get(models.ConsolidatedMovement,
+                               sap_payload.consolidated_movement_id)
+        originadores = await originadores_de_eventos(
+            self.db, list((cm.event_ids or []) if cm else []))
+
+        destinatarios = await resolver_destinatarios(
+            self.db,
+            company_id=sap_payload.company_id,
+            originadores=originadores,
+            explicitos=analistas,           # `docs/10 §6.2`, literal
+        )
         for user_id in destinatarios:
             await crear_notificacion(
                 self.db,

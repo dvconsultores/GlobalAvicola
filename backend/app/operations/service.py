@@ -461,6 +461,60 @@ class OperationsService:
         if alerts:
             self.db.add_all(alerts)
             await self.db.flush()
+            await self._notificar_alertas(event, alerts)
+
+    #: Las dos alertas que `docs/02 §3.14` enumera como tipos de notificación. Las otras
+    #: —temperatura y humedad fuera de rango— **no figuran ahí**, de modo que siguen siendo
+    #: alertas del lote y nada más: convertirlas sería inventar requisito.
+    ALERTAS_NOTIFICABLES = {
+        "high_mortality": "mortality_over_threshold",     # «Mortalidad > umbral configurable»
+        "weight_deviation": "weight_out_of_standard",     # «Peso fuera de estándar»
+    }
+
+    async def _notificar_alertas(self, event, alerts) -> None:
+        """Convierte en notificación las alertas que `§3.14` nombra. `GA-REM-038` / `OD-08`.
+
+        Una alerta pertenece al **lote**; una notificación, a **una persona**. No toda alerta
+        se convierte: solo las dos que la fuente normativa enumera, y solo cuando la alerta se
+        emitió de verdad —dentro de norma y sin referencia no la hay, y `GA-REM-037` sigue
+        gobernando eso—.
+
+        Los destinatarios salen de `OD-08`: quien registró el evento, los administradores, la
+        contraloría y los supervisores de esa empresa, deduplicados.
+        """
+        from ..notifications.recipients import resolver_destinatarios
+        from ..notifications.service import crear_notificacion
+
+        notificables = [a for a in alerts if a.alert_type in self.ALERTAS_NOTIFICABLES]
+        if not notificables:
+            return
+
+        destinatarios = await resolver_destinatarios(
+            self.db,
+            company_id=event.company_id,
+            originadores=[event.registered_by_id],
+        )
+        if not destinatarios:
+            return
+
+        for alerta in notificables:
+            tipo = self.ALERTAS_NOTIFICABLES[alerta.alert_type]
+            for user_id in destinatarios:
+                await crear_notificacion(
+                    self.db,
+                    company_id=event.company_id,
+                    recipient_user_id=user_id,
+                    notification_type=tipo,
+                    payload={
+                        "lot_id": event.lot_id,
+                        "message": alerta.message,
+                        "threshold_value": alerta.threshold_value,
+                        "actual_value": alerta.actual_value,
+                    },
+                    related_entity_type="operational_event",
+                    related_entity_id=event.id,
+                    evitar_duplicado_sin_leer=True,
+                )
 
     async def _alertas_de_peso(
         self,

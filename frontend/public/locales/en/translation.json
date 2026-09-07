@@ -1015,7 +1015,10 @@
     "daysAgo": "{{count}} d ago",
     "types": {
       "record_rejected": "Your record was rejected",
-      "sap_send_failed": "SAP submission failed"
+      "sap_send_failed": "SAP submission failed",
+      "mortality_over_threshold": "Mortality above threshold",
+      "weight_out_of_standard": "Weight outside standard",
+      "review_pending_24h": "Record pending review for over 24 h"
     }
   }
 }
