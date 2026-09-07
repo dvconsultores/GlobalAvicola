@@ -243,7 +243,7 @@ y se corrige sin que nadie se haya quedado fuera.
 | 2 | Usuarios existentes | A · B · C | **A** actuales · **C** cliente real | no |
 | 3 | Usuario sin unidad *(nueva)* | denegar · transversal | **`RESUELTA` · transversal → `OD-09.c`** | ~~SÍ~~ |
 | 4 | Registros clasificables | — | clasificar; ratificar vía raza | no |
-| 5 | Registros ambiguos | fail open · fail closed · cuarentena | **cuarentena** | **SÍ** |
+| 5 | Registros ambiguos | fail open · fail closed · cuarentena | **`RESUELTA` · cuarentena → `OD-10.c`** | ~~SÍ~~ |
 | 6 | Registros de doble unidad | — | **no existen**: son bilaterales | no |
 | 7 | Capacidades transversales | — | **`RESUELTA` · frontera por planos → `OD-09.b`** | ~~SÍ~~ |
 | 8 | Quién administra | — | comercial vs operativo; depende de `OD-05` | no |
@@ -251,8 +251,9 @@ y se corrige sin que nadie se haya quedado fuera.
 | 10 | No parar la operación | — | modo informe antes del filtro | no |
 
 ```
-BLOQUEANTES DE LA SPEC       1   (registros ambiguos)   — eran 3
+BLOQUEANTES DE LA SPEC       0   — eran 3
 RESUELTOS POR OD-09          2   usuario sin unidad · frontera transversal   (2026-09-07)
+RESUELTO POR OD-10           1   registros ambiguos → pendiente de clasificar
 BLOQUEANTES DEL ALTA REAL    2   (empresas y usuarios de un cliente real)
 DESAPARECIDOS POR ENV-01     0   ninguno desaparece; dos cambian de gate
 FALSOS BLOQUEANTES           1   «registros de doble unidad»

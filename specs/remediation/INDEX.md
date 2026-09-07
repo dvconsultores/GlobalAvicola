@@ -53,6 +53,7 @@ se interpretan.
 |---|---|---|---|
 | `ENV-01` | Clasificación de entorno — el desplegado es compartido de desarrollo/test/certificación, no producción | **VIGENTE** | [ENV-01](ENV-01-ENVIRONMENT-CLASSIFICATION.md) |
 | `OD-09` | Plano de control frente a unidad de negocio — visibilidad de control y acceso operativo son capacidades distintas | **VIGENTE** | [OD-09](OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md) |
+| `OD-10` | Contrato de traspaso entre unidades y clasificación pendiente — entre unidades solo pasa el contrato | **VIGENTE** | [OD-10](OD-10-HANDOFF-CONTRACT-AND-PENDING-CLASSIFICATION.md) |
 
 ## Resumen
 ```

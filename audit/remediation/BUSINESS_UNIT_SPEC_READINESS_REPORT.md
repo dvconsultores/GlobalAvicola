@@ -7,39 +7,44 @@
 ## 1. Veredicto
 
 ```
-NOT_READY_FOR_GA-REM-040_SPEC
+READY_FOR_GA-REM-040_SPEC          (2026-09-07)
 ```
 
-Faltan **dos decisiones del propietario** sin las cuales la spec tendría que inventarlas, y
-`NO SPEC = NO DEVELOPMENT` no se cumple escribiendo una spec que adivina.
+**Ningún bloqueante queda.** Las cinco decisiones que impedían escribir la spec están resueltas
+por el propietario y formalizadas.
+
+## 1 bis. Recálculo de las doce (2026-09-07)
+
+No se hereda el conteo: se recalcula decisión por decisión.
+
+| # | Decisión | Estado | ¿Bloquea la spec? | Por qué |
+|:--:|---|:--:|:--:|---|
+| `BU-D01` | contrato entre unidades | **`RESUELTA`** `B` → `OD-10.a` | **no** | decidida |
+| `BU-D01` bis | destino del despacho | **`RESUELTA`** `A` → `OD-10.b` | **no** | decidida |
+| `BU-D02` | registros sin unidad derivable | **`RESUELTA`** `C` → `OD-10.c` | **no** | decidida |
+| `BU-D03` | auditoría entre unidades | `PENDIENTE` | no | `OD-09.a` fija el control transversal y `OD-10.a` deja lo ajeno en `C`: la spec tiene regla |
+| `BU-D04` | el analista de SAP | `PENDIENTE` | no | `OD-09.a` da el mecanismo —transversalidad concedida explícitamente—; qué rol la recibe es configuración |
+| `BU-D05` | empresas y usuarios existentes | `PENDIENTE` | **no** | `ENV-01`: no hay producción real. Bloquea el **alta del primer cliente** |
+| `BU-D06` | lotes sin tipo de ave | `PENDIENTE` | no | cae en `OD-10.c`: sin clasificar → pendiente. La vía de la raza es una mejora a ratificar |
+| `BU-D07` | quién habilita y quién concede | `PENDIENTE` | no | `OD-09.b` lo sitúa en el plano de control; la spec exige **permiso**, no rol codificado. Depende de `OD-05`, abierta desde antes y que no ha bloqueado ninguna spec |
+| `BU-D08` | contratado ≠ habilitado | `PENDIENTE` | no | el propietario acotó el alcance a habilitar/deshabilitar por empresa; queda como extensión futura |
+| `BU-D09` | usuario sin unidades | **`RESUELTA`** `B` → `OD-09.c` | **no** | decidida |
+| `BU-D10` | retirar una unidad a una empresa | `PENDIENTE` **de ratificación** | no | el propietario fijó las reglas operativas: empresa `OFF` + concesión `ON` = denegar; deshabilitar **no** borra dato ni concesiones. Falta solo formalizarlo como `OD` |
+| `BU-D11` | contraloría y administración | **`RESUELTA`** `C` → `OD-09.a` | **no** | decidida |
+| `BU-D12` | qué queda fuera del filtro | **`RESUELTA`** `B` → `OD-09.b` | **no** | decidida |
 
 ```
-BU-D01   ¿qué ve cada línea cuando el producto cambia de manos?   (siete flujos)
-BU-D02   ¿quién ve un registro cuya línea no se puede determinar?
+BLOQUEANTES DE LA SPEC        0        eran 5, luego 2
+RESUELTAS                     5        + el destino del despacho
+PENDIENTES SIN BLOQUEAR       7
+BLOQUEANTES DEL ALTA REAL     1        BU-D05
+BLOQUEANTES NUEVOS            0        ninguno apareció al recalcular
 ```
 
-Las dos están desarrolladas para decisión en `audit/remediation/BU_DECISION_BRIEF_D01_D02.md`,
-con sus opciones literales, las consecuencias de cada una y una recomendación:
-
-```
-BU-D01   recomendada  B   contrato de traspaso
-         acompañante  A   el despacho declara su destino al crearse
-BU-D02   recomendada  C   pendiente de clasificar
-```
-
-**Si el propietario las acepta, no queda ningún bloqueante y `GA-REM-040` puede escribirse.**
-
-**Actualización del 2026-09-07.** Eran cinco. El propietario resolvió tres —`BU-D11 = C`,
-`BU-D12 = B`, `BU-D09 = B`—, formalizadas en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md`:
-
-```
-BU-D11  →  OD-09.a   visibilidad de control de empresa · operación por unidad
-BU-D12  →  OD-09.b   plano de control transversal · plano operativo por unidad
-BU-D09  →  OD-09.c   entra sin unidades · lo transversal que su rol permita · nada productivo
-```
-
-Con ellas quedan resueltas las fases 1, 2 y 3 de la hoja de ruta en lo que dependía de decisión.
-`BU-D05` sigue sin bloquear la spec: `ENV-01` lo sitúa en el alta del primer cliente real.
+**`BU-D10` merece una nota, porque es la única que no es limpia.** No está formalizada como `OD`,
+pero el propietario dio sus reglas operativas al autorizar esta tanda. La spec las adopta y lo
+dice; si más adelante se formaliza distinto, lo que cambia son sus criterios de aceptación, no el
+diseño.
 
 ## 2. Lo que sí está listo
 

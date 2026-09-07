@@ -500,3 +500,33 @@ CÓDIGO MODIFICADO                     ninguno
 ```
 
 `OD-05` sigue abierta y no se resuelve aquí: de ella depende quién puede conceder qué.
+
+---
+
+## `OD-10` · contrato de traspaso y clasificación pendiente (2026-09-07)
+
+| Decisión del dosier | Pregunta | Respuesta | Parte |
+|---|---|:--:|---|
+| `BU-D01` | ¿Qué sigue viendo cada línea cuando el producto cambia de manos? | **B** | `OD-10.a` |
+| `BU-D01` bis | ¿El despacho declara su destino al crearse? | **A** | `OD-10.b` |
+| `BU-D02` | ¿Quién ve un registro cuya línea no se puede determinar? | **C** | `OD-10.c` |
+
+```
+ENTRE UNIDADES SOLO PASA EL CONTRATO
+Y LO QUE NO SE PUEDE CLASIFICAR QUEDA NOMBRADO
+```
+
+`OD` aparte y no enmienda de `OD-09` porque su declaración es otra: `OD-09` trata de **quién**
+atraviesa el eje —control frente a operación—, y `OD-10` de **qué pasa** entre unidades en el
+plano operativo. Las dos preguntas van juntas porque `BU-D02` es anterior a `BU-D01`: un registro
+que no se sabe de quién es no puede entrar en ningún contrato.
+
+`P-10` se conserva: la **cadena** generacional es categoría `B` y se ve entera; el **interior** de
+cada eslabón queda en `C`.
+
+```
+BLOQUEANTES DE LA SPEC GA-REM-040     2  →  0
+DECISIONES DEL DOSIER RESUELTAS       5 / 12    (las otras 7 no bloquean)
+CERTIFICACIÓN FUNCIONAL               14 / 15   sin cambios
+CÓDIGO MODIFICADO                     ninguno
+```

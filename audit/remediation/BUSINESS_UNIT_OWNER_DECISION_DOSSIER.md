@@ -126,7 +126,10 @@ sanitario. El interior del otro —su mortalidad diaria, su consumo, sus costos�
 **Si no se decide.** No se puede construir. Cualquier elección por omisión rompe un proceso
 certificado o vacía la capacidad de contenido.
 
-**Estado · `PENDIENTE DE PROPIETARIO` · BLOQUEANTE**
+**Estado · `RESUELTA` — el propietario eligió la **opción B** el 2026-09-07, y **`A`** en la
+pregunta acompañante del destino del despacho. Formalizada en
+`specs/remediation/OD-10-HANDOFF-CONTRACT-AND-PENDING-CLASSIFICATION.md` como `OD-10.a` y
+`OD-10.b`.** Entre unidades solo pasa el contrato; el destino se declara al crear el despacho.
 
 ---
 
@@ -156,7 +159,10 @@ silenciado en una de las dos direcciones.
 **Si no se decide.** Se elegirá una de las dos malas sin querer: o una puerta abierta, o
 inspecciones que se evaporan.
 
-**Estado · `PENDIENTE DE PROPIETARIO` · BLOQUEANTE**
+**Estado · `RESUELTA` — el propietario eligió la **opción C** el 2026-09-07. Formalizada como
+`OD-10.c`.** Lo no clasificable queda **pendiente de clasificar**: lo ven quien lo registró y la
+administración autorizada, con clasificación explícita y auditada en `P-09`. No es una quinta
+unidad, es un estado.
 
 ---
 
@@ -375,7 +381,6 @@ que más fácil se olvida al construir, y la única cuya fuga **no deja rastro y
 - No crea `GA-REM-040`. Se recomienda; no se escribe.
 - No modifica ninguna certificación. **`FUNCIONAL 14/15` sigue igual.**
 - No asigna identificadores `OD-` definitivos.
-- **Ya no es cierto que no decida nada.** El 2026-09-07 el propietario resolvió `BU-D09`,
-  `BU-D11` y `BU-D12`, formalizadas en `OD-09`. **Las otras nueve siguen
-  `PENDIENTE DE PROPIETARIO`**, y de ellas `BU-D01` y `BU-D02` son las dos que aún bloquean
-  la spec.
+- **Ya no es cierto que no decida nada.** El 2026-09-07 el propietario resolvió cinco:
+  `BU-D09`, `BU-D11` y `BU-D12` en `OD-09`; `BU-D01` y `BU-D02` en `OD-10`. **Las otras siete
+  siguen `PENDIENTE DE PROPIETARIO`, y ninguna bloquea la spec.**

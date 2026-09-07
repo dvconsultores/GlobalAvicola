@@ -15,8 +15,9 @@ UNIDAD DE NEGOCIO  una línea        Progenitoras · Reproductora ·     NO EXIS
 
 | # | Decisión | Origen | Recomendación | Bloquea | Estado |
 |:--:|---|:--:|---|:--:|:--:|
-| `BU-D01` | Qué ve cada línea al traspasar el producto | auditoría 1 | contrato de traspaso | **spec** | `PENDIENTE` |
-| `BU-D02` | Registros sin línea derivable (inspecciones) | auditoría 2 | pendiente de clasificar | **spec** | `PENDIENTE` |
+| `BU-D01` | Qué ve cada línea al traspasar el producto | auditoría 1 | contrato de traspaso | ~~spec~~ | **`RESUELTA` · B → `OD-10.a`** |
+| `BU-D01` bis | ¿El despacho declara su destino al crearse? | esta serie | sí, al crearlo | ~~spec~~ | **`RESUELTA` · A → `OD-10.b`** |
+| `BU-D02` | Registros sin línea derivable (inspecciones) | auditoría 2 | pendiente de clasificar | ~~spec~~ | **`RESUELTA` · C → `OD-10.c`** |
 | `BU-D03` | Historial de auditoría entre líneas | auditoría 3 | completo solo con permiso de auditoría | — | `PENDIENTE` |
 | `BU-D04` | El analista de SAP ve las cuatro | auditoría 4 | excepción declarada y probada | — | `PENDIENTE` |
 | `BU-D05` | Empresas y usuarios que ya existen | auditoría 5 | habilitado hoy · declarado en el alta real | **alta real** | `PENDIENTE` |
@@ -32,10 +33,10 @@ UNIDAD DE NEGOCIO  una línea        Progenitoras · Reproductora ·     NO EXIS
 DECISIONES              12       la auditoría había enumerado 8
 NUEVAS                   4       D09 · D10 · D11 · D12
 DESAPARECIDAS            0       ninguna de las ocho se cae
-BLOQUEAN LA SPEC         2       D01 · D02          (eran 5, el 2026-09-07)
+BLOQUEAN LA SPEC         0       eran 5 · fueron 2 · ninguna queda
 BLOQUEAN EL ALTA REAL    1       D05
-DECIDIDAS                3       D09 · D11 · D12  →  OD-09  (2026-09-07)
-PENDIENTES               9
+DECIDIDAS                5       D09 D11 D12 → OD-09 · D01 D02 → OD-10   (2026-09-07)
+PENDIENTES               7       D03 D04 D05 D06 D07 D08 D10 — ninguna bloquea
 ```
 
 ## 1 bis. Lo que el propietario resolvió el 2026-09-07
@@ -106,11 +107,9 @@ una regla de lectura.
 ## 6. El orden en que conviene decidirlas
 
 ```
-PRIMERO   BU-D11   porque es la única que puede romper algo ya certificado
-          BU-D12   porque de ella depende qué significa «no tener líneas»
-          BU-D09
-LUEGO     BU-D01   la más larga: siete flujos, con su propia matriz
-          BU-D02
-DESPUÉS   BU-D03 · BU-D04 · BU-D06 · BU-D07 · BU-D08 · BU-D10
+HECHO     BU-D11 · BU-D12 · BU-D09     →  OD-09   (2026-09-07)
+HECHO     BU-D01 · BU-D02              →  OD-10   (2026-09-07)
+QUEDAN    BU-D03 · BU-D04 · BU-D06 · BU-D07 · BU-D08 · BU-D10
+          ninguna bloquea la spec: se resuelven durante la construcción
 AL FINAL  BU-D05   antes del primer cliente real, no antes de construir
 ```

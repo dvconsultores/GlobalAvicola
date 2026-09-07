@@ -6,9 +6,21 @@
 QUÉ ES ESTO       un documento para decidir
 QUÉ NO ES         no es spec · no contiene tareas de implementación
                   no crea tablas · no cambia código · no cambia certificaciones
-ESTADO            las dos PENDING_OWNER
-BLOQUEANTES       2 de 2 — son las únicas que quedan para GA-REM-040
+ESTADO            CONTESTADO el 2026-09-07
+BLOQUEANTES       0 — eran las dos últimas
 ```
+
+> ## Respondido
+>
+> ```
+> BU-D01                  = B     contrato de traspaso      →  OD-10.a
+> destino del despacho    = A     declarado al crearlo      →  OD-10.b
+> BU-D02                  = C     pendiente de clasificar   →  OD-10.c
+> ```
+>
+> Las tres recomendaciones de este documento fueron las elegidas. La fuente vigente es
+> `specs/remediation/OD-10-HANDOFF-CONTRACT-AND-PENDING-CLASSIFICATION.md`; este documento se
+> conserva como el análisis que llevó a ellas.
 
 ## Lo que ya está decidido, y sirve de suelo a estas dos
 

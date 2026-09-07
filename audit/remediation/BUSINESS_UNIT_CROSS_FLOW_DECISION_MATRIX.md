@@ -337,6 +337,24 @@ Excepción declarada en    2 / 7   (flujos 5 y 6)
 Opción C recomendada en   0 / 7
 ```
 
+## 6 bis. Resuelto · `OD-10.a` y `OD-10.b` (2026-09-07)
+
+El propietario eligió la **opción B** para los siete flujos, y la **opción A** para el destino del
+despacho:
+
+```
+CROSS-BUSINESS-UNIT VISIBILITY  =  LIMITED HANDOFF CONTRACT
+EL DESTINO SE DECLARA AL CREAR EL DESPACHO
+```
+
+Las cuatro categorías de `§3` —`A` propio, `B` traspaso, `C` interno ajeno, `D` agregado— pasan a
+ser normativas. La clasificación campo por campo de `B` frente a `C`, para cada flujo, es trabajo
+de `GA-REM-040`.
+
+Las excepciones de los flujos 5 y 6 quedan cubiertas: la del analista de SAP por el mecanismo de
+`OD-09.a` —transversalidad concedida explícitamente—, y la de revisión y aprobación por
+`OD-09.a` directamente.
+
 ## 7. Lo que este documento NO hace
 
 - No crea `BusinessUnit`, ni ninguna tabla, ni ninguna migración.
