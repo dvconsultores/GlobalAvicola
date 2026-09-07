@@ -507,3 +507,74 @@ DESPLEGADO       backend sí · frontend no
 
 Nadie debe leer «el canal de `P-14` funciona» como «hoy hay campana en
 `avicola.globaldv.net`». La habrá cuando `R-99` se cierre.
+
+---
+
+# ADDENDUM · `R-99` acotado: el artefacto del frontend está congelado (2026-09-07)
+
+Cuarta medición consecutiva, y la primera que aporta un dato nuevo.
+
+## Lo medido
+
+| Comprobación | Resultado |
+|---|:--:|
+| `API` responde (`/api/v1/lots` → `401`) | **HEALTHY** |
+| Backend de esta entrega (`/api/v1/masters/areas` → `401`) | **DESPLEGADO** |
+| `GA-REM-027` · backend sano y API pública rota | **NO** — no procede interrumpir |
+| Frontend de esta entrega | **NO DESPLEGADO** |
+
+```
+frontend local ......... 940 claves i18n
+frontend desplegado .... 866        ← el mismo número desde el 2026-09-06
+```
+
+## El dato nuevo
+
+```
+GET /            →  Last-Modified: Sat, 05 Sep 2026 14:09:27 GMT
+
+artefacto servido ....... /assets/index-D5dwMXuP.js
+artefacto de un build local limpio ... /assets/index-BvOqMhpi.js
+```
+
+El `index.html` del entorno compartido lleva **sin cambiar desde el 5 de septiembre**, con tres
+entregas de frontend publicadas después: `GA-REM-034` (roles), `GA-REM-037` (curvas) y
+`GA-REM-038`/`GA-REM-039` (notificaciones y áreas).
+
+Y el build local **funciona**: `vite build` compila sin errores y produce un artefacto distinto
+del servido. De modo que el problema no está en el código ni en la compilación.
+
+## Lo que esto acota, y lo que no
+
+```
+ACOTADO      el artefacto servido está congelado desde el 2026-09-05
+             el backend, en cambio, se despliega con normalidad en cada entrega
+             el código compila: el fallo no es de build
+
+NO PROBADO   por qué. Sin acceso a los registros de ejecución del flujo
+             (`gh` no está disponible en este entorno) no se afirma la causa.
+```
+
+No se dice «caché», ni «Watchtower», ni «etiqueta `:latest`»: serían conjeturas. Lo que se
+afirma es la fecha del artefacto y el contraste con el backend.
+
+## Clasificación
+
+```
+R-99 = BLOCKED_BY_OUT_OF_SCOPE_DEPLOYMENT
+```
+
+Resolverlo exige tocar el mecanismo de despliegue, que `EX-01` deja fuera de alcance. **No se
+ha modificado nada**: ni Watchtower, ni la etiqueta de imagen, ni la política de descarga, ni
+los disparadores. Se detiene aquí y se deja el hallazgo con su evidencia.
+
+## Consecuencia sobre `P-14`
+
+```
+CERTIFICADO             en el entorno de certificación aislado, con evidencia propia
+RUNTIME COMPARTIDO      backend PASS · interfaz NOT VERIFIED
+```
+
+La certificación de `P-14` es del entorno aislado, que es donde el programa ejecuta sus suites
+desde `GA-REM-014`. Nadie debe leer «`P-14` certificado» como «hoy hay campana en
+`avicola.globaldv.net`»: la habrá cuando `R-99` se cierre.
