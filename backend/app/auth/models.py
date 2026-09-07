@@ -20,6 +20,10 @@ class User(Base):
     phone: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     hashed_password: Mapped[str] = mapped_column(String(255))
     role_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("roles.id"), nullable=True)
+    #: `GA-REM-039` / `OD-08`. El área funcional a la que pertenece. Nulable: hay usuarios
+    #: anteriores a esta spec, y asignarles un área por su rol sería fabricar dato.
+    area_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("areas.id"), nullable=True, index=True)
     view_type: Mapped[str] = mapped_column(String(10), default="web")  # "mobile" or "web"
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     last_login: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)

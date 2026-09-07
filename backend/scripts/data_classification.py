@@ -81,6 +81,19 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
         "Ciclo productivo avícola. Sin `company_id`; `lot_phases` depende de él. "
         "Ningún código referencia sus `code`, luego es dato puro, pero es dato del dominio.",
     ),
+    # `GA-REM-039` / `OD-08`. El área es **estructura organizativa**, del mismo orden que un
+    # rol: describe cómo se organiza la empresa, no qué pasó en ella. Por eso se conserva.
+    #
+    # Y hay una razón concreta además de la conceptual: `users.area_id` apunta aquí, y los
+    # usuarios se conservan. El `TRUNCATE ... CASCADE` de la herramienta de reset vacía
+    # **toda** tabla que referencie a la truncada, sin mirar el `ON DELETE`, de modo que
+    # borrar las áreas se llevaría por delante a los usuarios. `T-025-04` lo detecta, y la
+    # respuesta correcta no es aflojar la guarda sino clasificar bien: un organigrama no es
+    # historia operativa ficticia.
+    "areas": (
+        Categoria.CONFIGURATION_REQUIRED,
+        "Estructura organizativa de la empresa. `users.area_id` depende de ella.",
+    ),
     # ── Maestros que crea el cliente ─────────────────────────────────────────
     **{
         tabla: (

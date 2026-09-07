@@ -437,9 +437,12 @@ class ApprovalService(SegregacionMixin):
         from ..notifications.recipients import resolver_destinatarios
         from ..notifications.service import RECORD_REJECTED, crear_notificacion
 
+        from ..notifications.sla import _area_del_lote
+
         destinatarios = await resolver_destinatarios(
             self.db,
             company_id=event.company_id,
+            area_id=await _area_del_lote(self.db, event.lot_id),
             originadores=[event.registered_by_id],
             explicitos=[event.registered_by_id],   # `docs/02 §3.14`, literal
         )

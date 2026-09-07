@@ -499,9 +499,12 @@ class SapService:
         originadores = await originadores_de_eventos(
             self.db, list((cm.event_ids or []) if cm else []))
 
+        from ...notifications.sla import _area_del_lote
+
         destinatarios = await resolver_destinatarios(
             self.db,
             company_id=sap_payload.company_id,
+            area_id=await _area_del_lote(self.db, cm.lot_id if cm else None),
             originadores=originadores,
             explicitos=analistas,           # `docs/10 §6.2`, literal
         )

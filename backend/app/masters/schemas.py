@@ -608,3 +608,34 @@ class WeightCurveRead(BaseModel):
 
 class WeightCurveActivate(BaseModel):
     is_active: bool
+
+
+# ============================================================
+# Área funcional · `GA-REM-039` / `OD-08`
+# ============================================================
+
+class AreaBase(BaseModel):
+    company_id: Optional[int] = None
+    name: str = Field(..., min_length=1, max_length=200)
+    code: Optional[str] = None
+    description: Optional[str] = None
+
+
+class AreaCreate(AreaBase):
+    pass
+
+
+class AreaRead(AreaBase):
+    id: int
+    is_active: bool
+    created_at: datetime
+    model_config = {"from_attributes": True}
+
+
+class AreaUpdate(BaseModel):
+    """Sin borrado: un área con usuarios, lotes o avisos históricos se da de baja."""
+    company_id: Optional[Any] = None
+    name: Optional[Any] = None
+    code: Optional[Any] = None
+    description: Optional[Any] = None
+    is_active: Optional[bool] = None

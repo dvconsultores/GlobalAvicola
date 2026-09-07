@@ -18,6 +18,13 @@ class LotBase(BaseModel):
     # publicar una revisión no puede cambiar la referencia contra la que ya se juzgó a
     # este lote. Si se omite, el alta toma la versión activa de su línea (`AC09`).
     weight_curve_id: Optional[int] = None
+    #: `GA-REM-039` / `OD-08`. Ámbito funcional del lote; por él resuelven su área los seis
+    #: avisos de `P-14`.
+    area_id: Optional[int] = None
+    #: `GA-REM-038` enmienda B / `OD-08`. Cuándo se **prevé** cerrar. No es `end_date`, que es
+    #: la fecha real y la fija `close_lot`: usar aquélla para pronosticar avisaría de algo que
+    #: ya ocurrió. Va en la base para que el alta la acepte y la lectura la devuelva.
+    planned_close_date: Optional[datetime] = None
     breed_id: Optional[int] = None
     lot_code: str = Field(..., min_length=1, max_length=100)
     bird_type: Optional[str] = None
@@ -59,8 +66,12 @@ class LotUpdate(BaseModel):
     house_id: Optional[int] = None
     genetic_line_id: Optional[int] = None
     breed_id: Optional[int] = None
+    area_id: Optional[int] = None
     start_date: Optional[datetime] = None
     end_date: Optional[datetime] = None
+    #: Replanificar es legítimo y no reescribe la historia: los avisos ya emitidos se
+    #: conservan como evidencia de lo que se sabía entonces.
+    planned_close_date: Optional[datetime] = None
 
 
 class LotRead(LotBase):
@@ -68,6 +79,7 @@ class LotRead(LotBase):
     status: str
     activation_type: Optional[str] = None
     start_date: Optional[datetime] = None
+    #: La real. No se confunde con `planned_close_date`, que viaja en `LotBase`.
     end_date: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime

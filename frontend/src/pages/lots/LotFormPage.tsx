@@ -23,6 +23,8 @@ const schema = z.object({
  farm_id: z.coerce.number().min(1, 'Requerido'),
  house_id: z.coerce.number().optional().nullable(),
  genetic_line_id: z.coerce.number().optional().nullable(),
+ area_id: z.coerce.number().optional().nullable(),
+ planned_close_date: z.string().optional().nullable(),
  breed_id: z.coerce.number().optional().nullable(),
  start_date: z.string().optional(),
  sap_reference: z.string().optional(),
@@ -42,6 +44,7 @@ export default function LotFormPage() {
  const [houses, setHouses] = useState<SelectOption[]>([])
  const [lines, setLines] = useState<SelectOption[]>([])
  const [breeds, setBreeds] = useState<SelectOption[]>([])
+ const [areas, setAreas] = useState<SelectOption[]>([])
  const [loadingMasters, setLoadingMasters] = useState(true)
 
  const {
@@ -79,7 +82,7 @@ export default function LotFormPage() {
  useEffect(() => {
  const load = async () => {
  try {
- const [farmRes, houseRes, lineRes, breedRes] = await Promise.allSettled([
+ const [farmRes, houseRes, lineRes, breedRes, areaRes] = await Promise.allSettled([
  api.get('/masters/farms?limit=100'),
  api.get('/masters/houses?limit=100'),
  api.get('/masters/genetic-lines?limit=100'),
@@ -176,6 +179,16 @@ export default function LotFormPage() {
  type="date"
  error={errors.start_date?.message}
  {...register('start_date')}
+ />
+
+ {/* `GA-REM-038` enmienda B / `OD-08`. La fecha **prevista** de cierre, que no es
+ `end_date`: aquélla la fija el cierre real. Se captura aquí para que el aviso de
+ «lote próximo a cierre» tenga contra qué medir. */}
+ <Input
+ label={t('lots.plannedClose')}
+ type="date"
+ error={errors.planned_close_date?.message}
+ {...register('planned_close_date')}
  />
  </CardBody>
  </Card>

@@ -23,11 +23,25 @@ from sqlalchemy.ext.asyncio import AsyncSession
 #:
 #: No hay entrada para «gerente del área»: no existe rol de gerencia ni modelo de área. Se
 #: declara en la matriz de correspondencia en lugar de sustituirse por otra cosa.
-FUNCIONES_OD08 = {
+#: Funciones que alcanzan a **toda la empresa**, sin importar el área.
+FUNCIONES_DE_EMPRESA = {
     "administrador": "administrador",   # Administrador de Empresa · Super Administrador
     "contralor": "contralor",           # Contralor Avícola
+}
+
+#: Funciones acotadas al **área** del evento. `GA-REM-039`: la capacidad la da el rol y la
+#: pertenencia, `User.area_id`. Sin área asignada no son gerente ni supervisor de nada.
+#:
+#: El rol de gerencia no existe todavía en el catálogo —`docs/02 §6.1` no lo tiene— y no se
+#: crea aquí: `GA-REM-034` permite que la empresa lo cree como dato. Si no existe, nadie
+#: entra por ese concepto y nada falla.
+FUNCIONES_DE_AREA = {
+    "gerente": "gerente",               # el que la empresa cree con `GA-REM-034`
     "supervisor": "supervisor",         # Supervisor Avícola
 }
+
+#: Compatibilidad de lectura: la unión de las dos, para quien inspeccione el módulo.
+FUNCIONES_OD08 = {**FUNCIONES_DE_EMPRESA, **FUNCIONES_DE_AREA}
 
 
 def _sin_acentos(texto: str) -> str:
@@ -37,40 +51,66 @@ def _sin_acentos(texto: str) -> str:
     )
 
 
-async def _por_funcion(db: AsyncSession, company_id: int) -> set[int]:
+async def _por_funcion(
+    db: AsyncSession, company_id: int, area_id: Optional[int] = None
+) -> set[int]:
     """Usuarios activos **de esa empresa** cuyo rol representa una función de `OD-08`.
+
+    Dos alcances distintos, y la diferencia importa:
+
+        administración y contraloría   toda la empresa
+        gerencia y supervisión         solo su área  (`GA-REM-039`)
+
+    Sin el segundo filtro, el gerente del área comercial recibiría los avisos de producción,
+    que es justo lo que el modelo de áreas viene a evitar.
 
     El filtro de empresa no es una comodidad: el Super Administrador se siembra con
     `company_id = None` y su nombre de rol contiene «administrador». Sin esta condición
-    recibiría el detalle operativo de todas las empresas, que es la fuga exacta que hay que
-    evitar. `OD-08` dice «de la empresa correspondiente».
+    recibiría el detalle operativo de todas las empresas. `OD-08` dice «de la empresa
+    correspondiente».
     """
     from ..auth.models import Role, User
 
     filas = (await db.execute(
-        select(User.id, Role.name)
+        select(User.id, Role.name, User.area_id)
         .join(Role, Role.id == User.role_id)
         .where(User.company_id == company_id, User.is_active.is_(True))
     )).all()
 
-    fragmentos = tuple(FUNCIONES_OD08.values())
-    return {
-        user_id for user_id, nombre_rol in filas
-        if nombre_rol and any(f in _sin_acentos(nombre_rol) for f in fragmentos)
-    }
+    de_empresa = tuple(FUNCIONES_DE_EMPRESA.values())
+    de_area = tuple(FUNCIONES_DE_AREA.values())
+
+    elegidos: set[int] = set()
+    for user_id, nombre_rol, area_del_usuario in filas:
+        if not nombre_rol:
+            continue
+        rol = _sin_acentos(nombre_rol)
+        if any(f in rol for f in de_empresa):
+            elegidos.add(user_id)
+            continue
+        # Gerencia y supervisión exigen **las dos cosas**: la capacidad y la pertenencia.
+        # Un evento sin área no alcanza a ninguno, y es correcto: no hay área que los
+        # identifique.
+        if area_id is not None and area_del_usuario == area_id and any(
+            f in rol for f in de_area
+        ):
+            elegidos.add(user_id)
+    return elegidos
 
 
 async def resolver_destinatarios(
     db: AsyncSession,
     *,
     company_id: int,
+    area_id: Optional[int] = None,
     originadores: Iterable[Optional[int]] = (),
     explicitos: Iterable[Optional[int]] = (),
 ) -> list[int]:
     """El conjunto de destinatarios de un evento normativo de `P-14`.
 
     ```
-    explícitos de fuentes anteriores ∪ originador ∪ administradores ∪ contraloría ∪ supervisor
+    explícitos ∪ originador ∪ administradores ∪ contraloría        toda la empresa
+                 ∪ gerente del área ∪ supervisores del área         solo `area_id`
         filtrado por  empresa del evento  y  usuario activo
         DISTINCT por user_id
     ```
@@ -87,7 +127,7 @@ async def resolver_destinatarios(
     El originador llega como identificador **persistido** —`registered_by_id`—, nunca como
     «el usuario autenticado»: el aviso puede generarse mucho después y por otra persona.
     """
-    destinatarios = await _por_funcion(db, company_id)
+    destinatarios = await _por_funcion(db, company_id, area_id)
 
     # Los explícitos y los originadores se comprueban contra la empresa igual que el resto:
     # un identificador de otra empresa no entra por venir «recomendado».

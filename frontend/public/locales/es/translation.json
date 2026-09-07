@@ -329,7 +329,8 @@
     "transports": "Transportes",
     "processingPlants": "Plantas de Beneficio",
     "rejectionReasons": "Motivos de Rechazo",
-    "correctionTypes": "Tipos de Corrección"
+    "correctionTypes": "Tipos de Corrección",
+    "areas": "Áreas Funcionales"
   },
   "review": {
     "center": "Centro de Revisión",
@@ -556,7 +557,9 @@
     "lastNamePlaceholder": "Apellido *",
     "emailPlaceholder": "Email *",
     "phonePlaceholder": "Teléfono",
-    "passwordPlaceholder": "Contraseña *"
+    "passwordPlaceholder": "Contraseña *",
+    "area": "Área funcional",
+    "noArea": "Sin área"
   },
   "profile": {
     "title": "Perfil",
@@ -849,7 +852,9 @@
     "transitionDate": "Fecha de transición",
     "populationMale": "Población machos",
     "populationFemale": "Población hembras",
-    "end": "Cierre"
+    "end": "Cierre",
+    "plannedClose": "Fecha prevista de cierre",
+    "selectArea": "Seleccionar área..."
   },
   "phases": {
     "rearing": "Fase Cría",
@@ -1018,7 +1023,8 @@
       "sap_send_failed": "Falló el envío a SAP",
       "mortality_over_threshold": "Mortalidad sobre el umbral",
       "weight_out_of_standard": "Peso fuera del estándar",
-      "review_pending_24h": "Registro pendiente de revisión hace más de 24 h"
+      "review_pending_24h": "Registro pendiente de revisión hace más de 24 h",
+      "lot_near_close": "Lote próximo a cierre"
     }
   }
 }

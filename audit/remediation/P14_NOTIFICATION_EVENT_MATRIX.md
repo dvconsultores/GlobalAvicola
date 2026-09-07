@@ -20,14 +20,30 @@ quién**; no resolvió **cuándo**, que sigue saliendo de las fuentes de cada ev
 
 ## 2. Los seis
 
-| # | Nombre literal (`docs/02 §3.14`) | Disparador | Originador del dato | Condición | Estado |
+| # | Nombre literal (`docs/02 §3.14`) | Disparador | Originador del dato | Área | Estado |
 |:--:|---|---|---|---|:--:|
-| 1 | **Registro pendiente de revisión > 24h** | el paso del tiempo sobre un evento en `pending_review` | `OperationalEvent.registered_by_id` | **objetiva y normativa**: 24 h desde que entró en `pending_review`, momento que consta en `AuditLog.new_state = 'pending_review'` | **ACTIONABLE** |
-| 2 | **Registro rechazado (notificar al operador)** | `review/service.py:409` — único punto que asigna `REJECTED` | `OperationalEvent.registered_by_id` | inmediata | **ACTIONABLE** |
-| 3 | **Mortalidad > umbral configurable** | `operations/service.py:397` — alerta `high_mortality` | `OperationalEvent.registered_by_id` | umbral en `settings.MORTALITY_ALERT_WARNING_PCT` (**configurable**, como exige el nombre) | **ACTIONABLE** |
-| 4 | **Peso fuera de estándar** | `operations/service.py` — alerta `weight_deviation` (`GA-REM-037`) | `OperationalEvent.registered_by_id` | fuera del rango de la curva; `WITHIN_STANDARD` y `NO_REFERENCE` **no** disparan | **ACTIONABLE** |
-| 5 | **Error de envío SAP** | `sap/service.py:367,451` — `PayloadStatus.FAILED` | los `registered_by_id` de los eventos de `ConsolidatedMovement.event_ids` | inmediata | **ACTIONABLE** |
-| 6 | **Lote próximo a cierre** | — | `Lot` no tiene originador; el lote no lo tiene | **«próximo» no está definido en ninguna fuente** | **BLOCKED_BY_OWNER_DECISION** |
+| 1 | **Registro pendiente de revisión > 24h** | `notifications/sla.py` · 24 h desde la transición, tomada de `AuditLog.new_state = 'pending_review'` | `OperationalEvent.registered_by_id` | `event.lot_id → Lot.area_id` | **CUBIERTO** |
+| 2 | **Registro rechazado (notificar al operador)** | `review/service.py:409` — único punto que asigna `REJECTED` | `OperationalEvent.registered_by_id` | `event.lot_id → Lot.area_id` | **CUBIERTO** |
+| 3 | **Mortalidad > umbral configurable** | `operations/service.py:397` — alerta `high_mortality`, umbral en `settings` | `OperationalEvent.registered_by_id` | `event.lot_id → Lot.area_id` | **CUBIERTO** |
+| 4 | **Peso fuera de estándar** | `operations/service.py` — alerta `weight_deviation` (`GA-REM-037`) | `OperationalEvent.registered_by_id` | `event.lot_id → Lot.area_id` | **CUBIERTO** |
+| 5 | **Error de envío SAP** | `sap/service.py:367,451` — `PayloadStatus.FAILED` | `ConsolidatedMovement.event_ids → registered_by_id` | `ConsolidatedMovement.lot_id → Lot.area_id` | **CUBIERTO** |
+| 6 | **Lote próximo a cierre** | `notifications/sla.py` · `0 <= días hasta planned_close_date <= 3` | quien dio de alta el lote, según `AuditLog` | `Lot.area_id`, directo | **CUBIERTO** |
+
+```
+6 / 6 disparadores computables
+6 / 6 reglas de destinatario resolubles
+6 / 6 integraciones probadas
+```
+
+## 2 bis. Los dos que se desbloquearon, y en qué orden
+
+```
+1ª tanda de OD-08 (destinatarios)   →  1 · 3 · 4 pasan a cubiertos
+2ª tanda de OD-08 (área + cierre)   →  6 pasa a cubierto
+```
+
+El evento 6 esperaba una definición que ninguna fuente daba. `OD-08` la dio —tres días antes
+de la fecha prevista— y con ella dejó de ser adivinanza.
 
 ## 3. El evento 1 sí tiene umbral, y por eso deja de estar bloqueado
 
@@ -55,7 +71,7 @@ lo que existe—.
 **una sola vez** por evento y destinatario, con idempotencia, y se registra que la recurrencia
 es un hueco de requisito. No se inventa una repetición diaria.
 
-## 4. El evento 6 sigue bloqueado, y por qué exactamente
+## 4. El evento 6, resuelto — y lo que hubo que añadir para poder resolverlo
 
 Se buscó en toda la jerarquía documental una definición de «próximo»:
 
@@ -64,10 +80,12 @@ near close · closing soon · lot closure · expected close · planned close
 end date · production age · cycle duration · días antes de cierre
 ```
 
-La única aparición de la frase en el repositorio es la línea de `docs/02 §3.14` que la enumera.
-No hay definición.
+Cuando se escribió la primera versión de esta matriz, la única aparición de la frase en el
+repositorio era la línea de `docs/02 §3.14` que la enumera. **`OD-08` la definió**: faltan tres
+días calendario para la fecha prevista de cierre.
 
-Y el modelo tampoco la deja derivar:
+Lo que el modelo seguía sin tener era la fecha prevista, y por eso se añadió `planned_close_date`
+—nulable, distinta de `end_date`—. Lo que **no** se hizo fue derivarla:
 
 | Campo | Qué es | ¿Sirve? |
 |---|---|:--:|
@@ -75,26 +93,21 @@ Y el modelo tampoco la deja derivar:
 | `Lot.start_date` | inicio del ciclo | por sí sola, no |
 | `ProductivePhase.duration_days` | duración típica de una fase (140 d en Cría) | **no sin fuente** — usarla equivaldría a decidir que el cierre previsto es `start_date + duration_days`, que ninguna fuente dice |
 
-No existe `planned_end_date` ni equivalente. Elegir «7 días antes» o derivar la fecha de la
-duración de fase sería inventar el requisito, que es justo lo que `§22` prohíbe.
+La fecha la pone quien planifica. Y la ventana es `0..3` en vez de `== 3` porque con igualdad
+el aviso solo saldría si el evaluador corriera exactamente ese día: con el sistema apagado, no
+saldría nunca.
 
 ## 5. Recuento
 
 ```
-6 eventos normativos
-  5 ACTIONABLE                      1 · 2 · 3 · 4 · 5
-  1 BLOCKED_BY_OWNER_DECISION       6 · «lote próximo a cierre»
+6 eventos normativos · 6 CUBIERTOS
 ```
-
-De los cinco accionables, dos ya estaban implementados (`2` y `5`) y les faltaba ampliar
-destinatarios; tres se implementan ahora (`1`, `3`, `4`).
 
 ## 6. Lo que sigue sin decidirse
 
 ```
-OD-08 · semántica temporal      ¿qué es «lote próximo a cierre»?  ABIERTA
-OD-08 · recurrencia del aviso   ¿el de «> 24h» se repite?         ABIERTA (se implementa una vez)
+recurrencia del aviso de «> 24h»   ¿una vez o mientras siga pendiente?
 ```
 
-Ambas son del propietario. La **tecnología** del disparador temporal no lo es: se resuelve con
-la arquitectura existente, sin introducir `Celery`, `Redis` ni colas.
+Ninguna fuente lo dice, y mientras tanto se emite **una vez**, con idempotencia. Es un hueco de
+requisito registrado, no una decisión nuestra. No bloquea `P-14`: el aviso existe y llega.

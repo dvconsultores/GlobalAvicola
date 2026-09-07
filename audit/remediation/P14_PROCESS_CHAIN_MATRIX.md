@@ -27,14 +27,14 @@ esa empresa, deduplicados.
 | 5 | **Mortalidad > umbral configurable** | alerta `high_mortality`, umbral en `settings` | `OD-08` | **PASS** |
 | 6 | **Peso fuera de estándar** | alerta `weight_deviation` (`GA-REM-037`) | `OD-08` | **PASS** |
 | 7 | **Error de envío SAP** | `sap/service.py:367,451` | `Analista SAP` **∪** `OD-08` | **PASS** |
-| 8 | **Lote próximo a cierre** | **no existe**; «próximo» sin definir en ninguna fuente | — | **BLOCKED_BY_OWNER_DECISION** |
+| 8 | **Lote próximo a cierre** | `notifications/sla.py` · `0 <= días hasta `planned_close_date` <= 3` | `OD-08`, con el área del lote | **PASS** |
 
 ### Y una función de `OD-08` que no se puede resolver
 
 | Función | Estado |
 |---|:--:|
-| persona que cargó el dato · administradores · contraloría · supervisor | **PASS** |
-| **gerente del área** | **BLOCKED_BY_MODEL_GAP** — no hay áreas ni rol de gerencia |
+| persona que cargó el dato · administradores · contraloría | **PASS** |
+| **gerente del área** · **supervisor del área** | **PASS** — `GA-REM-039` |
 
 ## 3. El ciclo de vida del aviso
 
@@ -79,7 +79,7 @@ su exención de tenencia haría pasar la prueba sin comprobar nada.
 | 27 | Los administradores de la empresa reciben | **PASS** |
 | 28 | La contraloría recibe | **PASS** |
 | 29 | Los supervisores reciben | **PASS** |
-| 30 | El gerente del área | **BLOCKED_BY_MODEL_GAP** |
+| 30 | El gerente y los supervisores **del área del evento** reciben; los de otra área, no | **PASS** |
 | 31 | El operador sigue recibiendo el rechazo (`docs/02 §3.14`) | **PASS** |
 | 32 | El `Analista SAP` sigue recibiendo el error de envío (`docs/10 §6.2`) | **PASS** |
 | 33 | Quien cumple dos condiciones recibe **un** aviso | **PASS** |
@@ -88,34 +88,35 @@ su exención de tenencia haría pasar la prueba sin comprobar nada.
 ## 6. Recuento
 
 ```
-34 pasos · PASS 32 · BLOQUEADOS 2
+34 pasos · PASS 34 · BLOQUEADOS 0
     2 de canal
-    5 de 6 tipos normativos          ← queda «lote próximo a cierre»
+    6 de 6 tipos normativos
    13 de ciclo de vida y aislamiento
     8 de experiencia
-    9 de destinatarios               ← queda el gerente del área
+    5 de destinatarios
 ```
 
-**`P-14` = `PARTIAL`.** No por un defecto: cinco de los seis tipos que `docs/02 §3.14` exige
-están cubiertos y funcionan de extremo a extremo. El sexto no tiene semántica, y
-`GA-REM-016 AC05` no admite certificar por muestra — cinco de seis sigue siendo una muestra.
+## 6 bis. La ventana de cierre, comprobada extremo a extremo
 
-## 7. Qué falta exactamente
+| # | Caso | Esperado | Estado |
+|:--:|---|:--:|:--:|
+| 35 | a 4 días | 0 avisos | **PASS** |
+| 36 | a 3 días — el umbral de `OD-08` | 1 | **PASS** |
+| 37 | a 2, 1 y 0 días, sin aviso previo | 1 | **PASS** |
+| 38 | pasada la fecha prevista | 0 | **PASS** |
+| 39 | lote ya cerrado | 0 | **PASS** |
+| 40 | sin fecha prevista | 0 | **PASS** |
+| 41 | reevaluar cinco veces | sigue 1 | **PASS** |
+| 42 | replanificar de verdad | vuelve a avisar | **PASS** |
+
+## 7. Qué queda
 
 ```
-OD-08 · destinatarios ......... RESUELTO
-OD-08 · semántica temporal .... ABIERTO
+OD-08 = RESUELTA por entero
 
-  · «lote próximo a cierre»: ¿qué es «próximo»?
-    La única aparición de la frase en el repositorio es la línea que la enumera.
-    `Lot.end_date` es la fecha REAL de cierre, no una prevista, y no hay `planned_end_date`.
-
-  · Recurrencia del aviso de «> 24h»: ¿una vez o mientras siga pendiente?
-    Mientras tanto se emite una sola vez, con idempotencia.
-
-MODELO
-  · gerente del área: no hay tabla de área ni rol de gerencia.
-    El usuario solo se asocia a una empresa y a un rol.
+Hueco de requisito, que NO bloquea:
+  · recurrencia del aviso de «> 24h»: ninguna fuente dice si se repite.
+    Mientras tanto se emite una vez, con idempotencia.
 ```
 
 ## 8. Evidencia

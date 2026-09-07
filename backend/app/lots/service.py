@@ -152,6 +152,13 @@ class LotService:
             house_id=data.house_id,
             genetic_line_id=data.genetic_line_id,
             weight_curve_id=weight_curve_id,
+            area_id=getattr(data, "area_id", None),
+            # `GA-REM-038` enmienda B. Se ancla a medianoche UTC con la misma convención que
+            # `start_date` y `end_date` (`R-75`): es una fecha de negocio, no un instante.
+            planned_close_date=(
+                _fecha_de_negocio(data.planned_close_date)
+                if getattr(data, "planned_close_date", None) else None
+            ),
             breed_id=data.breed_id,
             bird_type=data.bird_type,
             sex=data.sex,

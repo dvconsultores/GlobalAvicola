@@ -329,7 +329,8 @@
     "transports": "Transports",
     "processingPlants": "Processing Plants",
     "rejectionReasons": "Rejection Reasons",
-    "correctionTypes": "Correction Types"
+    "correctionTypes": "Correction Types",
+    "areas": "Functional Areas"
   },
   "review": {
     "center": "Review Center",
@@ -556,7 +557,9 @@
     "lastNamePlaceholder": "Last Name *",
     "emailPlaceholder": "Email *",
     "phonePlaceholder": "Phone",
-    "passwordPlaceholder": "Password *"
+    "passwordPlaceholder": "Password *",
+    "area": "Functional area",
+    "noArea": "No area"
   },
   "profile": {
     "title": "Profile",
@@ -849,7 +852,9 @@
     "transitionDate": "Transition date",
     "populationMale": "Male population",
     "populationFemale": "Female population",
-    "end": "Close Date"
+    "end": "Close Date",
+    "plannedClose": "Planned close date",
+    "selectArea": "Select area..."
   },
   "phases": {
     "rearing": "Rearing Phase",
@@ -1018,7 +1023,8 @@
       "sap_send_failed": "SAP submission failed",
       "mortality_over_threshold": "Mortality above threshold",
       "weight_out_of_standard": "Weight outside standard",
-      "review_pending_24h": "Record pending review for over 24 h"
+      "review_pending_24h": "Record pending review for over 24 h",
+      "lot_near_close": "Lot close approaching"
     }
   }
 }

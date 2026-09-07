@@ -104,6 +104,9 @@ register_crud("houses", models.House, schemas.HouseCreate, schemas.HouseRead, sc
 register_crud("hatcheries", models.Hatchery, schemas.HatcheryCreate, schemas.HatcheryRead, schemas.HatcheryUpdate, ["name", "code"])
 register_crud("incubators", models.Incubator, schemas.IncubatorCreate, schemas.IncubatorRead, schemas.IncubatorUpdate, ["name"])
 register_crud("hatchers", models.Hatcher, schemas.HatcherCreate, schemas.HatcherRead, schemas.HatcherUpdate, ["name"])
+# `GA-REM-039` / `OD-08`. El área es dato maestro configurable: los nombres los pone el
+# cliente y ninguno viene sembrado.
+register_crud("areas", models.Area, schemas.AreaCreate, schemas.AreaRead, schemas.AreaUpdate, ["name", "code"])
 register_crud("genetic-lines", models.GeneticLine, schemas.GeneticLineCreate, schemas.GeneticLineRead, schemas.GeneticLineUpdate, ["name", "code", "supplier"])
 register_crud("breeds", models.Breed, schemas.BreedCreate, schemas.BreedRead, schemas.BreedUpdate, ["name"])
 register_crud("productive-phases", models.ProductivePhase, schemas.ProductivePhaseCreate, schemas.ProductivePhaseRead, schemas.ProductivePhaseUpdate, ["name", "code"])

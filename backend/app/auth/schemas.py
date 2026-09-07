@@ -33,6 +33,8 @@ class UserBase(BaseModel):
     role_id: Optional[int] = None
     company_id: Optional[int] = None
     view_type: str = "web"
+    #: `GA-REM-039` / `OD-08`. Área funcional. Nulable: hay usuarios anteriores.
+    area_id: Optional[int] = None
 
 
 class UserCreate(UserBase):
@@ -76,6 +78,9 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone: Optional[str] = None
     role_id: Optional[int] = None
+    #: `GA-REM-039` / `OD-08`. Sin esto un usuario nace sin área y no puede ganarla nunca —
+    #: el mismo patrón de `R-93`, donde un rol no podía cambiar sus permisos.
+    area_id: Optional[int] = None
     view_type: Optional[str] = None
     is_active: Optional[bool] = None
 

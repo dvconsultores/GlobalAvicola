@@ -145,6 +145,32 @@ class Hatcher(Base):
     hatchery: Mapped["Hatchery"] = relationship("Hatchery", back_populates="hatchers")
 
 
+class Area(Base):
+    """Área funcional de la empresa — `GA-REM-039`, decisión `OD-08`.
+
+    **Dónde pertenece** un usuario, que es distinto de **qué puede hacer**: eso lo dice su rol.
+    Con dos supervisores de áreas distintas, deducir el área del nombre del rol haría que cada
+    uno recibiera los avisos del otro.
+
+    No se guarda aquí el gerente. Tenerlo en `Area.manager_user_id` **y** poder deducirlo del
+    rol crearía dos fuentes que acabarían discrepando: la pertenencia vive en `User.area_id` y
+    la capacidad en el rol.
+    """
+
+    __tablename__ = "areas"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    company_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("companies.id"), nullable=True, index=True)
+    name: Mapped[str] = mapped_column(String(200))
+    code: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
+    description: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    #: Baja lógica. Un área con usuarios, lotes o avisos históricos no se borra.
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now())
+
+
 class GeneticLine(Base):
     __tablename__ = "genetic_lines"
 
@@ -275,6 +301,15 @@ class Lot(Base):
     activation_type: Mapped[Optional[str]] = mapped_column(String(50), default="normal")
     start_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
     end_date: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+    #: `GA-REM-038` enmienda B / `OD-08`. Cuándo se **prevé** cerrar, que no es `end_date`:
+    #: aquélla es la fecha **real** y para cuando existe el lote ya cerró. Nulable porque hay
+    #: lotes anteriores a esta spec y no hay fuente segura para completarlos.
+    planned_close_date: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True)
+    #: `GA-REM-039`. El ámbito funcional del lote y, por él, el de sus eventos: es donde los
+    #: seis avisos de `P-14` convergen para resolver gerente y supervisores.
+    area_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("areas.id"), nullable=True, index=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

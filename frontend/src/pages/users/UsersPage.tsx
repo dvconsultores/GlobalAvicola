@@ -4,13 +4,15 @@ import { Plus, Pencil, Trash2, X, Users, Monitor, Smartphone, Building2 } from '
 import api from '../../services/api'
 
 
-interface UserForm { username: string; first_name: string; last_name: string; email: string; phone: string; password: string; role_id: number | null; company_id: number | null; view_type: string; is_active: boolean }
-const emptyForm: UserForm = { username: '', first_name: '', last_name: '', email: '', phone: '', password: '', role_id: null, company_id: null, view_type: 'web', is_active: true }
+interface UserForm { username: string; first_name: string; last_name: string; email: string; phone: string; password: string; role_id: number | null; area_id: number | null; company_id: number | null; view_type: string; is_active: boolean }
+const emptyForm: UserForm = { username: '', first_name: '', last_name: '', email: '', phone: '', password: '', role_id: null, area_id: null, company_id: null, view_type: 'web', is_active: true }
 
 export default function UsersPage() {
  const { t } = useTranslation()
  const [users, setUsers] = useState<any[]>([])
  const [roles, setRoles] = useState<any[]>([])
+ // `GA-REM-039`. Desde el maestro real: nunca una lista fija de nombres de área.
+ const [areas, setAreas] = useState<any[]>([])
  const [companies, setCompanies] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [showModal, setShowModal] = useState(false)
@@ -18,12 +20,12 @@ export default function UsersPage() {
  const [form, setForm] = useState<UserForm>(emptyForm)
  const [saving, setSaving] = useState(false)
 
- const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr, cr] = await Promise.all([api.get('/users'), api.get('/roles'), api.get('/masters/companies?limit=100')]); setUsers(ur.data || []); setRoles(rr.data || []); setCompanies(cr.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
+ const fetchData = useCallback(async () => { setLoading(true); try { const [ur, rr, cr, ar] = await Promise.all([api.get('/users'), api.get('/roles'), api.get('/masters/companies?limit=100'), api.get('/masters/areas?limit=100')]); setUsers(ur.data || []); setRoles(rr.data || []); setCompanies(cr.data || []); setAreas(ar.data || []) } catch (e) { console.error(e) } finally { setLoading(false) } }, [])
  // eslint-disable-next-line react-hooks/set-state-in-effect
  useEffect(() => { fetchData() }, [fetchData])
 
  const openCreate = () => { setEditingId(null); setForm(emptyForm); setShowModal(true) }
- const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setShowModal(true) }
+ const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, area_id: user.area_id ?? null, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setShowModal(true) }
 
  const handleSave = async () => {
  if (!form.username || !form.first_name || !form.email) return alert(t('users.fieldsRequired'))
@@ -32,7 +34,7 @@ export default function UsersPage() {
  // La contraseña no viaja en el cuerpo de edición: `UserUpdate` la rechaza. Enviarla ahí
  // devolvía 200 sin cambiar nada (P0-13). El restablecimiento tiene endpoint propio.
  const { password, ...datos } = form
- const payload: any = { ...datos, role_id: form.role_id || null }
+ const payload: any = { ...datos, role_id: form.role_id || null, area_id: form.area_id || null }
  if (editingId) {
  await api.put(`/users/${editingId}`, payload)
  if (password) await api.post(`/users/${editingId}/password`, { new_password: password })
@@ -64,11 +66,16 @@ export default function UsersPage() {
  <input placeholder={t('users.emailPlaceholder')} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <input placeholder={t('users.phonePlaceholder')} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <input placeholder={editingId ? t('users.newPasswordHint') : t('users.passwordPlaceholder')} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
- <select value={form.role_id || ''} onChange={e => setForm({ ...form, role_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noRole')}</option>{roles.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}</select>
+ <select value={form.role_id || ''} onChange={e => setForm({ ...form, role_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noRole')}</option>{roles.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></div>
+ <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.area')}</label><select value={form.area_id || ''} onChange={e => setForm({ ...form, area_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noArea')}</option>{areas.map((a: any) => <option key={a.id} value={a.id}>{a.name}</option>)}</select>
  <div>
  <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-1.5"><Building2 size={14} /> {t('masters.companies', 'Empresa')}</label>
  <select value={form.company_id || ''} onChange={e => setForm({ ...form, company_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('company.noCompany')}</option>{companies.filter((c: any) => c.is_active !== false).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
  </div>
+ <div className="grid grid-cols-2 gap-3"><input placeholder={t('users.firstNamePlaceholder')} value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /><input placeholder={t('users.lastNamePlaceholder')} value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /></div>
+ <input placeholder={t('users.emailPlaceholder')} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ <input placeholder={t('users.phonePlaceholder')} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ <input placeholder={editingId ? t('users.newPasswordHint') : t('users.passwordPlaceholder')} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.viewType')}</label><div className="flex gap-3"><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'mobile' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="mobile" checked={form.view_type === 'mobile'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Smartphone size={20} className={form.view_type === 'mobile' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.mobile')}</span></label><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'web' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="web" checked={form.view_type === 'web'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Monitor size={20} className={form.view_type === 'web' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.web')}</span></label></div></div>
  </div><div className="flex gap-3 mt-5"><button onClick={handleSave} disabled={saving} className="flex-1 bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">{saving ? t('common.saving') : t('common.save')}</button><button onClick={() => setShowModal(false)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel')}</button></div></div></div>}
  </div>)

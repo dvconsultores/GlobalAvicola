@@ -33,6 +33,9 @@ PREFIJO = "NR-TEST-"
 ROL_ADMIN = "Administrador de Empresa"      # `docs/02 §6.1`, normativo
 ROL_CONTRALOR = "Contralor Avícola"         # `seeds/integration_seeds.py:137`
 ROL_SUPERVISOR = "Supervisor Avícola"       # `docs/02 §6.1` + migración `l2m3n4o5p6q7`
+#: `GA-REM-039`. No existe en el catálogo y **no se siembra**: `GA-REM-034` permite que la
+#: empresa lo cree. El resolutor lo reconoce por el nombre, como a los demás.
+ROL_GERENTE = "Gerente de Área"
 
 
 def _cabecera(user_id: int) -> dict:
@@ -142,12 +145,13 @@ async def _usuario(client, cab, role_id: int, company_id: int) -> dict:
     return r.json()
 
 
-async def _lote(client, cab, seeded_ids) -> dict:
+async def _lote(client, cab, seeded_ids, area_id=None) -> dict:
     r = await client.post("/api/v1/lots", headers=cab, json={
         "company_id": seeded_ids["company_id"],
         "farm_id": seeded_ids["farm_id"], "house_id": seeded_ids["house_id"],
         "lot_code": f"{PREFIJO}{uuid.uuid4().hex[:10]}",
         "bird_type": "breeder", "sex": "mixed", "start_date": iso_days_ago(60),
+        "area_id": area_id,
     })
     assert r.status_code == 201, r.text
     return r.json()
@@ -204,17 +208,42 @@ async def _cuantas(test_database_url, entity_type, entity_id, user_id) -> int:
         await e.dispose()
 
 
+async def _area(client, cab, company_id):
+    r = await client.post("/api/v1/masters/areas", headers=cab, json={
+        "company_id": company_id, "name": f"{PREFIJO}{uuid.uuid4().hex[:8]}"})
+    assert r.status_code in (200, 201), r.text
+    return r.json()
+
+
+async def _en_area(client, cab, role_id, company_id, area_id) -> dict:
+    u = await _usuario(client, cab, role_id, company_id)
+    r = await client.put(f"/api/v1/users/{u['id']}", headers=cab, json={"area_id": area_id})
+    assert r.status_code == 200, r.text
+    assert r.json()["area_id"] == area_id, r.json()
+    return r.json()
+
+
 @pytest_asyncio.fixture
 async def elenco(client, auth_headers, seeded_ids, motor):
-    """Un usuario por cada función que `OD-08` nombra y que tiene rol real."""
+    """Un usuario por cada función que `OD-08` nombra, con rol real.
+
+    El área entra en el fixture porque `OD-08` dice «el supervisor **correspondiente**», y
+    `GA-REM-039` lo hace literal: la capacidad la da el rol y la pertenencia, `area_id`. Un
+    supervisor sin área no es supervisor de ninguna, así que el escenario debe tenerla.
+
+    Administración y contraloría **no** llevan área: su alcance es toda la empresa.
+    """
     empresa = seeded_ids["company_id"]
+    area = await _area(client, auth_headers, empresa)
     return {
+        "area": area,
         "admin": await _usuario(client, auth_headers,
                                 await _rol(client, auth_headers, ROL_ADMIN), empresa),
         "contralor": await _usuario(client, auth_headers,
                                     await _rol(client, auth_headers, ROL_CONTRALOR), empresa),
-        "supervisor": await _usuario(client, auth_headers,
-                                     await _rol(client, auth_headers, ROL_SUPERVISOR), empresa),
+        "supervisor": await _en_area(client, auth_headers,
+                                     await _rol(client, auth_headers, ROL_SUPERVISOR),
+                                     empresa, area["id"]),
     }
 
 
@@ -228,7 +257,7 @@ async def test_t_038_20_el_rechazo_llega_a_las_cinco_funciones(
     «Registro rechazado (notificar al operador)» es una exigencia previa de `docs/02 §3.14`.
     `OD-08` **amplía**; una decisión que amplía no retira.
     """
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     evento = await _evento(client, seeded_ids, lote)
     r = await _rechazar(client, auth_headers, seeded_ids, evento["id"])
     assert r.status_code == 200, r.text
@@ -252,7 +281,7 @@ async def test_t_038_21_la_mortalidad_sobre_umbral_avisa(
     El umbral vive en `settings`, que es lo que hace «configurable» al nombre del evento. Aquí
     se supera con holgura para que la alerta se dispare sin depender del saldo exacto.
     """
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     await _evento(client, seeded_ids, lote, tipo="bird_reception",
                   bird_movements=[{"sex": "mixed", "quantity": 1000}])
     muerte = await _evento(client, seeded_ids, lote, tipo="mortality_recording",
@@ -282,7 +311,8 @@ async def test_t_038_22_el_peso_fuera_de_curva_avisa(
         "house_id": seeded_ids["house_id"],
         "lot_code": f"{PREFIJO}{uuid.uuid4().hex[:10]}",
         "bird_type": "broiler", "sex": "mixed",
-        "genetic_line_id": linea["id"], "start_date": iso_days_ago(22)})
+        "genetic_line_id": linea["id"], "start_date": iso_days_ago(22),
+        "area_id": elenco["area"]["id"]})
     assert l.status_code == 201, l.text
 
     # A 15 días la curva interpola a [135, 165]; 100 g queda por debajo.
@@ -343,7 +373,7 @@ async def test_t_038_24_quien_cumple_tres_condiciones_recibe_una(
     ])
     admin = await _usuario(client, auth_headers, rol, empresa)
 
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids)  # sin área: el admin no la usa
     cab_admin = _cabecera(admin["id"])
     r = await client.post("/api/v1/operations", headers=cab_admin, json={
         "lot_id": lote["id"], "farm_id": lote["farm_id"], "house_id": lote["house_id"],
@@ -384,7 +414,7 @@ async def test_t_038_25_las_mismas_funciones_en_otra_empresa_no_reciben(
                           ("supervisor", ROL_SUPERVISOR))
     }
 
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     evento = await _evento(client, seeded_ids, lote)
     await _rechazar(client, auth_headers, seeded_ids, evento["id"])
 
@@ -410,7 +440,7 @@ async def test_t_038_26_el_error_de_sap_conserva_al_analista(
                               await _rol(client, auth_headers, "Analista SAP"),
                               seeded_ids["company_id"])
 
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     evento = await _evento(client, seeded_ids, lote)
     operador = _cabecera(seeded_ids["user_operator_id"])
     await client.post(f"/api/v1/operations/{evento['id']}/submit", headers=operador)
@@ -459,7 +489,7 @@ async def test_t_038_27_antes_de_24h_no_hay_aviso(
     from app.notifications.sla import evaluar_revisiones_vencidas
     import app.database as database
 
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     evento = await _evento(client, seeded_ids, lote)
     operador = _cabecera(seeded_ids["user_operator_id"])
     await client.post(f"/api/v1/operations/{evento['id']}/submit", headers=operador)
@@ -487,7 +517,7 @@ async def test_t_038_28_al_cruzar_24h_se_avisa_una_sola_vez(
     from app.notifications.sla import evaluar_revisiones_vencidas
     import app.database as database
 
-    lote = await _lote(client, auth_headers, seeded_ids)
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     evento = await _evento(client, seeded_ids, lote)
     operador = _cabecera(seeded_ids["user_operator_id"])
     await client.post(f"/api/v1/operations/{evento['id']}/submit", headers=operador)
@@ -514,3 +544,188 @@ async def test_t_038_28_al_cruzar_24h_se_avisa_una_sola_vez(
     repetidos = await _cuantas(test_database_url, "operational_event", evento["id"],
                                seeded_ids["user_operator_id"])
     assert repetidos == 1, f"reevaluar duplicó el aviso: {repetidos}"
+
+
+# ── AC-A04 · AC-A05 · AC-A10 — el área acota al gerente y al supervisor ───────
+
+async def test_t_039_10_el_gerente_y_el_supervisor_del_area_reciben(
+    client, auth_headers, seeded_ids, motor, test_database_url
+):
+    """`AC-A04`, `AC-A05` y `AC-A10` · el área del **evento**, no otra.
+
+    `CONTROL` gerente y supervisor del área del lote reciben.
+    `TRATAMIENTO` los de otra área de la **misma empresa** no reciben nada — que es
+    exactamente lo que el modelo de áreas viene a evitar, y lo que ningún filtro de empresa
+    habría detectado.
+    """
+    empresa = seeded_ids["company_id"]
+    produccion = await _area(client, auth_headers, empresa)
+    comercial = await _area(client, auth_headers, empresa)
+
+    rol_gerente = await _rol(client, auth_headers, ROL_GERENTE)
+    rol_supervisor = await _rol(client, auth_headers, ROL_SUPERVISOR)
+
+    gerente_ok = await _en_area(client, auth_headers, rol_gerente, empresa, produccion["id"])
+    super_ok = await _en_area(client, auth_headers, rol_supervisor, empresa, produccion["id"])
+    gerente_no = await _en_area(client, auth_headers, rol_gerente, empresa, comercial["id"])
+    super_no = await _en_area(client, auth_headers, rol_supervisor, empresa, comercial["id"])
+
+    r = await client.post("/api/v1/lots", headers=auth_headers, json={
+        "company_id": empresa, "farm_id": seeded_ids["farm_id"],
+        "house_id": seeded_ids["house_id"],
+        "lot_code": f"{PREFIJO}{uuid.uuid4().hex[:10]}",
+        "bird_type": "breeder", "sex": "mixed", "start_date": iso_days_ago(60),
+        "area_id": produccion["id"]})
+    assert r.status_code == 201, r.text
+    lote = r.json()
+    assert lote["area_id"] == produccion["id"], lote
+
+    evento = await _evento(client, seeded_ids, lote)
+    await _rechazar(client, auth_headers, seeded_ids, evento["id"])
+
+    avisados = await _destinatarios(test_database_url, "operational_event", evento["id"])
+
+    # CONTROL
+    assert gerente_ok["id"] in avisados, "el gerente del área del lote no recibió"
+    assert super_ok["id"] in avisados, "el supervisor del área del lote no recibió"
+    # TRATAMIENTO
+    assert gerente_no["id"] not in avisados, (
+        "el gerente de otra área recibió un aviso que no le toca"
+    )
+    assert super_no["id"] not in avisados, (
+        "el supervisor de otra área recibió un aviso que no le toca"
+    )
+
+
+async def test_t_039_11_el_gerente_de_otra_empresa_no_recibe(
+    client, auth_headers, seeded_ids, motor, test_database_url
+):
+    """`AC-A06` · aunque su área se llame igual y su rol sea el mismo."""
+    empresa = seeded_ids["company_id"]
+    ajena = seeded_ids["company_id_2"]
+
+    propia = await _area(client, auth_headers, empresa)
+    forastera = await _area(client, auth_headers, ajena)
+    rol_gerente = await _rol(client, auth_headers, ROL_GERENTE)
+
+    mio = await _en_area(client, auth_headers, rol_gerente, empresa, propia["id"])
+    suyo = await _en_area(client, auth_headers, rol_gerente, ajena, forastera["id"])
+
+    lote = (await client.post("/api/v1/lots", headers=auth_headers, json={
+        "company_id": empresa, "farm_id": seeded_ids["farm_id"],
+        "house_id": seeded_ids["house_id"],
+        "lot_code": f"{PREFIJO}{uuid.uuid4().hex[:10]}",
+        "bird_type": "breeder", "sex": "mixed", "start_date": iso_days_ago(60),
+        "area_id": propia["id"]})).json()
+    evento = await _evento(client, seeded_ids, lote)
+    await _rechazar(client, auth_headers, seeded_ids, evento["id"])
+
+    avisados = await _destinatarios(test_database_url, "operational_event", evento["id"])
+    assert mio["id"] in avisados
+    assert suyo["id"] not in avisados, "un gerente de otra empresa fue notificado"
+
+
+async def test_t_039_12_un_gerente_sin_area_no_es_gerente_de_nada(
+    client, auth_headers, seeded_ids, motor, test_database_url
+):
+    """`AC-A04` · la capacidad la da el rol; la pertenencia, `area_id`. Hacen falta las dos.
+
+    Sin este filtro, cualquiera con nombre de rol de gerencia recibiría todo lo de la empresa
+    y el modelo de áreas no serviría para nada.
+    """
+    empresa = seeded_ids["company_id"]
+    area = await _area(client, auth_headers, empresa)
+    rol_gerente = await _rol(client, auth_headers, ROL_GERENTE)
+
+    sin_area = await _usuario(client, auth_headers, rol_gerente, empresa)
+    assert sin_area.get("area_id") is None
+
+    lote = (await client.post("/api/v1/lots", headers=auth_headers, json={
+        "company_id": empresa, "farm_id": seeded_ids["farm_id"],
+        "house_id": seeded_ids["house_id"],
+        "lot_code": f"{PREFIJO}{uuid.uuid4().hex[:10]}",
+        "bird_type": "breeder", "sex": "mixed", "start_date": iso_days_ago(60),
+        "area_id": area["id"]})).json()
+    evento = await _evento(client, seeded_ids, lote)
+    await _rechazar(client, auth_headers, seeded_ids, evento["id"])
+
+    avisados = await _destinatarios(test_database_url, "operational_event", evento["id"])
+    assert sin_area["id"] not in avisados, (
+        "un usuario con rol de gerencia y sin área recibió el aviso de un área"
+    )
+
+
+async def test_t_039_13_un_usuario_inactivo_no_recibe(
+    client, auth_headers, seeded_ids, motor, test_database_url
+):
+    """`AC-A07` · quien ya no trabaja aquí no debe seguir recibiendo avisos operativos."""
+    empresa = seeded_ids["company_id"]
+    area = await _area(client, auth_headers, empresa)
+    gerente = await _en_area(client, auth_headers,
+                             await _rol(client, auth_headers, ROL_GERENTE), empresa, area["id"])
+
+    baja = await client.put(f"/api/v1/users/{gerente['id']}", headers=auth_headers,
+                            json={"is_active": False})
+    assert baja.status_code == 200, baja.text
+
+    lote = (await client.post("/api/v1/lots", headers=auth_headers, json={
+        "company_id": empresa, "farm_id": seeded_ids["farm_id"],
+        "house_id": seeded_ids["house_id"],
+        "lot_code": f"{PREFIJO}{uuid.uuid4().hex[:10]}",
+        "bird_type": "breeder", "sex": "mixed", "start_date": iso_days_ago(60),
+        "area_id": area["id"]})).json()
+    evento = await _evento(client, seeded_ids, lote)
+    await _rechazar(client, auth_headers, seeded_ids, evento["id"])
+
+    avisados = await _destinatarios(test_database_url, "operational_event", evento["id"])
+    assert gerente["id"] not in avisados, "un usuario inactivo recibió un aviso"
+
+
+# ── AC-C16 — la edición no reinicia las 24 horas ─────────────────────────────
+
+async def test_t_038_29_editar_el_evento_no_reinicia_la_cuenta(
+    client, auth_headers, seeded_ids, motor, elenco, test_database_url
+):
+    """`AC-C16` · la marca es la de la transición, no `updated_at`.
+
+    Con `updated_at`, un evento editado a las 23 horas volvería a empezar y no avisaría
+    **nunca** mientras alguien lo tocara a diario. Aquí se envejece la transición a 25 h y
+    después se edita el evento: la cuenta debe seguir valiendo.
+    """
+    from app.audit.models import AuditLog
+    from app.notifications.sla import evaluar_revisiones_vencidas
+    import app.database as database
+
+    lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
+    evento = await _evento(client, seeded_ids, lote)
+    operador = _cabecera(seeded_ids["user_operator_id"])
+    await client.post(f"/api/v1/operations/{evento['id']}/submit", headers=operador)
+
+    async with database.async_session() as s:
+        await s.execute(
+            AuditLog.__table__.update()
+            .where(AuditLog.entity_id == str(evento["id"]),
+                   AuditLog.new_state == "pending_review")
+            .values(created_at=datetime.now(timezone.utc) - timedelta(hours=25)))
+        await s.commit()
+
+    # Cualquier escritura posterior mueve `updated_at` a ahora mismo. Se hace en la base
+    # porque el flujo no permite editar un evento ya en revisión, y lo que importa aquí es el
+    # efecto sobre la marca, no el camino que la mueve.
+    from app.operations.models import OperationalEvent
+
+    async with database.async_session() as s2:
+        await s2.execute(
+            OperationalEvent.__table__.update()
+            .where(OperationalEvent.id == evento["id"])
+            .values(updated_at=datetime.now(timezone.utc)))
+        await s2.commit()
+
+    async with database.async_session() as s:
+        await evaluar_revisiones_vencidas(s)
+        await s.commit()
+
+    avisados = await _destinatarios(test_database_url, "operational_event", evento["id"])
+    assert seeded_ids["user_operator_id"] in avisados, (
+        "editar el evento reinició la cuenta de las 24 horas"
+    )

@@ -18,13 +18,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Notification
 
-#: Los cinco tipos accionables. El sexto de `docs/02 §3.14` —«lote próximo a cierre»— no
-#: figura: «próximo» no está definido en ninguna fuente y `OD-08` sigue abierta en esa mitad.
+#: Los **seis** tipos de `docs/02 §3.14`. El último se desbloqueó cuando `OD-08` definió qué
+#: significa «próximo»: faltan tres días para la fecha prevista de cierre.
 RECORD_REJECTED = "record_rejected"
 SAP_SEND_FAILED = "sap_send_failed"
 MORTALITY_OVER_THRESHOLD = "mortality_over_threshold"
 WEIGHT_OUT_OF_STANDARD = "weight_out_of_standard"
 REVIEW_PENDING_24H = "review_pending_24h"
+LOT_NEAR_CLOSE = "lot_near_close"
 
 
 async def crear_notificacion(
@@ -37,6 +38,7 @@ async def crear_notificacion(
     related_entity_type: Optional[str] = None,
     related_entity_id: Optional[int] = None,
     evitar_duplicado_sin_leer: bool = False,
+    ocurrencia: Optional[str] = None,
 ) -> Optional[Notification]:
     """Crea un aviso para una persona. Devuelve `None` si se omitió por duplicado.
 
@@ -49,6 +51,24 @@ async def crear_notificacion(
     problema sigue sin leerse, no se anuncia otra vez. La bandeja informa de problemas, no
     cuenta reintentos.
     """
+    if ocurrencia is not None:
+        # Idempotencia por **ocurrencia** y no solo por entidad. «Lote próximo a cierre» se
+        # emite una vez al entrar en la ventana, no una por evaluación ni una por día; y si la
+        # fecha prevista cambia de verdad, la ocurrencia es otra y vuelve a avisarse.
+        #
+        # A diferencia de `evitar_duplicado_sin_leer`, aquí no importa que el aviso ya se haya
+        # leído: leerlo no hace que el lote deje de estar próximo a cerrar.
+        ya = (await db.execute(
+            select(Notification.id).where(
+                Notification.recipient_user_id == recipient_user_id,
+                Notification.notification_type == notification_type,
+                Notification.payload["ocurrencia"].astext == ocurrencia,
+            ).limit(1)
+        )).scalar_one_or_none()
+        if ya is not None:
+            return None
+        payload = {**(payload or {}), "ocurrencia": ocurrencia}
+
     if evitar_duplicado_sin_leer:
         ya_avisado = (await db.execute(
             select(Notification.id).where(
