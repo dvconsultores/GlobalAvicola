@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-038` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** `SPEC_READY` — enmienda B abierta (`OD-08` completa) |
+| **Prioridad** | **P1** · **Estado** **`CERTIFIED`** — los seis tipos de `docs/02 §3.14` |
 | **Requisito** | `docs/02 §3.14` · `docs/10 §6.2` |
 | **Decisión** | **`OD-07` `RESOLVED`** · **`OD-08` `RESOLVED`** (destinatarios · área · próximo a cierre) |
 | **Proceso** | `P-14` · Notificaciones y alertas |

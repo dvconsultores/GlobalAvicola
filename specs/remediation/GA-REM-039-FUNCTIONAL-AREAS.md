@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-039` · `DOMAIN MODEL SPEC` |
-| **Prioridad** | **P1** · **Estado** `SPEC_READY` |
+| **Prioridad** | **P1** · **Estado** **`CERTIFIED`** (2026-09-07) |
 | **Requisito** | `OD-08` · consumido por `docs/02 §3.14` |
 | **Decisión** | **`OD-08`** — el área es dato maestro configurable por empresa |
 | **Procesos** | `P-12` (maestro nuevo) · `P-13` (campo del usuario) · `P-14` (destinatarios) |

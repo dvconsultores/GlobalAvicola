@@ -636,3 +636,33 @@ gerente del área          el modelo tiene que ganar un concepto que no tiene
 
 La segunda no la resuelve una respuesta: exige diseñar áreas y asignar usuarios a ellas, que es
 trabajo con su propia spec.
+
+
+---
+
+## `P-14` · cerrado (2026-09-07)
+
+```
+OD-08 (completa)
+  ├─→ GA-REM-039 · áreas funcionales        areas · users.area_id · lots.area_id
+  │     └─→ gerente y supervisor DEL ÁREA resolubles
+  └─→ GA-REM-038 enmienda B                 lots.planned_close_date
+        └─→ «lote próximo a cierre», ventana 0..3
+              └─→ P-14 = CERTIFIED   (6 de 6)
+```
+
+### El estado del programa
+
+```
+CERTIFIED = 14 / 15
+PARTIAL   =  1 / 15      P-08 · contrato SAP real · GA-REM-017 · BLOCKED_EXTERNAL
+```
+
+**Ningún proceso queda bloqueado por trabajo técnico pendiente**, y ninguno espera ya una
+decisión del propietario. El único que falta espera a un tercero.
+
+```
+RC-07  ¿la mortalidad se envía a SAP?       ABIERTA, no bloquea ningún proceso
+OD-05  ¿quién concede qué permiso?          ABIERTA, no bloquea (P-13 certificado)
+R-99   frontend compartido desactualizado   bloquea el runtime compartido, no la certificación
+```

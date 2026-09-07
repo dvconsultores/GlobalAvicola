@@ -419,3 +419,27 @@ Sigue abierto:
 De paso queda anotado un desfase anterior a este trabajo: `docs/02 §6.1` enumera **once** roles
 y hay **seis** sembrados. No se corrige aquí — `GA-REM-034` permite crearlos y el resolutor
 funciona con los que existan.
+
+
+---
+
+## `OD-08` completa · `P-14` certificado (2026-09-07)
+
+Los dos bloqueos que quedaban eran de clase distinta, y tratarlos igual habría llevado a pedir
+al propietario algo que no era suyo:
+
+```
+«lote próximo a cierre»   una DECISIÓN   →  OD-08: tres días antes de la fecha prevista
+gerente del área          un MODELO      →  GA-REM-039: el área no existía
+```
+
+```
+P-14: 5 de 6 tipos  →  6 de 6      CERTIFIED
+```
+
+Queda un hueco de requisito que **no bloquea**: ninguna fuente dice si el aviso de «> 24h» se
+repite. Se emite una vez, con idempotencia.
+
+Y queda `R-99`: el frontend del entorno compartido sigue por detrás de `main`, de modo que el
+**runtime compartido** de la interfaz de `P-14` está `NOT VERIFIED`. La certificación es del
+entorno aislado, que es donde el programa ejecuta sus suites.

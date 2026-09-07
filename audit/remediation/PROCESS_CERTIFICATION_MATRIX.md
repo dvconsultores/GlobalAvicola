@@ -49,7 +49,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ | ✅ | **4/4** (1 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
 | **P-13** Autenticación y gestión de usuarios | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **3/3** (2 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
-| **P-14** Notificaciones y alertas | func §3.14 | ✅ | ✅ | ✅ | ✅ | canal `OD-07` · destinatarios `OD-08` | ✅ | ✅ | **5/5** `UI_E2E` | **`PARTIAL`** — 5 de 6 tipos | **`PARTIAL`** — `OD-08` temporal |
+| **P-14** Notificaciones y alertas | func §3.14 | ✅ | ✅ | ✅ | ✅ | `OD-07` canal · `OD-08` destinatarios | ✅ | ✅ | **5/5** `UI_E2E` | `COVERED` — 6 de 6 | **`CERTIFIED`** |
 | **P-15** Reportes y KPI | spec §4.12 · `docs/02 §3.12` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **4/4** | `COVERED` | **`CERTIFIED`** |
 
 ### Nota sobre «parcial» en la columna E2E
@@ -573,5 +573,48 @@ Los dos procesos `PARTIAL` siguen sin esperar trabajo técnico:
 |---|---|---|
 | `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | `P-14` | semántica de un evento y modelo de área | **decisión** — `OD-08` |
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+
+---
+
+## `OD-08` completa · `P-14` certificado (2026-09-07)
+
+```
+CERTIFIED = 14 / 15      PARTIAL = 1 / 15
+```
+
+| Estado | Procesos |
+|---|---|
+| `CERTIFIED` | `P-01` · `P-02` · `P-03` · `P-04` · `P-05` · `P-06` · `P-07` · `P-09` · `P-10` · `P-11` · `P-12` · `P-13` · **`P-14`** · `P-15` |
+| `PARTIAL` | `P-08` |
+
+`P-14` cerró en tres tandas, y el recorrido dice más que el resultado:
+
+```
+canal construido, 2 de 6 tipos      OD-07 · el resto no decía a quién avisar
+destinatarios resueltos, 5 de 6     OD-08 · y releer los nombres literales desbloqueó uno más
+área + fecha prevista, 6 de 6       OD-08 · lo que faltaba era un modelo y una definición
+```
+
+En las dos primeras se resistió la tentación de certificar: la campana funcionaba de extremo a
+extremo desde la primera. `GA-REM-016 AC05` no admite certificar por muestra, y dos de seis
+—luego cinco de seis— seguía siendo una muestra.
+
+**Queda un solo proceso sin certificar**, y no espera trabajo técnico:
+
+| Proceso | Qué falta | Naturaleza |
+|---|---|---|
+| `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
+
+```
+NINGÚN proceso queda bloqueado por trabajo técnico pendiente.
+```
+
+Sobre el entorno compartido: la certificación es del entorno de certificación aislado, que es
+donde el programa ejecuta sus suites desde `GA-REM-014`. El **runtime compartido de la
+interfaz** queda `NOT VERIFIED` mientras `R-99` siga abierto — el backend sí llega, el frontend
+no. Son dos afirmaciones distintas y se dejan separadas.
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

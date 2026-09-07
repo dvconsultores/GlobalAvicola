@@ -3,10 +3,9 @@
 `docs/02 §3.14` · `docs/10 §6.2` · `GA-REM-038` · `OD-07`
 
 ```
-P-14  = PARTIAL          5 de los 6 tipos normativos cubiertos — ver ADDENDUM A
+P-14  = CERTIFIED        6 de los 6 tipos normativos — ver ADDENDUM B
 OD-07 = RESOLVED         canal interno / in-app
-OD-08 · destinatarios ......... RESOLVED
-OD-08 · semántica temporal .... OWNER_DECISION_REQUIRED
+OD-08 = RESOLVED         destinatarios · modelo de área · próximo a cierre
 ```
 
 > **`ADDENDUM A`.** Este informe se escribió con **dos** de seis tipos cubiertos. `OD-08`
@@ -357,3 +356,167 @@ Falta para certificar P-14:
   · OD-08 · qué es «lote próximo a cierre»           decisión del propietario
   · modelo de área y rol de gerencia                  decisión de modelo, para AC-R04
 ```
+
+---
+
+# ADDENDUM B · `OD-08` completa · los seis eventos
+
+`OD-08` · `GA-REM-038` enmienda B · `GA-REM-039`
+
+```
+P-14 = CERTIFIED
+```
+
+## B.1 Qué cerró el proceso
+
+Faltaban dos cosas, y eran de clase distinta:
+
+```
+«lote próximo a cierre»   una DECISIÓN: qué significa «próximo»
+gerente del área          un MODELO: el concepto no existía
+```
+
+`OD-08` resolvió la primera —tres días antes de la fecha prevista— y decidió la segunda: el
+área es dato maestro configurable, el usuario pertenece a una, y gerente y supervisor se
+resuelven por rol **dentro** de esa área.
+
+```
+2 de 6  →  5 de 6  →  6 de 6
+```
+
+## B.2 Los seis, con su disparador y su área
+
+| Nombre literal (`docs/02 §3.14`) | Disparador | Área |
+|---|---|---|
+| Registro pendiente de revisión > 24h | 24 h desde la transición, tomada de la auditoría | `lot_id → Lot.area_id` |
+| Registro rechazado (notificar al operador) | `review/service.py:409` | ídem |
+| Mortalidad > umbral configurable | alerta `high_mortality`, umbral en `settings` | ídem |
+| Peso fuera de estándar | alerta `weight_deviation` (`GA-REM-037`) | ídem |
+| Error de envío SAP | `PayloadStatus.FAILED` | `ConsolidatedMovement.lot_id` |
+| Lote próximo a cierre | `0 <= días hasta `planned_close_date` <= 3` | `Lot.area_id`, directo |
+
+```
+6 / 6 disparadores computables · 6 / 6 destinatarios resueltos · 6 / 6 probados
+```
+
+## B.3 El modelo de área, y la trampa que evita
+
+```
+Role   qué PUEDE hacer el usuario
+Area   dónde PERTENECE
+```
+
+Se resolvió con `User.area_id` **más** el rol, y **sin** `Area.manager_user_id`. Guardar el
+gerente en el área y además poder deducirlo del rol habría creado dos fuentes sin regla de
+autoridad entre ellas: el día que discreparan, nadie sabría cuál manda.
+
+Hacen falta las dos condiciones. Un usuario con rol de gerencia y **sin** área no es gerente de
+nada, y hay prueba de ello: sin ese filtro, cualquiera con ese nombre de rol recibiría todo lo
+de la empresa y el modelo de áreas no serviría para nada.
+
+**El rol de gerencia no se creó.** `docs/02 §6.1` no lo tiene; `GA-REM-034` permite que la
+empresa lo cree como dato. Si no existe, nadie entra por ese concepto y nada falla.
+
+## B.4 La fecha prevista, y por qué no se derivó
+
+```
+planned_close_date   cuándo se PREVÉ cerrar     nulable, la pone quien planifica
+end_date             cuándo se cerró DE VERDAD  intacto — `R-73`, `R-75`
+```
+
+No se derivó de la línea genética —`P-03` tiene Cobb, Ross y Hubbard, y ninguna fuente dice que
+su curva implique una fecha de cierre—, ni de una edad fija, ni de `ProductivePhase.duration_days`.
+
+Y la condición es una **ventana** `0..3`, no la igualdad `== 3`: con igualdad, el aviso solo
+saldría si el evaluador corriera exactamente ese día. Con el sistema apagado no saldría nunca, y
+un aviso que no sale es un aviso que no existe.
+
+La idempotencia se ancla a `lot_id + planned_close_date + destinatario`. Una replanificación
+real vuelve a avisar —es una situación nueva—; reevaluar la misma, no. Y **las notificaciones
+ya emitidas no se borran**: eran evidencia de lo que se sabía entonces.
+
+## B.5 Dos guardas del proyecto obligaron a hacerlo mejor
+
+**`T-025-04`** avisó de que el `TRUNCATE ... CASCADE` de la herramienta de reset vacía toda
+tabla que referencie a la truncada, **sin mirar el `ON DELETE`**: borrar las áreas se habría
+llevado por delante a los usuarios. La respuesta no fue aflojar la guarda sino clasificar bien —
+un organigrama es estructura, no historia operativa ficticia—.
+
+**`R-26`**, en la tanda anterior, prohibió `except Exception` en `main.py`. La tarea de fondo
+necesitaba una, y eso señaló que estaba en el archivo equivocado.
+
+## B.6 Y un fallo propio que conviene registrar
+
+`tsc --noEmit` dio **limpio** sobre un `UsersPage.tsx` con elementos JSX adyacentes sin
+envolver. La aplicación no arrancaba: 46 pruebas de navegador en rojo, incluidas las de la
+suite heredada que no tocan esa pantalla.
+
+```
+tsc --noEmit    comprueba tipos        →  pasó
+vite build      compila de verdad      →  falló, y dijo el archivo y la posición
+```
+
+Un typecheck limpio no es un build correcto. `vite build` pasa a formar parte de la
+verificación de frontend, junto a `tsc` y `vitest`.
+
+Merece decirse además que el diagnóstico llevó dos ejecuciones porque una espera activa mía
+—un bucle `until` sin pausa— dejó la máquina sin CPU y los navegadores empezaron a caerse por
+tiempo de espera. Los dos síntomas se parecían; solo uno era del producto. Se limpiaron los
+procesos huérfanos y se repitió en limpio antes de concluir nada.
+
+## B.7 Evidencia
+
+| Nivel | Archivo | Resultado |
+|---|---|:--:|
+| Áreas como maestro | `backend/tests/test_areas.py` | **5/5** |
+| Fecha prevista y ventana de cierre | `backend/tests/test_lot_planned_close.py` | **14/14** |
+| Destinatarios, área, deduplicación, tenencia | `backend/tests/test_notification_recipients.py` | **14/14** |
+| Bandeja, lectura, aislamiento | `backend/tests/test_notifications.py` | **11/11** |
+| Experiencia | `e2e/proceso-p14-notificaciones.spec.ts` | **5/5** `UI_E2E` |
+| Campana y estados | `frontend/src/components/notifications/__tests__` | **8/8** |
+| Regresión backend | suite completa | **493 passed · 49 skipped** |
+| Regresión `E2E` | 17 suites | **129 passed** |
+| Regresión `vitest` | suite completa | **82 passed** |
+| `tsc --noEmit` · `vite build` | — | **limpios** |
+| Paridad `i18n` | `es` / `en` | **940 = 940** |
+| Alembic | `o5p6q7r8s9t0` | **cabeza única** |
+
+## B.8 Sensibilidad · `GA-REM-016 AC13`
+
+Seis mutaciones en esta tanda, todas revertidas desde salvaguarda previa:
+
+| # | Mutación | Rompe | Fallos |
+|:--:|---|---|:--:|
+| 1 | El filtro de área desaparece: cualquier gerente recibe | `AC-A04`, `AC-A10` | 2 |
+| 2 | La ventana pasa de 3 a 4 días | `AC-C07` | 1 |
+| 3 | Se retira la idempotencia por ocurrencia | `AC-C11`, `AC-C12` | 1 |
+| 4 | Se retira la exclusión del lote cerrado | `AC-C09` | 1 |
+| 5 | El filtro de empresa desaparece | `AC-A06`, `AC-R08` | 1 |
+| 6 | La cuenta de 24 h vuelve a `updated_at` | `AC-T01`, `AC-C16` | 2 |
+
+La sexta es la que más importa: `updated_at` **parece** servir y no sirve. Un evento editado a
+las 23 horas reiniciaría la cuenta y no avisaría nunca mientras alguien lo tocara a diario. Hay
+prueba dedicada de que editar no reinicia nada.
+
+Tras cada reversión se comprobó, patrón por patrón, que la capacidad sigue existiendo — diez
+comprobaciones, no solo `git diff` limpio.
+
+## B.9 El veredicto
+
+```
+P-14 = CERTIFIED
+```
+
+Los seis eventos que `docs/02 §3.14` enumera tienen disparador computable, destinatarios
+resueltos según `OD-08` e integración probada. El canal es interno, como `OD-07` decidió, y no
+se introdujo ninguno externo.
+
+## B.10 Lo que queda dicho, y no bloquea
+
+- **Recurrencia del aviso de «> 24h».** Ninguna fuente dice si se repite. Se emite una vez, con
+  idempotencia. Es un hueco de requisito registrado, no una decisión nuestra.
+- **`R-98`.** El frontend sigue sin modelo de permisos y `P-14` no fue la excepción.
+- **`R-99`.** El frontend del entorno compartido sigue por detrás de `main`. La certificación es
+  del entorno de certificación aislado; el **runtime compartido** de la interfaz queda
+  `NOT VERIFIED` mientras `R-99` siga abierto.
+- **`P-08`, `RC-07`, `GA-TD-014`.** Intactos.

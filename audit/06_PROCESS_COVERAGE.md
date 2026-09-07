@@ -23,7 +23,7 @@ Clasificación: `CUBIERTO` (E2E completo) · `PARCIAL` · `MANUAL` (existe pero 
 | P-11 | Activación manual de lotes / saldos iniciales | spec §4.9 / func §3.9 | **MANUAL** |
 | P-12 | Gestión de datos maestros | func §3.2 | PARCIAL |
 | P-13 | Gestión de usuarios, roles y permisos | func §3.1 | PARCIAL |
-| P-14 | Notificaciones y alertas | func §3.14 | **PARCIAL** — 5 de 6 tipos; falta «lote próximo a cierre» |
+| P-14 | Notificaciones y alertas | func §3.14 | **CUBIERTO** — 6 de 6 tipos |
 | P-15 | Reportes y KPIs | spec §4.12 | PARCIAL |
 | — | Registro contable/administrativo en SAP | fuera de alcance (SAP es el sistema principal) | **MANUAL** (por diseño) |
 
@@ -291,13 +291,13 @@ de «umbral fijo en código» ya no es cierta.
 | Mortalidad > umbral configurable | **IMPLEMENTADO** |
 | Peso fuera de estándar | **IMPLEMENTADO** |
 | Error de envío SAP | **IMPLEMENTADO** — `Analista SAP` ∪ `OD-08` |
-| Lote próximo a cierre | **BLOQUEADO** — «próximo» sin definir en ninguna fuente |
+| Lote próximo a cierre | **IMPLEMENTADO** — 3 días antes de `planned_close_date` (`OD-08`) |
 
-Destinatarios según `OD-08`: quien cargó el dato, administradores, contraloría y supervisores de
-la empresa, más los que otras fuentes ya exigían, deduplicados. El **gerente del área** queda
-bloqueado: no hay modelo de área ni rol de gerencia.
+Destinatarios según `OD-08`: quien cargó el dato, administradores, contraloría, y gerente y
+supervisores **del área del evento**, más los que otras fuentes ya exigían, deduplicados. El
+modelo de área lo aporta `GA-REM-039`.
 
-**Cobertura: 32 de 34 pasos → PARCIAL.** Detalle en `audit/remediation/P14_PROCESS_CHAIN_MATRIX.md`.
+**Cobertura: 34 de 34 pasos → CUBIERTO.** Detalle en `audit/remediation/P14_PROCESS_CHAIN_MATRIX.md`.
 
 ### P-15 · Reportes y KPIs
 

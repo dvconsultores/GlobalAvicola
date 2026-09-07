@@ -433,3 +433,40 @@ movió la lógica a `notifications/sla.py`, que es donde iba.
 **Una sola prueba no habría bastado para el destinatario explícito.** Quitarlo de la unión
 rompió el aviso de SAP y **no** el del rechazo: allí el operador entra también como originador.
 Quien distingue las dos vías es el evento donde el `Analista SAP` no es originador de nada.
+
+
+---
+
+## 16. `OD-08` completa · `GA-REM-039` · `P-14` certificado (2026-09-07)
+
+| | Sev. | Estado |
+|---|:--:|---|
+| `OD-08` · destinatarios · área · próximo a cierre | — | **`RESOLVED`** |
+| `GA-REM-039` · áreas funcionales | **P1** | **`CERTIFIED`** |
+| `GA-REM-038` · notificaciones internas | **P1** | **`CERTIFIED`** — 6 de 6 tipos |
+
+```
+P-14 = CERTIFIED        CERTIFIED 14 / 15        PARTIAL 1 / 15
+```
+
+Cinco cosas que conviene conservar.
+
+**Los dos bloqueos no eran la misma clase de cosa.** «Lote próximo a cierre» era una decisión
+—qué significa «próximo»—; el gerente del área era un modelo que no existía. Distinguirlos
+evitó pedir al propietario que decidiera sobre el esquema.
+
+**Una fuente única para el gerente.** Se resolvió con `User.area_id` **más** el rol, sin
+`Area.manager_user_id`: tenerlo en los dos sitios habría creado dos verdades sin regla de
+autoridad. Y hacen falta las dos condiciones — un usuario con rol de gerencia y sin área no es
+gerente de nada, con prueba dedicada.
+
+**Ventana en vez de igualdad.** `== 3` habría exigido que el evaluador corriera exactamente ese
+día; con el sistema apagado el aviso no saldría nunca.
+
+**`T-025-04` obligó a clasificar mejor, no a aflojar.** El `TRUNCATE ... CASCADE` del reset vacía
+toda tabla que referencie a la truncada, sin mirar el `ON DELETE`: borrar las áreas se habría
+llevado a los usuarios. Un organigrama es estructura, no historia ficticia.
+
+**`tsc` no es un build.** Dio limpio sobre un JSX con elementos adyacentes sin envolver y la
+aplicación no arrancaba: 46 pruebas de navegador en rojo. Lo delató `vite build`, que pasa a
+formar parte de la verificación.
