@@ -3,10 +3,15 @@
 `docs/02 §3.14` · `docs/10 §6.2` · `GA-REM-038` · `OD-07`
 
 ```
-P-14  = PARTIAL          el canal existe y funciona; faltan 4 de los 6 tipos normativos
+P-14  = PARTIAL          5 de los 6 tipos normativos cubiertos — ver ADDENDUM A
 OD-07 = RESOLVED         canal interno / in-app
-OD-08 = OWNER_DECISION_REQUIRED
+OD-08 · destinatarios ......... RESOLVED
+OD-08 · semántica temporal .... OWNER_DECISION_REQUIRED
 ```
+
+> **`ADDENDUM A`.** Este informe se escribió con **dos** de seis tipos cubiertos. `OD-08`
+> resolvió los destinatarios y releer los nombres literales desbloqueó el aviso de las 24 horas:
+> ahora son **cinco**. El veredicto no cambia — cinco de seis sigue sin ser seis.
 
 ---
 
@@ -191,3 +196,164 @@ en la cabecera, `getUnreadCount()` y el estado de error.
 - **`P-08`, `RC-07`, `GA-TD-014`.** Intactos. La regla de la orden de compra sigue siendo
   `recibido_acumulado <= cantidad_ordenada`, sin tolerancia, y SAP sigue siendo la autoridad
   sobre el estado de la OC.
+
+---
+
+# ADDENDUM A · `OD-08` resuelve los destinatarios · cinco de seis
+
+`OD-08` · `GA-REM-038` enmienda A
+
+```
+P-14  = PARTIAL          5 de los 6 tipos normativos cubiertos
+OD-08 · destinatarios ......... RESOLVED
+OD-08 · semántica temporal .... OWNER_DECISION_REQUIRED
+```
+
+## A.1 Qué cambió
+
+El informe anterior dejó `P-14` en `PARTIAL` con **dos** de seis tipos, porque cuatro no decían
+a quién avisar. `OD-08` lo resolvió:
+
+```
+DESTINATARIOS = explícitos de fuentes anteriores
+              ∪ quien cargó el dato ∪ administradores ∪ contraloría ∪ supervisor
+              filtrado por empresa del evento · DISTINCT por user_id
+```
+
+Y al releer los **nombres literales** de `docs/02 §3.14` apareció algo que el informe anterior
+había agrupado mal:
+
+```
+«Registro pendiente de revisión > 24h»   el umbral ESTÁ en el nombre  → accionable
+«Lote próximo a cierre»                  «próximo» no está en ninguna parte → bloqueado
+```
+
+Los dos se habían clasificado juntos como «temporales sin definir». Solo uno lo era.
+
+```
+2 de 6  →  5 de 6
+```
+
+## A.2 Los términos del propietario contra los roles reales
+
+`OD-08` nombra funciones, no roles. La correspondencia se hizo contra el catálogo antes de
+escribir código (`P14_OD08_ROLE_MAPPING_MATRIX.md`):
+
+| Término | Rol real | Estado |
+|---|---|:--:|
+| persona que cargó el dato | `OperationalEvent.registered_by_id` | **resuelto** |
+| administradores | `Administrador de Empresa` · `Super Administrador` **con empresa** | **resuelto** |
+| contraloría | `Contralor Avícola` | **resuelto** |
+| supervisor | `Supervisor Avícola` | **resuelto** |
+| **gerente del área** | **ninguno** | **`BLOCKED_BY_MODEL_GAP`** |
+
+No hay tabla de área, departamento ni unidad organizativa. El usuario se asocia a una empresa y
+a un rol, y a nada más. Ni los roles identifican el área ni el usuario la tiene asignada.
+
+**`Super Administrador` no entra por serlo.** Se siembra con `company_id = None`, luego no
+pertenece a ninguna empresa, y su nombre de rol contiene «administrador». Sin la condición de
+pertenencia recibiría el detalle operativo de todas — la fuga exacta que había que evitar.
+
+De paso quedó anotado un desfase anterior: `docs/02 §6.1` enumera **once** roles y hay **seis**
+sembrados. No se corrige aquí; `GA-REM-034` permite crearlos y el resolutor funciona con los que
+existan.
+
+## A.3 El aviso de las 24 horas
+
+Su umbral es normativo, así que no había nada que decidir. Lo que sí hubo que resolver es desde
+cuándo se cuenta:
+
+```
+updated_at   NO — cambia con cualquier edición; un evento tocado a las 23 h reiniciaría la cuenta
+AuditLog     SÍ — guarda la transición a `pending_review` con su instante exacto
+```
+
+Leer la auditoría para computar una condición no es convertirla en bandeja: es consultar
+historia, que es para lo que existe. `P-09` sigue gobernándola y nadie escribe avisos en ella.
+
+**La recurrencia no está definida en ninguna fuente**, de modo que se emite **una vez** por
+evento y destinatario, con idempotencia. Inventar una repetición diaria habría añadido ruido que
+nadie pidió; el hueco queda registrado.
+
+**El mecanismo no es del propietario.** `§30` del encargo lo dice y es correcto: elegir entre
+`cron`, `Celery` o una tarea del proceso es decisión técnica. Se eligió la mínima que cumple —una
+tarea sobre el `lifespan` que ya existía—, sin `Redis`, ni colas, ni dependencias nuevas.
+
+## A.4 Una guarda obligó a poner la lógica donde va
+
+`R-26` prohíbe `except Exception` en `app/main.py`, porque el contrato de error no puede
+apoyarse en una captura genérica. La tarea de fondo sí necesita una —un fallo al evaluar no
+puede tumbar la aplicación—, y esa contradicción fue la señal de que estaba en el archivo
+equivocado.
+
+Vive en `notifications/sla.py`; `main.py` solo la arranca. La guarda no se tocó, y el resultado
+es mejor código: el arranque de la aplicación no contiene lógica de notificaciones.
+
+## A.5 Lo que sigue sin convertirse en notificación
+
+Las alertas de **temperatura** y **humedad** fuera de rango no figuran en `docs/02 §3.14`, de
+modo que siguen siendo alertas del lote. Convertirlas habría sido inventar requisito.
+
+Y `GA-REM-037` sigue vigente: **dentro de norma y sin referencia no hay alerta**, luego tampoco
+notificación. Hay prueba de que un pesaje normal no avisa a nadie.
+
+## A.6 Evidencia añadida
+
+| Nivel | Archivo | Resultado |
+|---|---|:--:|
+| Destinatarios, deduplicación, tenencia, 24 h | `backend/tests/test_notification_recipients.py` | **9/9** |
+| Regresión backend | suite completa | **469 passed · 49 skipped** (antes 460) |
+| Regresión `E2E` | 17 suites | **129 passed** |
+| Regresión `vitest` | suite completa | **82 passed** |
+| `tsc --noEmit` | — | **limpio** |
+| Paridad `i18n` | `es` / `en` | **934 = 934** |
+
+## A.7 Sensibilidad · `GA-REM-016 AC13`
+
+Siete mutaciones, todas revertidas desde salvaguarda previa:
+
+| # | Mutación | Rompe | Fallos |
+|:--:|---|---|:--:|
+| 1 | Se excluye al originador | `AC-R01` | 3 |
+| 2 | Se excluye a los administradores | `AC-R02` | 6 |
+| 3 | Se excluye a la contraloría | `AC-R03` | 5 |
+| 4 | Se retira la deduplicación | `AC-R07`, `AC-R09` | 1 |
+| 5 | Se retira el filtro de empresa | `AC-R08` | 1 |
+| 6 | Se pierde el destinatario explícito | `AC-R06` | 1 |
+| 7 | El umbral de 24 h pasa a 0 | `AC-T03` | 1 |
+
+**La mutación 6 merece un comentario.** Rompió el aviso de SAP y **no** el del rechazo, y es
+correcto: en el rechazo el operador entra también como originador, de modo que quitarlo de los
+explícitos no lo elimina. Quien distingue las dos vías es el evento de SAP, donde el
+`Analista SAP` **no** es originador de nada. Una sola prueba no habría bastado.
+
+### El protocolo de reversión
+
+```
+1. la implementación se confirmó y publicó ANTES de mutar        846b1bf
+2. se copió además una salvaguarda explícita de cada archivo
+3. cada reversión se hizo desde esa copia, nunca desde el índice
+4. tras revertir se comprobó que la capacidad SIGUE EXISTIENDO,
+   diez patrones uno a uno — no solo que `git diff` estuviera limpio
+```
+
+## A.8 El veredicto, y por qué no es otro
+
+```
+P-14 = PARTIAL
+```
+
+Cinco de seis no es seis. `docs/02 §3.14` enumera seis tipos y el sexto no tiene semántica:
+«próximo» no está definido en ninguna fuente, `Lot.end_date` es la fecha **real** de cierre —para
+cuando existe, el lote ya cerró— y no hay `planned_end_date`. Derivarla de
+`ProductivePhase.duration_days` sería decidir el requisito en vez de leerlo.
+
+Reducir el alcance para poder certificar —«cinco eventos certificados, luego `P-14` certificado»—
+es exactamente lo que `§94` del encargo prohíbe, y lo que obligó a revertir `P-03` dos días
+antes.
+
+```
+Falta para certificar P-14:
+  · OD-08 · qué es «lote próximo a cierre»           decisión del propietario
+  · modelo de área y rol de gerencia                  decisión de modelo, para AC-R04
+```

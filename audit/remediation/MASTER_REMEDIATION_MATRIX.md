@@ -399,3 +399,37 @@ públicas y ya estaban las seis. En lugar de subir el límite, se separó lo que
 mezclaba: rutas **sin sesión** frente a rutas que exigen sesión y autorizan por
 **titularidad**. `/me` figuraba como pública cuando exige token. Las públicas de `/api` bajaron
 de seis a dos y el límite bajó con ellas.
+
+
+---
+
+## 15. `OD-08` · destinatarios de `P-14` (2026-09-07)
+
+| | Sev. | Estado |
+|---|:--:|---|
+| `OD-08` · ¿quién recibe los avisos? | — | **`RESOLVED`** |
+| `OD-08` · ¿qué es «lote próximo a cierre»? | — | **`OWNER_DECISION_REQUIRED`** |
+| `GA-REM-038` enmienda A | **P1** | **`PARTIALLY CERTIFIED`** — 5 de 6 tipos |
+
+```
+P-14 = PARTIAL          CERTIFIED 13 / 15        PARTIAL 2 / 15
+```
+
+Cuatro cosas que conviene conservar.
+
+**Los nombres literales importaban.** El informe anterior agrupó dos eventos como «temporales
+sin definir». Al transcribirlos de `docs/02 §3.14` en vez de citarlos de memoria, uno llevaba su
+umbral en el propio nombre —«> 24h»— y el otro no. Uno pasó a accionable; el otro sigue
+bloqueado. Leer la fuente literal cambió un veredicto.
+
+**`Super Administrador` no entra por serlo.** Su nombre de rol contiene «administrador» y se
+siembra con `company_id = None`. Sin la condición de pertenencia habría recibido el detalle
+operativo de todas las empresas: una fuga que parecía una función.
+
+**Una guarda señaló que el código estaba en el archivo equivocado.** `R-26` prohíbe
+`except Exception` en `main.py`; la tarea de fondo necesita una. En vez de eximir la guarda se
+movió la lógica a `notifications/sla.py`, que es donde iba.
+
+**Una sola prueba no habría bastado para el destinatario explícito.** Quitarlo de la unión
+rompió el aviso de SAP y **no** el del rechazo: allí el operador entra también como originador.
+Quien distingue las dos vías es el evento donde el `Analista SAP` no es originador de nada.

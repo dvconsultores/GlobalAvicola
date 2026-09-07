@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-038` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** `SPEC_READY` — enmienda A abierta (`OD-08`) |
+| **Prioridad** | **P1** · **Estado** **`PARTIALLY CERTIFIED`** — 5 de 6 tipos; falta «lote próximo a cierre» |
 | **Requisito** | `docs/02 §3.14` · `docs/10 §6.2` |
 | **Decisión** | **`OD-07` `RESOLVED`** · **`OD-08` destinatarios `RESOLVED`, semántica temporal `OPEN`** |
 | **Proceso** | `P-14` · Notificaciones y alertas |

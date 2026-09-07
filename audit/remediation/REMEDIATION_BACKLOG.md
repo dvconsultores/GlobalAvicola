@@ -384,3 +384,38 @@ P-14  = PARTIAL
 Se descartaron por escrito tres destinatarios candidatos —`registered_by_id`, el rol
 `Supervisor Avícola` y «todos los administradores»— porque ninguno sale de una fuente.
 Notificar a la persona equivocada es peor que no notificar: parece que el sistema avisa.
+
+
+---
+
+## `OD-08` · destinatarios resueltos, semántica temporal abierta (2026-09-07)
+
+`OD-08` fijó a quién avisa `P-14`: quien cargó el dato, los administradores, la contraloría, el
+gerente del área y el supervisor de esa empresa. En unión con lo que otras fuentes ya exigían, y
+deduplicado — una persona, un aviso.
+
+Al mapear los términos contra los roles reales, cuatro de las cinco funciones resultaron
+resolubles y una no:
+
+```
+gerente del área    BLOCKED_BY_MODEL_GAP
+                    no hay tabla de área, departamento ni unidad organizativa,
+                    y el usuario solo se asocia a una empresa y a un rol
+```
+
+Y releer los nombres literales de `docs/02 §3.14` desbloqueó uno de los dos eventos temporales:
+«Registro pendiente de revisión **> 24h**» lleva su umbral en el nombre. «Lote próximo a cierre»
+no: la única aparición de la frase en el repositorio es la línea que la enumera.
+
+```
+P-14: 2 de 6 tipos  →  5 de 6
+
+Sigue abierto:
+  · OD-08 · qué es «lote próximo a cierre»
+  · OD-08 · si el aviso de «> 24h» se repite (mientras tanto, una vez)
+  · modelo de área y rol de gerencia, para AC-R04
+```
+
+De paso queda anotado un desfase anterior a este trabajo: `docs/02 §6.1` enumera **once** roles
+y hay **seis** sembrados. No se corrige aquí — `GA-REM-034` permite crearlos y el resolutor
+funciona con los que existan.

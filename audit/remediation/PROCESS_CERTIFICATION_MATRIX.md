@@ -49,7 +49,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ | ✅ | **4/4** (1 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
 | **P-13** Autenticación y gestión de usuarios | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **3/3** (2 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
-| **P-14** Notificaciones y alertas | func §3.14 | ✅ | ✅ | ✅ | ✅ | canal interno · `OD-07` | ✅ | ✅ | **5/5** `UI_E2E` | **`PARTIAL`** — 2 de 6 tipos | **`PARTIAL`** — `OD-08` |
+| **P-14** Notificaciones y alertas | func §3.14 | ✅ | ✅ | ✅ | ✅ | canal `OD-07` · destinatarios `OD-08` | ✅ | ✅ | **5/5** `UI_E2E` | **`PARTIAL`** — 5 de 6 tipos | **`PARTIAL`** — `OD-08` temporal |
 | **P-15** Reportes y KPI | spec §4.12 · `docs/02 §3.12` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **4/4** | `COVERED` | **`CERTIFIED`** |
 
 ### Nota sobre «parcial» en la columna E2E
@@ -525,5 +525,53 @@ Los dos procesos `PARTIAL` que quedan **no esperan trabajo técnico**:
 |---|---|---|
 | `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | `P-14` | a quién avisar en cuatro tipos | **decisión de negocio** — `OD-08` |
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+
+---
+
+## `OD-08` resuelve los destinatarios · `P-14` pasa de 2 a 5 de 6 (2026-09-07)
+
+```
+CERTIFIED = 13 / 15      PARTIAL = 2 / 15
+```
+
+Sin cambio de recuento otra vez, y por la misma razón de fondo: el proceso avanzó mucho y sigue
+sin estar completo.
+
+`OD-08` fijó a quién avisar —quien cargó el dato, administradores, contraloría, supervisor, más
+los destinatarios que otras fuentes ya exigían, deduplicados y acotados a la empresa—. Y releer
+los **nombres literales** de `docs/02 §3.14` desbloqueó uno de los dos eventos temporales:
+
+```
+«Registro pendiente de revisión > 24h»   el umbral ESTÁ en el nombre        → implementado
+«Lote próximo a cierre»                  «próximo» no está en ninguna parte → bloqueado
+```
+
+El informe anterior los había agrupado como «temporales sin definir». Solo uno lo era.
+
+```
+2 de 6  →  5 de 6
+```
+
+Y aun así `P-14` no se certifica. `GA-REM-016 AC05` no admite certificar por muestra: cinco de
+seis sigue siendo una muestra. Reducir el alcance para poder cerrar es lo que obligó a revertir
+`P-03` dos días antes.
+
+Queda por decidir, y no es trabajo técnico:
+
+| Qué | Quién decide |
+|---|---|
+| qué significa «lote próximo a cierre» | el propietario — `OD-08`, mitad abierta |
+| si el aviso de «> 24h» se repite | el propietario — mientras tanto, una vez |
+| modelo de área y rol de gerencia, para `AC-R04` | decisión de modelo |
+
+Los dos procesos `PARTIAL` siguen sin esperar trabajo técnico:
+
+| Proceso | Qué falta | Naturaleza |
+|---|---|---|
+| `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
+| `P-14` | semántica de un evento y modelo de área | **decisión** — `OD-08` |
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

@@ -23,7 +23,7 @@ Clasificación: `CUBIERTO` (E2E completo) · `PARCIAL` · `MANUAL` (existe pero 
 | P-11 | Activación manual de lotes / saldos iniciales | spec §4.9 / func §3.9 | **MANUAL** |
 | P-12 | Gestión de datos maestros | func §3.2 | PARCIAL |
 | P-13 | Gestión de usuarios, roles y permisos | func §3.1 | PARCIAL |
-| P-14 | Notificaciones y alertas | func §3.14 | **PARCIAL** — canal interno sí, 4 de 6 tipos sin destinatario |
+| P-14 | Notificaciones y alertas | func §3.14 | **PARCIAL** — 5 de 6 tipos; falta «lote próximo a cierre» |
 | P-15 | Reportes y KPIs | spec §4.12 | PARCIAL |
 | — | Registro contable/administrativo en SAP | fuera de alcance (SAP es el sistema principal) | **MANUAL** (por diseño) |
 
@@ -284,16 +284,20 @@ implementados —los únicos cuyo destinatario está escrito en una fuente— y 
 `OD-08`. «Mortalidad > umbral» tiene además su umbral en `settings`, de modo que la anotación
 de «umbral fijo en código» ya no es cierta.
 
-| Tipo | Estado tras `GA-REM-038` |
+| Tipo (nombre literal) | Estado tras `OD-08` |
 |---|---|
-| Registro rechazado → operador | **IMPLEMENTADO** |
-| Error de envío SAP → rol `Analista SAP` | **IMPLEMENTADO** |
-| Mortalidad > umbral | alerta sí; notificación no — sin destinatario (`OD-08`) |
-| Peso fuera de estándar | alerta sí (`GA-REM-037`); notificación no — sin destinatario (`OD-08`) |
-| Pendiente de revisión > 24 h | sin disparador (temporal, sin planificador) y sin destinatario |
-| Lote próximo a cierre | «próximo» sin definir y sin destinatario |
+| Registro pendiente de revisión > 24h | **IMPLEMENTADO** — umbral normativo, medido desde la auditoría |
+| Registro rechazado (notificar al operador) | **IMPLEMENTADO** — operador ∪ `OD-08` |
+| Mortalidad > umbral configurable | **IMPLEMENTADO** |
+| Peso fuera de estándar | **IMPLEMENTADO** |
+| Error de envío SAP | **IMPLEMENTADO** — `Analista SAP` ∪ `OD-08` |
+| Lote próximo a cierre | **BLOQUEADO** — «próximo» sin definir en ninguna fuente |
 
-**Cobertura: 21 de 25 pasos → PARCIAL.** Detalle en `audit/remediation/P14_PROCESS_CHAIN_MATRIX.md`.
+Destinatarios según `OD-08`: quien cargó el dato, administradores, contraloría y supervisores de
+la empresa, más los que otras fuentes ya exigían, deduplicados. El **gerente del área** queda
+bloqueado: no hay modelo de área ni rol de gerencia.
+
+**Cobertura: 32 de 34 pasos → PARCIAL.** Detalle en `audit/remediation/P14_PROCESS_CHAIN_MATRIX.md`.
 
 ### P-15 · Reportes y KPIs
 

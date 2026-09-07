@@ -595,3 +595,44 @@ RC-07  ¿la mortalidad se envía a SAP?          ABIERTA, no bloquea ningún pro
 OD-05  ¿quién puede conceder qué permiso?      ABIERTA, no bloquea (P-13 certificado)
 OD-08  ¿quién recibe los avisos operativos?    ABIERTA, bloquea 4 tipos de P-14
 ```
+
+
+---
+
+## `OD-08` · la mitad que se resolvió y la que no (2026-09-07)
+
+```
+OD-08 · destinatarios  RESUELTO
+  │
+  └─→ GA-REM-038 enmienda A · resolver_destinatarios()
+        ├─→ registro rechazado         operador ∪ OD-08
+        ├─→ error de envío SAP         Analista SAP ∪ OD-08
+        ├─→ mortalidad > umbral        OD-08
+        ├─→ peso fuera de estándar     OD-08
+        └─→ pendiente de revisión >24h OD-08  ← desbloqueado al leer el nombre literal
+              └─→ P-14 = PARTIAL   (5 de 6)
+
+OD-08 · semántica temporal  ABIERTO
+  └─→ «lote próximo a cierre»
+
+MODELO
+  └─→ área y rol de gerencia   →  AC-R04 bloqueado
+```
+
+### El estado del programa
+
+```
+P-08   contrato SAP real                 dependencia externa   GA-REM-017
+P-14   semántica de un evento + modelo   decisión              OD-08
+```
+
+Ningún proceso queda bloqueado por trabajo técnico pendiente. Y conviene distinguir las dos
+cosas que bloquean a `P-14`, porque no son iguales:
+
+```
+«lote próximo a cierre»   el propietario tiene que decidir qué significa
+gerente del área          el modelo tiene que ganar un concepto que no tiene
+```
+
+La segunda no la resuelve una respuesta: exige diseñar áreas y asignar usuarios a ellas, que es
+trabajo con su propia spec.

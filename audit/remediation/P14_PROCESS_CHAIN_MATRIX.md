@@ -16,14 +16,25 @@ campana»: es que cada uno de esos seis llegue a quien debe. Esta matriz los rec
 
 ## 2. Los seis tipos de `§3.14`
 
-| # | Tipo | Disparador | Destinatario | Fuente del destinatario | Estado |
-|:--:|---|---|---|---|:--:|
-| 3 | **Registro rechazado** | `review/service.py:409` | `event.registered_by_id` | `docs/02 §3.14`, literal | **PASS** |
-| 4 | **Error de envío SAP** | `sap/service.py:367,451` | rol `Analista SAP` | `docs/10 §6.2`, literal | **PASS** |
-| 5 | Mortalidad > umbral | existe (`high_mortality`) | — | **ninguna fuente lo dice** | **FAIL** — `OD-08` |
-| 6 | Peso fuera de estándar | existe (`weight_deviation`) | — | **ninguna fuente lo dice** | **FAIL** — `OD-08` |
-| 7 | Pendiente de revisión > 24 h | **no existe** (temporal, sin planificador) | — | ninguna | **FAIL** — `OD-08` |
-| 8 | Lote próximo a cierre | **no existe**; «próximo» sin definir | — | ninguna | **FAIL** — `OD-08` |
+Tras `OD-08`, el destinatario de todos sale de la misma regla: los explícitos de fuentes
+anteriores más quien cargó el dato, los administradores, la contraloría y los supervisores de
+esa empresa, deduplicados.
+
+| # | Tipo (nombre literal) | Disparador | Destinatarios | Estado |
+|:--:|---|---|---|:--:|
+| 3 | **Registro pendiente de revisión > 24h** | `notifications/sla.py` · 24 h desde la transición, tomada de la auditoría | `OD-08` | **PASS** |
+| 4 | **Registro rechazado (notificar al operador)** | `review/service.py:409` | operador **∪** `OD-08` | **PASS** |
+| 5 | **Mortalidad > umbral configurable** | alerta `high_mortality`, umbral en `settings` | `OD-08` | **PASS** |
+| 6 | **Peso fuera de estándar** | alerta `weight_deviation` (`GA-REM-037`) | `OD-08` | **PASS** |
+| 7 | **Error de envío SAP** | `sap/service.py:367,451` | `Analista SAP` **∪** `OD-08` | **PASS** |
+| 8 | **Lote próximo a cierre** | **no existe**; «próximo» sin definir en ninguna fuente | — | **BLOCKED_BY_OWNER_DECISION** |
+
+### Y una función de `OD-08` que no se puede resolver
+
+| Función | Estado |
+|---|:--:|
+| persona que cargó el dato · administradores · contraloría · supervisor | **PASS** |
+| **gerente del área** | **BLOCKED_BY_MODEL_GAP** — no hay áreas ni rol de gerencia |
 
 ## 3. El ciclo de vida del aviso
 
@@ -60,35 +71,52 @@ su exención de tenencia haría pasar la prueba sin comprobar nada.
 | 24 | Vacío, cargando y error son distintos | `AC19` | un fallo de API **no** es bandeja vacía | `vitest` |
 | 25 | Paridad `i18n` | `AC20` | `es` = `en` | conteo |
 
+## 5 bis. Los destinatarios, comprobados uno a uno
+
+| # | Comprobación | Estado |
+|:--:|---|:--:|
+| 26 | Quien cargó el dato recibe, en los cuatro eventos con originador | **PASS** |
+| 27 | Los administradores de la empresa reciben | **PASS** |
+| 28 | La contraloría recibe | **PASS** |
+| 29 | Los supervisores reciben | **PASS** |
+| 30 | El gerente del área | **BLOCKED_BY_MODEL_GAP** |
+| 31 | El operador sigue recibiendo el rechazo (`docs/02 §3.14`) | **PASS** |
+| 32 | El `Analista SAP` sigue recibiendo el error de envío (`docs/10 §6.2`) | **PASS** |
+| 33 | Quien cumple dos condiciones recibe **un** aviso | **PASS** |
+| 34 | Las mismas funciones en otra empresa reciben **cero** | **PASS** |
+
 ## 6. Recuento
 
 ```
-25 pasos · PASS 21 · FAIL 4
+34 pasos · PASS 32 · BLOQUEADOS 2
     2 de canal
-    2 de 6 tipos normativos    ← aquí está el hueco
+    5 de 6 tipos normativos          ← queda «lote próximo a cierre»
    13 de ciclo de vida y aislamiento
     8 de experiencia
+    9 de destinatarios               ← queda el gerente del área
 ```
 
-**`P-14` = `PARTIAL`.** No porque el canal falle —funciona de extremo a extremo— sino porque
-cuatro de los seis tipos que `docs/02 §3.14` exige no tienen a quién avisar. `GA-REM-016 AC05`
-no admite certificar por muestra, y dos de seis es una muestra.
+**`P-14` = `PARTIAL`.** No por un defecto: cinco de los seis tipos que `docs/02 §3.14` exige
+están cubiertos y funcionan de extremo a extremo. El sexto no tiene semántica, y
+`GA-REM-016 AC05` no admite certificar por muestra — cinco de seis sigue siendo una muestra.
 
 ## 7. Qué falta exactamente
 
 ```
-OD-08 = OWNER_DECISION_REQUIRED
+OD-08 · destinatarios ......... RESUELTO
+OD-08 · semántica temporal .... ABIERTO
 
-  · ¿quién recibe el aviso de mortalidad sobre umbral?
-  · ¿quién recibe el de peso fuera de la curva estándar?
-  · «pendiente de revisión > 24 h»: ¿a quién, y con qué mecanismo?
-    (es temporal, y el proyecto no tiene planificador)
-  · «lote próximo a cierre»: ¿qué es «próximo», y a quién se avisa?
+  · «lote próximo a cierre»: ¿qué es «próximo»?
+    La única aparición de la frase en el repositorio es la línea que la enumera.
+    `Lot.end_date` es la fecha REAL de cierre, no una prevista, y no hay `planned_end_date`.
+
+  · Recurrencia del aviso de «> 24h»: ¿una vez o mientras siga pendiente?
+    Mientras tanto se emite una sola vez, con idempotencia.
+
+MODELO
+  · gerente del área: no hay tabla de área ni rol de gerencia.
+    El usuario solo se asocia a una empresa y a un rol.
 ```
-
-Los dos primeros ya tienen disparador funcionando: solo falta la persona. Los dos últimos
-necesitan además una decisión de arquitectura que `OD-07` no tomó, porque resolvió el canal y
-solo el canal.
 
 ## 8. Evidencia
 
@@ -97,6 +125,7 @@ solo el canal.
 | Creación, destinatario, lectura, aislamiento | `backend/tests/test_notifications.py` | **11/11** |
 | Experiencia | `e2e/proceso-p14-notificaciones.spec.ts` | **5/5** `UI_E2E` |
 | Campana y estados | `frontend/src/components/notifications/__tests__` | **8/8** |
-| Regresión backend | suite completa | **460 passed · 49 skipped** |
+| Destinatarios de `OD-08` | `backend/tests/test_notification_recipients.py` | **9/9** |
+| Regresión backend | suite completa | **469 passed · 49 skipped** |
 | Regresión `E2E` | 17 suites | **129 passed** |
 | Regresión `vitest` | suite completa | **82 passed** |
