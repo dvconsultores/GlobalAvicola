@@ -999,5 +999,23 @@
     "above": "Sobre la curva estándar",
     "noReference": "Sin referencia de curva",
     "noReferenceHelp": "No hay curva estándar aplicable a esta edad."
+  },
+  "notifications": {
+    "title": "Notificaciones",
+    "bell": "Notificaciones",
+    "bellWithUnread": "Notificaciones: {{count}} sin leer",
+    "unread": "Sin leer",
+    "read": "Leída",
+    "empty": "No tienes notificaciones.",
+    "loadFailed": "No se pudieron cargar las notificaciones.",
+    "markFailed": "No se pudo marcar como leída.",
+    "justNow": "hace un momento",
+    "minutesAgo": "hace {{count}} min",
+    "hoursAgo": "hace {{count}} h",
+    "daysAgo": "hace {{count}} d",
+    "types": {
+      "record_rejected": "Su registro fue rechazado",
+      "sap_send_failed": "Falló el envío a SAP"
+    }
   }
 }

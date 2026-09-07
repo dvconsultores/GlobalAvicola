@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
 import { normalizeLanguage, nextLanguage } from '../../i18n'
 import { Globe, Bird, Building2, ChevronDown, Check } from 'lucide-react'
+import NotificationBell from '../notifications/NotificationBell'
 
 export default function Header() {
  const { t, i18n } = useTranslation()
@@ -47,6 +48,13 @@ export default function Header() {
  <>
  {/* ── Desktop Header ───────────────────────────────── */}
  <header className="hidden lg:flex h-12 bg-white backdrop-blur border-b border-slate-200/70 items-center justify-end px-5 gap-2.5 sticky top-0 z-20">
+ {/* `OD-07` / `GA-REM-038`. El canal de P-14 es interno: esta campana es la única
+ superficie por la que un usuario se entera de que su registro fue rechazado. */}
+ <NotificationBell />
+
+ {/* Divider */}
+ <div className="w-px h-4 bg-slate-200/80" />
+
  {/* Language toggle */}
  <button
  onClick={toggleLang}
@@ -169,6 +177,11 @@ export default function Header() {
  </div>
 
  <div className="flex items-center gap-1.5 shrink-0">
+ {/* La misma campana en móvil: `OD-07` no distingue dispositivo. */}
+ <div className="text-white">
+ <NotificationBell />
+ </div>
+
  {/* Language */}
  <button
  onClick={toggleLang}

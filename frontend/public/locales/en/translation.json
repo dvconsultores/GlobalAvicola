@@ -999,5 +999,23 @@
     "above": "Above standard curve",
     "noReference": "No curve reference",
     "noReferenceHelp": "No standard curve applies at this age."
+  },
+  "notifications": {
+    "title": "Notifications",
+    "bell": "Notifications",
+    "bellWithUnread": "Notifications: {{count}} unread",
+    "unread": "Unread",
+    "read": "Read",
+    "empty": "You have no notifications.",
+    "loadFailed": "Notifications could not be loaded.",
+    "markFailed": "It could not be marked as read.",
+    "justNow": "just now",
+    "minutesAgo": "{{count}} min ago",
+    "hoursAgo": "{{count}} h ago",
+    "daysAgo": "{{count}} d ago",
+    "types": {
+      "record_rejected": "Your record was rejected",
+      "sap_send_failed": "SAP submission failed"
+    }
   }
 }
