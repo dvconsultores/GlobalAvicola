@@ -556,3 +556,42 @@ Y dos decisiones siguen abiertas sin bloquear ningún proceso:
 RC-07  ¿la mortalidad se envía a SAP?          ABIERTA
 OD-05  ¿quién puede conceder qué permiso?      ABIERTA — no bloquea (P-13 ya certificado)
 ```
+
+
+---
+
+## `P-14` · resuelto a medias, y la mitad que falta no es técnica (2026-09-07)
+
+```
+OD-07 (canal)  RESUELTA
+  │
+  └─→ GA-REM-038 · bandeja interna
+        ├─→ notifications + migración n4o5p6q7r8s9
+        ├─→ record_rejected  ←  review/service.py       destinatario: docs/02 §3.14
+        ├─→ sap_send_failed  ←  sap/service.py          destinatario: docs/10 §6.2
+        └─→ campana, contador, lectura, aislamiento     UI_E2E 5/5
+              └─→ P-14 = PARTIAL   (2 de 6 tipos)
+
+OD-08 (destinatarios)  ABIERTA
+  └─→ los otros cuatro tipos de docs/02 §3.14
+```
+
+La dependencia que queda es de **información**, no de trabajo: los disparadores de dos de esos
+cuatro ya existen y funcionan; lo único que falta es saber a quién avisar. Los otros dos
+necesitan además un planificador, que es una decisión de arquitectura que `OD-07` no tomó.
+
+### El estado del programa
+
+```
+P-08   contrato SAP real          dependencia externa   GA-REM-017 BLOCKED_EXTERNAL
+P-14   a quién avisar             decisión de negocio   OD-08
+```
+
+**Ningún proceso queda bloqueado por trabajo técnico pendiente.** Los dos que faltan esperan a
+alguien de fuera: SAP en un caso, el propietario en el otro.
+
+```
+RC-07  ¿la mortalidad se envía a SAP?          ABIERTA, no bloquea ningún proceso
+OD-05  ¿quién puede conceder qué permiso?      ABIERTA, no bloquea (P-13 certificado)
+OD-08  ¿quién recibe los avisos operativos?    ABIERTA, bloquea 4 tipos de P-14
+```

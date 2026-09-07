@@ -23,7 +23,7 @@ Clasificación: `CUBIERTO` (E2E completo) · `PARCIAL` · `MANUAL` (existe pero 
 | P-11 | Activación manual de lotes / saldos iniciales | spec §4.9 / func §3.9 | **MANUAL** |
 | P-12 | Gestión de datos maestros | func §3.2 | PARCIAL |
 | P-13 | Gestión de usuarios, roles y permisos | func §3.1 | PARCIAL |
-| P-14 | Notificaciones y alertas | func §3.14 | **NO IMPLEMENTADO** |
+| P-14 | Notificaciones y alertas | func §3.14 | **PARCIAL** — canal interno sí, 4 de 6 tipos sin destinatario |
 | P-15 | Reportes y KPIs | spec §4.12 | PARCIAL |
 | — | Registro contable/administrativo en SAP | fuera de alcance (SAP es el sistema principal) | **MANUAL** (por diseño) |
 
@@ -32,7 +32,7 @@ Procesos identificados ...........  15
 Procesos 100 % cubiertos .........   0
 Procesos parciales ...............  12
 Procesos manuales ................   2   (P-11 y el posting real en SAP)
-Procesos no implementados ........   1   (P-14)
+Procesos no implementados ........   0   (P-14 pasó a PARCIAL con `GA-REM-038`)
 ```
 
 ---
@@ -277,7 +277,23 @@ Además el contador de resultados es incorrecto: `setTotal(response.data.length)
 | Lote próximo a cierre | **NO IMPLEMENTADO** |
 
 Sí existen dos alertas ambientales no especificadas: temperatura y humedad fuera de rango en `farm_inspection`.
-**NO IMPLEMENTADO** como proceso. No hay canal de notificación (email/push/Telegram) en ninguna parte del código.
+
+**Actualizado tras `OD-07` y `GA-REM-038`.** El canal existe: bandeja interna con campana,
+contador de no leídas, lectura y aislamiento por destinatario. De los seis tipos, dos están
+implementados —los únicos cuyo destinatario está escrito en una fuente— y cuatro esperan a
+`OD-08`. «Mortalidad > umbral» tiene además su umbral en `settings`, de modo que la anotación
+de «umbral fijo en código» ya no es cierta.
+
+| Tipo | Estado tras `GA-REM-038` |
+|---|---|
+| Registro rechazado → operador | **IMPLEMENTADO** |
+| Error de envío SAP → rol `Analista SAP` | **IMPLEMENTADO** |
+| Mortalidad > umbral | alerta sí; notificación no — sin destinatario (`OD-08`) |
+| Peso fuera de estándar | alerta sí (`GA-REM-037`); notificación no — sin destinatario (`OD-08`) |
+| Pendiente de revisión > 24 h | sin disparador (temporal, sin planificador) y sin destinatario |
+| Lote próximo a cierre | «próximo» sin definir y sin destinatario |
+
+**Cobertura: 21 de 25 pasos → PARCIAL.** Detalle en `audit/remediation/P14_PROCESS_CHAIN_MATRIX.md`.
 
 ### P-15 · Reportes y KPIs
 

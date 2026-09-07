@@ -354,3 +354,33 @@ pueda ejecutarlo desde el producto.
 `R-97` apareció al derivar el contrato de esa pantalla y es de otra clase —el backend calcula
 la evaluación y no la expone salvo cuando alerta—. Los dos se cierran por la enmienda A de
 `GA-REM-037`, que es la autoridad natural de `OD-06`.
+
+
+---
+
+## `P-14` · el canal existe, el proceso no (2026-09-07)
+
+`OD-07` resolvió que Global Avícola notifica **por dentro**, y `GA-REM-038` lo construyó:
+bandeja, campana, contador, lectura, aislamiento por destinatario y `UI_E2E`. Nada de eso
+certifica `P-14`.
+
+`docs/02 §3.14` enumera seis tipos de aviso. Al derivar cada uno de sus fuentes —no de la
+intuición— solo dos dicen a quién avisar:
+
+| Tipo | Disparador | Destinatario |
+|---|:--:|---|
+| Registro rechazado | sí | «al operador» — `docs/02 §3.14` |
+| Error de envío SAP | sí | rol `Analista SAP` — `docs/10 §6.2` |
+| Mortalidad > umbral | sí | **sin definir** |
+| Peso fuera de estándar | sí | **sin definir** |
+| Pendiente de revisión > 24 h | **no** (temporal, sin planificador) | sin definir |
+| Lote próximo a cierre | **no**, y «próximo» tampoco está definido | sin definir |
+
+```
+OD-08 = OWNER_DECISION_REQUIRED
+P-14  = PARTIAL
+```
+
+Se descartaron por escrito tres destinatarios candidatos —`registered_by_id`, el rol
+`Supervisor Avícola` y «todos los administradores»— porque ninguno sale de una fuente.
+Notificar a la persona equivocada es peor que no notificar: parece que el sistema avisa.

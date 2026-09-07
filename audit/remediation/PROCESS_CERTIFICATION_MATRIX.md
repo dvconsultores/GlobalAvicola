@@ -49,7 +49,7 @@ evidencia. Se certificaron los tres primeros.
 | **P-11** Activación manual de lotes | spec §4.9 | ✅ | ✅ | ✅ | ✅ | `BR-06` | ✅ | ✅ | **6/6** | `COVERED` | **`CERTIFIED`** |
 | **P-12** Gestión de datos maestros | func §3.2 | ✅ | ✅ | ✅ | ✅ | pertenencia | ✅ | ✅ | **4/4** (1 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
 | **P-13** Autenticación y gestión de usuarios | func §3.1 | ✅ | ✅ | ✅ | ✅ | `RR-05` · RBAC | ✅ | ✅ | **3/3** (2 `UI_E2E`) | `COVERED` | **`CERTIFIED`** |
-| **P-14** Notificaciones y alertas | func §3.14 | ✅ | ⚠ | ⚠ | ✅ | umbral configurable | ✅ | ✅ | **parcial** | **`PARTIAL`** | **`PARTIAL`** |
+| **P-14** Notificaciones y alertas | func §3.14 | ✅ | ✅ | ✅ | ✅ | canal interno · `OD-07` | ✅ | ✅ | **5/5** `UI_E2E` | **`PARTIAL`** — 2 de 6 tipos | **`PARTIAL`** — `OD-08` |
 | **P-15** Reportes y KPI | spec §4.12 · `docs/02 §3.12` | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | **4/4** | `COVERED` | **`CERTIFIED`** |
 
 ### Nota sobre «parcial» en la columna E2E
@@ -481,5 +481,49 @@ Los dos `PARTIAL` que quedan no esperan trabajo técnico:
 |---|---|---|
 | `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
 | `P-14` | elegir canal de notificación y construirlo | **decisión sin plantear** + desarrollo |
+
+**`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**
+
+
+---
+
+## `OD-07` resuelta · el canal de `P-14` existe, el proceso sigue `PARTIAL` (2026-09-07)
+
+```
+CERTIFIED = 13 / 15      PARTIAL = 2 / 15
+```
+
+Sin cambio de recuento, y conviene explicar por qué, porque la tentación era otra.
+
+`OD-07` fijó que `P-14` notifica **dentro de Global Avícola**. Se construyó: modelo, bandeja,
+campana, lectura, aislamiento, `UI_E2E`. Funciona de extremo a extremo.
+
+Y aun así `P-14` no se certifica. `docs/02 §3.14` enumera **seis** tipos de aviso; al derivar
+cada uno de sus fuentes resultó que solo **dos** dicen a quién avisar:
+
+```
+Registro rechazado      → «notificar al operador»          docs/02 §3.14, literal
+Error de envío SAP      → «rol Analista SAP»               docs/10 §6.2, literal
+Mortalidad > umbral     → ninguna fuente lo dice
+Peso fuera de estándar  → ninguna fuente lo dice
+Pendiente > 24 h        → ninguna fuente, y es temporal: no hay planificador
+Lote próximo a cierre   → ninguna fuente, y «próximo» tampoco está definido
+```
+
+`GA-REM-016 AC05` no admite certificar por muestra, y dos de seis es una muestra. Declararlo
+`CERTIFIED` porque la campana funciona sería el mismo salto que obligó a revertir `P-03` el día
+anterior: de «el mecanismo hace lo que la decisión describe» a «el proceso está completo».
+
+```
+OD-08 = OWNER_DECISION_REQUIRED    destinatarios de los avisos operativos
+                                   y qué significa «lote próximo a cierre»
+```
+
+Los dos procesos `PARTIAL` que quedan **no esperan trabajo técnico**:
+
+| Proceso | Qué falta | Naturaleza |
+|---|---|---|
+| `P-08` | contrato SAP real | **dependencia externa** — `GA-REM-017` `BLOCKED_EXTERNAL` |
+| `P-14` | a quién avisar en cuatro tipos | **decisión de negocio** — `OD-08` |
 
 **`21 / 60` de cobertura de requisitos permanece histórico y NO se recalcula.**

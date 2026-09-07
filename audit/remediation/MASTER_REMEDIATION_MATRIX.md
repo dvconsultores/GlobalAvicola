@@ -366,3 +366,36 @@ tramo evita.
 **Una reversión con `git checkout` destruyó trabajo sin confirmar y la guarda de residuo lo dio
 por limpio**, porque el código sospechoso ya no existía. Lo delató la suite completa con diez
 fallos. Las reversiones se hacen desde una salvaguarda previa, no desde el último commit.
+
+
+---
+
+## 14. `OD-07` · `GA-REM-038` · el canal de `P-14` (2026-09-07)
+
+| | Sev. | Estado |
+|---|:--:|---|
+| `OD-07` · ¿por qué canal notifica Global Avícola? | — | **`RESOLVED`** — interno |
+| `GA-REM-038` · bandeja interna | **P1** | **`PARTIALLY CERTIFIED`** — 2 de 6 tipos |
+| `OD-08` · ¿quién recibe los avisos operativos? | — | **`OWNER_DECISION_REQUIRED`** |
+
+```
+P-14 = PARTIAL          CERTIFIED 13 / 15        PARTIAL 2 / 15
+```
+
+Tres cosas que conviene conservar de este tramo.
+
+**Se construyó el canal y aun así no se certificó el proceso.** `docs/02 §3.14` enumera seis
+tipos; solo dos dicen a quién avisar. `GA-REM-016 AC05` no admite certificar por muestra, y era
+tentador: la campana funciona de extremo a extremo. Es el mismo salto que obligó a revertir
+`P-03` el día anterior, evitado esta vez antes de darlo.
+
+**Los destinatarios se leyeron, no se dedujeron.** «Notificar al operador» y «Notificar al rol
+Analista SAP» están escritos con esas palabras en `docs/02 §3.14` y `docs/10 §6.2`. Los otros
+cuatro no están escritos en ninguna parte, y `Lot` no tiene responsable asignado —se
+enumeraron sus campos—. Se descartaron tres candidatos por escrito antes de abrir `OD-08`.
+
+**Una guarda obligó a modelar mejor en vez de a ceder.** `test_ac08b` limita a seis las rutas
+públicas y ya estaban las seis. En lugar de subir el límite, se separó lo que la lista
+mezclaba: rutas **sin sesión** frente a rutas que exigen sesión y autorizan por
+**titularidad**. `/me` figuraba como pública cuando exige token. Las públicas de `/api` bajaron
+de seis a dos y el límite bajó con ellas.

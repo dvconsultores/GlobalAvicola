@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-038` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** `SPEC_READY` |
+| **Prioridad** | **P1** · **Estado** **`PARTIALLY CERTIFIED`** — 2 de 6 tipos; los otros 4 esperan a `OD-08` |
 | **Requisito** | `docs/02 §3.14` · `docs/10 §6.2` |
 | **Decisión** | **`OD-07` `RESOLVED`** (2026-09-07) |
 | **Proceso** | `P-14` · Notificaciones y alertas |

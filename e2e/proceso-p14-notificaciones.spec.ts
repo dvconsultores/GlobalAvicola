@@ -87,6 +87,17 @@ test.describe('P-14 · notificaciones internas', () => {
       const marca = `${PREFIJO}${sufijo()}`
       const { evento } = await registroRechazado(request, cab, marca)
 
+      // Cuántas tenía sin leer antes de mirar. No se supone que sea una: la suite completa
+      // crea varias, y afirmar «baja a cero» haría que la prueba dependiera del orden de
+      // ejecución en vez de del producto.
+      const clavePrevia = process.env.GA_TEST_OPERATOR_PASSWORD!
+      const sesion = await request.post(`${API}/login`, {
+        data: { username: 'test_operator', password: clavePrevia } })
+      const opPrevio = { Authorization: `Bearer ${(await sesion.json()).access_token}` }
+      const antes = (await (await request.get(`${API}/notifications/unread-count`,
+        { headers: opPrevio })).json()).unread
+      expect(antes, 'el rechazo no dejó ninguna sin leer').toBeGreaterThan(0)
+
       await entrar(page, 'operator')
 
       // `AC16` · la campana existe y dice cuántas hay sin leer.
@@ -104,10 +115,15 @@ test.describe('P-14 · notificaciones internas', () => {
       await expect(aviso.getByText(/sin leer|unread/i),
         'no se distingue por texto que está sin leer').toBeVisible()
 
-      // `AC18` · abrirla la marca leída, y el contador baja sin recargar.
+      // `AC18` · abrirla la marca leída, y el contador **baja** sin recargar.
       await aviso.click()
-      await expect(boton, 'el contador no bajó al leer el aviso')
-        .not.toHaveAccessibleName(/[1-9]/, { timeout: 15_000 })
+      await expect
+        .poll(async () => (await (await request.get(`${API}/notifications/unread-count`,
+          { headers: opPrevio })).json()).unread, { timeout: 15_000 })
+        .toBe(antes - 1)
+      // Y la campana refleja el nuevo número, o deja de anunciarlo si ya no queda ninguna.
+      await expect(boton, 'la campana no refleja el contador tras leer').toHaveAccessibleName(
+        antes - 1 > 0 ? new RegExp(`${antes - 1}`) : /^(?!.*[1-9]).*$/, { timeout: 15_000 })
 
       // Y quedó leída en el backend, no solo en la pantalla.
       const clave = process.env.GA_TEST_OPERATOR_PASSWORD!
