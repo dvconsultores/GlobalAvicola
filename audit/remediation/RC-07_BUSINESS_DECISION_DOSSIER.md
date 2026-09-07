@@ -433,12 +433,19 @@ que de los seis tipos de `docs/02 §3.14`, **dos** tienen disparador y destinata
 
 ---
 
-# RESOLUCIÓN PARCIAL · `OD-08` (2026-09-07)
+# RESOLUCIÓN · `OD-08` (2026-09-07)
 
 ```
-OD-08 · destinatarios ......... RESOLVED
-OD-08 · semántica temporal .... OWNER_DECISION_REQUIRED
+OD-08 = RESOLVED
+
+  · destinatarios ......... RESUELTO
+  · modelo de área ........ RESUELTO
+  · próximo a cierre ...... RESUELTO
 ```
+
+> **Sobre el identificador.** `OD-08` se abrió con cuatro preguntas y se resolvió en dos tandas.
+> No se crearon `OD-08A`/`OD-08B`/`OD-08C`: el registro no usa sufijos, y una decisión con
+> secciones es más fiel que tres identificadores para lo mismo.
 
 > **Sobre el identificador.** `OD-08` se abrió con **cuatro** preguntas y el propietario ha
 > respondido la de destinatarios. No se crea un `OD-ID` nuevo —el registro no admite
@@ -525,3 +532,77 @@ evento». Las tres se consideraron y las tres se descartaron por escrito en
 `P14_NOTIFICATION_RECIPIENT_MATRIX.md §4`: cualquiera sería una decisión nuestra vestida de
 requisito, y notificar a la persona equivocada es peor que no notificar, porque parece que el
 sistema avisa.
+
+---
+
+# `OD-08` · SECCIONES 2 Y 3 (2026-09-07)
+
+Completan la decisión que la primera tanda dejó a medias.
+
+## Sección 2 · modelo de área
+
+```
+AREA
+    dato maestro configurable, con alcance de empresa
+    los nombres los pone el cliente: no hay enum ni lista fija
+
+USER
+    se asigna a un área funcional
+
+AREA MANAGER
+    usuario con rol de gerencia, de la misma empresa y la misma área
+
+AREA SUPERVISOR
+    usuarios con rol de supervisión, de la misma empresa y la misma área
+```
+
+Desbloquea el `BLOCKED_BY_MODEL_GAP` que la primera tanda declaró. Se implementa en
+`GA-REM-039`, aparte de `P-14`, porque un maestro nuevo toca `P-12`, un campo del usuario toca
+`P-13` y un campo del lote toca `P-03` y `P-06`: `P-14` es su primer consumidor, no su dueño.
+
+**No se guarda el gerente en el área.** Tenerlo en `Area.manager_user_id` **y** poder deducirlo
+del rol crearía dos fuentes que acabarían discrepando. La pertenencia vive en el usuario
+(`area_id`) y la capacidad en su rol.
+
+**El rol de gerencia no se crea aquí.** `docs/02 §6.1` no lo tiene y `GA-REM-034` permite que la
+empresa lo cree como dato. Si no existe, no se avisa a nadie por ese concepto y nada falla.
+
+## Sección 3 · «lote próximo a cierre»
+
+```
+LOT_NEAR_CLOSE
+    faltan 3 días calendario para la fecha prevista de cierre del lote
+```
+
+Con las precisiones que la implementación necesitaba y la decisión permite:
+
+```
+planned_close_date   cuándo se PREVÉ cerrar     campo nuevo, nulable
+end_date             cuándo se cerró DE VERDAD  intacto, lo fija `close_lot`
+
+condición:  0 <= días hasta la fecha prevista <= 3
+            Y el lote no está cerrado
+            Y hay fecha prevista
+            Y no se avisó ya de esta misma ocurrencia
+
+frecuencia: UNA notificación al entrar en la ventana. No una por día.
+```
+
+**Ventana y no igualdad.** `== 3` habría exigido que el evaluador corriera exactamente ese día;
+con el sistema apagado el aviso no saldría nunca. La ventana lo detecta cuando vuelva a correr.
+
+**Pasada la fecha prevista no se avisa**: ya no significa «próximo». Un aviso de retraso sería
+otro evento con su propia fuente, y no se inventa aquí.
+
+**La fecha no se deriva de nada**: ni de la línea genética, ni de una edad fija, ni de
+`ProductivePhase.duration_days`. La pone quien planifica.
+
+## Lo que `OD-08` NO autoriza
+
+- Sembrar áreas con nombres inventados.
+- Rellenar retroactivamente el área de usuarios o lotes, ni la fecha prevista de los lotes
+  existentes. No hay fuente segura, y asignar «Supervisor → Producción» por su rol sería
+  fabricar dato.
+- Reutilizar o renombrar `end_date`.
+- Notificar a un `Super Administrador` sin empresa: `OD-08` dice «de la empresa correspondiente».
+- Modelar departamentos, divisiones, centros de coste ni regiones. Solo `Area`.

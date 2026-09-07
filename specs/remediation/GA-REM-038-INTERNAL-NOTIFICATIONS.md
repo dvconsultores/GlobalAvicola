@@ -3,11 +3,11 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-038` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** **`PARTIALLY CERTIFIED`** — 5 de 6 tipos; falta «lote próximo a cierre» |
+| **Prioridad** | **P1** · **Estado** `SPEC_READY` — enmienda B abierta (`OD-08` completa) |
 | **Requisito** | `docs/02 §3.14` · `docs/10 §6.2` |
-| **Decisión** | **`OD-07` `RESOLVED`** · **`OD-08` destinatarios `RESOLVED`, semántica temporal `OPEN`** |
+| **Decisión** | **`OD-07` `RESOLVED`** · **`OD-08` `RESOLVED`** (destinatarios · área · próximo a cierre) |
 | **Proceso** | `P-14` · Notificaciones y alertas |
-| **Dependencias** | `GA-REM-002` `CERTIFIED` (RBAC) · `GA-REM-026` `CERTIFIED` (frontera transaccional) |
+| **Dependencias** | `GA-REM-002` (RBAC) · `GA-REM-026` (frontera transaccional) · **`GA-REM-039`** (áreas funcionales) |
 | **Antecedentes** | `P14_NOTIFICATION_CAPABILITY_MATRIX.md` · `P14_NOTIFICATION_EVENT_MATRIX.md` · `P14_NOTIFICATION_RECIPIENT_MATRIX.md` |
 
 ---
@@ -415,3 +415,182 @@ de requisito registrado, no una decisión nuestra.
   destinatario explícito, revertida desde salvaguarda previa.
 - `P-14` reevaluado evento por evento. **Sigue `PARTIAL`** mientras el sexto no tenga
   semántica: cinco de seis no es seis.
+
+---
+
+# ENMIENDA B · «LOTE PRÓXIMO A CIERRE» Y EL ÁREA
+
+`2026-09-07` · decisión `OD-08` completa · estado de la spec: vuelve a `SPEC_READY`
+
+## B.1 Lo que resolvió el propietario
+
+```
+OD-08 · «lote próximo a cierre» (RESUELTO)
+
+    faltan 3 días calendario para la fecha prevista de cierre del lote
+```
+
+Y con la enmienda A y el modelo de `GA-REM-039`, `OD-08` queda entera:
+
+```
+OD-08 · destinatarios ......... RESUELTO   (enmienda A)
+OD-08 · modelo de área ........ RESUELTO   (GA-REM-039)
+OD-08 · próximo a cierre ...... RESUELTO   (esta enmienda)
+```
+
+## B.2 Fecha prevista ≠ fecha real
+
+```
+planned_close_date   cuándo se PREVÉ cerrar        planificación
+end_date             cuándo se cerró DE VERDAD     lo fija `close_lot`
+```
+
+`end_date` **no se reutiliza ni se renombra**. Para cuando existe, el lote ya cerró: usarla para
+pronosticar sería avisar de algo que ya pasó. Y su semántica actual la fijaron `R-73` y `R-75`,
+que siguen vigentes.
+
+`planned_close_date` es nulable. Hay lotes históricos y no existe fuente segura para
+completarlos: inventarles una fecha sería fabricar el dato que después se notifica.
+
+**No se deriva de nada.** Ni de la línea genética —`P-03` tiene Cobb, Ross y Hubbard, y ninguna
+fuente dice que su curva implique una fecha de cierre—, ni de una edad fija, ni de
+`ProductivePhase.duration_days`. La pone quien planifica.
+
+## B.3 La condición
+
+```
+0 <= (planned_close_date − fecha de negocio de hoy) <= 3 días
+    Y  el lote NO está cerrado
+    Y  planned_close_date NO es nula
+    Y  no se avisó ya de esta misma ocurrencia
+```
+
+**Ventana y no igualdad.** `== 3` habría exigido que el evaluador corriera exactamente ese día:
+si el sistema estuvo apagado, el aviso no saldría nunca. Con la ventana, un lote que entra en
+ella se detecta cuando el evaluador vuelva a correr —a 2, a 1 o a 0 días— y se avisa una vez.
+
+**Una sola vez, no diaria.** Decisión del propietario. Un aviso al entrar en la ventana; no uno
+por día mientras dure.
+
+**Pasada la fecha prevista, no se avisa.** Ya no significa «próximo». Si algún día hace falta un
+aviso de retraso será otro evento con su propia fuente; aquí no se inventa.
+
+## B.4 La ocurrencia, y qué pasa si se replanifica
+
+La idempotencia se ancla a:
+
+```
+lot_id + planned_close_date + destinatario
+```
+
+y no solo al lote. Si la fecha prevista **cambia de verdad**, el lote vuelve a entrar en una
+ventana distinta y vuelve a avisarse: es una situación nueva y merece aviso nuevo.
+
+**Las notificaciones ya emitidas no se borran ni se reescriben.** Son evidencia de lo que se
+sabía cuando se emitieron. Reescribir el historial al replanificar destruiría precisamente eso.
+
+## B.5 Marco temporal y `R-80`
+
+La comparación es **día de calendario contra día de calendario**:
+
+```
+planned_close_date   se guarda con `_fecha_de_negocio()`: medianoche UTC del día previsto,
+                     que es la convención que `R-75` fijó para las fechas de negocio del lote
+hoy                  `date.today()`, el día local del servidor — lo mismo que usa `close_lot`
+```
+
+`R-80` describe otra cosa: mezclar un **instante** UTC (`created_at`) con un **día** local. Aquí
+no hay instantes, solo días, y los dos extremos usan la convención del proyecto. **`R-80` no
+interviene**, y por eso no se toca ni se cierra.
+
+## B.6 El mecanismo
+
+El evaluador periódico ya existe: la tarea del `lifespan` que la enmienda A introdujo para el
+aviso de las 24 horas. Se le añade esta evaluación; no se crea una segunda.
+
+Sigue sin haber `Celery`, `Redis` ni colas. La condición es de **días**, así que no hace falta
+mirar cada minuto.
+
+## B.7 Los destinatarios
+
+Los de `OD-08`, con el área ya resoluble por `GA-REM-039`:
+
+```
+quien cargó el dato del lote · administradores · contraloría
+· gerente del área · supervisores del área
+    misma empresa · DISTINCT por user_id
+```
+
+Para «lote próximo a cierre», *quien cargó el dato* es **quien registró el lote**, no quien
+ejecuta el evaluador. El proceso de fondo no es destinatario de nada por serlo.
+
+## B.8 Criterios de aceptación añadidos
+
+### Grupo J · fecha prevista de cierre
+
+**`AC-C01`** · El lote tiene `planned_close_date`, distinta de `end_date`.
+
+**`AC-C02`** · Los lotes anteriores admiten `planned_close_date` nula.
+
+**`AC-C03`** · Una fecha prevista futura se persiste y se lee.
+
+**`AC-C04`** · `end_date` conserva su significado de cierre real: `close_lot` la fija y la
+planificación no la toca.
+
+### Grupo K · el aviso
+
+**`AC-C05`** · A tres días de la fecha prevista, el lote genera el aviso.
+
+**`AC-C06`** · A dos, uno o cero días también, **si aún no se avisó**: el evaluador puede no
+haber corrido antes.
+
+**`AC-C07`** · A más de tres días, no se avisa.
+
+**`AC-C08`** · Pasada la fecha prevista, no se avisa.
+
+**`AC-C09`** · Un lote cerrado no genera el aviso.
+
+**`AC-C10`** · Un lote sin fecha prevista no genera aviso falso.
+
+**`AC-C11`** · Se emite **como mucho una vez** por lote y fecha prevista.
+
+**`AC-C12`** · Ejecutar el evaluador varias veces no duplica.
+
+**`AC-C13`** · Los destinatarios son los de `OD-08`, con el área del lote, deduplicados y
+acotados a la empresa.
+
+**`AC-C14`** · El originador es quien registró el lote, nunca el proceso que evalúa.
+
+### Grupo L · el área en los avisos
+
+**`AC-C15`** · El gerente y los supervisores del área **del lote** reciben; los de otra área de
+la misma empresa, no.
+
+**`AC-C16`** · Una edición posterior del evento **no** reinicia la cuenta de las 24 horas: la
+marca es la de la transición, no `updated_at`.
+
+## B.9 Trazabilidad añadida
+
+| `AC` | Prueba | Nivel |
+|---|---|---|
+| `AC-C01`…`AC-C04` | `backend/tests/test_lot_planned_close.py` | integración HTTP |
+| `AC-C05`…`AC-C14` | `backend/tests/test_lot_planned_close.py` | integración |
+| `AC-C15`, `AC-C16` | `backend/tests/test_notification_recipients.py` | integración |
+| interfaz del lote | `e2e/proceso-p14-notificaciones.spec.ts` | `UI_E2E` |
+
+## B.10 Fuera de alcance
+
+- **Aviso de retraso** cuando la fecha prevista ya pasó. Ninguna fuente lo pide.
+- **Derivar la fecha prevista** de la genética, de una edad fija o de la duración de fase.
+- **Rellenar retroactivamente** la fecha de los lotes existentes.
+- **Renombrar o reutilizar `end_date`.**
+- **Calcular la ventana en el cliente.** El frontend muestra la fecha; no decide si hay aviso.
+- **`R-80`, `R-98`, `R-99`, `P-08`, `RC-07`, `GA-TD-014`.** Intactos.
+
+## B.11 Definición de terminado — ampliada
+
+- `AC-C01`…`AC-C16` pasan.
+- Los **seis** eventos de `docs/02 §3.14` quedan con disparador computable, destinatarios
+  resueltos e integración probada.
+- Regresión de `P-03`, `P-06` y `P-11` sin fallos nuevos: se toca el modelo del lote.
+- `P-14` recertificado evento por evento, sin certificar por muestra.
