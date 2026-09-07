@@ -600,3 +600,61 @@ GIT PUSH PASS  ≠  DEPLOY PASS  ≠  APPLICATION HEALTHY
 Que el commit esté en el remoto no demuestra que esté desplegado, y un `SPA = 200` con
 `API = HEALTHY` **no** demuestra que el servicio esté sirviendo este código. Son tres
 comprobaciones distintas y se registran por separado.
+
+---
+
+## Checkpoint documental · baseline de decisión de unidades de negocio (2026-09-07)
+
+```
+TIPO                     DOCUMENTACIÓN ÚNICAMENTE
+CÓDIGO                   0 archivos
+MIGRACIONES              0
+SPECS                    0
+CERTIFICACIONES          0 · FUNCIONAL 14/15 sin cambios
+PRUEBAS                  ninguna añadida ni modificada
+```
+
+Ocho archivos, los ocho `.md`, todos bajo `audit/remediation/`:
+
+```
+NUEVOS (5)   BUSINESS_UNIT_OWNER_DECISION_DOSSIER.md
+             BUSINESS_UNIT_OWNER_DECISION_MATRIX.md
+             BUSINESS_UNIT_CROSS_FLOW_DECISION_MATRIX.md
+             BUSINESS_UNIT_LEGACY_MIGRATION_DECISION_MATRIX.md
+             BUSINESS_UNIT_SPEC_READINESS_REPORT.md
+
+CORREGIDOS (3)
+             CROSS_MODULE_FLOW_MATRIX.md            ampliación
+             LEGACY_DATA_MODULE_MAPPING_MATRIX.md   dos afirmaciones superadas
+             MODULE_ACCESS_ARCHITECTURE_AUDIT.md    conteo y bloqueantes superados
+```
+
+**Son tres matrices corregidas, no dos.** La tercera apareció al validar el conteo: la auditoría
+maestra seguía declarando «8 decisiones» y «la 1 y la 5 son bloqueantes» como estado vigente, y
+el baseline nuevo dice 12 y otros cinco. Dejarla sin marcar habría hecho convivir dos conteos.
+
+### Cómo se corrigió, y por qué así
+
+Ninguna frase se borró. Las superadas quedan **tachadas en su sitio**, con un bloque inmediato
+que dice qué las sustituye y con qué fecha. Un lector que llegue a `§3` de la matriz de legado
+ya no puede leer la conclusión vieja sin ver que lo es — que era justo el riesgo de dejar la
+corrección solo en un apéndice al final.
+
+### Lo que cambió de estado
+
+```
+egg_batches · chick_batches   BLOQUEANTE «doble unidad»  →  bilaterales, no bloqueante
+migración del legado          bloquea la spec            →  bloquea el alta del primer cliente
+                                                             (ENV-01: no hay producción real)
+decisiones                    8                          →  12
+bloqueantes de la spec        auditoría 1 y 5            →  BU-D01 D02 D09 D11 D12
+```
+
+### Lo que NO cambia
+
+`P-14` conserva su certificación funcional. La colisión detectada con `OD-08` —si contraloría y
+administración son transversales frente al nuevo eje— se **registra como decisión pendiente**,
+no como regresión: el requisito no existía cuando se certificó.
+
+**Las doce decisiones siguen `PENDING_OWNER`.** No se ha decidido ninguna, no se ha asignado
+ningún `OD-` definitivo y `GA-REM-040` no se ha creado.

@@ -22,7 +22,7 @@ unidad pertenece? `§63` prohíbe adivinarlo.
 | `operational_alerts` | sí | vía `lot_id` | cadena | si el lote no lo tiene | MEDIO |
 | `notifications` | sí | vía entidad relacionada | cadena | sí | MEDIO |
 | `audit_logs` | sí | vía `lot_id` nulable | cadena | **sí, mayoritariamente** | **ALTO** |
-| `egg_batches`, `chick_batches` | sí | **cruzan** | `generation` | **por diseño** | **BLOQUEANTE** |
+| `egg_batches`, `chick_batches` | sí | **sí, por los dos lados** | columnas de origen y destino | **no: son bilaterales** | BAJO · ~~BLOQUEANTE~~ *(§6)* |
 | `consolidated_movements` | sí | vía `lot_id` | cadena | poco | BAJO |
 | maestros | sí | los cuatro específicos, sí | naturaleza | el resto es transversal | BAJO |
 | **`users`** | sí | **NO** | — | **sí, siempre** | **DECISIÓN** |
@@ -34,8 +34,13 @@ unidad pertenece? `§63` prohíbe adivinarlo.
 **Inspecciones.** Mismo caso, y son numerosas: `farm_inspection` es el primer paso de casi todas
 las cadenas.
 
-**Lotes de huevo y de pollito.** Pertenecen a dos unidades a la vez **por diseño**. Asignarles
-una sería falsear la trazabilidad que `P-10` certifica.
+**Lotes de huevo y de pollito.** ~~Pertenecen a dos unidades a la vez **por diseño**. Asignarles
+una sería falsear la trazabilidad que `P-10` certifica.~~
+
+> **SUPERADO · 2026-09-07 · ver `§6`.** No son ambiguos: son **bilaterales**. Llevan una columna
+> por cada lado, de modo que la fila **es** el traspaso y no hay propiedad única que decidir.
+> **No es bloqueante.** Los bloqueantes de datos de esta sección quedan en **dos** —eventos sin
+> lote e inspecciones—, que además son el mismo.
 
 ## 4. Los usuarios: no es un problema de datos, es una decisión
 
@@ -50,8 +55,13 @@ una sería falsear la trazabilidad que `P-10` certifica.
      → adivinar, y `§64` lo prohíbe
 ```
 
-Ninguna es obviamente correcta. `A` es amable y no aísla nada; `B` es correcta y deja la
-operación parada el lunes por la mañana. **Es decisión del propietario.**
+Ninguna es obviamente correcta. `A` es amable y no aísla nada; `B` es correcta y ~~deja la
+operación parada el lunes por la mañana~~. **Es decisión del propietario.**
+
+> **ACOTADO · 2026-09-07 · ver `§6`.** `ENV-01` establece que no hay producción real desplegada
+> y que los usuarios actuales son de desarrollo y certificación: **no hay operación que parar**.
+> La decisión sigue haciendo falta, pero **no bloquea el diseño de la spec**; bloquea el alta del
+> primer cliente real.
 
 ## 5. Sobre `fail closed`
 
@@ -61,3 +71,26 @@ opción segura y la más disruptiva a la vez.
 
 La tensión entre `§66` (denegar lo desconocido) y la realidad del legado (mucho es desconocido)
 es el riesgo principal de esta capacidad, y no se resuelve con más auditoría.
+
+---
+
+## 6. Corrección · 2026-09-07
+
+Al preparar `BUSINESS_UNIT_OWNER_DECISION_DOSSIER.md` se contrastaron dos afirmaciones de este
+documento contra el modelo y contra `ENV-01`. Las dos resultaron inexactas y se corrigen aquí:
+
+**`§3`, «lotes de huevo y de pollito».** Se marcaron `BLOQUEANTE` por «pertenecer a dos unidades
+a la vez por diseño». No es así: `egg_batches` y `chick_batches` llevan **una columna por cada
+lado** (`source_lot_id` / `hatchery_lot_id` y `hatchery_lot_id` / `destination_lot_id`). No hay
+que decidir de quién es la fila — la fila **es** el traspaso. **No son bloqueantes y no necesitan
+columna de unidad.** Ver `BUSINESS_UNIT_CROSS_FLOW_DECISION_MATRIX.md §2.1`.
+
+**`§2`, «lotes sin `bird_type`».** El tipo de ave está también en `Breed`, y `Lot.breed_id` la
+referencia. Existe por tanto una segunda vía de derivación que este documento no consideró.
+Reduce el volumen de lo inclasificable, pero es **inferencia de negocio** y requiere ratificación.
+
+**`§4`, usuarios existentes.** `ENV-01` —vigente, del propietario— establece que no hay
+producción real desplegada y que los usuarios actuales son de desarrollo y certificación. El
+riesgo descrito («la operación parada el lunes por la mañana») **no aplica hoy**; la decisión pasa
+a bloquear el alta del primer cliente real. Ver
+`BUSINESS_UNIT_LEGACY_MIGRATION_DECISION_MATRIX.md §1`.

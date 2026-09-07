@@ -357,8 +357,23 @@ Rebajar lo certificado porque aparece un requisito nuevo sería reescribir la hi
    Hoy no existe ninguno de los dos; separarlos ahora es barato y después, caro.
 ```
 
-La 1 y la 5 son bloqueantes: sin ellas, implementar rompe procesos certificados o deja la
-operación parada.
+~~La 1 y la 5 son bloqueantes: sin ellas, implementar rompe procesos certificados o deja la
+operación parada.~~
+
+> **SUPERADO · 2026-09-07.** El baseline vigente de decisiones es
+> `BUSINESS_UNIT_OWNER_DECISION_DOSSIER.md`, y corrige esta sección en tres puntos:
+>
+> ```
+> DECISIONES        8  →  12     ninguna de las ocho se cae; se añaden cuatro
+> BLOQUEAN LA SPEC  1 y 5  →  BU-D01 · BU-D02 · BU-D09 · BU-D11 · BU-D12
+> LA 5 (migración)  deja de bloquear la spec por ENV-01
+>                   pasa a bloquear el alta del primer cliente real
+> ```
+>
+> Las cuatro añadidas son de **régimen permanente**, no de legado, que es lo que esta auditoría
+> miró: usuario sin ninguna unidad · retirada de una unidad ya concedida · si contraloría y
+> administración son transversales (colisiona con `OD-08` y con `P-14` certificado) · qué
+> permisos `RBAC` quedan fuera del filtro.
 
 ---
 

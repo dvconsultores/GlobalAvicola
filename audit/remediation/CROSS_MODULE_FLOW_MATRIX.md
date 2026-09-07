@@ -77,3 +77,21 @@ diseño de producto y menos a seguridad.
 Implementar el filtro por unidad **antes** de responder estas siete preguntas rompería `P-02`,
 `P-04`, `P-05`, `P-06` y `P-10`, que están certificados. El orden importa: primero el contrato,
 después el filtro.
+
+---
+
+## Ampliación · 2026-09-07
+
+Los siete flujos se desarrollan lado por lado —qué ve el origen, qué ve el destino, qué queda
+oculto y qué opción se recomienda— en
+`audit/remediation/BUSINESS_UNIT_CROSS_FLOW_DECISION_MATRIX.md`.
+
+Dos observaciones de esa relectura afectan a esta matriz:
+
+- El flujo 1 describe una cadena de **dos saltos** (Progenitoras → Incubadora → Reproductora),
+  mientras que los flujos 2 y 3 describen los dos saltos de la otra cadena por separado. Los tres
+  existen; la asimetría hace que el flujo 1 exija una decisión extra —si el origen alcanza al
+  destino final o solo al siguiente eslabón—.
+- El flujo 2 es el único cuya decisión **arrastra un requisito de dato nuevo**: para que la
+  incubadora vea el huevo antes de recibirlo, el despacho tendría que declarar su destino.
+  `operational_events.destination_farm_id` apunta a una granja, no a una unidad, y es opcional.
