@@ -472,3 +472,38 @@ DESPLEGADO       backend sí · frontend no
 
 Nadie debe leer «`P-03` certificado» como «la capacidad está disponible hoy en
 `avicola.globaldv.net`». Lo estará cuando `R-99` se cierre.
+
+---
+
+# ADDENDUM · segunda medición de `R-99` (2026-09-07)
+
+Tras publicar `14ce39b` se repitió la comprobación con el mismo método —el código de una ruta
+protegida distingue lo desplegado de lo que no—:
+
+| Comprobación | Resultado |
+|---|:--:|
+| `API` responde (`/api/v1/lots` → `401`) | **HEALTHY** |
+| `GA-REM-027` · backend sano y API pública rota | **NO** — no procede interrumpir |
+| Backend de esta entrega (`/api/v1/notifications/unread-count` → `401`) | **DESPLEGADO** |
+| Frontend de esta entrega | **NO DESPLEGADO** |
+
+```
+frontend local ......... 931 claves i18n
+frontend desplegado .... 866        ← el mismo número que ayer
+```
+
+Los bloques `notifications` (de hoy), `curves` (de ayer) y `roles` (de `GA-REM-034`, anterior)
+siguen ausentes del entorno compartido. **`R-99` no ha cambiado y no se declara resuelto.**
+
+El backend, en cambio, se despliega con normalidad: es la segunda entrega consecutiva en la que
+llega y el frontend no. Eso acota el problema a `docker-push-frontend.yml` o a lo que sirve el
+SPA, y descarta que sea el mecanismo de publicación. Sin acceso a los registros de ejecución
+del flujo desde este entorno, no se afirma la causa.
+
+```
+CERTIFICADO      en el entorno aislado, con evidencia propia
+DESPLEGADO       backend sí · frontend no
+```
+
+Nadie debe leer «el canal de `P-14` funciona» como «hoy hay campana en
+`avicola.globaldv.net`». La habrá cuando `R-99` se cierre.
