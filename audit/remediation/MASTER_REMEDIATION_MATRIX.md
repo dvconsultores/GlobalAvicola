@@ -204,6 +204,8 @@ código, no después.
 | `R-93` · `RoleUpdate` no incluía permisos | P2 | **`CERTIFIED`** |
 | `R-94` · no había catálogo de permisos | P2 | **`CERTIFIED`** |
 | `OD-05` · ¿quién puede conceder qué permiso? | — | **`OWNER_DECISION_REQUIRED`** |
+| `OD-07` · ¿por qué canal notifica Global Avícola? | — | **`RESOLVED`** — interno / in-app |
+| `OD-08` · ¿quién recibe los avisos operativos, y qué es «lote próximo a cierre»? | — | **`OWNER_DECISION_REQUIRED`** |
 
 ```
 P-13 = CERTIFIED        CERTIFIED 10 / 15        PARTIAL 5 / 15

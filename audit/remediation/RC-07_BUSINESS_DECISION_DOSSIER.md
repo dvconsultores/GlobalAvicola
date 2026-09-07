@@ -380,3 +380,95 @@ Cada lote queda asociado a una VERSIÓN concreta de la curva
   notificación —correo, push, centro de avisos— es una decisión de negocio distinta, todavía
   sin plantear al propietario y **sin número de `OD` asignado**. No es `OD-05`, que pregunta
   por la escalada de privilegios en `P-13`.
+
+---
+
+# RESOLUCIÓN · `OD-07` (2026-09-07)
+
+```
+OD-07 = RESOLVED
+```
+
+| | |
+|---|---|
+| **Decidido por** | el propietario |
+| **Fecha** | 2026-09-07 |
+| **Pregunta** | ¿por qué canal notifica Global Avícola? |
+| **Requisito** | `docs/02 §3.14` — pasa de bloqueado por decisión a **`ACTIONABLE`** |
+| **Spec** | `GA-REM-038` |
+| **Proceso** | `P-14` · Notificaciones y alertas |
+
+> **Identificador.** Se comprobó el registro antes de asignarlo: `OD-01`…`OD-06` estaban
+> ocupados. `OD-05` es *«¿puede un administrador conceder permisos que él mismo no posee?»*, de
+> `P-13`, y llegó a citarse por error como bloqueante de `P-14`; esa confusión se corrigió el
+> 2026-09-06 en `PARTIAL_PROCESS_BLOCKER_MATRIX.md`. Este es el siguiente libre.
+
+## La decisión
+
+```
+P-14 utilizará como canal obligatorio inicial
+NOTIFICACIONES INTERNAS DENTRO DE GLOBAL AVÍCOLA.
+```
+
+Fuera del alcance inicial, por decisión expresa:
+
+```
+EMAIL · WHATSAPP · SMS · PUSH MÓVIL · WEB PUSH · TELEGRAM · otros canales externos
+```
+
+Concuerda con `spec.md §9`, que ya listaba «Notificaciones push (v2)» entre lo que el proyecto
+no hace.
+
+## Lo que la decisión NO autoriza
+
+`OD-07` resolvió **el canal**, y solo el canal. No autoriza a inventar:
+
+```
+qué eventos notifican · a quién · con qué prioridad · cuánto se conservan · escalados
+```
+
+Eso sale de requisitos existentes. Al derivarlos —`P14_NOTIFICATION_EVENT_MATRIX.md`— resultó
+que de los seis tipos de `docs/02 §3.14`, **dos** tienen disparador y destinatario escritos y
+**cuatro** no. Los cuatro se declaran, no se completan a ojo.
+
+---
+
+# ABIERTA · `OD-08` (2026-09-07)
+
+```
+OD-08 = OWNER_DECISION_REQUIRED
+```
+
+| | |
+|---|---|
+| **Origen** | derivar los seis tipos de `docs/02 §3.14` al implementar `OD-07` |
+| **Bloquea** | cuatro de los seis tipos de `P-14`; el canal en sí **no** está bloqueado |
+| **Consecuencia** | `P-14` queda `PARTIAL` aunque el canal funcione de extremo a extremo |
+
+## Lo que hay que preguntar
+
+```
+1. «Mortalidad > umbral configurable»
+   El aviso existe como alerta del lote desde P0-1. ¿Quién debe recibirlo como
+   notificación personal? Ninguna fuente lo dice, y `Lot` no tiene responsable
+   asignado: si la respuesta es «el responsable del lote», el modelo no lo tiene.
+
+2. «Peso fuera de estándar»
+   Mismo caso, desde `GA-REM-037`. ¿El mismo destinatario que el anterior, u otro?
+
+3. «Registro pendiente de revisión > 24 h»
+   Además de a quién, con qué mecanismo: es un disparador temporal y el proyecto no
+   tiene planificador. Introducirlo es una decisión de arquitectura, no de canal.
+
+4. «Lote próximo a cierre»
+   ¿Qué es «próximo»? ¿Días antes de una fecha prevista de cierre —que el modelo
+   tampoco tiene—, una edad, un porcentaje del ciclo? ¿Y a quién se avisa?
+```
+
+## Lo que NO se hizo mientras tanto
+
+No se eligió «todos los administradores», ni «el Supervisor Avícola», ni «quien registró el
+evento». Las tres se consideraron y las tres se descartaron por escrito en
+`P14_NOTIFICATION_RECIPIENT_MATRIX.md §4`: cualquiera sería una decisión nuestra vestida de
+requisito, y notificar a la persona equivocada es peor que no notificar, porque parece que el
+sistema avisa.
