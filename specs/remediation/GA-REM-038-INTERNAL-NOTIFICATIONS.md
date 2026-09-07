@@ -3,9 +3,9 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-038` · `CAPABILITY SPEC` |
-| **Prioridad** | **P1** · **Estado** **`PARTIALLY CERTIFIED`** — 2 de 6 tipos; los otros 4 esperan a `OD-08` |
+| **Prioridad** | **P1** · **Estado** `SPEC_READY` — enmienda A abierta (`OD-08`) |
 | **Requisito** | `docs/02 §3.14` · `docs/10 §6.2` |
-| **Decisión** | **`OD-07` `RESOLVED`** (2026-09-07) |
+| **Decisión** | **`OD-07` `RESOLVED`** · **`OD-08` destinatarios `RESOLVED`, semántica temporal `OPEN`** |
 | **Proceso** | `P-14` · Notificaciones y alertas |
 | **Dependencias** | `GA-REM-002` `CERTIFIED` (RBAC) · `GA-REM-026` `CERTIFIED` (frontera transaccional) |
 | **Antecedentes** | `P14_NOTIFICATION_CAPABILITY_MATRIX.md` · `P14_NOTIFICATION_EVENT_MATRIX.md` · `P14_NOTIFICATION_RECIPIENT_MATRIX.md` |
@@ -264,3 +264,154 @@ destinatario, del filtro de propiedad, del predicado de no leídas y del marcado
 - Paridad `i18n`.
 - Regresión completa sin fallos nuevos.
 - `P-14` reevaluado con su matriz de cadena, sin certificar por muestra.
+
+---
+
+# ENMIENDA A · DESTINATARIOS Y EL AVISO DE LAS 24 HORAS
+
+`2026-09-07` · decisión `OD-08` · estado de la spec: vuelve a `SPEC_READY`
+
+## A.1 Lo que resolvió el propietario
+
+```
+OD-08 · destinatarios (RESUELTO)
+
+  1. la persona que cargó/registró la data que originó el evento
+  2. los usuarios administradores de la empresa correspondiente
+  3. los usuarios con función de contraloría / contralor
+  4. el gerente del área correspondiente
+  5. el supervisor correspondiente
+
+  ámbito: MISMA EMPRESA · y misma área cuando la arquitectura la tenga
+```
+
+Y lo que **no** resolvió: qué significa «lote próximo a cierre», ni si el aviso de las 24 horas
+se repite. `OD-08` sigue abierta en esa mitad.
+
+## A.2 La regla, entera
+
+```
+DESTINATARIOS = destinatarios explícitos de fuentes anteriores
+              ∪ originador ∪ administradores ∪ contraloría ∪ supervisor
+              filtrado por  user.company_id == evento.company_id  y  user.is_active
+              DISTINCT por user_id
+```
+
+**La unión no resta.** «Notificar al operador» (`docs/02 §3.14`) y «Notificar al rol Analista
+SAP» (`docs/10 §6.2`) siguen exigidos y se suman; `OD-08` amplía, no sustituye.
+
+**Una persona, un aviso.** Quien cumpla varias condiciones a la vez recibe **una** fila, no una
+por motivo. La deduplicación es del backend.
+
+**`Super Administrador` no entra por serlo.** Se siembra con `company_id = None` y por tanto no
+pertenece a ninguna empresa. La condición es la pertenencia, no el rol; sin ella, un usuario de
+plataforma recibiría el detalle operativo de todas las empresas.
+
+**El originador sale del dato persistido**, nunca de quien esté autenticado al generarse el
+aviso: pueden ser personas distintas y momentos distintos.
+
+## A.3 Los seis eventos, con sus nombres literales
+
+| Nombre literal (`docs/02 §3.14`) | Estado |
+|---|:--:|
+| Registro pendiente de revisión > 24h | **se implementa** — umbral normativo |
+| Registro rechazado (notificar al operador) | ya implementado · **se amplían destinatarios** |
+| Mortalidad > umbral configurable | **se implementa** |
+| Peso fuera de estándar | **se implementa** |
+| Error de envío SAP | ya implementado · **se amplían destinatarios** |
+| Lote próximo a cierre | **`BLOCKED_BY_OWNER_DECISION`** |
+
+### El de las 24 horas deja de estar bloqueado
+
+Su umbral **está en su propio nombre**, y la condición es computable con lo que existe:
+
+```
+evento.status == pending_review
+  Y  ahora − (AuditLog más reciente del evento con new_state='pending_review').created_at > 24 h
+```
+
+`updated_at` no sirve: cambia con cualquier edición y reiniciaría la cuenta. La marca exacta es
+la de la transición, que consta en la auditoría. Leerla no es convertir `AuditLog` en bandeja:
+es consultar historia, para lo que existe.
+
+`OD-08` decidió el destinatario; la **tecnología** del disparador no es del propietario y se
+resuelve con la arquitectura vigente, sin `Celery`, `Redis` ni colas.
+
+### El de «próximo a cierre» sigue bloqueado
+
+Se buscó en toda la jerarquía y la única aparición de la frase es la línea que la enumera. El
+modelo tampoco la deja derivar: `Lot.end_date` es la fecha **real** de cierre —para cuando
+existe, el lote ya cerró— y no hay `planned_end_date`. Derivarla de
+`ProductivePhase.duration_days` sería decidir el requisito, no leerlo.
+
+## A.4 Criterios de aceptación añadidos
+
+### Grupo H · resolución de destinatarios
+
+**`AC-R01`** · En cada evento normativo se incluye a quien cargó el dato que lo originó, cuando
+es identificable.
+
+**`AC-R02`** · Se incluye a los administradores de la empresa, según los roles reales del
+catálogo y no según nombres inventados.
+
+**`AC-R03`** · Se incluye a los usuarios de contraloría, según el rol real.
+
+**`AC-R04`** · Se incluye al gerente del área **cuando exista resolución de área**. Hoy no
+existe: se declara, no se sustituye.
+
+**`AC-R05`** · Se incluye al supervisor correspondiente.
+
+**`AC-R06`** · Los destinatarios exigidos por fuentes anteriores —el operador en el rechazo, el
+rol `Analista SAP` en el error de envío— **siguen incluidos**.
+
+**`AC-R07`** · Un mismo usuario recibe **como mucho una** notificación por evento.
+
+**`AC-R08`** · Ningún destinatario de otra empresa recibe nada.
+
+**`AC-R09`** · Un usuario que cumple varias condiciones se deduplica.
+
+**`AC-R10`** · La resolución es del backend. El frontend no decide destinatarios.
+
+**`AC-R11`** · Lo que falta para resolver un destinatario se declara, no se adivina.
+
+**`AC-R12`** · Las pruebas satisfacen `GA-REM-016 AC13`.
+
+### Grupo I · el aviso de las 24 horas
+
+**`AC-T01`** · La condición es objetivamente computable: 24 h desde la transición a
+`pending_review`, tomada de la auditoría y no de `updated_at`.
+
+**`AC-T02`** · La notificación se crea al cruzar el umbral normativo.
+
+**`AC-T03`** · **Antes** del umbral no existe notificación.
+
+**`AC-T04`** · Reevaluar no duplica: la recurrencia no está definida en ninguna fuente, de modo
+que el aviso se emite **una sola vez** por evento y destinatario. Que se repita o no es un hueco
+de requisito registrado, no una decisión nuestra.
+
+## A.5 Trazabilidad añadida
+
+| `AC` | Prueba | Nivel |
+|---|---|---|
+| `AC-R01`…`AC-R11` | `backend/tests/test_notification_recipients.py` | integración HTTP |
+| `AC-T01`…`AC-T04` | `backend/tests/test_notification_recipients.py` | integración |
+| `AC-R12` | informe de certificación | mutación |
+
+## A.6 Fuera de alcance de la enmienda
+
+- **`Lote próximo a cierre`.** `OD-08` sigue abierta en esa mitad. Sin definición no se
+  implementa, y `P-14` no puede certificarse.
+- **Gerente del área.** No hay áreas ni rol de gerencia: `BLOCKED_BY_MODEL_GAP`.
+- **Recurrencia del aviso de 24 h.** Sin fuente: se emite una vez.
+- **Crear los roles que faltan del catálogo.** `docs/02 §6.1` enumera once y hay seis
+  sembrados. Es un desfase anterior; `GA-REM-034` permite crearlos y el resolutor funciona con
+  los que existan.
+- **`P-08`, `RC-07`, `GA-TD-014`, `R-98`, `R-99`.** Intactos.
+
+## A.7 Definición de terminado — ampliada
+
+- `AC-R01`…`AC-R12` y `AC-T01`…`AC-T04` pasan, salvo `AC-R04`, declarado bloqueado.
+- Sensibilidad sobre originador, administrador, contraloría, deduplicación, empresa y
+  destinatario explícito, revertida desde salvaguarda previa.
+- `P-14` reevaluado evento por evento. **Sigue `PARTIAL`** mientras el sexto no tenga
+  semántica: cinco de seis no es seis.

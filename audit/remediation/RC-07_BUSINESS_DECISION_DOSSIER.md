@@ -433,11 +433,56 @@ que de los seis tipos de `docs/02 §3.14`, **dos** tienen disparador y destinata
 
 ---
 
-# ABIERTA · `OD-08` (2026-09-07)
+# RESOLUCIÓN PARCIAL · `OD-08` (2026-09-07)
 
 ```
-OD-08 = OWNER_DECISION_REQUIRED
+OD-08 · destinatarios ......... RESOLVED
+OD-08 · semántica temporal .... OWNER_DECISION_REQUIRED
 ```
+
+> **Sobre el identificador.** `OD-08` se abrió con **cuatro** preguntas y el propietario ha
+> respondido la de destinatarios. No se crea un `OD-ID` nuevo —el registro no admite
+> subdecisiones numeradas y `OD-01`…`OD-08` están ocupados—: se marca la decisión como resuelta
+> **en parte**, nombrando qué mitad queda. El estado parcial ya existe en el vocabulario del
+> programa (`GA-REM-027` es `PARTIALLY CERTIFIED`).
+
+## La mitad resuelta · destinatarios
+
+```
+Para los eventos normativos de notificación interna de P-14, los destinatarios serán:
+
+  1. la persona que cargó/registró la data que originó el evento
+  2. los usuarios administradores de la empresa correspondiente
+  3. los usuarios con función/rol de contraloría / contralor
+  4. el gerente del área correspondiente
+  5. el supervisor correspondiente
+
+  ámbito: MISMA EMPRESA · y misma área cuando la arquitectura disponga de ella
+```
+
+Se aplica **en unión** con lo que ya exigían otras fuentes: «notificar al operador»
+(`docs/02 §3.14`) y «Notificar al rol Analista SAP» (`docs/10 §6.2`) siguen vigentes. Una
+decisión que amplía no retira.
+
+Y con deduplicación: quien cumpla varias condiciones recibe **un** aviso, no uno por motivo.
+
+### Lo que la mitad resuelta permitió cerrar
+
+Al mapear los términos contra los roles reales —`P14_OD08_ROLE_MAPPING_MATRIX.md`— tres de los
+cinco resultaron resolubles, uno ya lo era, y uno no:
+
+| Término | Rol real | Estado |
+|---|---|:--:|
+| persona que cargó el dato | `OperationalEvent.registered_by_id` | resoluble |
+| administradores | `Administrador de Empresa` · `Super Administrador` **con empresa** | resoluble |
+| contraloría | `Contralor Avícola` | resoluble |
+| supervisor | `Supervisor Avícola` | resoluble |
+| **gerente del área** | **ninguno** | **`BLOCKED_BY_MODEL_GAP`** |
+
+No hay tabla de área, departamento ni unidad organizativa, y el usuario solo se asocia a una
+empresa y a un rol. Ni los roles identifican el área ni el usuario la tiene asignada.
+
+## La mitad abierta · semántica temporal
 
 | | |
 |---|---|
@@ -447,23 +492,31 @@ OD-08 = OWNER_DECISION_REQUIRED
 
 ## Lo que hay que preguntar
 
+Las preguntas 1, 2 y 3 quedaron respondidas por la mitad de destinatarios: mortalidad, peso y
+el aviso de las 24 horas ya tienen a quién avisar. La tercera además dejó de necesitar decisión
+de mecanismo, porque **la tecnología del disparador no es del propietario**: su umbral está en
+el propio nombre del evento —«> 24h»— y la condición es computable con la auditoría, que guarda
+el momento exacto de la transición a `pending_review`.
+
+Queda una, y una derivada:
+
 ```
-1. «Mortalidad > umbral configurable»
-   El aviso existe como alerta del lote desde P0-1. ¿Quién debe recibirlo como
-   notificación personal? Ninguna fuente lo dice, y `Lot` no tiene responsable
-   asignado: si la respuesta es «el responsable del lote», el modelo no lo tiene.
+1. «Lote próximo a cierre»
+   ¿Qué es «próximo»? Se buscó en toda la jerarquía documental: la única aparición
+   de la frase es la línea de `docs/02 §3.14` que la enumera. Y el modelo no la deja
+   derivar — `Lot.end_date` es la fecha REAL de cierre, no una prevista, y no existe
+   `planned_end_date`. Derivarla de `ProductivePhase.duration_days` sería decidir el
+   requisito en vez de leerlo.
+   ¿Días antes de una fecha prevista? ¿Una edad? ¿Un porcentaje del ciclo?
 
-2. «Peso fuera de estándar»
-   Mismo caso, desde `GA-REM-037`. ¿El mismo destinatario que el anterior, u otro?
-
-3. «Registro pendiente de revisión > 24 h»
-   Además de a quién, con qué mecanismo: es un disparador temporal y el proyecto no
-   tiene planificador. Introducirlo es una decisión de arquitectura, no de canal.
-
-4. «Lote próximo a cierre»
-   ¿Qué es «próximo»? ¿Días antes de una fecha prevista de cierre —que el modelo
-   tampoco tiene—, una edad, un porcentaje del ciclo? ¿Y a quién se avisa?
+2. Recurrencia del aviso de «> 24h»
+   ¿Se emite una vez, o se repite mientras siga pendiente? Ninguna fuente lo dice.
+   Mientras tanto se emite UNA sola vez, con idempotencia: inventar una repetición
+   diaria sería añadir ruido que nadie pidió.
 ```
+
+**Consecuencia:** `P-14` sigue `PARTIAL`. Cinco de los seis eventos normativos quedan cubiertos;
+el sexto no tiene semántica y `GA-REM-016 AC05` no admite certificar por muestra.
 
 ## Lo que NO se hizo mientras tanto
 

@@ -1,93 +1,94 @@
 # `P-14` · A QUIÉN LLEGA CADA NOTIFICACIÓN
 
-`docs/02 §3.14` · `docs/10 §6.2` · `OD-07` · 2026-09-07
-
-Existe aparte de la matriz de eventos porque el destinatario es donde más fácil resulta
-inventar. `§14` del encargo lo dice sin rodeos: nada de «todos los administradores», «todos los
-usuarios» ni «todos los aprobadores» salvo que una regla lo exija.
+`docs/02 §3.14` · `docs/10 §6.2` · `OD-08` · `GA-REM-038`
 
 ---
 
-## 1. Quién causa el evento ≠ quién lo recibe
-
-`§59` del encargo, y es la distinción que evita el error más común:
+## 1. La decisión
 
 ```
-ACTOR      quien ejecuta la acción      p. ej. el aprobador que rechaza
-RECIPIENT  quien necesita enterarse     p. ej. el operador cuyo registro fue rechazado
+OD-08 · destinatarios de las notificaciones internas de P-14
+
+  1. la persona que cargó/registró la data que originó el evento
+  2. los usuarios administradores de la empresa correspondiente
+  3. los usuarios con función de contraloría / contralor
+  4. el gerente del área correspondiente
+  5. el supervisor correspondiente
+
+  ámbito: MISMA EMPRESA · y misma área cuando la arquitectura la tenga
 ```
 
-En el rechazo son **personas distintas por diseño**: `BR-14` exige segregación, de modo que
-quien rechaza no puede ser quien registró. La prueba lo comprueba en los dos sentidos —que B
-recibe y que A no—, porque si el destinatario se resolviera mal, notificar al propio actor
-pasaría desapercibido.
-
-## 2. Matriz
-
-| Event | Actor | Recipient Rule | Role-based? | User-specific? | Company-scoped? |
-|---|---|---|:--:|:--:|:--:|
-| `record_rejected` | quien rechaza (`Aprobador` / `Supervisor Avícola`) | `OperationalEvent.registered_by_id` — «notificar al operador», `docs/02 §3.14` literal | no | **sí** | sí · `event.company_id` |
-| `sap_send_failed` | el proceso de envío | todos los usuarios activos con rol **`Analista SAP`** en esa empresa — `docs/10 §6.2` literal | **sí** | no | sí · `payload.company_id` |
-| `mortality_over_threshold` | quien registra la mortalidad | **SIN DEFINIR** | — | — | — |
-| `weight_out_of_standard` | quien registra el pesaje | **SIN DEFINIR** | — | — | — |
-| `review_pending_24h` | nadie (paso del tiempo) | **SIN DEFINIR** | — | — | — |
-| `lot_near_closure` | nadie (paso del tiempo) | **SIN DEFINIR** | — | — | — |
-
-## 3. Las dos reglas que sí están escritas
-
-**`record_rejected` → el operador.** `docs/02 §3.14` dice literalmente «Registro rechazado
-(notificar al operador)». En el modelo, el operador de un registro es
-`OperationalEvent.registered_by_id`, que es obligatorio y nunca nulo. Un destinatario, una
-persona, sin ambigüedad.
-
-**`sap_send_failed` → el rol `Analista SAP`.** `docs/10 §6.2` dice «Notificar al rol "Analista
-SAP"». Ese rol **existe**: lo crea la migración `l2m3n4o5p6q7` y `review/service.py:549` ya lo
-busca por nombre para armar el tercer paso de aprobación. Es una regla por rol, no por persona,
-de modo que produce **una notificación por cada usuario** de ese rol en la empresa: la bandeja
-es personal y una fila compartida no podría marcarse leída por uno sin marcarla por todos.
-
-Si en una empresa no hay nadie con ese rol, no se crea ninguna notificación y no se falla: el
-envío SAP no puede depender de que la plantilla esté completa.
-
-## 4. Las cuatro que no
-
-`Lot` no tiene responsable, supervisor ni usuario asignado. Se enumeraron sus campos:
+## 2. La regla, en una línea
 
 ```
-id · company_id · farm_id · house_id · genetic_line_id · breed_id · weight_curve_id
-lot_code · bird_type · hatchery_purpose · sex · status · activation_type
-start_date · end_date · created_at · updated_at
+DESTINATARIOS = destinatarios explícitos de fuentes anteriores
+              ∪ originador ∪ administradores ∪ contraloría ∪ gerente ∪ supervisor
+              filtrado por  user.company_id == evento.company_id  y  user.is_active
+              DISTINCT por user_id
 ```
 
-Ninguno apunta a una persona. Para «mortalidad > umbral» y «peso fuera de estándar» no hay, por
-tanto, destinatario derivable del dato, y `docs/02 §3.14` no lo dice.
+**La unión no resta.** `OD-08` amplía; no retira lo que otra fuente exigía. «Notificar al
+operador» de `docs/02 §3.14` y «Notificar al rol Analista SAP» de `docs/10 §6.2` siguen en pie
+y se suman a los cinco términos nuevos.
 
-Las opciones que se descartaron, y por qué:
+**Una persona, un aviso.** Quien sea a la vez quien cargó el dato, administrador y supervisor
+recibe **una** notificación, no tres. La deduplicación la impone el backend, no la pantalla.
 
-| Candidato | Por qué no |
+## 3. La matriz
+
+| Event | Explicit prior recipient | Uploader | Admin | Contralor | Area manager | Supervisor | Final rule |
+|---|---|:--:|:--:|:--:|:--:|:--:|---|
+| **Registro pendiente de revisión > 24h** | — | ✅ `registered_by_id` | ✅ | ✅ | ⛔ sin modelo | ✅ | unión `OD-08`, empresa del evento |
+| **Registro rechazado (notificar al operador)** | **el operador** — `docs/02 §3.14` | ✅ (es el mismo) | ✅ | ✅ | ⛔ | ✅ | operador ∪ `OD-08` |
+| **Mortalidad > umbral configurable** | — | ✅ | ✅ | ✅ | ⛔ | ✅ | unión `OD-08` |
+| **Peso fuera de estándar** | — | ✅ | ✅ | ✅ | ⛔ | ✅ | unión `OD-08` |
+| **Error de envío SAP** | **rol `Analista SAP`** — `docs/10 §6.2` | ✅ los que registraron los eventos consolidados | ✅ | ✅ | ⛔ | ✅ | `Analista SAP` ∪ `OD-08` |
+| **Lote próximo a cierre** | — | — | — | — | — | — | **sin disparador** — `BLOCKED_BY_OWNER_DECISION` |
+
+`⛔` = no hay modelo de área ni rol de gerencia. Detalle en `P14_OD08_ROLE_MAPPING_MATRIX.md §5`.
+
+## 4. En el rechazo, actor y destinatario siguen sin ser el mismo
+
+`BR-14` exige segregación: quien rechaza no puede ser quien registró. `OD-08` no cambia eso —el
+operador sigue siendo destinatario por su papel de originador— pero sí añade a quien rechaza
+**si además** es administrador, contralor o supervisor de esa empresa.
+
+Es correcto y es lo que la decisión dice: un supervisor que rechaza un registro se entera de
+que se rechazó. Lo que la prueba comprueba es que el operador **siempre** está, no que el actor
+nunca esté.
+
+## 5. El originador de cada evento, campo por campo
+
+`§8` del encargo lo pide explícitamente: el destinatario sale del **dato persistido**, nunca de
+quien esté autenticado cuando se genera el aviso —que puede ser otra persona, u otro momento—.
+
+| Evento | Cómo se resuelve el originador |
 |---|---|
-| `registered_by_id` del evento | es quien acaba de registrar la mortalidad: ya lo sabe. Avisarle no informa a nadie |
-| rol `Supervisor Avícola` | `docs/02 §6.1` le da «revisar, corregir, devolver registros» — el flujo de revisión, no las alertas operativas |
-| todos los administradores de la empresa | exactamente lo que `§14` prohíbe |
+| `> 24h`, rechazo, mortalidad, peso | `OperationalEvent.registered_by_id` — obligatorio, nunca nulo |
+| error de envío SAP | `SapPayload → ConsolidatedMovement.event_ids → OperationalEvent.registered_by_id` de cada uno |
 
-Cualquiera de las tres sería una decisión nuestra vestida de requisito. Se deja el hueco.
+**No hace falta ningún campo nuevo.** No procede el hallazgo de `§9` («falta trazabilidad del
+originador»): los cinco eventos accionables lo tienen.
 
-## 5. Lo que habría que preguntar
+## 6. `Super Administrador` no entra por ser administrador
 
-Registrado como **`OD-08`**, sin plantear aquí:
+`OD-08` dice «administradores **de la empresa correspondiente**». El Super Administrador se
+siembra sin empresa (`company_id = None`), de modo que no pertenece a ninguna. Se le aplica la
+misma condición que a todos: pertenecer a la empresa del evento.
+
+Sin esa condición, un usuario de plataforma recibiría el detalle operativo de todas las
+empresas — la fuga que `§6` del encargo advierte.
+
+## 7. Lo que sigue sin resolverse
 
 ```
-1. ¿Quién debe recibir el aviso de mortalidad sobre umbral?
-   ¿un rol, el responsable de la granja, alguien asignado al lote?
-   Si es «el responsable del lote», el modelo no lo tiene y habría que añadirlo.
+gerente del área    BLOCKED_BY_MODEL_GAP   no hay áreas, ni rol de gerencia
+                                            (P14_OD08_ROLE_MAPPING_MATRIX §5)
 
-2. ¿Quién debe recibir el aviso de peso fuera de la curva estándar?
-   ¿el mismo que el anterior u otro?
+lote próximo a cierre   BLOCKED_BY_OWNER_DECISION   «próximo» sin definir
+                                                     (P14_NOTIFICATION_EVENT_MATRIX §4)
 
-3. «Registro pendiente de revisión > 24 h»: ¿a quién, y con qué mecanismo?
-   Hoy no hay planificador; introducirlo es una decisión de arquitectura, no de canal.
-
-4. «Lote próximo a cierre»: ¿qué es «próximo»?
-   ¿días antes de una fecha prevista de cierre —que el modelo tampoco tiene—,
-   una edad, un porcentaje del ciclo? Y ¿a quién se avisa?
+recurrencia del aviso de «> 24h»   sin definir   se implementa una sola vez
 ```
+
+Los tres se declaran. Ninguno se completa a ojo.
