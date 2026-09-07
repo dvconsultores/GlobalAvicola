@@ -207,11 +207,17 @@ async def test_t_037_23_fuera_del_rango_de_edades_no_se_extrapola(
 async def test_t_037_24_no_se_introduce_canal_de_notificacion(
     client, auth_headers, seeded_ids, motor, test_database_url
 ):
-    """`AC22` · la alerta es un registro. `P-14` sigue intacto.
+    """`AC22` · la alerta es un registro. `GA-REM-037` no abrió ningún canal.
 
-    Se comprueba sobre el esquema y no sobre el código: una tabla de notificaciones,
-    plantillas o suscripciones sería la huella inevitable de haber empezado `P-14` por la
-    puerta de atrás.
+    **Corregida.** La versión original prohibía cualquier tabla que contuviera
+    «notification», porque en su momento eso solo podía significar que `P-14` se había
+    colado. Desde `OD-07`, `P-14` existe por decisión del propietario y con su spec
+    (`GA-REM-038`), de modo que `notifications` es legítima y esta guarda la señalaba por su
+    nombre.
+
+    Lo que la guarda **quería** decir sigue en pie y es lo que ahora comprueba: `GA-REM-037`
+    no introduce ningún **canal externo** ni cuelga la alerta de peso de una bandeja. La
+    alerta sigue siendo una fila de `operational_alerts` y nada más.
     """
     from app.database import Base
 
@@ -224,6 +230,23 @@ async def test_t_037_24_no_se_introduce_canal_de_notificacion(
 
     sospechosas = [
         t for t in Base.metadata.tables
-        if any(p in t for p in ("notification", "notificacion", "subscription", "email_queue"))
+        if any(p in t for p in ("email", "smtp", "sms", "whatsapp", "push", "telegram",
+                                "subscription", "delivery_attempt"))
     ]
-    assert sospechosas == [], f"`P-14` entró de lado: {sospechosas}"
+    assert sospechosas == [], f"canal externo en el esquema: {sospechosas}"
+
+    # Y la alerta de peso no se convirtió en notificación: `GA-REM-038` implementa dos tipos
+    # —rechazo de registro y fallo de envío SAP— y `weight_deviation` no es ninguno.
+    from app.notifications.models import Notification
+
+    e = create_async_engine(test_database_url)
+    try:
+        async with e.connect() as c:
+            avisos = (await c.execute(
+                select(Notification.id).where(Notification.company_id.isnot(None))
+                .where(Notification.related_entity_type == "operational_alert"))).scalars().all()
+        assert avisos == [], (
+            "la alerta de peso acabó creando notificaciones, que `OD-08` aún no autoriza"
+        )
+    finally:
+        await e.dispose()

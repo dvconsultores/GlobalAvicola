@@ -16,22 +16,46 @@ from __future__ import annotations
 from fastapi import FastAPI
 from fastapi.routing import APIRoute
 
-# Rutas sin permiso, con el motivo por el que no pueden tenerlo.
+# Rutas **sin sesión**: cualquiera puede llamarlas. Es la lista que debe permanecer corta,
+# porque cada entrada es superficie expuesta a internet.
 RUTAS_PUBLICAS: dict[str, str] = {
     "/health": "sonda de disponibilidad, sin datos",
     "/api/v1/login": "es cómo se obtiene la sesión",
     "/api/v1/refresh": "renueva la sesión; se valida el token de refresco",
-    "/api/v1/me": "devuelve la identidad del propio titular, nada que no tenga ya",
-    "/api/v1/switch-company": "el servicio valida que la compañía sea suya",
-    "/api/v1/users/{user_id}/password": (
-        "la autorización depende de quién pide qué: el titular con su contraseña "
-        "actual, o un administrador. La decide el servicio (GA-REM-012)"
-    ),
-    "/api/v1/operations/event-types": "catálogo estático, sin datos de ninguna compañía",
     "/openapi.json": "documentación",
     "/docs": "documentación",
     "/docs/oauth2-redirect": "documentación",
     "/redoc": "documentación",
+}
+
+# Rutas que **exigen sesión** y autorizan por **titularidad**: no por permiso de módulo, sino
+# porque el dato es de quien pregunta.
+#
+# `GA-REM-038` obligó a separarlas de `RUTAS_PUBLICAS`, donde estaban mezcladas. Meterlas en el
+# mismo saco tenía dos consecuencias malas a la vez: `/me` figuraba como «pública» cuando exige
+# token, y la guarda que limita las públicas a seis contaba contra ese cupo rutas que no son
+# superficie anónima. Separarlas hace la lista pública **más** estricta, no menos: de seis
+# entradas de `/api` pasa a dos.
+#
+# Cada una debe declarar por qué la titularidad basta y **dónde** se impone. Ninguna delega la
+# decisión en el frontend.
+RUTAS_DE_TITULAR: dict[str, str] = {
+    "/api/v1/me": "la identidad del propio titular; `get_current_user` la resuelve del token",
+    "/api/v1/switch-company": "el servicio valida que la compañía sea suya",
+    "/api/v1/operations/event-types": "catálogo estático, sin datos de ninguna compañía",
+    "/api/v1/users/{user_id}/password": (
+        "el titular con su contraseña actual, o un administrador. Lo decide el servicio "
+        "(`GA-REM-012`)"
+    ),
+    # `GA-REM-038` / `OD-07`. La bandeja es de una persona. Un módulo de permiso nuevo lo
+    # tendrían que llevar todos los roles que puedan recibir un aviso —hoy dos, mañana otros—,
+    # de modo que gatearía por ceremonia mientras la protección real seguiría siendo la misma:
+    # `recipient_user_id`. El servicio filtra por destinatario **y** por empresa, y a quien no
+    # lo es le responde `404`, no `403`: un `403` confirmaría que hay algo ahí.
+    "/api/v1/notifications": "bandeja propia; `service._mias` filtra por destinatario y empresa",
+    "/api/v1/notifications/unread-count": "cuenta solo lo propio, con el mismo filtro",
+    "/api/v1/notifications/{notification_id}": "propia; a un tercero le responde 404",
+    "/api/v1/notifications/{notification_id}/read": "solo el destinatario marca la suya",
 }
 
 
@@ -71,7 +95,7 @@ def rutas_sin_autorizacion(app: FastAPI) -> list[str]:
     """Rutas que ni declaran permiso ni figuran como públicas."""
     huerfanas = []
     for camino, metodos, ruta in enumerar_rutas(app):
-        if camino in RUTAS_PUBLICAS:
+        if camino in RUTAS_PUBLICAS or camino in RUTAS_DE_TITULAR:
             continue
         if permiso_declarado(ruta) is None:
             huerfanas.append(f"{'/'.join(metodos)} {camino}")
@@ -86,5 +110,6 @@ def verificar(app: FastAPI) -> None:
             "Rutas sin permiso declarado ni motivo de exención "
             f"({len(huerfanas)}):\n  " + "\n  ".join(huerfanas)
             + "\n\nDeclare el permiso con `require_permission(modulo, accion)` o añada la "
-              "ruta a `RUTAS_PUBLICAS` con su motivo."
+              "ruta a `RUTAS_PUBLICAS` (sin sesión) o a `RUTAS_DE_TITULAR` (autoriza la\n"
+              "titularidad) con su motivo."
         )

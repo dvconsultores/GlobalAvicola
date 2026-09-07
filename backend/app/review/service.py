@@ -424,6 +424,28 @@ class ApprovalService(SegregacionMixin):
                                      "corrected", "rejected",
                                      comments=observations)
 
+        # `GA-REM-038` / `OD-07`. `docs/02 §3.14`: «Registro rechazado (notificar al
+        # operador)». El destinatario es quien **registró**, no quien rechaza: `BR-14` exige
+        # segregación, de modo que son personas distintas por diseño.
+        #
+        # Va dentro de la misma transacción: si el rechazo revierte, el aviso revierte con
+        # él. Notificar algo que no llegó a ocurrir es peor que no notificar.
+        from ..notifications.service import RECORD_REJECTED, crear_notificacion
+
+        await crear_notificacion(
+            self.db,
+            company_id=event.company_id,
+            recipient_user_id=event.registered_by_id,
+            notification_type=RECORD_REJECTED,
+            payload={
+                "event_type": str(getattr(event.event_type, "value", event.event_type)),
+                "lot_id": event.lot_id,
+                "observations": observations,
+            },
+            related_entity_type="operational_event",
+            related_entity_id=event.id,
+        )
+
         return event
 
     async def batch_approve(self, event_ids: list[int], observations: Optional[str] = None) -> list[OperationalEvent]:

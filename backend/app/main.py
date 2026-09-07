@@ -115,6 +115,7 @@ async def health_check():
 # Routers will be registered here as modules are built
 from .auth.router import router as auth_router
 from .masters.router import router as masters_router
+from .notifications.router import router as notifications_router
 from .lots.router import router as lots_router
 from .operations.router import router as ops_router
 from .review.router import router as review_router, approval_router, steps_router
@@ -129,6 +130,7 @@ if settings.FEATURE_SAP_ENABLED:
 
 app.include_router(auth_router, prefix="/api/v1", tags=["Auth & Users"])
 app.include_router(masters_router, prefix="/api/v1", tags=["Masters"])
+app.include_router(notifications_router, prefix="/api/v1", tags=["Notifications"])
 app.include_router(lots_router, prefix="/api/v1", tags=["Lots"])
 app.include_router(ops_router, prefix="/api/v1", tags=["Operations"])
 app.include_router(review_router, prefix="/api/v1", tags=["Review"])

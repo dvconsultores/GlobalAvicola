@@ -38,8 +38,20 @@ def test_ac08_ninguna_ruta_queda_sin_autorizacion():
 
 
 def test_ac08b_la_cobertura_es_amplia_y_las_excepciones_pocas():
-    """Las rutas públicas deben ser una lista corta y justificada, no un colador."""
+    """Las excepciones deben ser una lista corta y justificada, no un colador.
+
+    `GA-REM-038` separó las dos clases de excepción que antes compartían lista, porque no son
+    lo mismo y confundirlas escondía las dos:
+
+        RUTAS_PUBLICAS      no exigen sesión         superficie anónima
+        RUTAS_DE_TITULAR    exigen sesión y autorizan por titularidad
+
+    `/me` figuraba como «pública» cuando exige token, y las de titularidad gastaban el cupo
+    de superficie anónima. Con la separación, el límite de lo verdaderamente público baja de
+    seis a dos: la guarda quedó **más** estricta, no menos.
+    """
     from app.authorization_coverage import (
+        RUTAS_DE_TITULAR,
         RUTAS_PUBLICAS,
         enumerar_rutas,
         permiso_declarado,
@@ -49,10 +61,27 @@ def test_ac08b_la_cobertura_es_amplia_y_las_excepciones_pocas():
     rutas = enumerar_rutas(app)
     con_permiso = [r for _, _, r in rutas if permiso_declarado(r)]
     assert len(con_permiso) > 150, "La inmensa mayoría de las rutas debe exigir permiso"
+
     publicas_api = [c for c, _, _ in rutas if c in RUTAS_PUBLICAS and c.startswith("/api/")]
-    assert len(publicas_api) <= 6, f"Demasiadas rutas públicas: {publicas_api}"
-    for camino in RUTAS_PUBLICAS:
-        assert RUTAS_PUBLICAS[camino].strip(), f"{camino} debe declarar su motivo"
+    assert len(publicas_api) <= 2, (
+        f"Solo el inicio y la renovación de sesión pueden ser anónimos: {publicas_api}"
+    )
+
+    titular_api = [c for c, _, _ in rutas if c in RUTAS_DE_TITULAR and c.startswith("/api/")]
+    assert len(titular_api) <= 10, f"Demasiadas rutas de titularidad: {titular_api}"
+
+    for lista in (RUTAS_PUBLICAS, RUTAS_DE_TITULAR):
+        for camino, motivo in lista.items():
+            assert motivo.strip(), f"{camino} debe declarar su motivo"
+
+    # Ninguna ruta puede estar en las dos listas: sería no haber decidido cuál es.
+    solapadas = set(RUTAS_PUBLICAS) & set(RUTAS_DE_TITULAR)
+    assert not solapadas, f"rutas en ambas listas: {sorted(solapadas)}"
+
+    # Y una de titularidad sin sesión sería una pública disfrazada.
+    assert all(c.startswith("/api/") for c in RUTAS_DE_TITULAR), (
+        "una ruta de titularidad fuera de la API no exige sesión"
+    )
 
 
 # ── AC06 · 401 sin sesión, 403 sin permiso ────────────────────────────────────

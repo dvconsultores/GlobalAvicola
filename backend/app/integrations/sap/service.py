@@ -371,6 +371,7 @@ class SapService:
                 # GA-REM-010: retroceso con timedelta. La aritmética anterior
                 # ((minuto + n) % 60) podía producir una fecha en el pasado.
                 sap_payload.next_retry_at = datetime.now(timezone.utc) + timedelta(minutes=1)
+                await self._avisar_fallo_sap(sap_payload, result.message)
                 error_count += 1
 
             payloads_created += 1
@@ -453,11 +454,50 @@ class SapService:
                 # Exponential backoff: 1min, 5min, 15min
                 minutes = {1: 1, 2: 5, 3: 15}.get(sp.retry_count, 15)
                 sp.next_retry_at = datetime.now(timezone.utc) + timedelta(minutes=minutes)
+                await self._avisar_fallo_sap(sp, sap_result.message)
 
             retried += 1
             await self.db.flush()
 
         return {"retried": retried, "message": f"{retried} payloads reintentados"}
+
+    async def _avisar_fallo_sap(self, sap_payload, motivo: str) -> None:
+        """Avisa al rol `Analista SAP` de que un envío falló. `GA-REM-038` / `OD-07`.
+
+        `docs/10 §6.2` nombra el destinatario con estas palabras: «Notificar al rol "Analista
+        SAP"». Es una regla **por rol**, así que produce un aviso por cada usuario de ese rol
+        en la empresa: la bandeja es personal, y una fila compartida no podría marcarse leída
+        por uno sin marcarla por todos.
+
+        El envío reintenta hasta tres veces. Si el mismo `SapPayload` vuelve a fallar mientras
+        su aviso sigue sin leer, no se crea otro: la bandeja informa de problemas, no cuenta
+        reintentos.
+
+        Que no haya ningún analista en la empresa **no es un error**: no se avisa a nadie y el
+        envío sigue su curso. La integración no puede depender de que la plantilla esté
+        completa.
+        """
+        from ...notifications.service import (
+            SAP_SEND_FAILED, crear_notificacion, usuarios_con_rol,
+        )
+
+        destinatarios = await usuarios_con_rol(
+            self.db, "Analista SAP", sap_payload.company_id)
+        for user_id in destinatarios:
+            await crear_notificacion(
+                self.db,
+                company_id=sap_payload.company_id,
+                recipient_user_id=user_id,
+                notification_type=SAP_SEND_FAILED,
+                payload={
+                    "error_message": motivo,
+                    "retry_count": sap_payload.retry_count,
+                    "idempotency_key": sap_payload.idempotency_key,
+                },
+                related_entity_type="sap_payload",
+                related_entity_id=sap_payload.id,
+                evitar_duplicado_sin_leer=True,
+            )
 
     # ============================================================
     # Query

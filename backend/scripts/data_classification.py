@@ -107,6 +107,13 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
         Categoria.CLIENT_MASTER_DATA,
         "Filas de la tabla de una curva. Sin su versión no significan nada.",
     ),
+    # `GA-REM-038` / `OD-07`. Avisos dirigidos a un usuario sobre hechos del negocio. Van con
+    # la historia porque **son** historia: sin los eventos ficticios que los originaron no
+    # significan nada, y conservarlos dejaría avisos apuntando a registros que ya no existen.
+    "notifications": (
+        Categoria.TEST_BUSINESS_DATA,
+        "Notificaciones internas sobre eventos ficticios. Sin ellos no significan nada.",
+    ),
     # ── Historia operativa ficticia ──────────────────────────────────────────
     **{
         tabla: (Categoria.TEST_BUSINESS_DATA, motivo)
