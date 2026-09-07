@@ -18,6 +18,17 @@ BU-D01   ¿qué ve cada línea cuando el producto cambia de manos?   (siete fluj
 BU-D02   ¿quién ve un registro cuya línea no se puede determinar?
 ```
 
+Las dos están desarrolladas para decisión en `audit/remediation/BU_DECISION_BRIEF_D01_D02.md`,
+con sus opciones literales, las consecuencias de cada una y una recomendación:
+
+```
+BU-D01   recomendada  B   contrato de traspaso
+         acompañante  A   el despacho declara su destino al crearse
+BU-D02   recomendada  C   pendiente de clasificar
+```
+
+**Si el propietario las acepta, no queda ningún bloqueante y `GA-REM-040` puede escribirse.**
+
 **Actualización del 2026-09-07.** Eran cinco. El propietario resolvió tres —`BU-D11 = C`,
 `BU-D12 = B`, `BU-D09 = B`—, formalizadas en `specs/remediation/OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md`:
 
