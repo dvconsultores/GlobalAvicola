@@ -443,3 +443,50 @@ repite. Se emite una vez, con idempotencia.
 Y queda `R-99`: el frontend del entorno compartido sigue por detrás de `main`, de modo que el
 **runtime compartido** de la interfaz de `P-14` está `NOT VERIFIED`. La certificación es del
 entorno aislado, que es donde el programa ejecuta sus suites.
+
+## `GA-REM-040` especificada · la cola cambia de forma (2026-09-07)
+
+Hasta aquí el backlog era una lista de **defectos**. `GA-REM-040` es lo primero que entra siendo
+una **capacidad que falta**, y eso cambia cómo se prioriza: no hay nada roto que arreglar, hay
+algo que no existe.
+
+```
+GA-REM-040    SPEC_READY · 30 tareas · 11 fases · 0 líneas de código
+```
+
+### Lo que sale del backlog
+
+```
+BU-D01 · BU-D02 · BU-D09 · BU-D11 · BU-D12     resueltas → OD-09 y OD-10
+```
+
+### Lo que se queda, y por qué no urge
+
+```
+BU-D03 · BU-D04 · BU-D06 · BU-D07 · BU-D08 · BU-D10
+```
+
+Ninguna bloquea. `OD-09` y `OD-10` dieron los mecanismos con los que se resuelven durante la
+construcción: la transversalidad concedida explícitamente cubre `BU-D03` y `BU-D04`; el estado de
+clasificación pendiente cubre `BU-D06`; el plano de control cubre `BU-D07`. `BU-D08` quedó
+acotada como extensión futura, y `BU-D10` tiene sus reglas operativas fijadas y le falta solo la
+formalización.
+
+### Lo que sigue abierto de antes
+
+```
+OD-05     quién puede conceder qué permiso — abierta desde Wave 2, nunca bloqueante
+R-69 · R-70 · R-77 · R-80 · R-83 · R-98 · R-99
+R-100 … R-110     hallazgos de la auditoría de acceso; los cierra GA-REM-040 por fases
+P-08      BLOCKED_EXTERNAL · GA-REM-017 · contrato SAP
+BU-D05    gate FIRST_REAL_CUSTOMER_READINESS
+```
+
+### Frente de mayor palanca
+
+```
+GA-REM-040 FASE 1 — fundamento
+catálogo · habilitación por empresa · concesión por usuario · resolutor central
+```
+
+Y con una condición que la spec deja escrita: **la fase 4, los agregados, no puede ir al final.**

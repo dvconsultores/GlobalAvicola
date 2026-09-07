@@ -530,3 +530,40 @@ DECISIONES DEL DOSIER RESUELTAS       5 / 12    (las otras 7 no bloquean)
 CERTIFICACIÓN FUNCIONAL               14 / 15   sin cambios
 CÓDIGO MODIFICADO                     ninguno
 ```
+
+---
+
+## `GA-REM-040` · especificada, no construida (2026-09-07)
+
+```
+ESTADO                   SPEC_READY
+CÓDIGO ESCRITO           ninguno
+MIGRACIONES              ninguna
+PRUEBAS EJECUTABLES      ninguna
+RUTAS MODIFICADAS        0 de 198
+```
+
+Primera spec del programa que introduce una **dimensión nueva** en lugar de corregir un defecto.
+Gobierna catálogo de unidades, habilitación por empresa, concesión por usuario, resolutor central,
+clasificación de rutas, aislamiento por fila, agregados, los siete contratos de traspaso,
+clasificación pendiente, sesión, interfaz, notificaciones, tareas de fondo y auditoría.
+
+```
+CRITERIOS DE ACEPTACIÓN   10 grupos · A…J
+TAREAS                    T-040-01 … T-040-30
+FASES                     11
+MUTACIONES DE SENSIBILIDAD 9
+```
+
+Dos puntos del orden no son negociables: clasificar las rutas antes de filtrar filas, y **los
+agregados no van al final** — una fuga por diferencia no deja rastro y nadie la reporta.
+
+```
+CERTIFICACIÓN FUNCIONAL                14 / 15   sin cambios · ningún proceso se reabre
+CERTIFICACIÓN DE ACCESO POR UNIDAD      0 / 15   dimensión nueva
+                                                 PROCESS_BUSINESS_UNIT_ACCESS_MATRIX.md
+```
+
+`BU-D05` queda como gate aparte —`FIRST_REAL_CUSTOMER_READINESS`— y no bloquea la construcción.
+`R-98` recibirá infraestructura de aquí, y **eso no lo cierra**: la dependencia se registra y nada
+más.

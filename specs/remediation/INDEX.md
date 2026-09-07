@@ -43,6 +43,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-037` | Curvas estándar de peso y alerta por desviación (+ enmienda A: capacidad de producto) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 | `GA-REM-038` | Notificaciones internas (+ enmiendas A y B) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-038](GA-REM-038-INTERNAL-NOTIFICATIONS.md) |
 | `GA-REM-039` | Áreas funcionales | DOMAIN MODEL | P1 | **`CERTIFIED`** | — | [GA-REM-039](GA-REM-039-FUNCTIONAL-AREAS.md) |
+| `GA-REM-040` | Acceso por unidad de negocio | ACCESS CONTROL | P0 | `SPEC_READY` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
 
 ## Decisiones normativas
 
@@ -57,11 +58,11 @@ se interpretan.
 
 ## Resumen
 ```
-Total ................. 39
+Total ................. 40
 CERTIFIED ............. 24
 PARTIALLY CERTIFIED ... 1
 IMPLEMENTED ........... 2
-SPEC_READY ............ 9
+SPEC_READY ............ 10
 SPEC_DRAFT ............ 1
 BLOCKED_EXTERNAL ...... 1
 DEFERRED .............. 1

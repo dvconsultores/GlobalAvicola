@@ -666,3 +666,51 @@ RC-07  ¿la mortalidad se envía a SAP?       ABIERTA, no bloquea ningún proces
 OD-05  ¿quién concede qué permiso?          ABIERTA, no bloquea (P-13 certificado)
 R-99   frontend compartido desactualizado   bloquea el runtime compartido, no la certificación
 ```
+
+---
+
+## `GA-REM-040` · la primera dependencia transversal del programa (2026-09-07)
+
+```
+OD-09  ─┐
+OD-10  ─┼──►  GA-REM-040  ──►  certificación de acceso por unidad de los 15 procesos
+ENV-01 ─┘                      (PROCESS_BUSINESS_UNIT_ACCESS_MATRIX.md)
+```
+
+**No es dependencia retroactiva de la certificación funcional.** Los catorce procesos certificados
+lo siguen estando; lo que `GA-REM-040` habilita es una **segunda columna**, no una revisión de la
+primera.
+
+```
+P-14   funcional CERTIFIED · sin cambios       acceso por unidad: pendiente de GA-REM-040
+P-13   RBAC certificado ≠ aislamiento por unidad certificado
+P-15   KPI certificados  ≠ KPI acotados por unidad
+```
+
+### De qué depende `GA-REM-040`
+
+```
+GA-REM-002 · GA-REM-034     RBAC — la concesión de unidad NO lo sustituye
+GA-REM-039                  Area — que NO es unidad de negocio; se cita para no confundirlas
+ENV-01                      no hay producción real: la migración no bloquea
+```
+
+### De qué NO depende, aunque lo parezca
+
+```
+OD-05     abierta. GA-REM-040 exige un PERMISO, no un rol codificado,
+          precisamente para no prejuzgar quién puede conceder qué.
+BU-D05    gate del primer cliente real, no de la construcción.
+P-08      BLOCKED_EXTERNAL. La excepción del analista de SAP usa el mecanismo
+          de OD-09.a y no desbloquea nada suyo.
+```
+
+### Lo que arrastra
+
+```
+R-98      recibirá infraestructura de aquí. NO se cierra por transitividad.
+R-102     listados y contadores        → fases 3 y 4
+R-103     agregados                    → fase 4
+R-107     buscadores y desplegables    → fase 3
+R-106     contrato entre unidades      → fase 5
+```
