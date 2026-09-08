@@ -667,3 +667,38 @@ CLASIFICAR UNA RUTA   ≠   PROTEGER SUS FILAS
 CERTIFICACIÓN FUNCIONAL             14 / 15   sin cambios
 CERTIFICACIÓN DE ACCESO POR UNIDAD   0 / 15   sin cambios
 ```
+
+---
+
+## `GA-REM-040` fase 3 · aislamiento por fila (2026-09-07)
+
+```
+PERTENECER A LA EMPRESA ES NECESARIO PERO NO SUFICIENTE
+```
+
+La fuga que la fase 2 dejó demostrada queda cerrada: `/lots` ya no devuelve lotes de cadenas
+que el usuario no tiene concedidas — ni en el listado, ni en el detalle, ni en la mutación, ni
+en el total.
+
+```
+ENTIDADES ACOTADAS       3 / 16    lots · lot_phases · opening_balances
+APLAZADAS A LA FASE 5    3         son contratos de traspaso, no filas de un dueño
+PENDIENTES DE LA FASE 6  8         dependen de que lo no clasificable tenga estado
+PRUEBAS                  21 / 21   con CONTROL y TRATAMIENTO en el mismo escenario
+SENSIBILIDAD             10 / 10
+REGRESIÓN                570 passed · 49 skipped
+MIGRACIÓN                ninguna · FRONTEND 0
+```
+
+**Tres hallazgos que no eran de unidades de negocio.** `/lots/{id}/phases` y
+`/lots/{id}/opening-balance` consultaban por `lot_id` sin comprobar pertenencia alguna —ni de
+empresa—, y `add_phase` creaba la fila sin comprobar de quién era el lote. `IDOR` de inquilino y
+escritura contra lo ajeno, anteriores a esta capacidad. Cerrados por el mismo camino acotado.
+
+**Una mutación encontró un hueco de cobertura, no de implementación**: el atajo por nombre de
+rol no rompía ninguna prueba porque ninguna lo sujetaba por ese lado. Se añadió la que faltaba.
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios · ningún PASS por transitividad
+```

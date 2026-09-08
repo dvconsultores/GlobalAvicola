@@ -413,3 +413,57 @@ async def test_no_se_cuelga_una_fase_de_un_lote_de_otra_cadena(http_client, esce
             LotPhase.lot_id == escenario["lote_h"]))).scalar_one_or_none()
     await motor.dispose()
     assert creada is None, "una fase denegada no puede quedar escrita"
+
+
+async def test_llamarse_administrador_no_amplia_el_alcance(http_client, escenario,
+                                                           test_database_url):
+    """El nombre del rol no atraviesa el filtro por fila. `OD-09.a` · `AC-F05`.
+
+    `OD-09.a` da a las funciones de control visibilidad **de lectura** sobre la empresa, y
+    esa es otra superficie y otra fase. Un `GET /lots` corriente no se vuelve transversal
+    porque quien lo pida se llame de cierta forma, y el nombre de un rol es texto que
+    `GA-REM-034` permite editar: si bastara con llamarse «Administrador», la capacidad se
+    saltaría desde la pantalla de roles.
+
+    Esta prueba nació de una mutación que **no** rompió nada: el alcance sí estaba bien,
+    pero ninguna prueba lo sujetaba por este lado.
+    """
+    from app.auth.models import Permission, PermissionAction, Role, User
+    from app.auth.security import hash_password
+    from app.business_units.models import CompanyBusinessUnit
+    from app.business_units.service import conceder_unidad
+
+    motor = create_async_engine(test_database_url)
+    creados = []
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            hab = await s.get(CompanyBusinessUnit, escenario["hab_hatchery"])
+            breeder = (await s.execute(select(CompanyBusinessUnit).where(
+                CompanyBusinessUnit.company_id == escenario["empresa_a"],
+                CompanyBusinessUnit.id != hab.id))).scalars().first()
+            for nombre in ("Administrador de Empresa", "Contralor Avícola"):
+                rol = Role(name=f"{PREFIJO}{nombre}-{uuid.uuid4().hex[:6]}",
+                           company_id=escenario["empresa_a"], is_active=True)
+                s.add(rol)
+                await s.flush()
+                s.add(Permission(role_id=rol.id, module="lots",
+                                 action=PermissionAction.READ, scope_type="company"))
+                u = User(first_name=nombre[:8], last_name="Rol",
+                         email=f"{PREFIJO}{uuid.uuid4().hex[:8]}@e.test",
+                         username=f"{PREFIJO}{uuid.uuid4().hex[:8]}",
+                         hashed_password=hash_password("x"),
+                         company_id=escenario["empresa_a"], role_id=rol.id, is_active=True)
+                s.add(u)
+                await s.flush()
+                # Solo Reproductora, igual que el sujeto restringido.
+                await conceder_unidad(s, user=u, company_business_unit=breeder)
+                creados.append(u.id)
+            await s.commit()
+    finally:
+        await motor.dispose()
+
+    for user_id in creados:
+        vistos = await _codigos(http_client, user_id)
+        assert escenario["codigo_r"] in vistos, "debe seguir viendo lo suyo"
+        assert escenario["codigo_h"] not in vistos, (
+            "el nombre del rol no puede ampliar el alcance por fila")

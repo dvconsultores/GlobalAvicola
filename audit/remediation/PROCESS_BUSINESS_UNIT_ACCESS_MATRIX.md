@@ -52,6 +52,32 @@ CERTIFICACIÓN DE ACCESO POR UNIDAD     0 / 15
 PASS sobre capacidad inexistente       0        y así debe seguir hasta la fase 11
 ```
 
+## 3 bis. Avance de la capa por fila (2026-09-07 · fase 3)
+
+La columna funcional **no se toca**. Lo que avanza es el sustrato sobre el que la certificación
+de acceso se podrá medir algún día.
+
+| Proceso | Entidades acotadas | Lo que falta para poder certificarlo |
+|---|---|---|
+| `P-01` `P-02` `P-03` `P-04` `P-05` `P-06` | `lots`, `lot_phases`, `opening_balances` | eventos operativos (6) · `KPI` (4) |
+| `P-07` revisión → aprobación | ninguna | eventos operativos (6) |
+| `P-08` SAP | ninguna | contrato del flujo 5 · sigue `BLOCKED_EXTERNAL` |
+| `P-09` auditoría | ninguna | decisión `BU-D03` |
+| `P-10` trazabilidad | ninguna **a propósito** | contrato de traspaso (5) |
+| `P-11` activación de lotes | `lots`, `opening_balances` | eventos operativos (6) |
+| `P-12` maestros | ninguna | fase 3 posterior o 7, según el maestro |
+| `P-13` usuarios y roles | n/a — plano de control | — |
+| `P-14` notificaciones | ninguna | fase 10 |
+| `P-15` reportes y KPI | ninguna | fase 4 |
+
+```
+CERTIFICACIÓN DE ACCESO POR UNIDAD     0 / 15     sin cambios
+```
+
+**Ningún `PASS` por transitividad.** Que `/lots` sea seguro no certifica `P-03`: un proceso lo
+está cuando lo están todas sus superficies. Otorgarlo antes sería la evidencia que
+`GA-REM-016 AC13` prohíbe.
+
 ## 4. Qué tendrá que demostrar cada fila
 
 Los cinco casos de `GA-REM-040 §18`:

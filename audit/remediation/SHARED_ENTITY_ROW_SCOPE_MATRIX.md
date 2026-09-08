@@ -60,3 +60,47 @@ Añadir la columna a cada tabla la duplicaría en catorce sitios y abriría la p
 desincronicen. Derivarla siempre por `JOIN` obliga a que **todas** las consultas pasen por el
 lote, incluidas las de los submovimientos. Es la decisión de diseño central de esta capacidad, y
 esta auditoría la deja planteada sin resolverla.
+
+---
+
+## 5. Estado real del acotamiento (2026-09-07 · `GA-REM-040` fase 3)
+
+`§4` planteaba la decisión de diseño y la dejaba sin resolver. Se resolvió así: **política por
+entidad**, no columna en cada tabla ni `JOIN` obligatorio para todas. `predicado()` devuelve el
+acotamiento de la entidad que sabe acotar y `None` para el resto — que **no** es dejarla pasar:
+el filtro de empresa y el `RBAC` siguen actuando, y simplemente no se afirma nada sobre su unidad.
+
+| Entidad | Estado | Dónde |
+|---|:--:|---|
+| `lots` | **`ACOTADA`** | listado, detalle, mutación, total, sub-recursos |
+| `lot_phases` | **`ACOTADA`** | vía el lote, en lectura y escritura |
+| `opening_balances` | **`ACOTADA`** | vía el lote, incluida la activación manual |
+| `operational_events` | `NO ACOTADA` | `lot_id` nulable → **fase 6** |
+| `bird_movements` · `egg_movements` · `feed_movements` | `NO ACOTADAS` | heredan del evento → **fase 6** |
+| `inspection_details` | `NO ACOTADA` | el evento puede no tener lote → **fase 6** |
+| `hatchery_params` | `NO ACOTADA` | **fase 6** |
+| `operational_alerts` | `NO ACOTADA` | **fase 4** / **6** |
+| `notifications` | `NO ACOTADA` | **fase 10** |
+| `audit_logs` | `NO ACOTADA` | decisión `BU-D03` |
+| `egg_batches` · `chick_batches` | **`APLAZADA A LA FASE 5`** | son traspasos: un predicado de propietario único rompería `P-10` |
+| `consolidated_movements` | **`APLAZADA A LA FASE 5`** | contrato del flujo 5 |
+| `approval_actions` · `correction_logs` | `NO ACOTADAS` | heredan del evento → **fase 6** |
+
+```
+ACOTADAS               3 / 16
+APLAZADAS A LA FASE 5  3 / 16      son contratos, no filas de un dueño
+PENDIENTES DE LA 6     8 / 16      dependen de que lo no clasificable tenga estado
+OTRAS FASES            2 / 16
+```
+
+### Los tres bloqueantes de `§3`, revisados
+
+**Lotes sin `bird_type`.** Resuelto por `OD-10.c` en su parte de seguridad: se **deniega**. No se
+abre —sería el agujero permanente que `§3` temía— y no se borra. La bandeja donde resolverlos es
+la fase 6.
+
+**Eventos sin lote.** Sigue sin salida limpia, y por eso no se acotan todavía: acotarlos hoy los
+haría desaparecer para todos, incluida la persona que acaba de registrarlos.
+
+**Lotes de huevo y de pollito.** Confirmado que **no falta un campo, falta un contrato**. No
+reciben predicado de propietario único, y no se les añade columna de unidad.
