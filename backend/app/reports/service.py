@@ -16,6 +16,52 @@ class ReportsService:
         self.db = db
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
+        self._unidades_cache = None
+
+    async def _unidades(self) -> list[str]:
+        """Las unidades efectivas de quien pregunta. Una vez por servicio."""
+        if self._unidades_cache is None:
+            from ..business_units.service import unidades_efectivas_por_id
+
+            self._unidades_cache = await unidades_efectivas_por_id(
+                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+            )
+        return self._unidades_cache
+
+    async def _exigir_lote(self, lot_id):
+        """El lote tiene que estar al alcance del usuario. `GA-REM-040` fase 4.
+
+        Casi todos los indicadores de `P-15` son **por lote**: no suman la empresa, pero
+        devuelven el detalle de cualquier lote cuyo identificador alguien conozca. Un
+        indicador de mortalidad de un lote ajeno da la población inicial, las muertes y la
+        tasa — más de lo que el listado ocultaba.
+
+        Responde `404`, como el detalle del lote, para no distinguir «no existe» de «no es
+        tuyo».
+        """
+        if lot_id is None or self.current_user.get("is_super_admin"):
+            return
+        from fastapi import HTTPException, status as _st
+        from sqlalchemy import select as _select
+
+        from ..business_units.scope import lotes_alcanzables
+
+        alcanzable = (await self.db.execute(
+            _select(Lot.id).where(
+                Lot.id == lot_id,
+                Lot.id.in_(lotes_alcanzables(self.company_id, await self._unidades())))
+        )).scalar_one_or_none()
+        if alcanzable is None:
+            raise HTTPException(status_code=_st.HTTP_404_NOT_FOUND,
+                                detail="Lote no encontrado")
+
+    async def _filtro_de_lotes(self):
+        """Predicado para los agregados **sin** lote: solo los lotes alcanzables aportan."""
+        from ..business_units.scope import lotes_alcanzables
+
+        if self.current_user.get("is_super_admin"):
+            return None
+        return lotes_alcanzables(self.company_id, await self._unidades())
 
     # ============================================================
     # KPI Helpers
@@ -86,6 +132,7 @@ class ReportsService:
     # ============================================================
 
     async def get_kpi_mortality(self, lot_id: int) -> dict:
+        await self._exigir_lote(lot_id)
         total_deaths = await self._sum_bird_quantity(lot_id, [EventType.MORTALITY_RECORDING])
         ob = await self._get_opening_balance(lot_id)
         initial_pop = (ob.initial_male_count + ob.initial_female_count) if ob else 0
@@ -100,6 +147,7 @@ class ReportsService:
         }
 
     async def get_kpi_feed_conversion(self, lot_id: int) -> dict:
+        await self._exigir_lote(lot_id)
         total_feed_kg = await self._sum_feed_kg(lot_id)
         return {
             "lot_id": lot_id,
@@ -110,6 +158,7 @@ class ReportsService:
         }
 
     async def get_kpi_egg_production(self, lot_id: int) -> dict:
+        await self._exigir_lote(lot_id)
         total_eggs = await self._sum_egg_quantity(lot_id)
         ob = await self._get_opening_balance(lot_id)
         initial_females = ob.initial_female_count if ob else 0
@@ -134,6 +183,7 @@ class ReportsService:
         return self._porcentaje(fertiles, totales)
 
     async def get_kpi_hatchery(self, lot_id: Optional[int] = None) -> dict:
+        await self._exigir_lote(lot_id)
         base = select(
             func.coalesce(func.sum(BirdMovement.quantity), 0).label("total_born")
         ).join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id).where(
@@ -256,6 +306,7 @@ class ReportsService:
     # ============================================================
 
     async def get_lot_report(self, lot_id: int) -> dict:
+        await self._exigir_lote(lot_id)
         lot_result = await self.db.execute(
             select(Lot).where(Lot.id == lot_id, Lot.company_id == self.company_id)
         )
@@ -320,6 +371,7 @@ class ReportsService:
     # ============================================================
 
     async def get_sap_comparison(self, lot_id: Optional[int] = None) -> dict:
+        await self._exigir_lote(lot_id)
         base = select(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
             OperationalEvent.sap_document_ref != None,
@@ -355,6 +407,7 @@ class ReportsService:
     # ============================================================
 
     async def get_all_kpis(self, lot_id: Optional[int] = None) -> dict:
+        await self._exigir_lote(lot_id)
         mortality = await self.get_kpi_mortality(lot_id) if lot_id else None
         feed = await self.get_kpi_feed_conversion(lot_id) if lot_id else None
         eggs = await self.get_kpi_egg_production(lot_id) if lot_id else None
@@ -379,6 +432,7 @@ class ReportsService:
 
     async def get_kpi_animal_welfare(self, lot_id: int) -> dict:
         """Calculate animal welfare index based on health incidents, temperature, and observations."""
+        await self._exigir_lote(lot_id)
         result = await self.db.execute(
             select(
                 func.count(OperationalEvent.id).label("total_inspections"),
@@ -410,6 +464,7 @@ class ReportsService:
 
     async def get_kpi_vaccination_efficiency(self, lot_id: int) -> dict:
         """Vaccination efficiency: vaccinated chicks / total chicks born."""
+        await self._exigir_lote(lot_id)
         q = select(
             func.coalesce(func.sum(BirdMovement.quantity), 0).label("total"),
         ).join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id).where(
@@ -450,6 +505,7 @@ class ReportsService:
 
     async def get_kpi_transfer_efficiency(self, lot_id: int) -> dict:
         """Transfer efficiency: chicks alive at dispatch / chicks born healthy."""
+        await self._exigir_lote(lot_id)
         q_base = select(
             func.coalesce(func.sum(BirdMovement.quantity), 0).label("total"),
         ).join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id).where(
@@ -486,6 +542,7 @@ class ReportsService:
 
     async def get_kpi_afcr(self, lot_id: int) -> dict:
         """Adjusted FCR accounting for mortality."""
+        await self._exigir_lote(lot_id)
         total_feed_kg = await self._sum_feed_kg(lot_id)
 
         q = select(
@@ -515,6 +572,7 @@ class ReportsService:
 
     async def get_kpi_production_index(self, lot_id: int) -> dict:
         """Broiler production index = (avg_weight_g * viability_pct) / (age_days * FCR)."""
+        await self._exigir_lote(lot_id)
         # Get viability
         mortality_kpi = await self.get_kpi_mortality(lot_id)
         viability = 100 - mortality_kpi["mortality_rate_pct"]
@@ -562,6 +620,7 @@ class ReportsService:
         IPE = (Viabilidad% × Ganancia_Diaria_g × 100) / (FCR × 10)
         Ganancia diaria = avg_weight_g / age_days
         """
+        await self._exigir_lote(lot_id)
         mortality_kpi = await self.get_kpi_mortality(lot_id)
         viabilidad = 100.0 - mortality_kpi["mortality_rate_pct"]
 
@@ -612,6 +671,7 @@ class ReportsService:
         Computed across all weight_recording events for the lot.
         Excellent: CV% < 8%, Acceptable: 8-12%, Poor: > 12%
         """
+        await self._exigir_lote(lot_id)
         from sqlalchemy import text as sa_text
         q = select(
             func.avg(BirdMovement.avg_weight).label("mean_w"),

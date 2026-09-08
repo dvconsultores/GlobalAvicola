@@ -67,3 +67,30 @@ def predicado(modelo: Any, unidades: Sequence[str]) -> Optional[Any]:
             # fila. No es un error: es que todavía no hay lotes de esa cadena.
             continue
     return Lot.bird_type.in_(tipos) if tipos else false()
+
+
+def lotes_alcanzables(company_id, unidades):
+    """Subconsulta con los identificadores de lote que el usuario alcanza.
+
+    `GA-REM-040` fase 4. Es la pieza que permite acotar un **agregado** sin recalcular la
+    regla: los indicadores y el panel no preguntan «¿de qué cadena es este evento?» —que
+    obligaría a un `JOIN` distinto en cada consulta— sino «¿está su lote entre los que este
+    usuario alcanza?».
+
+        CONJUNTO AUTORIZADO  →  AGREGAR
+
+    y nunca al revés. Agregar la empresa entera y después descontar lo ajeno deja el total
+    correcto y el camino abierto: cualquier consulta que se olvide del descuento vuelve a
+    filtrar, y un total que cuenta lo que no se ve lo revela por diferencia.
+
+    Un evento **sin lote** no entra. Es la misma decisión que la fase 3 tomó con el lote sin
+    cadena declarada: `OD-10.c` manda lo no clasificable a «pendiente de clasificar», que es
+    la fase 6, y hasta entonces lo seguro es que no contribuya. Queda declarado.
+    """
+    from sqlalchemy import select
+
+    from ..masters.models import Lot
+
+    consulta = select(Lot.id).where(Lot.company_id == company_id)
+    condicion = predicado(Lot, unidades)
+    return consulta if condicion is None else consulta.where(condicion)

@@ -12,15 +12,43 @@ class DashboardService:
         self.db = db
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
+        self._unidades_cache = None
+
+    async def _lotes(self):
+        """Subconsulta de lotes alcanzables, o `None` si no procede acotar.
+
+        `GA-REM-040` fase 4. El panel es el agregado de empresa por excelencia: sus
+        contadores y su tendencia sumaban toda la compañía, y `lots_by_type` llegaba a
+        **nombrar** las cadenas ajenas con su recuento — una fuga de dimensión, que no
+        enseña ninguna fila y sin embargo dice que existen y cuántas hay.
+        """
+        if self.current_user.get("is_super_admin"):
+            return None
+        if self._unidades_cache is None:
+            from ..business_units.service import unidades_efectivas_por_id
+
+            self._unidades_cache = await unidades_efectivas_por_id(
+                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+            )
+        from ..business_units.scope import lotes_alcanzables
+
+        return lotes_alcanzables(self.company_id, self._unidades_cache)
 
     async def get_mobile_dashboard(self) -> dict:
         """Quick KPIs for operators on mobile."""
+        # `GA-REM-040` fase 4: los agregados del panel cuentan solo sobre lotes
+        # alcanzables. Un evento **sin lote** no contribuye — misma decisión que la fase 3
+        # tomó con el lote sin cadena: `OD-10.c` lo manda a «pendiente de clasificar», que
+        # es la fase 6, y hasta entonces lo seguro es que no sume. Queda declarado.
+        _lotes = await self._lotes()
+        _ambito = [] if _lotes is None else [OperationalEvent.lot_id.in_(_lotes)]
         from datetime import datetime, timezone
         today = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
 
         today_events = await self.db.execute(
             select(func.count()).select_from(OperationalEvent).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.registered_by_id == self.current_user["id"],
                 OperationalEvent.created_at >= today,
             )
@@ -28,6 +56,7 @@ class DashboardService:
         pending_review = await self.db.execute(
             select(func.count()).select_from(OperationalEvent).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.registered_by_id == self.current_user["id"],
                 OperationalEvent.status == EventStatus.RETURNED,
             )
@@ -35,6 +64,7 @@ class DashboardService:
         approved_today = await self.db.execute(
             select(func.count()).select_from(OperationalEvent).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.registered_by_id == self.current_user["id"],
                 OperationalEvent.status == EventStatus.APPROVED,
                 OperationalEvent.updated_at >= today,
@@ -55,10 +85,17 @@ class DashboardService:
 
     async def get_admin_dashboard(self) -> dict:
         """Admin/supervisor KPIs."""
+        # `GA-REM-040` fase 4: los agregados del panel cuentan solo sobre lotes
+        # alcanzables. Un evento **sin lote** no contribuye — misma decisión que la fase 3
+        # tomó con el lote sin cadena: `OD-10.c` lo manda a «pendiente de clasificar», que
+        # es la fase 6, y hasta entonces lo seguro es que no sume. Queda declarado.
+        _lotes = await self._lotes()
+        _ambito = [] if _lotes is None else [OperationalEvent.lot_id.in_(_lotes)]
         # Total events by status
         status_counts = await self.db.execute(
             select(OperationalEvent.status, func.count().label("cnt")).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
             ).group_by(OperationalEvent.status)
         )
         status_dist = {row.status.value: row.cnt for row in status_counts.fetchall()}
@@ -67,6 +104,7 @@ class DashboardService:
         pending = await self.db.execute(
             select(func.count()).select_from(OperationalEvent).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.status.in_([EventStatus.REGISTERED, EventStatus.PENDING_REVIEW]),
             )
         )
@@ -75,6 +113,7 @@ class DashboardService:
         pending_approval = await self.db.execute(
             select(func.count()).select_from(OperationalEvent).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.status == EventStatus.CORRECTED,
             )
         )
@@ -83,6 +122,7 @@ class DashboardService:
         type_counts = await self.db.execute(
             select(OperationalEvent.event_type, func.count().label("cnt")).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
             ).group_by(OperationalEvent.event_type).order_by(func.count().desc()).limit(5)
         )
         top_types = {row.event_type.value: row.cnt for row in type_counts.fetchall()}
@@ -93,6 +133,7 @@ class DashboardService:
         last_week = await self.db.execute(
             select(func.count()).select_from(OperationalEvent).where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.created_at >= seven_days_ago,
             )
         )
@@ -110,17 +151,31 @@ class DashboardService:
         }
 
     async def _get_lots_by_type(self) -> dict:
-        """Count active lots grouped by bird_type."""
+        """Lotes activos por cadena, **solo de las cadenas alcanzables**.
+
+        Acotar el total y dejar la dimensión suelta no protege nada: el grupo lleva el
+        nombre de la cadena ajena y su recuento. Se filtran los grupos, no se ocultan
+        después.
+        """
         from ..masters.models import Lot
-        rows = await self.db.execute(
+        consulta = (
             select(Lot.bird_type, func.count().label("cnt"))
             .where(Lot.company_id == self.company_id, Lot.status == "active")
-            .group_by(Lot.bird_type)
         )
+        lotes = await self._lotes()
+        if lotes is not None:
+            consulta = consulta.where(Lot.id.in_(lotes))
+        rows = await self.db.execute(consulta.group_by(Lot.bird_type))
         return {str(row.bird_type): row.cnt for row in rows.fetchall()}
 
     async def _get_mortality_trend(self) -> list[dict]:
         """Weekly mortality totals for the last 8 weeks."""
+        # `GA-REM-040` fase 4: los agregados del panel cuentan solo sobre lotes
+        # alcanzables. Un evento **sin lote** no contribuye — misma decisión que la fase 3
+        # tomó con el lote sin cadena: `OD-10.c` lo manda a «pendiente de clasificar», que
+        # es la fase 6, y hasta entonces lo seguro es que no sume. Queda declarado.
+        _lotes = await self._lotes()
+        _ambito = [] if _lotes is None else [OperationalEvent.lot_id.in_(_lotes)]
         from datetime import datetime, timedelta, timezone
         from sqlalchemy import extract
         from ..operations.models import BirdMovement
@@ -135,6 +190,7 @@ class DashboardService:
             .join(BirdMovement, BirdMovement.event_id == OperationalEvent.id)
             .where(
                 OperationalEvent.company_id == self.company_id,
+                *_ambito,
                 OperationalEvent.event_type == EventType.MORTALITY_RECORDING,
                 OperationalEvent.event_date >= eight_weeks_ago,
             )
@@ -148,6 +204,12 @@ class DashboardService:
 
     async def _get_active_alerts(self) -> list[dict]:
         """Return last 10 unresolved alerts for the company."""
+        # `GA-REM-040` fase 4: los agregados del panel cuentan solo sobre lotes
+        # alcanzables. Un evento **sin lote** no contribuye — misma decisión que la fase 3
+        # tomó con el lote sin cadena: `OD-10.c` lo manda a «pendiente de clasificar», que
+        # es la fase 6, y hasta entonces lo seguro es que no sume. Queda declarado.
+        _lotes = await self._lotes()
+        _ambito = [] if _lotes is None else [OperationalEvent.lot_id.in_(_lotes)]
         rows = await self.db.execute(
             select(
                 OperationalAlert.id,
