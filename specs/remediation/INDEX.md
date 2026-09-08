@@ -56,6 +56,7 @@ se interpretan.
 | `OD-09` | Plano de control frente a unidad de negocio — visibilidad de control y acceso operativo son capacidades distintas (+ enm. A: la concesión pertenece a usuario + empresa + unidad · enm. B: volver no reactiva) | **VIGENTE** | [OD-09](OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md) |
 | `OD-10` | Contrato de traspaso entre unidades y clasificación pendiente — entre unidades solo pasa el contrato | **VIGENTE** | [OD-10](OD-10-HANDOFF-CONTRACT-AND-PENDING-CLASSIFICATION.md) |
 | `OD-11` | La empresa efectiva de una petición — una reclamación en el token no es autoridad | **VIGENTE** | [OD-11](OD-11-EFFECTIVE-COMPANY-CONTEXT.md) |
+| `OD-12` | La transversalidad del contrato SAP — capacidad operativa explícita y acotada | **VIGENTE** | [OD-12](OD-12-SAP-TRANSVERSAL-CONTRACT.md) |
 
 ## Resumen
 ```

@@ -5,7 +5,7 @@
 | **ID** | `GA-REM-040` · `CROSS-CUTTING CAPABILITY SPEC` |
 | **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 construida, enmienda A** (2026-09-07) |
 | **Requisito** | habilitación de unidades por empresa y acotamiento por usuario |
-| **Decisiones** | `OD-09` (`a`…`e`) · `OD-10` (`a`…`d`) · **`OD-11`** contexto de empresa · marco `ENV-01` |
+| **Decisiones** | `OD-09` (`a`…`e`) · `OD-10` (`a`…`d`) · `OD-11` contexto · **`OD-12`** contrato SAP · marco `ENV-01` |
 | **Antecedente** | `audit/remediation/MODULE_ACCESS_ARCHITECTURE_AUDIT.md` y sus 21 matrices |
 | **Procesos** | los quince, en una **dimensión nueva**; ninguno se reabre |
 | **Dependencias** | `GA-REM-002` `GA-REM-034` (`RBAC`) · `GA-REM-039` (`Area`, que **no** es esto) |
@@ -692,6 +692,41 @@ depende de `Request`.
 **`AC-E07`** · Anulación y reversión obedecen el contrato: se ve desaparecer con su motivo.
 **`AC-E08`** · `P-10` sigue reconstruyendo la cadena completa bajo aislamiento.
 
+### Grupo `E` bis · la transversalidad SAP · `OD-12`
+
+**`AC-SAP01`** · Operar el contrato SAP exige una **capacidad SAP explícita** del catálogo
+`RBAC`. Sin ella se deniega, por muchas cadenas que se tengan concedidas.
+
+**`AC-SAP02`** · Solo alcanza recursos de la **misma empresa**. Nunca otra, por mucho que
+coincidan la cadena, el código de lote o la referencia.
+
+**`AC-SAP03`** · Con esa capacidad, el actor opera el contrato sobre registros de las **cuatro**
+cadenas de su empresa.
+
+**`AC-SAP04`** · Y lo hace **sin** tener concedidas esas cadenas: la capacidad no se sustituye
+por concesiones ordinarias.
+
+**`AC-SAP05`** · Operar el contrato **no crea** ninguna concesión de unidad.
+
+**`AC-SAP06`** · **No habilita** ninguna unidad a la empresa.
+
+**`AC-SAP07`** · El mismo actor, en las superficies **normales**, sigue acotado por sus unidades
+efectivas. Conocer un identificador por el contrato SAP no abre su detalle.
+
+**`AC-SAP08`** · La respuesta del contrato es una **proyección** declarada, no la entidad
+completa del otro lado.
+
+**`AC-SAP09`** · Ningún dato operativo interno ajeno viaja en ella.
+
+**`AC-SAP10`** · La elegibilidad de negocio para SAP se conserva intacta: la capacidad autoriza
+a **quién**, no a **qué**.
+
+**`AC-SAP11`** · Una operación denegada no produce mutación, ni transición de estado, ni llamada
+al límite externo, ni asiento de auditoría de éxito.
+
+**`AC-SAP12`** · No hay atajo por nombre de rol. Se demuestra con un actor cuyo rol se llama
+«Analista SAP» y **carece** del permiso.
+
 ### Grupo `F` · plano de control
 
 **`AC-F01`** · La visibilidad de control puede alcanzar toda la empresa, para quien la tenga
@@ -855,6 +890,7 @@ DECISIÓN DEL PROPIETARIO  →  AC  →  TAREA  →  PRUEBA FUTURA  →  EVIDENC
 | `T-040-17` | Acción de clasificar, auditada en `P-09` |
 | `T-040-35` | **`OD-10.d`** · reclasificación controlada, con efectos aguas abajo como barrera |
 | `T-040-36` | Semillas de certificación: empresa configurada explícitamente |
+| `T-040-37` | **`OD-12`** · política tipada del contrato SAP · flujo 5 · cierre de la fase 5 |
 | `T-040-18` | API de administración: habilitación por empresa |
 | `T-040-19` | API de administración: concesión por usuario |
 | `T-040-20` | Capacidades en la sesión |
@@ -1162,3 +1198,45 @@ que lo sujeta.
 Las suites que **miden** el aislamiento siguen construyendo sus propios sujetos —de una cadena,
 de varias, de ninguna, de control— y concediendo a mano. Allí la concesión es el objeto de
 estudio, no una precondición.
+
+---
+
+# Enmienda D · el flujo 5 deja de ser una ausencia (2026-09-07)
+
+## D.1 Lo que había
+
+Auditado antes de tocar nada, y conviene decirlo con precisión: **la seguridad del flujo 5 ya era
+sustancialmente correcta.**
+
+```
+el permiso ya existía       `sap:read` · `sap:send_sap`, declarados en las diez rutas
+la empresa ya se filtraba   incluidos los accesos por identificador — sin agujero de inquilino
+la proyección ya era acotada `ConsolidatedMovementRead` no lleva el lote ni sus internos
+```
+
+Lo que faltaba no era un filtro. Era que la transversalidad existía **por ausencia**: nadie había
+puesto el filtro por cadena, y eso funcionaba, pero
+
+> una excepción que solo existe porque nadie puso el filtro es indistinguible de un fallo.
+
+## D.2 Lo que la enmienda añade
+
+Una **política tipada** que convierte la ausencia en declaración, y que por tanto puede romperse:
+
+```
+el contrato SAP es la ÚNICA transversalidad operativa autorizada
+la autoriza una capacidad EXPLÍCITA del catálogo, no la ausencia de código
+está acotada a SAP: no es una función genérica que otra superficie pueda reutilizar
+```
+
+`§37` del encargo lo pedía así, y es lo correcto: un `saltar_alcance_por_unidad()` genérico
+acabaría llamándose desde donde nadie previó.
+
+## D.3 Lo que sigue igual
+
+```
+elegibilidad de negocio SAP        intacta — la capacidad dice quién, no qué
+superficies normales               acotadas por unidad, para el mismo actor
+`P-08`                              BLOCKED_EXTERNAL
+`unidades_efectivas`               no se toca ni se amplía
+```
