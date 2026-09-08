@@ -31,12 +31,18 @@ class MasterService:
         db: AsyncSession,
         model: Type[Base],
         current_user: Optional[dict[str, Any]] = None,
+        unidades: Optional[list[str]] = None,
     ):
         self.db = db
         self.model = model
         self.current_user = current_user or {}
         self.is_super_admin = self.current_user.get("is_super_admin", False)
         self.user_company_id = self.current_user.get("company_id")
+        #: Unidades de negocio efectivas del usuario (`GA-REM-040` fase 3). `None` significa
+        #: «esta llamada no acota por unidad»; una lista vacía significa «ninguna», que es
+        #: distinto y da cero filas. Lo resuelve quien construye el servicio, porque
+        #: resolverlo es una consulta y este constructor es síncrono.
+        self.unidades = unidades
 
     def _apply_company_filter(self, query):
         """
@@ -52,6 +58,25 @@ class MasterService:
             query = query.where(self.model.company_id == self.user_company_id)
         return query
 
+    def _apply_business_unit_filter(self, query):
+        """Acota por unidad de negocio. `GA-REM-040 AC-C08` / `T-040-09`.
+
+        Vive junto al filtro de empresa y **se aplica donde se aplica aquél**: si el de
+        empresa no actúa —Super Administrador, o modelo sin `company_id`—, éste tampoco.
+        Separarlos daría dos alcances distintos en la misma consulta y nadie sabría cuál
+        manda.
+
+        El Super Administrador queda fuera igual que del filtro de empresa: su semántica
+        está certificada en `GA-REM-002` y esta fase no la reabre. Queda declarado en la
+        evidencia como excepción, no como descuido.
+        """
+        from ..business_units.scope import predicado
+
+        if self.unidades is None or self.is_super_admin:
+            return query
+        condicion = predicado(self.model, self.unidades)
+        return query if condicion is None else query.where(condicion)
+
     async def get_all(
         self,
         skip: int = 0,
@@ -66,6 +91,10 @@ class MasterService:
 
         # Company isolation
         query = self._apply_company_filter(query)
+        # Unidad de negocio. Antes del recuento y de la paginación: si fuera después, el
+        # total contaría filas ocultas —revelándolas por diferencia— y la primera página
+        # llegaría con huecos donde estaban las ajenas.
+        query = self._apply_business_unit_filter(query)
 
         # Text search
         if search and search_fields:
@@ -99,6 +128,7 @@ class MasterService:
     async def get_by_id(self, item_id: int) -> Any:
         """Get single item by ID, respecting company isolation."""
         query = self._apply_company_filter(select(self.model))
+        query = self._apply_business_unit_filter(query)
         query = query.where(self.model.id == item_id)
         result = await self.db.execute(query)
         item = result.scalar_one_or_none()

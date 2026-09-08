@@ -58,13 +58,29 @@ class LotService:
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
         self.is_super_admin = current_user.get("is_super_admin", False)
+        self._unidades_cache: Optional[list[str]] = None
+
+    async def _unidades(self) -> list[str]:
+        """Las unidades efectivas de quien pregunta. `GA-REM-040` fase 3.
+
+        Se resuelve una vez por servicio y no una vez por consulta: el alcance no cambia a
+        mitad de una petición, y repetir la consulta sería gasto sin garantía añadida.
+        """
+        if self._unidades_cache is None:
+            from ..business_units.service import unidades_efectivas_por_id
+
+            self._unidades_cache = await unidades_efectivas_por_id(
+                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+            )
+        return self._unidades_cache
 
     async def get_lots(
         self, skip: int = 0, limit: int = 20, search: str = "",
         farm_id: Optional[int] = None, status: Optional[str] = None,
     ) -> tuple[list[Lot], int]:
         """List lots with filters and company isolation."""
-        master_service = MasterService(self.db, Lot, self.current_user)
+        master_service = MasterService(self.db, Lot, self.current_user,
+                                       unidades=await self._unidades())
         filters = {}
         if farm_id:
             filters["farm_id"] = farm_id
@@ -79,7 +95,8 @@ class LotService:
 
     async def get_lot(self, lot_id: int) -> Lot:
         """Get single lot with phases and opening balance eager loaded."""
-        master_service = MasterService(self.db, Lot, self.current_user)
+        master_service = MasterService(self.db, Lot, self.current_user,
+                                       unidades=await self._unidades())
         return await master_service.get_by_id(lot_id)
 
     async def _curva_del_lote(
@@ -196,12 +213,14 @@ class LotService:
 
     async def update_lot(self, lot_id: int, data: schemas.LotUpdate) -> Lot:
         """Update lot fields."""
-        master_service = MasterService(self.db, Lot, self.current_user)
+        master_service = MasterService(self.db, Lot, self.current_user,
+                                       unidades=await self._unidades())
         return await master_service.update(lot_id, data)
 
     async def close_lot(self, lot_id: int) -> dict:
         """G-09: Close a lot with final summary (BR-05)."""
-        master_service = MasterService(self.db, Lot, self.current_user)
+        master_service = MasterService(self.db, Lot, self.current_user,
+                                       unidades=await self._unidades())
         lot = await master_service.get_by_id(lot_id)
 
         if lot.status != "active":
@@ -331,6 +350,11 @@ class LotService:
         # misma comprobación que el resto del sistema (`GA-REM-002 AC10`).
         if not self.is_super_admin:
             await verificar_pertenencia(self.db, Lot, data.lot_id, self.company_id, "Lote")
+            # `GA-REM-040` fase 3. La comprobación de empresa no basta: el lote de otra
+            # cadena de la **misma** empresa también es ajeno. Se usa el mismo camino
+            # acotado que el detalle, de modo que la respuesta es idéntica —`404`— y no
+            # revela que el lote existe.
+            await self.get_lot(data.lot_id)
 
         # Validate no existing opening balance
         existing = await self.db.execute(
@@ -412,14 +436,22 @@ class LotService:
         return ob
 
     async def get_opening_balance(self, lot_id: int) -> Optional[models.OpeningBalance]:
-        """Get opening balance for a lot."""
+        """Saldo de apertura de un lote **alcanzable**.
+
+        Consultaba por `lot_id` sin comprobar pertenencia alguna —ni siquiera de empresa—, de
+        modo que el lote quedaba abierto por la puerta de al lado: proteger el detalle y
+        dejar el sub-recurso libre no protege nada. Pasa por `get_lot`, que aplica empresa y
+        unidad, y un lote inalcanzable produce el mismo `404` que produciría su detalle.
+        """
+        await self.get_lot(lot_id)
         result = await self.db.execute(
             select(models.OpeningBalance).where(models.OpeningBalance.lot_id == lot_id)
         )
         return result.scalar_one_or_none()
 
     async def get_lot_phases(self, lot_id: int) -> list[models.LotPhase]:
-        """Get all phases for a lot."""
+        """Fases de un lote **alcanzable**. Mismo caso que el saldo de apertura."""
+        await self.get_lot(lot_id)
         result = await self.db.execute(
             select(models.LotPhase)
             .where(models.LotPhase.lot_id == lot_id)
@@ -428,7 +460,13 @@ class LotService:
         return list(result.scalars().all())
 
     async def add_phase(self, data: schemas.LotPhaseCreate) -> models.LotPhase:
-        """Add a new phase to a lot."""
+        """Añade una fase a un lote **alcanzable**.
+
+        Creaba la fila sin comprobar de quién era el lote: se podía colgar una fase del lote
+        de otra empresa, o de otra cadena de la propia. Escribir contra lo ajeno es la misma
+        clase de defecto que `R-42`, y aquí se cierra por el mismo camino que la lectura.
+        """
+        await self.get_lot(data.lot_id)
         phase = models.LotPhase(**data.model_dump())
         self.db.add(phase)
         await self.db.flush()

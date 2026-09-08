@@ -91,7 +91,19 @@ async def unidades_efectivas(
     # no autoridad sobre sus cadenas (`AC-C14`).
     if company_id is None:
         company_id = getattr(user, "company_id", None)
-    if company_id is None:
+    return await unidades_efectivas_por_id(db, user_id=user.id, company_id=company_id)
+
+
+async def unidades_efectivas_por_id(
+    db: AsyncSession, *, user_id: Optional[int], company_id: Optional[int]
+) -> list[str]:
+    """Lo mismo, con identificadores en vez de con el objeto.
+
+    Existe porque el contexto de una petición viaja como diccionario —`current_user`— y no
+    como fila del ORM. Una sola consulta con dos puertas, en lugar de dos consultas que
+    tarde o temprano dirían cosas distintas.
+    """
+    if company_id is None or user_id is None:
         # El Super Administrador global se siembra sin empresa. No obtiene acceso operativo a
         # ninguna por esta capacidad: el modelo de inquilino se preserva intacto.
         return []
@@ -104,7 +116,7 @@ async def unidades_efectivas(
               UserBusinessUnit.company_business_unit_id == CompanyBusinessUnit.id)
         .where(CompanyBusinessUnit.company_id == company_id,
                CompanyBusinessUnit.is_enabled.is_(True),
-               UserBusinessUnit.user_id == user.id,
+               UserBusinessUnit.user_id == user_id,
                UserBusinessUnit.revoked_at.is_(None),
                BusinessUnit.is_active.is_(True))
     )).scalars().all()

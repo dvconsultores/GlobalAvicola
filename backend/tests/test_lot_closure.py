@@ -309,7 +309,7 @@ async def test_t_073_05_el_segundo_cierre_se_rechaza(
 # ── AC07 · aislamiento entre empresas ─────────────────────────────────────────
 
 async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
-    client, http_client, auth_headers, seeded_ids, motor
+    client, http_client, auth_headers, seeded_ids, motor, test_database_url
 ):
     """`AC07` · un usuario ajeno **con permiso** no alcanza el lote de otra empresa.
 
@@ -385,6 +385,15 @@ async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
     propios["house_id"] = galpon.json()["id"]
 
     propio = await _lote_cerrable(http_client, sujeto, propios, motor)
+    # `GA-REM-040` fase 3: sin unidades concedidas el sujeto no ve ni su propio lote, que es
+    # lo que `OD-09.c` dicta. Se configura la empresa —habilitar y conceder— como hará un
+    # cliente real en su alta; lo que esta prueba mide es el cierre, no el alcance.
+    from tests.business_unit_fixtures import habilitar_y_conceder_todo
+
+    await habilitar_y_conceder_todo(
+        test_database_url, company_id=seeded_ids["company_id_2"],
+        user_ids=[usuario.json()["id"]])
+
     control = await http_client.post(f"/api/v1/lots/{propio}/close", headers=sujeto)
     assert control.status_code == 200, (
         f"CONTROL falló: el sujeto no puede cerrar ni su propio lote, "
