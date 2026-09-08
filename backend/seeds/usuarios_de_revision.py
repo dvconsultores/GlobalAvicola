@@ -8,13 +8,13 @@ No son cuentas definitivas. Antes de producción se vacía y se crean como corre
 esto existe para poder recorrer la aplicación de extremo a extremo mientras tanto.
 
     # ver el estado sin tocar nada
-    python -m scripts.usuarios_de_revision --inventario
+    PYTHONPATH=. python3 seeds/usuarios_de_revision.py --inventario
 
     # crear o actualizar las dos cuentas
-    GA_REVIEW_PASSWORD='...' python -m scripts.usuarios_de_revision --crear
+    GA_REVIEW_PASSWORD='...' PYTHONPATH=. python3 seeds/usuarios_de_revision.py --crear
 
     # además, retirar las cuentas anteriores (reversible: solo las desactiva)
-    GA_REVIEW_PASSWORD='...' python -m scripts.usuarios_de_revision --crear --retirar-anteriores
+    GA_REVIEW_PASSWORD='...' PYTHONPATH=. python3 seeds/usuarios_de_revision.py --crear --retirar-anteriores
 
 **La contraseña no se escribe aquí.** `GA-REM-004` retiró las credenciales literales del
 repositorio y esa remediación está certificada; volver a ponerlas la desharía. Se lee del
@@ -29,6 +29,10 @@ evidencias, notificaciones y registros `SAP` —once claves foráneas obligatori
 criterio ya escrito en `GA-REM-025`: «las cuentas obsoletas se retiran con criterio, no en
 bloque». Si de verdad se quiere partir de cero, la herramienta es
 `scripts/environment_reset.py`, que tiene su propia guarda de cinco señales.
+
+**Vive en `seeds/` y no en `scripts/` a propósito.** El `Dockerfile` copia `app/` y `seeds/`
+a la imagen, y **no** `scripts/`: un fichero ahí no existiría dentro del contenedor
+desplegado, que es justo donde hay que ejecutarlo.
 
 **Configura la empresa, no solo las cuentas.** Desde `GA-REM-040` un usuario sin unidades de
 negocio concedidas no ve dato productivo: es lo que `OD-09.c` decidió. Un operador recién
