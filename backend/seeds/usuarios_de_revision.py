@@ -87,12 +87,45 @@ def _dsn() -> str:
     return valor.replace("postgresql://", "postgresql+asyncpg://", 1)
 
 
+#: Longitud mínima que el **login** admite, en el frontend (`LoginPage.tsx`) y en el backend
+#: (`LoginRequest`). Por debajo de esto la cuenta se crea y **no se puede usar**: el intento
+#: ni siquiera llega a comprobar la contraseña, lo rechaza la validación del esquema.
+MINIMO_PARA_ENTRAR = 6
+
+#: La política de verdad — `GA-REM-012`, regla `RR-05`—, idéntica en alta, cambio y
+#: restablecimiento. El seis del login no es una política: restringe un intento de
+#: autenticación, no la creación de un secreto.
+MINIMO_DE_POLITICA = 8
+
+
 def _password() -> str:
+    """La contraseña del entorno, comprobada contra las dos longitudes que importan.
+
+    Escribir el hash directamente **salta la validación del producto**, que es cómodo para
+    unas cuentas temporales y peligroso en un sentido concreto: se pueden crear cuentas con
+    una contraseña que el login rechaza, y entonces el fallo aparece lejos de su causa —en
+    la pantalla de acceso, pareciendo un problema de la aplicación.
+    """
     valor = os.environ.get("GA_REVIEW_PASSWORD")
     if not valor:
         sys.exit(
             "[revisión] Falta GA_REVIEW_PASSWORD.\n"
             "           `GA-REM-004`: no se escriben credenciales literales en el repositorio."
+        )
+    if len(valor) < MINIMO_PARA_ENTRAR:
+        sys.exit(
+            f"[revisión] La contraseña tiene {len(valor)} caracteres y el login exige "
+            f"{MINIMO_PARA_ENTRAR}.\n"
+            "           Se crearían cuentas imposibles de usar: la validación del esquema "
+            "rechaza\n"
+            "           el intento antes de comprobar nada. No se crea ninguna."
+        )
+    if len(valor) < MINIMO_DE_POLITICA:
+        print(
+            f"  ⚠️  {len(valor)} caracteres. Entra, pero queda por debajo de la política de "
+            f"{MINIMO_DE_POLITICA}\n"
+            "      (`GA-REM-012` `RR-05`). Cambiarla desde la aplicación exigirá "
+            f"{MINIMO_DE_POLITICA} o más."
         )
     return valor
 
