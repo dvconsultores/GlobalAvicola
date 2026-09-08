@@ -1,0 +1,121 @@
+# MATRIZ MAESTRA DE REQUISITOS
+
+Auditoría maestra · 2026-09-08 · `HEAD = e245157` · **solo lectura**
+
+**Alcance de esta matriz.** Cubre los requisitos de las diez áreas que motivaron la auditoría,
+extraídos de `docs/02 §3.1`–`§3.2`, `docs/03 §686`, `docs/10 §3.1`, `docs/12`, `GA-REM-002`,
+`GA-REM-034`, `GA-REM-039`, `GA-REM-040` y `OD-09`…`OD-12`. **No** es el censo de todos los
+requisitos del producto: los procesos operativos `P-01`…`P-15` conservan su propia matriz y su
+certificación funcional de `14 / 15`, que esta auditoría **no** recalcula.
+
+---
+
+## 1. Arquitectura y multicompañía
+
+| ID | Requisito | Fuente | Backend | BD | Frontend | Runtime | Test | Estado | Finding |
+|---|---|---|:--:|:--:|:--:|:--:|:--:|---|---|
+| `RQ-01` | Cada usuario pertenece a una compañía | `02 §3.1.4` | sí | `users.company_id` | formulario sí, columna no | sí | sí | **`PARTIAL`** | `F-J` |
+| `RQ-02` | Super Admin ve todas las compañías | `02 §3.1.4` | sí | — | sí | sí | sí | `COMPLETE` | — |
+| `RQ-03` | Usuarios regulares solo ven datos de su compañía **en todas las consultas** | `02 §3.1.4` | **no en `/users` ni en `companies`** | — | — | — | **no** | **`CONTRADICTED`** | `F-A` `F-B` `F-C` |
+| `RQ-04` | El `JWT` incluye `company_id` y `role_id` | `02 §3.1.4` | sí | — | sí | sí | sí | `COMPLETE` | — |
+| `RQ-05` | Toda entidad creada hereda el `company_id` del usuario | `02 §3.1.4` | parcial — `/users` no | — | — | — | parcial | **`PARTIAL`** | `F-G` |
+| `RQ-06` | Permisos con alcance `all` / `company` / `farm` | `02 §3.1.4` | `scope_type` existe | `permissions` | no | no evaluado | parcial | **`PARTIAL`** | `F-K` |
+| `RQ-07` | Configuración SAP por compañía | `02 §3.1.4` | `sap_config` | `companies` | `MasterListPage` | sí | no | **`CONTRADICTED`** | `F-B` |
+| `RQ-08` | Niveles de aprobación por compañía | `02 §3.1.4` | sí | `companies` | sí | sí | sí | `COMPLETE` | — |
+| `RQ-09` | Selector de compañía en frontend | `02 §3.1.4` **«(futuro)»** | `/switch-company` | — | **no** | no | sí | **`BACKEND_ONLY_EXPECTED`** | — |
+| `RQ-10` | La auditoría registra `company_id` en cada acción | `02 §3.1.4` · `13` | sí | `audit_logs` | `AuditPage` | sí | sí | `COMPLETE` | — |
+| `RQ-11` | Empresa efectiva resuelta, no reclamada | `OD-11` | sí | — | n/a | sí | sí | `COMPLETE` | — |
+
+## 2. Maestros y origen de verdad
+
+| ID | Requisito | Fuente | Backend | BD | Frontend | Runtime | Test | Estado | Finding |
+|---|---|---|:--:|:--:|:--:|:--:|:--:|---|---|
+| `RQ-12` | 22 maestros con `CRUD` | `02 §3.2.1` | sí | sí | `MasterListPage` | sí | sí | `COMPLETE` | — |
+| `RQ-13` | SAP importa Centros, Almacenes, Materiales, Proveedores, Lotes, OC, OT | `10 §3.1` | `sap_references` | sí | `SapManagerPage` | manual | sí | `COMPLETE` | — |
+| `RQ-14` | **Compañías provienen de SAP** | **ninguna** | — | — | — | — | — | **`SPEC_GAP`** | `F-F` |
+| `RQ-15` | **Granjas provienen de SAP** | **ninguna** | — | — | — | — | — | **`SPEC_GAP`** | `F-F` |
+| `RQ-16` | Los maestros se acotan por empresa | `02 §3.1.4` | sí salvo `companies` y sin empresa | — | — | — | parcial | **`PARTIAL`** | `F-B` `F-C` |
+
+## 3. Usuarios, roles y `RBAC`
+
+| ID | Requisito | Fuente | Backend | BD | Frontend | Runtime | Test | Estado | Finding |
+|---|---|---|:--:|:--:|:--:|:--:|:--:|---|---|
+| `RQ-17` | `CRUD` de usuarios con campo Empresa | `02 §3.1.2` | sí | sí | formulario sí · **columna no** | vacío | no | **`PARTIAL`** | `F-E` `F-J` |
+| `RQ-18` | El alta de usuario respeta el inquilino del actor | `02 §3.1.4` | **no** | — | — | — | **no** | **`CONTRADICTED`** | `F-G` |
+| `RQ-19` | La edición de usuario respeta el inquilino y no escala privilegios | `02 §3.1.4` | **no** | — | — | — | **no** | **`CONTRADICTED`** | `F-H` |
+| `RQ-20` | `CRUD` de roles con permisos granulares | `02 §3.1.3` · `GA-REM-034` | sí | sí | `RolesPage` | sí | sí | `COMPLETE` | — |
+| `RQ-21` | Los roles se acotan a la empresa | `02 §3.1.3` | **no** — `Role.company_id` existe y no se usa | `roles` | no | compartido | no | **`PARTIAL`** | `F-I` |
+| `RQ-22` | Toda ruta declara permiso | `GA-REM-002 AC08` | sí | — | — | sí | sí | `COMPLETE` | — |
+| `RQ-23` | Cambio de contraseña con política de 8 | `GA-REM-012` `RR-05` | sí | — | sí | sí | sí | `COMPLETE` | — |
+
+## 4. Módulos por empresa
+
+| ID | Requisito | Fuente | Backend | BD | Frontend | Runtime | Test | Estado | Finding |
+|---|---|---|:--:|:--:|:--:|:--:|:--:|---|---|
+| `RQ-24` | **La empresa activa o desactiva módulos** | **ninguna** | — | — | — | — | — | **`SPEC_GAP`** | `F-L` |
+| `RQ-25` | El menú refleja los módulos accesibles del rol | `02 §3.1.3` | n/a | — | **no** | todo visible | no | **`MISSING`** | `F-D` |
+
+## 5. Unidades de negocio · `GA-REM-040`
+
+| ID | Requisito | Fuente | Backend | BD | Frontend | Runtime | Test | Estado | Finding |
+|---|---|---|:--:|:--:|:--:|:--:|:--:|---|---|
+| `RQ-26` | Catálogo, habilitación por empresa, concesión por usuario | fase 1 · `AC-A01`…`B12` | sí | 3 tablas | — | sin consumidor | 31 | `BACKEND_ONLY` | — |
+| `RQ-27` | Guarda central y empresa efectiva | fase 2 | sí | — | — | sí | 25 | `COMPLETE` | — |
+| `RQ-28` | Aislamiento por fila | fase 3 | sí | — | — | sí | 21 | `COMPLETE` | — |
+| `RQ-29` | Aislamiento de agregados y `KPI` | fase 4 | sí | — | — | sí | 15 | `COMPLETE` | — |
+| `RQ-30` | Contratos de traspaso · 7 flujos | fase 5 · `OD-10` `OD-12` | sí | — | — | sí | 28 | `COMPLETE` | — |
+| `RQ-31` | Clasificación pendiente y reclasificación | fase 6 · `OD-10.c/d` | sí | sí | — | sin consumidor | 35 | `BACKEND_ONLY` | — |
+| `RQ-32` | API de administración | fase 7 · `T-040-18/19` | sí | — | — | sin consumidor | 39 | `BACKEND_ONLY` | — |
+| `RQ-33` | Capacidades en la sesión | fase 8 · `T-040-20` | **no** | — | — | — | — | **`MISSING`** — no iniciada | — |
+| `RQ-34` | Interfaz de unidades y clasificación | fase 9 · `T-040-21…24` | n/a | — | **no** | — | — | **`MISSING`** — no iniciada | — |
+| `RQ-35` | Quién administra el acceso por unidad | `R-113` | — | — | — | — | — | **`OWNER_DECISION_REQUIRED`** | `R-113` |
+| `RQ-36` | Ciclo de vida del histórico al cerrar una línea | `BU-D10` | — | — | — | — | — | **`OWNER_DECISION_REQUIRED`** | `BU-D10` |
+
+## 6. SAP e integración
+
+| ID | Requisito | Fuente | Backend | BD | Frontend | Runtime | Test | Estado | Finding |
+|---|---|---|:--:|:--:|:--:|:--:|:--:|---|---|
+| `RQ-37` | Consolidación y envío a SAP | `10` · `P-08` | sí | sí | `SapManagerPage` | sí | sí | **`BLOCKED_EXTERNAL`** | — |
+| `RQ-38` | Contratos de respuesta declarados en `/sap` | `GA-REM-016` | **1 de 10** | — | — | — | parcial | **`PARTIAL`** | `R-112` |
+
+---
+
+## 2. Recuento
+
+```
+TOTAL REQUISITOS AUDITADOS        38
+
+COMPLETE                          14
+PARTIAL                            7
+CONTRADICTED                       5
+MISSING                            4
+BACKEND_ONLY (esperado)            4
+SPEC_GAP                           3
+OWNER_DECISION_REQUIRED            2
+BLOCKED_EXTERNAL                   1
+
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08
+    14 / 38  =  37 %   COMPLETE
+    18 / 38  =  47 %   COMPLETE o BACKEND_ONLY esperado por hoja de ruta
+```
+
+El histórico `21 / 60 = 35 %` **no se toca**: mide otra cosa, en otra fecha, sobre otro censo.
+
+---
+
+## 3. Findings nuevos de esta auditoría
+
+| ID | Clase | Severidad | Qué |
+|---|---|:--:|---|
+| `F-A` | `IMPLEMENTATION_CONTRADICTS_SPEC` | **P0** | `/users` no filtra por empresa |
+| `F-B` | `IMPLEMENTATION_CONTRADICTS_SPEC` | **P0** | `/masters/companies` no acota y expone `sap_config` |
+| `F-C` | `IMPLEMENTATION_CONTRADICTS_SPEC` | **P0** | usuario sin empresa → maestros sin filtrar (`fail-open`) |
+| `F-H` | `IMPLEMENTATION_CONTRADICTS_SPEC` | **P0** | `update_user` cruza inquilinos y reasigna `role_id` |
+| `F-G` | `IMPLEMENTATION_CONTRADICTS_SPEC` | **P1** | `create_user` acepta `company_id` del cliente |
+| `F-D` | `FRONTEND_MISSING` | **P1** | ninguna pantalla comprueba permisos |
+| `F-E` | `FRONTEND_MISSING` | **P1** | errores silenciados: denegación indistinguible de vacío |
+| `F-I` | `SPEC_NOT_IMPLEMENTED` | **P1** | los roles no se acotan por empresa |
+| `F-J` | `FRONTEND_MISSING` | **P2** | falta la columna Empresa en `/users` |
+| `F-K` | `TEST_COVERAGE_GAP` | **P2** | `Permission.scope_type` existe y no se evalúa |
+| `F-F` | `OWNER_DECISION_REQUIRED` | **P1** | origen de Empresas y Granjas sin especificar |
+| `F-L` | `OWNER_DECISION_REQUIRED` | **P1** | módulos por empresa sin especificar |

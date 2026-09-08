@@ -714,3 +714,30 @@ R-103     agregados                    → fase 4
 R-107     buscadores y desplegables    → fase 3
 R-106     contrato entre unidades      → fase 5
 ```
+
+---
+
+## Dependencias tras la auditoría maestra (2026-09-08)
+
+```
+R-114 · R-115 · R-116 · R-117 · R-118   aislamiento de inquilino en administración
+        └── BLOQUEA ──> R-113 (quién administra)
+                        porque responder R-113 ACTIVA estos cuatro P0
+
+R-113 (owner)  ──> GA-REM-040 FASE 8 (sesión)
+                   sin saber quién administra, las capacidades de sesión no tienen destinatario
+
+GA-REM-040 FASE 8  ──> R-119 (gating de navegación)
+                       el frontend necesita el contrato de capacidades antes de poder filtrar
+
+GA-REM-040 FASE 8  ──> GA-REM-040 FASE 9 (interfaz de unidades)
+
+R-124 (owner · origen de maestros)  ──> spec de maestros ──> rediseño de CRUD de empresas/granjas
+R-125 (owner · módulos por empresa) ──> modelo de entitlement ──> guarda ──> menú
+
+R-120 (contrato de error en UI)     sin dependencias · ejecutable ya
+R-122 · R-123 · R-121 · R-112       sin dependencias · P2
+```
+
+**El camino crítico no es técnico, es de decisión.** `R-113`, `R-124` y `R-125` esperan al
+propietario, y dos de ellos gobiernan trabajo que aún no se puede ni especificar.

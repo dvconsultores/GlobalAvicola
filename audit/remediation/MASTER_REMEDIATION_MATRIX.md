@@ -933,3 +933,43 @@ R-112                                registrado · no remediado
 P-08                                 BLOCKED_EXTERNAL · intacto
 FASE 7                               COMPLETE
 ```
+
+---
+
+## AUDITORÍA MAESTRA DE SPEC/PRODUCTO — 2026-09-08
+
+```
+¿ESTAMOS AVANZANDO?   PARCIALMENTE
+DECISIÓN              B · CONGELAR FASE 8 · RECUPERAR FUNDAMENTO PRIMERO
+```
+
+El backend operativo es sólido y lo certificado sigue siendo cierto. Lo que faltaba era alguien
+preguntando si la **suma** de esas dimensiones era un producto.
+
+```
+CAPACIDAD TÉCNICA      alta     tres guardas de arranque · 207/207 rutas · 687 pruebas
+CAPACIDAD DE PROCESO   alta     14/15 procesos funcionales certificados
+CAPACIDAD DE PRODUCTO  media    falta toda la administración multiempresa
+CAPACIDAD DE UI        baja     0 comprobaciones de permiso en 28 pantallas
+CAPACIDAD DE RUNTIME   media    lo operativo funciona; lo administrativo no se puede usar
+```
+
+**Cuatro `P0` nuevos**, todos la misma ausencia: el filtro de empresa nunca llegó a la superficie
+de administración, y ninguna guarda lo vigila. `R-114`, `R-115`, `R-116`, `R-117`.
+
+**Tres preocupaciones del propietario no son defectos**: compañías desde SAP, granjas desde SAP y
+módulos por empresa tienen **cero** presencia en `docs/` y `specs/`. El código hace lo que
+`docs/02 §3.2.1` manda. `R-124` y `R-125` van al propietario, no al backlog técnico.
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08     14 / 38 = 37 % COMPLETE
+HISTÓRICO 21 / 60 = 35 %                            sin tocar · mide otra cosa
+CERTIFICACIÓN FUNCIONAL      14 / 15                sin cambios · sigue válida
+ACCESO POR UNIDAD             0 / 15                sin cambios
+CERTIFICACIONES INVALIDADAS   NINGUNA
+```
+
+Entregables: `GLOBAL_AVICOLA_MASTER_GAP_ANALYSIS.md` · `..._REQUIREMENT_MASTER_MATRIX.md` ·
+`..._SPEC_INVENTORY.md` · `..._RECOVERY_ROADMAP.md` · `MASTER_DATA_SOURCE_OF_TRUTH_MATRIX.md` ·
+`COMPANY_MODULE_ACCESS_MATRIX.md` · `COMPANY_CONFIGURATION_MATRIX.md` ·
+`FRONTEND_SCREEN_IMPLEMENTATION_MATRIX.md` · `BACKEND_API_IMPLEMENTATION_MATRIX.md`

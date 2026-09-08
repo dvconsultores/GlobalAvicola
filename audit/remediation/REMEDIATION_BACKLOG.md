@@ -645,3 +645,94 @@ corresponda a su organización desde `/roles` sin tocar código. Y el Super Admi
 administrar una empresa situándose en ella con `switch-company`, que deja rastro en `P-09`.
 
 **No lo resuelve la fase 7.** Decidir quién manda no es trabajo de quien implementa.
+
+---
+
+# AUDITORÍA MAESTRA DE SPEC/PRODUCTO — 2026-09-08
+
+Doce hallazgos. Ninguno estaba registrado; ninguno tiene prueba que lo cubra. Todos verificados
+sobre el código en `HEAD = e245157`, sin modificar nada.
+
+**El hilo común de los cinco primeros:** el filtro de empresa nunca llegó a la superficie de
+administración. `docs/02 §3.1.4` lo declara CRÍTICO y exige `WHERE company_id = ?` en *todas*
+las consultas; `/users` y `/masters/companies` no lo aplican.
+
+**Por qué convivieron con 687 pruebas verdes y tres guardas de arranque:** ninguna guarda vigila
+el filtro de inquilino, y `users:read/create/update` constan en `SOLO_SUPER_ADMIN`, de modo que
+en las semillas solo los alcanza quien legítimamente ve todo. **Están latentes, no ausentes**:
+se activan el día que se responda `R-113` y alguien cree un rol de administración.
+
+## `R-114` · `P0` · `/users` no filtra por empresa
+`AuthService.get_users` → `select(User)` sin `where` de empresa. `get_user` tampoco. Quien tenga
+`users:read` enumera nombre, correo, teléfono, rol y empresa de **todos** los inquilinos.
+Contradice `RQ-03` / `02 §3.1.4`. Sin remediación existente.
+
+## `R-115` · `P0` · `/masters/companies` no acota y expone `sap_config`
+`Company` no tiene columna `company_id`, así que `hasattr(self.model, "company_id")` es falso y
+`_apply_company_filter` es un **no-op** sobre ese maestro. `masters:read` lo tienen los cinco
+roles sembrados → cualquier usuario autenticado lista todas las empresas con `tax_id`, `country`,
+`currency`, `approval_levels` y `sap_config`, que `CompanyRead` expone entero.
+`docs/03 §686` asumía «la mayoría de entidades tienen `company_id`»; `Company` es la que no puede.
+
+## `R-116` · `P0` · usuario sin empresa → maestros sin filtrar
+`if not self.user_company_id: return query`. El comentario del propio código no resolvió la
+intención: «return empty or filter by id». Un usuario sin empresa que no sea Super Administrador
+ve los maestros de todas. Es `fail-open` donde `GA-REM-040` eligió `fail-closed`.
+`POST /users` permite crear usuarios así: `company_id` es `Optional`.
+
+## `R-117` · `P0` · `update_user` cruza inquilinos y reasigna el rol
+`select(User).where(User.id == user_id)` sin empresa, y `UserUpdate.role_id` se aplica por
+`setattr` en bucle. Con `users:update` se le asigna a **cualquier** usuario de **cualquier**
+empresa un rol con el comodín `("*", ...)`, que es Super Administrador. Escalada de privilegios
+que cruza inquilinos por la ruta documentada de edición.
+`GA-REM-034` cerró lo análogo para roles y `GA-REM-002 AC12` para sub-recursos de lote; la
+lección no llegó a `/users`.
+
+## `R-118` · `P1` · `create_user` acepta la empresa del cliente
+El router obtiene `current_user` y **no lo pasa** al servicio; `company_id=data.company_id` entra
+sin validar. Un administrador de A crea usuarios en B. El patrón correcto ya existe en la casa:
+`GA-REM-040` fase 7 resuelve la empresa en vez de recibirla.
+
+## `R-119` · `P1` · el frontend no comprueba permisos en ninguna pantalla
+Cero ocurrencias de `hasPermission`/`usePermission` en `frontend/src`. `navigationConfig.ts` es
+un array estático sin campo de permiso, módulo ni unidad: las nueve entradas se dibujan para
+cualquiera. `docs/02 §3.1.3` pide «módulos accesibles» por rol.
+**No es agujero de seguridad** —el backend deniega— sino producto que enseña puertas cerradas.
+Depende de `GA-REM-040` fase 8 para tener contrato de capacidades del que tirar.
+
+## `R-120` · `P1` · la interfaz confunde denegación con conjunto vacío
+`UsersPage` hace `Promise.all` de cuatro llamadas y las envuelve en `catch { console.error }`.
+Si una falla, `users` queda en `[]` y la tabla se dibuja con cabeceras y sin filas.
+**Es la explicación del `/users` vacío que motivó esta auditoría**: `/users` y `/roles` exigen
+`users:read`, que ningún rol sembrado concede. Barato de arreglar y de alto retorno.
+
+## `R-121` · `P1` · los roles no se acotan por empresa
+`Role.company_id` existe en el modelo. `get_roles` devuelve todos los activos sin filtrar y
+`create_role` no lo asigna: el catálogo de roles es global y un rol de la empresa A aparece en la
+lista de la B. Requiere decidir si el catálogo es de producto o de inquilino.
+
+## `R-122` · `P2` · falta la columna Empresa en el listado de usuarios
+`docs/02 §3.1.2` la exige. El formulario de alta/edición **sí** tiene el selector; la tabla no
+muestra la columna. `PARTIAL`, no `MISSING`.
+
+## `R-123` · `P2` · `Permission.scope_type` se almacena y no se evalúa
+`tiene_permiso` compara `(módulo, acción)` y descarta el alcance, salvo para detectar Super
+Administrador con `("*", scope="all")`. `docs/02 §3.1.4` pide `all` / `company` / `farm`.
+
+## `R-124` · `P1` · `OWNER_DECISION_REQUIRED` · ¿vienen de SAP las Empresas y las Granjas?
+`docs/10 §3.1` lista lo que SAP importa: Centros, Almacenes, Materiales, Proveedores, Lotes, OC,
+OT. **Ni Empresas ni Granjas.** `docs/02 §3.2.1` las lista como catálogos base locales con campos
+propios. **El código cumple la spec; la spec no cumple la expectativa del propietario.**
+No es defecto de implementación: es requisito no escrito. Preguntas a decidir:
+```
+¿Es SAP el dueño de Empresas? ¿Y de Granjas? ¿Contra qué objeto SAP?
+¿Réplica de solo lectura, o copia con extensión local declarada?
+¿Qué pasa con las creadas localmente hasta hoy?
+¿Y con `sap_config`, hoy campo editable de la empresa?
+```
+
+## `R-125` · `P1` · `OWNER_DECISION_REQUIRED` · módulos activables por empresa
+Cero coincidencias en `docs/` y `specs/`; no existe `CompanyModule` ni equivalente.
+**`RBAC` no lo sustituye:** `Permission.module` dice qué puede hacer una persona, no qué ha
+contratado una empresa. Hoy falta una dimensión entera de la pila de autorización.
+A decidir: ¿se vende por módulos contratables, o es producto único acotado por `RBAC`?

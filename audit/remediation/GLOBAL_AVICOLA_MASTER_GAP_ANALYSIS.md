@@ -1,0 +1,186 @@
+# GLOBAL AVÍCOLA — AUDITORÍA MAESTRA DE SPEC / PRODUCTO
+
+2026-09-08 · `HEAD = e245157` · **sin cambios de código**
+
+---
+
+## Resumen ejecutivo
+
+**¿Estamos avanzando de verdad? PARCIALMENTE.**
+
+El backend de procesos operativos es sólido y está genuinamente certificado. Tres guardas de
+arranque impiden servir una ruta sin permiso, sin clasificación de unidad o fuera de
+transacción, y las 207 rutas las cumplen. `GA-REM-040` construyó en siete fases un control de
+acceso por cadena productiva con 179 pruebas y sensibilidad demostrada. Eso es trabajo real y no
+está en discusión.
+
+**Y aun así el producto no está donde las certificaciones sugieren**, por tres razones
+distintas que conviene no mezclar:
+
+**1 · Hay contradicciones con la spec en la superficie de administración.** `docs/02 §3.1.4`
+declara el aislamiento multicompañía **CRÍTICO** y exige `WHERE company_id = ?` en *todas* las
+consultas. `/users` no lo aplica —ni al listar, ni al leer, ni al editar—, y `/masters/companies`
+tampoco, porque `Company` no tiene columna `company_id` y el filtro genérico es un no-op sobre
+ella. Cuatro hallazgos `P0`. Ninguno estaba registrado; ninguno tiene test.
+
+**2 · El frontend no implementa autorización en absoluto.** Cero comprobaciones de permiso en
+28 pantallas. El menú es un array estático. `docs/02 §3.1.3` pide que el rol determine los
+módulos accesibles y no ocurre. No es un agujero de seguridad —el backend deniega— pero sí un
+producto que enseña a todos puertas que casi nadie puede abrir, y que confunde una denegación
+con una lista vacía.
+
+**3 · Tres de las diez preocupaciones del propietario no son defectos: son requisitos que nunca
+se escribieron.** Compañías desde SAP, granjas desde SAP y módulos activables por empresa tienen
+**cero** presencia en `docs/` y en `specs/`. El código hace exactamente lo que `docs/02 §3.2.1`
+manda. No se puede acusar al software de incumplir una norma inexistente.
+
+**¿Qué está técnicamente listo?** Aislamiento por fila y por agregado, contratos de traspaso,
+clasificación pendiente, `RBAC` con guarda de cobertura, auditoría `P-09`, y las `API` de
+administración de unidades.
+
+**¿Qué está listo como producto?** Los procesos operativos de registro, revisión y aprobación.
+La administración —usuarios, empresas, módulos, unidades— **no**.
+
+**¿Debe continuar la fase 8?** **No todavía.** Ver la decisión al final.
+
+---
+
+## 1. La pregunta central, contestada
+
+> ¿El software implementa la arquitectura de negocio de las specs, o hemos certificado
+> componentes aislados mientras el producto integrado sigue incompleto?
+
+**Las dos cosas, y en proporciones distintas según la capa.**
+
+```
+CAPACIDAD TÉCNICA     alta      lo certificado es cierto en su dimensión
+CAPACIDAD DE PROCESO  alta      14/15 procesos funcionales certificados
+CAPACIDAD DE PRODUCTO media     falta toda la administración multiempresa
+CAPACIDAD DE UI       baja      sin autorización, sin pantallas de administración
+CAPACIDAD DE RUNTIME  media     lo operativo funciona; lo administrativo no se puede usar
+```
+
+Las certificaciones históricas **no se invalidan**. `GA-REM-040` fase 3 certificó aislamiento
+por fila y eso sigue siendo cierto. Lo que faltaba era alguien preguntando si la **suma** de
+esas dimensiones era un producto, y esa pregunta no la hacía ninguna matriz.
+
+**La causa raíz es de método, no de ejecución.** Cuarenta remediaciones contra dieciséis
+documentos de producto. El trabajo se organizó alrededor de defectos encontrados en el código, y
+nadie estaba recorriendo `docs/02` y `docs/10` renglón por renglón para ver qué no se había
+construido nunca. Un defecto se ve; una ausencia, no.
+
+---
+
+## 2. Los quince gaps críticos
+
+### `F-A` · `P0` · `/users` no filtra por empresa
+- **Requisito:** `RQ-03` — `02 §3.1.4`, marcado CRÍTICO
+- **Evidencia:** `AuthService.get_users` → `select(User)` sin `where` de empresa; `get_user` y
+  `update_user` tampoco
+- **Comportamiento actual:** quien tenga `users:read` enumera usuarios de todas las empresas
+- **Esperado:** solo los de la empresa efectiva
+- **Remediación existente:** ninguna · **Acción:** `GA-REM` nueva de aislamiento de `/users`
+
+### `F-H` · `P0` · `update_user` cruza inquilinos y reasigna rol
+- **Requisito:** `RQ-19`
+- **Evidencia:** `select(User).where(User.id == user_id)` sin empresa; `UserUpdate.role_id` se
+  aplica con `setattr` en bucle
+- **Comportamiento:** con `users:update` se asigna a cualquier usuario de cualquier empresa un
+  rol con comodín `("*", ...)` → Super Administrador
+- **Esperado:** objetivo del propio inquilino; cambio de rol acotado
+- **Acción:** misma `GA-REM` que `F-A`, prioridad máxima
+
+### `F-B` · `P0` · `/masters/companies` no acota y expone `sap_config`
+- **Requisito:** `RQ-03` · `RQ-07`
+- **Evidencia:** `hasattr(Company, "company_id")` es falso → filtro no-op; `CompanyRead` incluye
+  `sap_config`; `masters:read` lo tienen los cinco roles sembrados
+- **Acción:** acotar por identidad (`Company.id == empresa efectiva`) y revisar la proyección
+
+### `F-C` · `P0` · usuario sin empresa ve todos los maestros
+- **Evidencia:** `if not self.user_company_id: return query` — el comentario del propio código
+  admite que no se decidió («return empty or filter by id»)
+- **Contraste:** `GA-REM-040` resolvió el mismo dilema **fail-closed** (`unidades_efectivas` → `[]`)
+- **Acción:** decidir y cerrar en la misma remediación
+
+### `F-G` · `P1` · `create_user` acepta `company_id` del cliente
+- **Evidencia:** el router obtiene `current_user` y **no lo pasa** al servicio
+- **Acción:** resolver la empresa, no recibirla — el patrón ya existe en `GA-REM-040` fase 7
+
+### `F-D` · `P1` · el frontend no comprueba permisos
+- **Requisito:** `RQ-25` — `02 §3.1.3`
+- **Evidencia:** 0 ocurrencias de `hasPermission`/`usePermission` en `frontend/src`;
+  `navigationConfig.ts` sin campo de permiso
+- **Acción:** `GA-REM` de gating de navegación; depende de la fase 8 (`/me` con capacidades)
+
+### `F-E` · `P1` · el error se traga y la tabla queda vacía
+- **Evidencia:** `Promise.all` de cuatro llamadas + `catch { console.error }`
+- **Consecuencia:** *«no tienes permiso»*, *«el backend cayó»* y *«no hay datos»* son idénticos
+  en pantalla. **Es la explicación del `/users` vacío observado**
+- **Acción:** contrato de error en la UI; barato y de alto retorno
+
+### `F-I` · `P1` · los roles no se acotan por empresa
+- **Evidencia:** `Role.company_id` existe; `get_roles` y `create_role` no lo usan
+- **Acción:** decidir si el catálogo de roles es global (producto) o por inquilino
+
+### `F-F` · `P1` · `OWNER_DECISION_REQUIRED` · origen de Empresas y Granjas
+- **Evidencia:** `docs/10 §3.1` importa Centros, Almacenes, Materiales, Proveedores, Lotes;
+  `docs/02 §3.2.1` lista Empresas y Granjas como catálogos base **locales**
+- **Estado:** el código cumple la spec; **la spec no cumple la expectativa del propietario**
+- **Acción:** decisión de propietario → nueva `OD` → luego spec → luego código
+
+### `F-L` · `P1` · `OWNER_DECISION_REQUIRED` · módulos por empresa
+- **Evidencia:** cero coincidencias en `docs/` y `specs/`; no existe `CompanyModule`
+- **Aviso:** `RBAC` **no** lo sustituye. `Permission.module` dice qué hace una persona, no qué
+  ha contratado una empresa
+- **Acción:** decisión de propietario antes de cualquier diseño
+
+### `R-113` · `P1` · `OWNER_DECISION_REQUIRED` · quién administra el acceso
+- Abierto en la fase 7. **Su respuesta activa `F-A`, `F-G` y `F-H` el mismo día**, porque hoy
+  esos defectos están latentes solo porque ningún rol sembrado concede `users:*`
+
+### `F-J` · `P2` · falta la columna Empresa en `/users`
+- `02 §3.1.2` la exige. El formulario sí la tiene; la tabla no
+
+### `F-K` · `P2` · `Permission.scope_type` no se evalúa
+- `tiene_permiso` compara `(módulo, acción)` y descarta el alcance salvo para detectar Super
+  Admin. `02 §3.1.4` pide `all` / `company` / `farm`
+
+### `R-112` · `P2` · ocho rutas `SAP` sin `response_model`
+- Registrado y **no tocado**, según la orden de esta auditoría
+
+### `BU-D10` · `OWNER_DECISION_REQUIRED`
+- Sigue `PENDING_RATIFICATION`. **No tocado**
+
+---
+
+## 3. Reconciliación de certificaciones
+
+**Ninguna certificación histórica se invalida.** Todas medían capacidad técnica o de proceso en
+su dimensión, y siguen siendo ciertas ahí.
+
+| Afirmación | ¿Sigue válida? | Matiz que faltaba |
+|---|---|---|
+| `GA-REM-040` fases 1–7 `COMPLETE` | **sí** | backend; fases 8 y 9 sin empezar → sin producto |
+| Certificación funcional `14 / 15` | **sí** | mide procesos operativos, no administración |
+| Acceso por unidad `0 / 15` | **sí** | y se mantiene en `0` |
+| `GA-REM-002` cobertura de autorización | **sí** | garantiza que la ruta **declara** permiso, no que el filtro de empresa exista |
+| `P-14` certificado | **sí** | no cubre `/users` |
+
+**La lección de método:** las guardas verifican lo que se les pidió verificar. Ninguna vigila el
+filtro de empresa, y por eso cuatro defectos `P0` convivieron con tres guardas de arranque y 687
+pruebas en verde. Un guardián que asegura *«la ruta declara permiso»* no asegura *«la consulta
+acota por inquilino»*.
+
+---
+
+## 4. Topología de las pruebas
+
+```
+ficheros de prueba backend      53      687 pruebas · 49 omitidas
+ficheros de prueba frontend     11
+E2E de navegador                 0
+E2E de flujo por API             2      run_e2e_audit.py · test_full_workflow_audit.py
+```
+
+Las pruebas se concentran donde el producto ya era fuerte. **No hay una sola prueba de
+aislamiento multiempresa sobre `/users`**, que es donde están tres de los cuatro `P0`.
