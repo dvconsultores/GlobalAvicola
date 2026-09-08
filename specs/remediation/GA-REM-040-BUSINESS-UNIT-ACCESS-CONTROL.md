@@ -5,7 +5,7 @@
 | **ID** | `GA-REM-040` · `CROSS-CUTTING CAPABILITY SPEC` |
 | **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 construida, enmienda A** (2026-09-07) |
 | **Requisito** | habilitación de unidades por empresa y acotamiento por usuario |
-| **Decisiones** | `OD-09` (`a`…`e`) · `OD-10` (`a` `b` `c`) · **`OD-11`** contexto de empresa · marco `ENV-01` |
+| **Decisiones** | `OD-09` (`a`…`e`) · `OD-10` (`a`…`d`) · **`OD-11`** contexto de empresa · marco `ENV-01` |
 | **Antecedente** | `audit/remediation/MODULE_ACCESS_ARCHITECTURE_AUDIT.md` y sus 21 matrices |
 | **Procesos** | los quince, en una **dimensión nueva**; ninguno se reabre |
 | **Dependencias** | `GA-REM-002` `GA-REM-034` (`RBAC`) · `GA-REM-039` (`Area`, que **no** es esto) |
@@ -713,6 +713,25 @@ contenga «admin» y comprobando que **no** atraviesa nada.
 **`AC-G07`** · Nada queda abierto en silencio, y los pendientes se pueden contar.
 **`AC-G08`** · «Pendiente» **no** es una quinta unidad de negocio.
 
+**`AC-G09`** · **`OD-10.d`.** La edición ordinaria de un registro **no puede** cambiar su cadena
+productiva. El campo no viaja en el contrato de edición.
+
+**`AC-G10`** · Reclasificar exige **permiso explícito** y **motivo no vacío**. Sin cualquiera de
+los dos se deniega y no queda escrito nada.
+
+**`AC-G11`** · Un registro con **efectos productivos aguas abajo** —aprobado, consolidado o
+enviado a SAP, participante en un traspaso, o con acciones de aprobación— **no** se reclasifica
+en el sitio. Y si no se puede demostrar que no los tiene, tampoco.
+
+**`AC-G12`** · La reclasificación deja rastro en `P-09` con actor, momento, cadena anterior,
+cadena nueva y motivo. La historia anterior **se conserva**.
+
+**`AC-G13`** · Reclasificar **no** concede la cadena a nadie, **no** habilita la unidad a la
+empresa y **no** reasigna a los hijos en cascada.
+
+**`AC-G14`** · Después de reclasificar manda el alcance normal: quien tenía la cadena anterior
+deja de ver el registro, y quien tiene la nueva lo ve si su `RBAC` lo permite.
+
 ### Grupo `H` · interfaz
 
 **`AC-H01`** · La sesión expone unidades habilitadas, concedidas, efectivas y capacidades de
@@ -834,6 +853,8 @@ DECISIÓN DEL PROPIETARIO  →  AC  →  TAREA  →  PRUEBA FUTURA  →  EVIDENC
 | `T-040-15` | Contrato de despacho con destino declarado |
 | `T-040-16` | Estado de clasificación pendiente y su bandeja |
 | `T-040-17` | Acción de clasificar, auditada en `P-09` |
+| `T-040-35` | **`OD-10.d`** · reclasificación controlada, con efectos aguas abajo como barrera |
+| `T-040-36` | Semillas de certificación: empresa configurada explícitamente |
 | `T-040-18` | API de administración: habilitación por empresa |
 | `T-040-19` | API de administración: concesión por usuario |
 | `T-040-20` | Capacidades en la sesión |
@@ -1095,3 +1116,49 @@ CLASIFICAR UNA RUTA   ≠   PROTEGER SUS FILAS
 Que `/api/v1/lots` esté clasificada como `MULTI_UNIDAD` **no** significa que sus filas estén
 acotadas. Eso es la fase 3, y hasta entonces sigue devolviendo lotes de todas las unidades de la
 empresa.
+
+---
+
+# Enmienda C · las semillas configuran la empresa (2026-09-07)
+
+## C.1 El hecho
+
+Desde que el acceso se acota por cadena, un usuario sin concesiones no ve dato productivo — ni
+siquiera el que él mismo registró. Las suites escritas antes de esta capacidad crean usuarios sin
+concederles nada, y con razón: entonces no existía.
+
+Medido retirando las concesiones de la semilla:
+
+```
+20 pruebas caen · 18 de notificaciones · 2 de auditoría y flujo completo
+```
+
+## C.2 La regla
+
+```
+UNA SEMILLA DE CERTIFICACIÓN VÁLIDA
+    =  empresa con sus cadenas HABILITADAS explícitamente
+    +  usuarios con sus cadenas CONCEDIDAS explícitamente
+    +  RBAC
+    +  dato de negocio
+```
+
+**Una precondición válida es parte de la validez de la prueba.** Una prueba que falla porque su
+sujeto no tiene cadena concedida, cuando pretende medir otra regla, tiene una fixture inválida —
+no revela una regresión.
+
+## C.3 Lo que esto NO es
+
+```
+PROHIBIDO   sin concesiones  →  todas las cadenas de la empresa
+```
+
+Eso sería el `fail open` que toda esta capacidad existe para impedir, disfrazado de comodidad de
+pruebas. La ausencia de concesión sigue significando **ninguna cadena productiva**, y hay prueba
+que lo sujeta.
+
+## C.4 Y no todo el mundo recibe las cuatro
+
+Las suites que **miden** el aislamiento siguen construyendo sus propios sujetos —de una cadena,
+de varias, de ninguna, de control— y concediendo a mano. Allí la concesión es el objeto de
+estudio, no una precondición.

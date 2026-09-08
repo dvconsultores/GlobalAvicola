@@ -10,7 +10,7 @@
 | Estado | **VIGENTE** |
 | Alcance | Acceso por unidad de negocio: `GA-REM-040` y sus derivados |
 | Antecedente | `audit/remediation/BU_DECISION_BRIEF_D01_D02.md` |
-| Resuelve | `BU-D01 = B` · destino del despacho `= A` · `BU-D02 = C` |
+| Resuelve | `BU-D01 = B` · destino del despacho `= A` · `BU-D02 = C` · **enm. A**: reclasificación |
 | Complementa | `OD-09` · `ENV-01` |
 | Preserva | `P-10` `CERTIFIED` · `P-14` `CERTIFIED` · `OD-08` |
 
@@ -260,6 +260,96 @@ sabe cuánto dato quedaría sin clasificar, porque no hay dónde mirarlo; el est
 `GA-REM-039 §5` ya se encontró con el evento sin área y **no le inventó una**: devolvió un
 conjunto vacío de destinatarios, sin fallar y sin fingir. `OD-10.c` es esa misma respuesta, con
 una bandeja para resolverla.
+
+---
+
+## 4 bis. `OD-10.d` — Corregir una atribución · **enmienda A** (2026-09-07)
+
+`OD-10.c §4.6` dejó abierto qué pasa si un registro **ya clasificado** estaba mal atribuido. Se
+decide así:
+
+```
+PRIMERA CLASIFICACIÓN   ≠   RECLASIFICACIÓN
+```
+
+La primera es la que saca un registro de «pendiente». La segunda cambia una atribución que ya
+estaba hecha, y **no es una edición corriente**.
+
+### 4 bis.1 La edición ordinaria no reclasifica
+
+```
+PROHIBIDO   PUT / PATCH sobre el registro  →  cambiar su cadena productiva
+```
+
+Si la cadena pudiera cambiarse por el mismo camino que una observación o una fecha, cambiaría
+sin que nadie lo decidiera y sin dejar por qué. Es la misma lección que `R-32` dejó con el
+estado del evento: un campo que gobierna el flujo no viaja en el contrato de edición.
+
+### 4 bis.2 Es una operación de alto control
+
+Exige, todas a la vez:
+
+```
+permiso explícito       nunca el nombre del rol
+motivo obligatorio      no vacío, no espacios
+misma empresa           la habilitación tiene que ser del mismo inquilino
+rastro en `P-09`        actor, momento, cadena anterior, cadena nueva y motivo
+```
+
+### 4 bis.3 Dos situaciones, y solo una se permite en el sitio
+
+```
+A · SIN EFECTOS PRODUCTIVOS AGUAS ABAJO
+    la reclasificación controlada PUEDE hacerse
+
+B · CON EFECTOS PRODUCTIVOS YA OCURRIDOS
+    la reclasificación en el sitio se DENIEGA
+```
+
+Son efectos productivos, entre otros que cada entidad declare: haberse aprobado, haberse
+consolidado o enviado a SAP, participar en un traspaso, o tener acciones de aprobación
+registradas.
+
+**Por qué.** Cambiar la cadena de un registro que ya movió inventario, ya cruzó una frontera o
+ya se envió a un sistema externo **reinterpreta hechos pasados**: los agregados de ayer pasarían
+a contar otra cosa y la trazabilidad diría que ocurrió algo que no ocurrió así.
+
+### 4 bis.4 El camino correcto en el caso `B`
+
+```
+se detecta la atribución equivocada
+    ↓
+lo revierte cada proceso que la gobierna, con sus propias reglas
+    ↓
+reclasificación controlada
+    ↓
+la historia anterior se conserva
+```
+
+**Sin cascada automática.** Cambiar la cadena de un padre **no** reasigna a sus hijos en bloque:
+eso reinterpretaría operaciones históricas sin que nadie las hubiera revisado.
+
+### 4 bis.5 Ante la duda, se deniega
+
+```
+si no se puede demostrar que NO hay efectos aguas abajo   →   DENEGAR
+```
+
+### 4 bis.6 No concede ni habilita nada
+
+```
+NO concede la cadena nueva a nadie
+NO habilita la unidad a la empresa
+NO devuelve el registro a «pendiente» ni restaura la excepción del creador
+```
+
+`DATO PERTENECE A UNA CADENA` y `CADENA HABILITADA PARA OPERAR` siguen siendo dos cosas
+distintas, y **`BU-D10` no se resuelve por esto**.
+
+### 4 bis.7 No se deshace lo que ya se supo
+
+Quien vio legítimamente el dato bajo la atribución anterior forma parte de la historia. Lo que
+cambia es la **autoridad vigente**, no el pasado.
 
 ---
 
