@@ -147,3 +147,48 @@ superficies de maestros siguen sin acotar. Declararlo cerrado por haber arreglad
 certificación por transitividad, que es justo lo que la auditoría vino a señalar.
 
 El histórico `21 / 60` sigue sin tocarse.
+
+
+---
+
+## 5. Recálculo de `RQ-03` tras `R-115` y `R-116` (2026-09-08)
+
+**Método**: no se declara `COMPLETE` por haber cerrado dos hallazgos. Se recorre el inventario
+completo de `TENANT_RESOURCE_CLASSIFICATION.md` —54 recursos, derivado de `Base.metadata` y no
+de la lista anterior— y se comprueba recurso por recurso si hay aplicación del predicado.
+
+| Clase | Recursos | Con aplicación demostrada | Sin aplicación |
+|---|--:|--:|--:|
+| `TENANT` directo | 20 | 20 | 0 |
+| `TENANT` derivado | 18 | 18 | 0 |
+| `SAP` · inquilino | 4 | 4 | 0 |
+| `CONTROL` | 7 | **6** | **1** — `roles` |
+| `CONTROL` derivado | 1 | **0** | **1** — `permissions`, hereda de `roles` |
+| `TRASPASO` | 2 | 2 | 0 |
+| `GLOBAL / PLATAFORMA` | 2 | n/a — compartidos por diseño | 0 |
+| **TOTAL** | **54** | **50** | **2** |
+
+```
+RQ-03  =  PARTIAL
+```
+
+**Lo que falta, con nombre y apellido:**
+
+```
+`roles`         `Role.company_id` existe en el modelo y `get_roles` NO lo usa:
+                el catálogo es global y un rol de la empresa A aparece en la lista de la B.
+`permissions`   cuelga de `roles` por `role_id`; hereda el hueco.
+```
+
+Bloqueado por **`R-121`**, que es `OWNER_DECISION_REQUIRED` y no una corrección: si el catálogo
+de roles es de **producto**, no filtrar es lo correcto y `RQ-03` pasaría a `COMPLETE` con una
+excepción normativa escrita. Si es de **inquilino**, hay que acotarlo. `Role.company_id`
+existiendo sugiere lo segundo, pero sugerir no es decidir.
+
+**No se marca `COMPLETE` por transitividad.** Cerrar `/users`, `companies` y el caso «sin
+empresa» no certifica «todas las consultas»: quedan dos recursos y están nombrados.
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08
+    16 / 38 = 42 %   COMPLETE   ·   sin cambio: `RQ-03` sigue `PARTIAL`
+```

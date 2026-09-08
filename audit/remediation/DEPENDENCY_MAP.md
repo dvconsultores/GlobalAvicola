@@ -741,3 +741,22 @@ R-122 · R-123 · R-121 · R-112       sin dependencias · P2
 
 **El camino crítico no es técnico, es de decisión.** `R-113`, `R-124` y `R-125` esperan al
 propietario, y dos de ellos gobiernan trabajo que aún no se puede ni especificar.
+
+## Tras `R-115`/`R-116` (2026-09-08)
+
+```
+R-121 (owner · ¿el catálogo de roles es de producto o de inquilino?)
+      └── BLOQUEA ──> RQ-03 = COMPLETE
+
+R-126 (owner · ¿qué acota `switch-company`?)
+      └── BLOQUEA ──> GA-REM-040 FASE 8
+                      la forma de la carga de sesión depende de la respuesta;
+                      construirla antes significa rehacerla después
+
+R-113 (owner · quién administra el acceso por unidad)
+      NO depende de R-126: el Administrador de Accesos es un actor acotado a una
+      empresa, y las rutas de la fase 7 ya exigen empresa efectiva para todos.
+      Sigue congelado por su propia razón, ya no por los P0.
+
+R-127 (500 con `sap_config`)  independiente · P1 · sin bloqueos
+```

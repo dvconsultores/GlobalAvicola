@@ -1009,3 +1009,37 @@ CERTIFICACIÓN FUNCIONAL              14 / 15          sin cambios
 ACCESO POR UNIDAD                     0 / 15          sin cambios
 CERTIFICACIONES INVALIDADAS           NINGUNA
 ```
+
+---
+
+## `RQ-03` · cierre de `R-115` y `R-116` · expediente `R-126` (2026-09-08)
+
+```
+SIN `GA-REM` NUEVA — `RQ-03` y `AC05` ya gobernaban los dos huecos
+```
+
+La clasificación de recursos se rehízo **desde `Base.metadata`**: 54 recursos, cero sin
+clasificar, con un paso que falla ruidosamente si aparece una tabla que no encaja. La lista
+anterior era de lo que alguien miró; ésta es del universo.
+
+```
+R-115  CERRADO   `Company` se acota por su propia clave: es el inquilino
+R-116  CERRADO   sin empresa efectiva → cero filas
+R-127  NUEVO     `/masters/companies` da 500 con `sap_config` poblado — no remediado
+R-126  EXPEDIENTE DE DECISIÓN — sin una línea de código
+R-121  ABIERTO   `roles` sin acotar · es lo que mantiene `RQ-03` en PARTIAL
+```
+
+```
+PRUEBAS        12 / 12   ·  rojo previo 8 fallando, 4 controles pasando
+SENSIBILIDAD   7 / 7 detectadas · 1 rehecha por inválida y contada como tal
+REGRESIÓN      720 passed · 49 skipped   ·   frontend 0 ficheros
+```
+
+```
+RQ-03                                PARTIAL   · faltan `roles` y `permissions`
+COBERTURA DE REQUISITO DE PRODUCTO   16 / 38 = 42 %
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+ACCESO POR UNIDAD                     0 / 15   sin cambios
+R-113 · FASE 8                       CONGELADOS
+```

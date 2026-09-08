@@ -220,3 +220,32 @@ queries».
 sobrevivió dos veces porque la prueba que escribí para detectarla prometía en su descripción
 algo que su código no hacía. Las dos quedan contadas en la evidencia. Sin ese rigor, `§41`
 habría quedado afirmado y no demostrado.
+
+
+---
+
+## 6. `R-115` y `R-116` cerrados · `RQ-03` sigue `PARTIAL` (2026-09-08)
+
+**Qué cambió.** `MasterService._apply_company_filter` cubre sus dos huecos: `Company` se acota
+por su propia clave primaria —es el inquilino— y el actor sin empresa efectiva recibe cero
+filas. Un solo punto cierra listado, detalle, edición y baja. Sin `GA-REM` nueva: `RQ-03` y
+`AC05` ya lo gobernaban.
+
+**Lo que se corrigió del método.** `TENANT_RESOURCE_CLASSIFICATION.md` se ha rehecho **desde
+`Base.metadata`**, no desde la lista anterior: 54 recursos, cero sin clasificar, con un paso
+final que **falla ruidosamente** si aparece una tabla que no encaja. Ésa es la diferencia entre
+una lista de lo que alguien miró y una del universo.
+
+**Y una corrección a esta misma auditoría.** `R-115` afirmaba que `/masters/companies` exponía
+`sap_config`. La exposición estaba **latente detrás de un 500** —columna `String` validada como
+`dict`—, de modo que el campo nunca llegaba a viajar. Lo alcanzable era la fuga de la fila
+entera. Queda `R-127` registrado y la redacción corregida en el backlog.
+
+**`RQ-03` no pasa a `COMPLETE`.** Faltan `roles` y `permissions`, bloqueados por `R-121`, que es
+decisión de propietario: si el catálogo de roles es de producto, no filtrar es correcto; si es
+de inquilino, hay que acotarlo.
+
+**`R-126`** queda documentado como expediente de decisión, sin una línea de código. La
+incoherencia que lo justifica es concreta y no estética: la administración de unidades de la
+fase 7 **sí** exige empresa efectiva, mientras `/users` y `/masters` no. Dos superficies del
+mismo plano de control con dos respuestas a la misma pregunta.

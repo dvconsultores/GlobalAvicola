@@ -764,3 +764,41 @@ incluido—. Acotarlo solo en `/users` habría hecho que esa ruta se comportara 
 La pregunta es legítima y sigue abierta: **¿situarse en una empresa debe acotar también a la
 autoridad global?** Hoy la respuesta del producto es no. Cambiarla afecta a todos los servicios
 y es decisión de propietario, no un parche en una ruta.
+
+---
+
+## Cierre de `R-115` y `R-116` · nuevo `R-127` (2026-09-08)
+
+```
+R-115   CERRADO   `Company` acotada por su propia clave · `_INQUILINO_POR_IDENTIDAD`
+R-116   CERRADO   sin empresa efectiva → cero filas · `fail-closed`
+```
+
+Bajo `RQ-03` y `AC05`. **Sin `GA-REM` nueva**: la autoridad ya existía y lo que faltaba era la
+cobertura de recursos. Evidencia en `MASTER_TENANT_ISOLATION_EVIDENCE.md`.
+7 mutaciones, 7 detectadas — una rehecha por inválida y contada como tal.
+
+## `R-127` · `P1` · `/masters/companies` devuelve `500` si la empresa tiene `sap_config`
+
+```
+CLASE        INCOHERENCIA DE TIPO ENTRE MODELO Y ESQUEMA
+DESCUBIERTO  al construir la fixture de `R-115`
+ESTADO       REGISTRADO · no remediado
+```
+
+`Company.sap_config` es columna **`String`** tipada como `Mapped[Optional[dict]]`, y
+`CompanyRead.sap_config` la valida como `dict`. Cualquier empresa con configuración `SAP`
+poblada rompe el endpoint **para todo el mundo**, incluido el Super Administrador.
+
+**Corrige la redacción original de `R-115`**, que decía que se exponía `sap_config`: la
+exposición estaba **latente detrás de este 500**, no activa. El campo no podía filtrarse porque
+la ruta se rompía antes. Lo que sí era alcanzable era la fuga de la fila entera, y eso es lo que
+`R-115` ha cerrado.
+
+No se remedia aquí: no lo gobierna `R-115` y corregirlo exige decidir si `sap_config` debe ser
+`JSON` en la base —migración— o `str` en el esquema. Es una decisión de diseño pequeña pero
+real, y esta tanda es de aislamiento de inquilino.
+
+Nota de alcance: `docs/02 §3.1.4` declara «Configuración SAP por compañía», de modo que el campo
+es legítimo. Lo que no está decidido es si debe viajar entero en el listado de maestros o solo
+en una superficie administrativa — pregunta adyacente que se registra aquí y no se responde.

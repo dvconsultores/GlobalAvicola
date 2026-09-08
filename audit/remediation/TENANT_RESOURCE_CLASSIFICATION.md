@@ -137,3 +137,135 @@ administración. La omisión no fue inocua: `AC05` exigía acotar «un recurso d
 **La lección de método:** una `AC` correcta y una lista de aplicación incompleta producen
 exactamente el mismo agujero que no tener la `AC`. Toda superficie que devuelva o mute filas con
 `company_id` pertenece a esta tabla, la haya pedido alguien o no.
+
+
+---
+
+# INVENTARIO COMPLETO E INDEPENDIENTE (2026-09-08)
+
+## 1. Por qué se rehace desde cero
+
+La lista anterior de este documento se construyó **desde el modelo operativo**: alguien recorrió
+lotes, eventos, granjas y evidencias, y clasificó lo que encontró. Era una lista de lo que se
+miró, no del universo.
+
+```
+`AC05` CORRECTA  +  LISTA DE APLICACIÓN INCOMPLETA  =  SEGURIDAD INCOMPLETA
+```
+
+Coste medido: `users` fuera → cuatro `P0` (`R-114`, `R-117`, `R-118`).
+`companies` fuera → `R-115`. El caso «sin empresa» sin decidir → `R-116`.
+
+Por eso este inventario **no parte de la lista vieja**. Se deriva de `Base.metadata`, es decir
+de las tablas que el producto declara realmente, y luego se reconcilia contra lo que había.
+
+## 2. Método reproducible
+
+```
+1. enumerar TODAS las tablas de `Base.metadata`          → 54
+2. para cada una: ¿tiene `company_id`?                   → 30 sí · 24 no
+3. de las que no: ¿hereda inquilino por clave foránea?   → 18 sí
+4. de las restantes: ¿es el inquilino mismo?             → `companies`
+5. de las restantes: ¿es catálogo de plataforma?         → `business_units` · `productive_phases`
+6. lo que quede SIN CLASIFICAR es un hallazgo            → 0
+```
+
+El paso 6 es el que importa: la clasificación **falla ruidosamente** si aparece una tabla que no
+encaja, en vez de omitirla en silencio. Repetir el script tras cada migración es lo que impide
+que el universo vuelva a quedarse corto.
+
+## 3. Las 54 tablas
+
+| Recurso | Clase | Clave de inquilino | Gobierna / estado |
+|---|---|---|---|
+| `approval_actions` | TENANT derivado | vía `approval_steps`, `operational_events` | `AC12` · el sub-recurso hereda del padre |
+| `approval_steps` | CONTROL | `approval_steps.company_id` | `AC05` · `MasterService` / servicio propio |
+| `areas` | CONTROL | `areas.company_id` | `AC05` · `MasterService` / servicio propio |
+| `audit_logs` | CONTROL | `audit_logs.company_id` | `AC05` · `MasterService` / servicio propio |
+| `bird_movements` | TENANT derivado | vía `breeds`, `houses` | `AC12` · el sub-recurso hereda del padre |
+| `breeds` | TENANT derivado | vía `genetic_lines` | `AC12` · el sub-recurso hereda del padre |
+| `business_units` | GLOBAL / PLATAFORMA | — | catálogo de producto · sin `CRUD` de cliente |
+| `chick_batches` | TRASPASO entre unidades | vía lotes de ambos lados | `OD-10` · fase 5 |
+| `companies` | CONTROL · **el inquilino mismo** | `companies.id` | `R-115` cerrado · `_INQUILINO_POR_IDENTIDAD` |
+| `company_business_units` | CONTROL | `company_business_units.company_id` | `AC05` · `MasterService` / servicio propio |
+| `consolidated_movements` | SAP · inquilino | `consolidated_movements.company_id` | `AC05` · `MasterService` / servicio propio |
+| `correction_logs` | TENANT derivado | vía `correction_types`, `operational_events` | `AC12` · el sub-recurso hereda del padre |
+| `correction_types` | TENANT | `correction_types.company_id` | `AC05` · `MasterService` / servicio propio |
+| `cull_causes` | TENANT | `cull_causes.company_id` | `AC05` · `MasterService` / servicio propio |
+| `egg_batches` | TRASPASO entre unidades | vía lotes de ambos lados | `OD-10` · fase 5 |
+| `egg_movements` | TENANT derivado | vía `operational_events` | `AC12` · el sub-recurso hereda del padre |
+| `egg_storage` | TENANT derivado | vía `lots`, `operational_events` | `AC12` · el sub-recurso hereda del padre |
+| `evidences` | TENANT | `evidences.company_id` | `AC05` · `MasterService` / servicio propio |
+| `farms` | TENANT | `farms.company_id` | `AC05` · `MasterService` / servicio propio |
+| `feed_movements` | TENANT derivado | vía `feed_types`, `operational_events` | `AC12` · el sub-recurso hereda del padre |
+| `feed_types` | TENANT | `feed_types.company_id` | `AC05` · `MasterService` / servicio propio |
+| `genetic_lines` | TENANT | `genetic_lines.company_id` | `AC05` · `MasterService` / servicio propio |
+| `genetic_weight_curve_points` | TENANT derivado | vía `curve_id`→`genetic_lines` | `GA-REM-037` |
+| `genetic_weight_curves` | TENANT derivado | vía `genetic_lines` | `AC12` · el sub-recurso hereda del padre |
+| `hatcheries` | TENANT | `hatcheries.company_id` | `AC05` · `MasterService` / servicio propio |
+| `hatchers` | TENANT derivado | vía `hatcheries` | `AC12` · el sub-recurso hereda del padre |
+| `hatchery_params` | TENANT derivado | vía `hatcheries`, `hatchers` | `AC12` · el sub-recurso hereda del padre |
+| `houses` | TENANT derivado | vía `farms` | `AC12` · el sub-recurso hereda del padre |
+| `incubators` | TENANT derivado | vía `hatcheries` | `AC12` · el sub-recurso hereda del padre |
+| `inspection_details` | TENANT derivado | vía `houses`, `operational_events` | `AC12` · el sub-recurso hereda del padre |
+| `lot_phases` | TENANT derivado | vía `lots`, `productive_phases` | `AC12` · el sub-recurso hereda del padre |
+| `lots` | TENANT | `lots.company_id` | `AC05` · `MasterService` / servicio propio |
+| `medications` | TENANT | `medications.company_id` | `AC05` · `MasterService` / servicio propio |
+| `mortality_causes` | TENANT | `mortality_causes.company_id` | `AC05` · `MasterService` / servicio propio |
+| `notifications` | TENANT | `notifications.company_id` | `AC05` · `MasterService` / servicio propio |
+| `opening_balances` | TENANT derivado | vía `lots`, `productive_phases` | `AC12` · el sub-recurso hereda del padre |
+| `operational_alerts` | TENANT | `operational_alerts.company_id` | `AC05` · `MasterService` / servicio propio |
+| `operational_events` | TENANT | `operational_events.company_id` | `AC05` · `MasterService` / servicio propio |
+| `permissions` | CONTROL derivado | vía `role_id` | hereda de `roles` · `R-121` |
+| `processing_plants` | TENANT | `processing_plants.company_id` | `AC05` · `MasterService` / servicio propio |
+| `productive_phases` | GLOBAL / PLATAFORMA | — | invariante del dominio |
+| `rejection_reasons` | TENANT | `rejection_reasons.company_id` | `AC05` · `MasterService` / servicio propio |
+| `reversals` | TENANT | `reversals.company_id` | `AC05` · `MasterService` / servicio propio |
+| `review_batches` | TENANT | `review_batches.company_id` | `AC05` · `MasterService` / servicio propio |
+| `roles` | CONTROL | `roles.company_id` **existe y no se usa** | `R-121` · OWNER_DECISION |
+| `sap_payloads` | SAP · inquilino | `sap_payloads.company_id` | `AC05` · `MasterService` / servicio propio |
+| `sap_references` | SAP · inquilino | `sap_references.company_id` | `AC05` · `MasterService` / servicio propio |
+| `sap_responses` | TENANT derivado | vía `payload_id`→`sap_payloads` | `P-08` |
+| `sap_sync_jobs` | SAP · inquilino | `sap_sync_jobs.company_id` | `AC05` · `MasterService` / servicio propio |
+| `suppliers` | TENANT | `suppliers.company_id` | `AC05` · `MasterService` / servicio propio |
+| `transports` | TENANT | `transports.company_id` | `AC05` · `MasterService` / servicio propio |
+| `user_business_units` | TENANT derivado | vía `company_business_units`, `users` | `AC12` · el sub-recurso hereda del padre |
+| `users` | CONTROL | `users.company_id` | `R-114` cerrado · `GA-REM-002` enm. B |
+| `vaccines` | TENANT | `vaccines.company_id` | `AC05` · `MasterService` / servicio propio |
+
+```
+TENANT directo        20      `company_id` propio
+TENANT derivado       18      hereda por clave foránea — `AC12`
+SAP · inquilino        4      `company_id` propio, gobernado por `P-08`
+CONTROL                7      plano de control con `company_id`
+CONTROL derivado       1      `permissions`, vía `roles`
+TRASPASO               2      `egg_batches` · `chick_batches` — `OD-10`
+GLOBAL / PLATAFORMA    2      compartidos por diseño
+SIN CLASIFICAR         0
+```
+
+## 4. Lo que este inventario deja al descubierto
+
+| Recurso | Estado | Hallazgo |
+|---|---|---|
+| `companies` | **cerrado hoy** | `R-115` · clave de inquilino = su propio `id` |
+| `users` | **cerrado** | `R-114` · `GA-REM-002` enmienda B |
+| «sin empresa efectiva» | **cerrado hoy** en maestros y usuarios | `R-116` |
+| `roles` | **abierto** | `R-121` · tiene `company_id` y **no se usa** · `OWNER_DECISION` |
+| `permissions` | **abierto por herencia** | depende de `R-121` |
+
+## 5. Sobre una guarda estática · `§25`
+
+**No se construye.** Una guarda del tipo «la ruta menciona `company_id` en alguna parte» daría
+falsa seguridad, que es peor que no tenerla — es exactamente el modo de fallo que acabamos de
+pagar con una lista incompleta que parecía completa.
+
+Lo que sí se puede afirmar con rigor es la **completitud del inventario**: que ninguna tabla de
+`Base.metadata` quede sin clase. Eso es comprobable sin ambigüedad, y es lo que hace el paso 6.
+Lo que **no** se puede afirmar estáticamente es que cada consulta aplique el predicado
+correcto: eso lo demuestran las pruebas de aislamiento con su sensibilidad, recurso por recurso.
+
+```
+COMPLETITUD DEL INVENTARIO   comprobable  ·  y comprobada
+APLICACIÓN DEL PREDICADO     por prueba, no por guarda estática
+```
