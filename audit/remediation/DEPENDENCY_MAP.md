@@ -780,3 +780,19 @@ GA-REM-040 FASE 8
 
 R-127 · R-119 · R-120 · R-112   independientes · sin bloqueos
 ```
+
+## Tras `OD-15` (2026-09-09)
+
+```
+R-128  CERRADO   ya no bloquea la ratificación de R-113
+R-113  CERRADO   la figura existe, con permisos mínimos y sin auto-concesión
+
+GA-REM-040 FASE 8 — SESIÓN / CAPACIDADES
+      PRERREQUISITOS SATISFECHOS:
+          RQ-03 COMPLETE · R-121 · R-126/OD-14 · R-128 · R-113
+      SIGUE SIN EMPEZAR por decisión de esta tanda, no por impedimento.
+      `OD-14` ya fija qué debe exponer: `es_global`, `empresa_seleccionada`,
+      `empresa_efectiva`, `empresas_disponibles`, y el alcance por unidad.
+
+R-127 · R-119 · R-120 · R-112   independientes · sin bloqueos
+```

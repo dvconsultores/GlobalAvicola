@@ -834,3 +834,29 @@ salir de su empresa, y no puede fabricar autoridad global.
 Riesgo acotado y visible, no escalada. Pero es una pregunta de segregación de funciones
 legítima y bloquea la ratificación de `R-113`, no su reanudación técnica. Si el propietario
 quiere separarlo, cabe en la misma capa que `AC15`.
+
+---
+
+## Cierre de `R-128` y `R-113` (2026-09-09)
+
+```
+R-128   CERRADO   `OD-15` · quien reparte accesos no se sirve a sí mismo
+R-113   CERRADO   `OD-15 §6` · rol «Administrador de Accesos», cuatro permisos exactos
+```
+
+Evidencia: `R-128-BUSINESS-UNIT-SELF-GRANT-EVIDENCE.md`,
+`R-113-ACCESS-ADMINISTRATION-CLOSURE-EVIDENCE.md`.
+
+```
+PRUEBAS        16 nuevas · rojo previo 4/16
+SENSIBILIDAD   10 mutaciones · 10 detectadas · 2 intentos iniciales inválidos
+               y 2 pruebas mías reforzadas por ellas — una vacua, una débil
+REGRESIÓN      backend 754 passed · 49 skipped · frontend 87 · 0 ficheros TS/TSX
+MIGRACIÓN      ninguna
+```
+
+**El tope de `SOLO_SUPER_ADMIN` vuelve de 17 a 15**: los cuatro permisos de `business_units`
+salen de la excepción porque ya los concede un rol. Primera vez que esa lista baja.
+
+Sensibilidad acumulada del aislamiento y la administración: **37 mutaciones válidas · 37
+detectadas · 7 intentos iniciales inválidos corregidos antes de contarlos**.

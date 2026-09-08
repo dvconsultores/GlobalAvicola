@@ -37,3 +37,27 @@ ordinarias dentro de su empresa, y no toca ninguna: editarlas exige autoridad gl
 donde `docs/02 §3.1.4` la tenía trazada —`module="*"` con `scope_type="all"`— y ni un milímetro
 más allá. Prohibir todas las plantillas habría dejado a los administradores sin poder asignar
 nada, porque las seis del producto tienen `company_id NULL`.
+
+
+---
+
+## Addendum · `Administrador de Accesos` (`OD-15` · 2026-09-09)
+
+| Recurso | Alcance | ¿Visible? | ¿Asignable por el admin de empresa? | ¿Exige empresa seleccionada? |
+|---|---|:--:|:--:|:--:|
+| **Rol `Administrador de Accesos`** | `CONTROL_GLOBAL` — plantilla de producto | sí | sí (no confiere autoridad global) | no |
+
+Es un rol de sistema (`company_id NULL`) y **eso no lo hace privilegiado**: `OD-13.b` ya fijó
+que la autoridad se determina por las capacidades, no por la ausencia de empresa. Sus cuatro
+permisos son de plano de control acotado a una empresa; ninguno es `("*", …, "all")`.
+
+### La cuarta condición de la concesión
+
+`OD-15.a` añade una a las tres de la fase 7:
+
+```
+el usuario objetivo pertenece a la empresa efectiva
+la habilitación pertenece a la empresa efectiva
+la autoridad del actor es válida en esa empresa
+el usuario objetivo NO es el actor              ← `OD-15.a`
+```

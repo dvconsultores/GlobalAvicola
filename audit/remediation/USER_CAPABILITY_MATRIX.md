@@ -100,3 +100,26 @@ VALOR POR DEFECTO                   cerrado
 **Advertencia registrada.** `business_units:create` autoriza a conceder a cualquier usuario de
 la empresa efectiva, **incluido uno mismo**. Es la política vigente, no una decisión de esta
 fase, y queda auditada con actor y objetivo. Separarlo corresponde al propietario.
+
+---
+
+## `Administrador de Accesos` (`OD-15 §6` · `R-113` · 2026-09-09)
+
+La figura que administra el acceso por unidad de negocio. **Cuatro permisos, y ninguno más.**
+
+| Capacidad | Permiso | Qué permite | Qué **no** |
+|---|---|---|---|
+| Ver la configuración | `business_units:read` | catálogo con el estado de su empresa; concesiones de un usuario | ver dato productivo |
+| Contratar y retirar cadenas | `business_units:update` | habilitar y deshabilitar para su empresa | conceder a nadie |
+| Repartir acceso | `business_units:create` | conceder a **otro** usuario de su empresa | **concedérselo a sí mismo** · habilitar la cadena |
+| Retirar acceso | `business_units:delete` | revocar, con efecto inmediato | borrar historia ni lo registrado |
+
+```
+NO RECIBE   `users:*`  ·  comodín `("*", …, "all")`  ·  ninguna cadena productiva
+NO PUEDE    listar usuarios — `users:read` es otra cosa, y ampliarlo es cómo se abren
+            los agujeros que esta figura vino a cerrar
+```
+
+**La diferencia con la entrada de la fase 7**: allí `business_units:create` autorizaba a
+conceder a cualquiera «incluido uno mismo». `OD-15` lo separó. El registro de la política
+anterior vive en `OD-15 §1`.

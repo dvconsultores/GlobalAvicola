@@ -1070,3 +1070,30 @@ CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
 ACCESO POR UNIDAD                     0 / 15   sin cambios
 BU-D10 · R-112 · R-127 · P-08        intactos
 ```
+
+---
+
+## `OD-15` · la administración de acceso queda operable (2026-09-09)
+
+```
+ADMINISTRAR EL ACCESO  ≠  ELEVAR EL PROPIO
+```
+
+```
+R-128  CERRADO  ·  R-113  CERRADO  ·  RQ-03  COMPLETE (sin cambios)
+SOLO_SUPER_ADMIN  17 → 15   primera bajada del programa
+```
+
+```
+ROL NUEVO      «Administrador de Accesos» · 4 permisos exactos · sin comodín · sin `users:*`
+PRUEBAS        16 · SENSIBILIDAD 10/10 · BACKEND 754 passed · 49 skipped
+FRONTEND       87 passed · 0 ficheros · MIGRACIÓN ninguna
+```
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+ACCESO POR UNIDAD                     0 / 15   sin cambios
+COBERTURA DE REQUISITO DE PRODUCTO   20 / 38 = 53 %
+BU-D10 · R-112 · R-127 · P-08        intactos
+FASE 8                               NOT STARTED · prerrequisitos satisfechos
+```

@@ -223,3 +223,23 @@ COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08
 ```
 
 El histórico `21 / 60` sigue sin tocarse.
+
+
+---
+
+## 7. Tras `OD-15` (2026-09-09)
+
+| ID | Requisito | Antes | Ahora |
+|---|---|:--:|:--:|
+| `RQ-03` | aislamiento de compañía en todas las consultas aplicables | `COMPLETE` | **`COMPLETE`** — 54 recursos, sin cambios |
+| `RQ-22` | quién administra el acceso por unidad de negocio | `MISSING` | **`COMPLETE`** — `Administrador de Accesos` |
+| `RQ-23` | administrar el acceso no eleva el propio | — | **`COMPLETE`** — `OD-15.a` |
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-09
+    20 / 38  =  53 %   COMPLETE      (antes 18 / 38 = 47 %)
+```
+
+`RQ-03` **no cambia**: `R-128` y `R-113` no añaden ni quitan recursos del universo —siguen
+siendo 54— ni crean excepciones nuevas. Se verifica como regresión, no se recalcula por
+transitividad. El histórico `21 / 60` sigue intacto.

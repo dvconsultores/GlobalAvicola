@@ -322,23 +322,25 @@ async def test_la_auto_revocacion_no_entra_en_od15(client, esc):
 # ══════════════════════════════════════════════════════════════════════════════
 
 def test_s06_el_rol_sembrado_tiene_exactamente_los_cuatro_permisos():
-    """`AC-S06` · `AC-S09`. Contra la **siembra**, no contra la base de pruebas.
+    """`AC-S06` · `AC-S09`. Contra la **constante sembrada**, no contra su texto.
 
-    Se comprueba el conjunto **exacto**: un quinto permiso lo rompe. Un `>=` habría dejado
-    pasar precisamente el error que esta figura existe para no cometer.
+    La primera versión de esta prueba leía `baseline_seeds.py` con una expresión regular, y una
+    mutación de sensibilidad la atravesó: el patrón usaba `\w+` para el módulo, que **no puede
+    capturar `*`**. Añadir `("*", READ)` al rol pasaba desapercibido, y la línea que decía
+    comprobar que no hay comodín no comprobaba nada — sólo podía ser cierta.
+
+    Ahora se importa la constante. El conjunto se compara **exacto**: un quinto permiso, o un
+    comodín, rompe. Un `>=` habría dejado pasar justamente el error que esta figura existe
+    para no cometer.
     """
-    import pathlib
-    import re
+    from seeds.baseline_seeds import (
+        PERMISOS_ADMINISTRADOR_DE_ACCESOS, ROL_ADMINISTRADOR_DE_ACCESOS,
+    )
 
-    texto = pathlib.Path(__file__).resolve().parents[1].joinpath(
-        "seeds", "baseline_seeds.py").read_text(encoding="utf-8")
-    bloque = re.search(
-        r'PERMISOS_ADMINISTRADOR_DE_ACCESOS\s*=\s*\[(.*?)\]', texto, re.S)
-    assert bloque, "no existe la definición del rol en `baseline_seeds.py`"
-    pares = set(re.findall(r'\("(\w+)",\s*PermissionAction\.(\w+)\)', bloque.group(1)))
-    pares = {(m, a.lower()) for m, a in pares}
+    pares = {(modulo, accion.value) for modulo, accion in PERMISOS_ADMINISTRADOR_DE_ACCESOS}
 
     assert pares == PERMISOS_DEL_ROL, f"el conjunto de permisos cambió: {pares}"
+    assert ROL_ADMINISTRADOR_DE_ACCESOS == "Administrador de Accesos"
     assert not [p for p in pares if p[0] == "*"], "el rol recibió autoridad comodín"
     assert not [p for p in pares if p[0] == "users"], "el rol recibió `users:*`"
 
@@ -377,10 +379,33 @@ async def test_s07_el_supervisor_no_administra_aunque_opere_la_cadena(http_clien
         assert r.status_code == 403, f"{metodo} {url} → {r.status_code}"
 
 
-async def test_s08_tener_el_rol_no_concede_ninguna_unidad(esc):
-    """`AC-S08` · `OD-15.d`. El rol es autoridad, no acceso."""
-    assert await _concesiones(esc, esc["admin"]) == 0
-    assert await _efectivas(esc, esc["admin"]) == [], (
+async def test_s08_asignar_el_rol_no_concede_ninguna_unidad(client, esc):
+    """`AC-S08` · `OD-15.d`. El rol es autoridad, no acceso.
+
+    Se **asigna por la API** en vez de mirar el estado de la fixture: comprobar que el sujeto
+    sembrado no tiene concesiones no prueba que asignar el rol no las cree. La versión
+    anterior de esta prueba hacía justo eso y no habría detectado un auto-otorgamiento en el
+    camino de asignación.
+    """
+    from app.auth.models import User
+
+    motor = create_async_engine(esc["url"])
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            rol_acceso = (await s.execute(
+                select(User.role_id).where(User.id == esc["admin"]))).scalar_one()
+    finally:
+        await motor.dispose()
+
+    antes = await _concesiones(esc, esc["a2"])
+    r = await client.put(f"/api/v1/users/{esc['a2']}",
+                         headers=_token(esc["super"], company_id=esc["a"]),
+                         json={"role_id": rol_acceso})
+    assert r.status_code == 200, r.text
+
+    assert await _concesiones(esc, esc["a2"]) == antes == 0, (
+        "asignar el rol de administración creó concesiones")
+    assert await _efectivas(esc, esc["a2"]) == [], (
         "el rol de administración trajo acceso productivo consigo")
 
 
