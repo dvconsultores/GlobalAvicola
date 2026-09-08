@@ -15,6 +15,12 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from ..database import Base
 
+# `GA-REM-040` fase 6: `OperationalEvent.business_unit_id` apunta a `company_business_units`.
+# Se importa aquí para que la tabla esté registrada allí donde se use este módulo: sin ello,
+# cualquier consumidor que no importara además el módulo de unidades fallaría al resolver la
+# clave foránea, y el fallo aparecería lejos de su causa.
+from ..business_units import models as _unidades_de_negocio  # noqa: F401
+
 
 # ============================================================
 # Enums
@@ -115,6 +121,22 @@ class OperationalEvent(Base):
     transport_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("transports.id"), nullable=True)
     sample_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     extra_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    #: `GA-REM-040` fase 6 · `OD-10.c`. Cadena productiva **decidida a mano**, cuando no se
+    #: puede derivar del lote. Apunta a la habilitación de una empresa —no al catálogo—
+    #: por la misma razón que la concesión de un usuario (`OD-09.d`): así la fila dice bajo
+    #: qué empresa se clasificó y la combinación entre empresas no se puede ni escribir.
+    #:
+    #: Nulo **no** significa «de toda la empresa»: significa que todavía no se sabe, y
+    #: mientras tanto solo lo ven quien lo registró y el control autorizado.
+    business_unit_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("company_business_units.id"), nullable=True, index=True
+    )
+    classified_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+    classified_by_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("users.id"), nullable=True
+    )
 
     # Notes
     observations: Mapped[Optional[str]] = mapped_column(Text, nullable=True)

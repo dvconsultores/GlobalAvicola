@@ -56,6 +56,17 @@ class OperationsService:
         self.db = db
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
+        self._unidades_cache = None
+
+    async def _unidades(self) -> list[str]:
+        """Las cadenas efectivas de quien pregunta. Una vez por servicio."""
+        if self._unidades_cache is None:
+            from ..business_units.service import unidades_efectivas_por_id
+
+            self._unidades_cache = await unidades_efectivas_por_id(
+                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+            )
+        return self._unidades_cache
 
     # ============================================================
     # Create Event
@@ -798,6 +809,15 @@ class OperationsService:
         # universal: da acceso a nada.
         if not self.current_user.get("is_super_admin"):
             query = query.where(models.OperationalEvent.company_id == self.company_id)
+            # `GA-REM-040` fase 6. La cadena del evento se deriva de su lote o se fijó a
+            # mano; lo que no tiene ninguna de las dos **no aparece aquí**: su superficie es
+            # la bandeja de pendientes, aparte. Mezclarlo en el listado normal obligaría a
+            # que cada consulta recordara la excepción del creador, y la que la olvidara
+            # abriría el sistema en silencio.
+            from ..business_units.classification import predicado_de_evento
+
+            query = query.where(
+                predicado_de_evento(await self._unidades(), self.company_id))
 
         if lot_id:
             query = query.where(models.OperationalEvent.lot_id == lot_id)
@@ -850,6 +870,11 @@ class OperationsService:
             models.OperationalEvent.id == event_id,
             models.OperationalEvent.company_id == self.company_id,
         )
+        if not self.current_user.get("is_super_admin"):
+            from ..business_units.classification import predicado_de_evento
+
+            query = query.where(
+                predicado_de_evento(await self._unidades(), self.company_id))
         result = await self.db.execute(query)
         event = result.scalar_one_or_none()
         if not event:

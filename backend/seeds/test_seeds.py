@@ -363,6 +363,51 @@ async def seed_test_data() -> dict[str, int]:
 
         created["business_units"] = await sembrar_unidades_de_negocio(session)
 
+        # `GA-REM-040` fase 6: desde que el acceso se acota por cadena productiva, un usuario
+        # sin concesiones no ve dato productivo — ni siquiera el suyo. Las semillas
+        # **configuran la empresa**, que es lo que hará un cliente real en su alta: habilitan
+        # las cuatro cadenas y se las conceden a los usuarios sembrados.
+        #
+        # No es un rodeo al control. La alternativa —que la ausencia de concesión signifique
+        # acceso total— es exactamente el `fail open` que esta capacidad existe para impedir.
+        # Las suites que **miden** el aislamiento por cadena crean sus propios usuarios y
+        # conceden a mano, unidad por unidad, porque allí la concesión es el objeto de estudio.
+        from app.business_units.models import BusinessUnit, CompanyBusinessUnit
+        from app.business_units.service import conceder_unidad
+
+        unidades = (await session.execute(select(BusinessUnit))).scalars().all()
+        usuarios_por_empresa: dict[int, list] = {}
+        for u in (await session.execute(select(User))).scalars().all():
+            if u.company_id is not None:
+                usuarios_por_empresa.setdefault(u.company_id, []).append(u)
+
+        concedidas = 0
+        for company_id, usuarios_empresa in usuarios_por_empresa.items():
+            habilitaciones = []
+            for unidad in unidades:
+                fila = (await session.execute(select(CompanyBusinessUnit).where(
+                    CompanyBusinessUnit.company_id == company_id,
+                    CompanyBusinessUnit.business_unit_id == unidad.id))).scalar_one_or_none()
+                if fila is None:
+                    fila = CompanyBusinessUnit(company_id=company_id,
+                                               business_unit_id=unidad.id, is_enabled=True)
+                    session.add(fila)
+                    await session.flush()
+                habilitaciones.append(fila)
+            from app.business_units.models import UserBusinessUnit
+
+            for usuario in usuarios_empresa:
+                for fila in habilitaciones:
+                    ya = (await session.execute(select(UserBusinessUnit).where(
+                        UserBusinessUnit.user_id == usuario.id,
+                        UserBusinessUnit.company_business_unit_id == fila.id,
+                        UserBusinessUnit.revoked_at.is_(None)))).scalar_one_or_none()
+                    if ya is None:
+                        await conceder_unidad(session, user=usuario,
+                                              company_business_unit=fila)
+                        concedidas += 1
+        created["business_unit_grants"] = concedidas
+
         await session.commit()
 
     return created

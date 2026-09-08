@@ -108,6 +108,91 @@ async def resolve_alert(
     return await _service(db, current_user).resolve_alert(alert_id)
 
 
+# ============================================================
+# `GA-REM-040` fase 6 · clasificación pendiente (`OD-10.c`)
+#
+# Se declaran **antes** de `/{event_id}` para que la ruta literal gane: si fueran después,
+# `pending-classification` se leería como un identificador y la bandeja no existiría.
+# ============================================================
+
+@router.get("/pending-classification",
+            response_model=list[schemas.OperationalEventRead], tags=["Operations"])
+async def pending_classification(
+    skip: int = 0,
+    limit: int = Query(50, le=100),
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("operations", "read")),
+):
+    """Los registros cuya cadena productiva todavía no se sabe.
+
+    Superficie **aparte** del listado operativo, a propósito. Mezclarlos obligaría a que cada
+    consulta recordara la excepción de quien lo registró, y la que la olvidara abriría el
+    sistema en silencio.
+
+    Ve los suyos quien los registró; los de su empresa, el control autorizado.
+    """
+    from sqlalchemy import select
+
+    from ..business_units.classification import predicado_de_pendientes
+    from .models import OperationalEvent
+
+    consulta = (select(OperationalEvent)
+                .where(*predicado_de_pendientes(current_user))
+                .order_by(OperationalEvent.event_date.desc(), OperationalEvent.id.desc())
+                .offset(skip).limit(limit))
+    filas = (await db.execute(consulta)).scalars().all()
+    return [schemas.OperationalEventRead.model_validate(e) for e in filas]
+
+
+@router.post("/{event_id}/classify",
+             response_model=schemas.OperationalEventRead, tags=["Operations"])
+async def classify_event(
+    event_id: int,
+    data: schemas.ClassificationRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("masters", "update")),
+):
+    """Fija la cadena de un registro que no podía derivarla. `T-040-17`.
+
+    Exige el permiso de administración de datos maestros y no el de operar: decidir a qué
+    cadena pertenece un registro es configuración, no producción. **Ver un pendiente no
+    basta para clasificarlo** — quien lo registró lo ve y no puede decidirlo.
+    """
+    from sqlalchemy import select
+
+    from fastapi import status as _st
+
+    from ..business_units.classification import (
+        ClasificacionInvalida, clasificar, predicado_de_pendientes,
+    )
+    from ..business_units.models import CompanyBusinessUnit
+    from .models import OperationalEvent
+
+    evento = (await db.execute(
+        select(OperationalEvent).where(
+            OperationalEvent.id == event_id,
+            *predicado_de_pendientes(current_user))
+    )).scalar_one_or_none()
+    if evento is None:
+        raise HTTPException(status_code=_st.HTTP_404_NOT_FOUND,
+                            detail="Registro pendiente no encontrado")
+
+    habilitacion = (await db.execute(
+        select(CompanyBusinessUnit).where(
+            CompanyBusinessUnit.id == data.company_business_unit_id)
+    )).scalar_one_or_none()
+    try:
+        await clasificar(db, evento=evento, company_business_unit=habilitacion,
+                         actor=current_user)
+    except ClasificacionInvalida as exc:
+        raise HTTPException(status_code=_st.HTTP_400_BAD_REQUEST, detail=str(exc))
+    # Tras el `flush`, serializar la instancia dispara una carga perezosa fuera del contexto
+    # asíncrono. Se refresca antes de proyectarla: el objeto ya está en sesión y refrescarlo
+    # es más honesto que declarar la respuesta a medias.
+    await db.refresh(evento)
+    return schemas.OperationalEventRead.model_validate(evento)
+
+
 @router.get("/{event_id}/weight-evaluation",
             response_model=schemas.WeightEvaluationRead)
 async def get_weight_evaluation(

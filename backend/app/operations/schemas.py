@@ -295,3 +295,15 @@ class WeightEvaluationRead(BaseModel):
     curve_version_label: Optional[str] = None
     reason: Optional[str] = None
     evaluations: list[WeightEvaluationRow] = []
+
+
+class ClassificationRequest(BaseModel):
+    """`GA-REM-040` fase 6. La cadena se elige por su **habilitación de empresa**.
+
+    No por el catálogo global: así el destino queda atado a una empresa concreta y la
+    combinación entre empresas no se puede ni escribir — el mismo criterio de `OD-09.d`.
+    """
+
+    model_config = {"extra": "forbid"}
+
+    company_business_unit_id: int

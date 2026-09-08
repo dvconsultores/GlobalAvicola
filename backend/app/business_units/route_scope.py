@@ -113,6 +113,13 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/operations/{event_id}/weight-evaluation": (
         Alcance.MULTI_UNIDAD, None, "del lote del evento"),
     "/api/v1/operations/alerts": (Alcance.MULTI_UNIDAD, None, "alertas de sus lotes"),
+    # `GA-REM-040` fase 6. La bandeja de pendientes es **plano de control**: decide a qué
+    # cadena pertenece un registro, no opera sobre ninguna. Su alcance no es «una unidad»
+    # porque lo que la llena es justamente lo que todavía no tiene ninguna.
+    "/api/v1/operations/pending-classification": (
+        Alcance.CONTROL, None, "bandeja de clasificación pendiente (`OD-10.c`)"),
+    "/api/v1/operations/{event_id}/classify": (
+        Alcance.CONTROL, None, "acto de configuración, no de operación"),
     "/api/v1/operations/alerts/{alert_id}/resolve": (Alcance.MULTI_UNIDAD, None, "ídem"),
     "/api/v1/corrections": (Alcance.MULTI_UNIDAD, None, "corrige eventos de cualquier cadena"),
     "/api/v1/corrections/event/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),

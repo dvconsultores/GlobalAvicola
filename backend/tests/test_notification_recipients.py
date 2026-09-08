@@ -100,6 +100,11 @@ async def motor(test_database_url):
             await c.execute(delete(AuditLog).where(AuditLog.lot_id.in_(lotes)))
             await c.execute(delete(Lot).where(Lot.id.in_(lotes)))
         if usuarios:
+            # `GA-REM-040`: las concesiones de unidad referencian al usuario y le impiden
+            # ser borrado. Se retiran antes, como ya se hace con el resto de dependencias.
+            await c.execute(text(
+                "DELETE FROM user_business_units WHERE user_id = ANY(:ids)"),
+                {"ids": list(usuarios)})
             await c.execute(delete(User).where(User.id.in_(usuarios)))
         roles = (await c.execute(
             select(Role.id).where(Role.name.like(f"{PREFIJO}%")))).scalars().all()
@@ -372,6 +377,13 @@ async def test_t_038_24_quien_cumple_tres_condiciones_recibe_una(
         {"module": "lots", "action": "read"},
     ])
     admin = await _usuario(client, auth_headers, rol, empresa)
+    # `GA-REM-040` fase 6: el usuario nace sin cadenas concedidas y no vería ni su propio
+    # evento. Se le configura la empresa, como hará un cliente real; lo que esta prueba mide
+    # es la deduplicación de destinatarios, no el alcance por cadena.
+    from tests.business_unit_fixtures import habilitar_y_conceder_todo
+
+    await habilitar_y_conceder_todo(test_database_url, company_id=empresa,
+                                    user_ids=[admin["id"]])
 
     lote = await _lote(client, auth_headers, seeded_ids)  # sin área: el admin no la usa
     cab_admin = _cabecera(admin["id"])
