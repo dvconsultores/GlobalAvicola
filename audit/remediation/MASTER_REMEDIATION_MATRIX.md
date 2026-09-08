@@ -600,3 +600,37 @@ CERTIFICACIÓN DE ACCESO POR UNIDAD      0 / 15   sin cambios
 Nada de lo construido impide todavía que un usuario vea un lote de otra unidad: el filtro por
 fila es la fase 3. Otorgar un `PASS` por tener tablas y un resolutor sería la evidencia que
 `GA-REM-016 AC13` prohíbe.
+
+---
+
+## `GA-REM-040` fase 1.1 · la concesión se acota a la empresa (2026-09-07)
+
+La fase 1 cerró anotando una duda; el propietario pidió comprobarla. **El riesgo era real y se
+comprobó ejecutando**: al mover un usuario de la empresa A a la B, su concesión de A se
+reactivaba en B porque la fila no decía de qué empresa venía.
+
+```
+ANTES   user_business_units  →  business_units          `breeder` de A y de B, indistinguibles
+AHORA   user_business_units  →  company_business_units  la fila dice quién la otorgó
+```
+
+Formalizado como **`OD-09.d`**, enmienda de `OD-09` y no `OD` nuevo: no es una decisión nueva,
+es lo que `OD-09.b` ya implicaba —si administrar el acceso es un acto del plano de control de una
+empresa, lo concedido pertenece a esa empresa—.
+
+```
+AC NUEVOS            AC-B07 … AC-B11        TAREA   T-040-31
+PRUEBAS              31 / 31                (eran 23)
+SENSIBILIDAD         4 / 4 mutaciones detectadas
+MIGRACIÓN            q7r8s9t0u1v2 · cabeza única · se detiene antes que adivinar
+REGRESIÓN            524 passed · 49 skipped
+FRONTEND             0 archivos             RUTAS   0 de 198
+```
+
+`BU-D10` sigue `PENDIENTE DE RATIFICACIÓN` y esta corrección no la toca. Queda declarado sin
+decidir si volver a la empresa anterior reactiva la concesión.
+
+```
+CERTIFICACIÓN FUNCIONAL                14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD      0 / 15   sin cambios
+```

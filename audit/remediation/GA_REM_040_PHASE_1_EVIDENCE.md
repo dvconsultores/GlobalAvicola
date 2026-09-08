@@ -159,3 +159,183 @@ empieza en la fase 3, y hasta que exista, un `PASS` sería la evidencia que `AC1
 GA-REM-040 · FASE 2 — SEGURIDAD CENTRAL     T-040-06 … T-040-08
 NO INICIADA
 ```
+
+---
+
+# FASE 1.1 · LA CONCESIÓN SE ACOTA A LA EMPRESA (2026-09-07)
+
+`T-040-31` · `GA-REM-040` enmienda A · `OD-09.d`
+
+## 9. El defecto, comprobado ejecutando
+
+La fase 1 dejó una pregunta abierta y anotada al cerrarla: *«la concesión no guarda a qué
+empresa pertenecía cuando se otorgó»*. El propietario pidió comprobarlo antes de la fase 2.
+
+Se comprobó **ejecutando**, no razonando:
+
+```
+empresa A con `breeder` habilitada · usuario U en A con concesión de `breeder`  → ['breeder']
+se mueve U a la empresa B, que también tiene `breeder` habilitada
+sin que nadie le conceda nada en B                                              → ['breeder']
+                                                                                   ^^^^^^^^^^
+                                                                                   debía ser []
+```
+
+**La concesión viajó con el usuario.** El resolutor no falló: comprobaba la empresa actual, y
+hacía todas las comprobaciones que sabía hacer. Falló el dato, que no contenía la respuesta.
+
+## 10. Por qué el modelo de la fase 1 parecía correcto
+
+La concesión apuntaba al catálogo por una razón que sigue siendo buena: apuntando a la
+habilitación de una empresa se podía escribir la fila «usuario de A sobre habilitación de B».
+
+El error fue tratar **una** combinación inválida como si fueran todas. Al quitar la empresa de la
+fila desapareció esa fila imposible **y también** lo que distingue un contexto de otro: `breeder`
+de A y `breeder` de B pasaron a ser indistinguibles.
+
+La respuesta correcta no era quitar la empresa. Era ponerla y validarla.
+
+## 11. La corrección
+
+```
+ANTES    user_business_units  →  business_units
+AHORA    user_business_units  →  company_business_units  →  companies
+                                                         └→ business_units
+```
+
+Cerrada por los dos lados, y **las dos hacen falta**:
+
+```
+AL ESCRIBIR   `conceder_unidad` rechaza dar a un usuario la habilitación de otra
+              empresa, y no queda escrita.                            `AC-B10`
+
+AL LEER       el resolutor exige que la empresa de la habilitación sea la ACTUAL
+              del usuario.                                            `AC-B08`
+```
+
+La primera sola dejaría efectiva una concesión legítima de ayer cuando el usuario se mueve hoy.
+La segunda sola permitiría escribir filas que nunca sirven, y una fila inválida que existe acaba
+encontrando el camino a una consulta que la lea mal.
+
+`conceder_unidad` vive en la fase 1 y no en la 7 —donde estará la API de administración— porque
+la regla que protege es del modelo, no de la pantalla.
+
+## 12. Trazabilidad
+
+| `AC` | Prueba | Estado |
+|---|---|:--:|
+| `AC-B07` la concesión dice bajo qué empresa se otorgó | `test_ac_b07_la_concesion_dice_bajo_que_empresa_se_otorgo` · `..._conceder_por_el_servicio_produce_la_misma_efectividad` | **PASS** |
+| `AC-B08` no viaja con el usuario | `test_ac_b08_la_concesion_no_viaja_con_el_usuario` · `..._en_la_empresa_nueva_hace_falta_conceder_de_nuevo` | **PASS** |
+| `AC-B09` mismo código, dos contextos | `test_ac_b09_el_mismo_codigo_en_dos_empresas_son_dos_contextos` | **PASS** |
+| `AC-B10` la concesión cruzada se rechaza | `test_ac_b10_conceder_cruzando_empresas_se_rechaza` · `..._a_un_usuario_sin_empresa_se_rechaza` · `test_ac_a07_no_se_aprovecha_lo_habilitado_en_otra_empresa` | **PASS** |
+| `AC-B11` no se borra la historia | `test_ac_b11_mover_de_empresa_no_borra_la_concesion_anterior` | **PASS** |
+
+```
+PRUEBAS DE LA FASE     31 / 31 PASS        (eran 23; +8)
+```
+
+Dos pruebas de la fase 1 cambiaron de forma porque **su premisa ya no es construible**: conceder
+una unidad que la empresa no declaró, o la habilitación de otra empresa, ya no llega a existir.
+Comprueban esa propiedad —que es más fuerte— y no una más débil.
+
+## 13. Sensibilidad
+
+| # | Mutación | Resultado | Cayeron |
+|:--:|---|:--:|:--:|
+| 1 | ignorar la empresa actual del usuario | **RED** | 2 |
+| 2 | casar solo por el código del catálogo | **RED** | 2 |
+| 3 | la concesión viaja: casar por la unidad subyacente *(el defecto de la fase 1, reproducido)* | **RED** | 2 |
+| 4 | «limpiar» las concesiones de la empresa anterior al conceder | **RED** | 1 |
+
+La mutación 3 se rehízo. El primer intento rompió 17 de 31 pruebas, y eso **no es evidencia**:
+una mutación que rompe la consulta entera demuestra que la consulta era necesaria, no que la
+regla concreta lo sea. Reescrita como implementación coherente —casar por la unidad subyacente,
+que es exactamente el defecto de la fase 1— cae en las dos pruebas del alcance y en ninguna más.
+
+La mutación 4 solo es observable porque `AC-B11` se reforzó para conceder también en la empresa
+nueva: es el momento en que alguien sentiría la tentación de limpiar lo anterior. Sin ese paso,
+la preservación era estructural —nada la borra— y ninguna mutación razonable podía romperla.
+
+```
+MUTACIONES        4 / 4 detectadas
+RESTAURACIÓN      fichero idéntico a la instantánea · árbol limpio
+PATRONES          modelo, resolutor, límite de escritura y ausencia de borrado, verificados
+```
+
+## 14. La migración
+
+```
+q7r8s9t0u1v2      cabeza única · upgrade y downgrade escritos
+```
+
+**No adivina.** Resuelve la habilitación por la empresa **actual** del usuario y la unidad que la
+concesión nombraba —derivación de dato persistido—, y si alguna fila queda sin resolver **se
+detiene con un error** en lugar de borrarla o inventarle empresa:
+
+```
+RuntimeError: N concesiones sin habilitación de empresa resoluble.
+              No se borran ni se les inventa empresa.
+```
+
+Perder en silencio una concesión sería peor que fallar la migración. En la práctica hay **cero
+filas**: ninguna semilla crea concesiones, por decisión de la fase 1.
+
+## 15. Cómo se mueve hoy un usuario de empresa
+
+Auditado, porque la corrección depende de qué es posible:
+
+```
+UserUpdate            NO acepta `company_id`  →  ninguna API mueve a un usuario hoy
+POST /auth/switch-company   super administrador únicamente; desplaza la empresa en la
+                            RECLAMACIÓN del token y no toca `users.company_id`
+```
+
+**La ausencia de la pantalla no se usó como excusa.** El modelo tiene que ser correcto frente a
+un cambio directo futuro: una migración, un script de soporte o la API que la fase 7 traiga.
+
+### Una observación para la fase 2
+
+`switch-company` es del super administrador, que se siembra **sin empresa** y por tanto no
+resuelve ninguna unidad. Hoy no hay riesgo. Pero la fase 2 tendrá que decidir **de dónde toma la
+guarda la empresa efectiva de una petición**: de `users.company_id` o de la reclamación del
+token. Si son dos fuentes, hay que decir cuál manda. Queda anotado, no resuelto.
+
+## 16. Lo que sigue sin decidir
+
+**Si el usuario vuelve a la empresa anterior, ¿revive su concesión?**
+
+```
+SPEC DECISION REQUIRED
+```
+
+Ninguna fuente lo dice y no se inventa. Rige lo conservador: volver no reactiva nada. Es
+**distinto de `BU-D10`** —que trata de qué pasa cuando la empresa apaga una unidad— y no se
+resuelve arrastrando aquella.
+
+```
+BU-D10     PENDIENTE DE RATIFICACIÓN     sin tocar
+```
+
+## 17. Regresión y estado
+
+```
+BACKEND                            524 passed · 49 skipped     (eran 516)
+MIGRACIÓN                          cabeza única `q7r8s9t0u1v2` · base limpia PASS
+T-025                              PASS · ninguna tabla nueva
+TABLAS                             55 · sin cambios
+FRONTEND                           0 archivos
+RUTAS                              0 de 198
+LOS 22 MAESTROS                    sin cambios: la corrección no afecta a su clasificación
+CERTIFICACIÓN FUNCIONAL            14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD  0 / 15   sin cambios
+```
+
+## 18. Siguiente
+
+```
+GA-REM-040 · FASE 2 — SEGURIDAD CENTRAL     T-040-06 … T-040-08
+NO INICIADA
+```
+
+El fundamento queda **seguro para concesiones acotadas a la empresa**: una concesión pertenece a
+usuario + empresa + unidad, no se transfiere, no se borra y no se puede escribir cruzada.
