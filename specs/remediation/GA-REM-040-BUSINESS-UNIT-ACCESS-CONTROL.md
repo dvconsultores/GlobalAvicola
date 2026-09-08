@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-040` · `CROSS-CUTTING CAPABILITY SPEC` |
-| **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 construida, enmienda A** (2026-09-07) |
+| **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fases 1 a 7 construidas** (2026-09-08) |
 | **Requisito** | habilitación de unidades por empresa y acotamiento por usuario |
 | **Decisiones** | `OD-09` (`a`…`e`) · `OD-10` (`a`…`d`) · `OD-11` contexto · **`OD-12`** contrato SAP · marco `ENV-01` |
 | **Antecedente** | `audit/remediation/MODULE_ACCESS_ARCHITECTURE_AUDIT.md` y sus 21 matrices |
@@ -918,7 +918,7 @@ FASE  3   filtro por fila     lotes y listas compartidas · detalle · buscadore
 FASE  4   agregados           contadores · KPI · paneles · reportes · exportación   T-040-11…12
 FASE  5   contratos           los siete flujos · destino del despacho               T-040-13…15
 FASE  6   clasificación       estado · bandeja · acción · auditoría                 T-040-16…17
-FASE  7   API de administración                                                     T-040-18…19
+FASE  7   API de administración  ✔  habilitación · concesión · P-09       T-040-18…19
 FASE  8   sesión                                                                    T-040-20
 FASE  9   interfaz                                                                  T-040-21…24
 FASE 10   notificaciones, tareas y auditoría                                        T-040-25…27

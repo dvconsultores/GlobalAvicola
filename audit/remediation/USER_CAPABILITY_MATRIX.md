@@ -75,3 +75,28 @@ servicios de dominio    aplican `company_id` a mano, consulta por consulta
 Esa última línea es la que más trabajo daría: el filtro de empresa está **repetido** en los
 servicios, no centralizado. Un filtro de unidad seguiría el mismo camino y heredaría el mismo
 riesgo de olvido.
+
+---
+
+## Capacidades de administración de unidad de negocio (`GA-REM-040` fase 7 · 2026-09-08)
+
+**Solo administración.** Nada de esta tabla concede acceso productivo: el alcance operativo lo
+siguen decidiendo la habilitación de la empresa y la concesión al usuario, y ninguna de estas
+capacidades las otorga a quien las ejerce.
+
+| Capacidad | Permiso | Qué permite | Qué **no** permite |
+|---|---|---|---|
+| Ver la configuración de cadenas | `business_units:read` | el catálogo con el estado de su empresa, y las concesiones de un usuario | ver dato productivo de ninguna cadena |
+| Contratar y retirar cadenas | `business_units:update` | habilitar y deshabilitar para su empresa | conceder a nadie · borrar concesiones · tocar datos |
+| Repartir acceso | `business_units:create` | conceder una cadena habilitada a un usuario de su empresa | habilitar la cadena · operar en ella |
+| Retirar acceso | `business_units:delete` | revocar, con efecto inmediato | borrar la historia ni lo que el usuario registró |
+
+```
+NINGÚN ROL SEMBRADO LAS TIENE      `R-113` · decisión de propietario pendiente
+CONCEDIBLES DESDE `/roles`          el catálogo las declara
+VALOR POR DEFECTO                   cerrado
+```
+
+**Advertencia registrada.** `business_units:create` autoriza a conceder a cualquier usuario de
+la empresa efectiva, **incluido uno mismo**. Es la política vigente, no una decisión de esta
+fase, y queda auditada con actor y objetivo. Separarlo corresponde al propietario.

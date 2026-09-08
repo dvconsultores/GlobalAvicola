@@ -897,3 +897,39 @@ CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
 CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
 P-08                                 BLOCKED_EXTERNAL   sin cambios
 ```
+
+---
+
+## `GA-REM-040` fase 7 · la administración del acceso (2026-09-08)
+
+```
+ADMINISTRAR EL ACCESO  ≠  ACCEDER AL DATO        probado como par, no como afirmación
+```
+
+Seis rutas de plano de control, un módulo `RBAC` propio, **cero migraciones**: el esquema de la
+fase 1 ya sostenía las dos relaciones y lo que faltaba era la forma de administrarlas.
+
+Tres superficies se cerraron por diseño en lugar de vigilarse: la empresa no se recibe —se
+resuelve con `OD-11`—, la unidad se direcciona por código y el cuerpo de la concesión no acepta
+empresa. `AC-B10` se cumple porque la fila inválida no se puede **nombrar**.
+
+```
+PRUEBAS        39 / 39      SENSIBILIDAD  10 / 10 detectadas
+SUITES DE FASE 238          REGRESIÓN     687 passed · 49 skipped
+MIGRACIÓN      ninguna · head sigue `s9t0u1v2w3x4`
+FRONTEND       0 ficheros
+```
+
+Y una pregunta que la fase devolvió al propietario en vez de contestar: **ningún rol sembrado
+administra esto** (`R-113`). Lo detectaron los propios guardianes del proyecto, y su diagnóstico
+era correcto. Dárselo a «Supervisor Avícola» habría convertido a todo supervisor en alguien
+capaz de concederse las cuatro cadenas.
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+BU-D10                               PENDING_RATIFICATION · no resuelta
+R-112                                registrado · no remediado
+P-08                                 BLOCKED_EXTERNAL · intacto
+FASE 7                               COMPLETE
+```

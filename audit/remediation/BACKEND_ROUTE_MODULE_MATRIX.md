@@ -79,3 +79,30 @@ consultas. Ver §48 del informe maestro.
 `§10` del encargo lo advierte y es cierto aquí: `app/notifications/sla.py` recorre **todas** las
 empresas y todos los lotes desde una tarea de fondo, sin sesión de nadie. Ver
 `BACKGROUND_JOB_MODULE_MATRIX.md`.
+
+---
+
+## Rutas nuevas · `GA-REM-040` fase 7 (2026-09-08)
+
+Seis superficies de plano de control. Todas `CORE` en la clasificación de módulo —no pertenecen
+a ninguna cadena productiva— y `CONTROL` en la clasificación de alcance de unidad.
+
+| Camino | Métodos | Módulo `RBAC` | Alcance de unidad | `response_model` |
+|---|---|---|---|:--:|
+| `/api/v1/business-units` | `GET` | `business_units:read` | `CONTROL` | sí |
+| `/api/v1/business-units/{code}/enable` | `PATCH` | `business_units:update` | `CONTROL` | sí |
+| `/api/v1/business-units/{code}/disable` | `PATCH` | `business_units:update` | `CONTROL` | sí |
+| `/api/v1/users/{user_id}/business-units` | `GET` | `business_units:read` | `CONTROL` | sí |
+| `/api/v1/users/{user_id}/business-units` | `POST` | `business_units:create` | `CONTROL` | sí |
+| `/api/v1/users/{user_id}/business-units/{code}` | `DELETE` | `business_units:delete` | `CONTROL` | sí |
+
+```
+RUTAS `/api` CLASIFICADAS   207 / 207
+SIN PERMISO DECLARADO         0        `authorization_coverage` aborta el arranque
+SIN ALCANCE DECLARADO         0        `route_scope` aborta el arranque
+FUERA DE TRANSACCIÓN          0        `transaction` aborta el arranque
+```
+
+Los tres guardianes de arranque se aplicaron a estas rutas antes que ninguna prueba: el de
+transacción las rechazó por no declarar `route_class=RutaTransaccional`, y esa fue la primera
+señal de que faltaba la frontera transaccional que hace que conceder y auditar confirmen juntos.

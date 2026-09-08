@@ -114,3 +114,22 @@ de unidad los haría incumplir en silencio. `OD-09.a` lo resuelve, y esta fila d
 
 **`P-13`** es plano de control y no se filtra por unidad. Su certificación de acceso consiste en
 demostrar justamente eso: que administrar el acceso **no concede** acceso al dato.
+
+---
+
+## La fase 7 no certifica nada (2026-09-08)
+
+La `API` de administración por unidad de negocio queda implementada (`T-040-18` · `T-040-19`).
+**Ningún proceso cambia de estado.**
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15    sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15    sin cambios
+PROCESOS CERTIFICADOS POR ESTA FASE        0
+```
+
+Administrar el acceso es plano de control: contesta **quién puede conceder**, no **si el
+proceso respeta la concesión** en todas sus superficies. Que exista la ruta para conceder
+Incubadora no dice nada sobre si la incubación filtra por unidad de punta a punta.
+
+Sin certificación por fase, por endpoint ni por transitividad.
