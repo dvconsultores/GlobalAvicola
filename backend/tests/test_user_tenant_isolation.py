@@ -380,25 +380,59 @@ async def test_el_parametro_de_empresa_no_amplia_el_alcance(http_client, esc):
     assert esc["b1_username"] not in {u["username"] for u in r2.json()}
 
 
-async def test_la_autoridad_global_conserva_su_alcance(http_client, esc):
-    """`docs/02 §3.1.4` · `GA-REM-002 AC09`. El Super Administrador ve todas las compañías.
+async def test_od14_la_autoridad_global_situada_solo_ve_esa_empresa(http_client, esc):
+    """`OD-14.c` · `AC-G05`. `/users` es superficie de **inquilino**, y lo es para todos.
 
-    Esta prueba nació afirmando lo contrario —que situarse en A acotaba a A— y estaba
-    equivocada: la spec dice literalmente «Super Admin ve TODAS las compañías», y
-    `get_company_filter` lo aplica así en todo el producto. Acotarlo solo en `/users` habría
-    hecho que esta ruta se comportara distinto de `/masters` sin norma que lo pidiera, y
-    rompió dos pruebas certificadas que provisionan usuarios entre empresas.
+    **Esta prueba afirmaba lo contrario hasta `OD-14`**, y la afirmación era correcta
+    entonces: `docs/02 §3.1.4` decía «ve TODAS las compañías» y el producto lo aplicaba en
+    todas las rutas. El propietario ha decidido —Opción `C` de `R-126`— que esa frase gobierna
+    el **catálogo de empresas**, no toda ruta del producto.
 
-    **No es la fuga que cierra la enmienda.** El actor del hallazgo es el administrador
-    acotado, y para él el filtro es obligatorio — lo prueban las cuatro primeras de esta
-    suite. Si el propietario quiere además que `switch-company` acote a la autoridad global,
-    es decisión de producto para todos los servicios: `R-126`.
+    El cambio de expectativa es deliberado y queda registrado en `OD-14 §6`. La conducta
+    anterior no era un defecto: era la norma vigente.
     """
     r = await http_client.get("/api/v1/users?limit=100",
                               headers=_token(esc["super"], company_id=esc["a"]))
     assert r.status_code == 200, r.text
     nombres = {u["username"] for u in r.json()}
-    assert esc["a1_username"] in nombres and esc["b1_username"] in nombres
+    assert esc["a1_username"] in nombres
+    assert esc["b1_username"] not in nombres, (
+        "situada en A y devolvió usuarios de B: `/users` no es control global")
+
+
+async def test_od14_contraste_control_global_frente_a_inquilino(http_client, esc):
+    """`AC-G03` · `AC-G05` · `§73`. **La evidencia central de `OD-14`.**
+
+    El mismo actor, la misma sesión, la misma empresa seleccionada:
+
+    ```
+    CONTROL GLOBAL   catálogo de empresas  →  A y B
+    INQUILINO        `/users`              →  solo A
+    ```
+
+    Por separado ninguna mitad prueba nada: «ve las dos empresas» sería compatible con no
+    haber acotado nada, y «solo ve A» sería compatible con haberlo acotado todo. Es la
+    simultaneidad lo que demuestra que la clasificación existe y se respeta.
+    """
+    cabeceras = _token(esc["super"], company_id=esc["a"])
+
+    empresas = await http_client.get("/api/v1/masters/companies?limit=100",
+                                     headers=cabeceras)
+    assert empresas.status_code == 200, empresas.text
+    ids = {c["id"] for c in empresas.json()}
+    assert esc["a"] in ids and esc["b"] in ids, (
+        "el catálogo de empresas dejó de ser control global")
+
+    usuarios = await http_client.get("/api/v1/users?limit=100", headers=cabeceras)
+    assert usuarios.status_code == 200, usuarios.text
+    assert esc["b1_username"] not in {u["username"] for u in usuarios.json()}
+
+
+async def test_od14_la_autoridad_global_sin_contexto_no_obtiene_la_union(http_client, esc):
+    """`OD-14.d` · `AC-G04`. Sin empresa elegida no se opera sobre ningún inquilino."""
+    r = await http_client.get("/api/v1/users?limit=100", headers=_token(esc["super"]))
+    assert r.status_code == 403, (
+        f"sin contexto devolvió {r.status_code}: la unión de inquilinos sigue disponible")
 
 
 async def test_sin_empresa_efectiva_y_sin_autoridad_global_se_deniega(http_client, esc):

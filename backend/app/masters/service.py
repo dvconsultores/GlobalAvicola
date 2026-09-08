@@ -53,15 +53,22 @@ class MasterService:
     #: excepción declarada se puede revisar; una deducida se olvida.
     _INQUILINO_POR_IDENTIDAD = {"companies"}
 
+    #: Superficies de **control global** — `OD-14.a`. La autoridad global las ve enteras,
+    #: sin depender de la empresa seleccionada. Es una lista corta y declarada a propósito:
+    #: lo que no está aquí es de inquilino, incluso para el Super Administrador, y por tanto
+    #: exige contexto. No hay clase por omisión.
+    _CONTROL_GLOBAL = {"companies"}
+
     def _apply_company_filter(self, query):
         """Acota la consulta al inquilino del actor. `RQ-03` · `AC05`.
 
         Tres casos y ninguno implícito:
 
         ```
-        AUTORIDAD GLOBAL     sin filtro — `docs/02 §3.1.4`, literal: «Super Admin ve TODAS
-                             las compañías». Cambiarlo es `R-126`, decisión de propietario.
-        SIN EMPRESA          cero filas. `fail-closed`.
+        CONTROL GLOBAL       sin filtro, **solo** para la autoridad global y **solo** sobre
+                             las superficies declaradas en `_CONTROL_GLOBAL` — `OD-14.c`.
+        SIN EMPRESA          cero filas, autoridad global incluida. `OD-14.d`: sin contexto
+                             no se obtiene la unión de inquilinos.
         CON EMPRESA          por `company_id`, o por `id` si el modelo **es** el inquilino.
         ```
 
@@ -75,7 +82,9 @@ class MasterService:
         fuera a propósito: su diseño admite el uso compartido, y así consta en
         `TENANT_RESOURCE_CLASSIFICATION.md`.
         """
-        if self.is_super_admin:
+        if self.is_super_admin and self.model.__tablename__ in self._CONTROL_GLOBAL:
+            # `OD-14.c`: el catálogo de empresas es control global. `docs/02 §3.1.4` sigue
+            # cumpliéndose aquí, que es donde la frase tenía sentido.
             return query
         if self.user_company_id is None:
             # Nunca «sin empresa, todas las empresas». Cero filas, y el detalle por

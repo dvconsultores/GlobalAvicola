@@ -139,7 +139,32 @@ async def _rol(client, cab, nombre: str, permisos=None) -> int:
     return r.json()["id"]
 
 
+async def _situado_en(client, cab, company_id):
+    """Cabeceras de la autoridad global **situada** en esa empresa. `OD-14.b`.
+
+    Desde `OD-14`, `/users` es superficie de inquilino también para el Super Administrador:
+    aprovisionar en la empresa `B` exige estar en `B`. `switch-company` es el mecanismo que el
+    propio producto ofrece para eso, y el que un humano usaría.
+
+    El cambio de expectativa es deliberado: esta prueba se apoyaba en que la autoridad global
+    atravesaba cualquier inquilino desde cualquier contexto, que era la norma anterior y dejó
+    de serlo por decisión de propietario (`R-126`).
+    """
+    r = await client.post("/api/v1/switch-company", headers=cab,
+                          json={"company_id": company_id})
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
 async def _usuario(client, cab, role_id: int, company_id: int) -> dict:
+    """Crea un usuario **en** `company_id`, situándose allí primero. `OD-14.c`.
+
+    Desde `OD-14` el alta es superficie de inquilino también para la autoridad global: la
+    empresa sale del contexto, no del cuerpo. Sin situarse, estos usuarios nacían en la
+    empresa del administrador y la prueba de fuga los contaba como propios — un defecto de
+    fixture que se presentaba como fuga de notificaciones.
+    """
+    cab = await _situado_en(client, cab, company_id)
     nombre = f"{PREFIJO}{uuid.uuid4().hex[:8]}"
     r = await client.post("/api/v1/users", headers=cab, json={
         "username": nombre, "first_name": "Test", "last_name": nombre,
@@ -221,8 +246,12 @@ async def _area(client, cab, company_id):
 
 
 async def _en_area(client, cab, role_id, company_id, area_id) -> dict:
+    # `OD-14`: crear y editar ocurren en la empresa efectiva. `_usuario` ya se sitúa; la
+    # edición necesita el mismo contexto.
+    propio = await _situado_en(client, cab, company_id)
     u = await _usuario(client, cab, role_id, company_id)
-    r = await client.put(f"/api/v1/users/{u['id']}", headers=cab, json={"area_id": area_id})
+    r = await client.put(f"/api/v1/users/{u['id']}", headers=propio,
+                         json={"area_id": area_id})
     assert r.status_code == 200, r.text
     assert r.json()["area_id"] == area_id, r.json()
     return r.json()

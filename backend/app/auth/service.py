@@ -83,20 +83,11 @@ class AuthService:
         sobre el conjunto acotado. Filtrar después de traer las filas dejaría el total
         contando lo ajeno, que revela por diferencia lo que el filtro escondía.
         """
-        empresa, global_ = self._contexto(actor)
-        if global_:
-            # `docs/02 §3.1.4`, literal: «Super Admin (rol con `module="*"`,
-            # `scope_type="all"`) ve TODAS las compañías». Es la misma exención que
-            # `get_company_filter` aplica en el resto del producto y que `MasterService`
-            # respeta; acotarla solo aquí habría hecho que `/users` se comportara distinto
-            # de `/masters` sin que ninguna norma lo pidiera.
-            #
-            # Esto **no** es la fuga que cierra esta enmienda. El actor del hallazgo es el
-            # administrador **acotado** a una empresa, y para él el filtro de abajo es
-            # obligatorio. Si el propietario quiere además que situarse con `switch-company`
-            # acote a la autoridad global, es una decisión de producto que afecta a todos los
-            # servicios y no solo a éste: queda registrada como `R-126`.
-            return consulta
+        empresa, _ = self._contexto(actor)
+        # `OD-14.c`: `/users` es superficie de **inquilino**, y lo es para todos. La
+        # autoridad global no queda exenta: elige empresa con `switch-company` y opera en
+        # ella. Antes esta rama devolvía la consulta sin acotar para el Super Administrador,
+        # que es lo que `R-126` vino a decidir y `OD-14` decidió.
         if empresa is not None:
             return consulta.where(User.company_id == empresa)
         # `fail-closed`: sin empresa efectiva y sin autoridad global no se administra nada.
@@ -356,14 +347,13 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Usuario o email ya existe")
 
         empresa, global_ = self._contexto(actor)
-        if actor is None or global_:
-            # La autoridad global **sí** declara la empresa de destino. Aprovisionar usuarios
-            # en varias empresas es su trabajo, y quitárselo no cerraría ningún `P0`: el
-            # actor del hallazgo es el administrador **acotado**, para el que la empresa se
-            # impone justo debajo. Situarse con `switch-company` acota lo que **ve**; no le
-            # retira la autoridad de crear donde declare.
-            company_id = data.company_id if data.company_id is not None else empresa
+        if actor is None:
+            company_id = data.company_id
         elif empresa is not None:
+            # `OD-14.c`: el alta es superficie de inquilino como cualquier otra. La empresa
+            # sale del contexto **también para la autoridad global**: declarar una empresa
+            # distinta de aquella en la que se está situado sería operar sobre un inquilino
+            # sin estar en él, que es lo que `OD-14.d` prohíbe.
             company_id = empresa
         else:
             raise HTTPException(
@@ -580,11 +570,12 @@ class AuthService:
         `_rol_administrable`.
         """
         consulta = select(Role).where(Role.is_active == True)
-        empresa, global_ = self._contexto(actor)
-        if actor is not None and not global_:
+        empresa, _ = self._contexto(actor)
+        if actor is not None:
+            # `OD-14.c`: las plantillas de sistema son control global y se ven siempre; los
+            # roles de inquilino exigen contexto, también para la autoridad global.
             if empresa is None:
-                # `fail-closed`, igual que en usuarios y maestros.
-                consulta = consulta.where(Role.id.is_(None))
+                consulta = consulta.where(Role.company_id.is_(None))
             else:
                 consulta = consulta.where(
                     (Role.company_id == empresa) | (Role.company_id.is_(None)))

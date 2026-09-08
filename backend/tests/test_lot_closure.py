@@ -335,7 +335,14 @@ async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
     assert rol.status_code in (200, 201), rol.text
 
     clave = f"Cl-{uuid.uuid4().hex[:12]}!"
-    usuario = await client.post("/api/v1/users", headers=auth_headers, json={
+    # `OD-14.c`: el alta de usuario es superficie de inquilino también para la autoridad
+    # global. Para crear en la empresa 2 hay que situarse en ella — `switch-company`, que es
+    # lo que esta misma prueba ya hacía más abajo para sembrar sus maestros.
+    _cambio = await client.post("/api/v1/switch-company", headers=auth_headers,
+                                json={"company_id": seeded_ids["company_id_2"]})
+    assert _cambio.status_code == 200, _cambio.text
+    _en_2 = {"Authorization": f"Bearer {_cambio.json()['access_token']}"}
+    usuario = await client.post("/api/v1/users", headers=_en_2, json={
         "username": f"cl_test_{sufijo}",
         "email": f"cl_test_{sufijo}@example.com",
         "password": clave,
