@@ -207,8 +207,16 @@ class ChickBatchRead(BaseModel):
 
 
 class EggBatchCreate(BaseModel):
+    """Despacho de huevo fértil. `OD-10.b`: el destino se declara **al crear**.
+
+    Era opcional, y con destino nulo la incubadora no podía saber que un despacho era para
+    ella antes de recibirlo. La alternativa —enseñarle todos los pendientes de la empresa
+    para que encontrara el suyo— anularía el aislamiento justo en el punto que se quería
+    proteger.
+    """
+
     source_lot_id: int
-    hatchery_lot_id: Optional[int] = None
+    hatchery_lot_id: int
     generation: Optional[str] = None  # "grandparent" | "breeder"
     dispatch_event_id: Optional[int] = None
     quantity_dispatched: int
@@ -217,9 +225,22 @@ class EggBatchCreate(BaseModel):
 
 
 class ChickBatchCreate(BaseModel):
+    """Despacho de pollito. `OD-10.b`: el destino se declara al crear.
+
+    Se admiten los dos nombres —`destination_lot_id` es el general y `broiler_lot_id` el
+    heredado— pero **uno de los dos es obligatorio**: sin destino no hay contrato.
+    """
+
     hatchery_lot_id: int
-    destination_lot_id: Optional[int] = None  # Generalized: breeder or broiler lot
-    broiler_lot_id: Optional[int] = None  # Legacy, synced if destination not set
+    destination_lot_id: Optional[int] = None  # general: cría o engorde
+    broiler_lot_id: Optional[int] = None  # heredado, se sincroniza con el anterior
+
+    @model_validator(mode="after")
+    def _exige_destino(self):
+        if self.destination_lot_id is None and self.broiler_lot_id is None:
+            raise ValueError(
+                "el destino del despacho es obligatorio: indique `destination_lot_id`")
+        return self
     dispatch_event_id: Optional[int] = None
     egg_batch_id: Optional[int] = None
     quantity_dispatched: int

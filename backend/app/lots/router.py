@@ -207,10 +207,21 @@ async def create_egg_batch(
     from .models import EggBatch
     # `GA-REM-030 AC01/AC02/AC03`. El cuerpo entraba tal cual: cualquiera con `lots:create`
     # podía enlazar lotes ajenos o de dos compañías distintas (`R-60`).
-    await verificar_vinculo_generacional(db, _service(db, current_user).company_id, [
+    servicio = _service(db, current_user)
+    await verificar_vinculo_generacional(db, servicio.company_id, [
         (data.source_lot_id, "Lote origen"),
         (data.hatchery_lot_id, "Lote de incubadora"),
     ])
+    # `GA-REM-040` fase 5. Despachar es operar **sobre el lote origen**: exige tenerlo al
+    # alcance. Sin esto, el usuario de una cadena podía crear un traspaso saliendo del lote
+    # de otra — operar sobre la cadena ajena por la puerta del contrato.
+    #
+    # El **destino** no exige tener su cadena concedida, y eso es lo que lo hace un contrato
+    # y no un permiso: se le dirige el traspaso sin obtener acceso a él (`OD-10.a`).
+    origen = await servicio.get_lot(data.source_lot_id)
+    destino = await _lote_destino(db, data.hatchery_lot_id)
+    _validar_flujo("egg_batch", origen, destino)
+
     batch = EggBatch(**data.model_dump())
     db.add(batch)
     await db.flush()
@@ -228,10 +239,15 @@ async def create_chick_batch(
     from .models import ChickBatch
     # `GA-REM-030 AC06`. La misma guarda en las dos puertas: una regla aplicada en una y
     # ausente en la otra no es una regla.
-    await verificar_vinculo_generacional(db, _service(db, current_user).company_id, [
+    servicio = _service(db, current_user)
+    await verificar_vinculo_generacional(db, servicio.company_id, [
         (data.hatchery_lot_id, "Lote de incubadora"),
         (data.destination_lot_id or data.broiler_lot_id, "Lote destino"),
     ])
+    origen = await servicio.get_lot(data.hatchery_lot_id)
+    destino = await _lote_destino(db, data.destination_lot_id or data.broiler_lot_id)
+    _validar_flujo("chick_batch", origen, destino)
+
     payload = data.model_dump()
     # Sync: if destination_lot_id provided, also set broiler_lot_id for backward compat
     if payload.get("destination_lot_id") and not payload.get("broiler_lot_id"):
@@ -243,3 +259,33 @@ async def create_chick_batch(
     await db.flush()
     await db.refresh(batch)
     return schemas.ChickBatchRead.model_validate(batch)
+
+
+async def _lote_destino(db: AsyncSession, lot_id: int):
+    """El lote de destino, **sin** exigir su cadena al que despacha.
+
+    Se lee directo y no por `LotService`, a propósito: el servicio acota por unidad, y aquí
+    el destino es legítimamente de otra cadena. Su pertenencia a la empresa ya la comprobó
+    `verificar_vinculo_generacional`, que es la primera frontera y sigue siéndolo.
+    """
+    from sqlalchemy import select
+
+    from ..masters.models import Lot
+
+    return (await db.execute(select(Lot).where(Lot.id == lot_id))).scalar_one_or_none()
+
+
+def _validar_flujo(flujo: str, origen, destino) -> None:
+    """Las dos cadenas tienen que ser las que el flujo admite (`CROSS_MODULE_FLOW_MATRIX`).
+
+    Aceptar un destino fuera de la tabla escribiría una cadena que `P-10` no puede
+    reconstruir, y la trazabilidad generacional está certificada sobre ella.
+    """
+    from fastapi import HTTPException, status as _st
+
+    from ..business_units.handoff import DestinoInvalido, validar_flujo
+
+    try:
+        validar_flujo(flujo, origen=origen, destino=destino)
+    except DestinoInvalido as exc:
+        raise HTTPException(status_code=_st.HTTP_400_BAD_REQUEST, detail=str(exc))

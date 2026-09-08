@@ -158,10 +158,16 @@ async def escenario(client, auth_headers, seeded_ids):
     s = uuid.uuid4().hex[:8]
     c1, c2 = seeded_ids["company_id"], seeded_ids["company_id_2"]
 
+    # `GA-REM-040` fase 5: el traspaso declara sus dos cadenas y tienen que ser las del
+    # flujo. Antes bastaba cualquier par de lotes; ahora el huevo sale de reproducción y
+    # llega a incubación, y el pollito sale de incubación. Los tipos son de la fixture, no
+    # una regla nueva: la regla es que la cadena escrita sea reconstruible por `P-10`.
     propio_a = await _lote(client, auth_headers, c1,
-                           seeded_ids["farm_id"], seeded_ids["house_id"])
+                           seeded_ids["farm_id"], seeded_ids["house_id"], "breeder")
     propio_b = await _lote(client, auth_headers, c1,
                            seeded_ids["farm_id"], seeded_ids["house_id"], "hatchery")
+    propio_c = await _lote(client, auth_headers, c1,
+                           seeded_ids["farm_id"], seeded_ids["house_id"], "broiler")
 
     admin_2 = await _en_empresa(client, auth_headers, c2)
     granja_2, galpon_2 = await _maestros_en(client, admin_2, c2, s)
@@ -169,7 +175,14 @@ async def escenario(client, auth_headers, seeded_ids):
     ajeno_b = await _lote(client, admin_2, c2, granja_2, galpon_2, "broiler")
 
     return {"s": s, "c1": c1, "c2": c2, "propio_a": propio_a, "propio_b": propio_b,
-            "ajeno": ajeno, "ajeno_b": ajeno_b, "admin_2": admin_2}
+            "propio_c": propio_c, "ajeno": ajeno, "ajeno_b": ajeno_b, "admin_2": admin_2}
+
+
+async def _id_de(client, auth_headers, cabecera_sujeto) -> int:
+    """El identificador del sujeto, leído por su propia sesión."""
+    r = await client.get("/api/v1/me", headers=cabecera_sujeto)
+    assert r.status_code == 200, r.text
+    return r.json()["id"]
 
 
 async def _vinculos(motor, lot_id):
@@ -187,9 +200,13 @@ async def _vinculos(motor, lot_id):
 
 # ── AC01 · el actor no alcanza lotes ajenos ───────────────────────────────────
 
-@pytest.mark.parametrize("ruta,cuerpo", [("egg-batches", _huevo), ("chick-batches", _pollito)])
+@pytest.mark.parametrize("ruta,cuerpo,orig,dest,ajeno_k", [
+    ("egg-batches", _huevo, "propio_a", "propio_b", "ajeno"),
+    ("chick-batches", _pollito, "propio_b", "propio_c", "ajeno_b"),
+])
 async def test_t_060_01_el_actor_no_enlaza_lotes_ajenos(
-    client, http_client, auth_headers, seeded_ids, escenario, motor, ruta, cuerpo
+    client, http_client, auth_headers, seeded_ids, escenario, motor, ruta, cuerpo,
+    orig, dest, ajeno_k, test_database_url
 ):
     """`AC01` y `AC06` · con permiso, pero sin derecho sobre el lote ajeno.
 
@@ -198,10 +215,16 @@ async def test_t_060_01_el_actor_no_enlaza_lotes_ajenos(
     """
     sujeto = await _sujeto_con_permiso(
         client, auth_headers, escenario["c1"], f"{escenario['s']}{ruta[:3]}")
+    # `GA-REM-040` fase 3/5: despachar exige tener el lote origen al alcance. El sujeto se
+    # configura como hará un cliente real en su alta; lo que esta prueba mide es la
+    # **pertenencia**, no el alcance por cadena.
+    from tests.business_unit_fixtures import habilitar_y_conceder_todo
+    await habilitar_y_conceder_todo(test_database_url, company_id=escenario["c1"],
+                                    user_ids=[await _id_de(client, auth_headers, sujeto)])
 
     # CONTROL · dos lotes suyos.
     ok = await http_client.post(f"/api/v1/lots/{ruta}", headers=sujeto,
-                                json=cuerpo(escenario["propio_a"], escenario["propio_b"]))
+                                json=cuerpo(escenario[orig], escenario[dest]))
     assert ok.status_code == 201, (
         f"CONTROL falló: el sujeto no puede enlazar ni lotes propios, "
         f"así que un rechazo posterior no probaría pertenencia: {ok.text}"
@@ -209,7 +232,7 @@ async def test_t_060_01_el_actor_no_enlaza_lotes_ajenos(
 
     # TRATAMIENTO · el destino es de otra compañía.
     cruzado = await http_client.post(f"/api/v1/lots/{ruta}", headers=sujeto,
-                                     json=cuerpo(escenario["propio_a"], escenario["ajeno"]))
+                                     json=cuerpo(escenario[orig], escenario[ajeno_k]))
     assert cruzado.status_code == 400, (
         f"se enlazó un lote de otra compañía: {cruzado.status_code} {cruzado.text}"
     )
@@ -223,9 +246,12 @@ async def test_t_060_01_el_actor_no_enlaza_lotes_ajenos(
 
 # ── AC02 · el par es coherente incluso para el Super Admin ────────────────────
 
-@pytest.mark.parametrize("ruta,cuerpo", [("egg-batches", _huevo), ("chick-batches", _pollito)])
+@pytest.mark.parametrize("ruta,cuerpo,orig,dest,ajeno_k", [
+    ("egg-batches", _huevo, "propio_a", "propio_b", "ajeno"),
+    ("chick-batches", _pollito, "propio_b", "propio_c", "ajeno_b"),
+])
 async def test_t_060_02_el_super_admin_sin_contexto_no_cruza_companias(
-    client, auth_headers, escenario, motor, ruta, cuerpo
+    client, auth_headers, escenario, motor, ruta, cuerpo, orig, dest, ajeno_k
 ):
     """`AC02` · autoridad global no es licencia para crear un registro sin dueño.
 
@@ -244,12 +270,12 @@ async def test_t_060_02_el_super_admin_sin_contexto_no_cruza_companias(
     # CONTROL · el mismo Super Admin sin contexto, dentro de una sola compañía: se acepta.
     # Es lo que prueba que la guarda no le recortó la autoridad legítima.
     ok = await client.post(f"/api/v1/lots/{ruta}", headers=sujeto,
-                           json=cuerpo(escenario["propio_a"], escenario["propio_b"]))
+                           json=cuerpo(escenario[orig], escenario[dest]))
     assert ok.status_code == 201, f"CONTROL falló: {ok.text}"
 
     # TRATAMIENTO · el mismo sujeto, la misma llamada, cruzando compañías.
     cruzado = await client.post(f"/api/v1/lots/{ruta}", headers=sujeto,
-                                json=cuerpo(escenario["propio_a"], escenario["ajeno"]))
+                                json=cuerpo(escenario[orig], escenario[ajeno_k]))
     assert cruzado.status_code == 400, (
         f"el Super Admin creó un vínculo entre compañías: {cruzado.status_code} {cruzado.text}"
     )
@@ -258,9 +284,12 @@ async def test_t_060_02_el_super_admin_sin_contexto_no_cruza_companias(
 
 # ── AC03 · un lote inexistente se rechaza por contrato ────────────────────────
 
-@pytest.mark.parametrize("ruta,cuerpo", [("egg-batches", _huevo), ("chick-batches", _pollito)])
+@pytest.mark.parametrize("ruta,cuerpo,orig,dest,ajeno_k", [
+    ("egg-batches", _huevo, "propio_a", "propio_b", "ajeno"),
+    ("chick-batches", _pollito, "propio_b", "propio_c", "ajeno_b"),
+])
 async def test_t_060_03_lote_inexistente_da_400_y_no_500(
-    client, auth_headers, escenario, ruta, cuerpo
+    client, auth_headers, escenario, ruta, cuerpo, orig, dest, ajeno_k
 ):
     """`AC03` · sin la guarda esto revienta con 500 por violación de clave foránea.
 
@@ -271,7 +300,7 @@ async def test_t_060_03_lote_inexistente_da_400_y_no_500(
     sujeto = await _super_admin_sin_contexto(
         client, auth_headers, f"{escenario['s']}x{ruta[:3]}")
     r = await client.post(f"/api/v1/lots/{ruta}", headers=sujeto,
-                          json=cuerpo(escenario["propio_a"], 99_999_999))
+                          json=cuerpo(escenario[orig], 99_999_999))
     assert r.status_code == 400, f"esperado 400 por contrato, no {r.status_code}: {r.text}"
     assert r.json().get("rule") == "BR-07", r.json()
 

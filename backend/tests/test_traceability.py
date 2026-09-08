@@ -137,9 +137,13 @@ async def test_sin_destino_declarado_no_se_inventa_el_vinculo(auth_headers, clie
 @pytest.mark.asyncio
 async def test_el_enlace_manual_sigue_disponible(auth_headers, client, seeded_ids):
     """La spec lo sanciona como alternativa; debe funcionar."""
-    destino = await _lote(client, auth_headers, "TRACE-MANUAL-01", 2)
+    # `GA-REM-040` fase 5: el traspaso declara sus dos cadenas y tienen que ser las del
+    # flujo. El lote sembrado es de engorde, y un huevo fértil no sale de un engorde: la
+    # fixture enlazaba una cadena que `P-10` no puede reconstruir. Se usan las correctas.
+    origen = await _lote(client, auth_headers, "TRACE-MANUAL-SRC", 2, bird_type="breeder")
+    destino = await _lote(client, auth_headers, "TRACE-MANUAL-01", 2, bird_type="hatchery")
     r = await client.post("/api/v1/lots/egg-batches", headers=auth_headers, json={
-        "source_lot_id": seeded_ids["lot_id"],
+        "source_lot_id": origen,
         "hatchery_lot_id": destino,
         "quantity_dispatched": 1000,
         "dispatch_date": recent_event_date(),
