@@ -380,6 +380,35 @@ PENDIENTE Y REGISTRADO   qué roles ordinarios puede asignar un administrador de
 La autoridad global legítima —quien ya tiene `("*", …, all)`— conserva la capacidad: `AC15`
 acota a los actores de empresa, no al Super Administrador.
 
+## `AC16` — una denegación se ve como una denegación
+
+```
+Given una pantalla de administración cuya API responde 403
+When  el usuario la abre
+Then  ve un estado explícito de permiso insuficiente
+And   NO ve una tabla vacía
+
+Given la API responde 200 con lista vacía
+Then  ve el estado «no hay usuarios», y solo entonces
+```
+
+Va en esta enmienda y no en otra parte porque es **la misma superficie y el mismo hallazgo**:
+`/users` se veía vacía, y esa apariencia fue exactamente lo que mantuvo los cuatro `P0`
+invisibles durante meses. Una fuga de inquilino que no se puede ver no se reporta.
+
+Y porque el arreglo de `AC13` **aumenta** la frecuencia del `403`: donde antes un actor sin
+empresa efectiva recibía la lista entera, ahora recibe una denegación. Dejar la denegación
+indistinguible del vacío convertiría la corrección de seguridad en un fallo aparente del
+producto.
+
+El principio ya estaba escrito en la casa —`GA-REM-038 AC19`, para la campana de avisos:
+«un fallo de `API` no se presenta como bandeja vacía»— y nunca se generalizó. Aquí se aplica
+a la administración de usuarios; generalizarlo al resto de pantallas es trabajo aparte y
+queda en `R-120`.
+
+Cinco estados distinguibles: `cargando` · `datos` · `vacío real` · `403` · `error inesperado`.
+Todo texto por `i18n`, con paridad `es`/`en` (`GA-REM-038 AC20`).
+
 ## Tareas
 
 | Tarea | Qué |
@@ -388,6 +417,7 @@ acota a los actores de empresa, no al Super Administrador.
 | `T-002-14` | Listado, detalle y edición acotados en la consulta |
 | `T-002-15` | Barrera de autoridad global en la asignación de rol |
 | `T-002-16` | `users` incorporado a `TENANT_RESOURCE_CLASSIFICATION.md` |
+| `T-002-17` | Cinco estados distinguibles en la pantalla de usuarios |
 
 ## Estado
 
