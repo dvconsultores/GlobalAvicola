@@ -792,3 +792,40 @@ CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
 ```
 
 Certificar `P-10` por tener su cadena protegida sería tan inválido como certificar por endpoint.
+
+---
+
+## `GA-REM-040` fase 6 · clasificación pendiente (2026-09-07)
+
+```
+SIN CLASIFICAR ≠ DE TODA LA EMPRESA ≠ UNA QUINTA CADENA ≠ BORRADO
+```
+
+**Un campo nulable no es un pendiente**: primero se deriva. Sin esa distinción la bandeja se
+habría llenado de registros que no necesitan a nadie.
+
+Un solo mecanismo para siete entidades: `operational_events` es la única con `lot_id` y las seis
+dependientes heredan **por construcción** —no tienen ruta propia—, que es más fuerte que una
+comprobación que alguien pueda olvidar (`R-111`).
+
+```
+ENTIDADES ACOTADAS       13 / 16   eran 3
+FLUJOS IMPLEMENTADOS      6 / 7    4 y 6 desbloqueados · 5 sigue siendo excepción (BU-D04)
+PRUEBAS                  25 / 25   SENSIBILIDAD  9 / 9
+REGRESIÓN                623 passed · 49 skipped
+MIGRACIÓN                s9t0u1v2w3x4 · FRONTEND 0
+```
+
+Dos mutaciones sobrevivieron por huecos **de prueba**, no de implementación. Una de ellas pasaba
+en vacío por leer `items` donde el endpoint devuelve `events` — el mismo error de forma que la
+fase 4 ya había cazado en el panel, cometido otra vez.
+
+Las semillas pasan a **configurar la empresa**: es lo que hará un cliente real en su alta, y la
+alternativa sería el `fail open` que esto existe para impedir.
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+```
+
+Tener bandeja y acción de clasificar no certifica ningún proceso.

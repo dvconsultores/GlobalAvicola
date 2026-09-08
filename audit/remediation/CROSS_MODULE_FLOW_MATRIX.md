@@ -117,3 +117,17 @@ IMPLEMENTADOS 4 · APLAZADOS 2 · EXCEPCIÓN 1
 El detalle campo por campo está en `BUSINESS_UNIT_HANDOFF_CONTRACT_MATRIX.md`. Los dos aplazados
 no lo están por comodidad: acotar hoy los eventos sin lote los haría desaparecer para todos,
 incluida la persona que acaba de registrarlos.
+
+### Actualización tras la fase 6 (2026-09-07)
+
+| # | Flujo | Contrato | Cambio |
+|:--:|---|:--:|---|
+| 4 | Transferencia entre granjas | **IMPLEMENTADO** | por construcción: los movimientos no tienen ruta propia y viajan dentro del evento, que la fase 6 acotó |
+| 6 | Revisión y aprobación | **IMPLEMENTADO** | las cuatro consultas propias de las colas aplican el alcance de cadena |
+
+```
+IMPLEMENTADOS 6 · EXCEPCIÓN DECLARADA 1 (flujo 5 · BU-D04 PENDIENTE)
+```
+
+La fase 5 **no pasa a `COMPLETE`**: el séptimo depende de una decisión del propietario que no es
+técnica.

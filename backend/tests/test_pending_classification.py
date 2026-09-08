@@ -459,3 +459,102 @@ async def test_el_nombre_del_rol_no_abre_la_bandeja(http_client, pend, test_data
         await motor.dispose()
 
     assert pend["sin_lote"] not in await _pendientes(http_client, uid)
+
+
+# ── Flujo 6 · la cola de revisión, desbloqueada por la clasificación ─────────
+
+async def test_flujo6_la_cola_de_revision_no_muestra_cadenas_ajenas(
+        http_client, pend, test_database_url):
+    """La fase 5 aplazó el flujo 6 aquí, y esta es la razón por la que ya se puede.
+
+    Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su ritmo
+    aunque no se abra ninguno. Con la clasificación en pie, lo derivable se deriva y lo que
+    no tiene cadena no entra en la cola: su superficie es la bandeja.
+    """
+    from app.auth.models import Permission, PermissionAction, Role, User
+    from app.auth.security import hash_password
+    from app.business_units.models import CompanyBusinessUnit
+    from app.business_units.service import conceder_unidad
+    from app.masters.models import BirdTypeEnum, Lot
+    from app.operations.models import EventStatus, EventType, OperationalEvent
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            lote_inc = Lot(company_id=pend["empresa_a"],
+                           lot_code=f"{PREFIJO}INC-{uuid.uuid4().hex[:6]}",
+                           bird_type=BirdTypeEnum.HATCHERY, status="active")
+            s.add(lote_inc)
+            await s.flush()
+            evento_inc = OperationalEvent(
+                company_id=pend["empresa_a"], lot_id=lote_inc.id,
+                event_type=EventType.FARM_INSPECTION, event_date=days_ago(2),
+                status=EventStatus.PENDING_REVIEW, registered_by_id=pend["incub"])
+            s.add(evento_inc)
+            await s.flush()
+
+            rol = Role(name=f"{PREFIJO}Rev-{uuid.uuid4().hex[:6]}",
+                       company_id=pend["empresa_a"], is_active=True)
+            s.add(rol)
+            await s.flush()
+            for accion in (PermissionAction.READ, PermissionAction.REVIEW):
+                s.add(Permission(role_id=rol.id, module="review",
+                                 action=accion, scope_type="company"))
+            revisor = User(first_name="Rev", last_name="Isor",
+                           email=f"{PREFIJO}{uuid.uuid4().hex[:8]}@e.test",
+                           username=f"{PREFIJO}{uuid.uuid4().hex[:8]}",
+                           hashed_password=hash_password("x"),
+                           company_id=pend["empresa_a"], role_id=rol.id, is_active=True)
+            s.add(revisor)
+            await s.flush()
+            hab = await s.get(CompanyBusinessUnit, pend["hab_breeder"])
+            await conceder_unidad(s, user=revisor, company_business_unit=hab)
+            await s.commit()
+            revisor_id, evento_id = revisor.id, evento_inc.id
+    finally:
+        await motor.dispose()
+
+    r = await http_client.get("/api/v1/review/pending", headers=_token(revisor_id))
+    assert r.status_code == 200, r.text
+    cuerpo = r.json()
+    # El endpoint devuelve `{"events": [...], "total": n}`. Leer `items` habría hecho que
+    # esta comprobación pasara sin comprobar nada — el mismo error de forma que la fase 4
+    # cazó en el panel.
+    filas = cuerpo["events"] if isinstance(cuerpo, dict) else cuerpo
+    ids = {f["id"] if isinstance(f, dict) else f.id for f in filas}
+    assert evento_id not in ids, (
+        f"la cola mostró un evento de una cadena que el revisor no tiene: {ids}")
+
+
+async def test_clasificar_contra_una_unidad_apagada_se_rechaza_y_no_la_enciende(
+        http_client, pend, test_database_url):
+    """`§31`. Clasificar **no** es configurar: no puede encender lo que la empresa apagó.
+
+    Esta prueba nació de una mutación que no rompió nada. La que existía usaba una
+    habilitación ya encendida, de modo que un «enciéndela si hace falta» pasaba
+    inadvertido. Ahora se clasifica contra una apagada, y se comprueba las dos cosas: que
+    se rechaza y que sigue apagada.
+    """
+    from app.business_units.models import CompanyBusinessUnit
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async with async_sessionmaker(motor)() as s:
+            hab = await s.get(CompanyBusinessUnit, pend["hab_hatchery"])
+            hab.is_enabled = False
+            await s.commit()
+
+        r = await http_client.post(
+            f"/api/v1/operations/{pend['sin_lote']}/classify",
+            headers=_token(pend["clasif"]),
+            json={"company_business_unit_id": pend["hab_hatchery"]})
+        assert r.status_code == 400, r.text
+
+        async with async_sessionmaker(motor)() as s:
+            hab = await s.get(CompanyBusinessUnit, pend["hab_hatchery"])
+            sigue_apagada = not hab.is_enabled
+            hab.is_enabled = True
+            await s.commit()
+    finally:
+        await motor.dispose()
+    assert sigue_apagada, "clasificar encendió una unidad que la empresa había apagado"

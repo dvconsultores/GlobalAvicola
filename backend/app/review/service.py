@@ -74,6 +74,26 @@ class ReviewService(SegregacionMixin):
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
 
+    async def _ambito_de_unidad(self):
+        """Predicado de cadena productiva para las colas de revisión. `GA-REM-040` fase 6.
+
+        El flujo 6 —revisión y aprobación— quedó aplazado en la fase 5 porque su cadena se
+        deriva del evento, y el evento podía no tenerla. Con la clasificación pendiente en
+        pie, ya se puede: lo derivable se deriva, lo clasificado se lee, y lo que no tiene
+        ninguna de las dos **no entra en la cola** — su superficie es la bandeja.
+
+        Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su
+        ritmo aunque no se abra ninguno.
+        """
+        if self.current_user.get("is_super_admin"):
+            return []
+        from ..business_units.classification import predicado_de_evento
+        from ..business_units.service import unidades_efectivas_por_id
+
+        unidades = await unidades_efectivas_por_id(
+            self.db, user_id=self.current_user.get("id"), company_id=self.company_id)
+        return [predicado_de_evento(unidades, self.company_id)]
+
     # ============================================================
     # Query pending events
     # ============================================================
@@ -89,12 +109,15 @@ class ReviewService(SegregacionMixin):
         offset: int = 0,
     ) -> tuple[list[OperationalEvent], int]:
         """Get events pending review (status=registered or pending_review)."""
+        _ambito = await self._ambito_de_unidad()
         base = select(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
+            *_ambito,
             OperationalEvent.status.in_([EventStatus.REGISTERED, EventStatus.PENDING_REVIEW]),
         )
         count_q = select(func_count()).select_from(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
+            *_ambito,
             OperationalEvent.status.in_([EventStatus.REGISTERED, EventStatus.PENDING_REVIEW]),
         )
 
@@ -304,6 +327,7 @@ class ReviewService(SegregacionMixin):
             select(OperationalEvent).where(
                 OperationalEvent.id == event_id,
                 OperationalEvent.company_id == self.company_id,
+                *(await self._ambito_de_unidad()),
             )
         )
         event = result.scalar_one_or_none()
@@ -333,6 +357,26 @@ class ApprovalService(SegregacionMixin):
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
 
+    async def _ambito_de_unidad(self):
+        """Predicado de cadena productiva para las colas de revisión. `GA-REM-040` fase 6.
+
+        El flujo 6 —revisión y aprobación— quedó aplazado en la fase 5 porque su cadena se
+        deriva del evento, y el evento podía no tenerla. Con la clasificación pendiente en
+        pie, ya se puede: lo derivable se deriva, lo clasificado se lee, y lo que no tiene
+        ninguna de las dos **no entra en la cola** — su superficie es la bandeja.
+
+        Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su
+        ritmo aunque no se abra ninguno.
+        """
+        if self.current_user.get("is_super_admin"):
+            return []
+        from ..business_units.classification import predicado_de_evento
+        from ..business_units.service import unidades_efectivas_por_id
+
+        unidades = await unidades_efectivas_por_id(
+            self.db, user_id=self.current_user.get("id"), company_id=self.company_id)
+        return [predicado_de_evento(unidades, self.company_id)]
+
     # ============================================================
     # Pending approvals
     # ============================================================
@@ -345,12 +389,15 @@ class ApprovalService(SegregacionMixin):
         offset: int = 0,
     ) -> tuple[list[OperationalEvent], int]:
         """Get events pending approval (status=corrected)."""
+        _ambito = await self._ambito_de_unidad()
         base = select(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
+            *_ambito,
             OperationalEvent.status == EventStatus.CORRECTED,
         )
         cq = select(func_count()).select_from(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
+            *_ambito,
             OperationalEvent.status == EventStatus.CORRECTED,
         )
 
@@ -488,6 +535,7 @@ class ApprovalService(SegregacionMixin):
             select(OperationalEvent).where(
                 OperationalEvent.id == event_id,
                 OperationalEvent.company_id == self.company_id,
+                *(await self._ambito_de_unidad()),
             )
         )
         event = result.scalar_one_or_none()
@@ -509,6 +557,26 @@ class ApprovalStepService:
         self.db = db
         self.current_user = current_user
         self.company_id = current_user.get("company_id")
+
+    async def _ambito_de_unidad(self):
+        """Predicado de cadena productiva para las colas de revisión. `GA-REM-040` fase 6.
+
+        El flujo 6 —revisión y aprobación— quedó aplazado en la fase 5 porque su cadena se
+        deriva del evento, y el evento podía no tenerla. Con la clasificación pendiente en
+        pie, ya se puede: lo derivable se deriva, lo clasificado se lee, y lo que no tiene
+        ninguna de las dos **no entra en la cola** — su superficie es la bandeja.
+
+        Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su
+        ritmo aunque no se abra ninguno.
+        """
+        if self.current_user.get("is_super_admin"):
+            return []
+        from ..business_units.classification import predicado_de_evento
+        from ..business_units.service import unidades_efectivas_por_id
+
+        unidades = await unidades_efectivas_por_id(
+            self.db, user_id=self.current_user.get("id"), company_id=self.company_id)
+        return [predicado_de_evento(unidades, self.company_id)]
 
     async def get_steps(self) -> list[models.ApprovalStep]:
         result = await self.db.execute(

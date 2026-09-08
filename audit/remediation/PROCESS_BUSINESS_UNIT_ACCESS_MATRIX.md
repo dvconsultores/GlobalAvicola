@@ -59,8 +59,8 @@ de acceso se podrá medir algún día.
 
 | Proceso | Entidades acotadas | Lo que falta para poder certificarlo |
 |---|---|---|
-| `P-01` `P-02` `P-03` `P-04` `P-05` `P-06` | `lots`, `lot_phases`, `opening_balances`, **sus indicadores** | eventos operativos (6) |
-| `P-07` revisión → aprobación | ninguna | eventos operativos (6) |
+| `P-01` `P-02` `P-03` `P-04` `P-05` `P-06` | lotes, sus indicadores y **sus eventos** | administración (7) · sesión (8) · interfaz (9) · avisos (10) |
+| `P-07` revisión → aprobación | **eventos y colas de revisión** (fase 6) | administración (7) · sesión (8) · interfaz (9) |
 | `P-08` SAP | ninguna | contrato del flujo 5 · sigue `BLOCKED_EXTERNAL` |
 | `P-09` auditoría | ninguna | decisión `BU-D03` |
 | `P-10` trazabilidad | **contrato de traspaso** (fase 5) | eventos operativos (6) · superficie de anulación inexistente |

@@ -104,3 +104,24 @@ haría desaparecer para todos, incluida la persona que acaba de registrarlos.
 
 **Lotes de huevo y de pollito.** Confirmado que **no falta un campo, falta un contrato**. No
 reciben predicado de propietario único, y no se les añade columna de unidad.
+
+## 6. Estado tras la fase 6 (2026-09-07)
+
+| Entidad | Estado | Cómo |
+|---|:--:|---|
+| `operational_events` | **`ACOTADA`** | deriva del lote, o se clasifica a mano; lo que no puede, queda pendiente |
+| `bird_movements` · `egg_movements` · `feed_movements` | **`ACOTADAS`** | por construcción: sin ruta propia, viajan dentro del evento |
+| `inspection_details` · `hatchery_params` | **`ACOTADAS`** | ídem |
+| `approval_actions` · `correction_logs` | **`ACOTADAS`** | ídem |
+| `lots` con `bird_type` nulo | `DENEGADOS` | completar la cadena es de `P-03`/`P-06`, no de esta capa |
+| `notifications` | `NO ACOTADA` | **fase 10** |
+| `audit_logs` | `NO ACOTADA` | decisión `BU-D03` |
+
+```
+ACOTADAS   13 / 16      eran 3
+PENDIENTES  3 / 16      notifications (10) · audit_logs (BU-D03) · lots sin cadena
+```
+
+Los tres bloqueantes que `§3` declaró quedan resueltos o acotados: los eventos sin lote tienen
+estado, las entidades de traspaso tienen contrato, y los lotes sin cadena siguen denegados con su
+hueco registrado en el proceso que sí tiene autoridad sobre `bird_type`.
