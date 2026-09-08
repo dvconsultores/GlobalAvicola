@@ -38,7 +38,7 @@ Ninguna fila se rellena hasta que exista lo que se está midiendo.
 | `P-05` Incubación | `CERTIFIED` | Incubadora | `PENDIENTE` | `PENDIENTE` | **sí** · flujos 2 y 3 | **`PENDIENTE`** |
 | `P-06` Pollo de engorde | `CERTIFIED` | Engorde | `PENDIENTE` | `PENDIENTE` | **sí** · flujo 3 | **`PENDIENTE`** |
 | `P-07` Revisión → Aprobación | `CERTIFIED` | las cuatro | `PENDIENTE` | `PENDIENTE` | **sí** · flujo 6 | **`PENDIENTE`** |
-| `P-08` Consolidación SAP | `PARTIAL` `BLOCKED_EXTERNAL` | las cuatro | `PENDIENTE` | `PENDIENTE` | **sí** · flujo 5 | **`PENDIENTE`** |
+| `P-08` Consolidación SAP | `PARTIAL` `BLOCKED_EXTERNAL` | las cuatro · **excepción `OD-12`** | `PENDIENTE` | `PENDIENTE` | **implementado** | **`PENDIENTE`** |
 | `P-09` Auditoría interna | `CERTIFIED` | `CORE` · visibilidad decidida | `PENDIENTE` | `PENDIENTE` | no | **`PENDIENTE`** |
 | `P-10` Trazabilidad generacional | `CERTIFIED` | **cruza por diseño** | `PENDIENTE` | `PENDIENTE` | **sí** · flujo 7 | **`PENDIENTE`** |
 | `P-11` Activación manual de lotes | `CERTIFIED` | derivable del lote | `PENDIENTE` | `PENDIENTE` | no | **`PENDIENTE`** |

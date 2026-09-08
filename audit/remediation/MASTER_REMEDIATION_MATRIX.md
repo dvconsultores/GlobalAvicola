@@ -861,3 +861,39 @@ hueco de cobertura real. Registrado, porque la diferencia importa.
 CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
 CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
 ```
+
+---
+
+## `OD-12` · `BU-D04` resuelta · la fase 5 se cierra (2026-09-07)
+
+```
+LA TRANSVERSALIDAD SAP = CAPACIDAD OPERATIVA EXPLÍCITA, ACOTADA AL CONTRATO
+```
+
+**No hizo falta cambiar comportamiento.** Las quince pruebas del contrato pasaron sin tocar una
+línea: el permiso ya era explícito, la empresa ya se filtraba y las superficies normales ya
+seguían acotadas para el mismo actor. El hueco era de gobernanza — la transversalidad existía
+**por ausencia de filtro**.
+
+Se añadió una declaración con dientes: una prueba comprueba que la lista de superficies
+transversales coincide con las rutas reales, de modo que una ruta SAP nueva no hereda la
+excepción en silencio.
+
+**Y una mutación encontró un defecto real** (`R-112`): `/sap/consolidated` no declaraba
+`response_model`, así que la proyección existía en el fichero y no se aplicaba. Hoy no filtraba
+nada por coincidencia —el modelo no tiene relaciones—, no por contrato. Corregida esa ruta; las
+otras ocho quedan registradas.
+
+```
+FLUJOS         7 / 7 clasificados · 7 / 7 implementados · 0 excepciones sin resolver
+FASE 5         COMPLETE
+PRUEBAS        15 / 15     SENSIBILIDAD  6 / 6
+REGRESIÓN      648 passed · 49 skipped
+PERMISO NUEVO  ninguno · REUSE de `sap:read` y `sap:send_sap`
+```
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+P-08                                 BLOCKED_EXTERNAL   sin cambios
+```

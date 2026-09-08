@@ -141,3 +141,32 @@ no se resuelve aquí inventando una regla: hoy no hay por dónde cambiarlo, de m
 comportamiento es el conservador —crear de nuevo— sin necesidad de legislarlo.
 
 Cuando la fase 7 traiga administración, habrá que contestarla antes de abrir esa puerta.
+
+---
+
+## 9. Flujo 5 · el contrato SAP (2026-09-07 · `OD-12`)
+
+`BU-D04` resuelta: **excepción declarada**. La consolidación agrupa las cuatro cadenas por
+definición, y ahora eso es una decisión escrita en lugar de una ausencia de filtro.
+
+| Campo de `consolidated_movements` | Analista SAP | Cat. | Por qué |
+|---|:--:|:--:|---|
+| `id` · `lot_id` · `event_type` | ve | **B** | identifica el registro a consolidar y su origen |
+| `period_start` · `period_end` | ve | **B** | el periodo del documento |
+| `event_ids` | ve | **B** | qué agrupa; necesario para conciliar |
+| `total_quantity` · `unit` | ve | **B** | el valor que va al documento |
+| `sap_reference` · `sap_payload_id` | ve | **B** | la referencia del sistema externo |
+| `consolidated_by_id` · `created_at` | ve | **B** | quién y cuándo, para auditar |
+| **el lote completo** | **NO** | **C** | granja, galpón, genética, área, mortalidad, notas |
+| **indicadores del lote** | **NO** | **D** | la fase 4 sigue acotándolos para este mismo actor |
+
+```
+PROYECCIÓN DECLARADA   `ConsolidatedMovementRead`, ahora APLICADA (`R-112`)
+AUTORIZA               `sap:read` · `sap:send_sap`   —  no el nombre del rol
+ALCANCE                misma empresa, siempre
+NO CONCEDE             ninguna unidad · ninguna habilitación
+FUERA DEL CONTRATO     alcance normal por cadena, sin excepción
+```
+
+**El identificador del lote es `B` para trazar y no es una llave**: pedirlo por la superficie
+normal sigue dando `404`.

@@ -171,3 +171,159 @@ NO INICIADA
 
 Es la que desbloquea los flujos 4 y 6, los eventos operativos, las inspecciones y los lotes sin
 cadena declarada — todo lo que hoy queda fuera por no poder atribuirse.
+
+---
+
+# ADDENDUM · `BU-D04` Y EL CIERRE DE LA FASE 5 (2026-09-07)
+
+La evidencia original de la fase 5 se conserva íntegra. Esto es el estado actual.
+
+## A.1 La historia del recuento
+
+```
+fase 5 original      4 / 7 implementados · 2 aplazados · 1 excepción pendiente
+tras la fase 6       6 / 7 implementados · 0 aplazados · 1 excepción pendiente
+tras `OD-12`         7 / 7 implementados · 0 aplazados · 0 excepciones sin resolver
+```
+
+## A.2 `BU-D04` · el flujo 5
+
+```
+DECISIÓN   OD-12 · capacidad operativa transversal EXPLÍCITA, acotada al contrato SAP
+PERMISO    `sap:read` · `sap:send_sap`   —  REUSE, no se creó ninguno
+```
+
+### A.2.1 Lo primero: no hizo falta cambiar comportamiento
+
+Las quince pruebas del contrato **pasaron sin tocar una línea**. No hubo rojo que provocar
+porque no había defecto de comportamiento:
+
+```
+el permiso ya era explícito      en las diez rutas del módulo
+la empresa ya se filtraba        incluidos los accesos por identificador
+las superficies normales         ya seguían acotadas por cadena para el mismo actor
+```
+
+El hueco era otro y era de gobernanza: **la transversalidad existía por ausencia de filtro**. Y
+una excepción que solo existe porque nadie puso el filtro es indistinguible de un fallo.
+
+### A.2.2 Lo que se añadió, y lo que se decidió no añadir
+
+**Se añadió** una declaración con dientes: `sap_contract.py` no filtra nada —ésa es su función—
+y dice cuáles son las superficies transversales y qué las autoriza. Una prueba comprueba que la
+lista declarada **coincide con las rutas reales**, de modo que una ruta SAP nueva no hereda la
+excepción en silencio.
+
+Y una prueba de que **no existe** ninguna función genérica de salto de alcance, porque una
+excepción reutilizable acaba usándose donde nadie la previó.
+
+**No se añadió** una comprobación redundante de las cinco condiciones de `OD-12.b`. Cada una vive
+donde le corresponde —permiso en la ruta, empresa en el servicio, elegibilidad en las reglas de
+negocio— y duplicarlas habría creado una copia que se desincronizaría con la real.
+
+### A.2.3 El sujeto tiene **una sola** cadena concedida
+
+A propósito. Probar `BU-D04` con un analista al que se le conceden las cuatro habría demostrado
+que quien tiene todo ve todo, no que exista una excepción de contrato.
+
+```
+ANALISTA   `breeder` concedida · `sap:read` · `sap:send_sap`
+           → alcanza el consolidado de las CUATRO cadenas por el contrato
+           → y el detalle normal de un lote de incubadora le da 404
+```
+
+## A.3 Trazabilidad
+
+| `AC` | Prueba | Estado |
+|---|---|:--:|
+| `AC-SAP01` capacidad explícita | `test_ac_sap01_sin_capacidad_sap_no_se_opera_el_contrato` | **PASS** |
+| `AC-SAP02` misma empresa | `test_ac_sap02_el_contrato_no_cruza_la_empresa` · `..._el_analista_ajeno_no_ve_lo_nuestro` | **PASS** |
+| `AC-SAP03` las cuatro cadenas | `test_ac_sap03_el_analista_alcanza_las_cuatro_cadenas` | **PASS** |
+| `AC-SAP04` sin las cuatro concesiones | `test_ac_sap04_no_hacen_falta_las_cuatro_concesiones` | **PASS** |
+| `AC-SAP05` `AC-SAP06` no concede ni habilita | `test_ac_sap05_operar_el_contrato_no_concede_ni_habilita` | **PASS** |
+| `AC-SAP07` fuera del contrato, alcance normal | `test_ac_sap07_la_capacidad_sap_no_abre_las_superficies_normales` · `..._no_amplia_los_indicadores` · `test_el_identificador_obtenido_por_sap_no_es_una_llave` | **PASS** |
+| `AC-SAP08` `AC-SAP09` proyección | `test_ac_sap09_la_proyeccion_no_lleva_el_objeto_ajeno` | **PASS** |
+| `AC-SAP11` sin efectos al denegar | `test_ac_sap11_una_operacion_denegada_no_produce_efectos` | **PASS** |
+| `AC-SAP12` sin atajo por nombre | `test_ac_sap12_el_nombre_del_rol_no_abre_el_contrato` | **PASS** |
+| declaración con dientes | `test_la_excepcion_sap_esta_declarada_y_no_puede_crecer_en_silencio` · `..._configuracion_sap_quedan_fuera` · `test_no_existe_una_funcion_generica_de_salto_de_alcance` | **PASS** |
+
+```
+PRUEBAS DEL FLUJO 5     15 / 15
+```
+
+**`AC-SAP10` (elegibilidad de negocio) no tiene prueba propia** en esta tanda: no se tocó ninguna
+regla de elegibilidad y las suites de `P-08` la cubren funcionalmente. Se declara como cobertura
+heredada, no como comprobada aquí.
+
+## A.4 Sensibilidad
+
+| # | Mutación | Resultado | Detectado por |
+|:--:|---|:--:|---|
+| 1 | quitar la capacidad SAP explícita | **RED** | **la guarda de arranque** (`GA-REM-002 AC08`) |
+| 2 | conceder las cuatro cadenas a quien tiene SAP | **RED** | 2 pruebas |
+| 3 | autorizar por el nombre del rol | **RED** | **la guarda de arranque** |
+| 4 | quitar el filtro de empresa | **RED** | 2 pruebas |
+| 5 | la capacidad SAP abre las superficies normales | **RED** | 2 pruebas |
+| 6 | serializar el objeto ajeno entero | **RED** *(tras corregir `R-112`)* | 1 prueba |
+
+**Las mutaciones 1 y 3 no dieron un rojo de prueba sino un fallo de arranque.** La guarda de
+`GA-REM-002 AC08` aborta la aplicación si una ruta no declara permiso, así que sustituirlo por
+`get_current_user` o por una comprobación de nombre de rol **impide arrancar**. Es una detección
+más fuerte que un test —el sistema no llega a servir—, y se registra nombrando el mecanismo en
+lugar de presentarlo como si lo hubieran cazado las pruebas nuevas.
+
+### A.4.1 La mutación 6 encontró un defecto real · `R-112`
+
+Añadir un campo al esquema **no rompió nada**, porque `/sap/consolidated` **no declaraba
+`response_model`**: devolvía objetos `ORM` crudos. La proyección que la fase 5 había dado por
+buena existía en el fichero y no se estaba aplicando.
+
+Hoy no filtraba nada —`ConsolidatedMovement` no tiene relaciones y sus columnas coinciden con el
+esquema—, pero eso era **coincidencia, no contrato**: una relación o una columna nueva habrían
+empezado a viajar sin que nadie lo decidiera, en la superficie donde el actor alcanza las cuatro
+cadenas.
+
+Corregido en `/consolidated`. Las otras ocho rutas SAP quedan registradas en `R-112`: cambiar
+ocho formas de respuesta sin pruebas que las sujeten no corresponde a esta tanda.
+
+## A.5 Estado de los siete flujos
+
+| # | Flujo | Estado | Cómo |
+|:--:|---|:--:|---|
+| 1 | Progenitoras → Reproductora | **IMPLEMENTADO** | fase 5 |
+| 2 | Reproductora → Incubadora | **IMPLEMENTADO** | fase 5 · destino obligatorio |
+| 3 | Incubadora → Engorde | **IMPLEMENTADO** | fase 5 |
+| 4 | Transferencia entre granjas | **IMPLEMENTADO** | fase 6 · por construcción |
+| 5 | Consolidación a SAP | **IMPLEMENTADO** | `OD-12` · excepción declarada |
+| 6 | Revisión y aprobación | **IMPLEMENTADO** | fase 6 |
+| 7 | Trazabilidad generacional | **IMPLEMENTADO** | fase 5 |
+
+```
+CLASIFICADOS   7 / 7
+IMPLEMENTADOS  7 / 7
+APLAZADOS      0
+EXCEPCIONES SIN RESOLVER  0
+```
+
+```
+FASE 5   COMPLETE
+```
+
+## A.6 `P-08` no cambia
+
+```
+P-08   BLOCKED_EXTERNAL   sin cambios
+```
+
+`OD-12` gobierna **quién** puede operar el contrato y sobre qué filas. No prueba que SAP real
+acepte nada, y nada de esto certifica la integración externa.
+
+## A.7 Certificación
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+```
+
+Que la fase 5 esté completa **no certifica ningún proceso**: faltan la administración —fase 7—,
+la sesión —fase 8—, la interfaz —fase 9— y los avisos y tareas —fase 10—.

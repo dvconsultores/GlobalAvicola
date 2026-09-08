@@ -73,7 +73,16 @@ async def list_consolidated(
     items, total = await SapService(db, current_user).list_consolidated(
         lot_id=lot_id, limit=limit, offset=offset
     )
-    return {"consolidated": items, "total": total}
+    # `GA-REM-040 AC-SAP08` / `OD-12`. La respuesta del contrato es una **proyección
+    # declarada**, no la entidad. Devolvía objetos `ORM` crudos: hoy sus columnas coinciden
+    # con el esquema y no se filtra nada, pero eso era una coincidencia — una relación o una
+    # columna nueva habría empezado a viajar sin que nadie lo decidiera.
+    #
+    # Es una superficie transversal: el actor alcanza filas de las cuatro cadenas. Precisamente
+    # ahí la proyección no puede depender de qué tenga el modelo hoy.
+    return {"consolidated": [schemas.ConsolidatedMovementRead.model_validate(i)
+                             for i in items],
+            "total": total}
 
 
 # ============================================================

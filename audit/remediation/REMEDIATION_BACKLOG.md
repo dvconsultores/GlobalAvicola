@@ -546,3 +546,44 @@ equivocada no demuestra nada**, y comprobarlo antes de usarlo como evidencia es 
 Su **control** empezó a fallar en la fase 3 —el sujeto no podía cerrar ni su propio lote— porque
 carecía de unidades concedidas. Es `OD-09.c` funcionando, no una regresión: se le configuró la
 empresa, que es lo que hará un cliente real en su alta. **La prueba no se debilitó.**
+
+## `R-112` · ocho superficies SAP sin proyección declarada (2026-09-07)
+
+```
+CLASE        CONTRATO DE RESPUESTA NO DECLARADO
+SEVERIDAD    P2
+DESCUBIERTO  mutación de sensibilidad de `OD-12` · flujo 5
+ESTADO       1 de 9 corregida · 8 registradas
+```
+
+### Qué pasa
+
+Nueve de las diez rutas de `/api/v1/sap/` no declaran `response_model`: devuelven objetos `ORM`
+crudos que `FastAPI` serializa con lo que el modelo tenga en ese momento.
+
+```
+✓ corregida    /consolidated   — es la superficie del contrato transversal (`AC-SAP08`)
+✗ pendientes   /references · /references/import · /consolidate · /retry
+               /sync/jobs · /payloads · /errors · /connection-check
+```
+
+### Por qué no filtra **hoy**, y por qué importa igual
+
+`ConsolidatedMovement` no tiene relaciones, y sus columnas coinciden con el esquema. Es decir: la
+respuesta era correcta **por coincidencia**, no por contrato. Una relación nueva, o una columna
+añadida al modelo, habrían empezado a viajar sin que nadie lo decidiera — y en una superficie
+transversal, donde el actor alcanza filas de las cuatro cadenas, eso es exactamente lo que no
+puede pasar.
+
+Lo detectó una mutación: añadir un campo al esquema **no rompió nada**, porque el esquema no se
+estaba aplicando.
+
+### Por qué las otras ocho no se corrigen aquí
+
+Cambiar ocho formas de respuesta sin pruebas que las sujeten es un riesgo que no corresponde a
+esta tanda: el frontend las consume y la fase 9 es la que lo gobierna. Se corrigió la del
+contrato porque `AC-SAP08` la exige y porque su equivalencia de campos es verificable.
+
+```
+DESTINO   fase 7 o tanda propia, con cobertura de contrato de respuesta
+```

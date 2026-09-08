@@ -131,3 +131,16 @@ IMPLEMENTADOS 6 · EXCEPCIÓN DECLARADA 1 (flujo 5 · BU-D04 PENDIENTE)
 
 La fase 5 **no pasa a `COMPLETE`**: el séptimo depende de una decisión del propietario que no es
 técnica.
+
+### Cierre (2026-09-07 · `OD-12`)
+
+| # | Flujo | Contrato |
+|:--:|---|:--:|
+| 5 | Consolidación a SAP | **IMPLEMENTADO** · excepción declarada por `OD-12`, ya no «pendiente de `BU-D04`» |
+
+```
+CLASIFICADOS 7/7 · IMPLEMENTADOS 7/7 · APLAZADOS 0 · EXCEPCIONES SIN RESOLVER 0
+FASE 5 = COMPLETE
+```
+
+`P-08` sigue `BLOCKED_EXTERNAL`: esto gobierna quién opera el contrato, no que SAP real acepte.
