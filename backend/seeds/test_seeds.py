@@ -352,6 +352,17 @@ async def seed_test_data() -> dict[str, int]:
         created["user_approver_id"] = usuarios.get(TEST_APPROVER_USERNAME)
         created["user_other_company_id"] = usuarios.get(TEST_OTHER_COMPANY_USERNAME)
 
+        # El catálogo de unidades de negocio es dato de referencia del producto: sin él,
+        # ninguna base es utilizable para nada que toque `GA-REM-040`. Se reutiliza la misma
+        # función que el baseline en lugar de copiarla, para que las dos no discrepen.
+        #
+        # **Solo el catálogo.** Ni habilitaciones de empresa ni concesiones de usuario: las
+        # pruebas que las necesitan las crean explícitamente, que es también lo que tendrá
+        # que hacer un cliente real.
+        from seeds.baseline_seeds import sembrar_unidades_de_negocio
+
+        created["business_units"] = await sembrar_unidades_de_negocio(session)
+
         await session.commit()
 
     return created

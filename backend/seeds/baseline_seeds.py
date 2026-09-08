@@ -31,6 +31,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 # Todos los módulos de modelos deben importarse antes de usar el ORM: SQLAlchemy
 # configura los mappers de golpe y las relaciones cruzadas fallan si falta alguno.
 import app.audit.models  # noqa: F401
+import app.business_units.models  # noqa: F401
 import app.corrections.models  # noqa: F401
 import app.integrations.sap.models  # noqa: F401
 import app.lots.models  # noqa: F401
@@ -251,11 +252,50 @@ async def sembrar_admin(session: AsyncSession, roles: dict[str, Role]) -> None:
     print(f"  ✅ Usuario administrador: {ADMIN['username']}")
 
 
+#: Las cuatro cadenas productivas del producto (`GA-REM-040 §2`). Es catálogo de plataforma:
+#: ninguna empresa las crea ni las renombra. El nombre visible es una **clave de traducción**,
+#: no una traducción — el producto habla dos lenguas y la base no debe elegir una.
+#:
+#: `bird_type` registra la correspondencia con el enum de dominio. La autoridad de acceso son
+#: las tres tablas, nunca el enum.
+UNIDADES_DE_NEGOCIO = (
+    ("grandparent", "businessUnits.grandparent", "grandparent"),
+    ("breeder", "businessUnits.breeder", "breeder"),
+    ("hatchery", "businessUnits.hatchery", "hatchery"),
+    ("broiler", "businessUnits.broiler", "broiler"),
+)
+
+
+async def sembrar_unidades_de_negocio(session: AsyncSession) -> int:
+    """Siembra el catálogo de unidades. Idempotente: repetirla no duplica nada.
+
+    **Solo el catálogo.** Ni habilitaciones de empresa ni concesiones de usuario: `GA-REM-040`
+    exige que ambas sean explícitas. Encender las cuatro para toda empresa «para que no
+    moleste» dejaría la capacidad apagada de hecho el día que se estrene, y conceder todo a
+    los usuarios existentes haría lo mismo desde el otro lado.
+    """
+    from app.business_units.models import BusinessUnit
+
+    creadas = 0
+    for code, name_key, bird_type in UNIDADES_DE_NEGOCIO:
+        existe = (
+            await session.execute(select(BusinessUnit).where(BusinessUnit.code == code))
+        ).scalar_one_or_none()
+        if existe is None:
+            session.add(BusinessUnit(code=code, name_key=name_key, bird_type=bird_type))
+            creadas += 1
+    await session.flush()
+    if creadas:
+        print(f"  ✅ {creadas} unidades de negocio (catálogo de producto)")
+    return creadas
+
+
 async def sembrar_baseline(session: AsyncSession) -> dict[str, int]:
     """Siembra el baseline completo. Idempotente: repetirla no duplica nada."""
     print("── Baseline mínimo (GA-REM-025) ──")
     roles = await sembrar_roles(session)
     await sembrar_fases(session)
+    await sembrar_unidades_de_negocio(session)
     empresas = await sembrar_empresas(session)
     await sembrar_lineas_geneticas(session, empresas)
     await sembrar_admin(session, roles)

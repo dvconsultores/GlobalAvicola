@@ -94,6 +94,21 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
         Categoria.CONFIGURATION_REQUIRED,
         "Estructura organizativa de la empresa. `users.area_id` depende de ella.",
     ),
+    "business_units": (
+        Categoria.REFERENCE_MASTER_REQUIRED,
+        "Catálogo de las cuatro cadenas productivas. Sin `company_id`: es del producto, no "
+        "del cliente. Borrarlo dejaría sin destino las habilitaciones y las concesiones.",
+    ),
+    "company_business_units": (
+        Categoria.CONFIGURATION_REQUIRED,
+        "Qué unidades tiene habilitadas cada empresa. Configuración comercial, no historia "
+        "de negocio: borrarla apagaría en silencio el acceso de todos sus usuarios.",
+    ),
+    "user_business_units": (
+        Categoria.CONFIGURATION_REQUIRED,
+        "Qué unidades se le han concedido a cada usuario. Borrarla no destruye dato "
+        "productivo, pero revoca el acceso de todo el mundo sin dejar constancia.",
+    ),
     # ── Maestros que crea el cliente ─────────────────────────────────────────
     **{
         tabla: (
