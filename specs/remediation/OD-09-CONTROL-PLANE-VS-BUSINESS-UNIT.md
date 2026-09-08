@@ -10,7 +10,7 @@
 | Estado | **VIGENTE** |
 | Alcance | Acceso por unidad de negocio: `GA-REM-040` y sus derivados |
 | Antecedente | `audit/remediation/BU_DECISION_BRIEF_D11_D12_D09.md` |
-| Resuelve | `BU-D11 = C` · `BU-D12 = B` · `BU-D09 = B` |
+| Resuelve | `BU-D11 = C` · `BU-D12 = B` · `BU-D09 = B` · **enmienda A**: alcance de la concesión |
 | Preserva | `OD-08` · `P-14` `CERTIFIED` |
 
 ---
@@ -225,6 +225,99 @@ se escriba la spec.
 
 La diferencia con denegar el acceso no es cuánto se ve —en lo productivo, nada en ambos casos—
 sino si el usuario **puede entender por qué no ve nada**.
+
+---
+
+## 5 bis. `OD-09.d` — La concesión pertenece a una empresa · **enmienda A** (2026-09-07)
+
+```
+UNA CONCESIÓN DE UNIDAD DE NEGOCIO PERTENECE A
+    USUARIO  +  EMPRESA  +  UNIDAD
+```
+
+Significa:
+
+> «La empresa A concedió al usuario U acceso a la unidad X **dentro de la empresa A**.»
+
+Y **no**:
+
+> ~~«El usuario U tiene acceso a la unidad X.»~~
+
+### 5 bis.1 Por qué se añade, y por qué aquí
+
+No es una decisión nueva: es lo que `OD-09.b` ya implicaba. Si administrar el acceso es un acto
+del **plano de control de una empresa**, entonces lo concedido pertenece a esa empresa. Lo que
+faltaba era decirlo, y esa omisión tenía consecuencia observable.
+
+La fase 1 de `GA-REM-040` construyó la concesión apuntando al **catálogo** de unidades, no al
+contexto de la empresa. La consecuencia se comprobó ejecutando:
+
+```
+empresa A con `breeder` habilitada · usuario U en A · concesión de `breeder`   → efectiva
+se mueve U de la empresa A a la empresa B, que también tiene `breeder`
+sin que nadie le conceda nada en B                                             → ['breeder']
+```
+
+La concesión **viajó con el usuario**. No por un fallo del resolutor —comprueba la empresa
+actual— sino porque la fila no dice de qué empresa venía, y `breeder` en A y `breeder` en B eran
+indistinguibles para él.
+
+### 5 bis.2 La regla al cambiar de empresa
+
+```
+MOVER USUARIO   empresa A → empresa B
+
+    concesiones de A     quedan como HISTORIA · dejan de ser efectivas
+    concesiones en B     NINGUNA, por defecto
+```
+
+**No se copian automáticamente.** Que la unidad exista en la empresa de destino no es un motivo
+para concederla: es la misma cadena productiva, pero es otra empresa, con otros lotes, otras
+granjas y otra gente.
+
+### 5 bis.3 El mismo código de unidad en dos empresas son dos contextos distintos
+
+```
+empresa A / breeder   y   empresa B / breeder
+```
+
+son **dos contextos de autorización separados**. Una concesión en uno **nunca** satisface el
+otro. Es la consecuencia directa de `§3.2`: nada de esto cruza la empresa.
+
+### 5 bis.4 Historia no es acceso
+
+```
+PROHIBIDO   existe la fila de concesión  →  acceso permitido
+
+REGLA       la concesión existe y está viva
+       AND  la unidad está habilitada para la empresa
+       AND  el usuario pertenece HOY a esa empresa
+            → entonces, y solo entonces, puede ser efectiva
+```
+
+### 5 bis.5 No se borra historia
+
+```
+PROHIBIDO   cambiar de empresa  →  BORRAR las concesiones anteriores
+```
+
+Quedan registradas e inefectivas. Borrarlas haría imposible reconstruir quién tuvo acceso a qué
+y cuándo, que es justo lo que un control de acceso tiene que poder responder.
+
+### 5 bis.6 Lo que esta enmienda NO decide
+
+**Si el usuario vuelve a la empresa A, ¿revive su concesión anterior?** Ninguna fuente lo dice, y
+no se inventa.
+
+```
+SPEC DECISION REQUIRED     antes de implementar ese comportamiento
+```
+
+Es distinto de `BU-D10` —que trata de qué pasa cuando la **empresa** apaga una unidad— y no se
+resuelve arrastrando aquella. `BU-D10` sigue `PENDIENTE DE RATIFICACIÓN`.
+
+Hasta que se decida, el comportamiento es el conservador: volver a la empresa A **no** reactiva
+nada por sí solo; hace falta una concesión explícita.
 
 ---
 

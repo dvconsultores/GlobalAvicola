@@ -3,9 +3,9 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-040` · `CROSS-CUTTING CAPABILITY SPEC` |
-| **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 de 11 construida** (2026-09-07) |
+| **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 construida, enmienda A** (2026-09-07) |
 | **Requisito** | habilitación de unidades por empresa y acotamiento por usuario |
-| **Decisiones** | `OD-09` (`a` `b` `c`) · `OD-10` (`a` `b` `c`) · marco `ENV-01` |
+| **Decisiones** | `OD-09` (`a` `b` `c` · **`d`** enm. A) · `OD-10` (`a` `b` `c`) · marco `ENV-01` |
 | **Antecedente** | `audit/remediation/MODULE_ACCESS_ARCHITECTURE_AUDIT.md` y sus 21 matrices |
 | **Procesos** | los quince, en una **dimensión nueva**; ninguno se reabre |
 | **Dependencias** | `GA-REM-002` `GA-REM-034` (`RBAC`) · `GA-REM-039` (`Area`, que **no** es esto) |
@@ -164,7 +164,8 @@ reutilización (`T-040-01`) antes de crear una sola tabla.
 ```
 CATÁLOGO DE UNIDADES        código estable · identidad presentable e `i18n` · activa/de sistema
 HABILITACIÓN POR EMPRESA    ¿está la unidad habilitada para esta empresa?
-CONCESIÓN POR USUARIO       ¿tiene este usuario concesión operativa sobre ella?
+CONCESIÓN POR USUARIO       ¿le concedió ESTA EMPRESA a este usuario esa unidad?
+                            usuario + empresa + unidad — nunca solo usuario + unidad
 ACCESO EFECTIVO             la intersección, resuelta en un solo sitio
 ```
 
@@ -613,6 +614,24 @@ convertir el enum en control de acceso**.
 **`AC-B05`** · Conceder y revocar surten efecto **inmediato**, sin esperar a que caduque un token.
 **`AC-B06`** · La concesión de unidad **no sustituye** al `RBAC`: hacen falta las dos.
 
+**`AC-B07`** · **`OD-09.d` · enmienda A.** Una concesión pertenece a **usuario + empresa +
+unidad**. La base puede decir, sin ambigüedad y sin mirar la empresa actual del usuario, **bajo
+qué empresa se otorgó**.
+
+**`AC-B08`** · Mover un usuario de empresa **no transfiere** sus concesiones. Las anteriores
+quedan como historia y dejan de ser efectivas; en la nueva empresa no tiene ninguna hasta que
+se le conceda explícitamente.
+
+**`AC-B09`** · El mismo código de unidad en dos empresas son **dos contextos de autorización
+distintos**. Una concesión otorgada por la empresa A **nunca** satisface a la empresa B, por
+mucho que ambas tengan esa unidad habilitada.
+
+**`AC-B10`** · Crear una concesión que cruce empresas —usuario de A sobre la habilitación de
+B— se **rechaza** en el límite de servicio, y no queda escrita.
+
+**`AC-B11`** · Cambiar de empresa **no borra** las concesiones anteriores: quedan registradas e
+inefectivas.
+
 ### Grupo `C` · seguridad de backend
 
 **`AC-C01`** · Existe un resolutor central de acceso efectivo; no se repite la comprobación en
@@ -798,6 +817,7 @@ DECISIÓN DEL PROPIETARIO  →  AC  →  TAREA  →  PRUEBA FUTURA  →  EVIDENC
 | `T-040-28` | Pruebas de seguridad `E2E` de los cinco casos |
 | `T-040-29` | `E2E` de los siete contratos de traspaso |
 | `T-040-30` | Mutaciones de sensibilidad y `PROCESS_BUSINESS_UNIT_ACCESS_MATRIX.md` |
+| `T-040-31` | **Enmienda A** · acotar la concesión a la empresa que la otorgó · fase 1.1 |
 
 ## 22. Hoja de ruta
 
@@ -872,3 +892,93 @@ aparte —`audit/remediation/PROCESS_BUSINESS_UNIT_ACCESS_MATRIX.md`— y sus qu
 - Regresión completa sin fallos nuevos: **la certificación funcional sigue en 14/15**.
 - `PROCESS_BUSINESS_UNIT_ACCESS_MATRIX.md` completa, sin ningún `PASS` sobre capacidad
   inexistente.
+
+---
+
+# Enmienda A · la concesión se acota a la empresa que la otorgó (2026-09-07)
+
+## A.1 El defecto
+
+La fase 1 construyó la concesión apuntando al **catálogo** de unidades:
+
+```
+user_business_units  →  business_units
+```
+
+y el resolutor comprobaba la empresa **actual** del usuario. Parece suficiente, y no lo es: la
+fila no dice de qué empresa venía, de modo que `breeder` de la empresa A y `breeder` de la
+empresa B eran indistinguibles para ella.
+
+Comprobado ejecutando, no razonando:
+
+```
+A y B tienen `breeder` habilitada · U está en A con concesión de `breeder`   → ['breeder']
+se mueve U a B, sin que nadie le conceda nada allí                            → ['breeder']
+                                                                                 ^^^^^^^^^^
+                                                                                 debía ser []
+```
+
+**La concesión viajó con el usuario.** Y el resolutor no tenía forma de impedirlo: hacía todas
+las comprobaciones que sabía hacer, sobre un dato que no contenía la respuesta.
+
+## A.2 Por qué el modelo anterior parecía correcto
+
+Se eligió apuntar al catálogo por una razón que sigue siendo buena: apuntar a la habilitación de
+una empresa permitía escribir «usuario de A sobre habilitación de B», y apuntando al catálogo esa
+fila no se podía ni expresar.
+
+El error fue tratar **una** combinación inválida como si fueran todas. Al quitar la empresa de la
+fila desapareció la combinación imposible, y con ella la información que distingue un contexto de
+otro. La respuesta correcta no es quitar la empresa: es **ponerla y validarla**.
+
+## A.3 El modelo corregido
+
+```
+user_business_units  →  company_business_units  →  companies
+                                                └→ business_units
+```
+
+La concesión apunta a la **habilitación de una empresa concreta**, de modo que la fila responde
+por sí sola a «¿bajo qué empresa se otorgó esto?».
+
+Y como la combinación entre empresas vuelve a ser representable, se cierra por los dos lados:
+
+```
+EN LA ESCRITURA   el límite de servicio rechaza conceder a un usuario una habilitación
+                  de otra empresa                                            (`AC-B10`)
+
+EN LA LECTURA     el resolutor exige que la empresa de la habilitación sea la empresa
+                  ACTUAL del usuario                                          (`AC-B08`)
+```
+
+Las dos hacen falta. La primera sola dejaría efectiva una concesión legítima de ayer cuando el
+usuario se mueve hoy; la segunda sola permitiría escribir basura que nunca sirve.
+
+## A.4 Lo que no cambia
+
+- **`BU-D10` sigue `PENDIENTE DE RATIFICACIÓN`.** Qué pasa cuando la **empresa** apaga una unidad
+  es otra pregunta, y esta enmienda no la toca ni la prejuzga.
+- **No se borra historia.** Las concesiones anteriores se conservan; lo que pierden es la
+  efectividad.
+- **Ningún comportamiento destructivo nuevo.** Ni cascadas, ni borrados al mover de empresa.
+
+## A.5 Lo que queda declarado y sin decidir
+
+**Si el usuario vuelve a la empresa A, ¿revive su concesión anterior?**
+
+```
+SPEC DECISION REQUIRED
+```
+
+Ninguna fuente lo dice. Hasta que se decida rige lo conservador: volver no reactiva nada, hace
+falta conceder de nuevo. Se registra aquí para que no se resuelva por accidente al implementar.
+
+## A.6 Una observación para la fase 2
+
+`POST /auth/switch-company` emite un token con la empresa **desplazada** en la reclamación, sin
+tocar `users.company_id`, y es exclusivo del super administrador —que se siembra sin empresa y
+por tanto no resuelve ninguna unidad—. Hoy no hay riesgo.
+
+Pero la fase 2 tendrá que decidir de dónde toma la guarda la empresa efectiva de una petición:
+de `users.company_id` o de la reclamación del token. Si son dos fuentes, hay que decir cuál
+manda. Queda anotado, no resuelto.
