@@ -180,3 +180,130 @@ async def clasificar(db: AsyncSession, *, evento, company_business_unit, actor: 
         previous_state=anterior, new_state=str(codigo),
     )
     return evento
+
+
+#: Quién puede **corregir** una atribución ya hecha. Distinto del permiso de la primera
+#: clasificación a propósito: sacar un registro de «pendiente» y cambiar una atribución que ya
+#: estaba puesta no son el mismo acto ni el mismo riesgo. `corrections:correct` es el permiso
+#: que el catálogo ya reserva para enmendar un registro, y esto es exactamente eso.
+PERMISO_DE_RECLASIFICACION = ("corrections", "correct")
+
+
+class ReclasificacionBloqueada(RuntimeError):
+    """El registro ya produjo efectos y no se reclasifica en el sitio."""
+
+
+async def efectos_productivos(db: AsyncSession, evento) -> list[str]:
+    """Qué hechos ya ocurrieron por cuenta de este registro. `OD-10.d §4bis.3`.
+
+    Cambiar la cadena de algo que ya se aprobó, ya cruzó una frontera o ya se envió a un
+    sistema externo **reinterpreta hechos pasados**: los agregados de ayer pasarían a contar
+    otra cosa, y la trazabilidad diría que ocurrió algo que no ocurrió así.
+
+    Devuelve la lista de efectos encontrados, vacía si no hay ninguno. Se devuelve la lista y
+    no un booleano para que la negativa pueda decir **por qué**: «no se puede» sin motivo
+    obliga a adivinar qué hay que revertir.
+    """
+    from sqlalchemy import func
+
+    from ..lots.models import ChickBatch, EggBatch
+    from ..operations.models import EventStatus, OperationalEvent
+    from ..review.models import ApprovalAction
+
+    encontrados: list[str] = []
+
+    consolidados = {EventStatus.APPROVED, EventStatus.CONSOLIDATED,
+                    EventStatus.SENT_TO_SAP, EventStatus.SAP_CONFIRMED,
+                    EventStatus.SAP_ERROR}
+    if evento.status in consolidados:
+        encontrados.append(f"el registro está en estado {evento.status.value!r}")
+
+    for modelo, etiqueta in ((EggBatch, "un traspaso de huevo"),
+                             (ChickBatch, "un traspaso de pollito")):
+        cuantos = (await db.execute(
+            select(func.count(modelo.id)).where(
+                or_(modelo.dispatch_event_id == evento.id,
+                    modelo.reception_event_id == evento.id))
+        )).scalar_one()
+        if cuantos:
+            encontrados.append(f"participa en {etiqueta}")
+
+    aprobaciones = (await db.execute(
+        select(func.count(ApprovalAction.id))
+        .where(ApprovalAction.event_id == evento.id)
+    )).scalar_one()
+    if aprobaciones:
+        encontrados.append("tiene acciones de aprobación registradas")
+
+    return encontrados
+
+
+async def reclasificar(db: AsyncSession, *, evento, company_business_unit, motivo: str,
+                       actor: dict):
+    """Corrige una atribución ya hecha. `OD-10.d` · `AC-G10`…`AC-G14`.
+
+    Es **alto control**, no una edición: exige permiso propio, motivo y que el registro no
+    haya producido efectos aguas abajo. Ante la duda se deniega — si no se puede demostrar
+    que no los tiene, tampoco se reclasifica.
+
+    Y lo que **no** hace, que es tan importante como lo que hace:
+
+        NO concede la cadena nueva a nadie
+        NO habilita la unidad a la empresa
+        NO devuelve el registro a «pendiente» ni restaura la excepción de quien lo registró
+        NO reasigna a los hijos en cascada — eso reinterpretaría operaciones históricas
+                                             sin que nadie las hubiera revisado
+
+    La historia anterior no se borra: vive en `P-09`, que es donde vive el resto.
+    """
+    if company_business_unit is None:
+        raise ClasificacionInvalida("la habilitación no existe")
+    if company_business_unit.company_id != evento.company_id:
+        raise ClasificacionInvalida(
+            "la habilitación pertenece a otra empresa que el registro")
+    if not company_business_unit.is_enabled:
+        raise ClasificacionInvalida("la unidad no está habilitada para la empresa")
+    if evento.business_unit_id is None:
+        raise ClasificacionInvalida(
+            "el registro no está clasificado: use la primera clasificación")
+
+    efectos = await efectos_productivos(db, evento)
+    if efectos:
+        raise ReclasificacionBloqueada(
+            "no se reclasifica en el sitio un registro con efectos ya producidos: "
+            + "; ".join(efectos)
+            + ". Revierta primero por los procesos que los gobiernan."
+        )
+
+    from datetime import datetime, timezone
+
+    from .models import BusinessUnit, CompanyBusinessUnit
+
+    async def _codigo(cbu_id):
+        return (await db.execute(
+            select(BusinessUnit.code)
+            .join(CompanyBusinessUnit,
+                  CompanyBusinessUnit.business_unit_id == BusinessUnit.id)
+            .where(CompanyBusinessUnit.id == cbu_id)
+        )).scalar_one_or_none()
+
+    anterior = await _codigo(evento.business_unit_id)
+    nuevo = await _codigo(company_business_unit.id)
+
+    evento.business_unit_id = company_business_unit.id
+    evento.classified_at = datetime.now(timezone.utc)
+    evento.classified_by_id = actor.get("id")
+    await db.flush()
+
+    from ..audit.helpers import audit_accion
+    from ..audit.models import AuditAction, AuditModule
+
+    await audit_accion(
+        db, usuario={"id": actor.get("id"), "company_id": evento.company_id},
+        accion=AuditAction.CORRECTED, modulo=AuditModule.OPERATIONS,
+        entity_type="operational_event", entity_id=str(evento.id),
+        company_id=evento.company_id,
+        previous_state=str(anterior), new_state=str(nuevo),
+        change_reason=motivo,
+    )
+    return evento

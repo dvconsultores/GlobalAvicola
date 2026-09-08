@@ -193,6 +193,57 @@ async def classify_event(
     return schemas.OperationalEventRead.model_validate(evento)
 
 
+@router.post("/{event_id}/reclassify",
+             response_model=schemas.OperationalEventRead, tags=["Operations"])
+async def reclassify_event(
+    event_id: int,
+    data: schemas.ReclassificationRequest,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("corrections", "correct")),
+):
+    """Corrige la cadena de un registro **ya clasificado**. `OD-10.d`.
+
+    Permiso distinto del de la primera clasificación a propósito: sacar un registro de
+    «pendiente» y cambiar una atribución que ya estaba puesta no son el mismo acto ni el
+    mismo riesgo.
+
+    Responde `409` cuando el registro ya produjo efectos —aprobado, consolidado, enviado a
+    SAP o participante en un traspaso—, y dice **cuáles**: una negativa sin motivo obliga a
+    adivinar qué hay que revertir.
+    """
+    from fastapi import status as _st
+    from sqlalchemy import select
+
+    from ..business_units.classification import (
+        ClasificacionInvalida, ReclasificacionBloqueada, reclasificar,
+    )
+    from ..business_units.models import CompanyBusinessUnit
+    from .models import OperationalEvent
+
+    evento = (await db.execute(
+        select(OperationalEvent).where(
+            OperationalEvent.id == event_id,
+            OperationalEvent.company_id == current_user.get("company_id"))
+    )).scalar_one_or_none()
+    if evento is None:
+        raise HTTPException(status_code=_st.HTTP_404_NOT_FOUND,
+                            detail="Registro no encontrado")
+
+    habilitacion = (await db.execute(
+        select(CompanyBusinessUnit).where(
+            CompanyBusinessUnit.id == data.company_business_unit_id)
+    )).scalar_one_or_none()
+    try:
+        await reclasificar(db, evento=evento, company_business_unit=habilitacion,
+                           motivo=data.reason, actor=current_user)
+    except ReclasificacionBloqueada as exc:
+        raise HTTPException(status_code=_st.HTTP_409_CONFLICT, detail=str(exc))
+    except ClasificacionInvalida as exc:
+        raise HTTPException(status_code=_st.HTTP_400_BAD_REQUEST, detail=str(exc))
+    await db.refresh(evento)
+    return schemas.OperationalEventRead.model_validate(evento)
+
+
 @router.get("/{event_id}/weight-evaluation",
             response_model=schemas.WeightEvaluationRead)
 async def get_weight_evaluation(

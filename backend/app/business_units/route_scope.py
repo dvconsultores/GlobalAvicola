@@ -120,6 +120,8 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
         Alcance.CONTROL, None, "bandeja de clasificación pendiente (`OD-10.c`)"),
     "/api/v1/operations/{event_id}/classify": (
         Alcance.CONTROL, None, "acto de configuración, no de operación"),
+    "/api/v1/operations/{event_id}/reclassify": (
+        Alcance.CONTROL, None, "corrección de alto control (`OD-10.d`)"),
     "/api/v1/operations/alerts/{alert_id}/resolve": (Alcance.MULTI_UNIDAD, None, "ídem"),
     "/api/v1/corrections": (Alcance.MULTI_UNIDAD, None, "corrige eventos de cualquier cadena"),
     "/api/v1/corrections/event/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),

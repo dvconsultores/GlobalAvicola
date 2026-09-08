@@ -2,7 +2,7 @@
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 # ============================================================
@@ -307,3 +307,24 @@ class ClassificationRequest(BaseModel):
     model_config = {"extra": "forbid"}
 
     company_business_unit_id: int
+
+
+class ReclassificationRequest(BaseModel):
+    """`OD-10.d`. Corregir una atribución exige decir **por qué**.
+
+    Un motivo vacío convierte la trazabilidad en un sello: quedaría constancia de que alguien
+    cambió la cadena y ninguna de la razón, que es justo lo que hará falta el día que se
+    revise.
+    """
+
+    model_config = {"extra": "forbid"}
+
+    company_business_unit_id: int
+    reason: str = Field(..., min_length=1)
+
+    @field_validator("reason")
+    @classmethod
+    def _no_en_blanco(cls, v: str) -> str:
+        if not v.strip():
+            raise ValueError("el motivo no puede estar en blanco")
+        return v.strip()

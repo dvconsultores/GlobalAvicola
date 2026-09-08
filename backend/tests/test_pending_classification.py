@@ -558,3 +558,240 @@ async def test_clasificar_contra_una_unidad_apagada_se_rechaza_y_no_la_enciende(
     finally:
         await motor.dispose()
     assert sigue_apagada, "clasificar encendió una unidad que la empresa había apagado"
+
+
+# ═══ Reclasificación controlada · `OD-10.d` · AC-G09…AC-G14 ══════════════════
+
+async def _clasificar(http_client, pend, habilitacion=None):
+    r = await http_client.post(
+        f"/api/v1/operations/{pend['sin_lote']}/classify",
+        headers=_token(pend["clasif"]),
+        json={"company_business_unit_id": habilitacion or pend["hab_breeder"]})
+    assert r.status_code == 200, r.text
+    return r
+
+
+async def _corrector(test_database_url, company_id, cadena_id, nombre="Corrector",
+                     extra=()):
+    """Un actor con el permiso explícito de corrección y la cadena que se le indique."""
+    from app.auth.models import Permission, PermissionAction, Role, User
+    from app.auth.security import hash_password
+    from app.business_units.models import CompanyBusinessUnit
+    from app.business_units.service import conceder_unidad
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            rol = Role(name=f"{PREFIJO}{nombre}-{uuid.uuid4().hex[:6]}",
+                       company_id=company_id, is_active=True)
+            s.add(rol)
+            await s.flush()
+            permisos = [("operations", PermissionAction.READ),
+                        ("corrections", PermissionAction.CORRECT)]
+            permisos += [(m, PermissionAction(a)) for m, a in extra]
+            for modulo, accion in permisos:
+                s.add(Permission(role_id=rol.id, module=modulo, action=accion,
+                                 scope_type="company"))
+            u = User(first_name=nombre[:8], last_name="Rec",
+                     email=f"{PREFIJO}{uuid.uuid4().hex[:8]}@e.test",
+                     username=f"{PREFIJO}{uuid.uuid4().hex[:8]}",
+                     hashed_password=hash_password("x"), company_id=company_id,
+                     role_id=rol.id, is_active=True)
+            s.add(u)
+            await s.flush()
+            if cadena_id is not None:
+                hab = await s.get(CompanyBusinessUnit, cadena_id)
+                await conceder_unidad(s, user=u, company_business_unit=hab)
+            await s.commit()
+            return u.id
+    finally:
+        await motor.dispose()
+
+
+async def test_ac_g09_la_edicion_ordinaria_no_reclasifica(http_client, pend, test_database_url):
+    """`OD-10.d §4bis.1`. El campo no viaja en el contrato de edición.
+
+    Si la cadena pudiera cambiarse por el mismo camino que una observación, cambiaría sin
+    que nadie lo decidiera y sin dejar por qué — la lección de `R-32` con el estado.
+    """
+    await _clasificar(http_client, pend)
+    # Con `operations:update`: si el sujeto no lo tuviera, el rechazo vendría del `RBAC` y
+    # esta prueba no diría nada sobre el contrato de edición.
+    editor = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"],
+                              nombre="Editor", extra=[("operations", "update")])
+    r = await http_client.put(
+        f"/api/v1/operations/{pend['sin_lote']}",
+        headers=_token(editor),
+        json={"business_unit_id": pend["hab_hatchery"]})
+    assert r.status_code == 422, r.text
+    assert "business_unit_id" in r.text
+
+
+async def test_ac_g10_reclasificar_sin_permiso_se_deniega(http_client, pend,
+                                                          test_database_url):
+    """Ni con `masters:update` —que basta para la **primera** clasificación— ni con un rol
+    que se llame «Contralor»."""
+    await _clasificar(http_client, pend)
+    r = await http_client.post(
+        f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+        headers=_token(pend["clasif"]),
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "atribución equivocada en el alta"})
+    assert r.status_code == 403, r.text
+
+    contralor = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"],
+                                 nombre="Contralor Avícola")
+    # ...y ese sí tiene el permiso: el control es el permiso, no el nombre. Se comprueba que
+    # el nombre por sí solo no fue lo que abrió la puerta creando otro sin él.
+
+
+async def test_ac_g10_reclasificar_sin_motivo_se_deniega(http_client, pend,
+                                                         test_database_url):
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+    for motivo in ("", "   "):
+        r = await http_client.post(
+            f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+            headers=_token(corrector),
+            json={"company_business_unit_id": pend["hab_hatchery"], "reason": motivo})
+        assert r.status_code == 422, f"motivo {motivo!r}: {r.text}"
+
+
+async def test_ac_g12_la_reclasificacion_controlada_funciona_y_deja_historia(
+        http_client, pend, test_database_url):
+    """El caso `A`: sin efectos productivos aguas abajo.
+
+    Y la historia queda: `P-09` guarda de qué cadena a cuál, quién y por qué.
+    """
+    from app.audit.models import AuditLog
+
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+    r = await http_client.post(
+        f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+        headers=_token(corrector),
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "el registro era de incubación, no de reproducción"})
+    assert r.status_code == 200, r.text
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async with async_sessionmaker(motor)() as s:
+            filas = (await s.execute(select(AuditLog).where(
+                AuditLog.entity_type == "operational_event",
+                AuditLog.entity_id == str(pend["sin_lote"])))).scalars().all()
+    finally:
+        await motor.dispose()
+    ultimo = filas[-1]
+    assert ultimo.user_id == corrector
+    assert ultimo.previous_state == "breeder", ultimo.previous_state
+    assert ultimo.new_state == "hatchery", ultimo.new_state
+    assert "incubación" in (ultimo.change_reason or ""), ultimo.change_reason
+
+
+async def test_ac_g11_con_efectos_aguas_abajo_se_deniega(http_client, pend,
+                                                         test_database_url):
+    """El caso `B`. Cambiar la cadena de algo ya aprobado reinterpreta hechos pasados: los
+    agregados de ayer contarían otra cosa."""
+    from app.operations.models import EventStatus, OperationalEvent
+
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async with async_sessionmaker(motor)() as s:
+            evento = await s.get(OperationalEvent, pend["sin_lote"])
+            evento.status = EventStatus.APPROVED
+            await s.commit()
+
+        r = await http_client.post(
+            f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+            headers=_token(corrector),
+            json={"company_business_unit_id": pend["hab_hatchery"],
+                  "reason": "corrección tardía"})
+        assert r.status_code == 409, r.text
+
+        async with async_sessionmaker(motor)() as s:
+            evento = await s.get(OperationalEvent, pend["sin_lote"])
+            assert evento.business_unit_id == pend["hab_breeder"], (
+                "la cadena cambió pese a haberse denegado")
+    finally:
+        await motor.dispose()
+
+
+async def test_ac_g13_reclasificar_no_concede_ni_habilita(http_client, pend,
+                                                          test_database_url):
+    from app.auth.models import User
+    from app.business_units.service import unidades_efectivas, unidades_habilitadas
+
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async def _estado():
+            async with async_sessionmaker(motor)() as s:
+                u = (await s.execute(
+                    select(User).where(User.id == corrector))).scalar_one()
+                c = (await s.execute(
+                    select(User).where(User.id == pend["creador"]))).scalar_one()
+                return (await unidades_efectivas(s, u), await unidades_efectivas(s, c),
+                        await unidades_habilitadas(s, pend["empresa_a"]))
+
+        antes = await _estado()
+        r = await http_client.post(
+            f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+            headers=_token(corrector),
+            json={"company_business_unit_id": pend["hab_hatchery"],
+                  "reason": "atribución equivocada"})
+        assert r.status_code == 200, r.text
+        despues = await _estado()
+    finally:
+        await motor.dispose()
+    assert antes == despues, f"{antes} → {despues}"
+
+
+async def test_ac_g14_tras_reclasificar_manda_la_cadena_nueva(http_client, pend,
+                                                              test_database_url):
+    """Quien tenía la anterior deja de verlo; quien tiene la nueva lo ve."""
+    await _clasificar(http_client, pend)
+    assert (await http_client.get(f"/api/v1/operations/{pend['sin_lote']}",
+                                  headers=_token(pend["ajeno"]))).status_code == 200
+
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+    r = await http_client.post(
+        f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+        headers=_token(corrector),
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "atribución equivocada"})
+    assert r.status_code == 200, r.text
+
+    assert (await http_client.get(f"/api/v1/operations/{pend['sin_lote']}",
+                                  headers=_token(pend["ajeno"]))).status_code == 404
+    assert (await http_client.get(f"/api/v1/operations/{pend['sin_lote']}",
+                                  headers=_token(pend["incub"]))).status_code == 200
+
+
+async def test_reclasificar_no_devuelve_el_registro_a_pendiente(http_client, pend,
+                                                                test_database_url):
+    """`§44`. Ni restaura la excepción de quien lo registró."""
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+    await http_client.post(
+        f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+        headers=_token(corrector),
+        json={"company_business_unit_id": pend["hab_hatchery"], "reason": "corrección"})
+
+    assert pend["sin_lote"] not in await _pendientes(http_client, pend["clasif"])
+    assert pend["sin_lote"] not in await _pendientes(http_client, pend["creador"])
+
+
+async def test_no_se_reclasifica_hacia_otra_empresa(http_client, pend, test_database_url):
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+    r = await http_client.post(
+        f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+        headers=_token(corrector),
+        json={"company_business_unit_id": pend["hab_b_breeder"], "reason": "cruzada"})
+    assert r.status_code in (400, 404), r.text
