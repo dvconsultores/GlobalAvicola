@@ -760,3 +760,23 @@ R-113 (owner · quién administra el acceso por unidad)
 
 R-127 (500 con `sap_config`)  independiente · P1 · sin bloqueos
 ```
+
+## Tras `OD-13` / `OD-14` (2026-09-08)
+
+```
+RQ-03 = COMPLETE          ya no bloquea nada
+
+R-128 (owner · ¿auto-concesión de unidades?)
+      └── BLOQUEA ──> la RATIFICACIÓN de R-113, no su reanudación técnica
+
+R-113 (owner · qué figura administra el acceso)
+      READY_TO_RESUME · prerrequisitos técnicos satisfechos
+      lo que falta no es técnico: qué figura de una avícola lo hace
+
+GA-REM-040 FASE 8
+      DESBLOQUEADA por `OD-14`: la carga de sesión ya tiene semántica que exponer
+      —`es_global`, `empresa_seleccionada`, `empresa_efectiva`, `empresas_disponibles`—
+      sigue SIN EMPEZAR por decisión de esta tanda, no por impedimento
+
+R-127 · R-119 · R-120 · R-112   independientes · sin bloqueos
+```

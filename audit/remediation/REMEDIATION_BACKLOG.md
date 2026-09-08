@@ -802,3 +802,35 @@ real, y esta tanda es de aislamiento de inquilino.
 Nota de alcance: `docs/02 §3.1.4` declara «Configuración SAP por compañía», de modo que el campo
 es legítimo. Lo que no está decidido es si debe viajar entero en el listado de maestros o solo
 en una superficie administrativa — pregunta adyacente que se registra aquí y no se responde.
+
+---
+
+## Cierre de `R-121` y `R-126` · `RQ-03` = `COMPLETE` (2026-09-08)
+
+```
+R-121   CERRADO   `OD-13` · el permiso es de producto, el rol tiene alcance
+R-126   CERRADO   `OD-14` · cada superficie declara su clase, sin clase por omisión
+RQ-03   COMPLETE  54 recursos recorridos · 0 sin clasificar · 5 excepciones escritas
+R-113   READY_TO_RESUME · con una pregunta de segregación abierta
+```
+
+Evidencia: `RQ-03-TENANT-ISOLATION-CLOSURE-EVIDENCE.md`, `R-113-REEVALUATION-NOTE.md`,
+`ROLE_PERMISSION_COMPANY_SCOPE_MATRIX.md`,
+`GLOBAL_TENANT_SURFACE_CLASSIFICATION_MATRIX.md`.
+
+Sensibilidad acumulada del aislamiento: **27 mutaciones, 27 detectadas, 5 corregidas antes de
+contarlas** — una no instalada, una que fallaba por `NameError`, una que no quitaba la
+propiedad, una que medía la página equivocada y una fuera del camino de la prueba.
+
+## `R-128` · `P2` · `OWNER_DECISION_REQUIRED` · ¿puede concederse unidades a sí mismo quien las reparte?
+
+`business_units:create` autoriza a conceder a cualquier usuario de la empresa efectiva, **uno
+mismo incluido**. Documentado desde la fase 7, probado y auditado con actor y objetivo.
+
+Con el aislamiento cerrado el alcance es exactamente: puede darse cualquier cadena que su
+empresa **ya tenga habilitada**; no puede habilitar cadenas nuevas —es otra acción—, no puede
+salir de su empresa, y no puede fabricar autoridad global.
+
+Riesgo acotado y visible, no escalada. Pero es una pregunta de segregación de funciones
+legítima y bloquea la ratificación de `R-113`, no su reanudación técnica. Si el propietario
+quiere separarlo, cabe en la misma capa que `AC15`.

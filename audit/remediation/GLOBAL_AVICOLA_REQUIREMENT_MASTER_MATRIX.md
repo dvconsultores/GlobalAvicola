@@ -192,3 +192,34 @@ empresa» no certifica «todas las consultas»: quedan dos recursos y están nom
 COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08
     16 / 38 = 42 %   COMPLETE   ·   sin cambio: `RQ-03` sigue `PARTIAL`
 ```
+
+
+---
+
+## 6. `RQ-03` = `COMPLETE` (2026-09-08)
+
+Recalculado recurso a recurso sobre `Base.metadata`, **no** por haber cerrado `R-121` y `R-126`.
+
+| Clase | Recursos | Estado |
+|---|--:|---|
+| `TENANT` directo + derivado + `SAP` | 42 | predicado en la consulta o herencia del padre |
+| `CONTROL` de inquilino | 8 | `users` · `roles` · `companies` · habilitaciones · concesiones · `audit_logs` · `approval_steps` · `permissions` (derivado) |
+| `TRASPASO` | 2 | los dos lados en la misma empresa |
+| `CONTROL_GLOBAL` | 2 | excepción normativa explícita |
+| **TOTAL** | **54** | **0 sin clasificar · 0 huecos** |
+
+```
+RQ-03    PARTIAL  →  COMPLETE
+```
+
+Cinco excepciones, todas escritas en una decisión de propietario y con prueba:
+`permissions` y las plantillas de sistema (`OD-13`), el catálogo de empresas para la autoridad
+global (`OD-14`), y los dos catálogos de plataforma.
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08
+    18 / 38  =  47 %   COMPLETE      (antes 16 / 38 = 42 %)
+    `RQ-03` COMPLETE  ·  `RQ-17` sigue PARTIAL (falta la columna Empresa, `R-122`)
+```
+
+El histórico `21 / 60` sigue sin tocarse.

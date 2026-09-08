@@ -1043,3 +1043,30 @@ CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
 ACCESO POR UNIDAD                     0 / 15   sin cambios
 R-113 · FASE 8                       CONGELADOS
 ```
+
+---
+
+## `OD-13` · `OD-14` · `RQ-03` cerrado (2026-09-08)
+
+```
+EL PERMISO ES DE PRODUCTO · EL ROL TIENE ALCANCE · CADA SUPERFICIE DECLARA SU CLASE
+```
+
+```
+R-121  CERRADO   ·  R-126  CERRADO  ·  RQ-03  PARTIAL → COMPLETE
+R-113  READY_TO_RESUME   ·  R-128 nuevo (segregación) · FASE 8 sigue sin empezar
+```
+
+```
+PRUEBAS NUEVAS   12 roles + 4 de `OD-14`     ·  BACKEND  738 passed · 49 skipped
+SENSIBILIDAD     11 en esta tanda, todas detectadas · 27 acumuladas en aislamiento
+FRONTEND         87 passed · 0 ficheros de implementación cambiados
+MIGRACIÓN        ninguna · head sigue `s9t0u1v2w3x4`
+```
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO   18 / 38 = 47 %   (antes 42 %)
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+ACCESO POR UNIDAD                     0 / 15   sin cambios
+BU-D10 · R-112 · R-127 · P-08        intactos
+```

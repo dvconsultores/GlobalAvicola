@@ -249,3 +249,32 @@ de inquilino, hay que acotarlo.
 incoherencia que lo justifica es concreta y no estética: la administración de unidades de la
 fase 7 **sí** exige empresa efectiva, mientras `/users` y `/masters` no. Dos superficies del
 mismo plano de control con dos respuestas a la misma pregunta.
+
+
+---
+
+## 7. `R-121` y `R-126` cerrados · `RQ-03` = `COMPLETE` (2026-09-08)
+
+**`OD-13`** decide que el permiso es capacidad de producto y el rol tiene alcance. La columna
+`Role.company_id` existía desde el principio, nulable: lo que faltaba no era poder expresar el
+alcance, era usarlo. Sin migración.
+
+**`OD-14`** decide que cada superficie declara su clase, sin clase por omisión. Cambia el
+comportamiento del Super Administrador —ahora elige empresa para operar sobre datos de
+inquilino— y preserva `docs/02 §3.1.4` donde la frase tenía sentido: el catálogo de empresas.
+
+**Tres pruebas certificadas cambiaron de expectativa, deliberadamente y documentadas.** Las tres
+eran el mismo patrón: aprovisionar en la empresa 2 estando situado en la 1. Ahora usan
+`switch-company`. Ninguna se debilitó — y arreglar `_usuario` en origen destapó que los usuarios
+«de la empresa ajena» nacían en la propia, un defecto de fixture que se presentaba como fuga de
+notificaciones.
+
+**`RQ-03` pasa a `COMPLETE`** tras recorrer los 54 recursos, no por transitividad. Las cinco
+excepciones están nombradas y justificadas.
+
+**Lo que sigue abierto** —`R-127`, `R-119`, `R-120`, `R-112`— no es aislamiento de inquilino, y
+se enumera para que `COMPLETE` no se lea como «no queda nada».
+
+**`R-113` queda `READY_TO_RESUME`** con una pregunta de segregación abierta: quien reparte
+accesos puede dárselos a sí mismo dentro de su empresa. Acotado, visible y auditado — pero es
+decisión de propietario, no cambio silencioso.

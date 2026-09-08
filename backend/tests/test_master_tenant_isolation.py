@@ -49,8 +49,13 @@ MARCA_A = f"{PREFIJO}TAXA-SOLO-A"
 MARCA_B = f"{PREFIJO}TAXB-SOLO-B"
 
 
-def _token(user_id: int) -> dict:
-    return {"Authorization": f"Bearer {create_access_token(data={'sub': str(user_id)})}"}
+def _token(user_id: int, company_id: int | None = None) -> dict:
+    """`company_id` reclama un contexto de empresa. `OD-11`: solo vale para quien puede
+    cambiarlo; para el resto la reclamación se descarta y manda la base."""
+    datos: dict = {"sub": str(user_id)}
+    if company_id is not None:
+        datos["company_id"] = company_id
+    return {"Authorization": f"Bearer {create_access_token(data=datos)}"}
 
 
 @pytest_asyncio.fixture
@@ -138,6 +143,12 @@ async def esc(test_database_url):
         await c.execute(delete(User).where(User.username.like(f"{PREFIJO}%")))
         await c.execute(delete(Role).where(Role.name.like(f"{PREFIJO}%")))
         await c.execute(delete(Farm).where(Farm.name.like(f"{PREFIJO}%")))
+        # Las habilitaciones de unidad que crea la prueba de `OD-14`: sin borrarlas, la
+        # eliminación de empresas viola la clave foránea y el fallo aparece en el teardown,
+        # lejos de su causa.
+        await c.execute(text(
+            "DELETE FROM company_business_units WHERE company_id IN "
+            "(SELECT id FROM companies WHERE name LIKE :p)"), {"p": f"{PREFIJO}%"})
         await c.execute(delete(Company).where(Company.name.like(f"{PREFIJO}%")))
     await motor.dispose()
 
@@ -315,3 +326,88 @@ async def test_el_filtro_de_maestros_precede_a_la_paginacion(http_client, esc):
     total = r.headers.get("X-Total-Count")
     if total is not None:
         assert int(total) == 2, f"el recuento delata filas ajenas: {total}"
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  `OD-14` · la autoridad global situada opera en una sola empresa
+# ══════════════════════════════════════════════════════════════════════════════
+
+async def test_od14_la_autoridad_global_situada_solo_ve_las_granjas_de_esa_empresa(
+        http_client, esc):
+    """`AC-G05` · `§68`. Las granjas son maestro de **inquilino**, no control global."""
+    en_a = await http_client.get("/api/v1/masters/farms?limit=100",
+                                 headers=_token(esc["super"], company_id=esc["a"]))
+    assert en_a.status_code == 200, en_a.text
+    nombres_a = {f["name"] for f in en_a.json()}
+    assert f"{PREFIJO}GRANJA-A" in nombres_a
+    assert f"{PREFIJO}GRANJA-B" not in nombres_a, (
+        "situada en A y devolvió la granja de B")
+
+    en_b = await http_client.get("/api/v1/masters/farms?limit=100",
+                                 headers=_token(esc["super"], company_id=esc["b"]))
+    assert en_b.status_code == 200, en_b.text
+    nombres_b = {f["name"] for f in en_b.json()}
+    assert f"{PREFIJO}GRANJA-B" in nombres_b
+    assert f"{PREFIJO}GRANJA-A" not in nombres_b, "el contexto no se movió con el actor"
+
+
+async def test_od14_la_autoridad_global_sin_contexto_no_ve_granjas(http_client, esc):
+    """`OD-14.d`. Sin empresa elegida no hay unión de inquilinos, hay cero filas."""
+    r = await http_client.get("/api/v1/masters/farms?limit=100",
+                              headers=_token(esc["super"]))
+    assert r.status_code == 200, r.text
+    nombres = {f["name"] for f in r.json()}
+    assert f"{PREFIJO}GRANJA-A" not in nombres and f"{PREFIJO}GRANJA-B" not in nombres
+
+
+async def test_od14_la_administracion_de_unidades_sigue_el_contexto(http_client, esc):
+    """`AC-G05` · `§69`. La fase 7 ya lo exigía; aquí se comprueba que no ha cambiado.
+
+    Se habilita Incubadora en `B` y **no** en `A`. La autoridad global situada en `A` debe
+    ver su propio estado, no el del vecino: el identificador de la habilitación de `B` ni
+    siquiera es expresable, porque estas rutas direccionan por código.
+    """
+    from app.business_units.models import BusinessUnit, CompanyBusinessUnit
+
+    motor = create_async_engine(esc["url"])
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            unidad = (await s.execute(select(BusinessUnit).where(
+                BusinessUnit.code == "hatchery"))).scalar_one()
+            s.add(CompanyBusinessUnit(company_id=esc["b"],
+                                      business_unit_id=unidad.id, is_enabled=True))
+            await s.commit()
+    finally:
+        await motor.dispose()
+
+    en_a = await http_client.get("/api/v1/business-units",
+                                 headers=_token(esc["super"], company_id=esc["a"]))
+    assert en_a.status_code == 200, en_a.text
+    estado_a = {u["code"]: u["is_enabled"] for u in en_a.json()}
+    assert estado_a["hatchery"] is False, "vio la habilitación de la empresa B"
+
+    en_b = await http_client.get("/api/v1/business-units",
+                                 headers=_token(esc["super"], company_id=esc["b"]))
+    assert en_b.status_code == 200, en_b.text
+    assert {u["code"]: u["is_enabled"] for u in en_b.json()}["hatchery"] is True
+
+
+async def test_od14_contraste_empresas_global_frente_a_granjas_de_inquilino(
+        http_client, esc):
+    """`AC-G03` · `§73`. El contraste, también en maestros.
+
+    El mismo actor, situado en `A`: el catálogo de empresas devuelve las dos, y las granjas
+    solo las de `A`. Es la prueba de que la clasificación existe y no es una casualidad del
+    filtro.
+    """
+    cabeceras = _token(esc["super"], company_id=esc["a"])
+
+    empresas = await http_client.get("/api/v1/masters/companies?limit=100",
+                                     headers=cabeceras)
+    assert empresas.status_code == 200, empresas.text
+    ids = {c["id"] for c in empresas.json()}
+    assert esc["a"] in ids and esc["b"] in ids, "el catálogo de empresas dejó de ser global"
+
+    granjas = await http_client.get("/api/v1/masters/farms?limit=100", headers=cabeceras)
+    assert granjas.status_code == 200, granjas.text
+    assert f"{PREFIJO}GRANJA-B" not in {f["name"] for f in granjas.json()}
