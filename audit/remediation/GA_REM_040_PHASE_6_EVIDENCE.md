@@ -185,3 +185,142 @@ BU-D10 · retirar una unidad a una empresa  PENDIENTE DE RATIFICACIÓN · sin to
 GA-REM-040 · FASE 7 — API DE ADMINISTRACIÓN     T-040-18 · T-040-19
 NO INICIADA
 ```
+
+---
+
+# CIERRE DE LA FASE 6 (2026-09-07)
+
+## 13. Una corrección de mi informe anterior
+
+Informé **19** pruebas de notificaciones afectadas por la configuración de las semillas. El
+número real, medido retirando las concesiones sembradas:
+
+```
+20 caen en total
+   18  notificaciones      (9 + 9, no 19)
+    2  auditoría y flujo completo
+```
+
+Esa misma medición **es** la sensibilidad que `§65` pedía: sin concesiones sembradas caen veinte
+pruebas por la razón correcta —no hay acceso productivo sin concesión—, lo que demuestra que la
+suite depende de configuración explícita y no de un retroceso escondido.
+
+## 14. La semilla como precondición válida
+
+```
+UNA SEMILLA DE CERTIFICACIÓN VÁLIDA
+    =  empresa con cadenas HABILITADAS explícitamente
+    +  usuarios con cadenas CONCEDIDAS explícitamente
+    +  RBAC  +  dato de negocio
+```
+
+Se resolvió **en la semilla compartida**, no con veinte parches locales: todas compartían la
+misma precondición, y arreglarla veinte veces habría dejado veinte sitios donde olvidarla.
+
+**Ninguna aserción se debilitó.** Lo que cambió fue el estado de partida: empresa configurada,
+que es lo que hará un cliente real en su alta.
+
+Y no todo el mundo recibe las cuatro: las suites que **miden** el aislamiento —`test_business_units`,
+`test_lot_row_scope`, `test_kpi_scope`, `test_handoff_contract`, esta misma— siguen construyendo
+sus propios sujetos de una cadena, de varias, de ninguna y de control.
+
+```
+sin concesiones  →  ninguna cadena productiva     y hay prueba que lo sujeta
+```
+
+## 15. Reclasificación controlada · `OD-10.d`
+
+```
+PRIMERA CLASIFICACIÓN   ≠   RECLASIFICACIÓN
+```
+
+| Regla | Cómo |
+|---|---|
+| la edición ordinaria no reclasifica | el campo no viaja en `OperationalEventUpdate`, que es `extra="forbid"` |
+| permiso propio | `corrections:correct` — distinto del `masters:update` de la primera |
+| motivo obligatorio | no vacío, no espacios; se guarda en `change_reason` |
+| efectos aguas abajo | `409` **con la lista de cuáles**: una negativa sin motivo obliga a adivinar qué revertir |
+| historia | `P-09`: cadena anterior, cadena nueva, actor, momento y motivo |
+| sin cascada | los hijos no se reasignan en bloque |
+| sin conceder ni habilitar | comprobado midiendo antes y después |
+| no vuelve a «pendiente» | ni restaura la excepción de quien lo registró |
+
+**El permiso es distinto a propósito.** Sacar un registro de «pendiente» y cambiar una atribución
+que ya estaba puesta no son el mismo acto ni el mismo riesgo. `corrections:correct` es el permiso
+que el catálogo ya reservaba para enmendar un registro.
+
+### 15.1 Qué cuenta como efecto aguas abajo
+
+Auditado sobre el dominio real, no inventado:
+
+```
+el registro está aprobado, consolidado, enviado a SAP o con error de SAP
+participa en un traspaso de huevo o de pollito  (dispatch/reception)
+tiene acciones de aprobación registradas
+```
+
+Ante la duda **se deniega**. Y la respuesta enumera los efectos encontrados, porque decir «no se
+puede» sin decir qué hay que revertir no ayuda a nadie.
+
+## 16. Sensibilidad del cierre
+
+| # | Mutación | Resultado | Cayeron |
+|:--:|---|:--:|:--:|
+| 1 | sin concesiones → todas las cadenas | **RED** | 11 |
+| 2 | la edición ordinaria acepta el campo | **RED** | 1 |
+| 3 | el motivo puede ir en blanco | **RED** | 1 |
+| 4 | ignorar los efectos aguas abajo | **RED** | 1 |
+| 5 | no auditar la reclasificación | **RED** | 1 |
+| 6 | reclasificar concede la cadena nueva | **RED** | 3 |
+| 7 | reclasificar enciende la unidad apagada | **RED** | 1 |
+| 8 | el permiso de reclasificar se ignora | **RED** | 1 |
+
+### 16.1 Tres no salieron a la primera, y por razones distintas
+
+**La 1 se corrió contra la suite equivocada.** Las pruebas de cero unidades viven en
+`test_business_units`, `test_lot_row_scope` y `test_kpi_scope`, no en la de clasificación.
+Repetida sobre ellas, cae once veces. Error mío de alcance, no de cobertura.
+
+**La 6 era una mutación rota.** Llamaba a `conceder_unidad`, que no está importado en el ámbito
+de ese módulo: lanzaba `NameError` y **mi propio `except Exception` lo tragaba**. Una mutación
+que no ejecuta lo que dice ejecutar no demuestra nada. Rehecha con el import, cae tres veces.
+
+**La 7 sí era un hueco de cobertura.** Las pruebas de reclasificación apuntaban siempre a una
+habilitación encendida. Se añadió la que apunta a una apagada — y es **el mismo hueco que ya
+había aparecido en la primera clasificación**, cometido otra vez en la operación hermana. Que se
+repita en el par indica que conviene revisar estas dos operaciones juntas.
+
+```
+MUTACIONES        8 / 8 detectadas
+RESTAURACIÓN      árbol limpio · patrones verificados uno a uno
+```
+
+## 17. Regresión del cierre
+
+```
+BACKEND                633 passed · 49 skipped     (eran 623)
+P-14 · P-09 · P-10     verdes
+FASE 5 · 4 · 3 · `R-111` · 2 · 1   verdes
+INQUILINO · RBAC       verdes
+MIGRACIÓN              ninguna nueva · FRONTEND 0
+```
+
+## 18. Estado de la fase 6
+
+```
+CLASIFICACIÓN PENDIENTE      READY
+RECLASIFICACIÓN CONTROLADA   READY para `operational_events`
+```
+
+**Solo para `operational_events`.** Es la única entidad con clasificación propia; las seis
+dependientes heredan y no tienen atribución que corregir. No se construye una API polimórfica de
+reclasificación para entidades que no la necesitan.
+
+## 19. Lo que sigue sin decidir
+
+```
+BU-D04 · el analista de SAP                PENDIENTE · sin tocar
+BU-D10 · retirar una unidad a una empresa  PENDIENTE DE RATIFICACIÓN · sin tocar
+UN PERMISO PROPIO DE CLASIFICACIÓN         catálogo de `GA-REM-034` · fase 7
+COMPLETAR LA CADENA DE UN LOTE EXISTENTE   `P-03`/`P-06`, no esta capa
+```

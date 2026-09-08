@@ -127,3 +127,29 @@ CLASIFICAR HACIA UNA UNIDAD APAGADA         se rechaza
 Resuelto por la vía conservadora y con prueba: la clasificación **no enciende** lo que la empresa
 apagó. Si el propietario quisiera permitir atribuir historia a una cadena ya retirada, es una
 decisión suya y hoy no hace falta.
+
+---
+
+## 8. Reclasificación controlada · `OD-10.d` (2026-09-07)
+
+`§7` dejaba esto como `SPEC DECISION REQUIRED`. Decidido:
+
+| | Primera clasificación | Reclasificación |
+|---|---|---|
+| **De** | pendiente | una cadena ya atribuida |
+| **Permiso** | `masters:update` | **`corrections:correct`** |
+| **Motivo** | no exigido | **obligatorio**, no vacío |
+| **Barrera** | ninguna | **efectos aguas abajo → `409`** |
+| **Auditoría** | `P-09` · `UPDATED` | `P-09` · `CORRECTED` + motivo |
+| **Edición ordinaria** | n/a | **prohibida** — el campo no viaja en el contrato |
+
+```
+efectos aguas abajo  =  aprobado · consolidado · enviado a SAP · con error de SAP
+                        participa en un traspaso · tiene acciones de aprobación
+```
+
+Ante la duda, se deniega. Sin cascada a los hijos. Sin conceder cadenas ni habilitar unidades.
+Y no devuelve el registro a «pendiente»: la excepción de quien lo registró no vuelve.
+
+**Solo para `operational_events`**, que es la única con atribución propia. Las seis dependientes
+heredan y no tienen nada que corregir.

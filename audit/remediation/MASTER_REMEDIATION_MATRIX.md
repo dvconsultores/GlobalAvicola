@@ -829,3 +829,35 @@ CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
 ```
 
 Tener bandeja y acción de clasificar no certifica ningún proceso.
+
+---
+
+## `GA-REM-040` fase 6 · cierre (2026-09-07)
+
+```
+PRIMERA CLASIFICACIÓN ≠ RECLASIFICACIÓN
+```
+
+`OD-10.d` formaliza que corregir una atribución es **alto control**: permiso propio, motivo
+obligatorio, y **denegada en el sitio si el registro ya produjo efectos** —aprobado, consolidado,
+enviado a SAP o participante en un traspaso—. Cambiar la cadena de algo ya ocurrido reinterpreta
+hechos pasados.
+
+Y `GA-REM-040` enmienda C formaliza la semilla: una empresa de certificación válida configura sus
+cadenas explícitamente.
+
+```
+CORRECCIÓN DE INFORME    19 → 20 pruebas afectadas (18 de notificaciones, no 19)
+PRUEBAS                  35 / 35     SENSIBILIDAD  8 / 8
+REGRESIÓN                633 passed · 49 skipped
+FRONTEND                 0 · MIGRACIÓN ninguna
+```
+
+De las ocho mutaciones, tres no salieron a la primera: una la corrí contra la suite equivocada,
+otra estaba rota —lanzaba `NameError` y mi propio `except` lo tragaba— y solo la tercera era un
+hueco de cobertura real. Registrado, porque la diferencia importa.
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+```

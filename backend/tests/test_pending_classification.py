@@ -795,3 +795,41 @@ async def test_no_se_reclasifica_hacia_otra_empresa(http_client, pend, test_data
         headers=_token(corrector),
         json={"company_business_unit_id": pend["hab_b_breeder"], "reason": "cruzada"})
     assert r.status_code in (400, 404), r.text
+
+
+async def test_reclasificar_hacia_una_unidad_apagada_se_rechaza_y_no_la_enciende(
+        http_client, pend, test_database_url):
+    """`AC-G13`. Corregir una atribución no enciende lo que la empresa apagó.
+
+    Nació de una mutación que no rompió nada: las pruebas de reclasificación apuntaban
+    siempre a una habilitación encendida, de modo que un «enciéndela si hace falta» pasaba
+    inadvertido. Es el mismo hueco que ya apareció en la primera clasificación — y volver a
+    cometerlo en la operación hermana dice que conviene revisarlo por pares.
+    """
+    from app.business_units.models import CompanyBusinessUnit
+
+    await _clasificar(http_client, pend)
+    corrector = await _corrector(test_database_url, pend["empresa_a"], pend["hab_breeder"])
+
+    motor = create_async_engine(test_database_url)
+    try:
+        async with async_sessionmaker(motor)() as s:
+            hab = await s.get(CompanyBusinessUnit, pend["hab_hatchery"])
+            hab.is_enabled = False
+            await s.commit()
+
+        r = await http_client.post(
+            f"/api/v1/operations/{pend['sin_lote']}/reclassify",
+            headers=_token(corrector),
+            json={"company_business_unit_id": pend["hab_hatchery"],
+                  "reason": "atribución equivocada"})
+        assert r.status_code == 400, r.text
+
+        async with async_sessionmaker(motor)() as s:
+            hab = await s.get(CompanyBusinessUnit, pend["hab_hatchery"])
+            sigue_apagada = not hab.is_enabled
+            hab.is_enabled = True
+            await s.commit()
+    finally:
+        await motor.dispose()
+    assert sigue_apagada, "reclasificar encendió una unidad que la empresa había apagado"
