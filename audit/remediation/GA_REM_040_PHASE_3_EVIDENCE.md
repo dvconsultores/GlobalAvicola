@@ -103,6 +103,22 @@ Proteger el detalle y dejar el sub-recurso libre no protege nada: el lote quedab
 puerta de al lado. Los tres se cierran pasando por el mismo camino acotado que el detalle, con la
 misma respuesta `404` — distinguir «no existe» de «no es tuyo» ya filtra información.
 
+### 5.1 Trazabilidad formal · `R-111` (añadido 2026-09-07)
+
+Los tres se registran como **un hallazgo raíz con tres superficies** —es una omisión repetida en
+el mismo router, no tres defectos— bajo `R-111`, y su autoridad es `GA-REM-002`, que ya gobierna
+la pertenencia de recursos. **No hace falta `GA-REM` nuevo.**
+
+```
+CLASE     PERTENENCIA DE INQUILINO / RECURSO — IDOR PREEXISTENTE
+NO ES     hueco de aislamiento por unidad de negocio
+SPEC      GA-REM-002 · enmienda A · AC12
+ESTADO    CORREGIDO · con pruebas
+```
+
+`AC12` deja escrito lo que faltaba: *el sub-recurso hereda la pertenencia de su padre*. La
+certificación funcional no cambia por documentarlo.
+
 ## 6. Trazabilidad
 
 | Comprobación | Prueba | Estado |

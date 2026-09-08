@@ -235,6 +235,51 @@ And   no se registra auditoría
 And   ningún dato derivado de la compañía B cambia
 ```
 
+## `AC12` — el sub-recurso hereda la pertenencia de su padre · **enmienda A** (2026-09-07)
+
+```
+Given  un recurso anidado que se alcanza por el identificador de su padre
+       — las fases de un lote, su saldo de apertura —
+When   el padre no pertenece a la compañía efectiva del usuario
+Then   el sub-recurso es inalcanzable, con la misma respuesta que daría el padre
+And    ninguna escritura contra ese padre ajeno deja fila
+```
+
+### Por qué se añade
+
+`R-111`. `AC05` se verificó sobre **lecturas del recurso primario** —listados y consultas por
+id— y `AC10` sobre **claves foráneas en escritura**. Entre las dos quedó un hueco: el
+sub-recurso que se alcanza por el identificador del padre y consulta directamente por él.
+
+```
+GET /lots/{id}            comprobaba pertenencia
+GET /lots/{id}/phases     NO comprobaba nada — ni compañía
+GET /lots/{id}/opening-balance   ídem
+POST /lots/{id}/phases    creaba la fila sin comprobar de quién era el lote
+```
+
+Es literalmente la frase que esta spec ya había escrito para las claves foráneas —*«existir no
+basta»*, *«la lección no se extendió»*— aplicada un nivel más abajo:
+
+```
+DETALLE PROTEGIDO   ≠   SUB-RECURSO PROTEGIDO
+```
+
+Proteger el padre y dejar el hijo libre no protege nada: el recurso queda abierto por la puerta
+de al lado.
+
+### Estado
+
+Corregido. Los tres caminos pasan por la comprobación del padre y devuelven `404`, que es lo que
+`AC05` exige y lo que impide distinguir «no existe» de «no es tuyo». Las pruebas viven en
+`backend/tests/test_lot_row_scope.py` y se enumeran en `GA_REM_040_PHASE_3_EVIDENCE.md §5`.
+
+Se descubrió siguiendo la cadena de seguridad de `GA-REM-040` fase 3, y **no es un defecto de
+aquella fase**: es anterior a las unidades de negocio y de otra naturaleza —pertenencia de
+inquilino, no alcance de cadena productiva—.
+
+---
+
 ## `AC11` — la comprobación es explícita y compartida
 
 ```

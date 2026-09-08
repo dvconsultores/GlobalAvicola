@@ -490,3 +490,59 @@ catálogo · habilitación por empresa · concesión por usuario · resolutor ce
 ```
 
 Y con una condición que la spec deja escrita: **la fase 4, los agregados, no puede ir al final.**
+
+## `R-111` · el sub-recurso no heredaba la pertenencia de su padre (2026-09-07)
+
+```
+CLASE          PERTENENCIA DE INQUILINO / RECURSO — IDOR PREEXISTENTE
+NO ES          hueco de aislamiento por unidad de negocio
+SEVERIDAD      P1
+SPEC           GA-REM-002 · enmienda A · AC12   (no hace falta GA-REM nuevo)
+DESCUBIERTO    siguiendo la cadena de seguridad de GA-REM-040 fase 3
+ANTERIOR A     GA-REM-040
+ESTADO         CORREGIDO · con pruebas · sin certificación nueva
+```
+
+### Un hallazgo raíz, tres superficies
+
+No son tres defectos: es **una omisión repetida** en el mismo router, y por eso se registra
+como uno solo con sus tres manifestaciones.
+
+| Superficie | Qué hacía | Principio que incumplía |
+|---|---|---|
+| `GET /lots/{id}/phases` | consultaba por `lot_id` sin comprobar **nada** | `AC05` — lectura de recurso ajeno |
+| `GET /lots/{id}/opening-balance` | ídem | `AC05` |
+| `POST /lots/{id}/phases` | creaba la fila sin comprobar de quién era el lote | `AC10` — escritura contra lo ajeno |
+
+### La causa raíz, dicha con precisión
+
+La ruta **sí** exigía sesión y permiso: el fallo no era de autenticación ni de `RBAC`.
+
+```
+AUTENTICACIÓN DE RUTA        existía
+PERMISO RBAC                 existía
+PERTENENCIA DEL PADRE        NO se comprobaba en el camino anidado
+```
+
+`GA-REM-002` ya había narrado esta lección para las claves foráneas —«existir no basta», «la
+lección no se extendió»— y quedó sin extender un nivel más abajo:
+
+```
+DETALLE PROTEGIDO   ≠   SUB-RECURSO PROTEGIDO
+```
+
+### Lo que NO se registra como defecto de producto
+
+Al escribir las pruebas aparecieron cuatro fallos que eran de la **fixture**, no del sistema, y
+se corrigieron sin registrarlos como hallazgos: `limit` topa en 100, `LotUpdate` no acepta
+`notes`, faltaba el permiso `lots:create` —la denegación habría venido de la capa equivocada— y
+faltaba un campo obligatorio en la activación manual.
+
+Se dejan escritos por método, no por trazabilidad de defecto: **un rojo que viene de la capa
+equivocada no demuestra nada**, y comprobarlo antes de usarlo como evidencia es parte del gate.
+
+### `T-073-06`
+
+Su **control** empezó a fallar en la fase 3 —el sujeto no podía cerrar ni su propio lote— porque
+carecía de unidades concedidas. Es `OD-09.c` funcionando, no una regresión: se le configuró la
+empresa, que es lo que hará un cliente real en su alta. **La prueba no se debilitó.**

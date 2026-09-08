@@ -13,7 +13,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-007` | BR-14: segregación y centralización de reglas | BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-007](GA-REM-007-BR14-SEGREGATION-CENTRALIZATION.md) |
 | `GA-REM-011` | Alineación de contratos FE ↔ BE | CONTRACT | P0 | `SPEC_READY` | E | [GA-REM-011](GA-REM-011-FE-BE-CONTRACT-ALIGNMENT.md) |
 | `GA-REM-012` | Cambio de contraseña | SECURITY + BUGFIX | P0 | **`CERTIFIED`** | B | [GA-REM-012](GA-REM-012-PASSWORD-CHANGE.md) |
-| `GA-REM-002` | RBAC: enforcement en backend | SECURITY | P0 | **`IMPLEMENTED`** ⚠ R-44 | B | [GA-REM-002](GA-REM-002-RBAC-BACKEND-ENFORCEMENT.md) |
+| `GA-REM-002` | RBAC: enforcement en backend (+ enm. A: `AC12`, pertenencia del sub-recurso) | SECURITY | P0 | **`IMPLEMENTED`** ⚠ R-44 | B | [GA-REM-002](GA-REM-002-RBAC-BACKEND-ENFORCEMENT.md) |
 | `GA-REM-003` | Contexto de autorización y ciclo del token | SECURITY | P0 | **`CERTIFIED`** | B | [GA-REM-003](GA-REM-003-AUTH-CONTEXT-AND-TOKEN-LIFECYCLE.md) |
 | `GA-REM-006` | Correcciones e integridad del dato | DATA INTEGRITY | P0 | **`CERTIFIED`** | C | [GA-REM-006](GA-REM-006-CORRECTIONS-DATA-INTEGRITY.md) |
 | `GA-REM-008` | Trazabilidad generacional | DOMAIN + BUGFIX | P0 | **`CERTIFIED`** | C | [GA-REM-008](GA-REM-008-GENERATIONAL-TRACEABILITY.md) |

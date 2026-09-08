@@ -702,3 +702,30 @@ rol no rompía ninguna prueba porque ninguna lo sujetaba por ese lado. Se añadi
 CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
 CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios · ningún PASS por transitividad
 ```
+
+---
+
+## `R-111` · trazabilidad de un `IDOR` anterior (2026-09-07)
+
+Los tres caminos que la fase 3 encontró abiertos quedan registrados formalmente. **No son un
+hueco de unidades de negocio**: son pertenencia de inquilino, anterior a `GA-REM-040`, y su
+autoridad ya existía.
+
+```
+UN HALLAZGO RAÍZ · TRES SUPERFICIES     GET phases · GET opening-balance · POST phases
+SPEC                                    GA-REM-002 · enmienda A · AC12
+GA-REM NUEVO                            NO — la autoridad ya existía
+ESTADO                                  CORREGIDO en la fase 3 · con pruebas
+```
+
+```
+DETALLE PROTEGIDO   ≠   SUB-RECURSO PROTEGIDO
+```
+
+La ruta exigía sesión y permiso; lo que faltaba era comprobar de quién era el **padre** en el
+camino anidado. Es la lección que `GA-REM-002` ya había escrito para las claves foráneas, un
+nivel más abajo.
+
+No se registra como regresión de la fase 3: la fase 3 lo **encontró**. Y los cuatro fallos de
+fixture que aparecieron en el camino no se registran como defectos de producto, porque no lo
+eran.
