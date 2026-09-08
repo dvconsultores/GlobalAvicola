@@ -66,7 +66,7 @@ async def list_users(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "read")),
 ):
-    return await AuthService(db).get_users(skip=skip, limit=limit, search=search)
+    return await AuthService(db).get_users(skip=skip, limit=limit, search=search, actor=current_user)
 
 
 @router.post("/users", response_model=UserRead, status_code=201, tags=["Users"])
@@ -75,7 +75,7 @@ async def create_user(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "create")),
 ):
-    return await AuthService(db).create_user(data)
+    return await AuthService(db).create_user(data, actor=current_user)
 
 
 @router.get("/users/{user_id}", response_model=UserRead, tags=["Users"])
@@ -84,7 +84,7 @@ async def get_user(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "read")),
 ):
-    return await AuthService(db).get_user(user_id)
+    return await AuthService(db).get_user(user_id, actor=current_user)
 
 
 @router.put("/users/{user_id}", response_model=UserRead, tags=["Users"])
@@ -94,7 +94,7 @@ async def update_user(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "update")),
 ):
-    return await AuthService(db).update_user(user_id, data)
+    return await AuthService(db).update_user(user_id, data, actor=current_user)
 
 
 @router.post("/users/{user_id}/password", status_code=204, tags=["Users"])
@@ -118,7 +118,7 @@ async def deactivate_user(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "delete")),
 ):
-    await AuthService(db).deactivate_user(user_id)
+    await AuthService(db).deactivate_user(user_id, actor=current_user)
 
 
 # ------------------- Role Endpoints -------------------

@@ -49,6 +49,93 @@ class AuthService:
     def __init__(self, db: AsyncSession):
         self.db = db
 
+    # ── Inquilino en la administración de usuarios — `GA-REM-002` enmienda B ──
+    #
+    # `AC11` exige que la comprobación de pertenencia sea **una** función reutilizable y no
+    # una copia por servicio. Estos dos localizadores son ese sitio para `users`: listar,
+    # leer, editar y desactivar pasan por ellos, de modo que añadir mañana una quinta ruta
+    # no obliga a acordarse de nada.
+
+    class AutoridadInsuficiente(Exception):
+        """El actor no puede administrar usuarios en ninguna empresa concreta."""
+
+    @staticmethod
+    def _contexto(actor: dict | None) -> tuple[int | None, bool]:
+        """`(empresa efectiva, autoridad global)` del actor.
+
+        La empresa **no se recibe del cliente**: llega ya resuelta por `OD-11` dentro de
+        `current_user`, que la deriva de la persistida salvo cambio de contexto autorizado.
+        Un parámetro de consulta o una reclamación en el token no la mueven.
+
+        `None` en la empresa significa **no hay empresa efectiva**, y solo la autoridad
+        global —`("*", …, "all")`, que es como `docs/02 §3.1.4` define al Super
+        Administrador— puede operar sin ella. Para cualquier otro actor eso es denegar:
+        `fail-closed`, nunca «sin empresa, todas las empresas».
+        """
+        if actor is None:
+            return None, False
+        return actor.get("company_id"), bool(actor.get("is_super_admin"))
+
+    def _acotar(self, consulta, actor: dict | None):
+        """Añade el predicado de inquilino a una consulta sobre `users`. `AC13`.
+
+        Se aplica **en la consulta**, de modo que paginación, orden y búsqueda operen ya
+        sobre el conjunto acotado. Filtrar después de traer las filas dejaría el total
+        contando lo ajeno, que revela por diferencia lo que el filtro escondía.
+        """
+        empresa, global_ = self._contexto(actor)
+        if global_:
+            # `docs/02 §3.1.4`, literal: «Super Admin (rol con `module="*"`,
+            # `scope_type="all"`) ve TODAS las compañías». Es la misma exención que
+            # `get_company_filter` aplica en el resto del producto y que `MasterService`
+            # respeta; acotarla solo aquí habría hecho que `/users` se comportara distinto
+            # de `/masters` sin que ninguna norma lo pidiera.
+            #
+            # Esto **no** es la fuga que cierra esta enmienda. El actor del hallazgo es el
+            # administrador **acotado** a una empresa, y para él el filtro de abajo es
+            # obligatorio. Si el propietario quiere además que situarse con `switch-company`
+            # acote a la autoridad global, es una decisión de producto que afecta a todos los
+            # servicios y no solo a éste: queda registrada como `R-126`.
+            return consulta
+        if empresa is not None:
+            return consulta.where(User.company_id == empresa)
+        # `fail-closed`: sin empresa efectiva y sin autoridad global no se administra nada.
+        # Nunca «sin empresa, todas las empresas».
+        raise self.AutoridadInsuficiente(
+            "no hay empresa efectiva sobre la que administrar usuarios")
+
+    async def _usuario_alcanzable(self, user_id: int, actor: dict | None) -> User | None:
+        """El usuario, **si el actor tiene derecho a alcanzarlo**. `AC13` · `AC14`.
+
+        Devuelve `None` cuando no lo tiene, y quien llama responde `404`: la convención de
+        `AC05` es que un recurso ajeno se comporte como inexistente, porque distinguir «no
+        existe» de «no es tuyo» ya filtra información.
+
+        Es un **localizador**, no una comprobación posterior. La diferencia es el orden:
+        aquí el objetivo se resuelve dentro de la empresa antes de que exista nada que
+        mutar, en vez de traerlo global y descubrir la discrepancia con la fila ya en la
+        mano.
+        """
+        try:
+            consulta = self._acotar(select(User).where(User.id == user_id), actor)
+        except self.AutoridadInsuficiente:
+            return None
+        return (await self.db.execute(consulta)).scalar_one_or_none()
+
+    async def _es_autoridad_global(self, role_id: int | None) -> bool:
+        """¿Ese rol concede alcance sobre **todas** las compañías? `AC15`.
+
+        La forma la fija `docs/02 §3.1.4`: «rol con `module="*"`, `scope_type="all"`». No se
+        mira el nombre del rol — `GA-REM-040 AC-F05` ya dejó dicho lo que valen los nombres.
+        """
+        if role_id is None:
+            return False
+        return (await self.db.execute(
+            select(Permission.id).where(Permission.role_id == role_id,
+                                        Permission.module == "*",
+                                        Permission.scope_type == "all").limit(1)
+        )).scalar_one_or_none() is not None
+
     # ---- Auth ----
 
     async def login(self, data: LoginRequest) -> TokenResponse:
@@ -167,8 +254,19 @@ class AuthService:
 
     # ---- User CRUD ----
 
-    async def get_users(self, skip: int = 0, limit: int = 20, search: str = "") -> list[UserRead]:
-        query = select(User)
+    async def get_users(self, skip: int = 0, limit: int = 20, search: str = "",
+                        actor: dict | None = None) -> list[UserRead]:
+        """Los usuarios de la empresa efectiva. `AC13` · `R-114`.
+
+        El predicado de inquilino va **antes** que la búsqueda y la paginación: si fuera
+        después, la primera página llegaría con huecos donde estaban los ajenos y el
+        recuento los delataría por diferencia.
+        """
+        try:
+            query = self._acotar(select(User), actor)
+        except self.AutoridadInsuficiente as exc:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail=str(exc)) from exc
         if search:
             query = query.where(
                 (User.username.ilike(f"%{search}%"))
@@ -180,9 +278,18 @@ class AuthService:
         users = result.scalars().all()
         return [UserRead.model_validate(u) for u in users]
 
-    async def get_user(self, user_id: int) -> UserRead:
-        result = await self.db.execute(select(User).where(User.id == user_id))
-        user = result.scalar_one_or_none()
+    async def get_user(self, user_id: int, actor: dict | None = None) -> UserRead:
+        """Un usuario de la empresa efectiva. `AC13` · `R-114`.
+
+        `actor` nulo omite el filtro **a propósito y solo para `/me`**, donde el sujeto es el
+        propio titular y no hay inquilino ajeno que proteger. Toda ruta de administración lo
+        pasa.
+        """
+        if actor is None:
+            user = (await self.db.execute(
+                select(User).where(User.id == user_id))).scalar_one_or_none()
+        else:
+            user = await self._usuario_alcanzable(user_id, actor)
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
         data = UserRead.model_validate(user)
@@ -193,10 +300,37 @@ class AuthService:
             data.company_name = company_result.scalar_one_or_none()
         return data
 
-    async def create_user(self, data: UserCreate) -> UserRead:
+    async def create_user(self, data: UserCreate, actor: dict | None = None) -> UserRead:
+        """Alta de usuario **en la empresa efectiva**. `AC14` · `R-118`.
+
+        La empresa se **resuelve**, no se recibe. `company_id` venía del cuerpo y el router
+        obtenía el actor sin llegar a pasarlo, de modo que un administrador de A creaba
+        usuarios en B. Para un actor acotado la reclamación del cliente se ignora; solo la
+        autoridad global sin contexto puede declarar en qué empresa nace el usuario.
+        """
         existing = await self.db.execute(select(User).where((User.username == data.username) | (User.email == data.email)))
         if existing.scalar_one_or_none():
             raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Usuario o email ya existe")
+
+        empresa, global_ = self._contexto(actor)
+        if actor is None or global_:
+            # La autoridad global **sí** declara la empresa de destino. Aprovisionar usuarios
+            # en varias empresas es su trabajo, y quitárselo no cerraría ningún `P0`: el
+            # actor del hallazgo es el administrador **acotado**, para el que la empresa se
+            # impone justo debajo. Situarse con `switch-company` acota lo que **ve**; no le
+            # retira la autoridad de crear donde declare.
+            company_id = data.company_id if data.company_id is not None else empresa
+        elif empresa is not None:
+            company_id = empresa
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No hay empresa efectiva en la que crear el usuario")
+
+        if await self._es_autoridad_global(data.role_id) and not global_ and actor is not None:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No se puede otorgar autoridad global desde la administración de una empresa")
 
         user = User(
             first_name=data.first_name,
@@ -206,7 +340,7 @@ class AuthService:
             phone=data.phone,
             hashed_password=hash_password(data.password),
             role_id=data.role_id,
-            company_id=data.company_id,
+            company_id=company_id,
             view_type=data.view_type or "web",
         )
         self.db.add(user)
@@ -214,13 +348,39 @@ class AuthService:
         await self.db.refresh(user)
         return UserRead.model_validate(user)
 
-    async def update_user(self, user_id: int, data: UserUpdate) -> UserRead:
-        result = await self.db.execute(select(User).where(User.id == user_id))
-        user = result.scalar_one_or_none()
+    async def update_user(self, user_id: int, data: UserUpdate,
+                          actor: dict | None = None) -> UserRead:
+        """Edición de un usuario de la empresa efectiva. `AC14` · `AC15` · `R-114` · `R-117`.
+
+        El orden **es** parte de la regla:
+
+        ```
+        objetivo dentro de la empresa  →  validación de rol  →  mutación
+        ```
+
+        Antes se traía el usuario globalmente y se le aplicaban los campos en bucle, `role_id`
+        incluido. Eso permitía, por la ruta documentada de edición, que un administrador de la
+        empresa A convirtiera a un usuario de la B en Super Administrador: fuga de inquilino y
+        modificación de autoridad a la vez.
+        """
+        if actor is None:
+            user = (await self.db.execute(
+                select(User).where(User.id == user_id))).scalar_one_or_none()
+        else:
+            user = await self._usuario_alcanzable(user_id, actor)
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
 
         update_data = data.model_dump(exclude_unset=True)
+
+        # `AC15`. Se comprueba **antes** de tocar la fila: una denegación no puede dejar
+        # medio usuario escrito.
+        _, global_ = self._contexto(actor)
+        if ("role_id" in update_data and actor is not None and not global_
+                and await self._es_autoridad_global(update_data["role_id"])):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No se puede otorgar autoridad global desde la administración de una empresa")
         for key, value in update_data.items():
             setattr(user, key, value)
 
@@ -296,9 +456,17 @@ class AuthService:
             ),
         )
 
-    async def deactivate_user(self, user_id: int) -> None:
-        result = await self.db.execute(select(User).where(User.id == user_id))
-        user = result.scalar_one_or_none()
+    async def deactivate_user(self, user_id: int, actor: dict | None = None) -> None:
+        """Baja de un usuario de la empresa efectiva. `AC14`.
+
+        Misma clase de mutación por identificador que `update_user`, y por tanto la misma
+        regla: dar de baja a alguien de otro inquilino es tan grave como editarlo.
+        """
+        if actor is None:
+            user = (await self.db.execute(
+                select(User).where(User.id == user_id))).scalar_one_or_none()
+        else:
+            user = await self._usuario_alcanzable(user_id, actor)
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
         user.is_active = False
