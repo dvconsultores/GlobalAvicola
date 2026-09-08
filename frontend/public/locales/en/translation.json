@@ -559,7 +559,11 @@
     "phonePlaceholder": "Phone",
     "passwordPlaceholder": "Password *",
     "area": "Functional area",
-    "noArea": "No area"
+    "noArea": "No area",
+    "noUsers": "No users registered in this company",
+    "forbidden": "You do not have permission to view user administration",
+    "loadError": "The user list could not be loaded",
+    "partialCatalogs": "Some catalogs could not be loaded; dropdowns may be incomplete"
   },
   "profile": {
     "title": "Profile",

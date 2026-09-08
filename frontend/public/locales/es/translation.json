@@ -559,7 +559,11 @@
     "phonePlaceholder": "Teléfono",
     "passwordPlaceholder": "Contraseña *",
     "area": "Área funcional",
-    "noArea": "Sin área"
+    "noArea": "Sin área",
+    "noUsers": "No hay usuarios registrados en esta empresa",
+    "forbidden": "No tienes permiso para ver la administración de usuarios",
+    "loadError": "No se pudo cargar la lista de usuarios",
+    "partialCatalogs": "Algunos catálogos no se pudieron cargar; los desplegables pueden estar incompletos"
   },
   "profile": {
     "title": "Perfil",

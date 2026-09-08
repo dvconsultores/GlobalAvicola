@@ -189,6 +189,58 @@ async def test_p0a_el_listado_del_otro_lado_es_simetrico(http_client, esc):
     assert esc["a1_username"] not in nombres
 
 
+async def test_el_filtro_vive_en_la_consulta_y_no_despues_de_paginar(http_client, esc):
+    """`AC13` · `§41`. El predicado va **dentro** de la consulta, antes de la paginación.
+
+    Esta prueba existe porque una mutación sobrevivió **dos veces**, y la segunda por culpa
+    mía: filtrar en Python después de paginar daba el mismo resultado, y mi primer intento
+    pedía la primera página —donde los usuarios de `A`, con identificadores bajos, sobrevivían
+    igualmente al filtro posterior—. La prueba prometía en su descripción algo que su código
+    no hacía.
+
+    Ahora discrimina de verdad. Se siembran treinta usuarios de `B` y **después** uno de `A`,
+    de modo que el de `A` queda con el identificador más alto de todos:
+
+    ```
+    FILTRO EN LA CONSULTA   `A` tiene 3 usuarios · el nuevo entra en la primera página
+    FILTRO DESPUÉS          la primera página son treinta filas de `B` · el de `A` no está
+    ```
+    """
+    from app.auth.models import User
+    from app.auth.security import hash_password
+
+    marca = f"{PREFIJO}TARDIO-{uuid.uuid4().hex[:6]}"
+    motor = create_async_engine(esc["url"])
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            for i in range(30):
+                s.add(User(first_name="Relleno", last_name=str(i),
+                           email=f"{PREFIJO}rel{i}-{uuid.uuid4().hex[:6]}@globalavicola.com",
+                           username=f"{PREFIJO}REL{i}-{uuid.uuid4().hex[:6]}",
+                           hashed_password=hash_password("x1234567"),
+                           company_id=esc["b"], role_id=esc["rol_ordinario"],
+                           is_active=True))
+            await s.flush()
+            # El de `A`, el último de todos.
+            s.add(User(first_name="Tardio", last_name="A",
+                       email=f"{marca}@globalavicola.com", username=marca,
+                       hashed_password=hash_password("x1234567"),
+                       company_id=esc["a"], role_id=esc["rol_ordinario"], is_active=True))
+            await s.commit()
+    finally:
+        await motor.dispose()
+
+    r = await http_client.get("/api/v1/users?limit=20", headers=_token(esc["admin_a"]))
+    assert r.status_code == 200, r.text
+    nombres = {u["username"] for u in r.json()}
+
+    assert marca in nombres, (
+        "el usuario más reciente de la empresa propia no aparece en la primera página: "
+        "el filtro se está aplicando después de paginar")
+    assert not [n for n in nombres if n.startswith(f"{PREFIJO}REL")], (
+        "se colaron usuarios de la empresa B")
+
+
 async def test_p0b_conocer_el_identificador_ajeno_no_abre_el_usuario(http_client, esc):
     """`P0-B` · `R-114`. `IDOR` de inquilino en la consulta directa."""
     r = await http_client.get(f"/api/v1/users/{esc['b1']}", headers=_token(esc["admin_a"]))
