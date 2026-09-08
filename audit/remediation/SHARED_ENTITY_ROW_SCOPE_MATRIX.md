@@ -82,7 +82,7 @@ el filtro de empresa y el `RBAC` siguen actuando, y simplemente no se afirma nad
 | `operational_alerts` | `NO ACOTADA` | **fase 4** / **6** |
 | `notifications` | `NO ACOTADA` | **fase 10** |
 | `audit_logs` | `NO ACOTADA` | decisión `BU-D03` |
-| `egg_batches` · `chick_batches` | **`APLAZADA A LA FASE 5`** | son traspasos: un predicado de propietario único rompería `P-10` |
+| `egg_batches` · `chick_batches` | **`ACCESO CONTRACTUAL`** | fase 5: proyección `B` explícita, origen acotado, destino obligatorio y validado |
 | `consolidated_movements` | **`APLAZADA A LA FASE 5`** | contrato del flujo 5 |
 | `approval_actions` · `correction_logs` | `NO ACOTADAS` | heredan del evento → **fase 6** |
 

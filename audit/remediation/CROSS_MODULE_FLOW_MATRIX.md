@@ -95,3 +95,25 @@ Dos observaciones de esa relectura afectan a esta matriz:
 - El flujo 2 es el único cuya decisión **arrastra un requisito de dato nuevo**: para que la
   incubadora vea el huevo antes de recibirlo, el despacho tendría que declarar su destino.
   `operational_events.destination_farm_id` apunta a una granja, no a una unidad, y es opcional.
+
+---
+
+## Estado de los contratos tras la fase 5 (2026-09-07)
+
+| # | Flujo | Contrato | Por qué |
+|:--:|---|:--:|---|
+| 1 | Progenitoras → Reproductoras | **IMPLEMENTADO** | vía `egg_batches` + `chick_batches` |
+| 2 | Reproductoras → Incubadora | **IMPLEMENTADO** | destino obligatorio · flujo validado · origen acotado |
+| 3 | Incubadora → Engorde | **IMPLEMENTADO** | ídem, sobre `chick_batches` |
+| 4 | Transferencia entre granjas | **APLAZADO · FASE 6** | `bird_movements` cuelga del evento, y `lot_id` es nulable |
+| 5 | Consolidación a SAP | **EXCEPCIÓN DECLARADA** | agrupa las cuatro por definición · `BU-D04` pendiente |
+| 6 | Revisión y aprobación | **APLAZADO · FASE 6** | `operational_events`, misma dependencia |
+| 7 | Trazabilidad generacional | **IMPLEMENTADO** | la cadena es `B`; el interior de cada eslabón sigue en `C` |
+
+```
+IMPLEMENTADOS 4 · APLAZADOS 2 · EXCEPCIÓN 1
+```
+
+El detalle campo por campo está en `BUSINESS_UNIT_HANDOFF_CONTRACT_MATRIX.md`. Los dos aplazados
+no lo están por comodidad: acotar hoy los eventos sin lote los haría desaparecer para todos,
+incluida la persona que acaba de registrarlos.

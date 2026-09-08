@@ -762,3 +762,33 @@ CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
 
 Acotar los quince indicadores **no certifica `P-15`**: certificar por endpoint es lo que
 `GA-REM-016 AC05` prohíbe.
+
+---
+
+## `GA-REM-040` fase 5 · contratos de traspaso (2026-09-07)
+
+```
+VISIBILIDAD DE TRASPASO ≠ ACCESO A LA UNIDAD AJENA
+```
+
+**De trece comprobaciones del contrato, diez ya pasaban.** Las proyecciones de lectura ya eran
+acotadas y las fases 1 a 4 ya impedían pivotar del identificador ajeno a su detalle. Faltaban
+tres cosas, todas de escritura: el destino era opcional, el origen no se acotaba, y el flujo no
+se validaba.
+
+`T-040-14` se responde solo: **la columna de destino ya existía**. Decisión `REUSE`, sin
+migración — lo que `OD-10.b §3.2` había anticipado.
+
+```
+FLUJOS IMPLEMENTADOS     4 / 7    aplazados 2 (fase 6) · excepción declarada 1 (BU-D04)
+CAMPOS SIN CLASIFICAR    0
+PRUEBAS                  13 / 13   SENSIBILIDAD  6 / 6 aplicables · 3 N/A con razón
+REGRESIÓN                598 passed · 49 skipped · P-10 verde
+```
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+```
+
+Certificar `P-10` por tener su cadena protegida sería tan inválido como certificar por endpoint.

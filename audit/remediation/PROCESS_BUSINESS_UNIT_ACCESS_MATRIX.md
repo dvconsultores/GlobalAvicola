@@ -63,7 +63,7 @@ de acceso se podrá medir algún día.
 | `P-07` revisión → aprobación | ninguna | eventos operativos (6) |
 | `P-08` SAP | ninguna | contrato del flujo 5 · sigue `BLOCKED_EXTERNAL` |
 | `P-09` auditoría | ninguna | decisión `BU-D03` |
-| `P-10` trazabilidad | ninguna **a propósito** | contrato de traspaso (5) |
+| `P-10` trazabilidad | **contrato de traspaso** (fase 5) | eventos operativos (6) · superficie de anulación inexistente |
 | `P-11` activación de lotes | `lots`, `opening_balances` | eventos operativos (6) |
 | `P-12` maestros | ninguna | fase 3 posterior o 7, según el maestro |
 | `P-13` usuarios y roles | n/a — plano de control | — |
