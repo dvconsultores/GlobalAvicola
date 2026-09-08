@@ -33,6 +33,9 @@ PREFIJO = "BUKPI-"
 MUERTES_REPRODUCTORA = 10
 MUERTES_INCUBADORA = 7
 POBLACION_INICIAL = 1000
+#: Un registro pendiente de revisión. `P-15` **no** lo cuenta, y el filtro de seguridad de la
+#: fase 4 no puede alterar esa regla: se añade encima, no en su lugar.
+MUERTES_SIN_APROBAR = 500
 
 
 def _token(user_id: int) -> dict:
@@ -121,6 +124,16 @@ async def kpi(test_database_url):
             return lote
 
         lote_r = await _lote_con_muertes(a.id, "R", BirdTypeEnum.BREEDER, MUERTES_REPRODUCTORA)
+        # Un registro **sin aprobar** sobre el mismo lote. `P-15` lo excluye, y esa regla
+        # funcional tiene que sobrevivir al filtro de seguridad que la fase 4 añade.
+        borrador = OperationalEvent(
+            company_id=a.id, lot_id=lote_r.id, event_type=EventType.MORTALITY_RECORDING,
+            event_date=days_ago(5), status=EventStatus.PENDING_REVIEW,
+            registered_by_id=amb.id)
+        s.add(borrador)
+        await s.flush()
+        s.add(BirdMovement(event_id=borrador.id, quantity=MUERTES_SIN_APROBAR))
+        await s.flush()
         lote_h = await _lote_con_muertes(a.id, "H", BirdTypeEnum.HATCHERY, MUERTES_INCUBADORA)
         lote_b = await _lote_con_muertes(b.id, "B", BirdTypeEnum.BREEDER, 99)
         await s.commit()
@@ -328,3 +341,47 @@ async def test_llamarse_contralor_no_amplia_el_agregado(http_client, kpi, test_d
     assert panel.status_code == 200
     etiquetas = " ".join(str(k).lower() for k in (panel.json().get("lots_by_type") or {}))
     assert "hatchery" not in etiquetas
+
+
+async def test_el_filtro_de_seguridad_no_altera_la_regla_de_aprobacion(http_client, kpi):
+    """`§6` · `P-15` sigue excluyendo lo que no está aprobado.
+
+    El lote tiene 10 muertes aprobadas y 500 pendientes de revisión. El indicador debe
+    seguir diciendo 10: el alcance por unidad se aplica **además** de la semántica de
+    aprobación, no en su lugar.
+
+    Sin esta prueba, una implementación que reemplazara el filtro de estado por el de unidad
+    pasaría desapercibida y el indicador multiplicaría por cincuenta.
+    """
+    r = await http_client.get(f"/api/v1/reports/kpis/mortality?lot_id={kpi['lote_r']}",
+                              headers=_token(kpi["user_re"]))
+    assert r.status_code == 200, r.text
+    assert r.json()["total_deaths"] == MUERTES_REPRODUCTORA, (
+        "el registro sin aprobar no puede contar")
+
+
+async def test_los_contadores_del_panel_no_cuentan_eventos_ajenos(http_client, kpi):
+    """`§3` · un `COUNT` filtra igual que una fila.
+
+    El panel cuenta eventos de la empresa. Si no se acota, el usuario de reproductora ve
+    cuántos eventos tiene incubadora — y con dos consultas separadas por el tiempo, cuándo
+    los registra.
+
+    Esta prueba nació de una mutación que **no** rompió nada: el acotamiento estaba, pero
+    ninguna prueba lo sujetaba.
+    """
+    de_re = await http_client.get("/api/v1/dashboard/admin", headers=_token(kpi["user_re"]))
+    de_amb = await http_client.get("/api/v1/dashboard/admin", headers=_token(kpi["user_amb"]))
+    assert de_re.status_code == 200 and de_amb.status_code == 200
+
+    total_re = de_re.json()["total_events"]
+    total_amb = de_amb.json()["total_events"]
+    assert total_amb > total_re, (
+        f"quien alcanza dos cadenas debe contar más que quien alcanza una: "
+        f"{total_amb} vs {total_re}")
+
+
+async def test_el_panel_del_usuario_sin_unidades_no_cuenta_eventos(http_client, kpi):
+    r = await http_client.get("/api/v1/dashboard/admin", headers=_token(kpi["user_cero"]))
+    assert r.status_code == 200, r.text
+    assert r.json()["total_events"] == 0

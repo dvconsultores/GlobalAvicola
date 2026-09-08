@@ -729,3 +729,36 @@ nivel más abajo.
 No se registra como regresión de la fase 3: la fase 3 lo **encontró**. Y los cuatro fallos de
 fixture que aparecieron en el camino no se registran como defectos de producto, porque no lo
 eran.
+
+---
+
+## `GA-REM-040` fase 4 · agregados e indicadores (2026-09-07)
+
+```
+LO QUE NO SE PUEDE VER COMO FILAS NO PUEDE REAPARECER COMO TOTAL
+```
+
+**La forma del riesgo no era la que se suponía.** `/kpis/mortality` no sumaba la empresa: exige
+`lot_id`. Casi todos los indicadores de `P-15` son por lote, y lo que hacían era devolver el
+detalle de cualquier lote cuyo identificador alguien conociera — población inicial, muertes y
+tasa, más de lo que el listado ocultaba.
+
+La fuga de empresa de verdad estaba en el panel, y era la de manual: `lots_by_type` **nombraba**
+las cadenas ajenas con su recuento.
+
+```
+SUPERFICIES ACOTADAS     16 / 16
+PRUEBAS                  15 / 15   con valores discriminantes, 10 frente a 7
+SENSIBILIDAD             8 / 8     dos encontraron huecos de cobertura, no de implementación
+REGRESIÓN                585 passed · 49 skipped
+FÓRMULAS P-15            intactas · comprobado con un registro sin aprobar que no cuenta
+MIGRACIÓN                ninguna · FRONTEND 0
+```
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD    0 / 15   sin cambios
+```
+
+Acotar los quince indicadores **no certifica `P-15`**: certificar por endpoint es lo que
+`GA-REM-016 AC05` prohíbe.

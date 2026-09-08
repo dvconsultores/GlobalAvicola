@@ -62,3 +62,31 @@ haría incalculable. Es un indicador que, por naturaleza, o cruza o no existe.
 
 Ninguno se resuelve con un filtro: los dos necesitan que el propietario diga qué debe ver quien
 tiene una sola unidad.
+
+---
+
+## Estado real tras la fase 4 de `GA-REM-040` (2026-09-07)
+
+Al implementar apareció que la forma del riesgo **no era la que esta matriz suponía**: casi
+todos los indicadores de `P-15` son **por lote** —exigen `lot_id`—, de modo que no sumaban la
+empresa. Lo que hacían era devolver el detalle de cualquier lote cuyo identificador alguien
+conociera, que es más de lo que el listado de la fase 3 ocultaba.
+
+| Superficie | Forma | Antes | Ahora |
+|---|---|:--:|:--:|
+| `mortality` · `feed-conversion` · `egg-production` · `animal-welfare` · `vaccination-efficiency` · `transfer-efficiency` · `afcr` · `production-index` | por lote | **cualquier lote de la empresa** | **acotada** · `404` fuera del alcance |
+| `kpi/ipe/{lot_id}` · `kpi/weight-uniformity/{lot_id}` · `reports/lot/{lot_id}` | por lote | ídem | **acotada** |
+| `kpis` · `kpis/hatchery` · `sap-comparison` | lote opcional | agregaba la empresa | **acotada** |
+| `dashboard` — `lots_by_type` | agrupado | **nombraba las cadenas ajenas y las contaba** | **acotada** · grupos filtrados |
+| `dashboard` — contadores, tendencia, alertas | agregados | toda la empresa | **acotada** vía lote alcanzable |
+
+```
+SUPERFICIES        16 / 16 acotadas
+FUGA DE DIMENSIÓN  cerrada
+FÓRMULAS P-15      sin cambios · numerador, denominador, aprobación y redondeo intactos
+EVENTO SIN LOTE    no contribuye · dependencia declarada de la fase 6
+VISTA DE CONTROL   no implementada · requiere diseño de producto (`OD-09.a`)
+```
+
+**Ningún `PASS` de certificación por esto.** Acotar los quince indicadores no certifica `P-15`:
+el proceso consume además eventos operativos —fase 6— e indicadores de traspaso —fase 5—.

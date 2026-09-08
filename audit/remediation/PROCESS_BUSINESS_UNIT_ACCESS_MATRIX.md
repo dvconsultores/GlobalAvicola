@@ -59,7 +59,7 @@ de acceso se podrá medir algún día.
 
 | Proceso | Entidades acotadas | Lo que falta para poder certificarlo |
 |---|---|---|
-| `P-01` `P-02` `P-03` `P-04` `P-05` `P-06` | `lots`, `lot_phases`, `opening_balances` | eventos operativos (6) · `KPI` (4) |
+| `P-01` `P-02` `P-03` `P-04` `P-05` `P-06` | `lots`, `lot_phases`, `opening_balances`, **sus indicadores** | eventos operativos (6) |
 | `P-07` revisión → aprobación | ninguna | eventos operativos (6) |
 | `P-08` SAP | ninguna | contrato del flujo 5 · sigue `BLOCKED_EXTERNAL` |
 | `P-09` auditoría | ninguna | decisión `BU-D03` |
@@ -68,7 +68,7 @@ de acceso se podrá medir algún día.
 | `P-12` maestros | ninguna | fase 3 posterior o 7, según el maestro |
 | `P-13` usuarios y roles | n/a — plano de control | — |
 | `P-14` notificaciones | ninguna | fase 10 |
-| `P-15` reportes y KPI | ninguna | fase 4 |
+| `P-15` reportes y KPI | **los 15 indicadores y el panel** | eventos operativos (6) · indicadores de traspaso (5) |
 
 ```
 CERTIFICACIÓN DE ACCESO POR UNIDAD     0 / 15     sin cambios
