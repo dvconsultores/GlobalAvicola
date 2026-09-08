@@ -58,6 +58,7 @@ se interpretan.
 | `OD-11` | La empresa efectiva de una petición — una reclamación en el token no es autoridad | **VIGENTE** | [OD-11](OD-11-EFFECTIVE-COMPANY-CONTEXT.md) |
 | `OD-12` | La transversalidad del contrato SAP — capacidad operativa explícita y acotada | **VIGENTE** | [OD-12](OD-12-SAP-TRANSVERSAL-CONTRACT.md) |
 | `OD-13` | La propiedad de roles y permisos — el permiso es de producto, el rol tiene alcance | **VIGENTE** | [OD-13](OD-13-ROLE-AND-PERMISSION-TENANCY.md) |
+| `OD-14` | Control global frente a contexto de inquilino — `switch-company` elige inquilino, no retira autoridad | **VIGENTE** | [OD-14](OD-14-GLOBAL-CONTROL-VS-TENANT-CONTEXT.md) |
 
 ## Resumen
 ```
