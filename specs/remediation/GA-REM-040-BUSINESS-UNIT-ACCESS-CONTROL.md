@@ -3,7 +3,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-040` · `CROSS-CUTTING CAPABILITY SPEC` |
-| **Prioridad** | **P0** · Estado **`SPEC_READY`** (2026-09-07) · sin implementar |
+| **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 de 11 construida** (2026-09-07) |
 | **Requisito** | habilitación de unidades por empresa y acotamiento por usuario |
 | **Decisiones** | `OD-09` (`a` `b` `c`) · `OD-10` (`a` `b` `c`) · marco `ENV-01` |
 | **Antecedente** | `audit/remediation/MODULE_ACCESS_ARCHITECTURE_AUDIT.md` y sus 21 matrices |

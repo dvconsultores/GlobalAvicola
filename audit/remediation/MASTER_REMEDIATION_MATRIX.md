@@ -567,3 +567,36 @@ CERTIFICACIÓN DE ACCESO POR UNIDAD      0 / 15   dimensión nueva
 `BU-D05` queda como gate aparte —`FIRST_REAL_CUSTOMER_READINESS`— y no bloquea la construcción.
 `R-98` recibirá infraestructura de aquí, y **eso no lo cierra**: la dependencia se registra y nada
 más.
+
+---
+
+## `GA-REM-040` fase 1 · fundamento construido (2026-09-07)
+
+```
+FASE 1 DE 11             catálogo · habilitación por empresa · concesión por usuario · resolutor
+TABLAS NUEVAS            3        business_units · company_business_units · user_business_units
+MIGRACIÓN                p6q7r8s9t0u1    cabeza única
+PRUEBAS                  23 / 23
+SENSIBILIDAD             5 / 5 mutaciones detectadas
+REGRESIÓN                516 passed · 49 skipped     (eran 493 · 49)
+FRONTEND                 0 archivos
+RUTAS MODIFICADAS        0 de 198
+```
+
+`T-040-01` concluyó que **no existe** modelo de habilitación ni de alcance de usuario
+reutilizable: decisión `CREATE`, documentada en
+`audit/remediation/GA_REM_040_PHASE_1_EVIDENCE.md`.
+
+Los 22 maestros quedan clasificados —`MASTER_DATA_BUSINESS_UNIT_SCOPE_MATRIX.md`, 22/22— y el
+resultado útil es que **ninguno necesita columna de unidad**: los cuatro que son de una unidad la
+derivan de su naturaleza, `breeds` ya lleva `bird_type`, y al resto asignarle una falsearía el
+dato.
+
+```
+CERTIFICACIÓN FUNCIONAL                14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD      0 / 15   sin cambios
+```
+
+Nada de lo construido impide todavía que un usuario vea un lote de otra unidad: el filtro por
+fila es la fase 3. Otorgar un `PASS` por tener tablas y un resolutor sería la evidencia que
+`GA-REM-016 AC13` prohíbe.

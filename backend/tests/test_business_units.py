@@ -462,3 +462,54 @@ async def test_el_resolutor_no_necesita_una_peticion_http(sesion_bu):
     for nombre in ("unidades_habilitadas", "unidades_efectivas", "tiene_acceso"):
         firma = inspect.signature(getattr(service, nombre))
         assert "request" not in firma.parameters, nombre
+
+
+# ── Apagar y volver a encender · AC-A04, AC-A06 · BU-D10 ──────────────────────
+
+@pytest.mark.asyncio
+async def test_ac_a04_apagar_una_unidad_no_borra_las_concesiones(sesion_bu):
+    """`BU-D10` sigue pendiente de ratificación, así que apagar tiene que ser reversible.
+
+    Si apagar borrase las concesiones, el propietario ya no podría elegir: la opción
+    «conservar el histórico» habría desaparecido de hecho el día que alguien apagó una
+    unidad. Se conserva la fila y se pierde la efectividad, que sí es reversible.
+    """
+    from sqlalchemy import func
+
+    from app.business_units.models import UserBusinessUnit
+    from app.business_units.service import unidades_efectivas
+
+    empresa = await _empresa(sesion_bu)
+    habilitacion = await _habilitar(sesion_bu, empresa.id, "hatchery", True)
+    u = await _usuario(sesion_bu, empresa.id)
+    await _conceder(sesion_bu, u.id, "hatchery")
+    assert await unidades_efectivas(sesion_bu, u) == ["hatchery"]
+
+    habilitacion.is_enabled = False
+    await sesion_bu.flush()
+
+    assert await unidades_efectivas(sesion_bu, u) == []
+    vivas = (await sesion_bu.execute(
+        select(func.count(UserBusinessUnit.id))
+        .where(UserBusinessUnit.user_id == u.id)
+    )).scalar_one()
+    assert vivas == 1, "la concesión debe sobrevivir al apagado"
+
+
+@pytest.mark.asyncio
+async def test_ac_a06_rehabilitar_devuelve_la_efectividad_a_la_concesion_previa(sesion_bu):
+    """Encender de nuevo no obliga a recorrer usuario por usuario reconcediendo."""
+    from app.business_units.service import unidades_efectivas
+
+    empresa = await _empresa(sesion_bu)
+    habilitacion = await _habilitar(sesion_bu, empresa.id, "breeder", True)
+    u = await _usuario(sesion_bu, empresa.id)
+    await _conceder(sesion_bu, u.id, "breeder")
+
+    habilitacion.is_enabled = False
+    await sesion_bu.flush()
+    assert await unidades_efectivas(sesion_bu, u) == []
+
+    habilitacion.is_enabled = True
+    await sesion_bu.flush()
+    assert await unidades_efectivas(sesion_bu, u) == ["breeder"]
