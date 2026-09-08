@@ -43,7 +43,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-037` | Curvas estándar de peso y alerta por desviación (+ enmienda A: capacidad de producto) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 | `GA-REM-038` | Notificaciones internas (+ enmiendas A y B) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-038](GA-REM-038-INTERNAL-NOTIFICATIONS.md) |
 | `GA-REM-039` | Áreas funcionales | DOMAIN MODEL | P1 | **`CERTIFIED`** | — | [GA-REM-039](GA-REM-039-FUNCTIONAL-AREAS.md) |
-| `GA-REM-040` | Acceso por unidad de negocio (+ enmienda A: la concesión se acota a la empresa) | ACCESS CONTROL | P0 | `SPEC_READY` ⚠ fase 1/11 | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
+| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A y B: concesión acotada a la empresa · empresa efectiva) | ACCESS CONTROL | P0 | `SPEC_READY` ⚠ fase 1/11 | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
 
 ## Decisiones normativas
 
@@ -53,8 +53,9 @@ se interpretan.
 | ID | Título | Estado | Documento |
 |---|---|---|---|
 | `ENV-01` | Clasificación de entorno — el desplegado es compartido de desarrollo/test/certificación, no producción | **VIGENTE** | [ENV-01](ENV-01-ENVIRONMENT-CLASSIFICATION.md) |
-| `OD-09` | Plano de control frente a unidad de negocio — visibilidad de control y acceso operativo son capacidades distintas (+ enm. A: la concesión pertenece a usuario + empresa + unidad) | **VIGENTE** | [OD-09](OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md) |
+| `OD-09` | Plano de control frente a unidad de negocio — visibilidad de control y acceso operativo son capacidades distintas (+ enm. A: la concesión pertenece a usuario + empresa + unidad · enm. B: volver no reactiva) | **VIGENTE** | [OD-09](OD-09-CONTROL-PLANE-VS-BUSINESS-UNIT.md) |
 | `OD-10` | Contrato de traspaso entre unidades y clasificación pendiente — entre unidades solo pasa el contrato | **VIGENTE** | [OD-10](OD-10-HANDOFF-CONTRACT-AND-PENDING-CLASSIFICATION.md) |
+| `OD-11` | La empresa efectiva de una petición — una reclamación en el token no es autoridad | **VIGENTE** | [OD-11](OD-11-EFFECTIVE-COMPANY-CONTEXT.md) |
 
 ## Resumen
 ```

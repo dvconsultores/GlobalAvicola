@@ -10,7 +10,7 @@
 | Estado | **VIGENTE** |
 | Alcance | Acceso por unidad de negocio: `GA-REM-040` y sus derivados |
 | Antecedente | `audit/remediation/BU_DECISION_BRIEF_D11_D12_D09.md` |
-| Resuelve | `BU-D11 = C` · `BU-D12 = B` · `BU-D09 = B` · **enmienda A**: alcance de la concesión |
+| Resuelve | `BU-D11 = C` · `BU-D12 = B` · `BU-D09 = B` · **enm. A** alcance · **enm. B** regreso |
 | Preserva | `OD-08` · `P-14` `CERTIFIED` |
 
 ---
@@ -318,6 +318,67 @@ resuelve arrastrando aquella. `BU-D10` sigue `PENDIENTE DE RATIFICACIÓN`.
 
 Hasta que se decida, el comportamiento es el conservador: volver a la empresa A **no** reactiva
 nada por sí solo; hace falta una concesión explícita.
+
+---
+
+## 5 ter. `OD-09.e` — Volver no restaura · **enmienda B** (2026-09-07)
+
+```
+VOLVER A UNA EMPRESA ANTERIOR   ≠   RECUPERAR LA AUTORIZACIÓN ANTERIOR
+```
+
+`OD-09.d` dijo que la concesión no viaja al **salir** de una empresa. Faltaba el caso espejo:
+qué pasa al **volver**.
+
+```
+U tiene A / Reproductora concedida
+U pasa de A a B          →  la concesión de A queda como historia, inefectiva
+U vuelve de B a A        →  SIGUE siendo historia, SIGUE inefectiva
+```
+
+Hasta que un administrador autorizado otorgue una **concesión nueva y explícita**.
+
+### 5 ter.1 Por qué no se reactiva sola
+
+Volver a una empresa no prueba nada de lo que la concesión daba por supuesto:
+
+```
+el mismo cargo · las mismas responsabilidades · el mismo jefe
+la misma necesidad operativa · la misma autorización
+```
+
+Alguien que se fue de producción y vuelve a administración no debería recuperar el acceso a los
+lotes porque el sistema recuerde que un día lo tuvo. Una autorización que revive sola es una
+autorización que nadie concedió.
+
+### 5 ter.2 La historia se conserva
+
+```
+PROHIBIDO   volver  →  borrar o revivir las concesiones anteriores
+```
+
+Quedan registradas, auditables e **inefectivas**. Existir no es autorizar.
+
+### 5 ter.3 Y con ello `BU-D09` sigue en pie
+
+Al volver, mientras nadie conceda nada:
+
+```
+unidades efectivas  =  []
+```
+
+Que es el estado que `OD-09.c` ya declaró correcto: se entra, se usa lo transversal, no se ve
+dato productivo.
+
+### 5 ter.4 Esto no es `BU-D10`
+
+```
+OD-09.e    qué pasa con la concesión cuando el USUARIO cambia de empresa
+BU-D10     qué pasa con la concesión cuando la EMPRESA apaga una unidad
+```
+
+Dos ciclos de vida distintos. `BU-D10` sigue **`PENDIENTE DE RATIFICACIÓN`** y no se resuelve
+arrastrando ésta.
 
 ---
 

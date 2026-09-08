@@ -5,7 +5,7 @@
 | **ID** | `GA-REM-040` · `CROSS-CUTTING CAPABILITY SPEC` |
 | **Prioridad** | **P0** · Estado **`SPEC_READY`** · **fase 1 construida, enmienda A** (2026-09-07) |
 | **Requisito** | habilitación de unidades por empresa y acotamiento por usuario |
-| **Decisiones** | `OD-09` (`a` `b` `c` · **`d`** enm. A) · `OD-10` (`a` `b` `c`) · marco `ENV-01` |
+| **Decisiones** | `OD-09` (`a`…`e`) · `OD-10` (`a` `b` `c`) · **`OD-11`** contexto de empresa · marco `ENV-01` |
 | **Antecedente** | `audit/remediation/MODULE_ACCESS_ARCHITECTURE_AUDIT.md` y sus 21 matrices |
 | **Procesos** | los quince, en una **dimensión nueva**; ninguno se reabre |
 | **Dependencias** | `GA-REM-002` `GA-REM-034` (`RBAC`) · `GA-REM-039` (`Area`, que **no** es esto) |
@@ -632,6 +632,10 @@ B— se **rechaza** en el límite de servicio, y no queda escrita.
 **`AC-B11`** · Cambiar de empresa **no borra** las concesiones anteriores: quedan registradas e
 inefectivas.
 
+**`AC-B12`** · **`OD-09.e` · enmienda B.** Volver a una empresa anterior **no reactiva** la
+concesión que se tuvo allí. Sigue siendo historia inefectiva hasta que se otorgue una nueva y
+explícita.
+
 ### Grupo `C` · seguridad de backend
 
 **`AC-C01`** · Existe un resolutor central de acceso efectivo; no se repite la comprobación en
@@ -644,6 +648,29 @@ una sin clasificar. Las `CORE` se clasifican explícitamente.
 **`AC-C06`** · Una operación denegada **no produce efecto lateral alguno**.
 **`AC-C07`** · Servicios, repositorios y llamadas internas quedan cubiertos, no solo los routers.
 **`AC-C08`** · Alcance no resuelto **deniega**. Nunca abre.
+
+**`AC-C09`** · **`OD-11.a`.** Para un usuario normal la empresa efectiva es la **persistida**.
+
+**`AC-C10`** · Una reclamación de empresa en el token que no coincida con la persistida **se
+ignora** para un usuario normal. No desplaza el inquilino.
+
+**`AC-C11`** · **`OD-11.b`.** Un contexto de empresa desplazado solo se honra si el actor está
+autorizado a cambiarla, y la empresa de destino **existe y está activa**.
+
+**`AC-C12`** · Esas tres condiciones se comprueban **en cada petición**, no solo al emitir el
+token: una empresa puede desactivarse con la sesión viva.
+
+**`AC-C13`** · **`OD-11.c`.** Sin empresa persistida y sin contexto válido **no hay empresa
+efectiva**, y el acceso productivo se deniega. No se resuelve «todas las empresas».
+
+**`AC-C14`** · Cambiar de empresa con éxito **no concede** ninguna unidad de negocio ni ningún
+permiso `RBAC`. Las unidades efectivas se resuelven aparte.
+
+**`AC-C15`** · Toda ruta autenticada está **clasificada** por su relación con la unidad de
+negocio, y la guarda de arranque **falla** si alguna no lo está.
+
+**`AC-C16`** · La guarda de unidad es invocable desde una ruta, un servicio o una tarea, y no
+depende de `Request`.
 
 ### Grupo `D` · agregados
 
@@ -707,6 +734,9 @@ control.
 **`AC-I03`** · Los cambios de habilitación y concesión se auditan.
 **`AC-I04`** · La clasificación se audita.
 **`AC-I05`** · Las tareas operativas respetan el estado de la unidad en la empresa.
+
+**`AC-I06`** · **`OD-11 §6`.** El cambio de contexto de empresa deja rastro en `P-09`: quién,
+desde qué contexto, hacia qué empresa y cuándo.
 
 ### Grupo `J` · certificación
 
@@ -818,6 +848,9 @@ DECISIÓN DEL PROPIETARIO  →  AC  →  TAREA  →  PRUEBA FUTURA  →  EVIDENC
 | `T-040-29` | `E2E` de los siete contratos de traspaso |
 | `T-040-30` | Mutaciones de sensibilidad y `PROCESS_BUSINESS_UNIT_ACCESS_MATRIX.md` |
 | `T-040-31` | **Enmienda A** · acotar la concesión a la empresa que la otorgó · fase 1.1 |
+| `T-040-32` | **Enmienda B** · empresa efectiva central y validada en cada petición · fase 2 |
+| `T-040-33` | **Enmienda B** · volver a una empresa no reactiva la concesión · fase 2 |
+| `T-040-34` | **Enmienda B** · auditar el cambio de contexto de empresa en `P-09` · fase 2 |
 
 ## 22. Hoja de ruta
 
@@ -982,3 +1015,83 @@ por tanto no resuelve ninguna unidad—. Hoy no hay riesgo.
 Pero la fase 2 tendrá que decidir de dónde toma la guarda la empresa efectiva de una petición:
 de `users.company_id` o de la reclamación del token. Si son dos fuentes, hay que decir cuál
 manda. Queda anotado, no resuelto.
+
+---
+
+# Enmienda B · la empresa efectiva y el regreso (2026-09-07)
+
+## B.1 Qué faltaba
+
+`§4` exigía «misma empresa» como una de las seis condiciones, y **no decía cómo se determina cuál
+es**. Con un token que lleva una reclamación de empresa, eso no es un detalle: es la diferencia
+entre un aislamiento que se sostiene y uno que se puede pedir.
+
+Y `OD-09.d` resolvió que la concesión no viaja al **salir** de una empresa, sin decir qué pasa al
+**volver**.
+
+## B.2 Lo que ya existía y no se toca
+
+`R-48` implementó desde antes de esta spec la regla correcta:
+
+```
+usuario normal    manda la base; un token no reclama compañías ajenas
+Super Admin       se honra la empresa desplazada por `switch-company`
+```
+
+`OD-11` **ratifica** eso, no lo cambia. Lo que la fase 2 añade es lo que faltaba alrededor:
+
+```
+CENTRALIZARLO      hoy vive dentro de `get_current_user` y no es invocable desde
+                   un servicio ni una tarea
+
+VALIDARLO SIEMPRE  el contexto desplazado se comprobaba al emitirlo y no al usarlo;
+                   una empresa puede desactivarse con la sesión viva
+
+DEJAR RASTRO       situarse en otra empresa no quedaba registrado en ninguna parte
+```
+
+## B.3 Las tres dimensiones, y por qué se nombran
+
+```
+CONTEXTO DE INQUILINO   ≠   ACCESO A UNIDAD   ≠   PERMISO RBAC
+```
+
+Cambiar de empresa con éxito **no concede** ninguna unidad ni ningún permiso. El Super
+Administrador que se sitúa en una empresa obtiene contexto; sus unidades efectivas se resuelven
+aparte y, si nadie se las concedió, son ninguna.
+
+## B.4 El regreso
+
+```
+U con A/Reproductora  →  pasa a B  →  vuelve a A
+la concesión de A sigue siendo historia inefectiva
+```
+
+Volver no prueba el mismo cargo, ni las mismas responsabilidades, ni la misma necesidad
+operativa. **Una autorización que revive sola es una autorización que nadie concedió.**
+
+No es `BU-D10`: aquélla trata del ciclo de vida de la **unidad en la empresa**, y ésta del
+**usuario entre empresas**. `BU-D10` sigue pendiente de ratificación.
+
+## B.5 La clasificación de rutas
+
+`T-040-06` y `T-040-07`. Toda ruta autenticada declara su relación con la unidad de negocio:
+
+```
+CORE                 no depende de ninguna unidad
+CONTROL              plano de control de la empresa
+UNIDAD_UNICA         pertenece a una cadena concreta
+MULTI_UNIDAD         puede tocar varias — sus filas las acota la fase 3
+CONTRATO             traspaso entre unidades — sus campos, la fase 5
+```
+
+Y la guarda de arranque **falla** si alguna queda sin clasificar, igual que ya falla si alguna no
+declara permiso.
+
+```
+CLASIFICAR UNA RUTA   ≠   PROTEGER SUS FILAS
+```
+
+Que `/api/v1/lots` esté clasificada como `MULTI_UNIDAD` **no** significa que sus filas estén
+acotadas. Eso es la fase 3, y hasta entonces sigue devolviendo lotes de todas las unidades de la
+empresa.
