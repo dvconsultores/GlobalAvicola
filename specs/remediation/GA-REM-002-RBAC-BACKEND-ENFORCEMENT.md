@@ -291,3 +291,105 @@ And   no está duplicada en cada servicio
 
 Una regla de aislamiento aplicada en un sitio y ausente en otro no es una regla: es una
 casualidad. Es la misma lección que `BR-14` dejó en `GA-REM-007`.
+
+---
+
+# Enmienda B · la administración de usuarios es superficie de inquilino (2026-09-08)
+
+`R-114` · `R-117` · `R-118`. Cuatro `P0` demostrados por la Auditoría Maestra de Spec/Producto.
+
+## Por qué hubo que enmendar y no crear una `GA-REM` nueva
+
+`AC05` ya lo exigía: *«un usuario de la compañía A que intenta operar sobre un recurso de la
+compañía B recibe 403 o 404, nunca el recurso»*. Un usuario **es** un recurso de una compañía, de
+modo que la `AC` cubría el caso desde el primer día.
+
+Lo que falló no fue la norma, fue su traza. `TENANT_RESOURCE_CLASSIFICATION.md` —el documento que
+convierte `AC05` en una lista de sitios donde aplicar el filtro— se construyó desde el modelo de
+datos **operativo**: lotes, eventos, granjas, galpones, evidencias, revisiones. **`users` nunca
+entró en esa lista**, y con él se quedó fuera toda la superficie de administración.
+
+```
+LA `AC` EXISTÍA          ·  LA TRAZA DE IMPLEMENTACIÓN, NO
+```
+
+Por eso esto es una enmienda: no hay requisito nuevo que decidir, hay un ámbito que la
+implementación nunca alcanzó. Inventar `GA-REM-041` habría escondido que la regla llevaba
+escrita desde `GA-REM-002` y que lo que falló fue el método de verificación.
+
+## `AC13` — la administración de usuarios se acota a la empresa efectiva
+
+```
+Given un actor cuya compañía efectiva es A, con permiso de administración de usuarios
+When  lista usuarios
+Then  obtiene únicamente los de A
+And   el filtro se aplica en la consulta, antes de paginar, contar u ordenar
+
+When  consulta por identificador un usuario de la compañía B
+Then  recibe 404, y la respuesta no revela su existencia
+```
+
+El `404` y no el `403` es la convención ya fijada por `AC05`: distinguir «no existe» de «no es
+tuyo» ya filtra información.
+
+## `AC14` — la mutación resuelve el objetivo antes de mutar
+
+```
+Given un actor cuya compañía efectiva es A
+When  edita un usuario de la compañía B
+Then  la operación se rechaza ANTES de tocar ninguna fila
+And   el usuario ajeno queda idéntico en todos sus campos
+And   no se registra auditoría de éxito
+And   la transacción no deja estado parcial
+```
+
+El orden importa y es parte de la `AC`:
+
+```
+AUTENTICACIÓN → EMPRESA EFECTIVA → OBJETIVO EN ESA EMPRESA → RBAC →
+VALIDACIÓN DE CAMPOS → VALIDACIÓN DE ROL → MUTACIÓN → AUDITORÍA → COMMIT
+```
+
+Nunca «buscar globalmente, mutar, y descubrir después la discrepancia».
+
+Y la empresa **no se recibe del cliente**. Ni por cuerpo, ni por parámetro de consulta, ni por
+reclamación del token: se resuelve con `OD-11`, igual que en `GA-REM-040` fase 7.
+
+## `AC15` — asignar un rol es modificar autoridad
+
+```
+Given un actor acotado a una compañía
+When  asigna a cualquier usuario un rol con `module="*"` y `scope_type="all"`
+Then  la operación se rechaza con 403
+```
+
+`docs/02 §3.1.4` define al Super Administrador exactamente así y le da visibilidad sobre
+**todas** las compañías. Conceder ese rol desde una superficie acotada a una empresa **fabrica
+una autoridad global desde dentro de un inquilino**, y eso es escalada aunque el objetivo sea de
+la misma casa.
+
+Lo que esta `AC` **no** hace: inventar una regla de «solo se asignan roles más débiles que el
+propio». Esa jerarquía no está especificada en ninguna parte y decidirla no corresponde aquí.
+Se prohíbe exactamente lo que la spec ya describe como alcance global, y ni un milímetro más.
+
+```
+PENDIENTE Y REGISTRADO   qué roles ordinarios puede asignar un administrador de empresa
+                         sigue sin especificar — `R-121` · `OWNER_DECISION_REQUIRED`
+```
+
+La autoridad global legítima —quien ya tiene `("*", …, all)`— conserva la capacidad: `AC15`
+acota a los actores de empresa, no al Super Administrador.
+
+## Tareas
+
+| Tarea | Qué |
+|---|---|
+| `T-002-13` | Localizador único de usuario dentro de la empresa efectiva |
+| `T-002-14` | Listado, detalle y edición acotados en la consulta |
+| `T-002-15` | Barrera de autoridad global en la asignación de rol |
+| `T-002-16` | `users` incorporado a `TENANT_RESOURCE_CLASSIFICATION.md` |
+
+## Estado
+
+Corregido y evidenciado en `USER_TENANT_ISOLATION_P0_EVIDENCE.md`. **Sin migración**: la
+pertenencia ya existía en `users.company_id`; lo que faltaba era usarla.

@@ -118,3 +118,22 @@ existir  ≠  pertenecer
 
 Un recurso ajeno debe comportarse como **inexistente**: distinguir «no existe» de «no es
 tuyo» ya filtra información.
+
+
+---
+
+## Enmienda · la superficie de administración (2026-09-08)
+
+Esta clasificación se construyó desde el modelo de datos **operativo** y por eso omitía la
+administración. La omisión no fue inocua: `AC05` exigía acotar «un recurso de la compañía B» y
+`users` es uno, pero al no figurar aquí el filtro nunca se implementó. Cuatro `P0`.
+
+| Tabla | Clase | Clave de inquilino | Aplica en |
+|---|---|---|---|
+| `users` | **RECURSO DE INQUILINO** | `users.company_id` | listar · detalle · edición · alta |
+| `roles` | pendiente de decisión | `roles.company_id` existe y **no se usa** | `R-121` |
+| `companies` | el inquilino mismo | `companies.id` | `R-115`, sin remediar todavía |
+
+**La lección de método:** una `AC` correcta y una lista de aplicación incompleta producen
+exactamente el mismo agujero que no tener la `AC`. Toda superficie que devuelva o mute filas con
+`company_id` pertenece a esta tabla, la haya pedido alguien o no.
