@@ -736,3 +736,31 @@ Cero coincidencias en `docs/` y `specs/`; no existe `CompanyModule` ni equivalen
 **`RBAC` no lo sustituye:** `Permission.module` dice qué puede hacer una persona, no qué ha
 contratado una empresa. Hoy falta una dimensión entera de la pila de autorización.
 A decidir: ¿se vende por módulos contratables, o es producto único acotado por `RBAC`?
+
+---
+
+## Cierre de `R-114`, `R-117` y `R-118` · y `R-120` (2026-09-08)
+
+```
+R-114   CERRADO   `/users` listar, leer y editar acotados · `GA-REM-002` `AC13` `AC14`
+R-117   CERRADO   escalada de autoridad entre inquilinos · `AC15`
+R-118   CERRADO   el alta resuelve la empresa en vez de recibirla · `AC14`
+R-120   CERRADO   cinco estados distinguibles en `/users` · `AC16`
+R-116   PARCIAL   `fail-closed` en `/users`; `MasterService` sigue abierto
+```
+
+Evidencia en `USER_TENANT_ISOLATION_P0_EVIDENCE.md`. 9 mutaciones, 9 detectadas.
+
+## `R-126` · `P2` · `OWNER_DECISION_REQUIRED` · ¿acota `switch-company` a la autoridad global?
+
+Al cerrar `R-114` escribí una prueba afirmando que el Super Administrador situado en la empresa
+`A` con `switch-company` solo debía ver usuarios de `A`. **Estaba equivocada.**
+
+`docs/02 §3.1.4` dice literal: «Super Admin (rol con `module="*"`, `scope_type="all"`) ve TODAS
+las compañías», y `get_company_filter` lo aplica así en todo el producto —`MasterService`
+incluido—. Acotarlo solo en `/users` habría hecho que esa ruta se comportara distinto de
+`/masters` sin norma que lo pidiera, y rompió dos pruebas certificadas.
+
+La pregunta es legítima y sigue abierta: **¿situarse en una empresa debe acotar también a la
+autoridad global?** Hoy la respuesta del producto es no. Cambiarla afecta a todos los servicios
+y es decisión de propietario, no un parche en una ruta.

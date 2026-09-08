@@ -973,3 +973,39 @@ Entregables: `GLOBAL_AVICOLA_MASTER_GAP_ANALYSIS.md` · `..._REQUIREMENT_MASTER_
 `..._SPEC_INVENTORY.md` · `..._RECOVERY_ROADMAP.md` · `MASTER_DATA_SOURCE_OF_TRUTH_MATRIX.md` ·
 `COMPANY_MODULE_ACCESS_MATRIX.md` · `COMPANY_CONFIGURATION_MATRIX.md` ·
 `FRONTEND_SCREEN_IMPLEMENTATION_MATRIX.md` · `BACKEND_API_IMPLEMENTATION_MATRIX.md`
+
+---
+
+## `GA-REM-002` enmienda B · cierre de los cuatro `P0` de inquilino (2026-09-08)
+
+```
+LA `AC` EXISTÍA DESDE EL PRIMER DÍA · LA LISTA QUE LA APLICABA, NO
+```
+
+`AC05` exigía que un usuario de la compañía A no alcanzara «un recurso de la compañía B». Un
+usuario es uno. Lo que falló fue `TENANT_RESOURCE_CLASSIFICATION.md`, construido desde el modelo
+operativo: `users` nunca entró, y con él se quedó fuera toda la administración.
+
+```
+ROJO DEMOSTRADO   9 de 13 pruebas antes de tocar código
+SENSIBILIDAD      9 / 9 detectadas · 2 exigieron corregirme
+BACKEND           708 passed · 49 skipped
+FRONTEND          87 passed · 8 ficheros
+MIGRACIÓN         ninguna · head sigue `s9t0u1v2w3x4`
+```
+
+```
+R-114 · R-117 · R-118 · R-120     CERRADOS
+R-115 · R-116 · R-119 · R-121     ABIERTOS  ·  no se cierran por vecindad
+R-126                             NUEVO · decisión de propietario
+R-113 · FASE 8                    CONGELADOS, sin tocar
+BU-D10 · R-112 · P-08             intactos
+SAP y MÓDULOS                     ningún defecto falso creado
+```
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO   16 / 38 = 42 %   (antes 14 / 38 = 37 %)
+CERTIFICACIÓN FUNCIONAL              14 / 15          sin cambios
+ACCESO POR UNIDAD                     0 / 15          sin cambios
+CERTIFICACIONES INVALIDADAS           NINGUNA
+```

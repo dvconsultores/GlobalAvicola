@@ -85,7 +85,7 @@ async def esc(test_database_url):
 
         for rol in (rol_admin, rol_admin_b):
             for accion in (PermissionAction.READ, PermissionAction.CREATE,
-                           PermissionAction.UPDATE):
+                           PermissionAction.UPDATE, PermissionAction.DELETE):
                 s.add(Permission(role_id=rol.id, module="users", action=accion,
                                  scope_type="company"))
         s.add(Permission(role_id=rol_ordinario.id, module="operations",
@@ -419,3 +419,56 @@ async def test_sin_empresa_efectiva_y_sin_autoridad_global_se_deniega(http_clien
             f"un actor sin empresa efectiva obtuvo {r.status_code}: {r.text[:120]}")
     finally:
         await motor.dispose()
+
+
+# ══════════════════════════════════════════════════════════════════════════════
+#  El ataque completo, en una sola narrativa · `§89`
+# ══════════════════════════════════════════════════════════════════════════════
+
+async def test_e2e_el_ataque_entre_inquilinos_completo(http_client, esc):
+    """Un administrador de empresa legítimo, con el identificador ajeno en la mano.
+
+    Las cuatro superficies seguidas y sobre el mismo actor, porque por separado cada una
+    admite una explicación alternativa —«ese actor no puede nada», «ese usuario no existe»— y
+    juntas no admiten ninguna. Al final se comprueba que la empresa `B` quedó **byte a byte**
+    como estaba: ni rol, ni empresa, ni estado, ni perfil, ni una línea de auditoría.
+
+    Es el actor que `R-113` creará. Que hoy no exista ninguno sembrado con estos permisos es
+    la única razón por la que esto estuvo latente y no explotado.
+    """
+    estado_inicial = await _fila(esc, esc["b1"])
+    auditorias_iniciales = await _auditorias(esc, esc["b1"])
+    cabeceras = _token(esc["admin_a"])
+
+    # 1 · LISTAR — el objetivo no aparece
+    listado = await http_client.get("/api/v1/users?limit=100", headers=cabeceras)
+    assert listado.status_code == 200, listado.text
+    assert esc["b1_username"] not in {u["username"] for u in listado.json()}
+
+    # 2 · LEER con el identificador conocido
+    lectura = await http_client.get(f"/api/v1/users/{esc['b1']}", headers=cabeceras)
+    assert lectura.status_code == 404, lectura.text
+
+    # 3 · MODIFICAR el perfil
+    edicion = await http_client.put(f"/api/v1/users/{esc['b1']}", headers=cabeceras,
+                                    json={"first_name": "TOMADO", "is_active": False})
+    assert edicion.status_code == 404, edicion.text
+
+    # 4 · CONCEDER autoridad global
+    escalada = await http_client.put(f"/api/v1/users/{esc['b1']}", headers=cabeceras,
+                                     json={"role_id": esc["rol_global"]})
+    assert escalada.status_code == 404, escalada.text
+
+    # 5 · DAR DE BAJA
+    baja = await http_client.delete(f"/api/v1/users/{esc['b1']}", headers=cabeceras)
+    assert baja.status_code == 404, baja.text
+
+    # Efectos: ninguno.
+    assert await _fila(esc, esc["b1"]) == estado_inicial, "la empresa B cambió"
+    assert await _auditorias(esc, esc["b1"]) == auditorias_iniciales, (
+        "una operación denegada dejó rastro de éxito")
+
+    # Y el control: el mismo actor, sobre los suyos, sigue administrando.
+    propio = await http_client.put(f"/api/v1/users/{esc['a1']}", headers=cabeceras,
+                                   json={"first_name": "Legitimo"})
+    assert propio.status_code == 200, propio.text

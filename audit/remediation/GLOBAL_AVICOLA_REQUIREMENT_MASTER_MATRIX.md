@@ -119,3 +119,31 @@ El histórico `21 / 60 = 35 %` **no se toca**: mide otra cosa, en otra fecha, so
 | `F-K` | `TEST_COVERAGE_GAP` | **P2** | `Permission.scope_type` existe y no se evalúa |
 | `F-F` | `OWNER_DECISION_REQUIRED` | **P1** | origen de Empresas y Granjas sin especificar |
 | `F-L` | `OWNER_DECISION_REQUIRED` | **P1** | módulos por empresa sin especificar |
+
+
+---
+
+## 4. Actualización tras la remediación `P0` de inquilino (2026-09-08)
+
+`GA-REM-002` enmienda B. Los estados se recalculan **por evidencia de extremo a extremo**, no
+porque exista la ruta ni porque la suite esté verde.
+
+| ID | Requisito | Antes | Ahora | Evidencia |
+|---|---|:--:|:--:|---|
+| `RQ-03` | Usuarios regulares solo ven datos de su compañía en todas las consultas | `CONTRADICTED` | **`PARTIAL`** | `/users` cerrado y probado; `/masters/companies` (`R-115`) y el `fail-open` de maestros (`R-116`) siguen abiertos |
+| `RQ-05` | Toda entidad creada hereda el `company_id` del usuario | `PARTIAL` | **`COMPLETE`** para `/users` | la empresa se resuelve, no se recibe |
+| `RQ-17` | `CRUD` de usuarios con campo Empresa | `PARTIAL` | **`PARTIAL`** | aislamiento cerrado; falta la columna en la tabla (`R-122`) |
+| `RQ-18` | El alta respeta el inquilino del actor | `CONTRADICTED` | **`COMPLETE`** | `test_el_alta_no_acepta_la_empresa_del_cliente` |
+| `RQ-19` | La edición respeta el inquilino y no escala privilegios | `CONTRADICTED` | **`COMPLETE`** | `AC14` + `AC15`, `E2E` de ataque, 9 mutaciones |
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-08 (tras la remediación)
+    16 / 38  =  42 %   COMPLETE      (antes 14 / 38 = 37 %)
+    CONTRADICTED  5 → 3
+```
+
+`RQ-03` **no** pasa a `COMPLETE` a propósito: la spec dice «en todas las queries» y dos
+superficies de maestros siguen sin acotar. Declararlo cerrado por haber arreglado `/users` sería
+certificación por transitividad, que es justo lo que la auditoría vino a señalar.
+
+El histórico `21 / 60` sigue sin tocarse.

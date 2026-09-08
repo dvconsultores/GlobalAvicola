@@ -184,3 +184,39 @@ E2E de flujo por API             2      run_e2e_audit.py · test_full_workflow_a
 
 Las pruebas se concentran donde el producto ya era fuerte. **No hay una sola prueba de
 aislamiento multiempresa sobre `/users`**, que es donde están tres de los cuatro `P0`.
+
+
+---
+
+## 5. Cierre de los cuatro `P0` (2026-09-08) — no reescribe lo anterior
+
+**Qué cambió.** `GA-REM-002` enmienda B: `AC13` acota listado y detalle en la consulta, `AC14`
+fija que el objetivo se resuelve dentro de la empresa antes de mutar, `AC15` impide fabricar
+autoridad global desde una superficie de empresa, `AC16` hace que una denegación se vea como
+tal. Rojo demostrado antes del código —9 de 13—, 9 mutaciones de sensibilidad, `E2E` de ataque
+completo. Backend 708 · frontend 87. Sin migración.
+
+**Por qué escapó, con precisión.** No fue descuido de quien implementó `AC05`: fue que
+`TENANT_RESOURCE_CLASSIFICATION.md` —la lista que convierte esa `AC` en sitios concretos— se
+construyó desde el modelo operativo y **`users` nunca entró**. Una `AC` correcta con una lista
+de aplicación incompleta abre exactamente el mismo agujero que no tener la `AC`.
+
+**Qué queda abierto, y no se cierra por vecindad.**
+
+```
+R-115   `/masters/companies` sin acotar · expone `sap_config` · P0 · ABIERTO
+R-116   `MasterService` fail-open sin empresa · cerrado en `/users`, ABIERTO en maestros
+R-119   el frontend sigue sin comprobar permisos en 27 de 28 pantallas
+R-120   generalizar los cinco estados al resto de pantallas
+R-121   qué roles ordinarios puede asignar un administrador · OWNER_DECISION
+R-126   ¿debe `switch-company` acotar también a la autoridad global? · OWNER_DECISION
+```
+
+`RQ-03` sigue `PARTIAL` por `R-115` y `R-116`. Arreglar `/users` no certifica «todas las
+queries».
+
+**Lo que sí se corrigió del método.** Dos mutaciones me corrigieron a mí: una estaba rota
+—referenciaba un parámetro inexistente y fallaba por `NameError`, no por la mutación— y otra
+sobrevivió dos veces porque la prueba que escribí para detectarla prometía en su descripción
+algo que su código no hacía. Las dos quedan contadas en la evidencia. Sin ese rigor, `§41`
+habría quedado afirmado y no demostrado.
