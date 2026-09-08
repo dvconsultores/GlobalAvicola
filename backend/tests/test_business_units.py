@@ -115,13 +115,19 @@ async def _habilitar(s, company_id, code, habilitada=True):
 
 
 async def _conceder(s, user_id, code):
-    from app.business_units.models import UserBusinessUnit
+    """Concede por el camino que usará la administración: la habilitación de **su** empresa."""
+    from app.auth.models import User
+    from app.business_units.models import CompanyBusinessUnit
+    from app.business_units.service import conceder_unidad
 
+    usuario = (await s.execute(select(User).where(User.id == user_id))).scalar_one()
     unidad = await _unidad(s, code)
-    fila = UserBusinessUnit(user_id=user_id, business_unit_id=unidad.id)
-    s.add(fila)
-    await s.flush()
-    return fila
+    habilitacion = (await s.execute(
+        select(CompanyBusinessUnit).where(
+            CompanyBusinessUnit.company_id == usuario.company_id,
+            CompanyBusinessUnit.business_unit_id == unidad.id)
+    )).scalar_one()
+    return await conceder_unidad(s, user=usuario, company_business_unit=habilitacion)
 
 
 # ── El catálogo · AC-A01 ──────────────────────────────────────────────────────
@@ -242,14 +248,28 @@ async def test_ac_b02_la_empresa_apagada_manda_sobre_la_concesion(sesion_bu):
 
 
 @pytest.mark.asyncio
-async def test_ac_b02_una_unidad_que_la_empresa_no_declaro_no_es_efectiva(sesion_bu):
-    """Ausencia de fila no es habilitación implícita."""
+async def test_ac_b02_una_unidad_que_la_empresa_no_declaro_no_se_puede_ni_conceder(sesion_bu):
+    """Ausencia de fila no es habilitación implícita — y desde `OD-09.d`, ni siquiera es
+    concedible.
+
+    Antes de la enmienda esta prueba concedía la unidad y comprobaba que no era efectiva.
+    Ahora la concesión apunta a la habilitación de la empresa, y si la empresa nunca declaró
+    la unidad **no hay a qué apuntar**: la fila inválida no llega a existir. Se comprueba la
+    propiedad más fuerte, no la anterior.
+    """
+    from app.business_units.models import CompanyBusinessUnit
     from app.business_units.service import unidades_efectivas
 
     empresa = await _empresa(sesion_bu)
     u = await _usuario(sesion_bu, empresa.id)
-    await _conceder(sesion_bu, u.id, "broiler")
+    unidad = await _unidad(sesion_bu, "broiler")
 
+    habilitacion = (await sesion_bu.execute(
+        select(CompanyBusinessUnit).where(
+            CompanyBusinessUnit.company_id == empresa.id,
+            CompanyBusinessUnit.business_unit_id == unidad.id)
+    )).scalar_one_or_none()
+    assert habilitacion is None, "la empresa no declaró la unidad: no hay nada que conceder"
     assert await unidades_efectivas(sesion_bu, u) == []
 
 
@@ -303,21 +323,22 @@ async def test_ac_b03_el_usuario_sin_unidades_sigue_siendo_valido(sesion_bu):
 # ── Aislamiento de empresa · AC-A07 ───────────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_ac_a07_la_concesion_no_alcanza_lo_habilitado_en_otra_empresa(sesion_bu):
-    """Un usuario de la empresa A con concesión de `breeder` no se beneficia de que la
-    empresa B tenga `breeder` habilitada.
+async def test_ac_a07_no_se_aprovecha_lo_habilitado_en_otra_empresa(sesion_bu):
+    """Un usuario de la empresa A no se beneficia de que la empresa B tenga `breeder`.
 
-    La concesión apunta al **catálogo**, no a la habilitación de una empresa concreta, de
-    modo que la combinación inválida «usuario de A sobre habilitación de B» no se puede
-    ni escribir. Se comprueba que además no se cuela por el resolutor.
+    La habilitación de B se le ofrece explícitamente al servicio y se rechaza; y el conjunto
+    efectivo sigue vacío. Dos comprobaciones, porque protegen cosas distintas: que no se
+    escriba, y que no se lea.
     """
-    from app.business_units.service import unidades_efectivas
+    from app.business_units.service import ConcesionInvalida, conceder_unidad, unidades_efectivas
 
     a = await _empresa(sesion_bu, "A-")
     b = await _empresa(sesion_bu, "B-")
-    await _habilitar(sesion_bu, b.id, "breeder", True)
+    habilitacion_de_b = await _habilitar(sesion_bu, b.id, "breeder", True)
     u = await _usuario(sesion_bu, a.id)
-    await _conceder(sesion_bu, u.id, "breeder")
+
+    with pytest.raises(ConcesionInvalida):
+        await conceder_unidad(sesion_bu, user=u, company_business_unit=habilitacion_de_b)
 
     assert await unidades_efectivas(sesion_bu, u) == []
 
@@ -513,3 +534,202 @@ async def test_ac_a06_rehabilitar_devuelve_la_efectividad_a_la_concesion_previa(
     habilitacion.is_enabled = True
     await sesion_bu.flush()
     assert await unidades_efectivas(sesion_bu, u) == ["breeder"]
+
+
+# ── La concesión pertenece a una empresa · AC-B07…AC-B11 · OD-09.d ────────────
+
+async def _mover_de_empresa(s, user, company_id):
+    """Mueve al usuario. Hoy ninguna API lo permite —`UserUpdate` no acepta `company_id`—,
+    pero el modelo tiene que ser correcto frente a un cambio directo futuro: la ausencia de
+    una pantalla no es una garantía de seguridad."""
+    user.company_id = company_id
+    await s.flush()
+
+
+@pytest.mark.asyncio
+async def test_ac_b07_la_concesion_dice_bajo_que_empresa_se_otorgo(sesion_bu):
+    """La fila responde por sí sola, sin mirar la empresa actual del usuario.
+
+    Es la diferencia entre un dato que **contiene** la respuesta y uno del que hay que
+    deducirla: si hay que deducirla, el día que la premisa cambie la respuesta cambia sola.
+    """
+    from app.business_units.models import CompanyBusinessUnit, UserBusinessUnit
+
+    empresa = await _empresa(sesion_bu)
+    await _habilitar(sesion_bu, empresa.id, "breeder", True)
+    u = await _usuario(sesion_bu, empresa.id)
+    await _conceder(sesion_bu, u.id, "breeder")
+
+    otorgante = (await sesion_bu.execute(
+        select(CompanyBusinessUnit.company_id)
+        .join(UserBusinessUnit,
+              UserBusinessUnit.company_business_unit_id == CompanyBusinessUnit.id)
+        .where(UserBusinessUnit.user_id == u.id)
+    )).scalar_one()
+    assert otorgante == empresa.id
+
+
+@pytest.mark.asyncio
+async def test_ac_b08_la_concesion_no_viaja_con_el_usuario(sesion_bu):
+    """El caso que motivó la enmienda `OD-09.d`.
+
+    Las dos empresas tienen `breeder`. El usuario se mueve de A a B **sin que nadie le conceda
+    nada en B**. Antes de la corrección el resolutor devolvía `['breeder']`: la fila no decía
+    de qué empresa venía, y las dos eran indistinguibles para ella.
+    """
+    from app.business_units.service import unidades_efectivas
+
+    a = await _empresa(sesion_bu, "A-")
+    b = await _empresa(sesion_bu, "B-")
+    await _habilitar(sesion_bu, a.id, "breeder", True)
+    await _habilitar(sesion_bu, b.id, "breeder", True)
+    u = await _usuario(sesion_bu, a.id)
+    await _conceder(sesion_bu, u.id, "breeder")
+    assert await unidades_efectivas(sesion_bu, u) == ["breeder"]
+
+    await _mover_de_empresa(sesion_bu, u, b.id)
+
+    assert await unidades_efectivas(sesion_bu, u) == [], (
+        "la concesión de la empresa A no puede volverse efectiva en la B")
+
+
+@pytest.mark.asyncio
+async def test_ac_b08_en_la_empresa_nueva_hace_falta_conceder_de_nuevo(sesion_bu):
+    """Y al concederla explícitamente, funciona. Sin ese segundo paso no habría corrección,
+    solo una puerta cerrada."""
+    from app.business_units.service import unidades_efectivas
+
+    a = await _empresa(sesion_bu, "A-")
+    b = await _empresa(sesion_bu, "B-")
+    await _habilitar(sesion_bu, a.id, "breeder", True)
+    await _habilitar(sesion_bu, b.id, "breeder", True)
+    u = await _usuario(sesion_bu, a.id)
+    await _conceder(sesion_bu, u.id, "breeder")
+    await _mover_de_empresa(sesion_bu, u, b.id)
+    assert await unidades_efectivas(sesion_bu, u) == []
+
+    await _conceder(sesion_bu, u.id, "breeder")
+    assert await unidades_efectivas(sesion_bu, u) == ["breeder"]
+
+
+@pytest.mark.asyncio
+async def test_ac_b11_mover_de_empresa_no_borra_la_concesion_anterior(sesion_bu):
+    """`OD-09.d`: la historia se conserva; lo que se pierde es la efectividad.
+
+    Borrarla haría imposible reconstruir quién tuvo acceso a qué y cuándo, que es justo lo
+    que un control de acceso tiene que poder responder.
+    """
+    from sqlalchemy import func
+
+    from app.business_units.models import CompanyBusinessUnit, UserBusinessUnit
+
+    a = await _empresa(sesion_bu, "A-")
+    b = await _empresa(sesion_bu, "B-")
+    await _habilitar(sesion_bu, a.id, "breeder", True)
+    await _habilitar(sesion_bu, b.id, "breeder", True)
+    u = await _usuario(sesion_bu, a.id)
+    await _conceder(sesion_bu, u.id, "breeder")
+    await _mover_de_empresa(sesion_bu, u, b.id)
+    # Y se le concede en la empresa nueva: es el momento en que alguien podría sentir la
+    # tentación de «limpiar» lo anterior. No se limpia.
+    await _conceder(sesion_bu, u.id, "breeder")
+
+    de_a = (await sesion_bu.execute(
+        select(func.count(UserBusinessUnit.id))
+        .join(CompanyBusinessUnit,
+              CompanyBusinessUnit.id == UserBusinessUnit.company_business_unit_id)
+        .where(UserBusinessUnit.user_id == u.id,
+               CompanyBusinessUnit.company_id == a.id)
+    )).scalar_one()
+    assert de_a == 1, "la concesión de la empresa A debe seguir registrada"
+
+
+@pytest.mark.asyncio
+async def test_ac_b09_el_mismo_codigo_en_dos_empresas_son_dos_contextos(sesion_bu):
+    """`breeder` de A y `breeder` de B no son la misma autorización.
+
+    Es la prueba central de la enmienda: sin ella, «unidad de negocio» sería un permiso
+    global con nombre de cadena productiva.
+    """
+    from app.business_units.service import tiene_acceso, unidades_efectivas
+
+    a = await _empresa(sesion_bu, "A-")
+    b = await _empresa(sesion_bu, "B-")
+    await _habilitar(sesion_bu, a.id, "breeder", True)
+    await _habilitar(sesion_bu, b.id, "breeder", True)
+
+    de_a = await _usuario(sesion_bu, a.id)
+    de_b = await _usuario(sesion_bu, b.id)
+    await _conceder(sesion_bu, de_a.id, "breeder")
+
+    assert await unidades_efectivas(sesion_bu, de_a) == ["breeder"]
+    assert await unidades_efectivas(sesion_bu, de_b) == []
+    assert await tiene_acceso(sesion_bu, de_b, "breeder") is False
+
+
+@pytest.mark.asyncio
+async def test_ac_b10_conceder_cruzando_empresas_se_rechaza(sesion_bu):
+    """Un usuario de la empresa A no puede recibir la habilitación de la empresa B.
+
+    Se rechaza en el límite de servicio y **no queda escrita**: una fila inválida que
+    existe acaba encontrando el camino a una consulta que la lea mal.
+    """
+    from sqlalchemy import func
+
+    from app.business_units.models import CompanyBusinessUnit, UserBusinessUnit
+    from app.business_units.service import ConcesionInvalida, conceder_unidad
+
+    a = await _empresa(sesion_bu, "A-")
+    b = await _empresa(sesion_bu, "B-")
+    await _habilitar(sesion_bu, a.id, "breeder", True)
+    habilitacion_de_b = await _habilitar(sesion_bu, b.id, "breeder", True)
+    u = await _usuario(sesion_bu, a.id)
+
+    with pytest.raises(ConcesionInvalida):
+        await conceder_unidad(sesion_bu, user=u, company_business_unit=habilitacion_de_b)
+
+    escritas = (await sesion_bu.execute(
+        select(func.count(UserBusinessUnit.id))
+        .join(CompanyBusinessUnit,
+              CompanyBusinessUnit.id == UserBusinessUnit.company_business_unit_id)
+        .where(UserBusinessUnit.user_id == u.id)
+    )).scalar_one()
+    assert escritas == 0, "no debe quedar escrita ninguna concesión"
+
+
+@pytest.mark.asyncio
+async def test_ac_b10_conceder_a_un_usuario_sin_empresa_se_rechaza(sesion_bu):
+    """Sin empresa no hay empresa que conceda. El super administrador global entra por aquí."""
+    from app.auth.models import Role, User
+    from app.business_units.service import ConcesionInvalida, conceder_unidad
+
+    empresa = await _empresa(sesion_bu)
+    habilitacion = await _habilitar(sesion_bu, empresa.id, "breeder", True)
+    rol = Role(name=f"{PREFIJO}Global-{uuid.uuid4().hex[:6]}", company_id=None, is_active=True)
+    sesion_bu.add(rol)
+    await sesion_bu.flush()
+    sin_empresa = User(
+        first_name="Super", last_name="Global",
+        email=f"{PREFIJO}{uuid.uuid4().hex[:8]}@example.test",
+        username=f"{PREFIJO}{uuid.uuid4().hex[:8]}",
+        hashed_password="x", company_id=None, role_id=rol.id, is_active=True)
+    sesion_bu.add(sin_empresa)
+    await sesion_bu.flush()
+
+    with pytest.raises(ConcesionInvalida):
+        await conceder_unidad(sesion_bu, user=sin_empresa, company_business_unit=habilitacion)
+
+
+@pytest.mark.asyncio
+async def test_ac_b07_conceder_por_el_servicio_produce_la_misma_efectividad(sesion_bu):
+    """El camino de escritura y el de lectura tienen que casar."""
+    from app.business_units.models import CompanyBusinessUnit
+    from app.business_units.service import conceder_unidad, unidades_efectivas
+
+    empresa = await _empresa(sesion_bu)
+    habilitacion = await _habilitar(sesion_bu, empresa.id, "hatchery", True)
+    assert isinstance(habilitacion, CompanyBusinessUnit)
+    u = await _usuario(sesion_bu, empresa.id)
+
+    await conceder_unidad(sesion_bu, user=u, company_business_unit=habilitacion)
+    assert await unidades_efectivas(sesion_bu, u) == ["hatchery"]

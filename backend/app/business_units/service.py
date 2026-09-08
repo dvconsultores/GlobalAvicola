@@ -66,8 +66,14 @@ async def unidades_efectivas(db: AsyncSession, user) -> list[str]:
 
         empresa del usuario     sin ella, un usuario sin empresa heredaría lo de otra
         habilitada              sin ella, revocar a la empresa no revocaría a nadie
-        concedida               sin ella, pertenecer a la empresa bastaría — `§16` principio 1
+        concedida POR ESA       sin ella, pertenecer a la empresa bastaría — `§16` principio 1
+          MISMA EMPRESA         y una concesión de la empresa anterior seguiría valiendo
         activa en el producto   sin ella, una unidad retirada seguiría accesible
+
+    La tercera condición es la que `OD-09.d` corrigió. La concesión apunta a la **habilitación
+    de una empresa**, no al catálogo, de modo que exigir `CompanyBusinessUnit.company_id ==
+    company_id` deja fuera automáticamente las concesiones de una empresa anterior: existen,
+    son historia y no son efectivas.
 
     **Sin concesiones, la lista está vacía.** Nunca «toda la empresa»: si no conceder nada
     equivaliera a concederlo todo, nadie concedería nunca y la capacidad sería opcional en la
@@ -87,7 +93,7 @@ async def unidades_efectivas(db: AsyncSession, user) -> list[str]:
         .join(CompanyBusinessUnit,
               CompanyBusinessUnit.business_unit_id == BusinessUnit.id)
         .join(UserBusinessUnit,
-              UserBusinessUnit.business_unit_id == BusinessUnit.id)
+              UserBusinessUnit.company_business_unit_id == CompanyBusinessUnit.id)
         .where(CompanyBusinessUnit.company_id == company_id,
                CompanyBusinessUnit.is_enabled.is_(True),
                UserBusinessUnit.user_id == user.id,
@@ -104,3 +110,40 @@ async def tiene_acceso(db: AsyncSession, user, code: str) -> bool:
     modo habitual en que un sistema acaba concediendo de más sin que nadie lo decida.
     """
     return code in await unidades_efectivas(db, user)
+
+
+class ConcesionInvalida(ValueError):
+    """Se intentó conceder una unidad que no pertenece a la empresa del usuario."""
+
+
+async def conceder_unidad(db: AsyncSession, *, user, company_business_unit):
+    """Concede a un usuario una unidad **de su propia empresa**. `AC-B10`.
+
+    Es el límite de escritura de la capacidad. Existe ya en la fase 1 y no en la 7 —donde
+    vivirá la API de administración— porque la regla que protege es del modelo, no de la
+    pantalla: una fila que cruza empresas, si llega a escribirse, acaba encontrando el camino
+    a una consulta que la lea mal.
+
+    El resolutor comprueba lo mismo al leer, y las dos comprobaciones hacen falta:
+
+        al escribir   impide que se registre una concesión que nunca debió existir
+        al leer       impide que una concesión legítima de ayer siga valiendo cuando el
+                      usuario cambió de empresa hoy
+
+    Un usuario **sin empresa** —el super administrador global— no puede recibir ninguna: no
+    hay empresa que se la conceda.
+    """
+    company_id = getattr(user, "company_id", None)
+    if company_id is None:
+        raise ConcesionInvalida(
+            "un usuario sin empresa no puede recibir concesiones de unidad")
+    if company_business_unit.company_id != company_id:
+        raise ConcesionInvalida(
+            f"la habilitación pertenece a la empresa {company_business_unit.company_id} "
+            f"y el usuario a la {company_id}")
+
+    concesion = UserBusinessUnit(
+        user_id=user.id, company_business_unit_id=company_business_unit.id)
+    db.add(concesion)
+    await db.flush()
+    return concesion

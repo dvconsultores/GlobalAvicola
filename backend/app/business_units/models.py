@@ -88,36 +88,44 @@ class CompanyBusinessUnit(Base):
 
 
 class UserBusinessUnit(Base):
-    """Qué unidades se le han concedido a un usuario. Decisión operativa.
+    """Qué unidades le ha concedido **su empresa** a un usuario. Decisión operativa.
 
-    **Apunta al catálogo, no a la habilitación de una empresa.** Es deliberado: si apuntara a
-    `company_business_units`, se podría escribir la fila inválida «usuario de la empresa A
-    sobre la habilitación de la empresa B», y habría que prohibirla con una validación. Al
-    apuntar al catálogo esa combinación **no se puede ni expresar**, y la empresa del usuario
-    sigue siendo la única fuente de a qué inquilino pertenece.
+    **Apunta a la habilitación de una empresa concreta, no al catálogo** — `OD-09.d`. Una
+    concesión no dice «este usuario puede ver reproductora»: dice «la empresa A le concedió
+    reproductora **dentro de A**». La fila responde por sí sola a de quién viene, sin que
+    haya que deducirlo de dónde esté hoy el usuario.
 
-    Sin `company_id` propio por la misma razón: duplicarlo aquí crearía una segunda fuente que
-    quedaría obsoleta el día que alguien mueva un usuario de empresa.
+    La fase 1 lo hizo al revés —apuntaba al catálogo— por una razón que parecía buena:
+    apuntando a la habilitación se podía escribir «usuario de A sobre habilitación de B», y
+    apuntando al catálogo esa fila no se podía ni expresar. El error fue tratar **una**
+    combinación inválida como si fueran todas: al quitar la empresa desapareció la fila
+    imposible y, con ella, lo que distingue un contexto de otro. `breeder` de A y `breeder` de
+    B pasaban a ser indistinguibles, y una concesión viajaba con el usuario al cambiar de
+    empresa.
 
-    Y **no hay borrado en cascada desde la habilitación de empresa**: `BU-D10` sigue pendiente
-    de ratificación, de modo que apagar una unidad no puede destruir concesiones que el
-    propietario quizá quiera conservar. La concesión sobrevive; simplemente deja de ser
-    efectiva.
+    Ahora la combinación entre empresas vuelve a ser representable, y se cierra por los dos
+    lados: `conceder_unidad` la rechaza al escribir, y el resolutor exige al leer que la
+    empresa de la habilitación sea la **actual** del usuario. Las dos hacen falta — la primera
+    sola dejaría efectiva una concesión legítima de ayer cuando el usuario se mueve hoy.
+
+    Sin borrado en cascada. `BU-D10` sigue pendiente de ratificación, y una concesión de una
+    empresa anterior es **historia**: pierde la efectividad, no la existencia.
     """
 
     __tablename__ = "user_business_units"
     __table_args__ = (
-        UniqueConstraint("user_id", "business_unit_id", name="uq_user_business_unit"),
+        UniqueConstraint("user_id", "company_business_unit_id",
+                         name="uq_user_company_business_unit"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True)
-    business_unit_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("business_units.id"), index=True
+    company_business_unit_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("company_business_units.id"), index=True
     )
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
 
     def __repr__(self) -> str:  # pragma: no cover - depuración
-        return f"<UserBusinessUnit user={self.user_id} unit={self.business_unit_id}>"
+        return f"<UserBusinessUnit user={self.user_id} cbu={self.company_business_unit_id}>"
