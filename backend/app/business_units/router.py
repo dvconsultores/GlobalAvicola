@@ -81,6 +81,11 @@ def _traducir(exc: Exception) -> HTTPException:
     """
     if isinstance(exc, admin.RecursoDeAdministracionNoEncontrado):
         return HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail=str(exc))
+    if isinstance(exc, admin.SegregacionDeFunciones):
+        # `403` y no `409`: es la misma clase de negativa que `AC15` —«tienes la autoridad y
+        # aun así esto no» — y comparte su código para que el cliente no tenga que aprender
+        # dos contratos para la misma idea.
+        return HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc))
     return HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))
 
 
@@ -178,7 +183,8 @@ async def conceder_unidad_a_usuario(
         return await admin.conceder(
             db, user_id=user_id, company_id=_empresa_efectiva(current_user),
             code=data.code, actor=current_user)
-    except (admin.RecursoDeAdministracionNoEncontrado, admin.AdministracionInvalida) as exc:
+    except (admin.RecursoDeAdministracionNoEncontrado, admin.AdministracionInvalida,
+            admin.SegregacionDeFunciones) as exc:
         raise _traducir(exc) from exc
 
 

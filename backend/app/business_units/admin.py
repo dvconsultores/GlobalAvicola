@@ -58,6 +58,15 @@ class AdministracionInvalida(ValueError):
     """La operación es imposible por el estado de la configuración, no por autorización."""
 
 
+class SegregacionDeFunciones(PermissionError):
+    """El actor tiene la autoridad, y aun así no puede ejercerla **sobre sí mismo**.
+
+    `OD-15.a`. No es falta de permiso —lo tiene— ni un problema de configuración: es que
+    repartir accesos y recibirlos son dos papeles distintos, y una misma persona no ocupa los
+    dos en el mismo acto.
+    """
+
+
 # ── Localización, siempre acotada al inquilino ────────────────────────────────
 
 async def _habilitacion(
@@ -244,6 +253,19 @@ async def conceder(
     copia local: la comprobación de empresa del modelo tiene que aplicarse aunque a esta ruta
     se le olvide, y un segundo camino de escritura sería con el tiempo una segunda política.
     """
+    # `OD-15.a`. Antes de mirar nada más: `business_units:create` autoriza a **repartir**,
+    # no a **recibir**. La comprobación va primero a propósito — así la negativa no depende
+    # de que el usuario exista, ni de que la unidad esté habilitada, ni del orden en que
+    # alguien reordene las puertas de abajo.
+    #
+    # Sin excepción por ser el único administrador de su empresa (`OD-15.c`): una excepción
+    # así convertiría la regla en una sugerencia, porque bastaría con quedarse solo. Las dos
+    # vías de arranque —otro administrador, o el Super Administrador situado— existen
+    # siempre.
+    if actor is not None and user_id == actor.get("id"):
+        raise SegregacionDeFunciones(
+            "administrar el acceso no autoriza a concedérselo a uno mismo")
+
     usuario = await _usuario_de_la_empresa(db, user_id=user_id, company_id=company_id)
     if usuario is None:
         raise RecursoDeAdministracionNoEncontrado(f"usuario {user_id}")

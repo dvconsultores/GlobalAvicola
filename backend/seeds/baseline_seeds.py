@@ -62,6 +62,24 @@ def _matriz_de_la_migracion() -> dict[str, list[tuple[str, str]]]:
 #: reconcilia roles operativos; aquí sí hacen falta para que exista un administrador.
 ACCIONES_COMODIN = [a for a in PermissionAction]
 
+#: `OD-15 §6` · `R-113`. La figura que administra el acceso por unidad de negocio.
+#:
+#: Vive aquí y no en la migración de reconciliación por la misma razón que `ACCIONES_COMODIN`:
+#: aquella solo reconcilia **roles operativos**, y éste es plano de control. Añadirlo allí
+#: exigiría una migración nueva para sembrar un rol, que no es lo que las migraciones son.
+#:
+#: **Exactamente cuatro permisos, y ninguno más.** No lleva `users:*` —el conjunto que mantuvo
+#: cuatro `P0` latentes— ni comodín, ni ninguna cadena productiva: administrar el acceso no es
+#: acceder (`OD-09.b`), y repartirlo no es recibirlo (`OD-15.a`).
+PERMISOS_ADMINISTRADOR_DE_ACCESOS = [
+    ("business_units", PermissionAction.READ),
+    ("business_units", PermissionAction.UPDATE),
+    ("business_units", PermissionAction.CREATE),
+    ("business_units", PermissionAction.DELETE),
+]
+
+ROL_ADMINISTRADOR_DE_ACCESOS = "Administrador de Accesos"
+
 DESCRIPCIONES = {
     "Super Administrador": "Control total del sistema",
     "Operador de Granja": "Registro de operaciones en campo",
@@ -133,6 +151,7 @@ async def sembrar_roles(session: AsyncSession) -> dict[str, Role]:
     matriz = _matriz_de_la_migracion()
     permisos_por_rol: dict[str, list[tuple[str, PermissionAction]]] = {
         "Super Administrador": [("*", accion) for accion in ACCIONES_COMODIN],
+        ROL_ADMINISTRADOR_DE_ACCESOS: list(PERMISOS_ADMINISTRADOR_DE_ACCESOS),
     }
     for nombre, pares in matriz.items():
         permisos_por_rol[nombre] = [(modulo, PermissionAction(accion)) for modulo, accion in pares]

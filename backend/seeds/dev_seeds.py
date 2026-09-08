@@ -90,6 +90,20 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
             ],
         },
         {
+            # `OD-15 §6` · `R-113`. Administra el acceso por unidad y **nada más**: sin
+            # `users:*`, sin comodín, sin ninguna cadena productiva. Que no pueda listar
+            # usuarios es deliberado — `users:read` es otra cosa, y ampliarlo por comodidad
+            # es exactamente cómo se abren los agujeros que esta figura vino a cerrar.
+            "name": "Administrador de Accesos",
+            "description": "Administración del acceso por unidad de negocio",
+            "permissions": [
+                {"module": "business_units", "action": PermissionAction.READ},
+                {"module": "business_units", "action": PermissionAction.UPDATE},
+                {"module": "business_units", "action": PermissionAction.CREATE},
+                {"module": "business_units", "action": PermissionAction.DELETE},
+            ],
+        },
+        {
             "name": "Supervisor Avícola",
             "description": "Supervisión operativa de granjas",
             "permissions": [

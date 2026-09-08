@@ -583,7 +583,10 @@ async def test_el_administrador_no_puede_darse_acceso_a_otra_empresa(http_client
 
     Se envía igualmente para dejarlo probado: un campo de más se ignora, no amplía nada.
     """
-    r = await http_client.post(f"/api/v1/users/{esc['admin']}/business-units",
+    # El vehículo era una auto-concesión hasta `OD-15`. Se cambia el objetivo a otro usuario
+    # de la misma empresa: lo que esta prueba mide es el **campo de empresa**, no quién
+    # recibe, y con el objetivo antiguo mediría la regla de segregación por accidente.
+    r = await http_client.post(f"/api/v1/users/{esc['sujeto']}/business-units",
                                headers=_token(esc["admin"]),
                                json={"code": "hatchery", "company_id": esc["b"]})
     assert r.status_code == 201, r.text
@@ -648,31 +651,32 @@ async def test_un_usuario_operativo_no_concede_ni_a_otros_ni_a_si_mismo(http_cli
     assert await _efectivas(esc, esc["operario"]) == ["breeder"], "sin cambios"
 
 
-async def test_politica_vigente_quien_puede_conceder_puede_concederse(client, esc):
-    """`§51` · `§87`. **Se documenta lo que hay, no se inventa una excepción.**
+async def test_od15_quien_puede_conceder_no_puede_concederse(client, esc):
+    """`OD-15.a` · **supersede la política que esta misma prueba documentaba**.
 
-    `business_units:create` autoriza a conceder a cualquier usuario de la empresa efectiva, y
-    quien administra es uno de ellos. No existe hoy ninguna regla —ni en `GA-REM-040` ni en
-    `OD-09`— que separe conceder a otro de concederse a uno mismo, y **no se inventa aquí**:
-    inventarla sería decidir por el propietario.
+    Hasta `OD-15`, esta prueba afirmaba lo contrario: que `business_units:create` autorizaba a
+    conceder a cualquier usuario de la empresa **incluido uno mismo**, y lo dejaba escrito
+    como política vigente porque ninguna spec la separaba. Aquella lectura era correcta
+    entonces — `§51` de la fase 7 pedía documentar lo que había y no inventar una excepción.
 
-    Lo que sí queda dicho es la consecuencia, porque no es menor: `business_units:create` es
-    un permiso capaz de convertir autoridad de control en acceso operativo, en un solo paso y
-    dentro de la propia empresa. Queda auditado con actor y objetivo, que es lo que permite
-    detectarlo. Si el propietario quiere separarlo, es una decisión suya y una fase futura.
+    El propietario la separó al resolver `R-128`. El permiso autoriza a **repartir**, no a
+    **recibir**, y la negativa llega con todo lo demás correcto: permiso válido, empresa
+    propia, unidad habilitada.
+
+    El registro histórico de la política anterior vive en `OD-15 §1` y en
+    `GA_REM_040_PHASE_7_EVIDENCE.md`; aquí no se borra, se supera.
     """
     assert await _efectivas(esc, esc["admin"]) == []
 
     r = await client.post(f"/api/v1/users/{esc['admin']}/business-units",
                           headers=_token(esc["admin"]), json={"code": "hatchery"})
-    assert r.status_code == 201, r.text
-    assert await _efectivas(esc, esc["admin"]) == ["hatchery"], "la política vigente lo permite"
+    assert r.status_code == 403, r.text
+    assert await _efectivas(esc, esc["admin"]) == [], "se concedió a sí mismo"
 
-    registros = await _auditoria(esc, entity_type="user_business_unit",
-                                 user_id=esc["admin"])
-    assert any(x["new_values"] and x["new_values"].get("target_user_id") == esc["admin"]
-               for x in registros), (
-        "y queda registrado que el actor y el objetivo son la misma persona")
+    # Y la contraparte, para que «no puede concederse» no se confunda con «no puede conceder».
+    otro = await client.post(f"/api/v1/users/{esc['sujeto']}/business-units",
+                             headers=_token(esc["admin"]), json={"code": "hatchery"})
+    assert otro.status_code == 201, otro.text
 
 
 # ══════════════════════════════════════════════════════════════════════════════
