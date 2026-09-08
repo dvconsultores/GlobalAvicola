@@ -142,6 +142,10 @@ class PermissionCatalog(BaseModel):
 
 class RoleRead(RoleBase):
     id: int
+    #: `OD-13.b`. `None` es una plantilla de sistema; un valor concreto, un rol de esa
+    #: empresa. Se expone porque «visible ≠ asignable» solo es legible si el cliente puede
+    #: distinguir las dos clases.
+    company_id: Optional[int] = None
     is_active: bool
     created_at: datetime
     permissions: list["PermissionRead"] = []

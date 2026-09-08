@@ -141,7 +141,7 @@ async def list_roles(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "read")),
 ):
-    return await AuthService(db).get_roles()
+    return await AuthService(db).get_roles(actor=current_user)
 
 
 @router.post("/roles", response_model=RoleRead, status_code=201, tags=["Roles"])

@@ -122,6 +122,49 @@ class AuthService:
             return None
         return (await self.db.execute(consulta)).scalar_one_or_none()
 
+    async def _rol_asignable(self, role_id: int | None, actor: dict | None) -> bool:
+        """¿Puede este actor asignar ese rol? `OD-13.c` · `AC-R05` · `AC-R06`.
+
+        ```
+        autoridad global            cualquiera
+        rol de inquilino            solo si es de SU empresa
+        plantilla de sistema        sí, salvo que confiera autoridad global
+        ```
+
+        La tercera línea es la que evita convertir la norma en un bloqueo: **los seis roles
+        del producto tienen `company_id NULL`**, de modo que prohibirlos todos dejaría a un
+        administrador de empresa sin poder asignar nada. Lo que se protege es la autoridad
+        global, no la existencia de un catálogo compartido (`OD-13.c`).
+        """
+        if role_id is None:
+            return True
+        empresa, global_ = self._contexto(actor)
+        if actor is None or global_:
+            return True
+        rol = (await self.db.execute(
+            select(Role).where(Role.id == role_id))).scalar_one_or_none()
+        if rol is None:
+            return False
+        if rol.company_id is None:
+            # Plantilla de producto: asignable salvo que reparta autoridad global.
+            return not await self._es_autoridad_global(role_id)
+        return rol.company_id == empresa
+
+    async def _rol_administrable(self, role_id: int, actor: dict | None):
+        """El rol, **si el actor puede administrarlo**. `AC-R03` · `AC-R04`.
+
+        Un actor de empresa administra los roles de su empresa. Las plantillas de sistema
+        las **ve** —las necesita para elegir— y no las edita: `OD-13.e`.
+        """
+        rol = (await self.db.execute(
+            select(Role).where(Role.id == role_id))).scalar_one_or_none()
+        if rol is None:
+            return None
+        empresa, global_ = self._contexto(actor)
+        if actor is None or global_:
+            return rol
+        return rol if rol.company_id == empresa else None
+
     async def _es_autoridad_global(self, role_id: int | None) -> bool:
         """¿Ese rol concede alcance sobre **todas** las compañías? `AC15`.
 
@@ -327,10 +370,10 @@ class AuthService:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="No hay empresa efectiva en la que crear el usuario")
 
-        if await self._es_autoridad_global(data.role_id) and not global_ and actor is not None:
+        if not await self._rol_asignable(data.role_id, actor):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="No se puede otorgar autoridad global desde la administración de una empresa")
+                detail="Ese rol no es asignable desde la administración de esta empresa")
 
         user = User(
             first_name=data.first_name,
@@ -375,12 +418,11 @@ class AuthService:
 
         # `AC15`. Se comprueba **antes** de tocar la fila: una denegación no puede dejar
         # medio usuario escrito.
-        _, global_ = self._contexto(actor)
-        if ("role_id" in update_data and actor is not None and not global_
-                and await self._es_autoridad_global(update_data["role_id"])):
+        if ("role_id" in update_data
+                and not await self._rol_asignable(update_data["role_id"], actor)):
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="No se puede otorgar autoridad global desde la administración de una empresa")
+                detail="Ese rol no es asignable desde la administración de esta empresa")
         for key, value in update_data.items():
             setattr(user, key, value)
 
@@ -527,13 +569,38 @@ class AuthService:
             "actions": [a.value for a in PermissionAction],
         }
 
-    async def get_roles(self) -> list[RoleRead]:
-        result = await self.db.execute(select(Role).where(Role.is_active == True))
-        roles = result.scalars().all()
+    async def get_roles(self, actor: dict | None = None) -> list[RoleRead]:
+        """Los roles de la empresa efectiva **más** las plantillas de sistema. `AC-R01`.
+
+        `OD-13.b`: `company_id NULL` es una plantilla de producto, compartida por todos los
+        clientes; `company_id` concreto es un rol de un inquilino. El actor de empresa ve las
+        primeras y las suyas, nunca las de otra empresa.
+
+        Verlas no es poder asignarlas ni editarlas — de eso se ocupan `_rol_asignable` y
+        `_rol_administrable`.
+        """
+        consulta = select(Role).where(Role.is_active == True)
+        empresa, global_ = self._contexto(actor)
+        if actor is not None and not global_:
+            if empresa is None:
+                # `fail-closed`, igual que en usuarios y maestros.
+                consulta = consulta.where(Role.id.is_(None))
+            else:
+                consulta = consulta.where(
+                    (Role.company_id == empresa) | (Role.company_id.is_(None)))
+        roles = (await self.db.execute(consulta)).scalars().all()
         return [RoleRead.model_validate(r) for r in roles]
 
     async def create_role(self, data: RoleCreate, current_user: dict | None = None) -> RoleRead:
-        role = Role(name=data.name, description=data.description)
+        """Crea un rol **en la empresa efectiva del actor**. `AC-R02` · `OD-13.e`.
+
+        `RoleCreate` no acepta `company_id` y no se le añade: la empresa sale del actor, no
+        del cuerpo. La autoridad global crea plantillas de sistema (`company_id NULL`), que
+        es lo que las semillas del producto han hecho siempre.
+        """
+        empresa, global_ = self._contexto(current_user)
+        role = Role(name=data.name, description=data.description,
+                    company_id=None if (current_user is None or global_) else empresa)
         self.db.add(role)
         await self.db.flush()
 
@@ -561,8 +628,13 @@ class AuthService:
         return RoleRead.model_validate(role)
 
     async def update_role(self, role_id: int, data: RoleUpdate, current_user: dict | None = None) -> RoleRead:
-        result = await self.db.execute(select(Role).where(Role.id == role_id))
-        role = result.scalar_one_or_none()
+        """Edita un rol que el actor pueda administrar. `AC-R03` · `AC-R04`.
+
+        El objetivo se resuelve **dentro** del alcance antes de mutar nada, igual que en
+        `update_user`: una plantilla de sistema o un rol de otra empresa se comportan como
+        inexistentes para un actor de empresa.
+        """
+        role = await self._rol_administrable(role_id, current_user)
         if not role:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
 
