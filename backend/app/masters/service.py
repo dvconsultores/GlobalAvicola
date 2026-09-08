@@ -5,7 +5,7 @@ Multi-company aware: auto-filters by company_id for non-super-admin users.
 from typing import Any, Optional, Type
 
 from fastapi import HTTPException, status
-from sqlalchemy import select, func, or_
+from sqlalchemy import false as sa_false, func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import Base
@@ -44,16 +44,45 @@ class MasterService:
         #: resolverlo es una consulta y este constructor es síncrono.
         self.unidades = unidades
 
+    #: Modelos cuya clave de inquilino es su **propia clave primaria** — `R-115`.
+    #:
+    #: `Company` no tiene ni puede tener `company_id`: la empresa **es** el inquilino. El
+    #: filtro genérico preguntaba `hasattr(modelo, "company_id")`, que para ella es falso, y
+    #: por tanto no acotaba nunca: cualquier usuario con `masters:read` listaba todas las
+    #: empresas del sistema. Se declara aquí, por nombre de tabla, en vez de deducirse: una
+    #: excepción declarada se puede revisar; una deducida se olvida.
+    _INQUILINO_POR_IDENTIDAD = {"companies"}
+
     def _apply_company_filter(self, query):
-        """
-        Apply company_id filter unless:
-        - User is Super Admin (scope all)
-        - Model doesn't have company_id column
+        """Acota la consulta al inquilino del actor. `RQ-03` · `AC05`.
+
+        Tres casos y ninguno implícito:
+
+        ```
+        AUTORIDAD GLOBAL     sin filtro — `docs/02 §3.1.4`, literal: «Super Admin ve TODAS
+                             las compañías». Cambiarlo es `R-126`, decisión de propietario.
+        SIN EMPRESA          cero filas. `fail-closed`.
+        CON EMPRESA          por `company_id`, o por `id` si el modelo **es** el inquilino.
+        ```
+
+        El caso de en medio era `fail-open` —`R-116`—: `if not self.user_company_id: return
+        query` devolvía la consulta **sin acotar**, y el comentario original admitía que la
+        intención no se había resuelto («return empty or filter by id»). Un actor sin empresa
+        efectiva veía los maestros de todas. `GA-REM-040` había resuelto el mismo dilema al
+        revés para las unidades: sin concesiones, ninguna unidad, nunca «toda la empresa».
+
+        Los catálogos de plataforma sin `company_id` —fases productivas y similares— quedan
+        fuera a propósito: su diseño admite el uso compartido, y así consta en
+        `TENANT_RESOURCE_CLASSIFICATION.md`.
         """
         if self.is_super_admin:
-            return query  # No filter — sees all companies
-        if not self.user_company_id:
-            return query  # No company assigned — return empty or filter by id
+            return query
+        if self.user_company_id is None:
+            # Nunca «sin empresa, todas las empresas». Cero filas, y el detalle por
+            # identificador acaba en 404 por la misma vía.
+            return query.where(sa_false())
+        if self.model.__tablename__ in self._INQUILINO_POR_IDENTIDAD:
+            return query.where(self.model.id == self.user_company_id)
         if hasattr(self.model, "company_id"):
             query = query.where(self.model.company_id == self.user_company_id)
         return query
