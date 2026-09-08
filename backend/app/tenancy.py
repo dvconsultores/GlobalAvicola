@@ -130,3 +130,57 @@ async def verificar_vinculo_generacional(
             "Los lotes de un vínculo de trazabilidad deben pertenecer a la misma compañía",
             "BR-07",
         )
+
+
+# ── La empresa efectiva de una petición — `OD-11` · `GA-REM-040 AC-C09…AC-C14` ──
+
+async def resolver_empresa_efectiva(
+    db: AsyncSession, *, user: Any, reclamada: Any = None, puede_cambiar: bool = False
+) -> int | None:
+    """En qué empresa se evalúa esta petición.
+
+    ```
+    empresa efectiva  =  la empresa persistida del usuario
+                         SALVO contexto de cambio EXPLÍCITAMENTE AUTORIZADO y válido
+    ```
+
+    Vive aquí y no dentro de `get_current_user` porque un servicio o una tarea de fondo
+    también necesitan saber en qué empresa están, y no tienen petición de la que sacarlo.
+    `R-48` había resuelto la regla; lo que faltaba era poder invocarla.
+
+    **Una reclamación no es autoridad por existir.** Para un usuario normal manda la base y la
+    reclamación se ignora: sobre esa propiedad se sostiene el aislamiento multiempresa, porque
+    si bastara con pedir otra compañía no habría ninguna separación.
+
+    Para quien sí puede cambiar de empresa, las tres condiciones se comprueban **aquí y ahora**,
+    no al emitir el token: el token vive treinta minutos y la renovación lo reemite, de modo que
+    una empresa desactivada entretanto seguiría dando contexto. Un contexto validado hace media
+    hora no prueba nada sobre este instante.
+
+    Devolver `None` significa **no hay empresa efectiva**, y el acceso productivo se deniega. No
+    se resuelve «todas las empresas»: elegir una es un acto, no un valor por defecto (`OD-11.c`).
+
+    Y lo que esto **no** contesta: ni qué unidades ve —eso es `unidades_efectivas`— ni qué puede
+    hacer —eso es `RBAC`—. Tres dimensiones, y mezclarlas es de donde salen los atajos.
+    """
+    from .masters.models import Company
+
+    persistida = getattr(user, "company_id", None)
+
+    if reclamada is None or str(reclamada) == str(persistida):
+        return persistida
+
+    if not puede_cambiar:
+        # `R-48`: la reclamación se descarta y manda la base. No es un error del cliente
+        # —el token pudo emitirse antes de un cambio legítimo—, es que no tiene autoridad.
+        return persistida
+
+    try:
+        destino = int(reclamada)
+    except (TypeError, ValueError):
+        return None
+
+    activa = (await db.execute(
+        select(Company.id).where(Company.id == destino, Company.is_active.is_(True))
+    )).scalar_one_or_none()
+    return destino if activa is not None else None

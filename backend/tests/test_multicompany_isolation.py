@@ -34,12 +34,22 @@ async def test_la_fuente_del_contexto_es_una_sola_y_esta_documentada():
     import inspect
 
     from app.auth.security import get_current_user
+    from app.tenancy import resolver_empresa_efectiva
 
-    fuente = inspect.getsource(get_current_user)
-    assert "company_id = user.company_id" in fuente, (
-        "El valor por defecto debe venir de la base")
-    assert "if is_super_admin:" in fuente, (
-        "La excepción debe estar acotada a quien ya opera sobre cualquier compañía")
+    # `GA-REM-040` fase 2 / `OD-11`: la regla se movió a `app/tenancy.py` para que un
+    # servicio o una tarea de fondo puedan invocarla. La propiedad que esta prueba defiende
+    # no cambia —una sola fuente de contexto— y se comprueba en los dos extremos: que la
+    # petición **delega** y que no conserva una segunda copia de la regla.
+    peticion = inspect.getsource(get_current_user)
+    assert "resolver_empresa_efectiva" in peticion, (
+        "La petición debe delegar en el resolutor único")
+    assert "company_id = user.company_id" not in peticion, (
+        "No puede quedar una segunda copia de la regla en la capa de petición")
+
+    regla = inspect.getsource(resolver_empresa_efectiva)
+    assert "persistida" in regla, "El valor por defecto debe venir de la base"
+    assert "if not puede_cambiar:" in regla, (
+        "La excepción debe estar acotada a quien está autorizado a cambiar de empresa")
 
 
 async def test_un_usuario_normal_no_desplaza_su_contexto(http_client, seeded_ids):

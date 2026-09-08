@@ -134,11 +134,16 @@ async def get_current_user(
     #
     # Honrar el claim solo para quien ya puede operar sobre cualquier compania no concede
     # ningun privilegio nuevo: unicamente acota donde escribe.
-    company_id = user.company_id
-    if is_super_admin:
-        reclamada = payload.get("company_id")
-        if reclamada is not None:
-            company_id = int(reclamada)
+    # `OD-11` / `GA-REM-040 AC-C09`…`AC-C14`: la regla vive en `app/tenancy.py`, no aquí.
+    # Estaba escrita en este punto desde `R-48` y era correcta, pero solo era invocable
+    # desde una petición: un servicio o una tarea de fondo tenían que reimplementarla. Y
+    # comprobaba la autoridad del actor sin comprobar que la empresa de destino siguiera
+    # existiendo y activa, cosa que puede dejar de ser cierta con la sesión ya abierta.
+    from ..tenancy import resolver_empresa_efectiva
+
+    company_id = await resolver_empresa_efectiva(
+        db, user=user, reclamada=payload.get("company_id"), puede_cambiar=is_super_admin
+    )
 
     user_dict = {
         "id": user.id,

@@ -58,7 +58,9 @@ async def unidades_habilitadas(db: AsyncSession, company_id: Optional[int]) -> l
     return sorted(filas)
 
 
-async def unidades_efectivas(db: AsyncSession, user) -> list[str]:
+async def unidades_efectivas(
+    db: AsyncSession, user, company_id: Optional[int] = None
+) -> list[str]:
     """El alcance operativo de un usuario: lo habilitado **y** concedido, por código.
 
     Las cuatro condiciones a la vez. Quitar cualquiera de ellas es una de las mutaciones que
@@ -68,6 +70,7 @@ async def unidades_efectivas(db: AsyncSession, user) -> list[str]:
         habilitada              sin ella, revocar a la empresa no revocaría a nadie
         concedida POR ESA       sin ella, pertenecer a la empresa bastaría — `§16` principio 1
           MISMA EMPRESA         y una concesión de la empresa anterior seguiría valiendo
+        concesión VIVA          sin ella, volver a una empresa reviviría lo revocado
         activa en el producto   sin ella, una unidad retirada seguiría accesible
 
     La tercera condición es la que `OD-09.d` corrigió. La concesión apunta a la **habilitación
@@ -82,7 +85,12 @@ async def unidades_efectivas(db: AsyncSession, user) -> list[str]:
     Se lee de la base en cada llamada, no de un token ni de una caché: así una revocación surte
     efecto en la evaluación siguiente y no cuando caduque la sesión.
     """
-    company_id = getattr(user, "company_id", None)
+    # `OD-11`: la empresa efectiva puede venir dada —un actor autorizado situado en otra
+    # empresa— o derivarse de la persistida. Lo que **no** cambia es que las concesiones se
+    # buscan dentro de esa empresa y de ninguna otra: situarse en una empresa da contexto,
+    # no autoridad sobre sus cadenas (`AC-C14`).
+    if company_id is None:
+        company_id = getattr(user, "company_id", None)
     if company_id is None:
         # El Super Administrador global se siembra sin empresa. No obtiene acceso operativo a
         # ninguna por esta capacidad: el modelo de inquilino se preserva intacto.
@@ -97,6 +105,7 @@ async def unidades_efectivas(db: AsyncSession, user) -> list[str]:
         .where(CompanyBusinessUnit.company_id == company_id,
                CompanyBusinessUnit.is_enabled.is_(True),
                UserBusinessUnit.user_id == user.id,
+               UserBusinessUnit.revoked_at.is_(None),
                BusinessUnit.is_active.is_(True))
     )).scalars().all()
     return sorted(filas)
@@ -147,3 +156,67 @@ async def conceder_unidad(db: AsyncSession, *, user, company_business_unit):
     db.add(concesion)
     await db.flush()
     return concesion
+
+
+class AccesoDeUnidadDenegado(PermissionError):
+    """La unidad pedida no está en el alcance operativo efectivo del usuario."""
+
+
+async def exigir_acceso_a_unidad(
+    db: AsyncSession, *, user, code: str, company_id: Optional[int] = None
+) -> None:
+    """La guarda central. `AC-C08` · `AC-C16`.
+
+    Lanza si la unidad no está en el alcance efectivo; no devuelve nada si lo está.
+
+    Es una función y no una dependencia de `FastAPI` **a propósito**: las tareas de fondo, los
+    informes y las notificaciones tendrán que hacer la misma comprobación, y si viviera atada a
+    una petición cada uno reimplementaría la regla. Una regla aplicada en un sitio y ausente en
+    otro no es una regla, es una casualidad — la misma lección que `app/tenancy.py` ya había
+    aprendido con el filtro de empresa.
+
+    **No sustituye al `RBAC`.** Contesta «¿está esta cadena productiva en su alcance?», no
+    «¿puede ejecutar esta acción?». La cadena completa se compone fuera:
+
+        inquilino → unidad de negocio → RBAC → regla de negocio del recurso
+
+    Y no conoce excepciones por nombre de rol. Que alguien se llame «Administrador» o
+    «Contralor» no le abre nada aquí: `OD-09.a` da a las funciones de control visibilidad **de
+    lectura** sobre la empresa, que es otro resolutor y otra fase.
+    """
+    efectivas = await unidades_efectivas(db, user, company_id=company_id)
+    if code not in efectivas:
+        raise AccesoDeUnidadDenegado(
+            f"sin acceso operativo a la unidad de negocio {code!r}")
+
+
+async def revocar_concesiones(db: AsyncSession, *, user) -> int:
+    """Marca como historia todas las concesiones vivas de un usuario. `OD-09.e`.
+
+    **Debe invocarse cuando un usuario cambia de empresa.** Es lo que hace que salir deje
+    rastro, y sin ese rastro «volvió a la empresa A» sería indistinguible de «nunca salió»:
+    la concesión antigua reviviría sola al regresar, que es exactamente lo que `OD-09.e`
+    prohíbe. Volver no prueba el mismo cargo ni la misma necesidad operativa.
+
+    No borra. La fila queda, auditable, con la fecha en que dejó de valer — `AC-B11`.
+
+    **Hoy no hay ningún camino que cambie la empresa de un usuario**: `UserUpdate` no acepta
+    `company_id`, y `switch-company` desplaza el contexto sin tocar `users.company_id`. Esta
+    función existe antes que su llamador a propósito: la fase 7, que traerá esa
+    administración, encontrará la regla escrita en vez de tener que deducirla. Mientras tanto
+    la garantía vale lo que valga su futuro llamador, y eso queda dicho.
+
+    Devuelve cuántas se revocaron.
+    """
+    from datetime import datetime, timezone
+
+    from sqlalchemy import update
+
+    resultado = await db.execute(
+        update(UserBusinessUnit)
+        .where(UserBusinessUnit.user_id == user.id,
+               UserBusinessUnit.revoked_at.is_(None))
+        .values(revoked_at=datetime.now(timezone.utc))
+    )
+    await db.flush()
+    return resultado.rowcount or 0

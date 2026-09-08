@@ -175,3 +175,11 @@ _verificar_autorizacion(app)
 from .transaction import verificar as _verificar_transaccion  # noqa: E402
 
 _verificar_transaccion(app)
+
+# GA-REM-040 AC-C15: ninguna ruta puede quedarse sin declarar su relación con la unidad de
+# negocio. Es la misma idea que AC08 y por la misma razón: sin la comprobación, cada ruta
+# nueva olvidaría la clasificación y la capa se degradaría sola. Clasificar no protege las
+# filas —eso es la fase 3—, pero sin clasificar no se sabe siquiera qué hay que proteger.
+from .business_units.route_scope import verificar as _verificar_alcance_unidad  # noqa: E402
+
+_verificar_alcance_unidad(app)

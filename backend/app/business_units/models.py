@@ -15,7 +15,7 @@ from datetime import datetime
 from typing import Optional
 
 from sqlalchemy import (
-    Boolean, DateTime, ForeignKey, Integer, String, UniqueConstraint, func,
+    Boolean, DateTime, ForeignKey, Index, Integer, String, UniqueConstraint, func, text,
 )
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -114,8 +114,11 @@ class UserBusinessUnit(Base):
 
     __tablename__ = "user_business_units"
     __table_args__ = (
-        UniqueConstraint("user_id", "company_business_unit_id",
-                         name="uq_user_company_business_unit"),
+        # Única entre las **vivas**: una concesión revocada tiene que poder volver a
+        # otorgarse. Con una restricción total, revocar dejaría al usuario sin poder
+        # recuperar nunca ese acceso, que no es lo que revocar significa.
+        Index("uq_user_company_business_unit", "user_id", "company_business_unit_id",
+              unique=True, postgresql_where=text("revoked_at IS NULL")),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
@@ -126,6 +129,18 @@ class UserBusinessUnit(Base):
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), server_default=func.now()
     )
+    #: Cuándo dejó de valer. `OD-09.e`: la concesión no se borra al cambiar de empresa, se
+    #: **marca**. Sin esto, «volvió a la empresa A» sería indistinguible de «nunca salió», y
+    #: la concesión reviviría sola al regresar — que es justo lo que la decisión prohíbe.
+    revoked_at: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    @property
+    def esta_viva(self) -> bool:
+        return self.revoked_at is None
 
     def __repr__(self) -> str:  # pragma: no cover - depuración
-        return f"<UserBusinessUnit user={self.user_id} cbu={self.company_business_unit_id}>"
+        estado = "viva" if self.esta_viva else "revocada"
+        return (f"<UserBusinessUnit user={self.user_id} "
+                f"cbu={self.company_business_unit_id} {estado}>")

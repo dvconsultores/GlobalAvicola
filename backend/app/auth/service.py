@@ -319,6 +319,18 @@ class AuthService:
         user = result.scalar_one_or_none()
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        # `OD-11 §6` / `AC-I06`. Situarse en otra empresa decide sobre qué datos se opera
+        # después, y hasta aquí no quedaba constancia de que hubiera ocurrido. Va en `P-09`,
+        # con el mismo insertor que el resto, y no en un registro paralelo.
+        await audit_accion(
+            self.db, usuario={"id": user.id, "company_id": user.company_id},
+            accion=AuditAction.CONTEXT_SWITCHED, modulo=AuditModule.AUTH,
+            entity_type="company", entity_id=company_id,
+            company_id=company_id,
+            previous_state=str(user.company_id) if user.company_id else None,
+            new_state=str(company_id),
+        )
+
         # El mismo constructor que el login y la renovación, con el contexto desplazado.
         token_data = _claims_de(user, company_id)
         return TR(
