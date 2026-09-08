@@ -344,8 +344,12 @@ class AuthService:
     #: Módulos que el enforcement reconoce, recogidos de las llamadas a `require_permission`.
     #: Se enumeran aquí y no en el frontend para que no puedan desincronizarse.
     MODULOS = [
-        "approvals", "audit", "corrections", "dashboard", "lots", "masters",
-        "operations", "reports", "review", "sap", "users",
+        # `GA-REM-040 §5` fase 7: «el plano de control tiene permisos propios». Administrar
+        # qué cadenas opera una empresa y quién accede a ellas no es administrar usuarios ni
+        # editar un maestro, y reutilizar el módulo de otro habría atado dos autoridades que
+        # el propietario puede querer repartir entre personas distintas.
+        "approvals", "audit", "business_units", "corrections", "dashboard", "lots",
+        "masters", "operations", "reports", "review", "sap", "users",
     ]
 
     def get_permission_catalog(self) -> dict[str, list[str]]:

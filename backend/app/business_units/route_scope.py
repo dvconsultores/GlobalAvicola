@@ -82,6 +82,17 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/roles": (Alcance.CONTROL, None, "`RBAC`, no unidad"),
     "/api/v1/roles/{role_id}": (Alcance.CONTROL, None, "`RBAC`, no unidad"),
     "/api/v1/roles/permissions-catalog": (Alcance.CONTROL, None, "catálogo de permisos"),
+    # `GA-REM-040` fase 7. Administrar el acceso por unidad **es** plano de control, y por eso
+    # no se filtra por unidad: si administrar Incubadora exigiera tener Incubadora, nadie
+    # podría concederla la primera vez y la capacidad sería inservible (`OD-09.b`).
+    "/api/v1/business-units": (
+        Alcance.CONTROL, None, "configuración de la empresa, no producción"),
+    "/api/v1/business-units/{code}/enable": (Alcance.CONTROL, None, "habilitar, `T-040-18`"),
+    "/api/v1/business-units/{code}/disable": (Alcance.CONTROL, None, "deshabilitar"),
+    "/api/v1/users/{user_id}/business-units": (
+        Alcance.CONTROL, None, "conceder y consultar el acceso, `T-040-19`"),
+    "/api/v1/users/{user_id}/business-units/{code}": (
+        Alcance.CONTROL, None, "revocar el acceso"),
     # ── CORE ──────────────────────────────────────────────────────────────────
     "/api/v1/operations/event-types": (Alcance.CORE, None, "catálogo estático"),
     "/api/v1/notifications": (

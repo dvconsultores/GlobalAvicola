@@ -350,7 +350,8 @@ async def test_clasificar_deja_rastro_en_p09(http_client, pend, test_database_ur
         async with async_sessionmaker(motor)() as s:
             filas = (await s.execute(select(AuditLog).where(
                 AuditLog.entity_type == "operational_event",
-                AuditLog.entity_id == str(pend["sin_lote"])))).scalars().all()
+                AuditLog.entity_id == str(pend["sin_lote"]))
+                .order_by(AuditLog.created_at))).scalars().all()
     finally:
         await motor.dispose()
     assert filas, "la clasificación no dejó rastro"
@@ -679,7 +680,8 @@ async def test_ac_g12_la_reclasificacion_controlada_funciona_y_deja_historia(
         async with async_sessionmaker(motor)() as s:
             filas = (await s.execute(select(AuditLog).where(
                 AuditLog.entity_type == "operational_event",
-                AuditLog.entity_id == str(pend["sin_lote"])))).scalars().all()
+                AuditLog.entity_id == str(pend["sin_lote"]))
+                .order_by(AuditLog.created_at))).scalars().all()
     finally:
         await motor.dispose()
     ultimo = filas[-1]

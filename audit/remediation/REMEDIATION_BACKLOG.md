@@ -587,3 +587,61 @@ contrato porque `AC-SAP08` la exige y porque su equivalencia de campos es verifi
 ```
 DESTINO   fase 7 o tanda propia, con cobertura de contrato de respuesta
 ```
+
+---
+
+## `R-113` · nadie administra el acceso por unidad salvo el Super Admin (2026-09-08)
+
+```
+CLASE        DECISIÓN DE PROPIETARIO PENDIENTE  ·  no es un defecto de código
+SEVERIDAD    P2
+DESCUBIERTO  `GA-REM-040` fase 7 · lo señaló `test_rbac.py` al exigir coherencia de roles
+ESTADO       REGISTRADO — la capacidad funciona; falta decidir quién la ejerce
+```
+
+### Qué pasa
+
+La fase 7 añade las cuatro superficies de administración y su módulo `RBAC` propio
+(`business_units:read` · `update` · `create` · `delete`). **Ningún rol sembrado las tiene.**
+
+`test_rbac.py` exige que todo permiso que una ruta reclame lo conceda algún rol o conste como
+exclusivo del Super Administrador. Al no haber rol, las cuatro entraron en `SOLO_SUPER_ADMIN`, y
+eso hizo saltar el segundo guardián —el que vigila que esa lista no crezca— con el diagnóstico
+correcto: **falta un rol administrativo**.
+
+### Por qué no se inventó uno
+
+Ninguno de los cinco roles sembrados administra accesos:
+
+```
+Supervisor Avícola   supervisa producción
+Operador de Granja   registra en campo
+Aprobador            aprueba registros
+Analista SAP         opera la integración
+Auditor              lee
+```
+
+Y no es una cuestión de encaje estético. `business_units:create` permite conceder a cualquier
+usuario de la empresa, incluido uno mismo —`§51` lo comprueba y lo documenta—, de modo que
+dárselo a «Supervisor Avícola» convertiría a todo supervisor en alguien capaz de concederse las
+cuatro cadenas. Eso no es configurar un rol: es decidir el modelo de autoridad de la empresa.
+
+### La pregunta que va al propietario
+
+```
+¿Quién administra el acceso por unidad de negocio en una avícola?
+¿La misma figura que administra usuarios, o una distinta?
+¿Puede esa figura concederse unidades a sí misma, o hace falta separarlo?
+```
+
+La tercera no es teórica: hoy la respuesta es **sí puede**, por la política vigente, y queda
+auditada con actor y objetivo. Separarlo sería una decisión, no una corrección.
+
+### Mientras tanto
+
+El valor por defecto es **cerrado**, que es el lado correcto en el que equivocarse. El permiso
+consta en el catálogo (`AuthService.MODULOS`), de modo que el propietario puede crear el rol que
+corresponda a su organización desde `/roles` sin tocar código. Y el Super Administrador puede
+administrar una empresa situándose en ella con `switch-company`, que deja rastro en `P-09`.
+
+**No lo resuelve la fase 7.** Decidir quién manda no es trabajo de quien implementa.

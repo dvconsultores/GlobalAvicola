@@ -140,6 +140,7 @@ from .corrections.router import router as corrections_router
 from .audit.router import router as audit_router
 from .reports.router import router as reports_router
 from .dashboard.router import router as dashboard_router
+from .business_units.router import router as business_units_router
 
 # SAP Integration: solo se carga si el feature flag está activo
 if settings.FEATURE_SAP_ENABLED:
@@ -157,6 +158,9 @@ app.include_router(corrections_router, prefix="/api/v1", tags=["Corrections"])
 app.include_router(audit_router, prefix="/api/v1", tags=["Audit"])
 app.include_router(reports_router, prefix="/api/v1", tags=["Reports"])
 app.include_router(dashboard_router, prefix="/api/v1", tags=["Dashboard"])
+# `GA-REM-040` fase 7. El plano de control de las unidades de negocio: administrar el
+# acceso, que no es acceder (`OD-09.b`).
+app.include_router(business_units_router, prefix="/api/v1", tags=["Business Units"])
 
 if settings.FEATURE_SAP_ENABLED:
     app.include_router(sap_router, prefix="/api/v1", tags=["SAP Integration"])

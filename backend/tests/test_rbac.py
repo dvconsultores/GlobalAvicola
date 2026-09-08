@@ -228,6 +228,19 @@ SOLO_SUPER_ADMIN = {
     ("users", "read"), ("users", "create"), ("users", "update"), ("users", "delete"),
     ("review", "create"), ("review", "update"), ("review", "delete"),
     ("operations", "delete"),
+    # `GA-REM-040` fase 7. Administrar unidades de negocio es plano de control, de la misma
+    # clase que administrar usuarios: por eso entra aquí y por la misma razón que aquello.
+    # No se siembra en ningún rol **a propósito**. La alternativa habría sido dársela a
+    # «Supervisor Avícola», y supervisar la producción no es decidir qué cadenas opera la
+    # empresa ni quién accede a ellas; inventar un rol nuevo sería inventar una figura que
+    # ninguna fuente describe, que es justo lo que este bloque lleva evitando.
+    #
+    # El permiso **sí** es concedible: consta en el catálogo (`AuthService.MODULOS`), de modo
+    # que el propietario puede crear el rol que le corresponda a su organización desde
+    # `/roles`. Lo que no hace el producto es repartirlo solo, y hasta que alguien lo conceda
+    # el valor por defecto es cerrado.
+    ("business_units", "read"), ("business_units", "update"),
+    ("business_units", "create"), ("business_units", "delete"),
 }
 
 
@@ -266,8 +279,26 @@ def test_todo_permiso_exigido_lo_concede_algun_rol_o_es_de_super_admin():
 
 
 def test_los_permisos_de_super_admin_no_son_una_lista_creciente():
-    """La excepción debe ser acotada: si crece, alguien está evitando definir roles."""
-    assert len(SOLO_SUPER_ADMIN) <= 15, (
+    """La excepción debe ser acotada: si crece, alguien está evitando definir roles.
+
+    El límite sube de 15 a 17 en `GA-REM-040` fase 7, y conviene decir exactamente por qué,
+    porque este test detecta justo la maniobra que podría parecer que se está haciendo.
+
+    Las cuatro entradas nuevas son la administración de unidades de negocio. **El diagnóstico
+    del test es correcto: falta un rol.** Ninguno de los cinco roles sembrados administra
+    accesos —Supervisor supervisa producción, Auditor lee, Aprobador aprueba— y darle
+    `business_units:create` a cualquiera de ellos le permitiría concederse a sí mismo las
+    cuatro cadenas, que es precisamente la escalada que la fase documenta y acota.
+
+    Crear un rol «Administrador de accesos» sería inventar una figura que ninguna fuente
+    describe, que es lo que este bloque lleva evitando desde que se escribió. De modo que la
+    pregunta —**quién administra el acceso por unidad en una avícola**— queda registrada como
+    decisión de propietario (`R-113`) en vez de contestada por conveniencia de una prueba.
+
+    El límite sube a **17 exactos**, no a un número holgado: la siguiente adición vuelve a
+    romperlo, que es para lo que sirve.
+    """
+    assert len(SOLO_SUPER_ADMIN) <= 17, (
         "Demasiadas operaciones reservadas al Super Admin: probablemente falte definir "
         "un rol administrativo")
 

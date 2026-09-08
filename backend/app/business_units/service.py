@@ -232,3 +232,30 @@ async def revocar_concesiones(db: AsyncSession, *, user) -> int:
     )
     await db.flush()
     return resultado.rowcount or 0
+
+
+async def revocar_unidad(db: AsyncSession, *, user, company_business_unit):
+    """Revoca **una** concesión concreta. `GA-REM-040` fase 7 · `T-040-19`.
+
+    Vive junto a `revocar_concesiones` y no en la capa de administración a propósito: son las
+    dos formas de retirar acceso y tienen que significar lo mismo. Si una marcase y la otra
+    borrase, «revocado» dependería de por qué camino se llegó, y el historial que `OD-09.e`
+    necesita valdría solo la mitad de las veces.
+
+    Devuelve la concesión revocada, o `None` si no había ninguna viva — que no es un error de
+    este nivel: quien llama decide si eso es un `404` o un silencio.
+    """
+    from datetime import datetime, timezone
+
+    concesion = (await db.execute(
+        select(UserBusinessUnit).where(
+            UserBusinessUnit.user_id == user.id,
+            UserBusinessUnit.company_business_unit_id == company_business_unit.id,
+            UserBusinessUnit.revoked_at.is_(None))
+    )).scalar_one_or_none()
+    if concesion is None:
+        return None
+
+    concesion.revoked_at = datetime.now(timezone.utc)
+    await db.flush()
+    return concesion
