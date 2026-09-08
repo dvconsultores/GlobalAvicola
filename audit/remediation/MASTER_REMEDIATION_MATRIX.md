@@ -634,3 +634,36 @@ decidir si volver a la empresa anterior reactiva la concesión.
 CERTIFICACIÓN FUNCIONAL                14 / 15   sin cambios
 CERTIFICACIÓN DE ACCESO POR UNIDAD      0 / 15   sin cambios
 ```
+
+---
+
+## `GA-REM-040` fase 2 · seguridad central (2026-09-07)
+
+```
+EMPRESA EFECTIVA         centralizada en `app/tenancy.py` · `OD-11`
+GUARDA DE UNIDAD         `exigir_acceso_a_unidad` · invocable sin `Request`
+RUTAS CLASIFICADAS       198 / 198 · 0 sin clasificar · guarda de arranque
+CICLO DE VIDA            `revoked_at` con unicidad parcial · `OD-09.e`
+AUDITORÍA                `CONTEXT_SWITCHED` en `P-09`
+PRUEBAS                  25 nuevas · 549 passed / 49 skipped
+SENSIBILIDAD             10 / 10 mutaciones detectadas
+FRONTEND                 0 archivos          FILAS FILTRADAS   0
+```
+
+La regla de empresa efectiva **ya era correcta** desde `R-48`; lo que faltaba era poder
+invocarla fuera de una petición, revalidarla en cada una —una empresa puede desactivarse con la
+sesión viva— y dejar constancia de que alguien se situó en otra.
+
+`AC-B12` obligó a un hallazgo que no estaba previsto: **volver a una empresa es indistinguible
+de no haberse ido** si no se registra la salida. De ahí el ciclo de vida de la concesión.
+
+```
+CLASIFICAR UNA RUTA   ≠   PROTEGER SUS FILAS
+```
+
+`/lots` figura como `MULTI_UNIDAD` y sigue devolviendo lotes de todas las unidades.
+
+```
+CERTIFICACIÓN FUNCIONAL             14 / 15   sin cambios
+CERTIFICACIÓN DE ACCESO POR UNIDAD   0 / 15   sin cambios
+```
