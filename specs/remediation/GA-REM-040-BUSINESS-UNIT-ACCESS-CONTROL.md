@@ -919,7 +919,7 @@ FASE  4   agregados           contadores · KPI · paneles · reportes · export
 FASE  5   contratos           los siete flujos · destino del despacho               T-040-13…15
 FASE  6   clasificación       estado · bandeja · acción · auditoría                 T-040-16…17
 FASE  7   API de administración  ✔  habilitación · concesión · P-09       T-040-18…19
-FASE  8   sesión                                                                    T-040-20
+FASE  8   sesión               ✔  cuatro conceptos · empresa efectiva · actor global   T-040-20
 FASE  9   interfaz                                                                  T-040-21…24
 FASE 10   notificaciones, tareas y auditoría                                        T-040-25…27
 FASE 11   certificación de acceso por unidad                                        T-040-28…30
@@ -1240,3 +1240,101 @@ superficies normales               acotadas por unidad, para el mismo actor
 `P-08`                              BLOCKED_EXTERNAL
 `unidades_efectivas`               no se toca ni se amplía
 ```
+
+---
+
+# Enmienda E · la sesión representa la autoridad, no la define (2026-09-09)
+
+`T-040-20` · fase 8. `AC-H01` fijaba **qué** debe entregar la sesión; `OD-14` y `OD-15`
+cambiaron después **qué hay que representar**, y esta enmienda cierra ese hueco.
+
+```
+LA SESIÓN REPRESENTA LA AUTORIDAD   ·   NO LA DEFINE
+```
+
+Ninguna decisión de seguridad se toma aquí. Todo campo sale de un resolutor que ya existe y ya
+está certificado; si un campo necesitara lógica propia, sería señal de que la autoridad no está
+donde debe.
+
+## `AC-H11` · cuatro conceptos, cuatro campos
+
+`§14.1` los nombra por separado y por separado se entregan. Reunirlos en una lista sería
+volver a la confusión que `GA-REM-040` existe para deshacer:
+
+```
+unidades HABILITADAS   de la empresa efectiva      decisión comercial
+unidades CONCEDIDAS    al usuario en esa empresa   decisión operativa
+unidades EFECTIVAS     lo habilitado ∩ lo concedido ∩ activo en el producto
+capacidades            los permisos `RBAC` del actor
+```
+
+Una concesión sobre una unidad deshabilitada aparece en **concedidas** y **no** en
+**efectivas**. Que las dos listas puedan diferir es el punto: si nunca difirieran, una de ellas
+sobraría.
+
+## `AC-H12` · la empresa persistida no es la empresa efectiva
+
+`OD-14`. Para la autoridad global situada con `switch-company`, son distintas, y la sesión las
+entrega distintas:
+
+```
+company_id             la empresa PERSISTIDA del usuario — `users.company_id`
+effective_company_id   sobre la que se opera AHORA — resolutor de `OD-11`
+```
+
+`company_id` se conserva por compatibilidad y **queda documentado** lo que significa: era
+ambiguo desde `OD-14` y ahora deja de serlo por escrito, no por eliminación.
+
+## `AC-H13` · el actor global es una propiedad del actor, no una empresa
+
+```
+is_global_actor    derivado de la capacidad real, nunca del nombre del rol
+                   ni de que `company_id` sea nulo (`OD-13.b`)
+```
+
+```
+PROHIBIDO   una empresa ficticia `GLOBAL` · `company_id = 0` · `company_id = "*"`
+PROHIBIDO   sin empresa seleccionada → la primera · o la unión de todas
+```
+
+Sin empresa efectiva, `effective_company_id` es **nulo** y las tres listas de unidades van
+vacías. Un actor global sin contexto conserva su autoridad de control global y no obtiene dato
+de ningún inquilino: es `OD-14.d` representado, no reinterpretado.
+
+## `AC-H14` · administrar no aparece como acceder
+
+El caso que esta fase debe hacer legible, y que `OD-15` volvió obligatorio:
+
+```
+Administrador de Accesos      capacidades de `business_units` PRESENTES
+                              unidades efectivas                []
+```
+
+Las dos cosas a la vez, y **no** es una incoherencia que corregir: es `OD-09.b` por fin visible
+en el contrato. Un cliente que reciba esto puede ofrecer la pantalla de administración sin
+ofrecer dato productivo.
+
+## Lo que esta enmienda **no** añade
+
+```
+NO  lista de empresas seleccionables — `§14.1` no la pide
+NO  `users:read` para el Administrador de Accesos — `OD-15 §6` lo decidió al revés
+NO  banderas de conveniencia derivadas dos veces
+NO  módulos habilitados por empresa — no existe tal requisito
+NO  una segunda lengua de permisos para el cliente
+```
+
+## Y lo que la sesión sigue sin ser
+
+```
+LA SESIÓN INFORMA AL CLIENTE   ·   NO SUSTITUYE AL BACKEND
+```
+
+`AC-H10` sigue vigente y se demuestra igual: llamando a la `API` directamente. Que la sesión
+diga `capacidad ausente` no protege nada; lo que protege es que la ruta deniegue.
+
+## Tareas
+
+| Tarea | Qué |
+|---|---|
+| `T-040-20` | Capacidades y unidades en la sesión, por los resolutores centrales |
