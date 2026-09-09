@@ -25,7 +25,7 @@ Riesgo: probabilidad de efectos colaterales al implementar.
 | **14** | `GA-REM-008` | Trazabilidad generacional | P0 | 001, 011, 014 | M | medio | `SPEC_DRAFT` ⚠ `RC-04` |
 | **15** | `GA-REM-013` | Quality gates de CI | P1 | 001, 014 | S | bajo | `SPEC_READY` |
 | **16** | `GA-REM-015` | Certificación de tests backend | P1 | 014 | M | medio | **`CERTIFIED`** |
-| **17** | `GA-REM-021` | Consumo de agua (R-13) | P1 | 001 | S | bajo | `SPEC_READY` |
+| **17** | `GA-REM-021` | Consumo de agua (R-13) | P1 | 001 | S | bajo | **`PARTIAL`** (`B05` cerrado técnico, enm. A certificada; `B01…B04`, `B13`, `R-156` abiertos) |
 | **18** | `GA-REM-022` | Completitud de KPI (R-14) | P1 | 001, 011 | S | bajo | `SPEC_READY` |
 | **19** | `GA-REM-016` | Certificación E2E y de procesos | P1 | 002, 005, 006, 007, 011, 014, 015 | L | medio | `SPEC_DRAFT` |
 | **20** | `GA-REM-018` | Recuperación de trazabilidad Spec Dev | P1 | 001 + estabilización | L | bajo | `SPEC_READY` |
@@ -109,7 +109,7 @@ Descubiertos por `GA-REM-020`. **Ninguno se implementó en Wave 1** (§32 del en
 
 | ID | Hallazgo | Sev. | Destino | Estado |
 |---|---|---|---|---|
-| `R-13` | Consumo de agua no capturado en 3 etapas | P1 | `GA-REM-021` · `GA-REQ-057` | Wave 2 |
+| `R-13` | Consumo de agua no capturado en 3 etapas | P1 | `GA-REM-021` · `GA-REQ-057` | **CERRADO** (técnico; WAVE B tranche 6, `GA-REM-021-A`) |
 | `R-14` | Tasa de Eclosión devuelve texto en vez de número | P1 | `GA-REM-022` | Wave 2 |
 | `R-15` | Documentación del cliente sin usar para validar | P1 | `GA-REM-020` | **cerrado** |
 | `R-16` | Rotación de huevos: solo booleano; faltan frecuencia y ángulo | P2 | `GA-REM-021` (ampliada) · `GA-REQ-058` | Wave 2/3 |
@@ -1139,3 +1139,25 @@ contraloría, `integration_seeds`) → `reversals:read`; Administrador de Acceso
 rol de Contraloría y no se inventa. `GA-REM-041` enmienda A (`REV-R01…R08`). `B05` (`R-13`): `GA-REM-021` enmienda A con matriz de
 aplicabilidad y contrato de datos; `RR-10` (litros) y `RR-11` (`> 0`) resueltos por evidencia de nivel 5/6 sin escalado; `AOD-19`
 no gobierna `B05`. Sin código en este commit.
+
+---
+
+## Cierre de `B05` (`R-13`) + roles del reverso · WAVE B tranche 6 (2026-09-09)
+
+```
+OD-19 Acl. A CERRADA (técnico)  Supervisor Avícola → reversals:create + read · Contralor Avícola → read · Administrador de Accesos y operativos → ninguno ·
+                            SOLO_SUPER_ADMIN 15 → 13 · GA-REM-041-A certificada (REV-R01…R08 · 5/5 + RBAC · sensibilidad S9 a/b/c) ·
+                            GA-REM-041-B certificada: la decisión llega a instalaciones existentes por migración de datos v2w3x4y5z6a7 y al baseline
+                            (matriz compuesta, GA-REM-025 AC03 46 → 48; REV-R09…R12 · 3/3 + t_025_02; S9d/S9e) — hallazgo de la 1ª regresión completa
+R-13 / B05  CERRADO (técnico)  evento water_consumption + water_liters (litros, > 0; RR-10/RR-11) · solo Reproductoras y Engorde (Bases p.2/4/12) ·
+                            un dato, un registro (prohibido en otros tipos) · aditivo por día · editable y corregible · no reversible · cadena
+                            inquilino/unidad/concesión certificada (S3–S5) · migración u1v2w3x4y5z6 · frontend mínimo (catálogo, formulario, reporte) ·
+                            16/16 · rojo previo 15 · sensibilidad S1–S6, S9, S10 válidas (S7/S8 N/A)
+GA-REM-021  PARTIAL           B05 cerrado · B01 (cuadre) · B02 (pesos en rango) · B03 (alimento) · B13 (sanos/débiles) abiertos (enmienda B pendiente) ·
+                            B04 bloqueado por AOD-14 · R-156 bloqueado por AOD-20 · KPI de agua: ola C
+WAVE B   IN PROGRESS        22 ítems · 8 cerrados · 4 parciales (R-140 · R-154 · R-136 · GA-REM-021) · 10 abiertos · decisiones 6
+                            siguiente tranche (identificado, no iniciado): GA-REM-021 B01 + B02 (cuadre y pesos en rango en recepción, Rec. §6; usan el
+                            saldo de R-130) — requiere enmienda B previa; alternativa: R-152 → R-153 (Progenitoras, spec propia)
+```
+
+Evidencia: `GA-REM-021-B05-WATER-CAPTURE-EVIDENCE.md`. Regresión completa: **1000 passed · 49 skipped · 0 failed** (819 s, 2ª pasada; la 1ª dejó 2 rojas corregidas por `GA-REM-041-B`; 976 previas + 16 agua + 5 matriz de roles + 3 migración de roles; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 89/89 · `tsc` 6 preexistentes (`R-158`). Migraciones `u1v2w3x4y5z6` (autorizada por `GA-REM-021-A §A.5`, tras el commit de spec `c8447de`) y `v2w3x4y5z6a7` (datos de roles, autorizada por `GA-REM-041-B`, tras `8df04f7`). Rutas 211 (sin cambio). `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

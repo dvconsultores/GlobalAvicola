@@ -882,5 +882,9 @@ R-135 + R-143 ──CERRADOS (tranche 4, GA-REM-006-A · GA-REM-007-A)──► 
 R-136 ──OD-19──► interno CERRADO (tranche 5, GA-REM-041; R-165 cerrado con él) · post-SAP: SAP_DEFERRED (AOD-04 · OD-12 · GA-REM-017)
                 · huevos/incubación ◄── R-161 · consolidados ◄── contrato de des-consolidación (R8) · carrera approve/reject ◄── R-166
                                  el reverso de huevos/incubación depende además de R-161; el de consolidados, de R8; «solo administrador», de AOD-18
-siguiente (identificado, no iniciado): GA-REM-021 agua (B05; P1; SPEC_READY; B04 ◄── AOD-14) · acompañante posible: R-165 ◄── guarda compartida G/H
+GA-REM-021 B05 ──CERRADO (tranche 6, GA-REM-021-A)──► hoja; deja water_liters como fuente del KPI de agua (ola C: L/ave, agua/alimento ◄── R-131 FCR)
+                · OD-19 Aclaración A cierra la asignación de roles del reverso (GA-REM-041-A semillas · GA-REM-041-B migración de datos v2w3x4y5z6a7 para
+                instalaciones existentes y baseline) · GA-REM-021 PARTIAL: B01/B02 ◄── R-130 (cerrado) + enmienda B ·
+                B03 ◄── enmienda B · B13 ◄── enmienda B (Bases p.9) · B04 ◄── AOD-14 · R-156 ◄── AOD-20
+siguiente (identificado, no iniciado): GA-REM-021 B01 + B02 (cuadre y pesos en rango en recepción, Rec. §6; P2; enmienda B previa) · alternativa: R-152 → R-153 (Progenitoras)
 ```

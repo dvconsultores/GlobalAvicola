@@ -77,3 +77,10 @@ deja de estar vacío sin cambiar su contrato.
 
 Fuera: `B04` (`AOD-14`) · resto de `GA-REM-021` · KPI de agua (ola C: L/ave, agua/alimento, tendencias, umbrales) · alertas ·
 sensores/IoT · SAP · `R-161` · `R-164` · `R-166` · `R-140`/`R-154` residuales · `R-136` SAP · fase 9 · `BU-D10` · `R-158`.
+
+## 6. Resultado (2026-09-09)
+
+`B05` **cerrado (técnico)** por `GA-REM-021-A` (commits `c8447de` spec · `72600f1` código · commit de evidencia (este)): 16/16 · rojo previo 15/16 ·
+sensibilidad `S1–S6`, `S9`, `S10` válidas · regresión 1000 passed · 49 skipped · 0 failed (819 s, 2ª pasada; la 1ª dejó 2 rojas corregidas por `GA-REM-041-B`; 976 previas + 16 agua + 5 matriz de roles + 3 migración de roles; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · evidencia `GA-REM-021-B05-WATER-CAPTURE-EVIDENCE.md`.
+Corrección de redacción durante la implementación: `AC-V06` atribuía el veto de fecha futura a `BR-06`; lo aplica la regla genérica
+`R-30`/`BR-19` ya vigente para todo evento (sin regla propia del agua, como exigía la enmienda). `GA-REM-021` sigue **PARTIAL**.

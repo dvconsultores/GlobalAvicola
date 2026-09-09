@@ -4,7 +4,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-021` · **Tipo** `REQUIREMENT GAP SPEC` · `POST-AUDIT REMEDIATION SPEC` |
-| **Prioridad** | **P1** · **Estado** `SPEC_READY` |
+| **Prioridad** | **P1** · **Estado** **`PARTIAL`** (2026-09-09: `B05` cerrado técnico por la enmienda A; `B01…B04`, `B13`, `R-156` abiertos; E2E `BLOCKED_RUNTIME`) |
 | **Dependencias** | `GA-REM-001` · **informada por** `GA-REM-020` (validación de cobertura) |
 | **Hallazgo** | **R-13** — descubierto en la revalidación, **no estaba en la auditoría** |
 | **Fuente** | `Imagen de Procesos Documentado/Bases Consideradas en el Desarrollo de la App Avicola.pdf` |
@@ -121,7 +121,7 @@ Then  cita la fuente del cliente que lo exige, con página
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-021-A` · `REQUIRED OPERATIONAL DATA` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-021-A` · `REQUIRED OPERATIONAL DATA` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-09; E2E `BLOCKED_RUNTIME`) · evidencia `GA-REM-021-B05-WATER-CAPTURE-EVIDENCE.md` · commits `c8447de` · `72600f1` |
 | **Subrequisito** | **`B05`** = `R-13` = `H360-B05` (P1): consumo diario de agua exigido por el cliente en tres etapas y ausente |
 | **Fuente** | `Bases Consideradas en el Desarrollo de la App Avicola.pdf` p.2 («8. Consumo de Agua: Cantidad de agua consumida por los pollitos durante el día»), p.4 («11. … por las gallinas …»), p.12 («9. … por los pollos …»); ausente en p.7-11 (incubadora) |
 | **Matriz previa** | `GA_REM_021_B05_WATER_CAPTURE_MATRIX.md` (aplicabilidad §3, contrato de datos §4, resolución por niveles §2) |

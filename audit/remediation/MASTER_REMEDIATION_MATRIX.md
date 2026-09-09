@@ -1261,3 +1261,19 @@ regresión       **976 passed · 49 skipped · 0 failed** (807 s; 949 previas + 
 WAVE B          IN PROGRESS · 8/22 cerrados + 3 parciales · siguiente (no iniciado): GA-REM-021 agua
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
 ```
+
+## WAVE B · tranche 6 · roles del reverso (`OD-19` Acl. A) · `B05` agua cerrado (`GA-REM-021` PARTIAL) · `GA-REM-021-A` y `GA-REM-041-A` certificadas (2026-09-09)
+
+```
+pre-flight      OD-19 Aclaración A (propietario): Supervisor Avícola create+read · Contralor read · Access Admin/operativos ninguno · SOLO_SUPER_ADMIN 15 → 13
+GA-REM-041-A    CERTIFIED (frontera técnica) · REV-R01…R08 · test_reversal_role_matrix 5/5 · sensibilidad S9 a/b/c válidas
+GA-REM-041-B    CERTIFIED (frontera técnica) · REV-R09…R12 · migración de datos v2w3x4y5z6a7 · baseline compuesto (AC03 48) · hallazgo de la 1ª regresión completa
+GA-REM-021-A    CERTIFIED (frontera técnica) · B05 = R-13 = H360-B05 · gobernado sin escalado (nivel 2 + RR-10 + RR-11) · AC-W/V/S/BU/C/AU · rojo 15/16 → verde 16/16
+B05             CERRADO (técnico) · water_consumption + water_liters (L, > 0) · breeder/broiler · aditivo · corregible · no reversible · cadena BU certificada
+GA-REM-021      PARTIAL · B01/B02/B03/B13 abiertos (enmienda B pendiente) · B04 ◄── AOD-14 · R-156 ◄── AOD-20
+migraciones     u1v2w3x4y5z6 (eventtype 'WATER_CONSUMPTION' + operational_events.water_liters) · v2w3x4y5z6a7 (roles: +reversals al Supervisor) · rutas 211
+sensibilidad    S1–S6, S9(a/b/c/d/e), S10 válidas · S7/S8 N/A (contrato sin company_id; modelo aditivo)
+regresión       1ª pasada 995 passed · 2 failed (t_025_02 defecto real · t028_04 higiene) → corregidas → 2ª pasada **1000 passed · 49 skipped · 0 failed** (819 s, 2ª pasada; la 1ª dejó 2 rojas corregidas por `GA-REM-041-B`; 976 previas + 16 agua + 5 matriz de roles + 3 migración de roles; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 89/89 · tsc 6 (R-158)
+WAVE B          IN PROGRESS · 8/22 cerrados + 4 parciales · siguiente (no iniciado): GA-REM-021 B01 + B02 (Rec. §6; enmienda B previa) · alternativa R-152 → R-153
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
+```

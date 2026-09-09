@@ -277,3 +277,27 @@ B05 ............................ GA-REM-021 enmienda A · matriz GA_REM_021_B05_
                                  AOD-19 no lo gobierna · migración u1v2w3x4y5z6 (enum + columna) · frontend mínimo (catálogo + campo)
 fuera .......................... B04 (AOD-14) · resto de GA-REM-021 · KPI de agua (ola C) · reverso del dato (GA-REM-041 §3.5)
 ```
+
+## 15. Estado tras el tranche 6 (2026-09-09) — recalculado desde el backlog
+
+```
+TOTAL ......................... 22
+CERRADOS ......................  8   R-130 · R-160 · R-163 (P1) · R-159 · R-162 · R-143 · R-165 (P2) · R-135 (P1)   [R-13/B05 cerrado dentro de GA-REM-021]
+PARCIALES ......................  4   R-140 · R-154 · R-136 (interno cerrado; SAP diferido) · GA-REM-021 (B05 cerrado; B01–B04, B13, R-156 abiertos)
+P1 ABIERTOS ...................  0   (GA-REM-021 y R-136 parciales)
+P2 ABIERTOS ....................  7   R-142 · R-144 · R-152 · R-148 · R-147 · R-161 · R-164   (+ R-140 parcial)
+P3 ABIERTOS ....................  3   R-153 · R-156 · R-166   (+ R-154 parcial)
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP · GA-REM-021 B04 (AOD-14)]
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20   (OD-19 Aclaración A resuelta en este tranche; sin AOD nuevo)
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c
+BLOCKED_RUNTIME ................  R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 6 ...................... roles del reverso (GA-REM-041-A/B, 5/5 + 3/3, S9 a…e) + B05 agua (GA-REM-021-A, 16/16, S1–S6/S9/S10)
+                                 commits c8447de · cdb0670 · 72600f1 · 8df04f7 · daa0c0e · commit de evidencia (este) · cabeza v2w3x4y5z6a7
+                                 regresión 1000 passed · 49 skipped · 0 failed (819 s, 2ª pasada; la 1ª dejó 2 rojas corregidas por `GA-REM-041-B`; 976 previas + 16 agua + 5 matriz de roles + 3 migración de roles; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 89/89 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  GA-REM-021 B01 + B02 — cuadre de recepción (♀+♂+mortalidad+rechazo) y pesos en rango en recepción (Rec. §6; P2; ambos sobre el
+  evento de recepción y el saldo de R-130). Exige enmienda B previa (NO SPEC = NO DEVELOPMENT); «pesos en rango» necesita fuente
+  normativa del rango — si ninguna fuente por encima de la implementación lo fija, OWNER_DECISION_REQUIRED (no se inventa).
+  Alternativa sin decisión aparente: R-152 → R-153 (Progenitoras: importación con estructura de docs/02 §3.4.1; spec propia).
+```
