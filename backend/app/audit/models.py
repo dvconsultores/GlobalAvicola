@@ -35,6 +35,7 @@ class AuditAction(str, enum.Enum):
     SAP_CONFIRMED = "sap_confirmed"
     SAP_ERROR = "sap_error"
     CANCELLED = "cancelled"
+    REVERSED = "reversed"  # `OD-19`: reverso interno efectivo
     LOGIN = "login"
     LOGOUT = "logout"
     LOGIN_FAILED = "login_failed"

@@ -549,7 +549,7 @@ class AuthService:
         # editar un maestro, y reutilizar el módulo de otro habría atado dos autoridades que
         # el propietario puede querer repartir entre personas distintas.
         "approvals", "audit", "business_units", "corrections", "dashboard", "lots",
-        "masters", "operations", "reports", "review", "sap", "users",
+        "masters", "operations", "reports", "reversals", "review", "sap", "users",
     ]
 
     def get_permission_catalog(self) -> dict[str, list[str]]:

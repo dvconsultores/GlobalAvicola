@@ -113,6 +113,7 @@ async def audit_state_transition(
         "sap_confirmed":  AuditAction.SAP_CONFIRMED,
         "sap_error":      AuditAction.SAP_ERROR,
         "cancelled":      AuditAction.CANCELLED,
+        "reversed":       AuditAction.REVERSED,       # `OD-19` · `GA-REM-041`
     }
     audit_action = action_map.get(new_status, AuditAction.UPDATED)
 

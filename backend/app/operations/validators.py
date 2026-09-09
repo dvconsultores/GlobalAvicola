@@ -18,6 +18,34 @@ class BusinessRuleViolation(Exception):
 
 # ─── Balance helpers ──────────────────────────────────────────────────────────
 
+async def _suma_neta(db: AsyncSession, lot_id: int, columna, columna_evento, tipos) -> int:
+    """Σ natural de los eventos del lote de esos tipos, **menos** las contrapartidas efectivas.
+
+    `GA-REM-041 §3.4` · `OD-19 §3, §5`. El original revertido sigue sumando en su signo (la
+    historia dice que ocurrió); su contrapartida —mismo tipo, mismas cantidades— resta
+    exactamente lo mismo cuando es **efectiva** (`REVERSED`). Una contrapartida pendiente,
+    rechazada o cancelada no cuenta: ni suma como movimiento (no lo es) ni resta todavía.
+    No hay exclusión retroactiva: las dos filas están y las dos suman.
+    """
+    from .models import Reversal
+
+    contrapartidas = select(Reversal.reversal_event_id).where(Reversal.reversal_event_id.is_not(None))
+    base = (
+        select(func.coalesce(func.sum(columna), 0))
+        .join(OperationalEvent, columna_evento == OperationalEvent.id)
+        .where(OperationalEvent.lot_id == lot_id, OperationalEvent.event_type.in_(list(tipos)))
+    )
+    natural = (await db.execute(base.where(
+        OperationalEvent.status.not_in([EventStatus.CANCELLED]),
+        OperationalEvent.id.not_in(contrapartidas),
+    ))).scalar() or 0
+    efectivas = (await db.execute(base.where(
+        OperationalEvent.status == EventStatus.REVERSED,
+        OperationalEvent.id.in_(contrapartidas),
+    ))).scalar() or 0
+    return int(natural) - int(efectivas)
+
+
 async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
     """Saldo vivo de aves del lote.
 
@@ -46,24 +74,8 @@ async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
         EventType.BIRD_EXIT,
         EventType.CHICK_DISPATCH,
     ]
-    res_in = await db.execute(
-        select(func.coalesce(func.sum(BirdMovement.quantity), 0))
-        .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
-        .where(
-            OperationalEvent.lot_id == lot_id,
-            OperationalEvent.event_type.in_(in_types),
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
-        )
-    )
-    res_out = await db.execute(
-        select(func.coalesce(func.sum(BirdMovement.quantity), 0))
-        .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
-        .where(
-            OperationalEvent.lot_id == lot_id,
-            OperationalEvent.event_type.in_(out_types),
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
-        )
-    )
+    entradas = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id, in_types)
+    salidas = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id, out_types)
     from ..lots.models import OpeningBalance
 
     apertura = await db.execute(
@@ -73,7 +85,7 @@ async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
         ).where(OpeningBalance.lot_id == lot_id)
     )
 
-    return (apertura.scalar() or 0) + (res_in.scalar() or 0) - (res_out.scalar() or 0)
+    return (apertura.scalar() or 0) + entradas - salidas
 
 
 async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
@@ -141,29 +153,10 @@ async def get_viable_chick_balance(db: AsyncSession, lot_id: int) -> int:
     −15 pese a `BR-04`. Viable = nacidos − muertos − descartados − ya despachados, que es lo que
     «viable» significa (`Bases` p.9: sanos frente a débiles) y coincide con el saldo del lote.
     """
-    res_in = await db.execute(
-        select(func.coalesce(func.sum(BirdMovement.quantity), 0))
-        .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
-        .where(
-            OperationalEvent.lot_id == lot_id,
-            OperationalEvent.event_type == EventType.BIRTH_REGISTRATION,
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
-        )
-    )
-    res_out = await db.execute(
-        select(func.coalesce(func.sum(BirdMovement.quantity), 0))
-        .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
-        .where(
-            OperationalEvent.lot_id == lot_id,
-            OperationalEvent.event_type.in_([
-                EventType.CHICK_DISPATCH,
-                EventType.MORTALITY_RECORDING,
-                EventType.CULL_RECORDING,
-            ]),
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
-        )
-    )
-    return (res_in.scalar() or 0) - (res_out.scalar() or 0)
+    nacidos = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id, [EventType.BIRTH_REGISTRATION])
+    salidas = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id,
+                               [EventType.CHICK_DISPATCH, EventType.MORTALITY_RECORDING, EventType.CULL_RECORDING])
+    return nacidos - salidas
 
 
 # ─── Business rule validators ─────────────────────────────────────────────────

@@ -138,6 +138,9 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/operations/alerts/{alert_id}/resolve": (Alcance.MULTI_UNIDAD, None, "ídem"),
     "/api/v1/corrections": (Alcance.MULTI_UNIDAD, None, "corrige eventos de cualquier cadena"),
     "/api/v1/corrections/event/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),
+    # ── Reverso interno · `GA-REM-041` · `OD-19` ─────────────────────────────
+    "/api/v1/reversals": (Alcance.MULTI_UNIDAD, None, "reversa eventos de cualquier cadena; la contrapartida hereda la del original"),
+    "/api/v1/reversals/event/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),
     # ── Revisión y aprobación · `P-07`, flujo 6 ───────────────────────────────
     "/api/v1/review/pending": (Alcance.MULTI_UNIDAD, None, "cola de las cuatro"),
     "/api/v1/review/batches": (Alcance.MULTI_UNIDAD, None, "cola de las cuatro"),

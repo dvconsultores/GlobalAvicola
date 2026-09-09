@@ -86,6 +86,16 @@ class SegregacionMixin:
 
 
 
+async def _exigir_habilitacion(db, current_user, event) -> None:
+    """`GA-REM-041 §1.2` · `R-165` · `OD-19 §13`: revisar, devolver, completar, aprobar o rechazar
+    es operar dato productivo. El actor de empresa ya queda fuera por `unidades_efectivas`
+    (`404`); a la autoridad global, exenta de concesión, se le exige la **habilitación** de la
+    unidad como en `operations`, `lots` y `corrections` (`403`). Misma guarda compartida."""
+    from ..operations.service import OperationsService
+
+    await OperationsService(db, current_user).exigir_unidad_operativa(event=event)
+
+
 class ReviewService(SegregacionMixin):
     """Handles review workflow: batch creation, start/return/complete review."""
 
@@ -307,6 +317,11 @@ class ReviewService(SegregacionMixin):
             event.status = EventStatus.APPROVED
             event.approved_by_id = self.current_user["id"]
             new_status = "approved"
+            await self.db.flush()
+            from ..reversals.service import efectuar_reverso_si_procede  # `GA-REM-041`
+
+            if await efectuar_reverso_si_procede(self.db, event, self.current_user):
+                new_status = "reversed"
         else:
             # Multi-level: mark as corrected (awaiting approval step)
             event.status = EventStatus.CORRECTED
@@ -353,6 +368,7 @@ class ReviewService(SegregacionMixin):
         event = result.scalar_one_or_none()
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
+        await _exigir_habilitacion(self.db, self.current_user, event)  # `R-165` · `OD-19 §13`
         return event
 
     async def _get_company_approval_levels(self) -> int:
@@ -447,11 +463,18 @@ class ApprovalService(SegregacionMixin):
         # BR-14 (RR-03): segregacion de funciones, configurable por paso.
         await self._exigir_segregacion(event, "aprobar")
 
+        old_status = event.status.value if hasattr(event.status, "value") else str(event.status)
         event.status = EventStatus.APPROVED
         event.approved_by_id = self.current_user["id"]
         if observations:
             event.observations = observations
         await self.db.flush()
+        # `GA-REM-041` · `OD-19 §6, §20`: si lo aprobado es la contrapartida de un reverso, la
+        # aprobación **aplica** la compensación en esta misma transacción (original y
+        # contrapartida terminan `REVERSED`); si algo falla, nada de esto se confirma.
+        from ..reversals.service import efectuar_reverso_si_procede
+
+        new_status = "reversed" if await efectuar_reverso_si_procede(self.db, event, self.current_user) else "approved"
 
         self.db.add(models.ApprovalAction(
             event_id=event_id,
@@ -464,7 +487,7 @@ class ApprovalService(SegregacionMixin):
 
         # Audit
         await audit_state_transition(self.db, event, self.current_user,
-                                     "corrected", "approved",
+                                     old_status, new_status,
                                      comments=observations)
 
         return event
@@ -561,6 +584,7 @@ class ApprovalService(SegregacionMixin):
         event = result.scalar_one_or_none()
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
+        await _exigir_habilitacion(self.db, self.current_user, event)  # `R-165` · `OD-19 §13`
         # Can approve from CORRECTED or IN_REVIEW (single-level)
         if event.status not in (EventStatus.CORRECTED, EventStatus.IN_REVIEW):
             raise HTTPException(

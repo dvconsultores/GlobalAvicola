@@ -58,7 +58,8 @@ EDITABLES = (models.EventStatus.DRAFT, models.EventStatus.REGISTERED,
              models.EventStatus.RETURNED, models.EventStatus.REJECTED)
 REENVIABLES = (models.EventStatus.REGISTERED, models.EventStatus.RETURNED, models.EventStatus.REJECTED)
 NO_CANCELABLES = (models.EventStatus.APPROVED, models.EventStatus.CONSOLIDATED, models.EventStatus.SENT_TO_SAP,
-                  models.EventStatus.SAP_CONFIRMED, models.EventStatus.SAP_ERROR, models.EventStatus.CANCELLED)
+                  models.EventStatus.SAP_CONFIRMED, models.EventStatus.SAP_ERROR, models.EventStatus.CANCELLED,
+                  models.EventStatus.REVERSED)  # `OD-19`: lo revertido es terminal
 
 
 class OperationsService:
@@ -1027,6 +1028,12 @@ class OperationsService:
         # editable como `RETURNED`; el estado no cambia por editar (`AC-U02`).
         if event.status not in EDITABLES:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se pueden editar eventos en borrador, registrados, devueltos o rechazados")
+        # `GA-REM-041` · `AC-RV06`: la contrapartida de un reverso lleva las cantidades del
+        # original; editarla rompería la compensación exacta (`OD-19 §4`).
+        from ..reversals.service import es_contrapartida
+
+        if await es_contrapartida(self.db, event.id):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Una contrapartida de reverso no se edita")
         # `exclude_unset` es lo que hace que una edición parcial no borre lo que no
         # menciona. El esquema ya excluye `status`, `event_type` e `idempotency_key`, de
         # modo que aquí no puede llegar ninguno: el estado solo cambia por las

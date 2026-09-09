@@ -29,6 +29,11 @@ class CorrectionService:
         event = await operaciones.get_event(data.event_id)
         await operaciones.exigir_unidad_operativa(event=event)
 
+        # `GA-REM-041` · `AC-RV06`: la contrapartida de un reverso no se corrige (`OD-19 §4`).
+        from ..reversals.service import es_contrapartida
+
+        if await es_contrapartida(self.db, event.id):
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Una contrapartida de reverso no se corrige")
         # Event must be in a correctable state. `OD-17.a` / `AC-S02`: `REJECTED` no es terminal.
         correctable = (EventStatus.REGISTERED, EventStatus.PENDING_REVIEW, EventStatus.IN_REVIEW,
                        EventStatus.RETURNED, EventStatus.REJECTED)

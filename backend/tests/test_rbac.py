@@ -228,6 +228,9 @@ SOLO_SUPER_ADMIN = {
     ("users", "read"), ("users", "create"), ("users", "update"), ("users", "delete"),
     ("review", "create"), ("review", "update"), ("review", "delete"),
     ("operations", "delete"),
+    # `GA-REM-041` · `OD-19 §8`: la capacidad de reverso existe y ningún rol sembrado la recibe
+    # hasta que el propietario la asigne. 13 → 15, dentro del techo.
+    ("reversals", "create"), ("reversals", "read"),
     # `GA-REM-040` fase 7 dejó aquí los cuatro permisos de `business_units` porque ningún
     # rol los concedía. **`R-113` los saca**: el propietario decidió la figura —«Administrador
     # de Accesos», `OD-15 §6`— y las semillas la crean, de modo que ya no son exclusivos del

@@ -68,6 +68,7 @@ class EventStatus(str, enum.Enum):
     SAP_CONFIRMED = "sap_confirmed"
     SAP_ERROR = "sap_error"
     CANCELLED = "cancelled"
+    REVERSED = "reversed"  # `OD-19` · `GA-REM-041`: aprobado y neutralizado por contrapartida
 
 
 # ============================================================
