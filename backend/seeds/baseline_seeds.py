@@ -16,7 +16,9 @@ Todo eso lo crea un usuario por la API —los 19 maestros tienen CRUD completo�
 fixture de escenario. Inventarlo aquí sería fabricar los datos del futuro cliente.
 
 La matriz de permisos **no se copia**: se importa de la migración `l2m3n4o5p6q7`, que es
-su fuente única. Mantener dos copias fue precisamente la causa de `R-44`.
+su fuente única, y se compone con los deltas de las migraciones de reconciliación posteriores
+(`v2w3x4y5z6a7`, `OD-19` Aclaración A · `GA-REM-041-B`). Mantener dos copias fue precisamente
+la causa de `R-44`: sigue habiendo una copia de cada hecho.
 """
 from __future__ import annotations
 
@@ -43,19 +45,40 @@ from app.masters.models import Company, GeneticLine, ProductivePhase
 
 # ── Fuente única de la matriz RBAC ────────────────────────────────────────────
 
-def _matriz_de_la_migracion() -> dict[str, list[tuple[str, str]]]:
-    """Importa `PERMISOS_POR_ROL` de la migración de reconciliación.
+#: Migraciones de reconciliación de la matriz RBAC, en orden: la base (`R-44`) y los deltas
+#: que decisiones posteriores añadieron sobre ella. Cada una es la fuente única de su hecho.
+MIGRACIONES_DE_LA_MATRIZ = (
+    ("l2m3n4o5p6q7", "PERMISOS_POR_ROL"),       # base: `docs/12 §3` (46 asociaciones)
+    ("v2w3x4y5z6a7", "PERMISOS_ADICIONALES"),   # `OD-19` Aclaración A (+2 al Supervisor Avícola)
+)
 
-    Se carga por ruta porque el paquete `alembic/versions` no es importable como módulo.
-    Si la migración cambia, el seed cambia con ella: es imposible que diverjan.
-    """
+
+def _atributo_de_la_migracion(prefijo: str, atributo: str) -> dict[str, list[tuple[str, str]]]:
+    """Carga por ruta —el paquete `alembic/versions` no es importable como módulo—."""
     ruta = next(
-        pathlib.Path(__file__).resolve().parents[1].glob("alembic/versions/l2m3n4o5p6q7*.py")
+        pathlib.Path(__file__).resolve().parents[1].glob(f"alembic/versions/{prefijo}*.py")
     )
-    spec = importlib.util.spec_from_file_location("_rbac_matrix", ruta)
+    spec = importlib.util.spec_from_file_location(f"_rbac_{prefijo}", ruta)
     modulo = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(modulo)
-    return modulo.PERMISOS_POR_ROL
+    return getattr(modulo, atributo)
+
+
+def _matriz_de_la_migracion() -> dict[str, list[tuple[str, str]]]:
+    """Matriz RBAC compuesta: la base de `l2m3n4o5p6q7` más los deltas posteriores.
+
+    Si una migración cambia, el seed cambia con ella: es imposible que diverjan. Los deltas
+    solo se aplican a roles que ya están en la base: el baseline **no inventa roles**
+    («Contralor Avícola» es figura de `integration_seeds`, `OD-19` Aclaración A).
+    """
+    base_prefijo, base_atributo = MIGRACIONES_DE_LA_MATRIZ[0]
+    matriz = {rol: list(pares) for rol, pares in _atributo_de_la_migracion(base_prefijo, base_atributo).items()}
+    for prefijo, atributo in MIGRACIONES_DE_LA_MATRIZ[1:]:
+        for rol, pares in _atributo_de_la_migracion(prefijo, atributo).items():
+            if rol not in matriz:
+                continue
+            matriz[rol].extend(par for par in pares if par not in matriz[rol])
+    return matriz
 
 
 #: Acciones comodín del Super Administrador. No están en la migración porque ésta solo

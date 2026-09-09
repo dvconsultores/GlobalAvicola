@@ -58,10 +58,11 @@ async def test_t_025_01_alembic_en_cabeza(test_database_url):
 # ── AC03 — Roles y permisos ───────────────────────────────────────────────────
 
 async def test_t_025_02_matriz_rbac_completa(sesion):
-    """`AC03` · existen los 6 roles y sus 46 asociaciones operativas, permiso a permiso.
+    """`AC03` · existen los 6 roles y sus 48 asociaciones operativas, permiso a permiso.
 
     Se comprueba la matriz entera y no solo el total: dos roles con permisos cruzados
-    darían el mismo 46 y una autorización equivocada (§38 del encargo).
+    darían el mismo 48 y una autorización equivocada (§38 del encargo). 46 de `docs/12 §3`
+    (`l2m3n4o5p6q7`) + 2 de `OD-19` Aclaración A (`v2w3x4y5z6a7`, `GA-REM-041-B`).
     """
     await sembrar_baseline(sesion)
     matriz = _matriz_de_la_migracion()
@@ -88,7 +89,7 @@ async def test_t_025_02_matriz_rbac_completa(sesion):
             .where(Role.name.in_(list(matriz)))
         )
     ).scalar_one()
-    assert operativos == 46, f"se esperaban 46 asociaciones operativas, hay {operativos}"
+    assert operativos == 48, f"se esperaban 48 asociaciones operativas (46 + 2 de OD-19 Acl. A), hay {operativos}"
 
     # Y ninguna de más: un permiso concedido fuera de `docs/12 §3` es una autorización
     # que nadie decidió.

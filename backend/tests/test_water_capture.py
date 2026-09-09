@@ -29,7 +29,7 @@ import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.time_reference import recent_event_date, earlier_event_date, future_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -218,9 +218,10 @@ async def test_w03_s09_w04_la_empresa_y_la_unidad_se_derivan_del_lote_no_del_cue
 
 
 async def test_w05_w06_la_fecha_de_negocio_y_la_unidad_del_contrato(http_client, esc):
-    r = await _agua(http_client, esc, "operador", "lr", 80, fecha="2026-09-02")
+    fecha = earlier_event_date()  # la fecha de negocio es la del cuerpo, no la del servidor
+    r = await _agua(http_client, esc, "operador", "lr", 80, fecha=fecha)
     assert r.status_code == 201, r.text
-    assert r.json()["event_date"] == "2026-09-02"
+    assert r.json()["event_date"] == fecha
     assert "water_liters" in r.json() and "water_unit" not in r.json() and "unit" not in r.json(), "AC-W06: litros por contrato, sin unidad libre"
 
 
@@ -246,7 +247,7 @@ async def test_v01_v04_el_valor_es_obligatorio_numerico_y_estrictamente_positivo
 async def test_v05_v06_precision_y_fecha(http_client, esc):
     r = await _agua(http_client, esc, "operador", "lr", 12.345)
     assert r.status_code == 201 and r.json()["water_liters"] == 12.345, "AC-V05: sin redondeo inventado"
-    r = await _agua(http_client, esc, "operador", "lr", 10, fecha="2030-01-01")
+    r = await _agua(http_client, esc, "operador", "lr", 10, fecha=future_event_date())
     assert _es_br(r, "BR-19"), ("AC-V06: sin regla propia del agua; rige la genérica R-30/BR-19 ya vigente para todo evento", r.text)
 
 

@@ -95,6 +95,16 @@ def beyond_open_period() -> str:
     return iso_days_ago(CLOSED_PERIOD_DAYS + 1)
 
 
+def future_event_date() -> str:
+    """Fecha claramente futura: un mes por delante de la referencia.
+
+    `R-30` (`validate_event_date`, código `BR-19`) rechaza los eventos que aún no han
+    ocurrido con un día de holgura por zona horaria. Treinta días evitan que la prueba
+    dependa de la medianoche: expresa «futura», no «mañana».
+    """
+    return iso_days_ago(-30)
+
+
 def lot_start_date() -> _dt.datetime:
     """Inicio del lote sembrado: anterior a cualquier fecha que la suite genere.
 

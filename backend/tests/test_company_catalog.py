@@ -264,6 +264,6 @@ def test_t10_ac20_ac21_sin_migracion_y_sin_conector():
 
     raiz = pathlib.Path(__file__).resolve().parents[1]
     cabezas = ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads()
-    assert cabezas == ["u1v2w3x4y5z6"], cabezas  # `GA-REM-021-A §A.5`
+    assert cabezas == ["v2w3x4y5z6a7"], cabezas  # `GA-REM-041-B`
     assert isinstance(Company.__table__.c.sap_config.type, String)
     assert settings.SAP_ADAPTER in ("manual", "mock")
