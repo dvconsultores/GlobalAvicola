@@ -123,6 +123,44 @@ async def unidades_efectivas_por_id(
     return sorted(filas)
 
 
+async def unidades_concedidas(
+    db: AsyncSession, *, user_id: Optional[int], company_id: Optional[int]
+) -> list[str]:
+    """Las concesiones **vivas** de un usuario en una empresa, estén o no habilitadas.
+
+    `GA-REM-040` enmienda E · `AC-H11`. Es deliberadamente distinta de
+    `unidades_efectivas`: aquélla exige además que la empresa tenga la unidad habilitada y
+    que siga activa en el producto.
+
+    ```
+    CONCEDIDA   la empresa se la dio al usuario y no se la ha quitado
+    EFECTIVA    concedida  ∩  habilitada  ∩  activa en el producto
+    ```
+
+    Que las dos puedan diferir es justo lo que la sesión tiene que poder contar: una
+    concesión sobre una unidad que la empresa apagó **sigue existiendo** —`AC-A04`, apagar no
+    revoca— y no da acceso. Sin las dos listas, un cliente no puede distinguir «nunca se lo
+    dieron» de «se lo dieron y la empresa cerró esa línea».
+
+    No sustituye a `unidades_efectivas` en ninguna decisión de autorización: esto es para
+    **contar**, no para **autorizar**.
+    """
+    if company_id is None or user_id is None:
+        return []
+
+    filas = (await db.execute(
+        select(BusinessUnit.code)
+        .join(CompanyBusinessUnit,
+              CompanyBusinessUnit.business_unit_id == BusinessUnit.id)
+        .join(UserBusinessUnit,
+              UserBusinessUnit.company_business_unit_id == CompanyBusinessUnit.id)
+        .where(CompanyBusinessUnit.company_id == company_id,
+               UserBusinessUnit.user_id == user_id,
+               UserBusinessUnit.revoked_at.is_(None))
+    )).scalars().all()
+    return sorted(filas)
+
+
 async def tiene_acceso(db: AsyncSession, user, code: str) -> bool:
     """¿Está esa unidad dentro del alcance operativo del usuario?
 

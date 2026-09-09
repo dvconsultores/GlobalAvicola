@@ -97,6 +97,49 @@ class UserRead(UserBase):
     model_config = {"from_attributes": True}
 
 
+class SessionRead(UserRead):
+    """La sesión — `GA-REM-040` fase 8 · enmienda E · `AC-H11`…`AC-H14`.
+
+    Extiende `UserRead` en vez de sustituirlo: `AC-H12` conserva `company_id` por
+    compatibilidad y le pone nombre a lo que significa, que era lo ambiguo.
+
+    **Cuatro conceptos, cuatro campos.** `§14.1` los nombra por separado porque son
+    decisiones distintas de personas distintas, y reunirlos sería deshacer lo que
+    `GA-REM-040` vino a separar.
+
+    Nada de aquí decide nada: cada campo sale de un resolutor que ya existe. Si un campo
+    necesitara lógica propia, sería señal de que la autoridad no está donde debe.
+    """
+
+    # `AC-H13` · **el actor global es `is_super_admin`, y no se le añade sinónimo.**
+    #
+    # La primera versión de esta fase introdujo `is_global_actor` junto al campo que ya
+    # existía. Habrían sido dos campos con el mismo valor —`is_super_admin` ya se deriva de
+    # `("*", …, "all")`, que es la capacidad real y no un nombre de rol— y dos campos que
+    # deben coincidir siempre acaban divergiendo.
+    #
+    # El nombre es histórico y su significado es de capacidad: se conserva y se documenta,
+    # que es lo mismo que `AC-H12` hace con `company_id`.
+
+    #: `AC-H12`. La empresa sobre la que se opera **ahora**, por el resolutor de `OD-11`.
+    #: `None` significa que no hay ninguna elegida — no «todas», y no una empresa ficticia
+    #: (`AC-H13`). El `company_id` heredado de `UserRead` es la **persistida**, y para la
+    #: autoridad global situada las dos difieren.
+    effective_company_id: Optional[int] = None
+
+    #: Capacidades `RBAC`, como `"modulo:accion"` ordenadas. Es el mismo lenguaje que ya usa
+    #: la auditoría de permisos; no se inventa un segundo para el cliente.
+    permissions: list[str] = []
+
+    #: Las que la **empresa efectiva** tiene habilitadas. Decisión comercial.
+    company_business_units: list[str] = []
+    #: Las que se le han **concedido** al usuario en esa empresa. Decisión operativa.
+    #: Puede contener una unidad que la empresa haya apagado después: eso es correcto.
+    granted_business_units: list[str] = []
+    #: Concedidas ∩ habilitadas ∩ activas. Es la única que autoriza algo.
+    effective_business_units: list[str] = []
+
+
 class SwitchCompanyRequest(BaseModel):
     company_id: int = Field(..., gt=0)
 

@@ -6,6 +6,7 @@ from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from ..main import limiter, rate_limit  # S-05: rate limiting
 from .schemas import (
+    SessionRead,
     LoginRequest,
     PasswordChangeRequest,
     RefreshRequest,
@@ -36,14 +37,51 @@ async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)
     return await AuthService(db).refresh_token(data.refresh_token)
 
 
-@router.get("/me", response_model=UserRead, tags=["Auth"])
+@router.get("/me", response_model=SessionRead, tags=["Auth"])
 async def get_me(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(get_current_user),
 ):
-    user_read = await AuthService(db).get_user(current_user["id"])
-    user_read.is_super_admin = current_user.get("is_super_admin", False)
-    return user_read
+    """La sesión — `GA-REM-040` fase 8 · `T-040-20` · enmienda E.
+
+    **Compone; no calcula.** Cada campo sale de un resolutor ya certificado:
+
+    ```
+    empresa efectiva        `get_current_user`, que aplica `OD-11`
+    capacidades             el `RBAC` que ya resolvió esa misma dependencia
+    habilitadas             `unidades_habilitadas`
+    concedidas              `unidades_concedidas`
+    efectivas               `unidades_efectivas_por_id`
+    ```
+
+    Ninguna decisión de seguridad se toma aquí, y por eso no hay ni un `if` sobre roles,
+    empresas o comodines. La sesión **informa al cliente**; lo que protege sigue siendo que
+    la ruta deniegue (`AC-H10`).
+    """
+    from ..business_units.service import (
+        unidades_concedidas, unidades_efectivas_por_id, unidades_habilitadas,
+    )
+
+    base = await AuthService(db).get_user(current_user["id"])
+    empresa = current_user.get("company_id")
+
+    # `is_super_admin` lo asigna el endpoint y no el servicio: `get_user` lee la fila y la
+    # fila no sabe nada de comodines. Al componer la sesión perdí esta línea y `/me` empezó a
+    # decir que nadie era administrador — lo cazó `test_get_me`, que llevaba ahí desde el
+    # principio.
+    base.is_super_admin = bool(current_user.get("is_super_admin"))
+
+    return SessionRead(
+        **base.model_dump(),
+        effective_company_id=empresa,
+        permissions=sorted(f"{modulo}:{accion}"
+                           for modulo, accion in (current_user.get("permissions") or set())),
+        company_business_units=await unidades_habilitadas(db, empresa),
+        granted_business_units=await unidades_concedidas(
+            db, user_id=current_user["id"], company_id=empresa),
+        effective_business_units=await unidades_efectivas_por_id(
+            db, user_id=current_user["id"], company_id=empresa),
+    )
 
 
 @router.post("/switch-company", response_model=TokenResponse, tags=["Auth"])

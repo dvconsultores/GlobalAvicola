@@ -1288,9 +1288,18 @@ ambiguo desde `OD-14` y ahora deja de serlo por escrito, no por eliminación.
 ## `AC-H13` · el actor global es una propiedad del actor, no una empresa
 
 ```
-is_global_actor    derivado de la capacidad real, nunca del nombre del rol
-                   ni de que `company_id` sea nulo (`OD-13.b`)
+is_super_admin     derivado de la capacidad real —`("*", …, "all")`—, nunca del nombre
+                   del rol ni de que `company_id` sea nulo (`OD-13.b`)
 ```
+
+**Corrección a esta misma enmienda.** Su primera redacción pedía un campo nuevo,
+`is_global_actor`. Al implementarla quedó claro que habría sido un **sinónimo exacto** del
+`is_super_admin` que ya existe y que ya se deriva de la capacidad, no del nombre. Dos campos
+obligados a coincidir siempre acaban divergiendo, así que se conserva el que hay y se
+documenta su significado — exactamente lo que `AC-H12` hace con `company_id`.
+
+El nombre es histórico y suena a rol; lo que representa es una capacidad. Renombrarlo rompería
+el contrato vigente sin ganar nada.
 
 ```
 PROHIBIDO   una empresa ficticia `GLOBAL` · `company_id = 0` · `company_id = "*"`
