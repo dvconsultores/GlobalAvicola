@@ -58,6 +58,17 @@ class OperationsService:
         self.company_id = current_user.get("company_id")
         self._unidades_cache = None
 
+    def _acotar_a_empresa(self, query, columna):
+        """`OD-14.c/d` en una sola línea: con empresa efectiva, sus filas; sin ella, ninguna.
+
+        `sa_false()` y no `columna == None`: la segunda también cierra —`IS NULL` sobre una
+        columna no nula— pero solo por accidente del esquema (`R-116`, lección `M6`).
+        """
+        from sqlalchemy import false as sa_false
+        if self.company_id is None:
+            return query.where(sa_false())
+        return query.where(columna == self.company_id)
+
     async def _unidades(self) -> list[str]:
         """Las cadenas efectivas de quien pregunta. Una vez por servicio."""
         if self._unidades_cache is None:
@@ -758,9 +769,10 @@ class OperationsService:
         limit: int = 50,
     ) -> list[models.OperationalAlert]:
         query = select(models.OperationalAlert)
-        # R-36, mismo patrón fail-open que en `get_events`.
-        if not self.current_user.get("is_super_admin"):
-            query = query.where(models.OperationalAlert.company_id == self.company_id)
+        # `GA-REM-002-C` / `R-139` · `OD-14.c`: dato productivo = `INQUILINO`. El predicado
+        # de empresa es **incondicional**: antes, `if not is_super_admin` lo retiraba y la
+        # autoridad global sin contexto listaba las alertas de todas las empresas.
+        query = self._acotar_a_empresa(query, models.OperationalAlert.company_id)
         if lot_id is not None:
             query = query.where(models.OperationalAlert.lot_id == lot_id)
         if is_resolved is not None:
@@ -807,8 +819,13 @@ class OperationsService:
         # compañía no recibía filtro alguno y veía los eventos de todas. Fail-open sobre
         # el aislamiento multiempresa. Ahora la ausencia de compañía no da acceso
         # universal: da acceso a nada.
+        #
+        # `GA-REM-002-C` / `R-139` · `OD-14.c/d`: el predicado de empresa se aplica a
+        # **todos**, autoridad global incluida; sin empresa efectiva, cero filas. Lo único
+        # que sigue condicionado a no ser global es el predicado de **unidad**: la exención
+        # de visibilidad certificada en la fase 3 se preserva tal cual.
+        query = self._acotar_a_empresa(query, models.OperationalEvent.company_id)
         if not self.current_user.get("is_super_admin"):
-            query = query.where(models.OperationalEvent.company_id == self.company_id)
             # `GA-REM-040` fase 6. La cadena del evento se deriva de su lote o se fijó a
             # mano; lo que no tiene ninguna de las dos **no aparece aquí**: su superficie es
             # la bandeja de pendientes, aparte. Mezclarlo en el listado normal obligaría a
@@ -975,7 +992,9 @@ class OperationsService:
         evidence = result.scalar_one_or_none()
         if not evidence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evidencia no encontrada")
-        if not self.current_user.get("is_super_admin") and evidence.company_id != self.company_id:
+        # `R-139` · `OD-14.c`: la comparación de empresa es para todos; sin empresa efectiva
+        # (`None`) nunca coincide, y la autoridad global borra solo desde una empresa situada.
+        if evidence.company_id != self.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
         try:
             os.remove(evidence.file_path)
@@ -994,7 +1013,9 @@ class OperationsService:
         evidence = result.scalar_one_or_none()
         if not evidence:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evidencia no encontrada")
-        if not self.current_user.get("is_super_admin") and evidence.company_id != self.company_id:
+        # `R-139` · `OD-14.c`: ídem `delete_evidence`; el fichero solo se sirve desde la
+        # empresa efectiva de la evidencia.
+        if evidence.company_id != self.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
         return evidence
 

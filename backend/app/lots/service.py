@@ -348,13 +348,16 @@ class LotService:
         # carecer del permiso `lots:create`; quien lo tuviera en su propia empresa podía
         # fijar el saldo de apertura de un lote ajeno. Existir no es pertenecer: se usa la
         # misma comprobación que el resto del sistema (`GA-REM-002 AC10`).
-        if not self.is_super_admin:
-            await verificar_pertenencia(self.db, Lot, data.lot_id, self.company_id, "Lote")
-            # `GA-REM-040` fase 3. La comprobación de empresa no basta: el lote de otra
-            # cadena de la **misma** empresa también es ajeno. Se usa el mismo camino
-            # acotado que el detalle, de modo que la respuesta es idéntica —`404`— y no
-            # revela que el lote existe.
-            await self.get_lot(data.lot_id)
+        # `GA-REM-002-C` / `R-139` · `OD-14.c/d`: sin rama por `is_super_admin`. La
+        # pertenencia se exige a todos y falla cerrada sin empresa efectiva (`AC26`); la
+        # autoridad global fija saldos solo desde una empresa situada.
+        await verificar_pertenencia(self.db, Lot, data.lot_id, self.company_id, "Lote")
+        # `GA-REM-040` fase 3. La comprobación de empresa no basta: el lote de otra
+        # cadena de la **misma** empresa también es ajeno. Se usa el mismo camino
+        # acotado que el detalle, de modo que la respuesta es idéntica —`404`— y no
+        # revela que el lote existe. `get_lot` acota por empresa para todos y por unidad
+        # solo para quien no es global: la exención de visibilidad de unidad se preserva.
+        await self.get_lot(data.lot_id)
 
         # Validate no existing opening balance
         existing = await self.db.execute(

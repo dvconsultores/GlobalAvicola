@@ -71,11 +71,16 @@ async def _linea_del_usuario(
     La curva no lleva `company_id` propio: hereda el de su línea, como `Incubator` hereda
     el de su `Hatchery`. Dos fuentes de tenencia para el mismo dato acaban discrepando.
     """
-    consulta = select(models.GeneticLine).where(models.GeneticLine.id == genetic_line_id)
-    if not current_user.get("is_super_admin", False) and current_user.get("company_id"):
-        consulta = consulta.where(
-            models.GeneticLine.company_id == current_user["company_id"]
-        )
+    # `GA-REM-002-C` / `R-139` · `OD-14.c`: la línea se resuelve **siempre** contra la
+    # empresa efectiva. La condición anterior (`not is_super_admin and company_id`) dejaba
+    # sin filtro a la autoridad global y también al actor sin empresa (`R-116`).
+    company_id = current_user.get("company_id")
+    if company_id is None:
+        raise HTTPException(status_code=404, detail="Línea genética no encontrada")
+    consulta = select(models.GeneticLine).where(
+        models.GeneticLine.id == genetic_line_id,
+        models.GeneticLine.company_id == company_id,
+    )
     linea = (await db.execute(consulta)).scalar_one_or_none()
     if linea is None:
         raise HTTPException(status_code=404, detail="Línea genética no encontrada")

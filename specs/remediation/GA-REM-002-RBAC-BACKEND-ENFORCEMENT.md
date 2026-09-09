@@ -463,11 +463,11 @@ de empresa → su `users.company_id`; autoridad global → la reclamación autor
 
 | Situación | Listados (S01, S02) | Recurso por identificador (S05, S06, S07, S08) | Evidencias (S03, S04) |
 |---|---|---|---|
-| actor de empresa `A` | solo `A` | propio → `200`/`201`; ajeno → `404` | propia → `200`/`204`; ajena → `403` |
-| autoridad global **sin contexto** | **cero filas** (`200 []`) | **`404`** | **`403`** |
+| actor de empresa `A` | solo `A` | propio → `200`/`201`; ajeno → `404` (S06–S08) · `400 BR-07` (S05) | propia → `200`/`204`; ajena → `403` |
+| autoridad global **sin contexto** | **cero filas** (`200 []`) | **`404`** (S06–S08) · **`400 BR-07`** (S05, convención `AC-R67-11`) | **`403`** |
 | autoridad global situada en `A` | solo `A` | de `A` → `200`/`201`; de `B` → `404` | de `A` → ok; de `B` → `403` |
 | autoridad global situada en `B` | solo `B` | inverso | inverso |
-| actor sin empresa (`company_id NULL`, no global) | cero filas | `404` | `403` |
+| actor sin empresa (`company_id NULL`, no global) | cero filas | `404` · `400 BR-07` (S05) | `403` |
 
 Las convenciones de error son las **vigentes** de cada superficie: no se inventan.
 
@@ -516,7 +516,9 @@ Actor `A` sobre propia → `204` (fichero eliminado) · actor `B` sobre la de `A
 Actor `A` propia → `200` con el contenido · actor `B` → `403` · global sin contexto → `403` · situada en `A` → `200`; en `B` → `403`.
 
 ### `AC22` — S05 `POST /lots/activate-manual`
-Actor `A` con lote propio alcanzable → `201` · actor `B` con lote de `A` → `404` · global sin contexto → `404` y **ningún** `opening_balances` creado · situada en `A` → `201`; situada en `B` con lote de `A` → `404` · `409` con saldo previo se conserva.
+Actor `A` con lote propio alcanzable → `201` · actor `B` con lote de `A` → **`400 BR-07`** («Lote no encontrado», convención vigente de `verificar_pertenencia` / `AC-R67-11`; el `404` queda para el lote de otra **unidad** de la misma empresa, `get_lot`) · global sin contexto → `400 BR-07` y **ningún** `opening_balances` creado · situada en `A` → `201`; situada en `B` con lote de `A` → `400 BR-07` · `409` con saldo previo se conserva.
+
+> Corrección de redacción (2026-09-09, antes de implementar): la primera versión de este `AC` decía `404` para el lote ajeno; el rojo previo mostró que la convención vigente de la superficie es `400 BR-07` (`main.py:96`). Se ajusta el `AC` a la convención existente, no el código a un `AC` inventado.
 
 ### `AC23` — S06 curvas de una línea genética
 `GET /masters/genetic-lines/{id}/weight-curves`: actor `A` propia → `200` · actor `B` → `404` · global sin contexto → `404` · situada en `A` → `200`; en `B` → `404` · actor **sin empresa** → `404`. `POST /masters/weight-curves` sobre línea de `A` por la global sin contexto → `404`.
@@ -528,13 +530,14 @@ Actor `A` propia → `200` con sus galpones · actor `B` → `404` · global sin
 Ídem `AC24` con planta de incubación e incubadoras.
 
 ### `AC26` — el primitivo compartido falla cerrado
-`tenancy.verificar_pertenencia(company_id=None)` con `recurso_id` no nulo → `BusinessRuleViolation BR-07` («no encontrado»), en lugar de devolver sin comprobar. Consecuencia verificada en sus llamadores: `masters/service:199` (crear un galpón sobre una granja siendo autoridad global sin contexto → `422 BR-07`, antes creaba) y `verificar_ubicacion` (evento con `farm_id` por la global sin contexto → `422 BR-07`). Su docstring deja de afirmar la regla anterior.
+`tenancy.verificar_pertenencia(company_id=None)` con `recurso_id` no nulo → `BusinessRuleViolation BR-07` («no encontrado»), en lugar de devolver sin comprobar. Consecuencia verificada en sus llamadores: `masters/service:199` (crear un galpón sobre una granja siendo autoridad global sin contexto → `400 BR-07`, antes creaba) y `verificar_ubicacion` (evento con `farm_id` por la global sin contexto → `400 BR-07`). `BusinessRuleViolation` responde `400` (`main.py:96`). Su docstring deja de afirmar la regla anterior.
 
 ## C.5 Tareas
 
 | Tarea | Contenido | `AC` |
 |---|---|---|
 | `T-002-18` | pruebas **rojas** `backend/tests/test_od14_productive_surfaces.py`: fixture con empresas `A`/`B`, unidad `breeder` habilitada explícitamente en ambas, lotes, eventos, alertas, evidencias con fichero real, líneas genéticas con curva, granja+galpón y planta+incubadora por empresa; actores `A`, `B`, sin empresa, global (autoridad comprobada por `("*", …, "all")`, no por nombre); tokens situados por reclamación autorizada (`OD-11`) | `AC18–AC26` |
+| `T-002-18b` | ajuste documentado de fixtures existentes que dependían del atajo retirado: `test_genetic_curves.py::test_t_037_15` creaba la curva de la empresa 2 con la autoridad global situada en la 1; pasa a crearla **situada en la 2** (patrón de `771b402`). Ninguna aserción de esa prueba cambia | `AC17.15`, `AC23` |
 | `T-002-19` | S01/S02: predicado de empresa **incondicional** (cero filas con empresa efectiva nula) antes de paginación y total; el predicado de unidad se mantiene solo para actores no globales | `AC18`, `AC19`, `AC17.7/8` |
 | `T-002-20` | S03/S04: comparación `evidence.company_id == empresa efectiva` **incondicional** (`403` en caso contrario) | `AC20`, `AC21` |
 | `T-002-21` | S05: `get_lot` siempre (acota empresa para todos y unidad para no globales); sin rama por `is_super_admin` | `AC22` |

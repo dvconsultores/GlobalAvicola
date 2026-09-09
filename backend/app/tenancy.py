@@ -41,11 +41,16 @@ async def verificar_pertenencia(
     Un recurso ajeno se comporta como **inexistente**, que es lo que debe parecerle a quien
     no tiene derecho a verlo: distinguir «no existe» de «no es tuyo» ya filtra información.
 
-    `company_id` nulo —el Super Admin sin contexto— no impone filtro: opera sobre todas las
-    compañías por definición, y acotarlo aquí rompería la administración legítima.
+    `company_id` nulo —la autoridad global sin contexto, o un actor sin empresa— **falla
+    cerrado**: `OD-14.d` («sin empresa → todas las empresas» está prohibido) sustituyó la
+    regla anterior, que aquí devolvía sin comprobar (`GA-REM-002-C` / `R-139` `AC26`). La
+    administración legítima de la autoridad global pasa por situarse en una empresa
+    (`switch-company`, `OD-14.b`).
     """
-    if recurso_id is None or company_id is None:
+    if recurso_id is None:
         return
+    if company_id is None:
+        raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
 
     consulta = select(modelo.id).where(modelo.id == recurso_id)
     if hasattr(modelo, "company_id"):

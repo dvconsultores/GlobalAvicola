@@ -137,14 +137,15 @@ async def get_houses_by_farm(
 ):
     """Get houses belonging to a specific farm. Validates farm belongs to user's company."""
     company_id = current_user.get("company_id")
-    is_super_admin = current_user.get("is_super_admin", False)
-    # Verify farm belongs to user's company (super admins bypass)
-    if not is_super_admin and company_id is not None:
-        farm_check = await db.execute(
-            select(models.Farm).where(models.Farm.id == farm_id, models.Farm.company_id == company_id)
-        )
-        if not farm_check.scalar_one_or_none():
-            raise HTTPException(status_code=404, detail="Granja no encontrada")
+    # `GA-REM-002-C` / `R-139` · `OD-14.c`: la granja debe ser de la empresa efectiva, para
+    # todos. Sin empresa efectiva no hay granja alcanzable (`R-116`, `OD-14.d`).
+    if company_id is None:
+        raise HTTPException(status_code=404, detail="Granja no encontrada")
+    farm_check = await db.execute(
+        select(models.Farm).where(models.Farm.id == farm_id, models.Farm.company_id == company_id)
+    )
+    if not farm_check.scalar_one_or_none():
+        raise HTTPException(status_code=404, detail="Granja no encontrada")
     result = await db.execute(
         select(models.House).where(models.House.farm_id == farm_id)
     )
@@ -159,14 +160,14 @@ async def get_incubators_by_hatchery(
 ):
     """Get incubators belonging to a specific hatchery. Validates hatchery belongs to user's company."""
     company_id = current_user.get("company_id")
-    is_super_admin = current_user.get("is_super_admin", False)
-    # Verify hatchery belongs to user's company (super admins bypass)
-    if not is_super_admin and company_id is not None:
-        hatchery_check = await db.execute(
-            select(models.Hatchery).where(models.Hatchery.id == hatchery_id, models.Hatchery.company_id == company_id)
-        )
-        if not hatchery_check.scalar_one_or_none():
-            raise HTTPException(status_code=404, detail="Incubadora no encontrada")
+    # `GA-REM-002-C` / `R-139` · `OD-14.c`: ídem `get_houses_by_farm`, con la planta.
+    if company_id is None:
+        raise HTTPException(status_code=404, detail="Incubadora no encontrada")
+    hatchery_check = await db.execute(
+        select(models.Hatchery).where(models.Hatchery.id == hatchery_id, models.Hatchery.company_id == company_id)
+    )
+    if not hatchery_check.scalar_one_or_none():
+        raise HTTPException(status_code=404, detail="Incubadora no encontrada")
     result = await db.execute(
         select(models.Incubator).where(models.Incubator.hatchery_id == hatchery_id)
     )

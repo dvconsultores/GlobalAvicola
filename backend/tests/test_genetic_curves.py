@@ -359,10 +359,18 @@ async def test_t_037_15_las_curvas_no_cruzan_de_empresa(
     """
     from app.auth.security import create_access_token
 
+    # `GA-REM-002-C` / `R-139` · `OD-14.c`: las curvas son superficie de inquilino también
+    # para la autoridad global. La línea y la curva de la empresa 2 se crean **situado** en
+    # la empresa 2 (reclamación autorizada, `OD-11`), como `771b402` hizo en
+    # `test_lot_closure`; antes esta fixture dependía del atajo que `R-139` retira.
+    situado_2 = {"Authorization": "Bearer " + create_access_token(
+        data={"sub": str(seeded_ids["user_admin_id"]),
+              "company_id": seeded_ids["company_id_2"]})}
     propia = await _linea(client, auth_headers, seeded_ids["company_id"])
-    ajena = await _linea(client, auth_headers, seeded_ids["company_id_2"])
+    ajena = await _linea(client, situado_2, seeded_ids["company_id_2"])
     curva_propia = (await _curva(client, auth_headers, propia, version="p1")).json()
-    curva_ajena = (await _curva(client, auth_headers, ajena, version="a1")).json()
+    curva_ajena = (await _curva(client, situado_2, ajena, version="a1")).json()
+    assert "id" in curva_propia and "id" in curva_ajena, (curva_propia, curva_ajena)
 
     operador = {"Authorization": "Bearer " + create_access_token(
         data={"sub": str(seeded_ids["user_other_company_id"])})}
