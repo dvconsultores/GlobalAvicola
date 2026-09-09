@@ -361,3 +361,21 @@ alternativa, luego la alternativa no era una opción de negocio.
 
 Clasificación secundaria: **`SPEC_DEFECT`**. La redacción de `spec.md §4.9` es ambigua y
 fue la que produjo el defecto; conviene precisarla.
+
+## 10. RC-10 · Unidad y reglas de valor del consumo diario de agua (`GA-REM-021 B05`) — 2026-09-09
+
+| # | Nivel | Dice |
+|---|---|---|
+| 2 · Cliente | «Cantidad de agua consumida por los pollitos / las gallinas / los pollos durante el día» (`Bases` p.2, 4, 12) — **calla** sobre unidad, cero y decimales; igual que con el alimento |
+| 3 · Proceso | `docs/02`, `docs/12`: **silencio** (el agua no aparece) |
+| 4 · Spec | `spec.md`: silencio; `GA-REM-021`: el campo es opcional en la primera iteración; dónde vive lo deja a la spec |
+| 5 · Implementación | el reporte lee `e.water_liters` y suma `water_l` (`ReportsPage.tsx:24-30`); el consumo diario existente (`FeedMovementSchema.quantity_kg`) es `Float` y `gt=0` |
+| 6 · Legado | «Agua: Registro por semana (Lt Agua x Ave x Sem)»; `docs/15` prevé `OperationalEvent.water_liters` |
+
+El nivel 2 fija **qué** (consumo), **cuándo** (día) y **quién** (parvada); calla sobre la unidad y el valor. Los niveles 3 y 4
+callan. El nivel 5 se pronuncia (litros; consumo estrictamente positivo con decimales) y el 6 lo confirma (litros). La elección
+no cambia el comportamiento de negocio respecto al alimento, ya certificado con la misma regla: **no hay escalado**.
+
+> **RR-10.** El consumo diario de agua se registra en **litros** (`water_liters`), sin campo de unidad libre.
+> **RR-11.** El consumo diario de agua, como el de alimento, es **estrictamente positivo** con decimales; la ausencia de dato se
+> representa como **ausencia** (sin fila / `NULL`), nunca como `0`.

@@ -1129,3 +1129,13 @@ WAVE B   IN PROGRESS        22 ítems · 8 cerrados (R-130 · R-160 · R-163 · 
 ```
 
 Evidencia: `R-136-INTERNAL-REVERSAL-EVIDENCE.md`. Regresión completa: **976 passed · 49 skipped · 0 failed** (807 s; 949 previas + 27 nuevas); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 preexistentes (`R-158`). Migración `t0u1v2w3x4y5` (autorizada por `OD-19 §1`). Rutas 208 → 211. `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 6 (2026-09-09): roles del reverso · `B05` gobernado
+
+`OD-19` Aclaración A (propietario): «Supervisor Avícola» → `reversals:create` + `reversals:read`; «Contralor Avícola» (figura de
+contraloría, `integration_seeds`) → `reversals:read`; Administrador de Accesos y roles operativos → ninguno; `dev_seeds` no tiene
+rol de Contraloría y no se inventa. `GA-REM-041` enmienda A (`REV-R01…R08`). `B05` (`R-13`): `GA-REM-021` enmienda A con matriz de
+aplicabilidad y contrato de datos; `RR-10` (litros) y `RR-11` (`> 0`) resueltos por evidencia de nivel 5/6 sin escalado; `AOD-19`
+no gobierna `B05`. Sin código en este commit.

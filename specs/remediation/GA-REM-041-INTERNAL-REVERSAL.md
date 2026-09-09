@@ -231,3 +231,30 @@ cerrado, `R-136` **PARTIAL**, SAP diferido · `R-165` cerrado · certificación 
 fuera de bloque transaccional como `a1b2c3d4e5f6`) · `downgrade`: sin efecto sobre el tipo (documentado; PostgreSQL no
 elimina valores de enumerados) — ninguna fila tendrá `REVERSED` si se baja antes de usarlo; si las hay, la bajada se
 detiene con error explícito. Sin datos migrados. `test_upgrade_path` (script dedicado) queda como estaba.
+
+---
+
+# Enmienda A · la capacidad de reverso tiene titulares sembrados (2026-09-09 · WAVE B tranche 6 · pre-flight)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-041-A` · `ROLE GOVERNANCE` · **Estado** `SPEC_READY` |
+| **Decisión** | `OD-19` **Aclaración A** (propietario) |
+| **Cambio** | solo semillas y pruebas de gobierno: `dev_seeds` y `test_seeds` «Supervisor Avícola» + `reversals:create`, `reversals:read`; `integration_seeds` «Contralor Avícola» + `reversals:read`; `SOLO_SUPER_ADMIN` **15 → 13** (los dos permisos dejan de ser exclusivos de la autoridad global: el guardián se reduce, no se amplía) |
+| **Sin cambio** | motor de reverso, estados, compensación, rutas, migración, `OD-19 §1-§24`; `R-136` interno sigue cerrado |
+
+## A.1 Criterios de aceptación (`REV-R`)
+
+| AC | Criterio | Fuente de verdad |
+|---|---|---|
+| `REV-R01` | «Supervisor Avícola» concede `reversals:create` | `dev_seeds.py`, `test_seeds.py` |
+| `REV-R02` | «Supervisor Avícola» concede `reversals:read` | ídem |
+| `REV-R03` | «Contralor Avícola» concede `reversals:read` | `integration_seeds.py` |
+| `REV-R04` | «Contralor Avícola» **no** concede `reversals:create` | ídem |
+| `REV-R05` | «Administrador de Accesos» no concede ninguno (sigue con sus cuatro `business_units:*`) | `dev_seeds.py`, `OD-15 §6` |
+| `REV-R06` | «Operador de Granja» no concede ninguno | `dev_seeds.py` |
+| `REV-R07` | ningún rol sembrado gana `("*", …)` ni `scope_type = all`; «Supervisor Avícola» no gana `approvals:*`, `users:*` ni `business_units:*` | los tres ficheros de semillas |
+| `REV-R08` | en tiempo de ejecución, un usuario con el rol sembrado «Supervisor Avícola» solicita un reverso (`201`) y **no** puede aprobarlo (`BR-14`, sin `approvals:approve` → `403`) | `test_reversal_role_matrix.py` |
+
+Sensibilidad `S9` (encargo §84): (a) dar `reversals:create` a «Contralor Avícola» → `REV-R04` roja; (b) darle `reversals:read`
+al «Administrador de Accesos» → `REV-R05` roja; (c) quitar `reversals:create` al «Supervisor Avícola» → `REV-R01`/`R08` rojas.

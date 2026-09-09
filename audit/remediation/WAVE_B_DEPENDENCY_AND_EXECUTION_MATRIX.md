@@ -265,3 +265,15 @@ ESTADO ......................... IN PROGRESS
 SIGUIENTE TRANCHE (identificado, NO iniciado)
   GA-REM-021 — captura exigida por el cliente: agua (B05), P1, SPEC_READY; B01 desbloqueado por R-130; B04 fuera hasta AOD-14.
 ```
+
+## 14. Tranche 6 · pre-flight (2026-09-09)
+
+```
+recuento ....................... 22 · 8 cerrados · 3 parciales · 11 abiertos (consistente con §13; sin corrección)
+pre-flight A ................... OD-19 Aclaración A (propietario): Supervisor Avícola → reversals:create/read · Contralor Avícola → read ·
+                                 Administrador de Accesos y operativos → ninguno · SOLO_SUPER_ADMIN 15 → 13 · GA-REM-041 enmienda A
+B05 ............................ GA-REM-021 enmienda A · matriz GA_REM_021_B05_WATER_CAPTURE_MATRIX.md · gobernado por completo:
+                                 nivel 2 (qué, cuándo, dónde, etapas) + RR-10 (litros, nivel 5/6) + RR-11 (> 0, nivel 5) · sin escalado ·
+                                 AOD-19 no lo gobierna · migración u1v2w3x4y5z6 (enum + columna) · frontend mínimo (catálogo + campo)
+fuera .......................... B04 (AOD-14) · resto de GA-REM-021 · KPI de agua (ola C) · reverso del dato (GA-REM-041 §3.5)
+```

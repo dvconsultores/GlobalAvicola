@@ -53,3 +53,21 @@ consolidados (hasta resolver su contrato) ni `BU-D10`.
 | `docs/12 §2/§4` fila 13 · `docs/02 §4` | `Anulado` (`CANCELLED`) sigue siendo distinto; no se abre desde `Aprobado` |
 | `R136_INTERNAL_REVERSAL_PREFLIGHT.md` · `R136_INTERNAL_REVERSAL_EFFECT_MATRIX.md` | evidencia del vacío y de los efectos; las columnas `OWNER_DECISION_REQUIRED` quedan resueltas por esta decisión |
 | `GA-REM-041` | spec que la implementa |
+
+## Aclaración A · asignación de la capacidad de reverso a los roles sembrados (2026-09-09 · propietario · WAVE B tranche 6)
+
+Precisa `§8` (capacidad explícita) sin cambiar ninguna semántica de `§1-§24`. Es gobierno de **semillas/catálogo**, no lógica
+de autorización por nombre (`OD-09.a §3.1`): en tiempo de ejecución decide el permiso, nunca el nombre del rol.
+
+| Rol sembrado (nombre real del repositorio) | `reversals:create` | `reversals:read` | Nota |
+|---|:--:|:--:|---|
+| **Supervisor Avícola** (`dev_seeds`, `test_seeds`) | **sí** | **sí** | solicita y lee; **no** aprueba (`approvals:*` no se le concede; `BR-14`: solicitante ≠ aprobador) |
+| **Contralor Avícola** (`integration_seeds`; función «contraloría» de `OD-08`) | no | **sí** | lectura bajo su alcance transversal; no solicita por defecto |
+| **Administrador de Accesos** | no | no | plano de control (`OD-15`) |
+| **Operador de Granja** y demás roles operativos | no | no | por defecto |
+| **Super Administrador / autoridad global** | conserva la autoridad ya gobernada (capacidad comodín) | ídem | — |
+
+Reglas: `reversals:create` ≠ autoridad de aprobación · el motor de aprobación existente sigue gobernando la decisión ·
+**no** se crea `reversals:approve` · ningún rol gana comodín ni alcance entre empresas · `dev_seeds` **no** tiene un rol
+de Contraloría (el «Auditor» es otra figura: consulta de auditoría) y **no se inventa uno**: la asignación de Contraloría vive
+donde la figura existe (`integration_seeds`). Implementación: `GA-REM-041` enmienda A.
