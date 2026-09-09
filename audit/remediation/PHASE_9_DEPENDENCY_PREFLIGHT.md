@@ -133,3 +133,27 @@ INICIADA         NO
 **Siguiente tanda autorizable**: `R-127`, con decisión de propietario sobre la forma de
 `sap_config` y sobre si viaja en el listado. Cuando cierre, este preflight se repite — no se da
 por válido por haberse escrito una vez.
+
+---
+
+## 8. Recálculo tras `WAVE A1` (2026-09-09 · base `e339c1e`)
+
+| Dependencia | Antes | Ahora | Evidencia |
+|---|---|---|---|
+| `R-127` (única fuente del selector) | bloqueo duro | **CERRADO** — `GET /masters/companies` responde `200` con `sap_config` poblado; proyección `CompanyCatalogRead` sin `sap_config` | `R-127-SAFE-COMPANY-CATALOG-EVIDENCE.md` · `test_company_catalog.py` 11/11 |
+| Contrato del selector (`company.store.ts:39`) | dependía de una ruta rota | `id`, `name`, `is_active` presentes y tipados (`AC23`); `CompanyOption` sin cambio | `T9` |
+| Sesión (`GET /me`) | fase 8 `COMPLETE` | sin cambio; `test_session_payload` 16 verdes en la regresión de hoy | `§6` de este preflight |
+| `R-129` candidatos | cerrado | sin cambio; `test_grant_candidates` 14 verdes | — |
+| Configuración de unidades por empresa (`OD-16`) | implementada, no formalizada | **formalizada** como requisito de producto; API de fase 7 sin cambio; UI estática asume las cuatro (`H360A-01`, alcance de la propia fase 9) | `COMPANY_PRODUCTIVE_BUSINESS_UNIT_ACTIVATION_MATRIX.md` |
+| **`R-139`** (atajos `is_super_admin` no conformes con `OD-14.c/d`) | no existía como bloqueo | **bloqueo de conformidad nuevo**: la fase 9 construye sobre `OD-14` y el dato productivo aún no lo cumple para la autoridad global; exige spec + AC + 8 pruebas (tanda propia de `WAVE A`) | `A01_SUPER_ADMIN_SHORTCUT_VERIFICATION.md` |
+| `R-112` (8 superficies SAP sin proyección) | abierto | sin cambio; verificar frente a `OD-12` | — |
+| `BU-D10` | pendiente | `PENDING_RATIFICATION`; no la requiere la fase 9 | — |
+| `P-08` | `BLOCKED_EXTERNAL` | intacto | — |
+
+```
+PRERREQUISITOS TÉCNICOS   R-127 CERRADO · fase 8 COMPLETE · R-129 CERRADO · RQ-03 COMPLETE · OD-14 · OD-15 · OD-16 · OD-18
+BLOQUEO TÉCNICO RESTANTE  R-139 (conformidad OD-14 en dato productivo) — precede a la fase 9
+ESTADO                    READY AFTER REMEDIATION (R-139)
+AUTORIZACIÓN              NO — FASE 9 FROZEN por decisión del propietario: la remediación P1 operativa/de datos/KPI va antes
+INICIADA                  NO
+```

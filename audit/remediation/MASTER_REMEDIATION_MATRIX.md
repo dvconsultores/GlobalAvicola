@@ -1171,3 +1171,12 @@ Progenitoras               14 COMPLETE · 11 PARTIAL · 2 MISSING · 1 BLOCKED �
 Activación por empresa     requisito existe · implementación existe · certificación 0/15 (sin cambio)
 P1 de la Master 360        11 → 12 (H360-A01 confirmado)
 ```
+
+## `R-127` cerrado · `GA-REM-033` enmienda A certificada · fase 9 sigue `FROZEN` (2026-09-09 · WAVE A1)
+
+```
+GA-REM-033-A   CERTIFIED   AC13–AC24 · rojo 9/11 → verde 11/11 · S1–S3 válidas · S4/S5 N/A con motivo
+R-127          CERRADO     R-127.b DEFERRED (OD-18.b)
+regresión      **795 passed · 49 skipped · 0 failed** (539 s; 784 previas + 11 de `test_company_catalog.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 87 passed / 8 archivos · tsc sin errores
+fase 9         READY AFTER REMEDIATION (R-139) · FROZEN
+```

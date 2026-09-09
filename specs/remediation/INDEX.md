@@ -36,7 +36,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-030` | Pertenencia en los vínculos de trazabilidad | TENANCY HARDENING | P2 | **`CERTIFIED`** | — | [GA-REM-030](GA-REM-030-TRACEABILITY-LINK-OWNERSHIP.md) |
 | `GA-REM-031` | Creación del vínculo generacional desde la recepción | DOMAIN DEFECT | P1 | **`CERTIFIED`** | — | [GA-REM-031](GA-REM-031-RECEPTION-LINEAGE-CREATION.md) |
 | `GA-REM-032` | Cobertura de auditoría y contrato de consulta | DOMAIN + CONTRACT | P1 | **`CERTIFIED`** | — | [GA-REM-032](GA-REM-032-AUDIT-COVERAGE-AND-QUERY-CONTRACT.md) |
-| `GA-REM-033` | Gestión de datos maestros | CAPABILITY + CONTRACT | P1 | **`CERTIFIED`** | — | [GA-REM-033](GA-REM-033-MASTER-DATA-MANAGEMENT.md) |
+| `GA-REM-033` | Gestión de datos maestros (+ enmienda A: catálogo seguro de empresas, `R-127`) | CAPABILITY + CONTRACT | P1 | **`CERTIFIED`** (+ enm. A **`CERTIFIED`** 2026-09-09) | — | [GA-REM-033](GA-REM-033-MASTER-DATA-MANAGEMENT.md) |
 | `GA-REM-034` | Administración de roles y permisos | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-034](GA-REM-034-ROLE-ADMINISTRATION.md) |
 | `GA-REM-035` | Recepción contra orden de compra | BUSINESS RULE ACTIVATION | P1 | **`CERTIFIED`** | — | [GA-REM-035](GA-REM-035-PURCHASE-ORDER-RECEIPT-LIMIT.md) |
 | `GA-REM-036` | Aprobación obligatoria antes del cierre de lote | BUSINESS RULE | P1 | **`CERTIFIED`** | — | [GA-REM-036](GA-REM-036-LOT-CLOSE-APPROVAL-GUARD.md) |
@@ -107,7 +107,7 @@ Ninguna spec del encargo se ha eliminado. `GA-REM-019` absorbe el bloque «P2/P3
 
 | Ola | Contenido |
 |---|---|
-| **A** autoridad · seguridad · datos | `R-127` (`WAVE A1`, `OD-18`) · **`R-139`** (tanda propia, precede a la fase 9) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`) |
+| **A** autoridad · seguridad · datos | ~~`R-127`~~ **CERRADO** (`WAVE A1`, `OD-18`) · **`R-139`** (tanda propia, precede a la fase 9) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`, `R-158` tsc) |
 | **B** procesos faltantes | `R-130` · `R-135` (`OD-17`) · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
 | **C** KPI · trazabilidad | `R-131` · `R-132` · `R-133` · `R-134` · `R-141` · `GA-REM-022` (`H360-K10`) · `R-80` (`H360-B09`) |
 | **D** preparación SAP | `R-137` (`AOD-03`) · `R-138` · `R-145` · `R-155` (`AOD-15`) · `R-157` (`AOD-01…05`) · `R-124` (`AOD-06`) |

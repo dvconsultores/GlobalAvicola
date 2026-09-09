@@ -954,3 +954,23 @@ Mapeados sin ID nuevo (misma causa raíz): `H360-B05`/`H360A-10` → `R-13` · `
 
 Estado de los abiertos previos, sin cambio: `R-77` · `R-80` · `R-83` · `R-98`/`R-119` · `R-99` (`BLOCKED_BY_OUT_OF_SCOPE_DEPLOYMENT`, no tocar) ·
 `R-111` · `R-112` (verificar cierre frente a `OD-12`) · `R-122` · `R-123` · `R-124` · `R-125` · **`R-127`** (tanda `WAVE A1`, gobernada por `OD-18`) · `BU-D10` (`PENDING_RATIFICATION`).
+
+---
+
+## Cierre de `R-127` · catálogo seguro de empresas (2026-09-09 · WAVE A1)
+
+```
+R-127    CERRADO    GA-REM-033 enmienda A · OD-18 · CompanyCatalogRead sin sap_config · 11/11 · sensibilidad 3/3 válidas
+R-127.b  DEFERRED   escritura de sap_config (POST/PUT con dict sobre columna String) · OD-18.b · sin migración · SAP_DEFERRED
+FASE 9   FROZEN     bloqueo técnico de R-127 retirado · R-139 pendiente · autorización del propietario: NO
+```
+
+Evidencia: `R-127-SAFE-COMPANY-CATALOG-EVIDENCE.md`. Rojo previo 9/11 con la aserción `500 == 200` y
+control verde con el mismo rol y ruta; causa reproducida sin revertir código (`dict_type` en
+`sap_config`). Regresión completa: **795 passed · 49 skipped · 0 failed** (539 s; 784 previas + 11 de `test_company_catalog.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Vitest: 87 passed / 8 archivos.
+
+### Hallazgo nuevo de la ola A (no procede de la Master 360)
+
+| ID | Sev. | Título | Evidencia | Ola | Autoridad |
+|---|:--:|---|---|:--:|---|
+| `R-158` | P2 | `npx tsc -b --noEmit` falla con 6 errores (`TS6133` variables sin uso en `AuditPage.tsx:3`, `LotFormPage.tsx:47,85`; `TS2493` índice de tupla en `LotFormPage.tsx:85`); **preexistente en `7ee72a1`** (reproducido en worktree temporal; frontend sin cambios en la ola A). `quality-gates.yml:87` ejecuta exactamente ese comando, luego la puerta de frontend está roja | `scratchpad/tsc_A.txt` | A (`GA-REM-013`) · E | enm. `GA-REM-013` / `GA-REM-011` |
