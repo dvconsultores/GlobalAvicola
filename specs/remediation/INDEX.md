@@ -61,6 +61,8 @@ se interpretan.
 | `OD-14` | Control global frente a contexto de inquilino — `switch-company` elige inquilino, no retira autoridad | **VIGENTE** | [OD-14](OD-14-GLOBAL-CONTROL-VS-TENANT-CONTEXT.md) |
 | `OD-15` | Segregación en la administración de acceso — quien reparte no se sirve a sí mismo | **VIGENTE** | [OD-15](OD-15-ACCESS-ADMINISTRATION-SEGREGATION.md) |
 | `OD-16` | Alcance productivo vigente y activación de unidades por empresa — cuatro unidades, cada razón social las enciende o apaga en Global Avícola; encender ≠ conceder | **VIGENTE** · requisito de producto | [OD-16](OD-16-PRODUCT-SCOPE-AND-COMPANY-BUSINESS-UNIT-ACTIVATION.md) |
+| `OD-17` | Un rechazo corregible no es terminal — `RETURNED`/`REJECTED` se corrigen y reenvían; con SAP, reenvío explícito (alias `AOD-09`) | **VIGENTE** · implementación `WAVE B` | [OD-17](OD-17-CORRECTABLE-REJECTION-IS-NOT-TERMINAL.md) |
+| `OD-18` | El catálogo general de empresas no contiene configuración SAP — `sap_config` fuera de `GET /masters/companies`; persistencia diferida (alias `AOD-12`) | **VIGENTE** · gobierna `R-127` | [OD-18](OD-18-COMPANY-CATALOG-EXCLUDES-SAP-CONFIGURATION.md) |
 
 ## Resumen
 ```
