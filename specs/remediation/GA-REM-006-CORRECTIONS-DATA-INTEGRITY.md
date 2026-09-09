@@ -186,7 +186,7 @@ Reversible por commit. Las correcciones aplicadas **no** se revierten automátic
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-006-A` · `BUSINESS WORKFLOW / STATE MACHINE` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-006-A` · `BUSINESS WORKFLOW / STATE MACHINE` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-09; E2E `BLOCKED_RUNTIME`) · evidencia `R-135-R-143-STATE-CONTINUITY-EVIDENCE.md` |
 | **Hallazgos seleccionados** | **`R-135`** (P1, `H360-P03`/`D09`): `RETURNED` no se reenvía; `REJECTED` es terminal · **`R-140` PARTE A** (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) · **`R-154` subconjunto** (`DRAFT` en el mapa de transiciones; semántica de `version`) · cadena inquilino/unidad en `POST /corrections` (`AC-C05`, `OD-16.e/f`, hoy solo empresa) |
 | **Porciones excluidas** | `R-140` motivo obligatorio del `cancel` (el cliente llama la ruta **sin cuerpo**, `operations.service.ts:47`: exige vertical de UI, fuera de alcance) y permiso «solo administrador» (**`AOD-18`**) → **OPEN** · `R-154` dos «cierres» (**`AOD-08`**) y `LotStatus.CANCELLED` → **OPEN** · `R-142` (`CORRECTED` doble semántica, **`AOD-17`**): `complete_review` **no se toca** · `R-165`, `R-166` (registrados en el pre-flight) |
 | **Fuentes** | `docs/12 §2` (Devuelto → «Operador reenvía»; Rechazado → «Operador reenvía (corregido)»; Borrador → Registrado/Anulado), `§4` filas 1, 5, 8, 13, `§6 R3-R5`, `§8`, `§11` · `spec.md §4.10-4.11` · `BR-09`, `BR-15`, `BR-16` · `RR-01` · **`OD-17.a/b`** (vigente) · `OD-17.c` (SAP: **diferido**) · `OD-09/OD-14/OD-16` + `GA-REM-040-G/H` (cadena de escritura productiva) |

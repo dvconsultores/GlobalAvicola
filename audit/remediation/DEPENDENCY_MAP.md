@@ -877,5 +877,7 @@ R-160 + R-159 ──CERRADOS (tranche 2, GA-REM-040-G)──► desbloquean nada
                 sin unidad) y R-163 (lots: la autoridad global muta lotes de unidad apagada) — misma raíz, P2, tranche propio
 R-163 + R-162 ──CERRADOS (tranche 3, GA-REM-040-H)──► hoja; la guarda compartida business_units.exigir_unidad_operativa es ahora la
                 pieza que cualquier escritura productiva futura (ola C, GA-REM-021, R-152/R-153) debe llamar
-siguiente (identificado, no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) ◄── OD-17 vigente
+R-135 + R-143 ──CERRADOS (tranche 4, GA-REM-006-A · GA-REM-007-A)──► desbloquean R-136 parte interna (estados estables) · dejan R-140 (motivo: UI · permiso: AOD-18)
+                y R-154 (cierres: AOD-08) PARTIALES · R-142 sigue tras AOD-17 · registrados R-164 (BLOCKED_RUNTIME), R-165, R-166
+siguiente (identificado, no iniciado): R-136 parte interna (reverso, BR-16) + R-165 ◄── estados de P-07 estables · SAP diferido (OD-17.c)
 ```

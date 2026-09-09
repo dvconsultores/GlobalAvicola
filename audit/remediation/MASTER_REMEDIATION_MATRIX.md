@@ -1224,3 +1224,16 @@ regresión       **919 passed · 49 skipped · 0 failed** (719 s; 891 previas + 
 WAVE B          IN PROGRESS · 5/19 cerrados · siguiente (no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version)
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN
 ```
+
+## WAVE B · tranche 4 · `R-135` + `R-143` cerrados · `R-140`/`R-154` parciales · `GA-REM-006-A` y `GA-REM-007-A` certificadas (2026-09-09)
+
+```
+pre-flight      R-163 = P1 (normalizada) · lots.company_id IS NULL: BLOCKED_RUNTIME, UNKNOWN, nada limpiado · R-164 (modelo nulable) · R-165 · R-166 · ola B = 22
+GA-REM-006-A    CERTIFIED (frontera técnica) · continuidad de estados de P-07 (OD-17.a/b) · AC-S/R/D/U · rojo 13/24 → verde 24/24
+GA-REM-007-A    CERTIFIED (frontera técnica) · corrector/rechazador ≠ aprobador (docs/12 R2, OD-17.b, RR-03) · AC-G01…G07 · rojo 3/6 → verde 6/6
+R-135           CERRADO · R-143 CERRADO · R-140 PARTIAL (PARTE A) · R-154 PARTIAL (DRAFT/version)
+sensibilidad    S1–S8, S10, S11 válidas · S9 N/A (sin rama de doble efecto)
+regresión       **949 passed · 49 skipped · 0 failed** (735 s; 919 previas + 30 de `test_state_continuity.py`/`test_segregation_r143.py`)
+WAVE B          IN PROGRESS · 7/22 cerrados + 2 parciales · siguiente (no iniciado): R-136 parte interna + R-165 (alternativa: GA-REM-021 agua)
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME
+```

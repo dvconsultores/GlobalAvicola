@@ -158,7 +158,7 @@ Reversible por commit. Sin cambios de esquema ni de datos.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-007-A` · `BUSINESS RULE` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-007-A` · `BUSINESS RULE` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-09) · evidencia `R-135-R-143-STATE-CONTINUITY-EVIDENCE.md` |
 | **Hallazgo** | **`R-143`** (P2, `H360-P10`): `_exigir_segregacion` compara al aprobador solo con `registered_by_id`; `docs/12 R2` («el supervisor que corrige NO puede aprobar el mismo registro, si la configuración lo exige») no está implementada |
 | **Fuentes** | `docs/12 §6 R1-R2` · **`OD-17.b`** («segregación: quien rechazó no aprueba el reenvío si la configuración lo exige — `RC-03`, `docs/12 R2`») · `RR-03` (configurable por paso, `require_segregation` por defecto `True`) · `correction_logs.corrected_by_id` · `approval_actions.REJECTED.user_id` |
 | **Relación con `R-135`** | mismo servicio y misma transición (`CORRECTED → approve`); raíz distinta; enmienda propia; mismo tranche |

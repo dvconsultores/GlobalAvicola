@@ -1072,3 +1072,24 @@ Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión co
 | `R-166` | P3 | `approve` y `reject` sobre el mismo evento `CORRECTED` no se excluyen (sin bloqueo de fila; el último `flush` gana) | `review/service.py:423-470` | B |
 
 Trazas parciales del tranche 4: **`R-140`** → PARTE A (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) en `GA-REM-006-A`; motivo obligatorio (contrato de ruta que el cliente llama sin cuerpo → UI) y permiso «solo administrador» (`AOD-18`) → OPEN. **`R-154`** → subconjunto `DRAFT` (mapa de transiciones + controles) y `version` (semántica vigente documentada: avanza en `PUT` y en corrección; la matriz 360 lo daba por no incrementado) en `GA-REM-006-A`; dos «cierres» (`AOD-08`) y `LotStatus.CANCELLED` → OPEN. `R-163` normalizada a **P1**.
+
+---
+
+## Cierre de `R-135` + `R-143` · continuidad de estados de `P-07` y segregación corrector/rechazador ≠ aprobador · WAVE B tranche 4 (2026-09-09)
+
+```
+R-135    CERRADO (técnico)   GA-REM-006 enmienda A · OD-17.a/b · RETURNED/REJECTED reenviables (submit → PENDING_REVIEW, explícito, auditado)
+                            · REJECTED editable y corregible · mapa explícito EDITABLES/REENVIABLES/NO_CANCELABLES · cadena inquilino/unidad
+                            en POST /corrections · AC-S01…S12 · AC-R01…R07 · AC-D01…D06 · AC-U01…U05 · 24/24 · rojo previo 13 rojas
+R-143    CERRADO (técnico)   GA-REM-007 enmienda A · aprobador ∉ {registrador, correctores, quien rechazó} bajo require_segregation (docs/12 R2,
+                            OD-17.b) · AC-G01…G07 · 6/6 · rojo previo 3 rojas
+R-140    PARTIAL             PARTE A cerrada (cancel denegado desde SAP_CONFIRMED/SAP_ERROR/CANCELLED) · OPEN: motivo obligatorio (el cliente llama
+                            cancel sin cuerpo → UI) · permiso «solo administrador» (AOD-18)
+R-154    PARTIAL             DRAFT en el mapa de transiciones (editable, no reenviable, no aprobable por edición) · version documentada (avanza en PUT
+                            y corrección) · OPEN: dos «cierres» (AOD-08) · LotStatus.CANCELLED sin productor
+                            sensibilidad S1–S8, S10, S11 válidas · S9 N/A · relacionadas 353/353 · certificación de proceso: BLOCKED_RUNTIME
+WAVE B   IN PROGRESS        22 ítems · 7 cerrados (R-130 · R-160 · R-163 · R-159 · R-162 · R-135 · R-143) · 2 parciales (R-140 · R-154) · 13 abiertos
+                            siguiente tranche (identificado, no iniciado): R-136 parte interna (reverso, BR-16) + R-165; alternativa GA-REM-021 agua
+```
+
+Evidencia: `R-135-R-143-STATE-CONTINUITY-EVIDENCE.md`. Regresión completa: **949 passed · 49 skipped · 0 failed** (735 s; 919 previas + 30 de `test_state_continuity.py`/`test_segregation_r143.py`); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 preexistentes (`R-158`). Sin migración (`s9t0u1v2w3x4`), sin rutas nuevas, sin estados nuevos, sin frontend. `R-161` OPEN · `R-164` BLOCKED_RUNTIME · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

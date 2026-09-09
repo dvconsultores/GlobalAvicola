@@ -195,3 +195,24 @@ SAP_DEFERRED ...................  R-136 (parcial) · OD-17.c (reenvío SAP)
 BLOCKED_RUNTIME ................  R-164 (verificación de datos)
 TRANCHE 4 ...................... R-135 + R-143 + R-140 PARTE A + R-154 subconjunto DRAFT/version  (GA-REM-006-A · GA-REM-007-A)
 ```
+
+## 10. Estado tras el tranche 4 (2026-09-09) — recalculado desde el backlog
+
+```
+TOTAL ......................... 22
+CERRADOS ......................  7   R-130 · R-160 · R-163 (P1) · R-159 · R-162 (P2) · R-135 (P1) · R-143 (P2)
+PARCIALES ......................  2   R-140 (PARTE A cerrada; motivo → UI · permiso → AOD-18) · R-154 (DRAFT/version; cierres → AOD-08)
+P1 ABIERTOS ...................  2   R-136 (interno; SAP diferido) · GA-REM-021
+P2 ABIERTOS ....................  8   R-142 · R-144 · R-152 · R-148 · R-147 · R-161 · R-164 · R-165   (+ R-140 parcial)
+P3 ABIERTOS ....................  3   R-153 · R-156 · R-166   (+ R-154 parcial)
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131, ola C + AOD-08) · R-156 (AOD-20) · [+ R-136 post-SAP parcial]
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20
+SAP_DEFERRED ...................  R-136 (parcial) · OD-17.c
+BLOCKED_RUNTIME ................  R-164
+ESTADO ......................... IN PROGRESS
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-136 parte interna (reverso con registro compensatorio, BR-16, docs/16 G-R09; tabla reversals sin servicio) + R-165
+  (habilitación en el plano de revisión para la autoridad global; misma guarda). Por qué: P1 de integridad de estados,
+  «requiere los estados de 3 estables» (§3) — ya lo están; sin decisión pendiente; SAP diferido. Alternativa si el propietario
+  prioriza la captura: GA-REM-021 agua (P1, SPEC_READY). R-164 espera acceso a la base configurada.
+```
