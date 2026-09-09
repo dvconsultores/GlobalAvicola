@@ -1248,3 +1248,16 @@ artefactos      R136_INTERNAL_REVERSAL_PREFLIGHT.md · R136_INTERNAL_REVERSAL_EF
 WAVE B          IN PROGRESS · 7/22 cerrados + 2 parciales · decisiones 7 · siguiente (no iniciado): GA-REM-021 agua (+ R-165 posible)
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME
 ```
+
+## WAVE B · tranche 5 · `R-136` interno cerrado (`R-136` PARTIAL) · `R-165` cerrado · `OD-19` · `GA-REM-041` certificada (2026-09-09)
+
+```
+decisión        AOD-21 → OD-19 (propietario, 24 cláusulas) · pre-flight previo STOP (d20e008) → spec (651bca3) → código (83437a2)
+GA-REM-041      CERTIFIED (frontera técnica) · AC-RV01…07 · AC-EF01…07 · AC-S01…09 · AC-AU01…06 · AC-165-01…05 · rojo 22/27 → verde 27/27
+R-136           PARTIAL · interno CERRADO (REVERSED, contrapartida aprobada, exactamente una, saldos netos) · SAP SAP_DEFERRED · consolidados DEFERRED · huevos BLOCKED_BY_R-161
+R-165           CERRADO · plano de revisión con habilitación de unidad para la autoridad global
+migración       t0u1v2w3x4y5 (eventstatus + auditaction 'REVERSED') · rutas 208 → 211 · SOLO_SUPER_ADMIN 13 → 15
+regresión       **976 passed · 49 skipped · 0 failed** (807 s; 949 previas + 27 nuevas)
+WAVE B          IN PROGRESS · 8/22 cerrados + 3 parciales · siguiente (no iniciado): GA-REM-021 agua
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
+```

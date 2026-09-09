@@ -924,7 +924,7 @@ su `source_finding`. Ninguno se remedia en esta ola.
 | **`R-133`** | **P1** | eficiencia de vacunación cuenta eventos (`/1000`) y no aves | `H360-K03` | `Bases` p.10 | C | enm. `GA-REM-022` | — |
 | **`R-134`** | **P1** | AFCR suma `BirdMovement.quantity` como gramos; sin peso de muertos | `H360-K06` | `Bases` p.13 | C | enm. `GA-REM-022` | — |
 | **`R-135`** | **P1** | `RETURNED` no se reenvía; `REJECTED` es terminal | `H360-P03`, `H360-D09` | `docs/12 §4` | B | spec propia o enm. `GA-REM-006` + `spec §4.10` | **`OD-17`** ✓ |
-| **`R-136`** | **P1** (SAP) | tabla `reversals` sin servicio ni ruta; `BR-16` sin mecanismo | `H360-P05` | `BR-16` · Rec. §24 | B · D | **`GA-REM-041`** (interno) | **`OD-19`** ✓ (alias `AOD-21`; interno → tranche 5) · post-SAP `SAP_DEFERRED` (`AOD-04`/`OD-12`) |
+| **`R-136`** | **P1** (SAP) | tabla `reversals` sin servicio ni ruta; `BR-16` sin mecanismo | `H360-P05` | `BR-16` · Rec. §24 | B · D | **`GA-REM-041`** (interno, **`CERTIFIED`**) | **`OD-19`** ✓ · **PARTIAL**: interno **CERRADO** (tranche 5) · post-SAP `SAP_DEFERRED` (`AOD-04`/`OD-12`) · consolidados `DEFERRED` · huevos/incubación `BLOCKED_BY_R-161` |
 | **`R-137`** | **P1** (D) | `lots` sin identificador del lote productivo SAP | `H360-S05` | Rec. §3.3, §25.3 | D | enm. `GA-REM-017` | **`AOD-03`** |
 | **`R-138`** | **P1** (D) | materiales (`feed_types`, `vaccines`, `medications`) sin clave SAP; sin material por raza/sexo/huevo/pollito; proveedor por dos vías | `H360-S01`, `H360-S02`, `H360-S03` | Rec. §5, §15 | D | enm. `GA-REM-017` | `AOD-01` parcial |
 | **`R-139`** | **P1** | 8 atajos `is_super_admin` sobre dato productivo/maestros no conformes con `OD-14.c/d` (`operations:762,810,978,997` · `lots:351` · `curves:75` · `masters/router:139,161`); 0 tests | `H360-A01` = `H360A-08` · verificado en `A01_SUPER_ADMIN_SHORTCUT_VERIFICATION.md` | `OD-14` | **A** (tanda propia; precede a la fase 9) | enm. `GA-REM-002` clase C o `GA-REM-040` | — |
@@ -1111,3 +1111,21 @@ WAVE B   IN PROGRESS        22 ítems · 7 cerrados · 2 parciales · 13 abierto
 ```
 
 Artefactos: `R136_INTERNAL_REVERSAL_PREFLIGHT.md` · `R136_INTERNAL_REVERSAL_EFFECT_MATRIX.md` · `AOD-21`. Sin código, sin migración, sin pruebas nuevas; nada certificado; nada cerrado.
+
+---
+
+## Cierre de `R-136` (interno) + `R-165` · reverso interno de registros aprobados · WAVE B tranche 5 (2026-09-09)
+
+```
+R-136    PARTIAL             componente INTERNO CERRADO (técnico): OD-19 · GA-REM-041 · REVERSED (migración t0u1v2w3x4y5) · contrapartida
+                            aprobada por el motor existente · exactamente una (FOR UPDATE + solicitud activa 409) · saldos netos con
+                            contrapartidas efectivas (R-130 intacto) · original inmutable · motivo y auditoría · 22/22 · rojo previo 21
+                            componente SAP: SAP_DEFERRED · consolidados: DEFERRED · huevos/incubación: BLOCKED_BY_R-161 (OD-19 §11, §18)
+R-165    CERRADO (técnico)   el plano de revisión (start · return · complete · approve · reject) exige la habilitación de la unidad a la
+                            autoridad global (403) · actor de empresa y plano de control intactos · 5/5 · rojo previo 1
+                            sensibilidad: ver evidencia · relacionadas 498/498 · certificación de proceso: BLOCKED_RUNTIME
+WAVE B   IN PROGRESS        22 ítems · 8 cerrados (R-130 · R-160 · R-163 · R-159 · R-162 · R-135 · R-143 · R-165) · 3 parciales (R-140 · R-154 · R-136)
+                            · 11 abiertos · siguiente tranche (identificado, no iniciado): GA-REM-021 agua (P1, SPEC_READY; B04 fuera hasta AOD-14)
+```
+
+Evidencia: `R-136-INTERNAL-REVERSAL-EVIDENCE.md`. Regresión completa: **976 passed · 49 skipped · 0 failed** (807 s; 949 previas + 27 nuevas); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 preexistentes (`R-158`). Migración `t0u1v2w3x4y5` (autorizada por `OD-19 §1`). Rutas 208 → 211. `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

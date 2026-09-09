@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| **ID** | `GA-REM-041` · `BUSINESS WORKFLOW / DATA INTEGRITY SPEC` · **Estado** `SPEC_READY` (2026-09-09 · WAVE B tranche 5) |
+| **ID** | `GA-REM-041` · `BUSINESS WORKFLOW / DATA INTEGRITY SPEC` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-09; E2E `BLOCKED_RUNTIME`) · evidencia `R-136-INTERNAL-REVERSAL-EVIDENCE.md` |
 | **Hallazgos** | **`R-136`** («tabla `reversals` sin servicio ni ruta; `BR-16` sin mecanismo», P1, `H360-P05`, `G-R09`, `GA-TD-028`) — **solo el componente interno** (aprobado, pre-SAP) · **`R-165`** (P2: el plano de revisión no exige la habilitación de la unidad a la autoridad global) — **incluido** (§1.2) |
 | **Decisión** | **`OD-19`** (alias `AOD-21`) · `OD-17.a` · `OD-14` · `OD-16` (aclaración `GA-REM-040-H §H.2`) |
 | **Requisito raíz** | Rec. central 7.17 («corrección sobre aprobado sin versión/reverso») · `G-R09` («reverso con registro compensatorio») · `docs/16 §8` (`ANULADO/REVERSADO`) · `BR-16`/`R16` (post-SAP, no cambia) · `docs/13` (auditoría de anulación: usuario, fecha/hora, motivo, registro completo) |

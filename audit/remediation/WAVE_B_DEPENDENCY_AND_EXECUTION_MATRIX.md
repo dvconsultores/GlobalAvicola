@@ -247,3 +247,21 @@ DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AO
 BLOQUEADOS .....................  3   R-142 · R-144 · R-156 (+ R-136 post-SAP parcial)
 migración autorizada .......... t0u1v2w3x4y5 (eventstatus + auditaction ADD VALUE 'REVERSED') · SPEC + AC antes del código
 ```
+
+## 13. Estado tras el tranche 5 (2026-09-09) — recalculado desde el backlog
+
+```
+TOTAL ......................... 22
+CERRADOS ......................  8   R-130 · R-160 · R-163 (P1) · R-159 · R-162 · R-143 · R-165 (P2) · R-135 (P1)
+PARCIALES ......................  3   R-140 · R-154 · R-136 (interno cerrado; SAP diferido)
+P1 ABIERTOS ...................  1   GA-REM-021   (+ R-136 parcial)
+P2 ABIERTOS ....................  7   R-142 · R-144 · R-152 · R-148 · R-147 · R-161 · R-164   (+ R-140 parcial)
+P3 ABIERTOS ....................  3   R-153 · R-156 · R-166   (+ R-154 parcial)
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP]
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c
+BLOCKED_RUNTIME ................  R-164
+ESTADO ......................... IN PROGRESS
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  GA-REM-021 — captura exigida por el cliente: agua (B05), P1, SPEC_READY; B01 desbloqueado por R-130; B04 fuera hasta AOD-14.
+```
