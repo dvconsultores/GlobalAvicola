@@ -165,3 +165,78 @@ LA SESIÓN INFORMA AL CLIENTE   ·   NO SUSTITUYE AL BACKEND
 `AC-H10` sigue vigente y se demuestra igual que siempre: llamando a la `API` directamente. Que
 la sesión diga «capacidad ausente» no protege nada. Lo que protege es que la ruta deniegue, y
 eso lo sostienen las 770 pruebas del backend, no este contrato.
+
+
+---
+
+## 10. Cierre formal (2026-09-09 · segunda revisión)
+
+Cuatro precisiones que el cierre exige dejar escritas **tal como ocurrieron**, no como quedaron.
+
+### `is_global_actor` se retiró de la enmienda **antes** de certificar
+
+No es una característica implementada y después eliminada. La enmienda E lo pedía; al
+implementarla quedó claro que sería un sinónimo exacto de `is_super_admin`; se corrigió la
+enmienda y el campo **nunca entró en el contrato certificado**. Hoy aparece una sola vez en el
+código: en el comentario de `SessionRead` que explica por qué no existe.
+
+```
+CANÓNICO    is_super_admin  ←  ("*", …, "all")   ·   nunca del nombre del rol
+                                                  ·   nunca de company_id NULL
+```
+
+### La regresión de `is_super_admin`
+
+```
+CLASE       IMPLEMENTATION REGRESSION
+DETECTADA   antes de certificar · por `test_get_me`, prueba de contrato preexistente
+HALLAZGO    ninguno — corregida en la misma tanda, antes de certificación
+```
+
+La prueba se conserva tal cual. Es la razón por la que existía.
+
+### `S11` inicial: puerta equivocada
+
+```
+INTENTO      `extra="allow"` en el esquema
+RESULTADO    la prueba siguió pasando — y con razón
+CAUSA        el endpoint construye `SessionRead` con campos EXPLÍCITOS;
+             no había extras que dejar pasar; la propiedad no se retiró
+CLASE        INVALID MUTATION · no contada
+SUSTITUTA    el endpoint sirve `hashed_password` de verdad → rojo
+```
+
+```
+LA PROTECCIÓN ES   endpoint → construcción explícita → contrato
+NO ES              el rechazo de extras de Pydantic
+```
+
+### La fixture privilegiada afirma su autoridad
+
+```
+REGLA PERMANENTE
+    UNA FIXTURE PRIVILEGIADA DEBE AFIRMAR SU PRECONDICIÓN DE AUTORIDAD
+    ANTES DE PROBAR SUS CONSECUENCIAS
+```
+
+La del actor global sembraba el comodín con `scope_type="company"` y no era global. Ahora la
+fixture ejecuta `assert any(p.module == "*" and p.scope_type == "all")` antes de ceder el
+escenario, y `AC-H13` mide lo que dice medir.
+
+### Contabilidad de mutaciones
+
+```
+VÁLIDAS FINALES          11
+INTENTOS INVÁLIDOS        1   (`S11` · puerta equivocada)
+REHECHAS                  1
+CONTADAS SIN SER VÁLIDAS  0
+```
+
+### Veredicto
+
+```
+T-040-20            1 / 1
+AC-H11…AC-H14       4 / 4  ·  AC-H01 satisfecha por ellas
+suite dirigida      16 / 16  ·  test_get_me verde  ·  regresión 770 passed
+FASE 8              COMPLETE
+```
