@@ -157,3 +157,21 @@ ESTADO                    READY AFTER REMEDIATION (R-139)
 AUTORIZACIÓN              NO — FASE 9 FROZEN por decisión del propietario: la remediación P1 operativa/de datos/KPI va antes
 INICIADA                  NO
 ```
+
+---
+
+## 9. Recálculo tras `R-139` (2026-09-09 · base `ec536c0`)
+
+| Dependencia | Antes (§8) | Ahora |
+|---|---|---|
+| `R-127` | cerrado | cerrado |
+| **`R-139`** (conformidad `OD-14.c/d` en dato productivo) | bloqueo de conformidad | **CERRADO** — 8/8 superficies `INQUILINO`; la autoridad global sin contexto obtiene cero filas / `404` / `403` / `400 BR-07`; situada en `A` solo `A` |
+| `R-159` (alcance de unidad en `get_alerts`) | — | nuevo, P2, `WAVE B`; no es dependencia de la fase 9 (la fase 9 no decide autoridad) |
+| sesión, `R-129`, `OD-15`, `OD-16`, `OD-18` | sin cambio | sin cambio (regresión verde) |
+
+```
+BLOQUEOS TÉCNICOS   ninguno
+ESTADO              TECHNICALLY READY
+AUTORIZACIÓN        NO — FASE 9 FROZEN por decisión del propietario (remediación P1 operativa/datos/KPI primero: WAVE B/C)
+INICIADA            NO
+```

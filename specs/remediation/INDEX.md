@@ -13,7 +13,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-007` | BR-14: segregación y centralización de reglas | BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-007](GA-REM-007-BR14-SEGREGATION-CENTRALIZATION.md) |
 | `GA-REM-011` | Alineación de contratos FE ↔ BE | CONTRACT | P0 | **`PARTIALLY CERTIFIED`** (10/18; `H360-C01` → alcance restante) | E | [GA-REM-011](GA-REM-011-FE-BE-CONTRACT-ALIGNMENT.md) |
 | `GA-REM-012` | Cambio de contraseña | SECURITY + BUGFIX | P0 | **`CERTIFIED`** | B | [GA-REM-012](GA-REM-012-PASSWORD-CHANGE.md) |
-| `GA-REM-002` | RBAC: enforcement en backend (+ enm. A: `AC12`, pertenencia del sub-recurso) | SECURITY | P0 | **`CERTIFIED`** (+ enm. B `AC13–AC16` certificada 2026-09-08; `R-44` resuelto por la migración de reconciliación `l2m3n4o5p6q7`) | B | [GA-REM-002](GA-REM-002-RBAC-BACKEND-ENFORCEMENT.md) |
+| `GA-REM-002` | RBAC: enforcement en backend (+ enm. A: `AC12` · enm. B: administración de usuarios de inquilino · **enm. C: `OD-14.c/d` en el dato productivo, `R-139`**) | SECURITY | P0 | **`CERTIFIED`** (+ enm. B 2026-09-08 · **enm. C `CERTIFIED` 2026-09-09**) | B | [GA-REM-002](GA-REM-002-RBAC-BACKEND-ENFORCEMENT.md) |
 | `GA-REM-003` | Contexto de autorización y ciclo del token | SECURITY | P0 | **`CERTIFIED`** | B | [GA-REM-003](GA-REM-003-AUTH-CONTEXT-AND-TOKEN-LIFECYCLE.md) |
 | `GA-REM-006` | Correcciones e integridad del dato | DATA INTEGRITY | P0 | **`CERTIFIED`** | C | [GA-REM-006](GA-REM-006-CORRECTIONS-DATA-INTEGRITY.md) |
 | `GA-REM-008` | Trazabilidad generacional | DOMAIN + BUGFIX | P0 | **`CERTIFIED`** | C | [GA-REM-008](GA-REM-008-GENERATIONAL-TRACEABILITY.md) |
@@ -107,8 +107,8 @@ Ninguna spec del encargo se ha eliminado. `GA-REM-019` absorbe el bloque «P2/P3
 
 | Ola | Contenido |
 |---|---|
-| **A** autoridad · seguridad · datos | ~~`R-127`~~ **CERRADO** (`WAVE A1`, `OD-18`) · **`R-139`** (tanda propia, precede a la fase 9) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`, `R-158` tsc) |
-| **B** procesos faltantes | `R-130` · `R-135` (`OD-17`) · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
+| **A** autoridad · seguridad · datos | ~~`R-127`~~ **CERRADO** (`WAVE A1`, `OD-18`) · ~~`R-139`~~ **CERRADO** (`GA-REM-002-C`, 2026-09-09) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`, `R-158` tsc) — **WAVE A COMPLETE** en su alcance de seguridad/datos |
+| **B** procesos faltantes | `R-130` · `R-135` (`OD-17`) · `R-159` (alcance de unidad en alertas) · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
 | **C** KPI · trazabilidad | `R-131` · `R-132` · `R-133` · `R-134` · `R-141` · `GA-REM-022` (`H360-K10`) · `R-80` (`H360-B09`) |
 | **D** preparación SAP | `R-137` (`AOD-03`) · `R-138` · `R-145` · `R-155` (`AOD-15`) · `R-157` (`AOD-01…05`) · `R-124` (`AOD-06`) |
 | **E** frontend · UX | fase 9 de `GA-REM-040` (tras `R-127` y `R-139`) · `R-98`/`R-119` · `R-146` · `R-150` · `R-151` · `R-122` · `R-123` · `GA-REM-011` (`H360-C01`) |

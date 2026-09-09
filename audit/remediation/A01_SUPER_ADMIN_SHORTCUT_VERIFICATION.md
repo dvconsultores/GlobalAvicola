@@ -76,3 +76,13 @@ IMPLEMENTACIÓN ... requerida
 ALCANCE .......... FUERA de esta ejecución (A0-P · A0-G · A1). Se registra como R-139 (WAVE A, tanda propia)
                    y precede a la fase 9 por OD-14.
 ```
+
+---
+
+## 5. Cierre (2026-09-09 · `R-139`)
+
+Los 8 sitios no conformes de `§2` (#5 #6 #10 #11 #13 #19 #21 #23) quedaron conformes en `ec536c0`
+(`GA-REM-002` enmienda C); además el primitivo `tenancy.verificar_pertenencia` falla cerrado con
+empresa nula (`AC26`). Las 8 exenciones de visibilidad de unidad (#1 #2 #3 #4 #7 #14 #15 #18) se
+preservan como semántica certificada; #17 sigue `CONTROL_GLOBAL`; #8/#9 siguen redundantes.
+Evidencia: `R-139-OD14-PRODUCTIVE-DATA-EVIDENCE.md`.

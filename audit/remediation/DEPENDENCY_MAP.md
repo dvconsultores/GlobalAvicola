@@ -859,3 +859,10 @@ WAVE F   E2E en main ──► GA-REM-016 SPEC_READY ──► fases 10-11 (BU 0
 WAVE G   GA-REM-017 ◄── contrato técnico SAP (externo) + WAVE D completa
 ```
 Ruta crítica hacia la fase 9: `R-127` (A1) → `R-139` (A, tanda propia) → fase 9 (**FROZEN** por decisión del propietario aunque los bloqueos técnicos se cierren).
+
+## `R-139` cerrado (2026-09-09)
+
+```
+R-139 ──CERRADO──► fase 9: sin bloqueo técnico restante (R-127 · R-139 cerrados) · FROZEN por el propietario
+R-159 (nuevo, P2) ──► WAVE B · alcance de unidad en get_alerts · no bloquea la fase 9 (la fase 9 es interfaz; la autoridad sigue en el backend)
+```

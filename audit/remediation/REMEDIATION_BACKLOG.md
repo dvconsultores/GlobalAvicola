@@ -974,3 +974,18 @@ control verde con el mismo rol y ruta; causa reproducida sin revertir código (`
 | ID | Sev. | Título | Evidencia | Ola | Autoridad |
 |---|:--:|---|---|:--:|---|
 | `R-158` | P2 | `npx tsc -b --noEmit` falla con 6 errores (`TS6133` variables sin uso en `AuditPage.tsx:3`, `LotFormPage.tsx:47,85`; `TS2493` índice de tupla en `LotFormPage.tsx:85`); **preexistente en `7ee72a1`** (reproducido en worktree temporal; frontend sin cambios en la ola A). `quality-gates.yml:87` ejecuta exactamente ese comando, luego la puerta de frontend está roja | `scratchpad/tsc_A.txt` | A (`GA-REM-013`) · E | enm. `GA-REM-013` / `GA-REM-011` |
+
+---
+
+## Cierre de `R-139` · `OD-14.c/d` en el dato productivo · `WAVE A COMPLETE` (2026-09-09)
+
+```
+R-139    CERRADO    GA-REM-002 enmienda C · 8/8 superficies INQUILINO · primitivo verificar_pertenencia falla cerrado
+                    35/35 · rojo previo 24/35 · sensibilidad 8 válidas + 1 N/A (S5 reconstruida tras un intento inválido)
+R-159    P2 · NUEVO get_alerts sin predicado de unidad para actores de empresa (fase 3 lo dejó «parcial», evidencia :38;
+                    route_scope declara «alertas de sus lotes») · alcance de unidad, no de inquilino · fuera de R-139 · WAVE B
+WAVE A   COMPLETE   R-127 y R-139 cerrados · R-149 documental y R-158 (tsc) quedan en su ola
+FASE 9   TECHNICALLY READY · FROZEN (autorización del propietario: NO)
+```
+
+Evidencia: `R-139-OD14-PRODUCTIVE-DATA-EVIDENCE.md`. Regresión completa: **830 passed · 49 skipped · 0 failed** (542 s; 795 previas + 35 de `test_od14_productive_surfaces.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Por archivo: aislamiento de maestros 16 · usuarios 18 · roles 12 · unidades 31 · guarda 25 · administración 39 · sesión 16 · accesos 16 · candidatos 14 · `test_rbac` 21 (`SOLO_SUPER_ADMIN` ≤ 15 sin tocar) · clasificación pendiente 35 · curvas 16 · multiempresa 5 + 12 · saldo de apertura 12 · filas por unidad 21 · KPI por unidad 15 · catálogo de empresas 11. Vitest 87 passed / 8 archivos. `tsc` 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y mismos ficheros que en `7ee72a1` (`R-158`, sin cambio).

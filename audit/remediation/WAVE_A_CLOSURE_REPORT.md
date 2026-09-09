@@ -7,7 +7,7 @@
 WAVE A0-P   COMPLETE   OD-16 · spec.md v1.1.0 §4.0 · addendum Master 360 · matriz Progenitoras · matriz activación por empresa · BU-D10 PENDING_RATIFICATION
 WAVE A0-G   COMPLETE   OD-17 (AOD-09) · OD-18 (AOD-12) · 75 hallazgos reconciliados, 0 sin disposición · R-130…R-157 · INDEX reconciliado · A01 verificado → R-139
 WAVE A1     COMPLETE   R-127 CERRADO (GA-REM-033-A CERTIFIED) · R-127.b DEFERRED · fase 9 READY AFTER REMEDIATION (R-139) · FROZEN
-WAVE A      PARTIAL    queda R-139 (tanda propia, exige spec + AC + 8 pruebas) antes de declarar cerrada la ola A
+WAVE A      COMPLETE   R-139 CERRADO (GA-REM-002-C · ec536c0 · 35/35 · sensibilidad 8 válidas) — ver §7
 ```
 
 ## 1. Baseline de entrada verificado
@@ -72,7 +72,7 @@ Ninguna de estas cifras es certificación: son pruebas de integración verdes en
 | `RQ-03` · `OD-14` · `OD-15` · `R-113` · `R-129` · fase 7 · fase 8 · guardianes | ✓ (§2.2, todos `PASS`) |
 | backend completo · frontend | ✓ backend **795 passed · 49 skipped · 0 failed** (539 s; 784 previas + 11 de `test_company_catalog.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 87 passed / 8 archivos · `tsc` **6 errores TS6133/TS2493 preexistentes** (`AuditPage.tsx`, `LotFormPage.tsx`): reproducidos en `7ee72a1`, frontend sin cambios en esta ola → `R-158` |
 | remoto verificado · árbol limpio | ver §6 |
-| **`R-139`** (hallazgo P1 de esta ola, fuera de su alcance de ejecución) | **pendiente** → `WAVE A` queda **`PARTIAL`** hasta su tanda |
+| **`R-139`** | ✓ **CERRADO** (2026-09-09, tanda propia): `GA-REM-002-C`, 8/8 superficies, `AC26`; evidencia `R-139-OD14-PRODUCTIVE-DATA-EVIDENCE.md` |
 
 ## 4. `BU-D10`
 
@@ -100,3 +100,16 @@ NO se resolvió · NO hay código que dependa de la elección
 ## 6. Verificación remota
 
 Tras el push del commit de cierre: `git ls-remote git@github.com:dvconsultores/GlobalAvicola.git refs/heads/main` debe coincidir con `git rev-parse HEAD` y `git status --short` debe estar vacío. El resultado real se reporta en el bloque final de la tanda (no puede constar aquí antes de existir el commit).
+
+## 7. Cierre definitivo de `WAVE A` (2026-09-09 · `R-139`)
+
+```
+R-127   CERRADO   catálogo seguro de empresas (OD-18)
+R-139   CERRADO   OD-14.c/d en las 8 superficies de dato productivo + primitivo fail-closed (GA-REM-002-C)
+R-149   documental · sigue en WAVE A (no bloquea)         R-158   tsc preexistente · sigue en su ola (no bloquea)
+R-159   NUEVO P2 · alcance de unidad en alertas · WAVE B
+regresión tras R-139: **830 passed · 49 skipped · 0 failed** (542 s; 795 previas + 35 de `test_od14_productive_surfaces.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Por archivo: aislamiento de maestros 16 · usuarios 18 · roles 12 · unidades 31 · guarda 25 · administración 39 · sesión 16 · accesos 16 · candidatos 14 · `test_rbac` 21 (`SOLO_SUPER_ADMIN` ≤ 15 sin tocar) · clasificación pendiente 35 · curvas 16 · multiempresa 5 + 12 · saldo de apertura 12 · filas por unidad 21 · KPI por unidad 15 · catálogo de empresas 11 · vitest 87 passed / 8 archivos · tsc 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y mismos ficheros que en `7ee72a1` (`R-158`, sin cambio) (mismo número que en 7ee72a1)
+WAVE A  COMPLETE en su alcance de autoridad/seguridad/datos
+FASE 9  TECHNICALLY READY · FROZEN · NO INICIADA
+BU-D10  PENDING_RATIFICATION
+```

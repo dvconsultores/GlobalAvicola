@@ -1180,3 +1180,12 @@ R-127          CERRADO     R-127.b DEFERRED (OD-18.b)
 regresión      **795 passed · 49 skipped · 0 failed** (539 s; 784 previas + 11 de `test_company_catalog.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 87 passed / 8 archivos · tsc sin errores
 fase 9         READY AFTER REMEDIATION (R-139) · FROZEN
 ```
+
+## `R-139` cerrado · `GA-REM-002` enmienda C certificada · `WAVE A COMPLETE` (2026-09-09)
+
+```
+GA-REM-002-C   CERTIFIED   AC17–AC26 · 8 superficies INQUILINO · rojo 24/35 → verde 35/35 · S1–S9: 8 válidas, S3 N/A, S5 reconstruida
+R-139          CERRADO     R-159 registrado (alcance de unidad en alertas, WAVE B)
+regresión      **830 passed · 49 skipped · 0 failed** (542 s; 795 previas + 35 de `test_od14_productive_surfaces.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Por archivo: aislamiento de maestros 16 · usuarios 18 · roles 12 · unidades 31 · guarda 25 · administración 39 · sesión 16 · accesos 16 · candidatos 14 · `test_rbac` 21 (`SOLO_SUPER_ADMIN` ≤ 15 sin tocar) · clasificación pendiente 35 · curvas 16 · multiempresa 5 + 12 · saldo de apertura 12 · filas por unidad 21 · KPI por unidad 15 · catálogo de empresas 11 · vitest 87 passed / 8 archivos · tsc 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y mismos ficheros que en `7ee72a1` (`R-158`, sin cambio)
+WAVE A         COMPLETE    (R-127 · R-139) · fase 9 TECHNICALLY READY · FROZEN
+```
