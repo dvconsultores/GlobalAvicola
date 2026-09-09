@@ -151,3 +151,57 @@ Reversible por commit. Sin cambios de esquema ni de datos.
 
 ## Definition of Done
 - [x] `RC-03` resuelto (`RR-03`) · [ ] `R-23` cubierto (`complete_review`) · [ ] Inventario de puntos de entrada versionado · [ ] AC01–AC07 verificados · [ ] Tests en verde · [ ] Inventario de registros auto-aprobados en producción · [ ] Certification report
+
+---
+
+# Enmienda A · quien corrige (o rechaza) no aprueba el mismo registro — `docs/12 R2` (2026-09-09 · WAVE B tranche 4)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-007-A` · `BUSINESS RULE` · **Estado** `SPEC_READY` |
+| **Hallazgo** | **`R-143`** (P2, `H360-P10`): `_exigir_segregacion` compara al aprobador solo con `registered_by_id`; `docs/12 R2` («el supervisor que corrige NO puede aprobar el mismo registro, si la configuración lo exige») no está implementada |
+| **Fuentes** | `docs/12 §6 R1-R2` · **`OD-17.b`** («segregación: quien rechazó no aprueba el reenvío si la configuración lo exige — `RC-03`, `docs/12 R2`») · `RR-03` (configurable por paso, `require_segregation` por defecto `True`) · `correction_logs.corrected_by_id` · `approval_actions.REJECTED.user_id` |
+| **Relación con `R-135`** | mismo servicio y misma transición (`CORRECTED → approve`); raíz distinta; enmienda propia; mismo tranche |
+| **Edge case pendiente de la spec original** («registro corregido por un tercero y aprobado por el autor original») | queda decidido por `docs/12 R1` + `R2` **acumulativos**: el aprobador no puede ser **ni** el registrador **ni** ningún corrector **ni** quien lo rechazó |
+
+## A.1 Regla
+
+```
+si require_segregacion(empresa):
+    aprobador ∉ { registered_by_id }
+              ∪ { corrected_by_id  de correction_logs del evento }        (docs/12 R2 · R-143)
+              ∪ { user_id de approval_actions REJECTED del evento }       (OD-17.b)
+    → si no, 403 BR-14 (mismo identificador y mismo punto de control: _exigir_segregacion)
+```
+
+Aplica en **todos** los puntos de entrada a `APPROVED` (`approve`, `batch_approve`, `complete_review` con un nivel),
+como ya exige `GA-REM-007 AC05`. `return_to_operator` (devolver) **no** entra en el conjunto: devolver no es rechazar
+(`OD-17.a` distingue observado de rechazado; `docs/12 §2`: el mismo supervisor revisa el reenvío). Sin nombres de rol;
+sin excepción para la autoridad global (`GA-REM-007` edge case «Super Admin»).
+
+## A.2 Criterios de aceptación (`AC-G`)
+
+| `AC` | Criterio | Contrato |
+|---|---|---|
+| `AC-G01` | control: `B` registra, `C` aprueba → `200` (`GA-REM-007 AC04`) | `200` |
+| `AC-G02` | `C` corrige el evento (`POST /corrections`) y luego intenta aprobarlo → `403 BR-14`; el evento sigue `CORRECTED` | `403` |
+| `AC-G03` | `C` corrige, `D` aprueba → `200` (un tercero sí) | `200` |
+| `AC-G04` | `C` rechaza; el operador reenvía y corrige (o corrige); `C` intenta aprobar → `403 BR-14`; `D` aprueba → `200` | `403` / `200` |
+| `AC-G05` | con `require_segregation = False` en el paso aprobador, `C` corrige y aprueba → `200` (`RR-03`, configurado y auditado) | `200` |
+| `AC-G06` | `complete_review` con un nivel por quien corrigió → `403 BR-14` (punto de entrada alternativo, `AC05` de la spec) | `403` |
+| `AC-G07` | denegación por `BR-14` → cero cambios (`status`, `approved_by_id`, `approval_actions`) | — |
+
+## A.3 Tareas y sensibilidad
+
+`T-007-A1` pruebas rojas `backend/tests/test_segregation_r143.py` · `T-007-A2` `_exigir_segregacion` consulta
+`correction_logs` y `approval_actions` del evento · `T-007-A3` evidencia compartida con `R-135`.
+
+| Mut. | Retira | Debe caer |
+|---|---|---|
+| `S10` | los correctores del conjunto | `AC-G02`, `AC-G06` |
+| `S11` | quien rechazó del conjunto | `AC-G04` |
+
+## A.4 Definición de terminado
+
+`AC-G01…G07` verdes · rojo válido (`G02`, `G04`, `G06`) · `S10`, `S11` válidas · `GA-REM-007` AC01-07 (regresión:
+`test_full_workflow_audit::test_f4b`) · `R-143` cerrado.

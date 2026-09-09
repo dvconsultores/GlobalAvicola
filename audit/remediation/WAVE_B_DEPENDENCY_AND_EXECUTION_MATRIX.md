@@ -180,3 +180,18 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) — máquina de estados de P-07; OD-17 vigente; P1;
   sin SAP, sin fase 9, sin BU-D10; R-142 (AOD-17) y R-140 permiso (AOD-18) no entran; su pre-flight decide la spec.
 ```
+
+## 9. Pre-flight del tranche 4 (2026-09-09) — recuento revalidado desde el backlog
+
+```
+TOTAL ......................... 22   19 + R-164 (lots.company_id nulable · deuda UNKNOWN) + R-165 (revisión: global sobre unidad apagada) + R-166 (carrera approve/reject)
+CERRADOS ......................  5   R-130 (P1) · R-160 (P1) · R-163 (P1, normalizada) · R-159 (P2) · R-162 (P2)
+P1 ABIERTOS ...................  3   R-135 · R-136 (interno) · GA-REM-021
+P2 ABIERTOS ................... 10   R-143 · R-142 · R-140 · R-144 · R-152 · R-148 · R-147 · R-161 · R-164 · R-165
+P3 ABIERTOS ....................  4   R-153 · R-154 · R-156 · R-166
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131, ola C + AOD-08) · R-156 (AOD-20) · [+ R-136 post-SAP parcial]
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20
+SAP_DEFERRED ...................  R-136 (parcial) · OD-17.c (reenvío SAP)
+BLOCKED_RUNTIME ................  R-164 (verificación de datos)
+TRANCHE 4 ...................... R-135 + R-143 + R-140 PARTE A + R-154 subconjunto DRAFT/version  (GA-REM-006-A · GA-REM-007-A)
+```

@@ -1021,7 +1021,7 @@ Evidencia: `R-130-POPULATION-INVARIANT-EVIDENCE.md`. Regresión completa: **851 
 | ID | Sev. | Título | Evidencia | Ola |
 |---|:--:|---|---|:--:|
 | `R-162` | P2 | `GET /operations/{id}/evidences/{eid}/download` no aplica predicado de unidad para el actor de empresa (solo empresa, `R-139`); `get_evidences` sí lo hace vía `get_event`. Misma raíz que `R-160`/`R-159`; fuera del tranche 2 (lectura de fichero, no escritura ni alerta) | `operations/service.py get_evidence_for_download` | B |
-| `R-163` | P2 (`POST /lots` con actor de empresa: clase `AC-C05`) | en `lots` (`PUT /lots/{id}`, `POST /lots/activate-manual`; **inventario del tranche 3**: también `POST /lots/{id}/close`, `POST /lots/{id}/phases`, y **`POST /lots` no exige unidad a ningún actor**) la autoridad global sigue exenta de la **habilitación** de unidad (`masters/service._apply_business_unit_filter`: `if … or self.is_super_admin: return query`), de modo que puede mutar lotes de una unidad apagada; incoherente con la lectura absoluta de `AC-A05`/`OD-16.e` que `GA-REM-040-G` aplica a `operations` | `masters/service.py:113` · fase 3 | B |
+| `R-163` | **P1** (normalizada en el pre-flight del tranche 4: `POST /lots` sin unidad para todo actor = clase `AC-C05` de `R-160`; lotes sin empresa = clase `R-139`; antes «P2 (P1 en…)») | en `lots` (`PUT /lots/{id}`, `POST /lots/activate-manual`; **inventario del tranche 3**: también `POST /lots/{id}/close`, `POST /lots/{id}/phases`, y **`POST /lots` no exige unidad a ningún actor**) la autoridad global sigue exenta de la **habilitación** de unidad (`masters/service._apply_business_unit_filter`: `if … or self.is_super_admin: return query`), de modo que puede mutar lotes de una unidad apagada; incoherente con la lectura absoluta de `AC-A05`/`OD-16.e` que `GA-REM-040-G` aplica a `operations` | `masters/service.py:113` · fase 3 | B |
 
 Recuento canónico de la ola B: **17** ítems (1 cerrado) + `R-162`, `R-163` = **19**. Detalle en `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md §6`.
 
@@ -1060,3 +1060,15 @@ WAVE B   IN PROGRESS        19 ítems · 5 cerrados (R-130 · R-160 · R-159 · 
 ```
 
 Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión completa: **919 passed · 49 skipped · 0 failed** (719 s; 891 previas + 28 de `test_lots_bu_enforcement.py`; 2.ª pasada tras la dependencia de fixture de `test_t_038_49`, montaje reordenado: la concesión de unidad antes de registrar el lote); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 preexistentes (`R-158`). Sin migración (`s9t0u1v2w3x4`), sin rutas nuevas, sin frontend. `R-161` sigue OPEN. Fase 9 FROZEN. `BU-D10` PENDING_RATIFICATION.
+
+---
+
+## Pre-flight del tranche 4 · hallazgos nuevos y trazas parciales (2026-09-09)
+
+| ID | Sev. | Título | Evidencia | Ola |
+|---|:--:|---|---|:--:|
+| `R-164` | P2 | `lots.company_id` es nulable sin restricción de esquema (`masters/models.py`): la prevención de lotes huérfanos es de aplicación (`AC-L05`), no de base de datos; deuda de datos históricos **`UNKNOWN`** — la consulta `count(*) WHERE company_id IS NULL` contra la base configurada no fue alcanzable (`BLOCKED_RUNTIME`); **nada limpiado**. Exige verificación en entorno certificable, migración `NOT NULL` y decisión sobre filas inválidas si las hay | `WAVE_B_TRANCHE_4_PREFLIGHT.md §B` | B |
+| `R-165` | P2 | el plano de revisión (`review/start|return|complete`, `approvals/approve|reject`) no exige la **habilitación** de la unidad a la autoridad global (`_ambito_de_unidad` → `[]` para `is_super_admin`); misma clase que `R-163`; el actor de empresa ya queda fuera por `unidades_efectivas` | `review/service.py:77-99, 360-383, 561-580` | B |
+| `R-166` | P3 | `approve` y `reject` sobre el mismo evento `CORRECTED` no se excluyen (sin bloqueo de fila; el último `flush` gana) | `review/service.py:423-470` | B |
+
+Trazas parciales del tranche 4: **`R-140`** → PARTE A (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) en `GA-REM-006-A`; motivo obligatorio (contrato de ruta que el cliente llama sin cuerpo → UI) y permiso «solo administrador» (`AOD-18`) → OPEN. **`R-154`** → subconjunto `DRAFT` (mapa de transiciones + controles) y `version` (semántica vigente documentada: avanza en `PUT` y en corrección; la matriz 360 lo daba por no incrementado) en `GA-REM-006-A`; dos «cierres» (`AOD-08`) y `LotStatus.CANCELLED` → OPEN. `R-163` normalizada a **P1**.
