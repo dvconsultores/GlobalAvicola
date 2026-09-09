@@ -140,10 +140,10 @@ el saldo descuenta aves que nunca entraron. Ninguna fuente fija si la mortalidad
 
 - **Edición** (`PUT`, estados `EDITABLES`): los tres campos se revalidan contra Σ de los movimientos persistidos (los movimientos
   no se editan por `PUT`).
-- **Corrección** (`POST /corrections`, `RR-01`): un campo por corrección; la identidad se revalida tras `_convertir` (precedente
-  `water_liters`, `AC-C03`). Un error en **dos** sumandos no se arregla por dos correcciones encadenadas (cada una rompería la
-  identidad): se arregla por edición (`PUT` con ambos campos) en un estado editable, o devolviendo el registro (`RETURNED`, `R-135`).
-  No se relaja la regla en corrección: una corrección que descuadra es exactamente el dato que el cliente prohíbe.
+- **Corrección** (`POST /corrections`, un campo por corrección): los tres sumandos **no son corregibles uno a uno** — corregir uno
+  solo siempre descuadra un registro cuadrado — y `campos_corregibles()` los excluye explícitamente (excepción documentada a `RR-01`).
+  Se arreglan por edición (`PUT` con los sumandos afectados) en un estado editable, o devolviendo el registro (`RETURNED`, `R-135`).
+  Ninguna vía deja la recepción descuadrada.
 - **Concurrencia**: N/A — no hay agregado compartido. (La carrera del acumulado de la OC está documentada y decidida en
   `GA-REM-035 §6`; no se toca.)
 - **Idempotencia**: `idempotency_key` existente (`BR-12`); no se inventa número de recibo ni guía.

@@ -160,7 +160,8 @@ export default function OperationDetailPage() {
  `spec.md §4.5` pide avisar por desviación de peso, y `OD-06` fijó contra qué. La
  conclusión la calcula el backend; aquí solo se muestra (`AC-FE11`, `AC-FE14`).
  */}
- {event.event_type === 'weight_recording' && <WeightEvaluation eventId={event.id} />}
+ {/* `GA-REM-037-B` · B02: la recepción de reproductoras también muestra la evaluación del backend */}
+ {(event.event_type === 'weight_recording' || event.event_type === 'bird_reception') && <WeightEvaluation eventId={event.id} />}
  {event.feed_movements?.length > 0 && (
  <div className="mt-4 pt-4 border-t">
  <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.feed')}</h3>

@@ -317,7 +317,8 @@ async def test_t_038_21_la_mortalidad_sobre_umbral_avisa(
     """
     lote = await _lote(client, auth_headers, seeded_ids, elenco["area"]["id"])
     await _evento(client, seeded_ids, lote, tipo="bird_reception",
-                  bird_movements=[{"sex": "mixed", "quantity": 1000}])
+                  bird_movements=[{"sex": "mixed", "quantity": 1000}],
+                  received_total=1000, dead_on_arrival=0, rejected_on_arrival=0)  # `GA-REM-021-B` (`B01`), solo setup
     muerte = await _evento(client, seeded_ids, lote, tipo="mortality_recording",
                            bird_movements=[{"sex": "mixed", "quantity": 200}])
 

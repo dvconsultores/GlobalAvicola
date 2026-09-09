@@ -142,6 +142,12 @@ def func_count():
 # Aplicacion del valor corregido — P0-2 / RR-01
 # ═══════════════════════════════════════════════════════════════════════════
 
+#: `GA-REM-021-B` · `B01`: los sumandos del cuadre (`BR-20`) forman una identidad; corregir uno solo
+#: siempre descuadra un registro cuadrado. Se editan juntos por `PUT` (`OperationalEventUpdate`) o se
+#: devuelve el registro (`R-135`). Excepción explícita a la derivación de `RR-01`.
+NO_CORREGIBLES_POR_IDENTIDAD = frozenset({"received_total", "dead_on_arrival", "rejected_on_arrival"})
+
+
 def campos_corregibles() -> set[str]:
     """Campos del evento que una correccion puede modificar.
 
@@ -152,7 +158,7 @@ def campos_corregibles() -> set[str]:
     """
     from ..operations.schemas import OperationalEventUpdate
 
-    return set(OperationalEventUpdate.model_fields)
+    return set(OperationalEventUpdate.model_fields) - NO_CORREGIBLES_POR_IDENTIDAD
 
 
 def _leer_valor(event, campo: str) -> str | None:

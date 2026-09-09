@@ -120,6 +120,9 @@ export interface OperationEvent {
   egg_movements?: EggMovement[]
   feed_movements?: FeedMovement[]
   water_liters?: number // `GA-REM-021-A` · B05 (litros)
+  received_total?: number // `GA-REM-021-B` · B01 (aves recibidas declaradas)
+  dead_on_arrival?: number
+  rejected_on_arrival?: number
   hatchery_params?: HatcheryParam[]
   inspection_details?: InspectionDetail[]
 }

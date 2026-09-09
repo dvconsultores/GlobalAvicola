@@ -284,7 +284,7 @@ migración aplicada por `upgrade` · `B05` cerrado (técnico) · `GA-REM-021` **
 10. **Unidad**: aves, entero (`422` si no entero o negativo).
 11. **Fecha**: `event_date`; sin regla propia (`BR-06`, `BR-19`/`R-30`).
 12. **Duplicado/idempotencia**: `idempotency_key` existente; sin número de recibo nuevo.
-13. **Corrección**: los tres campos entran en `OperationalEventUpdate` → corregibles (`RR-01`); la identidad se revalida en alta, edición y corrección; un error en dos sumandos se arregla por edición o devolución (`R-135`), no relajando la regla.
+13. **Corrección**: los tres campos entran en `OperationalEventUpdate` (edición por `PUT`, con revalidación de la identidad) pero **no son corregibles uno a uno**: `campos_corregibles()` los excluye explícitamente (`NO_CORREGIBLES_POR_IDENTIDAD`, excepción documentada a la derivación de `RR-01`), porque cualquier corrección de un solo sumando descuadra un registro cuadrado y devolvería siempre `400`. La vía es la edición con los sumandos afectados en un estado editable, o la devolución (`R-135`). *Corrección de redacción en la implementación: la versión inicial decía «corregibles; la identidad se revalida en corrección», lo que es aritméticamente imposible de satisfacer.*
 14. **Concurrencia**: N/A (identidad intra-evento). **Transacción**: la regla corre antes de `db.add`; rechazo = cero filas, cero saldo, cero auditoría, cero alerta.
 15. **Inquilino / unidad / RBAC**: cadena certificada (`OD-14`, `OD-16`, `R-160`, `B05`); `operations:create`/`update`, `corrections:correct`; sin permiso nuevo.
 16. **Auditoría**: la del alta (`registered`); la denegada no audita.
@@ -331,7 +331,7 @@ migración aplicada por `upgrade` · `B05` cerrado (técnico) · `GA-REM-021` **
 | `AC-B01-15` | el alta cuadrada deja auditoría `registered`; la denegada no deja ninguna | auditoría |
 | `AC-B01-16` | reproductoras sin `received_total`, sin `dead_on_arrival` o sin `rejected_on_arrival` → `400` (cada ausencia por separado; `0` explícito sí vale) | `400` |
 | `AC-B01-17` | `received_total`/`rejected_on_arrival` en engorde → `400`; `dead_on_arrival` en engorde → `201` y **no** entra al saldo; los tres en `feed_registration`, en lote de progenitoras y en lote sin cadena → `400` | `400`/`201` |
-| `AC-B01-18` | `PUT` que descuadra → `400`; `PUT` que recuadra (dos campos) → `200`; corrección de `dead_on_arrival` que descuadra → `400`; corrección coherente → `201` con original en `correction_logs` | edición/corrección |
+| `AC-B01-18` | `PUT` que descuadra → `400 BR-20`; `PUT` que recuadra (dos campos) → `200`; una corrección uno a uno de cualquiera de los tres sumandos → `400` (campo no corregible) y **ninguna vía deja la recepción descuadrada**; `correction_logs` sin filas | edición/corrección |
 | `AC-B01-19` | `R-130`: tras la recepción el saldo es Σ alojadas (no `received_total`); una mortalidad posterior sigue acotada por ese saldo | saldo |
 | `AC-B01-20` | negativo o no entero → `422` | `422` |
 
@@ -395,7 +395,7 @@ permanente del tranche 7 §5). Migración **solo tras este commit de spec**.
 | `B01-S4` | el servidor confía en un total alojado enviado por el cliente (`extra_data.placed_total`) | `AC-B01-08` |
 | `B01-S5` | la obligatoriedad de los tres campos en reproductoras | `AC-B01-16` |
 | `B01-S6` | la aplicabilidad por cadena (identidad y campos admitidos en cualquier lote/tipo) | `AC-B01-17` |
-| `B01-S7` | la revalidación en corrección | `AC-B01-18` |
+| `B01-S7` | la exclusión de los tres sumandos de la corrección (un corrector puede dejar la recepción descuadrada) | `AC-B01-18` |
 | `SEC-S1` | la empresa (cuatro capas del alta: `_unidad_del_lote`, `_tipo_de_lote`, `lotes_alcanzables`, `validate_lot_active`) | `AC-B01-10` con fila observada |
 | `SEC-S2` | la habilitación de la unidad (guarda compartida) | `AC-B01-11` (global) |
 | `SEC-S3` | la concesión del actor | `AC-B01-11/12` |

@@ -43,6 +43,7 @@ from .validators import (
     validate_sap_document_unique,
     validate_sap_edit_lock,
     validate_segregation,
+    validate_reception_reconciliation,
     validate_water_consumption,
 )
 
@@ -583,7 +584,13 @@ class OperationsService:
         # proveedor que el administrador cargó, en la versión que este lote tiene fijada.
         # `docs/03 spec.md §4.5` pedía esta alerta desde el principio; lo que faltaba no
         # era el aviso sino la referencia contra la que emitirlo.
-        if event.event_type == models.EventType.WEIGHT_RECORDING and event.lot_id is not None:
+        # `GA-REM-037-B` · `GA-REM-021-B` (`B02`, Rec. §6): la recepción de reproductoras también se
+        # evalúa —mismo motor, misma alerta—; engorde no (`§4.8` no exige alertas por desviación).
+        if event.lot_id is not None and (
+            event.event_type == models.EventType.WEIGHT_RECORDING
+            or (event.event_type == models.EventType.BIRD_RECEPTION
+                and getattr(await self._tipo_de_lote(event.lot_id), "value", None) == "breeder")
+        ):
             alerts.extend(await self._alertas_de_peso(event, data))
 
         if alerts:
@@ -835,7 +842,12 @@ class OperationsService:
         # justamente por eso que las otras ocho salían como 500 (R-26).
         # `GA-REM-021-A` · `B05`: el agua solo en su evento, > 0 y en las etapas que el cliente
         # exige; la cadena se deriva del lote (empresa efectiva), nunca del cuerpo.
-        validate_water_consumption(event_type, data.water_liters, await self._tipo_de_lote(data.lot_id))
+        cadena_del_lote = await self._tipo_de_lote(data.lot_id)
+        validate_water_consumption(event_type, data.water_liters, cadena_del_lote)
+        # `GA-REM-021-B` · `B01`: el cuadre de la recepción de reproductoras (`BR-20`); las alojadas
+        # son las filas que este mismo servicio persiste, nunca un total enviado por el cliente.
+        validate_reception_reconciliation(event_type, cadena_del_lote, data.received_total, data.dead_on_arrival,
+                                          data.rejected_on_arrival, sum(bm.quantity for bm in data.bird_movements))
         if event_type == models.EventType.MORTALITY_RECORDING:
             # Sin la guarda `total_qty > 0`: `validate_mortality` es precisamente quien
             # rechaza el cero y los negativos (`BR-01`), y saltársela dejaba pasar un
@@ -1076,6 +1088,12 @@ class OperationsService:
             await self.exigir_unidad_operativa(event=event)
         if "water_liters" in cambios:  # `GA-REM-021-A`: la edición respeta `RR-11` y el tipo
             validate_water_consumption(event.event_type, cambios["water_liters"], await self._tipo_de_lote(lote_destino))
+        if any(k in cambios for k in ("received_total", "dead_on_arrival", "rejected_on_arrival")):
+            # `GA-REM-021-B`: la edición revalida el cuadre contra los movimientos persistidos (`BR-20`)
+            validate_reception_reconciliation(
+                event.event_type, await self._tipo_de_lote(lote_destino),
+                cambios.get("received_total", event.received_total), cambios.get("dead_on_arrival", event.dead_on_arrival),
+                cambios.get("rejected_on_arrival", event.rejected_on_arrival), sum(bm.quantity for bm in event.bird_movements))
         for key, val in cambios.items():
             setattr(event, key, val)
         event.version += 1

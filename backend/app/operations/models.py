@@ -126,6 +126,11 @@ class OperationalEvent(Base):
     # `GA-REM-021-A` · `B05`: litros consumidos por la parvada en el día (`RR-10`); solo en
     # `water_consumption`; `NULL` = sin dato (nunca `0`, `RR-11`). `Float` como `quantity_kg`.
     water_liters: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    # `GA-REM-021-B` · `B01` (Rec. §6): recibidas, muertas al arribo y rechazadas de la recepción de
+    # reproductoras; las alojadas son Σ `bird_movements.quantity`. `NULL` = no declarado.
+    received_total: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    dead_on_arrival: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    rejected_on_arrival: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     #: `GA-REM-040` fase 6 · `OD-10.c`. Cadena productiva **decidida a mano**, cuando no se
     #: puede derivar del lote. Apunta a la habilitación de una empresa —no al catálogo—
     #: por la misma razón que la concesión de un usuario (`OD-09.d`): así la fila dice bajo

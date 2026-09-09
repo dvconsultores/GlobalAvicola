@@ -417,6 +417,47 @@ async def validate_lot_active(db: AsyncSession, lot_id: int, company_id: int | N
 UNIDADES_CON_CONSUMO_DE_AGUA = {"breeder", "broiler"}
 
 
+def validate_reception_reconciliation(event_type, bird_type, received_total, dead_on_arrival, rejected_on_arrival, alojadas: int) -> None:
+    """`GA-REM-021` enmienda B · `B01` · `RR-12` · `BR-20` (`Recomendación central §6`).
+
+    Recepción de reproductoras: `recibidas == alojadas + muertas al arribo + rechazadas`, con los tres
+    datos declarados explícitamente (la ausencia no es `0`) y sin tolerancia. Las **alojadas** las
+    calcula el servidor (Σ `bird_movements.quantity`): nunca vienen del cuerpo. Engorde declara solo la
+    mortalidad inicial (`spec.md §4.8`); ningún otro tipo de evento ni otra cadena lleva estos datos.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    cadena = getattr(bird_type, "value", bird_type)
+    declarados = [n for n, v in (("received_total", received_total), ("dead_on_arrival", dead_on_arrival),
+                                 ("rejected_on_arrival", rejected_on_arrival)) if v is not None]
+    if tipo != EventType.BIRD_RECEPTION.value:
+        if declarados:
+            raise BusinessRuleViolation(
+                f"{', '.join(declarados)} solo se registra en una recepción de aves", "BR-20")
+        return
+    if cadena == "breeder":
+        faltan = [n for n, v in (("received_total", received_total), ("dead_on_arrival", dead_on_arrival),
+                                 ("rejected_on_arrival", rejected_on_arrival)) if v is None]
+        if faltan:
+            raise BusinessRuleViolation(
+                "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo "
+                f"(falta: {', '.join(faltan)})", "BR-20")
+        suma = alojadas + dead_on_arrival + rejected_on_arrival
+        if received_total != suma:
+            raise BusinessRuleViolation(
+                f"El cuadre de la recepción no cierra: recibidas {received_total} ≠ alojadas {alojadas} + "
+                f"mortalidad al arribo {dead_on_arrival} + rechazo {rejected_on_arrival} = {suma}", "BR-20")
+        return
+    if cadena == "broiler":
+        sobran = [n for n in declarados if n != "dead_on_arrival"]
+        if sobran:
+            raise BusinessRuleViolation(
+                f"{', '.join(sobran)} solo se registra en la recepción de reproductoras (Rec. §6)", "BR-20")
+        return
+    if declarados:
+        raise BusinessRuleViolation(
+            f"{', '.join(declarados)} solo se registra en la recepción de reproductoras o de engorde", "BR-20")
+
+
 def validate_water_consumption(event_type, water_liters, bird_type) -> None:
     """`GA-REM-021` enmienda A · `B05` · `RR-10` (litros) · `RR-11` (> 0).
 

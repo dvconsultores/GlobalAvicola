@@ -239,6 +239,7 @@ async def test_t_067_04_una_recepcion_posterior_suma(
             "event_type": "bird_reception",
             "event_date": recent_event_date(),
             "bird_movements": [{"sex": "male", "quantity": 500}],
+            "received_total": 500, "dead_on_arrival": 0, "rejected_on_arrival": 0,  # `GA-REM-021-B` (`B01`), solo setup
         },
     )
     assert r.status_code == 201, r.text
@@ -287,6 +288,7 @@ async def test_t_067_06_no_se_activa_un_lote_con_historia(
             "event_type": "bird_reception",
             "event_date": _hoy(),
             "bird_movements": [{"sex": "male", "quantity": 800}],
+            "received_total": 800, "dead_on_arrival": 0, "rejected_on_arrival": 0,  # `GA-REM-021-B` (`B01`), solo setup
         },
     )
     assert recepcion.status_code == 201, recepcion.text
@@ -316,6 +318,7 @@ async def test_t_067_07_lote_normal_sin_apertura_no_cambia(
             "event_type": "bird_reception",
             "event_date": _hoy(),
             "bird_movements": [{"sex": "female", "quantity": 2_000}],
+            "received_total": 2_000, "dead_on_arrival": 0, "rejected_on_arrival": 0,  # `GA-REM-021-B` (`B01`), solo setup
         },
     )
     assert await _saldo(motor, lot_id) == 2_000

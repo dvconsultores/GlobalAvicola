@@ -95,6 +95,9 @@ const operationSchema = z.object({
  transport_id: z.number().optional(),
  sample_size: z.number().optional(),
  water_liters: z.number().positive().optional(), // `GA-REM-021-A` · B05 (L, RR-11)
+ received_total: z.number().int().min(1).optional(), // `GA-REM-021-B` · B01 (aves)
+ dead_on_arrival: z.number().int().min(0).optional(),
+ rejected_on_arrival: z.number().int().min(0).optional(),
  extra_data: z.record(z.string(), z.any()).optional(),
  // Sub-models
  bird_movements: z.array(z.object({
@@ -626,6 +629,35 @@ export default function OperationFormPage() {
  </div>
  </div>
  )}
+
+ {/* `GA-REM-021-B` · B01: cuadre de la recepción de reproductoras (Rec. §6). Solo aritmética informativa; la regla (BR-20) la aplica el backend. */}
+ {stage === 'breeder_rearing' && (() => {
+ const dead = Number(watch('dead_on_arrival' as any) || 0)
+ const rejected = Number(watch('rejected_on_arrival' as any) || 0)
+ const received = Number(watch('received_total' as any) || 0)
+ return (
+ <div className="bg-slate-50 rounded-lg p-3 space-y-2">
+ <p className="text-sm font-semibold text-slate-700">{t('operations.receptionReconciliation', 'Cuadre de la recepción')}</p>
+ <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.receivedTotal', 'Cantidad recibida (aves)')}</label>
+ <input type="number" min="1" step="1" {...register('received_total' as any, { valueAsNumber: true })} className={ic} />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.deadOnArrival', 'Mortalidad al arribo')}</label>
+ <input type="number" min="0" step="1" {...register('dead_on_arrival' as any, { valueAsNumber: true })} className={ic} />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.rejectedOnArrival', 'Rechazo')}</label>
+ <input type="number" min="0" step="1" {...register('rejected_on_arrival' as any, { valueAsNumber: true })} className={ic} />
+ </div>
+ </div>
+ <p className="text-xs text-slate-500">
+ {t('operations.reconciliationHint', { placed: totalReceived, dead, rejected, sum: totalReceived + dead + rejected, received })}
+ </p>
+ </div>
+ )
+ })()}
 
  {/* Supplier & Breed — stacked on mobile, side-by-side on desktop */}
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">

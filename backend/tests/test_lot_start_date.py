@@ -201,6 +201,7 @@ async def test_t_047_04_br06_acepta_lo_posterior_y_rechaza_lo_anterior(
         "house_id": seeded_ids["house_id"],
         "event_type": "bird_reception",
         "bird_movements": [{"sex": "mixed", "quantity": 100}],
+        "received_total": 100, "dead_on_arrival": 0, "rejected_on_arrival": 0,  # `GA-REM-021-B` (`B01`), solo setup
     }
 
     # Posterior al inicio y dentro del período abierto: se acepta.

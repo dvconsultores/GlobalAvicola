@@ -153,8 +153,10 @@ def _cuerpo(esc, lote, tipo, cantidad, *, granja=None, galpon=None, extra=None):
 
 
 async def _recibir(http_client, esc, lote, n, *, actor="actor_a", granja="granja_a", galpon="galpon_a"):
+    # `GA-REM-021-B` (`B01`): la recepción de reproductoras declara su cuadre (solo setup; nada que medir aquí)
+    cuadre = {"received_total": n, "dead_on_arrival": 0, "rejected_on_arrival": 0} if lote in (esc["lr"], esc["lc"], esc["lb"]) else None
     r = await http_client.post("/api/v1/operations", headers=_token(esc[actor]),
-                               json=_cuerpo(esc, lote, "bird_reception", n, granja=esc[granja], galpon=esc[galpon]))
+                               json=_cuerpo(esc, lote, "bird_reception", n, granja=esc[granja], galpon=esc[galpon], extra=cuadre))
     assert r.status_code == 201, r.text
     return r.json()
 
@@ -392,5 +394,5 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     raiz = pathlib.Path(__file__).resolve().parents[1]
     # `GA-REM-041 §5`: la cabeza avanza a `t0u1v2w3x4y5` (REVERSED, `OD-19`) y hay tres rutas
     # nuevas de `reversals` (208 → 211). Recuentos exactos, nunca `>=`.
-    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["v2w3x4y5z6a7"]  # `GA-REM-041-B`
+    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["w3x4y5z6a7b8"]  # `GA-REM-021-B §B.5`
     assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 211

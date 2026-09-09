@@ -230,8 +230,11 @@ async def esc(test_database_url):
 # ── helpers ────────────────────────────────────────────────────────────────
 
 def _recepcion(esc, lote, n=10, *, granja="granja_a", galpon="galpon_a"):
-    return {"lot_id": lote, "event_type": "bird_reception", "event_date": recent_event_date(),
-            "farm_id": esc[granja], "house_id": esc[galpon], "bird_movements": [{"sex": "mixed", "quantity": n}]}
+    cuerpo = {"lot_id": lote, "event_type": "bird_reception", "event_date": recent_event_date(),
+              "farm_id": esc[granja], "house_id": esc[galpon], "bird_movements": [{"sex": "mixed", "quantity": n}]}
+    if lote in (esc["lr"], esc["lb"], esc["lc"]):  # `GA-REM-021-B` (`B01`): cuadre de reproductoras (solo setup)
+        cuerpo.update({"received_total": n, "dead_on_arrival": 0, "rejected_on_arrival": 0})
+    return cuerpo
 
 
 def _inspeccion_sin_lote(esc):

@@ -163,7 +163,8 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
     lot_id = await _crear_lote(client, auth_headers, seeded_ids)
 
     await _evento(client, auth_headers, seeded_ids, lot_id, "bird_reception",
-                  bird_movements=[{"sex": "mixed", "quantity": AVES_RECIBIDAS}])
+                  bird_movements=[{"sex": "mixed", "quantity": AVES_RECIBIDAS}],
+                  received_total=AVES_RECIBIDAS, dead_on_arrival=0, rejected_on_arrival=0)  # `GA-REM-021-B` (`B01`), solo setup
     id_mortalidad = await _evento(
         client, auth_headers, seeded_ids, lot_id, "mortality_recording",
         bird_movements=[{"sex": "mixed", "quantity": MORTALIDAD}])

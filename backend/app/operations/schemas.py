@@ -105,6 +105,10 @@ class OperationalEventBase(BaseModel):
     extra_data: Optional[dict] = None
     #: `GA-REM-021-A` · `B05`: litros del día; obligatorio en `water_consumption`, prohibido en el resto.
     water_liters: Optional[float] = None
+    #: `GA-REM-021-B` · `B01`: cuadre de la recepción de reproductoras (`BR-20`); enteros, aves.
+    received_total: Optional[int] = Field(default=None, ge=1)
+    dead_on_arrival: Optional[int] = Field(default=None, ge=0)
+    rejected_on_arrival: Optional[int] = Field(default=None, ge=0)
     idempotency_key: Optional[str] = None  # Client-generated UUID to prevent duplicate submissions
 
 
@@ -184,6 +188,11 @@ class OperationalEventUpdate(BaseModel):
     extra_data: Optional[dict] = None
     #: `GA-REM-021-A`: editable y **corregible** (`campos_corregibles` deriva de este contrato).
     water_liters: Optional[float] = None
+    #: `GA-REM-021-B`: editables por `PUT` (la identidad se revalida); **no** corregibles uno a uno
+    #: (`corrections.service.NO_CORREGIBLES_POR_IDENTIDAD`).
+    received_total: Optional[int] = Field(default=None, ge=1)
+    dead_on_arrival: Optional[int] = Field(default=None, ge=0)
+    rejected_on_arrival: Optional[int] = Field(default=None, ge=0)
 
 
 class OperationalEventRead(OperationalEventBase):
