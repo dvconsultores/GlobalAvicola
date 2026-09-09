@@ -74,6 +74,33 @@ class LotService:
             )
         return self._unidades_cache
 
+    async def _exigir_unidad_operativa(self, unidad: Optional[str]) -> None:
+        """`GA-REM-040-H` · `R-163`: la habilitación de la empresa es absoluta al escribir.
+
+        `unidad` es el código canónico del lote (`lot.bird_type`, o `data.bird_type` en el alta;
+        `None` = pendiente). Para el actor de empresa las superficies por `id` ya responden `404`
+        fuera de su alcance (fase 3): aquí solo cambia el alta, que no pasaba por ningún
+        alcance. Para la autoridad global se cierra la exención de **habilitación** que la fase 3
+        declaró para lecturas y que nunca fue una autorización para escribir (`OD-16.f`). La
+        decisión es la función compartida con `operations`; el contrato de `lots` es `403`:
+        la unidad es un catálogo público de cuatro códigos, no hay nada que no enumerar.
+        """
+        from fastapi import HTTPException, status as _st
+
+        from ..business_units.service import AccesoDeUnidadDenegado, exigir_unidad_operativa
+
+        try:
+            await exigir_unidad_operativa(
+                self.db, current_user=self.current_user, company_id=self.company_id,
+                unidad=unidad, efectivas=await self._unidades())
+        except AccesoDeUnidadDenegado as exc:
+            raise HTTPException(status_code=_st.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
+
+    @staticmethod
+    def _codigo(lot) -> Optional[str]:
+        tipo = getattr(lot, "bird_type", None)
+        return getattr(tipo, "value", tipo) if tipo is not None else None
+
     async def get_lots(
         self, skip: int = 0, limit: int = 20, search: str = "",
         farm_id: Optional[int] = None, status: Optional[str] = None,
@@ -161,6 +188,12 @@ class LotService:
         weight_curve_id = await self._curva_del_lote(
             data.genetic_line_id, getattr(data, "weight_curve_id", None)
         )
+        # `GA-REM-040-H` · `AC-L02…L07`: `bird_type` es el dato de dominio que fija la cadena
+        # del lote; el servidor lo contrasta con el alcance **antes** de `db.add`. Sin esto,
+        # cualquier actor creaba lotes en cualquier cadena, apagada o no concedida, y la
+        # autoridad global sin contexto los creaba sin empresa.
+        await self._exigir_unidad_operativa(
+            getattr(data.bird_type, "value", data.bird_type) if data.bird_type is not None else None)
 
         lot = Lot(
             company_id=self.company_id,
@@ -215,6 +248,9 @@ class LotService:
         """Update lot fields."""
         master_service = MasterService(self.db, Lot, self.current_user,
                                        unidades=await self._unidades())
+        # `GA-REM-040-H` · `AC-L08`: el lote se resuelve como siempre (`404` por unidad para el
+        # actor) y después se exige la habilitación, que a la autoridad global no le exigía nadie.
+        await self._exigir_unidad_operativa(self._codigo(await master_service.get_by_id(lot_id)))
         return await master_service.update(lot_id, data)
 
     async def close_lot(self, lot_id: int) -> dict:
@@ -222,6 +258,7 @@ class LotService:
         master_service = MasterService(self.db, Lot, self.current_user,
                                        unidades=await self._unidades())
         lot = await master_service.get_by_id(lot_id)
+        await self._exigir_unidad_operativa(self._codigo(lot))  # `AC-L08`, antes de toda regla
 
         if lot.status != "active":
             raise HTTPException(
@@ -357,7 +394,8 @@ class LotService:
         # acotado que el detalle, de modo que la respuesta es idéntica —`404`— y no
         # revela que el lote existe. `get_lot` acota por empresa para todos y por unidad
         # solo para quien no es global: la exención de visibilidad de unidad se preserva.
-        await self.get_lot(data.lot_id)
+        # `GA-REM-040-H` · `AC-L08`: verla no es operarla; la habilitación se exige a todos.
+        await self._exigir_unidad_operativa(self._codigo(await self.get_lot(data.lot_id)))
 
         # Validate no existing opening balance
         existing = await self.db.execute(
@@ -469,7 +507,7 @@ class LotService:
         de otra empresa, o de otra cadena de la propia. Escribir contra lo ajeno es la misma
         clase de defecto que `R-42`, y aquí se cierra por el mismo camino que la lectura.
         """
-        await self.get_lot(data.lot_id)
+        await self._exigir_unidad_operativa(self._codigo(await self.get_lot(data.lot_id)))  # `AC-L08`
         phase = models.LotPhase(**data.model_dump())
         self.db.add(phase)
         await self.db.flush()

@@ -29,7 +29,7 @@ exigiera tendrían que reimplementar la regla.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import Optional, Sequence
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -209,7 +209,62 @@ async def conceder_unidad(db: AsyncSession, *, user, company_business_unit):
 
 
 class AccesoDeUnidadDenegado(PermissionError):
-    """La unidad pedida no está en el alcance operativo efectivo del usuario."""
+    """La unidad pedida no está en el alcance operativo efectivo del usuario.
+
+    `motivo` (`GA-REM-040-H §H.5`) dice **por qué**, para que cada servicio traduzca a su
+    contrato sin reinterpretar la regla:
+
+        sin_empresa      sin empresa efectiva, o sin ninguna unidad habilitada en ella (`OD-14.d`)
+        no_habilitada    la empresa no tiene esa unidad encendida (`AC-A05`, `OD-16.e`)
+        no_concedida     el actor no la tiene en su alcance efectivo (`AC-C05`)
+        sin_unidades     dato pendiente y actor sin ninguna unidad efectiva (`OD-09.c`)
+    """
+
+    def __init__(self, motivo: str = "no_concedida", unidad: Optional[str] = None):
+        self.motivo = motivo
+        self.unidad = unidad
+        detalle = {
+            "sin_empresa": "sin empresa efectiva con unidades de negocio habilitadas",
+            "no_habilitada": f"la unidad de negocio {unidad!r} no está habilitada para la empresa",
+            "no_concedida": f"sin acceso operativo a la unidad de negocio {unidad!r}",
+            "sin_unidades": "sin unidad de negocio operativa",
+        }[motivo]
+        super().__init__(detalle)
+
+
+async def exigir_unidad_operativa(
+    db: AsyncSession, *, current_user: dict, company_id: Optional[int],
+    unidad: Optional[str], efectivas: Sequence[str],
+) -> None:
+    """La guarda de **escritura productiva**, compartida. `GA-REM-040` enmiendas G (§G.3) y H (§H.5).
+
+    Quien llama ya derivó la unidad canónica del recurso (`lot.bird_type`, la clasificación del
+    plano de control, o `None` = pendiente) y resolvió las unidades efectivas del actor. Aquí
+    solo se decide, y se decide igual en `operations` y en `lots`:
+
+        actor de empresa      unidad ∈ efectivas (habilitada ∧ concedida viva), o `no_concedida`
+                              pendiente: al menos una efectiva, o `sin_unidades` (`OD-09.c`)
+        autoridad global      situada y con alguna unidad habilitada, o `sin_empresa` (`OD-14.d`)
+                              unidad ∈ habilitadas de la empresa, o `no_habilitada` (`AC-A05`,
+                              `OD-16.e/f`: apagada = inaccesible **también para ella**)
+                              la concesión de usuario **no** se le exige (fase 3, `R-139 §6`)
+
+    `is_super_admin` es la capacidad `("*", …, "all")` resuelta en sesión, no un nombre de rol
+    (`AC-C14`, `OD-09.a §3.1`). No conoce superficies ni códigos HTTP: eso es del llamador.
+    """
+    if current_user.get("is_super_admin"):
+        habilitadas = await unidades_habilitadas(db, company_id)
+        if company_id is None or not habilitadas:
+            raise AccesoDeUnidadDenegado("sin_empresa")
+        if unidad is not None and unidad not in habilitadas:
+            raise AccesoDeUnidadDenegado("no_habilitada", unidad)
+        return
+    if unidad is not None:
+        if unidad not in efectivas:
+            raise AccesoDeUnidadDenegado("no_concedida", unidad)
+        return
+    if not efectivas:
+        raise AccesoDeUnidadDenegado("sin_unidades")
 
 
 async def exigir_acceso_a_unidad(
@@ -236,8 +291,8 @@ async def exigir_acceso_a_unidad(
     """
     efectivas = await unidades_efectivas(db, user, company_id=company_id)
     if code not in efectivas:
-        raise AccesoDeUnidadDenegado(
-            f"sin acceso operativo a la unidad de negocio {code!r}")
+        # Mismo mensaje que antes de la enmienda H; ahora con motivo estructurado.
+        raise AccesoDeUnidadDenegado("no_concedida", code)
 
 
 async def revocar_concesiones(db: AsyncSession, *, user) -> int:

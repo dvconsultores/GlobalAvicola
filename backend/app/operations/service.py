@@ -146,26 +146,20 @@ class OperationsService:
         else:
             unidad = None
 
-        if self.current_user.get("is_super_admin"):
-            from ..business_units.service import unidades_habilitadas
+        # `GA-REM-040-H §H.5`: la decisión vive en un solo sitio, compartido con `lots`. Aquí
+        # solo se deriva la unidad (arriba) y se traduce el motivo al contrato de esta
+        # superficie: lo no concedido se comporta como lote inexistente (anti-enumeración,
+        # `BR-07`); lo demás es `403`.
+        from ..business_units.service import (AccesoDeUnidadDenegado,
+                                              exigir_unidad_operativa as _guarda)
 
-            habilitadas = await unidades_habilitadas(self.db, self.company_id)
-            if self.company_id is None or not habilitadas:
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                                    detail="Sin empresa efectiva con unidades de negocio habilitadas")
-            if unidad is not None and unidad not in habilitadas:
-                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                                    detail=f"La unidad de negocio {unidad!r} no está habilitada para la empresa")
-            return
-
-        efectivas = await self._unidades()
-        if unidad is not None:
-            if unidad not in efectivas:
-                raise BusinessRuleViolation("Lote no encontrado", "BR-07")
-            return
-        if not efectivas:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
-                                detail="Sin unidad de negocio operativa")
+        try:
+            await _guarda(self.db, current_user=self.current_user, company_id=self.company_id,
+                          unidad=unidad, efectivas=await self._unidades())
+        except AccesoDeUnidadDenegado as exc:
+            if exc.motivo == "no_concedida":
+                raise BusinessRuleViolation("Lote no encontrado", "BR-07") from exc
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
 
     # ============================================================
     # Create Event
@@ -1163,6 +1157,11 @@ class OperationsService:
         # empresa efectiva de la evidencia.
         if evidence.company_id != self.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        # `GA-REM-040-H` · `R-162` · `AC-E02…E04`: ya dentro de la empresa, el evento se resuelve
+        # con el mismo alcance de unidad que su listado (`404` para el actor de empresa; la
+        # autoridad global situada conserva la visibilidad de control). Antes, el fichero de
+        # otra cadena de la propia empresa se servía con solo comparar la empresa.
+        await self.get_event(event_id)
         return evidence
 
     # ============================================================
