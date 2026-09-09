@@ -89,6 +89,8 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
         Alcance.CONTROL, None, "configuración de la empresa, no producción"),
     "/api/v1/business-units/{code}/enable": (Alcance.CONTROL, None, "habilitar, `T-040-18`"),
     "/api/v1/business-units/{code}/disable": (Alcance.CONTROL, None, "deshabilitar"),
+    "/api/v1/business-units/{code}/grant-candidates": (
+        Alcance.CONTROL, None, "a quién conceder, sin `users:read` · `R-129`"),
     "/api/v1/users/{user_id}/business-units": (
         Alcance.CONTROL, None, "conceder y consultar el acceso, `T-040-19`"),
     "/api/v1/users/{user_id}/business-units/{code}": (

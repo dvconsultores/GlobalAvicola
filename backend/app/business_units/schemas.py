@@ -60,3 +60,22 @@ class ConcesionCreate(BaseModel):
     """
 
     code: str = Field(min_length=1, max_length=30)
+
+
+class CandidatoRead(BaseModel):
+    """Un usuario al que se le puede conceder una unidad — enmienda F · `AC-H15` · `R-129`.
+
+    **Lo mínimo para elegir a una persona, y nada de administrarla.** Ni correo, ni teléfono,
+    ni rol, ni permisos: el `Administrador de Accesos` no tiene `users:read`, y esta
+    proyección existe justamente para que no lo necesite. Cada campo de más sería un pedazo
+    de `users:read` con otro nombre.
+    """
+
+    user_id: int
+    username: str
+    #: Nombre y apellido, para reconocer a la persona en un desplegable.
+    display_name: str
+    #: Si ya tiene esa unidad concedida y viva. Se incluye marcado, no se oculta: ocultarlo
+    #: haría indistinguible «nunca se le dio» de «ya la tiene» — la misma confusión que
+    #: `AC-H11` separa entre concedidas y efectivas.
+    already_granted: bool

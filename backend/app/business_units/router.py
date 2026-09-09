@@ -33,7 +33,7 @@ from ..auth.security import require_permission
 from ..database import get_db
 from ..transaction import RutaTransaccional
 from . import admin
-from .schemas import ConcesionCreate, ConcesionRead, HabilitacionRead
+from .schemas import CandidatoRead, ConcesionCreate, ConcesionRead, HabilitacionRead
 
 # `GA-REM-026`. La frontera transaccional es de la ruta: conceder y auditar la concesión
 # confirman juntos o no confirma ninguno. Sin esto quedaría escrito el acceso sin el registro
@@ -139,6 +139,25 @@ async def deshabilitar_unidad(
         return await admin.fijar_habilitacion(
             db, company_id=_empresa_efectiva(current_user), code=code,
             habilitada=False, actor=current_user)
+    except (admin.RecursoDeAdministracionNoEncontrado, admin.AdministracionInvalida) as exc:
+        raise _traducir(exc) from exc
+
+
+@router.get("/business-units/{code}/grant-candidates", response_model=list[CandidatoRead],
+            tags=["Business Units"])
+async def candidatos_a_recibir_unidad(
+    code: str,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission(MODULO, "create")),
+):
+    """A quién se le puede conceder esta unidad. `AC-H15` · `R-129` · `T-040-38`.
+
+    Exige `business_units:create` y **no** `users:read`: la autoridad de conceder es la de
+    saber a quién. Dos permisos que fueran siempre juntos serían uno con un nombre de más.
+    """
+    try:
+        return await admin.candidatos_de_concesion(
+            db, company_id=_empresa_efectiva(current_user), code=code, actor=current_user)
     except (admin.RecursoDeAdministracionNoEncontrado, admin.AdministracionInvalida) as exc:
         raise _traducir(exc) from exc
 

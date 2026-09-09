@@ -41,7 +41,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..audit.helpers import audit_accion
 from ..audit.models import AuditAction, AuditModule
 from .models import BusinessUnit, CompanyBusinessUnit, UserBusinessUnit
-from .schemas import ConcesionRead, HabilitacionRead
+from .schemas import CandidatoRead, ConcesionRead, HabilitacionRead
 from .service import ConcesionInvalida, conceder_unidad, revocar_unidad
 
 
@@ -229,6 +229,58 @@ async def listar_concesiones(
         .order_by(BusinessUnit.code, UserBusinessUnit.id)
     )).all()
     return [_proyectar(c, u, h) for c, u, h in filas]
+
+
+async def candidatos_de_concesion(
+    db: AsyncSession, *, company_id: int, code: str, actor: dict[str, Any]
+) -> list[CandidatoRead]:
+    """A quién se le puede conceder esa unidad, en la empresa efectiva. `AC-H15`.
+
+    ```
+    DESCUBRIR A QUIÉN CONCEDER   ≠   ADMINISTRAR USUARIOS
+    ```
+
+    Refleja las puertas de `conceder` en vez de inventar otras: una unidad desconocida o
+    apagada no tiene candidatos, igual que no admite concesión. La elegibilidad sale de lo que
+    el `POST` aceptaría —usuario activo de la empresa efectiva— más una cortesía: el actor no
+    se ofrece a sí mismo, porque `OD-15.a` va a rechazarlo de todos modos. **La seguridad no
+    está aquí**: el `POST` sigue denegando aunque el cliente se envíe a sí mismo o envíe a un
+    ajeno.
+
+    El predicado de empresa va **en la consulta**, antes de ordenar. No hay parámetro de
+    búsqueda ni de identificador, de modo que no hay oráculo: lo único que se puede pedir es
+    «los de mi empresa para esta unidad».
+
+    Solo lee. Ni fila, ni auditoría de éxito, ni cambio de estado.
+    """
+    from ..auth.models import User
+
+    unidad = await _unidad(db, code)
+    habilitacion = await _habilitacion(db, company_id=company_id, code=code)
+    if unidad is None or not unidad.is_active or habilitacion is None:
+        raise RecursoDeAdministracionNoEncontrado(f"unidad de negocio {code!r}")
+    if not habilitacion.is_enabled:
+        raise AdministracionInvalida(
+            f"la empresa no tiene habilitada la unidad {code!r}; no hay a quién concederla")
+
+    # Una sola consulta: el usuario y si tiene viva la concesión de ESA habilitación.
+    ya = (
+        select(UserBusinessUnit.user_id)
+        .where(UserBusinessUnit.company_business_unit_id == habilitacion.id,
+               UserBusinessUnit.revoked_at.is_(None))
+        .subquery()
+    )
+    filas = (await db.execute(
+        select(User.id, User.username, User.first_name, User.last_name,
+               User.id.in_(select(ya.c.user_id)).label("ya"))
+        .where(User.company_id == company_id,
+               User.is_active.is_(True),
+               User.id != actor.get("id"))
+        .order_by(User.username)
+    )).all()
+    return [CandidatoRead(user_id=uid, username=un,
+                          display_name=f"{fn} {ln}".strip(), already_granted=bool(ya_))
+            for uid, un, fn, ln, ya_ in filas]
 
 
 async def conceder(
