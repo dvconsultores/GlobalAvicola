@@ -253,3 +253,163 @@ sa.Column("water_liters", sa.Float(), nullable=True))` · `downgrade`: `drop_col
 `AC-W01…07`, `AC-V01…09`, `AC-S01…09`, `AC-BU01…04`, `AC-C01…03`, `AC-AU01…02` verdes · rojo válido · `S1–S6`, `S9`, `S10`
 válidas, `S7`/`S8` `N/A` · `R-130` 21/21 · tranches 2-5 · `R-139` 35/35 · guardianes exactos · regresión completa · `vitest` ·
 migración aplicada por `upgrade` · `B05` cerrado (técnico) · `GA-REM-021` **PARTIAL** · certificación de proceso `BLOCKED_RUNTIME`.
+
+---
+
+# Enmienda B · `B01` cuadre de recepción + `B02` pesos en rango en la recepción (2026-09-10 · WAVE B tranche 7)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-021-B` · `REQUIRED OPERATIONAL DATA` + `BUSINESS RULE ACTIVATION` · **Estado** `SPEC_READY` |
+| **Subrequisitos** | **`B01`** = `H360-B01` (P2): «hembras + machos + mortalidad + rechazo cuadren contra recibido» · **`B02`** = `H360-B02` (P2): «los pesos estén dentro de rango esperado» |
+| **Fuente** | `Recomendación central.pdf` §6 «Proceso recomendado: recepción de reproductoras» (p.9-10), validación en «administración web intermedia» |
+| **Matrices previas** | `GA_REM_021_B01_RECEPTION_RECONCILIATION_MATRIX.md` · `GA_REM_021_B02_WEIGHT_RANGE_MATRIX.md` |
+| **Trazas** | `B01` ≠ `OD-04`/`GA-TD-014` (viñeta distinta del mismo §6; la OC sigue en `BR-18` sin cambio) · `B02` gobernado por `GA-REQ-037` + `OD-06` + `GA-REM-037` (referente = curva estándar del lote; `RR-13`) |
+| **Reglas resueltas por evidencia** | **`RR-12`** (identidad del cuadre y sus datos; aves alojadas = Σ movimientos = entradas del saldo; mortalidad al arribo y rechazo fuera del saldo; sin tolerancia) · **`RR-13`** (referente del rango = curva del lote; consecuencia = alerta, no bloqueo; evaluación por fila contra la curva sin sexo) — ninguna exigió escalado |
+| **Composición** | `B01` y `B02` son independientes (mismo evento, distintas reglas, distintos datos); mismo `POST /operations`; **CASO A**: se implementan ambos |
+| **Decisión del propietario** | **no requerida** |
+| **Excluido** | `B03` · `B04` (`AOD-14`) · `B13` · `R-156` (`AOD-20`) · `R-152`/`R-153` · `R-161` · `R-164` · `R-166` · `R-140`/`R-154` residuales · `R-136` SAP · `R-142` · `R-144` · `R-147` · `R-148` · ola C (KPI, FCR, AFCR, mortalidad, vacunación, agua, peso/uniformidad) · fase 9 · SAP · `BU-D10` · `R-158` · motor genérico de recepción · motor genérico de genética · cierre de OC · tolerancias · estado de recepción · instantánea de curva · desviación % · estándar por sexo |
+
+## B.1 `B01` · contrato del cuadre
+
+1. **Recepción**: `bird_reception` de un lote `Lot.bird_type = BREEDER` (§6 «recepción de reproductoras»). Engorde: solo `dead_on_arrival` opcional (`spec.md §4.8:213`). Otros tipos de evento, otras cadenas y lote sin cadena: los tres campos **prohibidos** (`400`).
+2. **Fuente**: nivel 2 (§6). `OD-04`: solo el principio «sin tolerancia». `GA-TD-014`: intacto (`validate_oc_limit`, `BR-18`).
+3. **Cantidad esperada / recurso padre**: no participa (es la OC, ya certificada).
+4. **Recibido**: `received_total` (`int ≥ 1`), dato declarado por el operador (§6 «Cantidad recibida»).
+5. **Alojadas**: Σ `bird_movements[].quantity` del evento (§6 «Distribución de hembras/machos»), **derivado por el servidor**, nunca del cuerpo.
+6. **Mortalidad al arribo**: `dead_on_arrival` (`int ≥ 0`, explícito). **Rechazo**: `rejected_on_arrival` (`int ≥ 0`, explícito).
+7. **Identidad** (`BR-20`): `received_total == Σ alojadas + dead_on_arrival + rejected_on_arrival`; igualdad exacta; sin tolerancia; el mensaje nombra los cuatro números.
+8. **Entregas parciales**: cada entrega cuadra por sí misma; la acumulación contra la OC sigue siendo `BR-18`.
+9. **Sobre/bajo-recepción, cierre, estado**: no son `B01`; no se introduce estado ni cierre.
+10. **Unidad**: aves, entero (`422` si no entero o negativo).
+11. **Fecha**: `event_date`; sin regla propia (`BR-06`, `BR-19`/`R-30`).
+12. **Duplicado/idempotencia**: `idempotency_key` existente; sin número de recibo nuevo.
+13. **Corrección**: los tres campos entran en `OperationalEventUpdate` → corregibles (`RR-01`); la identidad se revalida en alta, edición y corrección; un error en dos sumandos se arregla por edición o devolución (`R-135`), no relajando la regla.
+14. **Concurrencia**: N/A (identidad intra-evento). **Transacción**: la regla corre antes de `db.add`; rechazo = cero filas, cero saldo, cero auditoría, cero alerta.
+15. **Inquilino / unidad / RBAC**: cadena certificada (`OD-14`, `OD-16`, `R-160`, `B05`); `operations:create`/`update`, `corrections:correct`; sin permiso nuevo.
+16. **Auditoría**: la del alta (`registered`); la denegada no audita.
+17. **`R-130`**: entradas del saldo = Σ alojadas (sin cambio); mortalidad al arribo y rechazo nunca entran (`RR-12`). Riesgo `R-167` registrado.
+18. **SAP**: no participa; «Diferencias» hacia SAP es `P-08` diferido.
+
+## B.2 `B02` · contrato de «pesos en rango»
+
+1. **Medida**: promedio de muestra por sexo/galpón en la recepción (`BirdMovement.avg_weight`, gramos).
+2. **Fuente**: nivel 2 (§6) para el qué/cuándo; `docs/02 §3.12.1/§3.14` y `spec.md §4.5` para el estándar; `OD-06` para el origen del rango; `GA-REM-037` para la regla, los bordes y la alerta (`RR-13`).
+3. **Unidades**: reproductoras **sí**; engorde, progenitoras, incubadora **no** (§4.8 sin alertas; sin fuente).
+4. **Línea y curva**: las del lote (`genetic_line_id`, `weight_curve_id` fijado); nunca del cuerpo.
+5. **Edad**: `event_date − Lot.start_date` en días (`GA-REM-028`, `service.py:750-753`); anterior al inicio → `NO_REFERENCE`.
+6. **Unidad de peso**: gramos; sin conversión.
+7. **min / target / max, interpolación, bordes, fuera de tabla**: exactamente `GA-REM-037 §5-§6` por el **mismo motor** (`weight_curve.py`); día 0 sin punto → `NO_REFERENCE` declarado.
+8. **Clasificación**: `BELOW` / `WITHIN` (inclusivo) / `ABOVE` / `NO_REFERENCE`; una fila por muestra ♀/♂.
+9. **Desviación %**: no gobernada → no se añade.
+10. **Guardar / bloquear**: se persiste siempre; fuera de rango → `OperationalAlert` `weight_deviation` (mismo mensaje, umbral y puente de notificación que `AC20`); dentro y sin referencia → sin alerta; **no bloquea** alta ni aprobación.
+11. **Versionado histórico**: versión fijada al lote (`AC23`); sin instantánea.
+12. **Inquilino / unidad / RBAC / auditoría**: cadena certificada; alerta con `company_id`/`lot_id`/`event_id` del evento; la lectura `AC26` filtra por empresa (`AC28`).
+13. **Frontend**: el detalle de una recepción muestra la evaluación del backend (`AC-FE11` análogo); sin cálculo en cliente (`AC-FE14`).
+14. **Autoridad**: enmienda B de `GA-REM-037` (puerta de la alerta + montaje del detalle); motor, modelos y migración intactos.
+
+## B.3 Criterios de aceptación
+
+### `B01` (`AC-B01`)
+
+| AC | Criterio | Contrato |
+|---|---|---|
+| `AC-B01-01` | recepción de reproductoras con `received_total == Σ alojadas + dead + rejected` → `201`; los tres campos se persisten y se leen | `201` |
+| `AC-B01-02` | dos entregas parciales contra la misma OC, cada una cuadrada → `201` ambas; `BR-18` intacto (control) | `201` |
+| `AC-B01-03` | las alojadas se calculan desde los movimientos persistidos: dos filas ♀/♂ por galpón suman | servidor |
+| `AC-B01-04` | `received_total ≠ Σ + dead + rejected` (uno de más **y** uno de menos) → `400 BR-20` con los cuatro números | `400` |
+| `AC-B01-05` | identidad exacta con `dead > 0` y `rejected > 0` → `201`; distingue `==` de `>=`/`<=` | `201` |
+| `AC-B01-06` | recepción denegada: cero eventos, cero `bird_movements`, saldo intacto, sin auditoría, sin alerta | 0 filas |
+| `AC-B01-07` | concurrencia **N/A** (sin agregado compartido); control: dos recepciones cuadradas consecutivas suman al saldo | control |
+| `AC-B01-08` | el cliente no puede aportar el total alojado: `extra_data.placed_total`/`declared_quantity` coherentes con `received_total` pero movimientos que no cuadran → `400 BR-20` | `400` |
+| `AC-B01-09` | `company_id`/`business_unit_id` en el cuerpo se ignoran (control certificado, una aserción) | control |
+| `AC-B01-10` | otra empresa → `400 BR-07` (lote inexistente para quien pide) | `400` |
+| `AC-B01-11` | unidad apagada: operador con concesión histórica → `BR-07`; autoridad global situada → `403` | `400`/`403` |
+| `AC-B01-12` | sin la unidad del lote → `BR-07` | `400` |
+| `AC-B01-13` | sin `operations:create` → `403` | `403` |
+| `AC-B01-14` | autoridad global sin contexto → `BR-07` (fallo cerrado) | `400` |
+| `AC-B01-15` | el alta cuadrada deja auditoría `registered`; la denegada no deja ninguna | auditoría |
+| `AC-B01-16` | reproductoras sin `received_total`, sin `dead_on_arrival` o sin `rejected_on_arrival` → `400` (cada ausencia por separado; `0` explícito sí vale) | `400` |
+| `AC-B01-17` | `received_total`/`rejected_on_arrival` en engorde → `400`; `dead_on_arrival` en engorde → `201` y **no** entra al saldo; los tres en `feed_registration`, en lote de progenitoras y en lote sin cadena → `400` | `400`/`201` |
+| `AC-B01-18` | `PUT` que descuadra → `400`; `PUT` que recuadra (dos campos) → `200`; corrección de `dead_on_arrival` que descuadra → `400`; corrección coherente → `201` con original en `correction_logs` | edición/corrección |
+| `AC-B01-19` | `R-130`: tras la recepción el saldo es Σ alojadas (no `received_total`); una mortalidad posterior sigue acotada por ese saldo | saldo |
+| `AC-B01-20` | negativo o no entero → `422` | `422` |
+
+### `B02` (`AC-B02`)
+
+| AC | Criterio | Contrato |
+|---|---|---|
+| `AC-B02-01` | recepción de reproductoras con `avg_weight` por fila → `201`; el peso se persiste | `201` |
+| `AC-B02-02` | la línea y la curva son las del lote; el cuerpo no las lleva (`breed_id` no es línea) | servidor |
+| `AC-B02-03` | edad = `event_date − start_date`: recepción el día de inicio → 0; cinco días después → 5; anterior al inicio → `NO_REFERENCE` (`event_before_lot_start`) | edad |
+| `AC-B02-04` | punto exacto (día 0) → `expected_min/target/max` exactos de ese punto | exacto |
+| `AC-B02-05` | día 5 entre los puntos 0 y 10 → los tres valores interpolados con el **número exacto** | interpolación |
+| `AC-B02-06` | `avg_weight == min` → `WITHIN_STANDARD`, sin alerta | borde |
+| `AC-B02-07` | `avg_weight == max` → `WITHIN_STANDARD`, sin alerta | borde |
+| `AC-B02-08` | `< min` → `BELOW_STANDARD` + `OperationalAlert` (`weight_deviation`, umbral = `min`, valor real, edad, versión) | alerta |
+| `AC-B02-09` | `> max` → `ABOVE_STANDARD` + alerta (umbral = `max`) | alerta |
+| `AC-B02-10` | dentro → `WITHIN_STANDARD`, sin alerta | — |
+| `AC-B02-11` | suplantación **N/A**: el cuerpo no lleva línea ni edad; `extra_data.declared_avg_weight_*` no participa (control) | N/A |
+| `AC-B02-12` | lote sin curva → `NO_REFERENCE` (`no_curve_assigned`); curva que empieza en el día 7 y recepción en el día 0 → `NO_REFERENCE` (`age_outside_curve_table`); en ambos casos `201` y sin alerta | sin inventar |
+| `AC-B02-13` | otra empresa no lee la evaluación de la recepción (`404`, control `AC28`) | tenencia |
+| `AC-B02-14`…`17` | unidad apagada / sin unidad / RBAC / global sin contexto: **misma ruta** que `B01`; cubiertos por `AC-B01-11…14` (una aserción de referencia) | control |
+| `AC-B02-18` | reproductoras: PASS · engorde: recepción con peso fuera de rango de una curva asignada → **sin** alerta (N/A por fuente) · progenitoras/incubadora: N/A | por unidad |
+| `AC-B02-19` | fuera de rango **no** bloquea: `201` + alerta; el registro puede enviarse a revisión | no bloqueo |
+| `AC-B02-20` | la alerta lleva `company_id`, `lot_id`, `event_id` del evento; el puente `weight_out_of_standard` existente recibe la alerta | auditoría |
+| `AC-B02-21` | el detalle de una recepción monta la evaluación del backend (`WeightEvaluation`) | frontend |
+| `AC-B02-22` | la evaluación usa la versión **fijada al lote**: activar una versión nueva de la línea después de crear el lote no cambia el veredicto de la recepción (`AC23` en recepción) | versión |
+
+## B.4 Frontend (vertical mínima)
+
+`OperationFormPage.tsx` · caso `bird_reception` con etapa `breeder_rearing`: tres campos numéricos («Cantidad recibida (aves)»,
+«Mortalidad al arribo», «Rechazo») ligados a `received_total`, `dead_on_arrival`, `rejected_on_arrival`; una línea informativa de
+aritmética (alojadas Σ + mortalidad + rechazo frente a recibidas) **sin regla en el cliente** (la valida el backend). Esquema `zod`:
+los tres enteros opcionales ≥ 0. `OperationDetailPage.tsx`: montar `WeightEvaluation` también para `bird_reception`.
+`domain.types.ts` y `translation.json` es/en. Sin pantalla nueva; sin tocar la alerta ±10 % existente (`R-169`, fuera).
+
+## B.5 Migración
+
+`w3x4y5z6a7b8_reception_reconciliation.py` (revisa `v2w3x4y5z6a7`): `operational_events.received_total INTEGER NULL`,
+`dead_on_arrival INTEGER NULL`, `rejected_on_arrival INTEGER NULL`. Sin relleno: las filas históricas quedan `NULL` (no declarado).
+Bajada: se detiene si alguna fila tiene alguno de los tres no nulo; retira las columnas. Sin cambio de enumerados. Guardianes de
+cabeza → `w3x4y5z6a7b8`; `test_clean_baseline` (55 tablas, esquema) y `test_time_determinism` en el verde dirigido (regla
+permanente del tranche 7 §5). Migración **solo tras este commit de spec**.
+
+## B.6 Tareas
+
+| Tarea | Contenido |
+|---|---|
+| `T-021-B1` | migración + modelo + `Base`/`Update` (tres enteros) |
+| `T-021-B2` | `validators.validate_reception_reconciliation` (`BR-20`) y aplicación en alta, edición y corrección; `_tipo_de_lote` ya existe |
+| `T-021-B3` | `service.py:586`: puerta de la alerta de peso también para `BIRD_RECEPTION` en lotes `breeder` (`GA-REM-037-B`) |
+| `T-021-B4` | frontend §B.4 |
+| `T-021-B5` | `tests/test_reception_reconciliation.py` (`AC-B01`) · `tests/test_reception_weight_range.py` (`AC-B02`) · fixtures de recepciones de reproductoras existentes (solo setup) |
+
+## B.7 Sensibilidad
+
+| Mut. | Retira | Debe caer |
+|---|---|---|
+| `B01-S1` | la identidad (`BR-20`) | `AC-B01-04` |
+| `B01-S2` | «ignorar recepciones previas» | **N/A**: `B01` no acumula (la acumulación es `GA-TD-014`, con su propia sensibilidad) |
+| `B01-S3` | protección de concurrencia | **N/A**: sin agregado compartido |
+| `B01-S4` | el servidor confía en un total alojado enviado por el cliente (`extra_data.placed_total`) | `AC-B01-08` |
+| `B01-S5` | la obligatoriedad de los tres campos en reproductoras | `AC-B01-16` |
+| `B01-S6` | la aplicabilidad por cadena (identidad y campos admitidos en cualquier lote/tipo) | `AC-B01-17` |
+| `B01-S7` | la revalidación en corrección | `AC-B01-18` |
+| `SEC-S1` | la empresa (cuatro capas del alta: `_unidad_del_lote`, `_tipo_de_lote`, `lotes_alcanzables`, `validate_lot_active`) | `AC-B01-10` con fila observada |
+| `SEC-S2` | la habilitación de la unidad (guarda compartida) | `AC-B01-11` (global) |
+| `SEC-S3` | la concesión del actor | `AC-B01-11/12` |
+| `SEC-S4` | `operations:create` en la ruta | `AC-B01-13` |
+| `B02-S1` | la puerta de la alerta para la recepción | `AC-B02-08/09` |
+| `B02-S2` | la interpolación del motor (devuelve el punto anterior) — mutación sobre el motor certificado, revertida | `AC-B02-05` |
+| `B02-S3` | la clasificación (todo `WITHIN`) | `AC-B02-08/09` |
+| `B02-S4` | confiar en línea/edad del cliente | **N/A**: no hay campo |
+| `B02-S5` | evaluar con la versión activa de la línea en vez de la fijada al lote | `AC-B02-22` |
+
+## B.8 Definición de terminado
+
+`AC-B01-01…20` y `AC-B02-01…22` verdes · rojo válido · sensibilidad `B01-S1/S4/S5/S6/S7`, `SEC-S1…S4`, `B02-S1/S2/S3/S5` válidas
+(`B01-S2/S3`, `B02-S4` N/A) · `R-130` 21/21 · genética/curvas/alertas/evaluación (4 suites) · `B05` 16/16 · reversos · `R-135`/`R-143` ·
+`R-159`/`R-160` · `R-162`/`R-163` · `R-139` 35/35 · `R-165` · recepción contra OC 7/7 · linaje de recepción · `test_clean_baseline` ·
+`test_time_determinism` · guardianes exactos · regresión completa **leída** · `vitest` · `tsc` 6 · `B01` y `B02` cerrados (técnico) ·
+`GA-REM-021` sigue **PARTIAL** (`B03`, `B04`, `B13`, `R-156`) · certificación de proceso `BLOCKED_RUNTIME`.

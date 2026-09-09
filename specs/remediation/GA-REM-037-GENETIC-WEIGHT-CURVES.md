@@ -351,3 +351,33 @@ alerta.
 - Paridad `i18n` mantenida.
 - Sin migración nueva: el trabajo de frontend no la necesita.
 - `P-03` recertificado de extremo a extremo, no por «el endpoint responde».
+
+---
+
+# ENMIENDA B · LA RECEPCIÓN DE REPRODUCTORAS TAMBIÉN SE EVALÚA (2026-09-10 · WAVE B tranche 7 · `GA-REM-021-B` / `B02`)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-037-B` · `SCOPE EXTENSION` · **Estado** `SPEC_READY` |
+| **Requisito** | `Recomendación central` §6 «Que los pesos estén dentro de rango esperado» (recepción de reproductoras) · `spec.md §4.5` (la recepción es el primer evento de la fase) · `OD-06` sin cambio |
+| **Traza** | `audit/remediation/GA_REM_021_B02_WEIGHT_RANGE_MATRIX.md` · `RR-13` |
+| **Cambio** | la **puerta** del gancho de alerta (`service.py:586`) admite `BIRD_RECEPTION` cuando el lote es `breeder`; el detalle monta `WeightEvaluation` también para `bird_reception` |
+| **Sin cambio** | `weight_curve.py` (motor), modelos, migración, `AC01`…`AC28`, `AC-FE01`…`AC-FE20`, engorde (§4.8 sin alertas), `P-14` |
+
+## B.1 Criterios añadidos
+
+**`AC29`** · Registrar una recepción de reproductoras con un `avg_weight` fuera del rango de la curva fijada al lote, a la edad del
+lote el día de la recepción, crea un `OperationalAlert` `weight_deviation` idéntico en forma al de `AC20` (valor, umbral, edad, versión).
+
+**`AC30`** · Dentro de rango, o sin referencia (sin curva, sin línea, día 0 fuera de la tabla, recepción anterior al inicio), **no**
+se emite alerta y la recepción se registra igual: la clasificación no bloquea. `NO_REFERENCE` sigue declarándose por `AC26`.
+
+**`AC31`** · El detalle de una recepción muestra la evaluación del backend (`AC26`), con `NO_REFERENCE` explícito (`AC-FE13`),
+sin cálculo en el cliente (`AC-FE14`).
+
+**`AC32`** · Una recepción de **engorde** con el mismo peso fuera de rango **no** alerta (`§4.8` no lo exige; `PROCESS-06-CERTIFICATION:46`).
+
+## B.2 Sensibilidad y trazabilidad
+
+`B02-S1` (puerta), `B02-S2` (interpolación, sobre el motor, revertida), `B02-S3` (clasificación), `B02-S5` (versión fijada) en
+`GA-REM-021-B §B.7`. Pruebas: `backend/tests/test_reception_weight_range.py`. Certificación: evidencia del tranche 7.

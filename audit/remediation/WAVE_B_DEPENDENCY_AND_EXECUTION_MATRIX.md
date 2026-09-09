@@ -301,3 +301,28 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   normativa del rango — si ninguna fuente por encima de la implementación lo fija, OWNER_DECISION_REQUIRED (no se inventa).
   Alternativa sin decisión aparente: R-152 → R-153 (Progenitoras: importación con estructura de docs/02 §3.4.1; spec propia).
 ```
+
+## 16. Tranche 7 · pre-flight (2026-09-10)
+
+```
+recuento ....................... 22 (21 R + GA-REM-021) · 8 cerrados (R-130 · R-135 · R-143 · R-159 · R-160 · R-162 · R-163 · R-165) ·
+                                 4 parciales (R-136 · R-140 · R-154 · GA-REM-021) · 10 abiertos (R-142 · R-144 · R-147 · R-148 · R-152 ·
+                                 R-153 · R-156 · R-161 · R-166 · R-164 BLOCKED_RUNTIME) · P1 abiertos 0 · P2 abiertos 7 · P3 abiertos 3 ·
+                                 bloqueados 3 (R-142 AOD-17 · R-144 R-131+AOD-08 · R-156 AOD-20) · decisiones 6 · SAP_DEFERRED R-136 post-SAP
+                                 — consistente con §15; sin corrección de recuento. Recontado fila a fila desde REMEDIATION_BACKLOG (líneas de
+                                 estado de los bloques de cierre) — no reutilizado.
+gate B01 ....................... bird_reception de reproductoras (Rec. §6) · identidad recibido = Σ alojadas + mortalidad al arribo + rechazo ·
+                                 ≠ OD-04/GA-TD-014 (viñeta distinta; BR-18 intacto) · sin acumulación · sin tolerancia · sin estado · concurrencia N/A ·
+                                 tres columnas nuevas (migración w3x4y5z6a7b8 tras el commit de spec) · GOBERNADO · independiente de B02
+gate B02 ....................... peso promedio de muestra ♀/♂ (g) de la recepción de reproductoras · referente = curva fijada al lote a la edad
+                                 del día (OD-06 · GA-REM-037; RR-13) · alerta, no bloqueo · NO_REFERENCE declarado en día 0 sin punto ·
+                                 GOBERNADO (GA-REQ-037/OD-06: SÍ) · la cautela «OWNER_DECISION_REQUIRED» del tranche 6 queda desestimada ·
+                                 engorde/progenitoras/incubadora N/A
+composición .................... CASO A (ambos) · mismo POST /operations · reglas y datos distintos · cierre independiente posible
+corrección documental .......... §2 y DEPENDENCY_MAP decían «B01 usa el saldo de R-130»: B01 no lee el saldo; gobierna lo que entra en él
+                                 (las alojadas). La dependencia real es de vocabulario (aves alojadas = entradas), no de cálculo.
+hallazgos nuevos ............... R-167 (doble contabilización de la mortalidad al arribo; KPI, ola C) · R-168 (sample_size por galpón descartado)
+                                 · R-169 (±10 % del formulario sin fuente) — P3, registrados, no resueltos
+artefactos ..................... GA_REM_021_B01_RECEPTION_RECONCILIATION_MATRIX.md · GA_REM_021_B02_WEIGHT_RANGE_MATRIX.md · GA-REM-021-B ·
+                                 GA-REM-037-B · RC-11 (RR-12 · RR-13)
+```

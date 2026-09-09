@@ -1070,6 +1070,9 @@ Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión co
 | `R-164` | P2 | `lots.company_id` es nulable sin restricción de esquema (`masters/models.py`): la prevención de lotes huérfanos es de aplicación (`AC-L05`), no de base de datos; deuda de datos históricos **`UNKNOWN`** — la consulta `count(*) WHERE company_id IS NULL` contra la base configurada no fue alcanzable (`BLOCKED_RUNTIME`); **nada limpiado**. Exige verificación en entorno certificable, migración `NOT NULL` y decisión sobre filas inválidas si las hay | `WAVE_B_TRANCHE_4_PREFLIGHT.md §B` | B |
 | `R-165` | P2 | el plano de revisión (`review/start|return|complete`, `approvals/approve|reject`) no exige la **habilitación** de la unidad a la autoridad global (`_ambito_de_unidad` → `[]` para `is_super_admin`); misma clase que `R-163`; el actor de empresa ya queda fuera por `unidades_efectivas` · **incluido en `GA-REM-041` §1.2** (el reverso se aprueba por ese plano; `OD-19 §13`) | `review/service.py:77-99, 360-383, 561-580` | B |
 | `R-166` | P3 | `approve` y `reject` sobre el mismo evento `CORRECTED` no se excluyen (sin bloqueo de fila; el último `flush` gana) | `review/service.py:423-470` | B |
+| `R-167` | P3 | doble contabilización posible de la mortalidad al arribo: campo `dead_on_arrival` de la recepción (`B01`) + evento `mortality_recording` del mismo día (práctica previa, `docs/16:177`); la semántica del KPI de mortalidad respecto a las muertas al arribo no tiene fuente (ola C) | `GA_REM_021_B01_RECEPTION_RECONCILIATION_MATRIX.md §7` | B/C |
+| `R-168` | P3 | el formulario de recepción envía `bird_movements[i].sample_size` y `BirdMovementSchema` no lo declara: se descarta en silencio (patrón `R-47`); «Muestra tomada» (§6) no se persiste por galpón | `OperationFormPage.tsx:698` · `operations/schemas.py:12-20` | B |
+| `R-169` | P3 | alerta «diferencia superior al 10 %» recibido vs declarado en el formulario de recepción sin fuente normativa (solo cliente, solo aviso); `FUNCTIONAL_COVERAGE_MATRIX CV-F07` la cuenta como «validación ±10 %» | `OperationFormPage.tsx:610-611` · familia `R-147` | B |
 
 Trazas parciales del tranche 4: **`R-140`** → PARTE A (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) en `GA-REM-006-A`; motivo obligatorio (contrato de ruta que el cliente llama sin cuerpo → UI) y permiso «solo administrador» (`AOD-18`) → OPEN. **`R-154`** → subconjunto `DRAFT` (mapa de transiciones + controles) y `version` (semántica vigente documentada: avanza en `PUT` y en corrección; la matriz 360 lo daba por no incrementado) en `GA-REM-006-A`; dos «cierres» (`AOD-08`) y `LotStatus.CANCELLED` → OPEN. `R-163` normalizada a **P1**.
 
@@ -1161,3 +1164,16 @@ WAVE B   IN PROGRESS        22 ítems · 8 cerrados · 4 parciales (R-140 · R-1
 ```
 
 Evidencia: `GA-REM-021-B05-WATER-CAPTURE-EVIDENCE.md`. Regresión completa: **1000 passed · 49 skipped · 0 failed** (819 s, 2ª pasada; la 1ª dejó 2 rojas corregidas por `GA-REM-041-B`; 976 previas + 16 agua + 5 matriz de roles + 3 migración de roles; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 89/89 · `tsc` 6 preexistentes (`R-158`). Migraciones `u1v2w3x4y5z6` (autorizada por `GA-REM-021-A §A.5`, tras el commit de spec `c8447de`) y `v2w3x4y5z6a7` (datos de roles, autorizada por `GA-REM-041-B`, tras `8df04f7`). Rutas 211 (sin cambio). `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 7 (2026-09-10): `B01` y `B02` gobernados · sin decisión del propietario · sin código
+
+`B01` («hembras + machos + mortalidad + rechazo cuadren contra recibido», Rec. §6) **no** es el contrato de `OD-04`/`GA-TD-014` (la OC,
+viñeta anterior del mismo §6, sigue en `BR-18`): es la identidad interna del evento `bird_reception` de reproductoras, con tres datos
+nuevos (`received_total`, `dead_on_arrival`, `rejected_on_arrival`) y la regla `BR-20`; las alojadas siguen siendo las entradas del saldo
+(`R-130` sin cambio). `B02` («pesos dentro de rango esperado») está gobernado por `GA-REQ-037` + `OD-06` + `GA-REM-037`: el referente es
+la curva fijada al lote a la edad del día de la recepción; fuera de rango alerta y no bloquea; la cautela del tranche 6 queda desestimada
+(`RR-13`). CASO A: ambos se implementan. Matrices `GA_REM_021_B01_…` y `GA_REM_021_B02_…`; `GA-REM-021` enmienda B; `GA-REM-037` enmienda B;
+`RC-11` (`RR-12`, `RR-13`). Hallazgos nuevos `R-167`, `R-168`, `R-169` (P3, no se resuelven aquí). Corrección de la ola B: «`B01` usa el
+saldo» → `B01` gobierna lo que **entra** al saldo. Recuento revalidado: 22 · 8 cerrados · 4 parciales · 10 abiertos.

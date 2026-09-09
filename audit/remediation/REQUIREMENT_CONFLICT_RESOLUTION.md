@@ -379,3 +379,31 @@ no cambia el comportamiento de negocio respecto al alimento, ya certificado con 
 > **RR-10.** El consumo diario de agua se registra en **litros** (`water_liters`), sin campo de unidad libre.
 > **RR-11.** El consumo diario de agua, como el de alimento, es **estrictamente positivo** con decimales; la ausencia de dato se
 > representa como **ausencia** (sin fila / `NULL`), nunca como `0`.
+
+## 11. `RC-11` · cuadre y rango de pesos en la recepción de reproductoras (`GA-REM-021` `B01`/`B02`, 2026-09-10)
+
+**Conflicto aparente 1 (`B01`).** `Recomendación central §6` exige que «hembras + machos + mortalidad + rechazo cuadren contra
+recibido», pero el modelo (nivel 5) solo persiste `BirdMovement(sex, quantity)` y mapea la mortalidad al arribo a un evento
+`mortality_recording` aparte (`docs/16:177`); la planificación de la ola B (nivel 5, `WAVE_B §2`) suponía que «el cuadre usa el saldo».
+**Corte:** el nivel 2 nombra los sumandos y el lado derecho («Cantidad recibida», dato de la misma captura); la elección de nivel 5
+cede. El saldo (`R-130`) no es el lado derecho: es la **consecuencia** (entran las alojadas). No hay escalado: nada cambia de
+comportamiento de negocio respecto a lo que el cliente escribió; solo se capturan los datos que la regla necesita.
+
+> **RR-12.** En la recepción de reproductoras, `recibido = Σ aves alojadas (♀ + ♂ por galpón) + mortalidad al arribo + rechazo`,
+> con igualdad exacta y sin tolerancia; los tres datos se declaran explícitamente (la ausencia no es `0`); las **alojadas** son las
+> entradas del saldo de aves (`R-130`, sin cambio) y la mortalidad al arribo y el rechazo **nunca** entran al saldo. Cada entrega
+> parcial cuadra por sí misma; la acumulación contra la OC sigue siendo `BR-18` (`OD-04`).
+
+**Conflicto aparente 2 (`B02`).** `§6` exige «pesos dentro de rango esperado» sin nombrar el referente. Candidatos: la curva estándar
+del lote (`OD-06`, nivel 1; `docs/02 §3.12.1/§3.14`, nivel 3; `spec.md §4.5`, nivel 4), el peso declarado por el proveedor (nivel 6,
+`R-156`/`AOD-20`) y un estándar fijo de pollito de un día (inexistente). El pre-flight del tranche 6 anotó «si ninguna fuente por encima
+de la implementación lo fija, `OWNER_DECISION_REQUIRED`». **Corte:** el silencio del nivel 2 desciende a los niveles 3 y 4, que conocen
+un único estándar de peso, y a `OD-06`, que fija su origen para la fase §4.5 de la que la recepción es el primer evento. La cautela
+queda desestimada; no hay escalado. La consecuencia de estar fuera de rango la fija `GA-REM-037 §5` (nivel 4): alerta, no bloqueo —
+coherente con «la app debe capturar la realidad de granja» (nivel 2, p.1).
+
+> **RR-13.** El «rango esperado» de los pesos de la recepción de reproductoras es el de la **curva estándar fijada al lote** a la edad
+> del lote el día de la recepción (`OD-06`, `GA-REM-037`: gramos, días, interpolación lineal, bordes inclusivos, sin tolerancia, sin
+> extrapolación → `NO_REFERENCE` declarado). Cada fila ♀/♂ se evalúa contra la misma curva (el estándar de `OD-06` no distingue sexo).
+> Fuera de rango se **persiste, se clasifica y alerta**; no bloquea el alta ni la aprobación. El peso declarado por el proveedor es
+> `R-156` (`AOD-20`) y no participa. No aplica a engorde (`§4.8` sin alertas), progenitoras ni incubadora.
