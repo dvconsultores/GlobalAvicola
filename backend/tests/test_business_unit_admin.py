@@ -827,7 +827,10 @@ async def test_las_rutas_nuevas_declaran_todas_su_contrato_de_respuesta(esc):
 
     rutas = [(camino, metodos, ruta) for camino, metodos, ruta in enumerar_rutas(app)
              if "business-units" in camino]
-    assert len(rutas) == 6, [c for c, _, _ in rutas]
+    # Seis en la fase 7; siete desde `R-129` (`GET …/{code}/grant-candidates`). El número es
+    # fijo a propósito —un `>=` dejaría pasar una ruta colada sin contrato— y por eso cada
+    # ruta nueva tiene que venir a actualizarlo. Es lo que acaba de pasar.
+    assert len(rutas) == 7, [c for c, _, _ in rutas]
 
     sin_contrato = [f"{'/'.join(m)} {c}" for c, m, r in rutas
                     if getattr(r, "response_model", None) is None]
