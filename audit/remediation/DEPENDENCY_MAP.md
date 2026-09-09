@@ -810,3 +810,24 @@ FASE 9 — INTERFAZ  (T-040-21…24)  ·  NO INICIADA
           R-120   los cinco estados, generalizados
       NO depende de: BU-D10 · R-112 · R-127 · P-08
 ```
+
+
+## Tras `R-129` y el preflight (2026-09-09)
+
+```
+R-129   CERRADO   la fase 9 ya tiene a quién ofrecerle, sin `users:read`
+
+R-127 (`sap_config`: columna String, esquema dict → 500 con cualquier empresa configurada)
+      └── BLOQUEA ──> GA-REM-040 FASE 9
+                      el selector de empresa (`company.store.ts:39`) solo lee de
+                      `GET /masters/companies`; la sesión no expone empresas a propósito;
+                      `§70` prohíbe esquivarlo en el frontend
+      NECESITA        tanda propia + decisión de propietario:
+                      ¿columna JSON (migración) o esquema str? ¿viaja en el listado?
+
+BU-D10  NO bloquea la fase 9 — `AC-A04`/`A05`/`A06` ya deciden lo que la UI promete
+        riesgo registrado: si BU-D10 añade «cerrar línea» ≠ «deshabilitar», hará falta
+        un segundo control en `T-040-21`
+R-112 · P-08   NO bloquean — ninguna tarea de la fase 9 toca SAP
+R-119 · R-120  NO bloquean — son el alcance de `T-040-23`
+```

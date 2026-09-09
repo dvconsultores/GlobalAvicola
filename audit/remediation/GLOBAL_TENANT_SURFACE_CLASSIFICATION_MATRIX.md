@@ -67,3 +67,18 @@ es `OD-14.d` representado.
 
 Lo que sí lleva siempre, con contexto o sin él: la identidad y las capacidades `RBAC`, que son
 del actor y no de la empresa.
+
+---
+
+## Addendum · los candidatos a recibir una unidad (`R-129` · 2026-09-09)
+
+| Superficie | Recurso | Clase | Actor de empresa | Autoridad global sin contexto | Situada en `A` | Permiso |
+|---|---|---|---|---|---|---|
+| `GET /business-units/{code}/grant-candidates` | proyección mínima de `users` | **`INQUILINO`** · plano de control | los activos de su empresa, sin él | `403` | los de `A` | `business_units:create` |
+
+No es una sexta excepción de `RQ-03`: es un recurso de inquilino con el predicado de empresa
+**en la consulta**. Y no es `users:read` con otro nombre — el mismo actor sigue recibiendo `403`
+en `GET /users`, y hay una prueba que lo exige (`AC-H16`).
+
+Sin parámetro de búsqueda ni de identificador **a propósito**: lo único que se puede pedir es
+«los de mi empresa para esta unidad», y por tanto no hay oráculo.

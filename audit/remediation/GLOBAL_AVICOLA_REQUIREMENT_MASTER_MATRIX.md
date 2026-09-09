@@ -262,3 +262,21 @@ COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-09
 
 `RQ-03` se verifica como regresión: la fase 8 no añade recursos —siguen 54— ni excepciones. El
 histórico `21 / 60` sigue intacto.
+
+
+---
+
+## 9. Tras `R-129` (2026-09-09)
+
+| ID | Requisito | Antes | Ahora |
+|---|---|:--:|:--:|
+| `RQ-26` | el administrador de acceso puede saber a quién conceder sin `users:read` | `MISSING` | **`COMPLETE`** — `AC-H15` · `AC-H16` |
+| `RQ-03` | aislamiento de compañía | `COMPLETE` | **`COMPLETE`** — 54 recursos, sin excepción nueva |
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-09
+    23 / 38  =  61 %   COMPLETE      (antes 22 / 38 = 58 %)
+```
+
+La ruta nueva es un recurso de inquilino con predicado en la consulta: **no** es una sexta
+excepción de `RQ-03`. Se verifica como regresión. El histórico `21 / 60` sigue intacto.

@@ -278,3 +278,28 @@ se enumera para que `COMPLETE` no se lea como «no queda nada».
 **`R-113` queda `READY_TO_RESUME`** con una pregunta de segregación abierta: quien reparte
 accesos puede dárselos a sí mismo dentro de su empresa. Acotado, visible y auditado — pero es
 decisión de propietario, no cambio silencioso.
+
+
+---
+
+## 8. Fase 8 cerrada · `R-129` cerrado · la fase 9 tiene un bloqueo con nombre (2026-09-09)
+
+**Lo que se cerró.** La sesión entrega los cuatro conceptos de `§14.1` compuestos desde los
+resolutores centrales, con `is_super_admin` canónico y sin sinónimo. Y el `Administrador de
+Accesos` ya puede saber a quién conceder sin `users:read` — con prueba de que sigue sin poder
+listar usuarios, que es el contraste que hace honesta la superficie.
+
+**Lo que el preflight destapó.** La fase 9 no puede empezar. No por acumulación de riesgos, sino
+por una causa exacta: el selector de empresa del frontend lee de `GET /masters/companies`, esa
+ruta devuelve `500` en cuanto una empresa tiene SAP configurado (`R-127`), y la sesión no expone
+empresas a propósito porque `§14.1` no lo pide. La decisión correcta de la fase 8 hace visible
+el hueco en vez de taparlo.
+
+**Lo que no se hizo con `R-127`.** Ni ignorar `sap_config`, ni capturar el `500`, ni ocultar las
+empresas configuradas, ni meter la lista en la sesión sin norma. Todo eso escondería el defecto.
+`R-127` necesita tanda propia y una decisión pequeña pero real del propietario.
+
+**Un error de método, corregido a la vista.** Un commit de `R-129` se hizo con la regresión en
+rojo por un conteo de rutas desactualizado —mío, de la fase 7— y con una cifra falsa en el
+mensaje. Se rectificó en un commit posterior en lugar de reescribir historia, y la regresión se
+repitió entera antes del push. Leer antes de escribir.

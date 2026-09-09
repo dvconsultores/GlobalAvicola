@@ -155,3 +155,16 @@ administradores») y lo que `/roles` invita a hacer.
 Que estén latentes no los hace menores: `R-113` —abierto la semana pasada— pregunta precisamente
 quién debe administrar en una avícola. La respuesta a `R-113` es lo que activa `F-A`, `F-G` y
 `F-H` el mismo día.
+
+---
+
+## Ruta nueva · `R-129` (2026-09-09)
+
+| Camino | Método | Módulo `RBAC` | Alcance de unidad | Empresa | `response_model` | Consumidor |
+|---|---|---|---|---|---|---|
+| `/api/v1/business-units/{code}/grant-candidates` | `GET` | `business_units:create` | `CONTROL` | efectiva, en la consulta | `list[CandidatoRead]` | fase 9 (`T-040-22`), no iniciada |
+
+```
+RUTAS `/api` CLASIFICADAS   208 / 208
+SIN PERMISO · SIN ALCANCE · FUERA DE TRANSACCIÓN   0 · 0 · 0
+```

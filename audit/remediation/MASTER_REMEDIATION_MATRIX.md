@@ -1124,3 +1124,30 @@ COBERTURA DE REQUISITO DE PRODUCTO   22 / 38 = 58 %
 RQ-03 · BU-D10 · R-112 · R-127 · P-08          intactos
 R-129 nuevo · dependencia de la fase 9
 ```
+
+
+---
+
+## Fase 8 cerrada · `R-129` cerrado · fase 9 bloqueada (2026-09-09)
+
+```
+DESCUBRIR A QUIÉN CONCEDER  ≠  ADMINISTRAR USUARIOS
+```
+
+```
+FASE 8   COMPLETE  ·  R-129  CERRADO  ·  RQ-03  COMPLETE (sin cambios)
+FASE 9   BLOQUEADA por R-127 — el selector de empresa solo puede leer de una ruta rota
+```
+
+```
+PRUEBAS        14 · rojo previo 12/14   ·  SENSIBILIDAD  8/8 · 0 inválidas · 2 N/A
+BACKEND        784 passed · 49 skipped  ·  FRONTEND  87 · 0 ficheros
+MIGRACIÓN      ninguna                 ·  users:read  NO
+```
+
+```
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+ACCESO POR UNIDAD                     0 / 15   sin cambios
+COBERTURA DE REQUISITO DE PRODUCTO   23 / 38 = 61 %
+R-127   OPEN → BLOQUEO DURO DE LA FASE 9   ·   R-112 · BU-D10 · P-08   intactos
+```

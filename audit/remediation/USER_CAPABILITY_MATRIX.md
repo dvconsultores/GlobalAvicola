@@ -118,6 +118,9 @@ La figura que administra el acceso por unidad de negocio. **Cuatro permisos, y n
 NO RECIBE   `users:*`  ·  comodín `("*", …, "all")`  ·  ninguna cadena productiva
 NO PUEDE    listar usuarios — `users:read` es otra cosa, y ampliarlo es cómo se abren
             los agujeros que esta figura vino a cerrar
+SÍ PUEDE    ver a quién conceder una unidad — `GET /business-units/{code}/grant-candidates`,
+            `R-129`: identificador, nombre de usuario, nombre visible y si ya la tiene.
+            Nada más. Es la autoridad de conceder, no la de administrar usuarios.
 ```
 
 **La diferencia con la entrada de la fase 7**: allí `business_units:create` autorizaba a

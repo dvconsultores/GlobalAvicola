@@ -885,3 +885,25 @@ pide `§14.1` ni ninguna `AC` vigente, y construirla aquí sería ampliar el alc
 comodidad.
 
 Queda como dependencia explícita de la fase 9.
+
+---
+
+## Cierre de `R-129` · fase 8 cerrada formalmente · preflight de la fase 9 (2026-09-09)
+
+```
+FASE 8   COMPLETE   cierre formal con las cuatro precisiones de `§4`–`§7`
+R-129    CERRADO    `GET /business-units/{code}/grant-candidates` · sin `users:read`
+FASE 9   BLOQUEADA  por `R-127` — una causa exacta, ver `PHASE_9_DEPENDENCY_PREFLIGHT.md`
+```
+
+Evidencia: `R-129-BUSINESS-UNIT-GRANT-CANDIDATES-EVIDENCE.md`.
+14 pruebas · rojo previo 12/14 · sensibilidad 8/8 · 0 intentos inválidos · 2 N/A con motivo.
+
+**`R-127` pasa de `P1` a bloqueo duro de la fase 9.** El selector de empresa
+(`company.store.ts:39`) solo puede leer de `GET /masters/companies`, que devuelve `500` en
+cuanto una empresa tiene `sap_config` poblado, y la sesión no expone empresas a propósito.
+`§70` prohíbe esquivarlo en el frontend. Necesita tanda propia con decisión de propietario:
+¿columna `JSON` (migración) o esquema `str`? ¿Y viaja `sap_config` en el listado de maestros?
+
+Sensibilidad acumulada del programa en aislamiento y administración: **56 mutaciones válidas ·
+56 detectadas · 8 intentos iniciales inválidos corregidos antes de contarlos**.

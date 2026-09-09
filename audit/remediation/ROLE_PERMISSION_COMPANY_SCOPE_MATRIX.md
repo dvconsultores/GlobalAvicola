@@ -61,3 +61,16 @@ la habilitación pertenece a la empresa efectiva
 la autoridad del actor es válida en esa empresa
 el usuario objetivo NO es el actor              ← `OD-15.a`
 ```
+
+
+---
+
+## Addendum · `business_units:create` también gobierna el descubrimiento (`R-129` · 2026-09-09)
+
+```
+business_units:create   conceder a un usuario  ·  Y saber a quién se puede conceder
+```
+
+No se creó permiso nuevo: la autoridad de conceder **es** la de saber a quién. Dos permisos que
+fueran siempre juntos serían uno con un nombre de más. Lo que sí queda separado, y probado, es
+que esa autoridad **no** alcanza `GET /users`.
