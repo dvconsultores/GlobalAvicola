@@ -846,3 +846,16 @@ H360A-05 (0 E2E de activación) ──► GA-REM-040 fases 10-11
 H360A-08 (atajos is_super_admin en dato productivo) ──► tanda propia de WAVE A · exige spec + AC · precede a fase 9 por OD-14
 H360A-02 / H360A-03 (importación de abuelas) ──► WAVE B
 ```
+
+## Hallazgos `R-130…R-157` · dependencias y olas (2026-09-09 · WAVE A0-G)
+
+```
+WAVE A   R-127 ──OD-18──► fase 9        R-139 ──OD-14──► fase 9        R-149 (documental)   GA-REM-013 enm.
+WAVE B   R-135 ◄──OD-17   R-130 R-136 R-140 R-142 R-143 R-144 R-147 R-148 R-152 R-153 R-154 R-156   GA-REM-021 enm.
+WAVE C   R-131 ──► R-141 (índice de producción, IPE dependen del FCR)   R-132 ◄── AOD-10.e   R-133 R-134   R-80
+WAVE D   AOD-01…05 ──► R-157 ──► R-137 (AOD-03) · R-138   R-145   R-155 (AOD-15)   R-124 (AOD-06)
+WAVE E   R-127 + R-139 ──► fase 9 (GA-REM-040) ──► R-98/R-119 · R-150 · R-151 · R-146 · R-122 · R-123
+WAVE F   E2E en main ──► GA-REM-016 SPEC_READY ──► fases 10-11 (BU 0/15) ──► certificación 360
+WAVE G   GA-REM-017 ◄── contrato técnico SAP (externo) + WAVE D completa
+```
+Ruta crítica hacia la fase 9: `R-127` (A1) → `R-139` (A, tanda propia) → fase 9 (**FROZEN** por decisión del propietario aunque los bloqueos técnicos se cierren).

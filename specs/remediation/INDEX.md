@@ -6,28 +6,28 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 |---|---|---|---|---|---|---|
 | `GA-REM-001` | Gobierno de Spec Development | GOVERNANCE | P0 | **`CERTIFIED`** | A | [GA-REM-001](GA-REM-001-SPEC-DEVELOPMENT-GOVERNANCE.md) |
 | `GA-REM-014` | Entorno de test backend aislado | INFRASTRUCTURE | P0 | **`CERTIFIED`** | F→adelantada | [GA-REM-014](GA-REM-014-ISOLATED-TEST-ENVIRONMENT.md) |
-| `GA-REM-004` | Credenciales y cuentas de prueba | SECURITY | P0 | `SPEC_READY` | B | [GA-REM-004](GA-REM-004-CREDENTIALS-AND-TEST-ACCOUNTS.md) |
-| `GA-REM-009` | Persistencia de evidencias y archivos | INFRASTRUCTURE | P0 | `SPEC_READY` | D | [GA-REM-009](GA-REM-009-EVIDENCE-PERSISTENCE.md) |
-| `GA-REM-010` | Semántica de estados SAP | INTEGRATION SEMANTICS | P0 | `SPEC_READY` | D | [GA-REM-010](GA-REM-010-SAP-STATE-SEMANTICS.md) |
+| `GA-REM-004` | Credenciales y cuentas de prueba | SECURITY | P0 | **`CERTIFIED`** (informe 2026-09-03) | B | [GA-REM-004](GA-REM-004-CREDENTIALS-AND-TEST-ACCOUNTS.md) |
+| `GA-REM-009` | Persistencia de evidencias y archivos | INFRASTRUCTURE | P0 | **`CERTIFIED`** (volumen `avicola-media`) | D | [GA-REM-009](GA-REM-009-EVIDENCE-PERSISTENCE.md) |
+| `GA-REM-010` | Semántica de estados SAP | INTEGRATION SEMANTICS | P0 | **`CERTIFIED`** (AC01–AC06) | D | [GA-REM-010](GA-REM-010-SAP-STATE-SEMANTICS.md) |
 | `GA-REM-005` | Mortalidad y balance de aves (+ enmienda `R-67`) | BUGFIX + BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-005](GA-REM-005-MORTALITY-AND-BIRD-BALANCE.md) |
 | `GA-REM-007` | BR-14: segregación y centralización de reglas | BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-007](GA-REM-007-BR14-SEGREGATION-CENTRALIZATION.md) |
-| `GA-REM-011` | Alineación de contratos FE ↔ BE | CONTRACT | P0 | `SPEC_READY` | E | [GA-REM-011](GA-REM-011-FE-BE-CONTRACT-ALIGNMENT.md) |
+| `GA-REM-011` | Alineación de contratos FE ↔ BE | CONTRACT | P0 | **`PARTIALLY CERTIFIED`** (10/18; `H360-C01` → alcance restante) | E | [GA-REM-011](GA-REM-011-FE-BE-CONTRACT-ALIGNMENT.md) |
 | `GA-REM-012` | Cambio de contraseña | SECURITY + BUGFIX | P0 | **`CERTIFIED`** | B | [GA-REM-012](GA-REM-012-PASSWORD-CHANGE.md) |
-| `GA-REM-002` | RBAC: enforcement en backend (+ enm. A: `AC12`, pertenencia del sub-recurso) | SECURITY | P0 | **`IMPLEMENTED`** ⚠ R-44 | B | [GA-REM-002](GA-REM-002-RBAC-BACKEND-ENFORCEMENT.md) |
+| `GA-REM-002` | RBAC: enforcement en backend (+ enm. A: `AC12`, pertenencia del sub-recurso) | SECURITY | P0 | **`CERTIFIED`** (+ enm. B `AC13–AC16` certificada 2026-09-08; `R-44` resuelto por la migración de reconciliación `l2m3n4o5p6q7`) | B | [GA-REM-002](GA-REM-002-RBAC-BACKEND-ENFORCEMENT.md) |
 | `GA-REM-003` | Contexto de autorización y ciclo del token | SECURITY | P0 | **`CERTIFIED`** | B | [GA-REM-003](GA-REM-003-AUTH-CONTEXT-AND-TOKEN-LIFECYCLE.md) |
 | `GA-REM-006` | Correcciones e integridad del dato | DATA INTEGRITY | P0 | **`CERTIFIED`** | C | [GA-REM-006](GA-REM-006-CORRECTIONS-DATA-INTEGRITY.md) |
 | `GA-REM-008` | Trazabilidad generacional | DOMAIN + BUGFIX | P0 | **`CERTIFIED`** | C | [GA-REM-008](GA-REM-008-GENERATIONAL-TRACEABILITY.md) |
-| `GA-REM-013` | Quality gates de CI (sin tocar deployment) | PROCESS | P1 | `SPEC_READY` | F | [GA-REM-013](GA-REM-013-QUALITY-GATES.md) |
-| `GA-REM-021` | Brechas de captura exigidas por el cliente | REQUIREMENT GAP | P1 | `SPEC_READY` | C | [GA-REM-021](GA-REM-021-CLIENT-REQUIRED-DATA-GAPS.md) |
-| `GA-REM-022` | Completitud de KPI | FUNCTIONAL GAP | P1 | `SPEC_READY` | E | [GA-REM-022](GA-REM-022-KPI-COMPLETENESS.md) |
+| `GA-REM-013` | Quality gates de CI (sin tocar deployment) | PROCESS | P1 | **`CERTIFIED`** (`H360-T01` → enmienda pendiente: CI sin `FEATURE_SAP_ENABLED`) | F | [GA-REM-013](GA-REM-013-QUALITY-GATES.md) |
+| `GA-REM-021` | Brechas de captura exigidas por el cliente | REQUIREMENT GAP | P1 | `SPEC_READY` — alcance ampliado por `H360-B01…B04`, `B13`, `R-156` | C | [GA-REM-021](GA-REM-021-CLIENT-REQUIRED-DATA-GAPS.md) |
+| `GA-REM-022` | Completitud de KPI | FUNCTIONAL GAP | P1 | `PARTIAL` — enm. A certificada (`P-15`); alcance base abierto + `R-131…R-134`, `R-141` | E | [GA-REM-022](GA-REM-022-KPI-COMPLETENESS.md) |
 | `GA-REM-023` | Persistencia de campos de evento y contrato de error | DATA INTEGRITY + API CONTRACT | **P0** | **`CERTIFIED`** | — | [GA-REM-023](GA-REM-023-EVENT-FIELD-PERSISTENCE-AND-ERROR-CONTRACT.md) |
-| `GA-REM-020` | Validación de cobertura funcional contra la documentación del cliente | VALIDATION | P1 | `SPEC_READY` | A | [GA-REM-020](GA-REM-020-FUNCTIONAL-COVERAGE-VALIDATION.md) |
+| `GA-REM-020` | Validación de cobertura funcional contra la documentación del cliente | VALIDATION | P1 | **`CERTIFIED`** | A | [GA-REM-020](GA-REM-020-FUNCTIONAL-COVERAGE-VALIDATION.md) |
 | `GA-REM-015` | Certificación de tests de backend | QA | P1 | **`CERTIFIED`** | F | [GA-REM-015](GA-REM-015-BACKEND-TEST-CERTIFICATION.md) |
-| `GA-REM-016` | Certificación E2E y de procesos | QA + CERTIFICATION | P1 | `SPEC_DRAFT` | G | [GA-REM-016](GA-REM-016-E2E-AND-PROCESS-CERTIFICATION.md) |
+| `GA-REM-016` | Certificación E2E y de procesos | QA + CERTIFICATION | P1 | `SPEC_DRAFT` — **en uso** por 15 informes de certificación; pasar a `SPEC_READY` en `WAVE F` (`R-149`) | G | [GA-REM-016](GA-REM-016-E2E-AND-PROCESS-CERTIFICATION.md) |
 | `GA-REM-018` | Recuperación de trazabilidad Spec Development | METHODOLOGY | P1 | `SPEC_READY` | I | [GA-REM-018](GA-REM-018-SPEC-TRACEABILITY-RECOVERY.md) |
 | `GA-REM-017` | Integración SAP real | INTEGRATION | P1 | **`BLOCKED_EXTERNAL`** | H | [GA-REM-017](GA-REM-017-SAP-REAL-INTEGRATION.md) |
 | `GA-REM-019` | Reevaluación de deuda P2/P3 | TECHNICAL DEBT | P2 | `DEFERRED` | J | [GA-REM-019](GA-REM-019-P2-P3-DEBT-REASSESSMENT.md) |
-| `GA-REM-024` | Ejecución de migraciones antes de servir | INFRASTRUCTURE + RELEASE SAFETY | **P0** | **`IMPLEMENTED`** ⚠ `R-58` | — | [GA-REM-024](GA-REM-024-MIGRATION-ON-DEPLOY.md) |
+| `GA-REM-024` | Ejecución de migraciones antes de servir | INFRASTRUCTURE + RELEASE SAFETY | **P0** | **`CERTIFIED`** (arranque real; `R-58` sin rastro abierto en el backlog) | — | [GA-REM-024](GA-REM-024-MIGRATION-ON-DEPLOY.md) |
 | `GA-REM-025` | Baseline limpio del entorno compartido | ENVIRONMENT + TEST DATA STRATEGY | P1 | **`CERTIFIED`** | — | [GA-REM-025](GA-REM-025-CLEAN-DEVELOPMENT-BASELINE.md) |
 | `GA-REM-026` | Frontera transaccional de la petición | DATA INTEGRITY + REQUEST LIFECYCLE | **P0** | **`CERTIFIED`** | — | [GA-REM-026](GA-REM-026-TRANSACTION-BOUNDARY.md) |
 | `GA-REM-027` | Resolución del upstream en el proxy | RUNTIME CONFIGURATION | **P0** | **`PARTIALLY CERTIFIED`** | — | [GA-REM-027](GA-REM-027-PROXY-UPSTREAM-RESOLUTION.md) |
@@ -43,7 +43,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-037` | Curvas estándar de peso y alerta por desviación (+ enmienda A: capacidad de producto) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 | `GA-REM-038` | Notificaciones internas (+ enmiendas A y B) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-038](GA-REM-038-INTERNAL-NOTIFICATIONS.md) |
 | `GA-REM-039` | Áreas funcionales | DOMAIN MODEL | P1 | **`CERTIFIED`** | — | [GA-REM-039](GA-REM-039-FUNCTIONAL-AREAS.md) |
-| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A y B: concesión acotada a la empresa · empresa efectiva) | ACCESS CONTROL | P0 | `SPEC_READY` ⚠ fase 7/11 | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
+| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A y B: concesión acotada a la empresa · empresa efectiva) | ACCESS CONTROL | P0 | `IN_PROGRESS` — fases 1–8 **`CERTIFIED`** · fase 9 `BLOCKED` (`R-127`) · fases 10–11 pendientes · precisada por `OD-16` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
 
 ## Decisiones normativas
 
@@ -67,14 +67,20 @@ se interpretan.
 ## Resumen
 ```
 Total ................. 40
-CERTIFIED ............. 24
-PARTIALLY CERTIFIED ... 1
-IMPLEMENTED ........... 2
-SPEC_READY ............ 10
-SPEC_DRAFT ............ 1
-BLOCKED_EXTERNAL ...... 1
-DEFERRED .............. 1
+CERTIFIED ............. 31
+PARTIALLY CERTIFIED ... 2     (011 · 027)
+PARTIAL ............... 1     (022)
+SPEC_READY ............ 2     (018 · 021)
+SPEC_DRAFT ............ 1     (016, en uso)
+IN_PROGRESS ........... 1     (040: fases 1–8 certificadas · fase 9 bloqueada)
+BLOCKED_EXTERNAL ...... 1     (017)
+DEFERRED .............. 1     (019)
 ```
+
+> **Reconciliación del 2026-09-09 (WAVE A0-G).** Diez estados de este índice contradecían los
+> informes de certificación que enlazan (`DOCUMENT_AUTHORITY_AND_SUPERSESSION_MATRIX.md §2`):
+> `004`, `009`, `010`, `011`, `013`, `020`, `022`, `002`, `024`, `040`. Se corrigen al estado que
+> tienen, con la evidencia citada en la celda. Ningún estado se eleva sin informe.
 
 > **Deriva de registro corregida el 2026-09-06.** Las specs `GA-REM-028`…`GA-REM-037` se
 > crearon y certificaron entre el 2026-09-04 y el 2026-09-06 sin darse de alta aquí, de modo
@@ -89,3 +95,22 @@ DEFERRED .............. 1
 | `GA-REM-022` | hallazgo **R-14**: la Tasa de Eclosión devuelve texto; 4 KPI implementados sin consumidor |
 
 Ninguna spec del encargo se ha eliminado. `GA-REM-019` absorbe el bloque «P2/P3 posterior a estabilización».
+
+## Hallazgos de auditoría → backlog oficial (2026-09-09)
+
+| Origen | Reconciliación | IDs |
+|---|---|---|
+| Master 360 (`H360-*`, 65) + addendum (`H360A-*`, 10) | `audit/remediation/H360_AND_ADDENDUM_TO_OFFICIAL_BACKLOG_RECONCILIATION.md` · 0 sin disposición | 28 nuevos `R-130…R-157` · 20 mapeados a IDs existentes |
+| Decisiones formalizadas | `OD-16` (requisito de producto) · `OD-17` (`AOD-09`) · `OD-18` (`AOD-12`) | pendientes: `AOD-01…08`, `10`, `11`, `13…16` · `BU-D10` `PENDING_RATIFICATION` |
+
+### Asignación por olas (vigente tras la reconciliación)
+
+| Ola | Contenido |
+|---|---|
+| **A** autoridad · seguridad · datos | `R-127` (`WAVE A1`, `OD-18`) · **`R-139`** (tanda propia, precede a la fase 9) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`) |
+| **B** procesos faltantes | `R-130` · `R-135` (`OD-17`) · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
+| **C** KPI · trazabilidad | `R-131` · `R-132` · `R-133` · `R-134` · `R-141` · `GA-REM-022` (`H360-K10`) · `R-80` (`H360-B09`) |
+| **D** preparación SAP | `R-137` (`AOD-03`) · `R-138` · `R-145` · `R-155` (`AOD-15`) · `R-157` (`AOD-01…05`) · `R-124` (`AOD-06`) |
+| **E** frontend · UX | fase 9 de `GA-REM-040` (tras `R-127` y `R-139`) · `R-98`/`R-119` · `R-146` · `R-150` · `R-151` · `R-122` · `R-123` · `GA-REM-011` (`H360-C01`) |
+| **F** certificación | E2E en `main` · `GA-REM-016` → `SPEC_READY` · fases 10–11 de `GA-REM-040` (`H360A-05`, `BU 0/15`) · evidencia `P-01` (`H360A-04`) · `R-83` |
+| **G** SAP real | `GA-REM-017` · `P-08` · `AOD-07` |

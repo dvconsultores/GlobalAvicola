@@ -11,7 +11,7 @@ referencia de dominio, no requisito. Estados: `COMPLETE` · `PARTIAL` · `MISSIN
 Rastro temporal: `BirdTypeEnum.GRANDPARENT` existe desde el commit inicial `3c93440` (2026-06-23);
 `HATCHERY` se añadió en `d3f37f8` (2026-06-24). `spec.md §4.4` y `docs/02 §3.4` lo gobiernan desde
 la redacción inicial; `docs/15:20` lo marca como «NUEVO» respecto de la app anterior. `docs/03:124`
-sigue listando **tres** valores (`GRANDPARENT, BREEDER, BROILER`) — deriva documental (`H360A-18`).
+sigue listando **tres** valores (`GRANDPARENT, BREEDER, BROILER`) — deriva documental (`H360A-07`).
 
 | Requisito | Fuente | Modelo | Backend | API | Frontend | KPI | Test | E2E | Evidencia | Estado |
 |---|---|---|---|---|---|---|---|---|---|---|

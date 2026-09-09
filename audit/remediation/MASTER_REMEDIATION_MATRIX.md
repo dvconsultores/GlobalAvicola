@@ -1151,3 +1151,23 @@ ACCESO POR UNIDAD                     0 / 15   sin cambios
 COBERTURA DE REQUISITO DE PRODUCTO   23 / 38 = 61 %
 R-127   OPEN → BLOQUEO DURO DE LA FASE 9   ·   R-112 · BU-D10 · P-08   intactos
 ```
+
+---
+
+## Reconciliación post-Master-360 (2026-09-09 · WAVE A0-P / A0-G)
+
+`§1` de este documento es histórico y no se reescribe. El estado consolidado de las 40 specs
+vive en `specs/remediation/INDEX.md` (reconciliado hoy) y su justificación en
+`MASTER_PROGRAM_STATUS_RECONCILIATION.md §2`.
+
+```
+OD-16   requisito de producto: cuatro unidades productivas · activación por empresa · encender ≠ conceder
+OD-17   un rechazo corregible no es terminal (AOD-09)
+OD-18   el catálogo de empresas no expone sap_config (AOD-12) → gobierna R-127
+H360 + H360A → backlog     75 hallazgos · 0 sin disposición · R-130…R-157 (28 nuevos) · 20 mapeados
+A01                        verificado: 8 sitios no conformes con OD-14.c/d → R-139 (P1, WAVE A, tanda propia)
+BU-D10                     PENDING_RATIFICATION
+Progenitoras               14 COMPLETE · 11 PARTIAL · 2 MISSING · 1 BLOCKED · 0 P0
+Activación por empresa     requisito existe · implementación existe · certificación 0/15 (sin cambio)
+P1 de la Master 360        11 → 12 (H360-A01 confirmado)
+```

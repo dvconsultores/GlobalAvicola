@@ -907,3 +907,50 @@ cuanto una empresa tiene `sap_config` poblado, y la sesión no expone empresas a
 
 Sensibilidad acumulada del programa en aislamiento y administración: **56 mutaciones válidas ·
 56 detectadas · 8 intentos iniciales inválidos corregidos antes de contarlos**.
+
+---
+
+## Hallazgos de la Master 360 y su addendum · alta oficial (2026-09-09 · WAVE A0-G)
+
+Reconciliación completa en `H360_AND_ADDENDUM_TO_OFFICIAL_BACKLOG_RECONCILIATION.md`: 75
+hallazgos, 0 sin disposición, 20 mapeados a IDs existentes, 28 IDs nuevos. Cada entrada conserva
+su `source_finding`. Ninguno se remedia en esta ola.
+
+| ID | Sev. | Título | `source_finding` | Requisito raíz | Ola | Autoridad prevista | Decisión |
+|---|:--:|---|---|---|:--:|---|---|
+| **`R-130`** | **P1** | `cull_recording` y `bird_exit` no validan contra el saldo: la población puede quedar negativa; sin test | `H360-P01` | `BR-01` · invariante | B | enm. `GA-REM-005` | — |
+| **`R-131`** | **P1** | «FCR» = `total_feed_kg / 1000` (`reports/service.py:155`), propagado a índice de producción e IPE; edad con `date.today()` en lotes cerrados | `H360-K01`, `H360-K07` | `Bases` p.2/p.13 | C | enm. `GA-REM-022` | — |
+| **`R-132`** | **P1** | % de mortalidad con denominador solo de `OpeningBalance` → 0 % en lotes activados por recepción; tendencia sin filtro de estado; sin % contra población actual | `H360-K02`, `H360-K13` | `Bases` p.3 · Rec. §9 | C | enm. `GA-REM-022` | `AOD-10.e` |
+| **`R-133`** | **P1** | eficiencia de vacunación cuenta eventos (`/1000`) y no aves | `H360-K03` | `Bases` p.10 | C | enm. `GA-REM-022` | — |
+| **`R-134`** | **P1** | AFCR suma `BirdMovement.quantity` como gramos; sin peso de muertos | `H360-K06` | `Bases` p.13 | C | enm. `GA-REM-022` | — |
+| **`R-135`** | **P1** | `RETURNED` no se reenvía; `REJECTED` es terminal | `H360-P03`, `H360-D09` | `docs/12 §4` | B | spec propia o enm. `GA-REM-006` + `spec §4.10` | **`OD-17`** ✓ |
+| **`R-136`** | **P1** (SAP) | tabla `reversals` sin servicio ni ruta; `BR-16` sin mecanismo | `H360-P05` | `BR-16` · Rec. §24 | B · D | spec propia | — |
+| **`R-137`** | **P1** (D) | `lots` sin identificador del lote productivo SAP | `H360-S05` | Rec. §3.3, §25.3 | D | enm. `GA-REM-017` | **`AOD-03`** |
+| **`R-138`** | **P1** (D) | materiales (`feed_types`, `vaccines`, `medications`) sin clave SAP; sin material por raza/sexo/huevo/pollito; proveedor por dos vías | `H360-S01`, `H360-S02`, `H360-S03` | Rec. §5, §15 | D | enm. `GA-REM-017` | `AOD-01` parcial |
+| **`R-139`** | **P1** | 8 atajos `is_super_admin` sobre dato productivo/maestros no conformes con `OD-14.c/d` (`operations:762,810,978,997` · `lots:351` · `curves:75` · `masters/router:139,161`); 0 tests | `H360-A01` = `H360A-08` · verificado en `A01_SUPER_ADMIN_SHORTCUT_VERIFICATION.md` | `OD-14` | **A** (tanda propia; precede a la fase 9) | enm. `GA-REM-002` clase C o `GA-REM-040` | — |
+| `R-140` | P2 | `cancel` sin motivo ni restricción de rol; no bloquea `SAP_CONFIRMED`/`SAP_ERROR` (latente) | `H360-P04` | `docs/12 §4` fila 13 | B | enm. `GA-REM-006` | — |
+| `R-141` | P2 | KPI de segundo orden: hen-day ×30 · bienestar heurístico · % sanos con denominador «cargados» · ganancia diaria aproximada | `H360-K04`, `K05`, `K11`, `K08` | `Bases` | C | enm. `GA-REM-022` | `AOD-10` |
+| `R-142` | P2 | `CORRECTED` usado como «pendiente de aprobador» sin corrección (`review/service.py:292`) | `H360-P06` | `docs/12 §4` fila 6 | B | enm. `GA-REM-006` | — |
+| `R-143` | P2 | `docs/12 R2` (quien corrige no aprueba) no implementada: la segregación compara con `registered_by_id` | `H360-P10` | `docs/12 §6` | B | enm. `GA-REM-007` | — |
+| `R-144` | P2 | resumen de cierre sin FCR ni peso final aunque `BR-05` exige pesaje para el FCR | `H360-P08` | `BR-05` · Rec. §13 | B/C | enm. `GA-REM-029` | `AOD-08` |
+| `R-145` | P2 | preparación SAP: backoff fijo 1 min (docs/10: 1/5/15) · consolidación sin validación de integridad · outbox pasivo · `external_transaction_id` solo tras éxito y `sap_reference_item` nunca poblado · OT no validada en alimento | `H360-S07`, `S10`, `S11`, `S13`, `S04`, `D11` | `docs/10 §5-6` · `docs/12 §10` · Rec. §8, §19 | D | enm. `GA-REM-010` | — |
+| `R-146` | P2 | sin `idempotency_key` de cliente: el reenvío móvil duplica registros | `H360-S12` | Rec. §17 | E | enm. `GA-REM-011` | `AOD-16` rel. |
+| `R-147` | P2 | constantes y tipos sin fuente normativa: unidad de medida sin catálogo · umbrales T°/H° fijos · `sex` `String` vs `SexEnum` · capacidad de incubadora no validada · pasos de aprobación por nombre de rol | `H360-B06`, `B07`, `B10`, `B12`, `B08` | Rec. §17 · `docs/02:516` | B/C | spec propia | — |
+| `R-148` | P2 | inmutabilidad de `audit_logs` solo en aplicación (listeners); sin trigger/regla en BD | `H360-D04` | `docs/13 §8` | B | enm. `GA-REM-032` | — |
+| `R-149` | P2 | deriva documental: `OD-04/06/08` sin archivo · `spec §14` → `docs/17` inexistente · `BR-17…19` fuera de `spec §5` · `GA-REM-016` en borrador amparando 15 certificaciones · `docs/03 §3.5` con tres tipos de ave (**la deriva de `INDEX.md` se cierra en este commit**) | `H360-D01`, `D02`/`D12`, `D03`, `D05`, `H360A-07` | `GA-REM-001` | A (documental) · F | — | — |
+| `R-150` | P2 | estados de error (`prohibido` / `error` / vacío) solo en `/users`; el resto de páginas no distingue denegación de vacío | `H360-F02` | `R-120` (generalización) | E | enm. `GA-REM-011` | — |
+| `R-151` | P2 | evidencia solo adjuntable en el detalle, no en el acto de captura móvil | `H360-F03` | Rec. §6 · `docs/02 §7` | E | spec propia | `AOD-16` rel. |
+| `R-152` | P2 | `grandparent_import` sin estructura para el plan de importación (`docs/02 §3.4.1`): país, cantidades comprada/embarcada/recibida, mortalidad en traslado, cuarentena, adjuntos tipados | `H360A-02` | `docs/02 §3.4.1` · `spec §4.4` | B | spec propia | — |
+| `R-153` | P3 | el lote de abuelas no se crea automáticamente al completar la importación | `H360A-03` | `docs/02 §3.4.2` | B | spec propia | — |
+| `R-154` | P3 | estados y campos sin productor: `DRAFT` · dos artefactos «cierre» (`LOT_CLOSURE` vs `POST /lots/{id}/close`) · `version` nunca incrementa · `LotStatus.CANCELLED` | `H360-P02`, `P09`, `P11` | `docs/12 §4` · `docs/13` | B | — | `AOD-08` |
+| `R-155` | P3 | período cerrado = 90 días fijos sin fuente (`BR-19`) | `H360-S06` | Rec. §15 | D | — | **`AOD-15`** |
+| `R-156` | P3 | peso reportado por el proveedor vs peso en granja (paridad con la app anterior, nivel 6) | `H360-B11` | legado p.18 | B | enm. `GA-REM-021` | — |
+| **`R-157`** | **P1** (D) | payload no mapeable a documento SAP (sin material, centro, almacén, objeto de costo, tipo de movimiento) · sin matriz formal por proceso (Rec. §24) · sin confirmación entrante SAP → app; `SENT_TO_SAP`/`SAP_CONFIRMED`/`SAP_ERROR` sin productor | `H360-S08`, `H360-S09` | Rec. §16, §18, §22, §24, §26 | D | enm. `GA-REM-017` | `AOD-01…05` |
+
+Mapeados sin ID nuevo (misma causa raíz): `H360-B05`/`H360A-10` → `R-13` · `H360-F01` → `R-98`/`R-119` ·
+`H360-B09` → `R-80` · `H360-B01/B02/B03/B04/B13` → `GA-REM-021` (enmienda pendiente) · `H360-K10` → `GA-REM-022` ·
+`H360-C01` → `GA-REM-011` · `H360-T01` → `GA-REM-013` · `H360-D06`/`H360A-06` → `R-124` · `H360A-01` → `GA-REM-040` fase 9 ·
+`H360A-04` → `GA-REM-016` · `H360A-05` → `GA-REM-040` fases 10-11 · `H360A-09` → `BU-D07` · `H360-D07/D08/D10` → `AOD-07/08/10`.
+
+Estado de los abiertos previos, sin cambio: `R-77` · `R-80` · `R-83` · `R-98`/`R-119` · `R-99` (`BLOCKED_BY_OUT_OF_SCOPE_DEPLOYMENT`, no tocar) ·
+`R-111` · `R-112` (verificar cierre frente a `OD-12`) · `R-122` · `R-123` · `R-124` · `R-125` · **`R-127`** (tanda `WAVE A1`, gobernada por `OD-18`) · `BU-D10` (`PENDING_RATIFICATION`).
