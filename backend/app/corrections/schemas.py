@@ -2,7 +2,7 @@
 from datetime import datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 
 class CorrectionCreate(BaseModel):
@@ -13,6 +13,14 @@ class CorrectionCreate(BaseModel):
     corrected_value: Optional[str] = None
     correction_type_id: Optional[int] = None
     reason: str = Field(..., min_length=5, max_length=2000)
+
+    @field_validator("reason")
+    @classmethod
+    def _motivo_no_vacio(cls, valor: str) -> str:
+        # `GA-REM-006-A` · `AC-R03`: cinco espacios cumplen `min_length` y no son un motivo.
+        if len(valor.strip()) < 5:
+            raise ValueError("El motivo de la corrección no puede estar en blanco")
+        return valor
 
 
 class CorrectionRead(BaseModel):

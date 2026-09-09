@@ -18,19 +18,20 @@ class CorrectionService:
 
     async def create_correction(self, data: schemas.CorrectionCreate) -> models.CorrectionLog:
         """Create a correction log entry and update the event status to CORRECTED."""
-        # Validate event exists and belongs to company
-        result = await self.db.execute(
-            select(OperationalEvent).where(
-                OperationalEvent.id == data.event_id,
-                OperationalEvent.company_id == self.company_id,
-            )
-        )
-        event = result.scalar_one_or_none()
-        if not event:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
+        # `GA-REM-006-A` · `AC-S05…S07`: el evento se resuelve con el **mismo alcance** que el
+        # resto de sus escrituras —empresa y unidad efectiva para el actor (`404`), y la
+        # guarda de escritura productiva (`OD-16.e/f`: la autoridad global, situada y solo
+        # sobre unidad habilitada). Antes solo se comparaba la empresa: un corrector
+        # alcanzaba los eventos de cadenas que no tenía, o apagadas.
+        from ..operations.service import OperationsService
 
-        # Event must be in a correctable state
-        correctable = (EventStatus.REGISTERED, EventStatus.PENDING_REVIEW, EventStatus.IN_REVIEW, EventStatus.RETURNED)
+        operaciones = OperationsService(self.db, self.current_user)
+        event = await operaciones.get_event(data.event_id)
+        await operaciones.exigir_unidad_operativa(event=event)
+
+        # Event must be in a correctable state. `OD-17.a` / `AC-S02`: `REJECTED` no es terminal.
+        correctable = (EventStatus.REGISTERED, EventStatus.PENDING_REVIEW, EventStatus.IN_REVIEW,
+                       EventStatus.RETURNED, EventStatus.REJECTED)
         if event.status not in correctable:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,

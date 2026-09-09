@@ -45,6 +45,26 @@ class SegregacionMixin:
             validate_segregation(event.registered_by_id, self.current_user["id"], accion)
         except BusinessRuleViolation as e:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=e.message)
+        # `GA-REM-007-A` · `R-143` · `docs/12 R2` + `OD-17.b`: tampoco aprueba quien **corrigió**
+        # el registro (`correction_logs.corrected_by_id`) ni quien lo **rechazó**
+        # (`approval_actions.REJECTED`). Devolverlo no cuenta: observar no es rechazar
+        # (`OD-17.a`), y el mismo supervisor revisa el reenvío (`docs/12 §2`). Mismo
+        # identificador `BR-14` y mismo punto de control (`GA-REM-007 AC05`, `AC07`).
+        from ..corrections.models import CorrectionLog
+
+        implicados = set((await self.db.execute(
+            select(CorrectionLog.corrected_by_id).where(CorrectionLog.event_id == event.id)
+        )).scalars().all())
+        implicados |= set((await self.db.execute(
+            select(models.ApprovalAction.user_id).where(
+                models.ApprovalAction.event_id == event.id,
+                models.ApprovalAction.action_type == models.ActionType.REJECTED)
+        )).scalars().all())
+        if self.current_user["id"] in implicados:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail=f"Quien corrigió o rechazó un registro no puede {accion}lo (segregación de funciones, BR-14)",
+            )
 
     async def _segregacion_configurada(self) -> bool:
         """`True` salvo que la empresa la haya desactivado explicitamente.

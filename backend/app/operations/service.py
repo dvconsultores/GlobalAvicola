@@ -51,6 +51,15 @@ LOT_OPTIONAL_EVENTS = {
     models.EventType.HATCHERY_INSPECTION,
 }
 
+# `GA-REM-006-A` §A.2 · mapa de transiciones de `P-07` (`R-135`, `R-140` PARTE A, `R-154`):
+# estados **desde** los que cada acto es válido. `OD-17.a`: `RETURNED` y `REJECTED` son
+# devoluciones internas, vivas; `CANCELLED` y el ciclo SAP son terminales o diferidos.
+EDITABLES = (models.EventStatus.DRAFT, models.EventStatus.REGISTERED,
+             models.EventStatus.RETURNED, models.EventStatus.REJECTED)
+REENVIABLES = (models.EventStatus.REGISTERED, models.EventStatus.RETURNED, models.EventStatus.REJECTED)
+NO_CANCELABLES = (models.EventStatus.APPROVED, models.EventStatus.CONSOLIDATED, models.EventStatus.SENT_TO_SAP,
+                  models.EventStatus.SAP_CONFIRMED, models.EventStatus.SAP_ERROR, models.EventStatus.CANCELLED)
+
 
 class OperationsService:
     def __init__(self, db: AsyncSession, current_user: dict[str, Any]):
@@ -1014,8 +1023,10 @@ class OperationsService:
         old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         # BR-15: Records sent to SAP cannot be edited
         validate_sap_edit_lock(event.status.value)
-        if event.status not in [models.EventStatus.DRAFT, models.EventStatus.REGISTERED, models.EventStatus.RETURNED]:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se pueden editar eventos en borrador, registrados o devueltos")
+        # `GA-REM-006-A` · `OD-17.a`: un rechazo corregible no es terminal. `REJECTED` es
+        # editable como `RETURNED`; el estado no cambia por editar (`AC-U02`).
+        if event.status not in EDITABLES:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo se pueden editar eventos en borrador, registrados, devueltos o rechazados")
         # `exclude_unset` es lo que hace que una edición parcial no borre lo que no
         # menciona. El esquema ya excluye `status`, `event_type` e `idempotency_key`, de
         # modo que aquí no puede llegar ninguno: el estado solo cambia por las
@@ -1055,8 +1066,12 @@ class OperationsService:
     async def submit_to_review(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
         await self.exigir_unidad_operativa(event=event)  # `AC-W13`: unidad apagada = 403
-        if event.status != models.EventStatus.REGISTERED:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo eventos registrados pueden enviarse a revisión")
+        # `GA-REM-006-A` · `R-135` · `OD-17.b` · `docs/12 §2`: el devuelto y el rechazado se
+        # **reenvían** con este mismo acto explícito y vuelven a la cola de revisión; el
+        # corregido espera al aprobador y el aprobado no vuelve. Mapa explícito, sin `setattr`
+        # de estado desde el cliente.
+        if event.status not in REENVIABLES:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo eventos registrados, devueltos o rechazados pueden enviarse a revisión")
         old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         event.status = models.EventStatus.PENDING_REVIEW
         await self.db.flush()
@@ -1069,8 +1084,11 @@ class OperationsService:
     async def cancel_event(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
         await self.exigir_unidad_operativa(event=event)  # `AC-W13`
-        if event.status in [models.EventStatus.APPROVED, models.EventStatus.CONSOLIDATED, models.EventStatus.SENT_TO_SAP]:
-            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se puede cancelar un evento ya aprobado o enviado a SAP")
+        # `GA-REM-006-A` · `R-140` PARTE A: lo aprobado, lo consolidado, lo enviado o confirmado
+        # por SAP, lo que SAP rechazó y lo ya anulado no se cancelan por aquí (`OD-17.a`:
+        # terminales y ciclo SAP; `BR-15`/`BR-16`: solo reverso). Motivo y permiso: fuera.
+        if event.status in NO_CANCELABLES:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se puede cancelar un evento aprobado, consolidado, enviado o confirmado por SAP, con error de SAP o ya anulado")
         old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         event.status = models.EventStatus.CANCELLED
         await self.db.flush()
