@@ -135,3 +135,14 @@ Reparto de las 22, medido sobre la base tras el arranque real (Wave 2.75):
 > añadidas. La cifra real, medida sobre la base, es **46 y 22**. El error fue de
 > estimación al redactar, no de la migración: las asociaciones que la migración escribe
 > siempre fueron las declaradas en `PERMISOS_POR_ROL`.
+
+## `OD-19` Aclaración A · capacidad de reverso (2026-09-10 · `GA-REM-041-A/B`)
+
+| Rol | Antes | Después | Añadidas | Vía |
+|---|---:|---:|---:|---|
+| Supervisor Avícola | 12 | 14 | 2 (`reversals:create`, `reversals:read`) | semillas (`dev`/`test`) + migración de datos `v2w3x4y5z6a7` (instalaciones existentes) + matriz compuesta del baseline |
+| Contralor Avícola (`integration_seeds`) | — | +1 (`reversals:read`) | 1 | `integration_seeds` + `v2w3x4y5z6a7` (si el rol existe) |
+| Administrador de Accesos · Operador de Granja · resto | sin cambio | sin cambio | 0 | — |
+| Super Administrador | 9 comodines | 9 comodines | 0 | `reversals:*` deja de ser exclusivo (`SOLO_SUPER_ADMIN` 15 → 13) |
+
+Total operativo de los 5 roles reconciliados: **46 → 48** (`GA-REM-025 AC03`). `reversals:approve` no existe: el reverso se aprueba por `approvals:*`.

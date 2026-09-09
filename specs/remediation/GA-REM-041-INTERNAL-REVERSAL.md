@@ -241,7 +241,7 @@ detiene con error explícito. Sin datos migrados. `test_upgrade_path` (script de
 | **Enmienda** | `GA-REM-041-A` · `ROLE GOVERNANCE` · **Estado** `SPEC_READY` |
 | **Decisión** | `OD-19` **Aclaración A** (propietario) |
 | **Cambio** | solo semillas y pruebas de gobierno: `dev_seeds` y `test_seeds` «Supervisor Avícola» + `reversals:create`, `reversals:read`; `integration_seeds` «Contralor Avícola» + `reversals:read`; `SOLO_SUPER_ADMIN` **15 → 13** (los dos permisos dejan de ser exclusivos de la autoridad global: el guardián se reduce, no se amplía) |
-| **Sin cambio** | motor de reverso, estados, compensación, rutas, migración, `OD-19 §1-§24`; `R-136` interno sigue cerrado |
+| **Sin cambio** | motor de reverso, estados, compensación, rutas, `OD-19 §1-§24`; `R-136` interno sigue cerrado. *«Sin migración» decía la versión inicial: la enmienda B lo corrige — las semillas solo sirven a instalaciones nuevas (`R-44`)* |
 
 ## A.1 Criterios de aceptación (`REV-R`)
 
@@ -258,3 +258,32 @@ detiene con error explícito. Sin datos migrados. `test_upgrade_path` (script de
 
 Sensibilidad `S9` (encargo §84): (a) dar `reversals:create` a «Contralor Avícola» → `REV-R04` roja; (b) darle `reversals:read`
 al «Administrador de Accesos» → `REV-R05` roja; (c) quitar `reversals:create` al «Supervisor Avícola» → `REV-R01`/`R08` rojas.
+
+---
+
+# Enmienda B · la asignación llega a las instalaciones existentes y al baseline (2026-09-10 · WAVE B tranche 6 · hallazgo de la regresión completa)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-041-B` · `ROLE GOVERNANCE` / `DATA MIGRATION` · **Estado** `SPEC_READY` |
+| **Decisión** | `OD-19` Aclaración A — **sin cambio** de titulares ni de semántica |
+| **Hallazgo** | La regresión completa tras `cdb0670` dejó roja `test_clean_baseline::test_t_025_02` (`GA-REM-025 AC03`: 46 asociaciones para los 5 roles operativos). La **fuente única** de la matriz RBAC para las instalaciones existentes y para el baseline es `PERMISOS_POR_ROL` de la migración de reconciliación `l2m3n4o5p6q7` (`R-44`: «actualizar las semillas no basta: las semillas sirven a instalaciones nuevas»), que `seeds/baseline_seeds.py` importa. La enmienda A cambió solo semillas, así que una instalación ya desplegada **nunca recibiría** la capacidad decidida por el propietario, y el baseline tampoco la sembraría. Las pruebas dirigidas no lo vieron porque `test_clean_baseline` no estaba entre ellas: solo la regresión completa lo mostró (por eso se lee antes de certificar). |
+| **Corrección** | (1) migración de datos **`v2w3x4y5z6a7`** (revisa `u1v2w3x4y5z6`) con `PERMISOS_ADICIONALES`: «Supervisor Avícola» + `reversals:create`, `reversals:read`; «Contralor Avícola» + `reversals:read`. Mismo contrato que `l2m3n4o5p6q7`: **solo añade**, idempotente, tolera el rol ausente (no crea roles). A diferencia de aquella, **sí se revierte**: el módulo `reversals` nace con `OD-19`, no existe personalización previa que confundir, y la bajada retira exactamente esas asociaciones. (2) `baseline_seeds._matriz_de_la_migracion()` **compone** la base (`l2m3n4o5p6q7`) con los deltas de las migraciones de reconciliación posteriores, solo para roles que ya están en la base: el baseline no inventa roles («Contralor Avícola» sigue viviendo en `integration_seeds`, `OD-19` Acl. A). Sigue habiendo una copia de cada hecho. (3) `GA-REM-025 AC03`: **46 → 48** por `OD-19` Aclaración A. |
+| **Sin cambio** | las semillas de la enmienda A · `SOLO_SUPER_ADMIN` 13 · motor, rutas, estados · `OD-19 §1-§24` |
+
+## B.1 Criterios de aceptación
+
+| AC | Criterio | Fuente de verdad |
+|---|---|---|
+| `REV-R09` | sobre una instalación con «Supervisor Avícola» **sin** los dos permisos, aplicar la migración los añade; aplicarla de nuevo no duplica ni añade nada más | `tests/test_reversal_role_migration.py` |
+| `REV-R10` | la matriz compuesta del baseline concede `reversals:create`/`read` al «Supervisor Avícola», suma **48** asociaciones para los 5 roles operativos y **no** contiene «Contralor Avícola» | `seeds/baseline_seeds._matriz_de_la_migracion` · `test_clean_baseline::test_t_025_02` |
+| `REV-R11` | la bajada retira exactamente las asociaciones del delta y ninguna otra; volver a subir las repone | `tests/test_reversal_role_migration.py` |
+| `REV-R12` | guardianes exactos: cabeza `v2w3x4y5z6a7` · rutas 211 · `test_t_025_02 == 48` · `SOLO_SUPER_ADMIN == 13` | guardianes |
+
+## B.2 Sensibilidad
+
+`S9d`: la composición del baseline no aplica el delta → `REV-R10` y `test_t_025_02` rojas. `S9e`: la migración no inserta → `REV-R09` roja.
+
+## B.3 Definición de terminado
+
+`REV-R09…R12` verdes · rojo válido · `S9d`/`S9e` válidas · regresión completa **leída** en verde · sin cambio en `OD-19`.

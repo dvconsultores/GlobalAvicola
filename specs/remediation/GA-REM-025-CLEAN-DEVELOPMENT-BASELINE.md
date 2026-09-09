@@ -48,7 +48,8 @@ debe inventarlo (`ENV-01 §3`, encargo §60).
 Detalle importante: la migración `l2m3n4o5p6q7` **no crea roles** —los busca por nombre y
 salta los que no existen (`alembic/versions/l2m3n4o5p6q7:121-126`)—. Sobre una base vacía
 no hace nada. Luego el baseline necesita un seed que cree roles y permisos; la migración
-solo reconcilia instalaciones ya existentes.
+solo reconcilia instalaciones ya existentes. Las migraciones de reconciliación posteriores (`v2w3x4y5z6a7`, `OD-19`
+Aclaración A) siguen el mismo contrato y el baseline las **compone** con la base (`GA-REM-041-B`): una copia de cada hecho.
 
 ## Alcance
 
@@ -71,7 +72,7 @@ SAP real (`GA-REM-017`, `BLOCKED_EXTERNAL`) · umbral de mortalidad por empresa 
 |---|---|---|
 | **AC01** | Tras el reset no queda historia operativa ficticia: `lots`, `operational_events` y sus 12 tablas dependientes están vacías | consulta de recuento por tabla |
 | **AC02** | Alembic queda en `head`, con una sola cabeza | `alembic current` / `alembic heads` |
-| **AC03** | Existen los 6 roles y sus asociaciones de permiso; **46** para los 5 roles operativos, más los comodines del Super Administrador | consulta y comparación contra `PERMISOS_POR_ROL` |
+| **AC03** | Existen los 6 roles y sus asociaciones de permiso; **48** para los 5 roles operativos (46 de `docs/12 §3` reconciliadas por `l2m3n4o5p6q7` + 2 de `OD-19` Aclaración A: `reversals:create`/`read` del «Supervisor Avícola», migración `v2w3x4y5z6a7`; enmendado 2026-09-10, `GA-REM-041-B`), más los comodines del Super Administrador | consulta y comparación contra la matriz compuesta (`PERMISOS_POR_ROL` + `PERMISOS_ADICIONALES`) |
 | **AC04** | Los Settings requeridos están presentes y con los valores de la spec vigente | arranque de la aplicación + comprobación de `Settings` |
 | **AC05** | Los usuarios de test autorizados pueden autenticarse; sus contraseñas no viven en el repositorio | login real + ausencia de literales |
 | **AC06** | Existen —o pueden crearse de forma determinista— dos contextos de tenant para pruebas multiempresa | fixture de dos empresas |
