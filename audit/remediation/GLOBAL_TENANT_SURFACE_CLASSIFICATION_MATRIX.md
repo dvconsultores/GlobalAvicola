@@ -52,3 +52,18 @@ la lista de exenciones, y vaciarla se detecta —es la mutación `S2`— con un 
 Construir una guarda del tipo «toda ruta declara su clase de empresa» exigiría un registro
 paralelo al de `route_scope`, y una guarda débil daría falsa seguridad. Queda documentado y no
 inventado.
+
+---
+
+## Addendum · la sesión (`GA-REM-040` fase 8 · 2026-09-09)
+
+| Superficie | Recurso | Clase | Actor de empresa | Autoridad global sin contexto | Situada en `A` |
+|---|---|---|---|---|---|
+| `GET /me` | la sesión del propio actor | **`INQUILINO`** por su contenido | su empresa | `effective_company_id` nulo · listas vacías | contexto de `A` |
+
+La sesión no es una superficie de control global aunque la pida un actor global: **entrega el
+contexto de inquilino en el que se está**. Sin contexto no entrega dato de ningún inquilino, que
+es `OD-14.d` representado.
+
+Lo que sí lleva siempre, con contexto o sin él: la identidad y las capacidades `RBAC`, que son
+del actor y no de la empresa.

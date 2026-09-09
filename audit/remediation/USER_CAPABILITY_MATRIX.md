@@ -123,3 +123,21 @@ NO PUEDE    listar usuarios — `users:read` es otra cosa, y ampliarlo es cómo 
 **La diferencia con la entrada de la fase 7**: allí `business_units:create` autorizaba a
 conceder a cualquiera «incluido uno mismo». `OD-15` lo separó. El registro de la política
 anterior vive en `OD-15 §1`.
+
+---
+
+## Cómo se lee la sesión (`GA-REM-040` fase 8 · 2026-09-09)
+
+| Campo | Significa | **No** significa |
+|---|---|---|
+| `permissions` | qué acciones autoriza el `RBAC` del actor | qué dato puede ver |
+| `company_business_units` | qué cadenas tiene contratadas su empresa | qué puede operar él |
+| `granted_business_units` | qué le concedió su empresa | qué es efectivo hoy |
+| `effective_business_units` | **lo único que autoriza dato productivo** | — |
+| `company_id` | la empresa **persistida** del usuario | dónde está operando |
+| `effective_company_id` | dónde está operando **ahora** | de quién es el usuario |
+| `is_super_admin` | tiene `("*", …, "all")` | que se llame «Administrador» |
+
+**El caso que hay que saber leer**: el `Administrador de Accesos` llega con capacidades de
+`business_units` y `effective_business_units` vacío. Es correcto y es el punto — administrar el
+acceso no es acceder.

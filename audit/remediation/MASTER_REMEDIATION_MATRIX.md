@@ -1097,3 +1097,30 @@ COBERTURA DE REQUISITO DE PRODUCTO   20 / 38 = 53 %
 BU-D10 · R-112 · R-127 · P-08        intactos
 FASE 8                               NOT STARTED · prerrequisitos satisfechos
 ```
+
+---
+
+## `GA-REM-040` fase 8 · la sesión (2026-09-09)
+
+```
+LA SESIÓN REPRESENTA LA AUTORIDAD  ·  NO LA DEFINE
+```
+
+El endpoint compone: ni un `if` sobre roles, empresas o comodines. Cuatro conceptos, cuatro
+campos, y una prueba dedicada a que **concedidas y efectivas difieran** — si nunca pudieran,
+una de las dos sobraría.
+
+```
+PRUEBAS        16 · rojo previo 15/16   ·  SENSIBILIDAD  11 / 11 · 1 rehecha
+BACKEND        770 passed · 49 skipped  ·  FRONTEND  87 passed · 0 ficheros
+MIGRACIÓN      ninguna · head sigue `s9t0u1v2w3x4`   ·  CONTRATO  aditivo
+```
+
+```
+FASE 8                               COMPLETE
+CERTIFICACIÓN FUNCIONAL              14 / 15   sin cambios
+ACCESO POR UNIDAD                     0 / 15   sin cambios
+COBERTURA DE REQUISITO DE PRODUCTO   22 / 38 = 58 %
+RQ-03 · BU-D10 · R-112 · R-127 · P-08          intactos
+R-129 nuevo · dependencia de la fase 9
+```

@@ -796,3 +796,17 @@ GA-REM-040 FASE 8 — SESIÓN / CAPACIDADES
 
 R-127 · R-119 · R-120 · R-112   independientes · sin bloqueos
 ```
+
+## Tras la fase 8 (2026-09-09)
+
+```
+FASE 8  COMPLETE   la sesión ya entrega lo que la interfaz necesitará
+
+FASE 9 — INTERFAZ  (T-040-21…24)  ·  NO INICIADA
+      DEPENDE DE:
+          R-129   superficie de candidatos — el Administrador de Accesos no tiene
+                  `users:read`, y `OD-15 §6` lo decidió así a propósito
+          R-119   el frontend no comprueba permisos en 27 de 28 pantallas
+          R-120   los cinco estados, generalizados
+      NO depende de: BU-D10 · R-112 · R-127 · P-08
+```

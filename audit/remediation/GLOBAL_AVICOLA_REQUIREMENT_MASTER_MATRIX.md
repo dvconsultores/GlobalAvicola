@@ -243,3 +243,22 @@ COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-09
 `RQ-03` **no cambia**: `R-128` y `R-113` no añaden ni quitan recursos del universo —siguen
 siendo 54— ni crean excepciones nuevas. Se verifica como regresión, no se recalcula por
 transitividad. El histórico `21 / 60` sigue intacto.
+
+
+---
+
+## 8. Tras la fase 8 (2026-09-09)
+
+| ID | Requisito | Antes | Ahora |
+|---|---|:--:|:--:|
+| `RQ-24` | la sesión entrega unidades y capacidades (`AC-H01`) | `MISSING` | **`COMPLETE`** |
+| `RQ-25` | el cliente puede distinguir administrar de acceder | `MISSING` | **`COMPLETE`** |
+| `RQ-03` | aislamiento de compañía | `COMPLETE` | **`COMPLETE`** — 54 recursos, sin cambios |
+
+```
+COBERTURA DE REQUISITO DE PRODUCTO — 2026-09-09
+    22 / 38  =  58 %   COMPLETE      (antes 20 / 38 = 53 %)
+```
+
+`RQ-03` se verifica como regresión: la fase 8 no añade recursos —siguen 54— ni excepciones. El
+histórico `21 / 60` sigue intacto.

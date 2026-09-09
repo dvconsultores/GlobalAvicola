@@ -860,3 +860,28 @@ salen de la excepción porque ya los concede un rol. Primera vez que esa lista b
 
 Sensibilidad acumulada del aislamiento y la administración: **37 mutaciones válidas · 37
 detectadas · 7 intentos iniciales inválidos corregidos antes de contarlos**.
+
+---
+
+## `GA-REM-040` fase 8 · COMPLETE (2026-09-09)
+
+```
+T-040-20   la sesión entrega habilitadas · concedidas · efectivas · capacidades
+FASE 8     COMPLETE · contrato aditivo · sin migración · 0 ficheros de frontend
+```
+
+Evidencia: `GA_REM_040_PHASE_8_EVIDENCE.md`.
+16 pruebas · rojo previo 15/16 · sensibilidad 11/11 · 1 rehecha por inválida.
+
+## `R-129` · `P3` · superficie de candidatos para la administración de acceso
+
+La fase 9 necesitará ofrecerle al `Administrador de Accesos` los usuarios de su empresa a los
+que conceder una unidad. Hoy no puede: `OD-15 §6` le negó `users:read` **a propósito**, porque
+`users:*` es el conjunto que mantuvo cuatro `P0` latentes.
+
+Hace falta una superficie propia y mínima —identificador y nombre de los usuarios de la empresa
+efectiva— sin conceder lectura general de usuarios. **No se implementa en la fase 8**: no la
+pide `§14.1` ni ninguna `AC` vigente, y construirla aquí sería ampliar el alcance por
+comodidad.
+
+Queda como dependencia explícita de la fase 9.
