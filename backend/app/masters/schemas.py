@@ -34,10 +34,24 @@ class CompanyUpdate(BaseModel):
     is_active: Optional[bool] = None
 
 
-class CompanyRead(CompanyBase):
+class CompanyCatalogRead(BaseModel):
+    """`GA-REM-033` enmienda A · `R-127` · `OD-18`: la proyección del catálogo de empresas.
+
+    Explícita y acotada: no hereda de `CompanyBase` y **no** declara `sap_config`. La
+    columna es `String` y el contrato anterior la validaba como `dict`, de modo que una sola
+    empresa con configuración poblada respondía `500` para todos, autoridad global incluida
+    (`AC14`). `OD-18.a` decide que el catálogo general identifica empresas y no lleva
+    configuración de integración; su representación persistente y su superficie
+    administrativa quedan diferidas (`OD-18.b`). Es el conjunto **exacto** de `AC16`: un
+    campo de más es fuga; uno de menos, regresión del selector de la fase 9 (`AC23`).
+    """
     id: int
+    name: str
+    tax_id: Optional[str] = None
+    country: Optional[str] = None
+    currency: Optional[str] = None
+    approval_levels: int
     is_active: bool
-    sap_config: Optional[dict] = None
     created_at: datetime
     updated_at: datetime
     model_config = {"from_attributes": True}

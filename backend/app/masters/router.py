@@ -98,7 +98,10 @@ def register_crud(
 # Register CRUD for all master entities
 # ============================================================
 
-register_crud("companies", models.Company, schemas.CompanyCreate, schemas.CompanyRead, schemas.CompanyUpdate, ["name", "tax_id"])
+# `GA-REM-033` enmienda A / `R-127`. El catálogo responde con `CompanyCatalogRead`, una
+# proyección explícita sin `sap_config` (`OD-18`). Con `CompanyRead(CompanyBase)` la fila
+# entera viajaba y, al ser la columna `String`, una configuración poblada rompía el listado.
+register_crud("companies", models.Company, schemas.CompanyCreate, schemas.CompanyCatalogRead, schemas.CompanyUpdate, ["name", "tax_id"])
 register_crud("farms", models.Farm, schemas.FarmCreate, schemas.FarmRead, schemas.FarmUpdate, ["name", "code", "location"])
 register_crud("houses", models.House, schemas.HouseCreate, schemas.HouseRead, schemas.HouseUpdate, ["name"])
 register_crud("hatcheries", models.Hatchery, schemas.HatcheryCreate, schemas.HatcheryRead, schemas.HatcheryUpdate, ["name", "code"])
