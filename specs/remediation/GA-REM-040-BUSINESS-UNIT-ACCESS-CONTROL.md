@@ -1347,3 +1347,76 @@ diga `capacidad ausente` no protege nada; lo que protege es que la ruta deniegue
 | Tarea | Qué |
 |---|---|
 | `T-040-20` | Capacidades y unidades en la sesión, por los resolutores centrales |
+
+---
+
+# Enmienda F · los candidatos a recibir una unidad (2026-09-09)
+
+`R-129`. Precondición de `T-040-22` (interfaz de unidades por usuario, fase 9), descubierta al
+resolver `OD-15`: el `Administrador de Accesos` **no tiene `users:read`**, a propósito, y sin
+eso la pantalla no tiene a quién ofrecerle.
+
+```
+DESCUBRIR A QUIÉN CONCEDER   ≠   ADMINISTRAR USUARIOS
+```
+
+Se enmienda `GA-REM-040` y no se crea remediación nueva: la autoridad —`OD-15 §6`, `AC-H05`—
+ya existe. Lo que faltaba era la superficie.
+
+## `AC-H15` · existe una superficie de candidatos, mínima y de inquilino
+
+```
+Given un actor con autoridad para conceder unidades (`business_units:create`)
+When  pide los candidatos para una unidad habilitada de su empresa efectiva
+Then  obtiene los usuarios ACTIVOS de esa empresa, sin él mismo,
+      con lo mínimo para elegir: identificador, nombre de usuario, nombre visible,
+      y si ya tienen esa unidad concedida
+And   NO obtiene usuarios de otra empresa, ni por identificador, ni por búsqueda
+And   NO necesita `users:read`, y sigue sin tenerlo
+```
+
+**Por qué `business_units:create` y no un permiso nuevo.** La autoridad de conceder **es** la
+autoridad de saber a quién. Un permiso aparte habría que concederlo siempre junto al otro, y dos
+permisos que van siempre juntos son uno con un nombre de más.
+
+**Por qué se incluye a quien ya la tiene, marcado.** Ocultarlo haría indistinguible «nunca se le
+dio» de «ya la tiene» — la misma confusión que `AC-H11` separa entre concedidas y efectivas. Se
+devuelve con `already_granted`, y la interfaz decide qué hacer con él.
+
+**Por qué se excluye al actor.** `OD-15.a` deniega la auto-concesión, y ofrecerse a uno mismo
+como candidato sería ofrecer una opción que el servidor va a rechazar. La exclusión es
+**cortesía**, no seguridad: el `POST` sigue denegando aunque el cliente se envíe a sí mismo.
+
+## `AC-H16` · descubrir no es administrar
+
+```
+Given el mismo actor
+When  llama a `GET /users`
+Then  recibe 403 — como antes, como siempre
+```
+
+Es el contraste obligatorio. Sin él, la superficie de candidatos sería `users:read` con otro
+nombre, y volverían por la puerta de atrás los cuatro `P0` que `OD-15 §6` cerró.
+
+## Lo que la superficie **no** es
+
+```
+NO  lista paginada con total — el universo es la empresa; cabe entero
+NO  buscador — no hay parámetro de búsqueda, y por tanto no hay oráculo
+NO  perfil — ni correo, ni teléfono, ni rol, ni permisos
+NO  escritura — 0 filas, 0 auditoría de éxito, 0 cambios
+NO  la seguridad — el `POST` de concesión sigue decidiendo solo
+```
+
+## Clase de la superficie
+
+```
+INQUILINO · plano de control          `OD-14.c`
+autoridad global sin contexto   →     403, como las demás rutas de la fase 7
+```
+
+## Tareas
+
+| Tarea | Qué |
+|---|---|
+| `T-040-38` | `GET /business-units/{code}/grant-candidates` · proyección mínima · misma empresa |
