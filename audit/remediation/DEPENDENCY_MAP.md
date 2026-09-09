@@ -873,4 +873,7 @@ R-159 (nuevo, P2) ──► WAVE B · alcance de unidad en get_alerts · no bloq
 R-130 ──CERRADO──► desbloquea: GA-REM-021 B01 (cuadre usa el saldo) · R-144 (sigue esperando R-131, ola C) · ola C (saldo correcto)
 R-161 (nuevo, P2) ──► misma familia (saldos de huevos/incubación sin bloqueo) · tranche posterior
 siguiente: R-160 + R-159 (alcance de unidad en creación/edición de eventos y alertas) ──► independiente de R-130
+R-160 + R-159 ──CERRADOS (tranche 2, GA-REM-040-G)──► desbloquean nada nuevo (eran hoja); dejan registrados R-162 (descarga de evidencia
+                sin unidad) y R-163 (lots: la autoridad global muta lotes de unidad apagada) — misma raíz, P2, tranche propio
+siguiente (identificado, no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) ◄── OD-17 vigente
 ```

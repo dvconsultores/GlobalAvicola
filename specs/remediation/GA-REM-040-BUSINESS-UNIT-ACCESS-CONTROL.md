@@ -1427,7 +1427,7 @@ autoridad global sin contexto   →     403, como las demás rutas de la fase 7
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-040-G` · `SECURITY / BUSINESS UNIT SCOPE` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-040-G` · `SECURITY / BUSINESS UNIT SCOPE` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-09; E2E `BLOCKED_RUNTIME`) · evidencia `R-160-R-159-PRODUCTIVE-BU-ENFORCEMENT-EVIDENCE.md` |
 | **Hallazgos** | **`R-160`** (P1): la creación y edición de eventos no exigen alcance de unidad · **`R-159`** (P2): `GET /operations/alerts` sin predicado de unidad para el actor de empresa · origen: pre-flight de la ola B (`WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md`) y `R-139` §7 |
 | **Requisito raíz** | `§4` («acceso operativo efectivo = … unidad habilitada AND unidad concedida …»), `AC-C05` («las mutaciones sobre unidad no concedida se deniegan»), `AC-C06`, `AC-C08`, `AC-A05`, `AC-B02`, `AC-B04` · `OD-09.b/c` · `OD-16.b/e/f` · `OD-14.c/d` (empresa) · `route_scope` («alertas de sus lotes») |
 | **Matriz previa** | `R160_R159_OPERATION_BU_AUTHORITY_MATRIX.md` (derivación canónica, semántica por actor, siete superficies de escritura, una de lectura, dos de control excluidas) |
@@ -1473,7 +1473,7 @@ dominio (`§2`): solo casa la fila con el alcance ya resuelto.
 | `POST /operations` | derivar la unidad del lote del payload; aplicar `§G.3` **antes** de `_apply_business_rules` y de `db.add` |
 | `PUT /operations/{id}` | `get_event` (como hoy); si el payload trae `lot_id`, `farm_id`, `house_id` o `destination_farm_id`: `validate_lot_active(lote destino, empresa)`, `verificar_ubicacion` y `§G.3` sobre el lote **destino**; si no cambia el lote, `§G.3` sobre el lote actual (bloquea al global sobre unidad apagada) |
 | `submit` · `cancel` · `POST evidences` | `get_event` (como hoy) + `§G.3` sobre la unidad del evento (solo añade la denegación del global sobre unidad apagada) |
-| `DELETE evidences/{eid}` | **`get_event` primero** (`404` por unidad para el actor) + `§G.3` |
+| `DELETE evidences/{eid}` | la comparación de empresa de `R-139` se mantiene **primero** (`403` entre inquilinos, contrato certificado por `GA-REM-002-C` `AC-S03`); ya dentro de la empresa, `get_event` (`404` por unidad para el actor) + `§G.3` · *corrección de redacción en la implementación (`T-040-G3`): la primera redacción ponía `get_event` delante y habría convertido el `403` certificado en `404`; lo detectó `test_od14_productive_surfaces::test_s03_*` (3 rojas), no una decisión nueva* |
 | `PATCH alerts/{id}/resolve` | la alerta se busca con el mismo predicado de `§G.5`; global: `§G.3` |
 | `classify` · `reclassify` | sin cambio (plano de control, fase 6) |
 
@@ -1496,7 +1496,7 @@ de respuesta sin cambio.
 | `AC-W03b` | actor con **cero** unidades efectivas → alta sobre cualquier lote → `400 BR-07`; alta sin lote (`farm_inspection`) → `403`; cero filas |
 | `AC-W04` | lote de otra empresa → `400 BR-07` (control, `R-42`) |
 | `AC-W05` | lote de **otra unidad** de la misma empresa (actor `breeder` sobre lote `grandparent`) → `400 BR-07` · y el actor con concesión `grandparent` sí crea (Progenitoras, independiente) |
-| `AC-W06` | edición de un evento de una unidad no alcanzable → `404` (control, `get_event`) · borrado de su evidencia → `404` (hoy `204`) |
+| `AC-W06` | edición de un evento de una unidad no alcanzable → `404` (control, `get_event`) · borrado de su evidencia (misma empresa, otra unidad) → `404` (hoy `204`) · evidencia de otra empresa → `403` (control, `R-139` `AC-S03`, sin cambio) |
 | `AC-W07` | edición de un evento propio (sin cambiar de lote) → `200` (control) |
 | `AC-W08` | suplantación de unidad por payload: `N/A` — no existe campo |
 | `AC-W09` | edición que **repunta** `lot_id` a un lote de otra unidad → `400 BR-07` y el evento **no cambia**; a un lote de otra empresa → `400 BR-07` (control de inquilino sobre la edición) |

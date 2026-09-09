@@ -1009,7 +1009,7 @@ Matriz completa: `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md`.
 R-130    CERRADO (técnico)   GA-REM-005 enmienda B · validate_bird_decrement + bloqueo de fila · viable real de pollitos
                             21/21 · rojo previo 11/21 · sensibilidad 6 válidas + 1 N/A (S4: R-160) · relacionadas 407/407
                             certificación de proceso: BLOCKED_RUNTIME (no se reclama)
-WAVE B   IN PROGRESS        17 ítems (recuento canónico, corregido en el tranche 2: R-161 ya era de la ola B) · 1 cerrado · siguiente tranche: R-160 + R-159
+WAVE B   IN PROGRESS        17 ítems (recuento canónico, corregido en el tranche 2: R-161 ya era de la ola B) · 1 cerrado · siguiente tranche: R-160 + R-159 (cerrado abajo)
 ```
 
 Evidencia: `R-130-POPULATION-INVARIANT-EVIDENCE.md`. Regresión completa: **851 passed · 49 skipped · 0 failed** (589 s; 830 previas + 21 de `test_population_invariant.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Primera pasada: 850/49/**1** — `test_master_management.py::test_t_090_06` descartaba 3 aves sobre el lote sembrado con saldo 0 (fixture que dependía del defecto); ajustada con recepción previa (`T-130-01b`, aserción intacta) y regresión repetida entera hasta leerla en verde. Vitest 87 passed / 8 archivos. `tsc` 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y ficheros que la línea base `R-158`.
@@ -1024,3 +1024,21 @@ Evidencia: `R-130-POPULATION-INVARIANT-EVIDENCE.md`. Regresión completa: **851 
 | `R-163` | P2 | en `lots` (`PUT /lots/{id}`, `POST /lots/activate-manual`) la autoridad global sigue exenta de la **habilitación** de unidad (`masters/service._apply_business_unit_filter`: `if … or self.is_super_admin: return query`), de modo que puede mutar lotes de una unidad apagada; incoherente con la lectura absoluta de `AC-A05`/`OD-16.e` que `GA-REM-040-G` aplica a `operations` | `masters/service.py:113` · fase 3 | B |
 
 Recuento canónico de la ola B: **17** ítems (1 cerrado) + `R-162`, `R-163` = **19**. Detalle en `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md §6`.
+
+---
+
+## Cierre de `R-160` + `R-159` · la unidad de negocio se exige al operar sobre `operations` · WAVE B tranche 2 (2026-09-09)
+
+```
+R-160    CERRADO (técnico)   GA-REM-040 enmienda G · exigir_unidad_operativa (alta · edición con lote y ubicación destino ·
+                            submit · cancel · evidencias) · derivación canónica en el servidor (lot.bird_type · clasificación · pendiente)
+                            AC-W01…W15 (W08 N/A: sin campo) · 24/24 · rojo previo 14 rojas de 23
+R-159    CERRADO (técnico)   mismo predicado en la consulta: lot_id IN lotes_alcanzables antes de ordenar/paginar · resolve con él
+                            AC-A01…A13 (A10 N/A: Contraloría sin resolutor) · 16/16 · rojo previo 9 rojas de 23
+                            sensibilidad S1–S9: 8 ejecutadas válidas (S4b tras añadir la prueba del lote cerrado) · S3/S8 N/A con motivo
+                            relacionadas 397 + 74 (R-139 35/35 · R-130 21/21) · certificación de proceso: BLOCKED_RUNTIME (no se reclama)
+WAVE B   IN PROGRESS        19 ítems (17 canónicos + R-162 + R-163 registrados en este tranche) · 3 cerrados (R-130 · R-160 · R-159) · 16 abiertos
+                            siguiente tranche (identificado, no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) — OD-17 decidida
+```
+
+Evidencia: `R-160-R-159-PRODUCTIVE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión completa: **891 passed · 49 skipped · 0 failed** (838 s; 851 previas + 40 de `test_operations_bu_enforcement.py`; 2.ª pasada tras la dependencia de fixture de `test_t_073_06`, montaje reordenado: la concesión de unidades antes de escribir eventos); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 errores preexistentes (`R-158`). Sin migración (`s9t0u1v2w3x4`), sin rutas nuevas, sin frontend. `R-161` sigue OPEN. Fase 9 FROZEN. `BU-D10` PENDING_RATIFICATION.

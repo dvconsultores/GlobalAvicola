@@ -43,7 +43,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-037` | Curvas estándar de peso y alerta por desviación (+ enmienda A: capacidad de producto) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 | `GA-REM-038` | Notificaciones internas (+ enmiendas A y B) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-038](GA-REM-038-INTERNAL-NOTIFICATIONS.md) |
 | `GA-REM-039` | Áreas funcionales | DOMAIN MODEL | P1 | **`CERTIFIED`** | — | [GA-REM-039](GA-REM-039-FUNCTIONAL-AREAS.md) |
-| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A y B: concesión acotada a la empresa · empresa efectiva) | ACCESS CONTROL | P0 | `IN_PROGRESS` — fases 1–8 **`CERTIFIED`** · fase 9 `BLOCKED` (`R-127`) · fases 10–11 pendientes · precisada por `OD-16` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
+| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A–F · **enm. G: la unidad se exige al operar sobre `operations`, `R-160`/`R-159`**) | ACCESS CONTROL | P0 | `IN_PROGRESS` — fases 1–8 **`CERTIFIED`** · enm. G **`CERTIFIED`** (2026-09-09, frontera técnica) · fase 9 `TECHNICALLY READY · FROZEN` (`R-127` y `R-139` cerrados) · fases 10–11 pendientes · precisada por `OD-16` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
 
 ## Decisiones normativas
 
@@ -108,7 +108,7 @@ Ninguna spec del encargo se ha eliminado. `GA-REM-019` absorbe el bloque «P2/P3
 | Ola | Contenido |
 |---|---|
 | **A** autoridad · seguridad · datos | ~~`R-127`~~ **CERRADO** (`WAVE A1`, `OD-18`) · ~~`R-139`~~ **CERRADO** (`GA-REM-002-C`, 2026-09-09) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`, `R-158` tsc) — **WAVE A COMPLETE** en su alcance de seguridad/datos |
-| **B** procesos faltantes | ~~`R-130`~~ **CERRADO** (tranche 1, `GA-REM-005-B`) · **`R-160`** + `R-159` (tranche 2: alcance de unidad en `operations`) · `R-135` (`OD-17`) · `R-161` · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
+| **B** procesos faltantes | ~~`R-130`~~ **CERRADO** (tranche 1, `GA-REM-005-B`) · ~~`R-160`~~ ~~`R-159`~~ **CERRADOS** (tranche 2, `GA-REM-040-G`; registrados `R-162` · `R-163`) · `R-135` (`OD-17`) · `R-161` · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
 | **C** KPI · trazabilidad | `R-131` · `R-132` · `R-133` · `R-134` · `R-141` · `GA-REM-022` (`H360-K10`) · `R-80` (`H360-B09`) |
 | **D** preparación SAP | `R-137` (`AOD-03`) · `R-138` · `R-145` · `R-155` (`AOD-15`) · `R-157` (`AOD-01…05`) · `R-124` (`AOD-06`) |
 | **E** frontend · UX | fase 9 de `GA-REM-040` (tras `R-127` y `R-139`) · `R-98`/`R-119` · `R-146` · `R-150` · `R-151` · `R-122` · `R-123` · `GA-REM-011` (`H360-C01`) |

@@ -145,13 +145,14 @@ async def esc(test_database_url):
         s.add_all([galpon_a, galpon_b])
         await s.flush()
 
-        def _lote(empresa, marca, tipo):
+        def _lote(empresa, marca, tipo, estado=LotStatus.ACTIVE):
             return Lot(company_id=empresa.id, lot_code=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}",
-                       bird_type=tipo, status=LotStatus.ACTIVE, farm_id=None)
+                       bird_type=tipo, status=estado, farm_id=None)
 
         lr, lg, lp = _lote(a, "LR", BirdTypeEnum.BREEDER), _lote(a, "LG", BirdTypeEnum.GRANDPARENT), _lote(a, "LP", BirdTypeEnum.BROILER)
         lh, ln, lb = _lote(a, "LH", BirdTypeEnum.HATCHERY), _lote(a, "LN", None), _lote(b, "LB", BirdTypeEnum.BREEDER)
-        s.add_all([lr, lg, lp, lh, ln, lb])
+        lc = _lote(a, "LC", BirdTypeEnum.BREEDER, LotStatus.CLOSED)  # misma unidad efectiva, cerrado
+        s.add_all([lr, lg, lp, lh, ln, lb, lc])
         await s.flush()
 
         def _evento(empresa, lote, autor):
@@ -190,7 +191,7 @@ async def esc(test_database_url):
         d = {"a": a.id, "b": b.id, "actor_a": actor_a.id, "actor_g": actor_g.id, "actor_cero": actor_cero.id,
              "actor_b": actor_b.id, "acceso": acc.id, "global": glob.id,
              "granja_a": granja_a.id, "galpon_a": galpon_a.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id,
-             "lr": lr.id, "lg": lg.id, "lp": lp.id, "lh": lh.id, "ln": ln.id, "lb": lb.id,
+             "lr": lr.id, "lg": lg.id, "lp": lp.id, "lh": lh.id, "ln": ln.id, "lb": lb.id, "lc": lc.id,
              "ev_r": ev_r.id, "ev_g": ev_g.id, "ev_h": ev_h.id, "ev_h2": ev_h2.id, "ev_b": ev_b.id,
              "evi_g": evi_g.id, "evi_h": evi_h.id, "evi_r": evi_r.id, "ruta_evi_g": str(evi_g.file_path),
              "al_r": al_r.id, "al_p": al_p.id, "al_g": al_g.id, "al_h": al_h.id, "al_b": al_b.id,
@@ -370,6 +371,17 @@ async def test_w09_la_edicion_no_repunta_el_evento_a_un_lote_de_otra_empresa(htt
     r = await http_client.put(f"/api/v1/operations/{esc['ev_r']}", headers=_token(esc["actor_a"]),
                               json={"lot_id": esc["lb"]})
     assert _es_br(r, "BR-07"), r.text
+    assert await _lote_del_evento(esc, esc["ev_r"]) == esc["lr"]
+
+
+async def test_w09_la_edicion_no_repunta_el_evento_a_un_lote_cerrado(http_client, esc):
+    """`§G.4`: el destino de una edición se verifica como el de un alta — `validate_lot_active` incluido.
+
+    La sensibilidad `S4b` (sin `validate_lot_active` en la edición) sobrevivía: la guarda de unidad ya
+    cubre la empresa, y el estado del lote era lo único sin prueba."""
+    r = await http_client.put(f"/api/v1/operations/{esc['ev_r']}", headers=_token(esc["actor_a"]),
+                              json={"lot_id": esc["lc"]})
+    assert _es_br(r, "BR-07") and "no está activo" in r.json()["detail"], r.text
     assert await _lote_del_evento(esc, esc["ev_r"]) == esc["lr"]
 
 

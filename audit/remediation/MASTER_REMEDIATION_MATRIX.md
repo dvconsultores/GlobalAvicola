@@ -1199,3 +1199,15 @@ R-130           CERRADO · regresión **851 passed · 49 skipped · 0 failed** (
 WAVE B          IN PROGRESS · siguiente: R-160 + R-159
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION
 ```
+
+## WAVE B · tranche 2 · `R-160` + `R-159` cerrados · `GA-REM-040` enmienda G certificada (2026-09-09)
+
+```
+recuento        canónico corregido a 17 (R-161 ya era de la ola B) · +R-162, +R-163 registrados (P2, misma raíz, fuera del tranche) → 19
+GA-REM-040-G    CERTIFIED (frontera técnica) · AC-W01…W15 · AC-A01…A13 · rojo 23/39 → verde 40/40 · S1–S9: 8 válidas, S3/S8 N/A
+R-160           CERRADO · guarda central exigir_unidad_operativa · unidad derivada en el servidor · global: situada + habilitada, sin concesión
+R-159           CERRADO · lot_id IN lotes_alcanzables en la consulta antes de paginar · cero unidades → [] · resolve con el mismo predicado
+regresión       **891 passed · 49 skipped · 0 failed** (838 s; 851 previas + 40 de `test_operations_bu_enforcement.py`; 2.ª pasada tras la dependencia de fixture de `test_t_073_06`, montaje reordenado: la concesión de unidades antes de escribir eventos)
+WAVE B          IN PROGRESS · 3/19 cerrados · siguiente (no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version)
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN
+```

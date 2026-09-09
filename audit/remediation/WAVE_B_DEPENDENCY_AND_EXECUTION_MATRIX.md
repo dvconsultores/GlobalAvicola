@@ -115,6 +115,24 @@ SIGUIENTE TRANCHE .............. R-160 + R-159 — misma raíz (superficies de `
                                  gobernado por GA-REM-040 (enmienda) y OD-09/OD-16; sin decisión, sin SAP, sin BU-D10 (las fixtures siembran su estado)
 ```
 
+## 7. Estado tras el tranche 2 (2026-09-09) — recalculado
+
+```
+TOTAL ......................... 19   17 canónicos + R-162 + R-163 (registrados en el pre-flight del tranche 2; misma raíz que R-160/R-159)
+CERRADOS ......................  3   R-130 · R-160 · R-159 (técnicos; certificación de proceso BLOCKED_RUNTIME)
+P1 ABIERTOS ...................  3   R-135 · R-136 (interno) · GA-REM-021
+P2 ABIERTOS ................... 10   R-143 · R-142 · R-140 · R-144 · R-152 · R-148 · R-147 · R-161 · R-162 · R-163
+P3 ABIERTOS ....................  3   R-153 · R-154 · R-156
+BLOQUEADOS .....................  2   R-144 (R-131, ola C) · R-136 post-SAP (SAP_DEFERRED)
+DECISIONES DEL PROPIETARIO .....  AOD-17 (R-142) · AOD-18 (R-140 permiso) · AOD-19 (R-147 UoM/umbrales) · AOD-20 (R-156) · AOD-08 · AOD-14
+ESTADO ......................... IN PROGRESS
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) — máquina de estados de P-07; OD-17 ya decidida; P1;
+  sin SAP (el reenvío con SAP queda descrito, no conectado), sin fase 9, sin BU-D10; R-142 sigue bloqueada por AOD-17
+  y no entra; R-140 permiso (AOD-18) no entra. Spec esperada: enmienda de GA-REM-011/GA-REM-013 (la que gobierne P-07)
+  o spec nueva — se decide en su propio pre-flight, no aquí.
+```
+
 ## 6. Recuento canónico (tranche 2 · 2026-09-09) — leído de los objetos del repositorio
 
 | ID | Título | Sev. | Estado | Ola |

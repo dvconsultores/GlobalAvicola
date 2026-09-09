@@ -391,15 +391,22 @@ async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
     assert galpon.status_code in (200, 201), galpon.text
     propios["house_id"] = galpon.json()["id"]
 
-    propio = await _lote_cerrable(http_client, sujeto, propios, motor)
     # `GA-REM-040` fase 3: sin unidades concedidas el sujeto no ve ni su propio lote, que es
     # lo que `OD-09.c` dicta. Se configura la empresa —habilitar y conceder— como hará un
     # cliente real en su alta; lo que esta prueba mide es el cierre, no el alcance.
+    #
+    # `GA-REM-040` enmienda G (`R-160`, `T-130-01b`-like): la concesión va **antes** de que el
+    # sujeto registre eventos sobre su lote. Hasta el tranche 2 de la ola B este montaje
+    # escribía eventos operativos con cero unidades efectivas —el defecto que `R-160`
+    # cierra— y por eso funcionaba; ahora esa escritura es `400 BR-07`. Solo cambia el orden
+    # del montaje; la aserción del cierre es la misma.
     from tests.business_unit_fixtures import habilitar_y_conceder_todo
 
     await habilitar_y_conceder_todo(
         test_database_url, company_id=seeded_ids["company_id_2"],
         user_ids=[usuario.json()["id"]])
+
+    propio = await _lote_cerrable(http_client, sujeto, propios, motor)
 
     control = await http_client.post(f"/api/v1/lots/{propio}/close", headers=sujeto)
     assert control.status_code == 200, (
