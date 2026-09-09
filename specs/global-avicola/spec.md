@@ -2,8 +2,8 @@
 
 > **Spec Kit Format**
 > **Proyecto:** global-avicola
-> **Versión:** 1.0.0
-> **Fecha:** 2026-06-22
+> **Versión:** 1.1.0
+> **Fecha:** 2026-06-22 · enmienda A 2026-09-09 (`OD-16`, ver §15)
 
 ---
 
@@ -35,6 +35,31 @@
 8. **Spec-Driven Development.** Especificar → Planificar → Tareas → Implementar.
 
 ### 4. Functional Domains
+
+#### 4.0 Alcance productivo vigente — enmienda A (2026-09-09 · `OD-16`)
+
+El producto soporta **cuatro unidades de negocio productivas completas**, y las cuatro deben
+permanecer listas para producto (definidas, implementables, disponibles, configurables por
+empresa, cubiertas por seguridad, requisitos, procesos, KPI aplicables, interfaz y certificación):
+
+| Unidad productiva | Código | Dominio funcional |
+|---|---|---|
+| Progenitoras | `grandparent` | §4.4 |
+| Reproductoras | `breeder` | §4.5, §4.6 |
+| Incubadora | `hatchery` | §4.7 |
+| Pollo de engorde | `broiler` | §4.8 |
+
+```
+SUPPORTED PRODUCTIVE BUSINESS UNITS = 4
+```
+
+- **Cada empresa / razón social activa o desactiva cada unidad de forma independiente**, dentro de Global Avícola (`company_business_units`; `GA-REM-040` fases 1 y 7). Toda combinación es representable; ninguna unidad es obligatoria ni está siempre encendida. Sin configuración, la unidad está **apagada** (`GA-REM-040 §7.4`).
+- La activación por empresa es configuración del plano de control de la aplicación (`OD-09.b`): la empresa como entidad oficial pertenece a SAP; qué unidades opera en la aplicación lo decide Global Avícola. Una futura sincronización de empresas desde SAP no determina esa activación ni concede acceso.
+- **Activar no concede**: la concesión de unidad a un usuario es un acto separado (`user_business_units`), dentro de lo habilitado por su empresa efectiva y con segregación (`OD-15`); el `RBAC` es un tercer plano separado.
+- **Desactivar prevalece** sobre cualquier concesión existente; la concesión no se borra. El ciclo de vida al reactivar es `BU-D10` (`PENDING_RATIFICATION`); el comportamiento provisional certificado es `GA-REM-040 §6.3`.
+- No existe acceso productivo implícito: cero concesiones → conjunto efectivo vacío (`OD-09.c`).
+- Unidad de negocio productiva ≠ módulo `RBAC` (`GA-REM-040 §1`): no se renombra uno para hacerlo coincidir con el otro.
+
 
 #### 4.1 Authentication & User Management
 - Login JWT con refresh tokens
@@ -476,3 +501,12 @@ El sistema usa **feature flags** controlados por variables de entorno (`.env`) p
 | Activar rate limiting | ⬜ Pendiente | Backend |
 | Verificar health check | ⬜ Pendiente | QA |
 | Monitorear logs 24h post-deploy | ⬜ Pendiente | DevOps |
+
+---
+
+### 15. Registro de enmiendas
+
+| Versión | Fecha | Enmienda | Motivo | Autoridad |
+|---|---|---|---|---|
+| 1.0.0 | 2026-06-22 | — | redacción inicial | — |
+| 1.1.0 | 2026-09-09 | A · §4.0 alcance productivo vigente y activación de unidades por empresa | el alcance de cuatro unidades y la activación por razón social solo constaban en una spec de remediación (`GA-REM-040`), no en la spec de producto; el propietario lo declara requisito vigente | `OD-16` |

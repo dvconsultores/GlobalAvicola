@@ -831,3 +831,18 @@ BU-D10  NO bloquea la fase 9 — `AC-A04`/`A05`/`A06` ya deciden lo que la UI pr
 R-112 · P-08   NO bloquean — ninguna tarea de la fase 9 toca SAP
 R-119 · R-120  NO bloquean — son el alcance de `T-040-23`
 ```
+
+---
+
+## `OD-16` · alcance productivo y activación por empresa (2026-09-09 · WAVE A0-P)
+
+```
+OD-16  ──precisa──►  GA-REM-040 §2 §5 §17-A     (ya implementado: fases 1, 7, 8)
+       ──precisa──►  spec.md §4.0 (v1.1.0)
+       ──deja separadas──►  BU-D05 (alta real) · BU-D07 (comercial/operativo) · BU-D08 · BU-D10 (PENDING_RATIFICATION)
+       ──no toca──►  R-124 / AOD-06 (origen de la empresa)
+H360A-01 (UI estática) ──► GA-REM-040 fase 9        (bloqueada por R-127)
+H360A-05 (0 E2E de activación) ──► GA-REM-040 fases 10-11
+H360A-08 (atajos is_super_admin en dato productivo) ──► tanda propia de WAVE A · exige spec + AC · precede a fase 9 por OD-14
+H360A-02 / H360A-03 (importación de abuelas) ──► WAVE B
+```

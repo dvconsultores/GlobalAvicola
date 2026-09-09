@@ -113,3 +113,21 @@ QUEDAN    BU-D03 · BU-D04 · BU-D06 · BU-D07 · BU-D08 · BU-D10
           ninguna bloquea la spec: se resuelven durante la construcción
 AL FINAL  BU-D05   antes del primer cliente real, no antes de construir
 ```
+
+---
+
+## 7. `BU-D10` · `PENDING_RATIFICATION` (2026-09-09 · WAVE A0-P)
+
+`OD-16` formalizó el alcance productivo y la activación por empresa y **dejó `BU-D10` separada a
+propósito** (`OD-16.e`). Estado exacto:
+
+```
+BU-D10   PENDING_RATIFICATION
+         comportamiento provisional vigente = opción A (GA-REM-040 §6.3 · AC-A06):
+         al rehabilitar, la concesión previa vuelve a ser efectiva
+         prueba: test_deshabilitar_no_borra_las_concesiones_y_rehabilitar_las_devuelve
+         opción B (concesión nueva explícita) NO elegida · NO descartada
+         ningún cambio de código depende de la elección
+```
+
+Sigue sin bloquear nada. Detalle en `GLOBAL_AVICOLA_MASTER_360_ADDENDUM_PRODUCT_SCOPE_AND_COMPANY_BU.md §6`.
