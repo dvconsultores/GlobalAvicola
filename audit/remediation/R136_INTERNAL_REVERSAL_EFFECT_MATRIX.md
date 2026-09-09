@@ -29,3 +29,18 @@ no hay libro materializado. Un efecto «ocurre» cuando una consulta lo cuenta.
 | `SENT_TO_SAP` · `SAP_CONFIRMED` · `SAP_ERROR` | **NO internamente**: reverso de documento SAP (`BR-16`) | `SAP_DEFERRED` |
 | `CANCELLED` | **NO**: terminal; sin efecto (excluido de todo saldo y KPI) | `OD-17.a` |
 | `REVERSED` | **no existe** en `EventStatus` | `AOD-21` decide si nace |
+
+## Decidido por `OD-19` (2026-09-09) — resolución de las columnas `OWNER_DECISION_REQUIRED`
+
+| Columna | Valor decidido |
+|---|---|
+| ACCIÓN DE REVERSO | solicitud (`POST /reversals`, `reversals:create`) → contrapartida en cola de revisión → aprobación por el motor existente |
+| ¿COMPENSACIÓN? · FORMA | **sí**: contrapartida explícita (evento inverso con las cantidades del original, `reversals` vinculada); los saldos restan las contrapartidas **efectivas**; historia intacta |
+| ESTADO DESTINO | **`REVERSED`** (nuevo; migración autorizada) para original y contrapartida |
+| IDEMPOTENTE | una contrapartida efectiva por original; segunda → `400`/`409`; concurrencia con bloqueo del original |
+| MOTIVO | obligatorio, no vacío |
+| PERMISO | `reversals:create` (solicitar) · `approvals:approve/reject` (decidir) · solicitante ≠ aprobador |
+| Huevos / incubación | `BLOCKED_BY_R-161` (no elegibles) |
+| Consolidados | `DEFERRED` |
+| Alertas · trazabilidad | se conservan como historia (no se deshacen): la contrapartida no crea alertas ni vínculos generacionales |
+| Cierre de lote / saldo de apertura | fuera (`AOD-08`, `R-154`) |

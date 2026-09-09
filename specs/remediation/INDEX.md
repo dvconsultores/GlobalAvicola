@@ -43,6 +43,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-037` | Curvas estándar de peso y alerta por desviación (+ enmienda A: capacidad de producto) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-037](GA-REM-037-GENETIC-WEIGHT-CURVES.md) |
 | `GA-REM-038` | Notificaciones internas (+ enmiendas A y B) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-038](GA-REM-038-INTERNAL-NOTIFICATIONS.md) |
 | `GA-REM-039` | Áreas funcionales | DOMAIN MODEL | P1 | **`CERTIFIED`** | — | [GA-REM-039](GA-REM-039-FUNCTIONAL-AREAS.md) |
+| `GA-REM-041` | Reverso interno de registros aprobados — `R-136` (interno) + `R-165` | BUSINESS WORKFLOW / DATA INTEGRITY | P1 | `SPEC_READY` (2026-09-09; migración `t0u1v2w3x4y5` autorizada por `OD-19 §1`) | B | [GA-REM-041](GA-REM-041-INTERNAL-REVERSAL.md) |
 | `GA-REM-040` | Acceso por unidad de negocio (+ enms. A–F · **enm. G: la unidad se exige al operar sobre `operations`, `R-160`/`R-159`** · **enm. H: la habilitación de la empresa es absoluta — `lots` y descarga, `R-163`/`R-162`**) | ACCESS CONTROL | P0 | `IN_PROGRESS` — fases 1–8 **`CERTIFIED`** · enms. G y H **`CERTIFIED`** (2026-09-09, frontera técnica) · fase 9 `TECHNICALLY READY · FROZEN` (`R-127` y `R-139` cerrados) · fases 10–11 pendientes · precisada por `OD-16` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
 
 ## Decisiones normativas
@@ -62,6 +63,7 @@ se interpretan.
 | `OD-15` | Segregación en la administración de acceso — quien reparte no se sirve a sí mismo | **VIGENTE** | [OD-15](OD-15-ACCESS-ADMINISTRATION-SEGREGATION.md) |
 | `OD-16` | Alcance productivo vigente y activación de unidades por empresa — cuatro unidades, cada razón social las enciende o apaga en Global Avícola; encender ≠ conceder | **VIGENTE** · requisito de producto | [OD-16](OD-16-PRODUCT-SCOPE-AND-COMPANY-BUSINESS-UNIT-ACTIVATION.md) |
 | `OD-17` | Un rechazo corregible no es terminal — `RETURNED`/`REJECTED` se corrigen y reenvían; con SAP, reenvío explícito (alias `AOD-09`) | **VIGENTE** · implementación `WAVE B` | [OD-17](OD-17-CORRECTABLE-REJECTION-IS-NOT-TERMINAL.md) |
+| `OD-19` | Reverso interno de registros aprobados pre-SAP — `REVERSED` distinto de `CANCELLED`; contrapartida explícita, aprobada, exactamente única; consolidados diferidos; huevos/incubación `BLOCKED_BY_R-161`; SAP diferido (alias `AOD-21`) | **VIGENTE** · gobierna `R-136` interno | [OD-19](OD-19-INTERNAL-REVERSAL-OF-APPROVED-RECORDS.md) |
 | `OD-18` | El catálogo general de empresas no contiene configuración SAP — `sap_config` fuera de `GET /masters/companies`; persistencia diferida (alias `AOD-12`) | **VIGENTE** · gobierna `R-127` | [OD-18](OD-18-COMPANY-CATALOG-EXCLUDES-SAP-CONFIGURATION.md) |
 
 ## Resumen

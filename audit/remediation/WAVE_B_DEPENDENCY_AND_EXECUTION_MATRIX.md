@@ -236,3 +236,14 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   GA-REM-021 — captura exigida por el cliente: agua (B05), P1, SPEC_READY; B01 desbloqueado por R-130; B04 fuera hasta AOD-14.
   Acompañante de coste mínimo: R-165 (guarda compartida en el plano de revisión; sin decisión). R-164 espera acceso a la base.
 ```
+
+## 12. Tranche 5 · `OD-19` resuelve `AOD-21` (2026-09-09)
+
+```
+R-136 interno ................. READY_FOR_SPEC → GA-REM-041 (SPEC_READY) · forma B: R-136 interno + R-165
+R-136 post-SAP ................ SAP_DEFERRED (sin cambio)
+R-165 ......................... incluido (el reverso se aprueba por el plano de revisión; OD-19 §13)
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20   (AOD-21 → OD-19)
+BLOQUEADOS .....................  3   R-142 · R-144 · R-156 (+ R-136 post-SAP parcial)
+migración autorizada .......... t0u1v2w3x4y5 (eventstatus + auditaction ADD VALUE 'REVERSED') · SPEC + AC antes del código
+```
