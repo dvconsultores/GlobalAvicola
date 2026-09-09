@@ -43,6 +43,7 @@ from .validators import (
     validate_sap_document_unique,
     validate_sap_edit_lock,
     validate_segregation,
+    validate_water_consumption,
 )
 
 
@@ -111,6 +112,15 @@ class OperationsService:
             raise BusinessRuleViolation("Lote no encontrado", "BR-07")
         tipo = fila[0]
         return tipo.value if tipo is not None else None
+
+    async def _tipo_de_lote(self, lot_id: int | None):
+        """`Lot.bird_type` del lote de la empresa efectiva, o `None` (sin lote / sin cadena)."""
+        if lot_id is None:
+            return None
+        from ..masters.models import Lot
+
+        consulta = self._acotar_a_empresa(select(Lot.bird_type).where(Lot.id == lot_id), Lot.company_id)
+        return (await self.db.execute(consulta)).scalar_one_or_none()
 
     async def _unidad_clasificada(self, company_business_unit_id: int) -> str | None:
         """El código de la habilitación que el plano de control fijó en el evento (fase 6)."""
@@ -823,6 +833,9 @@ class OperationsService:
         # `BusinessRuleViolation` registrado en `app/main.py` da un único contrato de
         # error a las 23 reglas. El bloque que había aquí solo cubría estas cinco, y era
         # justamente por eso que las otras ocho salían como 500 (R-26).
+        # `GA-REM-021-A` · `B05`: el agua solo en su evento, > 0 y en las etapas que el cliente
+        # exige; la cadena se deriva del lote (empresa efectiva), nunca del cuerpo.
+        validate_water_consumption(event_type, data.water_liters, await self._tipo_de_lote(data.lot_id))
         if event_type == models.EventType.MORTALITY_RECORDING:
             # Sin la guarda `total_qty > 0`: `validate_mortality` es precisamente quien
             # rechaza el cero y los negativos (`BR-01`), y saltársela dejaba pasar un
@@ -1061,6 +1074,8 @@ class OperationsService:
             await self.exigir_unidad_operativa(lot_id=lote_destino)
         else:
             await self.exigir_unidad_operativa(event=event)
+        if "water_liters" in cambios:  # `GA-REM-021-A`: la edición respeta `RR-11` y el tipo
+            validate_water_consumption(event.event_type, cambios["water_liters"], await self._tipo_de_lote(lote_destino))
         for key, val in cambios.items():
             setattr(event, key, val)
         event.version += 1

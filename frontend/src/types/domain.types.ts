@@ -38,6 +38,7 @@ export type EventType =
   | 'bird_transfer'
   | 'bird_exit'
   | 'feed_registration'
+  | 'water_consumption'
   | 'weight_recording'
   | 'mortality_recording'
   | 'cull_recording'
@@ -118,6 +119,7 @@ export interface OperationEvent {
   bird_movements?: BirdMovement[]
   egg_movements?: EggMovement[]
   feed_movements?: FeedMovement[]
+  water_liters?: number // `GA-REM-021-A` · B05 (litros)
   hatchery_params?: HatcheryParam[]
   inspection_details?: InspectionDetail[]
 }

@@ -1,4 +1,4 @@
-import {
+import { Droplets,
   Bird, Egg, Flame, Drumstick, Feather,
   Truck, Package, ArrowUpRight, Wheat, Scale, Skull, Trash2,
   Syringe, Pill, Building2, ClipboardList, ClipboardCheck, ArrowDownRight,
@@ -154,7 +154,7 @@ export const OPERATION_CATEGORIES: OperationCategory[] = [
     fallback: 'Registros Diarios',
     Icon: ClipboardList,
     color: 'text-amber-600',
-    events: ['feed_registration', 'weight_recording', 'mortality_recording', 'cull_recording'],
+    events: ['feed_registration', 'water_consumption', 'weight_recording', 'mortality_recording', 'cull_recording'],
   },
   {
     key: 'health',
@@ -215,12 +215,12 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
   ],
   breeder_rearing: [
     'farm_inspection', 'bird_reception', 'bird_distribution', 'bird_transfer',
-    'transport_inspection', 'feed_registration', 'weight_recording', 'mortality_recording',
+    'transport_inspection', 'feed_registration', 'water_consumption', 'weight_recording', 'mortality_recording',
     'cull_recording', 'vaccination', 'medication', 'bird_exit',
   ],
   breeder_production: [
     'farm_inspection', 'bird_transfer', 'transport_inspection', 'feed_registration',
-    'weight_recording', 'mortality_recording', 'cull_recording', 'vaccination',
+    'water_consumption', 'weight_recording', 'mortality_recording', 'cull_recording', 'vaccination',
     'medication', 'egg_collection', 'egg_dispatch', 'bird_exit',
   ],
   hatchery: [
@@ -229,7 +229,7 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
   ],
   broiler: [
     'farm_inspection', 'bird_reception', 'bird_distribution', 'bird_transfer',
-    'transport_inspection', 'feed_registration', 'weight_recording', 'mortality_recording',
+    'transport_inspection', 'feed_registration', 'water_consumption', 'weight_recording', 'mortality_recording',
     'cull_recording', 'vaccination', 'medication', 'bird_exit', 'lot_closure',
   ],
 }
@@ -241,6 +241,7 @@ export const EVENT_ICON_MAP: Record<string, LucideIcon> = {
   bird_transfer: Truck,
   bird_exit: ArrowUpRight,
   feed_registration: Wheat,
+  water_consumption: Droplets, // `GA-REM-021-A` · B05
   weight_recording: Scale,
   mortality_recording: Skull,
   cull_recording: Trash2,
@@ -278,6 +279,7 @@ export const EVENT_COLOR_MAP: Record<string, { bg: string; ring: string; text: s
   bird_transfer:          { bg: 'bg-violet-500',  ring: 'ring-violet-200',  text: 'text-violet-600' },
   bird_exit:              { bg: 'bg-purple-500',  ring: 'ring-purple-200',  text: 'text-purple-600' },
   feed_registration:      { bg: 'bg-amber-500',   ring: 'ring-amber-200',   text: 'text-amber-600' },
+  water_consumption:      { bg: 'bg-sky-500',     ring: 'ring-sky-200',     text: 'text-sky-600' },
   weight_recording:       { bg: 'bg-teal-500',    ring: 'ring-teal-200',    text: 'text-teal-600' },
   vaccination:            { bg: 'bg-rose-500',    ring: 'ring-rose-200',    text: 'text-rose-600' },
   medication:             { bg: 'bg-pink-500',    ring: 'ring-pink-200',    text: 'text-pink-600' },
@@ -377,6 +379,7 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
     step('bird_reception', 'Recepcionar las pollitas y registrar cantidades'),
     step('bird_distribution', 'Distribuir las pollitas a los galpones'),
     step('feed_registration', 'Registrar el consumo de alimento'),
+    step('water_consumption', 'Registrar el consumo de agua'),
     step('weight_recording', 'Registrar el pesaje semanal'),
     step('vaccination', 'Aplicar y registrar vacunas'),
     step('medication', 'Aplicar y registrar medicación'),
@@ -387,6 +390,7 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
   breeder_production: [
     step('farm_inspection', 'Inspeccionar condiciones de la granja'),
     step('feed_registration', 'Registrar el consumo de alimento'),
+    step('water_consumption', 'Registrar el consumo de agua'),
     step('weight_recording', 'Registrar el pesaje del lote'),
     step('vaccination', 'Aplicar y registrar vacunas'),
     step('medication', 'Aplicar y registrar medicación'),
@@ -411,6 +415,7 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
     step('bird_reception', 'Recepcionar los pollitos y registrar cantidades'),
     step('bird_distribution', 'Distribuir los pollitos a los galpones'),
     step('feed_registration', 'Registrar el consumo de alimento'),
+    step('water_consumption', 'Registrar el consumo de agua'),
     step('weight_recording', 'Registrar el pesaje del lote'),
     step('vaccination', 'Aplicar y registrar vacunas'),
     step('medication', 'Aplicar y registrar medicación'),

@@ -103,6 +103,8 @@ class OperationalEventBase(BaseModel):
     transport_id: Optional[int] = None
     sample_size: Optional[int] = None
     extra_data: Optional[dict] = None
+    #: `GA-REM-021-A` · `B05`: litros del día; obligatorio en `water_consumption`, prohibido en el resto.
+    water_liters: Optional[float] = None
     idempotency_key: Optional[str] = None  # Client-generated UUID to prevent duplicate submissions
 
 
@@ -180,6 +182,8 @@ class OperationalEventUpdate(BaseModel):
     transport_id: Optional[int] = None
     sample_size: Optional[int] = None
     extra_data: Optional[dict] = None
+    #: `GA-REM-021-A`: editable y **corregible** (`campos_corregibles` deriva de este contrato).
+    water_liters: Optional[float] = None
 
 
 class OperationalEventRead(OperationalEventBase):

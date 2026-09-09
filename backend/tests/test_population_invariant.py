@@ -392,5 +392,5 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     raiz = pathlib.Path(__file__).resolve().parents[1]
     # `GA-REM-041 §5`: la cabeza avanza a `t0u1v2w3x4y5` (REVERSED, `OD-19`) y hay tres rutas
     # nuevas de `reversals` (208 → 211). Recuentos exactos, nunca `>=`.
-    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["t0u1v2w3x4y5"]
+    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["u1v2w3x4y5z6"]  # `GA-REM-021-A §A.5`
     assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 211

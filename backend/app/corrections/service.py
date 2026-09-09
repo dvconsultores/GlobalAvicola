@@ -55,6 +55,10 @@ class CorrectionService:
         # aprobacion.
         valor_original = _leer_valor(event, data.field_name)
         valor_aplicado = _convertir(event, data.field_name, data.corrected_value)
+        if data.field_name == "water_liters":  # `GA-REM-021-A` · `AC-C03`: la corrección respeta `RR-11`
+            from ..operations.validators import validate_water_consumption
+
+            validate_water_consumption(event.event_type, valor_aplicado, await operaciones._tipo_de_lote(event.lot_id))
         setattr(event, data.field_name, valor_aplicado)
         event.version += 1
 

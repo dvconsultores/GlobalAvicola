@@ -94,6 +94,7 @@ const operationSchema = z.object({
  destination_plant_id: z.number().optional(),
  transport_id: z.number().optional(),
  sample_size: z.number().optional(),
+ water_liters: z.number().positive().optional(), // `GA-REM-021-A` · B05 (L, RR-11)
  extra_data: z.record(z.string(), z.any()).optional(),
  // Sub-models
  bird_movements: z.array(z.object({
@@ -937,6 +938,15 @@ export default function OperationFormPage() {
  {renderMFRows(true)}
  </div>
  )}
+
+ case 'water_consumption': return (
+ <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+ <div>
+ <label className={lc}>{t('operations.waterLiters', 'Consumo de agua (L)')}</label>
+ <input type="number" step="0.1" min="0.1" {...register('water_liters', { valueAsNumber: true })} className={ic} />
+ </div>
+ </div>
+ )
 
  case 'feed_registration': return (
  <div className="space-y-4">

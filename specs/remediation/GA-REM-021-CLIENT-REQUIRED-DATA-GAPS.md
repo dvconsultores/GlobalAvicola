@@ -171,7 +171,7 @@ cadena: **no** (aplicabilidad indeterminable). La ruta rechaza con `400` lo no a
 | `AC-V03` | `water_liters = 0` → denegado (`RR-11`) | `400` |
 | `AC-V04` | negativo → denegado | `400` |
 | `AC-V05` | `12.345` se persiste y devuelve sin redondeo inventado | — |
-| `AC-V06` | fecha futura: **sin regla propia** (`BR-06` solo veta fechas anteriores a la activación); se documenta, no se inventa | — |
+| `AC-V06` | fecha futura: **sin regla propia del agua**; rige la regla genérica ya vigente para todo evento (`validate_event_date`, `R-30`, código `BR-19`: futura más allá de un día de holgura → `400`); se documenta, no se inventa. *Corrección de redacción en la implementación: la versión inicial atribuía el veto a `BR-06`, que solo cubre fechas anteriores a la activación; el veto de fecha futura existía ya en `R-30`* | — |
 | `AC-V07` | lote cerrado → `400 BR-07`; lote sin cadena → `400`; `hatchery` → `400`; `grandparent` → `400` | `400` |
 | `AC-V08` | dos registros del mismo lote y fecha → ambos `201`, ambos listados (modelo aditivo, como alimento) | `201` |
 | `AC-V09` | `water_liters` en un `feed_registration` → `400` | `400` |

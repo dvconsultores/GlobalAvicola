@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { Download, BarChart2, Wheat, Egg, Baby, Syringe, Truck, ClipboardList, RefreshCw } from 'lucide-react'
+import { Droplets, Download, BarChart2, Wheat, Egg, Baby, Syringe, Truck, ClipboardList, RefreshCw } from 'lucide-react'
 import api from '../../services/api'
 import { exportToExcel, exportToPDF, kpisToRows } from '../../utils/export'
 import { Button } from '../../components/ui'
@@ -151,6 +151,20 @@ export default function ReportsPage() {
  <YAxis fontSize={11} />
  <Tooltip />
  <Bar dataKey="feed_kg" fill="#F59E0B" name={t('reports.feedKg')} radius={[4, 4, 0, 0]} />
+ </BarChart>
+ </ResponsiveContainer>
+ </div>
+
+ {/* Water Consumption Bar Chart — `GA-REM-021-A` · B05 (AC02: la serie deja de estar vacía) */}
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
+ <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2"><Droplets size={16} className="text-sky-400" /> {t('reports.waterConsumption')}</h2>
+ <ResponsiveContainer width="100%" height={250}>
+ <BarChart data={chartData}>
+ <CartesianGrid strokeDasharray="3 3" />
+ <XAxis dataKey="date" fontSize={11} />
+ <YAxis fontSize={11} />
+ <Tooltip />
+ <Bar dataKey="water_l" fill="#0EA5E9" name={t('reports.waterL')} radius={[4, 4, 0, 0]} />
  </BarChart>
  </ResponsiveContainer>
  </div>

@@ -413,6 +413,32 @@ async def validate_lot_active(db: AsyncSession, lot_id: int, company_id: int | N
         )
 
 
+#: `GA-REM-021-A` · `B05`: etapas del cliente que exigen el consumo de agua (`Bases` p.2, 4, 12).
+UNIDADES_CON_CONSUMO_DE_AGUA = {"breeder", "broiler"}
+
+
+def validate_water_consumption(event_type, water_liters, bird_type) -> None:
+    """`GA-REM-021` enmienda A · `B05` · `RR-10` (litros) · `RR-11` (> 0).
+
+    Un dato, un registro: `water_liters` solo viaja en `water_consumption`, es obligatorio allí,
+    estrictamente positivo (la ausencia de dato es ausencia, nunca `0`) y solo se registra sobre
+    lotes de Reproductoras o Engorde; Incubadora no lo pide y Progenitoras no es etapa del
+    documento del cliente. Se aplica en el alta, la edición y la corrección.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo == EventType.WATER_CONSUMPTION.value:
+        if water_liters is None:
+            raise BusinessRuleViolation("El consumo de agua requiere `water_liters` (litros)", "B05")
+        if water_liters <= 0:
+            raise BusinessRuleViolation("El consumo de agua debe ser mayor que cero (RR-11)", "RR-11")
+        cadena = getattr(bird_type, "value", bird_type)
+        if cadena not in UNIDADES_CON_CONSUMO_DE_AGUA:
+            raise BusinessRuleViolation(
+                "El consumo de agua solo se registra en Reproductoras y Engorde (Bases p.2/4/12)", "B05")
+    elif water_liters is not None:
+        raise BusinessRuleViolation("`water_liters` solo se registra en un evento de consumo de agua", "B05")
+
+
 def validate_segregation(registered_by_id: int, action_user_id: int, action: str = "aprobar") -> None:
     """BR-14: Operator cannot approve own data. Enforces segregation of duties."""
     if registered_by_id == action_user_id:

@@ -52,6 +52,7 @@ class EventType(str, enum.Enum):
     CHICK_DISPATCH = "chick_dispatch"
     LOT_CLOSURE = "lot_closure"
     GRANDPARENT_IMPORT = "grandparent_import"
+    WATER_CONSUMPTION = "water_consumption"  # `GA-REM-021-A` · `B05`: consumo diario de agua
 
 
 class EventStatus(str, enum.Enum):
@@ -122,6 +123,9 @@ class OperationalEvent(Base):
     transport_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("transports.id"), nullable=True)
     sample_size: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     extra_data: Mapped[Optional[dict]] = mapped_column(JSONB, nullable=True)
+    # `GA-REM-021-A` · `B05`: litros consumidos por la parvada en el día (`RR-10`); solo en
+    # `water_consumption`; `NULL` = sin dato (nunca `0`, `RR-11`). `Float` como `quantity_kg`.
+    water_liters: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     #: `GA-REM-040` fase 6 · `OD-10.c`. Cadena productiva **decidida a mano**, cuando no se
     #: puede derivar del lote. Apunta a la habilitación de una empresa —no al catálogo—
     #: por la misma razón que la concesión de un usuario (`OD-09.d`): así la fila dice bajo
