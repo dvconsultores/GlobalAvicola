@@ -1420,3 +1420,138 @@ autoridad global sin contexto   →     403, como las demás rutas de la fase 7
 | Tarea | Qué |
 |---|---|
 | `T-040-38` | `GET /business-units/{code}/grant-candidates` · proyección mínima · misma empresa |
+
+---
+
+# Enmienda G · la unidad de negocio se exige al **operar** sobre `operations` — escritura y alertas (2026-09-09 · WAVE B tranche 2)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-040-G` · `SECURITY / BUSINESS UNIT SCOPE` · **Estado** `SPEC_READY` |
+| **Hallazgos** | **`R-160`** (P1): la creación y edición de eventos no exigen alcance de unidad · **`R-159`** (P2): `GET /operations/alerts` sin predicado de unidad para el actor de empresa · origen: pre-flight de la ola B (`WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md`) y `R-139` §7 |
+| **Requisito raíz** | `§4` («acceso operativo efectivo = … unidad habilitada AND unidad concedida …»), `AC-C05` («las mutaciones sobre unidad no concedida se deniegan»), `AC-C06`, `AC-C08`, `AC-A05`, `AC-B02`, `AC-B04` · `OD-09.b/c` · `OD-16.b/e/f` · `OD-14.c/d` (empresa) · `route_scope` («alertas de sus lotes») |
+| **Matriz previa** | `R160_R159_OPERATION_BU_AUTHORITY_MATRIX.md` (derivación canónica, semántica por actor, siete superficies de escritura, una de lectura, dos de control excluidas) |
+| **Misma raíz** | ambos son superficies de `operations` que consultan la empresa y **no** la unidad; el mismo resolutor (`unidades_efectivas` · `lotes_alcanzables` · `unidades_habilitadas`) cierra los dos; por eso van juntos |
+| **Fuera de alcance** | `R-161` · `R-135` `R-136` `R-140` `R-142` `R-143` `R-144` `R-147` `R-148` `R-152` `R-153` `R-154` `R-156` · `GA-REM-021` (solo traza) · ola C · fase 9 · `R-158` · SAP · `BU-D10` · fórmula de población · concurrencia de huevos · máquina de estados · reverso · agua · frontend · **`R-162`** (descarga de evidencia) · **`R-163`** (`lots` para el actor global) — registrados, no remediados |
+
+## G.1 Hallazgo y causa raíz
+
+La fase 3 acotó por unidad **lecturas** (`get_events`, `get_event`, listados de lotes) y la
+**mutación de lotes** (`PUT /lots`), y la fase 6 la bandeja de pendientes. La **creación y
+edición de eventos** quedaron fuera: `POST /operations` pasa por `require_permission` y
+`validate_lot_active` (empresa) y **nunca consulta la unidad**; `PUT /operations/{id}` asigna el
+`lot_id` del payload con `setattr` sin verificar el lote destino; `DELETE …/evidences/{eid}` y
+`PATCH /alerts/{id}/resolve` consultan la empresa y no la unidad; `GET /operations/alerts` lista
+las alertas de toda la empresa. `exigir_acceso_a_unidad` (`AC-C16`) no tiene llamadores en `app/`.
+
+## G.2 Derivación canónica (normativa)
+
+```
+unidad(evento) = lot.bird_type → BusinessUnit.code        si el evento tiene lote con tipo
+               | company_business_units[event.business_unit_id].code   si el plano de control lo clasificó
+               | PENDIENTE                                  en otro caso (OD-10.c)
+unidad(alerta) = unidad del lote de la alerta (lot_id NOT NULL)
+```
+
+El payload **no** declara unidad ni empresa; la única vía de suplantación es `lot_id`, y se cierra
+verificando el lote destino en la misma transacción (`§G.4`). `BirdTypeEnum` sigue siendo dato de
+dominio (`§2`): solo casa la fila con el alcance ya resuelto.
+
+## G.3 Semántica por actor
+
+| Actor | Escritura sobre unidad `u` | Escritura sobre dato pendiente | Lectura de alertas |
+|---|---|---|---|
+| actor de empresa | `u ∈ unidades_efectivas` (habilitada ∧ concedida viva ∧ activa) — si no: `400 BR-07 «Lote no encontrado»` en alta/edición (anti-enumeración, igual que lote ajeno); `404` en transiciones/evidencias (`get_event`) | ≥ 1 unidad efectiva; si no: `403` (`OD-09.c`) | alertas de `lotes_alcanzables(empresa, unidades_efectivas)`; cero unidades → `[]` |
+| autoridad global | **situada** (`OD-14.d`) y `u ∈ unidades_habilitadas(empresa)`; unidad apagada → `403 «unidad no habilitada para la empresa»` (`AC-A05`, `OD-16.e`); **sin concesión requerida** (fase 3, `R-139` §6) | situada | toda la empresa efectiva, incluidas unidades apagadas (visibilidad de control certificada); sin contexto → `[]` |
+| Administrador de Accesos | `403` por RBAC (`operations:*` ausentes) y cero unidades | `403` | `403` (`operations:read` ausente) |
+| Contraloría | `N/A`: resolutor no implementado | — | — |
+
+## G.4 Comportamiento exigido por superficie
+
+| Superficie | Regla |
+|---|---|
+| `POST /operations` | derivar la unidad del lote del payload; aplicar `§G.3` **antes** de `_apply_business_rules` y de `db.add` |
+| `PUT /operations/{id}` | `get_event` (como hoy); si el payload trae `lot_id`, `farm_id`, `house_id` o `destination_farm_id`: `validate_lot_active(lote destino, empresa)`, `verificar_ubicacion` y `§G.3` sobre el lote **destino**; si no cambia el lote, `§G.3` sobre el lote actual (bloquea al global sobre unidad apagada) |
+| `submit` · `cancel` · `POST evidences` | `get_event` (como hoy) + `§G.3` sobre la unidad del evento (solo añade la denegación del global sobre unidad apagada) |
+| `DELETE evidences/{eid}` | **`get_event` primero** (`404` por unidad para el actor) + `§G.3` |
+| `PATCH alerts/{id}/resolve` | la alerta se busca con el mismo predicado de `§G.5`; global: `§G.3` |
+| `classify` · `reclassify` | sin cambio (plano de control, fase 6) |
+
+## G.5 Alertas (`R-159`)
+
+`GET /operations/alerts`: para el actor de empresa, `OperationalAlert.lot_id IN lotes_alcanzables(empresa, unidades_efectivas)`
+**en la consulta**, antes de `offset`/`limit`/orden; cero unidades → predicado `false()` → `[]`. Para la
+autoridad global situada: solo el predicado de empresa (`R-139`), sin predicado de unidad. Contrato
+de respuesta sin cambio.
+
+## G.6 Criterios de aceptación
+
+### Escritura (`R-160`)
+
+| `AC` | Criterio |
+|---|---|
+| `AC-W01` | actor de empresa · unidad habilitada · concesión viva · `operations:create` · lote de su empresa y unidad → `201` (control) |
+| `AC-W02` | unidad **apagada** para la empresa · concesión histórica del actor → alta sobre lote de esa unidad → `400 BR-07`; cero filas creadas |
+| `AC-W03` | unidad habilitada · **sin concesión** → `400 BR-07`; cero filas |
+| `AC-W03b` | actor con **cero** unidades efectivas → alta sobre cualquier lote → `400 BR-07`; alta sin lote (`farm_inspection`) → `403`; cero filas |
+| `AC-W04` | lote de otra empresa → `400 BR-07` (control, `R-42`) |
+| `AC-W05` | lote de **otra unidad** de la misma empresa (actor `breeder` sobre lote `grandparent`) → `400 BR-07` · y el actor con concesión `grandparent` sí crea (Progenitoras, independiente) |
+| `AC-W06` | edición de un evento de una unidad no alcanzable → `404` (control, `get_event`) · borrado de su evidencia → `404` (hoy `204`) |
+| `AC-W07` | edición de un evento propio (sin cambiar de lote) → `200` (control) |
+| `AC-W08` | suplantación de unidad por payload: `N/A` — no existe campo |
+| `AC-W09` | edición que **repunta** `lot_id` a un lote de otra unidad → `400 BR-07` y el evento **no cambia**; a un lote de otra empresa → `400 BR-07` (control de inquilino sobre la edición) |
+| `AC-W10` | Administrador de Accesos → `403` (RBAC), cero filas |
+| `AC-W11` | toda denegación: cero filas en `operational_events`/`bird_movements`/`evidences`, saldo intacto, sin auditoría de creación |
+| `AC-W12` | global sin contexto → `400 BR-07` (control, `R-139`) · global situada en `B` sobre lote de `A` → `400 BR-07` (control) |
+| `AC-W13` | global situada en `A` sobre lote de unidad **apagada** → `403`; `submit`/`cancel`/adjuntar/borrar evidencia sobre evento de unidad apagada → `403`; cero efectos |
+| `AC-W14` | global situada en `A` sobre unidad **habilitada** sin concesión → `201` (semántica certificada, fase 3 / `R-139` §6) |
+| `AC-W15` | Progenitoras: `AC-W05` positivo y negativo sobre `grandparent`, no inferido |
+
+### Alertas (`R-159`)
+
+| `AC` | Criterio |
+|---|---|
+| `AC-A01` | actor con `breeder` y `broiler` efectivas ve **exactamente** las alertas de lotes `breeder` y `broiler` de su empresa |
+| `AC-A02` | unidad `hatchery` apagada con concesión histórica → sus alertas ausentes |
+| `AC-A03` | unidad `grandparent` habilitada sin concesión → ausentes |
+| `AC-A04` | varias unidades efectivas → unión exacta (ni «la primera», ni «todas las habilitadas») |
+| `AC-A05` | cero unidades efectivas → `[]` |
+| `AC-A06` | alertas de otra empresa nunca (control, `R-139`) |
+| `AC-A07` | con `limit=1` y la alerta más reciente en una unidad no alcanzable, la respuesta trae una alerta **propia**: el predicado precede a la paginación |
+| `AC-A08` | global situada en `A` → todas las alertas de `A`, incluidas las de unidades apagadas; ninguna de `B` |
+| `AC-A09` | global sin contexto → `[]` (control, `R-139`) |
+| `AC-A10` | Contraloría: `N/A` (sin resolutor) |
+| `AC-A11` | Administrador de Accesos → `403` |
+| `AC-A12` | el contrato de respuesta (`OperationalAlertRead`) no cambia |
+| `AC-A13` | `resolve` de una alerta de unidad no alcanzable → `404`; global sobre unidad apagada → `403`; alerta propia → `200` |
+
+## G.7 Tareas
+
+| Tarea | Contenido |
+|---|---|
+| `T-040-G1` | pruebas rojas `backend/tests/test_operations_bu_enforcement.py` (fixture: empresa `A` con `breeder`/`grandparent`/`broiler` ON y `hatchery` OFF sembrados explícitamente, lotes por unidad, alertas y eventos por lote; empresa `B`; actores: concesiones `breeder+broiler`, solo `hatchery` (histórica), solo `grandparent`, cero, `B`, Administrador de Accesos, global) |
+| `T-040-G2` | `OperationsService._exigir_unidad_operativa(lote \| evento)`: deriva la unidad, aplica `§G.3`; sin lógica por nombre de rol; sin `is_global_actor` |
+| `T-040-G3` | alta: verificar antes de `_apply_business_rules`; edición: verificar el lote destino (empresa + ubicación + unidad); transiciones, evidencias (alta y borrado con `get_event`), `resolve` |
+| `T-040-G4` | `get_alerts` con `lotes_alcanzables` en la consulta para el actor de empresa; `resolve_alert` con el mismo predicado |
+| `T-040-G5` | sensibilidad, regresión (`R-130`, `R-139`, fases 7/8, `OD-15`, `R-129`, guardianes), evidencia `R-160-R-159-PRODUCTIVE-BU-ENFORCEMENT-EVIDENCE.md`, cierre |
+
+## G.8 Sensibilidad
+
+| Mutación | Retira | Debe caer |
+|---|---|---|
+| `S1` | la guarda de unidad en el alta | `AC-W03`/`AC-W05` (fila creada en unidad no concedida) |
+| `S2` | la habilitación (concesión histórica sobre unidad apagada tratada como efectiva) | `AC-W02` |
+| `S3` | confiar en el payload | `N/A`: no existe campo de unidad |
+| `S4` | la verificación del lote destino en la edición | `AC-W09` |
+| `S5` | el predicado de unidad en `get_alerts` | `AC-A01`/`A02`/`A05` (alerta ajena observada por id) |
+| `S6` | el orden predicado → paginación (filtrar tras `limit`) | `AC-A07` |
+| `S7` | restricción de empresa seleccionada para el global | `N/A`: rama de `R-139`, no cambia aquí |
+| `S8` | tratar capacidad de control como autoridad productiva | `N/A`: la guarda no mapea capacidades; el RBAC deniega antes (`AC-W10`) |
+| `S9` | `get_event` en el borrado de evidencia | `AC-W06` (evidencia ajena borrada) |
+
+## G.9 Definición de terminado
+
+`AC-W01…W15`, `AC-A01…A13` verdes (`N/A` con evidencia donde se declara) · rojo previo válido ·
+`S1–S9` según `§G.8` · `R-130` 21/21 · `R-139` 35/35 · fases 7/8 · `OD-15`/`R-129` · guardianes ·
+regresión completa · sin migración · sin rutas · sin frontend · `R-160` y `R-159` cerrados en su
+frontera técnica; certificación de proceso `BLOCKED_RUNTIME`.

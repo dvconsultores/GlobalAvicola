@@ -103,7 +103,7 @@ bloqueo: la misma carrera que `R-130` cierra para las aves, P2, misma familia, t
 ## 5. Estado tras el tranche 1 (2026-09-09)
 
 ```
-TOTAL ......................... 16   (+ R-161, registrado, P2, misma familia que R-130 → 17 con él)
+TOTAL ......................... 17   (canónico, tranche 2: 14 R del backlog + GA-REM-021 [1 ítem] + R-159 + R-160 + R-161; R-161 es de la ola B desde su alta)
 CERRADOS ......................  1   R-130 (técnico; certificación de proceso BLOCKED_RUNTIME)
 P1 ABIERTOS ...................  4   R-160 · R-135 · R-136 (interno) · GA-REM-021
 P2 ABIERTOS ....................  9   R-159 · R-143 · R-142 · R-140 · R-144 · R-152 · R-148 · R-147 · R-161
@@ -113,4 +113,33 @@ DECISIONES DEL PROPIETARIO .....  AOD-17 (R-142) · AOD-18 (R-140 permiso) · AO
 ESTADO ......................... IN PROGRESS
 SIGUIENTE TRANCHE .............. R-160 + R-159 — misma raíz (superficies de `operations` sin predicado de unidad); P1; independiente de R-130;
                                  gobernado por GA-REM-040 (enmienda) y OD-09/OD-16; sin decisión, sin SAP, sin BU-D10 (las fixtures siembran su estado)
+```
+
+## 6. Recuento canónico (tranche 2 · 2026-09-09) — leído de los objetos del repositorio
+
+| ID | Título | Sev. | Estado | Ola |
+|---|---|:--:|---|:--:|
+| `R-130` | saldo de aves nunca negativo | P1 | **CERRADO** (técnico) | B |
+| `R-160` | creación/edición de eventos sin alcance de unidad | P1 | abierto → tranche 2 | B |
+| `R-159` | `get_alerts` sin predicado de unidad | P2 | abierto → tranche 2 | B |
+| `R-135` | `RETURNED`/`REJECTED` sin reenvío | P1 | abierto (`OD-17`) | B |
+| `R-136` | reverso sin mecanismo | P1 (SAP) | abierto · post-SAP `SAP_DEFERRED` | B · D |
+| `GA-REM-021` | brechas de captura del cliente (agua + B01…B04, B13) | P1 | `SPEC_READY` | B |
+| `R-140` | `cancel` sin motivo/rol/guarda | P2 | abierto (parte con `AOD-18`) | B |
+| `R-142` | `CORRECTED` doble semántica | P2 | bloqueado por `AOD-17` | B |
+| `R-143` | `docs/12 R2` corrector ≠ aprobador | P2 | abierto | B |
+| `R-144` | cierre sin FCR ni peso final | P2 | bloqueado por `R-131` (C) y `AOD-08` | B/C |
+| `R-147` | constantes y tipos sin fuente | P2 | abierto (parte con `AOD-19`) | B/C |
+| `R-148` | auditoría inmutable solo en aplicación | P2 | abierto | B |
+| `R-152` | importación de abuelas sin estructura | P2 | abierto | B |
+| `R-153` | lote de abuelas automático | P3 | tras `R-152` | B |
+| `R-154` | estados/campos sin productor | P3 | abierto (parte con `AOD-08`) | B |
+| `R-156` | peso del proveedor (legado) | P3 | bloqueado por `AOD-20` | B |
+| `R-161` | saldos de huevos/incubación sin bloqueo | P2 | abierto | B |
+
+```
+TOTAL 17 · CERRADOS 1 · ABIERTOS 16 · P1 5 (1 cerrado) · P2 9 · P3 3
+BLOQUEADOS 3 (R-142 · R-144 · R-156) · DECISIÓN REQUERIDA 6 (AOD-08 · 14 · 17 · 18 · 19 · 20) · SAP_DEFERRED 1 parcial (R-136)
+Convención: GA-REM-021 cuenta como UN ítem (spec) aunque agrupe R-13 + H360-B01…B04, B13.
+Registrados en este pre-flight, fuera del tranche: R-162 (P2, descarga de evidencia sin unidad) · R-163 (P2, lots: global sobre unidad apagada) → TOTAL 19 tras su alta.
 ```

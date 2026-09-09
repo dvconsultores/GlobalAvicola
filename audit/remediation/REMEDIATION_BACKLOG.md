@@ -1009,7 +1009,18 @@ Matriz completa: `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md`.
 R-130    CERRADO (técnico)   GA-REM-005 enmienda B · validate_bird_decrement + bloqueo de fila · viable real de pollitos
                             21/21 · rojo previo 11/21 · sensibilidad 6 válidas + 1 N/A (S4: R-160) · relacionadas 407/407
                             certificación de proceso: BLOCKED_RUNTIME (no se reclama)
-WAVE B   IN PROGRESS        16 ítems · 1 cerrado · siguiente tranche: R-160 + R-159 (alcance de unidad en operations)
+WAVE B   IN PROGRESS        17 ítems (recuento canónico, corregido en el tranche 2: R-161 ya era de la ola B) · 1 cerrado · siguiente tranche: R-160 + R-159
 ```
 
 Evidencia: `R-130-POPULATION-INVARIANT-EVIDENCE.md`. Regresión completa: **851 passed · 49 skipped · 0 failed** (589 s; 830 previas + 21 de `test_population_invariant.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Primera pasada: 850/49/**1** — `test_master_management.py::test_t_090_06` descartaba 3 aves sobre el lote sembrado con saldo 0 (fixture que dependía del defecto); ajustada con recepción previa (`T-130-01b`, aserción intacta) y regresión repetida entera hasta leerla en verde. Vitest 87 passed / 8 archivos. `tsc` 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y ficheros que la línea base `R-158`.
+
+---
+
+## Pre-flight del tranche 2 · hallazgos nuevos (2026-09-09)
+
+| ID | Sev. | Título | Evidencia | Ola |
+|---|:--:|---|---|:--:|
+| `R-162` | P2 | `GET /operations/{id}/evidences/{eid}/download` no aplica predicado de unidad para el actor de empresa (solo empresa, `R-139`); `get_evidences` sí lo hace vía `get_event`. Misma raíz que `R-160`/`R-159`; fuera del tranche 2 (lectura de fichero, no escritura ni alerta) | `operations/service.py get_evidence_for_download` | B |
+| `R-163` | P2 | en `lots` (`PUT /lots/{id}`, `POST /lots/activate-manual`) la autoridad global sigue exenta de la **habilitación** de unidad (`masters/service._apply_business_unit_filter`: `if … or self.is_super_admin: return query`), de modo que puede mutar lotes de una unidad apagada; incoherente con la lectura absoluta de `AC-A05`/`OD-16.e` que `GA-REM-040-G` aplica a `operations` | `masters/service.py:113` · fase 3 | B |
+
+Recuento canónico de la ola B: **17** ítems (1 cerrado) + `R-162`, `R-163` = **19**. Detalle en `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md §6`.
