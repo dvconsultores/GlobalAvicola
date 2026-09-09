@@ -879,5 +879,7 @@ R-163 + R-162 ──CERRADOS (tranche 3, GA-REM-040-H)──► hoja; la guarda 
                 pieza que cualquier escritura productiva futura (ola C, GA-REM-021, R-152/R-153) debe llamar
 R-135 + R-143 ──CERRADOS (tranche 4, GA-REM-006-A · GA-REM-007-A)──► desbloquean R-136 parte interna (estados estables) · dejan R-140 (motivo: UI · permiso: AOD-18)
                 y R-154 (cierres: AOD-08) PARTIALES · R-142 sigue tras AOD-17 · registrados R-164 (BLOCKED_RUNTIME), R-165, R-166
-siguiente (identificado, no iniciado): R-136 parte interna (reverso, BR-16) + R-165 ◄── estados de P-07 estables · SAP diferido (OD-17.c)
+R-136 ──DETENIDO (tranche 5)──► interno: AOD-21 (estado · contrapartida · elegibilidad · autoridad) · post-SAP: SAP_DEFERRED (AOD-04 · OD-12 · GA-REM-017)
+                                 el reverso de huevos/incubación depende además de R-161; el de consolidados, de R8; «solo administrador», de AOD-18
+siguiente (identificado, no iniciado): GA-REM-021 agua (B05; P1; SPEC_READY; B04 ◄── AOD-14) · acompañante posible: R-165 ◄── guarda compartida G/H
 ```

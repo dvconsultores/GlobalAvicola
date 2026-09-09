@@ -924,7 +924,7 @@ su `source_finding`. Ninguno se remedia en esta ola.
 | **`R-133`** | **P1** | eficiencia de vacunación cuenta eventos (`/1000`) y no aves | `H360-K03` | `Bases` p.10 | C | enm. `GA-REM-022` | — |
 | **`R-134`** | **P1** | AFCR suma `BirdMovement.quantity` como gramos; sin peso de muertos | `H360-K06` | `Bases` p.13 | C | enm. `GA-REM-022` | — |
 | **`R-135`** | **P1** | `RETURNED` no se reenvía; `REJECTED` es terminal | `H360-P03`, `H360-D09` | `docs/12 §4` | B | spec propia o enm. `GA-REM-006` + `spec §4.10` | **`OD-17`** ✓ |
-| **`R-136`** | **P1** (SAP) | tabla `reversals` sin servicio ni ruta; `BR-16` sin mecanismo | `H360-P05` | `BR-16` · Rec. §24 | B · D | spec propia | — |
+| **`R-136`** | **P1** (SAP) | tabla `reversals` sin servicio ni ruta; `BR-16` sin mecanismo | `H360-P05` | `BR-16` · Rec. §24 | B · D | spec propia (pendiente de `AOD-21`) | **`AOD-21`** (reverso interno: estado, contrapartida, elegibilidad, autoridad) · post-SAP `SAP_DEFERRED` (`AOD-04`/`OD-12`) — pre-flight del tranche 5: **STOP**, `R136_INTERNAL_REVERSAL_PREFLIGHT.md` |
 | **`R-137`** | **P1** (D) | `lots` sin identificador del lote productivo SAP | `H360-S05` | Rec. §3.3, §25.3 | D | enm. `GA-REM-017` | **`AOD-03`** |
 | **`R-138`** | **P1** (D) | materiales (`feed_types`, `vaccines`, `medications`) sin clave SAP; sin material por raza/sexo/huevo/pollito; proveedor por dos vías | `H360-S01`, `H360-S02`, `H360-S03` | Rec. §5, §15 | D | enm. `GA-REM-017` | `AOD-01` parcial |
 | **`R-139`** | **P1** | 8 atajos `is_super_admin` sobre dato productivo/maestros no conformes con `OD-14.c/d` (`operations:762,810,978,997` · `lots:351` · `curves:75` · `masters/router:139,161`); 0 tests | `H360-A01` = `H360A-08` · verificado en `A01_SUPER_ADMIN_SHORTCUT_VERIFICATION.md` | `OD-14` | **A** (tanda propia; precede a la fase 9) | enm. `GA-REM-002` clase C o `GA-REM-040` | — |
@@ -1093,3 +1093,21 @@ WAVE B   IN PROGRESS        22 ítems · 7 cerrados (R-130 · R-160 · R-163 · 
 ```
 
 Evidencia: `R-135-R-143-STATE-CONTINUITY-EVIDENCE.md`. Regresión completa: **949 passed · 49 skipped · 0 failed** (735 s; 919 previas + 30 de `test_state_continuity.py`/`test_segregation_r143.py`); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 preexistentes (`R-158`). Sin migración (`s9t0u1v2w3x4`), sin rutas nuevas, sin estados nuevos, sin frontend. `R-161` OPEN · `R-164` BLOCKED_RUNTIME · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 5 · `R-136` reverso interno · **STOP sin código** (2026-09-09)
+
+```
+R-136    OPEN · P1           componente interno: OWNER_DECISION_REQUIRED (AOD-21) — ninguna fuente define estado, contrapartida, elegibilidad ni
+                            autoridad del reverso pre-SAP (BR-16/R16 son post-SAP; OD-17.a lo nombra como clase terminal; Rec. §24 no versionada)
+                            componente post-SAP: SAP_DEFERRED (GA-REM-017 BLOCKED_EXTERNAL · AOD-04 · OD-12)
+                            corrección documental: la fila 8 de WAVE_B §1 decía «lo gobiernan BR-16 y docs/12 R5» — verificado: no lo gobiernan
+R-165    OPEN · P2           evaluado: superficie PRODUCTIVE_REVIEW; misma guarda compartida que G/H; sin decisión pendiente; ejecutable como tranche
+                            propio o acompañante (no admitido solo en la forma de este tranche) → sigue OPEN
+R-164    BLOCKED_RUNTIME     sin cambio (no se intentó la base remota)
+WAVE B   IN PROGRESS        22 ítems · 7 cerrados · 2 parciales · 13 abiertos · decisiones 7 (AOD-08 · 14 · 17 · 18 · 19 · 20 · 21)
+                            siguiente tranche (identificado, no iniciado): GA-REM-021 agua (P1, SPEC_READY; B04 fuera hasta AOD-14) · acompañante posible: R-165
+```
+
+Artefactos: `R136_INTERNAL_REVERSAL_PREFLIGHT.md` · `R136_INTERNAL_REVERSAL_EFFECT_MATRIX.md` · `AOD-21`. Sin código, sin migración, sin pruebas nuevas; nada certificado; nada cerrado.

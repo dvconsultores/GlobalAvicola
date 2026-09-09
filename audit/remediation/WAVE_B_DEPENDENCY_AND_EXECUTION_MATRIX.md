@@ -216,3 +216,23 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   «requiere los estados de 3 estables» (§3) — ya lo están; sin decisión pendiente; SAP diferido. Alternativa si el propietario
   prioriza la captura: GA-REM-021 agua (P1, SPEC_READY). R-164 espera acceso a la base configurada.
 ```
+
+## 11. Pre-flight del tranche 5 (2026-09-09) — `R-136` detenido · recuento revalidado
+
+```
+TOTAL ......................... 22   (sin cambio; consistente con §10)
+CERRADOS ......................  7   R-130 · R-160 · R-163 · R-159 · R-162 · R-135 · R-143
+PARCIALES ......................  2   R-140 · R-154
+P1 ABIERTOS ...................  2   R-136 (interno: OWNER_DECISION_REQUIRED AOD-21 · post-SAP: SAP_DEFERRED) · GA-REM-021
+P2 ABIERTOS ....................  8   R-142 · R-144 · R-152 · R-148 · R-147 · R-161 · R-164 · R-165
+P3 ABIERTOS ....................  3   R-153 · R-156 · R-166
+BLOQUEADOS .....................  4   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · R-136 (AOD-21 · SAP)
+DECISIONES DEL PROPIETARIO .....  7   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-21
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c
+BLOCKED_RUNTIME ................  R-164
+CORRECCIÓN ..................... la fila 8 de §1 («el reverso interno lo gobiernan BR-16 y docs/12 R5») no se sostiene: R-136 sale de
+                                 «EJECUTABLES AHORA» (§1 línea 52) y pasa a decisión; el orden §3 tranche 4 (R-136) queda suspendido por AOD-21
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  GA-REM-021 — captura exigida por el cliente: agua (B05), P1, SPEC_READY; B01 desbloqueado por R-130; B04 fuera hasta AOD-14.
+  Acompañante de coste mínimo: R-165 (guarda compartida en el plano de revisión; sin decisión). R-164 espera acceso a la base.
+```

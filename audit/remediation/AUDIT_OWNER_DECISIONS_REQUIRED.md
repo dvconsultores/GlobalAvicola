@@ -31,7 +31,7 @@ dice por qué la evidencia no basta, qué bloquea y qué ola la necesita.
 ## Orden sugerido de resolución (no vinculante)
 
 ```
-antes de WAVE B ..... AOD-09 · AOD-08 · AOD-14
+antes de WAVE B ..... AOD-09 · AOD-08 · AOD-14 · AOD-21 (reverso interno, R-136)
 antes de WAVE C ..... AOD-10
 antes de WAVE D ..... AOD-01 · AOD-02 · AOD-03 · AOD-04 · AOD-05 · AOD-06 · AOD-11 · AOD-15
 antes de WAVE E ..... AOD-13 · AOD-16
@@ -51,3 +51,11 @@ WAVE A solo necesita AOD-12 en su parte de exposición; la corrección de tipo d
 | `BU-D10` | — | `PENDING_RATIFICATION` | ver `BUSINESS_UNIT_OWNER_DECISION_MATRIX.md §7` |
 
 La numeración `AOD-nn` de este documento **no se renumera**.
+
+## `AOD-21` · registro del pre-flight del tranche 5 (2026-09-09 · WAVE B)
+
+| AOD | Pregunta | Opciones (sin preferencia) | Por qué no se resuelve por evidencia | Bloquea | Prioridad · Ola |
+|---|---|---|---|---|---|
+| **AOD-21** | **Reverso interno** (`R-136`, `G-R09`, Rec. 7.17): ¿cómo se neutraliza un registro **aprobado** aún no enviado a SAP? (a) **estado**: reutilizar `CANCELLED` para el aprobado (contradice `docs/12 §2`: Anulado solo desde Borrador/Registrado) o crear `REVERSED` (vocabulario nuevo + migración); (b) **contrapartida**: excluir el original del conjunto de efectos con fila `reversals`, o registrar un **evento inverso** que pase por el flujo de aprobación (`R13`), o ambas; (c) **elegibilidad**: solo `APPROVED`, o también `CONSOLIDATED` (exige des-consolidar el lote, `R8`); (d) **autoridad**: qué permiso reversa (mismo caso que «solo administrador», `AOD-18`) y si quien aprobó puede reversar lo suyo; (e) **huevos/incubación**: incluir pese a `R-161` o excluir hasta cerrarlo | A `CANCELLED` + `reversals` + exclusión · B `REVERSED` nuevo + `reversals` + exclusión (migración) · C evento inverso aprobado (contrapartida contable) + `reversals` · D combinaciones; autoridad: permiso nuevo / `approvals:*` / `operations:delete` | `BR-16`/`R16` solo gobiernan el ajuste **post-SAP** y nombran el reverso sin definirlo; `OD-17.a` lo declara clase terminal distinta de `CANCELLED` sin definirlo; Rec. §24 («Reverso: cómo se anula») es un PDF no versionado; `docs/16 §8` deja el gap explícito («no hay REVERSADO con registro compensatorio»); el modelo `Reversal` fija solo motivo obligatorio y vínculo al original | `R-136` interno (P1) · toda corrección de un aprobado pre-SAP · el payload SAP futuro (`AOD-04`) | **P1 · WAVE B** (la parte post-SAP sigue en WAVE D con `AOD-04`/`OD-12`) |
+
+Evidencia: `R136_INTERNAL_REVERSAL_PREFLIGHT.md` · `R136_INTERNAL_REVERSAL_EFFECT_MATRIX.md`. El registro de `OD-*` llega a `OD-18`; `AOD-21` recibirá su `OD-nn` cuando se resuelva.

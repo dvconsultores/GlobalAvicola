@@ -1237,3 +1237,14 @@ regresión       **949 passed · 49 skipped · 0 failed** (735 s; 919 previas + 
 WAVE B          IN PROGRESS · 7/22 cerrados + 2 parciales · siguiente (no iniciado): R-136 parte interna + R-165 (alternativa: GA-REM-021 agua)
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME
 ```
+
+## WAVE B · tranche 5 · pre-flight de `R-136` · **STOP sin código** (2026-09-09)
+
+```
+R-136           OPEN · P1 · interno OWNER_DECISION_REQUIRED (AOD-21: estado · contrapartida · elegibilidad · autoridad) · post-SAP SAP_DEFERRED
+                ninguna fuente del repositorio define el reverso pre-SAP (BR-16/R16 post-SAP; OD-17.a lo nombra; Rec. §24 no versionada; Reversal huérfano)
+R-165           OPEN · P2 · evaluado (PRODUCTIVE_REVIEW; guarda compartida; sin decisión) · no admitido solo en este tranche → sigue OPEN
+artefactos      R136_INTERNAL_REVERSAL_PREFLIGHT.md · R136_INTERNAL_REVERSAL_EFFECT_MATRIX.md · AOD-21 · corrección de WAVE_B §1 fila 8
+WAVE B          IN PROGRESS · 7/22 cerrados + 2 parciales · decisiones 7 · siguiente (no iniciado): GA-REM-021 agua (+ R-165 posible)
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME
+```
