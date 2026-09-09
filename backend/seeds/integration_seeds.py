@@ -148,6 +148,9 @@ ROLES_DEF = [
             {"module": "audit", "action": PermissionAction.READ},
             {"module": "reports", "action": PermissionAction.READ},
             {"module": "masters", "action": PermissionAction.READ},
+            # `OD-19` Aclaración A: la contraloría **lee** reversos bajo su alcance transversal;
+            # no los solicita por defecto (`reversals:create` no se concede).
+            {"module": "reversals", "action": PermissionAction.READ},
         ],
     },
     # --- Supervisor (ya existe, se actualiza para cubrir todos los tipos) ---

@@ -119,6 +119,10 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 {"module": "corrections", "action": PermissionAction.CORRECT},
                 {"module": "operations", "action": PermissionAction.UPDATE},
                 {"module": "dashboard", "action": PermissionAction.READ},
+                # `OD-19` Aclaración A · `GA-REM-041-A`: el supervisor **solicita** y lee reversos;
+                # no aprueba (sin `approvals:*`): solicitante ≠ aprobador (`BR-14`).
+                {"module": "reversals", "action": PermissionAction.CREATE},
+                {"module": "reversals", "action": PermissionAction.READ},
             ],
         },
         {

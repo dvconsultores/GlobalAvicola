@@ -145,6 +145,9 @@ async def seed_test_data() -> dict[str, int]:
             "Supervisor Avícola": [
                 ("operations", PermissionAction.READ),
                 ("review", PermissionAction.REVIEW),
+                # `OD-19` Aclaración A · `GA-REM-041-A` (mismo catálogo que producción).
+                ("reversals", PermissionAction.CREATE),
+                ("reversals", PermissionAction.READ),
             ],
             "Aprobador": [
                 ("operations", PermissionAction.READ),
