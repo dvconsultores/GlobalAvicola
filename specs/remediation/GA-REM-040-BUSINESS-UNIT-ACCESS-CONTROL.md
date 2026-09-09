@@ -1555,3 +1555,141 @@ de respuesta sin cambio.
 `S1–S9` según `§G.8` · `R-130` 21/21 · `R-139` 35/35 · fases 7/8 · `OD-15`/`R-129` · guardianes ·
 regresión completa · sin migración · sin rutas · sin frontend · `R-160` y `R-159` cerrados en su
 frontera técnica; certificación de proceso `BLOCKED_RUNTIME`.
+
+---
+
+# Enmienda H · la habilitación de la empresa es absoluta para toda escritura productiva — `lots` y descarga de evidencia (2026-09-09 · WAVE B tranche 3)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-040-H` · `SECURITY / BUSINESS UNIT SCOPE` · **Estado** `SPEC_READY` |
+| **Hallazgos** | **`R-163`** (P2 registrado; `POST /lots` con actor de empresa es de clase `AC-C05`, P1): las escrituras de `lots` no exigen la **habilitación** de la unidad a la autoridad global, y `POST /lots` no exige unidad a nadie · **`R-162`** (P2): la descarga de evidencia no aplica el predicado de unidad al actor de empresa |
+| **Relación con `OD-16`** | **CLARIFIES / PROPAGATES `OD-16`** (no la sustituye): `OD-16.e` («apagar prevalece sobre la concesión»), `OD-16.f` («sin retroceso… por `is_super_admin`»), `AC-A05` («operativamente inaccesible, aunque haya concesión») ya son explícitas; esta enmienda las propaga a `lots` como la G las propagó a `operations`. **No se crea una decisión de propietario nueva** |
+| **Requisito raíz** | `§4` (regla central) · `§8` («listado · detalle · modificación · baja · acciones de flujo») · `AC-A05` · `AC-B02` · `AC-B04` · `AC-C05` · `AC-C08` · `OD-09.b/c` · `OD-14.d` |
+| **Matriz previa** | `R163_R162_LOTS_AND_EVIDENCE_BU_AUTHORITY_MATRIX.md` (clasificación de superficies §2; matriz §4) |
+| **Misma raíz** | ambos hallazgos son «la unidad no se exige donde la empresa sí»; `R-163` es **escritura** (`PRODUCTIVE_WRITE`), `R-162` es **lectura de fichero** (`PRODUCTIVE_READ`). Comparten enmienda por invariante común; tienen AC, pruebas, estado y evidencia **independientes** |
+| **Fuera de alcance** | `R-135` `R-143` `R-140` `R-154` `R-161` · resto de la ola B · ola C · fase 9 · SAP · `BU-D10` · `R-158` · frontend · migraciones · refactor amplio · lecturas de `lots` para la autoridad global (frontera declarada, no reabierta) · `egg-batches`/`chick-batches` (contrato, fase 5) |
+
+## H.1 Hallazgo y causa raíz
+
+`masters/service._apply_business_unit_filter` omite el predicado de unidad para `is_super_admin` «exactamente
+donde queda fuera del de empresa» (fase 3). `R-139` corrigió el lado de la **empresa** (`OD-14.c/d`) y dejó
+declarada la exención de **unidad** como visibilidad de control. La enmienda G fijó que, para **escribir**, la
+autoridad global necesita la unidad **habilitada** (`AC-A05`, `OD-16.e`), y lo aplicó a `operations`; `lots`
+quedó incoherente: `PUT`, `close`, `activate-manual` y `phases` aceptan una unidad apagada para la autoridad
+global. Además `create_lot` nunca consultó la unidad: `bird_type` se guarda tal cual llega, para cualquier actor.
+`get_evidence_for_download` compara la empresa (`R-139`) y no el alcance de unidad del evento; su hermana de
+listado sí (`get_event`).
+
+## H.2 Aclaración del propietario, registrada (propaga `OD-16`; no decide nada nuevo)
+
+| | Cláusula | Fuente ya vigente |
+|---|---|---|
+| A | Las cuatro unidades productivas siguen siendo `grandparent`, `breeder`, `hatchery`, `broiler` | `OD-16.a` |
+| B | `CompanyBusinessUnit.is_enabled = false` ⇒ la unidad **no está operativa** para comportamiento productivo | `OD-16.e`, `AC-A05` |
+| C | **Ningún actor** realiza escrituras productivas en una unidad apagada | `OD-16.f`, `AC-A05`, `AC-C08` |
+| D | La autoridad global **no** salta la habilitación de la empresa | `OD-16.f` («ni por `is_super_admin`»), `G.3` |
+| E | Una excepción global explícita puede seguir eximiendo de la **concesión de usuario**, solo donde ya está gobernada (fase 3 `:88`, `R-139` §6, `G.3`) | fase 3, `R-139`, `G.3` |
+| F | La administración del plano de control de una unidad apagada sigue posible para quien tenga `business_units:*` | `OD-09.b`, `OD-16 §7`, fase 7 |
+| G | Las superficies clasificadas como control global / auditoría se gobiernan aparte (`OD-14.c`); las lecturas productivas de la autoridad global conservan la visibilidad de control certificada | `OD-14.c`, fase 3, `R-139` S02 |
+| H | La descarga de evidencia productiva **no** se convierte en control global: es `PRODUCTIVE_READ` de inquilino | `OD-14.c` («dato productivo = INQUILINO»), `R-139` S04 |
+| I | `BU-D10` sigue independiente: la reactivación no se decide aquí; las pruebas siembran el estado ON/OFF | `OD-16.e`, `OD-16 §8` |
+
+## H.3 Clasificación de superficies
+
+Véase la matriz §2. Clases autoritativas: `POST /lots`, `PUT /lots/{id}`, `POST /lots/{id}/close`,
+`POST /lots/activate-manual`, `POST /lots/{id}/phases` = **`PRODUCTIVE_WRITE`**; `GET /lots…` =
+**`PRODUCTIVE_READ`** (sin cambio); `download` y listado de evidencias = **`PRODUCTIVE_READ`**;
+`business-units` = **`CONTROL_PLANE`** (sin cambio).
+
+## H.4 Comportamiento exigido
+
+### `R-163` (escritura de `lots`)
+
+| Superficie | Regla |
+|---|---|
+| `POST /lots` | unidad canónica = `data.bird_type` (dato de dominio; el servidor lo contrasta, no lo cree). Actor de empresa: `bird_type ∈ unidades_efectivas` o **`403`**; `bird_type` nulo → ≥ 1 unidad efectiva o `403` (`OD-09.c`), el lote nace pendiente (`OD-10.c`). Autoridad global: situada con ≥ 1 habilitada, y `bird_type ∈ unidades_habilitadas` o **`403`**; sin contexto → `403` (`OD-14.d`). Todo **antes** de `db.add` |
+| `PUT` · `close` · `activate-manual` · `phases` | tras resolver el lote como hoy (`get_by_id`/`get_lot`/`verificar_pertenencia`): autoridad global → `lot.bird_type ∈ unidades_habilitadas` o **`403`** sin efectos; actor de empresa → sin cambio (`404` por unidad, fase 3), la guarda es redundante y se aplica igual |
+| lecturas | sin cambio; `AC-L11` deja probada la frontera |
+
+### `R-162` (descarga)
+
+`get_evidence_for_download`: evidencia existe (`404`) → empresa (`403`, `R-139`, sin cambio) → **`get_event`**
+(actor de empresa: `404` por unidad; autoridad global situada: sin predicado de unidad, como el listado) → fichero.
+
+## H.5 La guarda, compartida
+
+La decisión de `G.3` deja de vivir solo en `OperationsService`: se extrae a
+`business_units.service.exigir_unidad_operativa(db, *, current_user, company_id, unidad, efectivas)`, que lanza
+`AccesoDeUnidadDenegado(motivo)` con `motivo ∈ {sin_empresa, no_habilitada, no_concedida, sin_unidades}`.
+Cada servicio **deriva** la unidad y **traduce** el motivo a su contrato: `operations` → `no_concedida` =
+`400 BR-07 «Lote no encontrado»` (anti-enumeración, `G.3`), resto `403`; `lots` → `403` con detalle.
+Sin lógica por nombre de rol; `is_super_admin` es la capacidad comodín resuelta en sesión. `exigir_acceso_a_unidad`
+(ORM) se conserva. No es refactor amplio: una función, dos llamadores, el comportamiento de `operations` no cambia
+(sus 40 pruebas y `S1–S9` lo sujetan).
+
+## H.6 Criterios de aceptación
+
+### `R-163` · `AC-L`
+
+| `AC` | Criterio |
+|---|---|
+| `AC-L01` | actor con `breeder` efectiva crea lote `breeder` → `201` (control) |
+| `AC-L02` | actor crea lote en unidad habilitada **no concedida** (`grandparent`) → `403`; cero filas |
+| `AC-L03` | actor con concesión histórica sobre unidad **apagada** (`hatchery`) crea lote `hatchery` → `403`; cero filas |
+| `AC-L04` | actor con cero unidades: lote de cualquier unidad → `403`; lote sin `bird_type` → `403` · control: actor con ≥ 1 unidad crea lote sin `bird_type` → `201` (pendiente) |
+| `AC-L05` | autoridad global sin contexto crea lote → `403`; cero filas (`OD-14.d`) |
+| `AC-L06` | autoridad global situada en `A` crea lote en unidad habilitada sin concesión → `201` (control, semántica certificada) |
+| `AC-L07` | autoridad global situada en `A` crea lote en unidad **apagada** → `403`; cero filas |
+| `AC-L08` | autoridad global situada en `A` sobre lote de unidad apagada: `PUT` → `403` y el lote no cambia · `close` → `403` y sigue `active` · `activate-manual` → `403` y sin saldo de apertura · `POST phases` → `403` y sin fase |
+| `AC-L09` | ídem sobre lote de unidad habilitada → `200`/`201` (control) |
+| `AC-L10` | actor de empresa: `PUT` sobre lote de otra cadena → `404` (control, fase 3); sobre el suyo → `200` |
+| `AC-L11` | **frontera de lectura**: autoridad global situada en `A` lista y detalla el lote de la unidad apagada (`200`); el actor de empresa no lo ve (fase 3) — controles que fijan que este tranche no reabre las lecturas |
+| `AC-L12` | Administrador de Accesos → `403` en `POST /lots` (RBAC) |
+| `AC-L13` | toda denegación: cero filas (`lots`, `opening_balances`, `lot_phases`), sin auditoría de creación |
+| `AC-L14` | Progenitoras: actor con solo `grandparent` crea lote `grandparent` (`201`) y no `breeder` (`403`) |
+| `AC-L15` | plano de control intacto: el Administrador de Accesos lee la configuración de unidades de su empresa y apaga una unidad encendida (`200`) mientras otra sigue apagada; no se reactiva ninguna (`BU-D10`) |
+
+### `R-162` · `AC-E`
+
+| `AC` | Criterio |
+|---|---|
+| `AC-E01` | actor descarga evidencia de un evento de su unidad → `200` con contenido (control) |
+| `AC-E02` | evidencia de evento de unidad habilitada no concedida (misma empresa) → `404`, sin contenido |
+| `AC-E03` | unidad apagada con concesión histórica → `404` |
+| `AC-E04` | actor con cero unidades → `404` |
+| `AC-E05` | evidencia de otra empresa → `403` (control, `R-139`) |
+| `AC-E06` | autoridad global sin contexto → `403` (control) · situada en `A` descarga la de `A` incluida la de unidad apagada (`200`, visibilidad de control) y no la de `B` (`403`) |
+| `AC-E07` | Administrador de Accesos → `403` (RBAC) |
+| `AC-E08` | el listado `GET …/evidences` ya responde `404` para el evento de otra cadena (control, sin cambio) |
+
+## H.7 Tareas
+
+| Tarea | Contenido |
+|---|---|
+| `T-040-H1` | pruebas rojas `backend/tests/test_lots_bu_enforcement.py` (fixture: `A` con `breeder`/`grandparent`/`broiler` ON y `hatchery` OFF, `B`; lotes por unidad y uno sin tipo; eventos con evidencia por lote; actores: `breeder+broiler+hatchery(histórica)`, solo `grandparent`, cero, `B`, Administrador de Accesos, global) |
+| `T-040-H2` | `business_units.service.exigir_unidad_operativa` compartida + `AccesoDeUnidadDenegado.motivo`; `OperationsService.exigir_unidad_operativa` delega |
+| `T-040-H3` | `LotService`: guarda en `create_lot` (antes de `db.add`), `update_lot`, `close_lot`, `activate_manual`, `add_phase` |
+| `T-040-H4` | `get_evidence_for_download`: `get_event` tras la comparación de empresa |
+| `T-040-H5` | sensibilidad, regresión (`R-130`, `R-139`, `R-160`/`R-159` 40/40, fase 3 `test_lot_row_scope`, fase 7, `OD-15`), evidencia `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`, cierre |
+
+## H.8 Sensibilidad
+
+| Mut. | Retira | Debe caer |
+|---|---|---|
+| `S1` | la guarda en `create_lot` | `AC-L02/L03/L07` |
+| `S2` | la habilitación en `unidades_habilitadas` (`is_enabled` ignorado) | `AC-L07/L08` (global sobre apagada) |
+| `S3` | confiar en la unidad del cliente | `N/A`: `bird_type` **es** el dato del lote y la guarda lo contrasta; «confiar» = no contrastar = `S1` |
+| `S4` | la guarda en `update`/`close`/`activate-manual`/`phases` | `AC-L08` |
+| `S5` | `get_event` en la descarga | `AC-E02/E03/E04` |
+| `S6` | filtrar tras agregar/paginar | `N/A`: sin agregado ni paginación en estas superficies |
+| `S7` | la empresa efectiva para la global sin contexto en `lots` (`_apply_company_filter` abierto) | `AC-L05` (+ `R-139`/`OD-14` suites) |
+| `S8` | tratar una capacidad de control como autoridad productiva | `N/A`: RBAC deniega antes (`AC-L12`, `AC-E07`); no hay rama que mutar |
+| `S9` | la rama de habilitación del global **en la guarda compartida** | `AC-L07/L08` y, por delegación, `AC-W13` de la enmienda G |
+
+## H.9 Definición de terminado
+
+`AC-L01…L15`, `AC-E01…E08` verdes · rojo previo válido · `S1, S2, S4, S5, S7, S9` válidas, `S3/S6/S8` `N/A` ·
+`R-160/R-159` 40/40 · `R-139` 35/35 · `R-130` 21/21 · fase 3 (`test_lot_row_scope`) · fase 7/8 · `OD-15` ·
+regresión completa · sin migración · sin rutas · sin frontend · `R-163` y `R-162` cerrados en su frontera
+técnica, **cada uno con su propia evidencia y estado**; certificación de proceso `BLOCKED_RUNTIME`.

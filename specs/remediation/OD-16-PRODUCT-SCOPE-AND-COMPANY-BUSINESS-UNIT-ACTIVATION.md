@@ -113,5 +113,6 @@ La autoridad es **por permiso**, nunca por nombre de rol. Que habilitar a la emp
 | `OD-16.d` | `GA-REM-040 §14.4` · `OD-15 §4` | `test_habilitar_no_concede_la_unidad_a_nadie` · `test_conceder_no_habilita_la_unidad_para_la_empresa` · `test_ac_c14_*` |
 | `OD-16.e` | `AC-A04`, `AC-A05` | `test_deshabilitar_no_borra_las_concesiones_y_rehabilitar_las_devuelve` |
 | `OD-16.f` | `OD-09.c` · `AC-B02`, `AC-B04`, `AC-B06` | `test_ac_b04_sin_concesiones_el_conjunto_efectivo_esta_vacio` · `test_ac_b02_*` · `test_el_nombre_del_rol_no_concede_nada` · `test_h11_*` |
+| `OD-16.e/f` propagadas a la **escritura productiva** (toda superficie, todo actor, autoridad global incluida) | `GA-REM-040` enmienda G (`operations`, 2026-09-09) · enmienda H (`lots` y descarga de evidencia, 2026-09-09) — **aclaran y propagan**, no sustituyen | `test_operations_bu_enforcement.py` · `test_lots_bu_enforcement.py` |
 
 Enmienda de alcance correspondiente en `specs/global-avicola/spec.md §4.0` (versión 1.1.0).

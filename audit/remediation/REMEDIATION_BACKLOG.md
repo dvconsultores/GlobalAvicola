@@ -1021,7 +1021,7 @@ Evidencia: `R-130-POPULATION-INVARIANT-EVIDENCE.md`. Regresión completa: **851 
 | ID | Sev. | Título | Evidencia | Ola |
 |---|:--:|---|---|:--:|
 | `R-162` | P2 | `GET /operations/{id}/evidences/{eid}/download` no aplica predicado de unidad para el actor de empresa (solo empresa, `R-139`); `get_evidences` sí lo hace vía `get_event`. Misma raíz que `R-160`/`R-159`; fuera del tranche 2 (lectura de fichero, no escritura ni alerta) | `operations/service.py get_evidence_for_download` | B |
-| `R-163` | P2 | en `lots` (`PUT /lots/{id}`, `POST /lots/activate-manual`) la autoridad global sigue exenta de la **habilitación** de unidad (`masters/service._apply_business_unit_filter`: `if … or self.is_super_admin: return query`), de modo que puede mutar lotes de una unidad apagada; incoherente con la lectura absoluta de `AC-A05`/`OD-16.e` que `GA-REM-040-G` aplica a `operations` | `masters/service.py:113` · fase 3 | B |
+| `R-163` | P2 (`POST /lots` con actor de empresa: clase `AC-C05`) | en `lots` (`PUT /lots/{id}`, `POST /lots/activate-manual`; **inventario del tranche 3**: también `POST /lots/{id}/close`, `POST /lots/{id}/phases`, y **`POST /lots` no exige unidad a ningún actor**) la autoridad global sigue exenta de la **habilitación** de unidad (`masters/service._apply_business_unit_filter`: `if … or self.is_super_admin: return query`), de modo que puede mutar lotes de una unidad apagada; incoherente con la lectura absoluta de `AC-A05`/`OD-16.e` que `GA-REM-040-G` aplica a `operations` | `masters/service.py:113` · fase 3 | B |
 
 Recuento canónico de la ola B: **17** ítems (1 cerrado) + `R-162`, `R-163` = **19**. Detalle en `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md §6`.
 

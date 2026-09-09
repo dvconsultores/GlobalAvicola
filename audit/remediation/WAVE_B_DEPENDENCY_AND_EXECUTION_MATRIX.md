@@ -123,9 +123,12 @@ CERRADOS ......................  3   R-130 · R-160 · R-159 (técnicos; certifi
 P1 ABIERTOS ...................  3   R-135 · R-136 (interno) · GA-REM-021
 P2 ABIERTOS ................... 10   R-143 · R-142 · R-140 · R-144 · R-152 · R-148 · R-147 · R-161 · R-162 · R-163
 P3 ABIERTOS ....................  3   R-153 · R-154 · R-156
-BLOQUEADOS .....................  2   R-144 (R-131, ola C) · R-136 post-SAP (SAP_DEFERRED)
-DECISIONES DEL PROPIETARIO .....  AOD-17 (R-142) · AOD-18 (R-140 permiso) · AOD-19 (R-147 UoM/umbrales) · AOD-20 (R-156) · AOD-08 · AOD-14
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131, ola C + AOD-08) · R-156 (AOD-20) · [+ R-136 post-SAP parcial, SAP_DEFERRED]
+                                      (corregido en el pre-flight del tranche 3: decía 2 y omitía R-142/R-156, que sí figuran abajo como decisiones)
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 (R-144/R-154 cierre) · AOD-14 (GA-REM-021 B04) · AOD-17 (R-142) · AOD-18 (R-140 permiso) · AOD-19 (R-147) · AOD-20 (R-156)
 ESTADO ......................... IN PROGRESS
+TRANCHE 3 (ejecutado antes que el «siguiente» abajo, por decisión del propietario: R-163 + R-162, misma raíz que el tranche 2;
+           el orden §3 sitúa R-135 + R-143 después, sin cambio)
 SIGUIENTE TRANCHE (identificado, NO iniciado)
   R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) — máquina de estados de P-07; OD-17 ya decidida; P1;
   sin SAP (el reenvío con SAP queda descrito, no conectado), sin fase 9, sin BU-D10; R-142 sigue bloqueada por AOD-17
