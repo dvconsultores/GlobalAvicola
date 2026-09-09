@@ -206,6 +206,17 @@ async def test_t_090_06_la_causa_creada_se_puede_usar_en_un_descarte(
 
     causa = await _crear(client, auth_headers, "cull-causes", seeded_ids["company_id"])
 
+    # `GA-REM-005-B` / `R-130` (`T-130-01b`): un descarte exige saldo. Antes esta prueba
+    # descartaba 3 aves sobre un lote con saldo 0 y pasaba solo porque el descarte no se
+    # validaba; se recibe población primero. La aserción del maestro no cambia.
+    recepcion = await client.post("/api/v1/operations", headers=auth_headers, json={
+        "lot_id": seeded_ids["lot_id"], "farm_id": seeded_ids["farm_id"],
+        "house_id": seeded_ids["house_id"], "event_type": "bird_reception",
+        "event_date": iso_days_ago(0),
+        "bird_movements": [{"sex": "mixed", "quantity": 10}],
+    })
+    assert recepcion.status_code == 201, recepcion.text
+
     r = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": seeded_ids["lot_id"], "farm_id": seeded_ids["farm_id"],
         "house_id": seeded_ids["house_id"], "event_type": "cull_recording",

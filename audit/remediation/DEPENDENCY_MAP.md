@@ -866,3 +866,11 @@ Ruta crítica hacia la fase 9: `R-127` (A1) → `R-139` (A, tanda propia) → fa
 R-139 ──CERRADO──► fase 9: sin bloqueo técnico restante (R-127 · R-139 cerrados) · FROZEN por el propietario
 R-159 (nuevo, P2) ──► WAVE B · alcance de unidad en get_alerts · no bloquea la fase 9 (la fase 9 es interfaz; la autoridad sigue en el backend)
 ```
+
+## WAVE B · tranche 1 cerrado (2026-09-09)
+
+```
+R-130 ──CERRADO──► desbloquea: GA-REM-021 B01 (cuadre usa el saldo) · R-144 (sigue esperando R-131, ola C) · ola C (saldo correcto)
+R-161 (nuevo, P2) ──► misma familia (saldos de huevos/incubación sin bloqueo) · tranche posterior
+siguiente: R-160 + R-159 (alcance de unidad en creación/edición de eventos y alertas) ──► independiente de R-130
+```

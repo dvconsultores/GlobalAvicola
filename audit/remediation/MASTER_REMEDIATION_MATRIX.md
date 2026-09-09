@@ -1189,3 +1189,13 @@ R-139          CERRADO     R-159 registrado (alcance de unidad en alertas, WAVE 
 regresión      **830 passed · 49 skipped · 0 failed** (542 s; 795 previas + 35 de `test_od14_productive_surfaces.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Por archivo: aislamiento de maestros 16 · usuarios 18 · roles 12 · unidades 31 · guarda 25 · administración 39 · sesión 16 · accesos 16 · candidatos 14 · `test_rbac` 21 (`SOLO_SUPER_ADMIN` ≤ 15 sin tocar) · clasificación pendiente 35 · curvas 16 · multiempresa 5 + 12 · saldo de apertura 12 · filas por unidad 21 · KPI por unidad 15 · catálogo de empresas 11 · vitest 87 passed / 8 archivos · tsc 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y mismos ficheros que en `7ee72a1` (`R-158`, sin cambio)
 WAVE A         COMPLETE    (R-127 · R-139) · fase 9 TECHNICALLY READY · FROZEN
 ```
+
+## WAVE B · tranche 1 · `R-130` cerrado · `GA-REM-005` enmienda B certificada (2026-09-09)
+
+```
+pre-flight      WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md · 16 ítems · 5 P1 · 8 P2 · 3 P3 · nuevos R-160 (P1) y R-161 (P2)
+GA-REM-005-B    CERTIFIED (frontera técnica) · AC-R130-01…14 · rojo 11/21 → verde 21/21 · S1–S7: 6 válidas, S4 N/A
+R-130           CERRADO · regresión **851 passed · 49 skipped · 0 failed** (589 s; 830 previas + 21 de `test_population_invariant.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Primera pasada: 850/49/**1** — `test_master_management.py::test_t_090_06` descartaba 3 aves sobre el lote sembrado con saldo 0 (fixture que dependía del defecto); ajustada con recepción previa (`T-130-01b`, aserción intacta) y regresión repetida entera hasta leerla en verde · vitest 87 passed / 8 archivos · tsc 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y ficheros que la línea base `R-158`
+WAVE B          IN PROGRESS · siguiente: R-160 + R-159
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION
+```

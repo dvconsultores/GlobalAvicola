@@ -99,3 +99,18 @@ SPEC                 GA-REM-005 · enmienda B (la regla de balance E.3 ya nombra
 Hallazgos nuevos del pre-flight, registrados en el backlog: **`R-160`** (creación/edición de eventos sin
 alcance de unidad, P1) y **`R-161`** (los saldos de huevos e incubación —`BR-02`, `BR-03`— se leen sin
 bloqueo: la misma carrera que `R-130` cierra para las aves, P2, misma familia, tranche posterior).
+
+## 5. Estado tras el tranche 1 (2026-09-09)
+
+```
+TOTAL ......................... 16   (+ R-161, registrado, P2, misma familia que R-130 → 17 con él)
+CERRADOS ......................  1   R-130 (técnico; certificación de proceso BLOCKED_RUNTIME)
+P1 ABIERTOS ...................  4   R-160 · R-135 · R-136 (interno) · GA-REM-021
+P2 ABIERTOS ....................  9   R-159 · R-143 · R-142 · R-140 · R-144 · R-152 · R-148 · R-147 · R-161
+P3 ABIERTOS ....................  3   R-153 · R-154 · R-156
+BLOQUEADOS .....................  2   R-144 (R-131, ola C) · R-136 post-SAP (SAP_DEFERRED)
+DECISIONES DEL PROPIETARIO .....  AOD-17 (R-142) · AOD-18 (R-140 permiso) · AOD-19 (R-147 UoM/umbrales) · AOD-20 (R-156) · AOD-08 · AOD-14
+ESTADO ......................... IN PROGRESS
+SIGUIENTE TRANCHE .............. R-160 + R-159 — misma raíz (superficies de `operations` sin predicado de unidad); P1; independiente de R-130;
+                                 gobernado por GA-REM-040 (enmienda) y OD-09/OD-16; sin decisión, sin SAP, sin BU-D10 (las fixtures siembran su estado)
+```

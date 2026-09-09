@@ -9,7 +9,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-004` | Credenciales y cuentas de prueba | SECURITY | P0 | **`CERTIFIED`** (informe 2026-09-03) | B | [GA-REM-004](GA-REM-004-CREDENTIALS-AND-TEST-ACCOUNTS.md) |
 | `GA-REM-009` | Persistencia de evidencias y archivos | INFRASTRUCTURE | P0 | **`CERTIFIED`** (volumen `avicola-media`) | D | [GA-REM-009](GA-REM-009-EVIDENCE-PERSISTENCE.md) |
 | `GA-REM-010` | Semántica de estados SAP | INTEGRATION SEMANTICS | P0 | **`CERTIFIED`** (AC01–AC06) | D | [GA-REM-010](GA-REM-010-SAP-STATE-SEMANTICS.md) |
-| `GA-REM-005` | Mortalidad y balance de aves (+ enmienda `R-67`) | BUGFIX + BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-005](GA-REM-005-MORTALITY-AND-BIRD-BALANCE.md) |
+| `GA-REM-005` | Mortalidad y balance de aves (+ enmienda `R-67` · **enmienda B: el saldo nunca es negativo, `R-130`**) | BUGFIX + BUSINESS RULE | P0 | **`CERTIFIED`** (+ enm. B **`CERTIFIED`** 2026-09-09, frontera técnica; E2E `BLOCKED_RUNTIME`) | C | [GA-REM-005](GA-REM-005-MORTALITY-AND-BIRD-BALANCE.md) |
 | `GA-REM-007` | BR-14: segregación y centralización de reglas | BUSINESS RULE | P0 | **`CERTIFIED`** | C | [GA-REM-007](GA-REM-007-BR14-SEGREGATION-CENTRALIZATION.md) |
 | `GA-REM-011` | Alineación de contratos FE ↔ BE | CONTRACT | P0 | **`PARTIALLY CERTIFIED`** (10/18; `H360-C01` → alcance restante) | E | [GA-REM-011](GA-REM-011-FE-BE-CONTRACT-ALIGNMENT.md) |
 | `GA-REM-012` | Cambio de contraseña | SECURITY + BUGFIX | P0 | **`CERTIFIED`** | B | [GA-REM-012](GA-REM-012-PASSWORD-CHANGE.md) |
@@ -108,7 +108,7 @@ Ninguna spec del encargo se ha eliminado. `GA-REM-019` absorbe el bloque «P2/P3
 | Ola | Contenido |
 |---|---|
 | **A** autoridad · seguridad · datos | ~~`R-127`~~ **CERRADO** (`WAVE A1`, `OD-18`) · ~~`R-139`~~ **CERRADO** (`GA-REM-002-C`, 2026-09-09) · `R-149` documental · `GA-REM-013` enm. (`H360-T01`, `R-158` tsc) — **WAVE A COMPLETE** en su alcance de seguridad/datos |
-| **B** procesos faltantes | `R-130` · `R-135` (`OD-17`) · `R-159` (alcance de unidad en alertas) · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
+| **B** procesos faltantes | ~~`R-130`~~ **CERRADO** (tranche 1, `GA-REM-005-B`) · **`R-160`** + `R-159` (tranche 2: alcance de unidad en `operations`) · `R-135` (`OD-17`) · `R-161` · `R-136` · `R-140` · `R-142` · `R-143` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · `R-154` · `R-156` · `GA-REM-021` (+ `H360-B01…B04`, `B13`) |
 | **C** KPI · trazabilidad | `R-131` · `R-132` · `R-133` · `R-134` · `R-141` · `GA-REM-022` (`H360-K10`) · `R-80` (`H360-B09`) |
 | **D** preparación SAP | `R-137` (`AOD-03`) · `R-138` · `R-145` · `R-155` (`AOD-15`) · `R-157` (`AOD-01…05`) · `R-124` (`AOD-06`) |
 | **E** frontend · UX | fase 9 de `GA-REM-040` (tras `R-127` y `R-139`) · `R-98`/`R-119` · `R-146` · `R-150` · `R-151` · `R-122` · `R-123` · `GA-REM-011` (`H360-C01`) |

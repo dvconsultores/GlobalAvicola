@@ -466,6 +466,7 @@ petición · **frontend**: ninguno · **SAP**: ninguno.
 | Tarea | Contenido |
 |---|---|
 | `T-130-01` | pruebas rojas `backend/tests/test_population_invariant.py` (fixture propia: dos empresas, unidades habilitadas **explícitamente**, lotes `breeder`, `grandparent`, `hatchery`, lote cerrado; actores con y sin permiso) |
+| `T-130-01b` | ajuste documentado de una fixture que dependía del defecto: `test_master_management.py::test_t_090_06` descartaba 3 aves sobre el lote sembrado con saldo 0; pasa a recibir población antes. Su aserción (`AC10` de `GA-REM-033`: el maestro creado se usa) no cambia |
 | `T-130-02` | `validators.py`: `bloquear_saldo_del_lote` (`SELECT lots.id … FOR UPDATE`) · `validate_bird_decrement(db, lot_id, quantity, etiqueta)` (`> 0`, `≤ saldo`, `BR-01`) · `validate_mortality` delega en él · `get_viable_chick_balance` resta mortalidad y descartes · `validate_chick_dispatch` bloquea antes de leer |
 | `T-130-03` | `operations/service._apply_business_rules`: ramas `CULL_RECORDING` y `BIRD_EXIT` → `validate_bird_decrement`; mortalidad y despacho bajo bloqueo |
 | `T-130-04` | sensibilidad `S1–S7`, regresión, evidencia `R-130-POPULATION-INVARIANT-EVIDENCE.md`, cierre en backlog/INDEX/matrices |

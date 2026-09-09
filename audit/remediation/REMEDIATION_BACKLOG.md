@@ -1000,3 +1000,16 @@ Evidencia: `R-139-OD14-PRODUCTIVE-DATA-EVIDENCE.md`. Regresión completa: **830 
 | `R-161` | P2 | los saldos de huevos e incubación (`BR-02`, `BR-03`) se leen sin bloqueo de fila: la misma carrera de decrementos concurrentes que `R-130` cierra para las aves | `validators.get_egg_balance`, `get_hatchery_egg_balance` | `DATA_INTEGRITY` | B · tras el tranche 1 |
 
 Matriz completa: `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md`.
+
+---
+
+## Cierre de `R-130` · el saldo de aves nunca es negativo · WAVE B tranche 1 (2026-09-09)
+
+```
+R-130    CERRADO (técnico)   GA-REM-005 enmienda B · validate_bird_decrement + bloqueo de fila · viable real de pollitos
+                            21/21 · rojo previo 11/21 · sensibilidad 6 válidas + 1 N/A (S4: R-160) · relacionadas 407/407
+                            certificación de proceso: BLOCKED_RUNTIME (no se reclama)
+WAVE B   IN PROGRESS        16 ítems · 1 cerrado · siguiente tranche: R-160 + R-159 (alcance de unidad en operations)
+```
+
+Evidencia: `R-130-POPULATION-INVARIANT-EVIDENCE.md`. Regresión completa: **851 passed · 49 skipped · 0 failed** (589 s; 830 previas + 21 de `test_population_invariant.py`; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). Primera pasada: 850/49/**1** — `test_master_management.py::test_t_090_06` descartaba 3 aves sobre el lote sembrado con saldo 0 (fixture que dependía del defecto); ajustada con recepción previa (`T-130-01b`, aserción intacta) y regresión repetida entera hasta leerla en verde. Vitest 87 passed / 8 archivos. `tsc` 6 errores preexistentes (`AuditPage.tsx`, `LotFormPage.tsx`), mismo número y ficheros que la línea base `R-158`.
