@@ -315,6 +315,11 @@ async def test_l05_la_autoridad_global_sin_contexto_no_crea_lotes(http_client, e
     antes = await _lotes_nuevos(esc)
     r = await _crear(http_client, esc, "global", "breeder", granja=False)
     assert r.status_code == 403, r.text
+    # `S7` sobrevivía con solo el caso anterior: sin contexto, `habilitadas` es `[]` y la rama
+    # «no habilitada» ya denegaba un lote **con** cadena. El lote **sin** cadena (pendiente) es
+    # el que solo `OD-14.d` detiene.
+    r = await _crear(http_client, esc, "global", None, granja=False)
+    assert r.status_code == 403, r.text
     assert await _lotes_nuevos(esc) == antes
 
 

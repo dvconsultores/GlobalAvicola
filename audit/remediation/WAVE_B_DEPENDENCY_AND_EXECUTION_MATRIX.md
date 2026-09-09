@@ -164,3 +164,19 @@ BLOQUEADOS 3 (R-142 · R-144 · R-156) · DECISIÓN REQUERIDA 6 (AOD-08 · 14 ·
 Convención: GA-REM-021 cuenta como UN ítem (spec) aunque agrupe R-13 + H360-B01…B04, B13.
 Registrados en este pre-flight, fuera del tranche: R-162 (P2, descarga de evidencia sin unidad) · R-163 (P2, lots: global sobre unidad apagada) → TOTAL 19 tras su alta.
 ```
+
+## 8. Estado tras el tranche 3 (2026-09-09) — recalculado desde el backlog
+
+```
+TOTAL ......................... 19
+CERRADOS ......................  5   R-130 · R-160 · R-159 · R-163 · R-162 (técnicos; certificación de proceso BLOCKED_RUNTIME)
+P1 ABIERTOS ...................  3   R-135 · R-136 (interno) · GA-REM-021
+P2 ABIERTOS ....................  8   R-143 · R-142 · R-140 · R-144 · R-152 · R-148 · R-147 · R-161
+P3 ABIERTOS ....................  3   R-153 · R-154 · R-156
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131, ola C + AOD-08) · R-156 (AOD-20) · [+ R-136 post-SAP parcial]
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20
+ESTADO ......................... IN PROGRESS
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) — máquina de estados de P-07; OD-17 vigente; P1;
+  sin SAP, sin fase 9, sin BU-D10; R-142 (AOD-17) y R-140 permiso (AOD-18) no entran; su pre-flight decide la spec.
+```

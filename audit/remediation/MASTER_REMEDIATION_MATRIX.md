@@ -1211,3 +1211,16 @@ regresión       **891 passed · 49 skipped · 0 failed** (838 s; 851 previas + 
 WAVE B          IN PROGRESS · 3/19 cerrados · siguiente (no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version)
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN
 ```
+
+## WAVE B · tranche 3 · `R-163` + `R-162` cerrados · `GA-REM-040` enmienda H certificada (2026-09-09)
+
+```
+recuento        revalidado desde el backlog: 19 · BLOQUEADOS corregido a 3 (R-142 · R-144 · R-156) + R-136 parcial
+GA-REM-040-H    CERTIFIED (frontera técnica) · AC-L01…L15 · AC-E01…E08 · rojo 13/28 (+1 control de fixture) → verde 28/28 · S1, S2, S4, S5, S7, S9 válidas · S3/S6/S8 N/A
+                aclaración del propietario registrada como CLARIFIES/PROPAGATES OD-16 (sin OD nueva) · guarda compartida con operations
+R-163           CERRADO · cinco escrituras de lots (create para todo actor; update/close/activate-manual/phases para la autoridad global sobre unidad apagada)
+R-162           CERRADO · descarga de evidencia por unidad (empresa 403 → evento 404 → fichero) · visibilidad de control de la global preservada
+regresión       **919 passed · 49 skipped · 0 failed** (719 s; 891 previas + 28 de `test_lots_bu_enforcement.py`; 2.ª pasada tras la dependencia de fixture de `test_t_038_49`, montaje reordenado: la concesión de unidad antes de registrar el lote)
+WAVE B          IN PROGRESS · 5/19 cerrados · siguiente (no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version)
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN
+```

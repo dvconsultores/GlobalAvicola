@@ -77,6 +77,13 @@ async def motor(test_database_url):
                     OperationalEvent.id.in_(eventos)))
             await c.execute(delete(AuditLog).where(AuditLog.lot_id.in_(lotes)))
             await c.execute(delete(Lot).where(Lot.id.in_(lotes)))
+        # Enmienda H: el usuario de `test_t_038_49` recibe una concesión de unidad; se retira
+        # antes que el usuario (clave foránea `user_business_units.user_id`).
+        from app.business_units.models import UserBusinessUnit
+        usuarios = (await c.execute(
+            select(User.id).where(User.username.like(f"{PREFIJO}%")))).scalars().all()
+        if usuarios:
+            await c.execute(delete(UserBusinessUnit).where(UserBusinessUnit.user_id.in_(usuarios)))
         await c.execute(delete(User).where(User.username.like(f"{PREFIJO}%")))
         from app.auth.models import Permission, Role
         roles = (await c.execute(
@@ -326,6 +333,16 @@ async def test_t_038_49_avisa_a_quien_registro_el_lote_y_no_al_evaluador(
         "role_id": rol.json()["id"], "company_id": seeded_ids["company_id"],
         "view_type": "web"})
     assert usuario.status_code == 201, usuario.text
+    # `GA-REM-040` enmienda H (`R-163`): registrar un lote es escritura productiva y exige la
+    # unidad efectiva (`OD-09.c`, `AC-C05`). Hasta el tranche 3 de la ola B este montaje creaba
+    # el lote con un usuario **sin** ninguna concesión —el defecto que `R-163` cierra— y por
+    # eso funcionaba. Solo cambia el montaje: se le concede la unidad como haría la
+    # administración de la fase 7; las aserciones sobre el aviso no cambian.
+    from tests.business_unit_fixtures import habilitar_y_conceder_todo
+
+    await habilitar_y_conceder_todo(
+        test_database_url, company_id=seeded_ids["company_id"],
+        user_ids=[usuario.json()["id"]])
 
     operador = {"Authorization": "Bearer " + create_access_token(
         data={"sub": str(usuario.json()["id"])})}

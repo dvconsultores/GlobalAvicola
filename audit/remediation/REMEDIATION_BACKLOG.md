@@ -1042,3 +1042,21 @@ WAVE B   IN PROGRESS        19 ítems (17 canónicos + R-162 + R-163 registrados
 ```
 
 Evidencia: `R-160-R-159-PRODUCTIVE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión completa: **891 passed · 49 skipped · 0 failed** (838 s; 851 previas + 40 de `test_operations_bu_enforcement.py`; 2.ª pasada tras la dependencia de fixture de `test_t_073_06`, montaje reordenado: la concesión de unidades antes de escribir eventos); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 errores preexistentes (`R-158`). Sin migración (`s9t0u1v2w3x4`), sin rutas nuevas, sin frontend. `R-161` sigue OPEN. Fase 9 FROZEN. `BU-D10` PENDING_RATIFICATION.
+
+---
+
+## Cierre de `R-163` + `R-162` · la habilitación de la empresa es absoluta para toda escritura productiva · WAVE B tranche 3 (2026-09-09)
+
+```
+R-163    CERRADO (técnico)   GA-REM-040 enmienda H · guarda compartida business_units.exigir_unidad_operativa · lots: create (antes sin unidad
+                            para nadie; la global sin contexto creaba lotes sin empresa), update, close, activate-manual, phases → 403 sobre
+                            unidad apagada para la autoridad global; el actor de empresa sigue en 404 por unidad (fase 3)
+                            AC-L01…L15 · 19/19 · rojo previo 10 rojas de 13
+R-162    CERRADO (técnico)   descarga de evidencia: empresa (403, R-139) → get_event (404 por unidad) → fichero · AC-E01…E08 · 9/9 · rojo previo 3
+                            sensibilidad S1, S2, S4, S5, S7, S9 válidas · S3/S6/S8 N/A con motivo · lecturas de lots de la global sin cambio (AC-L11)
+                            certificación de proceso: BLOCKED_RUNTIME (no se reclama) · R-160/R-159 40/40 · R-139 35/35 · R-130 21/21
+WAVE B   IN PROGRESS        19 ítems · 5 cerrados (R-130 · R-160 · R-159 · R-163 · R-162) · 14 abiertos
+                            siguiente tranche (identificado, no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) — OD-17 vigente
+```
+
+Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión completa: **919 passed · 49 skipped · 0 failed** (719 s; 891 previas + 28 de `test_lots_bu_enforcement.py`; 2.ª pasada tras la dependencia de fixture de `test_t_038_49`, montaje reordenado: la concesión de unidad antes de registrar el lote); los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 87/87 · `tsc` 6 preexistentes (`R-158`). Sin migración (`s9t0u1v2w3x4`), sin rutas nuevas, sin frontend. `R-161` sigue OPEN. Fase 9 FROZEN. `BU-D10` PENDING_RATIFICATION.

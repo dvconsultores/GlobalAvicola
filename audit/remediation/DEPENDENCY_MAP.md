@@ -875,5 +875,7 @@ R-161 (nuevo, P2) ──► misma familia (saldos de huevos/incubación sin bloq
 siguiente: R-160 + R-159 (alcance de unidad en creación/edición de eventos y alertas) ──► independiente de R-130
 R-160 + R-159 ──CERRADOS (tranche 2, GA-REM-040-G)──► desbloquean nada nuevo (eran hoja); dejan registrados R-162 (descarga de evidencia
                 sin unidad) y R-163 (lots: la autoridad global muta lotes de unidad apagada) — misma raíz, P2, tranche propio
+R-163 + R-162 ──CERRADOS (tranche 3, GA-REM-040-H)──► hoja; la guarda compartida business_units.exigir_unidad_operativa es ahora la
+                pieza que cualquier escritura productiva futura (ola C, GA-REM-021, R-152/R-153) debe llamar
 siguiente (identificado, no iniciado): R-135 + R-143 (+ R-140 motivo/guarda · R-154 DRAFT/version) ◄── OD-17 vigente
 ```

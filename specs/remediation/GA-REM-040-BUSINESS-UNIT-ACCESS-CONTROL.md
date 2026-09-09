@@ -1562,7 +1562,7 @@ frontera técnica; certificación de proceso `BLOCKED_RUNTIME`.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-040-H` · `SECURITY / BUSINESS UNIT SCOPE` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-040-H` · `SECURITY / BUSINESS UNIT SCOPE` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-09; E2E `BLOCKED_RUNTIME`) · evidencia `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md` |
 | **Hallazgos** | **`R-163`** (P2 registrado; `POST /lots` con actor de empresa es de clase `AC-C05`, P1): las escrituras de `lots` no exigen la **habilitación** de la unidad a la autoridad global, y `POST /lots` no exige unidad a nadie · **`R-162`** (P2): la descarga de evidencia no aplica el predicado de unidad al actor de empresa |
 | **Relación con `OD-16`** | **CLARIFIES / PROPAGATES `OD-16`** (no la sustituye): `OD-16.e` («apagar prevalece sobre la concesión»), `OD-16.f` («sin retroceso… por `is_super_admin`»), `AC-A05` («operativamente inaccesible, aunque haya concesión») ya son explícitas; esta enmienda las propaga a `lots` como la G las propagó a `operations`. **No se crea una decisión de propietario nueva** |
 | **Requisito raíz** | `§4` (regla central) · `§8` («listado · detalle · modificación · baja · acciones de flujo») · `AC-A05` · `AC-B02` · `AC-B04` · `AC-C05` · `AC-C08` · `OD-09.b/c` · `OD-14.d` |
