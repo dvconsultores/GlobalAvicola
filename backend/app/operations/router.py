@@ -360,6 +360,10 @@ async def upload_evidence(
 
     svc = _service(db, current_user)
     event = await svc.get_event(event_id)
+    # `GA-REM-040-G` · `AC-W13`: la guarda de escritura **antes** de tocar el disco, para que
+    # una denegación no deje un fichero huérfano; `create_evidence` la repite por si se llama
+    # desde otro sitio (la regla vive en el servicio, `AC-C16`).
+    await svc.exigir_unidad_operativa(event=event)
     company_dir = os.path.join(MEDIA_DIR, "evidences", str(event.company_id), str(event_id))
     os.makedirs(company_dir, exist_ok=True)
 

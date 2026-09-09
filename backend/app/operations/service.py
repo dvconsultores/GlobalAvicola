@@ -81,6 +81,93 @@ class OperationsService:
         return self._unidades_cache
 
     # ============================================================
+    # `GA-REM-040` enmienda G · `R-160` / `R-159` · la unidad se exige al operar
+    # ============================================================
+
+    async def _unidad_del_lote(self, lot_id: int) -> str | None:
+        """La unidad canónica de un lote de la empresa efectiva: `lot.bird_type` → código.
+
+        Un lote ajeno —o cualquiera sin empresa efectiva, `OD-14.d`— **no existe** para quien
+        pregunta (`BR-07`, la misma respuesta que `validate_lot_active`): distinguir «no es
+        tuyo» de «no está» ya enumera. `None` es un lote sin cadena declarada: pendiente
+        (`OD-10.c`), no una quinta unidad.
+        """
+        from ..masters.models import Lot
+
+        consulta = select(Lot.bird_type).where(Lot.id == lot_id)
+        consulta = self._acotar_a_empresa(consulta, Lot.company_id)
+        fila = (await self.db.execute(consulta)).one_or_none()
+        if fila is None:
+            raise BusinessRuleViolation("Lote no encontrado", "BR-07")
+        tipo = fila[0]
+        return tipo.value if tipo is not None else None
+
+    async def _unidad_clasificada(self, company_business_unit_id: int) -> str | None:
+        """El código de la habilitación que el plano de control fijó en el evento (fase 6)."""
+        from ..business_units.models import BusinessUnit, CompanyBusinessUnit
+
+        return (await self.db.execute(
+            select(BusinessUnit.code)
+            .join(CompanyBusinessUnit, CompanyBusinessUnit.business_unit_id == BusinessUnit.id)
+            .where(CompanyBusinessUnit.id == company_business_unit_id,
+                   CompanyBusinessUnit.company_id == self.company_id)
+        )).scalar_one_or_none()
+
+    async def exigir_unidad_operativa(self, *, lot_id: int | None = None, event=None) -> None:
+        """La guarda de escritura. `GA-REM-040-G §G.3` · `AC-C05` · `AC-W02…W05, W13, W14`.
+
+        La unidad se **deriva en el servidor** —del lote destino, o de la clasificación que el
+        plano de control fijó en el evento— y nunca del cuerpo de la petición, que no la
+        declara. Con eso resuelto:
+
+            actor de empresa      la unidad está en su alcance efectivo (habilitada ∧ concedida),
+                                  o el lote no existe para él (`BR-07`, anti-enumeración)
+            dato pendiente        sin unidad derivable; se exige al menos una unidad efectiva
+                                  (`OD-09.c`: cero unidades → ningún dato productivo)
+            autoridad global      situada (`OD-14.d`) y sobre una unidad **habilitada** para esa
+                                  empresa (`AC-A05`, `OD-16.e`: apagada = operativamente
+                                  inaccesible, también para ella); la concesión no se le exige,
+                                  como en la fase 3 (`R-139 §6`): su autoridad es la capacidad
+                                  comodín, no una fila de `user_business_units`
+
+        Sin lógica por nombre de rol: `is_super_admin` es la capacidad `("*", …, "all")`
+        resuelta en la sesión, no una cadena. Todo ocurre antes de `db.add`: una denegación
+        no deja fila, ni movimiento, ni auditoría (`AC-W11`).
+        """
+        if event is not None:
+            if event.lot_id is not None:
+                unidad = await self._unidad_del_lote(event.lot_id)
+            elif event.business_unit_id is not None:
+                unidad = await self._unidad_clasificada(event.business_unit_id)
+            else:
+                unidad = None
+        elif lot_id is not None:
+            unidad = await self._unidad_del_lote(lot_id)
+        else:
+            unidad = None
+
+        if self.current_user.get("is_super_admin"):
+            from ..business_units.service import unidades_habilitadas
+
+            habilitadas = await unidades_habilitadas(self.db, self.company_id)
+            if self.company_id is None or not habilitadas:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                    detail="Sin empresa efectiva con unidades de negocio habilitadas")
+            if unidad is not None and unidad not in habilitadas:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                    detail=f"La unidad de negocio {unidad!r} no está habilitada para la empresa")
+            return
+
+        efectivas = await self._unidades()
+        if unidad is not None:
+            if unidad not in efectivas:
+                raise BusinessRuleViolation("Lote no encontrado", "BR-07")
+            return
+        if not efectivas:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail="Sin unidad de negocio operativa")
+
+    # ============================================================
     # Create Event
     # ============================================================
 
@@ -99,6 +186,10 @@ class OperationsService:
             dup = existing.scalar_one_or_none()
             if dup:
                 return dup  # Return existing event — no duplicate created
+
+        # `GA-REM-040-G` · `R-160`: empresa y unidad del lote destino, antes de las reglas y
+        # de cualquier `db.add`. El cuerpo no declara la unidad; se deriva del lote.
+        await self.exigir_unidad_operativa(lot_id=data.lot_id)
 
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
@@ -782,6 +873,7 @@ class OperationsService:
         # de empresa es **incondicional**: antes, `if not is_super_admin` lo retiraba y la
         # autoridad global sin contexto listaba las alertas de todas las empresas.
         query = self._acotar_a_empresa(query, models.OperationalAlert.company_id)
+        query = await self._acotar_alertas_a_unidades(query)
         if lot_id is not None:
             query = query.where(models.OperationalAlert.lot_id == lot_id)
         if is_resolved is not None:
@@ -790,18 +882,30 @@ class OperationsService:
         result = await self.db.execute(query)
         return list(result.scalars().all())
 
+    async def _acotar_alertas_a_unidades(self, query):
+        """`GA-REM-040-G` · `R-159` · `AC-A01…A07`: la alerta es de su lote, y el lote de su cadena.
+
+        Predicado **en la consulta**, antes de contar, ordenar o paginar: `lot_id IN
+        lotes_alcanzables(empresa, unidades efectivas)`; cero unidades → `false()` → `[]`
+        (`OD-09.c`). La autoridad global conserva la visibilidad de control certificada en la
+        fase 3 (toda la empresa situada, unidades apagadas incluidas), igual que `get_events`.
+        """
+        if self.current_user.get("is_super_admin"):
+            return query
+        from ..business_units.scope import lotes_alcanzables
+
+        return query.where(models.OperationalAlert.lot_id.in_(
+            lotes_alcanzables(self.company_id, await self._unidades())))
+
     async def resolve_alert(self, alert_id: int) -> models.OperationalAlert:
         from datetime import datetime, timezone
-        result = await self.db.execute(
-            select(models.OperationalAlert).where(
-                models.OperationalAlert.id == alert_id,
-                models.OperationalAlert.company_id == self.company_id,
-            )
-        )
-        alert = result.scalar_one_or_none()
+        query = select(models.OperationalAlert).where(models.OperationalAlert.id == alert_id)
+        query = self._acotar_a_empresa(query, models.OperationalAlert.company_id)
+        query = await self._acotar_alertas_a_unidades(query)  # `AC-A13`: ajena por unidad = 404
+        alert = (await self.db.execute(query)).scalar_one_or_none()
         if alert is None:
-            from fastapi import HTTPException
             raise HTTPException(status_code=404, detail="Alerta no encontrada")
+        await self.exigir_unidad_operativa(lot_id=alert.lot_id)  # global sobre unidad apagada = 403
         alert.is_resolved = True
         alert.resolved_by_id = self.current_user.get("id")
         alert.resolved_at = datetime.now(timezone.utc)
@@ -922,7 +1026,30 @@ class OperationsService:
         # menciona. El esquema ya excluye `status`, `event_type` e `idempotency_key`, de
         # modo que aquí no puede llegar ninguno: el estado solo cambia por las
         # transiciones del flujo (R-32).
-        for key, val in data.model_dump(exclude_unset=True).items():
+        cambios = data.model_dump(exclude_unset=True)
+        # `GA-REM-040-G` · `R-160` · `AC-W09`: el destino de una edición se verifica como el
+        # de un alta. Antes, `lot_id`, `farm_id` y `house_id` se asignaban tal cual llegaban,
+        # de modo que un evento podía repuntarse a un lote de otra unidad **o de otra empresa**
+        # (`R-42` cubría el alta, no la edición). Si el lote no cambia, la guarda mira el
+        # actual: para el actor de empresa ya lo garantizó `get_event`; para la autoridad
+        # global bloquea la unidad apagada.
+        lote_destino = cambios["lot_id"] if "lot_id" in cambios else event.lot_id
+        if "lot_id" in cambios and lote_destino is not None:
+            await validate_lot_active(self.db, lote_destino, self.company_id)
+            await validate_event_date(self.db, lote_destino, cambios.get("event_date", event.event_date))
+        if any(k in cambios for k in ("farm_id", "house_id", "destination_farm_id")):
+            from ..tenancy import verificar_ubicacion
+
+            await verificar_ubicacion(
+                self.db, self.company_id,
+                farm_id=cambios.get("farm_id"), house_id=cambios.get("house_id"),
+                destination_farm_id=cambios.get("destination_farm_id"),
+            )
+        if lote_destino is not None:
+            await self.exigir_unidad_operativa(lot_id=lote_destino)
+        else:
+            await self.exigir_unidad_operativa(event=event)
+        for key, val in cambios.items():
             setattr(event, key, val)
         event.version += 1
         await self.db.flush()
@@ -933,6 +1060,7 @@ class OperationsService:
 
     async def submit_to_review(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
+        await self.exigir_unidad_operativa(event=event)  # `AC-W13`: unidad apagada = 403
         if event.status != models.EventStatus.REGISTERED:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Solo eventos registrados pueden enviarse a revisión")
         old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
@@ -946,6 +1074,7 @@ class OperationsService:
 
     async def cancel_event(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
+        await self.exigir_unidad_operativa(event=event)  # `AC-W13`
         if event.status in [models.EventStatus.APPROVED, models.EventStatus.CONSOLIDATED, models.EventStatus.SENT_TO_SAP]:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se puede cancelar un evento ya aprobado o enviado a SAP")
         old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
@@ -974,6 +1103,7 @@ class OperationsService:
         event = await self.get_event(event_id)
         if not self.current_user.get("is_super_admin") and event.company_id != self.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        await self.exigir_unidad_operativa(event=event)  # `AC-W13`
         evidence = models.Evidence(
             event_id=event_id,
             company_id=event.company_id,
@@ -1005,6 +1135,13 @@ class OperationsService:
         # (`None`) nunca coincide, y la autoridad global borra solo desde una empresa situada.
         if evidence.company_id != self.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
+        # `GA-REM-040-G` · `AC-W06`: ya dentro de la empresa, el evento se resuelve con el mismo
+        # alcance de unidad que el resto de sus superficies (`404` para el actor de empresa
+        # sobre unidad no alcanzable) y después la guarda de escritura (`403` para la
+        # autoridad global sobre unidad apagada). Antes solo se comparaba la empresa. El
+        # orden preserva el contrato certificado de `R-139` (`403` entre inquilinos).
+        event = await self.get_event(event_id)
+        await self.exigir_unidad_operativa(event=event)
         try:
             os.remove(evidence.file_path)
         except OSError:
