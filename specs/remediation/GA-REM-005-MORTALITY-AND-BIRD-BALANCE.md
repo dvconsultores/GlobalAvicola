@@ -377,3 +377,113 @@ También queda fuera —y se registra como `R-69`— la validación
 `accumulated_mortality_* ≤ initial_*_count` de `lots/service.py:209`: bajo `RR-08` rechaza
 datos legítimos (un lote de 5 000 aves vivas que acumuló 6 000 bajas a lo largo de su
 ciclo). Cambiar una validación de negocio merece su propia decisión.
+
+---
+
+# ENMIENDA B · `R-130` — EL SALDO DE AVES NUNCA ES NEGATIVO (2026-09-09 · WAVE B · tranche 1)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-005-B` · `DATA INTEGRITY + BUSINESS RULE` · **Estado** `SPEC_READY` |
+| **Hallazgo** | **`R-130`** (P1) · origen `H360-P01` · `OPERATIONAL_PROCESS_STATE_AND_CLOSURE_MATRIX.md §4` |
+| **Requisito raíz** | invariante del propietario «la población nunca es negativa» (encargo Master 360) · `spec.md BR-01` («mortalidad no puede exceder saldo disponible») · `docs/02 §5 R1` · Recomendación central §17 («mortalidad superior a población actual») · **esta spec, `E.3`**: `SALDO = apertura + Σ(entradas) − Σ(salidas)` con **salidas = `mortality_recording` · `cull_recording` · `bird_exit` · `chick_dispatch`** |
+| **Proceso** | `P-01`, `P-03`, `P-06` (cría/engorde: descarte y salida) · `P-05` (incubación: despacho de pollitos) · `P-11` (saldo de apertura) |
+| **Decisión** | ninguna requerida (`RR-02` neutros vigente; `R-67` apertura vigente; `OD-14`/`OD-16` intactas) |
+| **Fuera de alcance** | `R-160`/`R-159` (alcance de unidad) · `R-135`, `R-140`, `R-142`, `R-143`, `R-154` (máquina de estados) · `R-136` (reverso) · `GA-REM-021` · `R-144`, `R-131…R-134`, `R-141` (ola C) · `R-152`/`R-153` · `R-147`/`R-148` · `R-156` · `R-158` · fase 9 · SAP real · `BU-D10` · saldos de huevos e incubación (`BR-02`/`BR-03`: **`R-161`**) |
+
+## B.1 El defecto
+
+`E.3` define cuatro salidas del saldo; `_apply_business_rules` (`operations/service.py`) solo valida
+una contra él (`mortality_recording`, `BR-01`) y otra contra un saldo distinto (`chick_dispatch`,
+`BR-04` sobre `get_viable_chick_balance` = nacidos − despachados, **que ignora mortalidad y
+descartes**). `cull_recording` y `bird_exit` **no tienen rama**: un descarte o una salida a planta
+mayor que el saldo se registra con `201` y `get_current_bird_balance` queda negativo; una cantidad
+de **cero** se admite (`BirdMovementSchema.quantity ge=0`) y contamina indicadores. Además, el saldo
+se lee sin bloqueo: dos decrementos concurrentes del mismo lote pueden leer el mismo saldo y
+aprobarse ambos (`READ COMMITTED`, sesión por petición, `RutaTransaccional`).
+
+## B.2 Invariante y ecuación (del modelo real, no inventada)
+
+```
+SALDO(lote) = apertura + Σ bird_reception + Σ birth_registration
+              − Σ mortality_recording − Σ cull_recording − Σ bird_exit − Σ chick_dispatch
+              (eventos con status ≠ CANCELLED · bird_transfer y bird_distribution neutros · RR-02)
+
+INVARIANTE  para todo decremento D ∈ {mortalidad, descarte, salida, despacho de pollitos}:
+            cantidad(D) > 0   ∧   cantidad(D) ≤ SALDO(lote) antes de D   ⇒   SALDO después ≥ 0
+            evaluado bajo bloqueo de la fila del lote, de modo que decrementos concurrentes se serializan
+```
+
+- La regla se codifica como **`BR-01`** para mortalidad, descarte y salida («no exceder el saldo disponible de aves»): es la misma regla de `spec §5` aplicada a las tres salidas humanas que `E.3` ya enumera; no se inventa un `BR-` nuevo.
+- Para `chick_dispatch` sigue **`BR-04`**; su «viable» pasa a ser **nacidos − mortalidad − descartes − despachados**, que es lo que «viable» significa (`Bases` p.9: sanos vs débiles) y coincide con el saldo del lote de incubación. Sin mortalidad ni descartes, el comportamiento es idéntico al actual.
+- **Sexo y galpón**: el saldo es por lote (`E.3`); ninguna fuente de nivel 1-4 exige saldo por sexo o por galpón → no se añade.
+- **Corrección**: las cantidades son inmutables tras crear (`OperationalEventUpdate` excluye `SUBMOVEMENT_FIELDS`; `campos_corregibles` son campos del evento) → el invariante se aplica en la **creación**, único camino de escritura de cantidades. `cancel` retira el evento del saldo (`status ≠ CANCELLED`) y no puede dejarlo negativo (solo lo aumenta).
+- **Estado del lote**: `BR-07` (activo) sigue previo a toda validación.
+
+## B.3 Comportamiento exigido
+
+| Situación | Antes | Después |
+|---|---|---|
+| descarte ≤ saldo | `201` | `201` |
+| descarte > saldo | **`201`, saldo negativo** | `400 BR-01` «Descarte (n) excede el saldo de aves disponibles (s)» · sin fila, sin movimiento, sin auditoría de creación, sin alerta |
+| salida (`bird_exit`) > saldo | **`201`** | `400 BR-01` |
+| descarte / salida = 0 | **`201`** | `400 BR-01` («debe ser mayor a cero») |
+| descarte / salida < 0 | `422` (esquema) | `422` (sin cambio) |
+| despacho de pollitos > nacidos − mortalidad − descartes − despachados | **`201`** si ≤ nacidos − despachados | `400 BR-04` con el viable real en el mensaje |
+| N decrementos concurrentes cuya suma > saldo | **todos `201`** | solo los que quepan en orden de llegada; los demás `400 BR-01`/`BR-04`; saldo final ≥ 0 |
+| mortalidad (todas las filas anteriores) | `BR-01` vigente | sin cambio de contrato; gana el bloqueo |
+| lote ajeno · ubicación ajena · lote inactivo · sin permiso · clave de idempotencia repetida | `400 BR-07` · `400 BR-07` · `400 BR-07` · `403` · evento original | sin cambio |
+
+Impacto: **inquilino** ninguno (`validate_lot_active` por empresa, `verificar_ubicacion` intactos) ·
+**unidad** ninguno (la creación no está acotada por unidad hoy: `R-160`, fuera de alcance; esta
+enmienda no lo empeora ni lo mejora) · **RBAC** ninguno · **auditoría**: un rechazo no produce
+`audit_logs` (la excepción precede a `db.add`) · **API**: sin rutas nuevas; mismo contrato `400 {detail, rule}` ·
+**BD**: sin migración; bloqueo `SELECT … FOR UPDATE` sobre `lots.id` dentro de la transacción de la
+petición · **frontend**: ninguno · **SAP**: ninguno.
+
+## B.4 Criterios de aceptación
+
+| `AC` | Familia | Criterio (dado / cuando / entonces) |
+|---|---|---|
+| `AC-R130-01` | A happy | lote activo con saldo 100 · descarte 10 y salida 40 → `201` ambos · saldo 50 |
+| `AC-R130-02` | B/E límites | descarte 1 → `201` · descarte = saldo → `201` y saldo 0 · después cualquier decremento de 1 → `400 BR-01` |
+| `AC-R130-03` | F sobre saldo | descarte = saldo + 1 → `400 BR-01` con el saldo real en el mensaje · salida = saldo + 1 → `400 BR-01` |
+| `AC-R130-04` | D cero/negativo | descarte 0 y salida 0 → `400 BR-01` · cantidad negativa → `422` (esquema, sin cambio) |
+| `AC-R130-05` | S/Q sin efectos | tras un rechazo: ninguna fila en `operational_events` ni `bird_movements`, saldo intacto, ninguna entrada `audit_logs` de creación, ninguna alerta |
+| `AC-R130-06` | secuencia | recepción 100 → mortalidad 30 → descarte 30 → salida 40 → saldo 0 → salida 1 → `400` |
+| `AC-R130-07` | O cancelación | descarte 30 → `cancel` → saldo vuelve a 100 → salida 100 → `201` |
+| `AC-R130-08` | Progenitoras | el mismo invariante, verificado de forma independiente sobre un lote `grandparent` (sin inferir de `breeder`) |
+| `AC-R130-09` | incubación | nacimientos 100 · mortalidad 10 · descarte 5 → despacho 90 → `400 BR-04` (viable 85) · despacho 85 → `201` · despacho 1 → `400` |
+| `AC-R130-10` | P concurrencia | saldo 100 · tres descartes de 60 **concurrentes** → exactamente un `201`, dos `400`; saldo final 40 |
+| `AC-R130-11` | G duplicado | la misma `idempotency_key` dos veces → un solo evento y un solo decremento |
+| `AC-R130-12` | H/L/M/K controles | lote de otra empresa → `400 BR-07` · granja ajena en la salida → `400 BR-07` · lote cerrado → `400 BR-07` · sin `operations:create` → `403` (sin cambio) |
+| `AC-R130-13` | mortalidad | `BR-01` de mortalidad conserva mensaje y contrato (`test_mortality.py` intacto) |
+| `AC-R130-14` | sin migración · sin rutas | cabeza Alembic `s9t0u1v2w3x4`; 208 rutas; guardianes intactos |
+| `AC-R130-15` | I/J unidad | **`N/A` con evidencia**: la creación no está acotada por unidad (`R-160`); no se promete lo que no gobierna esta enmienda |
+
+## B.5 Tareas
+
+| Tarea | Contenido |
+|---|---|
+| `T-130-01` | pruebas rojas `backend/tests/test_population_invariant.py` (fixture propia: dos empresas, unidades habilitadas **explícitamente**, lotes `breeder`, `grandparent`, `hatchery`, lote cerrado; actores con y sin permiso) |
+| `T-130-02` | `validators.py`: `bloquear_saldo_del_lote` (`SELECT lots.id … FOR UPDATE`) · `validate_bird_decrement(db, lot_id, quantity, etiqueta)` (`> 0`, `≤ saldo`, `BR-01`) · `validate_mortality` delega en él · `get_viable_chick_balance` resta mortalidad y descartes · `validate_chick_dispatch` bloquea antes de leer |
+| `T-130-03` | `operations/service._apply_business_rules`: ramas `CULL_RECORDING` y `BIRD_EXIT` → `validate_bird_decrement`; mortalidad y despacho bajo bloqueo |
+| `T-130-04` | sensibilidad `S1–S7`, regresión, evidencia `R-130-POPULATION-INVARIANT-EVIDENCE.md`, cierre en backlog/INDEX/matrices |
+
+## B.6 Sensibilidad
+
+| Mutación | Retira | Debe caer |
+|---|---|---|
+| `S1` | la cota superior en `validate_bird_decrement` | `AC-R130-03` (sobre saldo) |
+| `S2` | `CULL_RECORDING` de las salidas del saldo (saldo sobrestimado → resultado negativo posible) | `AC-R130-02` (exacto + 1) · `AC-R130-06` |
+| `S3` | el bloqueo de fila | `AC-R130-10` (concurrencia) |
+| `S4` | puerta de unidad | **`N/A`**: no existe en la creación (`R-160`) |
+| `S5` | el filtro de empresa en `validate_lot_active` | `AC-R130-12` (lote ajeno) |
+| `S6` | el rechazo de cantidad cero | `AC-R130-04` |
+| `S7` | mortalidad y descartes del «viable» (restaurar el cálculo anterior) | `AC-R130-09` |
+
+## B.7 Definición de terminado
+
+`AC-R130-01…15` verdes · rojo previo documentado por criterio · `S1–S7` válidas o `N/A` con motivo ·
+regresión completa verde · vitest y `tsc` sin cambio de línea base · evidencia publicada ·
+`R-130 CERRADO` técnicamente; la certificación de proceso (`P-01/03/05/06`) sigue exigiendo E2E (`BLOCKED_RUNTIME`).
