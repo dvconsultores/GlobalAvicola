@@ -37,6 +37,7 @@ from .validators import (
     validate_lot_active,
     validate_lot_closure,
     validate_mortality,
+    validate_bird_decrement,
     validate_oc_limit,
     validate_period_open,
     validate_sap_document_unique,
@@ -735,6 +736,14 @@ class OperationsService:
             if data.lot_id is None:
                 raise BusinessRuleViolation("El evento requiere lote", "BR-07")
             await validate_mortality(self.db, data.lot_id, total_qty)
+        elif event_type in (models.EventType.CULL_RECORDING, models.EventType.BIRD_EXIT):
+            # `GA-REM-005-B` / `R-130`. Descarte y salida son salidas del saldo (`E.3`) y no
+            # tenían rama: se registraban por encima del saldo, o con cero aves, con `201`.
+            # Misma regla que la mortalidad, en el mismo sitio, bajo el mismo bloqueo.
+            if data.lot_id is None:
+                raise BusinessRuleViolation("El evento requiere lote", "BR-07")
+            etiqueta = "descarte" if event_type == models.EventType.CULL_RECORDING else "salida"
+            await validate_bird_decrement(self.db, data.lot_id, total_qty, etiqueta)
         elif event_type == models.EventType.EGG_DISPATCH:
             total = sum(em.quantity for em in data.egg_movements)
             if total > 0:

@@ -134,7 +134,12 @@ async def get_viable_chick_balance(db: AsyncSession, lot_id: int) -> int:
     """
     Viable chicks available for dispatch.
     IN:  BIRTH_REGISTRATION (bird_movements)
-    OUT: CHICK_DISPATCH (bird_movements)
+    OUT: CHICK_DISPATCH · MORTALITY_RECORDING · CULL_RECORDING (bird_movements)
+
+    `GA-REM-005-B` / `R-130`: «viable» descontaba solo lo despachado, de modo que un lote con
+    100 nacidos, 10 muertos y 5 descartados admitía despachar 100 y dejaba el saldo de aves en
+    −15 pese a `BR-04`. Viable = nacidos − muertos − descartados − ya despachados, que es lo que
+    «viable» significa (`Bases` p.9: sanos frente a débiles) y coincide con el saldo del lote.
     """
     res_in = await db.execute(
         select(func.coalesce(func.sum(BirdMovement.quantity), 0))
@@ -150,7 +155,11 @@ async def get_viable_chick_balance(db: AsyncSession, lot_id: int) -> int:
         .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
         .where(
             OperationalEvent.lot_id == lot_id,
-            OperationalEvent.event_type == EventType.CHICK_DISPATCH,
+            OperationalEvent.event_type.in_([
+                EventType.CHICK_DISPATCH,
+                EventType.MORTALITY_RECORDING,
+                EventType.CULL_RECORDING,
+            ]),
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
@@ -159,16 +168,46 @@ async def get_viable_chick_balance(db: AsyncSession, lot_id: int) -> int:
 
 # ─── Business rule validators ─────────────────────────────────────────────────
 
-async def validate_mortality(db: AsyncSession, lot_id: int, quantity: int) -> None:
-    """BR-01: Mortality cannot exceed available bird balance."""
+async def bloquear_saldo_del_lote(db: AsyncSession, lot_id: int) -> None:
+    """`GA-REM-005-B` / `R-130` `AC-R130-10`: serializa los decrementos de un mismo lote.
+
+    El saldo se calcula leyendo eventos y la sesión es por petición (`READ COMMITTED`): dos
+    decrementos concurrentes leían el mismo saldo y se aprobaban ambos. `SELECT … FOR UPDATE`
+    sobre la fila del lote hace que el segundo espere a que el primero confirme y lea el
+    saldo ya reducido. El bloqueo vive lo que la transacción de la petición
+    (`RutaTransaccional`) y solo toca la fila de **ese** lote: sin cadena de bloqueos, sin
+    interbloqueo posible.
+    """
+    from ..masters.models import Lot
+    await db.execute(select(Lot.id).where(Lot.id == lot_id).with_for_update())
+
+
+async def validate_bird_decrement(
+    db: AsyncSession, lot_id: int, quantity: int, etiqueta: str
+) -> None:
+    """`BR-01` para toda salida humana del saldo de aves: mortalidad, descarte y salida.
+
+    `GA-REM-005 E.3` enumera las cuatro salidas del saldo y hasta `R-130` solo la mortalidad
+    se validaba contra él: un descarte o una salida a planta mayor que el saldo se registraba
+    y `get_current_bird_balance` quedaba negativo. La regla es una sola, en un solo sitio:
+    cantidad > 0 y cantidad ≤ saldo, leído bajo el bloqueo de la fila del lote.
+    """
     if quantity <= 0:
-        raise BusinessRuleViolation("La cantidad de mortalidad debe ser mayor a cero", "BR-01")
+        raise BusinessRuleViolation(
+            f"La cantidad de {etiqueta} debe ser mayor a cero", "BR-01"
+        )
+    await bloquear_saldo_del_lote(db, lot_id)
     balance = await get_current_bird_balance(db, lot_id)
     if quantity > balance:
         raise BusinessRuleViolation(
-            f"Mortalidad ({quantity}) excede el saldo de aves disponibles ({balance})",
+            f"{etiqueta.capitalize()} ({quantity}) excede el saldo de aves disponibles ({balance})",
             "BR-01",
         )
+
+
+async def validate_mortality(db: AsyncSession, lot_id: int, quantity: int) -> None:
+    """BR-01: Mortality cannot exceed available bird balance."""
+    await validate_bird_decrement(db, lot_id, quantity, "mortalidad")
 
 
 async def validate_egg_dispatch(db: AsyncSession, lot_id: int, quantity: int) -> None:
@@ -201,6 +240,7 @@ async def validate_chick_dispatch(db: AsyncSession, lot_id: int, quantity: int) 
     """BR-04: Chick dispatch cannot exceed viable births."""
     if quantity <= 0:
         raise BusinessRuleViolation("La cantidad de pollitos debe ser mayor a cero", "BR-04")
+    await bloquear_saldo_del_lote(db, lot_id)
     balance = await get_viable_chick_balance(db, lot_id)
     if quantity > balance:
         raise BusinessRuleViolation(
