@@ -31,6 +31,13 @@ interface User {
   is_super_admin?: boolean
   company_id?: number | null
   company_name?: string | null
+  /** GA-FE-02 · sesión extendida de `/me` (`OD-11`/`OD-14`/`OD-16`). Opcionales para no
+   * romper sesiones hidratadas del token antes de que llegue `/me`. */
+  effective_company_id?: number | null
+  permissions?: string[]
+  company_business_units?: string[]
+  granted_business_units?: string[]
+  effective_business_units?: string[]
 }
 
 interface AuthState {
@@ -130,9 +137,18 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const { data } = await api.get('/me')
       const user = { ...data, view_type: data.view_type || 'web' }
       set({ user, isLoading: false })
-      // Keep company store in sync
+      // Keep company store in sync — la empresa ACTIVA es la EFECTIVA (`OD-11`).
       const { useCompanyStore } = await import('./company.store')
-      useCompanyStore.getState().initFromUser(user.company_id, user.company_name)
+      const companyStore = useCompanyStore.getState()
+      const effectiveId: number | null = user.effective_company_id ?? user.company_id ?? null
+      let effectiveName: string | null = effectiveId == null ? null : user.company_name ?? null
+      if (effectiveId != null && user.company_id != null && effectiveId !== user.company_id) {
+        // Contexto desplazado por `switch-company`: el nombre se resuelve por el catálogo
+        // (la fila del usuario sigue siendo la persistida; `OD-11.b`).
+        await companyStore.fetchCompanies()
+        effectiveName = useCompanyStore.getState().companies.find(c => c.id === effectiveId)?.name ?? `#${effectiveId}`
+      }
+      useCompanyStore.getState().initFromUser(effectiveId, effectiveName)
     } catch {
       // If /me fails, we still have basic user from JWT claims
       set({ isLoading: false })

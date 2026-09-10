@@ -15,6 +15,7 @@ import {
   Sprout,
   type LucideIcon,
 } from 'lucide-react'
+import { hasPermission, type SessionLike } from '../auth/permissions'
 
 export interface NavItem {
   /** Clave única para el submenú */
@@ -31,6 +32,9 @@ export interface NavItem {
   children?: NavItem[]
   /** Badge numérico opcional (ej: pendientes count) */
   badge?: number
+  /** GA-FE-02 · permiso RBAC requerido para mostrar la entrada (ausente = visible como siempre).
+   * Frontera `R-98`/GA-FE-03: SOLO las entradas que declaran `permission` se filtran. */
+  permission?: string
   /** Agrupar bajo qué sección */
   section: NavSectionKey
 }
@@ -201,6 +205,7 @@ export const NAV_ITEMS: NavItem[] = [
     children: [
       { key: 'settings_users', icon: Users, labelKey: 'nav.users', fallback: 'Usuarios y Roles', to: '/users', section: 'administration' },
       { key: 'settings_profile', icon: UserCheck, labelKey: 'nav.profile', fallback: 'Mi Perfil', to: '/profile', section: 'administration' },
+      { key: 'settings_unit_access', icon: Shield, labelKey: 'nav.unitAccess', fallback: 'Acceso por unidad', to: '/admin/unit-access', section: 'administration', permission: 'business_units:read' },
     ],
   },
 ]
@@ -292,4 +297,22 @@ export function isAnyChildActive(pathname: string, item: NavItem): boolean {
     })
   }
   return false
+}
+
+/**
+ * GA-FE-02 · Filtro MÍNIMO por permiso para la navegación.
+ *
+ * Solo se filtran las entradas que declaran `permission` (hoy, únicamente la de GA-FE-02).
+ * El resto del menú no se toca: la navegación dinámica global sigue siendo `GA-FE-03`
+ * (frontera `R-98`/`R-119` intacta).
+ */
+export function filterNavItemsByPermissions(
+  items: NavItem[],
+  session: SessionLike | null | undefined,
+): NavItem[] {
+  return items
+    .map(item =>
+      item.children ? { ...item, children: filterNavItemsByPermissions(item.children, session) } : item,
+    )
+    .filter(item => !item.permission || hasPermission(session, item.permission))
 }

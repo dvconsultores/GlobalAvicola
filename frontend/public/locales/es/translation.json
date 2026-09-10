@@ -116,6 +116,7 @@
     "sap": "SAP",
     "masters": "Maestros",
     "users": "Usuarios",
+    "unitAccess": "Acceso por unidad",
     "settings": "Configuración",
     "profile": "Perfil",
     "register": "Registrar",
@@ -532,6 +533,15 @@
     "lastSync": "Última sincronización"
   },
   "users": {
+    "businessUnits": {
+      "open": "Unidades de negocio",
+      "title": "Unidades de negocio",
+      "companyState": "Empresa",
+      "userState": "Usuario",
+      "loadError": "No se pudieron cargar las concesiones del usuario.",
+      "selfNote": "No puede concederse unidades a sí mismo.",
+      "revokedHistoric": "Revocada (histórica)"
+    },
     "usersList": "Usuarios",
     "rolesList": "Roles",
     "username": "Usuario",
@@ -919,6 +929,56 @@
     "destinationLotId": "Lote destino (reproductoras o engorde)",
     "hatcheryLotIdPlaceholder": "ID del lote de incubadora",
     "destinationLotIdPlaceholder": "ID del lote destino"
+  },
+  "businessUnits": {
+    "grandparent": "Progenitoras",
+    "breeder": "Reproductoras",
+    "hatchery": "Incubadora",
+    "broiler": "Engorde"
+  },
+  "admin": {
+    "context": {
+      "company": "Empresa:",
+      "none": "Sin empresa seleccionada",
+      "noneHint": "Seleccione una empresa para administrar sus unidades y accesos."
+    },
+    "units": {
+      "heading": "Acceso por unidad",
+      "state": {
+        "enabled": "Activa",
+        "disabled": "Inactiva"
+      },
+      "enable": "Activar",
+      "disable": "Desactivar",
+      "enableConfirmTitle": "Activar unidad",
+      "enableConfirmMessage": "La unidad quedará disponible para operar. Esto no concede acceso a ningún usuario. ¿Desea continuar?",
+      "disableConfirmTitle": "Desactivar unidad",
+      "disableConfirmMessage": "La unidad dejará de permitir operación productiva para toda la empresa, aunque las concesiones existentes se conservan. ¿Desea continuar?",
+      "enabledSuccess": "Unidad activada",
+      "disabledSuccess": "Unidad desactivada",
+      "saveError": "No se pudo actualizar la unidad. Se recargó el estado real.",
+      "loadError": "No se pudieron cargar las unidades de la empresa."
+    },
+    "grants": {
+      "heading": "Concesiones por unidad",
+      "unitLabel": "Unidad",
+      "unitDisabledNotice": "La unidad está inactiva. Actívela para conceder accesos.",
+      "empty": "No hay candidatos para esta unidad.",
+      "loadError": "No se pudieron cargar los candidatos.",
+      "state": {
+        "effective": "Efectiva",
+        "granted": "Concedida",
+        "notGranted": "No concedida"
+      },
+      "grant": "Conceder",
+      "revoke": "Revocar",
+      "revokeConfirmTitle": "Revocar unidad",
+      "revokeConfirmMessage": "El usuario perderá el acceso efectivo a esta unidad. La concesión queda registrada como revocada. ¿Desea continuar?",
+      "grantedSuccess": "Unidad concedida",
+      "revokedSuccess": "Unidad revocada",
+      "saveError": "No se pudo completar la operación. Se recargó el estado real."
+    },
+    "forbidden": "No tiene permiso para administrar unidades de negocio."
   },
   "company": {
     "selector": "Empresa activa",

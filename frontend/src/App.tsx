@@ -2,6 +2,7 @@ import { Routes, Route, Navigate, useParams, useNavigate, useLocation } from 're
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
+import { hasPermission } from './auth/permissions'
 import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
 import { normalizeLanguage } from './i18n'
 import { ToastProvider } from './components/Toast'
@@ -28,6 +29,7 @@ import SapComparisonPage from './pages/reports/SapComparisonPage'
 import AuditPage from './pages/audit/AuditPage'
 import SapManagerPage from './pages/sap/SapManagerPage'
 import UsersPage from './pages/users/UsersPage'
+import UnitAccessPage from './pages/admin/UnitAccessPage'
 import LotListPage from './pages/lots/LotListPage'
 import LotDetailPage from './pages/lots/LotDetailPage'
 import LotFormPage from './pages/lots/LotFormPage'
@@ -65,6 +67,17 @@ function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNod
 function WebOnlyRoute({ children }: { children: React.ReactNode }) {
  const { user } = useAuthStore()
  if (user?.view_type === 'mobile') return <Navigate to="/" replace />
+ return <>{children}</>
+}
+
+/** GA-FE-02 · Guard por PERMISO (nunca por nombre de rol). El backend sigue siendo la
+ * autoridad final; esto solo evita mostrar una pantalla sin capacidad real. */
+function PermissionRoute({ permission, children }: { permission: string; children: React.ReactNode }) {
+ const { t } = useTranslation()
+ const { user } = useAuthStore()
+ if (!hasPermission(user, permission)) {
+ return <div role="alert" className="py-8 text-center text-sm font-medium text-slate-600">{t('admin.forbidden')}</div>
+ }
  return <>{children}</>
 }
 
@@ -222,6 +235,7 @@ export default function App() {
  <Route path="/lots" element={<LotListPage />} />
  <Route path="/lots/new" element={<WebOnlyRoute><LotFormPage /></WebOnlyRoute>} />
  <Route path="/lots/:id" element={<LotDetailPage />} />
+ <Route path="/admin/unit-access" element={<WebOnlyRoute><PermissionRoute permission="business_units:read"><UnitAccessPage /></PermissionRoute></WebOnlyRoute>} />
  <Route path="/reports" element={<ReportsPage />} />
  <Route path="/reports/lot/:id" element={<LotReportPage />} />
  <Route path="/reports/sap" element={<WebOnlyRoute><SapComparisonPage /></WebOnlyRoute>} />

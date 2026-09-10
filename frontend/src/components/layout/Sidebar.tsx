@@ -7,6 +7,7 @@ import {
  getNavItemsForViewType,
  getNavSectionsForItems,
  isAnyChildActive,
+ filterNavItemsByPermissions,
  type NavItem,
 } from '../../data/navigationConfig'
 import SidebarSection from './SidebarSection'
@@ -54,7 +55,7 @@ export default function Sidebar() {
  const location = useLocation()
  const { logout, user } = useAuthStore()
 
- const navItems = useMemo(() => getNavItemsForViewType(user?.view_type), [user?.view_type])
+ const navItems = useMemo(() => filterNavItemsByPermissions(getNavItemsForViewType(user?.view_type), user), [user])
 
  const sections = useMemo(() => {
  const visibleSections = getNavSectionsForItems(navItems)

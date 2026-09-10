@@ -116,6 +116,7 @@
     "sap": "SAP",
     "masters": "Masters",
     "users": "Users",
+    "unitAccess": "Unit access",
     "settings": "Settings",
     "profile": "Profile",
     "register": "Register",
@@ -532,6 +533,15 @@
     "lastSync": "Last synchronization"
   },
   "users": {
+    "businessUnits": {
+      "open": "Business units",
+      "title": "Business units",
+      "companyState": "Company",
+      "userState": "User",
+      "loadError": "The user's grants could not be loaded.",
+      "selfNote": "You cannot grant units to yourself.",
+      "revokedHistoric": "Revoked (historic)"
+    },
     "usersList": "Users",
     "rolesList": "Roles",
     "username": "Username",
@@ -919,6 +929,56 @@
     "destinationLotId": "Destination lot (breeder or broiler)",
     "hatcheryLotIdPlaceholder": "Hatchery lot ID",
     "destinationLotIdPlaceholder": "Destination lot ID"
+  },
+  "businessUnits": {
+    "grandparent": "Grandparent stock",
+    "breeder": "Breeders",
+    "hatchery": "Hatchery",
+    "broiler": "Broiler"
+  },
+  "admin": {
+    "context": {
+      "company": "Company:",
+      "none": "No company selected",
+      "noneHint": "Select a company to administer its units and access."
+    },
+    "units": {
+      "heading": "Unit access",
+      "state": {
+        "enabled": "Active",
+        "disabled": "Inactive"
+      },
+      "enable": "Enable",
+      "disable": "Disable",
+      "enableConfirmTitle": "Enable unit",
+      "enableConfirmMessage": "The unit will become available for operation. This does not grant access to any user. Continue?",
+      "disableConfirmTitle": "Disable unit",
+      "disableConfirmMessage": "The unit will stop allowing productive operation for the whole company, although existing grants are preserved. Continue?",
+      "enabledSuccess": "Unit enabled",
+      "disabledSuccess": "Unit disabled",
+      "saveError": "The unit could not be updated. The real state was reloaded.",
+      "loadError": "The company's units could not be loaded."
+    },
+    "grants": {
+      "heading": "Grants by unit",
+      "unitLabel": "Unit",
+      "unitDisabledNotice": "The unit is inactive. Enable it to grant access.",
+      "empty": "No candidates for this unit.",
+      "loadError": "Candidates could not be loaded.",
+      "state": {
+        "effective": "Effective",
+        "granted": "Granted",
+        "notGranted": "Not granted"
+      },
+      "grant": "Grant",
+      "revoke": "Revoke",
+      "revokeConfirmTitle": "Revoke unit",
+      "revokeConfirmMessage": "The user will lose effective access to this unit. The grant is recorded as revoked. Continue?",
+      "grantedSuccess": "Unit granted",
+      "revokedSuccess": "Unit revoked",
+      "saveError": "The operation could not be completed. The real state was reloaded."
+    },
+    "forbidden": "You do not have permission to administer business units."
   },
   "company": {
     "selector": "Active company",
