@@ -514,3 +514,58 @@ corrección · `T-021-C3` formulario de nacimiento · `T-021-C4` formulario de r
 KPI incubadora · genética · `test_clean_baseline` · `test_time_determinism` · guardianes exactos · regresión completa **leída** · `vitest` ·
 `tsc` 6 · `B13`, `R-170`, `R-169`, `R-168` cerrados (técnico) · `R-167` cerrado (no reproducido) · `B03` `OWNER_DECISION_REQUIRED` ·
 `GA-REM-021` sigue **PARTIAL** (`B03`, `B04`) · certificación de proceso `BLOCKED_RUNTIME`.
+
+---
+
+# Enmienda D · `R-171` · la etapa de incubadora ofrece mortalidad y descarte de pollitos (catálogo; `UI_ONLY`) (2026-09-10 · WAVE B tranche 10)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-021-D` · `REQUIRED OPERATIONAL DATA` (cobertura de captura) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Hallazgo** | `R-171` (P2): «la etapa `hatchery` del catálogo no ofrece `cull_recording` ni `mortality_recording`, que son lo que viables y rendimiento restan (`Bases` p.10, Rec. §12)» · `processCatalog.ts:226-229, 403-412` |
+| **Verificación** | `R171_HATCHERY_MORTALITY_DISCARD_TRUTH_MATRIX.md §4` (tranche 10): backend acepta, persiste, resta de viables una vez (`AC-R161-16`); seguridad y corrección como hoy; el catálogo es lo único que falta; etiquetas ES/EN ya existen · **`UI_ONLY` confirmado** |
+| **Fuentes** | `Bases` p.10 («mortalidad de pollitos» = muertos / nacidos) · `Rec. §12` («pollitos descartados») · `RR-16` (`RC-13`: descarte = evento `cull_recording`; mortalidad = `mortality_recording`; ambos del lote de incubación, posteriores al nacimiento; «ambos deben ofrecerse en el flujo de incubadora») · `GA-REM-005-B` (viables) |
+| **Dominio** | **sin cambio**: ni enum, ni migración, ni saldo, ni permiso, ni ruta, ni estado, ni cadena i18n nueva; el backend ya es la autoridad |
+| **Fuera** | `B13` (atributos sanos/débiles: intactos; «débil» no se mapea a nada) · KPI de mortalidad/descarte (ola C) · rediseño del formulario · fase 9 |
+
+## D.1 Contrato
+
+1. `STAGE_OPERATIONS.hatchery` incluye `mortality_recording` y `cull_recording` (valores canónicos del backend, `EventType`).
+2. `STAGE_FLOWS.hatchery` añade dos pasos, **después** de `birth_registration` y **antes** de `chick_dispatch` (hechos post-nacimiento), con `descKey`
+   `process.flowDesc.mortality_recording` / `process.flowDesc.cull_recording` (claves existentes en ES/EN) y sus `descFallback`.
+3. Ninguna otra etapa cambia (todas ya ofrecían ambos). Ningún consumidor cambia (`LotDetailPage` deriva de `STAGE_OPERATIONS`; el formulario ya
+   renderiza `case 'mortality_recording'`/`case 'cull_recording'` sin depender de la etapa; iconos y colores existen).
+4. Etiquetas: `events.*`, `eventsShort.*`, `process.flowDesc.*` existentes en `public/locales/{es,en}/translation.json`; sin cadenas nuevas ni texto fijo.
+5. «Débil» sigue siendo atributo del nacimiento (`B13`); no hay mapeo en el frontend entre `chicks_weak` y ningún evento (`R171-S2` N/A por arquitectura).
+
+## D.2 Criterios de aceptación (`vitest`, `frontend/src/data/__tests__/processCatalog.test.ts`)
+
+| AC | Criterio |
+|---|---|
+| `AC-R171-01` | `STAGE_OPERATIONS.hatchery` contiene `mortality_recording` |
+| `AC-R171-02` | `STAGE_OPERATIONS.hatchery` contiene `cull_recording` |
+| `AC-R171-03` | `STAGE_FLOWS.hatchery` contiene ambos pasos, tras `birth_registration` y antes de `chick_dispatch`, con `descKey = process.flowDesc.<evento>` |
+| `AC-R171-04` | ES y EN (leídos de `public/locales/*/translation.json`) tienen `events.mortality_recording`, `events.cull_recording`, `process.flowDesc.mortality_recording`, `process.flowDesc.cull_recording` no vacíos |
+| `AC-R171-05` | control de aplicabilidad: `grandparent_rearing/production`, `breeder_rearing/production`, `broiler` siguen conteniendo ambos; ninguna etapa pierde eventos respecto de `4f70273` (instantánea en la prueba) |
+| `AC-R171-06` | backend: `AC-R161-16` (mortalidad y descarte en incubadora restan de viables una vez) y `R-170`/`B13` verdes, sin cambio de dominio |
+
+## D.3 Tareas
+
+| Tarea | Descripción |
+|---|---|
+| `T-021-D1` | pruebas rojas en `processCatalog.test.ts` (`AC-R171-01…05`) |
+| `T-021-D2` | `processCatalog.ts`: dos valores en `STAGE_OPERATIONS.hatchery`; dos `step(...)` en `STAGE_FLOWS.hatchery` |
+| `T-021-D3` | sensibilidad `R171-S1`; `vitest` completo; `tsc` (6 preexistentes, `R-158`); evidencia; cierre |
+
+## D.4 Sensibilidad
+
+| Mutación | Qué quita | Prueba que debe caer |
+|---|---|---|
+| `R171-S1` | `mortality_recording` de `STAGE_OPERATIONS.hatchery` | `AC-R171-01` |
+| `R171-S1b` | el paso `cull_recording` de `STAGE_FLOWS.hatchery` | `AC-R171-03` |
+| `R171-S2` | mapear «débil» a descarte | **N/A**: no existe mapeo en el frontend entre `chicks_weak` y eventos; el catálogo lista tipos de evento, no atributos |
+
+## D.5 Definición de terminado
+
+`AC-R171-01…06` verdes · rojo válido (`AC-R171-01/02/03` rojas en `4f70273`; backend verde antes y después) · `vitest` completo · `R-170`/`B13` verdes ·
+`R-171` CERRADO (técnico).

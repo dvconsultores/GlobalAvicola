@@ -34,3 +34,30 @@ B13 .............. intacto (débil ≠ descarte ≠ muerto; AOD-23 sigue pendien
 misma raíz que R-161 ... NO → no se implementa en este tranche (CASO B); queda OPEN, listo para el siguiente (catálogo + pasos de flujo + i18n + vitest)
 control ......... AC-R161-16 (prueba de API): mortalidad y descarte sobre un lote de incubadora → 201 y viables restan una vez
 ```
+
+## 4. Verificación `UI_ONLY` (WAVE B · tranche 10 · pre-flight · 2026-09-10)
+
+No se confía en el resumen del tranche 9: se releen backend, catálogo, formulario e idiomas.
+
+| Comprobación (`§43` del prompt) | Evidencia | Resultado |
+|---|---|---|
+| el backend acepta `mortality_recording` en un lote `hatchery` | `validate_mortality` → `validate_bird_decrement` (`BR-01`, bloqueado); `validate_farm_house` no exige ubicación para mortalidad/descarte (`validators.py:670-674`); ningún validador mira `bird_type` para estas dos salidas | **sí** (`AC-R161-16`, `test_egg_incubation_concurrency.py:316`, verde en `4f70273`) |
+| el backend acepta `cull_recording` en un lote `hatchery` | `validate_bird_decrement("descarte")` | **sí** (`AC-R161-16`) |
+| persistencia | fila + `bird_movements`; `_saldos(...)["viables"]` = 100 − 10 − 5 = **85** | **sí** (`AC-R161-16`) |
+| efecto en viables **una sola vez** | `get_viable_chick_balance` = nacidos − (despachos + mortalidad + descartes) (`GA-REM-005-B`); `chick_dispatch` de 86 → `400 BR-04` | **sí** (`AC-R161-16`) |
+| seguridad | misma cadena que cualquier alta (`OD-14`/`OD-16`/`R-160`/`R-139`); la unidad `hatchery` apagada → `403`/`400 BR-07` (`AC-R161-11`) | **sí** (sin cambio) |
+| corrección | submovimientos no corregibles (`GA-REM-005-B`); `cause_id`/`cull_cause_id` corregibles como hoy | como está gobernado |
+| el frontend no ofrece los dos tipos en incubadora | `STAGE_OPERATIONS.hatchery` (`processCatalog.ts:226-229`): `hatchery_inspection, egg_reception_hatchery, egg_reception_classification, transport_inspection, incubation_load, ovoscopy, transfer_to_hatcher, birth_registration, chick_dispatch` — **sin** `mortality_recording` ni `cull_recording` · `STAGE_FLOWS.hatchery` (`:403-412`) tampoco · `LotDetailPage.tsx:90` deriva las operaciones ofrecidas de `STAGE_OPERATIONS[resolveStageKey(bird_type)]` → un lote `hatchery` nunca las ve | **confirmado** |
+| etiquetas ES/EN | `public/locales/{es,en}/translation.json`: `events.mortality_recording` «Registro de Mortalidad» / «Mortality Recording», `events.cull_recording` «Registro de Descarte» / «Cull Recording», `eventsShort.*` «Mortalidad»/«Descarte», `process.flowDesc.mortality_recording` «Registrar mortalidad diaria» / «Record daily mortality», `process.flowDesc.cull_recording` «Registrar descarte de aves» / «Record bird culling» | **ya existen** (ninguna cadena nueva) |
+| formulario | `case 'mortality_recording'` / `case 'cull_recording'` (`OperationFormPage.tsx:461-500`): causa, semana, filas M/F (`renderMFRows`) — no dependen de la etapa | **sirve tal cual** |
+| iconos / colores | `EVENT_ICON_MAP`, `EVENT_COLOR_MAP` ya tienen ambos (`:246`, `:286`) | sin cambio |
+| «débil» | atributo del nacimiento (`B13`, `RR-15`); no se mapea a descarte | intacto |
+
+```
+R-171 ............ UI_ONLY · CONFIRMADO · GOBERNADO (RR-16) · SIN DECISIÓN · P2
+contrato mínimo .. processCatalog.ts: añadir 'mortality_recording' y 'cull_recording' a STAGE_OPERATIONS.hatchery y dos pasos a STAGE_FLOWS.hatchery
+                   (tras birth_registration, antes de chick_dispatch: Bases p.10 «mortalidad de pollitos» y Rec. §12 «pollitos descartados» son hechos post-nacimiento)
+sin ............. enum, migración, saldo, permiso, ruta, estado, cadena i18n nueva, cambio de backend
+aplicabilidad .... solo la etapa hatchery cambia; el resto de etapas ya los ofrecía (control: grandparent_*/breeder_*/broiler siguen con ambos; ninguna etapa pierde nada)
+spec ............. GA-REM-021 enmienda D · AC-R171-01…06 · pruebas vitest (processCatalog.test.ts)
+```

@@ -597,3 +597,191 @@ sensibilidad válida · `R-130` 21/21 · `R-170`/`B13` 6/6 · `B01` 10/10 · `B0
 `R-162`/`R-163` · `R-139` · `R-165` · `OD-14`/`OD-16` · guardianes exactos (rutas 211, cabeza `x4y5z6a7b8c9`, sin migración) · `test_clean_baseline`
 (N/A por cambio, ejecutada) · `test_time_determinism` · regresión completa **leída** · `R-161` cerrado (técnico) · `R-171` OPEN (siguiente) ·
 certificación de proceso `BLOCKED_RUNTIME`.
+
+---
+
+# ENMIENDA E · `R-173` + `R-174` — LAS MUTACIONES POSTERIORES AL ALTA (CAMBIO DE LOTE, CORRECCIÓN DE LOTE, CANCELACIÓN) RESPETAN EL INVARIANTE DEL SALDO; EL DESPACHO DE POLLITOS ES > 0 (2026-09-10 · WAVE B · tranche 10)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-005-E` · `DATA INTEGRITY` + `TENANT` · **Estado** `SPEC_READY` (pre-flight 2026-09-10; certificación al cierre del tranche) |
+| **Hallazgos** | **`R-173`** (registrado P2 → **P1** normalizado: saldo negativo, efecto movido sin validación, reasignación entre empresas por `POST /corrections`, sin bloqueo) · **`R-174`** (P3: `chick_dispatch` de 0 aceptado por la guarda `if total_qty > 0`) |
+| **Matrices** | `audit/remediation/R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md` (superficies, reasignación, modelo, bloqueos, fronteras) · `audit/remediation/R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md` |
+| **Fuentes** | `docs/12 §2-3` (editar antes de enviar; Registrado → Anulado auditado) · `docs/13 §2` (edición: campo, valor anterior, valor nuevo) · `B.2`/`E.3`/`D.1.4` (invariante; cuatro salidas; saldo ≥ 0 tras cualquier conjunto confirmado) · `GA-REM-040-G AC-W09` (destino de una edición = alta) · `GA-REM-006-A` (mapa de transiciones) · `OD-19`/`GA-REM-041` (reverso ≠ cancelación) |
+| **Modelo** | **B**: reasignación permitida en `EDITABLES`/estados corregibles (contrato vigente); efecto viejo neutralizado por construcción (agregado dinámico); efecto nuevo validado **como un alta** en el destino; origen conserva `saldo ≥ 0`; cancelación de entradas conserva `saldo ≥ 0`; todo bajo el bloqueo de las filas de lote, atómico en la transacción de la petición. **Sin decisión del propietario** (matriz §7) |
+| **Sin cambio** | fórmulas de los cuatro saldos · `_suma_neta` · `EDITABLES` / `NO_CANCELABLES` / estados corregibles · permisos · rutas · `R-140` residual (motivo, «solo administrador») · `R-154` (`DRAFT`, `version`) · `OD-19 §18` · reverso · `EggBatch`/`ChickBatch` (`R-178`) · reglas no keyed por lote en la edición (`R-176`) |
+| **Migración** | ninguna (cabeza `x4y5z6a7b8c9`) |
+
+## E.1 La premisa de `B.2` se corrige
+
+`B.2` afirmaba: «`cancel` retira el evento del saldo (`status ≠ CANCELLED`) y no puede dejarlo negativo (solo lo aumenta)» y «el invariante se aplica en
+la creación, único camino de escritura de cantidades». Ambas frases valen para las **salidas** y para la **cantidad**; no para las **entradas** ni para el
+**lote**: cancelar una recepción, un nacimiento, una recolección o una recepción en incubadora **resta** del saldo, y cambiar `lot_id` (por `PUT` o por
+corrección) traslada el efecto entero a otro lote. Texto vigente desde esta enmienda:
+
+> El invariante `saldo ≥ 0` (`B.2`, `D.1.4`) gobierna **toda** mutación que cambie qué filas cuentan en qué lote: el alta (`B.2`, `D.1`), la
+> **cancelación** (excluye una fila) y la **reasignación de lote** (`lot_id` por `PUT` o por `POST /corrections`: quita la fila de un lote y la pone en
+> otro). Las cantidades siguen siendo inmutables tras el alta.
+
+## E.2 Contrato (`§54` del prompt, 1-30)
+
+1. **Hallazgo**: `R-173` (matriz §1) — `update_event` y `create_correction` mueven el efecto entre lotes sin regla de saldo ni bloqueo (la corrección, además, sin empresa/unidad/activo/fecha/ubicación); `cancel_event` excluye una entrada sin comprobar que el saldo del lote quede `≥ 0` y sin bloqueo.
+2. **Tipos afectados** (matriz §3): entradas `bird_reception`, `birth_registration`, `egg_collection`, `egg_reception_hatchery`; salidas `mortality_recording`, `cull_recording`, `bird_exit`, `chick_dispatch`, `egg_dispatch`, `incubation_load`. Neutros y sin efecto: sin cambio de contrato.
+3. **Dinámico vs materializado**: las cuatro familias son `DYNAMIC_AGGREGATE` (`status ≠ CANCELLED`, `lot_id` actual). No hay compensación: la neutralización del efecto viejo es la propia exclusión/reasignación de la fila. Materializados fuera del saldo (`egg_batches`, `chick_batches`, alertas, notificaciones): fuera (`R-178`).
+4. **Edición de cantidad**: no existe (`bird_movements`, `egg_movements`, `hatchery_params` solo en el alta; `422` por `extra="forbid"`; no corregibles, `400`). Control `AC-R173-01`.
+5. **Cambio de lote** (`PUT` y `POST /corrections` con `field_name = lot_id`): permitido en los estados de hoy. El servidor deriva `n` de las filas persistidas (`Σ bird_movements.quantity`; `Σ egg_movements.quantity` **disponibles** —`GA-REM-005-F`—; `Σ hatchery_params.quantity_loaded`). El cliente no aporta cantidades, lote viejo, saldo ni compensación.
+6. **Cancelación**: permitida en los estados de hoy (`∉ NO_CANCELABLES`). Salidas: el saldo sube (sin regla, `AC-R130-07`). **Entradas**: `saldo(lote) − n ≥ 0`, y para `birth_registration` además `viables(lote) − n ≥ 0`; si no, `400` con la regla de la familia (`BR-01` aves · `BR-04` nacimiento con despachos · `BR-02` huevos · `BR-03` incubadora), mensaje «La anulación dejaría el saldo del lote en −k», evento intacto, sin auditoría `CANCELLED`. Nada en cascada.
+7. **Saldo viejo (origen A)**: salida movida → A sube (sin regla). Entrada movida → `saldo(A) − n ≥ 0` (y viables para nacimientos); si no, `400` con la regla de la familia y el evento intacto.
+8. **Saldo nuevo (destino B)**: entrada movida → B sube (sin regla de saldo). Salida movida → **la misma validación del alta** sobre B: `validate_mortality` / `validate_bird_decrement(etiqueta)` / `validate_chick_dispatch` / `validate_egg_dispatch` / `validate_incubation_load` con `n` persistido (`n > 0`, `n ≤ saldo(B)` bajo bloqueo). `400 BR-01/02/03/04` con el saldo de B en el mensaje.
+9. **Validación del destino, siempre** (ambos caminos): `validate_lot_active(company)` → `validate_event_date` → `verificar_ubicacion` (si cambia `farm_id`/`house_id`/`destination_farm_id`) → `exigir_unidad_operativa(lot_id=destino)` → reglas de saldo (7, 8). Orden fijo; la primera que falla responde; nada se escribe.
+10. **Bloqueos**: `cancel`: la fila `lots.id` del evento. Cambio de lote con efecto: las filas de A y B.
+11. **Orden**: `bloquear_saldo_del_lote(min(A, B))` y después `bloquear_saldo_del_lote(max(A, B))` — clave primaria ascendente, sentencias sucesivas; los validadores del alta vuelven a bloquear B (reentrante en la misma transacción). Una sola convención para todos los escritores → sin interbloqueo A→B/B→A. Sin mutex de proceso; alcance por recurso.
+12. **Atomicidad**: lectura del original → bloqueos → relectura (`refresh`) → validaciones → `setattr`/`CANCELLED` → auditoría, en la transacción de la petición (`RutaTransaccional`); cualquier fallo deja el evento como estaba, sin `lot_id` parcial y sin auditoría de éxito.
+13. **Idempotencia**: segunda cancelación → `400` (`CANCELLED ∈ NO_CANCELABLES`), sin efecto; cancelaciones concurrentes: el bloqueo serializa y la relectura hace que solo una transicione. Un `PUT` repetido con el mismo `lot_id` no mueve nada (destino = origen → sin guarda de saldo).
+14. **Inquilino**: destino de otra empresa → `400 BR-07` en `PUT` (hoy) y en corrección (nuevo). Los saldos de la otra empresa no se tocan.
+15. **Unidad**: destino en unidad apagada → `403`; sin concesión → `400 BR-07`; en ambos caminos (`OD-14`, `OD-16`, `R-160`).
+16. **RBAC**: `operations:update` (`PUT`), `corrections:correct` (corrección), `operations:create` (`cancel`): **sin cambio**; ningún permiso nuevo; nada por nombre de rol.
+17. **Actor global**: sin empresa efectiva → `400 BR-07` (fail-closed, `R-139`); situado en A → no mueve a B (`AC-W09`); en unidad apagada de A → `403`.
+18. **Administrador de Accesos**: `403` (RBAC) en los tres caminos, cero filas.
+19. **Contraloría** (lectura): `403`, cero filas.
+20. **Auditoría**: `PUT` audita `UPDATED` con `previous_values`/`new_values` de los campos cambiados (`docs/13 §2`; columnas existentes de `audit_logs`); corrección: `CORRECTED` con campo/valor anterior/valor nuevo (hoy); `cancel` confirmado: `CANCELLED` (hoy). Denegaciones: sin auditoría de éxito.
+21. **`R-130`**: intacto; se reutilizan `validate_bird_decrement`/`validate_mortality`/`validate_chick_dispatch` y `bloquear_saldo_del_lote`; `AC-R130-07` (cancelar un descarte devuelve el saldo) sigue.
+22. **`R-161`**: intacto; `validate_egg_dispatch`/`validate_incubation_load` con el bloqueo; el predicado de tipo lo fija `GA-REM-005-F`.
+23. **`R-140`** (residual): el `cancel` sigue sin motivo obligatorio y con `operations:create`; solo se añade la guarda de saldo y el bloqueo. No se cierra por transitividad.
+24. **`R-154`** (residual): `DRAFT` sigue editable y cancelable; `version` avanza como hoy; nada de cierres.
+25. **`R-136` / reverso**: `CANCELLED ≠ REVERSED`; el original `REVERSED` no se cancela ni edita; la contrapartida no se edita ni corrige; cancelar una contrapartida pendiente no cambia saldos (`_suma_neta` solo resta las `REVERSED`). Sin cambio.
+26. **AC**: §E.4.
+27. **Rojo**: `tests/test_edit_cancel_balance.py` (prefijo `MUTA-`): `AC-R173-02/04/05/08/09/11/12/13/14` rojas en `4f70273` por el defecto exacto (efecto movido/saldo negativo/reasignación sin control); `AC-R173-01/03/06/07/15/17` controles; `AC-R174-01` roja (evento de 0 persistido).
+28. **Sensibilidad**: §E.6.
+29. **Regresión**: `R-130` (21) · `R-161` (7) · `R-170`/`B13` · `B01` · `B02` · `B05` · reversos · `R-135`/`R-143` (estado, correcciones) · `R-159`/`R-160` · `R-162`/`R-163` · `R-139` · `R-165` · `OD-14`/`OD-16` · `test_clean_baseline` · `test_time_determinism` · regresión completa leída.
+30. **Cierre**: `R-173` CERRADO (técnico) y `R-174` CERRADO (técnico) solo con evidencia; certificación de proceso sigue `BLOCKED_RUNTIME`.
+
+## E.3 `R-174` · el despacho de pollitos es un decremento de `B.2`
+
+`B.2` incluye «despacho de pollitos» en `D` y exige `cantidad(D) > 0`; `validate_chick_dispatch` ya lo rechaza con `BR-04`; la rama `CHICK_DISPATCH`
+de `_apply_business_rules` lo esquiva con `if total_qty > 0`. Fila que `B.3` no listaba y ahora lista:
+
+| Situación | Antes | Después |
+|---|---|---|
+| despacho de pollitos = 0 | **`201`** (fila, movimiento de 0, auditoría, notificación, cola de revisión) | `400 BR-04` «La cantidad de pollitos debe ser mayor a cero» · sin fila · sin auditoría de alta · sin notificación · viables intactos |
+| despacho de pollitos < 0 | `422` (esquema) | `422` (sin cambio; se registra el código real en la prueba) |
+
+Cambio: retirar la guarda, como hizo la enmienda D para `egg_dispatch`/`incubation_load`. Sin validador nuevo, sin frontend, sin migración.
+
+## E.4 Criterios de aceptación
+
+| AC | Criterio | Verdad final exigida |
+|---|---|---|
+| `AC-R173-01` | control: `PUT` con `bird_movements` → `422`; corrección de `bird_movements` → `400` «no es corregible»; saldo intacto | filas y saldo iguales |
+| `AC-R173-02` | salida creada en A (con saldo) movida a B **sin saldo suficiente** → `400 BR-01` (mortalidad/descarte/salida), `BR-04` (despacho de pollitos), `BR-02` (despacho de huevos), `BR-03` (carga); `lot_id` sigue A | `saldo(A)` y `saldo(B)` iguales a los previos, evento en A, `version` igual |
+| `AC-R173-03` | salida movida a B **con** saldo → `200`; `saldo(A)` sube `n`, `saldo(B)` baja `n`; auditoría `UPDATED` con `previous_values.lot_id = A`, `new_values.lot_id = B` | verdad final exacta en A y B |
+| `AC-R173-04` | entrada movida cuyo origen quedaría `< 0` → `400` (regla de la familia), evento en A · entrada movida con origen suficiente → `200`, A baja `n`, B sube `n` | ambos casos, cuatro familias donde aplique |
+| `AC-R173-05` | cancelar una entrada tras salidas que dejarían `< 0` → `400` (`BR-01` recepción · `BR-04` nacimiento con despachos · `BR-02` recolección · `BR-03` recepción en incubadora); estado intacto; sin auditoría `CANCELLED` | saldo igual al previo |
+| `AC-R173-06` | cancelar una entrada con saldo suficiente → `200`, saldo exacto; cancelar una salida → `200`, saldo restaurado (`AC-R130-07`) | verdad final |
+| `AC-R173-07` | segunda cancelación → `400`; saldo y estado iguales | sin segundo efecto |
+| `AC-R173-08` | carrera: recepción de 100 en A; `asyncio.gather` de `cancel` + cinco salidas de 20 → resultado serializado: `saldo(A) ≥ 0` y `= Σ entradas vigentes − Σ salidas vigentes`; nunca recepción cancelada **y** salidas confirmadas que la excedan | verdad final, tres lotes frescos |
+| `AC-R173-09` | carrera: recepción de 100 en A; `gather` de `PUT lot_id → B` + salida de 100 en A → a lo sumo una confirma; `saldo(A) ≥ 0`, `saldo(B) ≥ 0` | verdad final |
+| `AC-R173-10` | la auditoría de la edición conserva valor anterior y nuevo de cada campo cambiado | dentro de `_03` |
+| `AC-R173-11` | corrección de `lot_id` a lote de **otra empresa** → `400 BR-07`; evento en A; saldos de B intactos | tenant |
+| `AC-R173-12` | corrección de `lot_id` a lote de unidad **apagada** → `403`; a unidad **sin concesión** del actor → `400 BR-07`; evento intacto | unidad |
+| `AC-R173-13` | corrección de `lot_id` a destino sin saldo → `400 BR-0x`; a lote inactivo → `400 BR-07`; a fecha anterior al lote → `400` | destino como alta |
+| `AC-R173-14` | corrección de `farm_id` (o `house_id`) a ubicación de otra empresa → `400 BR-07` | ubicación |
+| `AC-R173-15` | `PUT` de `lot_id` a otra empresa / unidad apagada / sin concesión → `400 BR-07` / `403` / `400 BR-07` (`AC-W09`, `test_operations_bu_enforcement`) | regresión |
+| `AC-R173-16` | toda denegación: cero cambios en `operational_events`, cero auditoría de éxito, cero notificaciones nuevas | en cada prueba |
+| `AC-R173-17` | evento sin efecto en saldo (p. ej. `feed_registration`) cambia de lote como hoy (`200`) | control |
+| `AC-R173-18` | regresión §E.2.29 verde | — |
+| `AC-R174-01` | `chick_dispatch` de 0 → `400 BR-04`; **cero** filas en `operational_events`/`bird_movements`; sin auditoría `created`; sin notificación; viables intactos | fila ausente |
+| `AC-R174-02` | cantidad negativa → denegada (código real del esquema, registrado) | control |
+| `AC-R174-03` | despacho de 1 con viables suficientes → `201` | control |
+| `AC-R174-04` | despacho del resto exacto → `201`, viables 0 | control |
+| `AC-R174-05` | resto + 1 → `400 BR-04`, sin fila | control |
+
+## E.5 Tareas
+
+| Tarea | Descripción |
+|---|---|
+| `T-005-E1` | pruebas rojas `tests/test_edit_cancel_balance.py` (escenario propio: empresas A/B; en A `breeder` ON, `hatchery` ON, `broiler` OFF; en B `breeder` ON; operador con `operations:create/read/update` + `corrections:correct` en `breeder` + `hatchery`; `operador_r` solo `breeder`; sin permiso; Administrador de Accesos; Contraloría; actor B; global; lotes `lr`/`lr2`/`lr3` breeder A, `lh`/`lh2` hatchery A, `lbo` broiler A (unidad apagada), `lc` breeder A inactivo, `lb` breeder B; fechas por `tests.time_reference`) |
+| `T-005-E2` | `operations/service.py`: guarda central `verificar_destino_de_edicion(event, cambios)` (cadena §E.2.9 + bloqueos §E.2.10-11 + reglas §E.2.7-8), usada por `update_event`; `cancel_event` con bloqueo, relectura y regla §E.2.6; auditoría con `previous_values`/`new_values` |
+| `T-005-E3` | `corrections/service.py`: `lot_id`, `farm_id`, `house_id`, `destination_farm_id` pasan por la misma guarda antes de `setattr` |
+| `T-005-E4` | `operations/service.py`: rama `CHICK_DISPATCH` sin `if total_qty > 0` (`R-174`) |
+| `T-005-E5` | sensibilidad §E.6 con el driver atómico; regresión §E.2.29; evidencia; cierre |
+
+## E.6 Sensibilidad
+
+| Mutación | Qué quita | Prueba que debe caer |
+|---|---|---|
+| `R173-S1` | la regla de saldo del destino (salidas) en la guarda | `AC-R173-02` (mover a B sin saldo → `200`, `saldo(B) < 0`) |
+| `R173-S2` | el bloqueo del lote en `cancel` (y la relectura) | `AC-R173-08` (recepción cancelada y salidas confirmadas: saldo `< 0`) — si el tiempo no lo manifiesta, se documenta como no observable y no se acredita |
+| `R173-S3` | el invariante del origen en la cancelación de entradas | `AC-R173-05` (cancel → `200`, saldo `< 0`) |
+| `R173-S4` | la relectura del estado bajo el bloqueo en `cancel` | `AC-R173-07`/`08` si se manifiesta; si el estado ya impide la doble transición sin relectura, **N/A con evidencia** |
+| `R173-S5` | la cadena de inquilino/unidad de la corrección de `lot_id` (las capas necesarias para que el movimiento **ocurra**: `validate_lot_active`, `exigir_unidad_operativa`; protocolo del tranche 4) | `AC-R173-11`/`12` (evento movido a lote de B / unidad apagada) |
+| `R174-S1` | restaurar `if total_qty > 0` | `AC-R174-01` (fila de 0 persistida) |
+
+## E.7 Definición de terminado
+
+`AC-R173-01…18` y `AC-R174-01…05` verdes · rojo válido leído en `4f70273` · sensibilidad válida (N/A solo con evidencia) · regresión §E.2.29 ·
+guardianes exactos (rutas 211, cabeza `x4y5z6a7b8c9`, sin migración) · `test_clean_baseline` (N/A por cambio, ejecutada) · `test_time_determinism` ·
+`R-175`: control de orden documentado (`R175_TEST_ORDER_DEPENDENCY_CONTROL.md`) · regresión completa **leída** · `R-173` y `R-174` cerrados (técnico) ·
+certificación de proceso `BLOCKED_RUNTIME`.
+
+---
+
+# ENMIENDA F · `R-172` — QUÉ CUENTA COMO DISPONIBLE EN `BR-02` Y `BR-03`: EL HUEVO FÉRTIL (2026-09-10 · WAVE B · tranche 10)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-005-F` · `DATA INTEGRITY` (semántica del saldo) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Hallazgo** | `R-172` (P2): `get_egg_balance` y `get_hatchery_egg_balance` suman **todas** las `egg_type`; las fuentes de nivel 2-4 despachan y reciben en la incubadora **huevos fértiles** → sobrecontabilización (recolección `fertile 100 + dirty 50 + broken 10` admite despachar 160) |
+| **Matriz** | `audit/remediation/R172_EGG_TYPE_AVAILABILITY_MATRIX.md` (tipos × `BR-02`/`BR-03`; ecuaciones; corte por niveles) · `RC-14` / `RR-17` |
+| **Fuentes** | `Bases` p.7-8 («Traslado de huevos fértiles»), p.9 («Número de Huevos Recibidos: Cantidad de huevos fértiles recibidos») · `docs/02 §3.6.4` (despacho a incubadora) · `§3.7.1` («recepción de huevos fértiles») · `§7 R2` · `spec.md :166/:176/:187` · `D.1` |
+| **Sin cambio** | bloqueo y orden de `D.1` (`R-161`) · filas capturadas (ninguna se borra ni reescribe) · `egg_collection`, `egg_classification`, `egg_reception_classification` (informativos; aceptan todos los tipos) · `egg_reception_hatchery` acepta filas no fértiles (diferencias vs enviado) que **no** cuentan · KPI (ola C) · `R-177` (enum/formulario de recepción) |
+| **Migración** | ninguna |
+
+## F.1 Contrato
+
+1. **Predicado único**: `cuenta_como_disponible(egg_type) := egg_type == "fertile"` (`operations/validators.py`), usado por `BR-02` y `BR-03`. Un solo sitio; ninguna lista blanca/negra por intuición: solo el tipo que las fuentes nombran.
+2. **`BR-02`** = Σ `egg_movements.quantity` de `egg_collection` **disponibles** − Σ `egg_movements.quantity` de `egg_dispatch` **disponibles** (por lote, `≠ CANCELLED`).
+3. **`BR-03`** = Σ `egg_movements.quantity` de `egg_reception_hatchery` **disponibles** − Σ `hatchery_params.quantity_loaded` de `incubation_load` (por lote, `≠ CANCELLED`).
+4. **Despacho**: toda fila de `egg_dispatch` con tipo no disponible → `400 BR-02` «El despacho a incubadora es de huevo fértil»; sin fila, sin auditoría de alta. La cantidad validada contra `BR-02` es la suma de las filas (todas fértiles).
+5. **Captura**: `egg_collection`, `egg_classification`, `egg_reception_classification`, `egg_reception_hatchery` siguen aceptando cualquier tipo; las filas no disponibles se persisten y **no** cuentan (`CAPTURADO ≠ DISPONIBLE`). Datos históricos: intactos; el saldo se recalcula con el predicado (las filas no fértiles dejan de inflarlo).
+6. **`R-161`**: mismo bloqueo, mismo orden; cambia **qué** se suma bajo el bloqueo. `R-173` (enmienda E) deriva `n` con el mismo predicado.
+7. **Frontend** (vertical mínima): el formulario de `egg_dispatch` ofrece **solo** la fila «Fértiles» (`operations.fertile`); recolección/clasificación/recepción conservan sus filas. Contrato estático `vitest`.
+8. **Seguridad, auditoría, API**: sin cambio (`400 {detail, rule}`).
+
+## F.2 Criterios de aceptación
+
+| AC | Criterio |
+|---|---|
+| `AC-R172-01` | recolección `fertile 100` → `BR-02` = 100; despacho 100 → `201`; 1 más → `400 BR-02` |
+| `AC-R172-02` | recolección mixta `fertile 100 + dirty 50 + broken 10 + infertile 5 + discarded 5` → `BR-02` = **100**; despacho 101 → `400 BR-02`; 100 → `201`; saldo 0 |
+| `AC-R172-03` | cada tipo no disponible por separado (`dirty`, `broken`, `infertile`, `discarded`, `commercial`), recolección de 50 → `BR-02` = 0; despacho de 1 → `400 BR-02` |
+| `AC-R172-04` | despacho con una fila `dirty` (junto a una fértil dentro del saldo) → `400 BR-02`, sin fila, sin auditoría de alta |
+| `AC-R172-05` | tras `AC-R172-02`, `egg_movements` conserva las filas no fértiles (nada se borra) |
+| `AC-R172-06` | recepción en incubadora `fertile 100 + broken 5 + contaminated 3` → `BR-03` = 100; carga 101 → `400 BR-03`; 100 → `201`; saldo 0 |
+| `AC-R172-07` | `AC-R161-05/06/07` verdes (carreras; bloqueo intacto) |
+| `AC-R172-08` | contrato estático: el `case 'egg_dispatch'` registra solo `egg_movements.0.egg_type = fertile`; el `case 'egg_collection'` conserva `fertile, dirty, broken, infertile, discarded` |
+
+## F.3 Tareas
+
+| Tarea | Descripción |
+|---|---|
+| `T-005-F1` | pruebas rojas `tests/test_egg_type_availability.py` (prefijo `TIPO-`; escenario propio mínimo: empresa A con `breeder` + `hatchery`; operador; lotes `lr` (breeder) y `lh` (hatchery)) + `frontend/src/pages/operations/__tests__/eggDispatchFormContract.test.ts` |
+| `T-005-F2` | `validators.py`: `TIPO_DISPONIBLE = "fertile"`, `cuenta_como_disponible`, predicado en `get_egg_balance` (entrada y salida) y `get_hatchery_egg_balance` (entrada); `validate_egg_dispatch_types(egg_types)` |
+| `T-005-F3` | `service.py`: rama `EGG_DISPATCH` valida los tipos antes de la cantidad |
+| `T-005-F4` | `OperationFormPage.tsx`: `case 'egg_dispatch'` con una sola fila (`fertile`) |
+| `T-005-F5` | sensibilidad §F.4; regresión `R-161` + `R-173`; evidencia; cierre |
+
+## F.4 Sensibilidad
+
+| Mutación | Qué quita | Prueba que debe caer |
+|---|---|---|
+| `R172-S1` | el predicado en `get_egg_balance` (vuelven a contar todos los tipos) | `AC-R172-02`/`03` (despacho de 101/1 → `201`) |
+| `R172-S2` | `fertile` del predicado (nada cuenta) | `AC-R172-01` (despacho de 100 → `400`) |
+| `R172-S3` | la validación de tipos del despacho | `AC-R172-04` (fila `dirty` → `201`) |
+| `R172-S4` | el predicado en `get_hatchery_egg_balance` | `AC-R172-06` (carga 101 → `201`) |
+| `R172-S5` | la fila única del formulario de despacho (frontend) | `AC-R172-08` |
+
+## F.5 Definición de terminado
+
+`AC-R172-01…08` verdes · rojo válido leído en `4f70273` (despacho de 160 sobre 100 fértiles aceptado) · sensibilidad válida · `R-161` 7/7 · `R-173`
+(enmienda E) verde con el predicado · KPI de incubadora (`test_kpi_hatchery`) verde · regresión completa leída · `R-172` CERRADO (técnico).

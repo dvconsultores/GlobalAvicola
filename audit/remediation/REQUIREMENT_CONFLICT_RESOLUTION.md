@@ -434,3 +434,30 @@ dato y calla la forma; entre las dos formas de nivel 3/4, la única que no dupli
 > **RR-16.** El descarte de pollitos es el evento `cull_recording` del lote de incubación (posterior al nacimiento), que resta de viables y
 > del saldo una sola vez; no se añade un atributo «descartados» al nacimiento. La mortalidad de pollitos (`Bases` p.10) es el evento
 > `mortality_recording` del mismo lote. Ambos deben ofrecerse en el flujo de incubadora (`R-171`).
+
+## 14. `RC-14` · «disponible» para despacho e incubación es el huevo fértil (`R-172`, 2026-09-10)
+
+**Conflicto.** La implementación (nivel 5) suma **todas** las `egg_type` de la recolección como disponibles para despacho (`BR-02`) y todas las recibidas
+como cargables (`BR-03`), mientras su propio docstring dice «fertile eggs available». `Bases` p.7-8 (nivel 2) titula el paso «Traslado de huevos
+fértiles» y p.9 define «Número de Huevos Recibidos: cantidad de huevos **fértiles** recibidos»; `docs/02 §3.6.4/§3.7.1` (nivel 3) despacha «a
+incubadora» y registra la «recepción de huevos fértiles»; `spec.md :166/:176/:187` (nivel 4) lo repite. **Corte:** nivel 2. Los demás tipos son
+hechos capturados (producción, roturas, suciedad, comerciales), no disponibilidad. Matriz: `R172_EGG_TYPE_AVAILABILITY_MATRIX.md`.
+
+> **RR-17.** Cuenta como disponible —para despachar (`BR-02`) y para cargar (`BR-03`)— únicamente el huevo de tipo `fertile`. Los demás tipos se
+> capturan y no cuentan (`CAPTURADO ≠ DISPONIBLE`); ninguna fila se borra. El despacho a incubadora solo lleva huevo fértil (otra fila → `400 BR-02`).
+> Un predicado, en un solo sitio, para los dos saldos; los dos saldos siguen siendo distintos.
+
+## 15. `RC-15` · toda mutación que cambie qué filas cuentan en qué lote respeta el invariante del saldo (`R-173`, 2026-09-10)
+
+**Conflicto.** `GA-REM-005-B §B.2` (nivel 4) fija `saldo ≥ 0` bajo el bloqueo del lote pero **presupone** que el alta es «el único camino de escritura» y
+que `cancel` «solo aumenta» el saldo; `docs/12 §3` (nivel 3) reconoce editar antes de enviar (`lot_id` incluido, `R-34`), `GA-REM-040-G AC-W09` (nivel 4)
+exige que el destino de una edición se verifique «como el de un alta», `docs/13 §2` (nivel 3) exige valor anterior y nuevo en la auditoría de una
+edición, y la implementación (nivel 5) calcula los saldos como agregados dinámicos por `lot_id` y `status ≠ CANCELLED`: cambiar el lote mueve el
+efecto entero y cancelar una entrada lo resta. **Corte:** las reglas de nivel 3/4 ya existen; la premisa de `B.2` era incompleta, no una decisión.
+Matriz: `R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md`.
+
+> **RR-18.** Cambiar el lote de un evento con efecto en saldo (por edición o por corrección) se valida como un alta en el destino (empresa, unidad,
+> lote activo, fecha, ubicación y regla de saldo de su familia) y deja el origen con `saldo ≥ 0`; cancelar una entrada deja el lote con `saldo ≥ 0`.
+> Todo bajo el bloqueo de las filas de lote implicadas —una, o dos en orden ascendente de clave primaria—, atómico en la transacción y con la
+> auditoría de valores anterior y nuevo. Las cantidades siguen siendo inmutables tras el alta; no se crea compensación ni cascada; `CANCELLED ≠
+> REVERSED`.

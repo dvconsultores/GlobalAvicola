@@ -70,3 +70,10 @@ Evidencia: `R136_INTERNAL_REVERSAL_PREFLIGHT.md` · `R136_INTERNAL_REVERSAL_EFFE
 | **AOD-23** | **Nacimiento** (`GA-REM-021 B13`, `Bases` p.9): ¿**sanos + débiles = nacidos** (partición completa: todo pollito nacido queda clasificado) o pueden quedar pollitos **sin clasificar** (`sanos + débiles ≤ nacidos`)? | igualdad exigida · desigualdad admitida | `Bases` p.9 define ambos como subconjuntos disjuntos de «nacidos» (garantiza `≤`) y **no afirma** la igualdad; la elección cambia qué registros se rechazan. `B13` se implementa con la restricción derivable (`≤`); la igualdad, si se decide, es un endurecimiento sin migración | nada (endurecimiento posterior) | P3 · B |
 
 `AOD-22` se resolverá como `OD-20+`; `AOD-23` ídem. Ninguna se decide aquí (`NO DECIDIR POR EL PROPIETARIO`).
+
+## Registro del pre-flight del tranche 10 (2026-09-10 · WAVE B)
+
+Sin decisión nueva. `R-173` (cambio de lote y cancelación frente a los saldos), `R-172` (qué huevo cuenta como disponible), `R-174` (despacho de pollitos
+de 0) y `R-171` (catálogo de incubadora) se resuelven por fuentes de nivel 2-4 (`RC-14`, `RC-15`, `RR-16`, `GA-REM-005-B §B.2`); las trazas están en
+`R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md §7`, `R172_EGG_TYPE_AVAILABILITY_MATRIX.md §6` y `R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md §2`.
+Pendientes sin cambio: `AOD-08`, `AOD-14`, `AOD-17`, `AOD-18`, `AOD-19`, `AOD-20`, `AOD-22`, `AOD-23`.

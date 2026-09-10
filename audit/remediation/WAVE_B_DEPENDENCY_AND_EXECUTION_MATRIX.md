@@ -429,3 +429,24 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   contrato estático) — con R-173 (PUT de lote y cancel de entradas contra los saldos; DATA_INTEGRITY P2, misma primitiva de bloqueo) si la traza
   lo muestra independiente. Alternativa: R-152 → R-153 (Progenitoras).
 ```
+
+## 22. Tranche 10 · pre-flight (2026-09-10) — recuento revalidado y puerta de composición
+
+```
+recuento ....................... 31 · 13 cerrados · 4 parciales · 14 abiertos — recontado desde la última línea de estado de cada ID en el backlog; consistente con §21
+                                 + altas de este pre-flight: R-176 (edición sin reglas no keyed por lote) · R-177 (egg_type sin enum; formulario de recepción en incubadora)
+                                 · R-178 (linaje egg_batches/chick_batches no neutralizado) → recuento canónico 34 · 13 · 4 · 17
+gate R-173 ..................... ACTIVE · GOBERNADO (docs/12 §3 · AC-W09 · B.2/D.1.4 · docs/13) · modelo B · sin decisión · P1 normalizado (saldo negativo, efecto
+                                 movido sin validación, reasignación entre empresas por POST /corrections, sin bloqueo) · GA-REM-005-E · RC-15/RR-18
+gate R-172 ..................... ACTIVE · GOBERNADO (Bases p.7-9, docs/02 §3.6.4/§3.7.1, spec.md :166/:187: huevo fértil) · predicado único, dos saldos ·
+                                 sin borrar filas · GA-REM-005-F · RC-14/RR-17
+gate R-174 ..................... ACTIVE · GOBERNADO (B.2 nombra al despacho de pollitos en D; validate_chick_dispatch ya rechaza 0) · GA-REM-005-E §E.3
+gate R-171 ..................... UI_ONLY confirmado (backend acepta/persiste/resta una vez: AC-R161-16; catálogo sin los dos tipos; i18n existente) · GA-REM-021-D
+gate R-175 ..................... NON-BLOCKING (aisladas 4/4 · B→A 3/3 · A→B 3/3 rojas «5 fases», residuo reproducido bajo control) · OPEN · sin limpieza
+modo ........................... A (R-173 → R-172 → R-174 → R-171) · sin decisión nueva · sin migración prevista
+P1 abiertos .................... 1 (R-173, este tranche)      P2 abiertos 8 (R-142 · R-144 · R-147 · R-148 · R-152 · R-164 · R-171 · R-172)      P3 abiertos 8 (R-153 · R-156 · R-166 · R-174 · R-175 · R-176 · R-177 · R-178)
+bloqueados ..................... R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP · B03 (AOD-22) · B04 (AOD-14)] · BLOCKED_RUNTIME R-164 · SAP_DEFERRED R-136 post-SAP
+decisiones del propietario ..... 8 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23) — ninguna nueva
+artefactos ..................... R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md · R172_EGG_TYPE_AVAILABILITY_MATRIX.md · R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md ·
+                                 R171_…_TRUTH_MATRIX.md §4 · R175_TEST_ORDER_DEPENDENCY_CONTROL.md · GA-REM-005-E/F · GA-REM-021-D · RC-14 · RC-15
+```

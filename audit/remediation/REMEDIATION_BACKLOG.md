@@ -1264,3 +1264,42 @@ WAVE B   IN PROGRESS        31 ítems (canónico) · 13 cerrados · 4 parciales 
 ```
 
 Evidencia: `R-161-EGG-INCUBATION-CONCURRENCY-EVIDENCE.md`. Regresión completa: **1031 passed · 49 skipped · 0 failed** (1210 s; 1024 previas + 7 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 95/95 · `tsc` 6 preexistentes (`R-158`). Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · `OD-19 §18` (huevos no reversibles) sin cambio · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 10 (2026-09-10): `R-173` gobernado (P1) · `R-172` gobernado · `R-174` gobernado · `R-171` UI_ONLY confirmado · `R-175` NON-BLOCKING · modo A · sin código
+
+Repositorio verificado: `main` · `4f70273` · limpio · local == remoto · cabeza `x4y5z6a7b8c9` · rutas 211.
+
+`R-173` (`R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md`): los cuatro saldos son agregados dinámicos por `lot_id` y `status ≠ CANCELLED`; cambiar `lot_id`
+(por `PUT` **y por `POST /corrections`**) mueve el efecto entero sin regla de saldo ni bloqueo, y en la corrección **sin empresa, unidad, lote activo, fecha
+ni ubicación** (reasignación entre empresas posible); cancelar una entrada tras salidas deja el saldo `< 0`. Fuentes de nivel 3/4 ya gobiernan (editar
+antes de enviar · destino de una edición = alta `AC-W09` · invariante `B.2`/`D.1.4` · auditoría con valores `docs/13`): modelo B, **sin decisión**;
+`GA-REM-005` enmienda E corrige la premisa de `B.2`. Severidad normalizada **P1** (saldo negativo + bypass de inquilino). `RC-15`/`RR-18`.
+`R-172` (`R172_EGG_TYPE_AVAILABILITY_MATRIX.md`): `Bases` p.7-9, `docs/02 §3.6.4/§3.7.1`, `spec.md :166/:187` despachan y reciben **huevo fértil**;
+la implementación suma todos los tipos (100 fértiles + 60 otros → despacha 160). **ACTIVE, gobernado**: predicado único `fertile` para `BR-02` y `BR-03`
+(dos saldos, un predicado), sin borrar filas; `GA-REM-005` enmienda F; `RC-14`/`RR-17`. `R-174` (`R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md`):
+`B.2` nombra «despacho de pollitos» en `D` con `cantidad > 0` → gobernado; enmienda E §E.3. `R-171` (`R171_…_TRUTH_MATRIX.md §4`): UI_ONLY confirmado
+releyendo backend, catálogo, formulario e idiomas → `GA-REM-021` enmienda D. `R-175` (`R175_TEST_ORDER_DEPENDENCY_CONTROL.md`): 4/4 aisladas verdes,
+3/3 B→A verdes, 3/3 A→B rojas por «las fases se duplicaron: 5» (residuo reproducido bajo control) → NON-BLOCKING, OPEN, sin limpieza.
+
+**Puerta de composición** (prompt §52): `R-173` ACTIVE · `R-172` ACTIVE · `R-174` ACTIVE · `R-171` UI_ONLY · `R-175` NON-BLOCKING → **modo A**
+(`R-173` + `R-172` + `R-174` + `R-171`, en ese orden). Sin decisión del propietario nueva. Sin migración prevista.
+
+Registrados en este pre-flight (fuera del alcance del tranche):
+
+| ID | P | Hallazgo | Dónde | Ola |
+|---|---|---|---|---|
+| `R-176` | P3 | la edición no vuelve a correr reglas de destino no keyed por lote: `sap_document_ref` (`BR-18`, acumulado de la OC; `validate_oc_limit` tiene `exclude_event_id` sin uso), `house_id` (`BR-17`, capacidad estática), `event_date` sola (`validate_event_date`/`validate_period_open` solo si cambia `lot_id`); sin efecto en los cuatro saldos | `service.py:1071-1088` | B |
+| `R-177` | P3 | `egg_type` es `String(30)`/`str` sin lista de valores (enum de `docs/03 :277` no aplicado); el formulario de recepción en incubadora envía categorías de ovoscopía (`dead_early`, `dead_late`, `contaminated`; `docs/02 §3.7.3`) como tipos recibidos; informativo tras `R-172` | `models.py:203` · `schemas.py:25` · `OperationFormPage.tsx:1479-1497` | B |
+| `R-178` | P3 | `egg_batches`/`chick_batches` (linaje) se materializan al casar despacho y recepción y no se neutralizan ni re-casan al cancelar o mover de lote un despacho/recepción; no es saldo | `service.py:401-500` | B |
+
+```
+R-173    OPEN · P1 (normalizado)   ACTIVE · gobernado (modelo B) · GA-REM-005-E · sin decisión
+R-172    OPEN · P2                 ACTIVE · gobernado (fértil) · GA-REM-005-F · sin decisión
+R-174    OPEN · P3                 ACTIVE · gobernado (B.2) · GA-REM-005-E §E.3
+R-171    OPEN · P2                 UI_ONLY confirmado · GA-REM-021-D
+R-175    OPEN · P3                 NON-BLOCKING · matriz de control · sin corrección
+R-176 · R-177 · R-178  OPEN · P3   registrados (fuera)
+WAVE B   IN PROGRESS        34 ítems (canónico: 31 + R-176 + R-177 + R-178) · 13 cerrados · 4 parciales · 17 abiertos (P1 1 · P2 8 · P3 8) · decisiones 8
+```

@@ -1323,3 +1323,13 @@ regresión       **1031 passed · 49 skipped · 0 failed** (1210 s; 1024 previas
 WAVE B          IN PROGRESS · 13/31 cerrados + 4 parciales · R-175 registrado (aislamiento de pruebas) · siguiente (no iniciado): R-171 (+ R-173) · alternativa R-152 → R-153
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-164 BLOCKED_RUNTIME · R-166 OPEN
 ```
+
+## WAVE B · tranche 10 · pre-flight (2026-09-10) · `R-173` P1 gobernado · `R-172` gobernado · `R-174` gobernado · `R-171` UI_ONLY · `R-175` control
+R-173           ACTIVE · P1 (normalizado desde P2: saldo negativo al cancelar entradas; efecto movido por PUT/corrección de lot_id sin regla ni bloqueo;
+                corrección de lot_id sin empresa/unidad/activo/fecha/ubicación → reasignación entre empresas) · modelo B gobernado · GA-REM-005-E · RC-15
+R-172           ACTIVE · P2 · solo el huevo fértil cuenta en BR-02 y BR-03 (Bases p.7-9; docs/02; spec.md) · GA-REM-005-F · RC-14 · sin borrar filas
+R-174           ACTIVE · P3 · B.2 exige cantidad > 0 al despacho de pollitos · GA-REM-005-E §E.3 (retirar la guarda if total_qty > 0)
+R-171           UI_ONLY confirmado · GA-REM-021-D (catálogo de incubadora: mortality_recording · cull_recording; pasos de flujo; i18n existente)
+R-175           NON-BLOCKING · matriz de control (aisladas 4/4 · B→A 3/3 · A→B 3/3 rojas «5 fases») · OPEN · sin limpieza
+altas           R-176 · R-177 · R-178 (P3, fuera) → recuento canónico 34 · 13 cerrados · 4 parciales · 17 abiertos (P1 1 · P2 8 · P3 8) · decisiones 8
+WAVE B          IN PROGRESS · modo A (R-173 → R-172 → R-174 → R-171) · sin migración · COMMIT 1 = solo spec

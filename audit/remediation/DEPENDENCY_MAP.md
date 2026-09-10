@@ -898,3 +898,13 @@ R-161 ──CERRADO (tranche 9, GA-REM-005-D)──► BR-02/BR-03 bajo el bloqu
                 posteriores al alta sin revalidar saldos), R-174 (chick_dispatch 0) · R-171 UI_ONLY listo
 siguiente (identificado, no iniciado): R-171 (catálogo de incubadora: mortalidad y descarte; UI_ONLY) + R-173 si independiente · alternativa: R-152 → R-153
 ```
+
+## WAVE B · tranche 10 · pre-flight (2026-09-10) — dependencias del tranche
+R-173 (P1) ◄── GA-REM-005-B (invariante) + GA-REM-040-G AC-W09 (destino = alta) + docs/12 §3 + docs/13 §2 · usa bloquear_saldo_del_lote (R-130) y los validadores
+                del alta (R-130 · R-161) · deriva n de huevos con el predicado de R-172 (GA-REM-005-F) → R-172 se implementa antes o junto; no bloquea (predicado aislable)
+R-172 (P2) ◄── Bases p.7-9 · docs/02 §3.6.4/§3.7.1 · spec.md :166/:187 · GA-REM-005-D (bloqueo intacto) → GA-REM-005-F · RC-14/RR-17 · sin decisión
+R-174 (P3) ◄── GA-REM-005-B B.2 (D incluye despacho de pollitos) → GA-REM-005-E §E.3 · independiente de R-173 (misma enmienda, distinta rama)
+R-171 (P2) ◄── RR-16 (RC-13) · AC-R161-16 (control backend) → GA-REM-021-D · frontend solo · independiente de los tres anteriores (no toca saldos)
+R-175 (P3) ── control de orden (R175_TEST_ORDER_DEPENDENCY_CONTROL.md): NON-BLOCKING · las suites nuevas del tranche no tocan productive_phases
+registrados: R-176 (edición: BR-17/BR-18/fecha no keyed por lote) · R-177 (egg_type sin enum; formulario de recepción en incubadora) · R-178 (linaje no neutralizado)
+modo A: R-173 → R-172 → R-174 → R-171 · sin AOD nueva · sin migración
