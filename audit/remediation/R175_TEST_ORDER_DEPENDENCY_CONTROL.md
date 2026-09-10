@@ -44,3 +44,19 @@ estado ........... OPEN (P3) · sin limpieza oportunista · la corrección (tear
                    higiene bajo la gobernanza de validez de pruebas
 regla ............ mientras R-175 siga abierto, toda suite del tranche que toque productive_phases, lots o baseline corre AISLADA + A→B + B→A
 ```
+
+## 4. Tranche 11 · control ampliado (`§48` del prompt)
+
+Suites nuevas del tranche (`T11`): `tests/test_edit_validation_parity.py` (`PARI-`) y `tests/test_lineage_cancel_move.py` (`LINA-`). Ninguna toca
+`productive_phases`. Matriz a ejecutar antes de la regresión completa (base reseteada en cada invocación):
+
+| Par | Objetivo | Resultado |
+|---|---|---|
+| las tres suites aisladas · A→B · B→A | reconfirmar el residuo conocido | _pendiente de ejecución (se rellena en el cierre)_ |
+| `T11 → A` (T11 antes de cada suite con residuo) | T11 no siembra nada que las altere | _pendiente_ |
+| `A → T11` | el residuo de A no altera T11 | _pendiente_ |
+| `T11 → B` (`test_clean_baseline`) | T11 no deja fases ni datos que el baseline cuente | _pendiente_ |
+| `B → T11` | el baseline no altera T11 | _pendiente_ |
+
+Criterio (`§49`): si algún par produce un rojo o verde falso atribuible al arnés, `R-175` pasa a BLOQUEANTE y se formaliza la remediación mínima bajo
+gobernanza de validez de pruebas; si no, sigue OPEN · NON-BLOCKING.

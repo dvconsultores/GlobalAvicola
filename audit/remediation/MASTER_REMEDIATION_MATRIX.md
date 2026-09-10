@@ -1340,3 +1340,13 @@ R-172           CERRADO (técnico) · solo el huevo fértil cuenta en BR-02/BR-0
 R-174           CERRADO (técnico) · chick_dispatch de 0 → 400 BR-04 sin fila · S1
 R-171           CERRADO (técnico) · catálogo de incubadora con mortalidad y descarte · vitest 5/5 · S1/S1b
 WAVE B          IN PROGRESS · 17/34 cerrados + 4 parciales · decisiones 8 · regresión 1056 passed · 49 skipped · 0 failed · siguiente (no iniciado): R-152 → R-153 · alternativa R-176 + R-178 / R-175
+
+## WAVE B · tranche 11 · pre-flight (2026-09-10) · `R-176` P2 gobernado (absorbe `R-45`) · `R-178` gobernado · `R-177` AOD-24 · `R-175` control
+R-176           ACTIVE · P2 (normalizado desde P3: misma raíz que R-45 P2; BR-18 permite superar la OC moviendo el acumulado) · paridad de validación pura
+                (BR-17 · BR-18 · BR-06 · BR-19 · BR-08 · BR-11) sobre el estado candidato en PUT y POST /corrections · GA-REM-023-B · sin decisión
+R-178           ACTIVE · P3 · linaje = trazabilidad generacional · histórico conservado + efectivo derivado del estado de los eventos + reasignación denegada si hay
+                vínculo · OD-10 · GA-REM-031-A · sin decisión · sin migración
+R-177           OPEN · P3 · pre-flight completo · registro corregido (evento ovoscopy) · DATA QUALITY + modelo → OWNER_DECISION_REQUIRED (AOD-24) · sin código
+R-175           control ampliado (T11) antes de la regresión · NON-BLOCKING salvo prueba
+R-45            (Wave 2, P2) absorbido por R-176
+WAVE B          IN PROGRESS · 17/34 cerrados + 4 parciales · decisiones 9 · modo R176_PLUS_R178 · COMMIT 1 = solo spec

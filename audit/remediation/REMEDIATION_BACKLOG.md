@@ -1328,3 +1328,35 @@ WAVE B   IN PROGRESS        34 ítems (canónico) · 17 cerrados · 4 parciales 
 
 Evidencia: `WAVE_B_TRANCHE_10_BALANCE_INTEGRITY_EVIDENCE.md`. Regresión completa: **1056 passed · 49 skipped · 0 failed** (1173 s; 1031 previas + 25 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado). `vitest` 102/102 · `tsc` 6 preexistentes (`R-158`).
 Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · `OD-19 §18` sin cambio · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 11 (2026-09-10): `R-176` gobernado (P2, absorbe `R-45`) · `R-178` gobernado · `R-177` pre-flight (AOD-24) · `R-175` control · modo R176_PLUS_R178 · sin código
+
+Repositorio verificado: `main` · `80cce71` · limpio · local == remoto · cabeza `x4y5z6a7b8c9` · rutas 211 (guardián `test_ac14`).
+
+`R-176` (`R176_CREATE_EDIT_CORRECTION_VALIDATION_PARITY_MATRIX.md`): seis reglas puras del alta (`BR-17`, `BR-18`, `BR-06`, `BR-19`, `BR-08`,
+`BR-11`/`BR-10`) no se reevalúan al editar ni corregir los campos que las disparan (`house_id`, `sap_document_ref`, `event_date`, `farm_id`, `lot_id`);
+`POST /corrections` es la segunda superficie. Es la misma raíz que **`R-45`** (Wave 2, P2, «corregir `event_date` no revalida `BR-19`», abierto en
+`GA-REM-016`/`GA-REM-019`, documentado en `test_corrections.py` con aserción tolerante): `R-176` lo absorbe. Autoridad: `AC-W09`/`RR-18` (destino de una
+edición = alta), `GA-REM-023` (contrato de validación), `GA-REM-035`, `R-30`, `R6`, `spec.md` → paridad sin repetir el alta, en la guarda central de
+`R-173`. **Sin decisión.** Severidad normalizada **P2** (la de `R-45`; `BR-18` permite superar la OC moviendo el acumulado) → `GA-REM-023` addendum B.
+`R-178` (`R178_LINEAGE_CANCEL_MOVE_INTEGRITY_MATRIX.md`): linaje = trazabilidad generacional (`egg_batches`/`chick_batches`), no genética; el árbol lista
+como vigente un traspaso cuyo despacho fue anulado y un evento casado puede moverse dejando el vínculo con orientación falsa. Autoridad: `OD-10 §2.4/2.5/4bis/4bis.5`,
+`BR-10`, `GA-REM-008 AC04/AC06`, `GA-REM-031 AC03` → histórico conservado + efectivo derivado en lectura + reasignación denegada si hay vínculo. **Sin
+decisión, sin migración** → `GA-REM-031` enmienda A. `R-177` (`R177_EGG_TYPE_OVOSCOPY_DOMAIN_MATRIX.md`): **registro corregido** (el bloque con categorías
+de ovoscopía es del evento `ovoscopy`, no de la recepción); DATA QUALITY DEFECT confirmado (cadena libre; UI cruda; `commercial` sin etiqueta) + modelo
+(tipo de huevo ≠ resultado de ovoscopía en el mismo campo) → **`OWNER_DECISION_REQUIRED` (`AOD-24`)**; sin código. `R-175`: control ampliado con las
+suites nuevas (§4 de la matriz; se ejecuta antes de la regresión completa).
+
+**Puerta de composición** (prompt §50): `R-176` activo · gobernado · sin decisión · ejecutable — `R-178` activo · linaje = trazabilidad generacional ·
+gobernado · sin decisión · ejecutable — `R-177` pre-flight completo, sin implementación — `R-175` no bloqueante → **modo `R176_PLUS_R178` (CASE A)**.
+
+```
+R-176    OPEN · P2 (normalizado; absorbe R-45)   ACTIVE · gobernado · GA-REM-023-B · sin decisión
+R-178    OPEN · P3                              ACTIVE · gobernado · GA-REM-031-A · sin decisión · sin migración
+R-177    OPEN · P3 · OWNER_DECISION_REQUIRED    AOD-24 · pre-flight completo · registro corregido · sin código
+R-175    OPEN · P3                              control ampliado en curso
+R-45     OPEN (Wave 2, P2)                      absorbido por R-176; se cierra con él por prueba (AC-R176-05)
+WAVE B   IN PROGRESS        34 ítems · 17 cerrados · 4 parciales · 13 abiertos (P1 0 · P2 7 · P3 6) · decisiones 9 (AOD-24 nueva)
+```

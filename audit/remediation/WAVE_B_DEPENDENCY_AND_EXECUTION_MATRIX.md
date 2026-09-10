@@ -468,3 +468,21 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   R-152 → R-153 (Progenitoras: estructura del plan de importación; creación automática del lote de abuelas) — spec propia; sin decisión pendiente.
   Alternativa: R-176 + R-178 (la edición y las reglas no keyed por lote; linaje tras anular/mover) o R-175 (higiene de fixtures bajo gobernanza de validez).
 ```
+
+## 24. Tranche 11 · pre-flight (2026-09-10) — recuento revalidado y puerta de composición
+
+```
+recuento ....................... 34 · 17 cerrados · 4 parciales · 13 abiertos — recontado desde la última línea de estado de cada ID en el backlog; consistente con §23
+                                 sin altas nuevas de Wave B · R-45 (Wave 2, P2, abierto) queda absorbido por R-176 (mismo defecto) · R-176 normalizado P3 → P2
+gate R-176 ..................... ACTIVE · GOBERNADO (AC-W09/RR-18 · GA-REM-023 · GA-REM-035 · R-30 · R6 · spec.md BR-08/BR-11) · sin decisión · ejecutable ·
+                                 paridad de validación pura sobre el estado candidato en la guarda central de R-173 (PUT y POST /corrections) · GA-REM-023-B
+gate R-178 ..................... ACTIVE · linaje = trazabilidad generacional (egg_batches/chick_batches; no GeneticLine) · GOBERNADO (OD-10 §2.4/2.5/4bis/4bis.5 · BR-10 ·
+                                 GA-REM-008 AC04/AC06 · GA-REM-031 AC03) · sin decisión · sin migración · ejecutable · GA-REM-031-A
+gate R-177 ..................... pre-flight COMPLETO · registro corregido (evento ovoscopy) · DATA QUALITY + modelo → OWNER_DECISION_REQUIRED (AOD-24) · sin implementación
+gate R-175 ..................... NON-BLOCKING (baseline del tranche 10) · control ampliado T11→A/A→T11/T11→B/B→T11 antes de la regresión completa
+modo ........................... R176_PLUS_R178 (CASE A) · sin migración prevista
+P1 abiertos .................... 0        P2 abiertos 7 (R-142 · R-144 · R-147 · R-148 · R-152 · R-164 · R-176)        P3 abiertos 6 (R-153 · R-156 · R-166 · R-175 · R-177 · R-178)
+decisiones del propietario ..... 9 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24)
+artefactos ..................... R176_CREATE_EDIT_CORRECTION_VALIDATION_PARITY_MATRIX.md · R178_LINEAGE_CANCEL_MOVE_INTEGRITY_MATRIX.md · R177_EGG_TYPE_OVOSCOPY_DOMAIN_MATRIX.md ·
+                                 R175_TEST_ORDER_DEPENDENCY_CONTROL.md §4 · GA-REM-023-B · GA-REM-031-A · AOD-24
+```

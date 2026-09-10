@@ -913,3 +913,12 @@ modo A: R-173 → R-172 → R-174 → R-171 · sin AOD nueva · sin migración
 R-173 CERRADO (técnico) · GA-REM-005-E CERTIFICADA · R-172 CERRADO · GA-REM-005-F CERTIFICADA · R-174 CERRADO · R-171 CERRADO · GA-REM-021-D CERTIFICADA
 R-175 OPEN (control NON-BLOCKING) · R-176 · R-177 · R-178 OPEN (P3) · GA-REM-021 sigue PARTIAL (B03 ◄ AOD-22 · B04 ◄ AOD-14 · R-156 ◄ AOD-20)
 regresión 1056 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-152 → R-153 · alternativa R-176 + R-178 o R-175
+
+## WAVE B · tranche 11 · pre-flight (2026-09-10) — dependencias del tranche
+R-176 (P2) ◄── GA-REM-023 (contrato de validación del alta) + GA-REM-035 (BR-18) + R-30 (BR-19) + R6 (BR-06) + spec.md (BR-08 · BR-11) + AC-W09/RR-18 ·
+                extiende la guarda central de R-173 (GA-REM-005-E) sin segunda guarda · absorbe R-45 (Wave 2) · independiente de R-178
+R-178 (P3) ◄── OD-10 (§2.4 la fila es el traspaso · §2.5 anulado desaparece con su motivo · §4bis sin cascada · §4bis.5 ante la duda se deniega) + BR-10 + GA-REM-008 AC04/AC06 +
+                GA-REM-031 AC03 · usa la guarda de R-173 (reasignación) y el árbol de GA-REM-008 · motivo del cancel ◄ R-140/AOD-18 (frontera, no bloquea)
+R-177 (P3) ◄── AOD-24 (modelo tipo de huevo vs ovoscopía) · RR-17 intacto · sin código hasta la decisión
+R-175 (P3) ── control ampliado con T11 · NON-BLOCKING salvo prueba en contra
+modo R176_PLUS_R178 · sin migración · sin AOD para R-176/R-178

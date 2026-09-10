@@ -77,3 +77,12 @@ Sin decisión nueva. `R-173` (cambio de lote y cancelación frente a los saldos)
 de 0) y `R-171` (catálogo de incubadora) se resuelven por fuentes de nivel 2-4 (`RC-14`, `RC-15`, `RR-16`, `GA-REM-005-B §B.2`); las trazas están en
 `R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md §7`, `R172_EGG_TYPE_AVAILABILITY_MATRIX.md §6` y `R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md §2`.
 Pendientes sin cambio: `AOD-08`, `AOD-14`, `AOD-17`, `AOD-18`, `AOD-19`, `AOD-20`, `AOD-22`, `AOD-23`.
+
+## `AOD-24` · registro del pre-flight del tranche 11 (2026-09-10 · WAVE B)
+
+| AOD | Pregunta | Opciones (sin preferencia) | Por qué no se resuelve por evidencia | Bloquea | Prioridad · Ola |
+|---|---|---|---|---|---|
+| **AOD-24** | **Tipo de huevo y resultado de ovoscopía** (`R-177`, `R177_EGG_TYPE_OVOSCOPY_DOMAIN_MATRIX.md`): hoy un solo campo libre (`egg_movements.egg_type`) guarda los tipos de huevo de la recolección (`docs/02 §3.6.2`, `docs/03 :277`: fértil, sucio, roto, infértil, descartado, comercial) **y** los resultados de la ovoscopía (`docs/02 §3.7.3`, `spec.md :192`: infértiles, embriones muertos tempranos/tardíos, contaminados). ¿Deben ser (A) un único conjunto cerrado que incluya ambos, o (C) dos datos distintos —`egg_type` en la recolección/clasificación y un resultado propio en la ovoscopía—? ¿Y qué valores exactos admite cada evento? | **A** · enum cerrado único (`docs/03` + categorías de `spec.md :192`) · **C** · dos campos/conceptos (los documentos los describen en eventos distintos). B (maestro configurable) y D (maestro existente) no tienen respaldo documental | los niveles 2-4 nombran las categorías pero no dicen si son el mismo atributo ni cómo se almacenan; la elección cambia el modelo de datos, la captura y la validación | `R-177` (validación de valores, etiquetas, UI) — no bloquea saldos (`RR-17` independiente) | P3 · WAVE B |
+
+`AOD-24` se resolverá como `OD-20+`. No se decide aquí (`NO DECIDIR POR EL PROPIETARIO`). `R-176` y `R-178` no requieren decisión (fuentes en
+`R176_CREATE_EDIT_CORRECTION_VALIDATION_PARITY_MATRIX.md §7` y `R178_LINEAGE_CANCEL_MOVE_INTEGRITY_MATRIX.md §3`).

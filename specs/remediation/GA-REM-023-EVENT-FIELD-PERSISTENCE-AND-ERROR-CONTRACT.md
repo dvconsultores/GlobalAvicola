@@ -181,3 +181,80 @@ escribir la cobertura de frontera de `BR-19` en `R-28`. Severidad P2.
 | `AC13` | Un evento con fecha posterior al día en curso se rechaza con `400` citando la regla |
 
 Se trata aquí por pertenecer al mismo contrato de validación, no por parche aparte.
+
+---
+
+## Addendum B — `R-176` (+ `R-45`) · paridad de validación en edición y corrección (2026-09-10 · WAVE B · tranche 11)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-023-B` · `DATA INTEGRITY` (contrato de validación) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Hallazgos** | **`R-176`** (P3 → **P2** normalizado) · **`R-45`** (Wave 2, P2: corregir `event_date` no revalida `BR-19`; abierto, `GA-REM-016`/`GA-REM-019`) — absorbido |
+| **Matriz** | `audit/remediation/R176_CREATE_EDIT_CORRECTION_VALIDATION_PARITY_MATRIX.md` (reglas definidas, paridad, campo → reglas, frontera con `R-173`) |
+| **Fuentes** | `§Reglas de negocio afectadas` de esta spec (`BR-06`, `BR-08`, `BR-10`, `BR-17`, `BR-19` se aplican en el alta) · addendum `R-30` (`AC13`) · `GA-REM-035 §3` (`BR-18`, `OD-04`) · `docs/02 §7 R6` · `spec.md §5 BR-08`, `BR-11` · `GA-REM-040-G AC-W09` y `RR-18` (`RC-15`): «el destino de una edición se verifica como el de un alta» · `tests/test_corrections.py` («corregir no es una puerta trasera», `R-45`) |
+| **Principio** | **paridad de validación sin repetir el alta**: las seis reglas son lecturas puras; se evalúan sobre el **estado candidato** (fila persistida + cambio) en la guarda central existente (`verificar_destino_de_edicion`, `GA-REM-005-E`); `create_event` sigue siendo el único que persiste, audita `created`, crea alertas, notificaciones y vínculos |
+| **Sin cambio** | estados editables/corregibles · permisos · rutas · cantidades inmutables · `R-173` (bloqueo, saldos, auditoría con valores) · etiqueta `BR-10` de la unicidad SAP (observación: `spec.md` la numera `BR-11`; el contrato de error no se altera) · `R-80` (zona horaria) · `R-140`/`R-154` residuales |
+| **Migración** | ninguna |
+
+### B.1 Contrato
+
+1. **Estado candidato**: `cand[campo] = cambios[campo] si campo ∈ cambios, si no getattr(event, campo)` para `lot_id`, `farm_id`, `house_id`,
+   `destination_farm_id`, `event_date`, `sap_document_ref`. `n` = Σ `bird_movements.quantity` persistidos (el cliente no aporta cantidades).
+2. **Disparadores** (sin sobre-validación): `farm_id`/`house_id` → `BR-08`; `event_date` → `BR-06` (vs `lote_destino`) y `BR-19` (período cerrado y fecha
+   futura); `sap_document_ref` o `lot_id` → `BR-11` (`validate_sap_document_unique`, `exclude_event_id = event.id`, tipo ≠ `bird_reception`);
+   `house_id` en `bird_reception`/`bird_distribution` → `BR-17` (`validate_house_capacity(cand.house_id, n)` si `n > 0`); `sap_document_ref` en
+   `bird_reception`/`bird_distribution` → `BR-18` (`validate_oc_limit(cand.sap_document_ref, n, company_id, exclude_event_id = event.id)`).
+3. **Orden** (`§63`): autenticación → empresa → original (`get_event`) → inquilino/unidad/lote activo/fecha vs lote/ubicación (`R-173`, sin cambio) →
+   **reglas puras del candidato** (`BR-08` → `BR-06`/`BR-19` → `BR-11` → `BR-17` → `BR-18`) → bloqueo de lotes y reglas de saldo (`R-173`) → aplicar →
+   auditar → confirmar. Ninguna regla de negocio se evalúa antes de la cadena de inquilino (sin fuga de información).
+4. **Dos superficies, una guarda**: `PUT /operations/{id}` (todos los campos del cambio) y `POST /corrections` (`field_name` ∈ {`lot_id`, `farm_id`,
+   `house_id`, `destination_farm_id`, `event_date`, `sap_document_ref`}) pasan por `verificar_destino_de_edicion`; ambas se prueban.
+5. **Error**: el de cada regla en el alta (`400 {detail, rule}`); ninguno nuevo.
+6. **Cero efectos**: una denegación deja fila, saldo, auditoría, alertas, notificaciones y vínculos intactos; una edición/corrección válida produce
+   exactamente su auditoría (`UPDATED` con valores / `CORRECTED`) y nada del alta.
+7. **Estados**: sin cambio (`EDITABLES`; correcciones `REGISTERED…REJECTED`; aprobado inmutable).
+8. **Fecha de negocio**: `validate_period_open` se reutiliza tal cual (`date.today()`); las pruebas usan `tests.time_reference`; `test_time_determinism` obligatoria.
+
+### B.2 Criterios de aceptación
+
+| AC | Criterio |
+|---|---|
+| `AC-R176-01` | `PUT house_id` de una recepción de 100 aves a un galpón de capacidad 50 → `400 BR-17`; `house_id`, saldo y auditoría intactos |
+| `AC-R176-02` | corrección de `house_id` → ídem (`400 BR-17`, sin `correction_logs`) |
+| `AC-R176-03` | OC-A (100) con 80 recibidas y OC-B (100) con 50: `PUT sap_document_ref` de la segunda → OC-A → `400 BR-18` (130 > 100); con cupo (OC-C de 200) → `200` |
+| `AC-R176-04` | corrección de `sap_document_ref` → ídem |
+| `AC-R176-05` | `PUT`/corrección de `event_date` → +91 días: `400 BR-19` · futura (+2 días): `400 BR-19` · anterior al inicio del lote: `400 BR-06` · dentro del período y posterior al inicio: `200`/`201` |
+| `AC-R176-05b` | `PUT {"house_id": null}` en una recepción → `400 BR-08`; corrección `farm_id` = `""` en un despacho de huevos → `400 BR-08` |
+| `AC-R176-05c` | vacunación con `DOC-1` en el lote; otra con `DOC-2`: `PUT`/corrección `sap_document_ref` → `DOC-1` → `400 BR-10`; mover a un lote donde `DOC-1` ya existe → `400 BR-10`; la recepción (OC repetible) no aplica |
+| `AC-R176-06` | edición válida (galpón con capacidad, OC con cupo, fecha válida) → `200` y valor aplicado |
+| `AC-R176-07` | corrección válida → `201`, estado `CORRECTED`, valor aplicado, `version + 1` |
+| `AC-R176-08` | toda denegación: cero cambios en `operational_events`, saldo igual, cero `audit_logs` de éxito, cero `operational_alerts`, cero `notifications`, cero `egg_batches`/`chick_batches` nuevos |
+| `AC-R176-09` | edición y corrección válidas: `audit_logs` +1 (`updated` / `corrected`), `operational_alerts` +0, `notifications` +0, `egg_batches`/`chick_batches` +0, saldos iguales — la paridad no repite el alta |
+| `AC-R176-10` | `R-173` intacto (`tests/test_edit_cancel_balance.py` verde) |
+| `AC-R176-11` | evento aprobado: `PUT` → `400` (sin cambio) |
+| `AC-R176-12` | actor de otra empresa / unidad apagada / sin permiso → `400 BR-07` / `403`, antes de cualquier regla de negocio |
+
+### B.3 Tareas
+
+| Tarea | Descripción |
+|---|---|
+| `T-023-B1` | pruebas rojas `tests/test_edit_validation_parity.py` (prefijo `PARI-`; escenario propio: empresa A/B; galpón grande y galpón de capacidad 50; `sap_references` `PURCHASE_ORDER` OC-A/OC-B (100) y OC-C (200); lote con `start_date` futuro para `BR-06`; fechas de `tests.time_reference`) |
+| `T-023-B2` | `operations/service.py::verificar_destino_de_edicion`: composición del candidato y reglas puras (B.1) antes del bloqueo |
+| `T-023-B3` | `corrections/service.py`: la guarda también para `event_date` y `sap_document_ref` |
+| `T-023-B4` | `tests/test_corrections.py::test_la_fecha_corregida_sigue_sujeta_a_las_reglas`: la aserción tolerante pasa a exigir el `400` (`R-45` cerrado por prueba, no por transitividad) |
+| `T-023-B5` | sensibilidad B.4; regresiones `R-173`, `R-135`/`R-143`, `R-159`/`R-160`, `B01`/`B02`/`B05`, `R-161`, `R-130`; `test_time_determinism`; evidencia; cierre |
+
+### B.4 Sensibilidad
+
+| Mutación | Qué quita | Prueba que debe caer |
+|---|---|---|
+| `R176-S1` | `BR-17` de la guarda | `AC-R176-01` (y `_02`) |
+| `R176-S2` | la llamada a la guarda desde la corrección para `event_date`/`sap_document_ref` (superficie de corrección) | `AC-R176-02/04/05` (corrección) |
+| `R176-S3` | `BR-18` de la guarda | `AC-R176-03/04` |
+| `R176-S4` | `BR-19`/`BR-06` del candidato | `AC-R176-05` |
+| `R176-S5` | reproducir un efecto del alta en la edición válida (llamar a `_auto_create_traceability_batches`/alerta) | `AC-R176-09` |
+
+### B.5 Definición de terminado
+
+`AC-R176-01…12` verdes · rojo válido leído en `80cce71` · sensibilidad válida · `R-173` 16/16 · `test_time_determinism` · regresión completa leída ·
+`R-176` y `R-45` cerrados (técnico).
