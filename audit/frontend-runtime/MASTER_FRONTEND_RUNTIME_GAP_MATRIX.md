@@ -36,7 +36,7 @@ Artefacto servido: generación **2026-09-05 14:09:27 GMT** (`index-D5dwMXuP.js`)
 
 | ID | Capacidad | Commit local | Marcador bundle (deployed→local) |
 |---|---|---|---|
-| CAP-ADM-09 | Roles y permisos | `fd5a389` (09-06) | `/roles` 1→7; ruta ausente del router servido |
+| CAP-ADM-09 | Roles y permisos | `fd5a389` (09-06) | `/roles` 1→7; ruta ausente del router servido; **sin enlace de navegación ni en local (sólo URL)** |
 | CAP-MAS-01 | Maestros (7 nuevos + ediciones) | `0a44706` (09-06) | `/masters` 30→39 |
 | CAP-MAS-02 | Áreas | `950bb21` (09-07) | `areas` 2→3 |
 | CAP-MAS-03 | Curvas de peso | `99e874f` (09-06) | `/weight-curves` 0→6 |

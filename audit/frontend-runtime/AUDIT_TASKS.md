@@ -66,7 +66,7 @@ Regla: sin tareas tipo "revisar frontend". Cada una es verificable y con resulta
 - **Resultado**: ✅.
 
 ### T-10 · Administración de roles y permisos
-- **Fuente**: `docs/02 §3.1.3` · `GA-REM-034` · **Backend**: `/roles` + catálogo de permisos desplegados · **Frontend**: `RolesPage` en repo local; **ausente del bundle desplegado** (`/roles` 1→7, sin ruta en el bundle servido)
+- **Fuente**: `docs/02 §3.1.3` · `GA-REM-034` · **Backend**: `/roles` + catálogo de permisos desplegados · **Frontend**: `RolesPage` en repo local (sin enlace de navegación: sólo URL); **ausente del bundle desplegado** (`/roles` 1→7, sin ruta en el bundle servido)
 - **Clasificación**: DEPLOYMENT_STALE · **Evidencia**: diff de bundles + pruebas de ruta del router en cada bundle
 - **Resultado**: ✅.
 

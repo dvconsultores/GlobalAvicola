@@ -28,7 +28,7 @@ Fuente trazada por imports reales de `App.tsx`; no por nombres de fichero. Compl
 | `/audit` | AuditPage | WebOnly | sí | ✅ (filtros viejos) | CAP-AUD-01 |
 | `/sap` | SapManagerPage | WebOnly | sí | ✅ | CAP-OPS-13 |
 | `/users` | UsersPage | WebOnly | sí | ✅ (vieja) | CAP-ADM-08 |
-| `/roles` | RolesPage | WebOnly | sí (local) | ❌ **ruta ausente** | CAP-ADM-09 |
+| `/roles` | RolesPage | WebOnly | **no — sin enlace en menú ni en páginas; sólo URL directa** | ❌ **ruta ausente** | CAP-ADM-09 |
 | `/profile` | ProfilePage | Protected | sí | ✅ | CAP-SES-03 |
 | `*` | → `/` | — | — | ✅ | — |
 

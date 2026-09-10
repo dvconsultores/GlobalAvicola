@@ -47,6 +47,7 @@ Hoy: **ninguna de las cinco filas está implementada** (0 `hasPermission`; menú
 | 4 | Deep links sin sesión redirigen a `/login` (correcto) | probado hoy: `/roles` `/masters/weight-curves` `/notifications` `/poultry/hatchery` `/review` → `/login` | — |
 | 5 | En el runtime 09-05, `/roles` no existe como ruta: escribirla lleva a `/login` (sin sesión) o a la home (con sesión) | bundle desplegado (router sin la ruta) | stale |
 | 6 | El badge «Empresa» (no selector) usa `activeCompanyName || company_name`; sin empresa no se muestra nada | Header 72/93 | cosmético-informativo |
+| 7 | **`/roles` no tiene ningún enlace de navegación** (ni menú ni páginas): la administración de roles sólo es alcanzable escribiendo la URL — y en el runtime servido ni la ruta existe | `App.tsx:238` es la única referencia; 0 enlaces `to="/roles"`; `nav.settings_users` apunta a `/users` | exposición incompleta (local) + stale (runtime) |
 
 ## 4. Roles sembrados vs entradas (contexto)
 
