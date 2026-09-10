@@ -1,0 +1,81 @@
+# MASTER FRONTEND REMEDIATION ROADMAP
+
+**2026-09-10** · base `3808ed5` · **NO iniciado** — este documento propone; no implementa.
+
+Orden derivado de la evidencia (§90 del encargo), no predeterminado. La primera pregunta es «¿qué debe existir para que el propietario entre y vea un producto coherente?».
+
+## Tranche 1 — `GA-FE-01 · Paridad de despliegue (R-99 recovery)` ← PRIMERO RECOMENDADO
+
+| Campo | Valor |
+|---|---|
+| **Resultado para el usuario** | Todo lo entregado desde el 2026-09-05 vuelve a ser visible (roles, maestros, curvas, notificaciones, áreas, agua, plan de abuelas, cuadre B01, B13, catálogo de incubadora) **y los tres flujos hoy rechazados dejan de dar 400** (BR-20/21/22) |
+| **Findings** | `R-99` (causa raíz demostrada) · `R-158` (los 6 errores que rompen `npm run build`) |
+| **Estado actual** | Artefacto congelado; toda entrega de frontend falla en CI en `RUN npm run build` |
+| **Backend listo** | Sí — ni un cambio |
+| **Trabajo frontend** | Eliminar 6 errores TS (2 imports sin uso en `AuditPage.tsx`; `areas/setAreas/areaRes` + índice de tupla en `LotFormPage.tsx`); `npm run build` verde |
+| **Rutas/componentes** | Sin cambios funcionales |
+| **Integraciones API** | Ninguna nueva |
+| **Navegación** | Sin cambios |
+| **RBAC/BU** | Sin cambios |
+| **E2E requerido** | Comparación de fingerprint (hash del bundle servido vs `main`) + smoke de BR-20/21/22 |
+| **Decisiones del propietario** | **NINGUNA** |
+| **Dependencias** | Ninguna |
+| **Riesgo** | Mínimo (compilación, no lógica) |
+| **Puerta de cierre** | `npm run build` verde en CI · artefacto servido ≠ 09-05 · los tres flujos dejan de devolver 400 con datos de auditoría · R-99 cerrado con evidencia |
+
+## Tranche 2 — `GA-FE-02 · Autorización y construcción de la fase 9 (shell multiempresa)`
+
+| Campo | Valor |
+|---|---|
+| **Resultado para el usuario** | El Administrador de Accesos entra, ve **las 4 unidades de su empresa** y las enciende/apaga; concede y revoca unidades a usuarios; el Super Admin tiene su selector |
+| **Findings** | `GA-REM-040` `T-040-21`/`T-040-22` · aportes: G2 + G3 + G4 |
+| **Estado actual** | Fase 9 `TECHNICALLY READY · FROZEN` (autorización del propietario: NO) |
+| **Backend listo** | Sí (`business_units:*`, `grant-candidates`, sesión fase 8) |
+| **Trabajo frontend** | Pantallas nuevas: unidades por empresa (`GET /business-units`, enable/disable) · unidades por usuario (`grant-candidates`, POST/DELETE) · mapa i18n · responsive (`AC-H08/09`) · sin `users:read` (contrato duro) |
+| **E2E requerido** | J03/J04/J05 + permutaciones OD-16 (BU ON/OFF × grant ON/OFF) + negativas (self-grant prohibido) |
+| **Decisiones del propietario** | **Autorizar la fase 9** · `BU-D07` (comercial vs operativo) puede esperar sin bloquear |
+| **Dependencias** | Tranche 1 (utilidad: sin paridad, no se despliega) |
+| **Riesgo** | Medio (superficie administrativa nueva) |
+| **Puerta de cierre** | Flujo completo con persistencia, refresh y relogin; efecto real en navegación del usuario afectado |
+
+## Tranche 3 — `GA-FE-03 · Navegación dinámica + controles de flujo pendientes`
+
+| Campo | Valor |
+|---|---|
+| **Resultado para el usuario** | El menú muestra solo lo que el usuario puede hacer (permisos + unidades); estado «sin unidades» distinguible; **envío/reenvío a revisión disponible**; reverso visible |
+| **Findings** | `T-040-23`/`T-040-24` · `R-119/R-98` · **`R-181`** · G5 + G6 |
+| **Estado actual** | Sin modelo de permisos (0 `hasPermission`); `operationsService.submit` sin llamadores |
+| **Backend listo** | Sí (sesión fase 8 · `submit` · `reversals`) |
+| **Trabajo frontend** | Filtro de menú por `permissions`+`effective_business_units` · estado zero-BU · control «Enviar a revisión/Reenviar» en detalle y móvil · pantalla de reverso · `statusColors` con `REVERSED` |
+| **E2E requerido** | J07/J16 + J14 (reenvío) + navegación por rol |
+| **Decisiones** | Ninguna nueva |
+| **Dependencias** | Tranche 2 (mismo shell) |
+| **Riesgo** | Medio |
+
+## Tranche 4 — `GA-FE-04 · Empresas y flujos de decisión pendiente`
+
+| Campo | Valor |
+|---|---|
+| **Resultado** | Administración de empresas conforme a la decisión del propietario; lote de abuelas automático según `AOD-25` |
+| **Findings** | `R-124`/`AOD-06` · `R-153`/`AOD-25` |
+| **Estado** | Decide el propietario |
+| **Dependencias** | Decisiones; puede reutilizar el shell del Tranche 2 |
+
+## Tranche 5 — `GA-FE-05 · Verificación autenticada + guardia de paridad (continuo)`
+
+| Campo | Valor |
+|---|---|
+| **Resultado** | Cierre de las 15 filas `BLOCKED_AUTH` y de los journeys; detección temprana de recaídas de despliegue |
+| **Findings** | G0 + G8 |
+| **Trabajo** | Cuentas autorizadas → corrida autenticada (fase 7 del plan) · sonda de fingerprint en CI (solo lectura; no toca EX-01) |
+| **Dependencias** | Cuentas del propietario (G0) |
+
+## Prioridad transversal
+
+1. Paridad de despliegue (T1) — **sin esto, nada de lo demás se ve**.
+2. Shell administrativo multiempresa (T2) — el corazón del «producto multiempresa» del propietario.
+3. Exposición/navegación (T3) — que cada rol vea su producto.
+4. Decisiones + empresas (T4).
+5. Verificación y guardia (T5) — continuo desde ya.
+
+No se implementa ninguno. **Primer tranche recomendado: `GA-FE-01` (paridad de despliegue), y no se inicia aquí.**

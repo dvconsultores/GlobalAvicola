@@ -1,0 +1,7 @@
+# Bundle hashes — auditoría frontend+runtime (2026-09-10)
+deployed (avicola.globaldv.net/assets/index-D5dwMXuP.js, descargado 2026-09-10 21:02 UTC):
+4eb822a57f9a04fd664ef48117968dd6e21df9613b6419146ffba417478c64be  /tmp/deployed_bundle.js
+local build HEAD 3808ed5 (vite build, dist/assets/index-Cl0MIg8E.js):
+5afa1a37594924bfc03575d5ede6d72689e32caf6c4699629c4f2b6f448b8733  frontend/dist/assets/index-Cl0MIg8E.js
+deployed index.html (fetch 21:02 UTC, Last-Modified 2026-09-05 14:09:27 GMT):
+61a41cb5ce8a8fd13a9e2fbdca08c61cbc5ec7c31aaceb6655a5e320cbdffb57  /tmp/deployed_index.html

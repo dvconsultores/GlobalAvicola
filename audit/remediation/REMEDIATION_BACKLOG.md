@@ -1545,3 +1545,90 @@ WAVE B   IN PROGRESS         36 ítems (canónico) · 24 cerrados · 4 parciales
 
 Evidencia: `WAVE_B_TRANCHE_14_SUBMOVEMENT_STRUCTURAL_TENANCY_EVIDENCE.md`. Recuento canónico de salida: **36 · 24 · 4 · 8** · P1 0 · P2 5 (`R-142` · `R-144` · `R-147` · `R-148` · `R-164`) · P3 3
 (`R-153` · `R-156` · `R-177`) · bloqueados por decisión 5 · `BLOCKED_RUNTIME` 1 · decisiones 10. Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211.
+
+---
+
+# AUDITORÍA MAESTRA FRONTEND + RUNTIME DESPLEGADO — reconciliación (2026-09-10 · AUDIT ONLY)
+
+Base auditada: `3808ed5` (`main` · limpio · local == remoto; el encargo llegó rotulado `6ffd73c`, se audita
+contra la verdad presente del repositorio y se registra el delta). Runtime: `avicola.globaldv.net` (ENV-01).
+Artefactos completos en `audit/frontend-runtime/`. **No se implementó, remedió ni modificó código de producto.**
+Esta sección **añade** capa de reconciliación: no reescribe ninguna línea anterior.
+
+## `R-99` · causa raíz demostrada (el frontend congelado tiene un mecanismo reproducible)
+
+```
+CAUSA RAÍZ   `tsc -b` rojo en `main` desde `4386f87` (2026-09-06) × `frontend/Dockerfile` = `RUN npm run build`
+             (`tsc -b && vite build`). Cada build de imagen de frontend falla en CI → no hay imagen nueva →
+             Watchtower no recibe nada → el artefacto servido no cambia desde el 2026-09-05 14:09:27 GMT.
+EVIDENCIA    ① f46cb13 (commit del artefacto servido): `tsc -b --noEmit` → exit 0 (worktree temporal).
+             ② 4386f87 retira las pestañas «por lote / por usuario» de `AuditPage.tsx` y deja `User, Database`
+                en el import → 2 × TS6133 (`noUnusedLocals: true`) → `tsc` RED.
+             ③ 950bb21 añade 4 diagnósticos más en `LotFormPage.tsx` (areas/setAreas/areaRes, índice de tupla).
+             ④ Los 15 commits de frontend posteriores al congelamiento: `tsc -b` RED en 15/15.
+             ⑤ Fingerprint re-medido el 2026-09-10: `Last-Modified` 2026-09-05 14:09:27 GMT, `index-D5dwMXuP.js`
+                (idéntico al del 2026-09-07) ≠ build local `index-Cl0MIg8E.js`. Hashes en el artefacto de evidencia.
+CONSECUENCIA 15 entregas de frontend no visibles (roles, maestros, curvas, notificaciones, áreas, agua, plan de
+             abuelas, cuadre B01, B13, catálogo de incubadora, despacho fértil, filtros de auditoría, UX de
+             denegación…). Y tres flujos del runtime compartido HOY EN 400 contra el backend nuevo:
+               recepción de reproductoras → BR-20 · nacimiento en incubadora → BR-21 · importación de abuelas → BR-22.
+ACOTAMIENTO  La causa NO es caché del cliente ni Watchtower ni etiqueta :latest (el backend sí se despliega en cada
+             entrega). Tampoco exige tocar EX-01: se corrige en el árbol de código (los 6 errores de R-158).
+DISPOSICIÓN  El hallazgo pasa de «BLOCKED_BY_OUT_OF_SCOPE_DEPLOYMENT · no tocar» a **remediable en alcance**:
+             eliminar los 6 errores de `R-158` restituye `npm run build`; el pipeline normal vuelve a desplegar.
+             Toda la evidencia y el orden propuesto: `audit/frontend-runtime/DEPLOYMENT_FRONTEND_FINGERPRINT.md`
+             y `MASTER_FRONTEND_REMEDIATION_ROADMAP.md` (tranche recomendado `GA-FE-01`, NO iniciado).
+```
+
+## `R-158` · normalización de impacto (sin cambio de severidad histórico)
+
+Los 6 errores de `tsc` estaban registrados como «P2 preexistente de quality gates». La auditoría demuestra que
+**bloquean todo despliegue de frontend** (mecanismo de `R-99`). Se documenta el impacto; la severidad formal se
+deja al programa (propuesta: P2 → **P1 operativo** hasta restaurar el build).
+
+## `R-181` · NUEVO · el envío/reenvío explícito a revisión no tiene control en la interfaz
+
+```
+ID            R-181 (siguiente libre tras R-180; ratificación del programa pendiente)
+SEVERIDAD     P2
+TÍTULO        `POST /operations/{id}/submit` (enviar a revisión / reenviar un devuelto o rechazado) no tiene
+              ningún control en la interfaz: `operationsService.submit` no tiene llamadores en todo el historial
+              del frontend; 0 refs `/submit` en el bundle desplegado; sin claves i18n; los E2E lo suplen por API.
+RAÍZ          vertical de UI nunca cableada — clase distinta de `R-98`/`R-119` (no es permisos) y de `R-135`
+              (que cerró el backend, `OD-17.b`).
+REQUISITO     `docs/12 §2` («Devuelto → Operador reenvía»; «Rechazado → Operador reenvía (corregido)») · `OD-17.b` · `spec §4.10`.
+BACKEND       IMPLEMENTED y desplegado — sin trabajo.
+FRONTEND      control «Enviar a revisión / Reenviar» (detalle y móvil) + feedback de estado.
+DEPENDENCIAS  ninguna (no fase 9, no decisión del propietario) · Ola E — puede viajar con `T-040-23`.
+EVIDENCIA     `audit/frontend-runtime/MASTER_FRONTEND_RUNTIME_AUDIT_EVIDENCE.md §34`.
+```
+
+## Deduplicación y alcance de esta auditoría
+
+```
+R-98 / R-119   vigentes (0 `hasPermission`; menú estático; `ProtectedRoute.roles` muerto) — no se duplican.
+R-135          su frontera backend sigue válida; la vertical UI ausente se registra como R-181 (raíz distinta).
+R-140          su parte «motivo → vertical de UI» sigue OPEN como estaba; no se toca.
+R-124 / AOD-06 · R-153 / AOD-25   clasificaciones OWNER_DECISION_REQUIRED referenciadas, no duplicadas.
+GA-REM-040     fase 9: FRONTEND_MISSING en 5 capacidades + reverso; congelada por autorización del propietario.
+GA-REM-041/OD-19   pantalla de reverso aplazada a fase 9 (ya declarado por el programa) — referenciado.
+CERTIFICACIONES   reconciliación de frontera en `CERTIFICATION_SCOPE_RECONCILIATION.md`; ningún cierre reescrito.
+```
+
+## Conteo de la auditoría (invariante verificado por script)
+
+```
+Capacidades user-visible ......... 38   ·  clasificadas 23  ·  bloqueadas por auth 15 (AUTHENTICATED_RUNTIME_BLOCKER)
+IMPLEMENTED_AND_VISIBLE .......... 0    IMPLEMENTED_BUT_NOT_EXPOSED ... 1
+FRONTEND_MISSING ................. 7    DEPLOYMENT_STALE .............. 13
+BROKEN_FLOW (primario) ........... 0    OWNER_DECISION_REQUIRED ....... 2
+23 = 0 + 1 + 7 + 13 + 2 ✓
+Hallazgos nuevos: R-181 (P2). Addenda: R-99 (causa raíz) · R-158 (impacto). Ningún otro ID.
+```
+
+## Solicitud al propietario (bloqueo de la fase autenticada)
+
+Cuentas **de prueba autorizadas** del entorno compartido para ejecutar la fase 7 del plan: Super Admin ·
+Administrador de Accesos · Supervisor Avícola · Operador de Granja · Contraloría · usuario multiempresa ·
+usuario sin unidades (zero-BU); wish: empresas con unidades en estados mixtos y concesiones mixtas.
+Sin ellas, 15 capacidades y los journeys J01–J18 quedan `BLOCKED_AUTH` por diseño del encargo (§38: no se adivina).
