@@ -309,3 +309,10 @@ identificadores AVI-*  introducidos: 0  (el único existente es un placeholder p
 ```
 
 `GA-REM-020` es una **validación documental**. No transformó nada en rediseño.
+
+## Correcciones del tranche 8 (2026-09-10)
+
+- `CV-F07` decía «`bird_reception` con distribución multi-galpón y **validación ±10 %**»: el ±10 % era un aviso de cliente sin fuente,
+  contrario a `OD-04` (`R-169`); se retira (`GA-REM-035-A`). La validación de cantidades es `BR-18` (backend).
+- `CV-D23` daba por «COVERED» sanos/débiles al nacer por las etiquetas del formulario; el modelo no los tenía y el formulario **duplicaba**
+  los nacidos (`R-170`). Cobertura real tras `GA-REM-021-C`: `chicks_healthy`/`chicks_weak` en el evento; `B13` cerrado en el tranche 8.

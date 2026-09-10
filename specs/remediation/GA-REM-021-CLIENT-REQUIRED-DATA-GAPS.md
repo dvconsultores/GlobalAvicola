@@ -413,3 +413,104 @@ permanente del tranche 7 §5). Migración **solo tras este commit de spec**.
 `R-159`/`R-160` · `R-162`/`R-163` · `R-139` 35/35 · `R-165` · recepción contra OC 7/7 · linaje de recepción · `test_clean_baseline` ·
 `test_time_determinism` · guardianes exactos · regresión completa **leída** · `vitest` · `tsc` 6 · `B01` y `B02` cerrados (técnico) ·
 `GA-REM-021` sigue **PARTIAL** (`B03`, `B04`, `B13`, `R-156`) · certificación de proceso `BLOCKED_RUNTIME`.
+
+---
+
+# Enmienda C · pre-flight de consistencia (`R-167` · `R-169` · `R-168`) + `B13` sanos/débiles al nacer + `B03` a decisión (2026-09-10 · WAVE B tranche 8)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-021-C` · `REQUIRED OPERATIONAL DATA` + `DATA INTEGRITY` · **Estado** `SPEC_READY` |
+| **Pre-flight** | `R-167` **NOT_REPRODUCED** (`R167_ARRIVAL_MORTALITY_ACCOUNTING_MATRIX.md`; prueba `test_r167_…` verde: la mortalidad al arribo tiene efecto productivo cero, las alojadas entran una vez; residuo = doble captura por el operador, instrucción de proceso; KPI → ola C) · `R-169` **ACTIVE_UI_CLASSIFICATION**, P2, corregido por **`GA-REM-035-A`** (era cantidad vs OC, no peso) · `R-168` **ACTIVE DEFECT** (pérdida silenciosa de «Muestra tomada»), P2, corregido aquí (§C.2) · **`R-170`** nuevo, **P1**, corregido por **`GA-REM-005-C`** (`BR-21`) antes de `B13` · `R-171` nuevo, P2, registrado (incubadora sin descarte/mortalidad en el catálogo) |
+| **`B13`** | `H360-B13` (P2): «Número de pollitos sanos / débiles» (`Bases` p.9) · matriz `GA_REM_021_B13_BIRTH_CLASSIFICATION_MATRIX.md` · gobernado salvo la igualdad de la partición (`AOD-23`, endurecimiento posterior) |
+| **`B03`** | `H360-B03` (P2): **`OWNER_DECISION_REQUIRED` (`AOD-22`)** + dependencia `AOD-19` (unidades) · matriz `GA_REM_021_B03_FEED_TRANSFER_MATRIX.md` · **sin código** |
+| **Modo** | `B13 ONLY` (+ `R-170`, `R-169`, `R-168`) — `B03` y `B13` son independientes; no se fuerza la simetría |
+| **Reglas resueltas por evidencia** | `RR-14` (nacidos = Σ filas, una por sexo, sin fila total) · `RR-15` (sanos y débiles son atributos disjuntos de los nacidos, `≤`, sin efecto en el saldo; débil ≠ descarte) — `RC-12` |
+| **Excluido** | `R-161` · `R-164` · `R-166` · `R-140`/`R-154` residuales · `R-136` SAP · `B04` (`AOD-14`) · `B03` (`AOD-22`) · `R-156` (`AOD-20`) · `R-171` · `R-142` · `R-144` · `R-147` · `R-148` · `R-152` · `R-153` · ola C (KPI: % sanos, eclosión, FCR, AFCR, mortalidad, agua, peso, vacunación) · fase 9 · SAP (inventario, STO, documentos) · valoración de alimento · reescritura de la contabilidad de nacimientos · rediseño de frontend · `BU-D10` · `R-158` |
+
+## C.1 `B13` · contrato del nacimiento
+
+1. **Dominio**: `birth_registration` de un lote `hatchery` (Incubadora); ninguna otra unidad nace pollitos.
+2. **Nacidos**: `Σ bird_movements.quantity` (una fila por sexo; `mixed` excluye sexadas; Σ ≥ 1) — `BR-21` (`GA-REM-005-C`, `RR-14`). El total **no** se declara.
+3. **Sanos** (`chicks_healthy`, `int ≥ 0`, explícito): «nacidos sanos y viables». **Débiles** (`chicks_weak`, `int ≥ 0`, explícito): «nacidos débiles o con problemas». Ambos obligatorios en el nacimiento de incubadora (datos diarios de `Bases` p.9); `0` explícito vale; la ausencia no es `0`.
+4. **Identidad**: `chicks_healthy + chicks_weak ≤ nacidos` (derivable: subconjuntos disjuntos del total). La igualdad no se exige (`AOD-23`).
+5. **Relaciones**: débil ≠ descarte ≠ muerto; el descarte sigue siendo `cull_recording` y la mortalidad `mortality_recording`; **viables** = `R-130` sin cambio. Sanos/débiles **no entran en ningún saldo** (`RR-15`).
+6. **Saldo**: los nacidos entran una vez (`BR-21`); `BR-04` acota el despacho contra viables reales.
+7. **`R-161`**: independiente (agregados de aves con bloqueo; sin regla nueva sobre huevos).
+8. **Estado / edición / corrección**: `P-07` sin cambio; `PUT` revalida `≤`; los dos campos son corregibles uno a uno con revalidación (no forman tupla de igualdad); `APPROVED` inmutable (`R-135`/`R-143`).
+9. **Inquilino / unidad / RBAC / auditoría**: cadena certificada; sin permiso nuevo.
+10. **Aplicabilidad**: los campos están **prohibidos** fuera del nacimiento y fuera de la incubadora (`400 BR-21`).
+11. **Fecha**: `event_date`, sin regla propia.
+12. **KPI** «% pollitos sanos» = sanos / nacidos: ola C (`H360-K11`); no se implementa.
+
+## C.2 `R-168` · «Muestra tomada»
+
+La recepción captura **una** muestra (Rec. §6) en el campo de evento `sample_size` que ya existe (`OperationalEventBase`); el formulario deja de
+registrar `bird_movements[i].sample_size` (recepción y distribución), que el esquema descartaba. Backend sin cambio (control: se persiste y se lee).
+
+## C.3 Criterios de aceptación
+
+| AC | Criterio | Contrato |
+|---|---|---|
+| `AC-B13-01` | nacimiento de incubadora con filas ♂ 48 + ♀ 47, sanos 90, débiles 5 → `201`; se persisten y se leen | `201` |
+| `AC-B13-02` | negativo, decimal o no numérico → `422` | `422` |
+| `AC-B13-03/04` | sanos + débiles > nacidos → `400 BR-21`; sanos o débiles ausentes → `400 BR-21`; Σ nacidos = 0 → `400 BR-21`; partición completa (95 + 0) → `201`; incompleta (80 + 5 ≤ 95) → `201` | `400`/`201` |
+| `AC-B13-05` | otra empresa → `400 BR-07` | `400` |
+| `AC-B13-06` | incubadora apagada: global situada → `403`; concesión histórica → `BR-07` | `403`/`400` |
+| `AC-B13-07` | sin la unidad → `BR-07` | `400` |
+| `AC-B13-08` | sin `operations:create` (sin permiso, Administrador de Accesos, control-lectura) → `403` | `403` |
+| `AC-B13-09` | global sin contexto → `BR-07` | `400` |
+| `AC-B13-10` | empresa y unidad del servidor; `company_id`/`business_unit_id` del cuerpo se ignoran | control |
+| `AC-B13-11` | `PUT` que supera los nacidos → `400 BR-21`; `PUT` coherente → `200`; corrección que supera → `400`; corrección coherente → `201` con `correction_logs`; viables intactos | edición |
+| `AC-B13-12/13` | viables = saldo = Σ filas (95); sanos/débiles no suman ni restan; sin sexar (`mixed` 60) → 60; el KPI de incubadora cuenta 95 | saldo |
+| `AC-B13-14` | auditoría `created` en el alta; la denegada no audita | auditoría |
+| `AC-B13-15` | campos en `chick_dispatch` → `400`; nacimiento en lote de reproductoras con campos → `400` (incubadora únicamente) | por unidad |
+| `AC-R168-01` | el formulario de recepción registra `sample_size` de evento y ningún `bird_movements.${i}.sample_size` | estático |
+| `AC-R168-02` | una recepción con `sample_size` lo persiste y lo devuelve (control backend) | `201` |
+
+`AC-R170-01…07` en `GA-REM-005-C`; `AC15…AC17` (`R-169`) en `GA-REM-035-A`.
+
+## C.4 Frontend (vertical mínima)
+
+Nacimiento: filas «Nacidos machos», «Nacidos hembras», «Nacidos sin sexar» (cualquier subconjunto) + campos «Sanos» y «Débiles» + línea
+derivada «Nacidos = Σ»; desaparecen la fila «Total nacidos» y la fila «Débiles» como nacidos. Recepción: campo «Muestra tomada» de evento;
+sin campos por galpón; sin recuadro ±10 % ni texto inyectado. Textos es/en. Sin pantalla nueva.
+
+## C.5 Migración
+
+`x4y5z6a7b8c9_birth_classification.py` (revisa `w3x4y5z6a7b8`): `operational_events.chicks_healthy INTEGER NULL`, `chicks_weak INTEGER NULL`;
+sin relleno; bajada guardada. `RQ-03`: sin recurso nuevo (`operational_events`, clasificación intacta). Guardianes de cabeza →
+`x4y5z6a7b8c9`; `test_clean_baseline` y `test_time_determinism` en el verde dirigido.
+
+## C.6 Tareas
+
+`T-021-C1` migración + modelo + `Base`/`Update` · `T-021-C2` `validate_birth_registration` (`BR-21`: filas + sanos/débiles) en alta, edición y
+corrección · `T-021-C3` formulario de nacimiento · `T-021-C4` formulario de recepción (`R-168`, `R-169`) · `T-021-C5` pruebas
+`test_birth_classification.py`, contrato estático del formulario, `R-168` backend; fixtures de nacimientos de incubadora (solo setup).
+
+## C.7 Sensibilidad
+
+| Mut. | Retira | Debe caer |
+|---|---|---|
+| `S-R170-1` | la regla de filas (`mixed` exclusivo, una por sexo, Σ ≥ 1) | `AC-R170-01…04` |
+| `S-B13-1` | `sanos + débiles ≤ nacidos` | `AC-B13-03` |
+| `S-B13-2` | `ge=0` del esquema (negativos admitidos) | `AC-B13-02` |
+| `S-B13-3` | los sanos entran también al saldo (segunda contabilidad) | `AC-B13-12` |
+| `S-B13-4` | confiar en un total del cliente | **N/A**: no hay total en el cuerpo (los nacidos son Σ filas) |
+| `S-B13-5` | habilitación de unidad (guarda compartida) | `AC-B13-06` |
+| `S-B13-6` | concesión del actor | `AC-B13-06/07` |
+| `S-B13-7` | `operations:create` en la ruta | `AC-B13-08` |
+| `S-B13-8` | revalidación en corrección | `AC-B13-11` |
+| `S-B13-9` | obligatoriedad y aplicabilidad (campos en cualquier evento/unidad; ausentes admitidos) | `AC-B13-03/15` |
+| `SEC-S1` | la empresa (cuatro capas) | `AC-B13-05` con fila observada |
+| `S-R169-1` | reintroducir el umbral en el formulario | `AC15/16` (contrato estático) |
+| `S-R169-2` | frontend ±10 % de peso contra curva del backend | **N/A** (nunca fue de peso) |
+| `S-R168-1` | volver a registrar la muestra por galpón | `AC-R168-01` |
+
+## C.8 Definición de terminado
+
+`AC-R170-01…07`, `AC-B13-01…15`, `AC-R168-01/02`, `AC15…17` verdes · rojo válido · sensibilidad válida (N/A declaradas) · `R-130` 21/21 ·
+`B01` 9/9 · `B02` 8/8 · `B05` 16/16 · reversos · `R-135`/`R-143` · `R-159`/`R-160` · `R-162`/`R-163` · `R-139` · `R-165` · `OD-14`/`OD-16` ·
+KPI incubadora · genética · `test_clean_baseline` · `test_time_determinism` · guardianes exactos · regresión completa **leída** · `vitest` ·
+`tsc` 6 · `B13`, `R-170`, `R-169`, `R-168` cerrados (técnico) · `R-167` cerrado (no reproducido) · `B03` `OWNER_DECISION_REQUIRED` ·
+`GA-REM-021` sigue **PARTIAL** (`B03`, `B04`) · certificación de proceso `BLOCKED_RUNTIME`.

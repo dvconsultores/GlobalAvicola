@@ -157,3 +157,27 @@ garantía bajo concurrencia, es un requisito transversal a todos los saldos, no 
 - Sensibilidad demostrada y revertida.
 - `P-01`, `P-03` y `P-06` **reevaluados uno a uno**, no certificados por alcance.
 - Regresión completa sin fallos nuevos.
+
+---
+
+# Enmienda A · la interfaz no presenta una tolerancia que la decisión no admite (2026-09-10 · WAVE B tranche 8 · `R-169`)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-035-A` · `UI CONSISTENCY WITH OD-04` · **Estado** `SPEC_READY` |
+| **Hallazgo** | `R-169` (P2): `OperationFormPage.tsx` clasifica la recepción como «diferencia superior al 10 %» frente a la cantidad declarada de la OC (recuadro ámbar) y, al enviar, **inyecta un texto «⚠️ ALERTA …» en `observations`** cuando \|recibido − declarado\| > 10 %. Inventario completo: `audit/remediation/R169_UNSOURCED_TOLERANCE_INVENTORY.md` |
+| **Autoridad** | `OD-04`: entregas parciales legítimas; `AC11`: sin tolerancia; `BR-18` en el backend es la única verdad de cantidades. Ninguna fuente de nivel 1-4 define un ±10 %. `CV-F07` de `FUNCTIONAL_COVERAGE_MATRIX` lo contaba como «validación»: error documental |
+| **Cambio** | se retiran el recuadro ámbar y la inyección en `observations`, con sus textos es/en; la tarjeta informativa de la OC (cantidad declarada, fecha de despacho, pesos declarados) se conserva **sin umbral**. El backend no cambia |
+| **Sin cambio** | `AC01`…`AC14` · `validate_oc_limit` · `R-156` (pesos declarados vs granja, `AOD-20`) · `thermalCurves.ts` (`R-147`/`AOD-19`) |
+
+## A.1 Criterios
+
+| AC | Criterio |
+|---|---|
+| `AC15` | el formulario de recepción no calcula ni muestra ninguna diferencia porcentual con umbral frente a la cantidad declarada (`pctDiff`, `outOfRange`, `qtyOutOfRange*` no existen) |
+| `AC16` | el envío de una recepción no altera `observations` con textos generados por umbral (`sapQtyAlert` no existe); lo que el operador escribe es lo que se persiste |
+| `AC17` | la tarjeta de la OC sigue mostrando la cantidad declarada sin veredicto; `BR-18` sigue rechazando el exceso en el backend (`test_purchase_order_receipt.py` 7/7) |
+
+Pruebas: `frontend/src/pages/operations/__tests__/receptionFormContract.test.ts` (contrato estático del formulario) · `test_purchase_order_receipt.py`.
+Sensibilidad `S-R169-1`: reintroducir el umbral en el formulario → contrato estático rojo. `S-R169-2` (frontend usa ±10 % mientras el
+backend usa la curva): **N/A** — el ±10 % nunca fue de peso; la evaluación de peso ya consume el backend (`AC-FE14`).

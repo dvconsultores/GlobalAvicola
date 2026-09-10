@@ -407,3 +407,19 @@ coherente con «la app debe capturar la realidad de granja» (nivel 2, p.1).
 > extrapolación → `NO_REFERENCE` declarado). Cada fila ♀/♂ se evalúa contra la misma curva (el estándar de `OD-06` no distingue sexo).
 > Fuera de rango se **persiste, se clasifica y alerta**; no bloquea el alta ni la aprobación. El peso declarado por el proveedor es
 > `R-156` (`AOD-20`) y no participa. No aplica a engorde (`§4.8` sin alertas), progenitoras ni incubadora.
+
+## 12. `RC-12` · nacimientos: una contabilidad, dos atributos (`GA-REM-021 B13` · `R-170`, 2026-09-10)
+
+**Conflicto.** La UI de nacimiento (nivel 5) modelaba «Total nacidos», «Machos viables», «Hembras viables» y «Débiles» como cuatro filas de
+`bird_movements`, y el saldo (nivel 4, `GA-REM-005-B`) suma todas las filas: un total y su desglose se contaban dos veces (`R-170`,
+observado: 100 pollitos → viables 200). `Bases` p.9 (nivel 2) define **un** total («cantidad total de pollitos nacidos») y dos
+subconjuntos disjuntos de ese total («nacidos sanos y viables», «nacidos débiles o con problemas»); no define ni «machos viables» ni una
+fila «total». **Corte:** nivel 2 sobre nivel 5.
+
+> **RR-14.** Los nacidos son `Σ bird_movements.quantity` del `birth_registration`, con **una fila por sexo** (`male`, `female`, `mixed`) y
+> `mixed` excluyente con las filas sexadas; no existe fila «total»: el total se deriva. Un nacimiento sin nacidos no es un nacimiento (Σ ≥ 1).
+
+> **RR-15.** «Sanos» y «débiles» son **atributos** del nacimiento (`chicks_healthy`, `chicks_weak`), subconjuntos disjuntos de los nacidos
+> (`sanos + débiles ≤ nacidos`) que **no entran en ningún saldo**; «débil» no es descarte ni mortalidad (el descarte sigue siendo
+> `cull_recording`, `Rec. §12`; la mortalidad, `mortality_recording`). La igualdad `sanos + débiles = nacidos` no la afirma ninguna fuente
+> (`AOD-23`). Sin sanos/débiles por sexo (`GA-REM-005:420`).

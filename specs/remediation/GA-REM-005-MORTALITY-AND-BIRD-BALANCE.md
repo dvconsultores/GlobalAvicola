@@ -488,3 +488,42 @@ petición · **frontend**: ninguno · **SAP**: ninguno.
 `AC-R130-01…15` verdes · rojo previo documentado por criterio · `S1–S7` válidas o `N/A` con motivo ·
 regresión completa verde · vitest y `tsc` sin cambio de línea base · evidencia publicada ·
 `R-130 CERRADO` técnicamente; la certificación de proceso (`P-01/03/05/06`) sigue exigiendo E2E (`BLOCKED_RUNTIME`).
+
+---
+
+# ENMIENDA C · `R-170` — UNA SOLA CONTABILIDAD DE NACIMIENTOS (2026-09-10 · WAVE B · tranche 8)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-005-C` · `DATA INTEGRITY` · **Estado** `SPEC_READY` |
+| **Hallazgo** | **`R-170`** (P1, activo, reproducido): el formulario de nacimiento emite «Total nacidos» + machos + hembras + «Débiles» como cuatro filas de `bird_movements`; `get_viable_chick_balance`, `get_current_bird_balance` y `total_chicks_born` suman todas. Observado por API: 100 + 48 + 47 + 5 → `201`, 4 filas, **viables = 200, saldo = 200** para 100 pollitos. `BR-04` admite despachar el doble; el KPI de eclosión se duplica. Sin rama de reglas para `BIRTH_REGISTRATION` (`service.py:852-892`) |
+| **Raíz** | dos contabilidades del mismo hecho (total y desglose) en la misma tabla; ninguna regla fija qué filas son «nacidos» |
+| **Invariante** | **UN HECHO = UN EFECTO**: `NACIDOS = Σ bird_movements.quantity` del nacimiento, con **una fila por sexo** (`male`, `female`, `mixed`) y `mixed` **excluyente** con las filas sexadas; el total no se declara, se deriva |
+| **Relación** | `R-130` intacto (`viables = nacidos − mortalidad − descartes − despachados`); `B13` (`GA-REM-021-C`) añade sanos/débiles como **atributos** que no entran en ningún saldo |
+| **Sin cambio** | `AC-R130-01…15` · `validate_chick_dispatch` · `_suma_neta` · `get_viable_chick_balance` |
+
+## C.1 Regla `BR-21` (nacimiento)
+
+```
+BIRTH_REGISTRATION:
+  Σ quantity ≥ 1                                          (un nacimiento sin nacidos no es un nacimiento)
+  a lo sumo una fila por valor de sex                     (dos filas «mixed» o dos «male» → 400)
+  «mixed» excluye «male»/«female» en el mismo evento       (total + desglose → 400)
+  chicks_healthy + chicks_weak ≤ Σ quantity               (B13; ver GA-REM-021-C)
+en caso contrario → 400 · rule = "BR-21" · el mensaje nombra las filas o los números
+```
+
+## C.2 Criterios de aceptación
+
+| AC | Criterio |
+|---|---|
+| `AC-R170-01` | la forma del formulario (`mixed` 100 + `male` 48 + `female` 47 + `mixed` 5) → `400 BR-21`; cero filas, viables 0 |
+| `AC-R170-02` | `mixed` + filas sexadas → `400 BR-21` |
+| `AC-R170-03` | dos filas del mismo sexo → `400 BR-21` |
+| `AC-R170-04` | Σ = 0 → `400 BR-21` |
+| `AC-R170-05` | nacimiento sexado (48 + 47) → `201`, viables 95, saldo 95; sin sexar (`mixed` 60) → `201`, viables 60 |
+| `AC-R170-06` | el KPI de incubadora (`total_chicks_born`) cuenta Σ filas del nacimiento aprobado, sin inflar |
+| `AC-R170-07` | el formulario de nacimiento no registra una fila «Total nacidos»: filas por sexo + sanos/débiles como datos de evento; el total se muestra derivado |
+
+Sensibilidad `S-R170-1`: retirar la regla de filas → `AC-R170-01/02/03` rojas. Pruebas: `tests/test_birth_classification.py` (R-170) ·
+contrato estático del formulario (`vitest`). Fixtures existentes (una fila `mixed`) siguen válidas.

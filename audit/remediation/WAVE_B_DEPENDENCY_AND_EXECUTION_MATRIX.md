@@ -349,3 +349,29 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   (NO SPEC = NO DEVELOPMENT); el gate documental decide qué recurso es «lote de alimento» y qué es «silo» antes de cualquier código.
   Alternativa sin decisión aparente: R-152 → R-153 (Progenitoras, docs/02 §3.4.1; paso 7 de §3).
 ```
+
+## 18. Tranche 8 · pre-flight (2026-09-10) — alta formal de `R-167…R-171` y recuento canónico
+
+Los hallazgos del tranche 7 estaban «registrados fuera del recuento canónico de 22 hasta su alta formal». Precedente: `R-159…R-166` entraron
+al recuento en su alta (17 → 19 → 22). Se aplica el mismo criterio: **todo hallazgo de ola B registrado en el backlog cuenta**.
+
+| ID | Título | Sev. (normalizada) | Fuente | Ola | Estado al pre-flight | ¿Cuenta? | Padre / spec | Razón |
+|---|---|:--:|---|:--:|---|:--:|---|---|
+| `R-167` | doble contabilización de la mortalidad al arribo | P3 → **NO_DEFECTO** | `B01` (tranche 7) | B | **CERRADO · NOT_REPRODUCED** (prueba `test_r167_…`; `R167_ARRIVAL_MORTALITY_ACCOUNTING_MATRIX.md`) | sí | `GA-REM-021-B` / `R-130` | ninguna ruta descuenta `dead_on_arrival`; residuo = doble captura por el operador (instrucción de proceso; KPI → ola C) |
+| `R-168` | `sample_size` por galpón descartado | P3 → **P2** | `OperationFormPage.tsx:730` | B | OPEN → este tranche | sí | `GA-REM-021-C §C.2` | pérdida silenciosa de «Muestra tomada» (Rec. §6); clase `R-47` |
+| `R-169` | tolerancia ±10 % sin fuente en la recepción (cantidad vs OC; **no** peso) | P3 → **P2** | `OperationFormPage.tsx:384-395, 613-614, 743-751` | B | OPEN → este tranche | sí | `GA-REM-035-A` | segunda definición normativa contraria a `OD-04`; inyecta un veredicto en `observations` |
+| **`R-170`** | **doble contabilidad de nacimientos** (fila «Total» + desglose sumados como nacidos) | **P1** | `OperationFormPage.tsx:1568-1590` · `service.py` sin rama de nacimiento | B | **ACTIVO, REPRODUCIDO** (viables 200 para 100) → este tranche | sí | `GA-REM-005-C` (`BR-21`) | verdad de población; `BR-04` admite despachar el doble; clase `R-130` |
+| **`R-171`** | la etapa de incubadora no ofrece `cull_recording` ni `mortality_recording` (viables ≡ nacidos desde la UI) | P2 | `processCatalog.ts:226-229, 403-412` | B | OPEN (registrado; no se resuelve aquí) | sí | `GA-REM-021` (enmienda pendiente) | `Bases` p.10 y Rec. §12 exigen esas capturas |
+
+```
+TOTAL CANÓNICO ................ 27   (22 + R-167 + R-168 + R-169 + R-170 + R-171; ningún duplicado: R-167 ≠ R-130, R-170 ≠ R-130 (nacimiento, no decremento))
+CERRADOS ......................  9   R-130 · R-135 · R-143 · R-159 · R-160 · R-162 · R-163 · R-165 · R-167 (no reproducido)
+PARCIALES ......................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS ....................... 14   R-142 · R-144 · R-147 · R-148 · R-152 · R-153 · R-156 · R-161 · R-164 (BLOCKED_RUNTIME) · R-166 · R-168 · R-169 · R-170 · R-171
+P1 ABIERTOS ...................  1   R-170          P2 ABIERTOS  10   (R-142 · R-144 · R-147 · R-148 · R-152 · R-161 · R-164 · R-168 · R-169 · R-171)          P3 ABIERTOS  3   R-153 · R-156 · R-166
+DECISIONES DEL PROPIETARIO .....  8   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 (B03) · AOD-23 (B13 igualdad; no bloquea)
+gates .......................... R-167 NOT_REPRODUCED · R-169 ACTIVE_UI_CLASSIFICATION (fix) · R-168 ACTIVE (fix) · R-170 CONFIRMED (fix primero) ·
+                                 B13 gobernado (≤; igualdad AOD-23) · B03 OWNER_DECISION_REQUIRED (AOD-22 + AOD-19) → modo C: B13 ONLY + R-170/R-169/R-168
+corrección documental .......... la fila R-169 del tranche 7 decía «±10 % de peso»: es cantidad vs OC · docs/16:177 (mortalidad al arribo = evento) superada por B01 ·
+                                 FUNCTIONAL_COVERAGE_MATRIX CV-F07 (±10 % como validación) y CV-D23 (sanos/débiles «COVERED» por etiquetas) corregidas
+```
