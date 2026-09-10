@@ -230,7 +230,10 @@ def _cuerpo(esc, lote, tipo, n, *, egg_type="fertile"):
     else:
         cuerpo["egg_movements"] = [{"egg_type": egg_type, "quantity": n}]
     if tipo == "egg_dispatch":
-        cuerpo["destination_farm_id"] = esc["planta_a"]
+        # Destino declarado sin recepción posible: esta suite mide reglas de saldo, no linaje. Con
+        # `planta_a` el despacho se casaba con la recepción de `lh*` y `GA-REM-031-A` (`R-178`) deniega
+        # mover un evento casado antes de mirar el saldo (solo setup; `AC-R173-02/04` intactos).
+        cuerpo["destination_farm_id"] = esc["granja_a"]
     return cuerpo
 
 

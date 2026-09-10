@@ -155,14 +155,13 @@ async def test_no_se_corrige_un_evento_cancelado(auth_headers, client):
 async def test_la_fecha_corregida_sigue_sujeta_a_las_reglas(auth_headers, client):
     """Corregir no es una puerta trasera: `BR-19` sigue aplicándose después.
 
-    Hoy la corrección escribe la fecha sin revalidarla, de modo que puede dejar el evento
-    con una fecha en período cerrado. Se documenta el comportamiento vigente y se traza
-    como `R-45`: revalidar las reglas tras una corrección pertenece a `GA-REM-016`.
+    `R-45` (Wave 2): la corrección escribía la fecha sin revalidarla y podía dejar el evento en
+    período cerrado; la aserción admitía ambos comportamientos. `GA-REM-023-B` (`R-176`, WAVE B
+    tranche 11) hace pasar la corrección por la guarda de edición: ahora se exige el `400` y la
+    fecha intacta (`AC-R176-05`).
     """
     evento = await _evento(client, auth_headers)
     r = await _corregir(client, auth_headers, evento["id"], "event_date", iso_days_ago(400))
     leido = await client.get(f"/api/v1/operations/{evento['id']}", headers=auth_headers)
-    assert (r.status_code, leido.json()["event_date"]) in (
-        (400, evento["event_date"]),            # deseable: la regla se revalida
-        (201, iso_days_ago(400)),               # vigente: se aplica sin revalidar (R-45)
-    )
+    assert (r.status_code, leido.json()["event_date"]) == (400, evento["event_date"]), (r.status_code, r.text)
+    assert r.json().get("rule") == "BR-19"

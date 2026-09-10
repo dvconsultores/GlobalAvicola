@@ -67,11 +67,13 @@ class CorrectionService:
             from ..operations.validators import validate_water_consumption
 
             validate_water_consumption(event.event_type, valor_aplicado, await operaciones._tipo_de_lote(event.lot_id))
-        if data.field_name in ("lot_id", "farm_id", "house_id", "destination_farm_id"):
+        if data.field_name in ("lot_id", "farm_id", "house_id", "destination_farm_id", "event_date", "sap_document_ref"):
             # `GA-REM-005-E` · `R-173` · `AC-R173-11…14`: corregir el lote o la ubicación **es** una
             # reasignación; pasa por la misma guarda que la edición (empresa, unidad, lote activo,
             # fecha, ubicación y regla de saldo, bajo el bloqueo de los lotes). Antes se aplicaba
             # tal cual: un evento podía moverse a un lote de otra empresa o de una unidad apagada.
+            # `GA-REM-023-B` · `R-176` (+ `R-45`): la fecha y el documento SAP también pasan por ella
+            # (`BR-06`, `BR-19`, `BR-11`, `BR-18`): corregir no es una puerta trasera.
             await operaciones.verificar_destino_de_edicion(event, {data.field_name: valor_aplicado})
         setattr(event, data.field_name, valor_aplicado)
         event.version += 1

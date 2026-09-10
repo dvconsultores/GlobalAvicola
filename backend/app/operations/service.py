@@ -1110,6 +1110,66 @@ class OperationsService:
                                      previous_values=previos, new_values={k: _valor_auditable(v) for k, v in cambios.items()})
         return event
 
+    async def _reglas_puras_del_candidato(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
+        """`GA-REM-023-B` · `R-176` (+ `R-45`): paridad de validación **sin repetir el alta**.
+
+        Las reglas del alta que dependen de un campo editable o corregible se reevalúan sobre el
+        **estado candidato** (fila persistida + cambio): `BR-08` (ubicación obligatoria), `BR-06`
+        (fecha vs inicio del lote) y `BR-19` (período cerrado, fecha futura: `R-30`), `BR-11`
+        (documento SAP no duplicado; el validador emite `BR-10`), `BR-17` (capacidad del galpón) y
+        `BR-18` (acumulado de la orden de compra, `OD-04`). Todas son lecturas puras: aquí no se
+        persiste, no se audita `created`, no se crean alertas, notificaciones ni vínculos. `n` sale
+        de los movimientos persistidos, nunca del cliente. Solo corre la regla cuyo campo cambia
+        (sin sobre-validación), después de la cadena de inquilino/unidad y antes del bloqueo.
+        """
+        cand = {c: (cambios[c] if c in cambios else getattr(event, c, None)) for c in ("farm_id", "house_id", "event_date", "sap_document_ref")}
+        tipo = event.event_type
+        tipo_txt = tipo.value if hasattr(tipo, "value") else str(tipo)
+        if "farm_id" in cambios or "house_id" in cambios:
+            await validate_farm_house(tipo_txt, cand["farm_id"], cand["house_id"])
+        if "event_date" in cambios:
+            if lote_destino is not None:
+                await validate_event_date(self.db, lote_destino, cand["event_date"])
+            await validate_period_open(self.db, cand["event_date"])
+        if (("sap_document_ref" in cambios or "lot_id" in cambios) and cand["sap_document_ref"]
+                and lote_destino is not None and tipo != models.EventType.BIRD_RECEPTION):
+            await validate_sap_document_unique(self.db, lote_destino, tipo, cand["sap_document_ref"], exclude_event_id=event.id)
+        if tipo in (models.EventType.BIRD_RECEPTION, models.EventType.BIRD_DISTRIBUTION):
+            n = sum(bm.quantity for bm in event.bird_movements)
+            if "house_id" in cambios and cand["house_id"] and n > 0:
+                await validate_house_capacity(self.db, cand["house_id"], n)
+            if "sap_document_ref" in cambios:
+                await validate_oc_limit(self.db, cand["sap_document_ref"], n, company_id=self.company_id, exclude_event_id=event.id)
+
+    async def _exigir_sin_vinculo_efectivo(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
+        """`GA-REM-031-A` · `R-178`: un evento casado en un vínculo de trazabilidad no se reasigna.
+
+        `OD-10 §4bis`: sin cascada automática y ante la duda se deniega; `GA-REM-031 AC03`: el vínculo
+        refleja los lotes de sus eventos. Cambiar el lote o el destino declarado de un despacho con
+        vínculo, o el lote de una recepción cuyo despacho sigue vigente, dejaría el vínculo con una
+        orientación falsa o reinterpretaría la historia. El camino es anular (`R-173`) y registrar
+        de nuevo: el emparejamiento crea el vínculo correcto. Sin vínculo, la edición sigue `R-173`.
+        """
+        cambia_lote = "lot_id" in cambios and lote_destino != event.lot_id
+        cambia_destino = "destination_farm_id" in cambios and cambios["destination_farm_id"] != event.destination_farm_id
+        if not (cambia_lote or cambia_destino):
+            return
+        from ..lots.models import ChickBatch, EggBatch
+
+        for modelo in (EggBatch, ChickBatch):
+            como_despacho = (await self.db.execute(
+                select(func.count()).select_from(modelo).where(modelo.dispatch_event_id == event.id))).scalar() or 0
+            como_recepcion_vigente = (await self.db.execute(
+                select(func.count()).select_from(modelo)
+                .join(models.OperationalEvent, models.OperationalEvent.id == modelo.dispatch_event_id)
+                .where(modelo.reception_event_id == event.id,
+                       models.OperationalEvent.status != models.EventStatus.CANCELLED))).scalar() or 0
+            if como_despacho or como_recepcion_vigente:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El evento participa en un vínculo de trazabilidad vigente; para cambiar su lote o su destino anúlelo y regístrelo de nuevo",
+                )
+
     async def verificar_destino_de_edicion(self, event: models.OperationalEvent, cambios: dict) -> int | None:
         """La guarda central de toda mutación posterior al alta (`PUT` y `POST /corrections`).
 
@@ -1142,6 +1202,8 @@ class OperationsService:
             await self.exigir_unidad_operativa(lot_id=lote_destino)
         else:
             await self.exigir_unidad_operativa(event=event)
+        await self._reglas_puras_del_candidato(event, cambios, lote_destino)
+        await self._exigir_sin_vinculo_efectivo(event, cambios, lote_destino)
         if "lot_id" in cambios and lote_destino != event.lot_id and tiene_efecto_en_saldo(event.event_type):
             await bloquear_saldos_de_lotes(self.db, event.lot_id, lote_destino)
             await self.db.refresh(event, attribute_names=["status", "lot_id"])

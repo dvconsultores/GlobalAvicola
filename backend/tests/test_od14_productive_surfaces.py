@@ -227,6 +227,7 @@ async def esc(test_database_url):
         await c.execute(text("DELETE FROM evidences WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)"), p)
         await c.execute(text("DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)"), p)
         await c.execute(text("DELETE FROM lots WHERE lot_code LIKE :p"), p)
+        await c.execute(text("DELETE FROM productive_phases WHERE name LIKE :p"), p)  # `GA-REM-015-B` (`R-175`): la fase creada por la fixture se retira
         await c.execute(text("DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)"), p)
         await c.execute(text("DELETE FROM farms WHERE name LIKE :p"), p)
         await c.execute(text("DELETE FROM incubators WHERE hatchery_id IN (SELECT id FROM hatcheries WHERE name LIKE :p)"), p)

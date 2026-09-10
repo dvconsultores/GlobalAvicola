@@ -192,6 +192,7 @@ async def esc(test_database_url):
             "DELETE FROM opening_balances WHERE lot_id IN (SELECT id FROM lots WHERE lot_code LIKE :p)",
             "DELETE FROM lot_phases WHERE lot_id IN (SELECT id FROM lots WHERE lot_code LIKE :p)",
             "DELETE FROM lots WHERE lot_code LIKE :p",
+            "DELETE FROM productive_phases WHERE name LIKE :p",  # `GA-REM-015-B` (`R-175`): la fase creada por la fixture se retira
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",

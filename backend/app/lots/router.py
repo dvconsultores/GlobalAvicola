@@ -188,13 +188,52 @@ async def get_lot_traceability(
         bird_type=lot.bird_type.value if lot.bird_type else None,
         status=lot.status.value if hasattr(lot.status, "value") else str(lot.status),
     )
+    # `GA-REM-031-A` · `R-178` · `OD-10 §2.5`: el árbol muestra el linaje **efectivo**, derivado del
+    # estado de los eventos del par; la fila se conserva (historia, `BR-10`).
+    estados = await _estado_de_eventos(db, egg_sent + egg_recv + chick_sent + chick_recv)
     return schemas.TraceabilityNode(
         lot=lot_ref,
-        egg_batches_sent=[schemas.EggBatchRead.model_validate(b) for b in egg_sent],
-        egg_batches_received=[schemas.EggBatchRead.model_validate(b) for b in egg_recv],
-        chick_batches_sent=[schemas.ChickBatchRead.model_validate(b) for b in chick_sent],
-        chick_batches_received=[schemas.ChickBatchRead.model_validate(b) for b in chick_recv],
+        egg_batches_sent=_vinculos_efectivos(egg_sent, estados, schemas.EggBatchRead, "emisor"),
+        egg_batches_received=_vinculos_efectivos(egg_recv, estados, schemas.EggBatchRead, "receptor"),
+        chick_batches_sent=_vinculos_efectivos(chick_sent, estados, schemas.ChickBatchRead, "emisor"),
+        chick_batches_received=_vinculos_efectivos(chick_recv, estados, schemas.ChickBatchRead, "receptor"),
     )
+
+
+async def _estado_de_eventos(db: AsyncSession, vinculos) -> dict:
+    """Estado de los eventos de despacho y recepción referenciados por los vínculos (una consulta)."""
+    from sqlalchemy import select
+
+    from ..operations.models import OperationalEvent
+
+    ids = {i for v in vinculos for i in (v.dispatch_event_id, v.reception_event_id) if i is not None}
+    if not ids:
+        return {}
+    filas = await db.execute(select(OperationalEvent.id, OperationalEvent.status).where(OperationalEvent.id.in_(ids)))
+    return {fila_id: estado for fila_id, estado in filas.all()}
+
+
+def _vinculos_efectivos(vinculos, estados: dict, lectura, lado: str) -> list:
+    """`GA-REM-031-A` §A.1.1: un traspaso cuyo despacho está anulado desaparece de ambos lados
+    (`OD-10 §2.5`); uno cuya recepción está anulada queda **incompleto** para el emisor (`GA-REM-008 AC04`)
+    y desaparece para el receptor. Los vínculos manuales (sin eventos) se listan siempre. Solo lectura:
+    la fila no cambia.
+    """
+    from ..operations.models import EventStatus
+
+    salida = []
+    for v in vinculos:
+        if v.dispatch_event_id is not None and estados.get(v.dispatch_event_id) == EventStatus.CANCELLED:
+            continue
+        recepcion_anulada = v.reception_event_id is not None and estados.get(v.reception_event_id) == EventStatus.CANCELLED
+        if recepcion_anulada and lado == "receptor":
+            continue
+        item = lectura.model_validate(v)
+        if recepcion_anulada:
+            item.quantity_received = None
+            item.reception_date = None
+        salida.append(item)
+    return salida
 
 
 @router.post("/egg-batches", response_model=schemas.EggBatchRead, status_code=201)

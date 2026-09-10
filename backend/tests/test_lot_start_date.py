@@ -62,6 +62,10 @@ async def motor(test_database_url):
             await c.execute(delete(OpeningBalance).where(OpeningBalance.lot_id.in_(ids)))
             await c.execute(delete(LotPhase).where(LotPhase.lot_id.in_(ids)))
             await c.execute(delete(Lot).where(Lot.id.in_(ids)))
+        # `GA-REM-015-B` (`R-175`): la fase productiva que el escenario creó se retira, por prefijo,
+        # después de los lotes que la referencian; sin ella, `test_clean_baseline` contaba 5 fases.
+        from app.masters.models import ProductivePhase
+        await c.execute(delete(ProductivePhase).where(ProductivePhase.code.like(f"{PREFIJO}%")))
     await e.dispose()
 
 
