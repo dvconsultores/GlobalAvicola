@@ -181,3 +181,34 @@ Cada dependencia temporal encontrada se clasifica en `INTENTIONALLY_FIXED_DATE`,
 ## Definition of Done
 
 - [ ] `AC09`–`AC14` verificados · [ ] `T-028-01`…`05` en verde · [ ] Clasificación documentada · [ ] Línea base reproducible tras el 2026-09-21 · [ ] Certification report
+
+---
+
+# ADDENDUM `R-175` — AISLAMIENTO DE LAS FASES PRODUCTIVAS QUE CREAN LAS SUITES (2026-09-10 · WAVE B · tranche 11)
+
+| Campo | Valor |
+|---|---|
+| **Addendum** | `GA-REM-015-B` · `QA SPEC` (validez de pruebas) · **Estado** `SPEC_READY` (tranche 11) |
+| **Hallazgo** | `R-175` (P3): `test_lot_start_date`, `test_lots_bu_enforcement` y `test_od14_productive_surfaces` crean una `ProductivePhase` cuando no existe ninguna y no la retiran; `test_clean_baseline::test_t_025_07` cuenta las fases de toda la base (`== 4`) y cae («las fases se duplicaron: 5») en cualquier invocación que ejecute una de esas suites antes que el baseline |
+| **Por qué ahora** | prompt del tranche 11 §49: el residuo produjo un **rojo falso** en el verde dirigido de `R-176`/`R-178` (orden no alfabético: `test_lot_start_date` antes que `test_clean_baseline`) → `R-175` pasa a **BLOQUEANTE** y se formaliza la remediación mínima del arnés bajo esta spec (`R-28`: «el defecto está en los tests, `BR-19` no se toca» es el precedente) |
+| **Principio** | cada suite retira en su teardown **exactamente** lo que creó, por prefijo propio (patrón ya certificado en `test_opening_balance.py:73`); ningún guardián se relaja (`test_t_025_07` sigue contando `== 4`); ninguna regla de dominio cambia |
+| **Fuera** | reescritura del arnés · fixtures compartidas · aleatorización del orden · `R-166` |
+
+## Criterios de aceptación
+
+| AC | Criterio |
+|---|---|
+| `AC-R175-01` | las tres suites borran en su teardown la `ProductivePhase` que crearon (por `code`/`name` con su prefijo), después de los lotes que la referencian |
+| `AC-R175-02` | A→B (`suite → test_clean_baseline`) verde para las tres suites (antes: `1 failed`, «5 fases») |
+| `AC-R175-03` | aisladas y B→A siguen verdes (sin regresión) |
+| `AC-R175-04` | pares con las suites del tranche 11: `T11 → A`, `A → T11`, `T11 → B`, `B → T11` verdes |
+| `AC-R175-05` | `test_clean_baseline` no cambia; regresión completa verde |
+
+## Tests requeridos
+
+La matriz de control `R175_TEST_ORDER_DEPENDENCY_CONTROL.md §5` (ejecuciones con base reseteada) es la evidencia; no se añade un guardián estático.
+
+## Definición de terminado
+
+`AC-R175-01…05` · matriz §5 verde · regresión completa leída · `R-175` CERRADO (técnico) · la regla permanente C (`ISOLATED + A→B + B→A` para suites con
+historial de residuo) deja de ser obligatoria para estas tres suites una vez cerrado, y sigue vigente para cualquier residuo nuevo.

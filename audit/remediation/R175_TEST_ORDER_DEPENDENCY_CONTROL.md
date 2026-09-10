@@ -60,3 +60,17 @@ Suites nuevas del tranche (`T11`): `tests/test_edit_validation_parity.py` (`PARI
 
 Criterio (`§49`): si algún par produce un rojo o verde falso atribuible al arnés, `R-175` pasa a BLOQUEANTE y se formaliza la remediación mínima bajo
 gobernanza de validez de pruebas; si no, sigue OPEN · NON-BLOCKING.
+
+## 5. Tranche 11 · `R-175` pasa a BLOQUEANTE y se remedia (`§49`)
+
+**Hecho**: en el verde dirigido de `R-176`/`R-178` (2026-09-10, orden no alfabético: `… test_lot_start_date, …, test_clean_baseline, …`) `test_t_025_07`
+cayó con «las fases se duplicaron: 5». Es el mecanismo conocido (§1), pero el prompt §49 es explícito: un rojo falso en esta tranche convierte a
+`R-175` en bloqueante → se formaliza la remediación mínima del arnés bajo `GA-REM-015` addendum B (`AC-R175-01…05`): las tres suites borran en su
+teardown la fase que crearon, por prefijo, después de los lotes. Nada más cambia (ni el guardián `== 4`, ni el dominio).
+
+| Par | Antes de la remediación (tranche 10/11) | Después (a ejecutar tras el commit de implementación) |
+|---|---|---|
+| aisladas (3 + baseline) | 4/4 verdes | _pendiente_ |
+| A→B (`suite → clean_baseline`) ×3 | **3/3 rojas** («5 fases») | _pendiente_ |
+| B→A ×3 | 3/3 verdes | _pendiente_ |
+| `T11 → A` · `A → T11` · `T11 → B` · `B → T11` | — | _pendiente_ |
