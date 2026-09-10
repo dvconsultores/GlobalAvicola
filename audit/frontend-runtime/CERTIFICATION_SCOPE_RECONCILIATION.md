@@ -75,3 +75,33 @@ Nada de esto invalida el trabajo técnico: se re-clasifica su alcance (§73).
 ## 6. Fuentes
 
 `BUSINESS_PROCESS_CERTIFICATION_MATRIX_360.md` · informes `PROCESS-0x` · `GA-REM-0xx-CERTIFICATION-REPORT.md` · `MASTER_REMEDIATION_MATRIX.md` · `POST_PUSH_PRODUCTION_STATE_REPORT.md` (addenda R-99) · `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX.md` · evidencia propia (`DEPLOYMENT_FRONTEND_FINGERPRINT.md`).
+
+---
+
+## 7. Addendum fechado · 2026-09-10 · GA-FE-01 — la generación servida volvió a ser el árbol actual
+
+Este addendum NO reescribe el cuerpo anterior (la foto del 2026-09-10 21:0xZ sigue siendo la foto
+de ese momento); registra el cambio de estado de la **frontera de entrega** tras la tranche
+GA-FE-01 (`397cc02` → `08d0197` → C3; push normal; EX-01 automático; 0 acciones manuales).
+
+```
+RUNTIME  antes: index-D5dwMXuP.js (congelado 2026-09-05 14:09:27 GMT)
+         ahora: index-kzREeQp6.js · Last-Modified 2026-09-10 21:42:54 GMT
+         paridad byte a byte con el build del commit 08d0197 (JS/CSS/HTML)
+         asset viejo: 404 · marcadores M1–M7 presentes · smoke público OK · cliente fresco OK
+
+EFECTO   La columna «producto hoy» del §3 («generación vieja») queda SUPERADA por este addendum.
+         Las 13 capacidades clasificadas DEPLOYMENT_STALE pasan a «desplegadas desde 08d0197»;
+         NO se reclasifican a IMPLEMENTED_AND_VISIBLE: su visualización/funcionamiento
+         autenticado sigue pendiente de verificación con sesión (BLOCKED_AUTH — sin credenciales).
+
+Cierres históricos reexaminados (§4): R-96/97, R-120, R-82 — su consecuencia de despliegue queda
+         resuelta (pantallas servidas); los cierres no se reescriben. R-135 se mantiene; R-181
+         (reenvío sin UI) sigue vigente. R-127 vigente.
+
+FINDINGS R-158 · CERRADO (build restituido y desplegado) · R-99 · CERRADO (paridad de entrega
+         probada) · R-182 · NUEVO propuesto P2 (alta de lote: planned_close_date/area_id) —
+         ver addendum de `REMEDIATION_BACKLOG.md`.
+
+INTOCADO R-98 / R-119 vigentes · fase 9 FROZEN · Ola B PAUSADA · backend/migraciones sin cambios.
+```

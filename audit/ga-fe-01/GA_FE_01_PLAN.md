@@ -10,20 +10,20 @@
 | 4 | R-158 semantic analysis | `R158_TYPESCRIPT_ERROR_SEMANTIC_MATRIX.md` + `GA_FE_01_CLARIFICATIONS.md` (6 filas, 3 clases, 0 decisiones) | ✅ |
 | 5 | Spec / AC | `GA_FE_01_R99_R158_…_SPEC.md` (AC-R158-01…10 · AC-R99-01…10 · AC-NR-01/02) | ✅ |
 | 6 | Valid current RED | `tsc` exit 2/6 · `npm run build` exit 2 (muere en tsc) · `vite build` exit 0 — medidos en esta sesión sin caché | ✅ |
-| 7 | Minimal implementation | 3 ediciones (import AuditPage · estado muerto LotForm · destructuring a 4) | ⏳ |
-| 8 | Targeted component tests | No existen suites dedicadas ni cambio de comportamiento → regla «solo si cambia» → no aplica añadir; se ejecuta Vitest completo | ⏳ |
-| 9 | TypeScript green | `npx tsc -b --noEmit` → exit 0 (sin allowance) | ⏳ |
-| 10 | Vite green | `npx vite build` → exit 0 | ⏳ |
-| 11 | Official npm build green | `npm run build` → exit 0 | ⏳ |
-| 12 | Full Vitest | `npx vitest run` → 0 failed | ⏳ |
-| 13 | Implementation checkpoint | COMMIT 2 solo con las ediciones mínimas | ⏳ |
-| 14 | Push through normal mechanism | `git push origin main` (sin tocar origin) | ⏳ |
-| 15 | Deployment observation | Observación acotada del runtime (root + asset + LM) | ⏳ |
-| 16 | Runtime fingerprint parity | `GA_FE_01_RUNTIME_EXIT_FINGERPRINT.md` — ENTRY vs EXIT | ⏳ |
-| 17 | Runtime smoke | Público: root/login/JS/CSS 200, sin error fatal; API viva | ⏳ |
-| 18 | Certification reconciliation | Addendum fechado (13 capacidades stale → DEPLOYMENT_STALE RESOLVED; auth `BLOCKED_AUTH`) | ⏳ |
-| 19 | Evidence | `GA_FE_01_…_EVIDENCE.md` (40 secciones §87) | ⏳ |
-| 20 | Closure | COMMIT 3 + push + verificación remota + informe final | ⏳ |
+| 7 | Minimal implementation | 3 ediciones (import AuditPage · estado muerto LotForm · destructuring a 4) | ✅ |
+| 8 | Targeted component tests | No existen suites dedicadas ni cambio de comportamiento → regla «solo si cambia» → no aplica añadir; se ejecuta Vitest completo | ✅ |
+| 9 | TypeScript green | `npx tsc -b --noEmit` → exit 0 (sin allowance) | ✅ |
+| 10 | Vite green | `npx vite build` → exit 0 | ✅ |
+| 11 | Official npm build green | `npm run build` → exit 0 | ✅ |
+| 12 | Full Vitest | `npx vitest run` → 0 failed | ✅ |
+| 13 | Implementation checkpoint | COMMIT 2 solo con las ediciones mínimas | ✅ |
+| 14 | Push through normal mechanism | `git push origin main` (sin tocar origin) | ✅ |
+| 15 | Deployment observation | Observación acotada del runtime (root + asset + LM) | ✅ |
+| 16 | Runtime fingerprint parity | `GA_FE_01_RUNTIME_EXIT_FINGERPRINT.md` — ENTRY vs EXIT | ✅ |
+| 17 | Runtime smoke | Público: root/login/JS/CSS 200, sin error fatal; API viva | ✅ |
+| 18 | Certification reconciliation | Addendum fechado (13 capacidades stale → DEPLOYMENT_STALE RESOLVED; auth `BLOCKED_AUTH`) | ✅ |
+| 19 | Evidence | `GA_FE_01_…_EVIDENCE.md` (40 secciones §87) | ✅ |
+| 20 | Closure | COMMIT 3 + push + verificación remota + informe final | ✅ |
 
 ## Reglas de ejecución
 
