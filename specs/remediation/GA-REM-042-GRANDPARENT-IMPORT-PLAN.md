@@ -4,7 +4,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-042` · **Tipo** `REQUIRED OPERATIONAL DATA + BUSINESS RULE SPEC` · `POST-AUDIT REMEDIATION SPEC` |
-| **Prioridad** | **P2** · **Estado** `SPEC_READY` (pre-flight 2026-09-10 · WAVE B tranche 12) |
+| **Prioridad** | **P2** · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10 · WAVE B tranche 12) · evidencia `WAVE_B_TRANCHE_12_PROGENITORAS_IMPORT_EVIDENCE.md` · commits `d3e0e70` · `2323d0c` |
 | **Hallazgo** | **`R-152`** (`H360A-02`): «`grandparent_import` sin estructura para el plan de importación (`docs/02 §3.4.1`): país, cantidades comprada/embarcada/recibida, mortalidad en traslado, cuarentena, adjuntos tipados» |
 | **Fuente** | `docs/02 §3.4.1` (Plan de importación: 22 campos) · `spec.md §4.4` («Plan de importación (PO SAP, proveedor internacional, docs sanitarios, aduana, cuarentena)»; `grandparent_import` «Registro inicial de importación con documentos»; evento exclusivo de Progenitoras) · `GA-REM-021-B` / `RR-12` (patrón: identidad intra-evento declarada, sin tolerancia; la ausencia no es 0) · `GA-REM-005 E.3` (entradas del saldo) · `GA-REM-040-G/H` (cadena de acceso por unidad, certificada para `grandparent`) · `GA-REM-030`/`R-42` (referencias de la empresa) |
 | **Matrices** | `R152_R153_DEPENDENCY_TRACE.md` · `R152_R153_PROGENITORAS_FUNCTIONAL_PARITY_MATRIX.md` · `R152_PROGENITORAS_GAP_MATRIX.md` |

@@ -1417,3 +1417,23 @@ R-153    OPEN · P3 · OWNER_DECISION_REQUIRED    AOD-25 · depende de R-152 (HA
 R-179    OPEN · P3                              registrado (fuera)
 WAVE B   IN PROGRESS        35 ítems (canónico: 34 + R-179) · 20 cerrados · 4 parciales · 11 abiertos (P1 0 · P2 6 · P3 5) · decisiones 10 (AOD-25 nueva)
 ```
+
+---
+
+## Cierre de `R-152` · WAVE B tranche 12 (2026-09-10) — `R-153` OWNER_DECISION_REQUIRED (`AOD-25`)
+
+```
+R-152    CERRADO (técnico)   GA-REM-042 · el plan de importación de abuelas (docs/02 §3.4.1) se captura tipado en extra_data.import_plan (PlanDeImportacion) y se
+                            valida en el alta, la edición y la corrección (BR-22: solo lote grandparent · identidades embarcada = recibida + mortalidad en traslado,
+                            recibida = Σ ♂/♀, llegada ≥ salida, fin de cuarentena ≥ llegada · OC y proveedor declarados · proveedor/transporte de la empresa) ·
+                            adjuntos clasificados en cinco clases (evidence_type) · documental (no puebla ni acumula contra la OC) · Progenitoras ≠ Reproductoras
+                            (solo primitivas compartidas, justificadas; BR-20/B02/agua siguen siendo de Reproductoras) · frontend: formulario, detalle, clase de adjunto,
+                            i18n ES/EN · 18/18 backend + 6/6 vitest · rojo previo 13 + 6 · sensibilidad válida · sin migración
+R-153    OPEN · P3           OWNER_DECISION_REQUIRED (AOD-25) · depende de R-152 (HARD) · sin código
+R-179    OPEN · P3           registrado (FK de maestros de otra empresa en eventos)
+WAVE B   IN PROGRESS        35 ítems (canónico) · 21 cerrados · 4 parciales · 10 abiertos (P1 0 · P2 5 · P3 5) · decisiones 10
+                            siguiente tranche (identificado, no iniciado): R-166 (approve/reject concurrentes sobre el mismo CORRECTED) · alternativa: R-179 (pertenencia de maestros en eventos)
+```
+
+Evidencia: `WAVE_B_TRANCHE_12_PROGENITORAS_IMPORT_EVIDENCE.md`. Regresión completa: **1088 passed · 49 skipped · 0 failed** (1113 s; 1070 previas + 18 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado). `vitest` 108/108 · `tsc` 6 preexistentes (`R-158`). Sin migración (cabeza `x4y5z6a7b8c9`).
+Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado · E2E `BLOCKED_RUNTIME` (guion `proceso-p01` actualizado).

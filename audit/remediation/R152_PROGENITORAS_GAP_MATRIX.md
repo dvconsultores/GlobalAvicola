@@ -31,3 +31,7 @@
 | `thermalCurves` «Breeder / Grandparent Rearing» | UNRELATED (`R-147`/`AOD-19`) |
 
 Sin reemplazos masivos: la única condición nueva es «`grandparent_import` solo sobre lote `grandparent`», con fuente (`spec.md §4.4`).
+
+## Cierre (2026-09-10)
+
+`R-152` CERRADO (técnico) · `GA-REM-042` certificada · `AC-R152-01…21` verdes · sensibilidad válida · evidencia `WAVE_B_TRANCHE_12_PROGENITORAS_IMPORT_EVIDENCE.md`.

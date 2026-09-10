@@ -521,3 +521,21 @@ decisiones del propietario ..... 10 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD
 artefactos ..................... R152_R153_DEPENDENCY_TRACE.md · R152_R153_PROGENITORAS_FUNCTIONAL_PARITY_MATRIX.md · R152_PROGENITORAS_GAP_MATRIX.md ·
                                  R153_PROGENITORAS_GAP_MATRIX.md · GA-REM-042 · AOD-25 · RC-16
 ```
+
+## 27. Estado tras el tranche 12 (2026-09-10) — recalculado desde el backlog (recuento canónico 35)
+
+```
+TOTAL ......................... 35   (34 + R-179, alta formal en §26)
+CERRADOS ...................... 21   R-130 · R-135 · R-143 · R-152 · R-159 · R-160 · R-161 · R-162 · R-163 · R-165 · R-167 · R-168 · R-169 · R-170 · R-171 · R-172 · R-173 · R-174 · R-175 · R-176 · R-178
+PARCIALES ......................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS ....................... 10   R-142 · R-144 · R-147 · R-148 · R-153 (AOD-25) · R-156 · R-164 (BLOCKED_RUNTIME) · R-166 · R-177 (AOD-24) · R-179
+P1 ABIERTOS ...................  0        P2 ABIERTOS  5   (R-142 · R-144 · R-147 · R-148 · R-164)        P3 ABIERTOS  5   R-153 · R-156 · R-166 · R-177 · R-179
+BLOQUEADOS .....................  5   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-153 (AOD-25) · R-156 (AOD-20) · R-177 (AOD-24) · [+ R-136 SAP · B03 (AOD-22) · B04 (AOD-14)]
+DECISIONES DEL PROPIETARIO ..... 10   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c          BLOCKED_RUNTIME ....... R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 12 ..................... commits d3e0e70 · 2323d0c · commit de evidencia (este) · sin migración · rutas 211 · regresión 1088 passed · 49 skipped · 0 failed (1113 s; 1070 previas + 18 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado) · vitest 108/108 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-166 — approve/reject concurrentes sobre el mismo evento CORRECTED (sin bloqueo de fila; el último flush gana): misma primitiva que R-130/R-173. Sin decisión pendiente.
+  Alternativa: R-179 (pertenencia de maestros referenciados por los eventos; clase R-42).
+```

@@ -1364,3 +1364,8 @@ R-152           ACTIVE · P2 · importación de abuelas sin plan tipado ni ident
 R-153           OPEN · P3 · OWNER_DECISION_REQUIRED (AOD-25) · depende de R-152 (HARD) · sin código
 R-179           registrado (P3, fuera): FK de maestros de otra empresa en eventos
 WAVE B          IN PROGRESS · 20/35 cerrados + 4 parciales · decisiones 10 · COMMIT 1 = solo spec
+
+## WAVE B · tranche 12 · cierre · `R-152` cerrado (técnico) · `GA-REM-042` certificada · `R-153` AOD-25 (2026-09-10)
+R-152           CERRADO (técnico) · P2 · plan de importación tipado (BR-22), adjuntos clasificados, revalidación en edición/corrección, documental · 18/18 + vitest 6/6 · sensibilidad válida
+R-153           OPEN · P3 · OWNER_DECISION_REQUIRED (AOD-25)
+WAVE B          IN PROGRESS · 21/35 cerrados + 4 parciales · decisiones 10 · regresión 1088 passed · 49 skipped · 0 failed · siguiente (no iniciado): R-166 · alternativa R-179

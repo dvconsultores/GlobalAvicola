@@ -933,3 +933,7 @@ R-152 (P2) ◄── docs/02 §3.4.1 · spec.md §4.4 · RR-12 (patrón de ident
 R-153 (P3) ◄── R-152 (HARD_DATA_MODEL + HARD_FUNCTIONAL) ◄ AOD-25 (qué es «completar», código del lote, si puebla, vía manual) · sin código
 R-179 (P3) ── registrado: FK de maestros sin pertenencia en eventos (clase R-42); GA-REM-042 cubre proveedor/transporte solo en la importación
 modo R152_ONLY · sin migración · dependencia R-152 → R-153 confirmada por prueba (antes: SOFT_ORDERING en la matriz de WAVE B)
+
+## WAVE B · tranche 12 · cierre (2026-09-10)
+R-152 CERRADO (técnico) · GA-REM-042 CERTIFICADA · R-153 OPEN ◄ AOD-25 (depende de R-152: satisfecho; falta la decisión) · R-179 OPEN (P3)
+regresión 1088 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-166 · alternativa R-179
