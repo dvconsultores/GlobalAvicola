@@ -109,6 +109,9 @@ class OperationalEventBase(BaseModel):
     received_total: Optional[int] = Field(default=None, ge=1)
     dead_on_arrival: Optional[int] = Field(default=None, ge=0)
     rejected_on_arrival: Optional[int] = Field(default=None, ge=0)
+    #: `GA-REM-021-C` · `B13`: sanos y débiles al nacer (`BR-21`); atributos, no saldo.
+    chicks_healthy: Optional[int] = Field(default=None, ge=0)
+    chicks_weak: Optional[int] = Field(default=None, ge=0)
     idempotency_key: Optional[str] = None  # Client-generated UUID to prevent duplicate submissions
 
 
@@ -193,6 +196,9 @@ class OperationalEventUpdate(BaseModel):
     received_total: Optional[int] = Field(default=None, ge=1)
     dead_on_arrival: Optional[int] = Field(default=None, ge=0)
     rejected_on_arrival: Optional[int] = Field(default=None, ge=0)
+    #: `GA-REM-021-C`: editables y corregibles uno a uno (la restricción es `≤`, no una igualdad).
+    chicks_healthy: Optional[int] = Field(default=None, ge=0)
+    chicks_weak: Optional[int] = Field(default=None, ge=0)
 
 
 class OperationalEventRead(OperationalEventBase):

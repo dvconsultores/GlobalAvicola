@@ -130,7 +130,8 @@ async def incubadora(client, auth_headers, seeded_ids, aprobador, motor):
                   hatchery_params=[{"quantity_loaded": CARGADOS}])
     await _evento(client, auth_headers, seeded_ids, lot_id, "birth_registration",
                   aprobar_con=aprobador,
-                  bird_movements=[{"sex": "mixed", "quantity": NACIDOS}])
+                  bird_movements=[{"sex": "mixed", "quantity": NACIDOS}],
+                  chicks_healthy=NACIDOS, chicks_weak=0)  # `GA-REM-021-C` (`B13`): datos del nacimiento, solo setup
     return lot_id
 
 
@@ -231,7 +232,8 @@ async def test_t_022_04_los_eventos_sin_aprobar_no_cuentan(
                               headers=auth_headers)).json()["nacimiento_pct"]
 
     await _evento(client, auth_headers, seeded_ids, incubadora, "birth_registration",
-                  bird_movements=[{"sex": "mixed", "quantity": 300}])   # sin aprobar
+                  bird_movements=[{"sex": "mixed", "quantity": 300}],
+                  chicks_healthy=300, chicks_weak=0)   # sin aprobar · `B13`: datos del nacimiento, solo setup
 
     despues = (await client.get(f"/api/v1/reports/kpis/hatchery?lot_id={incubadora}",
                                 headers=auth_headers)).json()["nacimiento_pct"]

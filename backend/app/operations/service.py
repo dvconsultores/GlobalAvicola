@@ -43,6 +43,7 @@ from .validators import (
     validate_sap_document_unique,
     validate_sap_edit_lock,
     validate_segregation,
+    validate_birth_registration,
     validate_reception_reconciliation,
     validate_water_consumption,
 )
@@ -848,6 +849,9 @@ class OperationsService:
         # son las filas que este mismo servicio persiste, nunca un total enviado por el cliente.
         validate_reception_reconciliation(event_type, cadena_del_lote, data.received_total, data.dead_on_arrival,
                                           data.rejected_on_arrival, sum(bm.quantity for bm in data.bird_movements))
+        # `GA-REM-005-C` (`R-170`) + `GA-REM-021-C` (`B13`): una sola contabilidad de nacimientos (`BR-21`).
+        validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
+                                    [(bm.sex, bm.quantity) for bm in data.bird_movements])
         if event_type == models.EventType.MORTALITY_RECORDING:
             # Sin la guarda `total_qty > 0`: `validate_mortality` es precisamente quien
             # rechaza el cero y los negativos (`BR-01`), y saltársela dejaba pasar un
@@ -1088,6 +1092,11 @@ class OperationsService:
             await self.exigir_unidad_operativa(event=event)
         if "water_liters" in cambios:  # `GA-REM-021-A`: la edición respeta `RR-11` y el tipo
             validate_water_consumption(event.event_type, cambios["water_liters"], await self._tipo_de_lote(lote_destino))
+        if any(k in cambios for k in ("chicks_healthy", "chicks_weak")):  # `GA-REM-021-C`: la edición revalida `BR-21`
+            validate_birth_registration(
+                event.event_type, await self._tipo_de_lote(lote_destino),
+                cambios.get("chicks_healthy", event.chicks_healthy), cambios.get("chicks_weak", event.chicks_weak),
+                [(bm.sex, bm.quantity) for bm in event.bird_movements])
         if any(k in cambios for k in ("received_total", "dead_on_arrival", "rejected_on_arrival")):
             # `GA-REM-021-B`: la edición revalida el cuadre contra los movimientos persistidos (`BR-20`)
             validate_reception_reconciliation(

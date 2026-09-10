@@ -132,7 +132,8 @@ async def cadena(client, auth_headers, seeded_ids):
     await _evento(client, auth_headers, repro, fr, hr, "egg_collection",
                   egg_movements=[{"egg_type": "fertile", "quantity": HUEVOS * 2}])
     await _evento(client, auth_headers, incub, fi, hi, "birth_registration",
-                  bird_movements=[{"sex": "mixed", "quantity": POLLITOS * 2}])
+                  bird_movements=[{"sex": "mixed", "quantity": POLLITOS * 2}],
+                  chicks_healthy=POLLITOS * 2, chicks_weak=0)  # `GA-REM-021-C` (`B13`), solo setup
 
     return {"company_id": c, "repro": repro, "incub": incub, "engorde": engorde,
             "fr": fr, "hr": hr, "fi": fi, "hi": hi, "fe": fe, "he": he}

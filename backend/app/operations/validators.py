@@ -458,6 +458,45 @@ def validate_reception_reconciliation(event_type, bird_type, received_total, dea
             f"{', '.join(declarados)} solo se registra en la recepción de reproductoras o de engorde", "BR-20")
 
 
+def validate_birth_registration(event_type, bird_type, chicks_healthy, chicks_weak, filas) -> None:
+    """`GA-REM-005` enmienda C (`R-170`, `RR-14`) + `GA-REM-021` enmienda C (`B13`, `RR-15`) · `BR-21`.
+
+    Una sola contabilidad de nacimientos: los nacidos son Σ `quantity` de las filas, con una fila por
+    sexo y `mixed` (sin sexar) excluyente con las filas sexadas; el total no se declara, se deriva.
+    Sanos y débiles (`Bases` p.9) son atributos disjuntos de los nacidos: obligatorios y explícitos en
+    el nacimiento de incubadora, `sanos + débiles ≤ nacidos`, y nunca un saldo. `filas` son pares
+    `(sex, quantity)`; se aplica en el alta, la edición y la corrección.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    cadena = getattr(bird_type, "value", bird_type)
+    declarados = [n for n, v in (("chicks_healthy", chicks_healthy), ("chicks_weak", chicks_weak)) if v is not None]
+    if tipo != EventType.BIRTH_REGISTRATION.value:
+        if declarados:
+            raise BusinessRuleViolation(f"{', '.join(declarados)} solo se registra en un nacimiento", "BR-21")
+        return
+    sexos = [(s.value if hasattr(s, "value") else s) or "mixed" for s, _ in filas]
+    nacidos = sum(int(q or 0) for _, q in filas)
+    if nacidos < 1:
+        raise BusinessRuleViolation("Un nacimiento declara al menos un pollito nacido", "BR-21")
+    if len(sexos) != len(set(sexos)):
+        raise BusinessRuleViolation(
+            "Los nacidos se declaran con una sola fila por sexo (el total se deriva; no se repite como fila)", "BR-21")
+    if "mixed" in sexos and len(sexos) > 1:
+        raise BusinessRuleViolation(
+            "Los nacidos sin sexar (mixed) no se combinan con filas sexadas: el total no es una fila más", "BR-21")
+    if cadena != "hatchery":
+        if declarados:
+            raise BusinessRuleViolation(f"{', '.join(declarados)} solo se registra en la incubadora (Bases p.9)", "BR-21")
+        return
+    faltan = [n for n, v in (("chicks_healthy", chicks_healthy), ("chicks_weak", chicks_weak)) if v is None]
+    if faltan:
+        raise BusinessRuleViolation(
+            f"El nacimiento declara los pollitos sanos y los débiles (falta: {', '.join(faltan)})", "BR-21")
+    if chicks_healthy + chicks_weak > nacidos:
+        raise BusinessRuleViolation(
+            f"Sanos {chicks_healthy} + débiles {chicks_weak} = {chicks_healthy + chicks_weak} superan los nacidos {nacidos}", "BR-21")
+
+
 def validate_water_consumption(event_type, water_liters, bird_type) -> None:
     """`GA-REM-021` enmienda A · `B05` · `RR-10` (litros) · `RR-11` (> 0).
 

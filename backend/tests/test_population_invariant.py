@@ -317,7 +317,8 @@ async def test_ac08_progenitoras_descarte_sobre_el_saldo(http_client, esc):
 
 async def test_ac09_el_despacho_de_pollitos_no_supera_los_viables_reales(http_client, esc):
     r = await http_client.post("/api/v1/operations", headers=_token(esc["actor_a"]),
-                               json=_cuerpo(esc, esc["lh"], "birth_registration", 100))
+                               json=_cuerpo(esc, esc["lh"], "birth_registration", 100,
+                                            extra={"chicks_healthy": 100, "chicks_weak": 0}))  # `B13`, solo setup
     assert r.status_code == 201, r.text
     assert (await _decremento(http_client, esc, esc["lh"], "mortality_recording", 10)).status_code == 201
     assert (await _decremento(http_client, esc, esc["lh"], "cull_recording", 5)).status_code == 201
@@ -394,5 +395,5 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     raiz = pathlib.Path(__file__).resolve().parents[1]
     # `GA-REM-041 §5`: la cabeza avanza a `t0u1v2w3x4y5` (REVERSED, `OD-19`) y hay tres rutas
     # nuevas de `reversals` (208 → 211). Recuentos exactos, nunca `>=`.
-    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["w3x4y5z6a7b8"]  # `GA-REM-021-B §B.5`
+    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["x4y5z6a7b8c9"]  # `GA-REM-021-C §C.5`
     assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 211

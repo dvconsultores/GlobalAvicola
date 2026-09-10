@@ -55,6 +55,14 @@ class CorrectionService:
         # aprobacion.
         valor_original = _leer_valor(event, data.field_name)
         valor_aplicado = _convertir(event, data.field_name, data.corrected_value)
+        if data.field_name in ("chicks_healthy", "chicks_weak"):  # `GA-REM-021-C` · `AC-B13-11`: la corrección respeta `BR-21`
+            from ..operations.validators import validate_birth_registration
+
+            validate_birth_registration(
+                event.event_type, await operaciones._tipo_de_lote(event.lot_id),
+                valor_aplicado if data.field_name == "chicks_healthy" else event.chicks_healthy,
+                valor_aplicado if data.field_name == "chicks_weak" else event.chicks_weak,
+                [(bm.sex, bm.quantity) for bm in event.bird_movements])
         if data.field_name == "water_liters":  # `GA-REM-021-A` · `AC-C03`: la corrección respeta `RR-11`
             from ..operations.validators import validate_water_consumption
 

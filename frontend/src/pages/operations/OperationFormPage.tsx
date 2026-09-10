@@ -98,6 +98,8 @@ const operationSchema = z.object({
  received_total: z.number().int().min(1).optional(), // `GA-REM-021-B` · B01 (aves)
  dead_on_arrival: z.number().int().min(0).optional(),
  rejected_on_arrival: z.number().int().min(0).optional(),
+ chicks_healthy: z.number().int().min(0).optional(), // `GA-REM-021-C` · B13
+ chicks_weak: z.number().int().min(0).optional(),
  extra_data: z.record(z.string(), z.any()).optional(),
  // Sub-models
  bird_movements: z.array(z.object({
@@ -381,20 +383,9 @@ export default function OperationFormPage() {
  }
  }
 
- // ── Bird reception: ±10% validation against SAP declared quantity ──
- let observations = data.observations || ''
- if (data.event_type === 'bird_reception' && data.extra_data?.declared_quantity) {
- const declared = Number(data.extra_data.declared_quantity)
- const received = (data.bird_movements || []).reduce((sum, m) => sum + (m.quantity || 0), 0)
- if (declared > 0) {
- const pct = ((received - declared) / declared) * 100
- if (Math.abs(pct) > 10) {
- const alertMsg = t('operations.sapQtyAlert', '⚠️ ALERTA: Cantidad recibida ({{received}}) difiere en {{pct}}% de la orden SAP ({{declared}}).',
-   { received, pct: pct.toFixed(1), declared })
- observations = observations ? `${observations}\n${alertMsg}` : alertMsg
- }
- }
- }
+ // `R-169` (`GA-REM-035-A`): sin tolerancia ±10 % en el cliente; la verdad de cantidades es BR-18 (backend).
+ // Lo que el operador escribe en observaciones es lo que se persiste.
+ const observations = data.observations || ''
 
  const normalizedBirdMovements = (data.bird_movements || []).map((m) => {
  if (data.event_type === 'bird_reception' && (m.week_number == null || Number.isNaN(m.week_number))) {
@@ -605,13 +596,11 @@ export default function OperationFormPage() {
  const dispatchDate = sapOrder?.extra_data?.dispatch_date || watch('extra_data.dispatch_date' as any) || ''
  const vendorName = sapOrder?.extra_data?.vendor_name || watch('extra_data.vendor_name' as any) || ''
 
- // Calculate total received across all houses
+ // Total alojado (Σ filas), solo informativo; la regla del cuadre (BR-20) y de la OC (BR-18) viven en el backend.
  const totalReceived = birdFields.reduce((sum, _, i) => {
  const qty = watch(`bird_movements.${i}.quantity` as any) || 0
  return sum + Number(qty)
  }, 0)
- const pctDiff = declaredQty > 0 ? ((totalReceived - declaredQty) / declaredQty) * 100 : 0
- const outOfRange = declaredQty > 0 && Math.abs(pctDiff) > 10
 
  return (
  <div className="space-y-4">
@@ -651,6 +640,11 @@ export default function OperationFormPage() {
  <label className="text-xs font-medium text-slate-500">{t('operations.rejectedOnArrival', 'Rechazo')}</label>
  <input type="number" min="0" step="1" {...register('rejected_on_arrival' as any, { valueAsNumber: true })} className={ic} />
  </div>
+ </div>
+ <div>
+ {/* `R-168` (`GA-REM-021-C §C.2`): «Muestra tomada» (Rec. §6) es un dato de la recepción, en el campo de evento */}
+ <label className="text-xs font-medium text-slate-500">{t('operations.sampleTaken', 'Muestra tomada (aves pesadas)')}</label>
+ <input type="number" min="1" step="1" {...register('sample_size', { valueAsNumber: true })} className={ic} />
  </div>
  <p className="text-xs text-slate-500">
  {t('operations.reconciliationHint', { placed: totalReceived, dead, rejected, sum: totalReceived + dead + rejected, received })}
@@ -725,10 +719,6 @@ export default function OperationFormPage() {
  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
  <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
  </div>
- <div>
- <label className="text-xs font-medium text-slate-500">{t('operations.sampleSize', 'Muestra')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} />
- </div>
  </div>
  </div>
  ))}
@@ -738,18 +728,6 @@ export default function OperationFormPage() {
  </button>
  </div>
 
- {/* Validation alert */}
- {outOfRange && (
- <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 text-sm text-amber-800">
- <p className="font-semibold flex items-center gap-1">
- ⚠️ {t('operations.qtyOutOfRange', 'Diferencia superior al 10%')}
- </p>
- <p className="mt-1">
- {t('operations.qtyOutOfRangeDetail', 'Recibido: {received} vs Declarado: {declared} ({pct}%)',
- { received: totalReceived, declared: declaredQty, pct: pctDiff.toFixed(1) })}
- </p>
- </div>
- )}
 
  </div>
  )}
@@ -804,10 +782,6 @@ export default function OperationFormPage() {
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
  <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
- </div>
- <div>
- <label className="text-xs font-medium text-slate-500">{t('operations.sampleSize', 'Muestra')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.sample_size`, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  </div>
@@ -1566,12 +1540,14 @@ export default function OperationFormPage() {
  )
 
  case 'birth_registration': {
+ // `R-170` (`GA-REM-005-C`, BR-21): los nacidos son la suma de las filas, una por sexo; no hay fila «total»
+ // (se deriva). `B13` (`GA-REM-021-C`): sanos y débiles son datos del nacimiento, no filas de nacidos.
  const rows = [
- { sex: 'mixed', label: t('operations.totalHatched', 'Total nacidos'), idx: 0 },
- { sex: 'male', label: t('operations.males', 'Machos viables'), idx: 1 },
- { sex: 'female',label: t('operations.females', 'Hembras viables'), idx: 2 },
- { sex: 'mixed', label: t('operations.weak', 'Débiles'), idx: 3 },
+ { sex: 'male', label: t('operations.hatchedMale', 'Nacidos machos'), idx: 0 },
+ { sex: 'female', label: t('operations.hatchedFemale', 'Nacidos hembras'), idx: 1 },
+ { sex: 'mixed', label: t('operations.hatchedUnsexed', 'Nacidos sin sexar'), idx: 2 },
  ]
+ const hatchedTotal = rows.reduce((sum, { idx }) => sum + Number(watch(`bird_movements.${idx}.quantity` as any) || 0), 0)
  return (
  <div className="space-y-5">
  {/* Birth counts */}
@@ -1586,6 +1562,17 @@ export default function OperationFormPage() {
  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
+ <p className="text-xs text-slate-500 mt-2">{t('operations.hatchedTotalHint', { total: hatchedTotal })}</p>
+ <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.chicksHealthy', 'Pollitos sanos')}</label>
+ <input type="number" min="0" step="1" {...register('chicks_healthy' as any, { valueAsNumber: true })} className={ic} />
+ </div>
+ <div>
+ <label className="text-xs font-medium text-slate-500">{t('operations.chicksWeak', 'Pollitos débiles')}</label>
+ <input type="number" min="0" step="1" {...register('chicks_weak' as any, { valueAsNumber: true })} className={ic} />
+ </div>
+ </div>
  </div>
 
  {/* Vaccination at birth */}

@@ -131,6 +131,10 @@ class OperationalEvent(Base):
     received_total: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     dead_on_arrival: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     rejected_on_arrival: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    # `GA-REM-021-C` · `B13` (Bases p.9): sanos y débiles al nacer, atributos del nacimiento de incubadora;
+    # los nacidos son Σ `bird_movements.quantity` (`BR-21`). `NULL` = no declarado.
+    chicks_healthy: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    chicks_weak: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     #: `GA-REM-040` fase 6 · `OD-10.c`. Cadena productiva **decidida a mano**, cuando no se
     #: puede derivar del lote. Apunta a la habilitación de una empresa —no al catálogo—
     #: por la misma razón que la concesión de un usuario (`OD-09.d`): así la fila dice bajo

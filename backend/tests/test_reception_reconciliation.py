@@ -345,3 +345,43 @@ async def test_b01_18_la_edicion_revalida_y_la_correccion_uno_a_uno_no_puede_des
     fila = (await _sql(esc, "SELECT received_total, dead_on_arrival, rejected_on_arrival FROM operational_events WHERE id = :e", e=ev["id"]))[0]
     assert tuple(fila) == (101, 4, 2), "ninguna vía deja la recepción descuadrada"
     assert await _cuenta(esc, "SELECT count(*) FROM correction_logs WHERE event_id = :e", e=ev["id"]) == 0
+
+
+async def test_r168_la_muestra_tomada_de_la_recepcion_se_persiste(http_client, esc):
+    """`AC-R168-02` (control): el campo de evento `sample_size` («Muestra tomada», Rec. §6) se persiste y se lee."""
+    r = await _recibir(http_client, esc, "operador", "lr", sample_size=30)
+    assert r.status_code == 201, r.text
+    assert r.json()["sample_size"] == 30
+    assert (await _sql(esc, "SELECT sample_size FROM operational_events WHERE id = :e", e=r.json()["id"]))[0][0] == 30
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  R-167 · reproducción controlada: un hecho de negocio, un efecto productivo
+# ═══════════════════════════════════════════════════════════════════════════
+
+async def test_r167_la_mortalidad_al_arribo_afecta_al_saldo_exactamente_cero_veces(http_client, esc):
+    """`R-167` (WAVE B tranche 8, pre-flight). Traza observada, no inspeccionada:
+
+    recibidas 100 · muertas al arribo 5 · rechazadas 5 · alojadas 90  →  saldo 90.
+    Ni el alta, ni la edición de la tupla, ni la lectura del saldo descuentan `dead_on_arrival`:
+    las muertas al arribo nunca entraron a la parvada y el sistema no crea ningún evento de
+    mortalidad por ellas. Un evento `mortality_recording` posterior es **otro hecho** (aves
+    alojadas que murieron) y descuenta una sola vez.
+    """
+    r = await _recibir(http_client, esc, "operador", "lr", filas=(("female", 50), ("male", 40)), total=100, dead=5, rej=5)
+    assert r.status_code == 201, r.text
+    ev = r.json()
+    assert await _saldo(esc, esc["lr"]) == 90, "las alojadas entran; muertas al arribo y rechazadas no"
+    assert await _cuenta(esc, "SELECT count(*) FROM operational_events WHERE lot_id = :l AND event_type::text ILIKE 'mortality_recording'", l=esc["lr"]) == 0, \
+        "el alta no fabrica ningún evento de mortalidad por las muertas al arribo"
+    assert await _cuenta(esc, "SELECT count(*) FROM operational_alerts WHERE lot_id = :l", l=esc["lr"]) == 0
+    # editar la tupla (5 → 6 muertas, 100 → 101 recibidas) no toca el saldo: las alojadas no cambiaron
+    r = await http_client.put(f"/api/v1/operations/{ev['id']}", headers=_token(esc["operador"]), json={"received_total": 101, "dead_on_arrival": 6})
+    assert r.status_code == 200, r.text
+    assert await _saldo(esc, esc["lr"]) == 90
+    # un evento de mortalidad es otro hecho y descuenta exactamente una vez
+    r = await http_client.post("/api/v1/operations", headers=_token(esc["operador"]), json={
+        "lot_id": esc["lr"], "event_type": "mortality_recording", "event_date": recent_event_date(),
+        "farm_id": esc["granja_a"], "house_id": esc["galpon_a"], "bird_movements": [{"sex": "mixed", "quantity": 5}]})
+    assert r.status_code == 201, r.text
+    assert await _saldo(esc, esc["lr"]) == 85

@@ -123,6 +123,8 @@ export interface OperationEvent {
   received_total?: number // `GA-REM-021-B` · B01 (aves recibidas declaradas)
   dead_on_arrival?: number
   rejected_on_arrival?: number
+  chicks_healthy?: number // `GA-REM-021-C` · B13
+  chicks_weak?: number
   hatchery_params?: HatcheryParam[]
   inspection_details?: InspectionDetail[]
 }
