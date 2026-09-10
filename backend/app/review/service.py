@@ -86,6 +86,27 @@ class SegregacionMixin:
 
 
 
+async def _bloquear_evento(db: AsyncSession, event: OperationalEvent) -> None:
+    """`GA-REM-007` enmienda B · `R-166`: serializa las decisiones de revisión sobre el mismo evento.
+
+    La fila autoritativa de la decisión es `operational_events` —`status` **es** la decisión efectiva; los
+    `approval_actions` son historia—. Sin bloqueo, dos peticiones concurrentes leían `CORRECTED`, ambas
+    superaban la comprobación de estado y ambas escribían: dos decisiones efectivas, dos auditorías de éxito
+    y —el rechazo— una notificación de un evento que quedaba aprobado.
+
+    `SELECT … FOR UPDATE` sobre esa fila y **relectura** del estado: el segundo espera al `commit` del primero
+    y ve el estado terminal, de modo que su transición ya no es legal (`GA-REM-006-A §A.2`). Misma primitiva que
+    `reversals._bloquear_original` y que `bloquear_saldo_del_lote` (`R-130`), sobre otra fila y otro invariante:
+    revisar **no** serializa el saldo del lote (`R-166` ≠ `R-161`).
+
+    Va **después** de la cadena de inquilino/unidad: bloquear antes revelaría la existencia de un evento ajeno.
+    """
+    await db.execute(
+        select(OperationalEvent.id).where(OperationalEvent.id == event.id).with_for_update()
+    )
+    await db.refresh(event, attribute_names=["status"])
+
+
 async def _exigir_habilitacion(db, current_user, event) -> None:
     """`GA-REM-041 §1.2` · `R-165` · `OD-19 §13`: revisar, devolver, completar, aprobar o rechazar
     es operar dato productivo. El actor de empresa ya queda fuera por `unidades_efectivas`
@@ -369,6 +390,9 @@ class ReviewService(SegregacionMixin):
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
         await _exigir_habilitacion(self.db, self.current_user, event)  # `R-165` · `OD-19 §13`
+        # `GA-REM-007-B` · `R-166`: todos los escritores de decisión convergen en la misma primitiva —
+        # `start_review`, `return_to_operator` y `complete_review` transitan la misma fila que `approve`/`reject`.
+        await _bloquear_evento(self.db, event)
         return event
 
     async def _get_company_approval_levels(self) -> int:
@@ -585,6 +609,8 @@ class ApprovalService(SegregacionMixin):
         if not event:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
         await _exigir_habilitacion(self.db, self.current_user, event)  # `R-165` · `OD-19 §13`
+        # `GA-REM-007-B` · `R-166`: la fila se bloquea y el estado se relee **antes** de validar la transición.
+        await _bloquear_evento(self.db, event)
         # Can approve from CORRECTED or IN_REVIEW (single-level)
         if event.status not in (EventStatus.CORRECTED, EventStatus.IN_REVIEW):
             raise HTTPException(

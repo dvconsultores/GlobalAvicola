@@ -70,6 +70,76 @@ async def verificar_pertenencia(
         raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
 
 
+async def verificar_catalogo_de_empresa(
+    db: AsyncSession,
+    modelo: Any,
+    recurso_id: int | None,
+    company_id: int | None,
+    etiqueta: str,
+) -> None:
+    """`GA-REM-002` enmienda D · `R-179`: un catálogo referenciado por un evento es de su empresa — o compartido.
+
+    El ADDENDUM Wave 3 de esta misma spec fijó la semántica y acotó su ampliación a las referencias
+    **estructurales** (`lot_id`, `farm_id`, `house_id`):
+
+        «los catálogos maestros declaran `company_id` como anulable, lo que significa **global si es nulo,
+         propio de la empresa si está fijado**, y bloquear una referencia a un catálogo compartido sería un error»
+
+    De ahí las dos ramas: `company_id IS NULL` es un catálogo compartido y se acepta desde cualquier empresa;
+    fijado, tiene que ser la del evento. La denegación conserva la semántica de `verificar_pertenencia`: el ajeno
+    **se comporta como inexistente** (`BR-07`), para no distinguir «no existe» de «no es tuyo» (`AC26`).
+    """
+    if recurso_id is None:
+        return
+    if company_id is None:
+        raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
+    fila = (await db.execute(
+        select(modelo.company_id).where(modelo.id == recurso_id)
+    )).one_or_none()
+    if fila is None:
+        raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
+    duenio = fila[0]
+    if duenio is not None and duenio != company_id:
+        raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
+
+
+async def verificar_catalogos_del_evento(db: AsyncSession, company_id: int | None, **campos) -> None:
+    """Los catálogos que un evento (o sus submovimientos) referencia, por nombre de campo.
+
+    `GA-REM-002-D §D.2`. Solo entran los `TENANT_OWNED_NULLABLE`; los derivados (máquina de incubación,
+    nacedora) se comprueban por su **padre**, y los `PLATFORM_GLOBAL` sin `company_id` —razas, fases
+    productivas— no entran: no se convierten en dato de inquilino.
+    """
+    from .masters.models import (CullCause, FeedType, Hatcher, Hatchery, Incubator, Medication, MortalityCause,
+                                 ProcessingPlant, Supplier, Transport, Vaccine)
+
+    directos = {
+        "supplier_id": (Supplier, "Proveedor"),
+        "transport_id": (Transport, "Transporte"),
+        "cause_id": (MortalityCause, "Causa de mortalidad"),
+        "cull_cause_id": (CullCause, "Causa de descarte"),
+        "vaccine_id": (Vaccine, "Vacuna"),
+        "medication_id": (Medication, "Medicamento"),
+        "destination_plant_id": (ProcessingPlant, "Planta de beneficio"),
+        "feed_type_id": (FeedType, "Tipo de alimento"),
+        "hatchery_id": (Hatchery, "Incubadora"),
+    }
+    derivados = {"incubator_id": (Incubator, "Incubadora"), "hatcher_id": (Hatcher, "Nacedora")}
+
+    for campo, valor in campos.items():
+        if valor is None:
+            continue
+        if campo in directos:
+            modelo, etiqueta = directos[campo]
+            await verificar_catalogo_de_empresa(db, modelo, valor, company_id, etiqueta)
+        elif campo in derivados:
+            modelo, etiqueta = derivados[campo]
+            padre = (await db.execute(select(modelo.hatchery_id).where(modelo.id == valor))).one_or_none()
+            if padre is None:
+                raise BusinessRuleViolation(f"{etiqueta} no encontrada", "BR-07")
+            await verificar_catalogo_de_empresa(db, Hatchery, padre[0], company_id, etiqueta)
+
+
 async def verificar_ubicacion(
     db: AsyncSession,
     company_id: int | None,

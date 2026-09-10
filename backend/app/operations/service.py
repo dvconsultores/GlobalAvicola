@@ -814,13 +814,28 @@ class OperationsService:
         # GA-REM-002 AC10: las referencias de ubicación deben pertenecer a la compañía.
         # `R-42` cubrió `lot_id`; el gate de la Wave 3 encontró que `farm_id` y `house_id`
         # seguían aceptando recursos de otra empresa.
-        from ..tenancy import verificar_ubicacion
+        from ..tenancy import verificar_catalogos_del_evento, verificar_ubicacion
 
         await verificar_ubicacion(
             self.db, self.company_id,
             farm_id=data.farm_id, house_id=data.house_id,
             destination_farm_id=data.destination_farm_id,
         )
+        # `GA-REM-002-D` · `R-179`: los catálogos que el evento y sus submovimientos referencian son de su
+        # empresa, o compartidos (`company_id` nulo). Un catálogo ajeno se comporta como inexistente (`BR-07`).
+        await verificar_catalogos_del_evento(
+            self.db, self.company_id,
+            supplier_id=data.supplier_id, transport_id=data.transport_id, cause_id=data.cause_id,
+            cull_cause_id=data.cull_cause_id, vaccine_id=data.vaccine_id, medication_id=data.medication_id,
+            destination_plant_id=data.destination_plant_id,
+        )
+        for fm in data.feed_movements:
+            await verificar_catalogos_del_evento(self.db, self.company_id, feed_type_id=fm.feed_type_id)
+        for hp in data.hatchery_params:
+            await verificar_catalogos_del_evento(
+                self.db, self.company_id,
+                hatchery_id=hp.hatchery_id, incubator_id=hp.incubator_id, hatcher_id=hp.hatcher_id,
+            )
         # BR-08: Movements require farm/house when applicable
         await validate_farm_house(data.event_type.value if hasattr(data.event_type, 'value') else str(data.event_type), data.farm_id, data.house_id)
         # BR-19: Date not in closed period
@@ -1149,6 +1164,14 @@ class OperationsService:
         if (("sap_document_ref" in cambios or "lot_id" in cambios) and cand["sap_document_ref"]
                 and lote_destino is not None and tipo != models.EventType.BIRD_RECEPTION):
             await validate_sap_document_unique(self.db, lote_destino, tipo, cand["sap_document_ref"], exclude_event_id=event.id)
+        # `GA-REM-002-D` · `R-179` `AC-R179-03/04`: la FK de catálogo que cambia se valida sobre el candidato,
+        # en `PUT` y en `POST /corrections`. Una FK que no se menciona no se revalida (`R-176`: sin arrastre).
+        catalogos = {k: cambios[k] for k in ("supplier_id", "transport_id", "cause_id", "cull_cause_id",
+                                             "vaccine_id", "medication_id", "destination_plant_id") if k in cambios}
+        if catalogos:
+            from ..tenancy import verificar_catalogos_del_evento
+
+            await verificar_catalogos_del_evento(self.db, self.company_id, **catalogos)
         if tipo == models.EventType.GRANDPARENT_IMPORT and any(k in cambios for k in ("extra_data", "supplier_id", "transport_id", "lot_id")):
             # `GA-REM-042` `AC-R152-17/18`: el plan se revalida sobre el candidato con las filas persistidas (`BR-22`)
             cand_extra = cambios["extra_data"] if "extra_data" in cambios else event.extra_data
