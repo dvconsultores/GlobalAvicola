@@ -664,7 +664,7 @@ distingue «no existe» de «no es tuyo».
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-002-E` · `TENANT ISOLATION` (escritura, hijos) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-002-E` · `TENANT ISOLATION` (escritura, hijos) · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_14_SUBMOVEMENT_STRUCTURAL_TENANCY_EVIDENCE.md` · commits `d9ff4bd` · `8a9f3cc` |
 | **Hallazgo** | `R-180` · severidad normalizada **`P2` → `P1`** (`R180_HOUSE_FARM_STRUCTURAL_OWNERSHIP_MATRIX.md §8`) |
 | **Autoridad** | **ADDENDUM Wave 3 de esta misma spec**: la ampliación cubre «las referencias **estructurales**, aquellas cuya pertenencia **define de quién es el dato**», y su tabla nombra `house_id` («ubica el registro; una granja ajena lo asocia a otra empresa») · `AC10` (el recurso estructural ajeno se rechaza sin fila ni auditoría) · `AC12`/enmienda A (el sub-recurso hereda la pertenencia de su padre) · clase `R-42`/`R-59` · `RQ-03` |
 | **Qué faltó** | no la regla, sino su **alcance**: el addendum la implementó sobre las columnas del evento (`verificar_ubicacion`) y no sobre las de sus hijos. La enmienda D lo dejó escrito como fuera de alcance y clasificado |

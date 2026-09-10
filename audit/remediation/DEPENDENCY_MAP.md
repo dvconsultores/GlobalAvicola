@@ -954,3 +954,7 @@ regresión 1122 passed · 49 skipped · 0 failed · sin migración · siguiente 
 R-180 ACTIVE · GOBERNADO · P2 → P1 · GA-REM-002 enmienda E (SPEC_READY) · cuatro referencias estructurales de submovimiento (galpón origen, galpón
 destino, galpón de inspección, lote de almacenamiento) · superficie escritora única: el alta · sin decisión del propietario · sin migración
 MUTATION_CHECKPOINT: gobernanza ejecutable (scripts/mutation_guard.py + tests/test_mutation_guard.py) · recuento canónico rectificado (WAVE B §30)
+
+## WAVE B · tranche 14 · cierre (2026-09-10)
+R-180 CERRADO (técnico) · P1 · GA-REM-002-E CERTIFICADA · MUTATION CHECKPOINT ejecutable establecido y probado en ejecución real
+recuento canónico 36 · 24 · 4 · 8 · siguiente (identificado, no iniciado): R-147 · alternativa R-148

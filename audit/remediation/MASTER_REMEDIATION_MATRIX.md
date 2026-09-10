@@ -1388,3 +1388,9 @@ WAVE B          IN PROGRESS · 23/36 cerrados + 4 parciales · decisiones 10 · 
 R-180   ACTIVE · P1 · las referencias estructurales de los submovimientos no se comprueban contra la empresa del evento (4 campos, 1 superficie)
         autoridad: ADDENDUM Wave 3 de GA-REM-002 (referencias estructurales) · AC10 · AC12 · clase R-42/R-59 · sin decisión · sin migración
 GUARDA  MUTATION CHECKPOINT ejecutable: scripts/mutation_guard.py (7 señales, fail-closed) + tests/test_mutation_guard.py (casos A…E)
+
+## WAVE B · tranche 14 · cierre · `R-180` (P1) cerrado (técnico) · `GA-REM-002-E` certificada (2026-09-10)
+R-180   CERRADO (técnico) · P1 · pertenencia estructural de los hijos (galpón origen, galpón destino, galpón de inspección, lote de almacenamiento)
+        comprobada antes de persistir · 11/11 · 8 mutaciones válidas · sin sobre-bloqueo (control positivo entre granjas) · sin migración
+GUARDA  MUTATION CHECKPOINT ejecutable (7 señales fail-closed) probado en ejecución real: abortó con código productivo sin confirmar
+WAVE B  IN PROGRESS · 24/36 cerrados + 4 parciales · decisiones 10 · siguiente (no iniciado): R-147 · alternativa R-148

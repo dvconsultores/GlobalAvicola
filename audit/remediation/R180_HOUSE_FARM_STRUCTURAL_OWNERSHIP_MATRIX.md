@@ -133,3 +133,8 @@ distinto de cero, se registra como hallazgo aparte con su propia remediación (`
 
 Sensibilidad prevista: `S1` origen · `S2` destino · `S3` cadena galpón→granja (aceptar por existencia) · `S4` inspección · `S5` almacenamiento ·
 `S6` cortocircuito del primer hijo (atomicidad) · `S7` sobre-bloqueo entre granjas de la misma empresa · `S8` inquilino multicapa.
+
+## 11. Cierre (2026-09-10)
+
+`R-180` CERRADO (técnico) · **P1** · `GA-REM-002-E` certificada (frontera técnica) · `AC-R180-01…14` verdes · rojo válido 8 · sensibilidad 8 válidas
+(dos reconstruidas; crédito 0 a las inválidas) · sin migración · evidencia `WAVE_B_TRANCHE_14_SUBMOVEMENT_STRUCTURAL_TENANCY_EVIDENCE.md`.

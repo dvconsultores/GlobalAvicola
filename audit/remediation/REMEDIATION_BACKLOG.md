@@ -1522,3 +1522,26 @@ R-180    ACTIVE · GOBERNADO · sin decisión · severidad P2 → P1
 
 Recuento canónico de entrada (recalculado, con la rectificación de `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX §30`): **36 · 23 · 4 · 9** ·
 P1 0 · **P2 6** · P3 3 · bloqueados por decisión 5 · `BLOCKED_RUNTIME` 1 · decisiones 10.
+
+---
+
+## Cierre de `R-180` · WAVE B tranche 14 (2026-09-10)
+
+```
+R-180    CERRADO (técnico)   GA-REM-002 enmienda E · P2 → P1 · verificar_estructurales_del_submovimiento recorre la cadena autoritativa real
+                             (House → Farm → Company para el galpón origen, el galpón destino y el galpón de la inspección; Lot.company_id para el lote
+                             del almacenamiento) sobre TODOS los hijos y ANTES de cualquier db.add: con un hijo ajeno no se persiste nada, ni el evento
+                             ni los hijos válidos. Se apoya en verificar_pertenencia, no en el helper de catálogos: la clase estructural no tiene el caso
+                             «nulo = compartido». PUT y POST /corrections no declaran submovimientos y esa imposibilidad queda versionada (AC-R180-14).
+                             No se inventa restricción de unidad ni de granja: House y Farm no declaran unidad de negocio y OD-10 queda intacto; el
+                             movimiento entre granjas distintas de la misma empresa se prueba como control positivo.
+                             11/11 · rojo previo 8 · sensibilidad 8 válidas (2 reconstruidas, crédito 0 a las inválidas) · sin migración
+GUARDA   ESTABLECIDA         MUTATION CHECKPOINT ejecutable: scripts/mutation_guard.py (7 señales fail-closed, restauración desde el commit declarado)
+                             + tests/test_mutation_guard.py (casos A…E, 6/6) + MUTATION_CHECKPOINT_GOVERNANCE.md. Probada en ejecución real: con un
+                             archivo productivo sucio, el driver ABORTÓ antes de instalar ninguna mutación.
+WAVE B   IN PROGRESS         36 ítems (canónico) · 24 cerrados · 4 parciales · 8 abiertos (P1 0 · P2 5 · P3 3) · decisiones 10
+                             siguiente tranche (identificado, no iniciado): R-147 (constantes sin fuente) · alternativa R-148 (inmutabilidad de audit_logs)
+```
+
+Evidencia: `WAVE_B_TRANCHE_14_SUBMOVEMENT_STRUCTURAL_TENANCY_EVIDENCE.md`. Recuento canónico de salida: **36 · 24 · 4 · 8** · P1 0 · P2 5 (`R-142` · `R-144` · `R-147` · `R-148` · `R-164`) · P3 3
+(`R-153` · `R-156` · `R-177`) · bloqueados por decisión 5 · `BLOCKED_RUNTIME` 1 · decisiones 10. Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211.

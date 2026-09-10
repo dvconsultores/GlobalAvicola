@@ -44,3 +44,9 @@ commit de spec → rojo válido → implementación → verde dirigido → COMMI
                                                                         ↓
                        integridad posterior (HEAD == implementación · residuo 0) → regresión → evidencia → push
 ```
+
+## Primera aplicación
+
+WAVE B tranche 14 (2026-09-10). `IMPLEMENTATION_COMMIT = 8a9f3cc`. La guarda se probó **en ejecución real** antes de la sensibilidad: con un archivo
+productivo deliberadamente sucio, el driver **abortó** antes de instalar ninguna mutación (`WAVE_B_TRANCHE_14_SUBMOVEMENT_STRUCTURAL_TENANCY_EVIDENCE.md §8`). Las ocho mutaciones válidas del tranche
+restauraron desde el commit declarado y se comprobaron byte a byte; residuo 0.

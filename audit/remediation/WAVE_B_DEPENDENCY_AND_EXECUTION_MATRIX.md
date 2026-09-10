@@ -610,3 +610,25 @@ DECISIONES DEL PROPIETARIO .... 10   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD
 
 Nota sobre la severidad de `R-180`: entra al tranche 14 declarada `P2` y se normaliza a **`P1`** en el pre-flight (misma clase que `R-42`/`R-59`/`R-179`:
 referencia entre empresas persistida en dato productivo). El recuento de salida lo refleja.
+
+## 31. Estado tras el tranche 14 (2026-09-10) — recuento canónico rectificado (§30) y recalculado
+
+```
+TOTAL ......................... 36
+CERRADOS ...................... 24   R-130 · R-135 · R-143 · R-152 · R-159 · R-160 · R-161 · R-162 · R-163 · R-165 · R-166 · R-167 · R-168 · R-169 ·
+                                     R-170 · R-171 · R-172 · R-173 · R-174 · R-175 · R-176 · R-178 · R-179 · R-180
+PARCIALES .....................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS ......................  8   R-142 · R-144 · R-147 · R-148 · R-153 · R-156 · R-164 · R-177
+  P1 ..........................  0
+  P2 ..........................  5   R-142 · R-144 · R-147 · R-148 · R-164
+  P3 ..........................  3   R-153 · R-156 · R-177
+BLOQUEADOS POR DECISIÓN .......  5   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-153 (AOD-25) · R-156 (AOD-20) · R-177 (AOD-24)
+BLOCKED_RUNTIME ...............  1   R-164          SAP_DEFERRED ... 1   R-136 post-SAP (OD-17.c)
+DECISIONES DEL PROPIETARIO .... 10   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25
+5 + 3 = 8 abiertos ✓      24 + 4 + 8 = 36 ✓
+ESTADO ......................... IN PROGRESS
+TRANCHE 14 ..................... commits d9ff4bd · 8a9f3cc · commit de evidencia · sin migración · rutas 211
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-147 — constantes de negocio sin fuente declarada (P2, sin decisión pendiente). Alternativa: R-148 (inmutabilidad de audit_logs en base de datos).
+  R-142, R-144, R-153, R-156 y R-177 siguen bloqueados por decisión del propietario; R-164 sigue BLOCKED_RUNTIME.
+```
