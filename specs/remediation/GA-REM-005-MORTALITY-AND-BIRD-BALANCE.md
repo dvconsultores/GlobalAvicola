@@ -604,7 +604,7 @@ certificación de proceso `BLOCKED_RUNTIME`.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-005-E` · `DATA INTEGRITY` + `TENANT` · **Estado** `SPEC_READY` (pre-flight 2026-09-10; certificación al cierre del tranche) |
+| **Enmienda** | `GA-REM-005-E` · `DATA INTEGRITY` + `TENANT` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_10_BALANCE_INTEGRITY_EVIDENCE.md` · commits `c56b2de` · `64dff76` |
 | **Hallazgos** | **`R-173`** (registrado P2 → **P1** normalizado: saldo negativo, efecto movido sin validación, reasignación entre empresas por `POST /corrections`, sin bloqueo) · **`R-174`** (P3: `chick_dispatch` de 0 aceptado por la guarda `if total_qty > 0`) |
 | **Matrices** | `audit/remediation/R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md` (superficies, reasignación, modelo, bloqueos, fronteras) · `audit/remediation/R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md` |
 | **Fuentes** | `docs/12 §2-3` (editar antes de enviar; Registrado → Anulado auditado) · `docs/13 §2` (edición: campo, valor anterior, valor nuevo) · `B.2`/`E.3`/`D.1.4` (invariante; cuatro salidas; saldo ≥ 0 tras cualquier conjunto confirmado) · `GA-REM-040-G AC-W09` (destino de una edición = alta) · `GA-REM-006-A` (mapa de transiciones) · `OD-19`/`GA-REM-041` (reverso ≠ cancelación) |
@@ -730,7 +730,7 @@ certificación de proceso `BLOCKED_RUNTIME`.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-005-F` · `DATA INTEGRITY` (semántica del saldo) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-005-F` · `DATA INTEGRITY` (semántica del saldo) · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_10_BALANCE_INTEGRITY_EVIDENCE.md` · commits `c56b2de` · `64dff76` |
 | **Hallazgo** | `R-172` (P2): `get_egg_balance` y `get_hatchery_egg_balance` suman **todas** las `egg_type`; las fuentes de nivel 2-4 despachan y reciben en la incubadora **huevos fértiles** → sobrecontabilización (recolección `fertile 100 + dirty 50 + broken 10` admite despachar 160) |
 | **Matriz** | `audit/remediation/R172_EGG_TYPE_AVAILABILITY_MATRIX.md` (tipos × `BR-02`/`BR-03`; ecuaciones; corte por niveles) · `RC-14` / `RR-17` |
 | **Fuentes** | `Bases` p.7-8 («Traslado de huevos fértiles»), p.9 («Número de Huevos Recibidos: Cantidad de huevos fértiles recibidos») · `docs/02 §3.6.4` (despacho a incubadora) · `§3.7.1` («recepción de huevos fértiles») · `§7 R2` · `spec.md :166/:176/:187` · `D.1` |

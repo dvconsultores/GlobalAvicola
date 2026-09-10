@@ -908,3 +908,8 @@ R-171 (P2) ◄── RR-16 (RC-13) · AC-R161-16 (control backend) → GA-REM-02
 R-175 (P3) ── control de orden (R175_TEST_ORDER_DEPENDENCY_CONTROL.md): NON-BLOCKING · las suites nuevas del tranche no tocan productive_phases
 registrados: R-176 (edición: BR-17/BR-18/fecha no keyed por lote) · R-177 (egg_type sin enum; formulario de recepción en incubadora) · R-178 (linaje no neutralizado)
 modo A: R-173 → R-172 → R-174 → R-171 · sin AOD nueva · sin migración
+
+## WAVE B · tranche 10 · cierre (2026-09-10)
+R-173 CERRADO (técnico) · GA-REM-005-E CERTIFICADA · R-172 CERRADO · GA-REM-005-F CERTIFICADA · R-174 CERRADO · R-171 CERRADO · GA-REM-021-D CERTIFICADA
+R-175 OPEN (control NON-BLOCKING) · R-176 · R-177 · R-178 OPEN (P3) · GA-REM-021 sigue PARTIAL (B03 ◄ AOD-22 · B04 ◄ AOD-14 · R-156 ◄ AOD-20)
+regresión 1056 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-152 → R-153 · alternativa R-176 + R-178 o R-175

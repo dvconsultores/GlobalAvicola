@@ -450,3 +450,21 @@ decisiones del propietario ..... 8 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-
 artefactos ..................... R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md · R172_EGG_TYPE_AVAILABILITY_MATRIX.md · R174_ZERO_QUANTITY_DISPATCH_AUTHORITY_TRACE.md ·
                                  R171_…_TRUTH_MATRIX.md §4 · R175_TEST_ORDER_DEPENDENCY_CONTROL.md · GA-REM-005-E/F · GA-REM-021-D · RC-14 · RC-15
 ```
+
+## 23. Estado tras el tranche 10 (2026-09-10) — recalculado desde el backlog (recuento canónico 34)
+
+```
+TOTAL ......................... 34   (31 + R-176 + R-177 + R-178, alta formal en §22)
+CERRADOS ...................... 17   R-130 · R-135 · R-143 · R-159 · R-160 · R-161 · R-162 · R-163 · R-165 · R-167 · R-168 · R-169 · R-170 · R-171 · R-172 · R-173 · R-174
+PARCIALES ......................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS ....................... 13   R-142 · R-144 · R-147 · R-148 · R-152 · R-153 · R-156 · R-164 (BLOCKED_RUNTIME) · R-166 · R-175 · R-176 · R-177 · R-178
+P1 ABIERTOS ...................  0        P2 ABIERTOS  6   (R-142 · R-144 · R-147 · R-148 · R-152 · R-164)        P3 ABIERTOS  7   R-153 · R-156 · R-166 · R-175 · R-176 · R-177 · R-178
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP · B03 (AOD-22) · B04 (AOD-14)]
+DECISIONES DEL PROPIETARIO .....  8   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c          BLOCKED_RUNTIME ....... R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 10 ..................... commits c56b2de · 64dff76 · commit de evidencia (este) · sin migración · rutas 211 · regresión 1056 passed · 49 skipped · 0 failed (1173 s; 1031 previas + 25 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado) · vitest 102/102 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-152 → R-153 (Progenitoras: estructura del plan de importación; creación automática del lote de abuelas) — spec propia; sin decisión pendiente.
+  Alternativa: R-176 + R-178 (la edición y las reglas no keyed por lote; linaje tras anular/mover) o R-175 (higiene de fixtures bajo gobernanza de validez).
+```

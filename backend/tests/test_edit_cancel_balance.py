@@ -402,6 +402,13 @@ async def test_r173_07b_dos_cancelaciones_concurrentes_una_sola_transicion(http_
         respuestas = await asyncio.gather(*[_cancelar(http_client, esc, "operador", recepcion) for _ in range(3)])
         resultados.append({"lote": lote, "codigos": sorted(r.status_code for r in respuestas),
                            "auditorias": await _auditorias(esc, recepcion, "cancelled"), "estado": (await _evento(esc, recepcion))["status"]})
+    # una salida: sin invariante de saldo que la frene, solo la relectura del estado bajo el bloqueo evita la doble transición
+    for lote in ("lr", "lr2", "lr3"):
+        await _alta(http_client, esc, lote, "bird_reception", 100)  # la recepción anterior quedó anulada: saldo nuevo para la salida
+        descarte = await _alta(http_client, esc, lote, "cull_recording", 10)
+        respuestas = await asyncio.gather(*[_cancelar(http_client, esc, "operador", descarte) for _ in range(3)])
+        resultados.append({"lote": f"{lote}-salida", "codigos": sorted(r.status_code for r in respuestas),
+                           "auditorias": await _auditorias(esc, descarte, "cancelled"), "estado": (await _evento(esc, descarte))["status"]})
     for r in resultados:
         assert r["codigos"] == [200, 400, 400] and r["auditorias"] == 1 and r["estado"] == "cancelled", ("AC-R173-07: una sola transición", r)
 

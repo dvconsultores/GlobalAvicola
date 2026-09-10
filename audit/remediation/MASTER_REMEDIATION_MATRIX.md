@@ -1333,3 +1333,10 @@ R-171           UI_ONLY confirmado · GA-REM-021-D (catálogo de incubadora: mor
 R-175           NON-BLOCKING · matriz de control (aisladas 4/4 · B→A 3/3 · A→B 3/3 rojas «5 fases») · OPEN · sin limpieza
 altas           R-176 · R-177 · R-178 (P3, fuera) → recuento canónico 34 · 13 cerrados · 4 parciales · 17 abiertos (P1 1 · P2 8 · P3 8) · decisiones 8
 WAVE B          IN PROGRESS · modo A (R-173 → R-172 → R-174 → R-171) · sin migración · COMMIT 1 = solo spec
+
+## WAVE B · tranche 10 · cierre · `R-173` `R-172` `R-174` `R-171` cerrados (técnico) · `GA-REM-005-E/F` y `GA-REM-021-D` certificadas (2026-09-10)
+R-173           CERRADO (técnico) · P1 · guarda central de edición/corrección/anulación bajo el invariante del saldo y el bloqueo de los lotes · 16/16 · S1…S5
+R-172           CERRADO (técnico) · solo el huevo fértil cuenta en BR-02/BR-03 · 9/9 + vitest · S1…S5 · R-161 intacto
+R-174           CERRADO (técnico) · chick_dispatch de 0 → 400 BR-04 sin fila · S1
+R-171           CERRADO (técnico) · catálogo de incubadora con mortalidad y descarte · vitest 5/5 · S1/S1b
+WAVE B          IN PROGRESS · 17/34 cerrados + 4 parciales · decisiones 8 · regresión 1056 passed · 49 skipped · 0 failed · siguiente (no iniciado): R-152 → R-153 · alternativa R-176 + R-178 / R-175

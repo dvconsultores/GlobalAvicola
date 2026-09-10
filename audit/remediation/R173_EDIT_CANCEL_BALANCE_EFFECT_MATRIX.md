@@ -237,3 +237,9 @@ Sensibilidad: `R173-S1` (quitar la regla de destino), `R173-S2` (no bloquear el 
 |---|---|---|---|---|
 | `R-176` | P3 | la edición no vuelve a correr reglas de destino **no keyed por lote**: `sap_document_ref` (`BR-18`, acumulado de la OC; `validate_oc_limit` ya admite `exclude_event_id` y nadie lo usa), `house_id` (`BR-17`, capacidad estática), `event_date` sola (`validate_event_date`/`validate_period_open` solo corren si cambia `lot_id`) | `service.py:1071-1088` | sin efecto en los cuatro saldos; `BR-18` es territorio `OD-04`/`GA-REM-035`; requiere su propia traza |
 | `R-178` | P3 | `egg_batches`/`chick_batches` (linaje) se materializan al casar despacho y recepción y **no** se neutralizan ni se re-casan al cancelar o al mover de lote un despacho/recepción | `service.py:401-500` | no es saldo; linaje/trazabilidad (`spec.md §233`) |
+
+## 18. Cierre (2026-09-10)
+
+`R-173` CERRADO (técnico) · `GA-REM-005-E` certificada · `AC-R173-01…18` verdes · `AC-R174-01…05` verdes · sensibilidad `R173-S1…S5` válidas (S4 sobre
+la doble anulación concurrente de una **salida**: para una entrada el propio invariante del saldo ya frena la segunda anulación) · evidencia
+`WAVE_B_TRANCHE_10_BALANCE_INTEGRITY_EVIDENCE.md`.

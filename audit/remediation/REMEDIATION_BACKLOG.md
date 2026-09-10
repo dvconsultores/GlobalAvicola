@@ -1303,3 +1303,28 @@ R-175    OPEN · P3                 NON-BLOCKING · matriz de control · sin cor
 R-176 · R-177 · R-178  OPEN · P3   registrados (fuera)
 WAVE B   IN PROGRESS        34 ítems (canónico: 31 + R-176 + R-177 + R-178) · 13 cerrados · 4 parciales · 17 abiertos (P1 1 · P2 8 · P3 8) · decisiones 8
 ```
+
+---
+
+## Cierre de `R-173` · `R-172` · `R-174` · `R-171` · WAVE B tranche 10 (2026-09-10)
+
+```
+R-173    CERRADO (técnico)   GA-REM-005 enmienda E · guarda central verificar_destino_de_edicion (PUT y POST /corrections: empresa · unidad · lote activo ·
+                            fecha · ubicación · regla de saldo del destino como alta · origen ≥ 0) bajo el bloqueo de los lotes en orden ascendente ·
+                            anulación de entradas con saldo ≥ 0 bajo bloqueo y relectura (una sola transición) · auditoría con valores anterior/nuevo ·
+                            P1 normalizado · 16/16 · rojo previo 10 (+ 2 carreras con saldo −100 observado) · sensibilidad R173-S1…S5 válidas
+R-172    CERRADO (técnico)   GA-REM-005 enmienda F · cuenta_como_disponible(egg_type) = fertile en BR-02 (entrada y salida) y BR-03 (entrada) · el despacho
+                            rechaza otros tipos (BR-02) · filas capturadas intactas · formulario de despacho con una sola fila · 9/9 + vitest · rojo previo 8 + 1 ·
+                            sensibilidad R172-S1…S5 válidas · R-161 7/7 intacto · RC-14/RR-17
+R-174    CERRADO (técnico)   GA-REM-005 enmienda E §E.3 · rama CHICK_DISPATCH sin la guarda if total_qty > 0 · 0 → 400 BR-04 sin fila, sin auditoría, sin
+                            notificación · negativo 422 · sensibilidad R174-S1 válida
+R-171    CERRADO (técnico)   GA-REM-021 enmienda D · STAGE_OPERATIONS.hatchery + mortality_recording/cull_recording · STAGE_FLOWS.hatchery + dos pasos tras el
+                            nacimiento · i18n existente · backend sin cambio (AC-R161-16) · vitest 5/5 · sensibilidad R171-S1/S1b válidas (S2 N/A por arquitectura)
+R-175    OPEN (P3)           control documentado (aisladas 4/4 · B→A 3/3 · A→B 3/3 rojas «5 fases») · NON-BLOCKING · sin limpieza (R175_TEST_ORDER_DEPENDENCY_CONTROL.md)
+R-176 · R-177 · R-178  OPEN (P3, registrados en el pre-flight)
+WAVE B   IN PROGRESS        34 ítems (canónico) · 17 cerrados · 4 parciales · 13 abiertos (P1 0 · P2 6 · P3 7) · decisiones 8
+                            siguiente tranche (identificado, no iniciado): R-152 → R-153 (Progenitoras) · alternativa: R-176 + R-178 (edición y linaje) o R-175 (higiene)
+```
+
+Evidencia: `WAVE_B_TRANCHE_10_BALANCE_INTEGRITY_EVIDENCE.md`. Regresión completa: **1056 passed · 49 skipped · 0 failed** (1173 s; 1031 previas + 25 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado). `vitest` 102/102 · `tsc` 6 preexistentes (`R-158`).
+Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · `OD-19 §18` sin cambio · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

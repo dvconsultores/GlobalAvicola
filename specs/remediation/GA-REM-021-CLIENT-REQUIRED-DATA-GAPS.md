@@ -521,7 +521,7 @@ KPI incubadora · genética · `test_clean_baseline` · `test_time_determinism` 
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-021-D` · `REQUIRED OPERATIONAL DATA` (cobertura de captura) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-021-D` · `REQUIRED OPERATIONAL DATA` (cobertura de captura) · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_10_BALANCE_INTEGRITY_EVIDENCE.md` · commits `c56b2de` · `64dff76` |
 | **Hallazgo** | `R-171` (P2): «la etapa `hatchery` del catálogo no ofrece `cull_recording` ni `mortality_recording`, que son lo que viables y rendimiento restan (`Bases` p.10, Rec. §12)» · `processCatalog.ts:226-229, 403-412` |
 | **Verificación** | `R171_HATCHERY_MORTALITY_DISCARD_TRUTH_MATRIX.md §4` (tranche 10): backend acepta, persiste, resta de viables una vez (`AC-R161-16`); seguridad y corrección como hoy; el catálogo es lo único que falta; etiquetas ES/EN ya existen · **`UI_ONLY` confirmado** |
 | **Fuentes** | `Bases` p.10 («mortalidad de pollitos» = muertos / nacidos) · `Rec. §12` («pollitos descartados») · `RR-16` (`RC-13`: descarte = evento `cull_recording`; mortalidad = `mortality_recording`; ambos del lote de incubación, posteriores al nacimiento; «ambos deben ofrecerse en el flujo de incubadora») · `GA-REM-005-B` (viables) |
