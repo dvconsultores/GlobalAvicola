@@ -101,3 +101,8 @@ de pollitos») y Rec. §12 («pollitos descartados») los exigen. Corrección do
 
 Fuera: `R-161` · `R-171` · `AOD-23` (igualdad) · KPI «% sanos» (ola C) · nacedora/incubadora en el nacimiento · sexo de sanos/débiles ·
 «pollitos descartados» como campo del nacimiento (`docs/02 §3.7.5`; el descarte sigue siendo `cull_recording`) · fase 9.
+
+## Resultado (2026-09-10)
+
+`B13` y `R-170` cerrados (técnico) por `GA-REM-021-C` y `GA-REM-005-C` (commits `ec974f0` spec · `c653ff8` código · commit de evidencia): 6/6 ·
+sensibilidad válida · regresión 1024 passed · 49 skipped · 0 failed (857 s; 1016 previas + 8 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · evidencia `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md`. `R-171` sigue OPEN; `AOD-23` pendiente (endurecimiento).

@@ -164,7 +164,7 @@ garantía bajo concurrencia, es un requisito transversal a todos los saldos, no 
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-035-A` · `UI CONSISTENCY WITH OD-04` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-035-A` · `UI CONSISTENCY WITH OD-04` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md` · commit `c653ff8` |
 | **Hallazgo** | `R-169` (P2): `OperationFormPage.tsx` clasifica la recepción como «diferencia superior al 10 %» frente a la cantidad declarada de la OC (recuadro ámbar) y, al enviar, **inyecta un texto «⚠️ ALERTA …» en `observations`** cuando \|recibido − declarado\| > 10 %. Inventario completo: `audit/remediation/R169_UNSOURCED_TOLERANCE_INVENTORY.md` |
 | **Autoridad** | `OD-04`: entregas parciales legítimas; `AC11`: sin tolerancia; `BR-18` en el backend es la única verdad de cantidades. Ninguna fuente de nivel 1-4 define un ±10 %. `CV-F07` de `FUNCTIONAL_COVERAGE_MATRIX` lo contaba como «validación»: error documental |
 | **Cambio** | se retiran el recuadro ámbar y la inyección en `observations`, con sus textos es/en; la tarjeta informativa de la OC (cantidad declarada, fecha de despacho, pesos declarados) se conserva **sin umbral**. El backend no cambia |

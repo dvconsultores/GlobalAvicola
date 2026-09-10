@@ -375,3 +375,24 @@ gates .......................... R-167 NOT_REPRODUCED · R-169 ACTIVE_UI_CLASSIF
 corrección documental .......... la fila R-169 del tranche 7 decía «±10 % de peso»: es cantidad vs OC · docs/16:177 (mortalidad al arribo = evento) superada por B01 ·
                                  FUNCTIONAL_COVERAGE_MATRIX CV-F07 (±10 % como validación) y CV-D23 (sanos/débiles «COVERED» por etiquetas) corregidas
 ```
+
+## 19. Estado tras el tranche 8 (2026-09-10) — recalculado desde el backlog (recuento canónico 27)
+
+```
+TOTAL ......................... 27
+CERRADOS ...................... 12   R-130 · R-135 · R-143 · R-159 · R-160 · R-162 · R-163 · R-165 · R-167 (no reproducido) · R-168 · R-169 · R-170
+PARCIALES ......................  4   R-136 (SAP diferido) · R-140 · R-154 · GA-REM-021 (B05 · B01 · B02 · B13 cerrados; B03 ◄── AOD-22 · B04 ◄── AOD-14 · R-156 ◄── AOD-20)
+ABIERTOS ....................... 11   R-142 · R-144 · R-147 · R-148 · R-152 · R-153 · R-156 · R-161 · R-164 (BLOCKED_RUNTIME) · R-166 · R-171
+P1 ABIERTOS ...................  0          P2 ABIERTOS  8   (R-142 · R-144 · R-147 · R-148 · R-152 · R-161 · R-164 · R-171)          P3 ABIERTOS  3   R-153 · R-156 · R-166
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP · GA-REM-021 B03 (AOD-22) · B04 (AOD-14)]
+DECISIONES DEL PROPIETARIO .....  8   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c
+BLOCKED_RUNTIME ................  R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 8 ...................... commits ec974f0 · c653ff8 · commit de evidencia (este) · cabeza x4y5z6a7b8c9 · rutas 211 · regresión 1024 passed · 49 skipped · 0 failed (857 s; 1016 previas + 8 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 95/95 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-161 — saldos de huevos e incubación (BR-02, BR-03) leídos sin bloqueo de fila: la carrera de decrementos concurrentes que R-130 cerró
+  para las aves (validate_egg_dispatch, validate_incubation_load sin bloquear_saldo_del_lote). DATA_INTEGRITY P2, sin decisión, misma
+  clase que el tranche 1; desbloquea el reverso de huevos/incubación (OD-19 §18). Acompañante: R-171 (catálogo de incubadora: descarte y
+  mortalidad, Bases p.10 · Rec. §12). Alternativa: R-152 → R-153 (Progenitoras). B03 espera AOD-22.
+```

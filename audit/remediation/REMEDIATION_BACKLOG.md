@@ -25,7 +25,7 @@ Riesgo: probabilidad de efectos colaterales al implementar.
 | **14** | `GA-REM-008` | Trazabilidad generacional | P0 | 001, 011, 014 | M | medio | `SPEC_DRAFT` ⚠ `RC-04` |
 | **15** | `GA-REM-013` | Quality gates de CI | P1 | 001, 014 | S | bajo | `SPEC_READY` |
 | **16** | `GA-REM-015` | Certificación de tests backend | P1 | 014 | M | medio | **`CERTIFIED`** |
-| **17** | `GA-REM-021` | Consumo de agua (R-13) | P1 | 001 | S | bajo | **`PARTIAL`** (`B05`, `B01`, `B02` cerrados técnico, enm. A y B certificadas; `B03`, `B04`, `B13`, `R-156` abiertos) |
+| **17** | `GA-REM-021` | Consumo de agua (R-13) | P1 | 001 | S | bajo | **`PARTIAL`** (`B05`, `B01`, `B02`, `B13` cerrados técnico, enm. A, B y C certificadas; `B03` ◄── `AOD-22` · `B04` ◄── `AOD-14` · `R-156` ◄── `AOD-20`) |
 | **18** | `GA-REM-022` | Completitud de KPI (R-14) | P1 | 001, 011 | S | bajo | `SPEC_READY` |
 | **19** | `GA-REM-016` | Certificación E2E y de procesos | P1 | 002, 005, 006, 007, 011, 014, 015 | L | medio | `SPEC_DRAFT` |
 | **20** | `GA-REM-018` | Recuperación de trazabilidad Spec Dev | P1 | 001 + estabilización | L | bajo | `SPEC_READY` |
@@ -1071,9 +1071,9 @@ Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión co
 | `R-165` | P2 | el plano de revisión (`review/start|return|complete`, `approvals/approve|reject`) no exige la **habilitación** de la unidad a la autoridad global (`_ambito_de_unidad` → `[]` para `is_super_admin`); misma clase que `R-163`; el actor de empresa ya queda fuera por `unidades_efectivas` · **incluido en `GA-REM-041` §1.2** (el reverso se aprueba por ese plano; `OD-19 §13`) | `review/service.py:77-99, 360-383, 561-580` | B |
 | `R-166` | P3 | `approve` y `reject` sobre el mismo evento `CORRECTED` no se excluyen (sin bloqueo de fila; el último `flush` gana) | `review/service.py:423-470` | B |
 | `R-167` | ~~P3~~ **NO_DEFECTO** (tranche 8: **NOT_REPRODUCED**, cerrado; `R167_ARRIVAL_MORTALITY_ACCOUNTING_MATRIX.md`) | doble contabilización posible de la mortalidad al arribo: campo `dead_on_arrival` de la recepción (`B01`) + evento `mortality_recording` del mismo día (práctica previa, `docs/16:177`); la semántica del KPI de mortalidad respecto a las muertas al arribo no tiene fuente (ola C) | `GA_REM_021_B01_RECEPTION_RECONCILIATION_MATRIX.md §7` | B/C |
-| `R-168` | ~~P3~~ **P2** (tranche 8: ACTIVE, `GA-REM-021-C §C.2`) | el formulario de recepción envía `bird_movements[i].sample_size` y `BirdMovementSchema` no lo declara: se descarta en silencio (patrón `R-47`); «Muestra tomada» (§6) no se persiste por galpón | `OperationFormPage.tsx:698` · `operations/schemas.py:12-20` | B |
-| `R-169` | ~~P3~~ **P2** (tranche 8: ACTIVE_UI_CLASSIFICATION, `GA-REM-035-A`; es **cantidad vs OC**, no peso) | alerta «diferencia superior al 10 %» recibido vs declarado en el formulario de recepción sin fuente normativa (solo cliente); además inyecta «⚠️ ALERTA …» en `observations` al enviar; `FUNCTIONAL_COVERAGE_MATRIX CV-F07` la cuenta como «validación ±10 %» | `OperationFormPage.tsx:384-395, 613-614, 743-751` · familia `R-147` | B |
-| **`R-170`** | **P1** | **doble contabilidad de nacimientos**: el formulario emite «Total nacidos» + machos + hembras + «Débiles» como cuatro filas de `bird_movements` y el saldo, los viables y el KPI suman todas (observado: 100 pollitos → viables 200, saldo 200); sin rama de reglas para `BIRTH_REGISTRATION` | `OperationFormPage.tsx:1568-1590` · `service.py:852-892` · `validators.get_viable_chick_balance` | B |
+| `R-168` | ~~P3~~ **P2** · **CERRADO** (técnico, tranche 8, `GA-REM-021-C §C.2`) | el formulario de recepción envía `bird_movements[i].sample_size` y `BirdMovementSchema` no lo declara: se descarta en silencio (patrón `R-47`); «Muestra tomada» (§6) no se persiste por galpón | `OperationFormPage.tsx:698` · `operations/schemas.py:12-20` | B |
+| `R-169` | ~~P3~~ **P2** · **CERRADO** (técnico, tranche 8, `GA-REM-035-A`; es **cantidad vs OC**, no peso) | alerta «diferencia superior al 10 %» recibido vs declarado en el formulario de recepción sin fuente normativa (solo cliente); además inyecta «⚠️ ALERTA …» en `observations` al enviar; `FUNCTIONAL_COVERAGE_MATRIX CV-F07` la cuenta como «validación ±10 %» | `OperationFormPage.tsx:384-395, 613-614, 743-751` · familia `R-147` | B |
+| **`R-170`** | **P1** · **CERRADO** (técnico, tranche 8, `GA-REM-005-C` · `BR-21`) | **doble contabilidad de nacimientos**: el formulario emite «Total nacidos» + machos + hembras + «Débiles» como cuatro filas de `bird_movements` y el saldo, los viables y el KPI suman todas (observado: 100 pollitos → viables 200, saldo 200); sin rama de reglas para `BIRTH_REGISTRATION` | `OperationFormPage.tsx:1568-1590` · `service.py:852-892` · `validators.get_viable_chick_balance` | B |
 | `R-171` | P2 | la etapa `hatchery` del catálogo no ofrece `cull_recording` ni `mortality_recording`, que son lo que viables y rendimiento restan (`Bases` p.10, Rec. §12) | `processCatalog.ts:226-229, 403-412` | B |
 
 Trazas parciales del tranche 4: **`R-140`** → PARTE A (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) en `GA-REM-006-A`; motivo obligatorio (contrato de ruta que el cliente llama sin cuerpo → UI) y permiso «solo administrador» (`AOD-18`) → OPEN. **`R-154`** → subconjunto `DRAFT` (mapa de transiciones + controles) y `version` (semántica vigente documentada: avanza en `PUT` y en corrección; la matriz 360 lo daba por no incrementado) en `GA-REM-006-A`; dos «cierres» (`AOD-08`) y `LotStatus.CANCELLED` → OPEN. `R-163` normalizada a **P1**.
@@ -1212,3 +1212,24 @@ capturada por galpón y descartada por el esquema → `GA-REM-021-C §C.2`. **`R
 (viables 200 para 100 pollitos) → `GA-REM-005-C` (`BR-21`), se corrige **antes** de `B13`. `B13`: gobernado (sanos/débiles como atributos,
 `≤ nacidos`; igualdad `AOD-23`). `B03`: `OWNER_DECISION_REQUIRED` (`AOD-22`: parciales/diferencia/unidad/persistencia) + `AOD-19` → sin código.
 `R-171` registrado. Recuento canónico: **27** (alta formal de `R-167…R-171`, `WAVE_B §18`).
+
+---
+
+## Cierre del tranche 8 · pre-flight de consistencia + `R-170` + `B13` (2026-09-10)
+
+```
+R-167    CERRADO (no reproducido)   ninguna ruta descuenta dead_on_arrival; las alojadas entran una vez (prueba) · residuo: instrucción de proceso · KPI → ola C
+R-169    CERRADO (técnico)          GA-REM-035-A · sin recuadro ±10 % ni texto inyectado en observations; tarjeta de la OC sin umbral · era cantidad vs OC · P2
+R-168    CERRADO (técnico)          «Muestra tomada» como sample_size de evento; sin campos por galpón · control backend · P2
+R-170    CERRADO (técnico)          GA-REM-005-C · BR-21 (una fila por sexo · mixed excluyente · Σ ≥ 1) · formulario sin fila total · viables = nacidos · P1
+B13 / H360-B13  CERRADO (técnico)   chicks_healthy / chicks_weak · obligatorios y explícitos en incubadora · ≤ nacidos · sin efecto en saldo · débil ≠ descarte ·
+                            edición y corrección revalidadas · 6/6 · rojo previo 5 (+1 arnés) · sensibilidad S-R170-1 · S-B13-1/2/3/5/6/7/8/9 · SEC-S1 · S-R169-1 · S-R168-1
+B03 / H360-B03  OWNER_DECISION_REQUIRED  AOD-22 (parciales/diferencia/unidad/cero) + AOD-19 · sin código
+R-171    OPEN (registrado, P2)      incubadora sin descarte/mortalidad en el catálogo
+GA-REM-021  PARTIAL                 B05 · B01 · B02 · B13 cerrados · B03 ◄── AOD-22 · B04 ◄── AOD-14 · R-156 ◄── AOD-20
+WAVE B   IN PROGRESS                27 ítems (canónico) · 12 cerrados · 4 parciales · 11 abiertos · decisiones 8 (AOD-08 · 14 · 17 · 18 · 19 · 20 · 22 · 23)
+                            siguiente tranche (identificado, no iniciado): R-161 (saldos de huevos/incubación sin bloqueo; P2; sin decisión) + R-171 ·
+                            alternativa: R-152 → R-153
+```
+
+Evidencia: `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md`. Regresión completa: **1024 passed · 49 skipped · 0 failed** (857 s; 1016 previas + 8 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 95/95 · `tsc` 6 preexistentes (`R-158`). Migración `x4y5z6a7b8c9` (autorizada por `GA-REM-021-C §C.5`, tras el commit de spec `ec974f0`). Rutas 211. `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

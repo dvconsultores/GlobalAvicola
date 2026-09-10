@@ -890,5 +890,9 @@ GA-REM-021 B01 + B02 ──CERRADOS (tranche 7, GA-REM-021-B · GA-REM-037-B)─
                 B02 reutiliza el motor de OD-06 (la recepción entra al gancho de alerta) · dejan R-167 (mortalidad al arribo vs evento de mortalidad;
                 KPI ola C), R-168 (sample_size por galpón), R-169 (±10 % del formulario) · GA-REM-021 PARTIAL: B03 ◄── enmienda C (Rec. §8) ·
                 B13 ◄── enmienda C (Bases p.9) · B04 ◄── AOD-14 · R-156 ◄── AOD-20
-siguiente (identificado, no iniciado): GA-REM-021 B03 (alimento por transferencia, Rec. §8; P2; enmienda C previa) (+ B13 si independiente) · alternativa: R-152 → R-153 (Progenitoras)
+R-170 ──CERRADO (tranche 8, GA-REM-005-C · BR-21)──► el nacimiento tiene una sola contabilidad; B13 ──CERRADO (GA-REM-021-C)──► sanos/débiles como
+                atributos; R-169 ──CERRADO (GA-REM-035-A)──► sin tolerancia en el cliente; R-168 ──CERRADO──► muestra persistida; R-167 no reproducido ·
+                B03 ◄── AOD-22 (+ AOD-19) · R-171 registrado (catálogo de incubadora) · AOD-23 (igualdad sanos + débiles = nacidos: endurecimiento posterior)
+siguiente (identificado, no iniciado): R-161 (saldos de huevos/incubación sin bloqueo de fila; P2; sin decisión; desbloquea el reverso de huevos, OD-19 §18) +
+                R-171 como acompañante · alternativa: R-152 → R-153 (Progenitoras)
 ```

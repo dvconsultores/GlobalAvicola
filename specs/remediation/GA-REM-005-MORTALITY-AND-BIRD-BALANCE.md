@@ -495,7 +495,7 @@ regresión completa verde · vitest y `tsc` sin cambio de línea base · evidenc
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-005-C` · `DATA INTEGRITY` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-005-C` · `DATA INTEGRITY` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md` · commit `c653ff8` |
 | **Hallazgo** | **`R-170`** (P1, activo, reproducido): el formulario de nacimiento emite «Total nacidos» + machos + hembras + «Débiles» como cuatro filas de `bird_movements`; `get_viable_chick_balance`, `get_current_bird_balance` y `total_chicks_born` suman todas. Observado por API: 100 + 48 + 47 + 5 → `201`, 4 filas, **viables = 200, saldo = 200** para 100 pollitos. `BR-04` admite despachar el doble; el KPI de eclosión se duplica. Sin rama de reglas para `BIRTH_REGISTRATION` (`service.py:852-892`) |
 | **Raíz** | dos contabilidades del mismo hecho (total y desglose) en la misma tabla; ninguna regla fija qué filas son «nacidos» |
 | **Invariante** | **UN HECHO = UN EFECTO**: `NACIDOS = Σ bird_movements.quantity` del nacimiento, con **una fila por sexo** (`male`, `female`, `mixed`) y `mixed` **excluyente** con las filas sexadas; el total no se declara, se deriva |

@@ -1294,3 +1294,19 @@ regresión       **1016 passed · 49 skipped · 0 failed** (935 s; 1000 previas 
 WAVE B          IN PROGRESS · 8/22 cerrados + 4 parciales · siguiente (no iniciado): GA-REM-021 B03 (+ B13) · alternativa R-152 → R-153
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
 ```
+
+## WAVE B · tranche 8 · pre-flight de consistencia · `R-170` (P1) y `B13` cerrados · `R-169`/`R-168` cerrados · `R-167` no reproducido · `B03` a decisión (2026-09-10)
+
+```
+pre-flight      R-167 NOT_REPRODUCED (matriz + prueba) · R-169 ACTIVE_UI (cantidad vs OC, no peso; 2 ocurrencias) · R-168 ACTIVE (pérdida silenciosa) ·
+                R-170 nuevo P1 CONFIRMED (viables 200 para 100 pollitos) · R-171 nuevo P2 · alta formal R-167…R-171 → recuento canónico 27
+GA-REM-005-C    CERTIFIED (frontera técnica) · BR-21 · AC-R170-01…07 · rojo 1/1 → verde
+GA-REM-035-A    CERTIFIED (frontera técnica) · AC15…17 · contrato estático del formulario · BR-18 intacto
+GA-REM-021-C    CERTIFIED (frontera técnica) · AC-B13-01…15 · AC-R168-01/02 · rojo 5/6 (+1 arnés) → verde 6/6
+B13             CERRADO (técnico) · B03 OWNER_DECISION_REQUIRED (AOD-22 + AOD-19) · AOD-23 (igualdad de la partición; no bloquea)
+migración       x4y5z6a7b8c9 (chicks_healthy · chicks_weak) · rutas 211 · SOLO_SUPER_ADMIN 13 · t_025_02 48
+sensibilidad    S-R170-1 · S-B13-1/2/3/5/6/7/8/9 · SEC-S1 · S-R169-1 · S-R168-1 válidas · S-B13-4 · S-R169-2 N/A
+regresión       **1024 passed · 49 skipped · 0 failed** (857 s; 1016 previas + 8 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 95/95 · tsc 6 (R-158)
+WAVE B          IN PROGRESS · 12/27 cerrados + 4 parciales · decisiones 8 · siguiente (no iniciado): R-161 (+ R-171) · alternativa R-152 → R-153
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
+```

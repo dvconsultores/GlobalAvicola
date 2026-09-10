@@ -4,7 +4,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-021` · **Tipo** `REQUIREMENT GAP SPEC` · `POST-AUDIT REMEDIATION SPEC` |
-| **Prioridad** | **P1** · **Estado** **`PARTIAL`** (2026-09-10: `B05` (enm. A), `B01` y `B02` (enm. B) cerrados técnico; `B03`, `B04`, `B13`, `R-156` abiertos; E2E `BLOCKED_RUNTIME`) |
+| **Prioridad** | **P1** · **Estado** **`PARTIAL`** (2026-09-10: `B05` (enm. A), `B01`/`B02` (enm. B) y `B13` (enm. C) cerrados técnico; `B03` ◄── `AOD-22` · `B04` ◄── `AOD-14` · `R-156` ◄── `AOD-20`; E2E `BLOCKED_RUNTIME`) |
 | **Dependencias** | `GA-REM-001` · **informada por** `GA-REM-020` (validación de cobertura) |
 | **Hallazgo** | **R-13** — descubierto en la revalidación, **no estaba en la auditoría** |
 | **Fuente** | `Imagen de Procesos Documentado/Bases Consideradas en el Desarrollo de la App Avicola.pdf` |
@@ -420,7 +420,7 @@ permanente del tranche 7 §5). Migración **solo tras este commit de spec**.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-021-C` · `REQUIRED OPERATIONAL DATA` + `DATA INTEGRITY` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-021-C` · `REQUIRED OPERATIONAL DATA` + `DATA INTEGRITY` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10; `B13`, `R-168`; `B03` a decisión) · evidencia `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md` · commits `ec974f0` · `c653ff8` |
 | **Pre-flight** | `R-167` **NOT_REPRODUCED** (`R167_ARRIVAL_MORTALITY_ACCOUNTING_MATRIX.md`; prueba `test_r167_…` verde: la mortalidad al arribo tiene efecto productivo cero, las alojadas entran una vez; residuo = doble captura por el operador, instrucción de proceso; KPI → ola C) · `R-169` **ACTIVE_UI_CLASSIFICATION**, P2, corregido por **`GA-REM-035-A`** (era cantidad vs OC, no peso) · `R-168` **ACTIVE DEFECT** (pérdida silenciosa de «Muestra tomada»), P2, corregido aquí (§C.2) · **`R-170`** nuevo, **P1**, corregido por **`GA-REM-005-C`** (`BR-21`) antes de `B13` · `R-171` nuevo, P2, registrado (incubadora sin descarte/mortalidad en el catálogo) |
 | **`B13`** | `H360-B13` (P2): «Número de pollitos sanos / débiles» (`Bases` p.9) · matriz `GA_REM_021_B13_BIRTH_CLASSIFICATION_MATRIX.md` · gobernado salvo la igualdad de la partición (`AOD-23`, endurecimiento posterior) |
 | **`B03`** | `H360-B03` (P2): **`OWNER_DECISION_REQUIRED` (`AOD-22`)** + dependencia `AOD-19` (unidades) · matriz `GA_REM_021_B03_FEED_TRANSFER_MATRIX.md` · **sin código** |

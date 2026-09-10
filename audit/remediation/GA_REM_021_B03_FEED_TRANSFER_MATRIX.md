@@ -62,3 +62,7 @@ dependencia SAP ..................... PARCIAL (semántica de la diferencia = doc
 decisión del propietario ............ SÍ → AOD-22 (+ AOD-19 pendiente)
 modo del tranche .................... C · B13 ONLY (+ R-170 · R-169 · R-168) · NO B03 CODE
 ```
+
+## Resultado (2026-09-10)
+
+`B03` **no se implementó**: `OWNER_DECISION_REQUIRED` (`AOD-22`) + dependencia `AOD-19`. Registrado en `AUDIT_OWNER_DECISIONS_REQUIRED.md`.
