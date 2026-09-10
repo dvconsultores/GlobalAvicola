@@ -44,7 +44,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-038` | Notificaciones internas (+ enmiendas A y B) | CAPABILITY | P1 | **`CERTIFIED`** | — | [GA-REM-038](GA-REM-038-INTERNAL-NOTIFICATIONS.md) |
 | `GA-REM-039` | Áreas funcionales | DOMAIN MODEL | P1 | **`CERTIFIED`** | — | [GA-REM-039](GA-REM-039-FUNCTIONAL-AREAS.md) |
 | `GA-REM-041` | Reverso interno de registros aprobados — `R-136` (interno) + `R-165` | BUSINESS WORKFLOW / DATA INTEGRITY | P1 | **`CERTIFIED`** (2026-09-09, frontera técnica; migración `t0u1v2w3x4y5`) | B | [GA-REM-041](GA-REM-041-INTERNAL-REVERSAL.md) |
-| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A–F · **enm. G: la unidad se exige al operar sobre `operations`, `R-160`/`R-159`** · **enm. H: la habilitación de la empresa es absoluta — `lots` y descarga, `R-163`/`R-162`**) | ACCESS CONTROL | P0 | `IN_PROGRESS` — fases 1–8 **`CERTIFIED`** · enms. G y H **`CERTIFIED`** (2026-09-09, frontera técnica) · fase 9 `TECHNICALLY READY · FROZEN` (`R-127` y `R-139` cerrados) · fases 10–11 pendientes · precisada por `OD-16` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
+| `GA-REM-040` | Acceso por unidad de negocio (+ enms. A–F · **enm. G: la unidad se exige al operar sobre `operations`, `R-160`/`R-159`** · **enm. H: la habilitación de la empresa es absoluta — `lots` y descarga, `R-163`/`R-162`**) | ACCESS CONTROL | P0 | `IN_PROGRESS` — fases 1–8 **`CERTIFIED`** · enms. G y H **`CERTIFIED`** (2026-09-09, frontera técnica) · fase 9 **`AUTHORIZED`** (`OD-20`, 2026-09-11 — tranche `GA-FE-02` en curso; antes `TECHNICALLY READY · FROZEN`; `R-127` y `R-139` cerrados) · fases 10–11 pendientes · precisada por `OD-16` | — | [GA-REM-040](GA-REM-040-BUSINESS-UNIT-ACCESS-CONTROL.md) |
 
 ## Decisiones normativas
 
@@ -65,6 +65,7 @@ se interpretan.
 | `OD-17` | Un rechazo corregible no es terminal — `RETURNED`/`REJECTED` se corrigen y reenvían; con SAP, reenvío explícito (alias `AOD-09`) | **VIGENTE** · implementación `WAVE B` | [OD-17](OD-17-CORRECTABLE-REJECTION-IS-NOT-TERMINAL.md) |
 | `OD-19` | Reverso interno de registros aprobados pre-SAP — `REVERSED` distinto de `CANCELLED`; contrapartida explícita, aprobada, exactamente única; consolidados diferidos; huevos/incubación `BLOCKED_BY_R-161`; SAP diferido (alias `AOD-21`) | **VIGENTE** · gobierna `R-136` interno | [OD-19](OD-19-INTERNAL-REVERSAL-OF-APPROVED-RECORDS.md) |
 | `OD-18` | El catálogo general de empresas no contiene configuración SAP — `sap_config` fuera de `GET /masters/companies`; persistencia diferida (alias `AOD-12`) | **VIGENTE** · gobierna `R-127` | [OD-18](OD-18-COMPANY-CATALOG-EXCLUDES-SAP-CONFIGURATION.md) |
+| `OD-20` | Fase 9 autorizada para `GA-FE-02` — administración multi-empresa y de unidades de negocio en el frontend: cuatro unidades, encender ≠ conceder, contexto de empresa visible, navegación administrativa mínima, E2E autenticado como requisito de certificación (alias: autorización de fase 9) | **VIGENTE** · gobierna `GA-FE-02` | [OD-20](OD-20-PHASE-9-AUTHORIZATION-MULTI-COMPANY-AND-BUSINESS-UNIT-ADMINISTRATION-FRONTEND.md) |
 
 ## Resumen
 ```
@@ -103,7 +104,7 @@ Ninguna spec del encargo se ha eliminado. `GA-REM-019` absorbe el bloque «P2/P3
 | Origen | Reconciliación | IDs |
 |---|---|---|
 | Master 360 (`H360-*`, 65) + addendum (`H360A-*`, 10) | `audit/remediation/H360_AND_ADDENDUM_TO_OFFICIAL_BACKLOG_RECONCILIATION.md` · 0 sin disposición | 28 nuevos `R-130…R-157` · 20 mapeados a IDs existentes |
-| Decisiones formalizadas | `OD-16` (requisito de producto) · `OD-17` (`AOD-09`) · `OD-18` (`AOD-12`) | pendientes: `AOD-01…08`, `10`, `11`, `13…16` · `BU-D10` `PENDING_RATIFICATION` |
+| Decisiones formalizadas | `OD-16` (requisito de producto) · `OD-17` (`AOD-09`) · `OD-18` (`AOD-12`) · `OD-20` (fase 9 → `GA-FE-02` autorizada, 2026-09-11) | pendientes: `AOD-01…08`, `10`, `11`, `13…16` · `BU-D10` `PENDING_RATIFICATION` |
 
 ### Asignación por olas (vigente tras la reconciliación)
 
