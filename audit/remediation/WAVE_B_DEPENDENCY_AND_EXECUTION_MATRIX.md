@@ -396,3 +396,17 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   clase que el tranche 1; desbloquea el reverso de huevos/incubación (OD-19 §18). Acompañante: R-171 (catálogo de incubadora: descarte y
   mortalidad, Bases p.10 · Rec. §12). Alternativa: R-152 → R-153 (Progenitoras). B03 espera AOD-22.
 ```
+
+## 20. Tranche 9 · pre-flight (2026-09-10)
+
+```
+recuento ....................... 27 · 12 cerrados · 4 parciales · 11 abiertos — recontado desde las líneas de cierre del backlog; consistente con §19
+gate R-161 ..................... saldos BR-02 (lote, granja) y BR-03 (lote, incubadora) · escritores: egg_dispatch, incubation_load (uno por saldo) ·
+                                 fila autoritativa lots.id · bloqueo antes de leer · corrección/aprobación N/A · cantidad 0 saltaba la validación ·
+                                 GOBERNADO (GA-REM-005-B patrón · BR-02/BR-03) · sin decisión · sin migración
+gate R-171 ..................... UI_ONLY (el backend ya acepta mortalidad y descarte en lotes de incubadora y viables los resta una vez) · evento, no
+                                 atributo (RR-16) · post-nacimiento · B13 intacto · sin decisión · raíz DISTINTA de R-161 → no se combina (CASO B)
+modo ........................... R161_ONLY · R-171 queda OPEN, listo para el siguiente tranche
+altas .......................... R-172 (egg_type en BR-02) · R-173 (PUT de lote / cancel de entradas sin revalidar) · R-174 (chick_dispatch 0) → recuento canónico 30
+artefactos ..................... R161_EGG_INCUBATION_BALANCE_WRITER_MATRIX.md · R171_HATCHERY_MORTALITY_DISCARD_TRUTH_MATRIX.md · GA-REM-005-D · RC-13 (RR-16)
+```

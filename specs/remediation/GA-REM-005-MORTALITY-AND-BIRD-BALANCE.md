@@ -527,3 +527,73 @@ en caso contrario → 400 · rule = "BR-21" · el mensaje nombra las filas o los
 
 Sensibilidad `S-R170-1`: retirar la regla de filas → `AC-R170-01/02/03` rojas. Pruebas: `tests/test_birth_classification.py` (R-170) ·
 contrato estático del formulario (`vitest`). Fixtures existentes (una fila `mixed`) siguen válidas.
+
+---
+
+# ENMIENDA D · `R-161` — LOS SALDOS DE HUEVOS E INCUBACIÓN SE LEEN BAJO EL BLOQUEO DEL LOTE (2026-09-10 · WAVE B · tranche 9)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-005-D` · `DATA INTEGRITY` · **Estado** `SPEC_READY` |
+| **Hallazgo** | `R-161` (P2): `validate_egg_dispatch` (`BR-02`) y `validate_incubation_load` (`BR-03`) leen `get_egg_balance` / `get_hatchery_egg_balance` **sin** `bloquear_saldo_del_lote`; dos decrementos concurrentes leen el mismo saldo y ambos confirman (la carrera que `R-130`/enmienda B cerró para las aves). Además el servicio salta la validación cuando la cantidad es 0 (`if total > 0`), por lo que un despacho o una carga de 0 se registra |
+| **Matriz** | `audit/remediation/R161_EGG_INCUBATION_BALANCE_WRITER_MATRIX.md` (escritores, grafo, fila autoritativa, criterios de bloqueo) |
+| **Fila autoritativa** | `lots.id` — los dos saldos se agrupan por `lot_id`; los dos escritores (uno por saldo) convergen en el lote; misma primitiva que `R-130` |
+| **Sin cambio** | `get_egg_balance`, `get_hatchery_egg_balance` (fórmulas), `_suma_neta`, saldos de aves, `AC-R130-*`, `BR-21`, `B13`, `R-166` (carrera approve/reject: otro invariante), `OD-19 §18` (huevos siguen no reversibles hasta enmienda de `GA-REM-041`) |
+| **Registrados, fuera** | `R-172` (todas las `egg_type` cuentan como disponibles) · `R-173` (`PUT` con cambio de lote y `cancel` de entradas sin revalidar saldos) · `R-174` (`chick_dispatch` de 0 aceptado) |
+
+## D.1 Contrato
+
+1. **Saldos**: `BR-02` = Σ recolección − Σ despacho (por lote, ≠ `CANCELLED`); `BR-03` = Σ recepción en incubadora − Σ `quantity_loaded` (por lote).
+2. **Escritores (decrementos)**: `egg_dispatch` → `BR-02`; `incubation_load` → `BR-03`. Incrementos (`egg_collection`, `egg_reception_hatchery`): sin bloqueo (solo suben el saldo; nunca lo exceden).
+3. **Bloqueo**: `bloquear_saldo_del_lote(lot_id)` (`SELECT … FOR UPDATE` sobre `lots`) **antes** de leer el saldo; el saldo se recalcula bajo el bloqueo; la validación usa ese saldo; el alta ocurre en la misma transacción (`RutaTransaccional`); el rollback no deja efecto parcial (la regla corre antes de `db.add`).
+4. **Invariante**: `cantidad > 0` y `cantidad ≤ saldo` bajo el bloqueo; tras cualquier conjunto confirmado, `saldo ≥ 0`. Sin tolerancia. El servicio **no** salta la validación por cantidad 0: la regla la rechaza (`BR-02`/`BR-03` «mayor a cero»), como `R-130 AC04`.
+5. **Orden de bloqueos**: uno solo (la fila del lote); sin cadena; sin interbloqueo posible. **Alcance**: por recurso (lote) → dos lotes o dos empresas no se serializan entre sí; sin mutex de proceso.
+6. **Error**: `400` con `rule = BR-02` / `BR-03` (contrato existente); mensaje con cantidad y saldo.
+7. **Corrección**: N/A (los submovimientos no son corregibles). **Aprobación**: N/A (el efecto nace en el alta; la aprobación no muta cantidades). **Reverso**: fuera (`OD-19 §18`).
+8. **Seguridad**: cadena certificada (`OD-14`, `OD-16`, `R-160`, `R-139`); sin permiso nuevo; sin lógica por nombre de rol.
+9. **Auditoría**: el alta confirmada audita `created`; la denegada no deja auditoría de éxito ni filas.
+10. **`R-130` / `R-170` / `B13`**: intactos; el bloqueo es la misma primitiva.
+
+## D.2 Criterios de aceptación
+
+| AC | Criterio | Contrato |
+|---|---|---|
+| `AC-R161-01` | control secuencial: recolección 100 → despacho 60 → saldo 40 (`BR-02`); recepción 100 → carga 60 → saldo 40 (`BR-03`) | `201` |
+| `AC-R161-02` | el resto exacto se acepta (40 tras 60; 100 de una vez) — distingue `>` de `>=` | `201` |
+| `AC-R161-03` | una unidad de más se rechaza con cero efectos (sin evento, sin filas, saldo intacto, sin auditoría de éxito) | `400 BR-02/03` |
+| `AC-R161-04` | cantidad 0 → `400` (sin fila «vacía») | `400` |
+| `AC-R161-05` | **carrera** `egg_dispatch`: saldo 100, tres despachos de 70 lanzados concurrentemente → exactamente uno confirma; códigos `[201, 400, 400]`; saldo final 30 ≥ 0; una sola fila de despacho | verdad final |
+| `AC-R161-06` | **carrera** `incubation_load`: recepción 100, tres cargas de 70 concurrentes → `[201, 400, 400]`; saldo 30 | verdad final |
+| `AC-R161-07` | dos lotes distintos, un despacho de 70 en cada uno concurrentemente → ambos `201` (bloqueo por recurso, no global) | `201, 201` |
+| `AC-R161-08` | multi-escritor: **N/A** (un decremento por saldo; documentado en la matriz) | — |
+| `AC-R161-09` | corrección: **N/A** (submovimientos no corregibles) | — |
+| `AC-R161-10` | otra empresa → `400 BR-07`; sin fila; saldo intacto | `400` |
+| `AC-R161-11` | unidad apagada: global situada → `403`; concesión histórica → `BR-07` | `403`/`400` |
+| `AC-R161-12` | sin la unidad → `BR-07` | `400` |
+| `AC-R161-13` | global sin contexto → `BR-07` | `400` |
+| `AC-R161-14` | sin `operations:create` (sin permiso, Administrador de Accesos, control-lectura) → `403` | `403` |
+| `AC-R161-15` | auditoría: la operación confirmada audita `created`; la denegada en la carrera no | auditoría |
+| `AC-R161-16` | control `R-171`: `mortality_recording` y `cull_recording` sobre un lote de incubadora → `201` y restan de viables una vez (el backend ya los admite: `R-171` es `UI_ONLY`) | control |
+
+## D.3 Sensibilidad
+
+| Mut. | Retira | Debe caer |
+|---|---|---|
+| `R161-S1` | el bloqueo en los dos validadores | `AC-R161-05/06` (doble `201`, saldo negativo observado) |
+| `R161-S2` | el bloqueo pasa a **después** de leer el saldo | `AC-R161-05/06` |
+| `R161-S3` | se bloquea pero se valida contra el saldo leído **antes** del bloqueo (relectura descartada) | `AC-R161-05/06` |
+| `R161-S4` | el bloqueo solo en `egg_dispatch` (se omite en `incubation_load`) | `AC-R161-06` (cobertura completa de escritores) |
+| `R161-S5` | la cota `cantidad ≤ saldo` | `AC-R161-03` |
+| `R161-S6` | la empresa (cuatro capas del alta) | `AC-R161-10` con fila observada |
+| `R161-S7` | la habilitación de la unidad | `AC-R161-11` |
+| `R161-S8` | la concesión del actor | `AC-R161-11/12` |
+| `R161-S9` | `operations:create` en la ruta | `AC-R161-14` |
+| `R161-S10` | vuelve el salto `if total > 0` | `AC-R161-04` |
+
+## D.4 Definición de terminado
+
+`AC-R161-01…07, 10…16` verdes (`08`, `09` N/A con evidencia) · rojo válido con carrera **observada** (ambas confirman; saldo negativo) ·
+sensibilidad válida · `R-130` 21/21 · `R-170`/`B13` 6/6 · `B01` 10/10 · `B02` 8/8 · `B05` 16/16 · reversos · `R-135`/`R-143` · `R-159`/`R-160` ·
+`R-162`/`R-163` · `R-139` · `R-165` · `OD-14`/`OD-16` · guardianes exactos (rutas 211, cabeza `x4y5z6a7b8c9`, sin migración) · `test_clean_baseline`
+(N/A por cambio, ejecutada) · `test_time_determinism` · regresión completa **leída** · `R-161` cerrado (técnico) · `R-171` OPEN (siguiente) ·
+certificación de proceso `BLOCKED_RUNTIME`.

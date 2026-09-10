@@ -1075,6 +1075,9 @@ Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión co
 | `R-169` | ~~P3~~ **P2** · **CERRADO** (técnico, tranche 8, `GA-REM-035-A`; es **cantidad vs OC**, no peso) | alerta «diferencia superior al 10 %» recibido vs declarado en el formulario de recepción sin fuente normativa (solo cliente); además inyecta «⚠️ ALERTA …» en `observations` al enviar; `FUNCTIONAL_COVERAGE_MATRIX CV-F07` la cuenta como «validación ±10 %» | `OperationFormPage.tsx:384-395, 613-614, 743-751` · familia `R-147` | B |
 | **`R-170`** | **P1** · **CERRADO** (técnico, tranche 8, `GA-REM-005-C` · `BR-21`) | **doble contabilidad de nacimientos**: el formulario emite «Total nacidos» + machos + hembras + «Débiles» como cuatro filas de `bird_movements` y el saldo, los viables y el KPI suman todas (observado: 100 pollitos → viables 200, saldo 200); sin rama de reglas para `BIRTH_REGISTRATION` | `OperationFormPage.tsx:1568-1590` · `service.py:852-892` · `validators.get_viable_chick_balance` | B |
 | `R-171` | P2 | la etapa `hatchery` del catálogo no ofrece `cull_recording` ni `mortality_recording`, que son lo que viables y rendimiento restan (`Bases` p.10, Rec. §12) | `processCatalog.ts:226-229, 403-412` | B |
+| `R-172` | P2 | `get_egg_balance` suma todas las `egg_type` de la recolección (sucios, rotos, infértiles, descartados) como huevos disponibles para despacho; `BR-02` habla de fértiles disponibles (semántica, no concurrencia) | `validators.py:91-114` | B |
+| `R-173` | P2 | mutaciones posteriores al alta con efecto en saldo sin revalidación ni bloqueo: `PUT` que cambia `lot_id` mueve el efecto entre lotes; `cancel` de una entrada (recolección, recepción, nacimiento, recepción de aves) tras salidas deja el saldo negativo; las cuatro familias de saldo | `service.py:1071-1078, 1133-1150` | B |
+| `R-174` | P3 | `chick_dispatch` con cantidad 0 se acepta: `if total_qty > 0` salta `validate_chick_dispatch` (residuo de la clase `R-130 AC04`) | `service.py:883` | B |
 
 Trazas parciales del tranche 4: **`R-140`** → PARTE A (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) en `GA-REM-006-A`; motivo obligatorio (contrato de ruta que el cliente llama sin cuerpo → UI) y permiso «solo administrador» (`AOD-18`) → OPEN. **`R-154`** → subconjunto `DRAFT` (mapa de transiciones + controles) y `version` (semántica vigente documentada: avanza en `PUT` y en corrección; la matriz 360 lo daba por no incrementado) en `GA-REM-006-A`; dos «cierres» (`AOD-08`) y `LotStatus.CANCELLED` → OPEN. `R-163` normalizada a **P1**.
 
@@ -1233,3 +1236,13 @@ WAVE B   IN PROGRESS                27 ítems (canónico) · 12 cerrados · 4 pa
 ```
 
 Evidencia: `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md`. Regresión completa: **1024 passed · 49 skipped · 0 failed** (857 s; 1016 previas + 8 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 95/95 · `tsc` 6 preexistentes (`R-158`). Migración `x4y5z6a7b8c9` (autorizada por `GA-REM-021-C §C.5`, tras el commit de spec `ec974f0`). Rutas 211. `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 9 (2026-09-10): `R-161` gobernado · `R-171` UI_ONLY y gobernado, raíz distinta · modo R161_ONLY · sin código
+
+`R-161`: dos saldos (`BR-02` del lote en granja, `BR-03` en incubadora), un decremento cada uno (`egg_dispatch`, `incubation_load`) leído sin
+`bloquear_saldo_del_lote`; la fila autoritativa es `lots.id` (misma primitiva que `R-130`); corrección y aprobación N/A; el servicio salta la
+validación con cantidad 0 → `GA-REM-005` enmienda D. `R-171`: el backend acepta y contabiliza `mortality_recording`/`cull_recording` en lotes de
+incubadora; solo falta el catálogo (`UI_ONLY`, `RR-16`); raíz distinta de `R-161` → queda OPEN, siguiente. Registrados `R-172`, `R-173`, `R-174`
+(no se corrigen aquí). Recuento revalidado: 27 · 12 · 4 · 11 (antes de las altas de este pre-flight).

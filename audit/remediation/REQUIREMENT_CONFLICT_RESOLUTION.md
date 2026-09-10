@@ -423,3 +423,14 @@ fila «total». **Corte:** nivel 2 sobre nivel 5.
 > (`sanos + débiles ≤ nacidos`) que **no entran en ningún saldo**; «débil» no es descarte ni mortalidad (el descarte sigue siendo
 > `cull_recording`, `Rec. §12`; la mortalidad, `mortality_recording`). La igualdad `sanos + débiles = nacidos` no la afirma ninguna fuente
 > (`AOD-23`). Sin sanos/débiles por sexo (`GA-REM-005:420`).
+
+## 13. `RC-13` · descarte de pollitos: evento, no atributo del nacimiento (`R-171`, 2026-09-10)
+
+**Conflicto.** `docs/02 §3.7.5` y `spec.md §4.7` (nivel 3/4) listan «Pollitos descartados» entre los datos del **nacimiento**; `GA-REM-005-B`
+(nivel 4, certificado con `R-130`) modela el descarte como el **evento** `cull_recording` que resta de viables; `Bases` p.9 (nivel 2) no tiene
+descartados al nacer y `Rec. §12` (nivel 2) pide capturar «Pollitos descartados» sin fijar la representación. **Corte:** el nivel 2 exige el
+dato y calla la forma; entre las dos formas de nivel 3/4, la única que no duplica el efecto (`R-170`) es la ya certificada.
+
+> **RR-16.** El descarte de pollitos es el evento `cull_recording` del lote de incubación (posterior al nacimiento), que resta de viables y
+> del saldo una sola vez; no se añade un atributo «descartados» al nacimiento. La mortalidad de pollitos (`Bases` p.10) es el evento
+> `mortality_recording` del mismo lote. Ambos deben ofrecerse en el flujo de incubadora (`R-171`).
