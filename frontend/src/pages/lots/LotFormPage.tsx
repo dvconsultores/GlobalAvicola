@@ -44,7 +44,6 @@ export default function LotFormPage() {
  const [houses, setHouses] = useState<SelectOption[]>([])
  const [lines, setLines] = useState<SelectOption[]>([])
  const [breeds, setBreeds] = useState<SelectOption[]>([])
- const [areas, setAreas] = useState<SelectOption[]>([])
  const [loadingMasters, setLoadingMasters] = useState(true)
 
  const {
@@ -82,7 +81,7 @@ export default function LotFormPage() {
  useEffect(() => {
  const load = async () => {
  try {
- const [farmRes, houseRes, lineRes, breedRes, areaRes] = await Promise.allSettled([
+ const [farmRes, houseRes, lineRes, breedRes] = await Promise.allSettled([
  api.get('/masters/farms?limit=100'),
  api.get('/masters/houses?limit=100'),
  api.get('/masters/genetic-lines?limit=100'),
