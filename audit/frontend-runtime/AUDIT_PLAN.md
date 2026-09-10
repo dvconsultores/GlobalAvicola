@@ -64,9 +64,10 @@ NO DEPLOYED PROOF = NO DEPLOYMENT CERTIFICATION
 
 | Commit | Contenido | Estado |
 |---|---|---|
-| C1 | SPEC + PLAN + CHECKLIST + TASKS | pendiente de commit |
-| C2 | (arnés adicional: no indispensable — las comprobaciones quedan documentadas como comandos reproducibles) | n/a |
-| C3 | Evidencia + matrices + roadmap + addendum backlog | pendiente de commit |
+| C1 | SPEC + PLAN + CHECKLIST + TASKS | `d178c0b` |
+| C2 | (arnés adicional: no indispensable — las comprobaciones quedan documentadas como comandos reproducibles; se añadió `generate_gap_matrix.py` como generador verificable de la matriz) | incluido en C3 |
+| C3 | Evidencia + matrices + roadmap + addendum backlog | `6c0658e` |
 
-Push: **NOT DONE** en esta sesión — no hay transporte autorizado disponible y el encargo solo lo
-exige si la gobernanza lo requiere (§136). Los commits quedan locales y verificables.
+Push: **PASS** (§136) — commits audit-only publicados con el transporte ya autorizado del entorno
+(`git push origin main` → `3808ed5..6c0658e`, sin tocar el remoto ni el despliegue: ninguna ruta
+`frontend/**`/`backend/**` viaja en estos commits).
