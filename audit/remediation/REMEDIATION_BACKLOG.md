@@ -1078,6 +1078,7 @@ Evidencia: `R-163-R-162-LOTS-EVIDENCE-BU-ENFORCEMENT-EVIDENCE.md`. Regresión co
 | `R-172` | P2 | `get_egg_balance` suma todas las `egg_type` de la recolección (sucios, rotos, infértiles, descartados) como huevos disponibles para despacho; `BR-02` habla de fértiles disponibles (semántica, no concurrencia) | `validators.py:91-114` | B |
 | `R-173` | P2 | mutaciones posteriores al alta con efecto en saldo sin revalidación ni bloqueo: `PUT` que cambia `lot_id` mueve el efecto entre lotes; `cancel` de una entrada (recolección, recepción, nacimiento, recepción de aves) tras salidas deja el saldo negativo; las cuatro familias de saldo | `service.py:1071-1078, 1133-1150` | B |
 | `R-174` | P3 | `chick_dispatch` con cantidad 0 se acepta: `if total_qty > 0` salta `validate_chick_dispatch` (residuo de la clase `R-130 AC04`) | `service.py:883` | B |
+| `R-175` | P3 | aislamiento de pruebas: `test_lot_start_date`, `test_lots_bu_enforcement` y `test_od14_productive_surfaces` crean una `ProductivePhase` y no la retiran; `test_clean_baseline::test_t_025_07` («las fases se duplicaron: 5») cae en cualquier invocación no alfabética que las ejecute antes (visto en los tranches 7, 8 y 9; demostrado por pares ordenados; en orden alfabético no se manifiesta) | `tests/test_lot_start_date.py:246` · `tests/test_lots_bu_enforcement.py` · `tests/test_od14_productive_surfaces.py` | B (higiene) |
 
 Trazas parciales del tranche 4: **`R-140`** → PARTE A (guarda de estados de `cancel`: `SAP_CONFIRMED`/`SAP_ERROR`/`CANCELLED`) en `GA-REM-006-A`; motivo obligatorio (contrato de ruta que el cliente llama sin cuerpo → UI) y permiso «solo administrador» (`AOD-18`) → OPEN. **`R-154`** → subconjunto `DRAFT` (mapa de transiciones + controles) y `version` (semántica vigente documentada: avanza en `PUT` y en corrección; la matriz 360 lo daba por no incrementado) en `GA-REM-006-A`; dos «cierres» (`AOD-08`) y `LotStatus.CANCELLED` → OPEN. `R-163` normalizada a **P1**.
 
@@ -1246,3 +1247,20 @@ Evidencia: `WAVE_B_TRANCHE_8_PREFLIGHT_AND_B13_EVIDENCE.md`. Regresión completa
 validación con cantidad 0 → `GA-REM-005` enmienda D. `R-171`: el backend acepta y contabiliza `mortality_recording`/`cull_recording` en lotes de
 incubadora; solo falta el catálogo (`UI_ONLY`, `RR-16`); raíz distinta de `R-161` → queda OPEN, siguiente. Registrados `R-172`, `R-173`, `R-174`
 (no se corrigen aquí). Recuento revalidado: 27 · 12 · 4 · 11 (antes de las altas de este pre-flight).
+
+---
+
+## Cierre de `R-161` · saldos de huevos e incubación bajo el bloqueo del lote · WAVE B tranche 9 (2026-09-10)
+
+```
+R-161    CERRADO (técnico)   GA-REM-005 enmienda D · validate_egg_dispatch y validate_incubation_load bloquean la fila del lote antes de leer el
+                            saldo (misma primitiva que R-130) · cantidad 0 rechazada (sin guarda if total > 0) · carreras observadas (5 × 70 sobre 100
+                            en tres lotes por familia: −250) y cerradas ([201, 400 ×4], saldo 30) · bloqueo por recurso · corrección/aprobación N/A ·
+                            7/7 · rojo previo 3 · sensibilidad R161-S1…S10 válidas
+R-171    OPEN                UI_ONLY · gobernado (RR-16) · raíz distinta → siguiente tranche
+R-172 · R-173 · R-174  OPEN  registrados en el pre-flight (P2 · P2 · P3) · R-175 OPEN (P3, aislamiento de pruebas: tres suites dejan una fase productiva)
+WAVE B   IN PROGRESS        31 ítems (canónico) · 13 cerrados · 4 parciales · 14 abiertos · decisiones 8
+                            siguiente tranche (identificado, no iniciado): R-171 (+ R-173 si independiente) · alternativa: R-152 → R-153
+```
+
+Evidencia: `R-161-EGG-INCUBATION-CONCURRENCY-EVIDENCE.md`. Regresión completa: **1031 passed · 49 skipped · 0 failed** (1210 s; 1024 previas + 7 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 95/95 · `tsc` 6 preexistentes (`R-158`). Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · `OD-19 §18` (huevos no reversibles) sin cambio · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

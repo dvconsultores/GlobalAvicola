@@ -410,3 +410,22 @@ modo ........................... R161_ONLY · R-171 queda OPEN, listo para el si
 altas .......................... R-172 (egg_type en BR-02) · R-173 (PUT de lote / cancel de entradas sin revalidar) · R-174 (chick_dispatch 0) → recuento canónico 30
 artefactos ..................... R161_EGG_INCUBATION_BALANCE_WRITER_MATRIX.md · R171_HATCHERY_MORTALITY_DISCARD_TRUTH_MATRIX.md · GA-REM-005-D · RC-13 (RR-16)
 ```
+
+## 21. Estado tras el tranche 9 (2026-09-10) — recalculado desde el backlog (recuento canónico 31)
+
+```
+TOTAL ......................... 31   (27 + R-172 + R-173 + R-174, alta formal en §20 · + R-175, aislamiento de pruebas, registrado en el cierre)
+CERRADOS ...................... 13   R-130 · R-135 · R-143 · R-159 · R-160 · R-161 · R-162 · R-163 · R-165 · R-167 · R-168 · R-169 · R-170
+PARCIALES ......................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS ....................... 14   R-142 · R-144 · R-147 · R-148 · R-152 · R-153 · R-156 · R-164 (BLOCKED_RUNTIME) · R-166 · R-171 · R-172 · R-173 · R-174 · R-175
+P1 ABIERTOS ...................  0        P2 ABIERTOS  9   (R-142 · R-144 · R-147 · R-148 · R-152 · R-164 · R-171 · R-172 · R-173)        P3 ABIERTOS  5   R-153 · R-156 · R-166 · R-174 · R-175
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP · B03 (AOD-22) · B04 (AOD-14)]
+DECISIONES DEL PROPIETARIO .....  8   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c          BLOCKED_RUNTIME ....... R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 9 ...................... commits 22476bb · abd3179 · commit de evidencia (este) · sin migración · rutas 211 · regresión 1031 passed · 49 skipped · 0 failed (1210 s; 1024 previas + 7 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 95/95 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-171 — catálogo de la etapa de incubadora con mortality_recording y cull_recording (UI_ONLY; RR-16; sin decisión; pasos de flujo, i18n,
+  contrato estático) — con R-173 (PUT de lote y cancel de entradas contra los saldos; DATA_INTEGRITY P2, misma primitiva de bloqueo) si la traza
+  lo muestra independiente. Alternativa: R-152 → R-153 (Progenitoras).
+```

@@ -893,6 +893,8 @@ GA-REM-021 B01 + B02 ──CERRADOS (tranche 7, GA-REM-021-B · GA-REM-037-B)─
 R-170 ──CERRADO (tranche 8, GA-REM-005-C · BR-21)──► el nacimiento tiene una sola contabilidad; B13 ──CERRADO (GA-REM-021-C)──► sanos/débiles como
                 atributos; R-169 ──CERRADO (GA-REM-035-A)──► sin tolerancia en el cliente; R-168 ──CERRADO──► muestra persistida; R-167 no reproducido ·
                 B03 ◄── AOD-22 (+ AOD-19) · R-171 registrado (catálogo de incubadora) · AOD-23 (igualdad sanos + débiles = nacidos: endurecimiento posterior)
-siguiente (identificado, no iniciado): R-161 (saldos de huevos/incubación sin bloqueo de fila; P2; sin decisión; desbloquea el reverso de huevos, OD-19 §18) +
-                R-171 como acompañante · alternativa: R-152 → R-153 (Progenitoras)
+R-161 ──CERRADO (tranche 9, GA-REM-005-D)──► BR-02/BR-03 bajo el bloqueo del lote · levanta el bloqueo de CONCURRENCIA del reverso de huevos (OD-19 §18),
+                que además exige _suma_neta en los saldos de huevos (enmienda futura de GA-REM-041) · deja R-172 (egg_type en BR-02), R-173 (mutaciones
+                posteriores al alta sin revalidar saldos), R-174 (chick_dispatch 0) · R-171 UI_ONLY listo
+siguiente (identificado, no iniciado): R-171 (catálogo de incubadora: mortalidad y descarte; UI_ONLY) + R-173 si independiente · alternativa: R-152 → R-153
 ```

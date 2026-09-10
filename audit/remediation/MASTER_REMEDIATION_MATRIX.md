@@ -1310,3 +1310,16 @@ regresión       **1024 passed · 49 skipped · 0 failed** (857 s; 1016 previas 
 WAVE B          IN PROGRESS · 12/27 cerrados + 4 parciales · decisiones 8 · siguiente (no iniciado): R-161 (+ R-171) · alternativa R-152 → R-153
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
 ```
+
+## WAVE B · tranche 9 · `R-161` cerrado (`GA-REM-005-D` certificada) · `R-171` UI_ONLY (siguiente) · `R-172`/`R-173`/`R-174` registrados (2026-09-10)
+
+```
+pre-flight      dos saldos (BR-02 lote/granja · BR-03 lote/incubadora), un decremento cada uno, fila autoritativa lots.id · corrección/aprobación N/A ·
+                R-171 UI_ONLY con raíz distinta → R161_ONLY · altas R-172 (egg_type en BR-02) · R-173 (PUT de lote / cancel de entradas) · R-174 (chick_dispatch 0)
+GA-REM-005-D    CERTIFIED (frontera técnica) · AC-R161-01…16 (08/09 N/A) · rojo 3/7 con carrera observada (−250) → verde 7/7
+R-161           CERRADO (técnico) · bloqueo antes de leer · relectura · > 0 y ≤ saldo · por recurso · sin migración
+sensibilidad    R161-S1…S10 válidas (S1/S2/S3 reproducen la carrera al retirar/mover/ignorar el bloqueo; S4 cobertura de escritores)
+regresión       **1031 passed · 49 skipped · 0 failed** (1210 s; 1024 previas + 7 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 95/95 · tsc 6 (R-158)
+WAVE B          IN PROGRESS · 13/31 cerrados + 4 parciales · R-175 registrado (aislamiento de pruebas) · siguiente (no iniciado): R-171 (+ R-173) · alternativa R-152 → R-153
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-164 BLOCKED_RUNTIME · R-166 OPEN
+```

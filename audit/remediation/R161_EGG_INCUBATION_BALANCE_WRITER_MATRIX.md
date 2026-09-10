@@ -72,3 +72,8 @@ R-171 decisión del propietario ...... NINGUNA
 R-171 misma raíz que R-161 .......... NO (recurso: pollitos vs huevos · saldo: viables vs BR-02/BR-03 · spec: GA-REM-021 vs GA-REM-005 · primitiva ausente: catálogo vs bloqueo)
 MODO ................................ R161_ONLY (CASO B: R-161 se cierra; R-171 queda OPEN → siguiente, listo)
 ```
+
+## 7. Resultado (2026-09-10)
+
+`R-161` cerrado (técnico) por `GA-REM-005-D` (commits `22476bb` spec · `abd3179` código · commit de evidencia): 7/7 · carreras observadas y
+cerradas · sensibilidad `R161-S1…S10` válidas · regresión 1031 passed · 49 skipped · 0 failed (1210 s; 1024 previas + 7 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · evidencia `R-161-EGG-INCUBATION-CONCURRENCY-EVIDENCE.md`.

@@ -534,7 +534,7 @@ contrato estático del formulario (`vitest`). Fixtures existentes (una fila `mix
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-005-D` · `DATA INTEGRITY` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-005-D` · `DATA INTEGRITY` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `R-161-EGG-INCUBATION-CONCURRENCY-EVIDENCE.md` · commits `22476bb` · `abd3179` |
 | **Hallazgo** | `R-161` (P2): `validate_egg_dispatch` (`BR-02`) y `validate_incubation_load` (`BR-03`) leen `get_egg_balance` / `get_hatchery_egg_balance` **sin** `bloquear_saldo_del_lote`; dos decrementos concurrentes leen el mismo saldo y ambos confirman (la carrera que `R-130`/enmienda B cerró para las aves). Además el servicio salta la validación cuando la cantidad es 0 (`if total > 0`), por lo que un despacho o una carga de 0 se registra |
 | **Matriz** | `audit/remediation/R161_EGG_INCUBATION_BALANCE_WRITER_MATRIX.md` (escritores, grafo, fila autoritativa, criterios de bloqueo) |
 | **Fila autoritativa** | `lots.id` — los dos saldos se agrupan por `lot_id`; los dos escritores (uno por saldo) convergen en el lote; misma primitiva que `R-130` |
