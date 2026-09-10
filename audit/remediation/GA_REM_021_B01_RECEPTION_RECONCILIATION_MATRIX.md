@@ -162,3 +162,8 @@ mortalidad (ola C); pantalla de recepción nueva (fase 9) — solo la vertical m
 | `R-167` | P3 | doble contabilización posible de la mortalidad al arribo (campo de la recepción + evento `mortality_recording` del mismo día); semántica del KPI de mortalidad sin fuente | §7 |
 | `R-168` | P3 | el formulario de recepción registra `bird_movements[i].sample_size` y `BirdMovementSchema` no lo declara: el cliente envía, el esquema descarta (patrón `R-47`); «Muestra tomada» del §6 no se persiste por galpón | `OperationFormPage.tsx:698` · `schemas.py:12-20` |
 | `R-169` | P3 | el formulario de recepción muestra una alerta «diferencia superior al 10 %» entre recibido y declarado sin fuente normativa (solo cliente, solo aviso); `FUNCTIONAL_COVERAGE_MATRIX CV-F07` la cuenta como «validación ±10 %» | `OperationFormPage.tsx:610-611` · familia `R-147` |
+
+## Resultado (2026-09-10)
+
+Cerrado (técnico) por `GA-REM-021-B` (commits `f878ab6` spec · `a759a17` código · commit de evidencia): 8/8 · sensibilidad válida ·
+regresión 1016 passed · 49 skipped · 0 failed (935 s; 1000 previas + 16 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · evidencia `GA-REM-021-B01-B02-RECEPTION-EVIDENCE.md`. `GA-REM-021` sigue **PARTIAL**.

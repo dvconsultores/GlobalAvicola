@@ -84,3 +84,8 @@ de `GA-REM-037`**, sin tocar el motor, los modelos ni la migración.
 
 Fuera: `R-156` (`AOD-20`); desviación %; estándar por sexo; instantánea de curva; bloqueo de aprobación; KPI de peso, uniformidad,
 tendencia (ola C); pantalla nueva (fase 9); engorde/progenitoras/incubadora; motor, modelos y migración de `GA-REM-037`.
+
+## Resultado (2026-09-10)
+
+Cerrado (técnico) por `GA-REM-021-B` (commits `f878ab6` spec · `a759a17` código · commit de evidencia): 8/8 · sensibilidad válida ·
+regresión 1016 passed · 49 skipped · 0 failed (935 s; 1000 previas + 16 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · evidencia `GA-REM-021-B01-B02-RECEPTION-EVIDENCE.md`. `GA-REM-021` sigue **PARTIAL**.

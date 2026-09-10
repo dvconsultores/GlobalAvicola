@@ -358,7 +358,7 @@ alerta.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-037-B` · `SCOPE EXTENSION` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-037-B` · `SCOPE EXTENSION` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `GA-REM-021-B01-B02-RECEPTION-EVIDENCE.md` · commit `a759a17` |
 | **Requisito** | `Recomendación central` §6 «Que los pesos estén dentro de rango esperado» (recepción de reproductoras) · `spec.md §4.5` (la recepción es el primer evento de la fase) · `OD-06` sin cambio |
 | **Traza** | `audit/remediation/GA_REM_021_B02_WEIGHT_RANGE_MATRIX.md` · `RR-13` |
 | **Cambio** | la **puerta** del gancho de alerta (`service.py:586`) admite `BIRD_RECEPTION` cuando el lote es `breeder`; el detalle monta `WeightEvaluation` también para `bird_reception` |

@@ -4,7 +4,7 @@
 | Campo | Valor |
 |---|---|
 | **ID** | `GA-REM-021` · **Tipo** `REQUIREMENT GAP SPEC` · `POST-AUDIT REMEDIATION SPEC` |
-| **Prioridad** | **P1** · **Estado** **`PARTIAL`** (2026-09-09: `B05` cerrado técnico por la enmienda A; `B01…B04`, `B13`, `R-156` abiertos; E2E `BLOCKED_RUNTIME`) |
+| **Prioridad** | **P1** · **Estado** **`PARTIAL`** (2026-09-10: `B05` (enm. A), `B01` y `B02` (enm. B) cerrados técnico; `B03`, `B04`, `B13`, `R-156` abiertos; E2E `BLOCKED_RUNTIME`) |
 | **Dependencias** | `GA-REM-001` · **informada por** `GA-REM-020` (validación de cobertura) |
 | **Hallazgo** | **R-13** — descubierto en la revalidación, **no estaba en la auditoría** |
 | **Fuente** | `Imagen de Procesos Documentado/Bases Consideradas en el Desarrollo de la App Avicola.pdf` |
@@ -260,7 +260,7 @@ migración aplicada por `upgrade` · `B05` cerrado (técnico) · `GA-REM-021` **
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-021-B` · `REQUIRED OPERATIONAL DATA` + `BUSINESS RULE ACTIVATION` · **Estado** `SPEC_READY` |
+| **Enmienda** | `GA-REM-021-B` · `REQUIRED OPERATIONAL DATA` + `BUSINESS RULE ACTIVATION` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10; E2E `BLOCKED_RUNTIME`) · evidencia `GA-REM-021-B01-B02-RECEPTION-EVIDENCE.md` · commits `f878ab6` · `a759a17` |
 | **Subrequisitos** | **`B01`** = `H360-B01` (P2): «hembras + machos + mortalidad + rechazo cuadren contra recibido» · **`B02`** = `H360-B02` (P2): «los pesos estén dentro de rango esperado» |
 | **Fuente** | `Recomendación central.pdf` §6 «Proceso recomendado: recepción de reproductoras» (p.9-10), validación en «administración web intermedia» |
 | **Matrices previas** | `GA_REM_021_B01_RECEPTION_RECONCILIATION_MATRIX.md` · `GA_REM_021_B02_WEIGHT_RANGE_MATRIX.md` |

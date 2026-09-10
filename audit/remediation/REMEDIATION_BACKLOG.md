@@ -25,7 +25,7 @@ Riesgo: probabilidad de efectos colaterales al implementar.
 | **14** | `GA-REM-008` | Trazabilidad generacional | P0 | 001, 011, 014 | M | medio | `SPEC_DRAFT` ⚠ `RC-04` |
 | **15** | `GA-REM-013` | Quality gates de CI | P1 | 001, 014 | S | bajo | `SPEC_READY` |
 | **16** | `GA-REM-015` | Certificación de tests backend | P1 | 014 | M | medio | **`CERTIFIED`** |
-| **17** | `GA-REM-021` | Consumo de agua (R-13) | P1 | 001 | S | bajo | **`PARTIAL`** (`B05` cerrado técnico, enm. A certificada; `B01…B04`, `B13`, `R-156` abiertos) |
+| **17** | `GA-REM-021` | Consumo de agua (R-13) | P1 | 001 | S | bajo | **`PARTIAL`** (`B05`, `B01`, `B02` cerrados técnico, enm. A y B certificadas; `B03`, `B04`, `B13`, `R-156` abiertos) |
 | **18** | `GA-REM-022` | Completitud de KPI (R-14) | P1 | 001, 011 | S | bajo | `SPEC_READY` |
 | **19** | `GA-REM-016` | Certificación E2E y de procesos | P1 | 002, 005, 006, 007, 011, 014, 015 | L | medio | `SPEC_DRAFT` |
 | **20** | `GA-REM-018` | Recuperación de trazabilidad Spec Dev | P1 | 001 + estabilización | L | bajo | `SPEC_READY` |
@@ -1177,3 +1177,24 @@ la curva fijada al lote a la edad del día de la recepción; fuera de rango aler
 (`RR-13`). CASO A: ambos se implementan. Matrices `GA_REM_021_B01_…` y `GA_REM_021_B02_…`; `GA-REM-021` enmienda B; `GA-REM-037` enmienda B;
 `RC-11` (`RR-12`, `RR-13`). Hallazgos nuevos `R-167`, `R-168`, `R-169` (P3, no se resuelven aquí). Corrección de la ola B: «`B01` usa el
 saldo» → `B01` gobierna lo que **entra** al saldo. Recuento revalidado: 22 · 8 cerrados · 4 parciales · 10 abiertos.
+
+---
+
+## Cierre de `B01` + `B02` · cuadre y pesos en rango en la recepción de reproductoras · WAVE B tranche 7 (2026-09-10)
+
+```
+B01 / H360-B01  CERRADO (técnico)  recibido = Σ alojadas + mortalidad al arribo + rechazo (BR-20; RR-12) · tres enteros nuevos (migración
+                            w3x4y5z6a7b8) · obligatorios y explícitos en reproductoras · engorde solo mortalidad inicial · alojadas del
+                            servidor · edición revalidada · sumandos no corregibles uno a uno · saldo = alojadas (R-130 intacto) · 8/8 ·
+                            rojo previo 6 · sensibilidad B01-S1/S4/S5/S6/S7 + SEC-S1…S4 válidas (B01-S2/S3 N/A)
+B02 / H360-B02  CERRADO (técnico)  referente = curva fijada al lote a la edad del día (OD-06 · GA-REM-037; RR-13) · alerta, no bloqueo ·
+                            NO_REFERENCE declarado · engorde N/A · detalle con evaluación · GA-REM-037 enmienda B (puerta de la alerta;
+                            motor intacto) · 8/8 · rojo previo 2 (+1 de arnés) · sensibilidad B02-S1/S2/S3/S5 válidas (B02-S4 N/A)
+GA-REM-021  PARTIAL           B05 · B01 · B02 cerrados · B03 (alimento) · B13 (sanos/débiles) abiertos (enmienda C pendiente) · B04 ◄── AOD-14 ·
+                            R-156 ◄── AOD-20 · KPI: ola C
+WAVE B   IN PROGRESS        22 ítems · 8 cerrados · 4 parciales (R-140 · R-154 · R-136 · GA-REM-021) · 10 abiertos · decisiones 6
+                            siguiente tranche (identificado, no iniciado): GA-REM-021 B03 (+ B13 si independiente) — enmienda C previa ·
+                            alternativa: R-152 → R-153 (Progenitoras)
+```
+
+Evidencia: `GA-REM-021-B01-B02-RECEPTION-EVIDENCE.md`. Regresión completa: **1016 passed · 49 skipped · 0 failed** (935 s; 1000 previas + 16 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado). `vitest` 89/89 · `tsc` 6 preexistentes (`R-158`). Migración `w3x4y5z6a7b8` (autorizada por `GA-REM-021-B §B.5`, tras el commit de spec `f878ab6`). Rutas 211 (sin cambio). `R-167`/`R-168`/`R-169` registrados (P3). `R-161` OPEN · `R-164` BLOCKED_RUNTIME · `R-166` OPEN · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

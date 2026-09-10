@@ -886,5 +886,9 @@ GA-REM-021 B05 ──CERRADO (tranche 6, GA-REM-021-A)──► hoja; deja water
                 · OD-19 Aclaración A cierra la asignación de roles del reverso (GA-REM-041-A semillas · GA-REM-041-B migración de datos v2w3x4y5z6a7 para
                 instalaciones existentes y baseline) · GA-REM-021 PARTIAL: B01/B02 ◄── R-130 (cerrado) + enmienda B ·
                 B03 ◄── enmienda B · B13 ◄── enmienda B (Bases p.9) · B04 ◄── AOD-14 · R-156 ◄── AOD-20
-siguiente (identificado, no iniciado): GA-REM-021 B01 + B02 (cuadre y pesos en rango en recepción, Rec. §6; P2; enmienda B previa) · alternativa: R-152 → R-153 (Progenitoras)
+GA-REM-021 B01 + B02 ──CERRADOS (tranche 7, GA-REM-021-B · GA-REM-037-B)──► hoja; B01 gobierna lo que entra al saldo (alojadas; R-130 intacto) ·
+                B02 reutiliza el motor de OD-06 (la recepción entra al gancho de alerta) · dejan R-167 (mortalidad al arribo vs evento de mortalidad;
+                KPI ola C), R-168 (sample_size por galpón), R-169 (±10 % del formulario) · GA-REM-021 PARTIAL: B03 ◄── enmienda C (Rec. §8) ·
+                B13 ◄── enmienda C (Bases p.9) · B04 ◄── AOD-14 · R-156 ◄── AOD-20
+siguiente (identificado, no iniciado): GA-REM-021 B03 (alimento por transferencia, Rec. §8; P2; enmienda C previa) (+ B13 si independiente) · alternativa: R-152 → R-153 (Progenitoras)
 ```

@@ -1277,3 +1277,20 @@ regresión       1ª pasada 995 passed · 2 failed (t_025_02 defecto real · t02
 WAVE B          IN PROGRESS · 8/22 cerrados + 4 parciales · siguiente (no iniciado): GA-REM-021 B01 + B02 (Rec. §6; enmienda B previa) · alternativa R-152 → R-153
 fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
 ```
+
+## WAVE B · tranche 7 · `B01` cuadre + `B02` pesos en rango en la recepción cerrados (`GA-REM-021` PARTIAL) · `GA-REM-021-B` y `GA-REM-037-B` certificadas (2026-09-10)
+
+```
+pre-flight      B01 ≠ OD-04/GA-TD-014 (viñeta distinta de Rec. §6; BR-18 intacto) · B02 gobernado por GA-REQ-037/OD-06 (referente = curva fijada al lote;
+                cautela del tranche 6 desestimada) · CASO A · sin decisión del propietario · RC-11 (RR-12 · RR-13) · R-167/R-168/R-169 registrados
+GA-REM-021-B    CERTIFIED (frontera técnica) · AC-B01-01…20 · AC-B02-01…22 · rojo 9/16 → verde 16/16
+GA-REM-037-B    CERTIFIED (frontera técnica) · AC29…AC32 · puerta de la alerta para la recepción de reproductoras · motor, modelos y migración intactos
+B01             CERRADO (técnico) · received_total / dead_on_arrival / rejected_on_arrival · BR-20 · alojadas del servidor · saldo = alojadas
+B02             CERRADO (técnico) · curva del lote a la edad del día · alerta sin bloqueo · NO_REFERENCE declarado · engorde N/A
+GA-REM-021      PARTIAL · B03 · B13 abiertos (enmienda C) · B04 ◄── AOD-14 · R-156 ◄── AOD-20
+migración       w3x4y5z6a7b8 (tres enteros en operational_events) · rutas 211 · SOLO_SUPER_ADMIN 13 · t_025_02 48
+sensibilidad    B01-S1/S4/S5/S6/S7 · SEC-S1…S4 · B02-S1/S2/S3/S5 válidas · B01-S2/S3 · B02-S4 N/A
+regresión       **1016 passed · 49 skipped · 0 failed** (935 s; 1000 previas + 16 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 89/89 · tsc 6 (R-158)
+WAVE B          IN PROGRESS · 8/22 cerrados + 4 parciales · siguiente (no iniciado): GA-REM-021 B03 (+ B13) · alternativa R-152 → R-153
+fase 9          FROZEN · ola C no iniciada · SAP no iniciado · BU-D10 PENDING_RATIFICATION · R-161 OPEN · R-164 BLOCKED_RUNTIME · R-166 OPEN
+```

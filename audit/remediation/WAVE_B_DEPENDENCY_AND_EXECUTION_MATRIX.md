@@ -326,3 +326,26 @@ hallazgos nuevos ............... R-167 (doble contabilización de la mortalidad 
 artefactos ..................... GA_REM_021_B01_RECEPTION_RECONCILIATION_MATRIX.md · GA_REM_021_B02_WEIGHT_RANGE_MATRIX.md · GA-REM-021-B ·
                                  GA-REM-037-B · RC-11 (RR-12 · RR-13)
 ```
+
+## 17. Estado tras el tranche 7 (2026-09-10) — recalculado desde el backlog
+
+```
+TOTAL ......................... 22
+CERRADOS ......................  8   R-130 · R-160 · R-163 (P1) · R-159 · R-162 · R-143 · R-165 (P2) · R-135 (P1)   [B05 · B01 · B02 cerrados dentro de GA-REM-021]
+PARCIALES ......................  4   R-140 · R-154 · R-136 (interno cerrado; SAP diferido) · GA-REM-021 (B05/B01/B02 cerrados; B03, B04, B13, R-156 abiertos)
+P1 ABIERTOS ...................  0   (GA-REM-021 y R-136 parciales)
+P2 ABIERTOS ....................  7   R-142 · R-144 · R-152 · R-148 · R-147 · R-161 · R-164   (+ R-140 parcial)
+P3 ABIERTOS ....................  3   R-153 · R-156 · R-166   (+ R-154 parcial)   [+ R-167 · R-168 · R-169 registrados en este tranche, P3, fuera del recuento canónico de 22 hasta su alta formal en §1]
+BLOQUEADOS .....................  3   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-156 (AOD-20) · [+ R-136 SAP · GA-REM-021 B04 (AOD-14)]
+DECISIONES DEL PROPIETARIO .....  6   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20   (sin AOD nuevo)
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c
+BLOCKED_RUNTIME ................  R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 7 ...................... B01 (8/8) + B02 (8/8) · commits f878ab6 · a759a17 · commit de evidencia (este) · cabeza w3x4y5z6a7b8 · rutas 211
+                                 regresión 1016 passed · 49 skipped · 0 failed (935 s; 1000 previas + 16 nuevas; los 49 saltados son `test_upgrade_path` y `test_runtime_startup`, que exigen su script dedicado) · vitest 89/89 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  GA-REM-021 B03 — alimento por transferencia (Rec. §8: lote/batch de alimento, silo o almacén destino, diferencias; P2) — con B13
+  (sanos/débiles al nacer, Bases p.9; P2) como acompañante si la traza los muestra independientes. Exige enmienda C previa
+  (NO SPEC = NO DEVELOPMENT); el gate documental decide qué recurso es «lote de alimento» y qué es «silo» antes de cualquier código.
+  Alternativa sin decisión aparente: R-152 → R-153 (Progenitoras, docs/02 §3.4.1; paso 7 de §3).
+```
