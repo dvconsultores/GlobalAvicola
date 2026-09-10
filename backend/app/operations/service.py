@@ -814,7 +814,8 @@ class OperationsService:
         # GA-REM-002 AC10: las referencias de ubicación deben pertenecer a la compañía.
         # `R-42` cubrió `lot_id`; el gate de la Wave 3 encontró que `farm_id` y `house_id`
         # seguían aceptando recursos de otra empresa.
-        from ..tenancy import verificar_catalogos_del_evento, verificar_ubicacion
+        from ..tenancy import (verificar_catalogos_del_evento, verificar_estructurales_del_submovimiento,
+                               verificar_ubicacion)
 
         await verificar_ubicacion(
             self.db, self.company_id,
@@ -831,6 +832,20 @@ class OperationsService:
         )
         for fm in data.feed_movements:
             await verificar_catalogos_del_evento(self.db, self.company_id, feed_type_id=fm.feed_type_id)
+        # `GA-REM-002-E` · `R-180`: las referencias **estructurales** de los hijos —galpón origen, galpón
+        # destino, galpón inspeccionado, lote del almacenamiento— también son de la empresa del evento. Se
+        # comprueban **todas** antes de cualquier `db.add`: con un hijo ajeno no se persiste nada, ni el evento
+        # ni los hijos válidos (`AC10`: «no se crea ni modifica ninguna fila»).
+        for bm in data.bird_movements:
+            await verificar_estructurales_del_submovimiento(
+                self.db, self.company_id,
+                source_house_id=bm.source_house_id, target_house_id=bm.target_house_id,
+            )
+        for ins in data.inspection_details:
+            await verificar_estructurales_del_submovimiento(self.db, self.company_id, house_id=ins.house_id)
+        for es in data.egg_storage_records:
+            # El alta hereda el lote del evento cuando el hijo no lo declara; ese ya está verificado.
+            await verificar_estructurales_del_submovimiento(self.db, self.company_id, lot_id=es.lot_id)
         for hp in data.hatchery_params:
             await verificar_catalogos_del_evento(
                 self.db, self.company_id,

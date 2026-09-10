@@ -140,6 +140,38 @@ async def verificar_catalogos_del_evento(db: AsyncSession, company_id: int | Non
             await verificar_catalogo_de_empresa(db, Hatchery, padre[0], company_id, etiqueta)
 
 
+async def verificar_estructurales_del_submovimiento(db: AsyncSession, company_id: int | None, **campos) -> None:
+    """`GA-REM-002` enmienda E · `R-180`: las referencias **estructurales** de un submovimiento son de la
+    empresa del evento.
+
+    El ADDENDUM Wave 3 de esta spec definió la clase: las referencias estructurales son «aquellas cuya
+    pertenencia **define de quién es el dato**», y su tabla nombra `house_id` («ubica el registro; una granja
+    ajena lo asocia a otra empresa»). `AC12` añadió que el sub-recurso **hereda la pertenencia de su padre**.
+    La regla estaba escrita; lo que faltaba era aplicarla a los hijos: un evento acotado a la empresa A podía
+    contener movimientos hacia un galpón de la empresa B.
+
+    Se apoya en `verificar_pertenencia`, que ya recorre la cadena autoritativa real —el galpón **no** declara
+    `company_id`: pertenece a la empresa a través de su granja (`House.farm_id → Farm.company_id`)— y trata el
+    recurso ajeno como **inexistente**.
+
+    No es la regla de los catálogos (`verificar_catalogo_de_empresa`): esta clase **no** tiene el caso
+    «nulo = compartido». Un galpón sin granja no existe, y un lote sin empresa no es un lote compartido.
+    """
+    from .masters.models import House, Lot
+
+    modelos = {
+        "source_house_id": (House, "Galpón origen"),
+        "target_house_id": (House, "Galpón destino"),
+        "house_id": (House, "Galpón"),
+        "lot_id": (Lot, "Lote"),
+    }
+    for campo, valor in campos.items():
+        if valor is None:
+            continue
+        modelo, etiqueta = modelos[campo]
+        await verificar_pertenencia(db, modelo, valor, company_id, etiqueta)
+
+
 async def verificar_ubicacion(
     db: AsyncSession,
     company_id: int | None,
