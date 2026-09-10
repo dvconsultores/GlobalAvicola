@@ -505,3 +505,19 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   R-152 → R-153 (Progenitoras: estructura del plan de importación; creación automática del lote de abuelas) — spec propia; sin decisión pendiente.
   Alternativa: R-166 (approve/reject concurrentes sobre el mismo CORRECTED: bloqueo de fila, misma primitiva que R-130).
 ```
+
+## 26. Tranche 12 · pre-flight (2026-09-10) — recuento revalidado y puerta de composición
+
+```
+recuento ....................... 34 · 20 cerrados · 4 parciales · 10 abiertos — recontado desde la última línea de estado de cada ID en el backlog; consistente con §25
+                                 + alta de este pre-flight: R-179 (FK de maestros de otra empresa en eventos) → recuento canónico 35 · 20 · 4 · 11
+R-152 ......................... «grandparent_import sin estructura para el plan de importación» · P2 · H360A-02 · docs/02 §3.4.1 · spec.md §4.4 · P-01 paso 1 · unidad grandparent
+                                 ACTIVE · GOBERNADO · sin decisión · ejecutable · spec propia GA-REM-042 (BR-22 · RC-16/RR-19) · sin migración
+R-153 ......................... «lote de abuelas no se crea automáticamente al completar la importación» · P3 · H360A-03 · docs/02 §3.4.2
+                                 ACTIVE · NO gobernado en lo implementación-crítico → OWNER_DECISION_REQUIRED (AOD-25) · depende de R-152 (HARD_DATA_MODEL + HARD_FUNCTIONAL)
+modo ........................... R152_ONLY
+P1 abiertos .................... 0        P2 abiertos 6 (R-142 · R-144 · R-147 · R-148 · R-152 · R-164)        P3 abiertos 5 (R-153 · R-156 · R-166 · R-177 · R-179)
+decisiones del propietario ..... 10 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25)
+artefactos ..................... R152_R153_DEPENDENCY_TRACE.md · R152_R153_PROGENITORAS_FUNCTIONAL_PARITY_MATRIX.md · R152_PROGENITORAS_GAP_MATRIX.md ·
+                                 R153_PROGENITORAS_GAP_MATRIX.md · GA-REM-042 · AOD-25 · RC-16
+```

@@ -86,3 +86,11 @@ Pendientes sin cambio: `AOD-08`, `AOD-14`, `AOD-17`, `AOD-18`, `AOD-19`, `AOD-20
 
 `AOD-24` se resolverá como `OD-20+`. No se decide aquí (`NO DECIDIR POR EL PROPIETARIO`). `R-176` y `R-178` no requieren decisión (fuentes en
 `R176_CREATE_EDIT_CORRECTION_VALIDATION_PARITY_MATRIX.md §7` y `R178_LINEAGE_CANCEL_MOVE_INTEGRITY_MATRIX.md §3`).
+
+## `AOD-25` · registro del pre-flight del tranche 12 (2026-09-10 · WAVE B)
+
+| AOD | Pregunta | Opciones (sin preferencia) | Por qué no se resuelve por evidencia | Bloquea | Prioridad · Ola |
+|---|---|---|---|---|---|
+| **AOD-25** | **Creación automática del lote de abuelas** (`R-153`, `docs/02 §3.4.2`: «Al completar la importación, se crea automáticamente el lote de abuelas»; `spec.md §4.4`: «Creación de lote de abuelas vinculado a granja/galpón»): (a) ¿qué es «completar la importación»: el registro del evento, su aprobación (`P-07`), la llegada (`arrival_date`) o el fin de la cuarentena? (b) ¿con qué **código** nace el lote (regla de `lot_code`) y con qué fecha de inicio y sexo? (c) ¿la importación **puebla** el lote con las recibidas, o la población sigue entrando por `bird_reception` (`P-01` paso 4, `BR-17`/`BR-18`, certificado) sin duplicar? (d) ¿se conserva la creación manual (`POST /lots`) y el contrato «la importación exige lote», o la importación pasa a registrarse sin lote y a producirlo? | (a) registro · aprobación · llegada · fin de cuarentena · (b) código derivado de la OC / secuencia por empresa / declarado por el operador en el plan · (c) puebla (y el paso 4 desaparece o se convierte en distribución) / no puebla (paso 4 sigue) · (d) ambas vías / solo automática | los niveles 2-4 nombran la capacidad pero callan el disparador, el código, el efecto en el saldo y la convivencia con lo certificado; cada opción cambia el proceso `P-01` y el modelo de saldo (`R-130`) | `R-153` (depende además de `R-152`, `GA-REM-042`) | P3 · WAVE B |
+
+`AOD-25` se resolverá como `OD-20+`. No se decide aquí (`NO DECIDIR POR EL PROPIETARIO`). `R-152` no requiere decisión (`GA-REM-042 §2`).

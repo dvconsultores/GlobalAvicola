@@ -926,3 +926,10 @@ modo R176_PLUS_R178 · sin migración · sin AOD para R-176/R-178
 ## WAVE B · tranche 11 · cierre (2026-09-10)
 R-176 CERRADO (técnico) · GA-REM-023-B CERTIFICADA · R-45 cerrado con él · R-178 CERRADO · GA-REM-031-A CERTIFICADA · R-175 CERRADO · GA-REM-015-B CERTIFICADA
 R-177 OPEN ◄ AOD-24 (modelo tipo de huevo vs ovoscopía) · regresión 1070 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-152 → R-153 · alternativa R-166
+
+## WAVE B · tranche 12 · pre-flight (2026-09-10) — dependencias del tranche
+R-152 (P2) ◄── docs/02 §3.4.1 · spec.md §4.4 · RR-12 (patrón de identidad) · GA-REM-040-G/H (cadena de acceso certificada para grandparent) · GA-REM-005 E.3 (documental)
+                → GA-REM-042 (BR-22) · usa la guarda de R-173/R-176 y verificar_pertenencia (GA-REM-030) · independiente de R-153
+R-153 (P3) ◄── R-152 (HARD_DATA_MODEL + HARD_FUNCTIONAL) ◄ AOD-25 (qué es «completar», código del lote, si puebla, vía manual) · sin código
+R-179 (P3) ── registrado: FK de maestros sin pertenencia en eventos (clase R-42); GA-REM-042 cubre proveedor/transporte solo en la importación
+modo R152_ONLY · sin migración · dependencia R-152 → R-153 confirmada por prueba (antes: SOFT_ORDERING en la matriz de WAVE B)

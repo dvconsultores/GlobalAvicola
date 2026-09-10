@@ -461,3 +461,18 @@ Matriz: `R173_EDIT_CANCEL_BALANCE_EFFECT_MATRIX.md`.
 > Todo bajo el bloqueo de las filas de lote implicadas —una, o dos en orden ascendente de clave primaria—, atómico en la transacción y con la
 > auditoría de valores anterior y nuevo. Las cantidades siguen siendo inmutables tras el alta; no se crea compensación ni cascada; `CANCELLED ≠
 > REVERSED`.
+
+## 16. `RC-16` · el plan de importación de abuelas es un dato tipado con identidades, no un evento genérico (`R-152`, 2026-09-10)
+
+**Conflicto.** `docs/02 §3.4.1` (nivel 3) enumera los 22 datos del plan de importación y `spec.md §4.4` (nivel 4) lo resume («PO SAP, proveedor
+internacional, docs sanitarios, aduana, cuarentena» · «Registro inicial de importación con documentos»); la implementación (nivel 5) lo modeló como un
+`OperationalEvent` genérico con `extra_data` libre y adjuntos sin clase, y el frontend inventó cuatro claves (`sanitary_cert`, `import_doc`, …) que no
+son las del documento. **Corte:** nivel 3. Las identidades entre cantidades (embarcada = recibida + mortalidad en traslado; recibida = Σ ♂/♀) siguen el
+patrón ya resuelto en `RR-12` (identidad intra-evento declarada, sin tolerancia). La relación comprada/embarcada **no** se regula (`OD-04`: entregas
+parciales; sobre-embarque sin fuente): dato informativo. La creación automática del lote (`§3.4.2`) queda aparte (`AOD-25`).
+
+> **RR-19.** La importación de abuelas (`grandparent_import`, solo sobre lotes `grandparent`) registra el plan de `docs/02 §3.4.1` con tipo: país,
+> comprada, embarcada, recibida, mortalidad en traslado, fechas de salida y llegada, condición, cuarentena e inspección inicial, con OC y proveedor de
+> la empresa, transporte opcional, ♂/♀ recibidas y adjuntos clasificados en cinco clases. Identidades exactas: `embarcada = recibida + mortalidad en
+> traslado`, `recibida = Σ ♂/♀`, `llegada ≥ salida`, `fin de cuarentena ≥ llegada`. Es un evento **documental**: no puebla el lote ni acumula contra la
+> OC (la población y `BR-18` siguen en `bird_reception`). `BR-22`.

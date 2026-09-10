@@ -1383,3 +1383,37 @@ WAVE B   IN PROGRESS        34 ítems (canónico) · 20 cerrados · 4 parciales 
 
 Evidencia: `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md`. Regresión completa: **1070 passed · 49 skipped · 0 failed** (931 s; 1056 previas + 14 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado). `vitest` 102/102 · `tsc` 6 preexistentes (`R-158`).
 Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · `OD-19 §18` sin cambio · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight del tranche 12 (2026-09-10): `R-152` gobernado (P2, `GA-REM-042`) · `R-153` OWNER_DECISION_REQUIRED (`AOD-25`) · dependencia probada · modo R152_ONLY · sin código
+
+Repositorio verificado: `main` · `5e9bbee` · limpio · local == remoto · cabeza `x4y5z6a7b8c9` · rutas 211 (guardián `test_ac14`).
+
+`R-152` (`R152_R153_DEPENDENCY_TRACE.md`, `R152_R153_PROGENITORAS_FUNCTIONAL_PARITY_MATRIX.md`, `R152_PROGENITORAS_GAP_MATRIX.md`): la importación de
+abuelas es un evento genérico sin esquema (`extra_data` libre con cuatro claves inventadas en el frontend; sin identidades; proveedor/transporte sin
+pertenencia; adjuntos sin clase; sin regla de tipo de lote). Progenitoras ≠ Reproductoras: la importación es `PROGENITORAS_SPECIFIC` (`docs/02 §3.4.1`,
+`spec.md §4.4`); solo se reutilizan primitivas (evento, filas ♂/♀, evidencias, cadena de acceso certificada `AC-W05/W15/L14`, guarda de edición) con
+justificación explícita; `BR-20`, `B02` y el agua siguen siendo de Reproductoras; `BR-17`/`BR-18` quedan en la recepción (paso 4). **Gobernado, sin decisión**
+→ `GA-REM-042` (`BR-22`, `RC-16`/`RR-19`), sin migración. `R-153` (`R153_PROGENITORAS_GAP_MATRIX.md`): depende de `R-152` (`HARD_DATA_MODEL` +
+`HARD_FUNCTIONAL`: hoy la importación exige lote; el lote automático necesita el plan) y el repositorio calla lo implementación-crítico (qué es
+«completar», código del lote, si puebla, convivencia con la vía manual) → **`OWNER_DECISION_REQUIRED` (`AOD-25`)**, sin código.
+
+**Puerta de composición** (prompt §44): `R-152` «`grandparent_import` sin estructura para el plan de importación» · P2 · gobernado · ejecutable · sin decisión —
+`R-153` «lote de abuelas no se crea automáticamente al completar la importación» · P3 · no gobernado · no ejecutable · `AOD-25` — `R-153` depende de `R-152`: **SÍ**
+(HARD) → **modo `R152_ONLY`**.
+
+Registrado (fuera del tranche): `R-179` (P3): `supplier_id`, `transport_id` (y los demás FK de maestros del evento: causas, vacunas, medicamentos,
+planta, `destination_plant_id`) no se verifican contra la empresa efectiva en el alta ni en la edición (clase `R-42`; `verificar_ubicacion` solo cubre
+granja/galpón/destino). `GA-REM-042` cubre proveedor y transporte **en la importación**; el resto queda en `R-179`.
+
+| ID | P | Hallazgo | Dónde | Ola |
+|---|---|---|---|---|
+| `R-179` | P3 | referencias a maestros de otra empresa en los eventos (`supplier_id`, `transport_id`, `cause_id`, `cull_cause_id`, `vaccine_id`, `medication_id`, `destination_plant_id`) sin `verificar_pertenencia` en alta/edición/corrección | `operations/service.py` (`_apply_business_rules`, `verificar_destino_de_edicion`) · `tenancy.py` | B |
+
+```
+R-152    OPEN · P2                              ACTIVE · gobernado · GA-REM-042 · sin decisión · sin migración
+R-153    OPEN · P3 · OWNER_DECISION_REQUIRED    AOD-25 · depende de R-152 (HARD) · sin código
+R-179    OPEN · P3                              registrado (fuera)
+WAVE B   IN PROGRESS        35 ítems (canónico: 34 + R-179) · 20 cerrados · 4 parciales · 11 abiertos (P1 0 · P2 6 · P3 5) · decisiones 10 (AOD-25 nueva)
+```

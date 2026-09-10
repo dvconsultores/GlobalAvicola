@@ -1357,3 +1357,10 @@ R-178           CERRADO (técnico) · linaje efectivo derivado del estado de los
 R-175           CERRADO (técnico) · teardown por prefijo en las tres suites · matriz de control ampliada verde · guardián intacto
 R-177           OPEN · P3 · OWNER_DECISION_REQUIRED (AOD-24)
 WAVE B          IN PROGRESS · 20/34 cerrados + 4 parciales · decisiones 9 · regresión 1070 passed · 49 skipped · 0 failed · siguiente (no iniciado): R-152 → R-153 · alternativa R-166
+
+## WAVE B · tranche 12 · pre-flight (2026-09-10) · `R-152` gobernado (`GA-REM-042`) · `R-153` AOD-25 · modo R152_ONLY
+R-152           ACTIVE · P2 · importación de abuelas sin plan tipado ni identidades ni adjuntos clasificados · PROGENITORAS_SPECIFIC (no copia de Reproductoras) ·
+                GA-REM-042 (BR-22 · RC-16/RR-19) · sin decisión · sin migración
+R-153           OPEN · P3 · OWNER_DECISION_REQUIRED (AOD-25) · depende de R-152 (HARD) · sin código
+R-179           registrado (P3, fuera): FK de maestros de otra empresa en eventos
+WAVE B          IN PROGRESS · 20/35 cerrados + 4 parciales · decisiones 10 · COMMIT 1 = solo spec
