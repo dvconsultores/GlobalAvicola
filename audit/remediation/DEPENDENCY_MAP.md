@@ -922,3 +922,7 @@ R-178 (P3) ◄── OD-10 (§2.4 la fila es el traspaso · §2.5 anulado desapa
 R-177 (P3) ◄── AOD-24 (modelo tipo de huevo vs ovoscopía) · RR-17 intacto · sin código hasta la decisión
 R-175 (P3) ── control ampliado con T11 · NON-BLOCKING salvo prueba en contra
 modo R176_PLUS_R178 · sin migración · sin AOD para R-176/R-178
+
+## WAVE B · tranche 11 · cierre (2026-09-10)
+R-176 CERRADO (técnico) · GA-REM-023-B CERTIFICADA · R-45 cerrado con él · R-178 CERRADO · GA-REM-031-A CERTIFICADA · R-175 CERRADO · GA-REM-015-B CERTIFICADA
+R-177 OPEN ◄ AOD-24 (modelo tipo de huevo vs ovoscopía) · regresión 1070 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-152 → R-153 · alternativa R-166

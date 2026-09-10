@@ -83,3 +83,7 @@ spec ............. GA-REM-031 enmienda A (linaje efectivo tras anular; reasignac
 Sensibilidad: `R178-S1` (el árbol vuelve a listar vínculos con despacho anulado) → `_02` roja · `R178-S2` (quitar la guarda de linaje en la reasignación)
 → `_04`/`_06` rojas · `R178-S3` (borrar la fila al anular) → `_02`/`_03` rojas (historia) · `R178-S4` N/A (linaje dinámico, sin escritura que pueda
 quedar parcial).
+
+## 9. Cierre (2026-09-10)
+
+`R-178` CERRADO (técnico) · `GA-REM-031-A` certificada · `AC-R178-01…11` verdes · sensibilidad `R178-S1…S3` válidas (`S4` N/A: linaje dinámico) · evidencia `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md`.

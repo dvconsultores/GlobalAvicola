@@ -101,3 +101,7 @@ R-176 ............ ACTIVE · GOBERNADO (AC-W09/RR-18 «destino de una edición =
 spec ............. GA-REM-023 addendum B (paridad de validación en edición y corrección) · sin GA-REM nueva · sin migración
 observación ...... la unicidad del documento SAP se emite como BR-10 aunque spec.md la numera BR-11 (etiqueta histórica; no se cambia: contrato de error existente)
 ```
+
+## 8. Cierre (2026-09-10)
+
+`R-176` CERRADO (técnico) · `R-45` cerrado con él · `GA-REM-023-B` certificada · `AC-R176-01…12` verdes · sensibilidad `R176-S1…S5` válidas · evidencia `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md`.

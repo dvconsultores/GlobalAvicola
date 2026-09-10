@@ -188,7 +188,7 @@ Se trata aquí por pertenecer al mismo contrato de validación, no por parche ap
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-023-B` · `DATA INTEGRITY` (contrato de validación) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-023-B` · `DATA INTEGRITY` (contrato de validación) · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md` · commits `172ec12` · `00b3bd6` |
 | **Hallazgos** | **`R-176`** (P3 → **P2** normalizado) · **`R-45`** (Wave 2, P2: corregir `event_date` no revalida `BR-19`; abierto, `GA-REM-016`/`GA-REM-019`) — absorbido |
 | **Matriz** | `audit/remediation/R176_CREATE_EDIT_CORRECTION_VALIDATION_PARITY_MATRIX.md` (reglas definidas, paridad, campo → reglas, frontera con `R-173`) |
 | **Fuentes** | `§Reglas de negocio afectadas` de esta spec (`BR-06`, `BR-08`, `BR-10`, `BR-17`, `BR-19` se aplican en el alta) · addendum `R-30` (`AC13`) · `GA-REM-035 §3` (`BR-18`, `OD-04`) · `docs/02 §7 R6` · `spec.md §5 BR-08`, `BR-11` · `GA-REM-040-G AC-W09` y `RR-18` (`RC-15`): «el destino de una edición se verifica como el de un alta» · `tests/test_corrections.py` («corregir no es una puerta trasera», `R-45`) |

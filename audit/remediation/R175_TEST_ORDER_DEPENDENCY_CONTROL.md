@@ -52,11 +52,11 @@ Suites nuevas del tranche (`T11`): `tests/test_edit_validation_parity.py` (`PARI
 
 | Par | Objetivo | Resultado |
 |---|---|---|
-| las tres suites aisladas · A→B · B→A | reconfirmar el residuo conocido | _pendiente de ejecución (se rellena en el cierre)_ |
-| `T11 → A` (T11 antes de cada suite con residuo) | T11 no siembra nada que las altere | _pendiente_ |
-| `A → T11` | el residuo de A no altera T11 | _pendiente_ |
-| `T11 → B` (`test_clean_baseline`) | T11 no deja fases ni datos que el baseline cuente | _pendiente_ |
-| `B → T11` | el baseline no altera T11 | _pendiente_ |
+| las tres suites aisladas · A→B · B→A | reconfirmar el residuo conocido | ver §5: tras `GA-REM-015-B`, 10/10 verdes |
+| `T11 → A` (T11 antes de cada suite con residuo) | T11 no siembra nada que las altere | **verde** (§5) |
+| `A → T11` | el residuo de A no altera T11 | **verde** (§5) |
+| `T11 → B` (`test_clean_baseline`) | T11 no deja fases ni datos que el baseline cuente | **verde** (§5) |
+| `B → T11` | el baseline no altera T11 | **verde** (§5) |
 
 Criterio (`§49`): si algún par produce un rojo o verde falso atribuible al arnés, `R-175` pasa a BLOQUEANTE y se formaliza la remediación mínima bajo
 gobernanza de validez de pruebas; si no, sigue OPEN · NON-BLOCKING.
@@ -70,7 +70,11 @@ teardown la fase que crearon, por prefijo, después de los lotes. Nada más camb
 
 | Par | Antes de la remediación (tranche 10/11) | Después (a ejecutar tras el commit de implementación) |
 |---|---|---|
-| aisladas (3 + baseline) | 4/4 verdes | _pendiente_ |
-| A→B (`suite → clean_baseline`) ×3 | **3/3 rojas** («5 fases») | _pendiente_ |
-| B→A ×3 | 3/3 verdes | _pendiente_ |
-| `T11 → A` · `A → T11` · `T11 → B` · `B → T11` | — | _pendiente_ |
+| aisladas (3 + baseline) | 4/4 verdes | **4/4 verdes** |
+| A→B (`suite → clean_baseline`) ×3 | **3/3 rojas** («5 fases») | **3/3 verdes** (24/24 · 46/46 · 53/53) |
+| B→A ×3 | 3/3 verdes | **3/3 verdes** |
+| `T11 → A` · `A → T11` · `T11 → B` · `B → T11` | — | **8/8 verdes** (20 · 42 · 49 por par; 32/32 con el baseline) |
+
+## 6. Cierre (2026-09-10)
+
+`R-175` CERRADO (técnico) · `GA-REM-015-B` certificada · `AC-R175-01…05` · 18/18 pares verdes · evidencia `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md §6`.

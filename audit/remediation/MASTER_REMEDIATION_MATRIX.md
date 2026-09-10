@@ -1350,3 +1350,10 @@ R-177           OPEN · P3 · pre-flight completo · registro corregido (evento 
 R-175           control ampliado (T11) antes de la regresión · NON-BLOCKING salvo prueba
 R-45            (Wave 2, P2) absorbido por R-176
 WAVE B          IN PROGRESS · 17/34 cerrados + 4 parciales · decisiones 9 · modo R176_PLUS_R178 · COMMIT 1 = solo spec
+
+## WAVE B · tranche 11 · cierre · `R-176` (+`R-45`) · `R-178` · `R-175` cerrados (técnico) · `GA-REM-023-B`, `GA-REM-031-A`, `GA-REM-015-B` certificadas (2026-09-10)
+R-176           CERRADO (técnico) · P2 · paridad de validación pura (BR-08/06/19/11/17/18) sobre el estado candidato en PUT y POST /corrections · 7/7 · S1…S5 · absorbe R-45
+R-178           CERRADO (técnico) · linaje efectivo derivado del estado de los eventos · historia conservada · reasignación de eventos casados denegada · 7/7 · S1…S3
+R-175           CERRADO (técnico) · teardown por prefijo en las tres suites · matriz de control ampliada verde · guardián intacto
+R-177           OPEN · P3 · OWNER_DECISION_REQUIRED (AOD-24)
+WAVE B          IN PROGRESS · 20/34 cerrados + 4 parciales · decisiones 9 · regresión 1070 passed · 49 skipped · 0 failed · siguiente (no iniciado): R-152 → R-153 · alternativa R-166

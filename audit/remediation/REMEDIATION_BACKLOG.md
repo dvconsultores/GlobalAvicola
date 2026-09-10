@@ -1360,3 +1360,26 @@ R-175    OPEN · P3                              control ampliado en curso
 R-45     OPEN (Wave 2, P2)                      absorbido por R-176; se cierra con él por prueba (AC-R176-05)
 WAVE B   IN PROGRESS        34 ítems · 17 cerrados · 4 parciales · 13 abiertos (P1 0 · P2 7 · P3 6) · decisiones 9 (AOD-24 nueva)
 ```
+
+---
+
+## Cierre de `R-176` (+ `R-45`) · `R-178` · `R-175` · WAVE B tranche 11 (2026-09-10) — `R-177` OWNER_DECISION_REQUIRED (`AOD-24`)
+
+```
+R-176    CERRADO (técnico)   GA-REM-023 addendum B · las reglas puras del alta (BR-08 · BR-06 · BR-19 · BR-11/BR-10 · BR-17 · BR-18) se reevalúan sobre el
+                            estado candidato en la guarda central (_reglas_puras_del_candidato), en PUT y en POST /corrections, sin repetir el alta
+                            (AC-R176-09) · P2 · 7/7 · rojo previo 5 (+1 aserción corregida, crédito 0) · sensibilidad R176-S1…S5 válidas · absorbe R-45
+R-45     CERRADO (técnico)   (Wave 2, P2) corregir event_date vuelve a pasar por BR-19: test_corrections exige ahora el 400 (AC-R176-05)
+R-178    CERRADO (técnico)   GA-REM-031 enmienda A · el árbol de trazabilidad muestra el linaje efectivo (despacho anulado: desaparece; recepción anulada:
+                            incompleto) derivado del estado de los eventos, sin borrar la fila (BR-10) · un evento casado no se reasigna (lote ni destino
+                            declarado) · 7/7 · rojo previo 4 · sensibilidad R178-S1…S3 válidas (S4 N/A: dinámico) · sin migración
+R-175    CERRADO (técnico)   GA-REM-015 addendum B · pasó a bloqueante por un rojo falso en el verde dirigido (§49) · las tres suites retiran la fase
+                            productiva que crean (teardown por prefijo) · guardián == 4 intacto · matriz de control ampliada verde (aisladas · A→B · B→A ·
+                            T11→A · A→T11 · T11→B · B→T11) · regla permanente C ya no obligatoria para estas suites
+R-177    OPEN · P3           OWNER_DECISION_REQUIRED (AOD-24) · pre-flight completo · registro corregido (evento ovoscopy) · sin código
+WAVE B   IN PROGRESS        34 ítems (canónico) · 20 cerrados · 4 parciales · 10 abiertos (P1 0 · P2 6 · P3 4) · decisiones 9
+                            siguiente tranche (identificado, no iniciado): R-152 → R-153 (Progenitoras) · alternativa: R-166 (carrera approve/reject)
+```
+
+Evidencia: `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md`. Regresión completa: **1070 passed · 49 skipped · 0 failed** (931 s; 1056 previas + 14 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado). `vitest` 102/102 · `tsc` 6 preexistentes (`R-158`).
+Sin migración (cabeza `x4y5z6a7b8c9`). Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · `OD-19 §18` sin cambio · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

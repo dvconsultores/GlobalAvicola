@@ -188,7 +188,7 @@ Cada dependencia temporal encontrada se clasifica en `INTENTIONALLY_FIXED_DATE`,
 
 | Campo | Valor |
 |---|---|
-| **Addendum** | `GA-REM-015-B` · `QA SPEC` (validez de pruebas) · **Estado** `SPEC_READY` (tranche 11) |
+| **Addendum** | `GA-REM-015-B` · `QA SPEC` (validez de pruebas) · **Estado** **`CERTIFIED`** (2026-09-10) · evidencia `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md` §6 · commits `4c72c40` · `00b3bd6` |
 | **Hallazgo** | `R-175` (P3): `test_lot_start_date`, `test_lots_bu_enforcement` y `test_od14_productive_surfaces` crean una `ProductivePhase` cuando no existe ninguna y no la retiran; `test_clean_baseline::test_t_025_07` cuenta las fases de toda la base (`== 4`) y cae («las fases se duplicaron: 5») en cualquier invocación que ejecute una de esas suites antes que el baseline |
 | **Por qué ahora** | prompt del tranche 11 §49: el residuo produjo un **rojo falso** en el verde dirigido de `R-176`/`R-178` (orden no alfabético: `test_lot_start_date` antes que `test_clean_baseline`) → `R-175` pasa a **BLOQUEANTE** y se formaliza la remediación mínima del arnés bajo esta spec (`R-28`: «el defecto está en los tests, `BR-19` no se toca» es el precedente) |
 | **Principio** | cada suite retira en su teardown **exactamente** lo que creó, por prefijo propio (patrón ya certificado en `test_opening_balance.py:73`); ningún guardián se relaja (`test_t_025_07` sigue contando `== 4`); ninguna regla de dominio cambia |

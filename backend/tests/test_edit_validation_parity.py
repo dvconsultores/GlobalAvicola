@@ -377,6 +377,10 @@ async def test_r176_09_la_edicion_valida_no_repite_los_efectos_del_alta(http_cli
 async def test_r176_11_12_aprobado_inmutable_y_cadena_de_seguridad_antes_de_las_reglas(http_client, esc):
     recepcion = await _alta(http_client, esc, "lr", "bird_reception", 100)
     antes, efectos = await _evento(esc, recepcion), await _efectos(esc)
+    # sonda de fuga (protocolo del tranche 4), primero: un campo inocuo desde otra empresa no se aplica
+    r = await _put(http_client, esc, "actor_b", recepcion, {"observations": f"{PREFIJO}fuga"})
+    assert r.status_code in (403, 404), ("AC-R176-12: otra empresa no edita ni un campo inocuo", r.status_code, r.text)
+    assert await _cuenta(esc, "SELECT count(*) FROM operational_events WHERE id = :e AND observations = :o", e=recepcion, o=f"{PREFIJO}fuga") == 0
     r = await _put(http_client, esc, "actor_b", recepcion, {"house_id": esc["galpon_chico"]})
     assert r.status_code in (403, 404), ("AC-R176-12: otra empresa no llega a BR-17", r.status_code, r.text)
     r = await _put(http_client, esc, "sin_perm", recepcion, {"house_id": esc["galpon_chico"]})

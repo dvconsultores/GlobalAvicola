@@ -142,7 +142,7 @@ despacho— sigue produciendo un vínculo y solo uno.
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-031-A` · `TRACEABILITY INTEGRITY` · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-031-A` · `TRACEABILITY INTEGRITY` · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_11_VALIDATION_PARITY_AND_LINEAGE_EVIDENCE.md` · commits `172ec12` · `00b3bd6` |
 | **Hallazgo** | `R-178` (P3): los vínculos `egg_batches`/`chick_batches` no se neutralizan ni re-casan al anular o mover de lote un despacho/recepción; el árbol (`GET /lots/{id}/traceability`) los presenta como traspasos vigentes |
 | **Matriz** | `audit/remediation/R178_LINEAGE_CANCEL_MOVE_INTEGRITY_MATRIX.md` (qué es el linaje, histórico ≠ efectivo, reproducción, AC) |
 | **Fuentes** | `OD-10 §2.4` («la fila es el traspaso»), `§2.5` («un traspaso anulado … el lado que lo veía lo ve desaparecer con su motivo»), `§4bis` («sin cascada automática … la historia anterior se conserva»), `§4bis.5` («ante la duda, se deniega») · `BR-10`/`docs/02 R10` (eliminación lógica) · `GA-REM-008 AC04/AC06` · `GA-REM-031 AC02/AC03` (uno por envío; orientación correcta) · `GA-REM-030` (sin vínculos entre empresas) |
