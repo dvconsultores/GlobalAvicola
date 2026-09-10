@@ -557,3 +557,22 @@ P1 abiertos .................... 1 (R-179, este tranche)   P2 abiertos 6 (R-142 
 decisiones del propietario ..... 10 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25) — ninguna nueva
 artefactos ..................... R179_MASTER_REFERENCE_AUTHORITY_MATRIX.md · R166_REVIEW_DECISION_CONCURRENCY_MATRIX.md · GA-REM-002-D · GA-REM-007-B
 ```
+
+## 29. Estado tras el tranche 13 (2026-09-10) — recalculado desde el backlog (recuento canónico 36)
+
+```
+TOTAL ......................... 36   (35 + R-180, alta formal en §28)
+CERRADOS ...................... 23   R-130 · R-135 · R-143 · R-152 · R-159 · R-160 · R-161 · R-162 · R-163 · R-165 · R-166 · R-167 · R-168 · R-169 · R-170 ·
+                                     R-171 · R-172 · R-173 · R-174 · R-175 · R-176 · R-178 · R-179
+PARCIALES ......................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS .......................  9   R-142 · R-144 · R-147 · R-148 · R-153 (AOD-25) · R-156 · R-164 (BLOCKED_RUNTIME) · R-177 (AOD-24) · R-180
+P1 ABIERTOS ...................  0        P2 ABIERTOS  5   (R-142 · R-144 · R-147 · R-148 · R-164 · R-180 → 6 con el alta)        P3 ABIERTOS  3   R-153 · R-156 · R-177
+BLOQUEADOS .....................  4   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-153 (AOD-25) · R-156 (AOD-20) · R-177 (AOD-24) · [+ R-136 SAP · B03 · B04]
+DECISIONES DEL PROPIETARIO ..... 10   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25
+SAP_DEFERRED ...................  R-136 post-SAP · OD-17.c          BLOCKED_RUNTIME ....... R-164
+ESTADO ......................... IN PROGRESS
+TRANCHE 13 ..................... commits 1cf6c37 · 919803a · commit de evidencia (este) · sin migración · rutas 211 · regresión 1122 passed · 49 skipped · 0 failed · vitest 108/108 · tsc 6
+SIGUIENTE TRANCHE (identificado, NO iniciado)
+  R-180 — galpones origen/destino de los movimientos de aves admiten granjas de otra empresa (clase estructural, regla de R-59; el ADDENDUM Wave 3 cubrió
+  el `house_id` del evento, no los del submovimiento). Sin decisión pendiente. Alternativa: R-147 (constantes sin fuente) o R-148 (inmutabilidad de audit_logs en BD).
+```

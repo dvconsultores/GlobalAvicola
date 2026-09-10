@@ -1474,3 +1474,26 @@ R-166    OPEN · P2 (normalizado desde P3)   ACTIVE · gobernado · GA-REM-007-B
 R-180    OPEN · P2                          registrado (fuera)
 WAVE B   IN PROGRESS        36 ítems (canónico: 35 + R-180) · 21 cerrados · 4 parciales · 11 abiertos (P1 1 · P2 6 · P3 4) · decisiones 10
 ```
+
+---
+
+## Cierre de `R-179` y `R-166` · WAVE B tranche 13 (2026-09-10)
+
+```
+R-179    CERRADO (técnico)   GA-REM-002 enmienda D · P1 · verificar_catalogo_de_empresa: el catálogo compartido (company_id nulo) se acepta desde cualquier
+                            empresa y el propio exige igualdad (BR-07, anti-enumeración) · aplicado en alta, PUT y POST /corrections, en las siete familias del
+                            evento, en los submovimientos (feed_type_id, hatchery_id) y en los derivados por su padre (incubator_id, hatcher_id) · razas y
+                            fases productivas siguen globales · 26/26 · rojo previo 11 · sensibilidad 5 válidas + 1 N/A (no existe superficie donde el cliente
+                            aporte la empresa) · sin migración
+R-166    CERRADO (técnico)   GA-REM-007 enmienda B · P2 · _bloquear_evento (SELECT … FOR UPDATE sobre operational_events + relectura del estado) antes de validar
+                            la transición, en approve, reject, complete_review, start_review y return_to_operator · una sola decisión efectiva por ciclo:
+                            un approval_action, una auditoría de éxito, una notificación · el reverso conserva su propio bloqueo (OD-19) · revisar no serializa
+                            el saldo del lote (R-166 ≠ R-161) · 8/8 · rojo previo 5 con carrera observada · sensibilidad 6 válidas · sin migración
+R-180    OPEN · P2           registrado en el pre-flight (galpones origen/destino de los submovimientos; clase estructural R-59)
+WAVE B   IN PROGRESS        36 ítems (canónico) · 23 cerrados · 4 parciales · 9 abiertos (P1 0 · P2 5 · P3 4) · decisiones 10
+                            siguiente tranche (identificado, no iniciado): R-180 · alternativa: R-147 / R-148
+```
+
+Evidencia: `WAVE_B_TRANCHE_13_MASTER_TENANCY_AND_REVIEW_CONCURRENCY_EVIDENCE.md`. Regresión completa: **1122 passed · 49 skipped · 0 failed** (1046 s; 1088 previas + 34 nuevas; los 49 saltados son `test_upgrade_path`
+y `test_runtime_startup`, que exigen su script dedicado). `vitest` 108/108 · `tsc` 6 preexistentes (`R-158`). Sin migración (cabeza `x4y5z6a7b8c9`).
+Rutas 211. `R-164` BLOCKED_RUNTIME · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.

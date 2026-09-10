@@ -121,3 +121,7 @@ queda fuera (`§19`: ninguna fuente lo exige para referenciar). `R-179` es por t
 Sensibilidad: `R179-S1` (quitar la validación de pertenencia para una familia) · `R179-S2` (solo en el alta) · `R179-S3` (solo en `PUT`) · `R179-S4` (solo en
 corrección) · `R179-S5` (**sobre-bloqueo**: exigir misma empresa también al catálogo compartido → `AC-R179-06` roja) · `R179-S6` (confiar en la empresa
 declarada por el cliente → `AC-R179-07` roja).
+
+## 9. Cierre (2026-09-10)
+
+`R-179` CERRADO (técnico) · P1 · `GA-REM-002-D` certificada · `AC-R179-01…12` verdes · sensibilidad 5 válidas + `S6` N/A con evidencia · evidencia `WAVE_B_TRANCHE_13_MASTER_TENANCY_AND_REVIEW_CONCURRENCY_EVIDENCE.md`.

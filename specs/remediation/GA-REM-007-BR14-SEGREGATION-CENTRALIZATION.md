@@ -212,7 +212,7 @@ sin excepción para la autoridad global (`GA-REM-007` edge case «Super Admin»)
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-007-B` · `DATA INTEGRITY` (decisión de revisión) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-007-B` · `DATA INTEGRITY` (decisión de revisión) · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_13_MASTER_TENANCY_AND_REVIEW_CONCURRENCY_EVIDENCE.md` · commits `1cf6c37` · `919803a` |
 | **Hallazgo** | **`R-166`** (registrado P3 → **P2** normalizado, `R166_REVIEW_DECISION_CONCURRENCY_MATRIX §6`): `approve` y `reject` sobre el mismo evento no se excluyen; `_get_event_for_approval` lee el estado **sin bloqueo** y ambas peticiones lo superan |
 | **Reproducción** | `approve \|\| reject` → ambas `200`; estado `APPROVED`; `approval_actions` = APPROVED + REJECTED; auditoría de éxito ×2; **una notificación de rechazo** de un evento aprobado. `approve \|\| approve` → `approval_actions` APPROVED ×2, auditoría ×2 (matriz §4) |
 | **Fila autoritativa** | `operational_events.id` — `status` es la decisión efectiva; `approval_actions` es historia (matriz §2) |

@@ -945,3 +945,7 @@ R-166 (P2) ◄── GA-REM-007 (aprobación) + GA-REM-006-A §A.2 (mapa de tran
                 GA-REM-041/OD-19 (el reverso conserva su bloqueo del original) · primitiva FOR UPDATE ya existente · independiente de R-179
 R-180 (P2) ── registrado: galpones origen/destino de los submovimientos (clase estructural R-59), fuera del tranche
 modo R179_PLUS_R166 · sin migración · sin decisión nueva
+
+## WAVE B · tranche 13 · cierre (2026-09-10)
+R-179 CERRADO (técnico) · GA-REM-002-D CERTIFICADA · R-166 CERRADO (técnico) · GA-REM-007-B CERTIFICADA · R-180 OPEN (P2, registrado)
+regresión 1122 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-180 · alternativa R-147 / R-148

@@ -126,3 +126,7 @@ Invariante: `COUNT(decisiones efectivas por ciclo de revisión) == 1`. La histor
 Sensibilidad: `R166-S1` (quitar el bloqueo) · `R166-S2` (bloquear **después** de leer el estado) · `R166-S3` (bloquear pero validar contra el estado previo) ·
 `R166-S4` (quitarlo solo del camino de aprobación) · `R166-S5` (solo del de rechazo) · `R166-S6` (permitir el efecto lateral duplicado: notificación/`ApprovalAction`) ·
 `R166-S7` (`BU` apagada) · `R166-S8` (inquilino).
+
+## 10. Cierre (2026-09-10)
+
+`R-166` CERRADO (técnico) · P2 · `GA-REM-007-B` certificada · `AC-R166-01…13` verdes · sensibilidad 6 válidas · evidencia `WAVE_B_TRANCHE_13_MASTER_TENANCY_AND_REVIEW_CONCURRENCY_EVIDENCE.md`.

@@ -1377,3 +1377,9 @@ R-166           ACTIVE · P2 (normalizado desde P3: dos decisiones efectivas, do
                 bloqueo de la fila del evento antes de releer el estado · sin decisión · sin migración
 R-180           registrado (P2, fuera): galpones origen/destino de los submovimientos
 WAVE B          IN PROGRESS · 21/36 cerrados + 4 parciales · decisiones 10 · COMMIT 1 = solo spec
+
+## WAVE B · tranche 13 · cierre · `R-179` (P1) y `R-166` (P2) cerrados (técnico) · `GA-REM-002-D` y `GA-REM-007-B` certificadas (2026-09-10)
+R-179           CERRADO (técnico) · P1 · pertenencia de empresa en las referencias a catálogos (compartido = company_id nulo) en alta, PUT y corrección · 26/26 · 5 mutaciones válidas + 1 N/A
+R-166           CERRADO (técnico) · P2 · una sola decisión efectiva por ciclo de revisión (FOR UPDATE + relectura antes de validar la transición) · 8/8 · 6 mutaciones válidas
+R-180           OPEN · P2 · registrado (galpones origen/destino de los submovimientos)
+WAVE B          IN PROGRESS · 23/36 cerrados + 4 parciales · decisiones 10 · regresión 1122 passed · siguiente (no iniciado): R-180 · alternativa R-147 / R-148

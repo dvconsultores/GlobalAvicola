@@ -583,7 +583,7 @@ con motivo) y revertidas · regresión completa verde · sin migración · evide
 
 | Campo | Valor |
 |---|---|
-| **Enmienda** | `GA-REM-002-D` · `TENANT ISOLATION` (escritura) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Enmienda** | `GA-REM-002-D` · `TENANT ISOLATION` (escritura) · **Estado** **`CERTIFIED`** (frontera técnica, 2026-09-10) · evidencia `WAVE_B_TRANCHE_13_MASTER_TENANCY_AND_REVIEW_CONCURRENCY_EVIDENCE.md` · commits `1cf6c37` · `919803a` |
 | **Hallazgo** | **`R-179`** (registrado P3 → **P1** normalizado, `R179_MASTER_REFERENCE_AUTHORITY_MATRIX §6`): un evento de la empresa A acepta, persiste y edita referencias a catálogos de la empresa B (`supplier_id`, `transport_id`, `cause_id`, `cull_cause_id`, `vaccine_id`, `medication_id`, `destination_plant_id`) en las **tres** superficies de mutación |
 | **Reproducción** | 7 familias × `POST /operations` (`201`), `PUT` (`200`), `POST /corrections` (`201`); fila persistida `evento.company_id = A` con `suppliers.company_id = B` (matriz §3) |
 | **Autoridad** | **este mismo ADDENDUM Wave 3**: «existir no basta»; «los catálogos maestros declaran `company_id` como anulable, lo que significa **global si es nulo, propio de la empresa si está fijado**, y bloquear una referencia a un catálogo compartido sería un error»; la ampliación de entonces cubrió solo las referencias **estructurales** (`lot_id`, `farm_id`, `house_id`). `R-179` extiende la misma regla, ya escrita, a los catálogos · `MASTER_DATA_BUSINESS_UNIT_SCOPE_MATRIX` (las seis familias: «compartido; `company_id`; transversal») · `MASTER_DATA_SOURCE_OF_TRUTH_MATRIX` · `RQ-03` (`TENANT` directo) |
