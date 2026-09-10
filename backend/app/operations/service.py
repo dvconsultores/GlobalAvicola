@@ -26,10 +26,18 @@ MORTALITY_WARNING_PCT = settings.MORTALITY_ALERT_WARNING_PCT
 MORTALITY_CRITICAL_PCT = settings.MORTALITY_ALERT_CRITICAL_PCT
 from . import models, schemas
 from .validators import (
+    ENTRADAS_DE_SALDO,
     BusinessRuleViolation,
+    bloquear_saldo_del_lote,
+    bloquear_saldos_de_lotes,
+    efecto_persistido,
     get_current_bird_balance,
+    tiene_efecto_en_saldo,
     validate_chick_dispatch,
     validate_egg_dispatch,
+    validate_egg_dispatch_types,
+    validate_retiro_de_entrada,
+    validate_salida_en_destino,
     validate_event_date,
     validate_farm_house,
     validate_house_capacity,
@@ -63,6 +71,11 @@ REENVIABLES = (models.EventStatus.REGISTERED, models.EventStatus.RETURNED, model
 NO_CANCELABLES = (models.EventStatus.APPROVED, models.EventStatus.CONSOLIDATED, models.EventStatus.SENT_TO_SAP,
                   models.EventStatus.SAP_CONFIRMED, models.EventStatus.SAP_ERROR, models.EventStatus.CANCELLED,
                   models.EventStatus.REVERSED)  # `OD-19`: lo revertido es terminal
+
+
+def _valor_auditable(valor):
+    """Valor serializable para `audit_logs.previous_values/new_values` (fechas → ISO)."""
+    return valor.isoformat() if hasattr(valor, "isoformat") else valor
 
 
 class OperationsService:
@@ -869,6 +882,8 @@ class OperationsService:
             etiqueta = "descarte" if event_type == models.EventType.CULL_RECORDING else "salida"
             await validate_bird_decrement(self.db, data.lot_id, total_qty, etiqueta)
         elif event_type == models.EventType.EGG_DISPATCH:
+            # `GA-REM-005-F` · `R-172`: a la incubadora solo va huevo fértil; la cantidad validada es la suma de esas filas
+            validate_egg_dispatch_types(em.egg_type for em in data.egg_movements)
             # `GA-REM-005-D` (`R-161`): sin la guarda `total > 0` — es la regla quien rechaza el cero
             # (`BR-02`), como en la mortalidad (`R-130 AC04`); y el saldo se lee bajo el bloqueo del lote.
             total = sum(em.quantity for em in data.egg_movements)
@@ -881,10 +896,11 @@ class OperationsService:
                 raise BusinessRuleViolation("El evento requiere lote", "BR-07")
             await validate_incubation_load(self.db, data.lot_id, total)
         elif event_type == models.EventType.CHICK_DISPATCH:
-            if total_qty > 0:
-                if data.lot_id is None:
-                    raise BusinessRuleViolation("El evento requiere lote", "BR-07")
-                await validate_chick_dispatch(self.db, data.lot_id, total_qty)
+            # `GA-REM-005-E §E.3` · `R-174`: `B.2` exige cantidad > 0 al despacho de pollitos; el validador
+            # rechaza 0 con `BR-04` y el servicio ya no lo salta (como la enmienda D con los huevos).
+            if data.lot_id is None:
+                raise BusinessRuleViolation("El evento requiere lote", "BR-07")
+            await validate_chick_dispatch(self.db, data.lot_id, total_qty)
         elif event_type == models.EventType.LOT_CLOSURE:
             if data.lot_id is None:
                 raise BusinessRuleViolation("El evento requiere lote", "BR-07")
@@ -1068,12 +1084,48 @@ class OperationsService:
         # modo que aquí no puede llegar ninguno: el estado solo cambia por las
         # transiciones del flujo (R-32).
         cambios = data.model_dump(exclude_unset=True)
-        # `GA-REM-040-G` · `R-160` · `AC-W09`: el destino de una edición se verifica como el
-        # de un alta. Antes, `lot_id`, `farm_id` y `house_id` se asignaban tal cual llegaban,
-        # de modo que un evento podía repuntarse a un lote de otra unidad **o de otra empresa**
-        # (`R-42` cubría el alta, no la edición). Si el lote no cambia, la guarda mira el
-        # actual: para el actor de empresa ya lo garantizó `get_event`; para la autoridad
-        # global bloquea la unidad apagada.
+        lote_destino = await self.verificar_destino_de_edicion(event, cambios)
+        if "water_liters" in cambios:  # `GA-REM-021-A`: la edición respeta `RR-11` y el tipo
+            validate_water_consumption(event.event_type, cambios["water_liters"], await self._tipo_de_lote(lote_destino))
+        if any(k in cambios for k in ("chicks_healthy", "chicks_weak")):  # `GA-REM-021-C`: la edición revalida `BR-21`
+            validate_birth_registration(
+                event.event_type, await self._tipo_de_lote(lote_destino),
+                cambios.get("chicks_healthy", event.chicks_healthy), cambios.get("chicks_weak", event.chicks_weak),
+                [(bm.sex, bm.quantity) for bm in event.bird_movements])
+        if any(k in cambios for k in ("received_total", "dead_on_arrival", "rejected_on_arrival")):
+            # `GA-REM-021-B`: la edición revalida el cuadre contra los movimientos persistidos (`BR-20`)
+            validate_reception_reconciliation(
+                event.event_type, await self._tipo_de_lote(lote_destino),
+                cambios.get("received_total", event.received_total), cambios.get("dead_on_arrival", event.dead_on_arrival),
+                cambios.get("rejected_on_arrival", event.rejected_on_arrival), sum(bm.quantity for bm in event.bird_movements))
+        # `GA-REM-005-E` `AC-R173-10` · `docs/13 §2`: la auditoría de la edición conserva valor anterior y nuevo
+        previos = {key: _valor_auditable(getattr(event, key, None)) for key in cambios}
+        for key, val in cambios.items():
+            setattr(event, key, val)
+        event.version += 1
+        await self.db.flush()
+        await self.db.refresh(event)
+        # Audit
+        await audit_state_transition(self.db, event, self.current_user, old_status, old_status, comments="Evento actualizado",
+                                     previous_values=previos, new_values={k: _valor_auditable(v) for k, v in cambios.items()})
+        return event
+
+    async def verificar_destino_de_edicion(self, event: models.OperationalEvent, cambios: dict) -> int | None:
+        """La guarda central de toda mutación posterior al alta (`PUT` y `POST /corrections`).
+
+        `GA-REM-040-G` · `R-160` · `AC-W09`: el destino de una edición se verifica como el de un
+        alta (empresa, lote activo, fecha, ubicación, unidad). Antes, `lot_id`, `farm_id` y
+        `house_id` se asignaban tal cual llegaban (`R-42` cubría el alta, no la edición); y la
+        corrección de esos mismos campos no verificaba nada (`R-173`, `AC-R173-11…14`). Si el lote
+        no cambia, la guarda mira el actual: para el actor de empresa ya lo garantizó `get_event`;
+        para la autoridad global bloquea la unidad apagada.
+
+        `GA-REM-005-E` · `R-173` (`RR-18`): si cambia el lote de un evento **con efecto en saldo**,
+        se bloquean las filas de origen y destino (clave primaria ascendente), se relee el evento
+        bajo el bloqueo y se aplica el invariante: una salida se valida en el destino con el mismo
+        validador del alta; una entrada deja el origen con `saldo ≥ 0`. `n` se deriva de las filas
+        persistidas, nunca del cliente. Todo antes de escribir: si falla, el evento queda intacto.
+        """
         lote_destino = cambios["lot_id"] if "lot_id" in cambios else event.lot_id
         if "lot_id" in cambios and lote_destino is not None:
             await validate_lot_active(self.db, lote_destino, self.company_id)
@@ -1090,27 +1142,17 @@ class OperationsService:
             await self.exigir_unidad_operativa(lot_id=lote_destino)
         else:
             await self.exigir_unidad_operativa(event=event)
-        if "water_liters" in cambios:  # `GA-REM-021-A`: la edición respeta `RR-11` y el tipo
-            validate_water_consumption(event.event_type, cambios["water_liters"], await self._tipo_de_lote(lote_destino))
-        if any(k in cambios for k in ("chicks_healthy", "chicks_weak")):  # `GA-REM-021-C`: la edición revalida `BR-21`
-            validate_birth_registration(
-                event.event_type, await self._tipo_de_lote(lote_destino),
-                cambios.get("chicks_healthy", event.chicks_healthy), cambios.get("chicks_weak", event.chicks_weak),
-                [(bm.sex, bm.quantity) for bm in event.bird_movements])
-        if any(k in cambios for k in ("received_total", "dead_on_arrival", "rejected_on_arrival")):
-            # `GA-REM-021-B`: la edición revalida el cuadre contra los movimientos persistidos (`BR-20`)
-            validate_reception_reconciliation(
-                event.event_type, await self._tipo_de_lote(lote_destino),
-                cambios.get("received_total", event.received_total), cambios.get("dead_on_arrival", event.dead_on_arrival),
-                cambios.get("rejected_on_arrival", event.rejected_on_arrival), sum(bm.quantity for bm in event.bird_movements))
-        for key, val in cambios.items():
-            setattr(event, key, val)
-        event.version += 1
-        await self.db.flush()
-        await self.db.refresh(event)
-        # Audit
-        await audit_state_transition(self.db, event, self.current_user, old_status, old_status, comments="Evento actualizado")
-        return event
+        if "lot_id" in cambios and lote_destino != event.lot_id and tiene_efecto_en_saldo(event.event_type):
+            await bloquear_saldos_de_lotes(self.db, event.lot_id, lote_destino)
+            await self.db.refresh(event, attribute_names=["status", "lot_id"])
+            if event.status == models.EventStatus.CANCELLED:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="El evento fue anulado; no se reasigna")
+            n = efecto_persistido(event)
+            if event.event_type in ENTRADAS_DE_SALDO:
+                await validate_retiro_de_entrada(self.db, event, n, "Reasignar el evento")
+            elif lote_destino is not None:
+                await validate_salida_en_destino(self.db, event, n, lote_destino)
+        return lote_destino
 
     async def submit_to_review(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
@@ -1133,11 +1175,22 @@ class OperationsService:
     async def cancel_event(self, event_id: int) -> models.OperationalEvent:
         event = await self.get_event(event_id)
         await self.exigir_unidad_operativa(event=event)  # `AC-W13`
+        # `GA-REM-005-E` · `R-173` (`RR-18`): la anulación excluye la fila del saldo (agregado
+        # dinámico). Se bloquea la fila del lote —la misma primitiva que los decrementos— y se
+        # relee el estado bajo el bloqueo: dos anulaciones o una anulación y una salida
+        # concurrentes se serializan; a lo sumo una transición efectiva (`AC-R173-07/08`).
+        if event.lot_id is not None:
+            await bloquear_saldo_del_lote(self.db, event.lot_id)
+            await self.db.refresh(event, attribute_names=["status"])
         # `GA-REM-006-A` · `R-140` PARTE A: lo aprobado, lo consolidado, lo enviado o confirmado
         # por SAP, lo que SAP rechazó y lo ya anulado no se cancelan por aquí (`OD-17.a`:
         # terminales y ciclo SAP; `BR-15`/`BR-16`: solo reverso). Motivo y permiso: fuera.
         if event.status in NO_CANCELABLES:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="No se puede cancelar un evento aprobado, consolidado, enviado o confirmado por SAP, con error de SAP o ya anulado")
+        # Una entrada (recepción, nacimiento, recolección, recepción en incubadora) que ya tuvo
+        # salidas no se anula si dejaría el saldo negativo (`AC-R173-05`); las salidas solo lo suben.
+        if event.lot_id is not None and event.event_type in ENTRADAS_DE_SALDO:
+            await validate_retiro_de_entrada(self.db, event, efecto_persistido(event), "La anulación")
         old_status = event.status.value if hasattr(event.status, 'value') else str(event.status)
         event.status = models.EventStatus.CANCELLED
         await self.db.flush()

@@ -225,7 +225,10 @@ export const STAGE_OPERATIONS: Record<StageKey, string[]> = {
   ],
   hatchery: [
     'hatchery_inspection', 'egg_reception_hatchery', 'egg_reception_classification', 'transport_inspection',
-    'incubation_load', 'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
+    'incubation_load', 'ovoscopy', 'transfer_to_hatcher', 'birth_registration',
+    // `GA-REM-021-D` · `R-171` · `RR-16`: la mortalidad y el descarte de pollitos son hechos posteriores al
+    // nacimiento del lote de incubación (`Bases` p.10, Rec. §12); el backend ya los acepta y los resta de viables.
+    'mortality_recording', 'cull_recording', 'chick_dispatch',
   ],
   broiler: [
     'farm_inspection', 'bird_reception', 'bird_distribution', 'bird_transfer',
@@ -408,6 +411,8 @@ export const STAGE_FLOWS: Record<StageKey, FlowStep[]> = {
     step('ovoscopy', 'Realizar ovoscopía para verificar fertilidad'),
     step('transfer_to_hatcher', 'Transferir los huevos a la nacedora'),
     step('birth_registration', 'Registrar el nacimiento de los pollitos'),
+    step('mortality_recording', 'Registrar mortalidad diaria'),
+    step('cull_recording', 'Registrar descarte de aves'),
     step('chick_dispatch', 'Despachar los pollitos nacidos'),
   ],
   broiler: [

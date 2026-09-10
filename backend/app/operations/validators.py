@@ -88,11 +88,40 @@ async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
     return (apertura.scalar() or 0) + entradas - salidas
 
 
+TIPO_DISPONIBLE = "fertile"
+
+
+def cuenta_como_disponible(egg_type: str | None) -> bool:
+    """`GA-REM-005-F` / `R-172` / `RR-17`: solo el huevo **fértil** es disponibilidad.
+
+    Lo que se traslada a la incubadora es huevo fértil (`Bases` p.7-8 «Traslado de huevos
+    fértiles»; p.9 «Número de Huevos Recibidos: cantidad de huevos fértiles recibidos»;
+    `docs/02 §3.6.4/§3.7.1`; `spec.md :166/:187`). Sucios, rotos, infértiles, descartados y
+    comerciales son hechos capturados —producción, roturas, indicadores— y no cuentan para
+    despachar (`BR-02`) ni para cargar (`BR-03`): `CAPTURADO ≠ DISPONIBLE`. Un solo predicado,
+    en un solo sitio, para los dos saldos; los dos saldos siguen siendo distintos.
+    """
+    return egg_type == TIPO_DISPONIBLE
+
+
+def validate_egg_dispatch_types(egg_types) -> None:
+    """`GA-REM-005-F` `AC-R172-04`: el despacho a incubadora solo lleva huevo fértil."""
+    ajenos = sorted({t for t in egg_types if not cuenta_como_disponible(t)})
+    if ajenos:
+        raise BusinessRuleViolation(
+            f"El despacho a incubadora es de huevo fértil; tipo(s) no despachable(s): {', '.join(str(t) for t in ajenos)}",
+            "BR-02",
+        )
+
+
 async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
     """
     Fertile eggs available at the farm for dispatch.
-    IN:  EGG_COLLECTION
-    OUT: EGG_DISPATCH
+    IN:  EGG_COLLECTION   (solo filas que cuentan como disponibles: `cuenta_como_disponible`)
+    OUT: EGG_DISPATCH     (ídem; las filas históricas de otro tipo nunca fueron disponibilidad)
+
+    `GA-REM-005-F` / `R-172`: hasta esta enmienda sumaba todas las `egg_type` y una recolección
+    de 100 fértiles + 60 de otros tipos admitía despachar 160.
     """
     res_in = await db.execute(
         select(func.coalesce(func.sum(EggMovement.quantity), 0))
@@ -100,6 +129,7 @@ async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
         .where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.event_type == EventType.EGG_COLLECTION,
+            EggMovement.egg_type == TIPO_DISPONIBLE,
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
@@ -109,6 +139,7 @@ async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
         .where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.event_type == EventType.EGG_DISPATCH,
+            EggMovement.egg_type == TIPO_DISPONIBLE,
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
@@ -118,7 +149,8 @@ async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
 async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
     """
     Eggs available at hatchery (received - loaded into incubators).
-    IN:  EGG_RECEPTION_HATCHERY
+    IN:  EGG_RECEPTION_HATCHERY  (solo el fértil recibido: `Bases` p.9, `GA-REM-005-F`; las demás filas
+                                  —diferencias vs enviado— se capturan y no cuentan)
     OUT: INCUBATION_LOAD (quantity_loaded from hatchery_params)
     """
     res_in = await db.execute(
@@ -127,6 +159,7 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
         .where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.event_type == EventType.EGG_RECEPTION_HATCHERY,
+            EggMovement.egg_type == TIPO_DISPONIBLE,
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
@@ -253,6 +286,77 @@ async def validate_chick_dispatch(db: AsyncSession, lot_id: int, quantity: int) 
             "Registre primero el nacimiento.",
             "BR-04",
         )
+
+
+# ─── `GA-REM-005-E` · `R-173` · mutaciones posteriores al alta ───────────────────────────
+#
+# Los cuatro saldos son agregados dinámicos por `lot_id` y `status ≠ CANCELLED`: cambiar el lote
+# de un evento mueve su efecto entero y cancelar una entrada lo resta. El invariante `saldo ≥ 0`
+# (`B.2`, `D.1.4`) gobierna esas dos mutaciones igual que al alta (`RR-18`).
+
+ENTRADAS_DE_SALDO = frozenset({EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION,
+                               EventType.EGG_COLLECTION, EventType.EGG_RECEPTION_HATCHERY})
+SALIDAS_DE_SALDO = frozenset({EventType.MORTALITY_RECORDING, EventType.CULL_RECORDING, EventType.BIRD_EXIT,
+                              EventType.CHICK_DISPATCH, EventType.EGG_DISPATCH, EventType.INCUBATION_LOAD})
+
+
+def tiene_efecto_en_saldo(event_type) -> bool:
+    return event_type in ENTRADAS_DE_SALDO or event_type in SALIDAS_DE_SALDO
+
+
+def efecto_persistido(event) -> int:
+    """`n` del evento, derivado de sus filas persistidas; el cliente nunca lo aporta (`§E.2.5`)."""
+    if event.event_type == EventType.INCUBATION_LOAD:
+        return sum(hp.quantity_loaded or 0 for hp in event.hatchery_params)
+    if event.event_type in (EventType.EGG_COLLECTION, EventType.EGG_DISPATCH, EventType.EGG_RECEPTION_HATCHERY):
+        return sum(em.quantity for em in event.egg_movements if cuenta_como_disponible(em.egg_type))
+    return sum(bm.quantity for bm in event.bird_movements)
+
+
+async def bloquear_saldos_de_lotes(db: AsyncSession, *lot_ids) -> None:
+    """Las filas de los lotes implicados, en orden ascendente de clave primaria (`§E.2.11`).
+
+    Una sola convención para todos los escritores: sin interbloqueo A→B/B→A. Los validadores
+    del alta vuelven a bloquear el destino dentro de la misma transacción (reentrante).
+    """
+    for lot_id in sorted({lote for lote in lot_ids if lote is not None}):
+        await bloquear_saldo_del_lote(db, lot_id)
+
+
+async def validate_retiro_de_entrada(db: AsyncSession, event, n: int, motivo: str) -> None:
+    """La entrada deja de contar en su lote (anulación o reasignación): el lote queda `≥ 0`.
+
+    Se lee **bajo el bloqueo** ya tomado por quien llama. Familia por tipo de evento; para el
+    nacimiento se comprueban viables (`BR-04`) y aves (`BR-01`).
+    """
+    lot_id = event.lot_id
+    reglas = {
+        EventType.BIRD_RECEPTION: [("aves", "BR-01", get_current_bird_balance)],
+        EventType.BIRTH_REGISTRATION: [("pollitos viables", "BR-04", get_viable_chick_balance), ("aves", "BR-01", get_current_bird_balance)],
+        EventType.EGG_COLLECTION: [("huevos", "BR-02", get_egg_balance)],
+        EventType.EGG_RECEPTION_HATCHERY: [("huevos en incubadora", "BR-03", get_hatchery_egg_balance)],
+    }
+    for etiqueta, regla, saldo_de in reglas.get(event.event_type, []):
+        saldo = await saldo_de(db, lot_id)
+        if saldo - n < 0:
+            raise BusinessRuleViolation(
+                f"{motivo} dejaría el saldo de {etiqueta} del lote en {saldo - n} (saldo {saldo}, entrada {n})", regla,
+            )
+
+
+async def validate_salida_en_destino(db: AsyncSession, event, n: int, lote_destino: int) -> None:
+    """La salida reasignada se valida en el destino **como un alta** (`AC-W09`, `B.2`): mismo validador."""
+    tipo = event.event_type
+    if tipo == EventType.MORTALITY_RECORDING:
+        await validate_mortality(db, lote_destino, n)
+    elif tipo in (EventType.CULL_RECORDING, EventType.BIRD_EXIT):
+        await validate_bird_decrement(db, lote_destino, n, "descarte" if tipo == EventType.CULL_RECORDING else "salida")
+    elif tipo == EventType.CHICK_DISPATCH:
+        await validate_chick_dispatch(db, lote_destino, n)
+    elif tipo == EventType.EGG_DISPATCH:
+        await validate_egg_dispatch(db, lote_destino, n)
+    elif tipo == EventType.INCUBATION_LOAD:
+        await validate_incubation_load(db, lote_destino, n)
 
 
 async def validate_lot_closure(db: AsyncSession, lot_id: int) -> None:

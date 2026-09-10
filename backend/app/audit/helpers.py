@@ -99,8 +99,14 @@ async def audit_state_transition(
     old_status: str,
     new_status: str,
     comments: str | None = None,
+    previous_values: dict | None = None,
+    new_values: dict | None = None,
 ) -> AuditLog:
-    """The event's status changed (submit, review, approve, reject, cancel, etc.)."""
+    """The event's status changed (submit, review, approve, reject, cancel, etc.).
+
+    `GA-REM-005-E` `AC-R173-10` · `docs/13 §2`: la edición registra campo modificado, valor
+    anterior y valor nuevo (`previous_values`/`new_values`), no solo «Evento actualizado».
+    """
     action_map: dict[str, AuditAction] = {
         "pending_review": AuditAction.UPDATED,         # submitted for review
         "in_review":      AuditAction.REVIEW_STARTED,
@@ -136,6 +142,8 @@ async def audit_state_transition(
         house_id=getattr(event, "house_id", None),
         previous_state=old_status,
         new_state=new_status,
+        previous_values=previous_values,
+        new_values=new_values,
         comments=comments,
     )
 

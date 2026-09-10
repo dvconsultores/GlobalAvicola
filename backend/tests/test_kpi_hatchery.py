@@ -30,15 +30,19 @@ from tests.time_reference import iso_days_ago
 
 PREFIJO = "KH-TEST-"
 
-#: 1.000 huevos recibidos, de los cuales 800 fértiles; se cargan 1.000; nacen 600, 540 viables.
+#: 1.000 huevos recibidos, de los cuales 800 fértiles; se cargan 750; nacen 600, 540 viables.
 #:
-#:   nacimiento  = 600 / 1000 = 60,0 %
+#: `GA-REM-005-F` (`R-172`, `RR-17`): en la incubadora solo el fértil recibido es cargable (`BR-03`,
+#: `Bases` p.9), así que la carga no puede superar los 800 fértiles; 750 mantiene distintos los
+#: denominadores de nacimiento (cargados) y eclosión (fértiles), que es lo que estas pruebas miden.
+#:
+#:   nacimiento  = 600 /  750 = 80,0 %
 #:   eclosión    = 600 /  800 = 75,0 %
-#:   rendimiento = 540 / 1000 = 54,0 %
+#:   rendimiento = 540 /  750 = 72,0 %
 #:   fertilidad  = 800 / 1000 = 80,0 %
 RECIBIDOS_FERTILES = 800
 RECIBIDOS_INFERTILES = 200
-CARGADOS = 1_000
+CARGADOS = 750
 NACIDOS = 600
 VIABLES = 540
 
@@ -152,18 +156,18 @@ async def test_t_014_01_la_incubadora_devuelve_numeros_y_no_texto(
 
     assert k["total_chicks_born"] == NACIDOS
 
-    # `nacimiento` = nacidos ÷ cargados = 600 / 1000
+    # `nacimiento` = nacidos ÷ cargados = 600 / 750
     assert isinstance(k["nacimiento_pct"], (int, float)), (
         f"un campo `_pct` no puede devolver texto: {k['nacimiento_pct']!r}"
     )
-    assert k["nacimiento_pct"] == pytest.approx(60.0), k
+    assert k["nacimiento_pct"] == pytest.approx(80.0), k
 
     # `eclosión` = nacidos ÷ **fértiles** = 600 / 800 — el denominador que `docs/02` exige
     assert k["eclosion_pct"] == pytest.approx(75.0), k
 
     # `rendimiento` = viables ÷ cargados. Sin descartes registrados, viables = nacidos, de
     # modo que coincide con `nacimiento`: la fórmula degrada correctamente.
-    assert k["rendimiento_pct"] == pytest.approx(60.0), k
+    assert k["rendimiento_pct"] == pytest.approx(80.0), k
 
     # el alias histórico se conserva y equivale a `nacimiento`
     assert k["hatchability_pct"] == k["nacimiento_pct"]
@@ -174,7 +178,7 @@ async def test_t_015_07_el_descarte_separa_rendimiento_de_nacimiento(
 ):
     """`docs/02 §3.12.1` · viables ÷ cargados.
 
-    Con 60 descartes aprobados: viables = 600 − 60 = 540, de 1.000 cargados → 54 %. El
+    Con 60 descartes aprobados: viables = 600 − 60 = 540, de 750 cargados → 72 %. El
     nacimiento no cambia, porque su numerador son los nacidos. Si el rendimiento no
     distinguiera el descarte, los dos seguirían coincidiendo.
     """
@@ -184,8 +188,8 @@ async def test_t_015_07_el_descarte_separa_rendimiento_de_nacimiento(
 
     k = (await client.get(f"/api/v1/reports/kpis/hatchery?lot_id={incubadora}",
                           headers=auth_headers)).json()
-    assert k["nacimiento_pct"] == pytest.approx(60.0), k
-    assert k["rendimiento_pct"] == pytest.approx(54.0), k
+    assert k["nacimiento_pct"] == pytest.approx(80.0), k
+    assert k["rendimiento_pct"] == pytest.approx(72.0), k
 
 
 async def test_t_085_02_eclosion_y_nacimiento_no_son_el_mismo_numero(

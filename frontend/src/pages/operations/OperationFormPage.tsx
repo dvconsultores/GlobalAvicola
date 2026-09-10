@@ -1123,12 +1123,10 @@ export default function OperationFormPage() {
  <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
  <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
  </div>
+ {/* `GA-REM-005-F` · `R-172` · `RR-17`: a la incubadora solo se despacha huevo fértil (`Bases` p.7-9,
+     `docs/02 §3.6.4/§3.7.1`); el backend rechaza cualquier otra fila (`BR-02`). */}
  {[
  { key: 'fertile', label: t('operations.fertile', 'Fértiles') },
- { key: 'dirty', label: t('operations.dirty', 'Sucios') },
- { key: 'broken', label: t('operations.broken', 'Rotos') },
- { key: 'infertile', label: t('operations.infertile', 'Infértiles') },
- { key: 'discarded', label: t('operations.discarded', 'Descartados') },
  ].map(({ key, label }, i) => (
  <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
  <div>
