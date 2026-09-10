@@ -205,3 +205,70 @@ sin excepción para la autoridad global (`GA-REM-007` edge case «Super Admin»)
 
 `AC-G01…G07` verdes · rojo válido (`G02`, `G04`, `G06`) · `S10`, `S11` válidas · `GA-REM-007` AC01-07 (regresión:
 `test_full_workflow_audit::test_f4b`) · `R-143` cerrado.
+
+---
+
+# Enmienda B · una sola decisión efectiva por ciclo de revisión — `R-166` (2026-09-10 · WAVE B tranche 13)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-007-B` · `DATA INTEGRITY` (decisión de revisión) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Hallazgo** | **`R-166`** (registrado P3 → **P2** normalizado, `R166_REVIEW_DECISION_CONCURRENCY_MATRIX §6`): `approve` y `reject` sobre el mismo evento no se excluyen; `_get_event_for_approval` lee el estado **sin bloqueo** y ambas peticiones lo superan |
+| **Reproducción** | `approve \|\| reject` → ambas `200`; estado `APPROVED`; `approval_actions` = APPROVED + REJECTED; auditoría de éxito ×2; **una notificación de rechazo** de un evento aprobado. `approve \|\| approve` → `approval_actions` APPROVED ×2, auditoría ×2 (matriz §4) |
+| **Fila autoritativa** | `operational_events.id` — `status` es la decisión efectiva; `approval_actions` es historia (matriz §2) |
+| **Primitiva** | la ya existente en el repositorio: `SELECT … FOR UPDATE` + `populate_existing` sobre la fila del evento (`reversals/service.py::_bloquear_original`, «es lo que serializa dos solicitudes o dos aprobaciones»); misma familia que `bloquear_saldo_del_lote` (`R-130`) pero sobre otra fila y otro invariante |
+| **Relación** | `R-166 ≠ R-161` (saldo) · `R-165`/`OD-16` (habilitación de unidad en el plano de revisión) intacto y **antes** del bloqueo · `GA-REM-007-A` (`BR-14`) intacta · `GA-REM-006-A §A.2` (mapa de transiciones) es quien ya niega la segunda decisión · `GA-REM-041`/`OD-19` (el reverso conserva su propio bloqueo del original) |
+| **Decisión del propietario** | **no requerida** (matriz §7: el contrato de error ya existe — `400` «El evento no está en estado aprobable») |
+| **Migración** | **ninguna** |
+| **Fuera de alcance** | `R-140`/`R-154` residuales · `R-136` SAP · idempotencia nueva · reescritura del motor de aprobación · lotes/saldos · `R-179` (otra raíz, mismo tranche) · ola C · fase 9 · SAP · `BU-D10` · `R-158` |
+
+## B.1 Contrato
+
+```
+autenticar → empresa efectiva → cargar el evento (empresa + unidad alcanzable)      ← autorización, puede leer antes del bloqueo
+  → _exigir_habilitacion  (R-165 · OD-16 · OD-19 §13)
+  → BLOQUEAR la fila del evento          SELECT … FOR UPDATE + populate_existing
+  → RELEER status bajo el bloqueo
+  → validar la transición contra ese estado        ← la segunda decisión muere aquí: 400 con el estado real
+  → [approve] BR-14 (GA-REM-007-A)
+  → aplicar la decisión (status, approved_by_id / observations)
+  → efectos gobernados: reverso (OD-19), ApprovalAction, auditoría, notificaciones
+  → confirmar
+```
+
+**Invariante**: `COUNT(decisiones efectivas por ciclo de revisión) == 1`. Todos los escritores de decisión convergen en la misma primitiva: `approve`,
+`reject`, `complete_review`, `start_review`, `return_to_operator` y sus variantes por lote (que llaman a las anteriores). Ninguna denegación escribe
+historia (hoy tampoco), y no se crea registro de intentos fallidos.
+
+El bloqueo va **después** de la cadena de inquilino/unidad: bloquear antes revelaría la existencia de un evento ajeno (`AC05`, anti-enumeración).
+
+## B.2 Criterios de aceptación
+
+| AC | Criterio |
+|---|---|
+| `AC-R166-01` | `approve \|\| reject` → una sola decisión efectiva: un `ApprovalAction`, una auditoría de éxito, estado coherente; sin notificación de rechazo si ganó la aprobación |
+| `AC-R166-02` | `approve \|\| approve` → un `ApprovalAction` APPROVED, una auditoría; la segunda `400` |
+| `AC-R166-03` | `reject \|\| reject` → un `ApprovalAction` REJECTED, una auditoría, una notificación |
+| `AC-R166-04` | la fila del evento se bloquea **antes** de releer el estado (observado por el resultado de la carrera) |
+| `AC-R166-05` | la segunda petición revalida contra el estado post-bloqueo y responde `400` nombrando el estado real |
+| `AC-R166-06` | efectos exactamente una vez (`approval_actions`, auditoría de éxito, notificaciones) |
+| `AC-R166-07` | `BR-14` intacta: el registrador no aprueba |
+| `AC-R166-08` | control secuencial: aprobar y luego rechazar → `400` (contrato vigente) |
+| `AC-R166-09` | `complete_review \|\| approve` → una sola transición a `APPROVED` |
+| `AC-R166-10` | `start_review \|\| start_review` (o con `return`) → una sola transición |
+| `AC-R166-11` | contrapartida de reverso aprobada dos veces a la vez → un solo reverso efectivo; `OD-19` intacto |
+| `AC-R166-12` | seguridad: otra empresa `404`; unidad apagada `403` (`R-165`); sin permiso `403`; global sin contexto cerrado |
+| `AC-R166-13` | control: revisar no serializa el lote (`R-161`/`R-130` intactos) |
+
+## B.3 Tareas
+
+| Tarea | Descripción |
+|---|---|
+| `T-007-B1` | pruebas rojas `tests/test_review_decision_concurrency.py` (prefijo `REVI-`; empresa A con `breeder` ON, dos revisores distintos del registrador, eventos en `CORRECTED`/`IN_REVIEW`, `asyncio.gather` de peticiones HTTP independientes; tres lotes/eventos frescos por carrera para que la reproducción no dependa del tiempo) |
+| `T-007-B2` | `review/service.py`: `_bloquear_evento(event_id)` (una primitiva, ambos servicios) invocado tras la cadena de seguridad y antes de validar la transición, en `_get_event_for_approval` (`approve`/`reject`) y en `_get_event` de `ReviewService` (`start_review`, `return_to_operator`, `complete_review`) |
+| `T-007-B3` | sensibilidad `R166-S1…S8`; regresión `R-135`/`R-143`, `R-165`, `GA-REM-007-A`, `R-136`/`OD-19`, `R-161`, `R-130`, notificaciones; evidencia; cierre |
+
+## B.4 Definición de terminado
+
+`AC-R166-01…13` verdes · rojo válido con carrera **observada** (dos decisiones efectivas registradas) · sensibilidad válida · regresión completa **leída** ·
+sin migración · `R-166` cerrado (técnico).

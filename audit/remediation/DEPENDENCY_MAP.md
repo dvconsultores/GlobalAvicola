@@ -937,3 +937,11 @@ modo R152_ONLY · sin migración · dependencia R-152 → R-153 confirmada por p
 ## WAVE B · tranche 12 · cierre (2026-09-10)
 R-152 CERRADO (técnico) · GA-REM-042 CERTIFICADA · R-153 OPEN ◄ AOD-25 (depende de R-152: satisfecho; falta la decisión) · R-179 OPEN (P3)
 regresión 1088 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-166 · alternativa R-179
+
+## WAVE B · tranche 13 · pre-flight (2026-09-10) — dependencias del tranche
+R-179 (P1) ◄── GA-REM-002 ADDENDUM Wave 3 (semántica de los catálogos: nulo = compartido, fijado = propio) + MASTER_DATA_BUSINESS_UNIT_SCOPE_MATRIX + RQ-03 +
+                precedentes R-42/R-59/R-111 · usa verificar_pertenencia (tenancy) y la guarda de R-173/R-176 · GA-REM-042 ya lo aplica a la importación (regresión)
+R-166 (P2) ◄── GA-REM-007 (aprobación) + GA-REM-006-A §A.2 (mapa de transiciones, que ya niega la segunda decisión) + R-165/OD-16 (habilitación antes del bloqueo) +
+                GA-REM-041/OD-19 (el reverso conserva su bloqueo del original) · primitiva FOR UPDATE ya existente · independiente de R-179
+R-180 (P2) ── registrado: galpones origen/destino de los submovimientos (clase estructural R-59), fuera del tranche
+modo R179_PLUS_R166 · sin migración · sin decisión nueva

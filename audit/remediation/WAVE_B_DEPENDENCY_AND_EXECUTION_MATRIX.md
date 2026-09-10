@@ -539,3 +539,21 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   R-166 — approve/reject concurrentes sobre el mismo evento CORRECTED (sin bloqueo de fila; el último flush gana): misma primitiva que R-130/R-173. Sin decisión pendiente.
   Alternativa: R-179 (pertenencia de maestros referenciados por los eventos; clase R-42).
 ```
+
+## 28. Tranche 13 · pre-flight (2026-09-10) — recuento revalidado y puerta de composición
+
+```
+recuento ....................... 35 · 21 cerrados · 4 parciales · 10 abiertos — recontado desde la última línea de estado de cada ID en el backlog; consistente con §27
+                                 + alta de este pre-flight: R-180 (galpones origen/destino de los submovimientos) → recuento canónico 36 · 21 · 4 · 11
+gate R-179 ..................... ACTIVE · reproducido por API (7 familias × 3 superficies; fila persistida entre empresas) · GOBERNADO por GA-REM-002 ADDENDUM Wave 3
+                                 («global si es nulo, propio si está fijado»; la ampliación de entonces cubrió solo lo estructural) · sin decisión ·
+                                 severidad P3 → **P1** (clase R-42/R-59) · GA-REM-002 enmienda D · sin migración
+gate R-166 ..................... ACTIVE · reproducido por API (approve||reject: dos decisiones efectivas, dos auditorías, notificación de rechazo sobre evento
+                                 aprobado) · fila autoritativa operational_events · primitiva ya existente (FOR UPDATE del reverso) · contrato de error existente ·
+                                 sin decisión · severidad P3 → **P2** · GA-REM-007 enmienda B · sin migración
+independencia .................. raíces distintas (referencia de catálogo vs serialización de decisión); ninguna bloquea a la otra
+modo ........................... R179_PLUS_R166 (R-179 primero: es P1 y toca la superficie de escritura que R-166 no toca)
+P1 abiertos .................... 1 (R-179, este tranche)   P2 abiertos 6 (R-142 · R-144 · R-147 · R-148 · R-164 · R-166 · R-180 → 7 con el alta)   P3 abiertos 4 (R-153 · R-156 · R-177 · R-179 ya no cuenta)
+decisiones del propietario ..... 10 (AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25) — ninguna nueva
+artefactos ..................... R179_MASTER_REFERENCE_AUTHORITY_MATRIX.md · R166_REVIEW_DECISION_CONCURRENCY_MATRIX.md · GA-REM-002-D · GA-REM-007-B
+```

@@ -1437,3 +1437,40 @@ WAVE B   IN PROGRESS        35 ítems (canónico) · 21 cerrados · 4 parciales 
 
 Evidencia: `WAVE_B_TRANCHE_12_PROGENITORAS_IMPORT_EVIDENCE.md`. Regresión completa: **1088 passed · 49 skipped · 0 failed** (1113 s; 1070 previas + 18 nuevas; los 49 saltados son test_upgrade_path y test_runtime_startup, que exigen su script dedicado). `vitest` 108/108 · `tsc` 6 preexistentes (`R-158`). Sin migración (cabeza `x4y5z6a7b8c9`).
 Rutas 211. `R-166` OPEN · `R-164` BLOCKED_RUNTIME · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado · E2E `BLOCKED_RUNTIME` (guion `proceso-p01` actualizado).
+
+---
+
+## Pre-flight del tranche 13 (2026-09-10): `R-179` gobernado (P3 → **P1**) · `R-166` gobernado (P3 → **P2**) · modo R179_PLUS_R166 · sin código
+
+Repositorio verificado: `main` · `a93d4d1` · limpio · local == remoto · cabeza `x4y5z6a7b8c9` · rutas 211.
+
+`R-179` (`R179_MASTER_REFERENCE_AUTHORITY_MATRIX.md`): **reproducido por API** — un evento de la empresa A acepta catálogos de la empresa B en las siete
+familias (`supplier_id`, `transport_id`, `cause_id`, `cull_cause_id`, `vaccine_id`, `medication_id`, `destination_plant_id`) y en las tres superficies
+(alta `201`, `PUT` `200`, corrección `201`), con la fila persistida (`evento.company_id = A` · `suppliers.company_id = B`). La semántica **ya estaba
+escrita**: `GA-REM-002` ADDENDUM Wave 3 fijó «global si es nulo, propio de la empresa si está fijado» y acotó su ampliación a las referencias
+estructurales; `R-179` extiende esa misma regla a los catálogos → `GA-REM-002` enmienda D. **Sin decisión.** Severidad normalizada **P1** por la clase de
+`R-42`/`R-59` (referencia entre empresas persistida en dato productivo). Control positivo obligatorio: el catálogo compartido (`company_id IS NULL`) sigue
+aceptándose desde cualquier empresa.
+`R-166` (`R166_REVIEW_DECISION_CONCURRENCY_MATRIX.md`): **reproducido por API** — `approve || reject` concurrentes sobre un evento `CORRECTED` devuelven
+ambas `200`; el estado queda `APPROVED` pero se registran **dos decisiones efectivas** (`approval_actions` APPROVED + REJECTED), **dos auditorías de éxito**
+y **una notificación de rechazo** de un evento aprobado; `approve || approve` deja dos `ApprovalAction` APPROVED. Fila autoritativa: `operational_events`
+(`status`); primitiva: el `SELECT … FOR UPDATE` que ya usa el reverso. Contrato de error existente (`400` «no está en estado aprobable») → **sin decisión**
+→ `GA-REM-007` enmienda B. Severidad normalizada **P2**.
+
+**Puerta de composición** (prompt §52): `R-179` activo · P1 · gobernado · sin decisión — `R-166` activo · P2 · gobernado · sin decisión — raíces
+independientes (referencia de catálogo vs serialización de la decisión) → **modo `R179_PLUS_R166`**, en ese orden.
+
+Registrado (fuera del tranche): `R-180` (P2): `bird_movements.source_house_id` / `target_house_id` admiten galpones de otra empresa; el ADDENDUM Wave 3
+cubrió `house_id` **del evento**, no los del submovimiento. Clase **estructural** (regla de `R-59`, sin el caso «nulo = compartido»), distinta de la de
+`R-179`: se registra en vez de mezclarse.
+
+| ID | P | Hallazgo | Dónde | Ola |
+|---|---|---|---|---|
+| `R-180` | P2 | `source_house_id` / `target_house_id` de los movimientos de aves admiten galpones de otra empresa (clase estructural, `R-59`) | `operations/service.py` · `schemas.py:19-20` | B |
+
+```
+R-179    OPEN · P1 (normalizado desde P3)   ACTIVE · gobernado · GA-REM-002-D · sin decisión · sin migración
+R-166    OPEN · P2 (normalizado desde P3)   ACTIVE · gobernado · GA-REM-007-B · sin decisión · sin migración
+R-180    OPEN · P2                          registrado (fuera)
+WAVE B   IN PROGRESS        36 ítems (canónico: 35 + R-180) · 21 cerrados · 4 parciales · 11 abiertos (P1 1 · P2 6 · P3 4) · decisiones 10
+```

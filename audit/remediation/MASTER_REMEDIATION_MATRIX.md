@@ -1369,3 +1369,11 @@ WAVE B          IN PROGRESS · 20/35 cerrados + 4 parciales · decisiones 10 · 
 R-152           CERRADO (técnico) · P2 · plan de importación tipado (BR-22), adjuntos clasificados, revalidación en edición/corrección, documental · 18/18 + vitest 6/6 · sensibilidad válida
 R-153           OPEN · P3 · OWNER_DECISION_REQUIRED (AOD-25)
 WAVE B          IN PROGRESS · 21/35 cerrados + 4 parciales · decisiones 10 · regresión 1088 passed · 49 skipped · 0 failed · siguiente (no iniciado): R-166 · alternativa R-179
+
+## WAVE B · tranche 13 · pre-flight (2026-09-10) · `R-179` P1 gobernado (`GA-REM-002-D`) · `R-166` P2 gobernado (`GA-REM-007-B`) · modo R179_PLUS_R166
+R-179           ACTIVE · P1 (normalizado desde P3 tras reproducir por API: 7 familias de catálogo × alta/PUT/corrección, fila persistida entre empresas) ·
+                regla ya escrita en GA-REM-002 ADDENDUM Wave 3 · control positivo: el catálogo compartido sigue aceptándose · sin decisión · sin migración
+R-166           ACTIVE · P2 (normalizado desde P3: dos decisiones efectivas, dos auditorías de éxito, notificación de rechazo sobre evento aprobado) ·
+                bloqueo de la fila del evento antes de releer el estado · sin decisión · sin migración
+R-180           registrado (P2, fuera): galpones origen/destino de los submovimientos
+WAVE B          IN PROGRESS · 21/36 cerrados + 4 parciales · decisiones 10 · COMMIT 1 = solo spec

@@ -576,3 +576,84 @@ vitest · `tsc` (6 errores preexistentes de `R-158`, sin cambio de número).
 `AC17–AC26` verdes · rojo previo por superficie documentado con causa · `S1–S9` válidas (o `N/A`
 con motivo) y revertidas · regresión completa verde · sin migración · evidencia publicada ·
 `R-139 CERRADO` · `WAVE A COMPLETE` · fase 9 `TECHNICALLY READY · FROZEN`.
+
+---
+
+# Enmienda D · las referencias a **catálogos** de un evento son de su empresa — `R-179` (2026-09-10 · WAVE B tranche 13)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-002-D` · `TENANT ISOLATION` (escritura) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Hallazgo** | **`R-179`** (registrado P3 → **P1** normalizado, `R179_MASTER_REFERENCE_AUTHORITY_MATRIX §6`): un evento de la empresa A acepta, persiste y edita referencias a catálogos de la empresa B (`supplier_id`, `transport_id`, `cause_id`, `cull_cause_id`, `vaccine_id`, `medication_id`, `destination_plant_id`) en las **tres** superficies de mutación |
+| **Reproducción** | 7 familias × `POST /operations` (`201`), `PUT` (`200`), `POST /corrections` (`201`); fila persistida `evento.company_id = A` con `suppliers.company_id = B` (matriz §3) |
+| **Autoridad** | **este mismo ADDENDUM Wave 3**: «existir no basta»; «los catálogos maestros declaran `company_id` como anulable, lo que significa **global si es nulo, propio de la empresa si está fijado**, y bloquear una referencia a un catálogo compartido sería un error»; la ampliación de entonces cubrió solo las referencias **estructurales** (`lot_id`, `farm_id`, `house_id`). `R-179` extiende la misma regla, ya escrita, a los catálogos · `MASTER_DATA_BUSINESS_UNIT_SCOPE_MATRIX` (las seis familias: «compartido; `company_id`; transversal») · `MASTER_DATA_SOURCE_OF_TRUTH_MATRIX` · `RQ-03` (`TENANT` directo) |
+| **Precedentes** | `R-42` (`lot_id` ajeno, P1) · `R-59` (`houses.farm_id` ajeno, P1) · `R-111` (sub-recurso por el padre) · `GA-REM-042` (proveedor y transporte en la importación de abuelas: mismo helper, alcance acotado a `grandparent_import`) |
+| **Decisión del propietario** | **no requerida** (matriz §5) |
+| **Migración** | **ninguna** (no se añade `company_id` a ninguna tabla; no se reclasifica ningún maestro) |
+| **Fuera de alcance** | `R-180` (galpones origen/destino de los submovimientos: clase **estructural**, regla sin caso compartido) · limpieza de datos históricos (`§25` del método: prevención sin reescritura retrospectiva; si hiciera falta, remediación aparte) · estado activo del maestro (`§19`: ninguna fuente lo exige) · alcance de **unidad** de plantas e incubadoras («se deriva, no se declara») · `R-153`/`AOD-25` · `R-177`/`AOD-24` · `R-164` · `R-140`/`R-154` residuales · `R-136` SAP · `B03`/`B04`/`R-156` · `R-142` · `R-144` · `R-147` · `R-148` · ola C y KPI · fase 9 · SAP real (`P-08`) · `BU-D10` · `R-158` · rediseño de maestros |
+
+## D.1 Regla
+
+```
+Para toda referencia de un evento (o de sus submovimientos) a un CATÁLOGO:
+
+    master.company_id IS NULL        →  catálogo compartido        →  ACEPTADO desde cualquier empresa
+    master.company_id IS NOT NULL    →  catálogo propio            →  master.company_id == empresa efectiva del evento
+                                                                      si no:  400 BR-07 «<Etiqueta> no encontrado»
+
+La empresa efectiva la deriva el SERVIDOR (sesión/contexto), nunca el cuerpo de la petición.
+Catálogos derivados (incubadora-máquina, nacedora): la regla se aplica a su PADRE (`hatchery_id`).
+Catálogos sin `company_id` (razas, fases productivas): PLATFORM_GLOBAL — no se convierten en tenant-owned.
+```
+
+Semántica de la denegación: la existente de `verificar_pertenencia` — el recurso ajeno **se comporta como inexistente** (`AC26`, anti-enumeración); no se
+distingue «no existe» de «no es tuyo».
+
+## D.2 Alcance (matriz §4)
+
+| Campo | Recurso | Clase | Regla |
+|---|---|---|---|
+| `supplier_id` · `transport_id` · `cause_id` · `cull_cause_id` · `vaccine_id` · `medication_id` · `destination_plant_id` | `suppliers` · `transports` · `mortality_causes` · `cull_causes` · `vaccines` · `medications` · `processing_plants` | `TENANT_OWNED_NULLABLE` | D.1 |
+| `feed_movements[].feed_type_id` · `hatchery_params[].hatchery_id` | `feed_types` · `hatcheries` | ídem | D.1 |
+| `hatchery_params[].incubator_id` · `hatcher_id` | `incubators` · `hatchers` | `TENANT_DERIVED` | D.1 sobre `hatchery_id` del padre |
+| `bird_movements[].breed_id` | `breeds` | `PLATFORM_GLOBAL` (sin `company_id`) | **ninguna** (control negativo) |
+| `lot_id` · `farm_id` · `house_id` · `destination_farm_id` · `sap_document_ref` | — | estructural / SAP | **sin cambio** (ya cubiertos: `R-42`, addendum Wave 3, `R-173`, `GA-REM-035`) |
+
+## D.3 Superficies
+
+1. **Alta** (`POST /operations`): en `_apply_business_rules`, junto a `verificar_ubicacion`, antes de las reglas de saldo.
+2. **Edición** (`PUT /operations/{id}`): en `verificar_destino_de_edicion` → `_reglas_puras_del_candidato`, sobre el **estado candidato** (`R-176`): solo se
+   valida la FK que cambia; una FK no mencionada no se revalida ni se arrastra como defecto (`§24`: sin limpieza retrospectiva inventada).
+3. **Corrección** (`POST /corrections`): por la misma guarda central (los campos de FK ya pasan por ella desde `GA-REM-042`).
+4. Submovimientos: solo en el alta (no son editables ni corregibles, `GA-REM-005-B`).
+
+## D.4 Criterios de aceptación
+
+| AC | Criterio |
+|---|---|
+| `AC-R179-01` | control: las siete familias con maestro **de la propia empresa** → `201`, FK persistida |
+| `AC-R179-02` | alta con maestro de otra empresa, familia por familia → `400 BR-07`; cero filas, cero auditoría de alta |
+| `AC-R179-03` | `PUT` de la FK a un maestro ajeno → `400 BR-07`; FK y evento intactos |
+| `AC-R179-04` | `POST /corrections` de la FK a un maestro ajeno → `400 BR-07`; cero `correction_logs` |
+| `AC-R179-05` | toda denegación: evento intacto (FK, estado, versión), sin auditoría de éxito, sin efecto |
+| `AC-R179-06` | **control positivo**: catálogo compartido (`company_id IS NULL`) aceptado desde cualquier empresa |
+| `AC-R179-07` | suplantación: declarar otra empresa en el contexto no autoriza el maestro ajeno |
+| `AC-R179-08` | `feed_type_id` y `hatchery_id` ajenos → `400 BR-07` |
+| `AC-R179-09` | `incubator_id`/`hatcher_id` cuya incubadora es ajena → `400 BR-07` |
+| `AC-R179-10` | control negativo: `breed_id` (global) sigue aceptándose |
+| `AC-R179-11` | `GA-REM-042` intacto: la importación exige proveedor y transporte de la empresa |
+| `AC-R179-12` | autoridad global situada en A: mismo contrato |
+
+## D.5 Tareas
+
+| Tarea | Descripción |
+|---|---|
+| `T-002-D1` | pruebas rojas `tests/test_master_reference_tenancy.py` (prefijo `MAES-`; empresas A y B con las siete familias + un catálogo compartido `company_id NULL` + raza global; actor de A, actor de B, autoridad global) |
+| `T-002-D2` | `tenancy.py`: `verificar_catalogo_de_empresa(db, modelo, recurso_id, company_id, etiqueta)` — acepta `company_id IS NULL`, exige igualdad si está fijado; y `verificar_catalogos_del_evento(...)` que aplica el mapa campo → modelo |
+| `T-002-D3` | `operations/service.py`: llamada en `_apply_business_rules` (alta, incluidos submovimientos) y en `_reglas_puras_del_candidato` (edición y corrección) |
+| `T-002-D4` | sensibilidad `R179-S1…S6`; regresión `GA-REM-042`, `R-173`, `R-176`, `R-178`, `R-42`/`R-59`/`RQ-03`, maestros, operaciones; evidencia; cierre |
+
+## D.6 Definición de terminado
+
+`AC-R179-01…12` verdes · rojo válido leído en `a93d4d1` · sensibilidad válida (incluido el sobre-bloqueo `S5`) · regresión completa **leída** · sin migración ·
+`R-179` cerrado (técnico) · `R-180` registrado.
