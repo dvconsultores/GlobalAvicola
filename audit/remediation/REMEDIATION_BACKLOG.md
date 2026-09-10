@@ -1497,3 +1497,28 @@ WAVE B   IN PROGRESS        36 ítems (canónico) · 23 cerrados · 4 parciales 
 Evidencia: `WAVE_B_TRANCHE_13_MASTER_TENANCY_AND_REVIEW_CONCURRENCY_EVIDENCE.md`. Regresión completa: **1122 passed · 49 skipped · 0 failed** (1046 s; 1088 previas + 34 nuevas; los 49 saltados son `test_upgrade_path`
 y `test_runtime_startup`, que exigen su script dedicado). `vitest` 108/108 · `tsc` 6 preexistentes (`R-158`). Sin migración (cabeza `x4y5z6a7b8c9`).
 Rutas 211. `R-164` BLOCKED_RUNTIME · fase 9 FROZEN · `BU-D10` PENDING_RATIFICATION · SAP no iniciado.
+
+---
+
+## Pre-flight de `R-180` · WAVE B tranche 14 (2026-09-10)
+
+```
+R-180    ACTIVE · GOBERNADO · sin decisión · severidad P2 → P1
+         las referencias ESTRUCTURALES de los submovimientos no se comprueban contra la empresa del evento. Cuatro campos, no dos:
+           bird_movements.source_house_id     House → Farm → Company     201 · persistido (galpón de otra empresa)
+           bird_movements.target_house_id     House → Farm → Company     201 · persistido
+           inspection_details.house_id        House → Farm → Company     201 · persistido   ← no declarado en el alta de R-180
+           egg_storage.lot_id                 Lot.company_id             201 · persistido   ← no declarado en el alta de R-180
+         Superficie escritora única: el ALTA. PUT no declara listas de submovimientos y la corrección deriva sus campos de OperationalEventUpdate,
+         luego ninguno puede fijarlos (se versiona como guardián, AC-R180-14). El reverso copia columnas del original: derivada.
+         Hijos mixtos (uno válido, uno ajeno): ambos se persisten hoy — no hay atomicidad porque no hay validación.
+         Autoridad: ADDENDUM Wave 3 de GA-REM-002 («las referencias estructurales, aquellas cuya pertenencia define de quién es el dato»; su tabla
+         nombra house_id) · AC10 · AC12/enmienda A (el sub-recurso hereda la pertenencia de su padre) · clase R-42/R-59 · RQ-03. No falta la regla:
+         faltó su alcance sobre los hijos. Sin decisión del propietario. Sin migración: la cadena House → Farm → Company ya existe.
+         Unidad de negocio: House y Farm NO la declaran (se deriva del lote), luego OD-10 no se toca y no se inventa restricción entre unidades ni
+         entre granjas de la misma empresa (control positivo obligatorio).
+         Artefactos: R180_HOUSE_FARM_STRUCTURAL_OWNERSHIP_MATRIX.md · GA-REM-002 enmienda E · AC-R180-01…14
+```
+
+Recuento canónico de entrada (recalculado, con la rectificación de `WAVE_B_DEPENDENCY_AND_EXECUTION_MATRIX §30`): **36 · 23 · 4 · 9** ·
+P1 0 · **P2 6** · P3 3 · bloqueados por decisión 5 · `BLOCKED_RUNTIME` 1 · decisiones 10.

@@ -1383,3 +1383,8 @@ R-179           CERRADO (técnico) · P1 · pertenencia de empresa en las refere
 R-166           CERRADO (técnico) · P2 · una sola decisión efectiva por ciclo de revisión (FOR UPDATE + relectura antes de validar la transición) · 8/8 · 6 mutaciones válidas
 R-180           OPEN · P2 · registrado (galpones origen/destino de los submovimientos)
 WAVE B          IN PROGRESS · 23/36 cerrados + 4 parciales · decisiones 10 · regresión 1122 passed · siguiente (no iniciado): R-180 · alternativa R-147 / R-148
+
+## WAVE B · tranche 14 · pre-flight · `R-180` (P2 → P1) gobernado por `GA-REM-002` enmienda E (2026-09-10)
+R-180   ACTIVE · P1 · las referencias estructurales de los submovimientos no se comprueban contra la empresa del evento (4 campos, 1 superficie)
+        autoridad: ADDENDUM Wave 3 de GA-REM-002 (referencias estructurales) · AC10 · AC12 · clase R-42/R-59 · sin decisión · sin migración
+GUARDA  MUTATION CHECKPOINT ejecutable: scripts/mutation_guard.py (7 señales, fail-closed) + tests/test_mutation_guard.py (casos A…E)

@@ -576,3 +576,37 @@ SIGUIENTE TRANCHE (identificado, NO iniciado)
   R-180 — galpones origen/destino de los movimientos de aves admiten granjas de otra empresa (clase estructural, regla de R-59; el ADDENDUM Wave 3 cubrió
   el `house_id` del evento, no los del submovimiento). Sin decisión pendiente. Alternativa: R-147 (constantes sin fuente) o R-148 (inmutabilidad de audit_logs en BD).
 ```
+
+## 30. Rectificación del recuento canónico (2026-09-10 · pre-flight del tranche 14)
+
+Dos rótulos del bloque `§29` no coinciden con los elementos que ellos mismos enumeran. Se rectifica aquí, en el documento canónico vigente, **sin
+reescribir** el bloque histórico ni ningún commit anterior.
+
+| Rótulo | Valor anterior | Elementos enumerados | Valor canónico | Fuente |
+|---|---|---|---|---|
+| `P2 ABIERTOS` | `5` | `R-142 · R-144 · R-147 · R-148 · R-164 · R-180` = **6** | **6** | severidades leídas del backlog: `R-142` P2 · `R-144` P2 · `R-147` P2 · `R-148` P2 · `R-164` P2 · `R-180` P2 |
+| `BLOQUEADOS` | `4` | `R-142 · R-144 · R-153 · R-156 · R-177` = **5** | **5** (por decisión del propietario; `R-164` es `BLOCKED_RUNTIME`, un bloqueo de otra naturaleza) | `AOD-17` · `AOD-08` + `R-131` · `AOD-25` · `AOD-20` · `AOD-24` |
+
+El resumen final del tranche 13 ya reportaba los valores correctos (`P2 = 6`, `P3 = 3`); la discrepancia estaba en el rótulo intermedio.
+
+**Sin impacto** en código, en pruebas, ni en el cierre técnico del tranche 13: `R-179` y `R-166` siguen cerrados y `GA-REM-002-D` y `GA-REM-007-B`
+certificadas. A partir de aquí se usa únicamente el recuento canónico recalculado.
+
+```
+RECUENTO CANÓNICO DE ENTRADA AL TRANCHE 14 (recalculado desde REMEDIATION_BACKLOG.md)
+TOTAL ......................... 36
+CERRADOS ...................... 23
+PARCIALES .....................  4   R-136 · R-140 · R-154 · GA-REM-021
+ABIERTOS ......................  9   R-142 · R-144 · R-147 · R-148 · R-153 · R-156 · R-164 · R-177 · R-180
+  P1 ..........................  0
+  P2 ..........................  6   R-142 · R-144 · R-147 · R-148 · R-164 · R-180
+  P3 ..........................  3   R-153 · R-156 · R-177
+BLOQUEADOS POR DECISIÓN ....... 5   R-142 (AOD-17) · R-144 (R-131 + AOD-08) · R-153 (AOD-25) · R-156 (AOD-20) · R-177 (AOD-24)
+BLOCKED_RUNTIME ...............  1   R-164
+SAP_DEFERRED ..................  1   R-136 post-SAP (OD-17.c)
+DECISIONES DEL PROPIETARIO .... 10   AOD-08 · AOD-14 · AOD-17 · AOD-18 · AOD-19 · AOD-20 · AOD-22 · AOD-23 · AOD-24 · AOD-25
+6 + 3 = 9 abiertos ✓      23 + 4 + 9 = 36 ✓
+```
+
+Nota sobre la severidad de `R-180`: entra al tranche 14 declarada `P2` y se normaliza a **`P1`** en el pre-flight (misma clase que `R-42`/`R-59`/`R-179`:
+referencia entre empresas persistida en dato productivo). El recuento de salida lo refleja.

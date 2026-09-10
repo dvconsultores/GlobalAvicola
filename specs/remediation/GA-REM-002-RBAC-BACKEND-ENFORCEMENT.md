@@ -657,3 +657,79 @@ distingue «no existe» de «no es tuyo».
 
 `AC-R179-01…12` verdes · rojo válido leído en `a93d4d1` · sensibilidad válida (incluido el sobre-bloqueo `S5`) · regresión completa **leída** · sin migración ·
 `R-179` cerrado (técnico) · `R-180` registrado.
+
+---
+
+# Enmienda E · las referencias **estructurales de los submovimientos** son de la empresa del evento — `R-180` (2026-09-10 · WAVE B tranche 14)
+
+| Campo | Valor |
+|---|---|
+| **Enmienda** | `GA-REM-002-E` · `TENANT ISOLATION` (escritura, hijos) · **Estado** `SPEC_READY` (pre-flight 2026-09-10) |
+| **Hallazgo** | `R-180` · severidad normalizada **`P2` → `P1`** (`R180_HOUSE_FARM_STRUCTURAL_OWNERSHIP_MATRIX.md §8`) |
+| **Autoridad** | **ADDENDUM Wave 3 de esta misma spec**: la ampliación cubre «las referencias **estructurales**, aquellas cuya pertenencia **define de quién es el dato**», y su tabla nombra `house_id` («ubica el registro; una granja ajena lo asocia a otra empresa») · `AC10` (el recurso estructural ajeno se rechaza sin fila ni auditoría) · `AC12`/enmienda A (el sub-recurso hereda la pertenencia de su padre) · clase `R-42`/`R-59` · `RQ-03` |
+| **Qué faltó** | no la regla, sino su **alcance**: el addendum la implementó sobre las columnas del evento (`verificar_ubicacion`) y no sobre las de sus hijos. La enmienda D lo dejó escrito como fuera de alcance y clasificado |
+| **Decisión del propietario** | **ninguna**. No se propone semántica nueva; la frontera de empresa ya es absoluta |
+| **Migración** | **ninguna**. La cadena `House → Farm → Company` ya existe en el esquema; añadir `company_id` al galpón o al submovimiento sería duplicar la autoridad |
+
+## E.1 Regla
+
+> Toda referencia **estructural** que un submovimiento envía —galpón, lote— pertenece a la **empresa efectiva del evento**, resuelta por su cadena
+> autoritativa real: el galpón por su granja (`House.farm_id → Farm.company_id`), el lote por su columna propia (`Lot.company_id`).
+> Una referencia ajena **se comporta como inexistente** (`BR-07`, «no encontrado»), igual que en `verificar_pertenencia`: distinguir «no existe» de
+> «no es tuyo» ya filtra información.
+
+Esta regla **no** tiene el caso «nulo = compartido» de la enmienda D: un galpón sin granja no existe, y `Lot.company_id` nulo no significa compartido.
+Es la clase **estructural**, no la de catálogo. Por eso `R-180` **no** reutiliza `verificar_catalogo_de_empresa`: reutiliza `verificar_pertenencia`,
+que ya recorre la cadena `House → Farm → Company` con un `JOIN` explícito.
+
+## E.2 Alcance exacto
+
+Cuatro referencias, todas en submovimientos, todas verificadas contra el modelo real:
+
+| Campo | Tabla | Modelo a resolver | Etiqueta de error |
+|---|---|---|---|
+| `source_house_id` | `bird_movements` | `House` (vía `Farm`) | `Galpón origen` |
+| `target_house_id` | `bird_movements` | `House` (vía `Farm`) | `Galpón destino` |
+| `house_id` | `inspection_details` | `House` (vía `Farm`) | `Galpón` |
+| `lot_id` | `egg_storage` | `Lot` (`company_id` propio) | `Lote` |
+
+Fuera: `feed_type_id`, `hatchery_id`, `incubator_id`, `hatcher_id` (catálogos, ya gobernados por la enmienda D) · `breed_id` (`PLATFORM_GLOBAL`).
+
+## E.3 Superficies
+
+Una sola superficie escritora: el **alta** (`POST /api/v1/operations`). `PUT` no declara listas de submovimientos y `POST /corrections` deriva sus
+campos corregibles de `OperationalEventUpdate`, luego **ninguno de los dos puede fijar estos campos**. Esa imposibilidad deja de ser una afirmación de
+lectura y pasa a ser un **guardián versionado** (`AC-R180-14`). El reverso copia las columnas del evento original, no acepta entrada del cliente.
+
+## E.4 Atomicidad
+
+La validación ocurre **antes de persistir** cualquier fila. Con hijos mixtos —uno válido y uno ajeno— no se persiste **nada**: ni el evento, ni el hijo
+válido, ni efecto de saldo, ni auditoría de éxito. `AC10` ya lo exige («no se crea ni modifica ninguna fila»).
+
+## E.5 Lo que esta enmienda **no** hace
+
+- **No** exige que el galpón origen y el destino compartan unidad de negocio: `House` y `Farm` no declaran unidad; se deriva del lote (`OD-10` intacto).
+- **No** exige que el actor tenga concedida una unidad del galpón destino.
+- **No** restringe el movimiento entre **granjas distintas de la misma empresa**: control positivo obligatorio.
+- **No** añade exigencia de galpón o granja «activos»: ninguna fuente lo gobierna en esta clase (`§24` del método).
+- **No** limpia datos históricos.
+- **No** toca `verificar_catalogo_de_empresa` ni la semántica compartida de la enmienda D.
+
+## E.6 Criterios de aceptación
+
+`AC-R180-01` … `AC-R180-14`, según la tabla del `§10` de `R180_HOUSE_FARM_STRUCTURAL_OWNERSHIP_MATRIX.md`, que forma parte de esta enmienda por referencia.
+
+## E.7 Tareas
+
+| Tarea | Contenido |
+|---|---|
+| `T-002-E1` | pruebas rojas `tests/test_submovement_structural_tenancy.py`: las cuatro referencias del `§E.2` en el alta, el control positivo entre granjas de la misma empresa, los hijos mixtos, la cadena de seguridad (empresa, unidad apagada, sin permiso, autoridad global) y el guardián de inmutabilidad de `PUT`/corrección |
+| `T-002-E2` | `tenancy.verificar_estructurales_del_submovimiento(db, company_id, **campos)`: mapa campo → modelo (`source_house_id`/`target_house_id`/`house_id` → `House`; `lot_id` → `Lot`) apoyado en `verificar_pertenencia`, que ya recorre `House → Farm → Company` |
+| `T-002-E3` | invocación en `OperationsService._apply_business_rules`, junto a `verificar_ubicacion` y a la comprobación de catálogos de la enmienda D, recorriendo **todos** los hijos de `bird_movements`, `inspection_details` y `egg_storage_records` antes de persistir |
+| `T-002-E4` | guardián de la precondición de mutación (`MUTATION_CHECKPOINT`), como herramienta de prueba y gobernanza: ver la enmienda de gobernanza al método |
+
+## E.8 Definición de terminado
+
+Las cuatro referencias denegadas en el alta con `BR-07` y sin efecto alguno · el control positivo entre granjas verde · hijos mixtos sin persistencia
+parcial · `PUT`/corrección probados como no escritores · anti-enumeración conservada · sensibilidad con las ocho mutaciones del `§10` de la matriz ·
+regresión completa leída antes de certificar · sin migración.

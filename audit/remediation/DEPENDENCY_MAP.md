@@ -949,3 +949,8 @@ modo R179_PLUS_R166 · sin migración · sin decisión nueva
 ## WAVE B · tranche 13 · cierre (2026-09-10)
 R-179 CERRADO (técnico) · GA-REM-002-D CERTIFICADA · R-166 CERRADO (técnico) · GA-REM-007-B CERTIFICADA · R-180 OPEN (P2, registrado)
 regresión 1122 passed · 49 skipped · 0 failed · sin migración · siguiente (identificado, no iniciado): R-180 · alternativa R-147 / R-148
+
+## WAVE B · tranche 14 · pre-flight (2026-09-10)
+R-180 ACTIVE · GOBERNADO · P2 → P1 · GA-REM-002 enmienda E (SPEC_READY) · cuatro referencias estructurales de submovimiento (galpón origen, galpón
+destino, galpón de inspección, lote de almacenamiento) · superficie escritora única: el alta · sin decisión del propietario · sin migración
+MUTATION_CHECKPOINT: gobernanza ejecutable (scripts/mutation_guard.py + tests/test_mutation_guard.py) · recuento canónico rectificado (WAVE B §30)
