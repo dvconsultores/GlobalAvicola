@@ -1673,3 +1673,25 @@ por UI. No corregido en GA-FE-01 (fuera de objetivos); registro para el programa
 
 `R-98`/`R-119`/`R-181` vigentes · fase 9 FROZEN · Ola B PAUSADA · severidad formal de `R-158` a
 cargo del programa (propuesta de normalización ya registrada en el addendum de la auditoría).
+
+---
+
+## GA-FE-02 · FASE 9 AUTORIZADA Y ENTREGADA (2026-09-11) — `OD-20`
+
+```
+AUTORIZACIÓN  OD-20 (fase 9: FROZEN → AUTORIZADA, solo GA-FE-02)
+COMMITS       466f9d3 (gobernanza) → 48ffdbb (implementación) → C3 (evidencia)
+ENTREGA       contexto de empresa efectivo + switch · Company BU admin (cuatro unidades,
+              habilitar/apagar, encender ≠ conceder) · User BU grants (candidatos para el
+              Administrador de Accesos + panel por usuario; self sin concesión) · navegación
+              admin mínima por permiso · RED 58 rojos → 90 verdes · tsc 0 · build 0 ·
+              vitest 198/198 · desplegado con paridad byte a byte (asset anterior 404;
+              marcadores presentes)
+FRONTERA      AUTHENTICATED E2E: BLOCKED_AUTH (cuentas de prueba requeridas, doc emitido)
+INTOCADO      R-98/R-119/R-181/R-182 sin cambio · BU-D10 PENDING_RATIFICATION ·
+              Wave B PAUSADA · Wave C / SAP no iniciados · backend sin cambios
+```
+
+Nuevos hallazgos de esta tranche: **ninguno** (el único defecto detectado —dependencia
+inestable que producía bucle de refetch— se corrigió dentro del propio ciclo RED→GREEN antes
+del commit de implementación).

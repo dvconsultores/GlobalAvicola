@@ -47,10 +47,10 @@ Formato: ID · fuente · AC · archivos · dependencia · prueba · estado. `⏳
 
 | ID | Tarea | Fuente | AC | Archivos | Dep | Prueba | Estado |
 |---|---|---|---|---|---|---|---|
-| T17 | RED: suites nuevas escritas y **rojas** antes de implementar (ver TEST_MATRIX) | §78 | todas | `src/**/__tests__/gaFe02*.test.ts*` | — | vitest (rojo) | ⏳ |
-| T18 | Targeted green + tsc 0 + build + Vitest completo | §107–110 | AC-DEP-01/02/03 | — | T05–T16 | comandos | ⏳ |
-| T19 | Verificación de no-relajación y no-producto-backend (diff acotado) | §118 | AC-NR-04 | — | T18 | git diff | ⏳ |
-| T20 | COMMIT 2 (implementación) | §116 | — | — | T18/T19 | git | ⏳ |
-| T21 | Push normal + verificación remota + fingerprint de egreso + marcadores | §119–121 | AC-DEP-05…10 | — | T20 | push/curl | ⏳ |
-| T22 | E2E autenticado (o paquete BLOCKED_AUTH) + persistencia/relogin + negativos | §125–135 | AC-COMP/CBU/UBU | — | T21 | browser/API | ⏳ |
+| T17 | RED: suites nuevas escritas y **rojas** antes de implementar (ver TEST_MATRIX) | §78 | todas | `src/**/__tests__/gaFe02*.test.ts*` | — | vitest (rojo) | ✅ 58 rojos/3 preexistentes |
+| T18 | Targeted green + tsc 0 + build + Vitest completo | §107–110 | AC-DEP-01/02/03 | — | T05–T16 | comandos | ✅ 90/90 · tsc 0 · build 0 · 198/198 |
+| T19 | Verificación de no-relajación y no-producto-backend (diff acotado) | §118 | AC-NR-04 | — | T18 | git diff | ✅ (0 líneas backend/infra) |
+| T20 | COMMIT 2 (implementación) | §116 | — | — | T18/T19 | git | ✅ `48ffdbb` |
+| T21 | Push normal + verificación remota + fingerprint de egreso + marcadores | §119–121 | AC-DEP-05…10 | — | T20 | push/curl | push ✅ · egreso ⏳ |
+| T22 | E2E autenticado (o paquete BLOCKED_AUTH) + persistencia/relogin + negativos | §125–135 | AC-COMP/CBU/UBU | — | T21 | browser/API | `BLOCKED_AUTH` (cuentas §122 no recibidas; doc de requerimientos emitido) |
 | T23 | Evidencia + reconciliación + UAT + COMMIT 3 + informe final | §159/§166/§170 | — | `audit/ga-fe-02/*` | T22 | git | ⏳ |

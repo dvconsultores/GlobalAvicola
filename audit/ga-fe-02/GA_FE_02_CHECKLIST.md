@@ -48,5 +48,19 @@ completar esta lista** (§70).
 
 ## Commit 1 (esta fase)
 
-- [ ] `git add` selectivo + verificar que NO contiene producto
-- [ ] COMMIT 1 registrado y worktree limpio
+- [x] `git add` selectivo + verificar que NO contiene producto (solo `specs/remediation/OD-20…`, `INDEX.md`, `audit/ga-fe-02/`)
+- [x] COMMIT 1 registrado y worktree limpio — `466f9d3` publicado
+
+## Ejecución (addendum de la tranche)
+
+- [x] RED construido y ROJO antes de implementar — 58 rojos / 3 verdes-preexistentes (razón por prueba)
+- [x] Implementación completa (20 archivos; RED→GREEN trazado) — cazado y corregido un bucle de refetch en el propio ciclo
+- [x] Targeted: 7 archivos · **90/90** verdes
+- [x] `tsc -b --noEmit` → **0 errores** · `npm run build` → exit 0 · Vitest completo → **198/198**
+- [x] Sin relajaciones (diff tsconfig/package/Dockerfile/.github = 0) · backend sin cambios (0 líneas)
+- [x] COMMIT 2 `48ffdbb` creado tras gates verdes · worktree limpio
+- [x] Push normal `466f9d3..48ffdbb` · remoto == implementación · origen intacto
+- [x] Cuentas de prueba: NO recibidas → `AUTHENTICATED E2E: BLOCKED_AUTH` + `GA_FE_02_REQUIRED_TEST_ACCOUNTS.md`
+- [x] Sensibilidad: N/A documentado (harness no disponible de forma segura; compensación: sensibilidad empírica RED→GREEN + guards backend certificados + negativos E2E pendientes)
+- [ ] Observación de despliegue y marcadores GA-FE-02 → pendiente la ventana de CI+Watchtower
+- [ ] Evidencia + addenda + COMMIT 3

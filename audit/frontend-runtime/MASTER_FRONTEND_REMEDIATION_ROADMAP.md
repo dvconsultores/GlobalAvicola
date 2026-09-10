@@ -79,3 +79,22 @@ Orden derivado de la evidencia (§90 del encargo), no predeterminado. La primera
 5. Verificación y guardia (T5) — continuo desde ya.
 
 No se implementa ninguno. **Primer tranche recomendado: `GA-FE-01` (paridad de despliegue), y no se inicia aquí.**
+
+---
+
+## Addendum fechado · 2026-09-11 · ejecución del roadmap
+
+```
+T1 · GA-FE-01 (paridad de build+despliegue)     → CLOSED / CERTIFIED (R-158 · R-99)
+T2 · GA-FE-02 (shell administrativo multiempresa) → ENTREGADO en esta tranche: contexto de
+     empresa efectivo + switch · Company BU admin (cuatro unidades) · User BU grants
+     (candidatos + panel) · navegación admin mínima por permiso · desplegado byte a byte.
+     Autenticado: BLOCKED_AUTH (cuentas pendientes del propietario).
+T3 · GA-FE-03 (R-98/R-119, navegación dinámica global) → NO INICIADO (siguiente candidato)
+T4 · GA-FE-04 (decisiones + empresas)            → NO INICIADO
+T5 · GA-FE-05 (verificación autenticada continua) → requisitos de cuentas emitidos
+     (GA_FE_02_REQUIRED_TEST_ACCOUNTS.md); primer candidato al recibirse las credenciales.
+```
+
+La prioridad transversal no cambia; T1 y T2 quedan cumplidos en su frontera declarada
+(implementación+despliegue; certificación funcional pendiente de cuentas).

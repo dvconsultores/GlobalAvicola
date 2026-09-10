@@ -105,3 +105,36 @@ FINDINGS R-158 · CERRADO (build restituido y desplegado) · R-99 · CERRADO (pa
 
 INTOCADO R-98 / R-119 vigentes · fase 9 FROZEN · Ola B PAUSADA · backend/migraciones sin cambios.
 ```
+
+---
+
+## 8. Addendum fechado · 2026-09-11 · GA-FE-02 — la fase 9 quedó AUTORIZADA y entregada
+
+Este addendum registra el cambio de estado del **programa** y de la **frontera de las
+capacidades administrativas** sin reescribir ninguna foto anterior (el «fase 9 FROZEN» de §7
+sigue siendo lo que era el 2026-09-10 21:0xZ).
+
+```
+AUTORIZACIÓN  OD-20 (2026-09-11) — fase 9: FROZEN → AUTORIZADA (solo GA-FE-02)
+ENTREGA       GA-FE-02 implementada y desplegada: contexto de empresa efectivo y resuelto tras
+              switch · administración de las cuatro unidades por empresa (habilitar/apagar con
+              reconciliación; encender ≠ conceder) · concesiones de unidad por usuario
+              (candidatos + panel por usuario; self sin concesión; gates por permiso) ·
+              navegación administrativa mínima condicionada por permiso
+RUNTIME       paridad byte a byte con el build de `48ffdbb`; asset anterior 404; marcadores
+              GA-FE-02 presentes (`GA_FE_02_RUNTIME_EXIT_FINGERPRINT.md`)
+EVIDENCIA     `audit/ga-fe-02/` (spec, matrices, RED→GREEN, evidencia, EXIT fingerprint)
+
+CAPACIDADES (frontera §4 reexaminada):
+  Company context / switcher / Company BU admin / User BU admin
+      → GA-FE-02: FRONTEND INTEGRATION: PASS (desplegado, byte a byte)
+      → DEPLOYED RUNTIME: PASS
+      → AUTHENTICATED E2E: BLOCKED_AUTH (cuentas §122 no recibidas — requerimientos emitidos)
+      → NO se reclasifican a IMPLEMENTED_AND_VISIBLE ni se certifican funcionalmente aquí.
+
+GA-REM-040   fase 9: `AUTHORIZED` (OD-20) — fases 10-11 y el resto de la fase 9 (si algo
+             quedara fuera de GA-FE-02) siguen pendientes de su tranche.
+FOTO §3-§7   intactas; R-96/97 · R-120 · R-82 · R-127: sin cambio. R-135 → R-181 sin cambio.
+INTOCADO     R-98 / R-119 / R-181 / R-182 vigentes · Ola B PAUSADA · Wave C / SAP no iniciados
+             · BU-D10 `PENDING_RATIFICATION` · backend y migraciones sin cambios.
+```

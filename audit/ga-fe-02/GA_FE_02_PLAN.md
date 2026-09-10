@@ -14,14 +14,14 @@
 | 8 | User BU UI contract | spec §6-S3c/S4 + AC-UBU (separación empresa/usuario, candidatos, concesión/revocación) | ✅ (diseño) |
 | 9 | Navigation/discoverability contract | spec §6-S5 + AC-NAV (1 entrada, guard por permiso, sin navegación global) | ✅ (diseño) |
 | 10 | AC | spec §9 (AC-COMP/CBU/UBU/NAV/UI/DEP/NR) | ✅ |
-| 11 | Tests/RED | `GA_FE_02_TEST_MATRIX.md`; RED construido y rojo ANTES de implementar | ⏳ |
-| 12 | Implementation | según TASKS (sesión extendida → servicio API → página admin → UsersPage panel → nav/guard → i18n) | ⏳ |
-| 13 | Targeted Vitest | suites GA-FE-02 verdes (§107 formato por área) | ⏳ |
-| 14 | TypeScript | `npx tsc -b --noEmit` → exit 0 (sin baseline allowance) | ⏳ |
-| 15 | Build | `npm run build` verde (comando del Dockerfile) | ⏳ |
-| 16 | Frontend regression | Vitest completo → 0 failed, sin skips nuevos; sin relajaciones | ⏳ |
-| 17 | Implementation commit | COMMIT 2 (tras todos los gates) | ⏳ |
-| 18 | Deploy normal | push → CI → Docker Hub → Watchtower (EX-01 intacto) | ⏳ |
+| 11 | Tests/RED | `GA_FE_02_TEST_MATRIX.md`; RED construido y rojo ANTES de implementar — 58 rojos / 3 preexistentes | ✅ |
+| 12 | Implementation | sesión extendida → servicio API → página admin → UsersPage panel → nav/guard → i18n (20 archivos) | ✅ |
+| 13 | Targeted Vitest | suites GA-FE-02 verdes — 7 archivos · 90/90 | ✅ |
+| 14 | TypeScript | `npx tsc -b --noEmit` → **exit 0** (sin baseline allowance) | ✅ |
+| 15 | Build | `npm run build` verde (comando del Dockerfile) | ✅ |
+| 16 | Frontend regression | Vitest completo → **198/198** (108 base + 90 nuevos), 0 failed, 0 skips nuevos | ✅ |
+| 17 | Implementation commit | COMMIT 2 `48ffdbb` (tras todos los gates) | ✅ |
+| 18 | Deploy normal | push `466f9d3..48ffdbb` → CI → Docker Hub → Watchtower (EX-01 intacto) | ✅ |
 | 19 | Runtime fingerprint | `GA_FE_02_RUNTIME_EXIT_FINGERPRINT.md` (ENTRY vs EXIT) | ⏳ |
 | 20 | Authenticated E2E | E2E-01…E2E-10 según credenciales disponibles; si no → `BLOCKED_AUTH` + `GA_FE_02_REQUIRED_TEST_ACCOUNTS.md` | ⏳ |
 | 21 | Persistence/relogin | refresh + relogin del usuario objetivo (según contrato) | ⏳ |
