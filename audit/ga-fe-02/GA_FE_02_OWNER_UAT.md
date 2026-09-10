@@ -2,6 +2,9 @@
 
 **Estado**: `OWNER_ACCEPTANCE: PENDING` — el propietario valida este guion sobre el entorno
 desplegado cuando lo estime. Este documento **no** se auto-declara aprobado (§165).
+**`UAT_READY: NO`** (actualización GA-FE-02-A, 2026-09-11): la ruta crítica autenticada aún no
+está verde (`MODE_C · BLOCKED_AUTH` — faltan cuentas); no se envía al propietario a validar un
+flujo no certificado. Este guion queda listo para cuando la certificación autenticada pase.
 **Entorno**: `https://avicola.globaldv.net` (ENV-01). **Credenciales**: las del propietario /
 cuentas de prueba autorizadas — no se incluyen aquí.
 

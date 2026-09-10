@@ -39,5 +39,32 @@ No contiene contraseñas — deben entregarse por el canal que el propietario de
 concesión ⇒ sin acceso · `E2E-10` concesión + unidad OFF ⇒ sin acceso productivo.
 
 **Sin estas cuentas, la frontera certificable hoy es**: implementación completa desplegada +
-paridad estática de marcadores; certificación funcional queda `BLOCKED_AUTH` (nunca
-`FUNCTIONALLY_CERTIFIED` por anal(ogía).
+paridad byte a byte de artefactos y marcadores; la certificación funcional queda
+`BLOCKED_AUTH` (nunca `FUNCTIONALLY_CERTIFIED` por analogía).
+
+---
+
+## Actualización GA-FE-02-A (2026-09-11) — matriz fina y mecanismo de entrega
+
+La ejecución de la certificación autenticada entró en **`MODE_C · BLOCKED_AUTH`**: no hubo
+credenciales suministradas, ni sesión disponible, ni actor bootstrap legítimo. Para reanudar
+(paso 30 del orden estricto), el propietario debe entregar —**por el mecanismo que designe y
+fuera del repositorio**— lo siguiente:
+
+| Requisito | Detalle exacto |
+|---|---|
+| **Bootstrap** | Una credencial con capacidad de administrar usuarios (`users:create`) o Super Administrador, para provisionar A/B/C/D por flujos oficiales. Alternativa: entregar A/B/C/D ya creadas. |
+| **Actor A** | `business_units:read` + `business_units:update` · empresa de prueba |
+| **Actor B** | rol «Administrador de Accesos» (4 permisos `business_units:*` exactos, SIN `users:read`) · misma empresa |
+| **Actor C** | usuario operativo de la misma empresa con RBAC de la capacidad representativa elegida; sin grant inicial de la BU objetivo |
+| **Actor D** | usuario de la misma empresa sin permisos `business_units:*` |
+| **Actor E (opcional)** | Super Administrador global solo si su credencial se entrega; si no, se reporta `GLOBAL_RUNTIME_CONTROL BLOCKED_AUTH` y no bloquea el resto |
+| **Empresa de prueba** | segura (dedicada o reutilizable sin uso productivo ajeno); estado sugerido `ON/OFF/ON/OFF`; la UI de GA-FE-02 permitirá además ajustarlo |
+| **Segunda empresa** | solo si existe un usuario seguro de ella para el negativo cross-company (E2E-07); si no, ese subcaso se marca `BLOCKED_FIXTURE` |
+
+**Entrega segura**: NO por este chat ni en el repositorio. Use el canal que designe (p. ej. un
+archivo local o variables de entorno `GA_E2E_*` en la estación de ejecución, definidas en la
+documentación de la tranche como nombres TEST-ONLY, sin valores en git).
+
+Con esos actores, la corrida se ejecuta en una sola sesión y produce la matriz E2E completa
+(31 escenarios) hacia `FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING`.
