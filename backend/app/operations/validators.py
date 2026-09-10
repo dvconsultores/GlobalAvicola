@@ -204,9 +204,16 @@ async def validate_mortality(db: AsyncSession, lot_id: int, quantity: int) -> No
 
 
 async def validate_egg_dispatch(db: AsyncSession, lot_id: int, quantity: int) -> None:
-    """BR-02: Egg dispatch cannot exceed available egg balance."""
+    """BR-02: Egg dispatch cannot exceed available egg balance.
+
+    `GA-REM-005-D` / `R-161`: el saldo se lee **bajo el bloqueo de la fila del lote**, como
+    el de aves (`validate_bird_decrement`): dos despachos concurrentes leían el mismo saldo y
+    ambos confirmaban. Bloquear antes de leer hace que el segundo espere y lea el saldo ya
+    reducido. Cantidad > 0: el servicio ya no salta esta regla con cantidad 0.
+    """
     if quantity <= 0:
         raise BusinessRuleViolation("La cantidad de huevos debe ser mayor a cero", "BR-02")
+    await bloquear_saldo_del_lote(db, lot_id)
     balance = await get_egg_balance(db, lot_id)
     if quantity > balance:
         raise BusinessRuleViolation(
@@ -217,9 +224,14 @@ async def validate_egg_dispatch(db: AsyncSession, lot_id: int, quantity: int) ->
 
 
 async def validate_incubation_load(db: AsyncSession, lot_id: int, quantity: int) -> None:
-    """BR-03: Incubation load cannot exceed eggs received at hatchery."""
+    """BR-03: Incubation load cannot exceed eggs received at hatchery.
+
+    `GA-REM-005-D` / `R-161`: misma primitiva que `BR-02` — bloqueo de la fila del lote antes de
+    leer los huevos disponibles en incubadora.
+    """
     if quantity <= 0:
         raise BusinessRuleViolation("La cantidad a cargar debe ser mayor a cero", "BR-03")
+    await bloquear_saldo_del_lote(db, lot_id)
     balance = await get_hatchery_egg_balance(db, lot_id)
     if quantity > balance:
         raise BusinessRuleViolation(

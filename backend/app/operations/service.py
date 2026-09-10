@@ -869,17 +869,17 @@ class OperationsService:
             etiqueta = "descarte" if event_type == models.EventType.CULL_RECORDING else "salida"
             await validate_bird_decrement(self.db, data.lot_id, total_qty, etiqueta)
         elif event_type == models.EventType.EGG_DISPATCH:
+            # `GA-REM-005-D` (`R-161`): sin la guarda `total > 0` — es la regla quien rechaza el cero
+            # (`BR-02`), como en la mortalidad (`R-130 AC04`); y el saldo se lee bajo el bloqueo del lote.
             total = sum(em.quantity for em in data.egg_movements)
-            if total > 0:
-                if data.lot_id is None:
-                    raise BusinessRuleViolation("El evento requiere lote", "BR-07")
-                await validate_egg_dispatch(self.db, data.lot_id, total)
+            if data.lot_id is None:
+                raise BusinessRuleViolation("El evento requiere lote", "BR-07")
+            await validate_egg_dispatch(self.db, data.lot_id, total)
         elif event_type == models.EventType.INCUBATION_LOAD:
             total = sum(hp.quantity_loaded or 0 for hp in data.hatchery_params)
-            if total > 0:
-                if data.lot_id is None:
-                    raise BusinessRuleViolation("El evento requiere lote", "BR-07")
-                await validate_incubation_load(self.db, data.lot_id, total)
+            if data.lot_id is None:
+                raise BusinessRuleViolation("El evento requiere lote", "BR-07")
+            await validate_incubation_load(self.db, data.lot_id, total)
         elif event_type == models.EventType.CHICK_DISPATCH:
             if total_qty > 0:
                 if data.lot_id is None:
