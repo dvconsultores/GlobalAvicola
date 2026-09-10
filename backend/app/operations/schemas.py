@@ -20,6 +20,30 @@ class BirdMovementSchema(BaseModel):
     target_house_id: Optional[int] = None
 
 
+class PlanDeImportacion(BaseModel):
+    """`GA-REM-042` · `R-152`: el plan de importación de abuelas (`docs/02 §3.4.1`), tipado y validado en el servidor.
+
+    Vive en `OperationalEvent.extra_data["import_plan"]` (sin migración). Obligatorios: país, comprada, embarcada,
+    recibida, mortalidad en traslado, fechas de salida y llegada; opcionales: condición de recepción, cuarentena (días
+    y fecha fin) e inspección sanitaria inicial. La línea genética y el tipo de ave son del lote; la OC, el proveedor
+    y el transporte van en sus columnas; las aves recibidas por sexo en `bird_movements`.
+    """
+
+    model_config = {"extra": "forbid"}
+
+    origin_country: str = Field(..., min_length=1, max_length=100)
+    purchased_total: int = Field(..., ge=1)
+    shipped_total: int = Field(..., ge=1)
+    received_total: int = Field(..., ge=0)
+    transit_mortality: int = Field(..., ge=0)
+    departure_date: date
+    arrival_date: date
+    reception_condition: Optional[str] = Field(default=None, max_length=500)
+    quarantine_days: Optional[int] = Field(default=None, ge=0)
+    quarantine_end_date: Optional[date] = None
+    initial_health_inspection: Optional[str] = Field(default=None, max_length=1000)
+
+
 class EggMovementSchema(BaseModel):
     model_config = {"from_attributes": True}
     egg_type: str  # fertile, dirty, broken, infertile, discarded, commercial

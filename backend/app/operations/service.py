@@ -36,6 +36,7 @@ from .validators import (
     validate_chick_dispatch,
     validate_egg_dispatch,
     validate_egg_dispatch_types,
+    validate_import_plan,
     validate_retiro_de_entrada,
     validate_salida_en_destino,
     validate_event_date,
@@ -865,6 +866,11 @@ class OperationsService:
         # `GA-REM-005-C` (`R-170`) + `GA-REM-021-C` (`B13`): una sola contabilidad de nacimientos (`BR-21`).
         validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
                                     [(bm.sex, bm.quantity) for bm in data.bird_movements])
+        if event_type == models.EventType.GRANDPARENT_IMPORT:
+            # `GA-REM-042` · `R-152` · `BR-22`: plan tipado, identidades, OC y proveedor; proveedor y transporte de la empresa
+            validate_import_plan(event_type, cadena_del_lote, (data.extra_data or {}).get("import_plan"),
+                                 [(bm.sex, bm.quantity) for bm in data.bird_movements], data.sap_document_ref, data.supplier_id)
+            await self._verificar_maestros_de_importacion(data.supplier_id, data.transport_id)
         if event_type == models.EventType.MORTALITY_RECORDING:
             # Sin la guarda `total_qty > 0`: `validate_mortality` es precisamente quien
             # rechaza el cero y los negativos (`BR-01`), y saltársela dejaba pasar un
@@ -1110,6 +1116,15 @@ class OperationsService:
                                      previous_values=previos, new_values={k: _valor_auditable(v) for k, v in cambios.items()})
         return event
 
+    async def _verificar_maestros_de_importacion(self, supplier_id: int | None, transport_id: int | None) -> None:
+        """`GA-REM-042` `AC-R152-05`: el proveedor y el transporte de la importación son de la empresa efectiva
+        (`verificar_pertenencia`, `GA-REM-030`/`R-42`: el ajeno se comporta como inexistente, `BR-07`)."""
+        from ..masters.models import Supplier, Transport
+        from ..tenancy import verificar_pertenencia
+
+        await verificar_pertenencia(self.db, Supplier, supplier_id, self.company_id, "Proveedor")
+        await verificar_pertenencia(self.db, Transport, transport_id, self.company_id, "Transporte")
+
     async def _reglas_puras_del_candidato(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
         """`GA-REM-023-B` · `R-176` (+ `R-45`): paridad de validación **sin repetir el alta**.
 
@@ -1134,6 +1149,14 @@ class OperationsService:
         if (("sap_document_ref" in cambios or "lot_id" in cambios) and cand["sap_document_ref"]
                 and lote_destino is not None and tipo != models.EventType.BIRD_RECEPTION):
             await validate_sap_document_unique(self.db, lote_destino, tipo, cand["sap_document_ref"], exclude_event_id=event.id)
+        if tipo == models.EventType.GRANDPARENT_IMPORT and any(k in cambios for k in ("extra_data", "supplier_id", "transport_id", "lot_id")):
+            # `GA-REM-042` `AC-R152-17/18`: el plan se revalida sobre el candidato con las filas persistidas (`BR-22`)
+            cand_extra = cambios["extra_data"] if "extra_data" in cambios else event.extra_data
+            cand_sup = cambios["supplier_id"] if "supplier_id" in cambios else event.supplier_id
+            cand_tr = cambios["transport_id"] if "transport_id" in cambios else event.transport_id
+            validate_import_plan(tipo, await self._tipo_de_lote(lote_destino), (cand_extra or {}).get("import_plan") if isinstance(cand_extra, dict) else None,
+                                 [(bm.sex, bm.quantity) for bm in event.bird_movements], cand["sap_document_ref"], cand_sup)
+            await self._verificar_maestros_de_importacion(cand_sup if "supplier_id" in cambios else None, cand_tr if "transport_id" in cambios else None)
         if tipo in (models.EventType.BIRD_RECEPTION, models.EventType.BIRD_DISTRIBUTION):
             n = sum(bm.quantity for bm in event.bird_movements)
             if "house_id" in cambios and cand["house_id"] and n > 0:

@@ -44,6 +44,7 @@ export default function OperationDetailPage() {
  const [evidences, setEvidences] = useState<Evidence[]>([])
  const [uploading, setUploading] = useState(false)
  const [description, setDescription] = useState('')
+ const [evidenceType, setEvidenceType] = useState('') // `GA-REM-042` · `R-152`: clase del adjunto del plan de importación
  const [deletingId, setDeletingId] = useState<number | null>(null)
  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
  const fileRef = useRef<HTMLInputElement>(null)
@@ -78,6 +79,7 @@ export default function OperationDetailPage() {
  const fd = new FormData()
  fd.append('file', file)
  fd.append('description', description)
+ if (evidenceType) fd.append('evidence_type', evidenceType)
  const { data } = await api.post(`/operations/${id}/evidences`, fd, {
  headers: { 'Content-Type': 'multipart/form-data' },
  })
@@ -174,6 +176,22 @@ export default function OperationDetailPage() {
  {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600">{em.quantity} · {em.egg_type}</div>)}
  </div>
  )}
+ {/* `GA-REM-042` · `R-152`: el plan de importación de abuelas (`docs/02 §3.4.1`) */}
+ {event.event_type === 'grandparent_import' && event.extra_data?.import_plan && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.importPlanTitle', 'Plan de importación')}</h3>
+ <dl className="grid grid-cols-2 gap-2 text-xs text-slate-600">
+ {([
+ ['origin_country', 'importOriginCountry'], ['purchased_total', 'importPurchasedTotal'], ['shipped_total', 'importShippedTotal'],
+ ['received_total', 'importReceivedTotal'], ['transit_mortality', 'importTransitMortality'], ['departure_date', 'importDepartureDate'],
+ ['arrival_date', 'importArrivalDate'], ['reception_condition', 'importReceptionCondition'], ['quarantine_days', 'importQuarantineDays'],
+ ['quarantine_end_date', 'importQuarantineEndDate'], ['initial_health_inspection', 'importInitialHealthInspection'],
+ ] as [string, string][]).map(([campo, clave]) => (
+ <div key={campo}><dt className="text-slate-500">{t(`operations.${clave}`)}</dt><dd>{String(event.extra_data.import_plan[campo] ?? '—')}</dd></div>
+ ))}
+ </dl>
+ </div>
+ )}
  </div>
 
  {/* Evidence Section */}
@@ -198,7 +216,8 @@ export default function OperationDetailPage() {
  <p className="text-sm font-medium text-slate-700 truncate">{ev.file_name}</p>
  <p className="text-xs text-slate-400">
  {ev.file_size ? formatBytes(ev.file_size) : ''}
- {ev.description ? ` · ${ev.description}` : ''}
+ {ev.evidence_type && ev.evidence_type !== 'document' && ev.evidence_type !== 'photo' ? ` · ${t(`evidence.types.${ev.evidence_type}`, ev.evidence_type)}` : ''}
+{ev.description ? ` · ${ev.description}` : ''}
  </p>
  </div>
  <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -229,6 +248,17 @@ export default function OperationDetailPage() {
  )}
 
  {/* Upload area */}
+ {event.event_type === 'grandparent_import' && (
+ <div className="mb-3">
+ <label className="block text-xs font-semibold text-slate-600 mb-1">{t('evidence.typeLabel', 'Clase de adjunto')}</label>
+ <select value={evidenceType} onChange={(e) => setEvidenceType(e.target.value)} className="w-full h-10 px-2 border border-slate-200 rounded-lg text-sm bg-white">
+ <option value="">{t('evidence.typeAuto', 'Según el archivo (foto o documento)')}</option>
+ {['sanitary_document', 'import_permit', 'customs_document', 'vaccination_certificate', 'origin_certificate'].map((clase) => (
+ <option key={clase} value={clase}>{t(`evidence.types.${clase}`, clase)}</option>
+ ))}
+ </select>
+ </div>
+ )}
  <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 space-y-3">
  <input
  ref={fileRef}

@@ -67,7 +67,8 @@ class CorrectionService:
             from ..operations.validators import validate_water_consumption
 
             validate_water_consumption(event.event_type, valor_aplicado, await operaciones._tipo_de_lote(event.lot_id))
-        if data.field_name in ("lot_id", "farm_id", "house_id", "destination_farm_id", "event_date", "sap_document_ref"):
+        if data.field_name in ("lot_id", "farm_id", "house_id", "destination_farm_id", "event_date", "sap_document_ref",
+                               "extra_data", "supplier_id", "transport_id"):  # `GA-REM-042`: el plan de importación y sus maestros
             # `GA-REM-005-E` · `R-173` · `AC-R173-11…14`: corregir el lote o la ubicación **es** una
             # reasignación; pasa por la misma guarda que la edición (empresa, unidad, lote activo,
             # fecha, ubicación y regla de saldo, bajo el bloqueo de los lotes). Antes se aplicaba

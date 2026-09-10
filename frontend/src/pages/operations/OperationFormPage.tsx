@@ -1673,30 +1673,82 @@ export default function OperationFormPage() {
  )
 
  case 'grandparent_import': return (
- <div className="space-y-4">
- <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
- <div>
- <label className={lc}>{t('operations.importCountry', 'País de origen')}</label>
- <input {...register('extra_data.origin_country' as any)} className={ic} placeholder={t('operations.importCountryPlaceholder')} />
- </div>
- <div>
- <label className={lc}>{t('operations.sanitaryCert', 'Certificado sanitario')}</label>
- <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder={t('operations.sanitaryCertPlaceholder')} />
- </div>
- <div>
- <label className={lc}>{t('operations.quarantineDays', 'Días de cuarentena')}</label>
- <input type="number" min="0" {...register('extra_data.quarantine_days' as any)} className={ic} placeholder="21" />
- </div>
- <div>
- <label className={lc}>{t('operations.importDoc', 'Documento de importación')}</label>
- <input {...register('extra_data.import_doc' as any)} className={ic} placeholder={t('operations.importDocPlaceholder')} />
- </div>
- </div>
- {renderMFRows(true)}
- </div>
+   // `GA-REM-042` · `R-152` · `BR-22`: el plan de importación de `docs/02 §3.4.1` con claves tipadas bajo
+   // `extra_data.import_plan.*`; OC (bloque común), proveedor y transporte de la empresa; ♂/♀ recibidas.
+   <div className="space-y-4">
+     <p className="text-xs text-slate-500">{t('operations.importPlanTitle', 'Plan de importación')} · {t('operations.importIdentityHint', 'Embarcada = recibida + mortalidad en traslado; recibida = machos + hembras')}</p>
+     <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
+       <div>
+         <label className={lc}>{t('operations.supplier', 'Proveedor')}</label>
+         <SearchSelect
+           value={watch('supplier_id' as any) ?? ''}
+           onChange={(v) => setValue('supplier_id' as any, v ? Number(v) : undefined)}
+           items={suppliers}
+           placeholder={t('operations.selectSupplier', 'Seleccionar proveedor...')}
+           renderLabel={(x: any) => x.name}
+         />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.transport', 'Transporte')}</label>
+         <SearchSelect
+           value={watch('transport_id' as any) ?? ''}
+           onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
+           items={transports}
+           placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
+           renderLabel={(x: any) => `${x.plate ? `${x.plate} — ` : ''}${x.name}`}
+         />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importOriginCountry', 'País de origen')}</label>
+         <input {...register('extra_data.import_plan.origin_country' as any)} className={ic} placeholder={t('operations.importCountryPlaceholder')} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importPurchasedTotal', 'Cantidad comprada')}</label>
+         <input type="number" min="1" {...register('extra_data.import_plan.purchased_total' as any, { valueAsNumber: true })} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importShippedTotal', 'Cantidad embarcada')}</label>
+         <input type="number" min="1" {...register('extra_data.import_plan.shipped_total' as any, { valueAsNumber: true })} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importReceivedTotal', 'Cantidad recibida')}</label>
+         <input type="number" min="0" {...register('extra_data.import_plan.received_total' as any, { valueAsNumber: true })} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importTransitMortality', 'Mortalidad en traslado')}</label>
+         <input type="number" min="0" {...register('extra_data.import_plan.transit_mortality' as any, { valueAsNumber: true })} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importDepartureDate', 'Fecha de salida (origen)')}</label>
+         <input type="date" {...register('extra_data.import_plan.departure_date' as any)} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importArrivalDate', 'Fecha de llegada (destino)')}</label>
+         <input type="date" {...register('extra_data.import_plan.arrival_date' as any)} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importReceptionCondition', 'Condición de recepción')}</label>
+         <input {...register('extra_data.import_plan.reception_condition' as any)} className={ic} />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importQuarantineDays', 'Cuarentena (días)')}</label>
+         <input type="number" min="0" {...register('extra_data.import_plan.quarantine_days' as any, { valueAsNumber: true })} className={ic} placeholder="21" />
+       </div>
+       <div>
+         <label className={lc}>{t('operations.importQuarantineEndDate', 'Cuarentena (fecha fin)')}</label>
+         <input type="date" {...register('extra_data.import_plan.quarantine_end_date' as any)} className={ic} />
+       </div>
+       <div className="lg:col-span-2">
+         <label className={lc}>{t('operations.importInitialHealthInspection', 'Inspección sanitaria inicial')}</label>
+         <input {...register('extra_data.import_plan.initial_health_inspection' as any)} className={ic} />
+       </div>
+     </div>
+     <p className="text-xs font-semibold text-slate-600">{t('operations.importReceivedBySex', 'Aves recibidas por sexo')}</p>
+     {renderMFRows(true)}
+   </div>
  )
 
- default: return (
+default: return (
  <div className="py-6 text-sm text-slate-900 text-center italic">
  {t('operations.noSpecificFields', 'Registra tus observaciones en el campo de abajo.')}
  </div>

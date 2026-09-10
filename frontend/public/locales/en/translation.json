@@ -793,7 +793,21 @@
     "receptionPurchase": "Purchase / import",
     "sapTransferOrder": "SAP transfer order",
     "sapImportOrder": "SAP purchase/import order",
-    "selectHatchery": "Select hatchery..."
+    "selectHatchery": "Select hatchery...",
+    "importPlanTitle": "Import plan",
+    "importOriginCountry": "Country of origin",
+    "importPurchasedTotal": "Quantity purchased",
+    "importShippedTotal": "Quantity shipped",
+    "importReceivedTotal": "Quantity received",
+    "importTransitMortality": "Transit mortality",
+    "importDepartureDate": "Departure date (origin)",
+    "importArrivalDate": "Arrival date (destination)",
+    "importReceptionCondition": "Reception condition",
+    "importQuarantineDays": "Quarantine (days)",
+    "importQuarantineEndDate": "Quarantine (end date)",
+    "importInitialHealthInspection": "Initial health inspection",
+    "importReceivedBySex": "Birds received by sex",
+    "importIdentityHint": "Shipped = received + transit mortality; received = males + females"
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -930,7 +944,18 @@
     "uploadError": "Error uploading file",
     "downloadError": "Error downloading file",
     "invalidType": "File type not allowed. Use JPG, PNG, GIF, WEBP or PDF.",
-    "tooLarge": "File too large (max {{max}} MB)"
+    "tooLarge": "File too large (max {{max}} MB)",
+    "typeLabel": "Attachment class",
+    "typeAuto": "By file (photo or document)",
+    "types": {
+      "sanitary_document": "Sanitary document",
+      "import_permit": "Import permit",
+      "customs_document": "Customs document",
+      "vaccination_certificate": "Vaccination certificate",
+      "origin_certificate": "Certificate of origin",
+      "photo": "Photo",
+      "document": "Document"
+    }
   },
   "alerts": {
     "activeTitle": "Active alerts",

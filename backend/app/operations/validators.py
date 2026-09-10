@@ -613,6 +613,60 @@ def validate_birth_registration(event_type, bird_type, chicks_healthy, chicks_we
             f"Sanos {chicks_healthy} + débiles {chicks_weak} = {chicks_healthy + chicks_weak} superan los nacidos {nacidos}", "BR-21")
 
 
+CLASES_DE_ADJUNTO_DE_IMPORTACION = ("sanitary_document", "import_permit", "customs_document", "vaccination_certificate", "origin_certificate")
+CLASES_DE_ADJUNTO = ("photo", "document", "signature", "audio") + CLASES_DE_ADJUNTO_DE_IMPORTACION
+
+
+def _cadena(bird_type) -> str | None:
+    return getattr(bird_type, "value", bird_type) if bird_type is not None else None
+
+
+def validate_import_plan(event_type, bird_type, plan, filas, sap_document_ref, supplier_id) -> None:
+    """`GA-REM-042` · `R-152` · `BR-22` · `RR-19`: el plan de importación de abuelas (`docs/02 §3.4.1`).
+
+    Solo sobre un lote de Progenitoras (`spec.md §4.4`: `grandparent_import` es un evento exclusivo de esa
+    unidad). El plan viaja en `extra_data["import_plan"]` con tipo (`PlanDeImportacion`) y sus identidades
+    son exactas y sin tolerancia, como el cuadre de `RR-12`: `embarcada = recibida + mortalidad en traslado`,
+    `recibida = Σ ♂/♀`, `llegada ≥ salida`, `fin de cuarentena ≥ llegada`. La OC y el proveedor se declaran.
+    Comprada frente a embarcada **no** se regula (`OD-04`: entregas parciales). Es un evento documental: no
+    puebla el lote ni acumula contra la OC (la población y `BR-18` siguen en `bird_reception`).
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.GRANDPARENT_IMPORT.value:
+        return
+    if _cadena(bird_type) != "grandparent":
+        raise BusinessRuleViolation("La importación de abuelas solo se registra sobre un lote de Progenitoras", "BR-22")
+    if not isinstance(plan, dict) or not plan:
+        raise BusinessRuleViolation("El plan de importación es obligatorio (país, cantidades comprada, embarcada y recibida, mortalidad en traslado, fechas)", "BR-22")
+    from pydantic import ValidationError
+
+    from .schemas import PlanDeImportacion
+
+    try:
+        p = PlanDeImportacion.model_validate(plan)
+    except ValidationError as exc:
+        detalle = "; ".join(f"{'.'.join(str(x) for x in e['loc'])}: {e['msg']}" for e in exc.errors()[:6])
+        raise BusinessRuleViolation(f"Plan de importación inválido: {detalle}", "BR-22") from None
+    if not sap_document_ref:
+        raise BusinessRuleViolation("La importación de abuelas declara la orden de compra SAP", "BR-22")
+    if supplier_id is None:
+        raise BusinessRuleViolation("La importación de abuelas declara el proveedor internacional", "BR-22")
+    if not filas:
+        raise BusinessRuleViolation("La importación de abuelas declara las aves recibidas por sexo (machos y hembras)", "BR-22")
+    recibidas = sum(int(q or 0) for _, q in filas)
+    if p.received_total != recibidas:
+        raise BusinessRuleViolation(
+            f"La cantidad recibida ({p.received_total}) no cuadra con las aves recibidas por sexo ({recibidas})", "BR-22")
+    if p.shipped_total != p.received_total + p.transit_mortality:
+        raise BusinessRuleViolation(
+            f"La cantidad embarcada ({p.shipped_total}) no cuadra con recibida {p.received_total} + mortalidad en traslado "
+            f"{p.transit_mortality} = {p.received_total + p.transit_mortality}", "BR-22")
+    if p.arrival_date < p.departure_date:
+        raise BusinessRuleViolation(f"La fecha de llegada ({p.arrival_date}) es anterior a la de salida ({p.departure_date})", "BR-22")
+    if p.quarantine_end_date is not None and p.quarantine_end_date < p.arrival_date:
+        raise BusinessRuleViolation(f"El fin de la cuarentena ({p.quarantine_end_date}) es anterior a la llegada ({p.arrival_date})", "BR-22")
+
+
 def validate_water_consumption(event_type, water_liters, bird_type) -> None:
     """`GA-REM-021` enmienda A · `B05` · `RR-10` (litros) · `RR-11` (> 0).
 

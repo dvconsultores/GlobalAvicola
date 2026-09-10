@@ -40,7 +40,12 @@ test.describe('P-01 · cadena de cría de progenitoras', () => {
     const base = { lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId, event_date: hoy() }
 
     const pasos: [string, any][] = [
-      ['grandparent_import', { sap_document_ref: oc, extra_data: { supplier: 'Internacional' } }],
+      // `GA-REM-042` (`R-152`, `BR-22`): la importación lleva el plan de `docs/02 §3.4.1`; embarcada = recibida + mortalidad en traslado;
+      // recibida = ♂ + ♀; proveedor y transporte de la empresa (`crearMaestros`). Runtime E2E: `BLOCKED_RUNTIME` (`R-164`).
+      ['grandparent_import', { sap_document_ref: oc, supplier_id: m.proveedorId, transport_id: m.transporteId,
+        bird_movements: [{ sex: 'male', quantity: 40 }, { sex: 'female', quantity: 60 }],
+        extra_data: { import_plan: { origin_country: 'Francia', purchased_total: 110, shipped_total: 105, received_total: 100, transit_mortality: 5,
+          departure_date: hoy(), arrival_date: hoy(), reception_condition: 'buena', quarantine_days: 21, initial_health_inspection: 'sin hallazgos' } } }],
       ['farm_inspection', { inspection_details: [{ parameter: 'Bioseguridad', value: 'ok', status: 'ok' }] }],
       ['transport_inspection', { inspection_details: [{ parameter: 'Higiene', value: 'ok', status: 'ok' }] }],
       ['bird_reception', { sap_document_ref: oc, bird_movements: [{ sex: 'mixed', quantity: PRIMERA }] }],

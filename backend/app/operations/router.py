@@ -346,9 +346,16 @@ async def upload_evidence(
     event_id: int,
     file: UploadFile = File(...),
     description: str = Form(""),
+    evidence_type: str = Form(""),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("operations", "create")),
 ):
+    # `GA-REM-042` · `R-152` `AC-R152-06/07`: la clase del adjunto se declara (cinco clases del plan de importación,
+    # `docs/02 §3.4.1`) o se deriva del archivo; fuera del conjunto cerrado → 400.
+    from .validators import CLASES_DE_ADJUNTO
+
+    if evidence_type and evidence_type not in CLASES_DE_ADJUNTO:
+        raise HTTPException(status_code=400, detail=f"Clase de adjunto no admitida. Admitidas: {', '.join(CLASES_DE_ADJUNTO)}")
     if file.content_type not in _ALLOWED_MIME:
         raise HTTPException(
             status_code=400,
@@ -372,7 +379,7 @@ async def upload_evidence(
     async with aiofiles.open(file_path, "wb") as f:
         await f.write(content)
 
-    evidence_type = "photo" if (file.content_type or "").startswith("image/") else "document"
+    evidence_type = evidence_type or ("photo" if (file.content_type or "").startswith("image/") else "document")
     evidence = await svc.create_evidence(
         event_id=event_id,
         file_name=file.filename or safe_name,

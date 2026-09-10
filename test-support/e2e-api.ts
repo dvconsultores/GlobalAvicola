@@ -160,6 +160,8 @@ export interface Maestros {
   vacunaId: number
   medicamentoId: number
   alimentoId: number
+  proveedorId: number
+  transporteId: number
 }
 
 /** Catálogos que la cadena completa necesita. Se crean por escenario, no se suponen. */
@@ -176,6 +178,9 @@ export async function crearMaestros(
     vacunaId: await uno('/masters/vaccines'),
     medicamentoId: await uno('/masters/medications'),
     alimentoId: await uno('/masters/feed-types'),
+    // `GA-REM-042` (`R-152`): la importación de abuelas declara proveedor y transporte de la empresa
+    proveedorId: await uno('/masters/suppliers', { country: 'Francia', supplier_type: 'international' }),
+    transporteId: await uno('/masters/transports', { plate: `IMP-${s}` }),
   }
 }
 
