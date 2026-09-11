@@ -191,16 +191,36 @@ cambio (rol id=35 intacto). Idempotencia: AC14 por test + arranques posteriores 
 
 **Plan/Tasks F1 (`GA-FE-02-C §24–26`)** — estado al cierre de cada fase:
 
-| # | Tarea | Estado (C1) |
+| # | Tarea | Estado (2026-09-11) |
 |---|---|---|
-| T1 | Test dirigido (RED válido: migración ausente) | PLAN |
-| T2 | Migración `y5z6a7b8c9d0` + `UNIDADES_CANONICAS` + `_sembrar_catalogo` + downgrade NO-OP | PLAN |
-| T3 | Seed importa la fuente única (sin segundo sitio) | PLAN |
-| T4 | Tests dirigidos GREEN (SQLite en memoria; guarda `GA-REM-014`) | PLAN |
-| T5 | Integridad de cadena (1 head) + `compileall` | PLAN |
-| T6 | COMMIT C2 + push → pipeline normal | PLAN |
-| T7 | Postcondición runtime §4.2.1 | PLAN |
-| T8 | Ledger + gap matrix + cierre F1 | PLAN |
+| T1 | Test dirigido (RED válido: migración ausente) | **DONE** — RED 6/6 (`tests/test_migration_bu_catalog.py`) |
+| T2 | Migración `y5z6a7b8c9d0` + `UNIDADES_CANONICAS` + `_sembrar_catalogo` + downgrade NO-OP | **DONE** — C2 `b4d8c3a` |
+| T3 | Seed importa la fuente única (sin segundo sitio) | **DONE** — C2 (`_unidades_de_negocio_de_la_migracion`) |
+| T4 | Tests dirigidos GREEN (SQLite en memoria; guarda `GA-REM-014`) | **DONE** — 6/6 passed |
+| T5 | Integridad de cadena (1 head) + `compileall` | **DONE** — heads=`[y5z6a7b8c9d0]`, 37 revisiones; OK |
+| T6 | COMMIT C2 + push → pipeline normal | **DONE** — `28e95bb` (C1) + `b4d8c3a` (C2) |
+| T7 | Postcondición runtime §4.2.1 | **DONE** — §4.2.2 |
+| T8 | Ledger + gap matrix + cierre F1 | **DONE** — este commit |
+
+**§4.2.2 Resultado runtime (2026-09-11)** — la migración se aplicó por el **pipeline normal**
+(push `b4d8c3a` → imagen backend → Watchtower → entrypoint `alembic upgrade head`), sin
+ejecución manual alguna:
+
+- `GET /business-units` empresa 1 → **4 filas**: `(breeder, businessUnits.breeder, false)` ·
+  `(broiler, businessUnits.broiler, false)` · `(grandparent, businessUnits.grandparent, false)` ·
+  `(hatchery, businessUnits.hatchery, false)` — códigos exactos, sin quinta unidad, sin
+  duplicados, `is_enabled=false` (catálogo ≠ habilitación). [AC01–05, 13, 16]
+- Empresa 3 → **mismo catálogo global** (4 filas, todas `false`) — sin duplicación por tenant. [AC13]
+- Candidatos `{code}/grant-candidates` → **404 ×4** (contrato: unidad apagada no tiene
+  candidatos).
+- Sin efectos colaterales: CBU de empresa **sin crear** (0 habilitaciones), UBU **sin crear**,
+  `GET /roles` = 14 con rol 35 intacto (4 permisos exactos), `GET /users` = 200 (23 filas;
+  ids 57–70 presentes) — RBAC/permisos/empresas/SAP sin cambio. [AC06–12]
+- Idempotencia: test dirigido AC03/AC14 (doble pasada, parcial, completo) + el propio arranque
+  del pipeline que re-ejecuta `upgrade` sobre revisión ya aplicada sin duplicar.
+- IDs de fila no expuestos por el contrato (`HabilitacionRead`: `code/name_key/is_enabled`).
+
+F1 queda **CLOSED**; `GA-FE-02-B` **CLOSED**; ENV-01 **READY FOR GA-FE-02** (sin certificar todavía).
 
 ## 5 · F2 — Creación del rol (API oficial)
 
@@ -312,20 +332,23 @@ resultado: reportar el bloqueo exacto, sin certificar por partes.
 ## 13 · Estado de ejecución (2026-09-11)
 
 ```
-F1 ... **FAIL / BLOCKED → REMEDIACIÓN AUTÓNOMA AUTORIZADA (GA-FE-02-C §2, §4.2)** — el
-       propietario reportó ejecución dos veces; la verificación del agente (3.ª vez,
-       2026-09-11) muestra el catálogo **aún vacío**: `GET /business-units` c1/c3 = `[]`
-       (`count=0`) y 4×404 en candidatos; `is_active default=True` descarta «inactivas» ⇒
-       las filas no alcanzaron la base de ENV-01. La vía manual queda agotada; se remedia
-       por **migración de datos `y5z6a7b8c9d0`** vía pipeline normal (spec §4.2), con
-       postcondición runtime obligatoria (§4.2.1) antes de reanudar el E2E.
+F1 ... **CLOSED** — remediación autónoma `GA-FE-02-C` aplicada por pipeline normal: migración
+       `y5z6a7b8c9d0` en el arranque del backend (`GA-REM-024`). Runtime verificado
+       (2026-09-11): `GET /business-units` c1/c3 = **4** filas canónicas
+       (`breeder·broiler·grandparent·hatchery`; `is_enabled=false`; candidatos 404×4; sin
+       CBU/UBU/roles/permisos nuevos). Evidencia: §4.2.2 + ledger #7. Commits C1 `28e95bb`
+       + C2 `b4d8c3a`.
 F2 ... CLOSED — rol id=35 · exactamente business_units:read|update|create|delete (all) ·
        company_id NULL (plantilla) · GET /roles=14 · sin comodín/users/productivos ·
-       sin asignaciones a humanos (0)
+       sin asignaciones a humanos (0) — re-verificado post-deploy F1
 F3 ... CLOSED — 14/14 filas 57–70 reparadas por API oficial (BEFORE 500 → AFTER 200);
        listados 200 (23 usuarios); invariantes intactos; seed endurecido `b83d908` + regresión
+       — re-verificado post-deploy F1 (users 200; 57–70 presentes)
 F4 ... CLOSED — `716d175` desplegado; verificación runtime autenticada PASS (selector alcanzable
        «Seleccionar empresa»; dropdown con empresas; switch-company 200; nombre resuelto por
        catálogo incluida persistida `null`; hard-refresh `/me` 200 sin forbidden; móvil 390×844).
        Evidencia: `GA_FE_02_B_F4_SELECTOR_EVIDENCE.md`
+
+GA-FE-02-B ... **CLOSED** — F1–F4 cerrados con evidencia runtime; ENV-01 READY FOR GA-FE-02: YES
+       (la certificación funcional GA-FE-02-A continúa — ver §9).
 ```
