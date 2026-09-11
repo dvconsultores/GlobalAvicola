@@ -44,3 +44,41 @@ Fecha: 2026-09-11 · Generación: `index-B66tpdeW.js` (C2 `de40d36`) · Programa
 Motivo: la conducta exigida por `AC-FE16` (ocultar por permiso, backend autoridad) y el residuo declarado por `R-96 §5`/backlog (ninguna pantalla ocultaba acciones) están implementados, probados (unidad + runtime), evidenciados y sin gating por rol/nombre. El cierre no invoca nuevas excepciones: R-181/R-182 permanecen UNCHANGED; BU-D10 PENDING_RATIFICATION.
 
 > Matiz honesto registrado: la autoridad de acción visible es **descubribilidad**; la autorización efectiva continúa siendo del backend (verificado con 403). No se declaró ningún AC extra (p. ej., «todas las pantallas del producto») más allá del texto canónico.
+
+---
+
+## 5 · GA-FE-04-A · Controles faltantes (completados 2026-09-11)
+
+Los dos controles declarados «NO EJECUTADO» por el informe GA-FE-04 se ejecutaron contra la generación final `index-B66tpdeW.js` (sin cambios de producto). Evidencia completa: `GA_FE_04_A_SELF_CROSS_RUNTIME_EVIDENCE.md`.
+
+### P13-AC20 · SELF-GRANT
+
+| Dimensión | Resultado |
+|---|---|
+| Frontend (objetivo self en UI) | **PASS** — self excluido de candidatos (backend OD-15.a) + guard UI `c.user_id !== sessionUser?.id`; fila propia 0, botón propio 0 (desktop y móvil) |
+| Backend (intento directo) | **PASS** — `403` «administrar el acceso no autoriza a concedérselo a uno mismo» |
+| Persistencia | **PASS** — concesiones propias `[]`, `effBU=[]`, CBU sin cambio, RBAC sin cambio |
+| Auditoría | **PASS** — 0 filas de éxito por el actor |
+| Desktop 1440×900 | **PASS** |
+| Móvil 390×844 | **PASS** (camino in-app Menú→Configuración→Acceso por unidad) |
+
+### P13-AC21 · CROSS-COMPANY
+
+| Dimensión | Resultado |
+|---|---|
+| Aislamiento de candidatos | **PASS** — X (empresa 3) ausente de candidatos de la empresa 1; 0 oráculo de búsqueda |
+| Backend (intento directo) | **PASS** — `404` `usuario 107` (indistinguible de inexistente) |
+| Persistencia | **PASS** — concesiones de X `[]`; sin grant cross-company |
+| Fuga de información | **PASS** — sin exposición en lista/búsqueda/estado/error |
+| Auditoría / UX | **PASS** — 0 filas de éxito; sin toast de éxito; sin estado optimista; refresh correcto |
+| Desktop 1440×900 | **PASS** |
+| Móvil 390×844 | **PASS** |
+
+### Reconfirmación de AC originales
+
+| Bloque | Estado |
+|---|---|
+| C1–C5 (ocultado por permiso · autoridad backend · modelo único · sin gating por rol · evidencia runtime + no-regresión) | **PASS** (sin cambio; suite 263/263; evidencia previa íntegra) |
+| AC de paridad de rutas, approve≠reject, productivos 3D, actores E/A/B/C/D/Z/P/R | **PASS** (C4) |
+
+**Veredicto final: R-98 = CLOSED** (AC originales + AC20 + AC21 PASS; residuo restante: NINGUNO).

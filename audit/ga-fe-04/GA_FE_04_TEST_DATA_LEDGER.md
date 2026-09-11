@@ -48,3 +48,17 @@ Estado final: **4 × OFF** (idéntico al inicio).
 - `/users` (admin): ninguna cuenta `ga-`/`ga_` visible → 0 residuos.
 - `/roles` (admin): ningún rol `GA-FE04` activo; rol 35 activo.
 - Credenciales: `/tmp/ga4_creds.json`, `/tmp/ga4_r_creds.json` destruidos.
+
+---
+
+## GA-FE-04-A · Fixtures self/cross (2026-09-11, misma sesión)
+
+| Alias | Usuario | Id | Rol | Empresa | Estado final |
+|---|---|---|---|---|---|
+| B | ga-fe04a-b | 105 | **35 canónico (reutilizado)** | 1 «Avícola Global C.A.» | baja 204 |
+| T | ga-fe04a-t | 106 | 3 «Operador de Granja» | 1 | baja 204 |
+| X | ga-fe04a-x | 107 | 3 «Operador de Granja» | 3 «Avícola Del Sur C.A.» | baja 204 |
+
+Roles nuevos: **ninguno**. Ventana controlada: `broiler` ON en empresa 1 (solo para cargar candidatos) → restaurado **OFF** (4×OFF).
+Concesiones creadas: **ninguna** (self 403 · cross 404 · concesiones de X en empresa 3 = `[]`).
+Verificación de residuos: empresa 1 `[]` · empresa 3 `[]` · rol 35 intacto · credenciales `/tmp/ga4a_creds.json` destruidas.

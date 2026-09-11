@@ -29,3 +29,13 @@ Directorio: `audit/ga-fe-04/evidence/`
 | `Rm_users_readonly_390.png` | R móvil | sin acciones |
 | `Cm_lots_cta_390.png` | C móvil | CTA=1 |
 | `R_masters_farms_readonly_EN.png` | R · inglés | «Read-only view…» |
+
+## GA-FE-04-A · Self-action + Cross-company (`evidence/runtime/`, misma generación `index-B66tpdeW.js`)
+
+| Archivo | Caso | Resultado |
+|---|---|---|
+| `SELF_CROSS_candidates_desktop.png` | B · `/admin/unit-access` broiler (desktop) | candidatos 24 · self 0 · T con Conceder 1 · X 0 |
+| `SELF_CROSS_candidates_mobile_390.png` | B · misma superficie (390×844, entrada directa) | idéntico |
+| `SELF_CROSS_candidates_mobile_via_settings_390.png` | B · camino in-app Menú→Configuración→Acceso por unidad | idéntico |
+| `hub_menu_mobile_B.png` | OBS-01 · `/menu` desnudo con rol 35 (móvil) | redirección a home + «Permiso requerido: dashboard:read» |
+| `hub_menu_desktop_B.png` | OBS-01 · ídem (desktop) | idéntico |

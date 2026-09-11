@@ -54,3 +54,21 @@ Revokes 2/2 · broiler restaurado OFF (4×OFF) · 7 bajas · 5 roles fixture OFF
 
 **GA-FE-04 = FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTANCE_PENDING.**
 Siguiente paso permitido: validación del propietario (UAT) sobre cambios visibles de P-13 (`GA_FE_04_OWNER_UAT.md`). Sin iniciar nuevas tranches.
+
+---
+
+## 9 · GA-FE-04-A · Cierre de evidencia runtime (2026-09-11)
+
+Tranche enfocada **solo evidencia** (sin cambios de producto; generación `index-B66tpdeW.js` estable, `de40d36` sin cambios posteriores de `frontend/**`):
+
+| Control | Resultado |
+|---|---|
+| `P13-AC20` Self-grant | **PASS** (frontend/backend/persistencia/auditoría/desktop/móvil) |
+| `P13-AC21` Cross-company | **PASS** (candidatos/backend/persistencia/fuga/auditoría/desktop/móvil) |
+
+- Smoke: tsc 0 · build PASS · Vitest **263/263** · GA-FE-04 **22/22**.
+- Evidencia: `GA_FE_04_A_SELF_CROSS_RUNTIME_EVIDENCE.md` (+ red, capturas, ledger, reconciliación actualizados).
+- Observación `OBS-01` (fuera de alcance, sin acción): hub desnudo `/menu` con rol 35 sin `dashboard:read` redirige a home y muestra «Permiso requerido»; preexistente, no bloquea la superficie de unidad (camino in-app verificado).
+- Limpieza: 3 bajas · 0 roles nuevos · broiler restaurado 4×OFF · rol 35 intacto · credenciales destruidas.
+
+**DECLARACIÓN FINAL: GA-FE-04 = FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTANCE_PENDING · R-98 = CLOSED · OWNER_UAT_READY: YES.**

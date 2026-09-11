@@ -19,6 +19,8 @@
 | T14 | R-98 | §21 | AC28 | móvil | (sin código) | runtime móvil | R 0/0/0+aviso; C CTA=1 | ✅ |
 | T15 | R-98 | §22 | AC37–40 | regresión | (sin código) | suite 263/263 + spots runtime | sin regresión GA-FE-02/03 | ✅ |
 | T16 | R-98 | §23–25 | cierre | evidencia+reconciliación | `audit/ga-fe-04/*` + addendum master | certificación + reconciliación R-98 CLOSED | ✅ |
+| T17 | R-98 | GA-FE-04-A | **P13-AC20** | self-grant (UI+API+audit) | (sin código; evidencia) | runtime B: UI self excluido; `403` SOD; sin persistencia | PASS (desktop+móvil) | ✅ |
+| T18 | R-98 | GA-FE-04-A | **P13-AC21** | cross-company (UI+API+fuga) | (sin código; evidencia) | runtime B: X ausente; `404` sin fuga; sin persistencia | PASS (desktop+móvil) | ✅ |
 
 **Prohibido**: tocar backend (esperado 0), LotForm (R-182), submit (R-181), SEMÁNTICA
 GA-FE-02/03. `git add` explícito; secret-check por commit.

@@ -38,3 +38,10 @@ UsersPage · RolesPage · MasterListPage · WeightCurvesPage · LotListPage · L
 - La capa de acción es UX de descubribilidad; **la autorización sigue en el backend** (verificado).
 - E sin empresa efectiva en sesión de navegador: listas vacías por alcance — control positivo de fila cubierto por pruebas y por actores con contexto.
 - Rol duplicado 42 (reintento de provisión) desactivado en la misma sesión; IDs reales reconciliados en la matriz de actores.
+
+## 7 · Addendum GA-FE-04-A (2026-09-11) · Self-action + Cross-company
+
+- `P13-AC20` (self-grant) y `P13-AC21` (cross-company) ejecutados contra la generación final: **PASS** en frontend, backend (403 SOD / 404 sin fuga), persistencia, auditoría, desktop y móvil. Detalle: `audit/ga-fe-04/GA_FE_04_A_SELF_CROSS_RUNTIME_EVIDENCE.md`.
+- Sin cambios de producto (tranche evidence-only).
+- Observación registrada sin acción: `OBS-01` (hub desnudo `/menu` con rol 35 sin `dashboard:read` → redirección a home con «Permiso requerido»); preexistente y ajeno al alcance R-98.
+- **R-98 = CLOSED** (AC originales + AC20/AC21).
