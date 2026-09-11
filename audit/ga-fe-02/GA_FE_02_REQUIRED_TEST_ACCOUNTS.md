@@ -97,3 +97,14 @@ users:create para configurarlas; el agente completa el resto.
 Sin una de estas tres, el estado permanece `DEPLOYED_IMPLEMENTATION_COMPLETE /
 FUNCTIONAL_CERTIFICATION_BLOCKED_AUTH (causa: BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED)` —
 con la cadena de evidencia completa que exige §5 del encargo.
+
+### Actualización 2026-09-11 (2.ª reanudación)
+
+Se declaró la credencial inyectada en el entorno. La verificación de **presencia** (solo
+presencia) resultó **negativa en las 13 ubicaciones canónicas** verificadas — incluida una
+terminal NUEVA en proceso fresco — por lo que la inyección no alcanzó la sesión de ejecución
+del agente. Clasificación: **`AUTH_CONFIGURATION_FAILURE`** (no `BOOTSTRAP_INVALID`: no hubo
+valor que probar). Remedio CORREGIDO y detalle completo:
+`audit/ga-fe-02-a/GA_FE_02_A_BOOTSTRAP_PRESENCE_VERIFICATION.md` → basta **R1** (exportar en la
+misma terminal «bash» del agente) o **R2** (relanzar VS Code con la variable exportada) o
+**R3** (compartir una página autenticada).

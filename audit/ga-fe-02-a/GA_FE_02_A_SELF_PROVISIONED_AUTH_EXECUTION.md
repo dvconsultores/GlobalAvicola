@@ -87,3 +87,19 @@ Adivinación ............... NO
 Usuarios reales tocados ... NO (0)
 Producto modificado ....... NO (diff de producto = 0)
 ```
+
+## 8 · 2.ª reanudación (2026-09-11, baseline `b2bbd7d`) — credencial declarada inyectada
+
+El propietario declaró la credencial inyectada en el entorno y ordenó verificar SOLO su
+presencia. Verificación ejecutada en 13 ubicaciones canónicas (shell persistente, terminal
+NUEVO en proceso fresco, login shell, perfiles, `.vscode` del workspace y del usuario,
+`environment.d`, `/etc/environment`, entornos de proceso accesibles, systemd user env, sesión
+de navegador, worktree): **presencia 0 en todas** — detalle y remedio exacto en
+`GA_FE_02_A_BOOTSTRAP_PRESENCE_VERIFICATION.md`.
+
+```
+CLASIFICACIÓN .... AUTH_CONFIGURATION_FAILURE (la inyección no alcanzó ningún entorno
+                   legible por el agente; no hubo valor que resultara BOOTSTRAP_INVALID)
+ACCIÓN ........... STOP (§6) — sin intento de autenticación, sin bypass, sin búsqueda
+ESTADO ........... GA-FE-02 = DEPLOYED_IMPLEMENTATION_COMPLETE / FUNCTIONAL_CERTIFICATION_BLOCKED_AUTH
+```
