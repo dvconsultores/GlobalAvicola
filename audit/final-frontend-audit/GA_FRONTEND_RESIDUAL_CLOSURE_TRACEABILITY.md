@@ -18,7 +18,7 @@ CORRECCIÓN: FRONTEND_READY_FOR_WAVE_B_RECONCILIATION = NO / PENDING
 
 | RES | Documento | Clase | Próximo paso | Bloquea cierre frontend | Bloquea readiness Wave B |
 |---|---|---|---|---|---|
-| RES-01 | `GA_AOD06_OWNER_DECISION_PACKET.md` | Decisión propietario P1 | **Pregunta A/B/C ahora** | SÍ (formal) | **SÍ** |
+| RES-01 | `GA_AOD06_OWNER_DECISION_PACKET.md` → **`GA_OD_24_COMPANIES_FARMS_OWNERSHIP_DECISION.md`** | Decisión propietario P1 | **RESUELTA (A → OD-24)**; sin producto hoy; SPEC de convergencia junto a P-08 | NO (resuelta) | NO (desbloqueada) |
 | RES-02 | `GA_RES02_CAP_ADM05_ANALYSIS.md` | Diseño condicional (OOS) | Paquete de diseño fase-9 con RES-04 | NO | NO |
 | RES-03 | `GA_AOD25_OWNER_DECISION_PACKET.md` | Decisión propietario P3 | Tras AOD-06 | NO (si A: cierre doc; si B/C: spec) | NO (resolver antes de arrancar Wave B por su lista, no por el frontend) |
 | RES-04 | `GA_FRONTEND_P3_RESIDUAL_RECONCILIATION.md` | Diferral (OOS) | Paquete de diseño fase-9 con RES-02 | NO | NO |

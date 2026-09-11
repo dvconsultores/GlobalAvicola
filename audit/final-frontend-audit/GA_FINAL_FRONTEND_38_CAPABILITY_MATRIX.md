@@ -56,7 +56,7 @@ Desktop/Mobile: `✓` PASS · `N/A(w)` = ruta web-only (redirect móvil por dise
 | FVA-04 | nombre de empresa visible (header) | L5 | GA-FE-02 | YES | GA-UAT-01 | ACCEPTED | **F_C_OA** | NONE | — | ga-uat-01 | S01 |
 | FVA-05 | selector alcanzable (F4 previo; sin regresión) | L5 | GA-FE-02-B | YES | GA-UAT-01 | ACCEPTED | **F_C_OA** | NONE | — | ga-fe-02-b | — |
 | FVA-06 | 1 fila cargada | L2 | — | — | — | — | **VNC** | hygiene P3 | — | runtime-uat (companiesRows=1) | S13 |
-| FVA-07 | UI de alta/edición existente; decisión pendiente | L2 | — | — | — | — | **ODR** | R-124 (P1) | R-124/AOD-06 | backlog:722 | — |
+| FVA-07 | UI de alta/edición existente (régimen provisional ratificado `OD-24`) | L2 | — | — | — | — | **SUPERSEDED_BY_CANONICAL_DECISION** | OD-24: sin producto hoy; SPEC de convergencia pre-P-08 | R-124 RESUELTO | GA_OD_24_…DECISION.md | — |
 | FVA-08 | 4 unidades listadas; ciclo ON/OFF certificado | L5 | GA-FE-02 + R-188 | YES | GA-UAT-01/08 | ACCEPTED | **F_C_OA** | NONE | — | ga-uat-08 | S16 |
 | FVA-09 | revoke→regrant por UI verificado hoy | L5 | GA-FE-02 + R-188 | YES | GA-UAT-01/08 | ACCEPTED | **F_C_OA** | NONE | — | runtime-uat (regrantRow) | S16 |
 | FVA-10 | no existe UI (0 refs; backend listo) | L0 | — | — | — | — | **OOS** | diseño-condicional (P2) | T-040-24 | orig inventory | — |
@@ -91,5 +91,5 @@ Desktop/Mobile: `✓` PASS · `N/A(w)` = ruta web-only (redirect móvil por dise
 
 ## Conteo
 
-- **F_C_OA: 14** (FVA-01,04,05,08,09,11,12,13,14,15,16,27,29,31) · **VNC: 19** · **ODR: 2** · **OOS: 2** · **BE: 1** → **38/38 reconciliadas**.
+- **F_C_OA: 14** (FVA-01,04,05,08,09,11,12,13,14,15,16,27,29,31) · **VNC: 19** · **ODR: 1** (FVA-19) · **SUPERSEDED: 1** (FVA-07/OD-24) · **OOS: 2** · **BE: 1** → **38/38 reconciliadas**.
 - Residuales «hygiene P3» (19 filas VNC) se consolidan como **un** ítem de cola (certificación formal por AC si el programa la exige).

@@ -719,7 +719,7 @@ muestra la columna. `PARTIAL`, no `MISSING`.
 `tiene_permiso` compara `(módulo, acción)` y descarta el alcance, salvo para detectar Super
 Administrador con `("*", scope="all")`. `docs/02 §3.1.4` pide `all` / `company` / `farm`.
 
-## `R-124` · `P1` · `OWNER_DECISION_REQUIRED` · ¿vienen de SAP las Empresas y las Granjas?
+## `R-124` · `P1` · **RESUELTO — `OD-24` (decisión A, 2026-09-11)** · ¿vienen de SAP las Empresas y las Granjas?
 `docs/10 §3.1` lista lo que SAP importa: Centros, Almacenes, Materiales, Proveedores, Lotes, OC,
 OT. **Ni Empresas ni Granjas.** `docs/02 §3.2.1` las lista como catálogos base locales con campos
 propios. **El código cumple la spec; la spec no cumple la expectativa del propietario.**
@@ -730,6 +730,7 @@ No es defecto de implementación: es requisito no escrito. Preguntas a decidir:
 ¿Qué pasa con las creadas localmente hasta hoy?
 ¿Y con `sap_config`, hoy campo editable de la empresa?
 ```
+**RESUELTA — `OD-24` (2026-09-11, decisión A):** importadas de SAP y no editables post-integración (Sociedad↔Empresa; Centro/Planta↔Granja, mapeo a fijar en SPEC); régimen provisional local declarado pre-P-08 (PL-05/06); sin código hoy. Texto: `audit/final-frontend-audit/GA_OD_24_COMPANIES_FARMS_OWNERSHIP_DECISION.md`.
 
 ## `R-125` · `P1` · `OWNER_DECISION_REQUIRED` · módulos activables por empresa
 Cero coincidencias en `docs/` y `specs/`; no existe `CompanyModule` ni equivalente.
@@ -2128,8 +2129,8 @@ CORRECCIÓN    FRONTEND_READY_FOR_WAVE_B_RECONCILIATION: YES → NO/PENDING (gob
               reconocida: decisión AOD-06 pendiente + 19 sin certificación + RES-01 P1)
 19 VNC        CERT-PATH A 0 · B 11 · C 8 · D 0 · E 0 · F 0 · G 0
               Plan por batches: S · CP · M · Q · E · R (→ F_C_UAT_NOT_REQUIRED) + OPS-GRANJA/INC/GP (→ UAT-1)
-DECISIONES    AOD-06 packet (P1; A/B/C canónicas: importadas SAP · local+sap_code · local sin vínculo) — PENDIENTE
-              AOD-25 packet (P3; A/B/C) — tras AOD-06 · AOD-24 nota de alcance (Wave B, no bloquea)
+DECISIONES    AOD-06 → RESUELTO como OD-24 (decisión A; 2026-09-11; sin producto hoy) ·
+              AOD-25 packet (P3; A/B/C) — PENDIENTE · AOD-24 nota de alcance (Wave B, no bloquea)
 RES           RES-02 (diseño fase-9) · RES-05/R-52 (ops, no bloquea) · RES-06/R-112 (SAP externo) ·
               RES-07 = las 19 (no ruido) · RES-08/R-148 (interno Wave B) · RES-10 notas P3 — todos reconciliados
 REGISTRO      audit/final-frontend-audit/GA_FRONTEND_RESIDUAL_19_CERTIFICATION_MATRIX.md (+9 documentos)

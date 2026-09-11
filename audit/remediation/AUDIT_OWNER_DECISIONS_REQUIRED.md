@@ -48,6 +48,7 @@ WAVE A solo necesita AOD-12 en su parte de exposición; la corrección de tipo d
 | `AOD-09` | **`OD-17`** | VIGENTE | un rechazo corregible no es terminal; `RETURNED`/`REJECTED` se corrigen y reenvían; SAP: reenvío explícito, nunca automático. Implementación en `WAVE B` |
 | `AOD-12` | **`OD-18`** | VIGENTE | el catálogo general de empresas no expone `sap_config`; persistencia `DEFERRED`; sin migración |
 | `AOD-01…08`, `AOD-10`, `AOD-11`, `AOD-13…16` | — | pendientes | sin decisión del propietario; no se asigna `OD` |
+| `AOD-06` | **`OD-24`** | VIGENTE | Empresas/Granjas: importadas de SAP no editables (post-P-08); régimen provisional local declarado pre-P-08; sin código hoy (2026-09-11, decisión A) |
 | `BU-D10` | — | `PENDING_RATIFICATION` | ver `BUSINESS_UNIT_OWNER_DECISION_MATRIX.md §7` |
 
 La numeración `AOD-nn` de este documento **no se renumera**.
