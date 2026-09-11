@@ -3,6 +3,7 @@ import { useNavigate, useParams, Navigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { LayoutGrid } from 'lucide-react'
 import { NAV_ITEMS, type NavItem } from '../../data/navigationConfig'
+import { filterNavItemsBySession } from '../../auth/navigation'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import MenuCard from '../../components/ui/MenuCard'
 import type { BreadcrumbItem } from '../../components/ui/Breadcrumbs'
@@ -10,8 +11,8 @@ import { useAuthStore } from '../../stores/auth.store'
 
 const MENU_STACK_KEY_PREFIX = 'menuHubStack:'
 
-/** Busca recursivamente un NavItem por su clave dentro de NAV_ITEMS. */
-function findNavItem(key: string, items: NavItem[] = NAV_ITEMS): NavItem | null {
+/** Busca recursivamente un NavItem por su clave dentro del árbol de `items`. */
+function findNavItem(key: string, items: NavItem[]): NavItem | null {
  for (const it of items) {
  if (it.key === key) return it
  if (it.children) {
@@ -39,7 +40,10 @@ export default function MenuHubPage() {
  const { user } = useAuthStore()
  const isMobileUser = user?.view_type === 'mobile'
 
- const root = useMemo(() => (menuKey ? findNavItem(menuKey) : null), [menuKey])
+ // GA-FE-03 (§34): el hub evalúa el MISMO árbol filtrado que el Sidebar — sin hijos no
+ // autorizados (cierra `D-2`) y sin raíces no visibles (fail-closed hacia home).
+ const filteredItems = useMemo(() => filterNavItemsBySession(NAV_ITEMS, user), [user])
+ const root = useMemo(() => (menuKey ? findNavItem(menuKey, filteredItems) : null), [menuKey, filteredItems])
  // Pila de navegación interna (drill-in dentro del hub)
  const [stack, setStack] = useState<NavItem[]>([])
 
@@ -50,7 +54,7 @@ export default function MenuHubPage() {
  const keys = JSON.parse(raw) as string[]
  if (!Array.isArray(keys)) return []
  const resolved = keys
- .map((k) => findNavItem(k))
+ .map((k) => findNavItem(k, filteredItems))
  .filter(Boolean) as NavItem[]
  return resolved
  } catch {
@@ -67,7 +71,8 @@ export default function MenuHubPage() {
  // Evita arrastrar historial al cambiar de un hub a otro.
  if (!menuKey) return
  setStack(restoreStack(menuKey))
- }, [menuKey])
+ // eslint-disable-next-line react-hooks/exhaustive-deps
+ }, [menuKey, filteredItems])
 
  useEffect(() => {
  if (!menuKey) return

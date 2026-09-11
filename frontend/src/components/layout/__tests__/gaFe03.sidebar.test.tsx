@@ -42,26 +42,26 @@ beforeEach(() => {
 })
 
 describe('GA-FE-03 · Sidebar derivado del evaluador canónico (§23)', () => {
-  it('D (dashboard:read): sin admin/productivo; CORE y perfil presentes; sin grupos vacíos', () => {
+  it('D (dashboard:read): sin admin/productivo; CORE y Configuración presentes; sin grupos vacíos', () => {
     setSession(['dashboard:read'], [], ['grandparent', 'breeder', 'hatchery', 'broiler'])
     renderSidebar()
+    expect(screen.getByText('Dashboard')).toBeTruthy()
+    expect(screen.getByText('Configuración')).toBeTruthy()
     for (const texto of [
-      'Usuarios y Roles', 'Auditoría', 'Maestros', 'Integración SAP',
-      'Reportes', 'Centro de Revisión', 'Aprobaciones', 'Gestión Avícola',
+      'Gestión Avícola', 'Centro de Revisión', 'Aprobaciones', 'Integración SAP',
+      'Reportes', 'Auditoría', 'Maestros', 'Usuarios y Roles', 'OPERATIVO', 'REVISIÓN',
     ]) {
       expect(screen.queryByText(texto), `no debe verse: ${texto}`).toBeNull()
     }
-    expect(screen.getByText('Mi Perfil')).toBeTruthy()
-    expect(screen.queryByText('OPERATIVO')).toBeNull()
-    expect(screen.queryByText('REVISIÓN')).toBeNull()
   })
 
   it('Z (cero unidades): el área operativa desaparece; Configuración permanece', () => {
     setSession(['dashboard:read'], [], ['grandparent', 'breeder', 'hatchery', 'broiler'])
     renderSidebar()
     expect(screen.queryByText('Gestión Avícola')).toBeNull()
+    expect(screen.queryByText('OPERATIVO')).toBeNull()
     expect(screen.getByText('Configuración')).toBeTruthy()
-    expect(screen.getByText('Mi Perfil')).toBeTruthy()
+    expect(screen.getByText('Dashboard')).toBeTruthy()
   })
 
   it('C con broiler: el área operativa aparece (hub) y el resto no', () => {
@@ -69,25 +69,32 @@ describe('GA-FE-03 · Sidebar derivado del evaluador canónico (§23)', () => {
     renderSidebar()
     expect(screen.getByText('Gestión Avícola')).toBeTruthy()
     expect(screen.queryByText('Centro de Revisión')).toBeNull()
+    expect(screen.queryByText('Auditoría')).toBeNull()
+    expect(screen.queryByText('Integración SAP')).toBeNull()
+    expect(screen.queryByText('Reportes')).toBeNull()
   })
 
-  it('B (Access Admin): descubre su superficie; sin productivo ni usuarios', () => {
+  it('B (Access Admin): descubre Configuración; sin productivo, sin dashboard (D-4), sin admin ajeno', () => {
     setSession(
       ['business_units:read', 'business_units:update', 'business_units:create', 'business_units:delete'],
       [], [],
     )
     renderSidebar()
-    expect(screen.getByText('Acceso por unidad')).toBeTruthy()
-    expect(screen.queryByText('Usuarios y Roles')).toBeNull()
+    expect(screen.getByText('Configuración')).toBeTruthy()
+    expect(screen.queryByText('Dashboard')).toBeNull()
     expect(screen.queryByText('Gestión Avícola')).toBeNull()
+    expect(screen.queryByText('Auditoría')).toBeNull()
+    expect(screen.queryByText('Maestros')).toBeNull()
+    expect(screen.queryByText('Integración SAP')).toBeNull()
   })
 
-  it('A (CBU Admin): igual separación de planos', () => {
+  it('A (CBU Admin): CORE + Configuración; sin planos ajenos', () => {
     setSession(['business_units:read', 'business_units:update', 'dashboard:read'], [], [])
     renderSidebar()
-    expect(screen.getByText('Acceso por unidad')).toBeTruthy()
-    expect(screen.queryByText('Usuarios y Roles')).toBeNull()
+    expect(screen.getByText('Dashboard')).toBeTruthy()
+    expect(screen.getByText('Configuración')).toBeTruthy()
     expect(screen.queryByText('Auditoría')).toBeNull()
+    expect(screen.queryByText('Maestros')).toBeNull()
     expect(screen.queryByText('Gestión Avícola')).toBeNull()
   })
 })

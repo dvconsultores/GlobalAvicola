@@ -1,7 +1,9 @@
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
+import { Link, Navigate } from 'react-router-dom'
 import { ChevronRight, LayoutGrid } from 'lucide-react'
 import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
+import { useAuthStore } from '../../stores/auth.store'
+import { stageVisibleForSession } from '../../auth/navigation'
 
 /**
  * Process hub — the main, visual entry point for registering operations.
@@ -13,7 +15,13 @@ import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/proces
  */
 export default function ProcessHubPage() {
  const { t } = useTranslation()
- const totalOps = PROCESS_STAGES.reduce((acc, s) => acc + flowForStage(s.key).length, 0)
+ const { user } = useAuthStore()
+
+ // GA-FE-03 (§33/§35): los tiles del hub de procesos son atajos accionables — misma política.
+ const visibleStages = PROCESS_STAGES.filter((s) => stageVisibleForSession(s.key, user))
+ if (visibleStages.length === 0) return <Navigate to="/" replace />
+
+ const totalOps = visibleStages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)
 
  return (
  <>
@@ -49,7 +57,7 @@ export default function ProcessHubPage() {
  {/* Process grid */}
  <div>
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
- {PROCESS_STAGES.map((stage) => {
+ {visibleStages.map((stage) => {
  const flow = flowForStage(stage.key)
  const preview = flow.slice(0, 3).map(s => t(`events.${s.event}`, s.event))
  return (

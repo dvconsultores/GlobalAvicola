@@ -11,11 +11,11 @@ import {
   Home, Bird, Egg, Flame, Drumstick, Feather, Plane,
   Search, CheckCircle, RefreshCw, TrendingUp, Shield,
   Database, Settings, Users, Clock, Undo2,
-  Send, AlertTriangle, BarChart3, UserCheck, FileText,
+  Send, AlertTriangle, BarChart3, UserCheck, FileText, UserCog,
   Sprout,
   type LucideIcon,
 } from 'lucide-react'
-import { hasPermission, type SessionLike } from '../auth/permissions'
+import type { NavCapability } from '../auth/navigation'
 
 export interface NavItem {
   /** Clave única para el submenú */
@@ -32,9 +32,15 @@ export interface NavItem {
   children?: NavItem[]
   /** Badge numérico opcional (ej: pendientes count) */
   badge?: number
-  /** GA-FE-02 · permiso RBAC requerido para mostrar la entrada (ausente = visible como siempre).
-   * Frontera `R-98`/GA-FE-03: SOLO las entradas que declaran `permission` se filtran. */
+  /** GA-FE-02/03 · permiso RBAC canónico requerido para mostrar/accionar la entrada.
+   * Espejo de `tiene_permiso` (`R-121`); ausente = capacidad sin permiso propio. */
   permission?: string
+  /** GA-FE-03 · clase de capacidad (SPEC §8). Obligatoria en todas las entradas. */
+  capability?: NavCapability
+  /** GA-FE-03 · unidad productiva canónica de la que depende la entrada (`OD-16.a`). */
+  businessUnit?: string
+  /** GA-FE-03 · la entrada exige un conjunto productivo no vacío (multi-unidad). */
+  requiresUnits?: boolean
   /** Agrupar bajo qué sección */
   section: NavSectionKey
 }
@@ -77,6 +83,8 @@ export const NAV_ITEMS: NavItem[] = [
     fallback: 'Dashboard',
     to: '/',
     section: 'main',
+    capability: 'CORE',
+    permission: 'dashboard:read',
   },
 
   // ===== OPERATIVO =====
@@ -86,6 +94,8 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.poultry',
     fallback: 'Gestión Avícola',
     section: 'operational',
+    capability: 'PRODUCTIVE',
+    requiresUnits: true,
     children: [
       {
         key: 'grandparent',
@@ -93,9 +103,12 @@ export const NAV_ITEMS: NavItem[] = [
         labelKey: 'nav.grandparent',
         fallback: 'Progenitoras',
         section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'operations:read',
+        businessUnit: 'grandparent',
         children: [
-          { key: 'gp_rearing', icon: Sprout, labelKey: 'nav.gpRearing', fallback: 'Cría', to: '/poultry/grandparent/rearing', section: 'operational' },
-          { key: 'gp_production', icon: Egg, labelKey: 'nav.gpProduction', fallback: 'Producción', to: '/poultry/grandparent/production', section: 'operational' },
+          { key: 'gp_rearing', icon: Sprout, labelKey: 'nav.gpRearing', fallback: 'Cría', to: '/poultry/grandparent/rearing', section: 'operational', capability: 'PRODUCTIVE', permission: 'operations:read', businessUnit: 'grandparent' },
+          { key: 'gp_production', icon: Egg, labelKey: 'nav.gpProduction', fallback: 'Producción', to: '/poultry/grandparent/production', section: 'operational', capability: 'PRODUCTIVE', permission: 'operations:read', businessUnit: 'grandparent' },
         ],
       },
       {
@@ -104,9 +117,12 @@ export const NAV_ITEMS: NavItem[] = [
         labelKey: 'nav.breeder',
         fallback: 'Reproductoras',
         section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'operations:read',
+        businessUnit: 'breeder',
         children: [
-          { key: 'br_rearing', icon: Sprout, labelKey: 'nav.brRearing', fallback: 'Cría', to: '/poultry/breeder/rearing', section: 'operational' },
-          { key: 'br_production', icon: Egg, labelKey: 'nav.brProduction', fallback: 'Producción', to: '/poultry/breeder/production', section: 'operational' },
+          { key: 'br_rearing', icon: Sprout, labelKey: 'nav.brRearing', fallback: 'Cría', to: '/poultry/breeder/rearing', section: 'operational', capability: 'PRODUCTIVE', permission: 'operations:read', businessUnit: 'breeder' },
+          { key: 'br_production', icon: Egg, labelKey: 'nav.brProduction', fallback: 'Producción', to: '/poultry/breeder/production', section: 'operational', capability: 'PRODUCTIVE', permission: 'operations:read', businessUnit: 'breeder' },
         ],
       },
       {
@@ -116,6 +132,9 @@ export const NAV_ITEMS: NavItem[] = [
         fallback: 'Incubadora',
         to: '/poultry/hatchery',
         section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'operations:read',
+        businessUnit: 'hatchery',
       },
       {
         key: 'broiler',
@@ -124,6 +143,9 @@ export const NAV_ITEMS: NavItem[] = [
         fallback: 'Pollo de Engorde',
         to: '/poultry/broiler',
         section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'operations:read',
+        businessUnit: 'broiler',
       },
     ],
   },
@@ -135,10 +157,13 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.review',
     fallback: 'Centro de Revisión',
     section: 'review',
+    capability: 'PRODUCTIVE',
+    permission: 'review:read',
+    requiresUnits: true,
     children: [
-      { key: 'review_pending', icon: Clock, labelKey: 'nav.reviewPending', fallback: 'Pendientes', to: '/review', section: 'review' },
-      { key: 'review_approved', icon: CheckCircle, labelKey: 'nav.reviewApproved', fallback: 'Aprobados', to: '/review?status=approved', section: 'review' },
-      { key: 'review_returned', icon: Undo2, labelKey: 'nav.reviewReturned', fallback: 'Devueltos', to: '/review?status=returned', section: 'review' },
+      { key: 'review_pending', icon: Clock, labelKey: 'nav.reviewPending', fallback: 'Pendientes', to: '/review', section: 'review', capability: 'PRODUCTIVE', permission: 'review:read', requiresUnits: true },
+      { key: 'review_approved', icon: CheckCircle, labelKey: 'nav.reviewApproved', fallback: 'Aprobados', to: '/review?status=approved', section: 'review', capability: 'PRODUCTIVE', permission: 'review:read', requiresUnits: true },
+      { key: 'review_returned', icon: Undo2, labelKey: 'nav.reviewReturned', fallback: 'Devueltos', to: '/review?status=returned', section: 'review', capability: 'PRODUCTIVE', permission: 'review:read', requiresUnits: true },
     ],
   },
   {
@@ -148,6 +173,9 @@ export const NAV_ITEMS: NavItem[] = [
     fallback: 'Aprobaciones',
     to: '/approvals',
     section: 'review',
+    capability: 'PRODUCTIVE',
+    permission: 'approvals:approve',
+    requiresUnits: true,
   },
 
   // ===== INTEGRACIÓN =====
@@ -157,11 +185,13 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.sap',
     fallback: 'Integración SAP',
     section: 'integration',
+    capability: 'INTEGRATION',
+    permission: 'sap:read',
     children: [
-      { key: 'sap_pending', icon: Clock, labelKey: 'nav.sapPending', fallback: 'Documentos Pendientes', to: '/sap', section: 'integration' },
-      { key: 'sap_sent', icon: Send, labelKey: 'nav.sapSent', fallback: 'Envíos a SAP', to: '/sap', section: 'integration' },
-      { key: 'sap_errors', icon: AlertTriangle, labelKey: 'nav.sapErrors', fallback: 'Errores SAP', to: '/sap', section: 'integration' },
-      { key: 'sap_log', icon: FileText, labelKey: 'nav.sapLog', fallback: 'Bitácora SAP', to: '/sap', section: 'integration' },
+      { key: 'sap_pending', icon: Clock, labelKey: 'nav.sapPending', fallback: 'Documentos Pendientes', to: '/sap', section: 'integration', capability: 'INTEGRATION', permission: 'sap:read' },
+      { key: 'sap_sent', icon: Send, labelKey: 'nav.sapSent', fallback: 'Envíos a SAP', to: '/sap', section: 'integration', capability: 'INTEGRATION', permission: 'sap:read' },
+      { key: 'sap_errors', icon: AlertTriangle, labelKey: 'nav.sapErrors', fallback: 'Errores SAP', to: '/sap', section: 'integration', capability: 'INTEGRATION', permission: 'sap:read' },
+      { key: 'sap_log', icon: FileText, labelKey: 'nav.sapLog', fallback: 'Bitácora SAP', to: '/sap', section: 'integration', capability: 'INTEGRATION', permission: 'sap:read' },
     ],
   },
 
@@ -172,10 +202,13 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.reports',
     fallback: 'Reportes',
     section: 'reports',
+    capability: 'REPORTING',
+    permission: 'reports:read',
+    requiresUnits: true,
     children: [
-      { key: 'rpt_production', icon: Egg, labelKey: 'nav.rptProduction', fallback: 'Producción', to: '/reports', section: 'reports' },
-      { key: 'rpt_mortality', icon: BarChart3, labelKey: 'nav.rptMortality', fallback: 'Mortalidad', to: '/reports', section: 'reports' },
-      { key: 'rpt_sap', icon: RefreshCw, labelKey: 'nav.rptSap', fallback: 'Diferencias SAP vs App', to: '/reports/sap', section: 'reports' },
+      { key: 'rpt_production', icon: Egg, labelKey: 'nav.rptProduction', fallback: 'Producción', to: '/reports', section: 'reports', capability: 'REPORTING', permission: 'reports:read', requiresUnits: true },
+      { key: 'rpt_mortality', icon: BarChart3, labelKey: 'nav.rptMortality', fallback: 'Mortalidad', to: '/reports', section: 'reports', capability: 'REPORTING', permission: 'reports:read', requiresUnits: true },
+      { key: 'rpt_sap', icon: RefreshCw, labelKey: 'nav.rptSap', fallback: 'Diferencias SAP vs App', to: '/reports/sap', section: 'reports', capability: 'REPORTING', permission: 'reports:read', requiresUnits: true },
     ],
   },
 
@@ -187,6 +220,8 @@ export const NAV_ITEMS: NavItem[] = [
     fallback: 'Auditoría',
     to: '/audit',
     section: 'administration',
+    capability: 'CONTROL_PLANE',
+    permission: 'audit:read',
   },
   {
     key: 'masters',
@@ -195,6 +230,8 @@ export const NAV_ITEMS: NavItem[] = [
     fallback: 'Maestros',
     to: '/masters',
     section: 'administration',
+    capability: 'CONTROL_PLANE',
+    permission: 'masters:read',
   },
   {
     key: 'settings',
@@ -202,10 +239,12 @@ export const NAV_ITEMS: NavItem[] = [
     labelKey: 'nav.settings',
     fallback: 'Configuración',
     section: 'administration',
+    capability: 'CONTROL_PLANE',
     children: [
-      { key: 'settings_users', icon: Users, labelKey: 'nav.users', fallback: 'Usuarios y Roles', to: '/users', section: 'administration' },
-      { key: 'settings_profile', icon: UserCheck, labelKey: 'nav.profile', fallback: 'Mi Perfil', to: '/profile', section: 'administration' },
-      { key: 'settings_unit_access', icon: Shield, labelKey: 'nav.unitAccess', fallback: 'Acceso por unidad', to: '/admin/unit-access', section: 'administration', permission: 'business_units:read' },
+      { key: 'settings_users', icon: Users, labelKey: 'nav.users', fallback: 'Usuarios y Roles', to: '/users', section: 'administration', capability: 'CONTROL_PLANE', permission: 'users:read' },
+      { key: 'settings_roles', icon: UserCog, labelKey: 'nav.roles', fallback: 'Roles', to: '/roles', section: 'administration', capability: 'CONTROL_PLANE', permission: 'users:read' },
+      { key: 'settings_profile', icon: UserCheck, labelKey: 'nav.profile', fallback: 'Mi Perfil', to: '/profile', section: 'administration', capability: 'CORE' },
+      { key: 'settings_unit_access', icon: Shield, labelKey: 'nav.unitAccess', fallback: 'Acceso por unidad', to: '/admin/unit-access', section: 'administration', capability: 'CONTROL_PLANE', permission: 'business_units:read' },
     ],
   },
 ]
@@ -297,22 +336,4 @@ export function isAnyChildActive(pathname: string, item: NavItem): boolean {
     })
   }
   return false
-}
-
-/**
- * GA-FE-02 · Filtro MÍNIMO por permiso para la navegación.
- *
- * Solo se filtran las entradas que declaran `permission` (hoy, únicamente la de GA-FE-02).
- * El resto del menú no se toca: la navegación dinámica global sigue siendo `GA-FE-03`
- * (frontera `R-98`/`R-119` intacta).
- */
-export function filterNavItemsByPermissions(
-  items: NavItem[],
-  session: SessionLike | null | undefined,
-): NavItem[] {
-  return items
-    .map(item =>
-      item.children ? { ...item, children: filterNavItemsByPermissions(item.children, session) } : item,
-    )
-    .filter(item => !item.permission || hasPermission(session, item.permission))
 }

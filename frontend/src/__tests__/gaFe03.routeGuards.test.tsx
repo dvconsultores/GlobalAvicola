@@ -109,6 +109,17 @@ describe('GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del men�
     expect(forbidden()).not.toBeNull()
   })
 
+  it('D: /poultry (hub web) → denegada; C con broiler → permitida', () => {
+    setSession(['dashboard:read'], [], ['broiler'])
+    const first = renderAt('/poultry')
+    expect(forbidden()).not.toBeNull()
+    first.unmount()
+
+    setSession(['operations:read', 'lots:read'], ['broiler'], ['broiler'])
+    renderAt('/poultry')
+    expect(forbidden()).toBeNull()
+  })
+
   it('C con concesión solo de broiler: /poultry/breeder denegada por unidad; /poultry/broiler permitida', () => {
     setSession(['operations:read', 'lots:read'], ['broiler'], ['grandparent', 'breeder', 'hatchery', 'broiler'])
     const first = renderAt('/poultry/breeder')

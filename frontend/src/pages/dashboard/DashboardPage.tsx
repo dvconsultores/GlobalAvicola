@@ -11,6 +11,7 @@ import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
 import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
+import { stageVisibleForSession } from '../../auth/navigation'
 import { normalizeLanguage } from '../../i18n'
 
 // ── Alert severity styles ───────────────────────────────────────────────────
@@ -169,6 +170,11 @@ export default function DashboardPage() {
  stages: PROCESS_STAGES.filter(s => s.key === 'broiler'),
  },
  ]
+
+ // GA-FE-03 (§33): los atajos accionables del Dashboard obedecen la MISMA política que el menú.
+ const visibleGroups = birdTypeGroups.filter((group) =>
+ group.stages.some((s) => stageVisibleForSession(s.key, user)),
+ )
 
  return (
  <>
@@ -351,12 +357,13 @@ export default function DashboardPage() {
  </div>
  )}
 
+ {visibleGroups.length > 0 && (
  <div className="space-y-2">
  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
  {t('process.hub.title', 'Procesos')}
  </h2>
  <div className="space-y-2.5">
- {birdTypeGroups.map((group) => {
+ {visibleGroups.map((group) => {
  const hasSubPhases = group.stages.length > 1
  return (
  <div key={group.id} className="space-y-2">
@@ -425,6 +432,7 @@ export default function DashboardPage() {
  })}
  </div>
  </div>
+ )}
  </>
  )}
  </div>

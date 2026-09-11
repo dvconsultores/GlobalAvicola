@@ -96,8 +96,9 @@ describe('GA-FE-03 · canAccessCapability — dimensiones de autoridad', () => {
     expect(canAccessCapability({ permission: 'reports:read', requiresUnits: true }, SESSIONS.eBroilerOn)).toBe(true)
     expect(canAccessCapability({ permission: 'reports:read', requiresUnits: true }, SESSIONS.eAllOff)).toBe(false)
     expect(canAccessCapability({ permission: 'reports:read', requiresUnits: true }, SESSIONS.eNoCtx)).toBe(false)
+    const reviewer = { ...SESSIONS.cFull, permissions: [...SESSIONS.cFull.permissions, 'review:read'] }
     expect(canAccessCapability({ permission: 'review:read', requiresUnits: true }, SESSIONS.cNoGrant)).toBe(false)
-    expect(canAccessCapability({ permission: 'review:read', requiresUnits: true }, SESSIONS.cFull)).toBe(true)
+    expect(canAccessCapability({ permission: 'review:read', requiresUnits: true }, reviewer)).toBe(true)
   })
 
   it('el comodín global (is_super_admin) es la única vía de permiso global', () => {
@@ -129,7 +130,7 @@ describe('GA-FE-03 · filterNavItemsBySession — política sobre el árbol real
     expect(k).not.toContain('review')
     expect(k).not.toContain('approvals')
     expect(k).not.toContain('reports')
-    expect(k).not.toContain('users')
+    expect(k).not.toContain('settings_users')
     expect(findKey(filtered, 'settings')!.children!.map((c) => c.key)).toEqual(['settings_profile'])
   })
 
@@ -138,7 +139,7 @@ describe('GA-FE-03 · filterNavItemsBySession — política sobre el árbol real
     expect(k).not.toContain('poultry')
     expect(k).not.toContain('reports')
     expect(k).not.toContain('review')
-    expect(k).toContain('users')
+    expect(k).toContain('settings_users')
     expect(k).toContain('masters')
     expect(k).toContain('audit')
     expect(k).toContain('settings_unit_access')
@@ -164,20 +165,20 @@ describe('GA-FE-03 · filterNavItemsBySession — política sobre el árbol real
 
   it('D y B: sin superficies ajenas a su autoridad', () => {
     const kd = keys(filterNavItemsBySession(NAV_ITEMS, SESSIONS.dNoAuth))
-    expect(kd).not.toContain('users')
+    expect(kd).not.toContain('settings_users')
     expect(kd).not.toContain('audit')
     expect(kd).not.toContain('masters')
     expect(kd).not.toContain('sap')
     const kb = keys(filterNavItemsBySession(NAV_ITEMS, SESSIONS.bAccess))
     expect(kb).toContain('settings_unit_access')
-    expect(kb).not.toContain('users')
+    expect(kb).not.toContain('settings_users')
     expect(kb).not.toContain('poultry')
   })
 
   it('A: descubribilidad de su superficie y nada más', () => {
     const k = keys(filterNavItemsBySession(NAV_ITEMS, SESSIONS.aCbu))
     expect(k).toContain('settings_unit_access')
-    expect(k).not.toContain('users')
+    expect(k).not.toContain('settings_users')
     expect(k).not.toContain('poultry')
     expect(k).not.toContain('masters')
   })

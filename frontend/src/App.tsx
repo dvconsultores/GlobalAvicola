@@ -3,6 +3,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
 import { hasPermission } from './auth/permissions'
+import { canAccessCapability, PRODUCTIVE_UNITS } from './auth/navigation'
 import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
 import { normalizeLanguage } from './i18n'
 import { ToastProvider } from './components/Toast'
@@ -79,6 +80,31 @@ function PermissionRoute({ permission, children }: { permission: string; childre
  return <div role="alert" className="py-8 text-center text-sm font-medium text-slate-600">{t('admin.forbidden')}</div>
  }
  return <>{children}</>
+}
+
+/** GA-FE-03 · Guarda de ruta por CAPACIDAD — misma política que la navegación
+ * (`auth/navigation`): permiso canónico + unidad productiva. Independiente del estado del
+ * menú y del backend (que sigue denegando por su cuenta). Nunca por nombre de rol. */
+function CapabilityRoute({ permission, businessUnit, requiresUnits, children }: { permission?: string; businessUnit?: string; requiresUnits?: boolean; children: React.ReactNode }) {
+ const { t } = useTranslation()
+ const { user } = useAuthStore()
+ if (!canAccessCapability({ permission, businessUnit, requiresUnits }, user)) {
+ return <div role="alert" className="py-8 text-center text-sm font-medium text-slate-600">{t('admin.forbidden')}</div>
+ }
+ return <>{children}</>
+}
+
+/** `/poultry/:birdType/:phase?` — la URL NOMBRA la unidad: la guarda exige elegibilidad real
+ * (efectiva normal / habilitada global con contexto). Un `birdType` desconocido se delega a la
+ * página (que redirige), sin inventar unidad. */
+function PoultryStageRoute() {
+ const { birdType } = useParams<{ birdType?: string }>()
+ const bu = birdType && (PRODUCTIVE_UNITS as readonly string[]).includes(birdType) ? birdType : undefined
+ return (
+ <CapabilityRoute permission="operations:read" businessUnit={bu}>
+ <PoultryStagePage />
+ </CapabilityRoute>
+ )
 }
 
 function HomeRoute() {
@@ -191,7 +217,7 @@ export default function App() {
  {/* Menu hubs — grilla de opciones por área (capa de presentación) */}
  <Route path="/menu/:menuKey" element={<MenuHubPage />} />
  {/* Web-only: Masters */}
- <Route path="/masters" element={<WebOnlyRoute><Navigate to="/masters/farms" replace /></WebOnlyRoute>} />
+ <Route path="/masters" element={<WebOnlyRoute><CapabilityRoute permission="masters:read"><Navigate to="/masters/farms" replace /></CapabilityRoute></WebOnlyRoute>} />
  {/*
  `R-96` / `OD-06`. Las curvas de peso cuelgan de la línea genética: se llega a ellas
  desde su fila, no desde un módulo nuevo de primer nivel. La capacidad es lo que el
@@ -199,7 +225,7 @@ export default function App() {
  */}
  <Route
  path="/masters/genetic-lines/:id/weight-curves"
- element={<WebOnlyRoute><WeightCurvesPage /></WebOnlyRoute>}
+ element={<WebOnlyRoute><CapabilityRoute permission="masters:read"><WeightCurvesPage /></CapabilityRoute></WebOnlyRoute>}
  />
  {masterEntities.map((m) => (
  <Route
@@ -207,6 +233,7 @@ export default function App() {
  path={`/masters/${m.entity}`}
  element={
  <WebOnlyRoute>
+ <CapabilityRoute permission="masters:read">
  <MasterListPage
  entity={m.entity}
  titleKey={m.title}
@@ -217,39 +244,40 @@ export default function App() {
  onClick: (item: any) => navigate(`/masters/genetic-lines/${item.id}/weight-curves`),
  }] : undefined}
  />
+ </CapabilityRoute>
  </WebOnlyRoute>
  }
  />
  ))}
  {/* Shared: Poultry (new) + Processes (legacy redirects) */}
- <Route path="/poultry" element={<PoultryHubLegacyRoute><PoultryHubPage /></PoultryHubLegacyRoute>} />
- <Route path="/poultry/:birdType/:phase?" element={<PoultryStagePage />} />
+ <Route path="/poultry" element={<PoultryHubLegacyRoute><CapabilityRoute permission="operations:read" requiresUnits><PoultryHubPage /></CapabilityRoute></PoultryHubLegacyRoute>} />
+ <Route path="/poultry/:birdType/:phase?" element={<PoultryStageRoute />} />
  {/* Legacy redirects — keep for backward compatibility */}
  <Route path="/processes" element={<Navigate to="/menu/poultry" replace />} />
  <Route path="/processes/:stage" element={<ProcessStageRedirect />} />
  {/* Operations, Lots, Reports — accessible by both web and mobile */}
- <Route path="/operations" element={<OperationListPage />} />
+ <Route path="/operations" element={<CapabilityRoute permission="operations:read"><OperationListPage /></CapabilityRoute>} />
  <Route path="/operations/new" element={<OperationFormPage />} />
- <Route path="/operations/:id" element={<OperationDetailPage />} />
+ <Route path="/operations/:id" element={<CapabilityRoute permission="operations:read"><OperationDetailPage /></CapabilityRoute>} />
  <Route path="/my-pending" element={<MyPendingPage />} />
- <Route path="/lots" element={<LotListPage />} />
+ <Route path="/lots" element={<CapabilityRoute permission="lots:read"><LotListPage /></CapabilityRoute>} />
  <Route path="/lots/new" element={<WebOnlyRoute><LotFormPage /></WebOnlyRoute>} />
- <Route path="/lots/:id" element={<LotDetailPage />} />
+ <Route path="/lots/:id" element={<CapabilityRoute permission="lots:read"><LotDetailPage /></CapabilityRoute>} />
  <Route path="/admin/unit-access" element={<WebOnlyRoute><PermissionRoute permission="business_units:read"><UnitAccessPage /></PermissionRoute></WebOnlyRoute>} />
- <Route path="/reports" element={<ReportsPage />} />
- <Route path="/reports/lot/:id" element={<LotReportPage />} />
- <Route path="/reports/sap" element={<WebOnlyRoute><SapComparisonPage /></WebOnlyRoute>} />
+ <Route path="/reports" element={<CapabilityRoute permission="reports:read"><ReportsPage /></CapabilityRoute>} />
+ <Route path="/reports/lot/:id" element={<CapabilityRoute permission="reports:read"><LotReportPage /></CapabilityRoute>} />
+ <Route path="/reports/sap" element={<WebOnlyRoute><CapabilityRoute permission="reports:read"><SapComparisonPage /></CapabilityRoute></WebOnlyRoute>} />
  {/* Web-only: Review, Approvals, Audit, SAP, Users */}
- <Route path="/review" element={<WebOnlyRoute><ReviewCenter /></WebOnlyRoute>} />
- <Route path="/review/:id" element={<WebOnlyRoute><ReviewDetail /></WebOnlyRoute>} />
- <Route path="/review/:id/correct" element={<WebOnlyRoute><CorrectionForm /></WebOnlyRoute>} />
- <Route path="/approvals" element={<WebOnlyRoute><ApprovalPanel /></WebOnlyRoute>} />
- <Route path="/audit" element={<WebOnlyRoute><AuditPage /></WebOnlyRoute>} />
- <Route path="/sap" element={<WebOnlyRoute><SapManagerPage /></WebOnlyRoute>} />
- <Route path="/users" element={<WebOnlyRoute><UsersPage /></WebOnlyRoute>} />
+ <Route path="/review" element={<WebOnlyRoute><CapabilityRoute permission="review:read"><ReviewCenter /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/review/:id" element={<WebOnlyRoute><CapabilityRoute permission="review:read"><ReviewDetail /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/review/:id/correct" element={<WebOnlyRoute><CapabilityRoute permission="review:read"><CorrectionForm /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/approvals" element={<WebOnlyRoute><CapabilityRoute permission="approvals:approve"><ApprovalPanel /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/audit" element={<WebOnlyRoute><CapabilityRoute permission="audit:read"><AuditPage /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/sap" element={<WebOnlyRoute><CapabilityRoute permission="sap:read"><SapManagerPage /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/users" element={<WebOnlyRoute><CapabilityRoute permission="users:read"><UsersPage /></CapabilityRoute></WebOnlyRoute>} />
  {/* `GA-REM-034 AC04` / `R-92`. `docs/02 §3.1.3` exige administrar roles con permisos
  granulares y no había ninguna superficie: ni ruta ni componente. */}
- <Route path="/roles" element={<WebOnlyRoute><RolesPage /></WebOnlyRoute>} />
+ <Route path="/roles" element={<WebOnlyRoute><CapabilityRoute permission="users:read"><RolesPage /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/profile" element={<ProfilePage />} />
  <Route path="*" element={<Navigate to="/" replace />} />
  </Route>

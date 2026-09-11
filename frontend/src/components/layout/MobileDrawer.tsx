@@ -8,7 +8,8 @@ import { useTranslation } from 'react-i18next'
 import { useAuthStore } from '../../stores/auth.store'
 import { normalizeLanguage, nextLanguage } from '../../i18n'
 import { X, Globe, LogOut, ArrowLeft, Bird, Sprout, Home, ShieldCheck, RefreshCw, BarChart3, Database, Settings, Users, ClipboardList, CheckCircle } from 'lucide-react'
-import { getNavItemsForViewType, getNavSectionsForItems, filterNavItemsByPermissions, type NavItem } from '../../data/navigationConfig'
+import { getNavItemsForViewType, getNavSectionsForItems, type NavItem } from '../../data/navigationConfig'
+import { filterNavItemsBySession } from '../../auth/navigation'
 
 interface MobileDrawerProps { open: boolean; onClose: () => void }
 
@@ -43,7 +44,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  const closeRef = useRef<HTMLButtonElement>(null)
  const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
- const navItems = useMemo(() => filterNavItemsByPermissions(getNavItemsForViewType(user?.view_type), user), [user])
+ const navItems = useMemo(() => filterNavItemsBySession(getNavItemsForViewType(user?.view_type), user), [user])
  const navSections = useMemo(
  () => getNavSectionsForItems(navItems).filter((s) => s.key !== 'main'),
  [navItems],
