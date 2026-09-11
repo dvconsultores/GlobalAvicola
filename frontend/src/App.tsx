@@ -89,7 +89,7 @@ function CapabilityRoute({ permission, businessUnit, requiresUnits, children }: 
  const { t } = useTranslation()
  const { user } = useAuthStore()
  if (!canAccessCapability({ permission, businessUnit, requiresUnits }, user)) {
- return <div role="alert" className="py-8 text-center text-sm font-medium text-slate-600">{t('admin.forbidden')}</div>
+ return <div role="alert" className="py-8 text-center text-sm font-medium text-slate-600">{t('common.noPermission')}</div>
  }
  return <>{children}</>
 }

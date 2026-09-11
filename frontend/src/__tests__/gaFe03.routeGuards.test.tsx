@@ -71,7 +71,8 @@ function renderAt(path: string) {
   return render(<MemoryRouter initialEntries={[path]}><App /></MemoryRouter>)
 }
 
-const forbidden = () => screen.queryByText('admin.forbidden')
+const forbidden = () => screen.queryByText('common.noPermission')
+const unitAccessForbidden = () => screen.queryByText('admin.forbidden')
 
 beforeEach(() => {
   useAuthStore.setState({ user: null, isAuthenticated: false, isLoading: false, token: null })
@@ -145,6 +146,6 @@ describe('GA-FE-03 Â· guardas de ruta (fail-closed visual, sin depender del menÃ
   it('control verde existente: /admin/unit-access ya deniega para D (referencia)', () => {
     setSession(['dashboard:read'], [], [])
     renderAt('/admin/unit-access')
-    expect(forbidden()).not.toBeNull()
+    expect(unitAccessForbidden()).not.toBeNull()
   })
 })

@@ -12,6 +12,7 @@
     "next": "Next",
     "loading": "Loading...",
     "noResults": "No results",
+    "noPermission": "You don't have permission to view this section.",
     "confirm": "Confirm",
     "actions": "Actions",
     "yes": "Yes",
