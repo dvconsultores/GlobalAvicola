@@ -1861,3 +1861,25 @@ INTOCADO      R-182 CLOSED_OWNER_ACCEPTED · R-184 SEPARATE_OPEN · OBS-UAT-01 U
 - **GA-GOV-01 §OBS-UAT-04** (`OWNER_DECISION_REQUIRED`): **RESUELTA** por OD-21 e implementada aquí.
 - Owner UAT corta de GA-FE-07: **EJECUTADA** (GA-UAT-05, 2026-09-11) → **A) ACEPTO GA-FE-07** (registro: `audit/ga-uat-05/GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`).
 - Estado final: R-185 = `CLOSED_OWNER_ACCEPTED` · OD-21 = `RATIFIED_IMPLEMENTED_OWNER_ACCEPTED`. Sin tranches nuevas iniciadas.
+
+## R-184 · CLOSED — KPI/IPE: SEMÁNTICA TEMPORAL + HTTP 500 (2026-09-11)
+
+```
+FINDING       R-184 (P2, era «N-2 candidato» de GA-FE-06) — CLOSED (técnico)
+SÍNTOMA       GET /reports/kpi/ipe/{lot} → 500 en todo lote con start_date
+CAUSA RAÍZ    get_kpi_ipe: date.today() − lot.start_date (date − datetime aware,
+              columna DateTime(timezone=True)) ⇒ TypeError  (probado, no supuesto)
+FIX           age_days normalizado con _dia() (R-75 / GA-REM-028) — C2 3f88f94
+              (1 archivo, +6/−1; fórmula, redondeo y contrato INTACTOS; backend-only)
+EVIDENCIA     runtime E2E-01…12 = 14/14 (valores independientes exactos: 556.6 y 37894.7)
+              · UI tarjeta IPE visible desktop/móvil · seguridad 404/403/OD-16 PASS
+GATES         Vitest 280/280 · tsc PASS · build PASS · backend canónico 7 passed ·
+              suite nueva PG/CI (skip local declarado)
+REGISTROS     R-186 (candidato): /reports/kpis/production-index → 500 misma clase
+              (SEPARATE_OPEN, no implementado por regla de alcance)
+              OBS negocio: posible ×100 de escala vs bandas «reference»
+              (OWNER_DECISION_REQUIRED futuro; no bloquea)
+UAT           OWNER_UAT_REQUIRED = YES (tarjeta visible) — READY, pendiente de convocatoria
+INTOCADO      R-181/R-182/R-185/OD-21 sin cambio · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED
+```

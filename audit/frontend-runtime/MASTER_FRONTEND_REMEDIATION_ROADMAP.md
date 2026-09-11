@@ -151,4 +151,15 @@ GA-FE-07 (elegibilidad de referencias nuevas por estado) → CLOSED / CERTIFIED
      decisión A) ACEPTO GA-FE-07 → R-185 CLOSED_OWNER_ACCEPTED · OD-21 RATIFIED.
 ```
 
+## Addendum fechado · 2026-09-11 · R-184 (KPI/IPE — semántica temporal + 500)
+
+```
+R-184 (SEMÁNTICA TEMPORAL DEL IPE) → CLOSED (técnico)
+     Causa raíz: date − datetime en get_kpi_ipe ⇒ 500 en todo lote con start_date.
+     Fix: _dia() canónico en age_days (C2 3f88f94; backend-only; fórmula intacta).
+     Runtime E2E-01…12 14/14 · UI tarjeta IPE 556.6 visible (desktop/móvil).
+     Candidatos registrados sin implementar: R-186 (production-index misma clase) ·
+     observación de escala fórmula-vs-bandas. Owner UAT REQUIRED y READY (tarjeta visible).
+```
+
 Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R; R-184 SEPARATE_OPEN.

@@ -1,0 +1,189 @@
+{
+  "baseline": {
+    "head": "3f88f94",
+    "frontend": "index-BUthrUt9.js",
+    "backend_fix": "3f88f94"
+  },
+  "captured": "2026-09-11",
+  "cases": {
+    "E2E-01_ipe35_antes_500": {
+      "status": 200,
+      "body": {
+        "lot_id": 35,
+        "viabilidad_pct": 100.0,
+        "avg_weight_g": 0.0,
+        "ganancia_diaria_g": 0.0,
+        "age_days": 1,
+        "fcr": 0.0,
+        "ipe": 0.0,
+        "reference": {
+          "excellent": ">300",
+          "good": "250-300",
+          "average": "200-250"
+        }
+      }
+    },
+    "E2E-01b_ipe33_antes_500": {
+      "status": 200,
+      "body": {
+        "lot_id": 33,
+        "viabilidad_pct": 100.0,
+        "avg_weight_g": 0.0,
+        "ganancia_diaria_g": 0.0,
+        "age_days": 1,
+        "fcr": 0.0,
+        "ipe": 0.0,
+        "reference": {
+          "excellent": ">300",
+          "good": "250-300",
+          "average": "200-250"
+        }
+      }
+    },
+    "E2E-02_ipe11": {
+      "status": 200,
+      "body": {
+        "lot_id": 11,
+        "viabilidad_pct": 100.0,
+        "avg_weight_g": 1500.0,
+        "ganancia_diaria_g": 13.64,
+        "age_days": 110,
+        "fcr": 24.5,
+        "ipe": 556.6,
+        "reference": {
+          "excellent": ">300",
+          "good": "250-300",
+          "average": "200-250"
+        }
+      },
+      "esperado": {
+        "pesos_n": 17,
+        "avg": 1500.0,
+        "age": 110,
+        "viabilidad": 100.0,
+        "fcr": 24.5,
+        "ganancia": 13.64,
+        "ipe": 556.6
+      },
+      "coincide": true,
+      "esperado_nota": "calculado desde datos crudos: kpis + bird_movements (detalle) + start_date"
+    },
+    "E2E-02b_estable": {
+      "status": 200,
+      "body": {
+        "igual": true
+      }
+    },
+    "E2E-03_fechas": {
+      "status": 200,
+      "body": {
+        "lot11_start": "2026-05-24",
+        "lot11_age_esperado": 110,
+        "lot11_age_actual": 110
+      },
+      "sin_off_by_one": true
+    },
+    "E2E-04_abierto": {
+      "status": 200,
+      "body": {
+        "lot11_status": "active",
+        "ipe_200": true
+      }
+    },
+    "E2E-05_cerrado": {
+      "status": 200,
+      "body": {
+        "status_lote": "closed",
+        "ipe_actual": {
+          "lot_id": 53,
+          "viabilidad_pct": 100.0,
+          "avg_weight_g": 1800.0,
+          "ganancia_diaria_g": 94.74,
+          "age_days": 19,
+          "fcr": 2.5,
+          "ipe": 37894.7,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        },
+        "ipe_esperado": 0.0
+      },
+      "coincide": true,
+      "esperado": {
+        "pesos_n": 1,
+        "avg": 1800.0,
+        "age": 19,
+        "viabilidad": 100.0,
+        "fcr": 2.5,
+        "ganancia": 94.74,
+        "ipe": 37894.7
+      }
+    },
+    "E2E-06_sin_datos": {
+      "status": 200,
+      "body": {
+        "lot_id": 35,
+        "viabilidad_pct": 100.0,
+        "avg_weight_g": 0.0,
+        "ganancia_diaria_g": 0.0,
+        "age_days": 1,
+        "fcr": 0.0,
+        "ipe": 0.0,
+        "reference": {
+          "excellent": ">300",
+          "good": "250-300",
+          "average": "200-250"
+        }
+      },
+      "controlado": true
+    },
+    "E2E-07_cero": {
+      "status": 200,
+      "body": {},
+      "sin_division_cero": true
+    },
+    "E2E-08_inexistente": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      }
+    },
+    "E2E-09_ajeno": {
+      "status": 404,
+      "body": {
+        "empresa_ajena": 3,
+        "lote_ajeno_id": 14,
+        "respuesta": {
+          "detail": "Lote no encontrado"
+        }
+      }
+    },
+    "E2E-10_bu_off": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      },
+      "restaurado_200": true
+    },
+    "E2E-11_sin_concesion": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      }
+    },
+    "E2E-12_sin_rbac": {
+      "status": 403,
+      "body": {
+        "detail": "Permiso requerido: reports:read"
+      }
+    }
+  },
+  "network_sample": {
+    "Content-Type": "application/json",
+    "Content-Length": "192",
+    "Server": "openresty",
+    "Date": "Fri, 11 Sep 2026 16:23:31 GMT"
+  }
+}

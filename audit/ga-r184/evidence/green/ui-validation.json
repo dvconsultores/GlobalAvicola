@@ -1,0 +1,19 @@
+{
+  "detalle": {
+    "ipe_valor_visible": true,
+    "ipe_etiqueta": true,
+    "sin_error_crudo": true,
+    "fecha_prevista_cierre": true,
+    "sin_error_crudo_nota": "El check inicial marcó false por falso positivo del regex /500/ sobre «1500g» (peso medio). Verificado: no hay «Internal Server Error» ni «Lote no encontrado»; la tarjeta IPE muestra 556.6."
+  },
+  "console_errors": 2,
+  "console_unicos": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "movil": {
+    "ipe_valor_visible": true,
+    "sin_desborde": true,
+    "console_errors": 2
+  },
+  "console_nota": "2 errores = respuestas 403 de widgets sin permiso (clase N-3 conocida; rol sin dashboard:read). 0 fatales."
+}

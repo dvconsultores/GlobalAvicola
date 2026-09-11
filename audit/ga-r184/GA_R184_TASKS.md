@@ -13,3 +13,7 @@
 | T9 | R-184 | §18-19 | — | commits C2/C4 | — | deploy+E2E | T4-T6 | ○ |
 | T10 | R-184 | §20-21 | — | cierre+certificación+UAT ready | — | — | T9 | ○ |
 | T11 | (R-186) | reconciliación §7 | — | registro backlog | — | `prodindex35`=500 | — | Registrado (no implementado) |
+
+## Estado final (2026-09-11)
+
+T1–T8: **✔ COMPLETADAS** (T7/T8 con evidencia runtime + documental; T4–T6 con suite PG/CI + batería runtime ejecutada). T9: **✔** (C2 `3f88f94` desplegado; E2E 14/14; C4 de evidencia en este commit). T10: **✔** (cierre + certificación redactados; Owner UAT **READY**, sin convocar). T11: **Registrado** como candidato separado (sin implementación, por regla de alcance).

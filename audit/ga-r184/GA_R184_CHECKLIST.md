@@ -2,6 +2,8 @@
 
 Sin AC huérfano. Tarea = `GA_R184_TASKS.md`. Suite = `backend/tests/test_r184_ipe_date_semantics.py`. Runtime = `GA_R184_AUTHENTICATED_RUNTIME_EVIDENCE.md`.
 
+> **ESTADO FINAL (2026-09-11): TODOS los AC = ✔ PASS.** La columna «Estado» de la tabla se congeló en la fase de escritura (RED); el resultado final por AC vive en `GA_R184_CLOSURE_RECONCILIATION.md` y en cada documento de evidencia (§2 §1 de `GA_R184_AUTHENTICATED_RUNTIME_EVIDENCE.md` para la batería 14/14; `GA_R184_BACKEND_EVIDENCE.md` para gates/suite).
+
 | AC | Tarea | Prueba | Evidencia runtime | Estado |
 |---|---|---|---|---|
 | R184-AC01 500 exacto reproducido | T1 | RED runtime (ya capturado) | `evidence/red/runtime-red.json` | ✔ |
