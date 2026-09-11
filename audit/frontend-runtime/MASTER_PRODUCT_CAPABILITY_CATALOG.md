@@ -305,3 +305,6 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   control sin Lotes; deep link intacto).
 - Frontend-only (2 archivos) · backend 0 · sin rutas/permisos/migración nuevos · 292/292 ·
   E2E-01…10 PASS. Detalle: `audit/ga-fe-08/`. C1 `4ba33f6` · C2 `a946cec` · C3 cierre.
+- **ACEPTADA por el propietario (2026-09-11): A) ACEPTO GA-FE-08 / OBS-UAT-01 —
+  OBS-UAT-01 = RESOLVED_OWNER_ACCEPTED · GA-FE-08 = FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTED ·
+  OWNER_ACCEPTANCE PASS** (registro `GA_OWNER_ACCEPTANCE_FE08_RECORD.md`; C4 decisión).

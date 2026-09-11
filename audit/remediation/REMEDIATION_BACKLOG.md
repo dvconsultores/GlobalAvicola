@@ -2093,8 +2093,10 @@ RUNTIME       index-DtzHNDMG.js · E2E-01…10 PASS (C01-C09): autorizado descub
 LIMPIEZA      4×OFF restaurada · usuarios 148-153 baja lógica · roles 94-97 off ·
               credenciales/temporales destruidos · login post-baja 403
 REGISTRO      audit/ga-fe-08/ (16 artefactos + evidence) · C1 4ba33f6 · C2 a946cec · C3 cierre
-ESTADO        OBS-UAT-01 = RESOLVED (técnico) · GA-FE-08 = FUNCTIONALLY_CERTIFIED ·
-              OWNER UAT REQUIRED/READY — acceptance PENDING (no auto-aprobada)
+ESTADO        OBS-UAT-01 = RESOLVED_OWNER_ACCEPTED · GA-FE-08 =
+              FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS
+              (decisión A «ACEPTO GA-FE-08 / OBS-UAT-01», 2026-09-11; registro
+              GA_OWNER_ACCEPTANCE_FE08_RECORD.md; C4 este cierre)
 INTOCADO      OD-16/OD-09.e · GA-FE-02..07 · R-181..188/OD-21/22/23 · BU-D10 · Wave B PAUSED ·
               Wave C/SAP NOT STARTED
 ```

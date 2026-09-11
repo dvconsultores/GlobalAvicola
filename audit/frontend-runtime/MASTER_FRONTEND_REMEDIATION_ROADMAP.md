@@ -276,3 +276,14 @@ OBS-UAT-01 → RESOLVED · GA-FE-08 → FUNCTIONALLY_CERTIFIED (OWNER UAT READY)
 Intactos: OD-16/OD-09.e · GA-FE-02..07 · R-181..188 · OD-21/22/23 · BU-D10 ·
      Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · GA-FE-08 aceptada por el propietario
+
+```
+OBS-UAT-01 → RESOLVED_OWNER_ACCEPTED · GA-FE-08 → FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTED
+     Decisión A) «ACEPTO GA-FE-08 / OBS-UAT-01» (UAT 5/5 PASS; sin observaciones).
+     Sin cambios de producto en la aceptación; limpieza verificada (BU 4×OFF).
+     Registro: audit/ga-fe-08/GA_OWNER_ACCEPTANCE_FE08_RECORD.md · C4 este cierre.
+Intactos: OD-16/OD-09.e · GA-FE-02..08 · R-181..188 · OD-21/22/23 · BU-D10 ·
+     Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

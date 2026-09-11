@@ -26,7 +26,7 @@ Fecha: 2026-09-11 · Baseline `30fe3dc` → C1 `4ba33f6` → C2 `a946cec` → C3
 ## 3 · Clasificación y cierre
 
 - Clase determinada: **MISSING_NAV_CONFIGURATION** (no FRAMEWORK_DEFECT; no ALREADY_RESOLVED).
-- **OBS-UAT-01: RESOLVED** (técnico). **GA-FE-08: FUNCTIONALLY_CERTIFIED**.
-- Owner UAT: **REQUIRED / READY** (cambio visible) — aceptación **PENDING** (no auto-aprobada).
+- **OBS-UAT-01: RESOLVED_OWNER_ACCEPTED** · **GA-FE-08: FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTED**.
+- Owner UAT: **REQUIRED / EJECUTADA** — decisión **A) ACEPTO GA-FE-08 / OBS-UAT-01** (2026-09-11; registro `GA_OWNER_ACCEPTANCE_FE08_RECORD.md`); OWNER_ACCEPTANCE **PASS** (no auto-aprobada).
 - No reabiertos: GA-FE-03 · R-119 · GA-FE-04 · R-98 · ningún R nuevo.
 - Wave B: PAUSED · Wave C/SAP: NOT_STARTED.

@@ -4,10 +4,10 @@ Fecha: 2026-09-11 · Commits: C1 `4ba33f6` · C2 `a946cec` · C3 (este cierre) �
 
 ```
 OBS-UAT-01:
-RESOLVED
+RESOLVED_OWNER_ACCEPTED
 
 GA-FE-08:
-FUNCTIONALLY_CERTIFIED
+FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTED
 
 Clasificación de la brecha:
 MISSING_NAV_CONFIGURATION
@@ -19,7 +19,8 @@ OWNER_UAT_READY:
 YES        (guía GA_OWNER_UAT_FE08_GUIDE.md; 5 casos)
 
 Owner acceptance:
-PENDING    (no se auto-aprueba)
+PASS       (A) ACEPTO GA-FE-08 / OBS-UAT-01 — 2026-09-11;
+           registro: GA_OWNER_ACCEPTANCE_FE08_RECORD.md)
 
 Generación:
 index-DtzHNDMG.js (health 200)

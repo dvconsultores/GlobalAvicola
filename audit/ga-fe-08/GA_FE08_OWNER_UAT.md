@@ -2,6 +2,8 @@
 
 Estado: **READY** — la UAT no se auto-aprueba; aceptación **PENDING** hasta respuesta explícita.
 
+**Cierre: EJECUTADA — decisión A) ACEPTO GA-FE-08 / OBS-UAT-01 (2026-09-11; registro `GA_OWNER_ACCEPTANCE_FE08_RECORD.md`) · OWNER_ACCEPTANCE PASS.**
+
 ## Casos (resultado esperado)
 
 | UAT ID | Caso | Resultado de ingeniería |
