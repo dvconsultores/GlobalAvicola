@@ -7,6 +7,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..lots.models import LotPhase, OpeningBalance
+from ..lots.service import _dia
 from ..masters.models import Lot
 from ..operations.models import BirdMovement, EggMovement, EventStatus, EventType, FeedMovement, OperationalEvent
 
@@ -644,7 +645,11 @@ class ReportsService:
             select(Lot).where(Lot.id == lot_id, Lot.company_id == self.company_id)
         )
         lot = lot_result.scalar_one_or_none()
-        age_days = (date.today() - lot.start_date).days if lot and lot.start_date else 30
+        # `R-184` · `R-75` / `GA-REM-028`: `Lot.start_date` es `DateTime(timezone=True)`
+        # y la edad del IPE es un día de calendario. Sin normalizar, `date − datetime`
+        # elevaba `TypeError` ⇒ HTTP 500 en todo lote con inicio declarado (todo alta
+        # fija). Se reutiliza la normalización canónica del día de negocio.
+        age_days = (date.today() - _dia(lot.start_date)).days if lot and lot.start_date else 30
         if age_days <= 0:
             age_days = 1
 
