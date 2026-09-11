@@ -128,12 +128,12 @@ async def deshabilitar_unidad(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission(MODULO, "update")),
 ):
-    """Deshabilita la unidad para la empresa efectiva. `AC-A03` · `AC-A04`.
+    """Deshabilita la unidad para la empresa efectiva. `AC-A03` · `OD-23` (`R-188`).
 
-    Las concesiones **no se borran**: dejan de ser efectivas y siguen escritas, y rehabilitar
-    las devuelve (`AC-A06`). `BU-D10` —qué pasa con el histórico cuando una línea se cierra de
-    verdad— sigue pendiente de ratificación, y esta ruta la deja pendiente: no destruye nada
-    que una respuesta futura pudiera necesitar.
+    Las concesiones vivas **se terminan**: quedan marcadas (`revoked_at`, con auditoría
+    individual y causa declarada) y **no se borran**. Rehabilitar **no** las devuelve — cada
+    usuario requiere una concesión nueva y explícita (`OD-23` = B). La historia queda
+    completa.
     """
     try:
         return await admin.fijar_habilitacion(
