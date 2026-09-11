@@ -64,7 +64,14 @@ describe('GA-FE-02 · navegación admin mínima', () => {
     expect(keys).not.toContain('users')
     expect(keys).not.toContain('audit')
     expect(keys).not.toContain('sap')
-    expect(keys).not.toContain('poultry')
+    // GA-FE-08: con `lots:read` + unidad efectiva, la única superficie productiva descubrible
+    // es «Lotes» (entrada nueva bajo Gestión Avícola); las demás unidades siguen ocultas.
+    expect(keys).toContain('poultry')
+    expect(keys).not.toContain('grandparent')
+    expect(keys).not.toContain('breeder')
+    expect(keys).not.toContain('hatchery')
+    expect(keys).not.toContain('broiler')
+    expect(flatten(filtered).some((i) => i.key === 'lots' && i.to === '/lots')).toBe(true)
     expect(keys).toContain('settings_profile')
   })
 })

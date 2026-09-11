@@ -13,6 +13,7 @@ import {
   Database, Settings, Users, Clock, Undo2,
   Send, AlertTriangle, BarChart3, UserCheck, FileText, UserCog,
   Sprout,
+  Layers,
   type LucideIcon,
 } from 'lucide-react'
 import type { NavCapability } from '../auth/navigation'
@@ -97,6 +98,17 @@ export const NAV_ITEMS: NavItem[] = [
     capability: 'PRODUCTIVE',
     requiresUnits: true,
     children: [
+      {
+        key: 'lots',
+        icon: Layers,
+        labelKey: 'nav.lots',
+        fallback: 'Lotes',
+        to: '/lots',
+        section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'lots:read',
+        requiresUnits: true,
+      },
       {
         key: 'grandparent',
         icon: Plane,
