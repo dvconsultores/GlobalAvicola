@@ -135,3 +135,19 @@ R-184                                       → SEPARATE_OPEN (sin relación)
 
 Candidato natural para la próxima iteración de navegación: entrada de «Lotes» + filtro
 de selección por estado (sujeto a la decisión del propietario sobre OBS-UAT-04).
+
+---
+
+## Addendum fechado · 2026-09-11 · GA-FE-07 (OD-21 · R-185 · elegibilidad por estado)
+
+```
+GA-FE-07 (elegibilidad de referencias nuevas por estado) → CLOSED / CERTIFIED
+     Decisión OD-21 («Option C»): inactivo (baja lógica) NO sirve para referencias nuevas;
+     la historia se conserva. Implementación Área→Lote: alta/edición DENY con inactiva
+     («Área inactiva», BR-07), detección de cambio H1–H5, selector transaccional solo
+     activas, administración intacta. R-185 CERRADO (técnico).
+     Commits C1 511c419 · C2 5a5bb3f · generación index-BUthrUt9.js / backend 5a5bb3f.
+     GA-GOV-01 OBS-UAT-04: RESUELTA. Owner UAT corta pendiente de convocatoria.
+```
+
+Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R; R-184 SEPARATE_OPEN.

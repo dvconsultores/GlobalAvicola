@@ -90,3 +90,11 @@ Regla de la tranche: **implementación autorizada = NO** para todos los ítems (
 | R-184 | SEPARATE_OPEN | P2 (existente) | Ya existe | No | NO |
 
 **Implementación autorizada global: NO — en todas las filas.**
+
+---
+
+# ADDENDUM (2026-09-11) — OBS-UAT-04 RESUELTA
+
+El propietario eligió **Opción C** en GA-FE-07 → registrada como **OD-21** y desarrollada en la
+tranche **GA-FE-07** (finding **R-185**, CLOSED técnico; evidencias en `audit/ga-fe-07/`).
+Disposición final: `OWNER_DECISION_REQUIRED → RESOLVED_BY_OD-21_AND_GA_FE_07`.

@@ -1,0 +1,114 @@
+{
+  "tranche": "GA-FE-07",
+  "when": "2026-09-11T15:50:19.944Z",
+  "suffix": "155019ujgc",
+  "generation": {
+    "frontend": "index-BUthrUt9.js",
+    "backend": "5a5bb3f"
+  },
+  "steps": {
+    "fixtures": {
+      "A2": 11,
+      "H_inactive": 12,
+      "hist_lot": 48
+    },
+    "e2e01_active_create": {
+      "http": 201,
+      "id": 49,
+      "area": 11,
+      "pld": "2026-11-11T00:00:00Z"
+    },
+    "e2e03_inactive_create": {
+      "http": 400,
+      "detail": "Área inactiva",
+      "rule": "BR-07",
+      "persisted": 0
+    },
+    "e2e04_update_to_inactive": {
+      "http": 400,
+      "detail": "Área inactiva",
+      "fresh_area": 11
+    },
+    "e2e05_06_historical": {
+      "readable_area": 12,
+      "update_http": 200,
+      "after_area": 12
+    },
+    "e2e09_same_id": {
+      "http": 200,
+      "area": 12
+    },
+    "e2e08_inactive_to_inactive": {
+      "http": 400,
+      "detail": "Área inactiva",
+      "fresh_area": 12
+    },
+    "e2e07_hist_to_active": {
+      "http": 200,
+      "area": 11
+    },
+    "e2e10_foreign_create": {
+      "http": 400,
+      "detail": "Área no encontrado"
+    },
+    "e2e10_foreign_update": {
+      "http": 400,
+      "detail": "Área no encontrado",
+      "fresh_area": 11
+    },
+    "e2e11_null": {
+      "http": 201,
+      "area": null
+    },
+    "audit": {
+      "act": 1,
+      "inact": 0
+    },
+    "masters_admin": {
+      "total": 10,
+      "h_visible_inactive": true
+    },
+    "bu_off": {
+      "http": 403,
+      "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+    },
+    "global_bu_off": {
+      "http": 403,
+      "detail": "sin empresa efectiva con unidades de negocio habilitadas"
+    },
+    "user_bu_no": {
+      "http": 403,
+      "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+    },
+    "rbac_no": {
+      "http": 403,
+      "detail": "Permiso requerido: lots:create"
+    },
+    "e2e02_selector_desktop": {
+      "options": [
+        "Seleccionar área...",
+        "Nave Activa GA-FE-07",
+        "Nave Activa 155019ujgc",
+        "Nave Carrera 155019ujgc"
+      ],
+      "activa_presente": true,
+      "hist_ausente": true,
+      "retirada_ausente": true,
+      "sin_ids_crudos": true
+    },
+    "e2e12_race": {
+      "http": 400,
+      "detail": "Área inactiva",
+      "error_visible": true,
+      "persisted": 0
+    },
+    "console_desktop": 1,
+    "console_sample": [
+      "Failed to load resource: the server responded with a status of 400 (Bad Request)"
+    ],
+    "mobile_selector": {
+      "activa_presente": true,
+      "inactivas_ausentes": true
+    }
+  }
+}

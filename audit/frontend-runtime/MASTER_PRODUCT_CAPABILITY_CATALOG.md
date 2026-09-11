@@ -224,3 +224,13 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   con default neutro B en `audit/ga-gov-01/`.
 - GA-FE-02..06 y R-98/R-119/R-181/R-182: **preservados** (sin reapertura). R-184:
   SEPARATE_OPEN sin relación con las observaciones.
+
+## Addendum GA-FE-07 (2026-09-11) · `index-BUthrUt9.js` / backend `5a5bb3f`
+
+- **OD-21** (elección del propietario «Option C»): un maestro dado de baja lógica no sirve
+  para **referencias nuevas**; la historia se conserva. Implementación Área→Lote (R-185):
+  alta/edición DENY con inactiva («Área inactiva», BR-07), **detección de cambio** en edición
+  (H1–H5), selector transaccional solo activas, administración de maestros intacta.
+- `CAP-OPS-10 (Lotes)`: contrato de alta/edición ampliado (elegibilidad por estado, sin
+  migración/permisos/endpoints). **R-185 CLOSED** (técnico; UAT corta pendiente).
+  OBS-UAT-04 (GA-GOV-01): **RESUELTA**. R-182/R-184/OBS-UAT-01/BU-D10: sin cambio.

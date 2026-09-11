@@ -1824,3 +1824,39 @@ INFORME      audit/ga-gov-01/GA_GOV_01_FINAL_GOVERNANCE_REPORT.md
 
 INTOCADO: GA-FE-02..06 OWNER_ACCEPTED · R-98/R-119/R-181/R-182 (sin reapertura) ·
 BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED · implementación NINGUNA.
+
+---
+
+## GA-FE-07 · R-185 CERRADO — ELEGIBILIDAD DE REFERENCIAS POR ESTADO (2026-09-11) — `OD-21`
+
+```
+DECISIÓN      OD-21 («Option C — Domain Rule Complete», elección explícita del propietario):
+              UN RECURSO DADO DE BAJA LÓGICA NO PUEDE USARSE PARA NUEVAS REFERENCIAS.
+              La desactivación lógica no borra ni invalida la historia. Implementación
+              limitada a Área→Lote (principio general documentado, sin remediación masiva).
+FINDING       R-185 (P2, integridad funcional de dominio) — dedup contra R-171/R-179/R-182/
+              R-98/R-119: sin dueño previo → creado y CERRADO técnicamente.
+ENTREGA       Alta y edición de lote exigen área ACTIVA para referencias nuevas
+              (`verificar_catalogo_de_empresa` extendido con `exigir_activo`, default intacto);
+              detección de cambio real en edición (H1–H5: omitir/mismo-id/null ⇒ sin regla
+              nueva; cambiar ⇒ referencia nueva); selector de lote solo áreas activas;
+              administración de maestros INTACTA. 0 migración · 0 permisos · 0 endpoints.
+SEMÁNTICA     Inactiva propia ⇒ 400 «Área inactiva»/BR-07 · Ajena/inexistente ⇒ 400
+              «Área no encontrado» (anti-enumeración intacta).
+COMMITS       C1 511c419 (gobernanza+RED) → C2 5a5bb3f (implementación) → C4 (evidencia)
+GENERACIÓN    frontend index-BUthrUt9.js (LM 15:46:08 GMT) · backend 5a5bb3f
+GATES         Vitest 280/280 (+2) · tsc 0 · build PASS · PG-libre 7/7 · suites lotes/área/
+              elegibilidad en CI (skip local declarado)
+RUNTIME       E2E-01…12 PASS (alta/edición DENY sin persistencia ni auditoría de éxito;
+              H1/H2/H4 ALLOW; H3/H5 DENY; ajena DENY; NULL intacto; carrera de baja DENY;
+              masters admin conserva inactivas; BU/RBAC 403; móvil/consola conformes)
+HIGIENE       actores/roles retirados · concesión revocada · BU 4×OFF · áreas a baja ·
+              credenciales destruidas · auditoría preservada · humanos intactos
+INTOCADO      R-182 CLOSED_OWNER_ACCEPTED · R-184 SEPARATE_OPEN · OBS-UAT-01 UX P2 ·
+              BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED
+```
+
+### Disposición heredada
+
+- **GA-GOV-01 §OBS-UAT-04** (`OWNER_DECISION_REQUIRED`): **RESUELTA** por OD-21 e implementada aquí.
+- Próximo recomendado: Owner UAT corta de GA-FE-07 (5 validaciones visibles) cuando el propietario la convoque.
