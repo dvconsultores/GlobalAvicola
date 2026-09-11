@@ -134,7 +134,8 @@ IMPLEMENTED_AND_VISIBLE ........ 1 → 5  (CAP-SES-05 + las 4 superficies GA-FE-
 
 Las capacidades de GA-FE-03 **no** se reclasifican (siguen como están); la instantánea
 original del catálogo **no se reescribe**. Incidencias documentadas de la corrida
-(D-1 lectura global exenta certificada GA-REM-002 · D-2 tarjeta hub R-119 · D-3 filtro
-`module` de `/audit` con valores fuera del enum → 500 · D-4 fail-closed del home sin
-`dashboard:read`): registradas en la evidencia; **R-98/R-119 permanecen UNCHANGED** y ninguno
-bloquea GA-FE-02.
+(**D-1** lectura productiva del actor global con unidades OFF — reclasificada por GA-FE-02-D
+como `SECURITY_DEFECT` y **corregida** en `9ffc5ec` con verificación runtime OFF→cero/404 y
+ON→habilitadas · D-2 tarjeta hub R-119 · D-3 filtro `module` de `/audit` con valores fuera
+del enum → 500 · D-4 fail-closed del home sin `dashboard:read`): registradas en la evidencia;
+**R-98/R-119 permanecen UNCHANGED** y ninguna bloquea GA-FE-02.

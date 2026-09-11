@@ -129,15 +129,17 @@ Dimensiones independientes: **YES** (cada caso usa actores/estados reales verifi
 
 ## Divergencias y observaciones (honestidad de la corrida)
 
-- **D-1 · Lectura del actor global sin row-scope (E).** Con contexto c1, `GET /lots` del
-  bootstrap devuelve 8 filas aunque las unidades estén OFF y sin concesión. **No es un
-  defecto nuevo ni un bypass**: es la excepción **declarada y certificada** de
-  `GA-REM-002`/`GA-REM-040` fase 3 (`app/masters/service._apply_business_unit_filter`:
-  «certificada en GA-REM-002 y esta fase no la reabre… declarado en la evidencia como
-  excepción, no como descuido»). Las **escrituras sí están cerradas** (R-163: alto de lote
-  → 403 verificado). La expectativa de DENY-lectura de §56 no coincide con la semántica
-  certificada del repositorio; se documenta y **no se reabre** (§68: sin hotfix; adaptar a la
-  verdad del repositorio). Sin contexto: fail-closed verificado (cero filas — `OD-14.d`).
+- **D-1 · Lectura productiva del actor global (E) — CORREGIDO en GA-FE-02-D.** Con contexto c1
+  y unidades OFF, el bootstrap leía filas productivas (lotes 8 · eventos 34 · revisión 8 ·
+  panel 34). **GA-FE-02-D** lo reconcilió contra `OD-16`: la lectura es **dato productivo** y
+  la puerta de habilitación es absoluta **también para la autoridad global** ⇒
+  `SECURITY_DEFECT` (CASE 3), corregido con el resolutor `unidades_de_alcance_productivo` +
+  la remoción de los 8 atajos (commit `9ffc5ec`). Runtime post-deploy: **OFF → cero/404 en
+  todas las superficies productivas; ON → solo las habilitadas** (batería 21/21 + MX 12/12).
+  Evidencia: `audit/ga-fe-02-d/GA_FE_02_D_OD16_GLOBAL_READ_RECONCILIATION.md` §13. La antigua
+  clasificación como «excepción certificada (fase 3 / GA-REM-002)» queda **superada** para
+  LECTURAS productivas: una certificación anterior no anula una decisión posterior del
+  propietario.
 - **D-2 · Tarjeta de hub visible para D (R-119).** El grid de `/menu/settings` no filtra por
   permiso (el sidebar sí): D ve la tarjeta, la ruta responde protegida (alerta, sin
   superficie). Es exactamente el alcance de **R-119** (navegación por permisos), declarado

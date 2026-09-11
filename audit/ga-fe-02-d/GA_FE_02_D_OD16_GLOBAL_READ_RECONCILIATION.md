@@ -267,3 +267,56 @@ Wave C `NOT STARTED` · SAP `NOT STARTED` · **GA-FE-03: ELIGIBLE_BUT_NOT_STARTE
   `audit/remediation/GA-REM-002-003-CERTIFICATION-REPORT.md` (AC09; 2026-09-04) ·
   `audit/remediation/R163_R162_LOTS_AND_EVIDENCE_BU_AUTHORITY_MATRIX.md` ·
   `audit/remediation/BUSINESS_UNIT_OWNER_DECISION_MATRIX.md` (OD-16 · BU-D10).
+
+---
+
+## 13 · Resultado runtime post-deploy (GREEN) — 2026-09-11
+
+**Deploy por pipeline normal**: push `9ffc5ec` → imagen backend → Watchtower → contenedor
+reemplazado (arranque con `alembic upgrade head`, `GA-REM-024`). Sin pasos manuales.
+
+### 13.1 Batería OD-16 (actor global situado en empresa 1, todas las unidades OFF) — **21/21 PASS**
+
+| Comprobación | Resultado |
+|---|---|
+| `/me` sin cambio de contrato | `effective=[] · granted=[]` ✔ |
+| `GET /lots` | **0 filas** (antes 8) |
+| `GET /lots/1` · `GET /lots/1/phases` | **404** (antes 200) |
+| `GET /operations` | **0 filas** (antes 34) |
+| `GET /operations/37` | **404** (antes 200) |
+| `GET /review/pending` | **total 0** (antes 8) |
+| `GET /dashboard/admin` | **total_events 0** (antes 34) |
+| `GET /reports/kpis/mortality?lot_id=1` | **404** (antes 200) |
+| Plano de control | `/business-units` 4 · `/users` 200 · `/roles` 14 — **intacto** |
+| **ON control (broiler)** | `/lots` = **solo** `L-BO-2026-05/06` (`bird_type=broiler`) · `/operations` 7 (antes 34) · `/review/pending` 0 · `/dashboard/admin` 7 (antes 34) · lote fuera de alcance → **404** |
+| Restauración | broiler → OFF; `GET /lots` → 0 de nuevo |
+
+### 13.2 Matriz afectada con actor de empresa (fixture normal re-provisionado) — **12/12 PASS**
+
+`MX-2` ON / sin concesión / RBAC sí → **DENY (0 filas)** · `MX-4` ON / concesión viva / RBAC sí →
+**ALLOW (2 filas `L-BO-2026-05/06`)** · fixture restaurado por completo (C2 dado de baja, rol 37
+desactivado, CBU 4×OFF). **AC-D1-04** (actor de empresa sin cambio) verificado.
+
+### 13.3 Spots de no-regresión
+
+`POST /lots` del global sobre unidad apagada → **403** (R-163 intacta · `AC-D1-06`) ·
+F2 `GET /roles` = 14 con rol 35 exacto · F3 `GET /users` 200 · bundle `index-B2-tZnkI.js` estable
+(frontend sin tocar) · D1/F4 sin cambios (no se tocó frontend).
+
+### 13.4 AC — cierre
+
+`AC-D1-01` ✔ · `AC-D1-02` ✔ · `AC-D1-03` ✔ · `AC-D1-04` ✔ · `AC-D1-05` ✔ · `AC-D1-06` ✔ ·
+`AC-D1-07` ✔ · `AC-D1-08` ✔ (RED ejecutado pre-fix; GREEN ejecutado post-deploy; test dirigido
+nuevo `tests/test_od16_global_read_boundary.py` — ruteo puro ejecutado local 1/1 + frontera PG
+para CI).
+
+### 13.5 Veredicto
+
+```
+D-1 .................. CORREGIDO Y VERIFICADO (OD-16)
+Productive rows while OFF ........ 0 (era 8/34/8/34)
+GA-FE-02 ............. FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING
+OWNER_UAT_READY ...... YES · OWNER_ACCEPTANCE: PENDING (solo el propietario)
+BU-D10 ............... PENDING_RATIFICATION · R-98/R-119/R-181/R-182 UNCHANGED
+Wave B PAUSED · Wave C/SAP NOT STARTED · GA-FE-03 ELIGIBLE_BUT_NOT_STARTED
+```

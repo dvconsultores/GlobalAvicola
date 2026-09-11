@@ -44,7 +44,7 @@ automática `context.on('response')` del runner Playwright local (desktop 1440×
 | C | GET | `/me` | 200 | `effective_business_units` = `["broiler"]` con concesión efectiva; `[]` sin ella |
 | C | GET | `/lots?limit=100` | 200 | **ALLOW** = 2 filas `L-BO-2026-05/06`; **DENY** = 0 filas (row-scope por unidad, `false()` sin unidades efectivas) |
 | D | GET | `/lots?limit=100` | **403** | RBAC NO (`lots:read` ausente) — MX-3 |
-| E | GET | `/lots?limit=100` | 200 | 8 filas — lecturas del actor global **sin row-scope** (excepción declarada GA-REM-002/GA-REM-040 fase 3; ver divergencia D-1) |
+| E | GET | `/lots?limit=100` | 200 | 8 filas — lectura productiva sin row-scope (D-1; **corregido en GA-FE-02-D**: post-deploy OFF→0/404, ON→solo habilitadas) |
 | E | GET | `/audit?module=config&entity_type=company_business_unit&limit=200` | 200 | 14 filas `config_change` (actor/empresa/objetivo/timestamp) |
 | E | GET | `/audit?module=users&entity_type=user_business_unit&limit=200` | 200 | 15 filas `permission_change` |
 

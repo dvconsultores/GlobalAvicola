@@ -272,3 +272,18 @@ Wave C ........................ NOT STARTED
 SAP ........................... NOT STARTED
 GA-FE-03 ...................... ELIGIBLE_BUT_NOT_STARTED (no iniciada)
 ```
+
+---
+
+## 47 · Addendum GA-FE-02-D (2026-09-11) — D-1 reclasificado y CORREGIDO (OD-16)
+
+`D-1` dejó de ser «excepción documentada»: la reconciliación contra `OD-16`
+(`audit/ga-fe-02-d/GA_FE_02_D_OD16_GLOBAL_READ_RECONCILIATION.md`) estableció que la lectura
+del actor global sobre `/lots` (y la familia: operations/review/dashboard/reports) es **dato
+productivo** y que la puerta de habilitación por empresa es absoluta también para él ⇒
+`SECURITY_DEFECT` (CASE 3). Corregido en `9ffc5ec` (resolutor `unidades_de_alcance_productivo`
++ remoción de los 8 atajos) y verificado en runtime post-deploy: **OFF → cero/404 en todas las
+superficies productivas; ON → solo las habilitadas** (batería 21/21 · MX 12/12 · spots F2/F3 ·
+bundle estable). Estado final: `GA-FE-02 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` ·
+`OWNER_UAT_READY=YES`. La excepción fase-3/`GA-REM-002` queda **superada para LECTURAS
+productivas**; la escritura (`R-163`) y el plano de control permanecen intactos.
