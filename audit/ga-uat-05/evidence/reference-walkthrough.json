@@ -1,0 +1,31 @@
+{
+  "selector_desktop": {
+    "options": [
+      "Seleccionar área...",
+      "Nave Disponible (UAT GA-FE-07)"
+    ],
+    "activa": true,
+    "retirada_ausente": true,
+    "historica_ausente": true,
+    "sin_ids_crudos": true
+  },
+  "create": {
+    "status": 201,
+    "id": 52,
+    "area": 14
+  },
+  "historico": {
+    "accesible": true
+  },
+  "console_desktop": 10,
+  "masters_admin": {
+    "muestra_historica": true,
+    "muestra_retirada": true,
+    "columnas_estado_visibles": true
+  },
+  "selector_movil": {
+    "activa": true,
+    "retirada_ausente": true,
+    "historica_ausente": true
+  }
+}
