@@ -1,0 +1,113 @@
+{
+  "ts": "2026-09-11T18:50:15.009Z",
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users/141/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/56",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/55",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/11",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "results": {
+    "bu_before": {
+      "code": "broiler",
+      "name_key": "businessUnits.broiler",
+      "is_enabled": false
+    },
+    "bu_enable": 200,
+    "ipe_DET": {
+      "status": 200,
+      "ipe": 333.3,
+      "viab": 95,
+      "gain": 105.26,
+      "fcr": 3
+    },
+    "ipe_MID": {
+      "status": 200,
+      "ipe": 282.7,
+      "viab": 95,
+      "gain": 89.29,
+      "fcr": 3
+    },
+    "ipe_LOW": {
+      "status": 200,
+      "ipe": 241.1,
+      "viab": 90,
+      "gain": 53.57,
+      "fcr": 2
+    },
+    "ipe_LEGADO11": {
+      "status": 200,
+      "ipe": 5.6,
+      "viab": 100,
+      "gain": 13.64,
+      "fcr": 24.5
+    }
+  },
+  "created": {
+    "role": {
+      "status": 201,
+      "id": 71
+    },
+    "user": {
+      "status": 201,
+      "id": 141
+    },
+    "grant": 201,
+    "uat_login": 200
+  }
+}

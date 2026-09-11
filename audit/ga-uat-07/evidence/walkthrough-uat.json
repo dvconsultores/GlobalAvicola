@@ -1,0 +1,74 @@
+{
+  "ts": "2026-09-11T18:50:41.364Z",
+  "pages": {
+    "lista": {
+      "ok": true
+    },
+    "C01": {
+      "ipe": "333.3",
+      "emoji": "🟢",
+      "label": "Excelente",
+      "old_scale_present": false,
+      "raw_error": false,
+      "nan_inf": false
+    },
+    "C03": {
+      "ipe": null,
+      "emoji": "🟢",
+      "label": "Excelente",
+      "old_scale_present": false,
+      "raw_error": false,
+      "nan_inf": false
+    },
+    "C04": {
+      "ipe": null,
+      "emoji": "🟢",
+      "label": "Excelente",
+      "old_scale_present": false,
+      "raw_error": false,
+      "nan_inf": false
+    },
+    "C05": {
+      "ipe": "333.3",
+      "emoji": "🟢",
+      "label": "Excelente",
+      "old_scale_present": false,
+      "raw_error": false,
+      "nan_inf": false
+    },
+    "C07": {
+      "ipe": "282.7",
+      "emoji": "🟡",
+      "label": "Bueno",
+      "old_scale_present": false,
+      "raw_error": false,
+      "nan_inf": false
+    },
+    "C06": {
+      "ipe": "333.3",
+      "emoji": "🟢",
+      "label": "Excelente",
+      "old_scale_present": false,
+      "raw_error": false,
+      "nan_inf": false,
+      "overflow": 0
+    }
+  },
+  "console": {
+    "desktop": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ],
+    "mobile": [
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)",
+      "console: Failed to load resource: the server responded with a status of 403 (Forbidden)"
+    ]
+  }
+}
