@@ -1,0 +1,35 @@
+{
+  "options": [
+    {
+      "t": "Seleccionar área...",
+      "v": ""
+    },
+    {
+      "t": "Nave Norte (GA-FE-06)",
+      "v": "1"
+    },
+    {
+      "t": "Nave Sur (GA-FE-06)",
+      "v": "2"
+    },
+    {
+      "t": "Nave Operativa (GA-FE-06-A)",
+      "v": "4"
+    },
+    {
+      "t": "Nave Activa GA-FE-07",
+      "v": "6"
+    },
+    {
+      "t": "Nave Histórica GA-FE-07",
+      "v": "7"
+    },
+    {
+      "t": "Nave Retirada GA-FE-07",
+      "v": "8"
+    }
+  ],
+  "inactivePresent": true,
+  "activePresent": true,
+  "note": "RED pre-fix: el selector muestra el área inactiva (target post-fix: ausente)"
+}
