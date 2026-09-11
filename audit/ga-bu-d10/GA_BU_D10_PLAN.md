@@ -24,3 +24,7 @@
 | P20 | Informe final §78 + STOP (esperando UAT del propietario) | ⏳ |
 
 Checkpoints git: C1 `067fba6` (paquete pre-decisión) · C2 (decisión+SPEC+RED) · C3 (implementación) · C4 (evidencia). C5 solo si UAT requiere aceptación explícita posterior.
+
+## Estado al cierre (2026-09-11)
+
+P1-P6 ✅ (C1 `067fba6` · decisión B → OD-23 · R-188 P2 OPEN) · P7-P8 ✅ (C2 `0542310`: SPEC+matriz+clarificaciones+suite RED x10) · P9-P12 ✅ (C3 `bee33f5` + C3b `399751c`: implementación mínima + pruebas reexpresadas + gates local/CI-declarado + Vitest 280/280) · P13 ✅ (deploy observado por comportamiento) · P14 ✅ (E2E-01…14 + UI U1-U6 + auditoría + persistencia; 0×500) · P15 ✅ (cleanup 4×OFF; ver ledger) · P16-P18 ✅ (evidencia + hogares + C4) · **P19 ✅ Owner UAT package READY (REQUIRED; acceptance PENDING — no auto-aprobada)** · P20 ✅ (informe §78 + STOP).

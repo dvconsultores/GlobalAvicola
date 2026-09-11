@@ -1,0 +1,522 @@
+{
+  "ts": "2026-09-11T19:34:54.965Z",
+  "results": {
+    "bu_antes": [
+      [
+        "breeder",
+        false
+      ],
+      [
+        "broiler",
+        false
+      ],
+      [
+        "grandparent",
+        false
+      ],
+      [
+        "hatchery",
+        false
+      ]
+    ],
+    "ids": {
+      "uOp": 142,
+      "uAdm": 143,
+      "uZero": 144,
+      "uNr": 145
+    },
+    "e2e01": {
+      "grant": 201,
+      "lots": 200,
+      "ipe": 200,
+      "me": [
+        "broiler"
+      ]
+    },
+    "e2e02": {
+      "lots": 200,
+      "ipe": 404,
+      "me_effective": [],
+      "me_granted": [],
+      "concesiones": [
+        {
+          "code": "broiler",
+          "revoked_at": "2026-09-11T19:33:10.622154Z",
+          "is_effective": false
+        },
+        {
+          "code": "broiler",
+          "revoked_at": "2026-09-11T19:33:44.346890Z",
+          "is_effective": false
+        },
+        {
+          "code": "broiler",
+          "revoked_at": "2026-09-11T19:34:27.022965Z",
+          "is_effective": false
+        },
+        {
+          "code": "broiler",
+          "revoked_at": "2026-09-11T19:35:03.577558Z",
+          "is_effective": false
+        }
+      ]
+    },
+    "e2e02b": {
+      "disable2": 200
+    },
+    "e2e04": {
+      "lots_status": 200,
+      "lots_count": 0,
+      "ipe": 404,
+      "me": []
+    },
+    "e2e05": {
+      "adm_me": [],
+      "adm_ipe": 403,
+      "grant_por_adm": 201,
+      "lots": 200,
+      "ipe": 200
+    },
+    "e2e06": {
+      "off_lots": 200,
+      "off_ipe": 404,
+      "on_ipe": 404,
+      "regrant_ipe": 200
+    },
+    "e2e07": {
+      "self": 403
+    },
+    "e2e08": {
+      "con_off": 409,
+      "cross": 404
+    },
+    "e2e09": {
+      "nr_lots": 200,
+      "nr_ipe": 403
+    },
+    "e2e10": {
+      "zero_lots_status": 200,
+      "zero_lots_count": 0,
+      "zero_me": []
+    },
+    "e2e11": {
+      "global_off_ipe": 404,
+      "global_on_ipe": 200,
+      "regrant_op": 201
+    },
+    "e2e12": {
+      "relogin_ipe": 200
+    },
+    "e2e13": {
+      "audit_status": 200,
+      "eventos_ubu": 23,
+      "terminaciones_con_causa": 9
+    },
+    "e2e14": [
+      {
+        "code": "broiler",
+        "revoked_at": "2026-09-11T19:33:10.622154Z",
+        "is_effective": false
+      },
+      {
+        "code": "broiler",
+        "revoked_at": "2026-09-11T19:33:44.346890Z",
+        "is_effective": false
+      },
+      {
+        "code": "broiler",
+        "revoked_at": "2026-09-11T19:34:27.022965Z",
+        "is_effective": false
+      },
+      {
+        "code": "broiler",
+        "revoked_at": "2026-09-11T19:35:03.577558Z",
+        "is_effective": false
+      },
+      {
+        "code": "broiler",
+        "revoked_at": "2026-09-11T19:35:07.671594Z",
+        "is_effective": false
+      },
+      {
+        "code": "broiler",
+        "revoked_at": "2026-09-11T19:35:10.156485Z",
+        "is_effective": false
+      },
+      {
+        "code": "broiler",
+        "revoked_at": null,
+        "is_effective": true
+      }
+    ],
+    "estado_final": {
+      "bu_on": [
+        {
+          "code": "breeder",
+          "name_key": "businessUnits.breeder",
+          "is_enabled": false
+        },
+        {
+          "code": "broiler",
+          "name_key": "businessUnits.broiler",
+          "is_enabled": true
+        },
+        {
+          "code": "grandparent",
+          "name_key": "businessUnits.grandparent",
+          "is_enabled": false
+        },
+        {
+          "code": "hatchery",
+          "name_key": "businessUnits.hatchery",
+          "is_enabled": false
+        }
+      ],
+      "op_me": [
+        "broiler"
+      ]
+    }
+  },
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "path": "/users?search=bu188op&limit=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "path": "/users?search=bu188adm&limit=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "path": "/users?search=bu188zero&limit=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "path": "/users?search=bu188nr&limit=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users/143/business-units",
+      "method": "POST",
+      "status": 403
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "POST",
+      "status": 409
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "POST",
+      "status": 404
+    },
+    {
+      "path": "/users/145/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "path": "/lots?limit=5",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/audit?limit=200",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users/142/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

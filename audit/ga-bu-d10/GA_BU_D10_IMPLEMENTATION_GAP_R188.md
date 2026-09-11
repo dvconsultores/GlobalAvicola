@@ -33,4 +33,4 @@ Producto actual (provisional A, probado): apagar una BU de empresa no toca conce
 
 ## Estado
 
-`OPEN` · Implementación: **NO** (secuencia SPEC→RED→impl en esta tranche). Intocables: OD-16, GA-FE-02..07, R-184/185/186/187, OD-21/22, OBS-UAT-01, Wave B/C/SAP.
+**`CLOSED`** (técnico; 2026-09-11) · FUNCTIONALLY_CERTIFIED · OD-23 = RATIFIED_IMPLEMENTED — implementación C3 `bee33f5` (+C3b `399751c`); runtime E2E-01…14 + UI PASS; evidencia `audit/ga-bu-d10/`. **Owner UAT REQUIRED / READY — acceptance PENDING** (no auto-aprobada).

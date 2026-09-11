@@ -2017,3 +2017,29 @@ POBLACIÓN     Empresa 1 (entorno de prueba): 91 usuarios, 2 con concesión viva
 INTOCADO      OD-16, GA-FE-02..07, R-184/185/186/187, OD-21/22 · OBS-UAT-01 P2 ·
               Wave B PAUSED · Wave C/SAP NOT STARTED
 ```
+
+## R-188 · CLOSED — BU-D10 RESUELTA (OD-23 = B): APAGAR TERMINA · RE-ENCENDER NO DEVUELVE (2026-09-11)
+
+```
+DECISIÓN      OD-23 (propietario, respuesta explícita «B») — RATIFIED_IMPLEMENTED
+              apagar una unidad de empresa TERMINA las concesiones vivas del ciclo (marca
+              revoked_at + auditoría individual con causa; nunca borra); re-encender NO
+              devuelve — cada usuario requiere concesión nueva explícita; sin migración.
+FINDING       R-188 → CLOSED (técnico) · FUNCTIONALLY_CERTIFIED · OWNER UAT REQUIRED /
+              READY — acceptance PENDING (no auto-aprobada)
+IMPLEMENTACIÓN admin.fijar_habilitacion (marca+audita al apagar; enable intacto) +
+              docstrings servicio/router/modelo; pruebas provisionales A reexpresadas a B
+              (+ suite RED r188 x10 PG/CI). Cero migraciones; resolutor/proyecciones intactos.
+EVIDENCIA     runtime E2E-01…14 PASS (OFF⇒DENY; re-enable⇒404 B; regrant⇒200; sesión activa
+              sin privilegio obsoleto; global+OFF 404; RBAC 403; self 403; cross 404;
+              conceder-con-OFF 409; auditoría 23 eventos / 9 terminaciones con causa;
+              persistencia 6+1 filas) · UI U1-U6 (nav 1/0/0/1; móvil overflow 0; unit-access
+              control-plane) · 0×500 · Vitest 280/280 · gate canónico 7 passed · suites PG
+              en CI (skip local declarado; baseline idéntico pre/post en local)
+REGISTRO      audit/ga-bu-d10/ (17 artefactos + evidence) · C1 067fba6 · C2 0542310 ·
+              C3 bee33f5 · C3b 399751c · C4 (este cierre)
+LIMPIEZA      4×OFF restaurada · actores baja lógica · roles BU188* desactivados (incl.
+              duplicados de re-ejecución, documentados) · credenciales destruidas
+INTOCADO      OD-16/OD-09.e/GA-FE-02..07/R-181..187/OD-21/22 PRESERVED · OBS-UAT-01 P2 ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED
+```

@@ -1,0 +1,41 @@
+{
+  "ts": "2026-09-11T19:36:11.704Z",
+  "ui": {
+    "U1": {
+      "ipe333": true,
+      "crudo": false,
+      "navLots": 1,
+      "snippet": "Global Avícola\n\nGestión Operativa\n\nREPORTES\nReportes\nADMINISTRACIÓN\nConfiguración\nBB\n\nBU10 bu188op\n\nbu188op\n\nPerfil\nCerr"
+    },
+    "U2": {
+      "ipe333": false,
+      "crudo": false,
+      "navLots": 0,
+      "snippet": "Global Avícola\n\nGestión Operativa\n\nADMINISTRACIÓN\nConfiguración\nBB\n\nBU10 bu188op\n\nbu188op\n\nPerfil\nCerrar Sesión\nEN\nAvíco"
+    },
+    "U3": {
+      "ipe333": false,
+      "crudo": false,
+      "navLots": 0,
+      "snippet": "Global Avícola\n\nGestión Operativa\n\nADMINISTRACIÓN\nConfiguración\nBB\n\nBU10 bu188op\n\nbu188op\n\nPerfil\nCerrar Sesión\nEN\nAvíco"
+    },
+    "U4_grant": 201,
+    "U4": {
+      "ipe333": true,
+      "crudo": false,
+      "navLots": 1,
+      "snippet": "Global Avícola\n\nGestión Operativa\n\nREPORTES\nReportes\nADMINISTRACIÓN\nConfiguración\nBB\n\nBU10 bu188op\n\nbu188op\n\nPerfil\nCerr"
+    },
+    "U6": {
+      "tiene_broiler": false,
+      "crudo": false,
+      "snippet": "Global Avícola\n\nGestión Operativa\n\nADMINISTRACIÓN\nConfiguración\nBB\n\nBU10 bu188adm\n\nbu188adm\n\nPerfil\nCerrar Sesión\nEN\nAvícola Global C.A.\nBB\n\nBU10 bu188adm\n\nbu18"
+    },
+    "U5": {
+      "ipe333": true,
+      "overflow": 0,
+      "crudo": false
+    }
+  },
+  "console": {}
+}

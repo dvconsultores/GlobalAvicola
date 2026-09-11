@@ -232,3 +232,16 @@ BU-D10 → paquete de decisión preparado (audit/ga-bu-d10/, C1 solo gobernanza)
      Dedup: GENUINE_OWNER_DECISION_UNRESOLVED · Recomendación: B (coherencia OD-09.e).
      Sin producto. Decisión del propietario PENDIENTE (respuesta A o B).
 ```
+
+## Addendum fechado · 2026-09-11 · R-188 (OD-23 = B — BU-D10 resuelta)
+
+```
+OD-23 → RATIFIED_IMPLEMENTED (decisión B) · R-188 → CLOSED · FUNCTIONALLY_CERTIFIED
+     Apagar termina (marca+auditoría con causa; no borra); re-encender NO devuelve;
+     concesión nueva restaura. Backend-only (business_units); 0 frontend; sin migración.
+     Runtime E2E-01…14 + UI (nav 1/0/0/1; móvil OK; unit-access control-plane) PASS.
+     Owner UAT REQUIRED / READY — acceptance PENDING. C1 067fba6 · C2 0542310 ·
+     C3 bee33f5 · C3b 399751c. Detalle: audit/ga-bu-d10/.
+Intactos: OD-16, OD-09.e/transferencia, GA-FE-02..07, R-181..187, OD-21/22,
+     OBS-UAT-01 P2 · Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

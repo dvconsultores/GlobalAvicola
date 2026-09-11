@@ -267,6 +267,17 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   seguridad OD-16/RBAC PASS · G-05 5.1 intacto · GA-FE-07 spot 400.
 - Owner UAT REQUIRED/READY — acceptance PENDING. Detalle: `audit/ga-r187/`. C1 `5a32a6c` · C2 `f755baa`.
 
+## Addendum R-188 (2026-09-11) · OD-23 = B — BU-D10 resuelta
+
+- **OD-23 RATIFIED_IMPLEMENTED** · **R-188 CLOSED · FUNCTIONALLY_CERTIFIED**: apagar una unidad
+  de empresa **termina** sus concesiones vivas (marca `revoked_at` + auditoría individual con
+  causa; nunca borra); re-encender **no** devuelve — cada usuario requiere concesión nueva.
+  Backend-only (business_units); frontend 0; sin migración.
+- Runtime E2E-01…14 + UI (nav 1/0/0/1 por ON/OFF/re-enable/regrant; móvil overflow 0;
+  unit-access control-plane) PASS · auditoría 23 eventos / 9 terminaciones con causa.
+- **Owner UAT REQUIRED / READY — acceptance PENDING** (no auto-aprobada). Detalle:
+  `audit/ga-bu-d10/`. C2 `0542310` · C3 `bee33f5` · C3b `399751c`.
+
 ## Addendum GA-UAT-07 (2026-09-11) · R-187 CLOSED_OWNER_ACCEPTED
 
 - **Decisión A) «ACEPTO R-187»** — UAT del propietario 6/6 (333.3 🟢 visible; clasificación
