@@ -10,5 +10,5 @@
 | Conducta probada | `backend/tests/test_business_unit_admin.py:318` · `test_business_units.py:491/509` · runtime GA-FE-02-D/E |
 | Implementación vigente | `admin.py` (`fijar_habilitacion` `:137`; `conceder` `:286`; `revocar` `:363`) · `service.py` (`unidades_efectivas_por_id` `:97`; `revocar_concesiones` `:321`) |
 | Paquete de decisión (esta tranche) | `audit/ga-bu-d10/` (C1; solo gobernanza) |
-| Próximo ID OD (línea GA) | **A INSPECCIONAR EXACTAMENTE AL FORMALIZAR la decisión** (no se asume número; a distinguir de la familia `AOD-*` de Wave B) |
-| **DECISIÓN DEL PROPIETARIO** | **PENDIENTE** — responder **A** o **B** (paquete §SU ELECCIÓN) |
+| Próximo ID OD (línea GA) | **OD-23 — ASIGNADA** (verificada libre el 2026-09-11; a distinguir de la familia `AOD-*` de Wave B) |
+| **DECISIÓN DEL PROPIETARIO** | **B — RE-AUTORIZACIÓN** (respuesta explícita, 2026-09-11) · `OD-23` RATIFIED · finding **R-188** (P2 · OPEN) |
