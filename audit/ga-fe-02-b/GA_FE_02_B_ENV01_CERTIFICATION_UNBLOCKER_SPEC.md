@@ -81,6 +81,34 @@ asyncio.run(main())
 PY
 ```
 
+**§4.1 · Retry 2026-09-11 con self-check (obligatorio)** — tras el reporte del propietario el
+catálogo seguía vacío; ejecutar ESTA versión (agrega conteo y códigos para verificación en la
+misma salida):
+
+```bash
+docker exec -i globalavicola-backend python - <<'PY'
+import asyncio
+from sqlalchemy import select, func
+from app.database import async_session
+from app.business_units.models import BusinessUnit
+from seeds.baseline_seeds import sembrar_unidades_de_negocio
+
+async def main():
+    async with async_session() as s:
+        creadas = await sembrar_unidades_de_negocio(s)
+        await s.commit()
+        n = (await s.execute(select(func.count()).select_from(BusinessUnit))).scalar_one()
+        codigos = sorted((await s.execute(select(BusinessUnit.code))).scalars().all())
+        print('creadas:', creadas, '· filas_catalogo:', n, '· codigos:', codigos)
+
+asyncio.run(main())
+PY
+```
+
+Esperado: `creadas: 4 · filas_catalogo: 4 · codigos: ['breeder', 'broiler', 'grandparent',
+'hatchery']`. Si `filas_catalogo` siguiera 0: el contenedor apunta a otra base — comprobar
+`docker logs --tail 20 globalavicola-backend` (el entrypoint imprime «target: host/db»).
+
 **Invariantes del seed** (verificados en código, §9 del encargo): idempotente por `code`; crea
 **solo** filas `BusinessUnit`; **cero** `CompanyBusinessUnit`; **cero** `UserBusinessUnit`; no
 toca roles/permisos/empresas.
@@ -201,13 +229,12 @@ resultado: reportar el bloqueo exacto, sin certificar por partes.
 ## 13 · Estado de ejecución (2026-09-11)
 
 ```
-F1 ... BLOCKED_SERVER_ACCESS_F1 — intento de ejecución por el agente (2026-09-11): ejecución
-       literal local imposible (`docker` ausente en la estación) y SSH sin clave autorizada
-       (`root@84.247.161.106` y `dvconsultores@84.247.161.106` → `Permission denied
-       (publickey,password)`; host no conocido previamente por la estación; sondeo detenido
-       conforme a §10 — nada de adivinar credenciales). Comando canónico exacto en §4 para
-       owner/ops, o autorizar la clave de esta estación (`~/.ssh/id_ed25519.pub`) para un
-       usuario con docker en el servidor y reintentar automáticamente
+F1 ... **FAIL / BLOCKED** — el propietario reportó ejecución, pero la verificación del agente
+       (2026-09-11) muestra el catálogo **aún vacío** en ENV-01: `GET /business-units` c1/c3 =
+       `[]` (`count=0`) y 4×404 en candidatos; `BusinessUnit.is_active` tiene default `True`, de
+       modo que no es la variante «filas inactivas» ⇒ las filas no están en la base que sirve
+       `avicola.globaldv.net`. Conforme a §6: **E2E STOP** (sin actores, sin certificación).
+       Reintento y self-check exactos: bloque «retry» en el ledger (entrada #5) y §4.
 F2 ... CLOSED — rol id=35 · exactamente business_units:read|update|create|delete (all) ·
        company_id NULL (plantilla) · GET /roles=14 · sin comodín/users/productivos ·
        sin asignaciones a humanos (0)

@@ -8,6 +8,11 @@ ningún flujo autenticado; no existe fila "probada por otro medio" — prohibido
 > refinada: **`BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED`**. Todos los escenarios conservan su
 > estado; ninguno cambió de clase.
 
+> **Actualización 2026-09-11 (post-reporte F1 del propietario)**: la verificación del gate F1
+> (que debía cerrar el bloqueo) encontró el catálogo **aún vacío** (`[]`, `count=0`; 4×404) ⇒
+> **F1 = FAIL / BLOCKED** y el E2E permanece **sin corrida** (STOP §6). Los 31 escenarios siguen
+> sin resultado real; el resto del entorno (F2/F3/F4/D1) quedó re-verificado verde.
+
 | E2E_ID | AC | ACTOR | COMPANY | COMPANY_BU | USER_GRANT | RBAC | ACCIÓN | RESULTADO | FAILURE CLASS |
 |---|---|---|---|---|---|---|---|---|---|
 | E2E-01a | AC-COMP-01 | A | prueba | — | — | — | login → contexto de empresa visible → página admin | `BLOCKED_AUTH` | AUTH_CREDENTIAL_MISSING |

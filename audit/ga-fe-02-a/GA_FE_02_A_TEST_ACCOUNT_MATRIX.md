@@ -41,4 +41,10 @@ si no, ese subcaso se marca BLOCKED_FIXTURE (no bloquea toda la suite — §38).
 - **Actores A/C/D/E**: NO provisionados — la fixture E2E depende de **F1** (catálogo BU, pendiente
   server-side) ⇒ permanecen `BLOCKED` hasta ejecutar F1 y reanudar la certificación completa.
 - `GET /users` operativo tras F3 (0 filas 500; 23 usuarios en empresa 1).
+
+### Verificación 2026-09-11 (post-reporte F1)
+
+Gate F1 **FALLÓ**: el catálogo sigue `[]` en ENV-01 (`count=0`; 4×404; `is_active default=True`
+descarta «inactivas») ⇒ actores A–D **NO provisionados** (E2E STOP §6). El resto del entorno:
+rol id=35 disponible · F2/F3/F4/D1 re-verificados verdes.
 ```
