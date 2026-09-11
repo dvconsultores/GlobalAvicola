@@ -2069,3 +2069,32 @@ INTOCADO      OD-16/OD-09.e · GA-FE-02..07 · R-181..187/OD-21/22 PRESERVED ·
   (**R-188**, C3 `bee33f5` + C3b `399751c`) y **aceptada por el propietario** (decisión A).
 - Nota N-1 (informativa): el home de roles operativos sin `dashboard:read` muestra «Permiso
   requerido» — fallo cerrado pre-existente, ajeno a R-188; sin acción en este ciclo.
+
+---
+
+## GA-FE-08 · OBS-UAT-01 RESUELTA — DESCUBRIBILIDAD DE «LOTES» (2026-09-11)
+
+```
+OBSERVACIÓN   OBS-UAT-01 (GA-UAT-04): «Lotes» sin entrada de menú (solo URL directa)
+CLASE         MISSING_NAV_CONFIGURATION (no FRAMEWORK_DEFECT; no ALREADY_RESOLVED)
+DECISIÓN      Propietario autorizó GA-FE-08 «solo si la observación sigue presente»
+              → presente (pre-fix P01-P03) → cambio mínimo de CONFIGURACIÓN de navegación
+CAMBIOS       frontend-only (2 archivos): entrada `lots` primera hija de Gestión Avícola
+              (hub /menu/poultry) — reusa ruta /lots, permiso lots:read, clave nav.lots,
+              icono Layers; expectativa heredada gaFe02 actualizada (anotada)
+NO-CAMBIOS    backend 0 · migración 0 · rutas 0 · permisos 0 · motor de navegación intacto
+NO-REABRE     GA-FE-03 · R-119 · GA-FE-04 · R-98 · sin R nuevo (OBS-UAT-01 poseía el trabajo)
+GATES          RED 7 failed/5 passed → 292/292 vitest (38 archivos) · tsc/build ✓ ·
+              backend diff 0 (suites PG en CI, skip local declarado)
+RUNTIME       index-DtzHNDMG.js · E2E-01…10 PASS (C01-C09): autorizado descubre y llega
+              (desktop/móvil); BU OFF oculta (global incluido); sin concesión oculta;
+              OD-23 histórico no revive; regrant por UI restaura; sin RBAC oculta;
+              zero-BU/control sin Lotes; tenant 404 spot; overflow 0; ES/EN por reuso
+LIMPIEZA      4×OFF restaurada · usuarios 148-153 baja lógica · roles 94-97 off ·
+              credenciales/temporales destruidos · login post-baja 403
+REGISTRO      audit/ga-fe-08/ (16 artefactos + evidence) · C1 4ba33f6 · C2 a946cec · C3 cierre
+ESTADO        OBS-UAT-01 = RESOLVED (técnico) · GA-FE-08 = FUNCTIONALLY_CERTIFIED ·
+              OWNER UAT REQUIRED/READY — acceptance PENDING (no auto-aprobada)
+INTOCADO      OD-16/OD-09.e · GA-FE-02..07 · R-181..188/OD-21/22/23 · BU-D10 · Wave B PAUSED ·
+              Wave C/SAP NOT STARTED
+```

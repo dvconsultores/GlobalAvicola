@@ -259,3 +259,20 @@ R-188 → CLOSED_OWNER_ACCEPTED · BU-D10 → RESOLVED_OWNER_ACCEPTED
 Intactos: OD-16/OD-09.e · GA-FE-02..07 · R-181..187 · OD-21/22 · OBS-UAT-01 P2 ·
      Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · GA-FE-08 (OBS-UAT-01 resuelta)
+
+```
+OBS-UAT-01 → RESOLVED · GA-FE-08 → FUNCTIONALLY_CERTIFIED (OWNER UAT READY)
+     Entrada «Lotes» (primera hija de Gestión Avícola → hub /menu/poultry), reusando
+     ruta /lots, permiso lots:read, icono Layers y clave nav.lots. Autoridad por el
+     evaluador GA-FE-03: BU OFF oculta (global incluido); sin concesión oculta; OD-23
+     histórico no revive; concesión nueva restaura (regrant por UI real); sin RBAC oculta.
+     Frontend-only (2 archivos) · backend 0 · sin migración/permisos/rutas nuevos.
+     RED 7/5 → 292/292 vitest · build ✓ · E2E-01…10 PASS (C01-C09; overflow 0;
+     1 consola pre-existente N-1 ajena). Clase: MISSING_NAV_CONFIGURATION.
+     Detalle: audit/ga-fe-08/. C1 4ba33f6 · C2 a946cec · C3 (este cierre).
+     Owner acceptance PENDING (no auto-aprobada).
+Intactos: OD-16/OD-09.e · GA-FE-02..07 · R-181..188 · OD-21/22/23 · BU-D10 ·
+     Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

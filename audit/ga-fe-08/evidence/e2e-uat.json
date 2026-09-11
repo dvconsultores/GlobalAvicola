@@ -1,0 +1,56 @@
+{
+  "ts": "2026-09-11T20:07:20.253Z",
+  "console": [
+    "[adm] Failed to load resource: the server responded with a status of 403 (Forbidden)"
+  ],
+  "overflow": [],
+  "steps": {
+    "e2e01_hub_lotes": 1,
+    "e2e01_hub_broiler": 1,
+    "e2e01_url": "https://avicola.globaldv.net/lots",
+    "e2e01_rows": 82,
+    "e2e02_active": 1,
+    "e2e15_direct_rows": 82,
+    "e2e10_api_count": {
+      "detail": [
+        {
+          "type": "less_than_equal",
+          "loc": [
+            "query",
+            "limit"
+          ],
+          "msg": "Input should be less than or equal to 100",
+          "input": "200",
+          "ctx": {
+            "le": 100
+          }
+        }
+      ]
+    },
+    "e2e10_foreign": 404,
+    "e2e06_hub_lotes": 0,
+    "e2e06_hub_url": "redirect",
+    "e2e06_sidebar_poultry": false,
+    "e2e06_direct_rows": 0,
+    "e2e07_hub_lotes": 0,
+    "e2e07_hub_broiler": 1,
+    "e2e07_direct_denied": true,
+    "e2e03_mobile_hub_lotes": 1,
+    "e2e03_mobile_url": "https://avicola.globaldv.net/lots",
+    "e2e03_mobile_rows": 82,
+    "bu_disable": 200,
+    "e2e04_sidebar_poultry": false,
+    "e2e04_direct_rows": 0,
+    "e2e14_global_hub_lotes": 0,
+    "e2e14_global_sidebar_poultry": false,
+    "bu_enable": 200,
+    "e2e05a_historical_lotes": 0,
+    "e2e05b_row_state": "fe08opGA FE08-OP\nConcedida\nRevocar",
+    "e2e09_adm_sidebar_lotes": false,
+    "e2e09_adm_direct_denied": true,
+    "e2e05c_fresh_lotes": 1,
+    "e2e05c_rows": 82,
+    "e2e08_sidebar_poultry": false,
+    "e2e08_direct_denied": true
+  }
+}

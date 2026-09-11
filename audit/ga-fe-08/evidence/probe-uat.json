@@ -1,0 +1,33 @@
+{
+  "ts": "2026-09-11T20:09:25.033Z",
+  "forbidden": [
+    {
+      "url": "https://avicola.globaldv.net/api/v1/dashboard/admin",
+      "method": "GET"
+    }
+  ],
+  "i18n": {
+    "es_lotes": 1,
+    "en_lots": 0,
+    "es_lotes_back": 1
+  },
+  "api": {
+    "count": 41,
+    "sample": [
+      [
+        "GA6A-GREEN-NOBU-202609111423",
+        "broiler"
+      ],
+      [
+        "GA6A-GREEN-NULL-202609111423",
+        "broiler"
+      ],
+      [
+        "GA6A-GREEN-OK-202609111423",
+        "broiler"
+      ]
+    ]
+  },
+  "forbidden_after_lots": 1,
+  "forbidden_total": 1
+}

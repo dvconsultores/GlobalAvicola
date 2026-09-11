@@ -295,3 +295,13 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   OD-23 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS.**
 - Sin cambios de producto · walkthrough C01-C08 PASS · limpieza verificada (BU 4×OFF;
   actores destruidos). Detalle: `audit/ga-uat-08/`. C1 `a2fe22a` · C2 decisión.
+
+## Addendum GA-FE-08 (2026-09-11) · OBS-UAT-01 resuelta — «Lotes» descubrible
+
+- **CAP-OPS-10 (Lotes): descubribilidad normal AÑADIDA** — tarjeta «Lotes» en el hub de
+  Gestión Avícola (desktop y móvil), primera opción; reusa `/lots`, `lots:read` y `nav.lots`.
+- **OBS-UAT-01 = RESOLVED · GA-FE-08 = FUNCTIONALLY_CERTIFIED** (Owner UAT READY/PENDING):
+  autoridad por el evaluador GA-FE-03 (BU OFF/global ocultan; OD-23 respetado; zero-BU y
+  control sin Lotes; deep link intacto).
+- Frontend-only (2 archivos) · backend 0 · sin rutas/permisos/migración nuevos · 292/292 ·
+  E2E-01…10 PASS. Detalle: `audit/ga-fe-08/`. C1 `4ba33f6` · C2 `a946cec` · C3 cierre.
