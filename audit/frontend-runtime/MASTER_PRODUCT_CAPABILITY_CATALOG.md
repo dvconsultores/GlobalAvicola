@@ -182,3 +182,18 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   `BU-D10`: PENDING_RATIFICATION. Detalle: `GA_FE_05_ADDENDUM_R181_SUBMIT_RESUBMIT.md` y
   `audit/ga-fe-05/GA_FE_05_R181_CLOSURE_RECONCILIATION.md`.
 - **Aceptación del propietario (GA-UAT-03, `90ceee4` + registro): `GA-FE-05 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED` · `R-181 = CLOSED / OWNER_ACCEPTED`** (sin observaciones).
+
+## Addendum GA-FE-06 (2026-09-11) · `index-DcqmSs-R.js` (`23ca59a`)
+
+- **`R-182` → `CLOSED`**: el alta de lote pasa de **perder en silencio** la fecha prevista de
+  cierre (y no capturar área) a enviar, persistir, releer y **mostrar** `planned_close_date`
+  y `area_id`; el aviso SLA «lote próximo a cierre» recupera su fuente de datos (ventana
+  0..3 días intacta, sin cambios backend/migración/permisos). Selector de área acotado a la
+  empresa del actor (nombres, sin IDs crudos).
+- RED 4 rojos + 1 control → **5/5 verdes**; suite **278/278**; runtime autenticado E2E-01…16
+  (desktop/móvil/ES/EN; RBAC y CBU negativos; auditoría verificada).
+- **Nuevos candidatos**: `R-183` (API de alta/edición acepta `area_id` de otra empresa — la
+  UI filtra), `R-184` (`kpi/ipe` 500 en lote recién creado) + observaciones N-3/N-4.
+- `R-98`/`R-119`/`R-181`: CLOSED sin regresión. `BU-D10`: PENDING_RATIFICATION. Wave B:
+  PAUSED · Wave C/SAP: NOT STARTED. Detalle: `GA_FE_06_ADDENDUM_LOT_CONTRACT_SLA.md` y
+  `audit/ga-fe-06/GA_FE_06_CERTIFICATION.md`.

@@ -1,0 +1,40 @@
+# GA-FE-06 · PAQUETE UAT DEL PROPIETARIO — R-182
+
+Objetivo: que el propietario pueda **reproducir y aceptar** el arreglo sin conocimiento técnico previo. Duración estimada: 5–8 minutos.
+
+## Guion reproducible
+
+Cuenta de prueba (efímera): `ga6.operador` — credencial entregada por canal seguro (se destruye al cierre de la tranche).
+
+1. **Alta con fecha prevista y área** (escritorio): entra en `https://avicola.globaldv.net/lots/new`.
+   - Rellena Código (p.ej. `UAT-1`), Tipo = Engorde, Granja, **Área = Nave Norte (GA-FE-06)** y **Fecha prevista de cierre** (elige una fecha de, digamos, dentro de unos días).
+   - Pulsa «Crear Lote» → debe aparecer «Lote creado exitosamente» y abrirse el detalle.
+   - **Comprueba**: la tarjeta «Información» muestra **«Fecha prevista de cierre»** con el día que elegiste (sin desfase de un día).
+2. **Opcionalidad**: repite el alta **sin** fecha ni área → se crea igualmente (no son obligatorias).
+3. **Sin áreas ajenas**: en el desplegable «Área» solo aparecen áreas de tu empresa (las dos «Nave … (GA-FE-06)»). No aparece ninguna «Del Sur».
+4. **Móvil** (opcional): repite el paso 1 en el teléfono (390×844): el selector y la fecha funcionan igual.
+5. **Inglés** (opcional): cambia el idioma a EN en el encabezado → verás `PLANNED CLOSE DATE` y `Area`.
+
+## Qué mirar para aceptar
+
+- La fecha que tecleas es la que se guarda y la que se ve (mismo día).
+- El área se elige por nombre, de una lista de tu empresa.
+- Nada más cambia: los permisos siguen mandando (un usuario sin permiso de alta no puede crear; sin unidad operativa tampoco).
+
+## Evidencia disponible (índice)
+
+- `GA_FE_06_AUTHENTICATED_RUNTIME_EVIDENCE.md` — batería E2E-01…16 con valores reales.
+- `GA_FE_06_SCREENSHOT_INDEX.md` — capturas (alta, detalle, RBAC, móvil, inglés).
+- `GA_FE_06_NETWORK_EVIDENCE.md` — payload antes/después.
+- `GA_FE_06_RED_EVIDENCE.md` — el defecto demostrado antes de corregir.
+- `GA_FE_06_R182_CLOSURE_RECONCILIATION.md` — respuestas directas de cierre.
+
+## Decisión solicitada
+
+```
+A) ACEPTO GA-FE-06 (R-182 cerrado)
+B) ACEPTO CON RESERVAS (indicar cuáles)
+C) NO ACEPTO (indicar qué falla)
+```
+
+Estado: **OWNER_ACCEPTANCE_PENDING** — a la espera de la decisión del propietario (no se inicia ninguna otra tranche).

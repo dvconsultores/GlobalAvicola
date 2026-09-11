@@ -26,18 +26,18 @@ Ejecución autónoma de extremo a extremo. Estados: ✔ hecho · ◐ en curso ·
 | P20 | Matriz de fixtures escrita | ✔ |
 | P21 | Especificación R182-AC01…52 escrita | ✔ |
 | P22 | Clarificaciones C01–C25 escritas | ✔ |
-| P23 | Plan/checklist/tareas escritos | ○ |
-| P24 | Prueba RED vitest del contrato de alta (fallo objetivo triple) | ○ |
-| P25 | Evidencia RED runtime pre-implementación (fixtures + alta real) | ○ |
-| P26 | C1: commit de gobernanza + RED (+ push) | ○ |
-| P27 | Implementación mínima: selector de áreas + payload PLD/área + clave i18n + fila detalle | ○ |
-| P28 | GREEN dirigido + regresión completa frontend (tsc/build/Vitest) + gate PG-libre backend | ○ |
-| P29 | C2: commit de implementación + push ⇒ despliegue (Docker/Watchtower) | ○ |
-| P30 | Congelar generación nueva (bundle + Last-Modified + ETag) | ○ |
-| P31 | E2E-01…16 autenticados (desktop/móvil, ES/EN, red, consola, auditoría) | ○ |
-| P32 | Regresiones GA-FE-02/03/04/05 (R-98/R-119/R-181 verdes) | ○ |
-| P33 | Escaneo SLA oportuno (relectura al cierre) | ○ |
+| P23 | Plan/checklist/tareas escritos | ✔ |
+| P24 | Prueba RED vitest del contrato de alta (fallo objetivo triple) | ✔ |
+| P25 | Evidencia RED runtime pre-implementación (fixtures + alta real) | ✔ |
+| P26 | C1: commit de gobernanza + RED (+ push) | ✔ (`10f91db`) |
+| P27 | Implementación mínima: selector de áreas + payload PLD/área + clave i18n + fila detalle | ✔ |
+| P28 | GREEN dirigido + regresión completa frontend (tsc/build/Vitest) + gate PG-libre backend | ✔ (278/278 · 7/7) |
+| P29 | C2: commit de implementación + push ⇒ despliegue (Docker/Watchtower) | ✔ (`23ca59a`) |
+| P30 | Congelar generación nueva (bundle + Last-Modified + ETag) | ✔ (`index-DcqmSs-R.js`) |
+| P31 | E2E-01…16 autenticados (desktop/móvil, ES/EN, red, consola, auditoría) | ✔ |
+| P32 | Regresiones GA-FE-02/03/04/05 (R-98/R-119/R-181 verdes) | ✔ (suite + guard D runtime) |
+| P33 | Escaneo SLA oportuno (relectura al cierre) | ◐ |
 | P34 | Higiene §101 (revocaciones, OFF de BUs, baja de áreas/roles/usuarios, destrucción de credenciales) | ○ |
-| P35 | Documentos de evidencia (runtime, red, capturas, ledger, reconciliación R-182) | ○ |
-| P36 | Cierre: certificación + addendum de auditoría + catálogo + paquete UAT | ○ |
+| P35 | Documentos de evidencia (runtime, red, capturas, ledger, reconciliación R-182) | ✔ |
+| P36 | Cierre: certificación + addendum de auditoría + catálogo + paquete UAT | ✔ |
 | P37 | C4 evidencia + verificación final local==remoto/worktree limpio + informe final + STOP | ○ |

@@ -1,0 +1,176 @@
+{
+  "tranche": "GA-FE-06",
+  "phase": "GREEN",
+  "when": "2026-09-11T13:59:36.074Z",
+  "steps": [
+    {
+      "E2E-00-bundle": [
+        "index-DcqmSs-R.js",
+        "index-NE-4BlmS.css"
+      ]
+    },
+    {
+      "E2E-03-selector": {
+        "options": [
+          "Seleccionar área..."
+        ],
+        "incluyeAjena": false
+      }
+    },
+    {
+      "E2E-06-masters-areas-C": {
+        "ids": [
+          1,
+          2
+        ],
+        "codes": [
+          "GA6-AREA-A1",
+          "GA6-AREA-A2"
+        ]
+      }
+    },
+    {
+      "E2E-01-alta-valida": {
+        "id": 19,
+        "status": 201,
+        "payloadPLD": "2026-09-21",
+        "payloadArea": 1,
+        "freshPLD": "2026-09-21T00:00:00Z",
+        "freshArea": 1,
+        "serverToday": "2026-09-11",
+        "detailHasPLD": false
+      }
+    },
+    {
+      "E2E-05-roundtrip": [
+        {
+          "code": "GA6-B3-202609111359",
+          "typed": "2026-09-14",
+          "stored": "2026-09-14",
+          "exacto": true
+        },
+        {
+          "code": "GA6-I1-202609111359",
+          "typed": "2026-09-12",
+          "stored": "2026-09-12",
+          "exacto": true
+        },
+        {
+          "code": "GA6-PAST-202609111359",
+          "typed": "2026-09-10",
+          "stored": "2026-09-10",
+          "exacto": true
+        }
+      ]
+    },
+    {
+      "E2E-04-null": {
+        "id": 23,
+        "payloadPLD": null,
+        "payloadArea": null,
+        "freshPLD": null,
+        "freshArea": null
+      }
+    },
+    {
+      "E2E-14-validacion": {
+        "postDisparado": false,
+        "errVisible": true
+      }
+    },
+    {
+      "E2E-07-refresh": {
+        "pldIgual": true,
+        "areaIgual": true,
+        "uiMuestraCierre": false
+      }
+    },
+    {
+      "E2E-10-sla-datos": {
+        "fuera10": "GA6-E01-202609111359",
+        "dentro3": "GA6-B3-202609111359",
+        "dentro1": "GA6-I1-202609111359",
+        "pasado": "GA6-PAST-202609111359",
+        "nulo": "GA6-NN-202609111359",
+        "serverToday": "2026-09-11",
+        "fechas": {
+          "p10": "2026-09-21",
+          "p3": "2026-09-14",
+          "p1": "2026-09-12",
+          "pm1": "2026-09-10"
+        }
+      }
+    },
+    {
+      "E2E-footer-net": {
+        "total": 8,
+        "endpoints": [
+          "me",
+          "notifications/unread-count",
+          "masters/farms",
+          "masters/houses",
+          "masters/genetic-lines",
+          "masters/breeds",
+          "masters/areas"
+        ]
+      }
+    },
+    {
+      "e2e-console-errors": {
+        "count": 2,
+        "sample": [
+          "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+          "Failed to load resource: the server responded with a status of 403 (Forbidden)"
+        ]
+      }
+    },
+    {
+      "E2E-08-rbac": {
+        "rutaFinal": "/lots/new",
+        "bloqueadoUI": false,
+        "apiStatus": 403
+      }
+    },
+    {
+      "E2E-09-cbu": {
+        "code": "GA6-E-NOBU-202609111359",
+        "postStatus": 403,
+        "payload": {
+          "lot_code": "GA6-E-NOBU-202609111359",
+          "bird_type": "broiler",
+          "farm_id": 1,
+          "house_id": null,
+          "area_id": 1,
+          "planned_close_date": "2026-09-12",
+          "genetic_line_id": null,
+          "breed_id": null,
+          "start_date": null,
+          "sap_reference": null
+        },
+        "fresh": null,
+        "detailHasPLD": false
+      }
+    },
+    {
+      "E2E-09-cbu-api": {
+        "status": 403,
+        "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+      }
+    },
+    {
+      "E2E-movil": {
+        "id": 24,
+        "status": 201,
+        "freshPLD": "2026-09-12",
+        "freshArea": 2
+      }
+    },
+    {
+      "E2E-EN": {
+        "hasPlannedClose": false,
+        "hasArea": true,
+        "hasSelectArea": true
+      }
+    }
+  ]
+}

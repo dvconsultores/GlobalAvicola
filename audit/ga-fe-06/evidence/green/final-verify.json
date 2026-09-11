@@ -1,0 +1,41 @@
+{
+  "detalle": {
+    "filaCierre": [
+      "2026-09-21"
+    ],
+    "cuatroXX": [
+      {
+        "status": 500,
+        "url": "reports/kpi/ipe/19"
+      }
+    ],
+    "consoleErrors": [
+      "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    ]
+  },
+  "reload": {
+    "persiste": true,
+    "cuatroXXacumulados": 2,
+    "consoleErrorsAcumulados": 2
+  },
+  "sla": {
+    "status": 200,
+    "total": 0,
+    "nearClose": []
+  },
+  "unread": {
+    "status": 200,
+    "body": {
+      "unread": 0
+    }
+  },
+  "guardD": {
+    "path": "/lots/new",
+    "prohibido": true
+  },
+  "en": {
+    "plannedClose": true,
+    "area": true,
+    "selectArea": true
+  }
+}

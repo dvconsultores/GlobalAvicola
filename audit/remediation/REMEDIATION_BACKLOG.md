@@ -1695,3 +1695,36 @@ INTOCADO      R-98/R-119/R-181/R-182 sin cambio · BU-D10 PENDING_RATIFICATION �
 Nuevos hallazgos de esta tranche: **ninguno** (el único defecto detectado —dependencia
 inestable que producía bucle de refetch— se corrigió dentro del propio ciclo RED→GREEN antes
 del commit de implementación).
+
+---
+
+## GA-FE-06 · R-182 CERRADO (2026-09-11) — contrato de alta de lote + SLA
+
+```
+ENTREGA       `LotFormPage`: selector de área por empresa (`/masters/areas`) + payload con
+              `planned_close_date` y `area_id` (null explícito si vacío); `LotDetailPage`:
+              fila «Fecha prevista de cierre» (día natural, sin ±1); i18n `lots.area` ES/EN.
+COMMITS       C1 10f91db (gobernanza+RED) → C2 23ca59a (implementación) → C4 (evidencia)
+GENERACIÓN    index-DcqmSs-R.js (entrada index-WUv1-F9o.js)
+RED→GREEN     vitest 4 rojos + 1 control → 5/5 verdes · runtime pre-fix (lote 17: payload de
+              8 claves, fresh null) · suite 278/278 · tsc 0 · build PASS · PG-libre 7/7
+RUNTIME       E2E-01…16 autenticados (desktop 1440×900 · móvil 390×844 · ES/EN · RBAC 403 ·
+              CBU 403 rol/ventana · auditoría verificada · red sin tormenta)
+SLA           fuente reparada; regla 0..3 intacta (suite CI); aviso por escáner horario
+              (relectura documentada — ver certificación)
+CAMBIO        backend 0 · migración 0 · permisos 0 · expansión 0
+```
+
+### Nuevos candidatos registrados (con evidencia viva; NO corregidos — fuera de alcance)
+
+- **`R-183` (P2 propuesto, ex N-1)**: `POST/PUT /lots` acepta `area_id` de **otra empresa**
+  (probado: 201 y persistido, lote 18 `GA6-XT-CHECK-1`; `farm_id` sí tiene guarda). La UI
+  filtra y el inquilino no se cruza en lectura. Recomendación: guarda simétrica + test CI.
+- **`R-184` (P2 propuesto, ex N-2)**: `GET /reports/kpi/ipe/{lot}` → **500** con lote recién
+  creado (`date.today() − lot.start_date` sobre datetime aware). Reproducido vivo (lote 19).
+- Observaciones: N-3 (detalle de lote llama KPIs sin permiso → 403 de consola; P3) ·
+  N-4 (`new_values` de auditoría de alta no incluye `planned_close_date`/`area_id`; P3).
+
+INTOCADO: `R-98`/`R-119`/`R-181` CLOSED sin regresión · BU-D10 PENDING_RATIFICATION ·
+Wave B PAUSADA · Wave C / SAP no iniciados · GA-FE-06 = FUNCTIONALLY_CERTIFIED /
+OWNER_ACCEPTANCE_PENDING (paquete UAT emitido).

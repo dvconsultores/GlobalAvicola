@@ -1,0 +1,52 @@
+{
+  "detalle": {
+    "tieneEtiquetaCierre": false,
+    "tieneFecha": true,
+    "fila": [
+      "2026-09-21"
+    ]
+  },
+  "selector": [
+    "Seleccionar área...",
+    "Nave Norte (GA-FE-06)",
+    "Nave Sur (GA-FE-06)"
+  ],
+  "fourXX": [
+    {
+      "status": 403,
+      "url": "reports/kpis?lot_id=19"
+    },
+    {
+      "status": 403,
+      "url": "reports/kpi/ipe/19"
+    },
+    {
+      "status": 403,
+      "url": "reports/kpi/weight-uniformity/19"
+    },
+    {
+      "status": 403,
+      "url": "reports/kpis?lot_id=25"
+    },
+    {
+      "status": 403,
+      "url": "reports/kpi/ipe/25"
+    },
+    {
+      "status": 403,
+      "url": "reports/kpi/weight-uniformity/25"
+    }
+  ],
+  "guardD": {
+    "path": "/lots/new",
+    "texto": "Global Avícola\n\nGestión Operativa\n\nDashboard\nADMINISTRACIÓN\nConfiguración\nRG\n\nRBAC GA-FE-06\n\nga6.rbac\n\nPerfil\nCerrar Sesión\nEN\nAvícola Global C.A.\nRG\n\nRBAC GA-FE-06\n\nga6.rbac\n\nCerrar Sesión\nNo tiene permiso para ver esta sección.",
+    "consoleErrors": []
+  },
+  "en": {
+    "plannedLabel": false,
+    "areaLabel": [
+      "Area"
+    ],
+    "selectArea": true
+  }
+}

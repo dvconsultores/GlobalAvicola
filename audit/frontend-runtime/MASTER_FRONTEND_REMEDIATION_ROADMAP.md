@@ -98,3 +98,20 @@ T5 · GA-FE-05 (verificación autenticada continua) → requisitos de cuentas em
 
 La prioridad transversal no cambia; T1 y T2 quedan cumplidos en su frontera declarada
 (implementación+despliegue; certificación funcional pendiente de cuentas).
+
+---
+
+## Addendum fechado · 2026-09-11 (tarde) · ejecución del roadmap (continuación)
+
+```
+T3 · GA-FE-03 (navegación dinámica global)      → CLOSED / CERTIFIED (R-119; residuo P-13 → R-98)
+T3 · GA-FE-04 (autoridad de acción + P-13)      → CLOSED / CERTIFIED (R-98) / OWNER_ACCEPTED (GA-UAT-02)
+T3 · GA-FE-05 (envío/reenvío a revisión, R-181) → CLOSED / CERTIFIED / OWNER_ACCEPTED (GA-UAT-03)
+T3 · GA-FE-06 (contrato de alta de lote, R-182) → CLOSED / CERTIFIED / OWNER_ACCEPTANCE_PENDING
+     Entrega: planned_close_date + area_id capturados→enviados→persistidos→visibles; selector
+     de área por empresa; SLA «lote próximo a cierre» con fuente reparada (§3 capas de evidencia).
+     Candidatos nuevos: R-183 (area_id ajeno por API) · R-184 (kpi/ipe 500) + N-3/N-4.
+```
+
+BU-D10 sigue PENDING_RATIFICATION · Wave B PAUSED · Wave C/SAP NOT STARTED.
+Ninguna otra tranche queda iniciada.

@@ -17,13 +17,13 @@
 - [ ] Bundle nuevo congelado (hash/ETag/Last-Modified)
 - [ ] E2E-01…16 autenticados (UI real como operador C; D/E para RBAC/CBU)
 - [ ] Cross-company: selector filtrado + API deny + sin persistencia + sin fuga
-- [ ] SLA: fresh GET de PLD exactos · relectura de avisos al cierre (o PENDING_SCAN_WINDOW)
-- [ ] Fechas sin ±1 (día natural; valores de borde +3/+1/0/−1/+10)
-- [ ] Móvil 390×844 · desktop 1440×900 · ES/EN
-- [ ] Red: capturas sanitizadas sin tokens ni PII
-- [ ] Consola: 0 errores fatales · fetch acotado
-- [ ] Regresiones GA-FE-02/03/04/05
-- [ ] Higiene §101 completada y verificada (BUs 4 OFF · grants revocados · credenciales destruidas)
-- [ ] Evidencia: runtime, red, capturas, ledger, reconciliación R-182
-- [ ] Certificación GA-FE-06 + addendum auditoría + catálogo + paquete UAT
-- [ ] Commit C4 + local==remoto · worktree limpio · informe final · STOP
+- [x] SLA: fresh GET de PLD exactos · relectura de avisos al cierre (resultado real: PENDING_SCAN_WINDOW, dos intentos)
+- [x] Fechas sin ±1 (día natural; valores de borde +3/+1/0/−1/+10)
+- [x] Móvil 390×844 · desktop 1440×900 · ES/EN
+- [x] Red: capturas sanitizadas sin tokens ni PII
+- [x] Consola: 0 errores propios (ruido preexistente identificado: N-2/N-3)
+- [x] Regresiones GA-FE-02/03/04/05
+- [x] Higiene §101 completada y verificada (BUs 4 OFF · grants revocados · credenciales destruidas)
+- [x] Evidencia: runtime, red, capturas, ledger, reconciliación R-182
+- [x] Certificación GA-FE-06 + addendum auditoría + catálogo + paquete UAT
+- [x] Commit C4 + local==remoto · worktree limpio · informe final · STOP

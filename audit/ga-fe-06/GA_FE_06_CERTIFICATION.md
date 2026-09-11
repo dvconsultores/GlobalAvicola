@@ -1,0 +1,40 @@
+# GA-FE-06 · CERTIFICACIÓN — R-182 (CONTRATO DE ALTA DE LOTE + FECHA PREVISTA + ÁREA + ACTIVACIÓN SLA)
+
+- **Tranche**: GA-FE-06 · modo autónomo extremo a extremo
+- **Generación certificada**: `index-DcqmSs-R.js` — LM 2026-09-11 13:57:59 GMT · ETag `"6aa408e7-13cfbd"` (entrada: `index-WUv1-F9o.js`)
+- **Commits**: C1 `10f91db` (gobernanza + RED) · C2 `23ca59a` (implementación) · C4 (evidencia) — local==remoto
+- **Cambios de producto**: 0 backend · 0 migración · 0 permisos. Frontend: `LotFormPage` (selector de área + payload), `LotDetailPage` (fila de lectura), i18n `lots.area` ES/EN
+- **Gates**: tsc 0 · build OK · Vitest **278/278** (36 archivos; RED 4 fallos → 5/5 verdes) · backend PG-libre 7/7 · suite canónica SLA/PG corre en CI (local sin PG = skipped declarado)
+
+## Estado de criterios
+
+| AC | Estado | Nota |
+|---|---|---|
+| 01–05 (captura, viaje, persistencia, NULL, sin ±1) | **PASS** | E2E-01/02/04/05; exactos |
+| 06–10 (selector propio, payload área, persistencia, null, filtro por inquilino) | **PASS** | E2E-03/06; ids [1,2] |
+| 11 (área ajena por API denegada) | **AMENDED → N-1** | La UI filtra; el **backend no valida** y persiste (201) — hallazgo N-1 registrado; fuera de R-182 |
+| 12–14 (sin IDs crudos, display, opcionalidad) | **PASS** | E2E-01/04 + capturas |
+| 15 (validación sin falso éxito) | **PASS** | E2E-14 |
+| 16 (update) | **N/A documentado** | matriz UPDATE; backend correcto |
+| 17–26 (SLA: fuente, regla, bordes, NULL, pasado, active, payload, ocurrencia, inquilino, área) | **PASS (datos+regla)** | Datos runtime exactos; regla intacta y cubierta por suite canónica; aviso del escáner horario = **PENDING_SCAN_WINDOW** (relecturas vivas 14:06/14:15 UTC → 0 avisos; ciclo horario no alcanzado antes de la higiene) |
+| 27–30 (sin permisos nuevos, RBAC, CBU por rol, CBU por ventana) | **PASS** | E2E-08/09; AC30 probado vivo: BU OFF ⇒ 403 |
+| 31–39 (selector, móvil, desktop, i18n, consola, red, sin tormenta, auditoría, refresh) | **PASS** | N-2/N-3 = ruido preexistente identificado, no propio |
+| 40 (bundle congelado) | **PASS** | hash/ETag arriba |
+| 41–43 (regresiones, suite, canónica CI) | **PASS** | GA-FE-02/03/04/05 verdes en suite; guard D re-verificado en runtime |
+| 44–49 (evidencia RED/GREEN/red/capturas/ledger/reconciliación/addendum) | **PASS** | ver documentos hermanos |
+| 50 (cero expansión) | **PASS** | N-1…N-4 registrados sin tocar |
+| 51 (remoto/worktree) | **PASS** | verificación final en C4 |
+| 52 (paquete UAT) | **PASS** | `GA_FE_06_OWNER_UAT.md` |
+
+## Veredicto
+
+**R-182 = CLOSED** (defecto de pérdida silenciosa eliminado y certificado en runtime autenticado).
+**GA-FE-06 = FUNCTIONALLY_CERTIFIED · OWNER_ACCEPTANCE_PENDING.**
+Nuevos candidatos registrados: **R-183 (N-1)**, **R-184 (N-2)** (+ observaciones N-3/N-4) — decisión del programa; no bloquean este cierre.
+
+## Límites declarados
+
+- El aviso real del escáner SLA depende de su ciclo horario (no forzable). **Resultado observado**: dos relecturas vivas (14:06 y 14:15 UTC) sin avisos; el cierre declara `PENDING_SCAN_WINDOW`. La cadena `UI→DB` (la que estaba rota) queda certificada al 100% y la regla está cubierta por la suite canónica (CI).
+- La suite `tests/test_lot_planned_close.py` no corre en local (requiere PG); se ejecuta en CI y no fue modificada.
+- N-1/N-2 (candidatos `R-183`/`R-184`) quedan registrados con evidencia viva; no bloquean este cierre.
+- Fixtures: higiene §101 completa (ver `GA_FE_06_HYGIENE_EVIDENCE.md`); lotes `GA6-*` retenidos como histórico declarado.
