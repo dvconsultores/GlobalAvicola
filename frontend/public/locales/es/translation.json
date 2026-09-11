@@ -80,7 +80,10 @@
     "consolidated": "Consolidado",
     "sent_to_sap": "Enviado a SAP",
     "sap_confirmed": "SAP Confirmado",
-    "cancelled": "Anulado"
+    "cancelled": "Anulado",
+    "draft": "Borrador",
+    "sap_error": "Error SAP",
+    "reversed": "Revertido"
   },
   "auth": {
     "login": "Iniciar Sesión",
@@ -819,7 +822,12 @@
     "importQuarantineEndDate": "Cuarentena (fecha fin)",
     "importInitialHealthInspection": "Inspección sanitaria inicial",
     "importReceivedBySex": "Aves recibidas por sexo",
-    "importIdentityHint": "Embarcada = recibida + mortalidad en traslado; recibida = machos + hembras"
+    "importIdentityHint": "Embarcada = recibida + mortalidad en traslado; recibida = machos + hembras",
+    "submitToReview": "Enviar a revisión",
+    "resubmitToReview": "Reenviar a revisión",
+    "submittedToReview": "Enviado a revisión",
+    "resubmittedToReview": "Reenviado a revisión",
+    "submitError": "No se pudo enviar a revisión"
   },
   "weekly": {
     "weekNumber": "N° Sem",

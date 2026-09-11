@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Activity, Paperclip, Upload, Trash2, FileText, Image, Download, X } from 'lucide-react'
 import api from '../../services/api'
+import { operationsService } from '../../services/operations.service'
 import { useCan } from '../../auth/actionAuthority'
 import WeightEvaluation from '../../components/operations/WeightEvaluation'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -18,6 +19,11 @@ const STATUS_COLORS: Record<string, string> = {
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
 const MAX_SIZE_MB = 10
+
+/** `GA-FE-05` · `R-181` · `OD-17.a/b` · `docs/12 §2`: estados que el backend acepta en
+ * `POST /operations/{id}/submit` (`REENVIABLES`). El CTA refleja exactamente ese conjunto:
+ * registrado ⇒ enviar; devuelto/rechazado ⇒ reenviar; el resto no ofrece acción. */
+const SUBMITTABLE_STATUSES = ['registered', 'returned', 'rejected']
 
 function formatBytes(bytes: number) {
  if (bytes < 1024) return `${bytes} B`
@@ -48,6 +54,8 @@ export default function OperationDetailPage() {
  const [description, setDescription] = useState('')
  const [evidenceType, setEvidenceType] = useState('') // `GA-REM-042` · `R-152`: clase del adjunto del plan de importación
  const [deletingId, setDeletingId] = useState<number | null>(null)
+ const [submitting, setSubmitting] = useState(false)
+ const submittingRef = useRef(false)
  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
  const fileRef = useRef<HTMLInputElement>(null)
  const toast = useToast()
@@ -105,6 +113,36 @@ export default function OperationDetailPage() {
  } finally { setDeletingId(null) }
  }
 
+ // `GA-FE-05` · `R-181`: acto explícito de envío/reenvío a revisión.
+ // Autoridad: permiso de la ACCIÓN (`operations:create`, contrato real del endpoint) ∧ unidad
+ // disponible (GA-FE-04). Estado: solo los aceptados por el backend (`REENVIABLES`).
+ // Tras éxito **y** tras fallo se relee la verdad del backend (nada optimista).
+ const canSubmit = !!event && SUBMITTABLE_STATUSES.includes(event.status)
+ && can({ permission: 'operations:create', requiresUnits: true })
+ const isResubmit = !!event && (event.status === 'returned' || event.status === 'rejected')
+ const submitLabel = isResubmit
+ ? String(t('operations.resubmitToReview', 'Reenviar a revisión'))
+ : String(t('operations.submitToReview', 'Enviar a revisión'))
+
+ const handleSubmitToReview = async () => {
+ if (!event || submittingRef.current) return
+ submittingRef.current = true
+ setSubmitting(true)
+ try {
+ await operationsService.submit(event.id)
+ toast.success(t(
+ isResubmit ? 'operations.resubmittedToReview' : 'operations.submittedToReview',
+ isResubmit ? 'Reenviado a revisión' : 'Enviado a revisión',
+ ))
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('operations.submitError', 'No se pudo enviar a revisión')))
+ } finally {
+ submittingRef.current = false
+ setSubmitting(false)
+ loadEvent()
+ }
+ }
+
  const handleDownload = async (ev: Evidence) => {
  try {
  const response = await api.get(`/operations/${id}/evidences/${ev.id}/download`, { responseType: 'blob' })
@@ -139,8 +177,21 @@ export default function OperationDetailPage() {
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
  <div className="flex items-center justify-between mb-4">
  <h1 className="text-xl font-bold text-[#1E3A5F]">{t('operations.eventDetail', { id: event.id })}</h1>
- <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100'}`}>{event.status}</span>
+ <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100'}`}>{String(t(`status.${event.status}`, event.status))}</span>
  </div>
+ {/* `GA-FE-05` · `R-181`: acción primaria state-aware (desktop y móvil comparten vista). */}
+ {canSubmit && (
+ <div className="flex flex-wrap justify-end mb-4">
+ <button
+ type="button"
+ onClick={handleSubmitToReview}
+ disabled={submitting}
+ className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+ >
+ {submitting ? t('common.saving') : submitLabel}
+ </button>
+ </div>
+ )}
  <dl className="grid grid-cols-2 gap-4 text-sm">
  <div><dt className="text-slate-500">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
  <div><dt className="text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
