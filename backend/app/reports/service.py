@@ -599,7 +599,10 @@ class ReportsService:
             select(Lot).where(Lot.id == lot_id, Lot.company_id == self.company_id)
         )
         lot = lot_result.scalar_one_or_none()
-        age_days = (date.today() - lot.start_date).days if lot and lot.start_date else 30
+        # `R-186` · `R-75` / `GA-REM-028`: misma normalización canónica que `get_kpi_ipe`
+        # (R-184). `Lot.start_date` es `DateTime(timezone=True)`; sin normalizar,
+        # `date − datetime` elevaba `TypeError` ⇒ HTTP 500 en todo lote con inicio.
+        age_days = (date.today() - _dia(lot.start_date)).days if lot and lot.start_date else 30
 
         # Get FCR
         fcr_kpi = await self.get_kpi_feed_conversion(lot_id)
