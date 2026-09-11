@@ -176,3 +176,99 @@ se reanuda en el paso 30 del orden estricto y ejecuta los 31 escenarios.
 
 Estado al cierre de redacción: commit de gobernanza de GA-FE-02-A (este paquete) + push.
 Worktree limpio tras el commit; sin código de producto; sin cambios en `origin`.
+
+---
+
+# ADENDA — 2026-09-11 · GA-FE-02-C · CORRIDA AUTENTICADA COMPLETA Y CERTIFICACIÓN
+
+> Esta adenda **supera los §36–39 anteriores** para la certificación funcional: la ruta
+> crítica autenticada ya no está bloqueada. Lo anterior queda como registro histórico del
+> bloqueo y su resolución (D1→F4→F1).
+
+## 41 · Ruta crítica resuelta (histórico inmediato)
+
+| Hito | Estado | Dónde |
+|---|---|---|
+| D1 (hidratación de sesión) | CLOSED | `ea26b2e` · verificación runtime en esta corrida (hard refresh) |
+| F2 (rol «Administrador de Accesos») | CLOSED | rol id=35 · 4 permisos exactos |
+| F3 (emails `.local` ⇒ 500) | CLOSED | 14/14 reparadas · seed endurecido `b83d908` |
+| F4 (selector de empresa) | CLOSED | `716d175` · re-verificado en UI en esta corrida |
+| **F1 (catálogo canónico)** | **CLOSED** | **migración de datos `y5z6a7b8c9d0`** por pipeline normal (`GA-REM-024`); postcondición runtime 4/4 — spec §4.2.2 |
+
+## 42 · Corrida de certificación (resultados)
+
+Autorización GA-FE-02-C · modo autónomo · baseline de producto `b4d8c3a` (C2) + cierres.
+Todo ejecutado contra `https://avicola.globaldv.net` con el bundle **`index-B2-tZnkI.js`**
+estable de inicio a fin (sin movimiento de generación — §79).
+
+- **E2E-01…10 + variantes: 33 PASS / 0 FAIL / 0 BLOCKED** — matriz completa en
+  `GA_FE_02_A_E2E_MATRIX.md` (sección «RESULTADOS REALES»).
+- **Matriz 3D: 4/4** — `OFF/YES/YES→DENY` · `ON/NO/YES→DENY` · `ON/YES/NO→403 DENY` ·
+  `ON/YES/YES→ALLOW(2)` — con actores y estados reales, sin inferencia.
+- **Refresh 5/5 · Relogin 2/2 (IMMEDIATE/IMMEDIATE) · Desktop PASS · Móvil 390×844 PASS.**
+- **Persistencia PASS** (fresh GET + refresh por mutación) · **Auditoría PASS** (14+15 filas
+  con actor/empresa/objetivo/acción/timestamp) · **Consola: 0 fatales** · **UX de fallo PASS**
+  · **Doble acción PASS** (1 mutación por clic).
+- **Seguridad (stop conditions §68): todas negativas.** Auto-concesión: no existe ruta (3
+  capas) · cross-company: 404 · D no muta (403×4) · OFF/NO/RBAC-NO: DENY real · sin mezcla de
+  tenants · sin estado obsoleto tras switch. Dos incidencias documentadas (no defectos):
+  **D-1** lectura global exenta (excepción certificada GA-REM-002; escrituras cerradas R-163),
+  **D-2** tarjeta del hub para D (alcance conocido R-119, ruta protegida). Observación D-3
+  (filtro `module` de `/audit` con valores fuera del enum → 500; valores canónicos → 200) y
+  D-4 (fail-closed del home para roles sin `dashboard:read`) quedan registradas sin remediar
+  (fuera de alcance; sin hotfix — §68/§70).
+- **Fixtures**: actores A–E + X provisionados por API oficial, logins independientes 5/5;
+  **restauración completa** (CBU todas OFF; sin concesiones vivas; usuarios sintéticos dados
+  de baja; roles temporales desactivados; rol 35 intacto) — ledger de datos §76.
+- **Higiene**: 0 credenciales impresas/commiteadas; 0 tokens en documentos; `/tmp` destruido
+  al cierre; navegador de E2E cerrado.
+
+## 43 · Gates finales (§78)
+
+```
+TypeScript (tsc -b --noEmit) ........ 0 errores            PASS
+npm run build ....................... ✓ built             PASS
+Vitest .............................. 205/205 (21 files)  PASS
+Backend dirigido (migración F1) ..... 6/6 passed          PASS
+compileall (app/seeds/tests/alembic)  OK                  PASS
+Cadena Alembic ...................... 1 head / 1 base · 37 revisiones  PASS
+Runtime F1 ........................... 4/4 canónicas      PASS
+F2 / F3 / F4 / D1 .................... PASS (re-verificados post-deploy)
+E2E autenticado ...................... PASS (33/33 con D-1..D-4 documentadas)
+Runtime estable ...................... index-B2-tZnkI.js idéntico inicio/fin
+```
+
+## 44 · Reconciliación de capas (§82)
+
+| Capa | Resultado |
+|---|---|
+| Backend técnico | **CERTIFIED** (contratos BU + segregación + row-scope; migración determinista) |
+| Frontend | **PASS** (consolas admin alcanzables/protegidas; distinción de estados; móvil operable) |
+| Deployment | **PASS** (pipeline normal aplicó migración + bundle estable) |
+| Authenticated E2E | **PASS** |
+| Security | **PASS** (stop conditions negativas; D-1 declarada certificada) |
+| Persistence | **PASS** |
+| Responsive | **PASS** |
+| Owner UAT | **READY — PENDING** (solo el propietario puede aprobar) |
+
+## 45 · Decisión de certificación (§83)
+
+```
+F1 CLOSED · F2 CLOSED · F3 CLOSED · F4 CLOSED · D1 CLOSED
+GA-FE-02-B CLOSED · ENV-01 READY FOR GA-FE-02: YES
+A/B/C/D READY (en la corrida) · E verificado
+E2E-01…10 PASS · 3D 4/4 · refresh/relogin/desktop/mobile/network/persistence/audit PASS
+GA-FE-02 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING
+OWNER_UAT_READY = YES · Owner Acceptance: PENDING
+```
+
+## 46 · Límites del programa (intactos)
+
+```
+R-98 / R-119 / R-181 / R-182 ... UNCHANGED (D-2 documenta R-119 sin reabrirlo)
+BU-D10 ........................ PENDING_RATIFICATION (observado, no decidido)
+Wave B ........................ PAUSED
+Wave C ........................ NOT STARTED
+SAP ........................... NOT STARTED
+GA-FE-03 ...................... ELIGIBLE_BUT_NOT_STARTED (no iniciada)
+```

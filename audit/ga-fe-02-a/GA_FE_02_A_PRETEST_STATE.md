@@ -51,3 +51,45 @@ sin sesión autenticada disponible). Modo refinado:
 
 Nada cambió en el sistema: sin cuentas creadas, sin mutaciones, runtime intacto
 (`index-C_aR7TJ6.js` · `35ea38e2…`), gates verdes (tsc 0 · build 0 · 198/198).
+
+---
+
+## Snapshot PRE-TEST capturado — 2026-09-11 (GA-FE-02-C, autenticado)
+
+Capturado **antes de la primera mutación de la corrida de certificación** (tras el cierre de
+F1 y el aprovisionamiento de actores; instrumento: API oficial con sesión del bootstrap +
+sesiones propias de cada actor).
+
+```
+FECHA/HORA          2026-09-11 ~02:05Z (UTC)
+REPO                main · HEAD b4d8c3a (C2) · worktree limpio
+RUNTIME             200 OK · assets/index-B2-tZnkI.js · LM 01:09:24 GMT — estable toda la corrida
+F1                  CLOSED — catálogo de 4 unidades presente (migración y5z6a7b8c9d0)
+
+EMPRESA DE PRUEBA   Avícola Global C.A. (id 1)
+COMPANY BU (id 1)   breeder=false · broiler=false · grandparent=false · hatchery=false
+                    (las 4 recién creadas por la migración; ninguna habilitación previa)
+C · RBAC            lots:read (rol 37) — fuente de la capacidad productiva representativa
+C · CONCESIONES     vivas: 0 (historia: 4 revocadas del sondeo de selección de BU)
+C · EFFECTIVE BU    [] (sin concesión viva)
+B · PERMISOS        4 exactos (rol 35, plantilla; sin asignaciones a humanos previas a esta corrida)
+A · PERMISOS        3 (rol 36: business_units read/update + dashboard:read)
+D · PERMISOS        dashboard:read (rol 38)
+E (bootstrap)       is_super_admin=true · 9 comodines · sin empresa efectiva al inicio
+ROL 35              activo · exactamente business_units:read|update|create|delete · company_id NULL
+ROLES               17 totales (14 canónicos + 3 fixtures temporales recién creados)
+USUARIOS (c1)       27 (23 históricos + A/B/C/D) · (c3: 24; X incluido)
+AUDITORÍA (base)    71 filas totales previas a la corrida (auth/config/users)
+```
+
+**BU objetivo seleccionado empíricamente** (sondeo por flujo oficial; restaurado tras el
+sondeo): `broiler` (Engorde) — la empresa 1 tiene **2 lotes activos** `L-BO-2026-05/06`
+(bird_type `broiler`), lo que permite un ALLOW observable (filas>0) y un DENY observable
+(filas=0) con la misma petición representativa `GET /lots`.
+
+```
+TARGET_BU           broiler (Engorde)
+POR QUÉ             2 lotes activos de la cadena en la empresa 1 → la dimensión «efectiva»
+                    es observable; ruta representativa GET /lots (RBAC lots:read + row-scope
+                    por unidad), no destructiva, sin depender de R-181/R-182 ni SAP.
+```

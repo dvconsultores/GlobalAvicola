@@ -115,3 +115,26 @@ IMPLEMENTED_BUT_NOT_EXPOSED 0; los CSV/conteos generados se regeneran en la pró
 script con este addendum). Detalle y evidencia:
 `audit/ga-fe-02-b/GA_FE_02_B_F4_SELECTOR_EVIDENCE.md` y
 `audit/frontend-runtime/GA_FE_02_B_CAP_SES_05_ADDENDUM.md`. `R-98`/`R-119` sin cambio.
+
+## Addendum GA-FE-02-C (2026-09-11)
+
+La **corrida autenticada completa** (E2E-01…10 + matriz 3D, desktop y móvil) quedó **verde**
+sobre `index-B2-tZnkI.js` — evidencia en
+`audit/ga-fe-02-a/GA_FE_02_A_AUTHENTICATED_RUNTIME_CERTIFICATION_EVIDENCE.md` (adenda §41–46).
+Las capacidades user-visible de GA-FE-02 (administración de unidades de empresa y de
+concesiones de usuario, contexto de empresa, selector) pasan a **`IMPLEMENTED_AND_VISIBLE`**
+**con evidencia runtime autenticada** — sin R-ID nuevo y sin tocar la clasificación de
+capacidades ajenas a GA-FE-02. Conteo revisado del estado primario:
+
+```
+IMPLEMENTED_AND_VISIBLE ........ 1 → 5  (CAP-SES-05 + las 4 superficies GA-FE-02 certificadas:
+                                        contexto de empresa · 4 unidades de empresa ·
+                                        concesiones de usuario · selector global)
+```
+
+Las capacidades de GA-FE-03 **no** se reclasifican (siguen como están); la instantánea
+original del catálogo **no se reescribe**. Incidencias documentadas de la corrida
+(D-1 lectura global exenta certificada GA-REM-002 · D-2 tarjeta hub R-119 · D-3 filtro
+`module` de `/audit` con valores fuera del enum → 500 · D-4 fail-closed del home sin
+`dashboard:read`): registradas en la evidencia; **R-98/R-119 permanecen UNCHANGED** y ninguno
+bloquea GA-FE-02.

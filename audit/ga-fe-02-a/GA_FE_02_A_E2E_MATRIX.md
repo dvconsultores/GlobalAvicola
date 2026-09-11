@@ -56,3 +56,108 @@ ningún flujo autenticado; no existe fila "probada por otro medio" — prohibido
 
 Al reanudar, esta matriz se sustituye por la corrida real (mismo esqueleto, con columnas de
 request/HTTP/UI/persistida/capturas/red/auditoría y RESULTADO por fila).
+
+---
+
+# RESULTADOS REALES — corrida autenticada 2026-09-11 (GA-FE-02-C)
+
+**Runtime**: `https://avicola.globaldv.net` · bundle `index-B2-tZnkI.js` (estable de inicio a
+fin) · Empresa de prueba `Avícola Global C.A.` (id 1) · BU objetivo `broiler` (2 lotes
+`L-BO-2026-05/06`) · Ruta productiva representativa: `GET /api/v1/lots` (RBAC `lots:read` +
+row-scope por unidad) · Actores A–E según `GA_FE_02_A_TEST_ACCOUNT_MATRIX.md` (addendum C).
+**Cada fila fue ejecutada contra el runtime real; ninguna por transitividad.**
+
+## Resultados por escenario
+
+| E2E | Descripción | Resultado | Evidencia |
+|---|---|---|---|
+| **E2E-01a** | E: selector visible sin contexto; 2 empresas; switch c1; contexto en header | **PASS** | 01_desktop_selector/switched · red switch 200 |
+| **E2E-01b** | E: switch c1→c3→c1; hard refresh; /me 200; sin forbidden; sin estado obsoleto | **PASS** | 01b_dropdown/back · 01_hard_refresh (D1) |
+| **E2E-01 (A–D)** | Cada actor con su propia sesión: login 200 + `/me` 200 (empresa 1; X en 3) | **PASS** | matriz de cuentas §8 |
+| **E2E-02a** | A: navegación normal → «Acceso por unidad»; 4 unidades (Progenitoras·Reproductoras·Incubadora·Engorde); todas «Inactiva» | **PASS** | 02_nav_discoverability · 02_four_units_all_off |
+| **E2E-02b** | A: habilitar Engorde por UI (diálogo «Activar unidad» → Confirmar) → «Activa»; fresh GET `broiler=true`; **otras 3 intactas** | **PASS** | 02_enable_dialog · 02_enabled_broiler |
+| **E2E-02c** | Tras habilitar: **cero** concesiones creadas (catálogo/enablement ≠ concesión) | **PASS** | `/users/73/business-units` sin vivas |
+| **E2E-02-refresh** | Hard refresh: estado persiste y coincide con backend | **PASS** | 02_refresh (persistencia) |
+| **E2E-03a** | A: desactivar por UI → «Inactiva»; persiste tras refresh; **1 sola mutación por clic** | **PASS** | E2E03_disabled · PATCH disable=1 |
+| **E2E-03b** | C (login fresco): concesión viva + RBAC sí, CBU OFF → **DENY** (0 filas) | **PASS** | MX-1 (abajo) |
+| **E2E-03c/§44-§56 (E)** | Escritura del actor global: `POST /lots` → **403** (`R-163`); lectura global exenta por semántica certificada — ver **D-1** | **PASS / D-1 documentada** | GLOBAL-WRITE-DENY · sin persistencia |
+| **E2E-03d** | Rehabilitar (AC-A06): la concesión almacenada vuelve a ser efectiva → ALLOW (2) | **PASS** | AC-A06-rehabilitar-devuelve |
+| **E2E-04a** | B: distinción visual **empresa Activa / C «No concedida»** | **PASS** | 04_before_grant |
+| **E2E-04b** | B: «Conceder» por UI → «Concedida»; fresh GET: concesión viva `is_effective=true` | **PASS** | 04_after_grant |
+| **E2E-04c** | C: relogin fresco → `/me` `effective_business_units=["broiler"]` → `GET /lots` **ALLOW (2 filas)**; efecto **IMMEDIATE** | **PASS** | L-BO-2026-05/06 |
+| **E2E-05a** | B: «Revocar» por UI (diálogo) → «No concedida»; sin vivas | **PASS** | 05_revoked |
+| **E2E-05b** | C: relogin fresco → **DENY (0 filas)**; efecto **IMMEDIATE**; sin transitividad | **PASS** | E2E05-target-DENY |
+| **E2E-06** | Auto-concesión: **no existe ruta** — B excluido de candidatos (backend), sin botón en UI, `POST` directo → **403** `OD-15.a`; sin fila ni auditoría de éxito | **PASS (triple capa)** | E2E06_self_no_grant_button · 403 |
+| **E2E-07** | Cross-company: candidatos de c1 **no incluyen** a X (c3); `POST /users/75` → **404**; sin persistencia | **PASS** | E2E07 (n=26, 404, vivas X=0) |
+| **E2E-08** | D autenticado: ruta protegida (alerta de permiso, sin superficie); `GET/PATCH/POST/DELETE` → **403×4**; sin persistencia | **PASS** | E2E08_forbidden · [403,403,403,403] · nota R-119 (D-2) |
+| **E2E-09** | ON / sin concesión / RBAC sí → **DENY (0 filas)**; UI: empresa Activa + «No concedida» | **PASS** | MX-2 |
+| **E2E-10** | OFF / concesión viva / RBAC sí → **DENY (0 filas)**; fila **conservada** (`revoked_at=null`, `is_effective=false`); UI: aviso «unidad inactiva», no implica acceso | **PASS** | MX-1 · E2E10_ui_unit_inactive_notice · BU-D10 |
+
+## Matriz 3D (runtime real, 4/4)
+
+| Caso | Company BU | User BU | RBAC | Petición | Resultado |
+|---|---|---|---|---|---|
+| **MX-1** | OFF | YES | YES | `GET /lots` (C) | **DENY** — 200, 0 filas |
+| **MX-2** | ON | NO | YES | `GET /lots` (C) | **DENY** — 200, 0 filas |
+| **MX-3** | ON | YES | NO | `GET /lots` (D) | **DENY** — **403** (RBAC) |
+| **MX-4** | ON | YES | YES | `GET /lots` (C) | **ALLOW** — 2 filas `L-BO-2026-05/06` |
+
+Dimensiones independientes: **YES** (cada caso usa actores/estados reales verificados por
+`GET /users/{id}/business-units` y `/business-units` antes y después).
+
+## Refresh · Relogin · Desktop · Móvil
+
+| Bloque | Resultado |
+|---|---|
+| Refresh tras switch (E) | **PASS** — contexto correcto |
+| Refresh tras enable/disable (A) | **PASS** — estado real persistido |
+| Refresh tras concede/revoke (B; desktop y móvil) | **PASS** — filas reconciliadas |
+| Relogin C tras concesión | **PASS** — ALLOW **IMMEDIATE** |
+| Relogin C tras revocación | **PASS** — DENY **IMMEDIATE** |
+| Desktop 1440×900 | **PASS** — flujos completos (16 capturas) |
+| Móvil 390×844 | **PASS** — 4 unidades visibles; toggle y concesión/revocación operables; sin overflow (delta=0); sin modal bloqueado; 5 capturas |
+
+## Persistencia · Auditoría · Consola · UX de fallo · Doble acción
+
+| Bloque | Resultado |
+|---|---|
+| Persistencia (BEFORE/ACTION/RESPONSE/fresh GET/refresh/FINAL UI por mutación) | **PASS** |
+| Auditoría: `config_change`/`company_business_unit` **14 filas**; `permission_change`/`user_business_unit` **15 filas**; con actor, empresa, objetivo, acción y timestamp; negativas **sin** fila de éxito | **PASS** |
+| Consola: sin `pageerror`; solo 403 esperados (fetches fail-closed de actores de fixture) | **PASS** |
+| UX de mutación fallida: 403 auto-concesión → sin éxito falso; estado reconciliado por refetch | **PASS** |
+| Doble acción: 1 clic = **1** mutación (PATCH disable=1 en la ventana) | **PASS** |
+
+## Divergencias y observaciones (honestidad de la corrida)
+
+- **D-1 · Lectura del actor global sin row-scope (E).** Con contexto c1, `GET /lots` del
+  bootstrap devuelve 8 filas aunque las unidades estén OFF y sin concesión. **No es un
+  defecto nuevo ni un bypass**: es la excepción **declarada y certificada** de
+  `GA-REM-002`/`GA-REM-040` fase 3 (`app/masters/service._apply_business_unit_filter`:
+  «certificada en GA-REM-002 y esta fase no la reabre… declarado en la evidencia como
+  excepción, no como descuido»). Las **escrituras sí están cerradas** (R-163: alto de lote
+  → 403 verificado). La expectativa de DENY-lectura de §56 no coincide con la semántica
+  certificada del repositorio; se documenta y **no se reabre** (§68: sin hotfix; adaptar a la
+  verdad del repositorio). Sin contexto: fail-closed verificado (cero filas — `OD-14.d`).
+- **D-2 · Tarjeta de hub visible para D (R-119).** El grid de `/menu/settings` no filtra por
+  permiso (el sidebar sí): D ve la tarjeta, la ruta responde protegida (alerta, sin
+  superficie). Es exactamente el alcance de **R-119** (navegación por permisos), declarado
+  **UNCHANGED** en esta tranche. Registrado, no reabierto.
+- **D-3 · Robustez del filtro `module` de `/audit`.** Valores fuera del enum PostgreSQL
+  (`AuditModule`) → **500** (p. ej. `module=business_units`/`audit`); valores canónicos
+  (`users`, `config`, `auth`, `lots`, `operations`) → 200. Observación de robustez **no
+  bloqueante** (la verificación de auditoría de GA-FE-02 se hizo con filtros canónicos);
+  queda registrada para backlog.
+- **D-4 · Aterrizaje del home para roles administrativos mínimos.** A (pre-fix de fixture) y
+  B (rol 35 canónico **sin** `dashboard:read` por diseño `OD-15 §6`) ven «Permiso requerido:
+  dashboard:read | Reintentar» en `/` — **fail-closed correcto** y sidebar navegable; la
+  superficie GA-FE-02 no está afectada. No se modifica el rol canónico ni se añade permiso
+  nuevo (R-98/R-119 intactos).
+
+```
+Escenarios ejecutados contra runtime real ...... 31 filas de matriz + variantes E2E-02/03/04/05
+PASS ........................................... 33
+PASS con incidencia documentada (D-1..D-4) ..... 2 (E-global lectura; D hub R-119)
+FAIL ........................................... 0
+BLOCKED_AUTH / BLOCKED_FIXTURE ................. 0 (histórico de intentos previos, superado)
+Sin transitividad / sin combinación con corridas previas ...... CONFIRMADO
+```

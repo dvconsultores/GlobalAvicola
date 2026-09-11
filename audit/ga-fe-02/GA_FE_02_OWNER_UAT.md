@@ -6,15 +6,18 @@ desplegado cuando lo estime. Este documento **no** se auto-declara aprobado (§1
 está verde (`MODE_C · BLOCKED_AUTH` — faltan cuentas); no se envía al propietario a validar un
 flujo no certificado. Este guion queda listo para cuando la certificación autenticada pase.
 
-**Actualización GA-FE-02-B (2026-09-11)**: F2 (rol canónico «Administrador de Accesos»), F3
-(usuarios 57–70 reparados; `GET /users` operativo) y F4 (selector de empresa alcanzable —
-pasos 1–2 de este guion) quedaron resueltos y verificados. Falta **F1** (catálogo de las cuatro
-unidades en ENV-01, pendiente server-side del propietario; comando exacto en
-`audit/ga-fe-02-b/GA_FE_02_B_ENV01_CERTIFICATION_UNBLOCKER_SPEC.md` §4). `UAT_READY` sigue
-**NO** hasta que la re-certificación autenticada completa (E2E-01…10) pase tras F1: el paso 3
-de este guion (cuatro unidades) no puede observarse hasta entonces.
+**Actualización GA-FE-02-C (2026-09-11)**: **`UAT_READY: YES`** — la certificación autenticada
+completa pasó (E2E-01…10 + matriz 3D 4/4 + refresh/relogin/desktop/móvil/red/persistencia/
+auditoría) sobre `https://avicola.globaldv.net` (bundle `index-B2-tZnkI.js`). Evidencia:
+`audit/ga-fe-02-a/GA_FE_02_A_AUTHENTICATED_RUNTIME_CERTIFICATION_EVIDENCE.md` (adenda §41–46) y
+`GA_FE_02_A_E2E_MATRIX.md` (resultados reales). **GA-FE-02 =
+FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING.** Los pasos 1–3 de este guion ya no tienen
+bloqueo alguno.
 **Entorno**: `https://avicola.globaldv.net` (ENV-01). **Credenciales**: las del propietario /
-cuentas de prueba autorizadas — no se incluyen aquí.
+cuentas de prueba autorizadas — no se incluyen aquí. *Nota de cierre (§76):* los actores
+sintéticos de la corrida (A–D y X) y los roles temporales de fixture fueron **dados de baja al
+terminar**; para repetir los pasos 4–6 con un segundo usuario, use una cuenta operativa de
+prueba propia o solicite la re-provisión de fixtures.
 
 ---
 
