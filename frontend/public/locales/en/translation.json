@@ -907,7 +907,8 @@
     "populationFemale": "Female population",
     "end": "Close Date",
     "plannedClose": "Planned close date",
-    "selectArea": "Select area..."
+    "selectArea": "Select area...",
+    "area": "Area"
   },
   "phases": {
     "rearing": "Rearing Phase",

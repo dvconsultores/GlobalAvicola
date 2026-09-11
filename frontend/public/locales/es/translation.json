@@ -907,7 +907,8 @@
     "populationFemale": "Población hembras",
     "end": "Cierre",
     "plannedClose": "Fecha prevista de cierre",
-    "selectArea": "Seleccionar área..."
+    "selectArea": "Seleccionar área...",
+    "area": "Área"
   },
   "phases": {
     "rearing": "Fase Cría",

@@ -340,6 +340,8 @@ export default function LotDetailPage() {
  </h2>
  <dl className="space-y-2 text-sm">
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
+ {/* `R-182`: día natural tal como se capturó (corte del ISO en UTC, sin salto de zona). */}
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.plannedClose')}</dt><dd>{lot.planned_close_date ? String(lot.planned_close_date).slice(0, 10) : '—'}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>

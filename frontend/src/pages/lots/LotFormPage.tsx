@@ -44,6 +44,7 @@ export default function LotFormPage() {
  const [houses, setHouses] = useState<SelectOption[]>([])
  const [lines, setLines] = useState<SelectOption[]>([])
  const [breeds, setBreeds] = useState<SelectOption[]>([])
+ const [areas, setAreas] = useState<SelectOption[]>([])
  const [loadingMasters, setLoadingMasters] = useState(true)
 
  const {
@@ -81,16 +82,20 @@ export default function LotFormPage() {
  useEffect(() => {
  const load = async () => {
  try {
- const [farmRes, houseRes, lineRes, breedRes] = await Promise.allSettled([
+ const [farmRes, houseRes, lineRes, breedRes, areaRes] = await Promise.allSettled([
  api.get('/masters/farms?limit=100'),
  api.get('/masters/houses?limit=100'),
  api.get('/masters/genetic-lines?limit=100'),
  api.get('/masters/breeds?limit=100'),
+ // `R-182`. Área es una referencia organizativa **de la empresa** (`Area` no cuelga
+ // de `Farm`): la consulta ya viene acotada al inquilino del usuario.
+ api.get('/masters/areas?limit=100'),
  ])
  if (farmRes.status === 'fulfilled') setFarms(farmRes.value.data ?? [])
  if (houseRes.status === 'fulfilled') setHouses(houseRes.value.data ?? [])
  if (lineRes.status === 'fulfilled') setLines(lineRes.value.data ?? [])
  if (breedRes.status === 'fulfilled') setBreeds(breedRes.value.data ?? [])
+ if (areaRes.status === 'fulfilled') setAreas(areaRes.value.data ?? [])
  } finally {
  setLoadingMasters(false)
  }
@@ -110,6 +115,11 @@ export default function LotFormPage() {
  bird_type: values.bird_type,
  farm_id: values.farm_id || null,
  house_id: values.house_id || null,
+ // `R-182`. La fecha **prevista** de cierre y el área viajaban capturadas pero se
+ // perdían aquí en silencio: el alta respondía 201 y el aviso de «lote próximo a
+ // cierre» no tenía contra qué medir. Sin valor, viaja `null` explícito.
+ area_id: values.area_id || null,
+ planned_close_date: values.planned_close_date || null,
  genetic_line_id: values.genetic_line_id || null,
  breed_id: values.breed_id || null,
  start_date: values.start_date || null,
@@ -218,6 +228,16 @@ export default function LotFormPage() {
  <select className={selectClass} {...register('house_id')}>
  <option value="">{t('lots.selectHouse', 'Seleccionar galpón...')}</option>
  {filteredHouses.map(h => <option key={h.id} value={h.id}>{h.name}</option>)}
+ </select>
+ </div>
+
+ {/* Área — `R-182`. Referencia organizativa de la empresa, opcional en el
+ contrato: sin elección viaja `null` y el lote queda sin área. */}
+ <div className="flex flex-col gap-1">
+ <label htmlFor="lot-area" className="text-sm font-semibold text-slate-700">{t('lots.area', 'Área')}</label>
+ <select id="lot-area" className={selectClass} {...register('area_id')}>
+ <option value="">{t('lots.selectArea', 'Seleccionar área...')}</option>
+ {areas.map(a => <option key={a.id} value={a.id}>{a.name}</option>)}
  </select>
  </div>
  </CardBody>
