@@ -1991,3 +1991,29 @@ LIMPIEZA      concesión 141 revocada · operador 141 baja lógica · rol 71 des
 INTOCADO      R-184/R-186 sin cambios · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
               Wave B PAUSED · Wave C/SAP NOT STARTED · sin tranche nueva iniciada
 ```
+
+## GA-BU-D10 · PAQUETE DE DECISIÓN DEL PROPIETARIO — CICLO APAGAR/ENCENDER LÍNEA (2026-09-11)
+
+```
+GOBERNANZA    Tranche GA-BU-D10 (solo análisis y sesión de decisión; cero producto) —
+              audit/ga-bu-d10/ (9 artefactos: fuentes, modelo, acceso efectivo, toggle,
+              grant/revoke, dedup, impacto, paquete, trazabilidad).
+PREGUNTA      ¿Al re-encender una unidad de empresa, las concesiones previas vuelven a ser
+              efectivas solas (A) o cada usuario requiere concesión nueva explícita (B)?
+              (misma empresa · mismo usuario · misma unidad · sin transferencia)
+ESTADO HOY    Provisional = A (AC-A06; «al rehabilitar, la concesión previa vuelve a ser
+              efectiva»), documentado como provisional desde GA-REM-040 §6.3; B NO elegida,
+              NO descartada; ningún código depende de la elección (matriz §7).
+DEDUP         GENUINE_OWNER_DECISION_UNRESOLVED (no resuelta por OD-09/10/14/15/16 ni
+              R-98/113/121/128/163/185/187; OD-16.e la reservó a propósito).
+RECOMENDACIÓN B (coherencia con OD-09.e «volver no prueba el mismo cargo»; enablement ≠
+              grant; auditoría explícita; mínimo privilegio). A = conducta actual, coste 0.
+C1            Paquete de decisión commiteado y pusheado ANTES de la decisión.
+SIGUIENTE     Decisión explícita A/B → OD (ID a inspeccionar al formalizar) → brecha →
+              SPEC/AC/RED si B (auto-reactivación actual = defecto a corregir) / reconciliación
+              sin código si A → runtime → certificación → UAT si aplica.
+POBLACIÓN     Empresa 1 (entorno de prueba): 91 usuarios, 2 con concesión viva (broiler);
+              4×OFF hoy ⇒ ninguna efectiva. Sin PII.
+INTOCADO      OD-16, GA-FE-02..07, R-184/185/186/187, OD-21/22 · OBS-UAT-01 P2 ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED
+```

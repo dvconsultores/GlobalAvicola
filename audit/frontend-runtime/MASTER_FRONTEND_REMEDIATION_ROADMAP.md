@@ -221,3 +221,14 @@ R-187 → CLOSED_OWNER_ACCEPTED · OWNER_ACCEPTANCE PASS (decisión A) · OD-22 
      Limpieza verificada (4×OFF). Detalle: audit/ga-uat-07/.
 Sin tranche nueva. OBS-UAT-01 P2 · BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · GA-BU-D10 (paquete de decisión del propietario)
+
+```
+BU-D10 → paquete de decisión preparado (audit/ga-bu-d10/, C1 solo gobernanza).
+     Pregunta: al re-encender una unidad de empresa, ¿las concesiones previas vuelven a ser
+     efectivas solas (A) o exigen concesión nueva explícita (B)?
+     Hoy provisional = A (AC-A06), documentado y reversible; B no elegida, no descartada.
+     Dedup: GENUINE_OWNER_DECISION_UNRESOLVED · Recomendación: B (coherencia OD-09.e).
+     Sin producto. Decisión del propietario PENDIENTE (respuesta A o B).
+```
