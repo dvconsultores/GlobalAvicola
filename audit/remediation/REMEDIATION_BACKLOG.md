@@ -2118,3 +2118,20 @@ GATES         Vitest 292/292 · build ✓ · E2E S01-S21 PASS · 0 fatales · 0 
 REGISTRO      audit/final-frontend-audit/ (15 artefactos + evidence 26 archivos) · commit de este paquete
 INTOCADO      Todo el programa (sin código, sin tranche, sin Wave B/C/SAP)
 ```
+
+---
+
+## FINAL FRONTEND RESIDUAL CLOSURE — PAQUETE PRE-DECISIÓN (2026-09-11) — SOLO GOBERNANZA
+
+```
+CORRECCIÓN    FRONTEND_READY_FOR_WAVE_B_RECONCILIATION: YES → NO/PENDING (gobernanza; contradicción
+              reconocida: decisión AOD-06 pendiente + 19 sin certificación + RES-01 P1)
+19 VNC        CERT-PATH A 0 · B 11 · C 8 · D 0 · E 0 · F 0 · G 0
+              Plan por batches: S · CP · M · Q · E · R (→ F_C_UAT_NOT_REQUIRED) + OPS-GRANJA/INC/GP (→ UAT-1)
+DECISIONES    AOD-06 packet (P1; A/B/C canónicas: importadas SAP · local+sap_code · local sin vínculo) — PENDIENTE
+              AOD-25 packet (P3; A/B/C) — tras AOD-06 · AOD-24 nota de alcance (Wave B, no bloquea)
+RES           RES-02 (diseño fase-9) · RES-05/R-52 (ops, no bloquea) · RES-06/R-112 (SAP externo) ·
+              RES-07 = las 19 (no ruido) · RES-08/R-148 (interno Wave B) · RES-10 notas P3 — todos reconciliados
+REGISTRO      audit/final-frontend-audit/GA_FRONTEND_RESIDUAL_19_CERTIFICATION_MATRIX.md (+9 documentos)
+INTOCADO      Producto 0 · Wave B PAUSED · Wave C/SAP NOT STARTED · sin findings nuevos · sin decisiones inferidas
+```
