@@ -1,0 +1,1342 @@
+{
+  "ts": "2026-09-11T18:41:00.512Z",
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/11",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users/136/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users/137/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users/138/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users/140/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/masters/productive-phases",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/lots",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots/activate-manual",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots/activate-manual",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots/activate-manual",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots/activate-manual",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots/activate-manual",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/lots/activate-manual",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/operations/63/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/63",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/63",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/63",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/DET/63",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/64/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/64",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/64",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/64",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/DET/64",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/65/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/65",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/65",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/65",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/DET/65",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/66/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/66",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/66",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/66",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/LOW/66",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/67/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/67",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/67",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/67",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/LOW/67",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/68/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/68",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/68",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/68",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/LOW/68",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/69/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/69",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/69",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/69",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/MID/69",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/70/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/70",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/70",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/70",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/MID/70",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/71/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/71",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/71",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/71",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/MID/71",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/72/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/72",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/72",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/72",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B249/72",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/73/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/73",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/73",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/73",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B249/73",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/74/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/74",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/74",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/74",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B249/74",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/75/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/75",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/75",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/75",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B250/75",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/76/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/76",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/76",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/76",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B250/76",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/77/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/77",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/77",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/77",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B300/77",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/operations/78/submit",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/start/78",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/review/complete",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/78",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/approvals/approve",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/operations/78",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/chain/B300/78",
+      "method": "CHAIN",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/55",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/56",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/57",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/58",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/59",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/11",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/53",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/33",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/35",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpis/production-index?lot_id=11",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/14",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/reports/kpi/ipe/999999999",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 403
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 404
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/reports/kpi/ipe/54",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/lots/54",
+      "method": "PUT",
+      "status": 400
+    },
+    {
+      "path": "/reports/kpi/ipe/11",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "results": {
+    "switch_company": 200,
+    "bu_broiler_before": {
+      "code": "broiler",
+      "name_key": "businessUnits.broiler",
+      "is_enabled": false
+    },
+    "deploy_probe": {
+      "status": 200,
+      "data": {
+        "lot_id": 11,
+        "viabilidad_pct": 100,
+        "avg_weight_g": 1500,
+        "ganancia_diaria_g": 13.64,
+        "age_days": 110,
+        "fcr": 24.5,
+        "ipe": 5.6,
+        "reference": {
+          "excellent": ">300",
+          "good": "250-300",
+          "average": "200-250"
+        }
+      }
+    },
+    "fase_id": 13,
+    "e2e": {
+      "ipe_DET": {
+        "status": 200,
+        "data": {
+          "lot_id": 54,
+          "viabilidad_pct": 95,
+          "avg_weight_g": 2000,
+          "ganancia_diaria_g": 105.26,
+          "age_days": 19,
+          "fcr": 3,
+          "ipe": 333.3,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_LOW": {
+        "status": 200,
+        "data": {
+          "lot_id": 55,
+          "viabilidad_pct": 90,
+          "avg_weight_g": 1500,
+          "ganancia_diaria_g": 53.57,
+          "age_days": 28,
+          "fcr": 2,
+          "ipe": 241.1,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_MID": {
+        "status": 200,
+        "data": {
+          "lot_id": 56,
+          "viabilidad_pct": 95,
+          "avg_weight_g": 2500,
+          "ganancia_diaria_g": 89.29,
+          "age_days": 28,
+          "fcr": 3,
+          "ipe": 282.7,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_B249": {
+        "status": 200,
+        "data": {
+          "lot_id": 57,
+          "viabilidad_pct": 98,
+          "avg_weight_g": 1020,
+          "ganancia_diaria_g": 102,
+          "age_days": 10,
+          "fcr": 4,
+          "ipe": 249.9,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_B250": {
+        "status": 200,
+        "data": {
+          "lot_id": 58,
+          "viabilidad_pct": 100,
+          "avg_weight_g": 1000,
+          "ganancia_diaria_g": 100,
+          "age_days": 10,
+          "fcr": 4,
+          "ipe": 250,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_B300": {
+        "status": 200,
+        "data": {
+          "lot_id": 59,
+          "viabilidad_pct": 100,
+          "avg_weight_g": 1200,
+          "ganancia_diaria_g": 120,
+          "age_days": 10,
+          "fcr": 4,
+          "ipe": 300,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_11": {
+        "status": 200,
+        "data": {
+          "lot_id": 11,
+          "viabilidad_pct": 100,
+          "avg_weight_g": 1500,
+          "ganancia_diaria_g": 13.64,
+          "age_days": 110,
+          "fcr": 24.5,
+          "ipe": 5.6,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_53": {
+        "status": 200,
+        "data": {
+          "lot_id": 53,
+          "viabilidad_pct": 100,
+          "avg_weight_g": 1800,
+          "ganancia_diaria_g": 94.74,
+          "age_days": 19,
+          "fcr": 2.5,
+          "ipe": 378.9,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_33": {
+        "status": 200,
+        "data": {
+          "lot_id": 33,
+          "viabilidad_pct": 100,
+          "avg_weight_g": 0,
+          "ganancia_diaria_g": 0,
+          "age_days": 1,
+          "fcr": 0,
+          "ipe": 0,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "ipe_35": {
+        "status": 200,
+        "data": {
+          "lot_id": 35,
+          "viabilidad_pct": 100,
+          "avg_weight_g": 0,
+          "ganancia_diaria_g": 0,
+          "age_days": 1,
+          "fcr": 0,
+          "ipe": 0,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      },
+      "g05_11": {
+        "status": 200,
+        "data": {
+          "lot_id": 11,
+          "avg_weight_g": 1363.2,
+          "viability_pct": 100,
+          "age_days": 110,
+          "fcr": 24.5,
+          "production_index": 5.1,
+          "unit": "index"
+        }
+      },
+      "ajeno_14": {
+        "status": 404,
+        "data": {
+          "detail": "Lote no encontrado"
+        }
+      },
+      "inexistente": {
+        "status": 404,
+        "data": {
+          "detail": "Lote no encontrado"
+        }
+      },
+      "nobu": {
+        "status": 404,
+        "data": {
+          "detail": "Lote no encontrado"
+        }
+      },
+      "noperm": {
+        "status": 403,
+        "data": {
+          "detail": "Permiso requerido: reports:read"
+        }
+      },
+      "buoff_op": {
+        "status": 404,
+        "data": {
+          "detail": "Lote no encontrado"
+        }
+      },
+      "buoff_admin": {
+        "status": 404,
+        "data": {
+          "detail": "Lote no encontrado"
+        }
+      },
+      "buon_op": {
+        "status": 200,
+        "data": {
+          "lot_id": 54,
+          "viabilidad_pct": 95,
+          "avg_weight_g": 2000,
+          "ganancia_diaria_g": 105.26,
+          "age_days": 19,
+          "fcr": 3,
+          "ipe": 333.3,
+          "reference": {
+            "excellent": ">300",
+            "good": "250-300",
+            "average": "200-250"
+          }
+        }
+      }
+    },
+    "ga_fe_07_area16": {
+      "status": 400,
+      "data": {
+        "detail": "Área inactiva",
+        "rule": "BR-07"
+      }
+    },
+    "r184_tecnico": {
+      "status": 200,
+      "keys": [
+        "lot_id",
+        "viabilidad_pct",
+        "avg_weight_g",
+        "ganancia_diaria_g",
+        "age_days",
+        "fcr",
+        "ipe",
+        "reference"
+      ],
+      "age_days": 110,
+      "ipe": 5.6
+    }
+  },
+  "created": {
+    "roles": {
+      "OP": {
+        "status": 201,
+        "id": 67,
+        "name": "R187 OP"
+      },
+      "REV": {
+        "status": 201,
+        "id": 68,
+        "name": "R187 REV"
+      },
+      "APP": {
+        "status": 201,
+        "id": 69,
+        "name": "R187 APP"
+      },
+      "NOPERM": {
+        "status": 201,
+        "id": 70,
+        "name": "R187 NOPERM"
+      }
+    },
+    "users": {
+      "OP": {
+        "status": 201,
+        "id": 136,
+        "username": "ra187op"
+      },
+      "REV": {
+        "status": 201,
+        "id": 137,
+        "username": "ra187rev"
+      },
+      "APP": {
+        "status": 201,
+        "id": 138,
+        "username": "ra187app"
+      },
+      "NOBU": {
+        "status": 201,
+        "id": 139,
+        "username": "ra187nobu"
+      },
+      "NOPERM": {
+        "status": 201,
+        "id": 140,
+        "username": "ra187noperm"
+      }
+    },
+    "lots": {
+      "DET": {
+        "id": 54,
+        "code": "L-R187-DET",
+        "activation": 201
+      },
+      "LOW": {
+        "id": 55,
+        "code": "L-R187-LOW",
+        "activation": 201
+      },
+      "MID": {
+        "id": 56,
+        "code": "L-R187-MID",
+        "activation": 201
+      },
+      "B249": {
+        "id": 57,
+        "code": "L-R187-B249",
+        "activation": 201
+      },
+      "B250": {
+        "id": 58,
+        "code": "L-R187-B250",
+        "activation": 201
+      },
+      "B300": {
+        "id": 59,
+        "code": "L-R187-B300",
+        "activation": 201
+      }
+    },
+    "events": {
+      "DET": [
+        63,
+        64,
+        65
+      ],
+      "LOW": [
+        66,
+        67,
+        68
+      ],
+      "MID": [
+        69,
+        70,
+        71
+      ],
+      "B249": [
+        72,
+        73,
+        74
+      ],
+      "B250": [
+        75,
+        76
+      ],
+      "B300": [
+        77,
+        78
+      ]
+    },
+    "grant_OP": 201,
+    "grant_REV": 201,
+    "grant_APP": 201,
+    "grant_NOPERM": 201,
+    "token_OP": 200,
+    "token_REV": 200,
+    "token_APP": 200,
+    "token_NOBU": 200,
+    "token_NOPERM": 200
+  }
+}

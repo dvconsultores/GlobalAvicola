@@ -256,3 +256,13 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   Tranche futura (spec → AC → implementación → UAT; cambia el número mostrado). Sin implementar.
 - R-184/R-186 cerrados · GA-FE-02..07/OD-21 intactos · OBS-UAT-01 P2 · BU-D10 PENDING ·
   Wave B/C/SAP sin cambio. Detalle: `audit/ga-od-01/`.
+
+## Addendum R-187 (2026-09-11) · OD-22 implementada — IPE a escala estándar
+
+- **OD-22 RATIFIED_IMPLEMENTED** · **R-187 CLOSED · FUNCTIONALLY_CERTIFIED**: retirado el `×100`
+  duplicado en G-06 (`ipe = viab% × gain / (fcr×10)`); bandas, labels, umbrales, fechas (R-184),
+  FCR y esquema sin cambios; backend-only; sin migración. Frontend product diff: 0.
+- Runtime E2E-01…14 PASS: 333.3 (DET, independiente exacto) · 241.1 🔴 · 282.7 🟡 · fronteras
+  250.0/300.0/249.9 · lote 11: 556.6→5.6 · UI detalle/reporte/refresh/relogin/móvil OK ·
+  seguridad OD-16/RBAC PASS · G-05 5.1 intacto · GA-FE-07 spot 400.
+- Owner UAT REQUIRED/READY — acceptance PENDING. Detalle: `audit/ga-r187/`. C1 `5a32a6c` · C2 `f755baa`.

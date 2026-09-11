@@ -1,0 +1,30 @@
+{
+  "ts": "2026-09-11T18:42:21.694Z",
+  "ui": {
+    "lots_list_ok": true,
+    "detail": {
+      "raw": "Global Avícola\n\nGestión Operativa\n\nOPERATIVO\nGestión Avícola\nREPORTES\nReportes\nADMINISTRACIÓN\nConfiguración\nRO\n\nR187 OP\n\nra187op\n\nPerfil\nCerrar Sesión\n3\nEN\nAvícola Global C.A.\nRO\n\nR187 OP\n\nra187op\n\nCerrar Sesión\nL-R187-DET\nEngorde\n·\nActivo\nCerrar Lote\nRegistrar Operación\nInspección Granja\nRecepción de Aves\nDistribución\nTransferencia\nInspección Transporte\nAlimento\nAgua\nPesaje\nMortalidad\nDescarte\nVa",
+      "num": "333.3"
+    },
+    "detail_has_error": false,
+    "report": {
+      "raw": "Global Avícola\n\nGestión Operativa\n\nOPERATIVO\nGestión Avícola\nREPORTES\nReportes\nADMINISTRACIÓN\nConfiguración\nRO\n\nR187 OP\n\nra187op\n\nPerfil\nCerrar Sesión\n3\nEN\nAvícola Global C.A.\nRO\n\nR187 OP\n\nra187op\n\nCerrar Sesión\nReportes\nReporte: L-R187-DET\nExcel\nPDF\nInfo del Lote\nEstado\nactive\nInicio\n2026-08-23 00:00:00+00:00\nBalance Inicial\nAves\n1000\nMachos\n500\nHembras\n500\nResumen de Eventos\n\nTotal Eventos: 3 ev",
+      "num": "333.3"
+    },
+    "report_has_error": false,
+    "report_after_refresh": {
+      "raw": "Global Avícola\n\nGestión Operativa\n\nOPERATIVO\nGestión Avícola\nREPORTES\nReportes\nADMINISTRACIÓN\nConfiguración\nRO\n\nR187 OP\n\nra187op\n\nPerfil\nCerrar Sesión\n3\nEN\nAvícola Global C.A.\nRO\n\nR187 OP\n\nra187op\n\nCerrar Sesión\nReportes\nReporte: L-R187-DET\nExcel\nPDF\nInfo del Lote\nEstado\nactive\nInicio\n2026-08-23 00:00:00+00:00\nBalance Inicial\nAves\n1000\nMachos\n500\nHembras\n500\nResumen de Eventos\n\nTotal Eventos: 3 ev",
+      "num": "333.3"
+    },
+    "detail_after_relogin": {
+      "raw": "Global Avícola\n\nGestión Operativa\n\nOPERATIVO\nGestión Avícola\nREPORTES\nReportes\nADMINISTRACIÓN\nConfiguración\nRO\n\nR187 OP\n\nra187op\n\nPerfil\nCerrar Sesión\n3\nEN\nAvícola Global C.A.\nRO\n\nR187 OP\n\nra187op\n\nCerrar Sesión\nL-R187-DET\nEngorde\n·\nActivo\nCerrar Lote\nRegistrar Operación\nInspección Granja\nRecepción de Aves\nDistribución\nTransferencia\nInspección Transporte\nAlimento\nAgua\nPesaje\nMortalidad\nDescarte\nVa",
+      "num": "333.3"
+    },
+    "mobile": {
+      "raw": "Global Avícola\n\nAvícola Global C.A.\n\n3\nEN\nL-R187-DET\nEngorde\n·\nActivo\nCerrar Lote\nRegistrar Operación\nInspección Granja\nRecepción de Aves\nDistribución\nTransferencia\nInspección Transporte\nAlimento\nAgua\nPesaje\nMortalidad\nDescarte\nVacunación\nMedicación\nSalida de Aves\nCierre de Lote\nÚltimos Registros\nfeed_registration2026-09-10\napproved\nweight_recording2026-09-09\napproved\nmortality_recording2026-09-09",
+      "num": "333.3"
+    },
+    "mobile_overflow": 0,
+    "mobile_error": false
+  }
+}

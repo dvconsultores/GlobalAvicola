@@ -199,3 +199,15 @@ R-187 → FORMAL_OPEN_FINDING (P2 · OPEN): brecha actual (get_kpi_ipe con ×100
 Intactos: R-184/R-186 cerrados · GA-FE-02..07 · OD-21 · OBS-UAT-01 P2 · BU-D10 PENDING ·
      Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · R-187 (OD-22 — IPE G-06 a escala estándar)
+
+```
+OD-22 → RATIFIED_IMPLEMENTED (R-187 CLOSED · FUNCTIONALLY_CERTIFIED)
+     ×100 duplicado retirado en get_kpi_ipe; bandas/fechas/FCR/esquema intactos; backend-only.
+     Runtime E2E-01…14 PASS (333.3 exacto; fronteras 249.9/250.0/300.0; lote 11 = 5.6).
+     Owner UAT REQUIRED / READY — acceptance PENDING (no se auto-aprueba).
+     C1 5a32a6c · C2 f755baa · C4 evidencia. Detalle: audit/ga-r187/.
+Intactos: R-184 (técnica; 556.6 superseded), R-186 (G-05 5.1), GA-FE-02..07, OD-21,
+     OBS-UAT-01 P2 · BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

@@ -41,4 +41,6 @@ Esta decisión es **prospectiva**: **NO reabre R-184** (CLOSED_OWNER_ACCEPTED) n
 
 ## 7. Estado final del registro
 
-`OD-22 = RATIFIED` (decisión registrada; implementación no iniciada) · Observación de negocio GA-GOV-02: **RESUELTA** (`RESOLVED_OWNER_DECISION_A`) · Finding derivado: **R-187 · P2 · OPEN** · Implementación: **NO**.
+**Actualización 2026-09-11 (tranche R-187): IMPLEMENTADA y certificada técnicamente** — `OD-22 = RATIFIED_IMPLEMENTED` · R-187 = **CLOSED · FUNCTIONALLY_CERTIFIED** · Owner UAT REQUIRED / READY (acceptance PENDING) · evidencia completa en `audit/ga-r187/`.
+
+*(Estado al ratificar la decisión: `OD-22 = RATIFIED` — implementación no iniciada; se conserva como registro histórico de este documento.)*

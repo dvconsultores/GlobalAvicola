@@ -1951,3 +1951,26 @@ PRIORIDAD     Cola técnica post-decisión: R-187 (P2) junto a OBS-UAT-01 (P2) �
 INTOCADO      R-184/R-186 sin reapertura ni reutilización · GA-FE-02..07 y R-181/182/185/OD-21
               PRESERVED · certificaciones intactas
 ```
+
+## R-187 · CLOSED — IPE G-06: ESCALA ESTÁNDAR OD-22 (SIN ×100) (2026-09-11)
+
+```
+FINDING       R-187 (P2, ex GA-OD-01) — CLOSED (técnico) · FUNCTIONALLY_CERTIFIED
+DECISIÓN      OD-22 (Opción A del propietario) — RATIFIED_IMPLEMENTED
+CAMBIO        get_kpi_ipe: ipe = (viabilidad × ganancia_diaria) / (fcr × 10)
+              (retirado el ×100 duplicado — la viabilidad ya llega en %). Docstrings alineados.
+              Nada más: bandas/labels/umbrales/fechas/FCR/esquema intactos. Backend-only.
+EVIDENCIA     runtime E2E-01…14 PASS: DET 333.3 (independiente, exacto) · LOW 241.1 🔴 ·
+              MID 282.7 🟡 · fronteras 249.9/250.0/300.0 exactas · lote 11: 5.6 (pre 556.6;
+              ratio 99.99) · lote 53: 378.9 (pre 37894.7) · UI detalle/reporte/refresh/
+              relogin/móvil 333.3 · seguridad 404/403/BU-OFF/OD-16 PASS · G-05 5.1 intacto ·
+              GA-FE-07 spot 400 «Área inactiva»
+GATES         tsc/build PASS · Vitest 280/280 · canónico backend 7 passed · suites PG
+              (r184/r186/r187) skip local declarado (corren en CI)
+REGISTRO      audit/ga-r187/ · commits C1 5a32a6c · C2 f755baa · C4 (evidencia)
+OWNER UAT     REQUIRED / READY — acceptance PENDING (guía GA_R187_OWNER_UAT.md)
+INTOCADO      R-184 técnico PRESERVADO (556.6 SUPERSEDED, no objetivo de regresión) ·
+              R-186 G-05 PRESERVED · GA-FE-02..07/OD-21/R-185 PRESERVED · OBS-UAT-01 P2 ·
+              BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED
+              Fixtures retenidos: lotes 54-59 (L-R187-*) documentados en el ledger
+```

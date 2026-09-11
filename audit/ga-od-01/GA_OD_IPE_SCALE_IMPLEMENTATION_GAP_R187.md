@@ -37,4 +37,6 @@ Evidencia: `GA_OD_IPE_UNIT_ANALYSIS.md` (`CONFIRMED_100X_SCALE_CONFLICT`; ratio 
 
 ## Estado
 
-`OPEN` · Implementación: **NO** (autorización: NO en esta sesión) · Cola post-decisión: tranche técnica R-187 (P2) junto a OBS-UAT-01 (P2) y BU-D10 PENDING, sin alterar Wave B PAUSED / Wave C-SAP NOT STARTED.
+**`CLOSED`** (2026-09-11 — implementado en la tranche R-187: C2 `f755baa`; runtime E2E-01…14 PASS; evidencia `audit/ga-r187/`). Owner UAT: REQUIRED / READY — acceptance PENDING.
+
+*(Histórico: abierto como P2 `OPEN` al ratificarse OD-22; sin implementar hasta la tranche R-187.)*
