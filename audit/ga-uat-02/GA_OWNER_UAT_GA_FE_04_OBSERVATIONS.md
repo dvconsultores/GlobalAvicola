@@ -12,12 +12,16 @@ anexa en `GA_OWNER_ACCEPTANCE_RECORD.md` al cierre de la sesión.
 
 ## Observaciones del propietario durante la sesión
 
-- Caso 01: ______
-- Caso 02: ______
-- Caso 03: ______
-- Caso 04: ______
-- Caso 05: ______
-- Caso 06: ______
+- **Decisión: A) ACEPTO GA-FE-04** — sin observaciones (respuesta libre vacía).
+- Caso 01: sin observaciones
+- Caso 02: sin observaciones
+- Caso 03: sin observaciones
+- Caso 04: sin observaciones
+- Caso 05: sin observaciones
+- Caso 06: sin observaciones
+
+> Cierre: NINGUNA observación registrada. OBS-01 permanece documentado, no bloqueante y sin
+> reclasificar (ver tabla superior). Registro de aceptación en `GA_OWNER_ACCEPTANCE_RECORD.md`.
 
 ## Conducta de registro
 

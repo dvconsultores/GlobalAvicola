@@ -72,3 +72,16 @@ Tranche enfocada **solo evidencia** (sin cambios de producto; generación `index
 - Limpieza: 3 bajas · 0 roles nuevos · broiler restaurado 4×OFF · rol 35 intacto · credenciales destruidas.
 
 **DECLARACIÓN FINAL: GA-FE-04 = FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTANCE_PENDING · R-98 = CLOSED · OWNER_UAT_READY: YES.**
+
+---
+
+## 10 · GA-UAT-02 · Aceptación del propietario (2026-09-11)
+
+- Sesión guiada enfocada (6 casos, sin jerga) ejecutada con actor de solo lectura sintético y
+  control positivo autorizado; registro: `audit/ga-uat-02/`.
+- **Decisión del propietario: A) ACEPTO GA-FE-04** — sin observaciones.
+- Estado actualizado: **GA-FE-04 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED** ·
+  **OWNER_ACCEPTANCE (programa) = PASS**.
+- Limpieza post-sesión verificada (baja fixture, rol 41 off, rol 35 intacto, 4×OFF,
+  credenciales destruidas). **OBS-01** sigue documentado y no bloqueante, sin reclasificar.
+- Sin cambios de producto; generación `index-B66tpdeW.js` estable.

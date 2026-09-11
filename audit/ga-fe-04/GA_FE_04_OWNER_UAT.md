@@ -1,6 +1,7 @@
 # GA-FE-04 · UAT DEL PROPIETARIO (P-13 visible)
 
 **OWNER_UAT_READY: YES** (2026-09-11, tras GA-FE-04-A: P13-AC20/AC21 PASS; sin cambios de producto; generación `index-B66tpdeW.js` estable).
+**SESIÓN EJECUTADA (GA-UAT-02): decisión del propietario = A) ACEPTO GA-FE-04 — sin observaciones (ver `audit/ga-uat-02/GA_OWNER_ACCEPTANCE_RECORD.md`). GA-FE-04 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED.**
 
 Para el propietario · sin jerga · 10-15 min · producción https://avicola.globaldv.net
 
