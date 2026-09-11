@@ -161,3 +161,14 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - `R-181`/`R-182`/SAP/`BU-D10`: **UNCHANGED**. Detalle:
   `audit/frontend-runtime/GA_FE_03_ADDENDUM_DYNAMIC_NAVIGATION.md` y
   `audit/ga-fe-03/GA_FE_03_CERTIFICATION_RECONCILIATION.md`.
+
+## Addendum GA-FE-04 (2026-09-11) · `index-B66tpdeW.js` (`de40d36`)
+
+- **`R-98` → `CLOSED`**: capa de autoridad de ACCIÓN (`auth/actionAuthority.tsx`) + gates en
+  12 superficies (31 acciones de escritura) + paridad de rutas de alta. La interfaz muestra
+  solo acciones permitidas; el backend permanece autoridad (403 verificados).
+- `CAP-ADM-06` se mantiene IMPLEMENTED_AND_VISIBLE (sin cambio); se añade el nivel de acción
+  intra-pantalla como parte del mismo evaluador canónico (sin segundo sistema).
+- `R-119` sigue `CLOSED`; `R-181`/`R-182`/SAP/`BU-D10`: **UNCHANGED**. Detalle:
+  `audit/frontend-runtime/GA_FE_04_ADDENDUM_INTRA_SCREEN_AUTHORITY.md` y
+  `audit/ga-fe-04/GA_FE_04_R98_CLOSURE_RECONCILIATION.md`.
