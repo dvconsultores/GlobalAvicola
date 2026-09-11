@@ -26,18 +26,18 @@ Descubrimiento (UAT-01): enlace «Lotes» en menú — **no existe** (pre-existe
 
 ## C · CASOS DEL PROPIETARIO
 
-Resultados del propietario: **PENDIENTES** (se completan en la sesión; ver `GA_OWNER_UAT_GA_FE_06_OBSERVATIONS.md`).
+Resultados del propietario: **PASS** en los casos aplicables y **N/A** en UAT-11, según la **decisión explícita A) ACEPTO GA-FE-06** (2026-09-11) — sin observaciones adicionales reportadas. Detalle por caso y notas de ingeniería en `GA_OWNER_UAT_GA_FE_06_OBSERVATIONS.md`.
+
 Resultados de referencia de ingeniería (no sustituyen aceptación): ver §Medidas arriba y `evidence/reference-walkthrough.json`.
 
 ## D · OBSERVACIONES DEL PROPIETARIO
 
-Ver registro dedicado (PENDIENTE). Pre-detectadas (honestidad): descubrimiento de Lotes (UAT-01, candidato P2), Área no visible en detalle (UAT-06, a juicio), opción de área dada de baja en selector (P3).
+Registro completo (CERRADO): `GA_OWNER_UAT_GA_FE_06_OBSERVATIONS.md`. Observaciones registradas: descubrimiento de «Lotes» sin entrada de menú (UAT-01, candidato UX P2, aceptado) · Área no visible en detalle (UAT-06, nota UX) · opción de área de baja lógica en selector (UAT-04, P3). Ninguna bloquea la aceptación.
 
 ## E · DECISIÓN DEL PROPIETARIO
 
-**NO PREFIJADA.** Se registrará exactamente la respuesta del propietario:
-A) ACEPTO · B) ACEPTO CON OBSERVACIONES · C) RECHAZO.
+**A) ACEPTO GA-FE-06** — decidida explícitamente por el propietario el 2026-09-11 en la sesión GA-UAT-04. Registro: `GA_OWNER_ACCEPTANCE_GA_FE_06_RECORD.md`.
 
 ## F · LIMPIEZA
 
-Pendiente de la decisión: restaurar BU a OFF (estado de entrada), retirar concesión, desactivar usuario 123, desactivar rol 56, dar de baja áreas 1/2 (volver a su estado previo de baja lógica), retener/archivar lotes UAT según ledger, destruir credenciales y tokens, cerrar sesiones. La auditoría se preserva. Ningún usuario humano se modifica.
+**Ejecutada tras la decisión y verificada**: concesión `uat.lotes`→broiler revocada · usuario 123 dado de baja (204 → `is_active:false`) · rol 56 desactivado · BU `broiler` restaurada **OFF** (catálogo 4×OFF verificado) · áreas 1/2 **devueltas a su estado previo (baja lógica)** · credenciales `~/ga_uat04_credentials.txt` y tokens/scripts temporales **destruidos** (verificado inexistente) · lotes UAT-LOTE-01/02 **retenidos** como evidencia (ledger) · auditoría preservada · ningún usuario humano modificado · rol 35 y registros de aceptación GA-FE-02/03/04/05 intactos.

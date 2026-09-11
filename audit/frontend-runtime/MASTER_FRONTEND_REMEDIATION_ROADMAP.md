@@ -107,12 +107,12 @@ La prioridad transversal no cambia; T1 y T2 quedan cumplidos en su frontera decl
 T3 · GA-FE-03 (navegación dinámica global)      → CLOSED / CERTIFIED (R-119; residuo P-13 → R-98)
 T3 · GA-FE-04 (autoridad de acción + P-13)      → CLOSED / CERTIFIED (R-98) / OWNER_ACCEPTED (GA-UAT-02)
 T3 · GA-FE-05 (envío/reenvío a revisión, R-181) → CLOSED / CERTIFIED / OWNER_ACCEPTED (GA-UAT-03)
-T3 · GA-FE-06 (contrato de alta de lote, R-182) → CLOSED / CERTIFIED / OWNER_ACCEPTANCE_PENDING
+T3 · GA-FE-06 (contrato de alta de lote, R-182) → CLOSED / CERTIFIED / **OWNER_ACCEPTED** (GA-UAT-04, «A) ACEPTO GA-FE-06»)
      Entrega: planned_close_date + area_id capturados→enviados→persistidos→visibles; selector
      de área por empresa; SLA «lote próximo a cierre» con fuente reparada (§3 capas de evidencia).
      GA-FE-06-A (seguridad): el backend deniega área de otra empresa en alta y edición
-     (`BR-07`, fail-closed); N-1/R-183 absorbido y cerrado. Pendiente Owner UAT.
-     R-184 (kpi/ipe 500): SEPARATE/UNCHANGED.
+     (`BR-07`, fail-closed); N-1/R-183 absorbido y cerrado. Observación aceptada: sin
+     entrada de menú para «Lotes» (candidato UX P2). R-184 (kpi/ipe 500): SEPARATE/UNCHANGED.
 ```
 
 BU-D10 sigue PENDING_RATIFICATION · Wave B PAUSED · Wave C/SAP NOT STARTED.

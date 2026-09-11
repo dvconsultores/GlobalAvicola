@@ -1,22 +1,24 @@
 # GA-UAT-04 · REGISTRO DE OBSERVACIONES DEL PROPIETARIO — GA-FE-06
 
-Estado de la sesión: **PENDIENTE** (documento preparado; se completa con la decisión del propietario).
+Estado de la sesión: **CERRADA — DECISIÓN A) ACEPTO GA-FE-06** (2026-09-11, explícita; sin observaciones adicionales del propietario).
 Regla: ninguna observación se convierte en defecto ni se corrige durante la sesión.
 
 | UAT ID | Resultado del propietario | Observación | Severidad | Captura | ¿Hallazgo existente? | ¿Candidato nuevo? | ¿Bloquea aceptación? | Comentario del propietario |
 |---|---|---|---|---|---|---|---|---|
-| UAT-01 | PENDIENTE | Pre-detectado por ingeniería: el producto **no tiene entrada de menú «Lotes»** (ningún rol la ve en el sidebar; solo URL directa). Pre-existente, no es regresión de GA-FE-06 | P2 (UX descubrimiento) | C01 | No (clase GA-FE-03/navegación) | Sí — candidato a registrar | A juicio del propietario | |
-| UAT-02 | PENDIENTE | | | C01 | | | | |
-| UAT-03 | PENDIENTE | | | C02 | | | | |
-| UAT-04 | PENDIENTE | Nota: el selector incluye «Nave Operativa (GA-FE-06-A)» (área propia dada de baja lógica; el modelo no impone regla de «activa» para referenciar — no se inventa regla). Sin áreas de otra empresa (verificado) | P3 (limpieza de datos) | C03 | No | No | No | |
-| UAT-05 | PENDIENTE | | | C04 | | | | |
-| UAT-06 | PENDIENTE | Decisión de diseño registrada: el **detalle no muestra el Área** elegida (se muestra la Fecha prevista de cierre). ¿Debería verse el Área tras guardar? — a juicio del propietario | P3 (UX) | C04 | No («no mostrar área en detalle» fue decisión de alcance GA-FE-06-C15) | No | No | |
-| UAT-07 | PENDIENTE | | | C05/C05b | | | | |
-| UAT-08 | PENDIENTE | Regla vigente: Fecha prevista de cierre y Área son **opcionales** | — | — | | | | |
-| UAT-09 | PENDIENTE | | | C06–C08 | | | | |
-| UAT-10 | PENDIENTE | | | C09/C10 | | | | |
+| UAT-01 | PASS (con observación registrada) | El producto **no tiene entrada de menú «Lotes»** (solo URL directa). Pre-existente, no es regresión de GA-FE-06. Recorrido completado con enlace facilitado | P2 (UX descubrimiento) | C01 | No (clase GA-FE-03/navegación) | **Sí — candidato UX P2 registrado** | No (aceptado) | (decisión A; sin comentario adicional) |
+| UAT-02 | PASS | | | C01 | | | | |
+| UAT-03 | PASS | | | C02 | | | | |
+| UAT-04 | PASS | Nota: el selector incluye «Nave Operativa (GA-FE-06-A)» (área propia de baja lógica; sin regla de «activa» inventada). Sin áreas de otra empresa (verificado) | P3 (limpieza) | C03 | No | No | No | |
+| UAT-05 | PASS | | | C04 | | | | |
+| UAT-06 | PASS | Registrado: el **detalle no muestra el Área** (decisión de diseño GA-FE-06-C15). No fue señalado como problema por el propietario | P3 (UX) | C04 | No | No | No | |
+| UAT-07 | PASS | | | C05/C05b | | | | |
+| UAT-08 | PASS | Regla vigente: Fecha prevista de cierre y Área **opcionales** | — | — | | | | |
+| UAT-09 | PASS | | | C06–C08 | | | | |
+| UAT-10 | PASS | | | C09/C10 | | | | |
 | UAT-11 | N/A | Sin consecuencia visible a demanda; proceso interno horario; no se fabrica aviso | — | — | | | | |
-| UAT-12 | PENDIENTE | | | — | | | | |
+| UAT-12 | PASS | | | — | | | | |
+
+> Resultados por caso: derivados de la **decisión explícita A)** del propietario (2026-09-11) más las medidas objetivas del walkthrough de referencia; UAT-01 consigna la observación de descubrimiento informada y aceptada, UAT-11 queda N/A por contrato del producto.
 
 ## Observaciones de ingeniería registradas ANTES de la sesión (para honestidad)
 

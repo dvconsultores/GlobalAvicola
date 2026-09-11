@@ -1763,3 +1763,31 @@ HIGIENE       revokes + BU 4×OFF + usuarios 120-122 baja + roles 54/55 off +
 **`R-182 = CLOSED` · `GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` ·
 `OWNER_UAT_READY = YES`.** R-98/R-119/R-181 CLOSED · BU-D10 PENDING_RATIFICATION ·
 Wave B PAUSADA · Wave C/SAP no iniciados. Owner UAT **no ejecutado** en esta tranche.
+
+---
+
+## GA-UAT-04 · ACEPTACIÓN DEL PROPIETARIO — GA-FE-06 ACEPTADO (2026-09-11)
+
+```
+DECISIÓN      «A) ACEPTO GA-FE-06» (explícita; sin observaciones adicionales)
+EFECTOS       GA-FE-06 = FUNCTIONALLY_CERTIFIED · OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS
+              R-182 = CLOSED · OWNER_ACCEPTED (técnicamente cerrado en GA-FE-06-A)
+REGISTRO      audit/ga-uat-04/GA_OWNER_ACCEPTANCE_GA_FE_06_RECORD.md
+              + guía, observaciones, evidencia de referencia, capturas C01-C10, ledger
+LIMPIEZA      BU 4×OFF restaurada · concesión revocada · usuario/rol UAT desactivados ·
+              áreas 1/2 devueltas a baja lógica · credenciales destruidas · auditoría preservada
+INTOCADO      R-184 SEPARATE_UNCHANGED · BU-D10 PENDING_RATIFICATION · Wave B PAUSED ·
+              Wave C / SAP NOT STARTED · GA-FE-02/03/04/05 OWNER_ACCEPTED (registros intactos)
+```
+
+### Candidato nuevo registrado (a decisión del programa; NO corregido)
+
+- **Descubrimiento del módulo «Lotes» (UX · P2 propuesto, sin R asignado)**: la
+  configuración de navegación no contiene ninguna entrada «Lotes» y ninguna pantalla
+  enlaza a `/lots`; el módulo solo es alcanzable por URL directa. Detectado durante la
+  preparación de GA-UAT-04 (UAT-01) y **informado y aceptado** por el propietario como
+  observación no bloqueante. Clase: navegación/descubrimiento (GA-FE-03), pre-existente;
+  no es regresión de GA-FE-06 ni de la remediación de seguridad.
+- Notas menores aceptadas: el detalle del lote no muestra el Área (decisión de diseño
+  GA-FE-06-C15) · el selector incluye áreas propias de baja lógica (P3; sin regla de
+  «activa» inventada).

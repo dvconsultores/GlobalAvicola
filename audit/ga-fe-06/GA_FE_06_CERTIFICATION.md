@@ -56,6 +56,22 @@ Remediación en curso bajo `GA-FE-06-A` (enmienda de spec + RED + invariante bac
 
 ---
 
+# ESTADO FINAL (2026-09-11) — OWNER ACCEPTED
+
+Tras GA-FE-06-A (seguridad de área ajena remediada y recertificada) y GA-UAT-04 (sesión guiada, decisión explícita del propietario):
+
+| Campo | Estado |
+|---|---|
+| **R-182** | **CLOSED · OWNER_ACCEPTED** |
+| **GA-FE-06** | **FUNCTIONALLY_CERTIFIED · OWNER_ACCEPTED** |
+| **OWNER_ACCEPTANCE** | **PASS** |
+
+- Decisión: «A) ACEPTO GA-FE-06» (2026-09-11) — `audit/ga-uat-04/GA_OWNER_ACCEPTANCE_GA_FE_06_RECORD.md`.
+- Observaciones aceptadas y registradas (no bloqueantes): descubrimiento de «Lotes» sin entrada de menú (candidato UX P2) · área no visible en el detalle (decisión de diseño) · opción de área de baja lógica en el selector (P3).
+- R-184: SEPARATE_UNCHANGED · BU-D10: PENDING_RATIFICATION · Wave B PAUSED · Wave C/SAP NOT STARTED.
+
+---
+
 # RE-VEREDICTO FINAL GA-FE-06-A (2026-09-11) — tras la remediación de seguridad
 
 | Criterio (§35 del encargo) | Estado |

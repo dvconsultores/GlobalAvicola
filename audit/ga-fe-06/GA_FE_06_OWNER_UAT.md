@@ -45,4 +45,19 @@ Estado: **OWNER_ACCEPTANCE_PENDING** — a la espera de la decisión del propiet
 
 **OWNER_UAT_READY: NO** — suspendido hasta que la remediación de seguridad de área ajena (GA-FE-06-A) cierre y R-182 quede recertificado. La matriz de seguridad de área ajena es de ingeniería y no requiere repetición por el propietario; su UAT sigue enfocado en lo visible (cierre previsto, selección de área, alta, persistencia, móvil, ES/EN). Este documento se actualizará tras la recertificación técnica completa.
 
+---
+
+# CIERRE GA-UAT-04 (2026-09-11) — DECISIÓN DEL PROPIETARIO
+
+**A) ACEPTO GA-FE-06** (explícita, 2026-09-11; sin observaciones adicionales del propietario).
+
+| Campo | Estado final |
+|---|---|
+| GA-FE-06 | FUNCTIONALLY_CERTIFIED · **OWNER_ACCEPTED** |
+| OWNER_ACCEPTANCE | **PASS** |
+| R-182 | **CLOSED · OWNER_ACCEPTED** |
+| OWNER_UAT_READY | YES (consumado) |
+
+Registro: `audit/ga-uat-04/GA_OWNER_ACCEPTANCE_GA_FE_06_RECORD.md` · Observaciones aceptadas (UAT-01 descubrimiento de «Lotes» — candidato UX P2; UAT-06 área no visible en detalle; UAT-04 opción de área de baja lógica) en `audit/ga-uat-04/GA_OWNER_UAT_GA_FE_06_OBSERVATIONS.md`. Limpieza ejecutada y verificada (ver `GA_OWNER_UAT_GA_FE_06_EVIDENCE.md §F`). R-184 permanece SEPARATE_UNCHANGED.
+
 **ACTUALIZACIÓN (2026-09-11, cierre GA-FE-06-A): `OWNER_UAT_READY = YES`.** La remediación pasó (backend `69d0c95`, runtime recertificado, R-182 CLOSED; ver `GA_FE_06_CERTIFICATION.md` §RE-VEREDICTO y `audit/ga-fe-06-a/`). El Owner UAT **no se ha ejecutado** en esta tranche y no se inicia aquí; queda listo para cuando el propietario lo ordene, con el foco visible ya descrito.

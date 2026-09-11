@@ -197,6 +197,11 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - `R-98`/`R-119`/`R-181`: CLOSED sin regresión. `BU-D10`: PENDING_RATIFICATION. Wave B:
   PAUSED · Wave C/SAP: NOT STARTED. Detalle: `GA_FE_06_ADDENDUM_LOT_CONTRACT_SLA.md` y
   `audit/ga-fe-06/GA_FE_06_CERTIFICATION.md`.
+- **Aceptación del propietario (GA-UAT-04, 2026-09-11): «A) ACEPTO GA-FE-06» ⇒ GA-FE-06 =
+  FUNCTIONALLY_CERTIFIED · OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS · R-182 = CLOSED ·
+  OWNER_ACCEPTED.** Observaciones aceptadas (no bloqueantes): descubrimiento de «Lotes»
+  sin entrada de menú (candidato UX P2) · área no visible en el detalle · opción de área
+  de baja lógica en el selector (P3). Registro: `audit/ga-uat-04/`
 
 ## Addendum GA-FE-06-A (2026-09-11) · backend `69d0c95` · bundle `index-DcqmSs-R.js`
 

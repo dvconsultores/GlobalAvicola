@@ -35,6 +35,12 @@ Fecha: 2026-09-11 · Generación: `index-DcqmSs-R.js` (entrada `index-WUv1-F9o.j
 - La suite canónica del SLA (`tests/test_lot_planned_close.py`) requiere PG: corre en CI, no en local (declarado).
 - N-1/N-2 son defectos **preexistentes** de backend ajenos a R-182; se registran con evidencia viva para decisión del programa (disciplina de alcance).
 
+## 6 · Cierre con aceptación del propietario (2026-09-11)
+
+- **GA-UAT-04** (sesión guiada): decisión explícita **«A) ACEPTO GA-FE-06»** ⇒ **GA-FE-06 = FUNCTIONALLY_CERTIFIED · OWNER_ACCEPTED · R-182 = CLOSED · OWNER_ACCEPTED** (`audit/ga-uat-04/GA_OWNER_ACCEPTANCE_GA_FE_06_RECORD.md`).
+- Observaciones aceptadas (no bloqueantes): sin entrada de menú para «Lotes» (candidato UX P2 registrado) · el detalle no muestra el Área (decisión de diseño) · opción de área de baja lógica en el selector (P3).
+- GA-FE-06-A (seguridad): área de otra empresa denegada en alta y edición (`BR-07`, fail-closed), verificada en runtime y por suite CI.
+
 ---
 
 # ADDENDUM GA-FE-06-A (2026-09-11) · `69d0c95` backend · bundle `index-DcqmSs-R.js`
