@@ -85,15 +85,15 @@ Ninguna casilla de resultado ha sido rellenada por el agente.
 ## 3 · DECISIÓN DEL PROPIETARIO
 
 ```
-PENDIENTE — el propietario responde una de:
-A) ACEPTO GA-FE-02 Y GA-FE-03
-B) ACEPTO CON OBSERVACIONES: <texto>
-C) RECHAZO — CORREGIR: <texto>
+DECISIÓN: A) ACEPTO GA-FE-02 Y GA-FE-03   (2026-09-11)
+Observaciones: NINGUNA
+GA-FE-02 OWNER: ACCEPTED · GA-FE-03 OWNER: ACCEPTED · OWNER_ACCEPTANCE = PASS
 ```
 
-**No se infiere aceptación del silencio.** Tras la respuesta se actualizará
-`GA-FE-02/GA-FE-03 OWNER: ACCEPTED / ACCEPTED_WITH_OBSERVATIONS / REJECTED`, se clasificarán
-las observaciones y se ejecutará la limpieza de fixtures (§40).
+Registro completo: `GA_OWNER_ACCEPTANCE_RECORD.md`. Limpieza post-sesión ejecutada 15/15
+(§40): concesión móvil revocada · 6 usuarios UAT dados de baja · roles temporales
+desactivados · rol 35 intacto · 4 unidades OFF · credenciales efímeras destruidas ·
+auditoría conservada. **Sin aceptación inferida**: la respuesta fue explícita.
 
 ### Notas de estado del programa (sin cambio durante el UAT)
 ```
