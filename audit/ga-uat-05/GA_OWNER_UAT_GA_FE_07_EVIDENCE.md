@@ -36,16 +36,18 @@
 
 ## C · CASOS DEL PROPIETARIO
 
-**Pendientes de la sesión del propietario.** Resultados de referencia de ingeniería: ver §A (no sustituyen aceptación). Se completará con la decisión explícita A/B/C.
+Resultados del propietario: **PASS en los 5 casos** (UAT-01…05) según la **decisión explícita A) ACEPTO GA-FE-07** (2026-09-11) — sin observaciones adicionales reportadas. Detalle por caso: `GA_OWNER_UAT_GA_FE_07_OBSERVATIONS.md`.
+
+Resultados de referencia de ingeniería (no sustituyen aceptación): ver §A y `evidence/reference-walkthrough.json`.
 
 ## D · OBSERVACIONES DEL PROPIETARIO
 
-**Pendiente.** Observaciones de ingeniería pre-sesión: ver `GA_OWNER_UAT_GA_FE_07_OBSERVATIONS.md`.
+Registro completo (CERRADO): `GA_OWNER_UAT_GA_FE_07_OBSERVATIONS.md`. Observaciones registradas: ninguna del propietario (decisión A sin comentarios adicionales) · notas de ingeniería pre-sesión: descubrimiento «Lotes» sin menú (OBS-UAT-01 ya inventariada) · lista de Áreas sin marca visual de estado (nota UX; presencia verificada) · consola solo clase N-3 (403 de KPIs). Ninguna bloquea la aceptación.
 
 ## E · DECISIÓN DEL PROPIETARIO
 
-**(vacía — se completará únicamente tras decisión explícita del propietario)**
+**A) ACEPTO GA-FE-07** — decidida explícitamente por el propietario el 2026-09-11 en la sesión GA-UAT-05. Registro: `GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`.
 
 ## F · LIMPIEZA
 
-**Pendiente (§36, se ejecuta tras la decisión):** revocar concesión `uat7.lotes`→Engorde · baja lógica usuarios 127/128 · desactivar roles 59/60 · BU `broiler` restaurada **OFF** (catálogo 4×OFF) · Área 14 (ACT) dada de baja lógica (15/16 ya en baja) · lotes **51 y 52 retenidos** como evidencia (ledger) · credenciales `~/ga_uat05_credentials.txt` y temporales `/tmp/ga05_*` destruidos · auditoría preservada · ningún usuario humano modificado.
+**Ejecutada tras la decisión y verificada (§36)**: concesión `uat7.lotes`→Engorde **revocada** (200) · usuarios 127/128 **baja lógica** (204) · roles 59/60 **desactivados** (200) · BU `broiler` **OFF** — catálogo verificado **4×OFF** (`breeder·broiler·grandparent·hatchery`) · Área 14 **baja** (204; 15/16 ya en baja → **las tres en baja**) · lotes **51 y 52 retenidos** como evidencia (creados y leídos durante la sesión con BU ON; con BU OFF la lectura productiva del actor global queda cerrada por diseño OD-16 — estado normal del entorno restaurado) · credenciales `~/ga_uat05_credentials.txt` y temporales `/tmp/ga05_*` **destruidos** (verificado inexistentes) · **auditoría preservada** · usuario admin (id 1) operativo · **ningún usuario humano modificado** · registros de aceptación GA-FE-02/03/04/05/06 intactos.

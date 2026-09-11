@@ -6,7 +6,7 @@ Fecha: 2026-09-11 · Baseline de entrada `87d090c` · Generación final `index-B
 ## 1 · Nueva regla de dominio vigente
 
 - **OD-21**: un maestro dado de baja lógica no puede usarse para **referencias nuevas**; la historia se conserva. Implementación **solo Área→Lote** en esta tranche (principio general documentado).
-- Finding **R-185** (P2) **CLOSED** técnicamente (aceptación pendiente). OBS-UAT-04 queda **RESUELTO por OD-21 + GA-FE-07**.
+- Finding **R-185** (P2) **CLOSED_OWNER_ACCEPTED** (UAT corta GA-UAT-05, 2026-09-11, decisión A). OBS-UAT-04 queda **RESUELTO por OD-21 + GA-FE-07**, ratificado por el propietario.
 
 ## 2 · Efecto en las entradas del audit
 

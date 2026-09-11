@@ -1,9 +1,9 @@
 # GA-FE-07 · OWNER UAT — READINESS (sesión corta)
 
 ```
-OWNER_UAT_READY: YES
-GA-FE-07: FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING
-R-185: CLOSED (técnico) — aceptación del propietario pendiente
+OWNER_UAT_READY: EJECUTADA — GA-UAT-05 (2026-09-11)
+GA-FE-07: FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED (decisión A)
+R-185: CLOSED_OWNER_ACCEPTED
 ```
 
 ## Qué valida el propietario (5 comprobaciones visibles, ~5 minutos)
@@ -27,4 +27,4 @@ B) ACEPTO GA-FE-07 CON OBSERVACIONES: <texto>
 C) RECHAZO GA-FE-07 — CORREGIR: <texto>
 ```
 
-Estado ahora: **esperando convocatoria** (no se inicia otra tranche).
+Estado ahora: **ACEPTADO — A) ACEPTO GA-FE-07 (2026-09-11)**. Registro: `audit/ga-uat-05/GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`. No se inicia otra tranche.

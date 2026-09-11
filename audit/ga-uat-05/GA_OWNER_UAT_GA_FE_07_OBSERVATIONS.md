@@ -1,17 +1,17 @@
 # GA-UAT-05 · REGISTRO DE OBSERVACIONES DEL PROPIETARIO — GA-FE-07
 
-Estado de la sesión: **PREPARADA — PENDIENTE DE DECISIÓN DEL PROPIETARIO**.
+Estado de la sesión: **CERRADA — DECISIÓN A) ACEPTO GA-FE-07** (2026-09-11, explícita; sin observaciones adicionales del propietario).
 Regla: ninguna observación se convierte en defecto ni se corrige durante la sesión.
 
-## Resultados por caso (a completar con la decisión del propietario)
+## Resultados por caso
 
 | UAT ID | Resultado del propietario | Observación | Severidad | Captura | ¿Hallazgo existente? | ¿Candidato nuevo? | ¿Bloquea aceptación? | Comentario del propietario |
 |---|---|---|---|---|---|---|---|---|
-| UAT-01 | (pendiente) | | | C01/C02 | | | | |
-| UAT-02 | (pendiente) | | | C03 | | | | |
-| UAT-03 | (pendiente) | | | C04 | | | | |
-| UAT-04 | (pendiente) | | | C05 | | | | |
-| UAT-05 | (pendiente) | | | C06/C07 | | | | |
+| UAT-01 | PASS | Selector: solo «Nave Disponible» (activa); retiradas ausentes; sin IDs | — | C01/C02 | No | No | No | (decisión A; sin comentario adicional) |
+| UAT-02 | PASS | Alta con área activa correcta | — | C03 | No | No | No | |
+| UAT-03 | PASS | Histórico `UAT7-HIST-01` usable tras retirar su área | — | C04 | No | No | No | |
+| UAT-04 | PASS | Administración conserva «Nave Retirada» y «Nave Histórica» (presencia; sin marca visual de estado — nota abajo) | P3 (nota UX, no bloquea) | C05 | No | No | No | |
+| UAT-05 | PASS | Móvil: misma lista (solo activa), sin desbordes | — | C06/C07 | No | No | No | |
 
 > Las medidas objetivas del walkthrough de referencia están en `GA_OWNER_UAT_GA_FE_07_EVIDENCE.md` (§A/§C) y `evidence/reference-walkthrough.json`. No sustituyen la aceptación.
 
@@ -26,6 +26,6 @@ Regla: ninguna observación se convierte en defecto ni se corrige durante la ses
 
 ---
 
-# DECISIÓN DEL PROPIETARIO (a completar)
+# DECISIÓN DEL PROPIETARIO
 
-(se rellenará tras la decisión explícita; opciones A/B/C de la guía)
+**A) ACEPTO GA-FE-07** — decidida explícitamente por el propietario el 2026-09-11 en la sesión GA-UAT-05. Sin observaciones adicionales reportadas. Registro: `GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`.

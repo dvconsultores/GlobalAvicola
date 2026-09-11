@@ -1827,7 +1827,7 @@ BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED · implementación NIN
 
 ---
 
-## GA-FE-07 · R-185 CERRADO — ELEGIBILIDAD DE REFERENCIAS POR ESTADO (2026-09-11) — `OD-21`
+## GA-FE-07 · R-185 CLOSED_OWNER_ACCEPTED — ELEGIBILIDAD DE REFERENCIAS POR ESTADO (2026-09-11) — `OD-21`
 
 ```
 DECISIÓN      OD-21 («Option C — Domain Rule Complete», elección explícita del propietario):
@@ -1835,7 +1835,7 @@ DECISIÓN      OD-21 («Option C — Domain Rule Complete», elección explícit
               La desactivación lógica no borra ni invalida la historia. Implementación
               limitada a Área→Lote (principio general documentado, sin remediación masiva).
 FINDING       R-185 (P2, integridad funcional de dominio) — dedup contra R-171/R-179/R-182/
-              R-98/R-119: sin dueño previo → creado y CERRADO técnicamente.
+              R-98/R-119: sin dueño previo → creado; técnico CERRADO; ACEPTADO por el propietario (GA-UAT-05, decisión A, 2026-09-11).
 ENTREGA       Alta y edición de lote exigen área ACTIVA para referencias nuevas
               (`verificar_catalogo_de_empresa` extendido con `exigir_activo`, default intacto);
               detección de cambio real en edición (H1–H5: omitir/mismo-id/null ⇒ sin regla
@@ -1859,4 +1859,5 @@ INTOCADO      R-182 CLOSED_OWNER_ACCEPTED · R-184 SEPARATE_OPEN · OBS-UAT-01 U
 ### Disposición heredada
 
 - **GA-GOV-01 §OBS-UAT-04** (`OWNER_DECISION_REQUIRED`): **RESUELTA** por OD-21 e implementada aquí.
-- Próximo recomendado: Owner UAT corta de GA-FE-07 (5 validaciones visibles) cuando el propietario la convoque.
+- Owner UAT corta de GA-FE-07: **EJECUTADA** (GA-UAT-05, 2026-09-11) → **A) ACEPTO GA-FE-07** (registro: `audit/ga-uat-05/GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`).
+- Estado final: R-185 = `CLOSED_OWNER_ACCEPTED` · OD-21 = `RATIFIED_IMPLEMENTED_OWNER_ACCEPTED`. Sin tranches nuevas iniciadas.

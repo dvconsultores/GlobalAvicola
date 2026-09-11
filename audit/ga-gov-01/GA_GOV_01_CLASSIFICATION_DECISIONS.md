@@ -96,5 +96,5 @@ Regla de la tranche: **implementación autorizada = NO** para todos los ítems (
 # ADDENDUM (2026-09-11) — OBS-UAT-04 RESUELTA
 
 El propietario eligió **Opción C** en GA-FE-07 → registrada como **OD-21** y desarrollada en la
-tranche **GA-FE-07** (finding **R-185**, CLOSED técnico; evidencias en `audit/ga-fe-07/`).
-Disposición final: `OWNER_DECISION_REQUIRED → RESOLVED_BY_OD-21_AND_GA_FE_07`.
+tranche **GA-FE-07** (finding **R-185**, CLOSED; UAT corta GA-UAT-05 2026-09-11 → decisión A: **`CLOSED_OWNER_ACCEPTED`**; evidencias en `audit/ga-fe-07/`).
+Disposición final: `OWNER_DECISION_REQUIRED → RESOLVED_BY_OD-21_AND_GA_FE_07 → OWNER_RATIFIED (2026-09-11)`.

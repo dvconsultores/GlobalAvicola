@@ -232,5 +232,5 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   alta/edición DENY con inactiva («Área inactiva», BR-07), **detección de cambio** en edición
   (H1–H5), selector transaccional solo activas, administración de maestros intacta.
 - `CAP-OPS-10 (Lotes)`: contrato de alta/edición ampliado (elegibilidad por estado, sin
-  migración/permisos/endpoints). **R-185 CLOSED** (técnico; UAT corta pendiente).
+  migración/permisos/endpoints). **R-185 CLOSED_OWNER_ACCEPTED** (UAT corta GA-UAT-05, 2026-09-11, decisión A).
   OBS-UAT-04 (GA-GOV-01): **RESUELTA**. R-182/R-184/OBS-UAT-01/BU-D10: sin cambio.

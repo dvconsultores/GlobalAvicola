@@ -40,3 +40,12 @@ Principio canónico:
 - Pregunta y opciones originales: `audit/ga-gov-01/GA_GOV_01_CLASSIFICATION_DECISIONS.md §OBS-UAT-04`.
 - Implementación: `GA_FE_07_INACTIVE_AREA_REFERENCE_SPEC.md` · Finding: `R-185`.
 - Mapa completo de la decisión: `GA_FE_07_OWNER_DECISION_TRACEABILITY.md`.
+
+## Ratificación en uso real (GA-UAT-05)
+
+El propietario **ratificó** la decisión OD-21 tras la sesión corta de aceptación de su implementación (Área→Lote):
+
+- Sesión: **GA-UAT-05** (2026-09-11) — 5 casos visibles (selector, alta con activa, histórico usable, administración conserva retiradas, móvil).
+- Decisión: **A) ACEPTO GA-FE-07**.
+- Estado final: **OD-21 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED** · R-185 = `CLOSED_OWNER_ACCEPTED`.
+- Registro: `audit/ga-uat-05/GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`.

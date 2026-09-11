@@ -16,7 +16,7 @@ Sesión: aceptación del propietario de GA-FE-07 (R-185 / OD-21) · entorno: pro
 | Área «Nave Histórica (UAT GA-FE-07)» | 16 (H) | API admin · **retirada tras crear el lote histórico** | en baja lógica | UAT-03/04 | ya en baja | Sí (estado final) |
 | Lote `UAT7-HIST-01` | 51 | Flujo oficial del producto: operador + Área H + fecha prevista | activo, área 16 (retirada) | UAT-03 (histórico usable) | **sin limpieza** | **Sí — evidencia** |
 | Lote `UAT7-NUEVO-01` | 52 | UI del producto (walkthrough de referencia, 201) | activo, área 14 | UAT-02 (referencia) | **sin limpieza** | **Sí — evidencia** |
-| Lote del propietario (sugerido `UAT7-OP-01`) | (se creará en sesión) | UI del producto por el propietario | — | UAT-02 (aceptación) | **sin limpieza** | **Sí — evidencia** |
+| Lote del propietario (sugerido `UAT7-OP-01`) | (no creado) | — | — | UAT-02 (referencia: cubierto por `UAT7-NUEVO-01`) | — | No aplica: el propietario registró su decisión A de aceptación sin ejecutar el recorrido en vivo (patrón GA-UAT-04: medida de referencia + decisión explícita) |
 
 ## Otros elementos
 
@@ -25,6 +25,18 @@ Sesión: aceptación del propietario de GA-FE-07 (R-185 / OD-21) · entorno: pro
 - Auditoría del sistema: **preservada** (los registros de altas/bajas quedan como evidencia de la sesión).
 - Ningún usuario humano ni registro de aceptaciones previas (GA-FE-02/03/04/05/06) se modifica.
 
-## Verificación de limpieza (a completar en §36)
+## Verificación de limpieza (§36 — EJECUTADA 2026-09-11)
 
-(se completará tras ejecutar la limpieza: concesión revocada · usuarios 127/128 en baja · roles 59/60 desactivados · BU OFF · área 14 en baja · credenciales y temporales destruidos · auditoría intacta)
+| Comprobación | Resultado |
+|---|---|
+| Concesión Engorde → `uat7.lotes` revocada | **200** (verificado) |
+| Usuarios 127/128 dados de baja lógica | **204 / 204** |
+| Roles 59/60 desactivados | **200 / 200** |
+| BU `broiler` OFF · catálogo 4×OFF | **verificado** (`breeder·broiler·grandparent·hatchery` = OFF) |
+| Área 14 en baja · áreas 14/15/16 todas en baja | **204** + listado verificado |
+| Lotes 51/52 retenidos como evidencia | Sí (no borrados; lectura productiva cerrada con BU OFF por diseño OD-16) |
+| Credenciales `~/ga_uat05_credentials.txt` destruidas | **verificado inexistente** |
+| Temporales `/tmp/ga05_*` eliminados | **verificado inexistente** |
+| Auditoría preservada · usuario admin operativo · ningún humano modificado | **verificado** |
+
+Cierre: limpieza completa y verificada antes del commit de decisión C2.
