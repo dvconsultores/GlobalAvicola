@@ -239,7 +239,7 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 
 - **KPI IPE (G-06)**: `GET /reports/kpi/ipe/{lot}` recuperado de un 500 sistemático
   (date − datetime en `age_days`; corrección con `_dia()` canónico, fórmula intacta).
-  **R-184 CLOSED** (técnico; Owner UAT READY — tarjeta IPE visible en detalle de lote).
+  **R-184 CLOSED_OWNER_ACCEPTED** (UAT GA-UAT-06, 2026-09-11, decisión A; tarjeta IPE visible en detalle de lote).
 - Candidato **R-186** registrado sin implementar: `production-index` (G-05) comparte la
   expresión defectuosa. Observación de negocio: escala de la fórmula vs bandas `reference`.
 - R-181/R-182/R-185/R-184-OBS-UAT-01/BU-D10 sin cambio; Wave B/C/SAP igual.

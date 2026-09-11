@@ -1,4 +1,4 @@
-# GA-R184 · OWNER UAT (READY — pendiente de convocatoria)
+# GA-R184 · OWNER UAT — EJECUTADA (GA-UAT-06, decisión A)
 
 Sesión corta y visible. El propietario **no repite** pruebas de tipos, seguridad ni fórmulas: eso ya está certificado de ingeniería.
 
@@ -21,4 +21,4 @@ B) ACEPTO R-184 CON OBSERVACIONES: <texto>
 C) RECHAZO R-184 — CORREGIR: <texto>
 ```
 
-Estado ahora: **READY — esperando convocatoria** (no se inicia otra tranche).
+Estado: **ACEPTADO — A) ACEPTO R-184 (2026-09-11, GA-UAT-06)**. Registro: `audit/ga-uat-06/GA_OWNER_ACCEPTANCE_R184_RECORD.md`. No se inicia otra tranche.

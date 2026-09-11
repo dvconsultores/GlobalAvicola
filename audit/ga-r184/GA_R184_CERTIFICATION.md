@@ -3,9 +3,9 @@
 ```
 TRANCH      R-184 — KPI/IPE: semántica temporal + remediación del HTTP 500
 ESTADO      FUNCTIONALLY_CERTIFIED
-FINDING     R-184 = CLOSED
-OWNER UAT   REQUIRED: YES (superficie USER_VISIBLE: tarjeta IPE en detalle de lote
-            y en reporte de lote) — READY, pendiente de convocatoria
+FINDING     R-184 = CLOSED_OWNER_ACCEPTED
+OWNER UAT   EJECUTADA — GA-UAT-06 (2026-09-11): decisión A) ACEPTO R-184
+OWNER_ACCEPTANCE  PASS — registro: audit/ga-uat-06/GA_OWNER_ACCEPTANCE_R184_RECORD.md
 ```
 
 ## Base de la certificación
@@ -29,6 +29,6 @@ OWNER UAT   REQUIRED: YES (superficie USER_VISIBLE: tarjeta IPE en detalle de lo
 - Los lotes «retinados» quedan legibles solo con BU ON (estado normal del entorno con BU OFF es fail-closed OD-16).
 - No se reabren R-181/R-182/R-185/OD-21; OBS-UAT-01 y BU-D10 sin cambio; Wave B/C/SAP fuera.
 
-## Siguiente paso
+## Cierre de aceptación
 
-Owner UAT corta (guía `GA_R184_OWNER_UAT.md`): el propietario valida que la tarjeta IPE carga, se entiende y aguanta refresco/móvil. **No se convoca aquí; queda READY.**
+Owner UAT ejecutada (**GA-UAT-06**, 2026-09-11): **decisión A) ACEPTO R-184** → **R-184 CLOSED_OWNER_ACCEPTED** · OWNER_ACCEPTANCE **PASS** (6/6 casos, sin observaciones). Registro: `audit/ga-uat-06/GA_OWNER_ACCEPTANCE_R184_RECORD.md`. Certificación técnica preservada; sin cambios de producto.

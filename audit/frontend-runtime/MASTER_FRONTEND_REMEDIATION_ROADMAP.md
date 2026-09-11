@@ -159,7 +159,8 @@ R-184 (SEMÁNTICA TEMPORAL DEL IPE) → CLOSED (técnico)
      Fix: _dia() canónico en age_days (C2 3f88f94; backend-only; fórmula intacta).
      Runtime E2E-01…12 14/14 · UI tarjeta IPE 556.6 visible (desktop/móvil).
      Candidatos registrados sin implementar: R-186 (production-index misma clase) ·
-     observación de escala fórmula-vs-bandas. Owner UAT REQUIRED y READY (tarjeta visible).
+     observación de escala fórmula-vs-bandas. Owner UAT EJECUTADA (GA-UAT-06, 2026-09-11):
+     decisión A) ACEPTO R-184 → R-184 CLOSED_OWNER_ACCEPTED.
 ```
 
 Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R; R-184 SEPARATE_OPEN.

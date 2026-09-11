@@ -20,9 +20,18 @@ Sesión: aceptación del propietario de **R-184 (KPI / IPE)** · Entorno: produc
 | Eventos/pesajes/alimento del lote 11 (histórico) | entradas del KPI | Intactos (solo lectura) |
 | Lote cerrado 53 (retenido de R-184) | **no usado** en esta UAT (fixture primario suficiente) | Intacto |
 
-## Checklist de higiene (a verificar tras la limpieza §40)
+## Verificación de limpieza (§40 — EJECUTADA 2026-09-11)
 
-- Concesión revocada · usuario 132 en baja · rol 64 desactivado · BU 4×OFF restaurada.
-- Credenciales y `/tmp/ga06_*` destruidos; sesiones de navegador cerradas sin artefactos (sin storageState en repo).
-- Auditoría preservada (incluye las altas/bajas del fixture, como evidencia del flujo oficial).
-- **Ningún usuario humano modificado**; aceptaciones previas (GA-FE-02..07, GA-UAT-04/05) intactas.
+| Comprobación | Resultado |
+|---|---|
+| Concesión Engorde → `uat6.ipe` revocada | **200** (verificado) |
+| Usuario 132 baja lógica | **204** |
+| Rol 64 desactivado | **200** |
+| BU `broiler` OFF · catálogo 4×OFF | **verificado** (`breeder·broiler·grandparent·hatchery` = OFF) |
+| Lote 11 / histórico | **intacto** (solo lectura) |
+| Credenciales `~/ga_uat06_credentials.txt` destruidas | **verificado inexistente** |
+| Temporales `/tmp/ga06_*` eliminados | **verificado inexistente** |
+| Sesiones de navegador | cerradas (sin storageState versionado) |
+| Auditoría preservada · admin humano operativo · ningún humano modificado | **verificado** |
+
+Cierre: limpieza completa y verificada antes del commit de decisión C2.

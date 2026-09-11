@@ -1,18 +1,18 @@
 # GA-UAT-06 · REGISTRO DE OBSERVACIONES DEL PROPIETARIO — R-184 (KPI / IPE)
 
-Estado de la sesión: **PREPARADA — PENDIENTE DE DECISIÓN DEL PROPIETARIO**.
+Estado de la sesión: **CERRADA — DECISIÓN A) ACEPTO R-184** (2026-09-11, explícita; sin observaciones adicionales del propietario).
 Regla: ninguna observación se convierte en defecto ni se corrige durante la sesión. **No se clasifica ninguna observación nueva hasta que la UAT concluya.**
 
-## Resultados por caso (a completar con la decisión del propietario)
+## Resultados por caso
 
 | UAT ID | Resultado | Observación | Severidad | Captura | ¿Hallazgo existente? | ¿Relacionado con R-186? | ¿Relacionado con la observación de negocio? | ¿Candidato nuevo? | ¿Bloquea aceptación? | Comentario del propietario |
 |---|---|---|---|---|---|---|---|---|---|---|
-| UAT-01 | (pendiente) | | | C01/C02 | | | | | | |
-| UAT-02 | (pendiente) | | | C02 | | | | | | |
-| UAT-03 | (pendiente) | | | C03 | | | | | | |
-| UAT-04 | (pendiente) | | | C04 | | | | | | |
-| UAT-05 | (pendiente) | | | C05/C06 | | | | | | |
-| UAT-06 | (pendiente) | | | — | | | | | | |
+| UAT-01 | **PASS** | Tarjeta IPE carga con 556.6 sin errores | — | C01/C02 | No | No | No | No | No | (decisión A; sin comentario adicional) |
+| UAT-02 | **PASS** | Presentación clara: «IPE», valor legible, «Excelente» | — | C02 | No | No | No | No | No | |
+| UAT-03 | **PASS** | Estable tras recarga y nuevo inicio de sesión | — | C03 | No | No | No | No | No | |
+| UAT-04 | **PASS** | Reporte del lote coherente con el detalle (556.6) | — | C04 | No | No | No | No | No | |
+| UAT-05 | **PASS** | Móvil: tarjeta visible, sin desbordes | — | C05/C06 | No | No | No | No | No | |
+| UAT-06 | **PASS** | Comprensión global confirmada | — | — | No | No | No | No | No | |
 
 > Las medidas objetivas del walkthrough de referencia están en `GA_OWNER_UAT_R184_EVIDENCE.md` (§C). No sustituyen la aceptación.
 
@@ -28,6 +28,6 @@ Regla: ninguna observación se convierte en defecto ni se corrige durante la ses
 
 ---
 
-# DECISIÓN DEL PROPIETARIO (a completar)
+# DECISIÓN DEL PROPIETARIO
 
-(se rellenará únicamente tras la decisión explícita; opciones A/B/C de la guía)
+**A) ACEPTO R-184** — decidida explícitamente por el propietario el 2026-09-11 en la sesión GA-UAT-06. Sin observaciones adicionales reportadas. Registro: `GA_OWNER_ACCEPTANCE_R184_RECORD.md`.

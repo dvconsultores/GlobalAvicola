@@ -40,16 +40,16 @@ Datos: `evidence/reference-walkthrough.json` · capturas C01–C06.
 
 ## D · CASOS DEL PROPIETARIO
 
-**Pendientes de la decisión explícita A/B/C** (ver `GA_OWNER_UAT_R184_OBSERVATIONS.md`). El resultado de referencia de ingeniería (arriba) documenta que la experiencia visible está lista para la sesión.
+Resultados del propietario: **PASS en los 6 casos** (UAT-01…06) según la **decisión explícita A) ACEPTO R-184** (2026-09-11) — sin observaciones adicionales reportadas. Detalle por caso: `GA_OWNER_UAT_R184_OBSERVATIONS.md`. El resultado de referencia de ingeniería (arriba) documenta que la experiencia visible estaba lista para la sesión.
 
 ## E · OBSERVACIONES DEL PROPIETARIO
 
-**Pendiente.** Notas de preparación pre-sesión: ver `GA_OWNER_UAT_R184_OBSERVATIONS.md` (R-186 fuera de alcance · observación de negocio separada · OBS-UAT-01 existente · BU-D10 no se decide aquí).
+Registro completo (CERRADO): `GA_OWNER_UAT_R184_OBSERVATIONS.md`. Sin observaciones del propietario (decisión A sin comentarios adicionales). Notas de preparación pre-sesión registradas allí: R-186 fuera de alcance · observación de negocio separada · OBS-UAT-01 existente · BU-D10 no decidido aquí.
 
 ## F · DECISIÓN DEL PROPIETARIO
 
-**(vacía — se completará únicamente tras decisión explícita del propietario)**
+**A) ACEPTO R-184** — decidida explícitamente por el propietario el 2026-09-11 en la sesión GA-UAT-06. Registro: `GA_OWNER_ACCEPTANCE_R184_RECORD.md`.
 
 ## G · LIMPIEZA
 
-**Pendiente (§40, se ejecuta tras la decisión):** revocar concesión Engorde de `uat6.ipe` · baja lógica del usuario 132 · desactivar el rol 64 · BU `broiler` restaurada **OFF** (catálogo 4×OFF) · **lote 11 (y todo el histórico) intacto** — solo se usó en lectura · credenciales `~/ga_uat06_credentials.txt` y temporales `/tmp/ga06_*` destruidos · sesiones de navegador cerradas (almacenamiento local limpio) · auditoría preservada · **ningún usuario humano modificado** · registros de aceptación previos intactos.
+**Ejecutada tras la decisión y verificada (§40)**: concesión Engorde de `uat6.ipe` **revocada** (200) · usuario 132 **baja lógica** (204) · rol 64 **desactivado** (200) · BU `broiler` restaurada **OFF** — catálogo verificado **4×OFF** (`breeder·broiler·grandparent·hatchery`) · **lote 11 y todo el histórico intactos** (uso solo-lectura) · credenciales `~/ga_uat06_credentials.txt` y temporales `/tmp/ga06_*` **destruidos** (verificado inexistentes) · sesiones de navegador cerradas (almacenamiento local limpiado; sin storageState versionado) · **auditoría preservada** · admin humano operativo · **ningún usuario humano modificado** · registros de aceptación GA-FE-02..07 y GA-UAT-04/05 intactos.

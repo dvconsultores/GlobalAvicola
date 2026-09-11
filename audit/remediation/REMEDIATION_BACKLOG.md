@@ -1862,7 +1862,7 @@ INTOCADO      R-182 CLOSED_OWNER_ACCEPTED · R-184 SEPARATE_OPEN · OBS-UAT-01 U
 - Owner UAT corta de GA-FE-07: **EJECUTADA** (GA-UAT-05, 2026-09-11) → **A) ACEPTO GA-FE-07** (registro: `audit/ga-uat-05/GA_OWNER_ACCEPTANCE_GA_FE_07_RECORD.md`).
 - Estado final: R-185 = `CLOSED_OWNER_ACCEPTED` · OD-21 = `RATIFIED_IMPLEMENTED_OWNER_ACCEPTED`. Sin tranches nuevas iniciadas.
 
-## R-184 · CLOSED — KPI/IPE: SEMÁNTICA TEMPORAL + HTTP 500 (2026-09-11)
+## R-184 · CLOSED_OWNER_ACCEPTED — KPI/IPE: SEMÁNTICA TEMPORAL + HTTP 500 (2026-09-11)
 
 ```
 FINDING       R-184 (P2, era «N-2 candidato» de GA-FE-06) — CLOSED (técnico)
@@ -1879,7 +1879,8 @@ REGISTROS     R-186 (candidato): /reports/kpis/production-index → 500 misma cl
               (SEPARATE_OPEN, no implementado por regla de alcance)
               OBS negocio: posible ×100 de escala vs bandas «reference»
               (OWNER_DECISION_REQUIRED futuro; no bloquea)
-UAT           OWNER_UAT_REQUIRED = YES (tarjeta visible) — READY, pendiente de convocatoria
+UAT           GA-UAT-06 (2026-09-11): decisión A) ACEPTO R-184 (6/6 casos, sin
+              observaciones) → R-184 = CLOSED_OWNER_ACCEPTED
 INTOCADO      R-181/R-182/R-185/OD-21 sin cambio · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
               Wave B PAUSED · Wave C/SAP NOT STARTED
 ```
