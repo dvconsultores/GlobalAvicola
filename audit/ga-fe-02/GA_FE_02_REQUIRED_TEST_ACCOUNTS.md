@@ -68,3 +68,32 @@ documentación de la tranche como nombres TEST-ONLY, sin valores en git).
 
 Con esos actores, la corrida se ejecuta en una sola sesión y produce la matriz E2E completa
 (31 escenarios) hacia `FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING`.
+
+---
+
+## Resume 2026-09-11 — remedio EXACTO (investigación de provisioning completada)
+
+El agente ejecutó la investigación obligatoria de mecanismos oficiales
+(`audit/ga-fe-02-a/GA_FE_02_A_AUTH_PROVISIONING_MAP.md`): **no existe auto-provisioning sin una
+credencial bootstrap inyectada**. Remediación mínima (cualquiera de estas, por el canal que el
+propietario designe — NUNCA por el repositorio):
+
+```
+OPCIÓN 1 · inyectar la credencial bootstrap como variable de entorno en la estación de
+ejecución (la vía que la propia GUIA_PRUEBAS_EN_VIVO §1.1 y GA-REM-004 diseñan):
+    export GA_FLOW_PASSWORD='<password de la cuenta admin de ENV-01>'
+  (o GA_BASELINE_ADMIN_PASSWORD si esa es la variable con la que el operador sembró el admin)
+  → el agente hace login por la API oficial, provisiona A–D por la API/UI oficial
+    (POST /users, rol existente por usuario, password por endpoint oficial) y corre los 31 escenarios.
+
+OPCIÓN 2 · compartir en el navegador integrado UNA página ya autenticada de
+https://avicola.globaldv.net (p. ej. la sesión del Super Administrador). El agente usará esa
+sesión explícitamente disponible para provisionar A–D por los flujos oficiales.
+
+OPCIÓN 3 · entregar A–D ya creadas (mismos permisos/roles de la matriz) + un bootstrap con
+users:create para configurarlas; el agente completa el resto.
+```
+
+Sin una de estas tres, el estado permanece `DEPLOYED_IMPLEMENTATION_COMPLETE /
+FUNCTIONAL_CERTIFICATION_BLOCKED_AUTH (causa: BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED)` —
+con la cadena de evidencia completa que exige §5 del encargo.

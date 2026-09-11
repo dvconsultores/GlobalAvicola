@@ -48,6 +48,14 @@ cambios de acceso efectivos se resuelven por petición en servidor.
 credenciales, no se adivinaron, no se usó `admin/admin`, no hubo bypass ni acceso a DB.
 **Búsqueda: NO · Adivinación: NO · Bypass: NO.**
 
+**Resume 2026-09-11 (auto-provisioning autorizado)** — investigación COMPLETA de mecanismos
+oficiales (`GA_FE_02_A_AUTH_PROVISIONING_MAP.md`): 6 mecanismos inventariados; los 5 oficiales
+exigen una credencial bootstrap inyectada externamente (M3/M7: seeds con
+`GA_BASELINE_ADMIN_PASSWORD`/`GA_SEED_*` y credential store de GUIA §1.1 — todos AUSENTES: 0)
+o acceso server-side/DB (ausente y prohibido por §2). Sin registro/invitación (M6: 0 endpoints)
+y sin sesión autenticada disponible (no se compartió ninguna). Determinación final de la causa:
+**`BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED`** — cadena de evidencia A–F en el mapa.
+
 ## 8 · Matriz de cuentas de prueba
 
 `GA_FE_02_A_TEST_ACCOUNT_MATRIX.md` — A/B/C/D `MISSING`; E `OPTIONAL_MISSING`.
@@ -153,7 +161,8 @@ USER BUSINESS UNIT ADMIN:    BLOCKED
 SECURITY MATRIX:         BLOCKED
 PERSISTENCE:             BLOCKED
 RESPONSIVE:              BLOCKED
-GA-FE-02: DEPLOYED_IMPLEMENTATION_COMPLETE / FUNCTIONAL_CERTIFICATION_BLOCKED_AUTH  (sin cambio)
+GA-FE-02: DEPLOYED_IMPLEMENTATION_COMPLETE / FUNCTIONAL_CERTIFICATION_BLOCKED_AUTH
+          causa refinada (resume 2026-09-11): BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED
 OWNER ACCEPTANCE: PENDING
 ```
 

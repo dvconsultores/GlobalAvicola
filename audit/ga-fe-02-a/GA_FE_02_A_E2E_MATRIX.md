@@ -3,6 +3,11 @@
 Todos los estados son del **MODE_C · BLOCKED_AUTH** (paso 29 §133 → rama §79). No se ejecutó
 ningún flujo autenticado; no existe fila "probada por otro medio" — prohibido (§102).
 
+> **Actualización 2026-09-11 (resume de self-provisioning)**: la investigación obligatoria de
+> mecanismos oficiales se completó (`GA_FE_02_A_AUTH_PROVISIONING_MAP.md`) y la causa raíz queda
+> refinada: **`BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED`**. Todos los escenarios conservan su
+> estado; ninguno cambió de clase.
+
 | E2E_ID | AC | ACTOR | COMPANY | COMPANY_BU | USER_GRANT | RBAC | ACCIÓN | RESULTADO | FAILURE CLASS |
 |---|---|---|---|---|---|---|---|---|---|
 | E2E-01a | AC-COMP-01 | A | prueba | — | — | — | login → contexto de empresa visible → página admin | `BLOCKED_AUTH` | AUTH_CREDENTIAL_MISSING |

@@ -37,3 +37,17 @@ Línea base de auditoría .................... requiere sesión
 3. Crear el ledger de datos (`GA_FE_02_A_TEST_DATA_LEDGER.md`) con lo observado.
 
 Sin secretos en este documento.
+
+---
+
+## Actualización · resume de self-provisioning (2026-09-11, baseline `fad6463`)
+
+Segunda pasada con autorización de auto-provisioning. Determinación: el provisioning oficial
+existe (M1/M2 UI/API admin; M3 seeds; M7 credential store externo) pero **requiere una
+credencial bootstrap inyectada** que NO está presente (todas las variables documentadas: 0;
+sin sesión autenticada disponible). Modo refinado:
+**`BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED`** (cadena completa en
+`GA_FE_02_A_AUTH_PROVISIONING_MAP.md` y `GA_FE_02_A_SELF_PROVISIONED_AUTH_EXECUTION.md`).
+
+Nada cambió en el sistema: sin cuentas creadas, sin mutaciones, runtime intacto
+(`index-C_aR7TJ6.js` · `35ea38e2…`), gates verdes (tsc 0 · build 0 · 198/198).

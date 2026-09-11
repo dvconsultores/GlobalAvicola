@@ -16,6 +16,9 @@
 ## Credenciales y actores
 
 - [x] credenciales autorizadas: **NINGUNA** (determinación acotada; sin búsqueda)
+- [x] autorización de auto-provisioning registrada (2026-09-11) e investigación de mecanismos COMPLETA (`GA_FE_02_A_AUTH_PROVISIONING_MAP.md`)
+- [x] mecanismo oficial seleccionado: **ninguno usable** — todos exigen bootstrap inyectado (0 variables presentes) o acceso server-side (prohibido)
+- [x] sin auth bypass · sin DB directa · sin JWT fabricado · sin `admin/admin` · sin búsqueda de secretos
 - [x] actor A (Company-BU Admin): `MISSING`
 - [x] actor B (Access Admin): `MISSING`
 - [x] actor C (Target User): `MISSING`

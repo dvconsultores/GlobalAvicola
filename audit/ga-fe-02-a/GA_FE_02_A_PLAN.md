@@ -7,8 +7,8 @@ autenticación; fases 7–18 y 20–23 **BLOCKED_AUTH**; 25–28 ejecutadas como
 |---|---|---|---|
 | 1 | Repo/runtime preflight | `main` · `d120fdd` == remoto · limpio · runtime = GA-FE-02 (`index-C_aR7TJ6.js`, hash `35ea38e2…`) | ✅ |
 | 2 | Certification addendum | spec + clarify + plan + checklist + tasks en `audit/ga-fe-02-a/` | ✅ |
-| 3 | Auth availability | determinación acotada: **0 credenciales · sin sesión · sin bootstrap** | ✅ → `MODE_C` |
-| 4 | Test account matrix | `GA_FE_02_A_TEST_ACCOUNT_MATRIX.md` — todos `MISSING` | ✅ (estado bloqueado) |
+| 3 | Auth availability | 1.ª pasada: 0 credenciales → `MODE_C` · **resume 09-11: investigación de provisioning COMPLETA (mapa M1–M7)** → causa refinada `BLOCKED_AUTH_BOOTSTRAP_CREDENTIAL_REQUIRED` | ✅ |
+| 4 | Test account matrix | `GA_FE_02_A_TEST_ACCOUNT_MATRIX.md` — todos `MISSING` (plan de creación congelado y auto-ejecutable con bootstrap) | ✅ (estado bloqueado) |
 | 5 | Test Company state | no determinable sin actor; requisitos registrados | `BLOCKED_AUTH` |
 | 6 | Pre-test snapshot | `GA_FE_02_A_PRETEST_STATE.md` — registro del estado no-autenticado | ✅ (bloqueado) |
 | 7 | Company context | E2E-01 | `BLOCKED_AUTH` |
