@@ -185,4 +185,17 @@ R-186 (ex «candidato») → CLOSED (técnico)
      OWNER UAT NOT REQUIRED (API_ONLY). G-06/R-184 intactos (556.6). Sin UI nueva.
 ```
 
-Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R; R-184 SEPARATE_OPEN.
+Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R. *(Corrección 2026-09-11: la nota previa «R-184 SEPARATE_OPEN» quedó obsoleta — R-184 está CLOSED_OWNER_ACCEPTED desde GA-UAT-06.)*
+
+## Addendum fechado · 2026-09-11 · GA-OD-01 (OD-22 · decisión del propietario — escala del IPE)
+
+```
+OD-22 → RATIFICADA (Opción A): IPE G-06 alineado a la escala estándar/bandas — retirar el
+     ×100 duplicado (viabilidad ya en %); bandas >300/250-300/≤250 SIN cambios; sin migración.
+     Registro: audit/ga-od-01/GA_OD_IPE_SCALE_OWNER_DECISION.md. Línea GA/OD (≠ AOD-22 Wave B).
+R-187 → FORMAL_OPEN_FINDING (P2 · OPEN): brecha actual (get_kpi_ipe con ×100; números ~100×
+     bandas ⇒ clasificación poco informativa). Implementación: NO (tranche futura con UAT propia).
+     Evidencia: audit/ga-od-01/. Paquete C1: 3cf7baf.
+Intactos: R-184/R-186 cerrados · GA-FE-02..07 · OD-21 · OBS-UAT-01 P2 · BU-D10 PENDING ·
+     Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

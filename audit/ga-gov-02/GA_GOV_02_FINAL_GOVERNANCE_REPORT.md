@@ -17,6 +17,6 @@ Ver también el informe §47 entregado en la sesión (mismo contenido, formato d
 ## Hogares canónicos (sin duplicados)
 
 - **R-186** → `REMEDIATION_BACKLOG.md` entrada OPEN formal (P2) — única.
-- **Decisión escala IPE** → `REMEDIATION_BACKLOG.md` GA-GOV-02 «Decisión de propietario pendiente» + paquete — única.
+- **Decisión escala IPE** → `REMEDIATION_BACKLOG.md` GA-GOV-02 «Decisión de propietario pendiente» + paquete — única. **Actualización 2026-09-11: RESUELTA → OD-22 · Opción A** (`audit/ga-od-01/GA_OD_IPE_SCALE_OWNER_DECISION.md`); finding derivado **R-187 · P2 · OPEN** (`audit/ga-od-01/GA_OD_IPE_SCALE_IMPLEMENTATION_GAP_R187.md`).
 
 **STOP: no se inicia la Priority 1.**

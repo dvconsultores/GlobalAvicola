@@ -246,3 +246,13 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   Observación de negocio de escala del IPE: **decisión de propietario pendiente**
   (paquete A/B/C en `audit/ga-gov-02/`). Detalle: `audit/ga-r186/`.
 - R-181/R-182/R-185/R-184-OBS-UAT-01/BU-D10 sin cambio; Wave B/C/SAP igual.
+
+## Addendum GA-OD-01 (2026-09-11) · OD-22 (escala del IPE G-06)
+
+- **OD-22 RATIFICADA** (Opción A, decisión explícita del propietario): el IPE se alineará a la
+  escala estándar/bandas (sin ×100); bandas y textos **sin cambios**; sin migración.
+  Registro: `audit/ga-od-01/GA_OD_IPE_SCALE_OWNER_DECISION.md` (línea GA/OD, ≠ Wave B «AOD-22»).
+- **R-187 · P2 · OPEN**: brecha de implementación (fórmula actual con ×100 vs regla OD-22).
+  Tranche futura (spec → AC → implementación → UAT; cambia el número mostrado). Sin implementar.
+- R-184/R-186 cerrados · GA-FE-02..07/OD-21 intactos · OBS-UAT-01 P2 · BU-D10 PENDING ·
+  Wave B/C/SAP sin cambio. Detalle: `audit/ga-od-01/`.

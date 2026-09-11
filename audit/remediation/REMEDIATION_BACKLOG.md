@@ -1927,3 +1927,27 @@ INTOCADO      R-184/G-06 (556.6 intacto) · observación de escala IPE
               OWNER_DECISION_REQUIRED · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
               Wave B PAUSED · Wave C/SAP NOT STARTED
 ```
+
+## GA-OD-01 · OD-22 RATIFICADA (A) + R-187 FORMALIZADO (P2 · OPEN) — ESCALA DEL IPE (2026-09-11)
+
+```
+GOBERNANZA    GA-OD-01 (solo análisis y sesión de decisión; cero producto) — audit/ga-od-01/
+              C1 3cf7baf (paquete de decisión: traza fórmula/bandas/unidades · evidencia ·
+              impacto · trazabilidad · paquete) → informe §31 → decisión del propietario.
+OD-22         RATIFICADA — Opción A («alinear el valor del IPE a la escala estándar/de las
+              bandas»): viabilidad en % (0-100); IPE en escala EPEF (retirar el ×100
+              duplicado); bandas >300/250-300/≤250 SIN cambios; sin migración (KPI en vivo).
+              Línea GA/OD (NO confundir con Wave B «AOD-22»). Registro:
+              audit/ga-od-01/GA_OD_IPE_SCALE_OWNER_DECISION.md · 2026-09-11.
+OBSERVACIÓN   Escala IPE vs bandas (GA-GOV-02): RESUELTA por OD-22 (RESOLVED_OWNER_DECISION_A).
+R-187         FORMAL_OPEN_FINDING (P2 · OPEN) — brecha implementación vs regla OD-22:
+              get_kpi_ipe mantiene el ×100 (CONFIRMED_100X_SCALE_CONFLICT); números ~100×
+              bandas ⇒ clasificación poco informativa. Dedup: DISTINCT (R-184/R-186 = 500
+              temporal, cerrados; R-131 vecino de meta-clase FCR; sin dueño previo).
+              Implementación: NO (tranche futura: spec → AC → implementación → UAT propia
+              por cambio visible). Evidencia: audit/ga-od-01/GA_OD_IPE_SCALE_IMPLEMENTATION_GAP_R187.md.
+PRIORIDAD     Cola técnica post-decisión: R-187 (P2) junto a OBS-UAT-01 (P2) · BU-D10 PENDING ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED
+INTOCADO      R-184/R-186 sin reapertura ni reutilización · GA-FE-02..07 y R-181/182/185/OD-21
+              PRESERVED · certificaciones intactas
+```

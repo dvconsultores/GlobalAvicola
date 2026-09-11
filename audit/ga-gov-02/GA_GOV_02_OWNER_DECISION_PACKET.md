@@ -44,3 +44,7 @@ El IPE es un KPI de decisión productiva: si la escala y las bandas no comparten
 ## NOTA DE SECUENCIA
 
 Si se elige A o B: **OBSERVACIÓN → DECISIÓN → SPEC → (finding solo si hay brecha) → AC → IMPLEMENTACIÓN con aceptación**. No se implementa nada desde este paquete.
+
+## RESOLUCIÓN (actualización de estado, 2026-09-11)
+
+**DECIDIDA: Opción A** (respuesta explícita del propietario en la sesión GA-OD-01) → **OD-22 RATIFICADA** (`audit/ga-od-01/GA_OD_IPE_SCALE_OWNER_DECISION.md`). Brecha real ⇒ finding **R-187 · P2 · OPEN** (`audit/ga-od-01/GA_OD_IPE_SCALE_IMPLEMENTATION_GAP_R187.md`). Observación de negocio: **RESUELTA**. Implementación: **NO** (tranche propia futura con UAT).

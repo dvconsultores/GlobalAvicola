@@ -53,7 +53,9 @@ El `×100` de la fórmula ya convertía la viabilidad de fracción (0.95) a porc
 
 ## OWNER DECISION
 
-**PENDIENTE** — el propietario debe responder **A**, **B** o **C** (llamada de decisión). Tras su respuesta: se asigna el ID canónico (siguiente libre línea OD; ver trazabilidad), se ratifica la regla y se determinará, si procede, una tranche técnica nueva (spec → AC → implementación → UAT). **Nada se implementa en esta sesión.**
+**A — ALINEAR EL VALOR A LA ESCALA ESTÁNDAR / ESCALA DE LAS BANDAS** (respuesta explícita del propietario, 2026-09-11).
+
+**RATIFICADA como `OD-22`** (línea GA/OD; a distinguir de la familia Wave B `AOD-22`). Registro canónico: `GA_OD_IPE_SCALE_OWNER_DECISION.md` (mismo directorio). Consecuencia: la brecha de implementación queda formalizada como **R-187 · P2 · OPEN** (`GA_OD_IPE_SCALE_IMPLEMENTATION_GAP_R187.md`); tranche técnica futura (spec → AC → implementación → UAT propia), **no implementada en esta sesión**.
 
 ---
 *Apéndices técnicos*: `GA_OD_IPE_CURRENT_FORMULA_TRACE.md` · `GA_OD_IPE_CLASSIFICATION_BANDS_TRACE.md` · `GA_OD_IPE_UNIT_ANALYSIS.md` · `GA_OD_IPE_SCALE_EVIDENCE.md` · `GA_OD_IPE_SCALE_IMPACT_ANALYSIS.md` · `GA_OD_IPE_SCALE_TRACEABILITY.md`.
