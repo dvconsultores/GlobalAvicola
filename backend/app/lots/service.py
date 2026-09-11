@@ -182,6 +182,19 @@ class LotService:
                     detail="La granja no pertenece a su compañía",
                 )
 
+        # `GA-FE-06-A` · `R182-SEC-AC01`. `GA-REM-039` añadió el área al lote, pero quedó
+        # fuera de las comprobaciones de pertenencia que `GA-REM-002` (`R-42`/`R-59`),
+        # `R-139` y `R-179` extienden a toda referencia que el cliente puede enviar: el
+        # área de **otra empresa** se aceptaba (`201`) y quedaba ligada al lote. Se usa el
+        # validador canónico de catálogos — `company_id` nulo = compartida; ajena = se
+        # comporta como inexistente (`BR-07`), sin distinguir «no existe» de «no es tuyo».
+        if getattr(data, "area_id", None) is not None:
+            from ..masters.models import Area
+            from ..tenancy import verificar_catalogo_de_empresa
+
+            await verificar_catalogo_de_empresa(
+                self.db, Area, data.area_id, self.company_id, "Área")
+
         # `GA-REM-037` / `OD-06`. La curva estándar contra la que se juzgará este lote se
         # fija ahora y no se recalcula: es lo que separa una referencia histórica de una
         # que cambia bajo los pies del dato ya registrado (`AC07`, `AC08`).
@@ -251,6 +264,17 @@ class LotService:
         # `GA-REM-040-H` · `AC-L08`: el lote se resuelve como siempre (`404` por unidad para el
         # actor) y después se exige la habilitación, que a la autoridad global no le exigía nadie.
         await self._exigir_unidad_operativa(self._codigo(await master_service.get_by_id(lot_id)))
+        # `GA-FE-06-A` · `R182-SEC-AC02`. La edición pasa por `MasterService.update`, cuyo
+        # `_PADRES_TENANT` no incluye `area_id`: mover un lote al área de otra empresa era la
+        # misma escritura entre inquilinos que crearlo ahí. Se valida **antes** de tocar el
+        # objeto — una negativa no deja mutación parcial ni auditoría de éxito.
+        campos = data.model_dump(exclude_unset=True)
+        if campos.get("area_id") is not None:
+            from ..masters.models import Area
+            from ..tenancy import verificar_catalogo_de_empresa
+
+            await verificar_catalogo_de_empresa(
+                self.db, Area, campos["area_id"], self.company_id, "Área")
         return await master_service.update(lot_id, data)
 
     async def close_lot(self, lot_id: int) -> dict:
