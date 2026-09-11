@@ -1,0 +1,29 @@
+# GA-FE-06 · CHECKLIST DE EJECUCIÓN
+
+- [x] Preflight verde y bundle de entrada congelado
+- [x] Baselines (frontend 273/273 · tsc 0 · build · backend PG-libre 7/7)
+- [x] Lecturas canónicas completas (modelo/esquema/servicio/SLA/form/i18n/migración/dedup)
+- [x] Reconciliación R-182 (defecto = pérdida silenciosa en payload del alta)
+- [x] Trazas (modelo, SLA) y matrices (alta, edición, SLA, actores, fixtures)
+- [x] Especificación R182-AC01…52 + clarificaciones C01–C25
+- [x] Plan P1–P37 · checklist · tareas
+- [ ] RED vitest: PLD capturada→enviada; selector área desde `/masters/areas`; área→`area_id`
+- [ ] RED runtime pre-fix con captura de payload real (evidencia)
+- [ ] Commit C1 (gobernanza + RED)
+- [ ] Implementación mínima (selector + payload + i18n `lots.area` + fila «Cierre previsto»)
+- [ ] GREEN dirigido (nuevos verdes; controles: nulls, no-ID-crudo)
+- [ ] Gates: tsc 0 · build · Vitest completo · backend PG-libre · (CI: suite canónica SLA)
+- [ ] Commit C2 + push + despliegue observado
+- [ ] Bundle nuevo congelado (hash/ETag/Last-Modified)
+- [ ] E2E-01…16 autenticados (UI real como operador C; D/E para RBAC/CBU)
+- [ ] Cross-company: selector filtrado + API deny + sin persistencia + sin fuga
+- [ ] SLA: fresh GET de PLD exactos · relectura de avisos al cierre (o PENDING_SCAN_WINDOW)
+- [ ] Fechas sin ±1 (día natural; valores de borde +3/+1/0/−1/+10)
+- [ ] Móvil 390×844 · desktop 1440×900 · ES/EN
+- [ ] Red: capturas sanitizadas sin tokens ni PII
+- [ ] Consola: 0 errores fatales · fetch acotado
+- [ ] Regresiones GA-FE-02/03/04/05
+- [ ] Higiene §101 completada y verificada (BUs 4 OFF · grants revocados · credenciales destruidas)
+- [ ] Evidencia: runtime, red, capturas, ledger, reconciliación R-182
+- [ ] Certificación GA-FE-06 + addendum auditoría + catálogo + paquete UAT
+- [ ] Commit C4 + local==remoto · worktree limpio · informe final · STOP
