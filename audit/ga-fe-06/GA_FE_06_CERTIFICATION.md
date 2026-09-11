@@ -38,3 +38,18 @@ Nuevos candidatos registrados: **R-183 (N-1)**, **R-184 (N-2)** (+ observaciones
 - La suite `tests/test_lot_planned_close.py` no corre en local (requiere PG); se ejecuta en CI y no fue modificada.
 - N-1/N-2 (candidatos `R-183`/`R-184`) quedan registrados con evidencia viva; no bloquean este cierre.
 - Fixtures: higiene §101 completa (ver `GA_FE_06_HYGIENE_EVIDENCE.md`); lotes `GA6-*` retenidos como histórico declarado.
+
+---
+
+# ADDENDUM GA-FE-06-A · CORRECCIÓN DE ESTADO (2026-09-11)
+
+El veredicto anterior de esta página queda **histórico**: la evidencia runtime posterior (N-1, `area_id` ajeno aceptado con 201/200) lo invalida como estado vigente, porque R182-AC20/R182-AC36 no pasaron.
+
+| Campo | Estado corregido |
+|---|---|
+| R-182 | **SECURITY_REMEDIATION_REQUIRED** (antes: CLOSED — retirado) |
+| GA-FE-06 | **PARTIAL / SECURITY_REMEDIATION_REQUIRED** (antes: FUNCTIONALLY_CERTIFIED — retirado) |
+| OWNER_UAT_READY | **NO** |
+| Owner UAT | **NO iniciado** |
+
+Remediación en curso bajo `GA-FE-06-A` (enmienda de spec + RED + invariante backend `LOT.COMPANY = AREA.COMPANY` + recertificación runtime). El estado final se registrará en `GA_FE_06_A_*` y en el re-veredicto de esta página al cierre (sin reescribir este addendum).

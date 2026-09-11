@@ -34,3 +34,11 @@ Disciplina de alcance: R-182 es un defecto **de frontend** (pérdida silenciosa 
 ## Declaración de no-intervención
 
 Ninguno de los cuatro se corrigió aquí: N-1/N-2 son backend (el enunciado de R-182 no los contiene y tocar backend invalidaría el resultado «0 cambios backend» declarado para esta tranche), y N-3/N-4 son observaciones de UX/trazabilidad. Quedan listados para el backlog con evidencia reproducible.
+
+---
+
+# ADDENDUM GA-FE-06-A (2026-09-11) — DISPOSICIÓN DE N-1 (R-183)
+
+**N-1 / R-183 = ABSORBED_IN_R182** (subhallazgo de seguridad), por orden del propietario y verdad del repositorio (ver `audit/ga-fe-06-a/GA_FE_06_A_R183_DEDUP.md`): la clase ya estaba gobernada por `GA-REM-002`/`R-42`/`R-139`/`R-179`; el **sitio** `lots.area_id` nunca se registró en esas extensiones. Se remedia dentro de GA-FE-06-A aplicando el validador canónico `verificar_catalogo_de_empresa` a alta y edición.
+
+`R-184` (N-2) permanece **SEPARATE / non-blocking**: no es consumidor canónico del SLA ni de la certificación de R-182; no se implementa en esta tranche. N-3/N-4 sin cambio.

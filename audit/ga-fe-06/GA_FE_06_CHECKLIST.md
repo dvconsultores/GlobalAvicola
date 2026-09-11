@@ -27,3 +27,17 @@
 - [x] Evidencia: runtime, red, capturas, ledger, reconciliación R-182
 - [x] Certificación GA-FE-06 + addendum auditoría + catálogo + paquete UAT
 - [x] Commit C4 + local==remoto · worktree limpio · informe final · STOP
+
+## GA-FE-06-A · seguridad de área ajena (remediación R-182)
+
+- [x] Preflight + lecturas canónicas + dedup R-183 (ABSORBED_IN_R182)
+- [x] Corrección de estado (R-182 SECURITY_REMEDIATION_REQUIRED · GA-FE-06 PARTIAL · OWNER_UAT_READY NO)
+- [x] Enmienda de spec (SEC-AC01…08) + checklist + tareas
+- [x] RED: suite PG escrita + captura runtime pre-fix (201 alta / 200 edición / 500 inexistente)
+- [ ] C5 gobernanza + push
+- [ ] Implementación validador canónico (`verificar_catalogo_de_empresa`) en alta y edición
+- [ ] GREEN local (gates) + C6 + despliegue + generación congelada
+- [ ] E2E runtime: DENY alta · DENY edición · sin persistencia · sin auditoría de éxito · sin fuga · ALLOW misma-empresa · NULL · inexistente 400/BR-07
+- [ ] Matriz tenant/BU/RBAC (incl. global con ventana OFF) + selector desktop/móvil + SLA datos/regla + regresiones GA-FE-02/03/04/05
+- [ ] Higiene §101 + credenciales destruidas
+- [ ] Recertificación R-182 completa + evidencias + addendum + C7 + informe §41 + STOP

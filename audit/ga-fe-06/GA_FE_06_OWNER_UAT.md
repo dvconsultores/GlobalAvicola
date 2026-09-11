@@ -38,3 +38,9 @@ C) NO ACEPTO (indicar qué falla)
 ```
 
 Estado: **OWNER_ACCEPTANCE_PENDING** — a la espera de la decisión del propietario (no se inicia ninguna otra tranche).
+
+---
+
+# ADDENDUM GA-FE-06-A (2026-09-11) — READINESS
+
+**OWNER_UAT_READY: NO** — suspendido hasta que la remediación de seguridad de área ajena (GA-FE-06-A) cierre y R-182 quede recertificado. La matriz de seguridad de área ajena es de ingeniería y no requiere repetición por el propietario; su UAT sigue enfocado en lo visible (cierre previsto, selección de área, alta, persistencia, móvil, ES/EN). Este documento se actualizará tras la recertificación técnica completa.

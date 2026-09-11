@@ -18,4 +18,22 @@
 | T14 | Higiene §101 | T12 | ledger actualizado | ✔ |
 | T15 | Evidencia de cierre (runtime/red/capturas/ledger/reconciliación) | T13,T14 | docs | ✔ |
 | T16 | Certificación + addendum + catálogo + paquete UAT | T15 | docs | ✔ |
-| T17 | Commit C4 + verificación final + informe §FINAL + STOP | T16 | hash; worktree limpio | ○ |
+| T17 | Commit C4 + verificación final + informe §FINAL + STOP | T16 | hash; worktree limpio | ✔ (`84080c3`) |
+
+## GA-FE-06-A · remediación de seguridad (subhallazgo R-183 absorbido)
+
+| ID | Tarea | Estado |
+|---|---|---|
+| A1 | Preflight + lecturas canónicas (AC20/36, tenancy, Area, create/update) | ✔ |
+| A2 | Dedup R-183 ⇒ ABSORBED_IN_R182 | ✔ |
+| A3 | Corrección de estado (R-182 SECURITY_REMEDIATION_REQUIRED · GA-FE-06 PARTIAL · UAT_READY NO) | ✔ |
+| A4 | Enmienda de spec + SEC-AC01…08 + checklist | ✔ |
+| A5 | RED: suite PG `test_lot_area_ownership.py` + captura runtime pre-fix (201/200/500) | ✔ |
+| A6 | Commit C5 gobernanza + push | ○ |
+| A7 | Implementación: validador canónico en alta y edición (sin migración/permisos/endpoints) | ○ |
+| A8 | GREEN local: gates backend PG-libre + frontend (vitest/tsc/build) | ○ |
+| A9 | Commit C6 + push + despliegue automático + congelar generación | ○ |
+| A10 | E2E runtime: negativos (alta/edición/inexistente), positivos (misma empresa/NULL), matriz tenant/BU/RBAC, selector desktop/móvil, SLA datos+regla | ○ |
+| A11 | Higiene: revokes, BU OFF, usuarios/roles off, áreas baja, credenciales destruidas | ○ |
+| A12 | Recertificación R-182 completa + evidencias + addendum auditoría + backlog | ○ |
+| A13 | Commit C7 evidencia + verificación final + informe §41 + STOP | ○ |
