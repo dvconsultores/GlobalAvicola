@@ -68,8 +68,10 @@ export default function Header() {
  {/* Divider */}
  <div className="w-px h-4 bg-slate-200/80" />
 
- {/* Company selector (super_admin) or badge (regular user) */}
- {(activeCompanyName || user?.company_name) && (
+ {/* Company selector (super_admin) or badge (regular user).
+     F4 · GA-FE-02-B (`CAP-SES-05`): la autoridad global debe poder situarse aunque no haya
+     empresa elegida todavía; sin esto el camino de recuperación de `OD-14` era circular. */}
+ {(isSuperAdmin || activeCompanyName || user?.company_name) && (
  <div ref={companyRef} className="relative">
  {isSuperAdmin ? (
  /* ── Dropdown selector for super_admin ── */
@@ -81,7 +83,7 @@ export default function Header() {
  >
  <Building2 size={11} className="text-slate-400 shrink-0" />
  <span className="text-xs font-medium text-slate-600 max-w-[130px] truncate">
- {isSwitching ? t('company.switching') : (activeCompanyName || user?.company_name)}
+ {isSwitching ? t('company.switching') : (activeCompanyName || user?.company_name || t('company.select'))}
  </span>
  <ChevronDown size={10} className={`text-slate-400 transition-transform ${companyOpen ? 'rotate-180' : ''}`} />
  </button>

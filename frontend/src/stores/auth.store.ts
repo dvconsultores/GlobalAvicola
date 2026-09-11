@@ -148,7 +148,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       const companyStore = useCompanyStore.getState()
       const effectiveId: number | null = user.effective_company_id ?? user.company_id ?? null
       let effectiveName: string | null = effectiveId == null ? null : user.company_name ?? null
-      if (effectiveId != null && user.company_id != null && effectiveId !== user.company_id) {
+      // F4 · GA-FE-02-B: también cuando la persistida es `null` (bootstrap admin) — si no,
+      // el nombre de la empresa elegida no se resolvía y el selector quedaba sin etiqueta.
+      if (effectiveId != null && effectiveId !== user.company_id) {
         // Contexto desplazado por `switch-company`: el nombre se resuelve por el catálogo
         // (la fila del usuario sigue siendo la persistida; `OD-11.b`).
         await companyStore.fetchCompanies()

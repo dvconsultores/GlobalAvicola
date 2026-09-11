@@ -987,7 +987,8 @@
     "switchSuccess": "Company switched successfully",
     "switchError": "Could not switch company",
     "allCompanies": "All companies",
-    "noCompany": "No company"
+    "noCompany": "No company",
+    "select": "Select company"
   },
   "evidence": {
     "title": "Attached evidence",

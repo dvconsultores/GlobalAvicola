@@ -987,7 +987,8 @@
     "switchSuccess": "Empresa cambiada correctamente",
     "switchError": "No se pudo cambiar de empresa",
     "allCompanies": "Todas las empresas",
-    "noCompany": "Sin empresa"
+    "noCompany": "Sin empresa",
+    "select": "Seleccionar empresa"
   },
   "evidence": {
     "title": "Evidencias adjuntas",
