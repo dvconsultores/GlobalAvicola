@@ -1791,3 +1791,36 @@ INTOCADO      R-184 SEPARATE_UNCHANGED · BU-D10 PENDING_RATIFICATION · Wave B 
 - Notas menores aceptadas: el detalle del lote no muestra el Área (decisión de diseño
   GA-FE-06-C15) · el selector incluye áreas propias de baja lógica (P3; sin regla de
   «activa» inventada).
+
+---
+
+## GA-GOV-01 · TRIAGE POST-UAT-04 (2026-09-11) — SOLO GOBERNANZA
+
+```
+ENTRADA      baseline cfdbdee · producto sin cambios · análisis sin implementación
+MATRIZ       audit/ga-gov-01/GA_GOV_01_POST_UAT04_TRIAGE_MATRIX.md
+DEDUP        audit/ga-gov-01/GA_GOV_01_DEDUP_REPORT.md
+DECISIONES   audit/ga-gov-01/GA_GOV_01_CLASSIFICATION_DECISIONS.md
+INFORME      audit/ga-gov-01/GA_GOV_01_FINAL_GOVERNANCE_REPORT.md
+```
+
+### Disposiciones finales (una por observación; sin R nuevos — regla §23 aplicada)
+
+- **OBS-UAT-01 «Lotes sin entrada de menú» → UX_ENHANCEMENT_ONLY · P2 · sin R.**
+  No es defecto: GA-FE-03 inventarió `/lots*` entre las «rutas sin fuente de menú»
+  con decisión expresa «sin entradas nuevas salvo Roles» (aceptado en GA-UAT-01).
+  No reabre R-119/GA-FE-03/GA-FE-06. Hogar: mejora de navegación P2 (candidata a la
+  próxima iteración de navegación junto al filtro de estado).
+- **OBS-UAT-04 «área en baja lógica seleccionable» → OWNER_DECISION_REQUIRED · P3 · sin R.**
+  Silencio canónico verificado (R-179 solo tenencia; CRUD sin filtro de estado;
+  GA-FE-06-A §29 no inventó regla de «activa»). Pregunta A/B/C: A estatus actual ·
+  **B (default neutro): filtro de selección en UI sin tocar backend ni histórico** ·
+  C regla de dominio completa (backend rechaza referencias nuevas a inactivos).
+- **OBS-UAT-06 «área ausente del detalle» → ACCEPTED_DESIGN** (GA-FE-06-C15; ninguna
+  spec la exige; el API la expone).
+- **UAT-11 «SLA visible» → NOT_A_DEFECT (N/A_BY_DESIGN)** — el aviso es notificación
+  interna evaluada por tarea horaria; sin superficie a demanda en ninguna fuente.
+- **R-184 → SEPARATE_OPEN sin relación** con las observaciones; no se toca.
+
+INTOCADO: GA-FE-02..06 OWNER_ACCEPTED · R-98/R-119/R-181/R-182 (sin reapertura) ·
+BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED · implementación NINGUNA.

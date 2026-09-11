@@ -212,3 +212,15 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - `R-183`: **ABSORBED_IN_R182** (sin entrada independiente). `R-184`: SEPARATE/UNCHANGED.
 - **`R-182 = CLOSED` · `GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` ·
   `OWNER_UAT_READY = YES`** (Owner UAT no ejecutado). Detalle: `audit/ga-fe-06-a/`.
+
+## Addendum GA-GOV-01 (2026-09-11) · triage post-UAT-04 (solo gobernanza)
+
+- **CAP-OPS-10 (Lotes)**: estado sin cambio (IMPLEMENTED/PRESENT); se anota la mejora de
+  descubrimiento **P2, sin R**: `/lots*` sin fuente de menú — estado inventariado y
+  decidido en GA-FE-03 §34 («rutas sin fuente de menú»; «sin entradas nuevas salvo
+  Roles»; aceptado en GA-UAT-01). No es regresión; no reabre R-119/GA-FE-03.
+- **Elegibilidad por estado** (áreas/maestros en baja lógica para referencias nuevas):
+  `OWNER_DECISION_REQUIRED` (P3, sin R) — silencio canónico verificado; opciones A/B/C
+  con default neutro B en `audit/ga-gov-01/`.
+- GA-FE-02..06 y R-98/R-119/R-181/R-182: **preservados** (sin reapertura). R-184:
+  SEPARATE_OPEN sin relación con las observaciones.

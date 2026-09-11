@@ -117,3 +117,21 @@ T3 · GA-FE-06 (contrato de alta de lote, R-182) → CLOSED / CERTIFIED / **OWNE
 
 BU-D10 sigue PENDING_RATIFICATION · Wave B PAUSED · Wave C/SAP NOT STARTED.
 Ninguna otra tranche queda iniciada.
+
+---
+
+## Addendum fechado · 2026-09-11 · GA-GOV-01 (triage post-UAT-04; solo gobernanza)
+
+```
+OBS-UAT-01 «Lotes sin entrada de menú»      → UX_ENHANCEMENT_ONLY · P2 · sin R
+     (estado ya inventariado en GA-FE-03 §34 «rutas sin fuente de menú»; decisión
+      «sin entradas nuevas salvo Roles» — no reabre R-119 ni GA-FE-03)
+OBS-UAT-04 «área en baja lógica seleccionable» → OWNER_DECISION_REQUIRED · P3 · sin R
+     (silencio canónico sobre elegibilidad por estado; opciones A/B/C con default B)
+OBS-UAT-06 «área ausente del detalle»       → ACCEPTED_DESIGN (GA-FE-06-C15)
+UAT-11 «SLA sin superficie a demanda»      → NOT_A_DEFECT (N/A_BY_DESIGN)
+R-184                                       → SEPARATE_OPEN (sin relación)
+```
+
+Candidato natural para la próxima iteración de navegación: entrada de «Lotes» + filtro
+de selección por estado (sujeto a la decisión del propietario sobre OBS-UAT-04).
