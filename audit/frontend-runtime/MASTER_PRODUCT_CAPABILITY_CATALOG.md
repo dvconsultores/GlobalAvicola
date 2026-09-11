@@ -172,3 +172,12 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - `R-119` sigue `CLOSED`; `R-181`/`R-182`/SAP/`BU-D10`: **UNCHANGED**. Detalle:
   `audit/frontend-runtime/GA_FE_04_ADDENDUM_INTRA_SCREEN_AUTHORITY.md` y
   `audit/ga-fe-04/GA_FE_04_R98_CLOSURE_RECONCILIATION.md`.
+
+## Addendum GA-FE-05 (2026-09-11) · `index-WUv1-F9o.js` (`005a252`)
+
+- **`R-181` → `CLOSED`**: el envío/reenvío explícito a revisión ya es descubrible por UI
+  (`/operations/:id`, state-aware según `OD-17.a/b`), con estado localizado, refresh sin
+  optimismo y seguridad de producto verificada (permiso ∧ unidad ∧ estado; API 404/403/400).
+- `R-98`/`R-119`: CLOSED (sin regresión; se reutiliza su evaluador). `R-182`: **UNCHANGED / OPEN**.
+  `BU-D10`: PENDING_RATIFICATION. Detalle: `GA_FE_05_ADDENDUM_R181_SUBMIT_RESUBMIT.md` y
+  `audit/ga-fe-05/GA_FE_05_R181_CLOSURE_RECONCILIATION.md`.
