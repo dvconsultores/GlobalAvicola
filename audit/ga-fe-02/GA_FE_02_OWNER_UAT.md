@@ -5,6 +5,14 @@ desplegado cuando lo estime. Este documento **no** se auto-declara aprobado (§1
 **`UAT_READY: NO`** (actualización GA-FE-02-A, 2026-09-11): la ruta crítica autenticada aún no
 está verde (`MODE_C · BLOCKED_AUTH` — faltan cuentas); no se envía al propietario a validar un
 flujo no certificado. Este guion queda listo para cuando la certificación autenticada pase.
+
+**Actualización GA-FE-02-B (2026-09-11)**: F2 (rol canónico «Administrador de Accesos»), F3
+(usuarios 57–70 reparados; `GET /users` operativo) y F4 (selector de empresa alcanzable —
+pasos 1–2 de este guion) quedaron resueltos y verificados. Falta **F1** (catálogo de las cuatro
+unidades en ENV-01, pendiente server-side del propietario; comando exacto en
+`audit/ga-fe-02-b/GA_FE_02_B_ENV01_CERTIFICATION_UNBLOCKER_SPEC.md` §4). `UAT_READY` sigue
+**NO** hasta que la re-certificación autenticada completa (E2E-01…10) pase tras F1: el paso 3
+de este guion (cuatro unidades) no puede observarse hasta entonces.
 **Entorno**: `https://avicola.globaldv.net` (ENV-01). **Credenciales**: las del propietario /
 cuentas de prueba autorizadas — no se incluyen aquí.
 

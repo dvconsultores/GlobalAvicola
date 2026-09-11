@@ -197,3 +197,19 @@ hotfix.
 filas 500 + seed endurecido · `F4 CLOSED` ⇒ selector alcanzable + contexto + refresh · E2E
 completo verde ⇒ `GA-FE-02 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING`. Cualquier otro
 resultado: reportar el bloqueo exacto, sin certificar por partes.
+
+## 13 · Estado de ejecución (2026-09-11)
+
+```
+F1 ... BLOCKED_SERVER_ACCESS_F1 — comando canónico exacto en §4 (owner/ops); sin acceso
+       server-side legítimo desde la estación del agente
+F2 ... CLOSED — rol id=35 · exactamente business_units:read|update|create|delete (all) ·
+       company_id NULL (plantilla) · GET /roles=14 · sin comodín/users/productivos ·
+       sin asignaciones a humanos (0)
+F3 ... CLOSED — 14/14 filas 57–70 reparadas por API oficial (BEFORE 500 → AFTER 200);
+       listados 200 (23 usuarios); invariantes intactos; seed endurecido `b83d908` + regresión
+F4 ... CLOSED — `716d175` desplegado; verificación runtime autenticada PASS (selector alcanzable
+       «Seleccionar empresa»; dropdown con empresas; switch-company 200; nombre resuelto por
+       catálogo incluida persistida `null`; hard-refresh `/me` 200 sin forbidden; móvil 390×844).
+       Evidencia: `GA_FE_02_B_F4_SELECTOR_EVIDENCE.md`
+```

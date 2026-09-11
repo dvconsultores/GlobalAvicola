@@ -105,3 +105,13 @@ Capacidades internas (anexo, no contadas) ....... 7
 ```
 
 Invariante: `23 = 0 + 1 + 7 + 13 + 2` ✓. Las 15 bloqueadas no reciben estado inventado; quedan pendientes de la entrega de cuentas por el propietario (§38 del encargo). Fuente única del conteo: `generate_gap_matrix.py` (reproducible).
+
+## Addendum GA-FE-02-B (2026-09-11)
+
+`CAP-SES-05` — selector de empresa: fix mínimo entregado y **verificado en runtime autenticado**
+(GA-FE-02-B F4, commit `716d175`; bundle `index-B2-tZnkI.js`). Estado primario revisado:
+**IMPLEMENTED_AND_VISIBLE** (conteo revisado: IMPLEMENTED_AND_VISIBLE 1 ·
+IMPLEMENTED_BUT_NOT_EXPOSED 0; los CSV/conteos generados se regeneran en la próxima pasada del
+script con este addendum). Detalle y evidencia:
+`audit/ga-fe-02-b/GA_FE_02_B_F4_SELECTOR_EVIDENCE.md` y
+`audit/frontend-runtime/GA_FE_02_B_CAP_SES_05_ADDENDUM.md`. `R-98`/`R-119` sin cambio.

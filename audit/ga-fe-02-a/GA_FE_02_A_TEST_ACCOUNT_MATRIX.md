@@ -32,4 +32,13 @@ si no, ese subcaso se marca BLOCKED_FIXTURE (no bloquea toda la suite — §38).
 - **Actor E** — cubierto por el bootstrap (comodín, sin empresa persistida; fail-closed 403
   verificado sin contexto).
 - Evidencia: `GA_FE_02_A_RESUME3_AUTHENTICATED_FINDINGS.md`; remediación D1: commit `ea26b2e`.
+
+## Addendum GA-FE-02-B (2026-09-11) — disponibilidad en ENV-01
+
+- Bootstrap `admin` (super, comodín) — verificado (login/`me`/`switch-company` 200).
+- **Actor B**: rol canónico «Administrador de Accesos» **creado y disponible** (id=35; exactamente
+  `business_units:read|update|create|delete`, plantilla de sistema) — GA-FE-02-B **F2 CLOSED**.
+- **Actores A/C/D/E**: NO provisionados — la fixture E2E depende de **F1** (catálogo BU, pendiente
+  server-side) ⇒ permanecen `BLOCKED` hasta ejecutar F1 y reanudar la certificación completa.
+- `GET /users` operativo tras F3 (0 filas 500; 23 usuarios en empresa 1).
 ```

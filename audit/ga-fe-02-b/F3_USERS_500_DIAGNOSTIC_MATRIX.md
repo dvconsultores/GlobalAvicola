@@ -92,3 +92,17 @@ correspondencia antes de seguir); **(d) AFTER** = `GET /users/{id}` → 200. Tod
 
 `GET /users` default y `limit=100` → 200 sin 500 · cada 57–70 → 200 · tenant/rol sin cambio ·
 ninguna credencial tocada · seed endurecido + regresión añadida.
+
+## 7 · Reparación ejecutada (2026-09-11) — RESULTADO
+
+| Fase | Resultado |
+|---|---|
+| BEFORE | 500 ×14 (ids 57–70; registrado en `/tmp/ga_f3_before.txt`) |
+| Reparación | `PUT /users/{id}` `{"email":"<username>@globalavicola.com"}` ×14 → **200** en todas; `username` devuelto = esperado del seed en **14/14** (57–63 móviles · 64–70 web) |
+| AFTER | `GET /users/{id}` → **200 ×14**; `GET /users?limit=100` → **200** (23 filas); default → **200** |
+| Invariantes | company_id=1 y role_id originales intactos (spot 57: rol 28; spot 70: rol 33); `view_type` intacto; `is_active` intacto; 14 emails únicos; **cero** credenciales tocadas |
+| Endurecimiento | `b83d908` — `integration_seeds` con dominio válido + `test_seed_email_domains.py` (guarda R-44); grep de dominios reservados en seeds: 0 |
+
+Nota de ejecución: un primer barrido accidental usó un token **sin contexto de empresa** (403 fail-closed)
+y el guard de correspondencia cortó sin ninguna mutación; la reparación se ejecutó de nuevo con la
+sesión situada en la empresa 1 (`switch-company`).
