@@ -1,0 +1,120 @@
+{
+  "ts": "2026-09-11T19:44:33.009Z",
+  "results": {
+    "bu_antes": [
+      [
+        "breeder",
+        false
+      ],
+      [
+        "broiler",
+        false
+      ],
+      [
+        "grandparent",
+        false
+      ],
+      [
+        "hatchery",
+        false
+      ]
+    ],
+    "bu_enable": 200,
+    "ids": {
+      "uOp": 146,
+      "uAdm": 147,
+      "rOp": 92,
+      "rAdm": 93
+    },
+    "grant_op": 201,
+    "op_me": {
+      "effective": [
+        "broiler"
+      ],
+      "granted": [
+        "broiler"
+      ]
+    },
+    "adm_me": {
+      "effective": [],
+      "granted": []
+    }
+  },
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/roles?limit=100",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/roles",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users?search=uat188&limit=20",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/users/146/business-units",
+      "method": "POST",
+      "status": 201
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/me",
+      "method": "GET",
+      "status": 200
+    }
+  ]
+}

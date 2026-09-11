@@ -1,0 +1,55 @@
+{
+  "ts": "2026-09-11T19:45:59.783Z",
+  "ui": {
+    "C01": {
+      "ipe333": true,
+      "navLots": 1,
+      "crudo": false
+    },
+    "C02": {
+      "ipe333": false,
+      "navLots": 0,
+      "crudo": false
+    },
+    "C08": {
+      "ipe333": false,
+      "navLots": 0,
+      "overflow": 0
+    },
+    "C03": {
+      "ipe333": false,
+      "navLots": 0,
+      "crudo": false
+    },
+    "C04_antes": {
+      "fila": "uat188opUAT08 uat188op | No concedida | Conceder",
+      "muestra_no_concedida": true
+    },
+    "C04_despues": {
+      "fila": "uat188opUAT08 uat188op | Concedida | Revocar",
+      "muestra_concedida": true
+    },
+    "regrant_me": {
+      "effective": [
+        "broiler"
+      ],
+      "granted": [
+        "broiler"
+      ]
+    },
+    "C05": {
+      "ipe333": true,
+      "navLots": 1
+    },
+    "C06": {
+      "ipe333": true,
+      "crudo": false
+    },
+    "C07": {
+      "ipe333": true,
+      "overflow": 0,
+      "crudo": false
+    }
+  },
+  "console": {}
+}
