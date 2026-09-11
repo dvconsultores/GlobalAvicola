@@ -1,8 +1,12 @@
 """R-184 — Semántica temporal del IPE (`GET /reports/kpi/ipe/{lot_id}`).
 
-Contrato canónico (G-06): `app/reports/router.py` y `app/reports/service.py`:
+Contrato canónico (G-06): `app/reports/router.py` y `app/reports/service.py`.
+`OD-22` / `R-187` (2026-09-11) sustituyó el régimen numérico (`× 100` histórico
+retirado; escala estándar). Esta suite conserva los **invariantes técnicos** de
+R-184 (200, fechas, esquema, seguridad) y su aserción numérica usa los mismos
+insumos crudos con el valor OD-22 calculado a mano (no congela el valor anterior).
 
-    IPE = (Viabilidad% × Ganancia_Diaria_g × 100) / (FCR × 10)
+    IPE(OD-22) = (Viabilidad% × Ganancia_Diaria_g) / (FCR × 10)
     Ganancia_Diaria_g = avg_weight_g / age_days
 
 R-184: `get_kpi_ipe` evaluaba `date.today() - lot.start_date` mezclando un
@@ -43,11 +47,13 @@ MUERTES = 50              # 5 % ⇒ viabilidad 95.0
 PESO_MEDIO_G = 2000.0     # ganancia = 2000 / 19
 ALIMENTO_KG = 3000.0      # FCR simplificado = 3000 / 1000 = 3.0
 
-# Valor esperado calculado a mano desde el contrato documentado (NO desde el código):
+# Valor esperado calculado a mano (NO desde el código). `OD-22` / `R-187` (2026-09-11):
+# la fórmula estándar ya no lleva el `× 100` histórico (la viabilidad llega como %).
 #   viabilidad = 100 − (50 / 1000 × 100) = 95.0
 #   ganancia   = 2000 / 19               = 105.263157…
-#   IPE        = (95.0 × (2000/19) × 100) / (3.0 × 10) = 1_000_000 / 30 = 33333.333… → 33333.3
-IPE_ESPERADO = 33333.3
+#   IPE(OD-22) = (95.0 × (2000/19)) / (3.0 × 10) = 10_000 / 30 = 333.333… → 333.3
+# Régimen anterior (×100, superseded por OD-22): 33333.3 — NO es objetivo de regresión.
+IPE_ESPERADO = 333.3
 GANANCIA_ESPERADA = 105.26
 REFERENCIA_CANONICA = {"excellent": ">300", "good": "250-300", "average": "200-250"}
 CLAVES_RESPUESTA = {

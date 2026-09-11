@@ -626,7 +626,12 @@ class ReportsService:
     async def get_kpi_ipe(self, lot_id: int) -> dict:
         """
         European Production Index (IPE).
-        IPE = (Viabilidad% × Ganancia_Diaria_g × 100) / (FCR × 10)
+
+        `OD-22` (2026-09-11, `GA-OD-01`; implementado por `R-187`): la viabilidad ya
+        llega como porcentaje (0-100), así que el `× 100` histórico era una doble
+        conversión fracción→porcentaje — se retira y el índice queda en la escala
+        estándar del indicador (EPEF). Bandas/etiquetas/umbrales no cambian.
+        IPE = (Viabilidad% × Ganancia_Diaria_g) / (FCR × 10)
         Ganancia diaria = avg_weight_g / age_days
         """
         await self._exigir_lote(lot_id)
@@ -660,7 +665,9 @@ class ReportsService:
         fcr = fcr_kpi.get("feed_conversion_ratio") or 0.0
 
         ganancia_diaria = avg_weight_g / age_days if age_days > 0 else 0.0
-        ipe = (viabilidad * ganancia_diaria * 100) / (fcr * 10) if fcr > 0 else 0.0
+        # `OD-22` / `R-187`: sin el `× 100` histórico (doble conversión — la viabilidad
+        # ya es porcentaje 0-100). Escala estándar del indicador (típica ~200-400).
+        ipe = (viabilidad * ganancia_diaria) / (fcr * 10) if fcr > 0 else 0.0
 
         return {
             "lot_id": lot_id,

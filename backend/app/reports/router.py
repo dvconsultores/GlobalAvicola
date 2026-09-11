@@ -119,7 +119,10 @@ async def get_kpi_ipe(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("reports", "read")),
 ):
-    """G-06: European Production Index (IPE) = (Viabilidad × Ganancia Diaria × 100) / (FCR × 10)."""
+    """G-06: European Production Index (IPE) = (Viabilidad% × Ganancia Diaria) / (FCR × 10).
+
+    `OD-22` / `R-187`: escala estándar del indicador, sin el `× 100` histórico.
+    """
     return await ReportsService(db, current_user).get_kpi_ipe(lot_id)
 
 
