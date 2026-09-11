@@ -91,7 +91,13 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   token: accessToken,
   refreshToken: refreshToken,
   isAuthenticated: !!accessToken,
-  isLoading: false,
+  // D1 · GA-FE-02-A: con token en storage la sesión arranca EN RESTAURACIÓN; el efecto de
+  // `App` («fetchMe always runs when token exists») llama a `fetchMe()` y `/me` hidrata
+  // `is_super_admin`/`permissions`/`effective_company_id` antes de que los guards decidan.
+  // Con `false`, el efecto no corría nunca: tras un refresh, el super admin quedaba
+  // denegado en `/admin/unit-access` (`PermissionRoute`) y las superficies GA-FE-02
+  // perdían la sesión extendida. Defecto D1 detectado en la certificación (ENV-01).
+  isLoading: !!accessToken,
 
   setTokens: (access: string, refresh: string) => {
     accessToken = access
