@@ -15,7 +15,7 @@ A–G explícitas del propietario) · Baseline de entrada: `0dfa20b` (D1 = `ea26
 
 | F | Problema | Tipo | Resolución |
 |---|---|---|---|
-| **F1** | Catálogo `BusinessUnit` vacío en ENV-01 (`GET /business-units` → `[]`; 4×404 candidatos) | ENV (data de plataforma) | Sembrar el catálogo canónico de 4 unidades — `baseline_seeds.sembrar_unidades_de_negocio` (solo catálogo) |
+| **F1** | Catálogo `BusinessUnit` vacío en ENV-01 (`GET /business-units` → `[]`; 4×404 candidatos) | ENV (data de plataforma) | **GA-FE-02-C §2 (autorización explícita)**: el catálogo se vuelve dato determinista de despliegue — migración de datos Alembic `y5z6a7b8c9d0` (solo catálogo; §4.2) |
 | **F2** | Rol «Administrador de Accesos» ausente (13 roles, ninguno con `business_units:*`) | ENV (RBAC de plataforma) | Crear el rol canónico por **API oficial** (`POST /roles`) con exactamente 4 permisos |
 | **F3** | `GET /users` 500 con ≥10 filas; ids 57–70 → 500 individual | DATA (fixture malformada) | Reparar emails inválidos (dominio reservado) por **API oficial** (`PUT /users/{id}`) + endurecer el seed |
 | **F4** | Selector de empresa invisible para la autoridad global sin contexto (`CAP-SES-05`, `IMPLEMENTED_BUT_NOT_EXPOSED`) | CODE (frontend, mínimo) | Hacer alcanzable la selección exigida por `OD-14` (RED→fix mínimo en `Header`) — reutiliza `CAP-SES-05`, sin R-ID nuevo |
@@ -61,6 +61,11 @@ bypass de auth · escrituras crudas a DB de auth · borrado de usuarios 57–70 
 **sin rol nuevo de semántica** — el rol ES «Administrador de Accesos» (nombre canónico `R-113`).
 
 ## 4 · F1 — Ejecución y Postcondición
+
+> **Histórico (§4/§4.1): superado por §4.2** (`GA-FE-02-C`). La vía manual quedó agotada: dos
+> reportes de ejecución del propietario **no observables** en runtime (3.ª verificación:
+> `[]`/`count=0`) y acceso server-side no autorizado desde esta estación
+> (`BLOCKED_SERVER_ACCESS_F1`). Se conserva como registro.
 
 **Ejecución**: server-side únicamente (comando canónico para owner/ops — `BLOCKED_SERVER_ACCESS_F1`
 desde esta estación):
@@ -118,6 +123,84 @@ toca roles/permisos/empresas.
 (3) `GET /business-units/{code}/grant-candidates` → 404 mientras no haya habilitación (contrato
 «unidad apagada no tiene candidatos») → tras E2E-02 (enable) → 200; (4) re-ejecutar el comando →
 `creadas: 0` (idempotencia); (5) ninguna empresa queda habilitada ni ningún usuario con concesión.
+
+## 4.2 · F1 — Remediación autónoma `GA-FE-02-C`: catálogo como dato determinista de despliegue
+
+**Autorización**: prompt `GA-FE-02-C §2` (explícita del propietario). **Dedup**: enmienda a F1;
+no crea finding, ni Owner Decision, ni R-ID — las cuatro unidades ya están gobernadas
+(`GA-REM-040 §2`, `OD-16.a`; mapping intacto: grandparent=Progenitoras, breeder=Reproductoras,
+hatchery=Incubadora, broiler=Engorde; `is_active` según modelo).
+
+**Clasificación**: `MISSING_CANONICAL_BASELINE_DATA` — el catálogo dependía de una siembra
+manual/opcional que el ciclo de despliegue determinista no garantizaba.
+
+**Mecanismo — `ALEMBIC_DATA_MIGRATION`** (verificado en fuente, §10): `docker-push-backend.yml`
+se dispara con `backend/**`; `Dockerfile` copia `alembic/`; `docker-entrypoint.sh` ejecuta
+`alembic upgrade head` **antes de servir** (`GA-REM-024`); Watchtower recrea `:latest`.
+Requisito normativo:
+
+> Tras un despliegue **normal** (commit → push → auto-deploy → arranque) sobre cualquier base
+> en la revisión anterior o posterior, las **cuatro filas canónicas** del catálogo
+> `business_units` DEBEN existir. Sin `docker exec`, sin SQL manual, sin paso de operador.
+
+**Supersesión registrada**: el docstring de `p6q7r8s9t0u1` dejó escrito «una migración que
+inserta catálogo obliga a mantener el dato en dos sitios» y sembró solo en `seeds/`. Queda
+superado: la fuente única se conserva con el patrón ya del repo — **el seed importa la
+constante de la migración** (como ya hace con la matriz RBAC de `l2m3n4o5p6q7`). Sin segundo
+sitio donde el dato pueda divergir.
+
+**Diseño de la migración** (`y5z6a7b8c9d0`, `down_revision = x4y5z6a7b8c9` — head vigente,
+36 revisiones, 1 head):
+
+- Datos locales de la migración (`UNIDADES_CANONICAS`); **sin** importar modelos ORM de la app.
+- `SELECT code` + `INSERT` solo de códigos ausentes: idempotente; soporta vacío/parcial/completo;
+  portable PostgreSQL + SQLite (para el test dirigido).
+- **No** actualiza filas existentes (no reescribe `name_key`/`bird_type` presentes).
+- `is_active`/`created_at` por defaults de esquema (`p6q7r8s9t0u1`: `uq_business_unit_code`;
+  `is_active server_default true`).
+- **Downgrade = NO-OP intencional** (precedente `l2m3n4o5p6q7`): borrar filas canónicas podría
+destruir referencias (`company_business_units`, `user_business_units`, histórico); es baseline
+aditivo — no hay estado anterior que restaurar.
+
+**AC-F1 (1–17)**:
+
+| AC | Criterio | Evidencia |
+|---|---|---|
+| 01 | Crea exactamente los 4 códigos canónicos | test vacío→4 + runtime |
+| 02 | No duplica filas existentes | unique `code` + test |
+| 03 | Idempotente | test doble pasada |
+| 04 | Estado parcial se completa (solo ausentes) | test parcial |
+| 05 | Sin quinta unidad | test exactamente 4 |
+| 06 | Cero `CompanyBusinessUnit` creadas | test tablas-adyacentes + invariantes runtime |
+| 07 | Cero `UserBusinessUnit` | íd. |
+| 08 | Cero asignaciones de rol | diff de migración (no toca `users`/`roles`) |
+| 09 | Cero definiciones de permiso | diff (no toca `permissions`) |
+| 10 | Cero cambios RBAC | íd. |
+| 11 | Cero cambios de empresa | íd. |
+| 12 | Cero cambios SAP | íd. |
+| 13 | Runtime: `GET /business-units` = 4 (empresa efectiva autorizada) | §4.2.1 |
+| 14 | Segundo arranque no duplica | test + arranques reales con revisión ya aplicada |
+| 15 | Catálogo completo intacto | test completo |
+| 16 | Columnas/constraints según esquema real | `p6q7r8s9t0u1` + réplica en test |
+| 17 | Sin operación manual de servidor | pipeline normal |
+
+**§4.2.1 Verificación post-deploy (obligatoria)**: autenticar → empresa segura →
+`GET /business-units` → **count=4**, códigos `[breeder, broiler, grandparent, hatchery]`,
+`is_enabled=false` (catálogo ≠ habilitación). Efectos colaterales: CBU/UBU/roles/permisos sin
+cambio (rol id=35 intacto). Idempotencia: AC14 por test + arranques posteriores del pipeline.
+
+**Plan/Tasks F1 (`GA-FE-02-C §24–26`)** — estado al cierre de cada fase:
+
+| # | Tarea | Estado (C1) |
+|---|---|---|
+| T1 | Test dirigido (RED válido: migración ausente) | PLAN |
+| T2 | Migración `y5z6a7b8c9d0` + `UNIDADES_CANONICAS` + `_sembrar_catalogo` + downgrade NO-OP | PLAN |
+| T3 | Seed importa la fuente única (sin segundo sitio) | PLAN |
+| T4 | Tests dirigidos GREEN (SQLite en memoria; guarda `GA-REM-014`) | PLAN |
+| T5 | Integridad de cadena (1 head) + `compileall` | PLAN |
+| T6 | COMMIT C2 + push → pipeline normal | PLAN |
+| T7 | Postcondición runtime §4.2.1 | PLAN |
+| T8 | Ledger + gap matrix + cierre F1 | PLAN |
 
 ## 5 · F2 — Creación del rol (API oficial)
 
@@ -229,12 +312,13 @@ resultado: reportar el bloqueo exacto, sin certificar por partes.
 ## 13 · Estado de ejecución (2026-09-11)
 
 ```
-F1 ... **FAIL / BLOCKED** — el propietario reportó ejecución, pero la verificación del agente
-       (2026-09-11) muestra el catálogo **aún vacío** en ENV-01: `GET /business-units` c1/c3 =
-       `[]` (`count=0`) y 4×404 en candidatos; `BusinessUnit.is_active` tiene default `True`, de
-       modo que no es la variante «filas inactivas» ⇒ las filas no están en la base que sirve
-       `avicola.globaldv.net`. Conforme a §6: **E2E STOP** (sin actores, sin certificación).
-       Reintento y self-check exactos: bloque «retry» en el ledger (entrada #5) y §4.
+F1 ... **FAIL / BLOCKED → REMEDIACIÓN AUTÓNOMA AUTORIZADA (GA-FE-02-C §2, §4.2)** — el
+       propietario reportó ejecución dos veces; la verificación del agente (3.ª vez,
+       2026-09-11) muestra el catálogo **aún vacío**: `GET /business-units` c1/c3 = `[]`
+       (`count=0`) y 4×404 en candidatos; `is_active default=True` descarta «inactivas» ⇒
+       las filas no alcanzaron la base de ENV-01. La vía manual queda agotada; se remedia
+       por **migración de datos `y5z6a7b8c9d0`** vía pipeline normal (spec §4.2), con
+       postcondición runtime obligatoria (§4.2.1) antes de reanudar el E2E.
 F2 ... CLOSED — rol id=35 · exactamente business_units:read|update|create|delete (all) ·
        company_id NULL (plantilla) · GET /roles=14 · sin comodín/users/productivos ·
        sin asignaciones a humanos (0)
