@@ -1,0 +1,41 @@
+{
+  "baseline": {
+    "head": "dc3bbb8",
+    "backend": "3f88f94",
+    "frontend": "index-BUthrUt9.js"
+  },
+  "measured": "2026-09-11",
+  "detail": {
+    "loads": true,
+    "ipe_visible": true,
+    "clasificacion": true,
+    "sin_500": true,
+    "sin_nan": true,
+    "sin_infinity": true
+  },
+  "refresh": {
+    "mismo_valor": true,
+    "misma_clasificacion": true
+  },
+  "relogin": {
+    "mismo_valor": true,
+    "mismo_lote": true
+  },
+  "report": {
+    "carga": true,
+    "ipe_visible": true,
+    "coherente": true,
+    "sin_500": true
+  },
+  "console": {
+    "total": 0,
+    "unicos": [],
+    "fatales": 0
+  },
+  "movil": {
+    "ipe_visible": true,
+    "clasificacion": true,
+    "sin_desborde": true,
+    "console_errores": 0
+  }
+}
