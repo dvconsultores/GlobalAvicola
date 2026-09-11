@@ -240,8 +240,9 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - **KPI IPE (G-06)**: `GET /reports/kpi/ipe/{lot}` recuperado de un 500 sistemático
   (date − datetime en `age_days`; corrección con `_dia()` canónico, fórmula intacta).
   **R-184 CLOSED_OWNER_ACCEPTED** (UAT GA-UAT-06, 2026-09-11, decisión A; tarjeta IPE visible en detalle de lote).
-- **GA-GOV-02 (2026-09-11)**: **R-186 formalizado OPEN (P2)** — `production-index` (G-05)
-  comparte la expresión defectuosa de fecha (detalle y evidencia en backlog / `audit/ga-gov-02/`).
+- **GA-GOV-02 (2026-09-11)**: **R-186 CLOSED** — tranche homónima (2026-09-11): 500 temporal del
+  `production-index` (G-05) resuelto con el helper `_dia()` canónico (C2 `0309225`);
+  runtime E2E 14/14; **OWNER UAT NOT REQUIRED** (API-only, sin superficie de usuario).
   Observación de negocio de escala del IPE: **decisión de propietario pendiente**
-  (paquete A/B/C en `audit/ga-gov-02/`). Sin implementación.
+  (paquete A/B/C en `audit/ga-gov-02/`). Detalle: `audit/ga-r186/`.
 - R-181/R-182/R-185/R-184-OBS-UAT-01/BU-D10 sin cambio; Wave B/C/SAP igual.

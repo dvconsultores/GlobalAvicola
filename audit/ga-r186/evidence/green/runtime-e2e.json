@@ -1,0 +1,166 @@
+{
+  "baseline": {
+    "head": "0309225",
+    "backend_fix": "0309225",
+    "frontend": "index-BUthrUt9.js"
+  },
+  "captured": "2026-09-11",
+  "cases": {
+    "E2E-01_prod35_antes_500": {
+      "status": 200,
+      "body": {
+        "lot_id": 35,
+        "avg_weight_g": 0,
+        "viability_pct": 100,
+        "age_days": 0,
+        "fcr": 1,
+        "production_index": 0,
+        "unit": "index"
+      }
+    },
+    "E2E-01b_prod33_antes_500": {
+      "status": 200,
+      "body": {
+        "lot_id": 33,
+        "avg_weight_g": 0,
+        "viability_pct": 100,
+        "age_days": 0,
+        "fcr": 1,
+        "production_index": 0,
+        "unit": "index"
+      }
+    },
+    "E2E-02_determinista": {
+      "status": 200,
+      "body": {
+        "lot_id": 11,
+        "avg_weight_g": 1363.2,
+        "viability_pct": 100.0,
+        "age_days": 110,
+        "fcr": 24.5,
+        "production_index": 5.1,
+        "unit": "index"
+      },
+      "esperado": {
+        "pesos_n": 19,
+        "avg_raw": 1363.157894736842,
+        "avg_round1": 1363.2,
+        "age": 110,
+        "viabilidad": 100.0,
+        "fcr": 24.5,
+        "pi": 5.1
+      },
+      "coincide": true
+    },
+    "E2E-02b_estable": {
+      "status": 200,
+      "body": {
+        "igual": true
+      }
+    },
+    "E2E-03_fechas": {
+      "status": 200,
+      "body": {
+        "lot11_start": "2026-05-24",
+        "age_esperado": 110,
+        "age_actual": 110
+      },
+      "sin_off_by_one": true
+    },
+    "E2E-04_mismo_dia": {
+      "status": 200,
+      "body": {
+        "lot_id": 35,
+        "avg_weight_g": 0,
+        "viability_pct": 100,
+        "age_days": 0,
+        "fcr": 1,
+        "production_index": 0,
+        "unit": "index"
+      },
+      "ok": true
+    },
+    "E2E-08_incompleto": {
+      "status": 200,
+      "body": {
+        "avg_weight_g": 0,
+        "viability_pct": 100,
+        "fcr": 1,
+        "production_index": 0
+      },
+      "controlado": true
+    },
+    "E2E-05_sin_inicio_NA": {
+      "status": "N/A",
+      "body": "no existen lotes sin start_date en runtime; el alta fija inicio. Cubierto por suite PG (age 30)."
+    },
+    "E2E-06_vacio_NA": {
+      "status": "N/A",
+      "body": "endpoint de un solo lote (lot_id requerido): sin agregacion/coleccion."
+    },
+    "E2E-07_multi_NA": {
+      "status": "N/A",
+      "body": "sin coleccion: no aplica."
+    },
+    "E2E-09_ajeno": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      }
+    },
+    "E2E-10_bu_off": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      }
+    },
+    "E2E-13_global_bu_off": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      }
+    },
+    "E2E-11_sin_concesion": {
+      "status": 404,
+      "body": {
+        "detail": "Lote no encontrado"
+      }
+    },
+    "E2E-12_sin_rbac": {
+      "status": 403,
+      "body": {
+        "detail": "Permiso requerido: reports:read"
+      }
+    },
+    "E2E-R184_ipe11": {
+      "status": 200,
+      "body": {
+        "lot_id": 11,
+        "viabilidad_pct": 100.0,
+        "avg_weight_g": 1500.0,
+        "ganancia_diaria_g": 13.64,
+        "age_days": 110,
+        "fcr": 24.5,
+        "ipe": 556.6,
+        "reference": {
+          "excellent": ">300",
+          "good": "250-300",
+          "average": "200-250"
+        }
+      },
+      "preservado": true
+    },
+    "E2E-R184b_ipe35": {
+      "status": 200,
+      "body": {
+        "ok": true
+      }
+    }
+  },
+  "network_sample": {
+    "Content-Type": "application/json",
+    "Content-Length": "121",
+    "Server": "openresty",
+    "Date": "Fri, 11 Sep 2026 18:14:30 GMT"
+  }
+}

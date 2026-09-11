@@ -1896,7 +1896,7 @@ R-186         FORMAL_OPEN_FINDING (ex «candidato»): GET /reports/kpis/producti
               Dedup: DISTINCT_NEW_FINDING (R-184 = otro endpoint/AC/línea; R-147 vecino de
               meta-clase; sin dueño previo). ID legítimo: siguiente libre tras R-185.
               Severidad P2 (defecto funcional real; API-only sin consumidor frontend).
-              Owner Decision: NO. Implementación: NO (tranche técnica futura, P1 recomendada).
+              Owner Decision: NO. Implementación: SÍ — EJECUTADA en la tranche R-186 (ver bloque siguiente).
 OBSERVACIÓN   Escala del IPE vs bandas «reference» (factor ~100; viabilidad % vs fracción;
               FCR simplificado documentado en contrato): OWNER_DECISION_REQUIRED — 1 decisión
               (opciones A/B/C; recomendada A) en audit/ga-gov-02/GA_GOV_02_OWNER_DECISION_PACKET.md.
@@ -1905,4 +1905,25 @@ PRIORIDAD     P1 tranche técnica R-186 · P2 sesión de decisión del propietar
               BU-D10 espera ratificación · Wave B PAUSED
 INTOCADO      R-184/GA-UAT-06 sin reapertura · GA-FE-02..07 y R-181/182/185/OD-21 PRESERVED ·
               OBS-UAT-01 UX P2 · Wave C/SAP NOT STARTED
+```
+
+## R-186 · CLOSED — G-05 PRODUCTION INDEX: SEMÁNTICA TEMPORAL + HTTP 500 (2026-09-11)
+
+```
+FINDING       R-186 (P2, ex «candidato» de GA-GOV-02) — CLOSED (técnico)
+SÍNTOMA       GET /reports/kpis/production-index → 500 en todo lote con start_date
+CAUSA RAÍZ    get_kpi_production_index: date.today() − lot.start_date (date − datetime
+              aware) ⇒ TypeError  (probado, no supuesto)
+FIX           age_days normalizado con _dia() (R-75/GA-REM-028; mismo helper canónico
+              de R-184) — C2 0309225 (1 archivo, +4/−1; fórmula, guarda, or-1,
+              fallbacks y redondeos INTACTOS; G-06 sin tocar; backend-only)
+EVIDENCIA     runtime E2E-01…13 + R-184 = 14/14 (determinista independiente exacto:
+              5.1; mismo día 0; incompleto controlado; security 404/403/OD-16) ·
+              suite PG nueva (11 casos; skip local declarado)
+GATES         Vitest 280/280 · tsc/build PASS · backend canónico 7 passed
+OWNER UAT     NOT REQUIRED (API_ONLY verificado; sin superficie de usuario cambiada)
+REGISTRO      audit/ga-r186/ · commits C1 d9fa109 · C2 0309225 · C4 (evidencia)
+INTOCADO      R-184/G-06 (556.6 intacto) · observación de escala IPE
+              OWNER_DECISION_REQUIRED · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED
 ```

@@ -175,4 +175,14 @@ PRIORIDAD: P1 tranche R-186 · P2 decisión del propietario · P3 OBS-UAT-01.
 Intactos: R-184/GA-UAT-06, GA-FE-02..07, R-181/182/185, OD-21, OBS-UAT-01, BU-D10.
 ```
 
+## Addendum fechado · 2026-09-11 · R-186 (G-05 production-index — 500 temporal)
+
+```
+R-186 (ex «candidato») → CLOSED (técnico)
+     Causa: date − datetime en get_kpi_production_index ⇒ 500 en todo lote con start_date.
+     Fix: _dia() canónico (mismo helper de R-184; C2 0309225; backend-only; fórmula intacta).
+     Runtime E2E-01…13 + R-184 = 14/14 (determinista 5.1 exacto; seguridad OD-16 PASS).
+     OWNER UAT NOT REQUIRED (API_ONLY). G-06/R-184 intactos (556.6). Sin UI nueva.
+```
+
 Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R; R-184 SEPARATE_OPEN.

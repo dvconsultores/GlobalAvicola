@@ -12,3 +12,7 @@
 | T8 | R-186 | §16 | AC42–43 | docs canónicos | verificación | — | T7 | ○ |
 | T9 | R-186 | §14-16 | — | commits C2/C4 | — | deploy+E2E | T4-T6 | ○ |
 | T10 | R-186 | §16-17 | — | cierre+certificación | — | — | T9 | ○ |
+
+## Estado final (2026-09-11)
+
+T1–T10: **✔ COMPLETADAS** (T4–T6 con suite PG/CI + batería runtime ejecutada; T9 con C2 `0309225` desplegado y E2E 14/14; T10 con cierre, certificación y UAT NOT REQUIRED documentada).

@@ -2,6 +2,8 @@
 
 Tarea = `GA_R186_TASKS.md` · Suite = `backend/tests/test_r186_g05_date_semantics.py` · Runtime = `GA_R186_AUTHENTICATED_RUNTIME_EVIDENCE.md`. Estado inicial = fase RED.
 
+> **ESTADO FINAL (2026-09-11): todos los AC = ✔ cubiertos.** Los AC de colección (17–22) quedaron **N/A con prueba** (endpoint de un solo lote); el resto PASS con evidencia runtime 14/14. Detalle final: `GA_R186_CLOSURE_RECONCILIATION.md`.
+
 | AC | Tarea | Prueba | Evidencia runtime | Estado |
 |---|---|---|---|---|
 | AC01 500 original reproducido/probado | T1 | RED heredado `prodindex35` + repro local | `evidence/red/runtime-red.json` (R-184) | ✔ |
