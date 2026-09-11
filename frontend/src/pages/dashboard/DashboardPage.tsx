@@ -8,6 +8,7 @@ import {
  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
 import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
@@ -26,6 +27,7 @@ function AlertsWidget({ alerts, onResolve }: {
  onResolve: (id: number) => void
 }) {
  const { t } = useTranslation()
+ const can = useCan()
  if (!alerts || alerts.length === 0) return null
  return (
  <Card>
@@ -57,13 +59,13 @@ function AlertsWidget({ alerts, onResolve }: {
  </div>
  <p className={`text-xs leading-snug ${s.text}`}>{a.message}</p>
  </div>
- <button
+ {can({ permission: 'operations:update' }) && <button
  onClick={() => onResolve(a.id)}
  className="shrink-0 text-slate-400 hover p-1 rounded"
  title={t('alerts.resolve', 'Marcar como resuelta')}
  >
  <X size={14} />
- </button>
+ </button>}
  </div>
  )
  })}

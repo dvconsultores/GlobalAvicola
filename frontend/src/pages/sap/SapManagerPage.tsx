@@ -5,6 +5,7 @@ import {
  Send, AlertTriangle, FileText, Building2,
 } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { KpiCard, Badge } from '../../components/ui'
@@ -22,6 +23,7 @@ const SAP_TABS = [
 ]
 
 export default function SapManagerPage() {
+ const can = useCan()
  const { t } = useTranslation()
  const toast = useToast()
  const { user } = useAuthStore()
@@ -130,14 +132,14 @@ export default function SapManagerPage() {
 
  {/* Action buttons */}
  <div className="flex flex-wrap gap-3 mb-6">
- <button onClick={handleConsolidate}
+ {can({ permission: 'sap:send_sap' }) && <button onClick={handleConsolidate}
  className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800 transition inline-flex items-center gap-2 shadow-sm">
  <Package size={16} /> {t('sap.consolidate', 'Consolidar')}
- </button>
- <button onClick={handleExport}
+ </button>}
+ {can({ permission: 'sap:send_sap' }) && <button onClick={handleExport}
  className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-700 transition inline-flex items-center gap-2 shadow-sm">
  <Upload size={16} /> {t('sap.export', 'Exportar a SAP')}
- </button>
+ </button>}
  </div>
 
  {/* Tabs */}

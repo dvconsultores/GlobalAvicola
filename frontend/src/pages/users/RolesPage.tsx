@@ -12,6 +12,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Pencil, Trash2, X, ShieldCheck } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 
 interface Permiso { module: string; action: string; scope_type?: string }
 interface RolForm { name: string; description: string; permissions: Permiso[] }
@@ -19,6 +20,7 @@ interface RolForm { name: string; description: string; permissions: Permiso[] }
 const formVacio: RolForm = { name: '', description: '', permissions: [] }
 
 export default function RolesPage() {
+ const can = useCan()
   const { t } = useTranslation()
   const [roles, setRoles] = useState<any[]>([])
   const [catalogo, setCatalogo] = useState<{ modules: string[]; actions: string[] }>({ modules: [], actions: [] })
@@ -102,12 +104,12 @@ export default function RolesPage() {
         <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
           <ShieldCheck size={20} className="text-blue-600" /> {t('roles.title', 'Roles y permisos')}
         </h1>
-        <button
+        {can({ permission: 'users:create' }) && <button
           onClick={abrirNuevo}
           className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2"
         >
           <Plus size={16} /> {t('roles.createRole', 'Nuevo rol')}
-        </button>
+        </button>}
       </div>
 
       {loading ? (
@@ -132,20 +134,20 @@ export default function RolesPage() {
                   <td className="px-4 py-3 text-slate-500">{rol.description}</td>
                   <td className="px-4 py-3 text-slate-500">{(rol.permissions ?? []).length}</td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
-                    <button
+                    {can({ permission: 'users:update' }) && <button
                       onClick={() => abrirEdicion(rol)}
                       aria-label={t('roles.editRole', 'Editar rol')}
                       className="text-slate-400 hover:text-blue-600 p-1"
                     >
                       <Pencil size={16} />
-                    </button>
-                    <button
+                    </button>}
+                    {can({ permission: 'users:delete' }) && <button
                       onClick={() => desactivar(rol)}
                       aria-label={t('roles.deactivate', 'Desactivar rol')}
                       className="text-slate-400 hover:text-red-600 p-1 ml-1"
                     >
                       <Trash2 size={16} />
-                    </button>
+                    </button>}
                   </td>
                 </tr>
               ))}

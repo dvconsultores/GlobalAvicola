@@ -7,6 +7,7 @@ import { Button, Modal, Input } from '../../components/ui'
 import { TraceabilityTree } from '../../components/TraceabilityTree'
 import { STAGE_OPERATIONS, resolveStageKey } from '../../data/processCatalog'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 // ─── Status badge colours ────────────────────────────────────────────────────
@@ -18,6 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 
 export default function LotDetailPage() {
+ const can = useCan()
  const { t } = useTranslation()
  const { id } = useParams<{ id: string }>()
  const [lot, setLot] = useState<any>(null)
@@ -169,7 +171,7 @@ export default function LotDetailPage() {
  </div>
 
  {/* Phase transition button (Cría → Producción) */}
- {canTransition && (
+ {canTransition && can({ permission: 'lots:create' }) && (
  <Button
  size="sm"
  onClick={() => setShowTransitionModal(true)}
@@ -180,7 +182,7 @@ export default function LotDetailPage() {
  )}
 
  {/* Close lot button */}
- {lot.status === 'active' && (
+ {lot.status === 'active' && can({ permission: 'lots:create' }) && (
  <Button
  variant="danger"
  size="sm"
@@ -223,7 +225,7 @@ export default function LotDetailPage() {
  </span>
  )}
  </h2>
- <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+ {can({ permission: 'operations:create' }) && <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
  {stageOps.map(eventType => {
  const Icon = EVENT_ICONS[eventType] ?? Activity
  return (
@@ -237,7 +239,7 @@ export default function LotDetailPage() {
  </Link>
  )
  })}
- </div>
+ </div>}
  </div>
 
  {/* G-11: Weekly Summary Table (matching old app's week-based organization) */}
@@ -438,9 +440,9 @@ export default function LotDetailPage() {
  </span>
  <p className="text-slate-700 mt-0.5 leading-snug">{a.message}</p>
  </div>
- <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
+ {can({ permission: 'operations:update' }) && <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
  <X size={12} />
- </button>
+ </button>}
  </div>
  ))}
  </div>

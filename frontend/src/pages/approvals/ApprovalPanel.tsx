@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Check, CheckCircle, X, ArrowLeft, Search, Clock, AlertTriangle } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { KpiCard, ConfirmDialog, Badge, FilterPanel, FilterGroup } from '../../components/ui'
@@ -15,6 +16,7 @@ const STATUS_VARIANT: Record<string, string> = {
 }
 
 export default function ApprovalPanel() {
+ const can = useCan()
  const { t } = useTranslation()
  const toast = useToast()
  const [events, setEvents] = useState<any[]>([])
@@ -168,7 +170,7 @@ export default function ApprovalPanel() {
  </div>
 
  {/* Batch Actions Bar */}
- {selectedCount > 0 && (
+ {can({ permission: 'review:review' }) && selectedCount > 0 && (
  <div className="bg-[#1E3A5F] text-white rounded-xl px-5 py-3 mb-4 flex items-center justify-between shadow-sm">
  <span className="text-sm font-semibold">{selectedCount} {t('review.selectedEvents', 'seleccionados')}</span>
  <div className="flex gap-2">
@@ -219,8 +221,8 @@ export default function ApprovalPanel() {
  {events.map((event: any) => (
  <div key={event.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
  <div className="flex items-start gap-3">
- <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)}
- className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+ {can({ permission: 'review:review' }) && <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)}
+ className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />}
  <div className="flex-1 min-w-0">
  <div className="flex items-center gap-2 mb-1.5">
  <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
@@ -233,14 +235,14 @@ export default function ApprovalPanel() {
  </div>
  </div>
  <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
- <button onClick={() => openApproveSingle(event.id)}
+ {can({ permission: 'approvals:approve' }) && <button onClick={() => openApproveSingle(event.id)}
  className="flex-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition flex items-center justify-center gap-1.5">
  <Check size={14} /> {t('review.approve', 'Aprobar')}
- </button>
- <button onClick={() => openRejectSingle(event.id)}
+ </button>}
+ {can({ permission: 'approvals:reject' }) && <button onClick={() => openRejectSingle(event.id)}
  className="flex-1 bg-red-50 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-100 transition flex items-center justify-center gap-1.5">
  <X size={14} /> {t('review.reject', 'Rechazar')}
- </button>
+ </button>}
  <Link to={`/review/${event.id}`}
  className="flex-1 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
  <Search size={14} />
@@ -256,9 +258,9 @@ export default function ApprovalPanel() {
  <thead className="bg-slate-50 border-b border-slate-200">
  <tr>
  <th className="w-12 px-4 py-3.5 text-left">
- <input type="checkbox"
+ {can({ permission: 'review:review' }) && <input type="checkbox"
  onChange={e => setEvents(prev => prev.map(ev => ({ ...ev, _checked: e.target.checked })))}
- className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+ className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />}
  </th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.id')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
@@ -290,8 +292,8 @@ export default function ApprovalPanel() {
  {events.map((event: any) => (
  <tr key={event.id} className="hover:bg-blue-50/40 transition-colors">
  <td className="px-4 py-3">
- <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)}
- className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+ {can({ permission: 'review:review' }) && <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)}
+ className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />}
  </td>
  <td className="px-4 py-3 font-mono text-xs text-slate-500">#{event.id}</td>
  <td className="px-4 py-3 text-slate-700">{getEventLabel(t, event.event_type)}</td>
@@ -306,14 +308,14 @@ export default function ApprovalPanel() {
  </td>
  <td className="px-4 py-3">
  <div className="flex gap-1.5">
- <button onClick={() => openApproveSingle(event.id)}
+ {can({ permission: 'approvals:approve' }) && <button onClick={() => openApproveSingle(event.id)}
  className="bg-emerald-50 text-emerald-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition flex items-center gap-1">
  <Check size={12} /> {t('review.approve', 'Aprobar')}
- </button>
- <button onClick={() => openRejectSingle(event.id)}
+ </button>}
+ {can({ permission: 'approvals:reject' }) && <button onClick={() => openRejectSingle(event.id)}
  className="bg-red-50 text-red-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-100 transition flex items-center gap-1">
  <X size={12} /> {t('review.reject', 'Rechazar')}
- </button>
+ </button>}
  <Link to={`/review/${event.id}`}
  className="bg-slate-50 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center">
  <Search size={12} />

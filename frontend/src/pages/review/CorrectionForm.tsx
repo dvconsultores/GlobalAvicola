@@ -3,9 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Pencil } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 export default function CorrectionForm() {
+ const can = useCan()
  const { t } = useTranslation()
  const { id } = useParams<{ id: string }>()
  const navigate = useNavigate()
@@ -134,10 +136,10 @@ export default function CorrectionForm() {
 
  {/* Submit */}
  <div className="flex gap-3 pt-2">
- <button type="submit" disabled={submitting}
+ {can({ permission: 'corrections:correct' }) && <button type="submit" disabled={submitting}
  className="bg-amber-600 text-white px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-700 transition disabled:opacity-50">
  {submitting ? t('common.saving') : t('review.saveCorrection')}
- </button>
+ </button>}
  <Link to={`/review/${id}`}
  className="bg-slate-100 text-slate-700 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">
  {t('common.cancel')}

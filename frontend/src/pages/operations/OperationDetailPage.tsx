@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Activity, Paperclip, Upload, Trash2, FileText, Image, Download, X } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import WeightEvaluation from '../../components/operations/WeightEvaluation'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
@@ -36,6 +37,7 @@ interface Evidence {
 }
 
 export default function OperationDetailPage() {
+ const can = useCan()
  const { t } = useTranslation()
  const { id } = useParams<{ id: string }>()
  const [event, setEvent] = useState<any>(null)
@@ -229,7 +231,7 @@ export default function OperationDetailPage() {
  >
  <Download size={14} />
  </button>
- <button
+ {can({ permission: 'operations:delete' }) && <button
  type="button"
  onClick={() => handleDelete(ev.id)}
  disabled={deletingId === ev.id}
@@ -237,7 +239,7 @@ export default function OperationDetailPage() {
  className="p-1.5 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-md disabled:opacity-40"
  >
  <Trash2 size={14} />
- </button>
+ </button>}
  </div>
  </li>
  )
@@ -259,6 +261,7 @@ export default function OperationDetailPage() {
  </select>
  </div>
  )}
+ {can({ permission: 'operations:create' }) && (
  <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 space-y-3">
  <input
  ref={fileRef}
@@ -282,6 +285,7 @@ export default function OperationDetailPage() {
  </label>
  <p className="text-xs text-center text-slate-400">{t('evidence.maxSize', { max: MAX_SIZE_MB })}</p>
  </div>
+ )}
  </div>
 
  {/* Image Preview Modal */}

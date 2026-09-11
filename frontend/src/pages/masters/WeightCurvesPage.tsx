@@ -18,6 +18,7 @@ import {
   activateWeightCurve, getGeneticLine, listWeightCurves, parsearTabla, uploadWeightCurve,
   type CurveRowError, type GeneticLine, type WeightCurve, type WeightCurvePoint,
 } from '../../services/weightCurves'
+import { useCan } from '../../auth/actionAuthority'
 
 /** Extrae el informe de rechazo del backend, que no es el 422 de Pydantic. */
 function erroresDeFila(err: any): CurveRowError[] {
@@ -33,6 +34,7 @@ function mensajeGeneral(err: any, porDefecto: string): string {
 }
 
 export default function WeightCurvesPage() {
+ const can = useCan()
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
@@ -156,9 +158,9 @@ export default function WeightCurvesPage() {
             {t('masters.geneticLines')}: <strong>{linea?.name ?? '—'}</strong>
           </p>
         </div>
-        <Button leftIcon={<Upload size={15} />} onClick={abrirDialogo}>
+        {can({ permission: 'masters:create' }) && <Button leftIcon={<Upload size={15} />} onClick={abrirDialogo}>
           {t('curves.upload')}
-        </Button>
+        </Button>}
       </div>
 
       {errorCarga && (
@@ -175,7 +177,7 @@ export default function WeightCurvesPage() {
             icon={LineChart}
             title={t('curves.emptyTitle', { line: linea?.name ?? '' })}
             description={t('curves.emptyDescription')}
-            action={{ label: t('curves.uploadFirst'), onClick: abrirDialogo }}
+            action={can({ permission: 'masters:create' }) ? { label: t('curves.uploadFirst'), onClick: abrirDialogo } : undefined}
           />
         ) : (
           <div className="overflow-x-auto">
@@ -214,7 +216,7 @@ export default function WeightCurvesPage() {
                         >
                           {t('common.view')}
                         </button>
-                        {!c.is_active && (
+                        {!c.is_active && can({ permission: 'masters:update' }) && (
                           <button
                             onClick={() => activar(c)}
                             disabled={activando === c.id}

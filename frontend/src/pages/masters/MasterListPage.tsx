@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import DataTable, { type RowAction } from '../../components/data-table/DataTable'
 import { Button, Modal, Input } from '../../components/ui'
 
@@ -25,6 +26,7 @@ export default function MasterListPage({
  rowActions,
 }: MasterListPageProps) {
  const { t } = useTranslation()
+ const can = useCan()
  const [items, setItems] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [search, setSearch] = useState('')
@@ -126,6 +128,9 @@ export default function MasterListPage({
  <div>
  <h1 className="text-2xl font-bold text-slate-800">{t(titleKey)}</h1>
  <p className="text-sm text-slate-500 mt-1">{total} {t('common.results')}</p>
+ {!can({ permission: 'masters:create' }) && !can({ permission: 'masters:update' }) && !can({ permission: 'masters:delete' }) && (
+ <p className="text-xs text-slate-400 mt-1">{t('actions.readOnlyViewer')}</p>
+ )}
  </div>
  <div className="flex gap-3">
  <div className="relative">
@@ -138,9 +143,9 @@ export default function MasterListPage({
  className="h-10 pl-9 pr-3 border border-slate-300 rounded-lg text-sm focus:border-[#5a9bba] focus:ring-2 focus:ring-blue-200 outline-none"
  />
  </div>
- <Button leftIcon={<Plus size={15} />} onClick={openCreate}>
+ {can({ permission: 'masters:create' }) && <Button leftIcon={<Plus size={15} />} onClick={openCreate}>
  {t('common.new', 'Nuevo')}
- </Button>
+ </Button>}
  </div>
  </div>
 
@@ -149,8 +154,8 @@ export default function MasterListPage({
  columns={tableColumns}
  data={items}
  loading={loading}
- onEdit={openEdit}
- onDelete={(item: any) => setDeleteTarget(item)}
+ onEdit={can({ permission: 'masters:update' }) ? openEdit : undefined}
+ onDelete={can({ permission: 'masters:delete' }) ? (item: any) => setDeleteTarget(item) : undefined}
  rowActions={rowActions}
  />
  </div>

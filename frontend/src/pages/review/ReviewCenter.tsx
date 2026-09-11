@@ -6,6 +6,7 @@ import {
  Clock, ListChecks,
 } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { EVENT_ICON_MAP } from '../../data/processCatalog'
 import { Badge, FilterPanel, FilterGroup } from '../../components/ui'
@@ -40,6 +41,7 @@ const STATUS_TABS = [
 type StatusTab = typeof STATUS_TABS[number]['key']
 
 export default function ReviewCenter() {
+ const can = useCan()
  const { t } = useTranslation()
  const toast = useToast()
  const [searchParams, setSearchParams] = useSearchParams()
@@ -162,10 +164,10 @@ export default function ReviewCenter() {
  hideBack
  actions={
  <div className="flex gap-2">
- <button onClick={handleCreateBatch}
+ {can({ permission: 'review:review' }) && <button onClick={handleCreateBatch}
  className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5 shadow-sm">
  <Package size={16} /> {t('review.createBatch')}
- </button>
+ </button>}
  <Link to="/approvals"
  className="bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-sm">
  <CheckCircle size={16} /> {t('nav.approvals')}
@@ -292,12 +294,12 @@ export default function ReviewCenter() {
  {events.map((event: any) => (
  <div key={event.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
  <div className="flex items-start gap-3">
- <input
+ {can({ permission: 'review:review' }) && <input
  type="checkbox"
  checked={!!event._checked}
  onChange={() => toggleCheck(event.id)}
  className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
- />
+ />}
  <div className="flex-1 min-w-0">
  <div className="flex items-center gap-2 mb-1.5">
  <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
@@ -312,13 +314,13 @@ export default function ReviewCenter() {
  </div>
  </div>
  <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
- {event.status === 'pending_review' && (
+ {can({ permission: 'review:review' }) && event.status === 'pending_review' && (
  <button onClick={() => handleAction(event.id, 'start')}
  className="flex-1 bg-indigo-50 text-indigo-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition flex items-center justify-center gap-1.5">
  <Play size={14} /> {t('review.start', 'Iniciar')}
  </button>
  )}
- {event.status === 'in_review' && (
+ {can({ permission: 'review:review' }) && event.status === 'in_review' && (
  <>
  <button onClick={() => handleAction(event.id, 'complete')}
  className="flex-1 bg-teal-50 text-teal-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-teal-100 transition flex items-center justify-center gap-1.5">
@@ -345,11 +347,11 @@ export default function ReviewCenter() {
  <thead className="bg-slate-50 border-b border-slate-200">
  <tr>
  <th className="w-12 px-4 py-3.5 text-left">
- <input
+ {can({ permission: 'review:review' }) && <input
  type="checkbox"
  onChange={e => setEvents(prev => prev.map(ev => ({ ...ev, _checked: e.target.checked })))}
  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
- />
+ />}
  </th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.id', 'ID')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
@@ -383,12 +385,12 @@ export default function ReviewCenter() {
  return (
  <tr key={event.id} className="hover:bg-blue-50/40 transition-colors">
  <td className="px-4 py-3">
- <input
+ {can({ permission: 'review:review' }) && <input
  type="checkbox"
  checked={!!event._checked}
  onChange={() => toggleCheck(event.id)}
  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500"
- />
+ />}
  </td>
  <td className="px-4 py-3 font-mono text-xs text-slate-500">#{event.id}</td>
  <td className="px-4 py-3">
@@ -410,13 +412,13 @@ export default function ReviewCenter() {
  </td>
  <td className="px-4 py-3">
  <div className="flex gap-1.5">
- {event.status === 'pending_review' && (
+ {can({ permission: 'review:review' }) && event.status === 'pending_review' && (
  <button onClick={() => handleAction(event.id, 'start')}
  className="bg-indigo-50 text-indigo-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-indigo-100 transition flex items-center gap-1">
  <Play size={12} /> {t('review.start', 'Iniciar')}
  </button>
  )}
- {event.status === 'in_review' && (
+ {can({ permission: 'review:review' }) && event.status === 'in_review' && (
  <>
  <button onClick={() => handleAction(event.id, 'complete')}
  className="bg-teal-50 text-teal-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-teal-100 transition flex items-center gap-1">

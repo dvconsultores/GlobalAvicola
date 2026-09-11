@@ -257,11 +257,11 @@ export default function App() {
  <Route path="/processes/:stage" element={<ProcessStageRedirect />} />
  {/* Operations, Lots, Reports — accessible by both web and mobile */}
  <Route path="/operations" element={<CapabilityRoute permission="operations:read"><OperationListPage /></CapabilityRoute>} />
- <Route path="/operations/new" element={<OperationFormPage />} />
+ <Route path="/operations/new" element={<CapabilityRoute permission="operations:create"><OperationFormPage /></CapabilityRoute>} />
  <Route path="/operations/:id" element={<CapabilityRoute permission="operations:read"><OperationDetailPage /></CapabilityRoute>} />
  <Route path="/my-pending" element={<MyPendingPage />} />
  <Route path="/lots" element={<CapabilityRoute permission="lots:read"><LotListPage /></CapabilityRoute>} />
- <Route path="/lots/new" element={<WebOnlyRoute><LotFormPage /></WebOnlyRoute>} />
+ <Route path="/lots/new" element={<WebOnlyRoute><CapabilityRoute permission="lots:create"><LotFormPage /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/lots/:id" element={<CapabilityRoute permission="lots:read"><LotDetailPage /></CapabilityRoute>} />
  <Route path="/admin/unit-access" element={<WebOnlyRoute><PermissionRoute permission="business_units:read"><UnitAccessPage /></PermissionRoute></WebOnlyRoute>} />
  <Route path="/reports" element={<CapabilityRoute permission="reports:read"><ReportsPage /></CapabilityRoute>} />
@@ -270,7 +270,7 @@ export default function App() {
  {/* Web-only: Review, Approvals, Audit, SAP, Users */}
  <Route path="/review" element={<WebOnlyRoute><CapabilityRoute permission="review:read"><ReviewCenter /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/review/:id" element={<WebOnlyRoute><CapabilityRoute permission="review:read"><ReviewDetail /></CapabilityRoute></WebOnlyRoute>} />
- <Route path="/review/:id/correct" element={<WebOnlyRoute><CapabilityRoute permission="review:read"><CorrectionForm /></CapabilityRoute></WebOnlyRoute>} />
+ <Route path="/review/:id/correct" element={<WebOnlyRoute><CapabilityRoute permission="corrections:correct"><CorrectionForm /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/approvals" element={<WebOnlyRoute><CapabilityRoute permission="approvals:approve"><ApprovalPanel /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/audit" element={<WebOnlyRoute><CapabilityRoute permission="audit:read"><AuditPage /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/sap" element={<WebOnlyRoute><CapabilityRoute permission="sap:read"><SapManagerPage /></CapabilityRoute></WebOnlyRoute>} />

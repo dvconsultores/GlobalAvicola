@@ -1133,5 +1133,8 @@
       "review_pending_24h": "Registro pendiente de revisión hace más de 24 h",
       "lot_near_close": "Lote próximo a cierre"
     }
+  },
+  "actions": {
+    "readOnlyViewer": "Vista de solo lectura: su rol no permite acciones en esta pantalla."
   }
 }

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { ClipboardList, Bird, Wheat, Egg, RefreshCw, Pencil, FileText } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
@@ -15,6 +16,7 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 export default function ReviewDetail() {
+ const can = useCan()
  const { t } = useTranslation()
  const { id } = useParams<{ id: string }>()
  const navigate = useNavigate()
@@ -207,13 +209,13 @@ export default function ReviewDetail() {
  <div className="mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5">
  <h2 className="font-semibold text-slate-700 mb-3">{t('common.actions')}</h2>
  <div className="flex flex-wrap gap-3">
- {event.status === 'pending_review' && (
+ {can({ permission: 'review:review' }) && event.status === 'pending_review' && (
  <button onClick={() => handleAction('start')}
  className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition">
  ▶ {t('review.startReview')}
  </button>
  )}
- {event.status === 'in_review' && (
+ {can({ permission: 'review:review' }) && event.status === 'in_review' && (
  <>
  <button onClick={() => handleAction('complete')}
  className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition">
@@ -227,34 +229,34 @@ export default function ReviewDetail() {
  ↩ {t('review.returnToOperator')}
  </button>
  </div>
- <Link to={`/review/${id}/correct`}
+ {can({ permission: 'corrections:correct' }) && <Link to={`/review/${id}/correct`}
  className="bg-amber-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-700 transition">
  <Pencil size={14} className="inline-block mr-1" aria-hidden="true" />
  {t('review.correct')}
- </Link>
+ </Link>}
  </>
  )}
  {(event.status === 'corrected' || event.status === 'in_review') && (
  <>
- <button onClick={() => handleAction('approve')}
+ {can({ permission: 'approvals:approve' }) && <button onClick={() => handleAction('approve')}
  className="bg-emerald-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition">
  ✓ {t('review.approve')}
- </button>
+ </button>}
  <div className="flex gap-2 items-center">
  <input type="text" placeholder={t('review.rejectionReason')} value={obs} onChange={e => setObs(e.target.value)}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-48" />
- <button onClick={() => handleAction('reject')}
+ {can({ permission: 'approvals:reject' }) && <button onClick={() => handleAction('reject')}
  className="bg-red-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-red-700 transition">
  ✗ {t('review.reject')}
- </button>
+ </button>}
  </div>
  </>
  )}
- <Link to={`/review/${id}/correct`}
+ {can({ permission: 'corrections:correct' }) && <Link to={`/review/${id}/correct`}
  className="bg-amber-100 text-amber-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-200 transition inline-flex items-center gap-1">
  <Pencil size={14} aria-hidden="true" />
  {t('review.correct')}
- </Link>
+ </Link>}
  </div>
  </div>
  </div>

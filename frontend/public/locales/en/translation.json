@@ -1133,5 +1133,8 @@
       "review_pending_24h": "Record pending review for over 24 h",
       "lot_near_close": "Lot close approaching"
     }
+  },
+  "actions": {
+    "readOnlyViewer": "Read-only view: your role cannot perform actions on this screen."
   }
 }
