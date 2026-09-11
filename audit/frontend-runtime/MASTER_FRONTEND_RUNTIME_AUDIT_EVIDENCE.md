@@ -223,3 +223,12 @@ PRODUCT OVERALL ..... READY_FOR_FRONTEND_REMEDIATION
 ## 41. Evidencia adjunta
 
 `DEPLOYMENT_FRONTEND_FINGERPRINT.md` · `MASTER_FRONTEND_RUNTIME_GAP_MATRIX.md/.csv` · `evidence/BUNDLE_HASHES.txt` · `evidence/AUDIT_001_DEPLOYED_LOGIN.png` · `RUNTIME_SCREENSHOT_INDEX.md` · `RUNTIME_CONSOLE_ERROR_SUMMARY.md` · addendum fechado en `REMEDIATION_BACKLOG.md`.
+
+## 42. Cierre del inventario (2026-09-11)
+
+La **FINAL FRONTEND AUDIT RECONCILIATION** (paquete `audit/final-frontend-audit/`: inventario original
+FVA/FIA, matrices 38/7, recuperación de las 15 auth-bloqueadas, trazas de certificación/aceptación, rutas,
+navegación, acciones, ledger, capturas S01-S21, red saneada, residuales RES-01…RES-10 y reporte §64) deja
+la instantánea de este hogar **reconciliada al día**: 38/38 visibles · 7/7 internas · 15/15 recuperadas;
+veredicto **RECONCILED_WITH_RESIDUALS** (0 missing/stale/broken aplicables; 0 unknowns). La instantánea
+histórica original (conteos y clasificaciones) **no se reescribe**.

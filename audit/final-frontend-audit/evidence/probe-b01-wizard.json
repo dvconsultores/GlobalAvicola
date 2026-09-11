@@ -1,0 +1,30 @@
+{
+  "ts": "2026-09-11T20:30:16.716Z",
+  "f403": [
+    "/api/v1/sap/references?ref_type=purchase_order&limit=50",
+    "/api/v1/sap/references?ref_type=transfer_order&limit=50",
+    "/api/v1/sap/references?ref_type=transfer_order&limit=50",
+    "/api/v1/sap/references?ref_type=purchase_order&limit=50"
+  ],
+  "steps": {
+    "step2_buttons": [
+      "Cerrar Sesión",
+      "",
+      "EN",
+      "Cerrar Sesión",
+      "",
+      "EN",
+      "1 · Proceso",
+      "2 · Lote y Operación",
+      "3 · Datos",
+      "Volver",
+      "Recepción de Aves",
+      "Distribución"
+    ],
+    "dead": 1,
+    "received": 1,
+    "water": 1
+  },
+  "role_update": 200,
+  "f403_water": 4
+}

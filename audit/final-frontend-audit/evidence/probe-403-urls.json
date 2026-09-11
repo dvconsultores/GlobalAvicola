@@ -1,0 +1,92 @@
+{
+  "ts": "2026-09-11T20:29:01.773Z",
+  "f403": {
+    "op": [
+      "—login—",
+      "/api/v1/sap/references?ref_type=transfer_order&limit=50",
+      "/api/v1/masters/vaccines?limit=100",
+      "/api/v1/sap/references?ref_type=purchase_order&limit=50",
+      "/api/v1/masters/medications?limit=100",
+      "/api/v1/masters/mortality-causes?limit=100",
+      "/api/v1/masters/cull-causes?limit=100",
+      "/api/v1/masters/transports?limit=100",
+      "/api/v1/masters/farms?limit=100",
+      "/api/v1/masters/suppliers?limit=100",
+      "/api/v1/masters/houses?limit=100",
+      "/api/v1/masters/breeds?limit=100",
+      "/api/v1/masters/feed-types?limit=100",
+      "/api/v1/masters/processing-plants?limit=100",
+      "/api/v1/masters/incubators?limit=100",
+      "/api/v1/masters/hatchers?limit=100",
+      "/api/v1/masters/hatcheries?limit=100",
+      "—reception—",
+      "/api/v1/sap/references?ref_type=purchase_order&limit=50",
+      "/api/v1/sap/references?ref_type=transfer_order&limit=50",
+      "/api/v1/masters/vaccines?limit=100",
+      "/api/v1/masters/medications?limit=100",
+      "/api/v1/masters/cull-causes?limit=100",
+      "/api/v1/masters/transports?limit=100",
+      "/api/v1/masters/farms?limit=100",
+      "/api/v1/masters/mortality-causes?limit=100",
+      "/api/v1/masters/processing-plants?limit=100",
+      "/api/v1/masters/suppliers?limit=100",
+      "/api/v1/masters/incubators?limit=100",
+      "/api/v1/masters/breeds?limit=100",
+      "/api/v1/masters/feed-types?limit=100",
+      "/api/v1/masters/houses?limit=100",
+      "/api/v1/masters/hatchers?limit=100",
+      "/api/v1/masters/hatcheries?limit=100",
+      "—water—",
+      "—home—",
+      "—kpi—"
+    ],
+    "rev": []
+  },
+  "deadField": 0,
+  "lotSampleKeys": [
+    "company_id",
+    "farm_id",
+    "house_id",
+    "genetic_line_id",
+    "weight_curve_id",
+    "area_id",
+    "planned_close_date",
+    "breed_id",
+    "lot_code",
+    "bird_type",
+    "sex",
+    "id",
+    "status",
+    "activation_type",
+    "start_date",
+    "end_date",
+    "created_at",
+    "updated_at"
+  ],
+  "breederLots": [
+    {
+      "id": 1,
+      "code": "L-2026-001",
+      "status": "closed"
+    },
+    {
+      "id": 2,
+      "code": "L-2026-002",
+      "status": "active"
+    },
+    {
+      "id": 9,
+      "code": "L-BR-2026-02",
+      "status": "active"
+    },
+    {
+      "id": 8,
+      "code": "L-BR-2026-06",
+      "status": "active"
+    }
+  ],
+  "rearingLot": {
+    "id": 1,
+    "code": "L-2026-001"
+  }
+}

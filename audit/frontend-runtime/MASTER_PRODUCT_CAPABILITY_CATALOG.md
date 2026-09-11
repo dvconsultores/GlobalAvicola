@@ -308,3 +308,12 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - **ACEPTADA por el propietario (2026-09-11): A) ACEPTO GA-FE-08 / OBS-UAT-01 —
   OBS-UAT-01 = RESOLVED_OWNER_ACCEPTED · GA-FE-08 = FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTED ·
   OWNER_ACCEPTANCE PASS** (registro `GA_OWNER_ACCEPTANCE_FE08_RECORD.md`; C4 decisión).
+
+## Addendum FINAL FRONTEND AUDIT RECONCILIATION (2026-09-11)
+
+- **38/38 filas user-visible reconciliadas** (matriz FVA) · **7/7 internas** · **15/15 auth-bloqueadas ejercitadas**:
+  F_C_OA **14** · VNC **19** · ODR **2** (CAP-ADM-02/AOD-06 · CAP-BU-04/AOD-25) · OOS **2**
+  (CAP-ADM-05 diseño-condicional · CAP-OPS-09 diferida) · BLOCKED_EXTERNAL **1** (CAP-OPS-13/P-08).
+- **FRONTEND AUDIT = RECONCILED_WITH_RESIDUALS** — 0 missing aplicable · 0 stale · 0 broken · 0 auth-blocked ·
+  0 unknowns · 0 gaps funcionales; cola RES-01…RES-10 en `audit/final-frontend-audit/GA_FINAL_FRONTEND_RESIDUAL_GAPS.md`.
+- Sin cambios de producto; runtime `index-DtzHNDMG.js`; Vitest 292/292. Detalle: `audit/final-frontend-audit/`.

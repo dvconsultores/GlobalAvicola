@@ -287,3 +287,15 @@ OBS-UAT-01 → RESOLVED_OWNER_ACCEPTED · GA-FE-08 → FUNCTIONALLY_CERTIFIED_OW
 Intactos: OD-16/OD-09.e · GA-FE-02..08 · R-181..188 · OD-21/22/23 · BU-D10 ·
      Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · FINAL FRONTEND AUDIT RECONCILIATION
+
+```
+FRONTEND AUDIT → RECONCILED_WITH_RESIDUALS (38/38 visibles · 7/7 internas · 15/15 auth-bloqueadas)
+     Clases: F_C_OA 14 · VNC 19 · ODR 2 · OOS 2 · BE 1 · missing/stale/broken/blocked-auth/unknown 0
+     Cola: RES-01…RES-10 (RES-01/AOD-06 P1 decisión · RES-05/R-52 · RES-02 ADM-05 · RES-06/R-112 ·
+     RES-08/R-148 · RES-03/AOD-25 · RES-04/OPS-09 · RES-09/AOD-24 · RES-07 hygiene · RES-10 notas)
+     Runtime index-DtzHNDMG.js · Vitest 292/292 · E2E agrupado S01-S21 PASS · 0 fatales · 0 overflow
+     Detalle: audit/final-frontend-audit/ (15 artefactos + evidence). SIN producto.
+Intactos: todo lo anterior; Wave B PAUSED (readiness signal: YES) · Wave C/SAP NOT STARTED.
+```

@@ -1,0 +1,183 @@
+{
+  "ts": "2026-09-11T20:32:35.113Z",
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/users/154/business-units/grandparent",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/154/business-units/breeder",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/154/business-units/hatchery",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/154/business-units/broiler",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/159/business-units/grandparent",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/159/business-units/breeder",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/159/business-units/hatchery",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/159/business-units/broiler",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/155/business-units/grandparent",
+      "method": "DELETE",
+      "status": 404
+    },
+    {
+      "path": "/users/155/business-units/breeder",
+      "method": "DELETE",
+      "status": 404
+    },
+    {
+      "path": "/users/155/business-units/hatchery",
+      "method": "DELETE",
+      "status": 404
+    },
+    {
+      "path": "/users/155/business-units/broiler",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/154",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/users/155",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/users/156",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/users/157",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/users/158",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/users/159",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/roles/98",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/roles/99",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/roles/100",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/roles/101",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/roles/102",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/business-units/grandparent/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units/breeder/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units/hatchery/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/roles?limit=3",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 403
+    }
+  ],
+  "catalogo": [
+    [
+      "breeder",
+      false
+    ],
+    [
+      "broiler",
+      false
+    ],
+    [
+      "grandparent",
+      false
+    ],
+    [
+      "hatchery",
+      false
+    ]
+  ]
+}
