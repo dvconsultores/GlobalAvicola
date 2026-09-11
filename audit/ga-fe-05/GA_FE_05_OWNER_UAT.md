@@ -1,5 +1,7 @@
 # GA-FE-05 · UAT DEL PROPIETARIO (R-181 — envío/reenvío a revisión)
 
+**SESIÓN EJECUTADA (GA-UAT-03): decisión del propietario = A) ACEPTO GA-FE-05 — sin observaciones** (`audit/ga-uat-03/GA_OWNER_ACCEPTANCE_GA_FE_05_RECORD.md`). **GA-FE-05 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED · R-181 = CLOSED / OWNER_ACCEPTED.**
+
 **OWNER_UAT_READY: YES** (2026-09-11 · GA-FE-05 FUNCTIONALLY_CERTIFIED · generación `index-WUv1-F9o.js`).
 Sesión guiada corta (7 puntos). Las cuentas de prueba se preparan al abrir la sesión (no hay cuentas vivas entre sesiones).
 

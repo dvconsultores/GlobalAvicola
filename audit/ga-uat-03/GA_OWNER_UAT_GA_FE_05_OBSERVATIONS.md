@@ -1,7 +1,22 @@
 # GA-UAT-03 · REGISTRO DE OBSERVACIONES DEL PROPIETARIO — GA-FE-05
 
-**Estado: PENDIENTE — sin decisiones del agente.**
-La decisión del propietario se anexa en `GA_OWNER_ACCEPTANCE_GA_FE_05_RECORD.md`.
+**Estado: CERRADO — Decisión: A) ACEPTO GA-FE-05 — sin observaciones (respuesta libre vacía).**
+Registro de aceptación: `GA_OWNER_ACCEPTANCE_GA_FE_05_RECORD.md`.
+
+| UAT ID | Resultado del propietario | Observación | Severidad | Captura | ¿Hallazgo existente? | ¿Candidato a hallazgo nuevo? | ¿Bloquea aceptación? | Comentario del propietario |
+|---|---|---|---|---|---|---|---|---|
+| UAT-01 | PASS (implícito en aceptación) | — | — | `c01_registered_submit_cta.png` | — | — | — | — |
+| UAT-02 | PASS (implícito) | — | — | sesión/paquete | — | — | — | — |
+| UAT-03 | PASS (implícito) | — | — | `c02_pending_no_cta.png` | — | — | — | — |
+| UAT-04 | PASS (implícito) | — | — | `c03_returned_reason_resubmit.png` | — | — | — | — |
+| UAT-05 | PASS (implícito) | — | — | `c03…` / sesión | — | — | — | — |
+| UAT-06 | PASS (implícito) | — | — | `c04_approved_final_no_cta.png` | — | — | — | — |
+| UAT-07 | PASS (implícito) | — | — | `c08_failure_race_error_and_reconcile.png` | — | — | — | — |
+| UAT-08 | PASS (implícito) | — | — | `c05…` / `c06…` | — | — | — | — |
+| UAT-09 | PASS (implícito) | — | — | `c07_en_submit_label.png` | — | — | — | — |
+| UAT-10 | PASS (aceptación sin comentarios) | — | — | — | — | — | — | — |
+
+> Cierre: NINGUNA observación registrada. No se convirtió feedback subjetivo en hallazgo; R-182 y BU-D10 permanecen fuera de alcance.
 
 | UAT ID | Resultado del propietario | Observación | Severidad | Captura | ¿Hallazgo existente? | ¿Candidato a hallazgo nuevo? | ¿Bloquea aceptación? | Comentario del propietario |
 |---|---|---|---|---|---|---|---|---|

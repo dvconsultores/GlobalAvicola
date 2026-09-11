@@ -52,11 +52,17 @@ Credenciales efímeras: `~/ga_uat_03_credentials.txt` (fuera del repositorio; se
 
 ## D · OBSERVACIONES DEL PROPIETARIO
 
-**PENDIENTE** — registro vacío hasta la sesión (`GA_OWNER_UAT_GA_FE_05_OBSERVATIONS.md`).
+**CERRADO** — NINGUNA observación (ver registro de observaciones).
 
 ## E · DECISIÓN DEL PROPIETARIO
 
-**PENDIENTE** — no se rellena antes de la respuesta explícita.
+**A) ACEPTO GA-FE-05** — sin observaciones (respuesta libre vacía).
+Registro: `GA_OWNER_ACCEPTANCE_GA_FE_05_RECORD.md`.
+
+## G · LIMPIEZA POST-SESIÓN
+
+2 revokes · 2 bajas (115, 116) · roles 50/51 OFF · rol 35 intacto · BU 4×OFF ·
+operaciones #53–#60 retenidas como evidencia · credenciales destruidas · sin residuo.
 
 ## F · LÍMITES
 

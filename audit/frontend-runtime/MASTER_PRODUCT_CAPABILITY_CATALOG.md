@@ -181,3 +181,4 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - `R-98`/`R-119`: CLOSED (sin regresión; se reutiliza su evaluador). `R-182`: **UNCHANGED / OPEN**.
   `BU-D10`: PENDING_RATIFICATION. Detalle: `GA_FE_05_ADDENDUM_R181_SUBMIT_RESUBMIT.md` y
   `audit/ga-fe-05/GA_FE_05_R181_CLOSURE_RECONCILIATION.md`.
+- **Aceptación del propietario (GA-UAT-03, `90ceee4` + registro): `GA-FE-05 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED` · `R-181 = CLOSED / OWNER_ACCEPTED`** (sin observaciones).

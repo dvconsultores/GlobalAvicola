@@ -48,3 +48,15 @@ Acta completa en `GA_FE_05_R181_CLOSURE_RECONCILIATION.md` (AC R181-AC01…40 �
 
 **GA-FE-05 = FUNCTIONALLY_CERTIFIED_OWNER_ACCEPTANCE_PENDING.**
 `OWNER_UAT_READY = YES` (`GA_FE_05_OWNER_UAT.md`). Sin iniciar otras tranches.
+
+---
+
+## 9 · GA-UAT-03 · Aceptación del propietario (2026-09-11)
+
+- Sesión guiada enfocada (10 puntos) preparada y entregada; registro: `audit/ga-uat-03/`.
+- **Decisión del propietario: A) ACEPTO GA-FE-05** — sin observaciones.
+- Estado actualizado: **GA-FE-05 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTED** ·
+  **OWNER_ACCEPTANCE (programa) = PASS** · **R-181 = CLOSED / OWNER_ACCEPTED**.
+- Limpieza verificada (2 revokes, 2 bajas, roles 50/51 off, rol 35 intacto, 4×OFF,
+  credenciales destruidas; operaciones #53–#60 retenidas como evidencia).
+- Sin cambios de producto; generación `index-WUv1-F9o.js` estable.
