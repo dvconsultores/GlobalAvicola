@@ -256,7 +256,9 @@ async def seed_users(session: AsyncSession, roles: dict[str, Role]):
             continue
         user = User(
             first_name=udef["first_name"], last_name=udef["last_name"],
-            email=f"{udef['username']}@testing.local",
+            # F3 · GA-FE-02-B: dominio válido. `.local` es special-use para `EmailStr`
+            # (email-validator) y el usuario quedaba ilegible por la API (500).
+            email=f"{udef['username']}@globalavicola.com",
             username=udef["username"], hashed_password=hash_password(_seed_password(udef["username"])),
             role_id=role.id, company_id=COMPANY_ID, view_type=udef["view_type"],
         )
