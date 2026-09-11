@@ -1,0 +1,41 @@
+{
+  "tranche": "GA-UAT-04",
+  "when": "2026-09-11T14:52:52.854Z",
+  "steps": {
+    "areaSelector": {
+      "options": [
+        "Seleccionar área...",
+        "Nave Norte (GA-FE-06)",
+        "Nave Sur (GA-FE-06)",
+        "Nave Operativa (GA-FE-06-A)"
+      ],
+      "foreignVisible": false
+    },
+    "form": {
+      "hasPlannedClose": true,
+      "rawKeysVisible": false
+    },
+    "savedLot": {
+      "href": "/lots/37",
+      "id": 37
+    },
+    "relogin": {
+      "ok": true,
+      "pldVisible": true
+    },
+    "consoleErrorsDesktop": 5,
+    "mobile": {
+      "status": 201,
+      "id": 38,
+      "pldVisible": true,
+      "horizontalOverflow": false
+    },
+    "consoleErrorsMobile": 5,
+    "english": {
+      "plannedClose": true,
+      "area": true,
+      "rawKeys": false
+    },
+    "consoleErrorsEnglish": 5
+  }
+}
