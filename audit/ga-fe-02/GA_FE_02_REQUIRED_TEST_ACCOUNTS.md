@@ -108,3 +108,16 @@ valor que probar). Remedio CORREGIDO y detalle completo:
 `audit/ga-fe-02-a/GA_FE_02_A_BOOTSTRAP_PRESENCE_VERIFICATION.md` → basta **R1** (exportar en la
 misma terminal «bash» del agente) o **R2** (relanzar VS Code con la variable exportada) o
 **R3** (compartir una página autenticada).
+
+### Actualización 2026-09-11 (3.ª reanudación — autenticada)
+
+La credencial bootstrap se entregó por **R1** y el login funcionó (**200**; identidad `admin`,
+super). El primer contacto autenticado reveló que **ENV-01 no está sembrado para los flujos de
+GA-FE-02**: el **catálogo de unidades de negocio está VACÍO** (`GET /business-units` → `[]`;
+los 4 candidatos → 404) y el rol **«Administrador de Accesos» NO existe** (crear roles está
+prohibido por el encargo → Actor B bloqueado). Además `GET /users` responde **500** desde la 10.ª
+fila (ids 57–70 ilegibles individualmente). Se remedió el defecto **D1** (tras un refresh, el
+super admin quedaba denegado en `/admin/unit-access`; fix + test, commit `ea26b2e`, verificado
+post-deploy). **Acción del propietario/ops (server-side)**: sembrar el catálogo de unidades y el
+rol de acceso en ENV-01 (baseline de plataforma), corregir las filas 57–70 de `users`, y
+re-ejecutar GA-FE-02-A. Detalle: `audit/ga-fe-02-a/GA_FE_02_A_RESUME3_AUTHENTICATED_FINDINGS.md`.

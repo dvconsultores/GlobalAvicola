@@ -19,4 +19,17 @@ Estado sugerido: grandparent ON · breeder OFF · hatchery ON · broiler OFF.
 Target C: RBAC SÍ para la capacidad representativa; BU objetivo con grant NO.
 Segunda empresa de prueba solo si existe un usuario seguro de ella para E2E-07;
 si no, ese subcaso se marca BLOCKED_FIXTURE (no bloquea toda la suite — §38).
+
+## Addendum 2026-09-11 (reanudación 3 — primer contacto autenticado)
+
+- **Bootstrap disponible y verificado**: identidad `admin` (Super Administrador, 9 comodines),
+  login/`me`/`switch-company` 200. Empresas visibles: «Avícola Global C.A.» (id 1) y
+  «Avícola Del Sur C.A.» (id 3).
+- **Actor B — `BLOCKED_FIXTURE`**: el rol «Administrador de Accesos» NO existe en ENV-01 (13
+  roles activos, ninguno con `business_units:*`); crear roles está prohibido por el encargo (F2).
+- **Actores C/D** — provisionables como usuarios (roles operativos existentes), pero sus flujos
+  E2E quedan bloqueados por F1 (catálogo BU vacío: `[]` + 4×404).
+- **Actor E** — cubierto por el bootstrap (comodín, sin empresa persistida; fail-closed 403
+  verificado sin contexto).
+- Evidencia: `GA_FE_02_A_RESUME3_AUTHENTICATED_FINDINGS.md`; remediación D1: commit `ea26b2e`.
 ```

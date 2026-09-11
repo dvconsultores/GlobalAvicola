@@ -103,3 +103,22 @@ CLASIFICACIÓN .... AUTH_CONFIGURATION_FAILURE (la inyección no alcanzó ningú
 ACCIÓN ........... STOP (§6) — sin intento de autenticación, sin bypass, sin búsqueda
 ESTADO ........... GA-FE-02 = DEPLOYED_IMPLEMENTATION_COMPLETE / FUNCTIONAL_CERTIFICATION_BLOCKED_AUTH
 ```
+
+## 9 · 3.ª reanudación (2026-09-11) — CONTACTO AUTENTICADO REAL (bootstrap por R1)
+
+El propietario entregó la credencial en la terminal del agente (R1: export en la MISMA sesión;
+historial de bash desactivado durante el export; valor jamás impreso). Login **200**, `/me`
+**200** (identidad `admin`, super, 9 comodines), `switch-company` **200**. El contacto autenticado
+descubrió y remedió el defecto **D1** (refresh: sesión hidratada solo desde claims ⇒
+`PermissionRoute` denegaba al super admin; fix `isLoading=Boolean(accessToken)` + test
+RED→GREEN; commit `ea26b2e`, verificado post-deploy) y los gaps de ENV-01: **F1** catálogo BU
+vacío, **F2** rol «Administrador de Accesos» ausente, **F3** `/users` 500 (ids 57–70), **F4**
+selector de empresa sin render para admin sin contexto (observación).
+
+Evidencia completa: `GA_FE_02_A_RESUME3_AUTHENTICATED_FINDINGS.md`.
+
+```
+CLASIFICACIÓN .... MODE_E · GA_FE_02_DEFECT_FOUND (D1 remediado; re-run total pendiente §7)
+                   × BLOCKED_FIXTURE_ENV01 (F1/F2) — GA-FE-02 NO certificado
+ACCIÓN ........... STOP de certificación; remediación server-side del propietario (§6 findings)
+```

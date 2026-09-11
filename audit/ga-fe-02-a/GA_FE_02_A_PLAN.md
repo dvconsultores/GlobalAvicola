@@ -42,4 +42,12 @@ autenticación; fases 7–18 y 20–23 **BLOCKED_AUTH**; 25–28 ejecutadas como
 3. Verificar login bootstrap + identidad + permisos (pasos 30–32 §133).
 4. Ejecutar fases 5–23 en orden estricto §133 (50–160).
 5. Solo entonces: fase 24–27 y certificación (§126).
+
+## Reanudación 3 (autenticada — 2026-09-11, `ea26b2e`)
+
+Fases 5–18: **`BLOCKED_FIXTURE_ENV01`** — el catálogo de unidades de negocio está vacío (F1) y el
+rol «Administrador de Accesos» no existe (F2); sin ellos E2E-02…10 y la matriz 3D no son
+ejecutables por ningún mecanismo oficial del cliente. Fase 19 (refresh): defecto **D1** detectado
+y remediado (§7; verificado post-deploy). Re-ejecución completa pendiente tras resolver F1/F2.
+Detalle y evidencia: `GA_FE_02_A_RESUME3_AUTHENTICATED_FINDINGS.md`.
 ```
