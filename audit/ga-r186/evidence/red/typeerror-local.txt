@@ -1,0 +1,7 @@
+start_date: datetime.datetime(2026, 8, 23, 0, 0, tzinfo=datetime.timezone.utc) -> datetime tz: UTC
+hoy: datetime.date(2026, 9, 11) -> date
+PRE-FIX TypeError: unsupported operand type(s) for -: 'datetime.date' and 'datetime.datetime'
+  operando izq: date | operando der: datetime
+POST-FIX edad: 19 -> int
+PI esperado (calculo independiente): 400.0 -> redondeado 1d: 400.0
+REPRO-R186-DONE
