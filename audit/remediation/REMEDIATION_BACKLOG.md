@@ -1884,3 +1884,25 @@ UAT           GA-UAT-06 (2026-09-11): decisión A) ACEPTO R-184 (6/6 casos, sin
 INTOCADO      R-181/R-182/R-185/OD-21 sin cambio · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
               Wave B PAUSED · Wave C/SAP NOT STARTED
 ```
+
+## GA-GOV-02 · R-186 FORMALIZADO (P2 · OPEN) + DECISIÓN DE PROPIETARIO PENDIENTE — ESCALA DEL IPE (2026-09-11)
+
+```
+GOBERNANZA    GA-GOV-02 (solo análisis y clasificación; cero producto) — audit/ga-gov-02/
+R-186         FORMAL_OPEN_FINDING (ex «candidato»): GET /reports/kpis/production-index
+              (G-05) → 500 en todo lote con start_date (date − datetime; expresión
+              hermana de R-184, línea propia NO tocada por el fix 3f88f94).
+              Evidencia: audit/ga-r184/evidence/red/runtime-red.json (prodindex35 = 500).
+              Dedup: DISTINCT_NEW_FINDING (R-184 = otro endpoint/AC/línea; R-147 vecino de
+              meta-clase; sin dueño previo). ID legítimo: siguiente libre tras R-185.
+              Severidad P2 (defecto funcional real; API-only sin consumidor frontend).
+              Owner Decision: NO. Implementación: NO (tranche técnica futura, P1 recomendada).
+OBSERVACIÓN   Escala del IPE vs bandas «reference» (factor ~100; viabilidad % vs fracción;
+              FCR simplificado documentado en contrato): OWNER_DECISION_REQUIRED — 1 decisión
+              (opciones A/B/C; recomendada A) en audit/ga-gov-02/GA_GOV_02_OWNER_DECISION_PACKET.md.
+              Sin finding hasta la decisión (secuencia OBS→OD→SPEC→…). Implementación: NO.
+PRIORIDAD     P1 tranche técnica R-186 · P2 sesión de decisión del propietario · P3 OBS-UAT-01 ·
+              BU-D10 espera ratificación · Wave B PAUSED
+INTOCADO      R-184/GA-UAT-06 sin reapertura · GA-FE-02..07 y R-181/182/185/OD-21 PRESERVED ·
+              OBS-UAT-01 UX P2 · Wave C/SAP NOT STARTED
+```

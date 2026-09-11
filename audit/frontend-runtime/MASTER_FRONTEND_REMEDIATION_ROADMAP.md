@@ -163,4 +163,16 @@ R-184 (SEMÁNTICA TEMPORAL DEL IPE) → CLOSED (técnico)
      decisión A) ACEPTO R-184 → R-184 CLOSED_OWNER_ACCEPTED.
 ```
 
+## Addendum fechado · 2026-09-11 · GA-GOV-02 (triage de residuales post-R184)
+
+```
+R-186 (ex «candidato») → FORMAL_OPEN_FINDING (P2 · OPEN)
+     GET /reports/kpis/production-index → 500 con start_date (misma clase que R-184,
+     endpoint propio; dedup DISTINCT; ID siguiente libre tras R-185). Sin implementar.
+OBSERVACIÓN de escala del IPE (fórmula vs bandas) → OWNER_DECISION_REQUIRED
+     (1 decisión; A/B/C con recomendación A; sin finding hasta decidir; sin implementar).
+PRIORIDAD: P1 tranche R-186 · P2 decisión del propietario · P3 OBS-UAT-01.
+Intactos: R-184/GA-UAT-06, GA-FE-02..07, R-181/182/185, OD-21, OBS-UAT-01, BU-D10.
+```
+
 Ninguna otra tranche iniciada. OBS-UAT-01 (navegación) sigue P2 sin R; R-184 SEPARATE_OPEN.
