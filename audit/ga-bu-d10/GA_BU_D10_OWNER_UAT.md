@@ -2,6 +2,8 @@
 
 Estado: **READY** — la UAT **no se inicia automáticamente**; se activará por instrucción del propietario (operaciones prepara ventana y actor temporales; credenciales fuera del repositorio, destruidas al cierre).
 
+**Cierre: EJECUTADA — decisión A) ACEPTO R-188 / BU-D10 / OD-23 (GA-UAT-08, 2026-09-11; registro `audit/ga-uat-08/GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md`).**
+
 ## Qué validar (solo el resultado visible)
 
 1. **Con acceso**: con la línea encendida y una concesión vigente, el operador entra a sus lotes y ve el IPE normalmente (p. ej. `L-R187-DET` → **333.3**).

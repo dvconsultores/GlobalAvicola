@@ -4,13 +4,13 @@ Fecha: 2026-09-11 · Commits: C2 `0542310` · C3 `bee33f5` · C3b `399751c` · E
 
 ```
 R-188:
-CLOSED
+CLOSED_OWNER_ACCEPTED
 
 Technical:
 FUNCTIONALLY_CERTIFIED
 
 OD-23:
-RATIFIED_IMPLEMENTED
+RATIFIED_IMPLEMENTED_OWNER_ACCEPTED
 
 OWNER_UAT_REQUIRED:
 YES        (OD-23 = B cambia comportamiento visible de acceso productivo)
@@ -19,7 +19,8 @@ OWNER_UAT_READY:
 YES        (guía GA_BU_D10_OWNER_UAT.md; ventana y actores por operaciones)
 
 Owner acceptance:
-PENDING    (no se auto-aprueba)
+ACCEPTED   (A) ACEPTO R-188 / BU-D10 / OD-23 — GA-UAT-08, 2026-09-11;
+           registro: audit/ga-uat-08/GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md)
 ```
 
 ## Alcance certificado
@@ -37,6 +38,10 @@ PENDING    (no se auto-aprueba)
 - Suites BU completas en local: resultados **idénticos** antes/después de C3 (artefactos sin PG; delta R-188 = 0).
 - Transparencia: los reintentos del probe crearon **roles duplicados** (inactivos; documentados en el ledger); el hallazgo funcional de esos reintentos (probe mal condicionado) fue corregido en el guion, no en producto.
 - Fixtures de lotes 54-59 intactos; actores y credenciales destruidos.
+
+## Aceptación del propietario (GA-UAT-08)
+
+Decisión **A) ACEPTO R-188 / BU-D10 / OD-23** (2026-09-11): UAT del propietario **5/5 PASS** (acceso válido; apagar quita; re-encender **NO** devuelve; concesión nueva restaura vía UI real; móvil OK). **BU-D10 = RESOLVED_OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS.** C1 UAT `a2fe22a` · C2 decisión. Registro: `audit/ga-uat-08/GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md`.
 
 ## No reapertura
 

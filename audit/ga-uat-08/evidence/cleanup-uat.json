@@ -1,0 +1,73 @@
+{
+  "ts": "2026-09-11T19:48:43.530Z",
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/users/146/business-units/broiler",
+      "method": "DELETE",
+      "status": 200
+    },
+    {
+      "path": "/users/146",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/users/147",
+      "method": "DELETE",
+      "status": 204
+    },
+    {
+      "path": "/roles/92",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/roles/93",
+      "method": "PUT",
+      "status": 200
+    },
+    {
+      "path": "/business-units/broiler/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/roles?limit=3",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "catalogo": [
+    [
+      "breeder",
+      false
+    ],
+    [
+      "broiler",
+      false
+    ],
+    [
+      "grandparent",
+      false
+    ],
+    [
+      "hatchery",
+      false
+    ]
+  ]
+}

@@ -285,3 +285,13 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - **OD-22 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED** · OWNER_ACCEPTANCE **PASS**.
 - Sin cambios de producto · limpieza verificada (BU 4×OFF; actor UAT destruido).
   Detalle: `audit/ga-uat-07/`. C1 `d1f9829` · C2 decisión.
+
+## Addendum GA-UAT-08 (2026-09-11) · R-188 / BU-D10 / OD-23 ACEPTADOS
+
+- **Decisión A) «ACEPTO R-188 / BU-D10 / OD-23»** — UAT del propietario 5/5: acceso válido
+  (333.3) · apagar quita acceso · re-encender **no** devuelve · concesión nueva restauró
+  (por la UI real del Access Admin) · móvil usable.
+- **R-188 = CLOSED_OWNER_ACCEPTED · BU-D10 = RESOLVED_OWNER_ACCEPTED ·
+  OD-23 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS.**
+- Sin cambios de producto · walkthrough C01-C08 PASS · limpieza verificada (BU 4×OFF;
+  actores destruidos). Detalle: `audit/ga-uat-08/`. C1 `a2fe22a` · C2 decisión.

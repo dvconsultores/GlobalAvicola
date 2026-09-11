@@ -245,3 +245,17 @@ OD-23 → RATIFIED_IMPLEMENTED (decisión B) · R-188 → CLOSED · FUNCTIONALLY
 Intactos: OD-16, OD-09.e/transferencia, GA-FE-02..07, R-181..187, OD-21/22,
      OBS-UAT-01 P2 · Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · GA-UAT-08 (aceptación del propietario)
+
+```
+R-188 → CLOSED_OWNER_ACCEPTED · BU-D10 → RESOLVED_OWNER_ACCEPTED
+     OD-23 → RATIFIED_IMPLEMENTED_OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS
+     UAT del propietario 5/5 (decisión A): acceso válido (333.3); apagar quita;
+     re-encender NO devuelve; concesión nueva restaura (regrant por UI real);
+     móvil usable. Walkthrough C01-C08 PASS · 0 regresión visible · limpieza
+     verificada (BU 4×OFF; actores y credenciales destruidos).
+     Detalle: audit/ga-uat-08/. C1 a2fe22a · C2 (esta decisión).
+Intactos: OD-16/OD-09.e · GA-FE-02..07 · R-181..187 · OD-21/22 · OBS-UAT-01 P2 ·
+     Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

@@ -39,17 +39,17 @@ Raw: `evidence/walkthrough-uat.json` · `evidence/setup-uat.json`.
 
 | UAT-01 | UAT-02 | UAT-03 | UAT-04 | UAT-05 |
 |---|---|---|---|---|
-| **PENDIENTE** | **PENDIENTE** | **PENDIENTE** | **PENDIENTE** | **PENDIENTE** |
+| **PASS** | **PASS** | **PASS** | **PASS** | **PASS** |
 
 ## E · Observaciones del propietario
 
-**PENDIENTE** — ver `GA_OWNER_UAT_R188_OBSERVATIONS.md` (notas N-1…N-3 informativas).
+**Sin observaciones** — decisión A (ver `GA_OWNER_UAT_R188_OBSERVATIONS.md`; notas N-1…N-3 informativas).
 
 ## F · Decisión del propietario
 
-**PENDIENTE** — A) ACEPTO R-188 / BU-D10 / OD-23 · B) … CON OBSERVACIONES · C) RECHAZO … — CORREGIR. (Sin aceptación ficticia.)
+**A) ACEPTO R-188 / BU-D10 / OD-23** — registrada en `GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md` (fecha 2026-09-11).
 
-## G · Limpieza (tras la decisión)
+## G · Limpieza (ejecutada tras la decisión)
 
-Plan: revocar concesión del operador · baja lógica de ambos actores · desactivar roles 92/93 · restaurar **BU Engorde OFF (4×OFF)** · destruir credenciales y temporales · preservar auditoría y evidencia · ningún humano modificado.
-**Estado: PENDIENTE hasta la decisión.**
+Ejecutada y verificada: concesión del operador revocada (200) · bajas lógicas de usuarios 146/147 (204/204) · roles 92/93 desactivados (200/200) · **BU Engorde OFF — catálogo 4×OFF** · admin operativo (200) · credenciales y temporales destruidos.
+Raw: `evidence/cleanup-uat.json`.

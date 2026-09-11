@@ -2043,3 +2043,29 @@ LIMPIEZA      4×OFF restaurada · actores baja lógica · roles BU188* desactiv
 INTOCADO      OD-16/OD-09.e/GA-FE-02..07/R-181..187/OD-21/22 PRESERVED · OBS-UAT-01 P2 ·
               Wave B PAUSED · Wave C/SAP NOT STARTED
 ```
+
+---
+
+## GA-UAT-08 · ACEPTACIÓN DEL PROPIETARIO — R-188 / BU-D10 / OD-23 ACEPTADOS (2026-09-11)
+
+```
+DECISIÓN      «A) ACEPTO R-188 / BU-D10 / OD-23» (explícita; sin observaciones)
+EFECTOS       R-188 = CLOSED_OWNER_ACCEPTED · BU-D10 = RESOLVED_OWNER_ACCEPTED ·
+              OD-23 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED · OWNER_ACCEPTANCE = PASS
+REGISTRO      audit/ga-uat-08/GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md
+              + guía (5 casos), observaciones (ninguna), evidencia C01-C08, índice, ledger
+UAT           5/5 PASS: acceso válido; apagar quita; re-encender NO devuelve;
+              concesión nueva restaura (regrant por UI real); móvil usable
+LIMPIEZA      concesión revocada · usuarios 146/147 baja lógica · roles 92/93 off ·
+              BU Engorde OFF (catálogo 4×OFF) · credenciales/temporales destruidos
+INTOCADO      OD-16/OD-09.e · GA-FE-02..07 · R-181..187/OD-21/22 PRESERVED ·
+              OBS-UAT-01 P2 · Wave B PAUSED · Wave C/SAP NOT STARTED · ningún humano tocado
+```
+
+### Cierre de ciclo BU-D10
+
+- **BU-D10 → RESOLVED_OWNER_ACCEPTED**: la pregunta «¿re-encender una unidad devuelve el
+  acceso solo (A) o exige concesión nueva (B)?» quedó resuelta por **OD-23 = B**, implementada
+  (**R-188**, C3 `bee33f5` + C3b `399751c`) y **aceptada por el propietario** (decisión A).
+- Nota N-1 (informativa): el home de roles operativos sin `dashboard:read` muestra «Permiso
+  requerido» — fallo cerrado pre-existente, ajeno a R-188; sin acción en este ciclo.

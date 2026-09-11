@@ -1,6 +1,6 @@
 # GA-BU-D10 · DECISIÓN DEL PROPIETARIO — CICLO APAGAR/ENCENDER UNA UNIDAD DE EMPRESA
 
-**ID canónico: `OD-23`** (línea GA/OD; siguiente libre tras OD-22; a distinguir de la familia `AOD-*` de Wave B) · Fecha: 2026-09-11 · Tranche: GA-BU-D10 · Estado: **RATIFIED_IMPLEMENTED** (implementada y certificada técnicamente; **Owner UAT REQUIRED — READY, acceptance PENDING**)
+**ID canónico: `OD-23`** (línea GA/OD; siguiente libre tras OD-22; a distinguir de la familia `AOD-*` de Wave B) · Fecha: 2026-09-11 · Tranche: GA-BU-D10 · Estado: **RATIFIED_IMPLEMENTED_OWNER_ACCEPTED** (implementada, certificada y **aceptada por el propietario** — GA-UAT-08, decisión A, 2026-09-11; registro: `audit/ga-uat-08/GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md`)
 Decisión explícita del propietario: **B — RE-AUTORIZACIÓN.**
 
 ## 1 · La pregunta resuelta

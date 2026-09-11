@@ -33,4 +33,4 @@ Producto actual (provisional A, probado): apagar una BU de empresa no toca conce
 
 ## Estado
 
-**`CLOSED`** (técnico; 2026-09-11) · FUNCTIONALLY_CERTIFIED · OD-23 = RATIFIED_IMPLEMENTED — implementación C3 `bee33f5` (+C3b `399751c`); runtime E2E-01…14 + UI PASS; evidencia `audit/ga-bu-d10/`. **Owner UAT REQUIRED / READY — acceptance PENDING** (no auto-aprobada).
+**`CLOSED_OWNER_ACCEPTED`** (2026-09-11 — tranche GA-UAT-08: decisión **A) ACEPTO R-188 / BU-D10 / OD-23**; UAT del propietario 5/5 PASS; registro `audit/ga-uat-08/GA_OWNER_ACCEPTANCE_R188_BU_D10_RECORD.md`). OD-23 = **RATIFIED_IMPLEMENTED_OWNER_ACCEPTED** · **BU-D10 = RESOLVED_OWNER_ACCEPTED**. Implementación C3 `bee33f5` (+C3b `399751c`); runtime E2E-01…14 + UI PASS; evidencia `audit/ga-bu-d10/` + `audit/ga-uat-08/`.
