@@ -1,0 +1,6 @@
+{"case": "ipe35", "path": "/reports/kpi/ipe/35", "status": 500, "body": "Internal Server Error"}
+{"case": "ipe33", "path": "/reports/kpi/ipe/33", "status": 500, "body": "Internal Server Error"}
+{"case": "kpis35", "path": "/reports/kpis?lot_id=35", "status": 200, "body": "{\"mortality\":{\"lot_id\":35,\"initial_population\":0,\"total_deaths\":0.0,\"mortality_rate_pct\":0,\"unit\":\"%\"},\"feed_conversion\":{\"lot_id\":35,\"total_feed_kg\":0.0,\"feed_conversion_ratio\":0,\"unit\":\"kg feed / kg weight (estimado)\",\"note\":\"Cálculo simplificado — requiere datos de pesaje para FCR real\"},\"egg_production\":{\"lot_id\":35,\"total_eggs\":0,\"initial_females\":0,\"hen_day_production_pct\":0,\"fertilidad_pct\":null,\"unit\":\"%\"},\"hatchery_yield\":{\"total_chicks_born\":0,\"eggs_loaded\":0,\"fertile_eggs\":0,\"nacimien"}
+{"case": "uniform35", "path": "/reports/kpi/weight-uniformity/35", "status": 200, "body": "{\"lot_id\":35,\"n_samples\":0,\"mean_weight_g\":null,\"cv_pct\":null,\"uniformity_status\":\"insufficient_data\"}"}
+{"case": "prodindex35", "path": "/reports/kpis/production-index?lot_id=35", "status": 500, "body": "Internal Server Error"}
+{"case": "ipe999999", "path": "/reports/kpi/ipe/999999", "status": 404, "body": "{\"detail\":\"Lote no encontrado\"}"}
