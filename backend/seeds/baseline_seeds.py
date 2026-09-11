@@ -300,12 +300,19 @@ async def sembrar_admin(session: AsyncSession, roles: dict[str, Role]) -> None:
 #:
 #: `bird_type` registra la correspondencia con el enum de dominio. La autoridad de acceso son
 #: las tres tablas, nunca el enum.
-UNIDADES_DE_NEGOCIO = (
-    ("grandparent", "businessUnits.grandparent", "grandparent"),
-    ("breeder", "businessUnits.breeder", "breeder"),
-    ("hatchery", "businessUnits.hatchery", "hatchery"),
-    ("broiler", "businessUnits.broiler", "broiler"),
-)
+#:
+#: **Fuente única: la migración `y5z6a7b8c9d0`** (`GA-FE-02-C §2`). El catálogo dejó de ser
+#: solo-semilla cuando pasó a ser baseline determinista de despliegue: la migración lo crea en
+#: instalaciones existentes y este seed **importa el mismo hecho** — imposible que diverjan,
+#: igual que con la matriz RBAC. `p6q7r8s9t0u1` advirtió «una migración que inserta catálogo
+#: obliga a mantener el dato en dos sitios»; este import es exactamente lo que evita ese
+#: segundo sitio.
+def _unidades_de_negocio_de_la_migracion() -> tuple[tuple[str, str, str], ...]:
+    """Carga por ruta —el paquete `alembic/versions` no es importable como módulo—."""
+    return _atributo_de_la_migracion("y5z6a7b8c9d0", "UNIDADES_CANONICAS")
+
+
+UNIDADES_DE_NEGOCIO = _unidades_de_negocio_de_la_migracion()
 
 
 async def sembrar_unidades_de_negocio(session: AsyncSession) -> int:
