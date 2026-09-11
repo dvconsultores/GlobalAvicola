@@ -41,3 +41,11 @@ una: DONE/state.
    datos; espejo del contrato `/me` (`AC-H11…H14`).
 4. **BU-D10** (reactivación) → la navegación usa `effective_business_units` vigente; no decide
    política de ciclo de vida.
+
+---
+
+**ESTADO FINAL (2026-09-11 · HEAD `5608465` · evidencia C4)**: **P1–P26 DONE**. Preflight
+verde; RED 17F/2P → GREEN 241/241; implementación C2 `a3cd7eb` + C3 `5608465` desplegada
+(`index-CElqNz3R.js` == build local); certificación runtime **desktop 45/45 · móvil 13/13 ·
+regresión+restauración 29/29**; evidencia y addenda publicadas; `GA-FE-03 = FUNCTIONALLY_
+CERTIFIED / OWNER_ACCEPTANCE_PENDING`.

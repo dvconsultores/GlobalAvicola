@@ -25,4 +25,20 @@ GA-FE-03 (encargo §2: no implementar flujos nuevos; §37: no crear clutter).
 **Clasificación provisional** (`§94` al cierre): previsible **`PARTIAL`** — GA-FE-03 cierra la
 parte de navegación (acciones accionables de descubribilidad) con evidencia; la parte
 intra-pantalla permanece como trabajo del frente `P-13` (sin re-ID, sin cierre por asociación).
-La clasificación final se fija en `GA_FE_03_CERTIFICATION_RECONCILIATION.md` tras el runtime.
+
+## Clasificación FINAL (post-certificación runtime, 2026-09-11)
+
+```
+R-98 = PARTIAL
+```
+
+- **Cerrado por GA-FE-03** (runtime autenticado): las **acciones de navegación** sin autoridad
+  real quedan ocultas — menú, hubs, barra móvil, atajos de procesos del Dashboard y del hub;
+  deep links fail-closed; backend autoridad (familia D-1 re-verificada 0/404/403). Desktop
+  45/45 · móvil 13/13.
+- **Residuo declarado** (sin reabrir): ocultado de acciones de **escritura intra-pantalla** en
+  superficies fuera de la frontera de navegación (`P-13`/`H360-F01` residual). No se cierra
+  por asociación con `R-119`.
+
+Evidencia: `GA_FE_03_CERTIFICATION_RECONCILIATION.md` ·
+`GA_FE_03_AUTHENTICATED_RUNTIME_EVIDENCE.md`.

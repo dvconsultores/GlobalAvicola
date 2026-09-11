@@ -139,3 +139,25 @@ como `SECURITY_DEFECT` y **corregida** en `9ffc5ec` con verificación runtime OF
 ON→habilitadas · D-2 tarjeta hub R-119 · D-3 filtro `module` de `/audit` con valores fuera
 del enum → 500 · D-4 fail-closed del home sin `dashboard:read`): registradas en la evidencia;
 **R-98/R-119 permanecen UNCHANGED** y ninguna bloquea GA-FE-02.
+
+## Addendum GA-FE-03 (2026-09-11)
+
+Navegación dinámica certificada en runtime autenticado sobre `index-CElqNz3R.js`
+(desktop 45/45 · móvil 13/13 · regresión+restauración 29/29). Conteo revisado del estado
+primario:
+
+```
+IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a permisos y
+                                         unidades» pasa de FRONTEND_MISSING a
+                                         IMPLEMENTED_AND_VISIBLE con evidencia runtime)
+```
+
+- `D-2` (tarjeta del hub para D) **CERRADO** (hub sobre árbol filtrado).
+- Entrada `Roles` descubrible para `users:read` (CAP-ADM-09 deja de ser «solo URL» en lo
+  relativo a descubribilidad; su estado de despliegue lo cubre GA-FE-01 R-99/158).
+- **`R-119` → `CLOSED`** (individual, con su evidencia) · **`R-98` → `PARTIAL`** (navegación
+  accionable cerrada; residuo de ocultado intra-pantalla pertenece a `P-13`, declarado sin
+  cierre por asociación).
+- `R-181`/`R-182`/SAP/`BU-D10`: **UNCHANGED**. Detalle:
+  `audit/frontend-runtime/GA_FE_03_ADDENDUM_DYNAMIC_NAVIGATION.md` y
+  `audit/ga-fe-03/GA_FE_03_CERTIFICATION_RECONCILIATION.md`.

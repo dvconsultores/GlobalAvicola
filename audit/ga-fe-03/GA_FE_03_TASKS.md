@@ -22,3 +22,10 @@
 **Checklist de cierre por tarea**: test exigido escrito ANTES/actualizado en el mismo commit;
 grep de rol/usuario en componentes de navegación = 0; sin `any` nuevos injustificados; i18n sin
 claves crudas; sin secretos.
+
+---
+
+**ESTADO FINAL**: T1–T10 **DONE**. T1–T3 (evaluador + streams) · T4 (hub, `D-2` cerrado) ·
+T5 (dashboard/móvil) · T6 (guardas de ruta) · T7 (i18n) · T8 (gates 241/241 + regresión) ·
+T9 (3D 4/4 + rutas directas) · T10 (fixtures 82–91 + ledger + restauración). Ver
+`GA_FE_03_CERTIFICATION_RECONCILIATION.md` para el mapa AC→evidencia completo.

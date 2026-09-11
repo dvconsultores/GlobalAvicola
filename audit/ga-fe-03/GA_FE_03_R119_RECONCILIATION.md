@@ -24,6 +24,22 @@ ninguno por vecindad: cada uno con su AC y su evidencia.
 `company_business_units`, `granted_business_units`, `effective_business_units`,
 `effective_company_id`) **existe y está desplegado** — verificado en GA-FE-02-E.
 
-**Clasificación provisional** (`§94` al cierre): PENDIENTE — se decide con la certificación
-runtime. Criterio previsto: `CLOSED` si AC1–AC6 pasan con evidencia autenticada; `PARTIAL` si
-alguna capa móvil/plano no alcanza evidencia. Prohibido cerrar por asociación con `R-98`.
+## Clasificación final (post-certificación runtime)
+
+```
+R-119 = CLOSED
+```
+
+- **AC1** ✅ menú derivado de `hasPermission` real + metadatos (todos los actores, runtime).
+- **AC2** ✅ modelo declarativo único (`navigationConfig` + `auth/navigation`); 0 arrays
+  duplicados.
+- **AC3** ✅ móvil con la MISMA evaluación (`MobileNav`/drawer/hubs; Cm/Zm/Dm/Bm en 390×844).
+- **AC4** ✅ grupos vacíos fuera (Z; secciones OPERATIVO/REVISIÓN/REPORTES/INTEGRACIÓN).
+- **AC5** ✅ backend autoridad: familia D-1 re-verificada (OFF → 0/404/403) + negativas de la
+  corrida (10/10 deep links D; C5; P1).
+- **AC6** ✅ dimensión UNIDAD completa (`T-040-23`/`AC-H02/03`): matriz 3D 4/4 + hub por unidad
+  + concesión/revocación + BU ON/OFF.
+
+Evidencia: `GA_FE_03_AUTHENTICATED_RUNTIME_EVIDENCE.md` · RED→GREEN en
+`GA_FE_03_RED_EVIDENCE.md` · reconciliación AC total en
+`GA_FE_03_CERTIFICATION_RECONCILIATION.md`.
