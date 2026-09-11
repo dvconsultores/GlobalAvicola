@@ -1974,3 +1974,20 @@ INTOCADO      R-184 técnico PRESERVADO (556.6 SUPERSEDED, no objetivo de regres
               BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED
               Fixtures retenidos: lotes 54-59 (L-R187-*) documentados en el ledger
 ```
+
+## GA-UAT-07 · R-187 CLOSED_OWNER_ACCEPTED — UAT DEL PROPIETARIO (OD-22) (2026-09-11)
+
+```
+DECISIÓN      A) «ACEPTO R-187» (respuesta explícita del propietario; sin observaciones)
+UAT           6/6 casos PASS con walkthrough de referencia (333.3 🟢; detalle=reporte;
+              refresh/relogin estables; móvil 390×844 overflow 0; 0 errores fatales)
+REGISTRO      audit/ga-uat-07/ (guía, observaciones, evidencia, índice C01-C07, ledger)
+              C1 paquete d1f9829 · C2 decisión/limpieza (aceptación)
+ESTADOS       R-187 = CLOSED_OWNER_ACCEPTED · OWNER_ACCEPTANCE PASS ·
+              OD-22 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED
+LIMPIEZA      concesión 141 revocada · operador 141 baja lógica · rol 71 desactivado ·
+              BU broiler OFF restaurada (4×OFF) · credenciales/temporales destruidos ·
+              ningún humano modificado
+INTOCADO      R-184/R-186 sin cambios · OBS-UAT-01 UX P2 · BU-D10 PENDING ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED · sin tranche nueva iniciada
+```

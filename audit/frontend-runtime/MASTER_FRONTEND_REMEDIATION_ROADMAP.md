@@ -211,3 +211,13 @@ OD-22 → RATIFIED_IMPLEMENTED (R-187 CLOSED · FUNCTIONALLY_CERTIFIED)
 Intactos: R-184 (técnica; 556.6 superseded), R-186 (G-05 5.1), GA-FE-02..07, OD-21,
      OBS-UAT-01 P2 · BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED.
 ```
+
+## Addendum fechado · 2026-09-11 · GA-UAT-07 (R-187 — UAT del propietario)
+
+```
+R-187 → CLOSED_OWNER_ACCEPTED · OWNER_ACCEPTANCE PASS (decisión A) · OD-22 =
+     RATIFIED_IMPLEMENTED_OWNER_ACCEPTED. UAT 6/6 (333.3 🟢; detalle=reporte;
+     refresh/relogin estables; móvil OK; 0 fatales). C1 d1f9829 · C2 decisión.
+     Limpieza verificada (4×OFF). Detalle: audit/ga-uat-07/.
+Sin tranche nueva. OBS-UAT-01 P2 · BU-D10 PENDING · Wave B PAUSED · Wave C/SAP NOT STARTED.
+```

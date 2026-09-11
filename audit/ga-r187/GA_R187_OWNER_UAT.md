@@ -1,6 +1,8 @@
 # GA-R187 · GUÍA DE UAT DEL PROPIETARIO
 
-Estado: **READY** — la UAT del propietario **no se inicia automáticamente**; se activará por su instrucción.
+Estado: **COMPLETADA — ACEPTADA (A, 2026-09-11, GA-UAT-07)** · registro: `audit/ga-uat-07/GA_OWNER_ACCEPTANCE_R187_RECORD.md`.
+
+*(Estado previo: READY — la UAT no se iniciaba automáticamente; se activó por instrucción del propietario.)*
 
 ## Qué validar (solo el resultado visible de negocio)
 

@@ -6,22 +6,22 @@ Fecha: 2026-09-11 · Tranche: R-187 (implementación de OD-22) · Commits: C1 `5
 
 ```
 R-187:
-CLOSED
+CLOSED_OWNER_ACCEPTED
 
 Technical:
 FUNCTIONALLY_CERTIFIED
 
 OD-22:
-RATIFIED_IMPLEMENTED
+RATIFIED_IMPLEMENTED_OWNER_ACCEPTED
 
 OWNER_UAT_REQUIRED:
-YES        (G-06 es USER_VISIBLE; el número mostrado cambia por decisión de negocio)
+YES — EJECUTADA (GA-UAT-07, 2026-09-11)
 
 OWNER_UAT_READY:
-YES
+YES (cerrada)
 
 Owner acceptance:
-PENDING     (no se auto-aprueba; §69)
+PASS — A) «ACEPTO R-187» (§38; registro: audit/ga-uat-07/GA_OWNER_ACCEPTANCE_R187_RECORD.md)
 ```
 
 ## Alcance certificado

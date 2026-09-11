@@ -41,6 +41,6 @@ Esta decisión es **prospectiva**: **NO reabre R-184** (CLOSED_OWNER_ACCEPTED) n
 
 ## 7. Estado final del registro
 
-**Actualización 2026-09-11 (tranche R-187): IMPLEMENTADA y certificada técnicamente** — `OD-22 = RATIFIED_IMPLEMENTED` · R-187 = **CLOSED · FUNCTIONALLY_CERTIFIED** · Owner UAT REQUIRED / READY (acceptance PENDING) · evidencia completa en `audit/ga-r187/`.
+**Actualización 2026-09-11 (tranches R-187 + GA-UAT-07): IMPLEMENTADA, certificada y ACEPTADA por el propietario** — `OD-22 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED` · R-187 = **CLOSED_OWNER_ACCEPTED** (decisión **A**; GA-UAT-07: 6/6 casos, sin observaciones) · evidencia: `audit/ga-r187/` + `audit/ga-uat-07/`.
 
 *(Estado al ratificar la decisión: `OD-22 = RATIFIED` — implementación no iniciada; se conserva como registro histórico de este documento.)*

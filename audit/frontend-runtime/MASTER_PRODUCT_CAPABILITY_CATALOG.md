@@ -266,3 +266,11 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
   250.0/300.0/249.9 · lote 11: 556.6→5.6 · UI detalle/reporte/refresh/relogin/móvil OK ·
   seguridad OD-16/RBAC PASS · G-05 5.1 intacto · GA-FE-07 spot 400.
 - Owner UAT REQUIRED/READY — acceptance PENDING. Detalle: `audit/ga-r187/`. C1 `5a32a6c` · C2 `f755baa`.
+
+## Addendum GA-UAT-07 (2026-09-11) · R-187 CLOSED_OWNER_ACCEPTED
+
+- **Decisión A) «ACEPTO R-187»** — UAT del propietario 6/6 (333.3 🟢 visible; clasificación
+  coherente con bandas intactas; detalle=reporte; refresh/relogin estables; móvil usable).
+- **OD-22 = RATIFIED_IMPLEMENTED_OWNER_ACCEPTED** · OWNER_ACCEPTANCE **PASS**.
+- Sin cambios de producto · limpieza verificada (BU 4×OFF; actor UAT destruido).
+  Detalle: `audit/ga-uat-07/`. C1 `d1f9829` · C2 decisión.

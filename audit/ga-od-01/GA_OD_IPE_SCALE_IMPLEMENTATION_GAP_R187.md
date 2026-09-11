@@ -37,6 +37,6 @@ Evidencia: `GA_OD_IPE_UNIT_ANALYSIS.md` (`CONFIRMED_100X_SCALE_CONFLICT`; ratio 
 
 ## Estado
 
-**`CLOSED`** (2026-09-11 — implementado en la tranche R-187: C2 `f755baa`; runtime E2E-01…14 PASS; evidencia `audit/ga-r187/`). Owner UAT: REQUIRED / READY — acceptance PENDING.
+**`CLOSED_OWNER_ACCEPTED`** (2026-09-11 — tranche R-187: C2 `f755baa`; runtime E2E-01…14 PASS; aceptación del propietario **GA-UAT-07 → A) «ACEPTO R-187»**; evidencia `audit/ga-r187/` + `audit/ga-uat-07/`).
 
-*(Histórico: abierto como P2 `OPEN` al ratificarse OD-22; sin implementar hasta la tranche R-187.)*
+*(Histórico: abierto como P2 `OPEN` al ratificarse OD-22; implementado en R-187; aceptado en GA-UAT-07.)*

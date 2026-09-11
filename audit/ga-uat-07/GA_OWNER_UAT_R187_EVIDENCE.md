@@ -46,18 +46,16 @@ Raw: `evidence/walkthrough-uat.json` · `evidence/setup-uat.json`.
 
 | UAT-01 | UAT-02 | UAT-03 | UAT-04 | UAT-05 | UAT-06 |
 |---|---|---|---|---|---|
-| **PENDIENTE** | **PENDIENTE** | **PENDIENTE** | **PENDIENTE** | **PENDIENTE** | **PENDIENTE** |
+| **PASS** | **PASS** | **PASS** | **PASS** | **PASS** | **PASS (A)** |
 
 ## E · Observaciones del propietario
 
-**PENDIENTE** — ver `GA_OWNER_UAT_R187_OBSERVATIONS.md` (incluye notas técnicas pre-registradas N-1…N-3, no bloqueantes).
+**Sin observaciones.** Ver `GA_OWNER_UAT_R187_OBSERVATIONS.md` (N-1…N-3 permanecen como notas informativas sin acción).
 
 ## F · Decisión del propietario
 
-**PENDIENTE** — opciones válidas: A) ACEPTO R-187 · B) ACEPTO R-187 CON OBSERVACIONES · C) RECHAZO R-187 — CORREGIR.
-*(No se registra aceptación ficticia; este campo se completa solo con la respuesta explícita.)*
+**A) ACEPTO R-187** (2026-09-11) — OWNER_ACCEPTANCE: **PASS**. Registro: `GA_OWNER_ACCEPTANCE_R187_RECORD.md`.
 
-## G · Limpieza (tras la decisión)
+## G · Limpieza (ejecutada tras la decisión)
 
-Plan: revocar concesión · baja lógica del operador (141) · desactivar rol (71) · restaurar **BU broiler OFF (4×OFF)** · destruir credenciales `~/ga_uat07_credentials.txt` y temporales · preservar todo `audit/`, evidencia R-187, decisión OD-22, R-184/R-186 y aceptaciones previas · ningún usuario humano modificado.
-**Estado: PENDIENTE hasta la decisión.**
+Concesión 141→broiler **revocada (200)** · usuario 141 **baja lógica (204)** · rol 71 **desactivado (200)** · **BU broiler OFF restaurada — catálogo 4×OFF verificado** · credenciales `~/ga_uat07_credentials.txt` y temporales **destruidos** · admin verificado operativo · **ningún usuario humano modificado** · evidencia preservada. Raw: `evidence/cleanup-uat.json`.
