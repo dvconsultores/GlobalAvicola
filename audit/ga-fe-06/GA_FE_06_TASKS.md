@@ -29,11 +29,11 @@
 | A3 | Corrección de estado (R-182 SECURITY_REMEDIATION_REQUIRED · GA-FE-06 PARTIAL · UAT_READY NO) | ✔ |
 | A4 | Enmienda de spec + SEC-AC01…08 + checklist | ✔ |
 | A5 | RED: suite PG `test_lot_area_ownership.py` + captura runtime pre-fix (201/200/500) | ✔ |
-| A6 | Commit C5 gobernanza + push | ○ |
-| A7 | Implementación: validador canónico en alta y edición (sin migración/permisos/endpoints) | ○ |
-| A8 | GREEN local: gates backend PG-libre + frontend (vitest/tsc/build) | ○ |
-| A9 | Commit C6 + push + despliegue automático + congelar generación | ○ |
-| A10 | E2E runtime: negativos (alta/edición/inexistente), positivos (misma empresa/NULL), matriz tenant/BU/RBAC, selector desktop/móvil, SLA datos+regla | ○ |
-| A11 | Higiene: revokes, BU OFF, usuarios/roles off, áreas baja, credenciales destruidas | ○ |
-| A12 | Recertificación R-182 completa + evidencias + addendum auditoría + backlog | ○ |
+| A6 | Commit C5 gobernanza + push | ✔ (`b48e4ea`) |
+| A7 | Implementación: validador canónico en alta y edición (sin migración/permisos/endpoints) | ✔ |
+| A8 | GREEN local: gates backend PG-libre + frontend (vitest/tsc/build) | ✔ (7/7 · 278/278 · 0 · PASS) |
+| A9 | Commit C6 + push + despliegue automático + congelar generación | ✔ (`69d0c95` · observado) |
+| A10 | E2E runtime: negativos (alta/edición/inexistente), positivos (misma empresa/NULL), matriz tenant/BU/RBAC, selector desktop/móvil, SLA datos+regla | ✔ |
+| A11 | Higiene: revokes, BU OFF, usuarios/roles off, áreas baja, credenciales destruidas | ✔ |
+| A12 | Recertificación R-182 completa + evidencias + addendum auditoría + backlog | ✔ |
 | A13 | Commit C7 evidencia + verificación final + informe §41 + STOP | ○ |

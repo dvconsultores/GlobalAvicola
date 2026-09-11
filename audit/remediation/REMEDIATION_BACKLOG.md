@@ -1728,3 +1728,38 @@ CAMBIO        backend 0 · migración 0 · permisos 0 · expansión 0
 INTOCADO: `R-98`/`R-119`/`R-181` CLOSED sin regresión · BU-D10 PENDING_RATIFICATION ·
 Wave B PAUSADA · Wave C / SAP no iniciados · GA-FE-06 = FUNCTIONALLY_CERTIFIED /
 OWNER_ACCEPTANCE_PENDING (paquete UAT emitido).
+
+---
+
+## GA-FE-06-A · R-182 SEGURIDAD DE ÁREA — RE-CERRADO (2026-09-11)
+
+```
+ORDEN         Remediación directa del defecto de propiedad de área entre empresas
+              (subhallazgo N-1/R-183), requerida para cerrar R-182.
+CORRECCIÓN    Estado previo corregido: R-182 SECURITY_REMEDIATION_REQUIRED ·
+              GA-FE-06 PARTIAL · OWNER_UAT_READY NO (addendum, sin reescribir historia).
+COMMITS       C5 b48e4ea (gobernanza+RED) → C6 69d0c95 (backend) → C7 (evidencia)
+GENERACIÓN    backend 69d0c95 (despliegue observado 500→502→400) · bundle sin cambio
+              index-DcqmSs-R.js
+CAMBIO        backend/app/lots/service.py (+24): alta y edición validan pertenencia
+              del área con `verificar_catalogo_de_empresa` (R-179; BR-07; fail-closed)
+RUNTIME       ajena alta 201→400 · ajena edición 200→400 · inexistente 500→400 ·
+              positiva/NULL ALLOW · sin persistencia · sin auditoría de éxito ·
+              sin fuga (400 idéntico para inexistente y ajena)
+GATES         PG-libre 7/7 · vitest 278/278 · tsc 0 · build PASS · suite nueva
+              `tests/test_lot_area_ownership.py` (PG/CI)
+HIGIENE       revokes + BU 4×OFF + usuarios 120-122 baja + roles 54/55 off +
+              áreas 4/5 baja + credenciales destruidas
+```
+
+### Disposición de hallazgos
+
+- **`R-183` → ABSORBED_IN_R182** (clasificación A): misma clase ya gobernada por
+  `GA-REM-002`/`R-42`/`R-139`/`R-179`; el sitio `lots.area_id` era el hueco. **No se crea
+  entrada independiente** (sin deuda duplicada). Evidencia: `audit/ga-fe-06-a/`.
+- **`R-184` → SEPARATE / UNCHANGED** (no bloquea R-182; no implementado aquí).
+- N-3/N-4: sin cambio.
+
+**`R-182 = CLOSED` · `GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` ·
+`OWNER_UAT_READY = YES`.** R-98/R-119/R-181 CLOSED · BU-D10 PENDING_RATIFICATION ·
+Wave B PAUSADA · Wave C/SAP no iniciados. Owner UAT **no ejecutado** en esta tranche.

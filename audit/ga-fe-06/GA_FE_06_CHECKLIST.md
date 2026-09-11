@@ -34,10 +34,11 @@
 - [x] Corrección de estado (R-182 SECURITY_REMEDIATION_REQUIRED · GA-FE-06 PARTIAL · OWNER_UAT_READY NO)
 - [x] Enmienda de spec (SEC-AC01…08) + checklist + tareas
 - [x] RED: suite PG escrita + captura runtime pre-fix (201 alta / 200 edición / 500 inexistente)
-- [ ] C5 gobernanza + push
-- [ ] Implementación validador canónico (`verificar_catalogo_de_empresa`) en alta y edición
-- [ ] GREEN local (gates) + C6 + despliegue + generación congelada
-- [ ] E2E runtime: DENY alta · DENY edición · sin persistencia · sin auditoría de éxito · sin fuga · ALLOW misma-empresa · NULL · inexistente 400/BR-07
-- [ ] Matriz tenant/BU/RBAC (incl. global con ventana OFF) + selector desktop/móvil + SLA datos/regla + regresiones GA-FE-02/03/04/05
-- [ ] Higiene §101 + credenciales destruidas
-- [ ] Recertificación R-182 completa + evidencias + addendum + C7 + informe §41 + STOP
+- [x] C5 gobernanza + push (`b48e4ea`)
+- [x] Implementación validador canónico (`verificar_catalogo_de_empresa`) en alta y edición
+- [x] GREEN local (gates) + C6 `69d0c95` + despliegue observado + generación congelada
+- [x] E2E runtime: DENY alta · DENY edición · sin persistencia · sin auditoría de éxito · sin fuga · ALLOW misma-empresa · NULL · inexistente 400/BR-07
+- [x] Matriz tenant/BU/RBAC (incl. global con ventana OFF; negativos re-ejecutados con token propio) + selector desktop/móvil + SLA datos/regla + regresiones GA-FE-02/03/04/05
+- [x] Higiene §101 + credenciales destruidas
+- [x] Recertificación R-182 completa + evidencias + addendum + backlog
+- [ ] C7 evidencia + informe §41 + STOP

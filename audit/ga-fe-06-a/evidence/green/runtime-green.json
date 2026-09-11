@@ -1,0 +1,79 @@
+{
+  "tranche": "GA-FE-06-A",
+  "phase": "GREEN",
+  "when": "2026-09-11T14:23:31.042Z",
+  "steps": {
+    "foreign_create": {
+      "http": 400,
+      "detail": "Área no encontrado",
+      "rule": "BR-07",
+      "raw": "{\"detail\":\"Área no encontrado\",\"rule\":\"BR-07\"}",
+      "no_persistencia": true
+    },
+    "same_company_create": {
+      "http": 201,
+      "id": 32,
+      "area": 4,
+      "pld": "2026-09-12T00:00:00Z"
+    },
+    "null_create": {
+      "http": 201,
+      "id": 33,
+      "area": null
+    },
+    "unknown_area": {
+      "http": 400,
+      "detail": "Área no encontrado",
+      "rule": "BR-07"
+    },
+    "foreign_update": {
+      "http": 400,
+      "detail": "Área no encontrado",
+      "rule": "BR-07",
+      "fresh_area": 4
+    },
+    "own_update_control": {
+      "http": 200
+    },
+    "audit": {
+      "positivos": 1,
+      "ajenos": 0
+    },
+    "bu_off": {
+      "http": 403,
+      "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+    },
+    "global_bu_off": {
+      "http": 403,
+      "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+    },
+    "user_bu_no": {
+      "http": 201
+    },
+    "rbac_no": {
+      "http": 201
+    },
+    "sla_notifications": {
+      "total": 0
+    },
+    "ui_selector": {
+      "options": [
+        "Seleccionar área...",
+        "Nave Norte (GA-FE-06)",
+        "Nave Sur (GA-FE-06)",
+        "Nave Operativa (GA-FE-06-A)"
+      ],
+      "propia": true,
+      "ajena": false
+    },
+    "ui_rbac_guard": {
+      "path": "/lots/new",
+      "fail_closed": true
+    },
+    "ui_selector_mobile": {
+      "propia": true,
+      "ajena": false
+    },
+    "ui_console_errors": 0
+  }
+}

@@ -197,3 +197,13 @@ IMPLEMENTED_AND_VISIBLE ........ 5 → 6  (CAP-ADM-06 «Navegación adaptada a p
 - `R-98`/`R-119`/`R-181`: CLOSED sin regresión. `BU-D10`: PENDING_RATIFICATION. Wave B:
   PAUSED · Wave C/SAP: NOT STARTED. Detalle: `GA_FE_06_ADDENDUM_LOT_CONTRACT_SLA.md` y
   `audit/ga-fe-06/GA_FE_06_CERTIFICATION.md`.
+
+## Addendum GA-FE-06-A (2026-09-11) · backend `69d0c95` · bundle `index-DcqmSs-R.js`
+
+- **Seguridad de área entre empresas (subhallazgo N-1/R-183) → CERRADA dentro de R-182**:
+  alta y edición de lote validan la pertenencia del área (`verificar_catalogo_de_empresa`;
+  `BR-07`; fail-closed). Runtime: ajena **DENY** (400) en alta y edición; inexistente 400
+  (antes 500); positiva/NULL ALLOW; sin persistencia/auditoría de éxito/fuga.
+- `R-183`: **ABSORBED_IN_R182** (sin entrada independiente). `R-184`: SEPARATE/UNCHANGED.
+- **`R-182 = CLOSED` · `GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` ·
+  `OWNER_UAT_READY = YES`** (Owner UAT no ejecutado). Detalle: `audit/ga-fe-06-a/`.

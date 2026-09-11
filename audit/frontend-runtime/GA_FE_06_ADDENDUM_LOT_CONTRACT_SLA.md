@@ -34,3 +34,11 @@ Fecha: 2026-09-11 · Generación: `index-DcqmSs-R.js` (entrada `index-WUv1-F9o.j
 - El aviso real del SLA depende del ciclo horario del escáner; el cierre documenta `PENDING_SCAN_WINDOW` si no corrió (sin forzarlo ni reimplementar la regla).
 - La suite canónica del SLA (`tests/test_lot_planned_close.py`) requiere PG: corre en CI, no en local (declarado).
 - N-1/N-2 son defectos **preexistentes** de backend ajenos a R-182; se registran con evidencia viva para decisión del programa (disciplina de alcance).
+
+---
+
+# ADDENDUM GA-FE-06-A (2026-09-11) · `69d0c95` backend · bundle `index-DcqmSs-R.js`
+
+- **N-1/R-183 → remediado dentro de R-182** (absorbido): el alta **y** la edición de lote validan la pertenencia del área con el validador canónico `tenancy.verificar_catalogo_de_empresa` (semántica `R-179`: nulo=compartida; ajeno=inexistente; `BR-07`; fail-closed sin empresa). Cero migración · cero permiso · cero endpoint · SLA intacto · frontend 0 cambios.
+- Runtime: alta ajena **400** (antes 201), edición ajena **400** (antes 200), inexistente **400** (antes 500); controles positiva/NULL ALLOW; sin persistencia ni auditoría de éxito; selector UI/móvil sin área ajena (evidencia `audit/ga-fe-06-a/`).
+- Suite nueva `tests/test_lot_area_ownership.py` (PG, CI) — gate de regresión permanente. `R-184` y N-3/N-4 sin cambio. **R-182 = CLOSED · GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING · OWNER_UAT_READY = YES.**

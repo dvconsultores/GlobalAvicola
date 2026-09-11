@@ -110,7 +110,9 @@ T3 · GA-FE-05 (envío/reenvío a revisión, R-181) → CLOSED / CERTIFIED / OWN
 T3 · GA-FE-06 (contrato de alta de lote, R-182) → CLOSED / CERTIFIED / OWNER_ACCEPTANCE_PENDING
      Entrega: planned_close_date + area_id capturados→enviados→persistidos→visibles; selector
      de área por empresa; SLA «lote próximo a cierre» con fuente reparada (§3 capas de evidencia).
-     Candidatos nuevos: R-183 (area_id ajeno por API) · R-184 (kpi/ipe 500) + N-3/N-4.
+     GA-FE-06-A (seguridad): el backend deniega área de otra empresa en alta y edición
+     (`BR-07`, fail-closed); N-1/R-183 absorbido y cerrado. Pendiente Owner UAT.
+     R-184 (kpi/ipe 500): SEPARATE/UNCHANGED.
 ```
 
 BU-D10 sigue PENDING_RATIFICATION · Wave B PAUSED · Wave C/SAP NOT STARTED.

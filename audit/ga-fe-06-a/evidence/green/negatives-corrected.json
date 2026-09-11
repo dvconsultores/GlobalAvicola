@@ -1,0 +1,34 @@
+{
+  "tranche": "GA-FE-06-A",
+  "phase": "GREEN-negatives-corrected",
+  "when": "2026-09-11T14:24:45.283Z",
+  "note": "Primera corrida tuvo un bug de arnés (helper sin parámetro de token); estos son los negativos ejecutados con el token correcto de cada actor.",
+  "user_bu_no": {
+    "actor": "ga6a.sinventana",
+    "http": 403,
+    "body": {
+      "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+    }
+  },
+  "rbac_no": {
+    "actor": "ga6a.rbac",
+    "http": 403,
+    "body": {
+      "detail": "Permiso requerido: lots:create"
+    }
+  },
+  "global_bu_off": {
+    "actor": "admin-scoped (empresa 1)",
+    "http": 403,
+    "body": {
+      "detail": "sin empresa efectiva con unidades de negocio habilitadas"
+    }
+  },
+  "f_bu_off": {
+    "actor": "ga6a.operador (F)",
+    "http": 403,
+    "body": {
+      "detail": "sin acceso operativo a la unidad de negocio 'broiler'"
+    }
+  }
+}

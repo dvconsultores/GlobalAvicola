@@ -53,3 +53,22 @@ El veredicto anterior de esta página queda **histórico**: la evidencia runtime
 | Owner UAT | **NO iniciado** |
 
 Remediación en curso bajo `GA-FE-06-A` (enmienda de spec + RED + invariante backend `LOT.COMPANY = AREA.COMPANY` + recertificación runtime). El estado final se registrará en `GA_FE_06_A_*` y en el re-veredicto de esta página al cierre (sin reescribir este addendum).
+
+---
+
+# RE-VEREDICTO FINAL GA-FE-06-A (2026-09-11) — tras la remediación de seguridad
+
+| Criterio (§35 del encargo) | Estado |
+|---|---|
+| `planned_close_date` (captura→payload→persistencia→visible) | **PASS** (GA-FE-06; sin cambios en esta tranche) |
+| `area_id` UI / persistencia | **PASS** |
+| **Área ajena: backend deniega (alta y edición)** | **PASS** — `400 BR-07`, sin persistencia, sin auditoría de éxito, sin fuga (runtime `69d0c95`) |
+| Control misma-empresa / NULL / inexistente | **PASS / PASS / PASS** (400/BR-07, no 500) |
+| SLA fuente · regla | **PASS · PASS canónico** (suite canónica; lógica intacta) · scheduler window **NOT_OBSERVED** (declarado) |
+| Inquilino · BU · RBAC · global sin ventana | **PASS** (403 canónicos; negativos corregidos con token propio) |
+| Desktop · móvil · ES/EN (sin cambios de producto) | **PASS** (selector propio visible · ajeno ausente en ambos) |
+| Regresiones GA-FE-02/03/04/05 (R-98/R-119/R-181) | **PASS** (vitest 278/278 + guard RBAC vivo) |
+| Gates: PG-libre 7/7 · lotes/áreas 24 skipped (PG, decl.) · tsc 0 · build PASS | **PASS** |
+
+**Veredicto vigente: `R-182 = CLOSED` · `GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` · `OWNER_UAT_READY = YES`.**
+Evidencia: `audit/ga-fe-06-a/` (dedup, backend, RED, runtime, red, ledger) · commits C5 `b48e4ea` · C6 `69d0c95` · C7 (este cierre). No se reescribió evidencia histórica.

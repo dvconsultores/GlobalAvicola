@@ -21,3 +21,16 @@ Respuestas directas, con evidencia ligada.
 ## Nota SLA (honestidad)
 
 El aviso `lot_near_close` lo produce una tarea interna con ciclo horario; no existe disparador manual. La tranche certifica: (a) los datos de origen existen y son exactos (runtime), (b) la regla `0..3 / active / NOT NULL` está cubierta por la suite canónica del repo (CI), (c) relectura de notificaciones al cierre documentando el resultado real (aviso capturado o `PENDING_SCAN_WINDOW`). **No se reimplementó la regla ni se forzó el escáner.**
+
+---
+
+# ADDENDUM GA-FE-06-A (2026-09-11) — cierre de seguridad
+
+El AC de pertenencia (ácron local AC11; **R182-AC20/R182-AC36** en la numeración del encargo) pasó de PARTIAL a **PASS**:
+
+- Alta con área ajena: **400 `{"detail":"Área no encontrado","rule":"BR-07"}`**, sin persistencia, sin auditoría de éxito (runtime `69d0c95`).
+- Edición a área ajena: íd.; fresh GET conserva el área propia.
+- Misma-empresa y NULL: ALLOW (controles). Área inexistente: 400 BR-07 (antes 500).
+- R-183: **absorbido en R-182** (subhallazgo de seguridad; `GA_FE_06_A_R183_DEDUP.md`). R-184: separate, non-blocking, sin cambios.
+
+Con esto, **R-182 = CLOSED** (0 residuales de seguridad) y `GA-FE-06 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING`.
