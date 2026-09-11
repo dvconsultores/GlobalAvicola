@@ -92,3 +92,15 @@ Roles temporales creados ........ 3 (36/37/38 · solo permisos canónicos)
 Rol canónico 35 ................. intacto y activo (4 permisos exactos)
 Credenciales en repo/docs ....... 0
 ```
+
+## Adenda GA-FE-02-E (rerun final) — fixtures e
+
+```
+Usuarios sintéticos creados ..... 5 (77–81: ga-fe02e-a/b/c/d en empresa 1 · x en empresa 3)
+Roles temporales ................ reutilizados 36/37/38 (reactivados por PUT y desactivados al cierre)
+B ............................... rol canónico 35 (4 permisos exactos; sin asignaciones humanas)
+Logins independientes 200 ....... 5/5 (/me 200; concesiones visibles en /me)
+Bajas al cierre ................. 5/5 (DELETE /users/{id} → 204; login posterior 403)
+Rol canónico 35 ................. intacto (activos = 14 canónicos)
+Credenciales en repo/docs ....... 0 (efímeras, solo /tmp 600, destruidas al cierre)
+```

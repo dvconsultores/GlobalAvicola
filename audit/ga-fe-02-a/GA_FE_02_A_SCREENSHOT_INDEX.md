@@ -35,3 +35,33 @@ Desktop ............. 16 (1440×900)
 Móvil ............... 5  (390×844)
 Con secretos ........ 0
 ```
+
+## GA-FE-02-E · recertificación final (2026-09-11) — `audit/ga-fe-02-e/evidence/` (20)
+
+| Archivo | Viewport | Escenario | Qué muestra |
+|---|---|---|---|
+| `E2E01_selector.png` | 1440×900 | E2E-01 (E) | Selector visible con empresas; contexto aplicado |
+| `E2E01_switched.png` | 1440×900 | E2E-01 | Tras switch a Avícola Global C.A. (200) |
+| `E2E01_refresh.png` | 1440×900 | E2E-01/D1/F4 | **Hard refresh** sin forbidden; contexto persistido |
+| `E2E01b_back.png` | 1440×900 | E2E-01b | Switch c1→c3→c1 de vuelta |
+| `E2E02_four_units.png` | 1440×900 | E2E-02 | 4 unidades canónicas, todas «Inactiva» |
+| `E2E02_enable_dialog.png` | 1440×900 | E2E-02 | Diálogo de confirmación (verbo «Activar») |
+| `E2E02_enabled.png` | 1440×900 | E2E-02 | Engorde «Activa» tras confirmar |
+| `E2E03_disabled.png` | 1440×900 | E2E-03 | Engorde «Inactiva» tras desactivar |
+| `E2E04_before_grant.png` | 1440×900 | E2E-04 | C «No concedida» antes de conceder |
+| `E2E04_after_grant.png` | 1440×900 | E2E-04 | C «Concedida» tras conceder |
+| `E2E05_revoked.png` | 1440×900 | E2E-05 | C «No concedida» tras revocar |
+| `E2E06_candidates_self_excluded.png` | 1440×900 | E2E-06 | Lista de candidatos sin el propio B |
+| `E2E08_forbidden.png` | 1440×900 | E2E-08 (D) | Ruta protegida: «No tiene permiso…» |
+| `E2E10_unit_inactive_notice.png` | 1440×900 | E2E-10 | Aviso de unidad inactiva (sin implicar acceso) |
+| `MX4_granted_state.png` | 1440×900 | MX-4 | Estado «Concedida» reconciliado tras refresh |
+| `MOBILE_A_four_units.png` | 390×844 | móvil (A) | 4 unidades visibles, sin overflow (delta=0) |
+| `MOBILE_A_disabled.png` | 390×844 | móvil (A) | Engorde «Inactiva» en móvil |
+| `MOBILE_A_enabled.png` | 390×844 | móvil (A) | Engorde «Activa» en móvil |
+| `MOBILE_B_grant_state.png` | 390×844 | móvil (B) | C «Concedida» + «Revocar» en móvil |
+| `MOBILE_B_revoked.png` | 390×844 | móvil (B) | C «No concedida» tras revocar en móvil |
+
+```
+Capturas GA-FE-02-E ... 20 · Desktop 15 (1440×900) · Móvil 5 (390×844)
+Con secretos .......... 0 (ninguna captura contiene credenciales ni tokens)
+```

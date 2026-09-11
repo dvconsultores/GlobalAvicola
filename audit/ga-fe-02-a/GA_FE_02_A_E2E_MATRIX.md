@@ -163,3 +163,15 @@ FAIL ........................................... 0
 BLOCKED_AUTH / BLOCKED_FIXTURE ................. 0 (histórico de intentos previos, superado)
 Sin transitividad / sin combinación con corridas previas ...... CONFIRMADO
 ```
+
+---
+
+## RERUN FINAL · GA-FE-02-E (2026-09-11) — sin transitividad
+
+Repetición **completa** de esta matriz contra la generación corregida (`ccb47b5` · bundle
+`index-B2-tZnkI.js` · backend con `9ffc5ec`), desde cero y con fixtures nuevos (e: 77–81):
+E2E-01…10 desktop **46/46 PASS** · móvil **10/10 PASS** · matriz 3D **4/4** · D-1 (E-global
+lectura) **ya no es incidencia**: `PASS` estricto con **read DENY total** con CBU OFF. Las
+incidencias D-2/D-3/D-4 se mantienen documentadas en backlog sin cambio (no bloqueantes; sin
+reapertura en esta tranche). Resultados por escenario en
+`audit/ga-fe-02-e/GA_FE_02_E_FINAL_GENERATION_RECERTIFICATION.md` §5–§13.

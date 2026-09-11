@@ -61,3 +61,21 @@ Secretos capturados ........ 0 (registro solo de método/ruta/estado/cuerpo sem�
 Cabeceras registradas ...... ninguna
 Tokens en documentos ....... 0
 ```
+
+## RERUN GA-FE-02-E (2026-09-11) — red de la recertificación final
+
+Captura automática por contexto (Playwright local + batería API) sobre la generación corregida:
+
+```
+Mutaciones UI desktop (A) .... PATCH enable/disable broiler 1× por acción (S2/S5/S7; toasts+refetch)
+Mutaciones UI desktop (B) .... POST/DELETE concesiones 1× por acción (grant C · revoke C · MX-3 D · MX-4 C)
+Mutaciones UI móvil .......... disable/enable ×2 (A) · revoke ×1 (B) — 1× por acción
+Batería API (global) ......... PATCH disable(OFF)/enable(ON)/disable(restore) — 3, sin duplicados
+Denegaciones ................. 403 auto-concesión · 404 cross-company · 403×4 (D) · 403 write global
+Refresh/relogin .............. 5 refrescos sin forbidden · C relogin ALLOW tras grant · DENY tras revoke
+Persistencia ................. cada mutación verificada con GET fresco + refresh (0 estados falsos)
+Secretos capturados .......... 0 (solo método/ruta/estado/cuerpo semántico)
+Cabeceras/tokens en docs ..... 0
+```
+
+Detalle en `audit/ga-fe-02-e/GA_FE_02_E_FINAL_GENERATION_RECERTIFICATION.md` §12.

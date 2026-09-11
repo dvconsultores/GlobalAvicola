@@ -57,3 +57,22 @@ BU-D10 ............................ OBSERVED_RUNTIME_BEHAVIOR: con CBU OFF y con
                                     la fila se conserva con is_effective=false (rehabilitar la
                                     devuelve — AC-A06). OWNER_RATIFIED_POLICY: NONE.
 ```
+
+## Adenda GA-FE-02-E (rerun final) — libro de datos
+
+| Familia | Tabla | IDs | Creación | Restauración | Estado final |
+|---|---|---|---|---|---|
+| Usuarios sintéticos e | `users` | 77–81 | `POST /users` oficiales | baja al cierre (`DELETE` → `is_active=false`; login posterior **403**) | inactivos |
+| Roles temporales | `roles` | 36/37/38 | reactivados (`PUT /roles/{id}`) | desactivados (`is_active=false`) | inactivos |
+| Rol canónico | `roles` | 35 | — (no tocado) | — | activo, idéntico |
+| CBU toggles | `company_business_units` | broiler | UI/API oficiales (enable×3/disable×3) | 4×OFF al cierre | OFF (4/4) |
+| Concesiones B | `user_business_units` | e10/e11/e12 (C/D) | grant/revoke por UI/API/móvil (6 ops) | revocadas; filas conservadas (`revoked_at`) | 0 vivas |
+| Escritura global | intento | — | **403** (R-163) — sin fila | — | n/a |
+| Auditoría | `audit_logs` | — | +8 `config_change` (A×5 + global×3) · +6 `permission_change` (B×6) | append-only | conservada |
+
+```
+Datos de negocio reales tocados .. 0
+Usuarios humanos modificados ...... 0
+Eliminaciones ..................... 0 (baja lógica + historia conservada)
+Credenciales en este ledger ....... 0
+```

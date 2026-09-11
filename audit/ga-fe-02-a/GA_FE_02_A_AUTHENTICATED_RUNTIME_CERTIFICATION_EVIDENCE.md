@@ -287,3 +287,20 @@ superficies productivas; ON → solo las habilitadas** (batería 21/21 · MX 12/
 bundle estable). Estado final: `GA-FE-02 = FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` ·
 `OWNER_UAT_READY=YES`. La excepción fase-3/`GA-REM-002` queda **superada para LECTURAS
 productivas**; la escritura (`R-163`) y el plano de control permanecen intactos.
+
+---
+
+## 48 · Addendum GA-FE-02-E (2026-09-11) — RECERTIFICACIÓN FINAL sobre la generación corregida
+
+Tras los cambios de producto de GA-FE-02-D (`9ffc5ec`), se ejecutó **un rerun completo de
+GA-FE-02-A desde cero** contra la generación desplegada (`ccb47b5`, bundle
+`index-B2-tZnkI.js`), sin transitividad: preflight (TSC 0 · build ✓ · Vitest 205/205 · backend
+dirigido 7/7) · fixtures e (77–81; roles 36/37/38 reactivados/desactivados; rol 35 intacto) ·
+E2E-01…10 desktop **46/46** + móvil **10/10** · matriz 3D **4/4** · GLOBAL OFF read/write DENY ·
+refresh/relogin · regresión OD-16 familia completa **22/22** (OFF→0/404/403; ON→solo
+`L-BO-2026-05/06`) · auditoría 1:1 (A×5 · B×6 · actor global×3; denegadas → 0 filas) ·
+restauración total (CBU 4×OFF; usuarios 77–81 baja → login 403; sin concesiones vivas) ·
+restore §. Resultado: **`GA-FE-02-A: PASS_FINAL_GENERATION`** — `GA-FE-02:
+FUNCTIONALLY_CERTIFIED / OWNER_ACCEPTANCE_PENDING` · `OWNER_UAT_READY: YES`. Detalle:
+`audit/ga-fe-02-e/GA_FE_02_E_FINAL_GENERATION_RECERTIFICATION.md`. `GA-FE-03` no iniciada;
+`BU-D10` sigue `PENDING_RATIFICATION` (`OWNER_RATIFIED_POLICY: NONE`).
