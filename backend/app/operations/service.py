@@ -98,12 +98,15 @@ class OperationsService:
         return query.where(columna == self.company_id)
 
     async def _unidades(self) -> list[str]:
-        """Las cadenas efectivas de quien pregunta. Una vez por servicio."""
-        if self._unidades_cache is None:
-            from ..business_units.service import unidades_efectivas_por_id
+        """Las cadenas de lectura productiva de quien pregunta (`OD-16`). Una vez por servicio.
 
-            self._unidades_cache = await unidades_efectivas_por_id(
-                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+        La autoridad global lee por las **habilitadas** de la empresa — `GA-FE-02-D`.
+        """
+        if self._unidades_cache is None:
+            from ..business_units.service import unidades_de_alcance_productivo
+
+            self._unidades_cache = await unidades_de_alcance_productivo(
+                self.db, current_user=self.current_user, company_id=self.company_id
             )
         return self._unidades_cache
 
@@ -972,11 +975,10 @@ class OperationsService:
 
         Predicado **en la consulta**, antes de contar, ordenar o paginar: `lot_id IN
         lotes_alcanzables(empresa, unidades efectivas)`; cero unidades → `false()` → `[]`
-        (`OD-09.c`). La autoridad global conserva la visibilidad de control certificada en la
-        fase 3 (toda la empresa situada, unidades apagadas incluidas), igual que `get_events`.
+        (`OD-09.c`). Sin atajo para la autoridad global (`GA-FE-02-D` · `OD-16`): su alcance
+        son las unidades **habilitadas** de la empresa — es el mismo resolutor que usa
+        `get_events`, y así la alerta de una unidad apagada tampoco se lista para ella.
         """
-        if self.current_user.get("is_super_admin"):
-            return query
         from ..business_units.scope import lotes_alcanzables
 
         return query.where(models.OperationalAlert.lot_id.in_(
@@ -1019,20 +1021,20 @@ class OperationsService:
         # universal: da acceso a nada.
         #
         # `GA-REM-002-C` / `R-139` · `OD-14.c/d`: el predicado de empresa se aplica a
-        # **todos**, autoridad global incluida; sin empresa efectiva, cero filas. Lo único
-        # que sigue condicionado a no ser global es el predicado de **unidad**: la exención
-        # de visibilidad certificada en la fase 3 se preserva tal cual.
+        # **todos**, autoridad global incluida; sin empresa efectiva, cero filas. El
+        # predicado de **unidad** también se aplica a todos desde `GA-FE-02-D` (`OD-16`):
+        # la habilitación de la empresa es absoluta para el dato productivo; la autoridad
+        # global solo se salta la concesión de usuario (vía el resolutor de alcance).
         query = self._acotar_a_empresa(query, models.OperationalEvent.company_id)
-        if not self.current_user.get("is_super_admin"):
-            # `GA-REM-040` fase 6. La cadena del evento se deriva de su lote o se fijó a
-            # mano; lo que no tiene ninguna de las dos **no aparece aquí**: su superficie es
-            # la bandeja de pendientes, aparte. Mezclarlo en el listado normal obligaría a
-            # que cada consulta recordara la excepción del creador, y la que la olvidara
-            # abriría el sistema en silencio.
-            from ..business_units.classification import predicado_de_evento
+        # `GA-REM-040` fase 6. La cadena del evento se deriva de su lote o se fijó a
+        # mano; lo que no tiene ninguna de las dos **no aparece aquí**: su superficie es
+        # la bandeja de pendientes, aparte. Mezclarlo en el listado normal obligaría a
+        # que cada consulta recordara la excepción del creador, y la que la olvidara
+        # abriría el sistema en silencio.
+        from ..business_units.classification import predicado_de_evento
 
-            query = query.where(
-                predicado_de_evento(await self._unidades(), self.company_id))
+        query = query.where(
+            predicado_de_evento(await self._unidades(), self.company_id))
 
         if lot_id:
             query = query.where(models.OperationalEvent.lot_id == lot_id)
@@ -1085,11 +1087,12 @@ class OperationsService:
             models.OperationalEvent.id == event_id,
             models.OperationalEvent.company_id == self.company_id,
         )
-        if not self.current_user.get("is_super_admin"):
-            from ..business_units.classification import predicado_de_evento
+        # `GA-FE-02-D` · `OD-16`: sin atajo para la autoridad global — el detalle de un
+        # evento de una unidad apagada tampoco es alcanzable para ella.
+        from ..business_units.classification import predicado_de_evento
 
-            query = query.where(
-                predicado_de_evento(await self._unidades(), self.company_id))
+        query = query.where(
+            predicado_de_evento(await self._unidades(), self.company_id))
         result = await self.db.execute(query)
         event = result.scalar_one_or_none()
         if not event:

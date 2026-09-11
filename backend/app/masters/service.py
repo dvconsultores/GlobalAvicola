@@ -104,13 +104,17 @@ class MasterService:
         Separarlos daría dos alcances distintos en la misma consulta y nadie sabría cuál
         manda.
 
-        El Super Administrador queda fuera igual que del filtro de empresa: su semántica
-        está certificada en `GA-REM-002` y esta fase no la reabre. Queda declarado en la
-        evidencia como excepción, no como descuido.
+        El Super Administrador **ya no queda fuera** (`GA-FE-02-D` · `OD-16`, ratificado por
+        el propietario): la habilitación de la empresa es absoluta para el dato productivo
+        también para la autoridad global, así que el predicado se aplica con **su** alcance
+        —las unidades habilitadas de la empresa, resueltas por
+        `unidades_de_alcance_productivo`—. La excepción de la fase 3 («certificada en
+        `GA-REM-002`») queda superada en LECTURAS productivas: una certificación anterior no
+        anula una decisión posterior del propietario.
         """
         from ..business_units.scope import predicado
 
-        if self.unidades is None or self.is_super_admin:
+        if self.unidades is None:
             return query
         condicion = predicado(self.model, self.unidades)
         return query if condicion is None else query.where(condicion)

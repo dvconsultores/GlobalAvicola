@@ -19,12 +19,17 @@ class ReportsService:
         self._unidades_cache = None
 
     async def _unidades(self) -> list[str]:
-        """Las unidades efectivas de quien pregunta. Una vez por servicio."""
-        if self._unidades_cache is None:
-            from ..business_units.service import unidades_efectivas_por_id
+        """El alcance de lectura productiva de quien pregunta (`OD-16` · `GA-FE-02-D`).
 
-            self._unidades_cache = await unidades_efectivas_por_id(
-                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+        La autoridad global lee por las **habilitadas** de la empresa (la concesión no se le
+        exige; la habilitación jamás se salta): con todo apagado, los indicadores no
+        alcanzan ningún lote.
+        """
+        if self._unidades_cache is None:
+            from ..business_units.service import unidades_de_alcance_productivo
+
+            self._unidades_cache = await unidades_de_alcance_productivo(
+                self.db, current_user=self.current_user, company_id=self.company_id
             )
         return self._unidades_cache
 
@@ -39,7 +44,7 @@ class ReportsService:
         Responde `404`, como el detalle del lote, para no distinguir «no existe» de «no es
         tuyo».
         """
-        if lot_id is None or self.current_user.get("is_super_admin"):
+        if lot_id is None:
             return
         from fastapi import HTTPException, status as _st
         from sqlalchemy import select as _select
@@ -59,8 +64,8 @@ class ReportsService:
         """Predicado para los agregados **sin** lote: solo los lotes alcanzables aportan."""
         from ..business_units.scope import lotes_alcanzables
 
-        if self.current_user.get("is_super_admin"):
-            return None
+        # `GA-FE-02-D` · `OD-16`: la autoridad global no queda fuera del filtro — su
+        # alcance son las unidades habilitadas (agregados a cero con todo apagado).
         return lotes_alcanzables(self.company_id, await self._unidades())
 
     # ============================================================

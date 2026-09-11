@@ -15,20 +15,21 @@ class DashboardService:
         self._unidades_cache = None
 
     async def _lotes(self):
-        """Subconsulta de lotes alcanzables, o `None` si no procede acotar.
+        """Subconsulta de lotes alcanzables (`OD-16`: también para la autoridad global).
 
-        `GA-REM-040` fase 4. El panel es el agregado de empresa por excelencia: sus
-        contadores y su tendencia sumaban toda la compañía, y `lots_by_type` llegaba a
-        **nombrar** las cadenas ajenas con su recuento — una fuga de dimensión, que no
-        enseña ninguna fila y sin embargo dice que existen y cuántas hay.
+        `GA-REM-040` fase 4 · `GA-FE-02-D`. El panel es el agregado de empresa por
+        excelencia: sus contadores y su tendencia sumaban toda la compañía, y `lots_by_type`
+        llegaba a **nombrar** las cadenas ajenas con su recuento — una fuga de dimensión,
+        que no enseña ninguna fila y sin embargo dice que existen y cuántas hay. La
+        autoridad global quedaba exenta (fase 3); `OD-16` la somete a la misma puerta: su
+        alcance son las unidades **habilitadas** de la empresa, así que con todo apagado
+        los agregados son cero y con una encendida solo ella suma.
         """
-        if self.current_user.get("is_super_admin"):
-            return None
         if self._unidades_cache is None:
-            from ..business_units.service import unidades_efectivas_por_id
+            from ..business_units.service import unidades_de_alcance_productivo
 
-            self._unidades_cache = await unidades_efectivas_por_id(
-                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+            self._unidades_cache = await unidades_de_alcance_productivo(
+                self.db, current_user=self.current_user, company_id=self.company_id
             )
         from ..business_units.scope import lotes_alcanzables
 

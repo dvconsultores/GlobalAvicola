@@ -136,13 +136,14 @@ class ReviewService(SegregacionMixin):
         Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su
         ritmo aunque no se abra ninguno.
         """
-        if self.current_user.get("is_super_admin"):
-            return []
         from ..business_units.classification import predicado_de_evento
-        from ..business_units.service import unidades_efectivas_por_id
+        from ..business_units.service import unidades_de_alcance_productivo
 
-        unidades = await unidades_efectivas_por_id(
-            self.db, user_id=self.current_user.get("id"), company_id=self.company_id)
+        # `GA-FE-02-D` · `OD-16`: sin atajo para la autoridad global — su alcance son las
+        # unidades habilitadas de la empresa (la concesión no se le exige; la habilitación
+        # jamás se salta).
+        unidades = await unidades_de_alcance_productivo(
+            self.db, current_user=self.current_user, company_id=self.company_id)
         return [predicado_de_evento(unidades, self.company_id)]
 
     # ============================================================
@@ -428,13 +429,14 @@ class ApprovalService(SegregacionMixin):
         Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su
         ritmo aunque no se abra ninguno.
         """
-        if self.current_user.get("is_super_admin"):
-            return []
         from ..business_units.classification import predicado_de_evento
-        from ..business_units.service import unidades_efectivas_por_id
+        from ..business_units.service import unidades_de_alcance_productivo
 
-        unidades = await unidades_efectivas_por_id(
-            self.db, user_id=self.current_user.get("id"), company_id=self.company_id)
+        # `GA-FE-02-D` · `OD-16`: sin atajo para la autoridad global — su alcance son las
+        # unidades habilitadas de la empresa (la concesión no se le exige; la habilitación
+        # jamás se salta).
+        unidades = await unidades_de_alcance_productivo(
+            self.db, current_user=self.current_user, company_id=self.company_id)
         return [predicado_de_evento(unidades, self.company_id)]
 
     # ============================================================
@@ -639,13 +641,14 @@ class ApprovalStepService:
         Una cola de revisión que muestre eventos de cadenas ajenas revela su volumen y su
         ritmo aunque no se abra ninguno.
         """
-        if self.current_user.get("is_super_admin"):
-            return []
         from ..business_units.classification import predicado_de_evento
-        from ..business_units.service import unidades_efectivas_por_id
+        from ..business_units.service import unidades_de_alcance_productivo
 
-        unidades = await unidades_efectivas_por_id(
-            self.db, user_id=self.current_user.get("id"), company_id=self.company_id)
+        # `GA-FE-02-D` · `OD-16`: sin atajo para la autoridad global — su alcance son las
+        # unidades habilitadas de la empresa (la concesión no se le exige; la habilitación
+        # jamás se salta).
+        unidades = await unidades_de_alcance_productivo(
+            self.db, current_user=self.current_user, company_id=self.company_id)
         return [predicado_de_evento(unidades, self.company_id)]
 
     async def get_steps(self) -> list[models.ApprovalStep]:

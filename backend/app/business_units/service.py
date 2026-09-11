@@ -123,6 +123,29 @@ async def unidades_efectivas_por_id(
     return sorted(filas)
 
 
+async def unidades_de_alcance_productivo(
+    db: AsyncSession, *, current_user: dict, company_id: Optional[int]
+) -> list[str]:
+    """El alcance de **lectura productiva** de quien pregunta. `GA-FE-02-D` · `OD-16`.
+
+    Para el actor de empresa es la lista efectiva de siempre —habilitada ∧ concedida viva—.
+    Para la **autoridad global**, la fase 3 declaró «sin filtro de unidad» (la excepción que
+    `GA-REM-002` amparaba); `OD-16` la prohíbe: la habilitación de la empresa es absoluta
+    para el dato productivo **también para ella**. Aquí se lee como lo que la **escritura**
+    ya aplica (`exigir_unidad_operativa`, `R-163`): se le exime la **concesión de usuario**
+    (`R-139 §6`), nunca la habilitación.
+
+    No sustituye a `unidades_efectivas` como contrato de sesión (`/me` informa la vista de
+    concesiones): este resolutor es el de las superficies productivas —lotes, eventos,
+    colas de revisión, panel y KPI— y su resultado viaja al predicado que acota la consulta
+    **antes** de contar y paginar.
+    """
+    if current_user.get("is_super_admin"):
+        return await unidades_habilitadas(db, company_id)
+    return await unidades_efectivas_por_id(
+        db, user_id=current_user.get("id"), company_id=company_id)
+
+
 async def unidades_concedidas(
     db: AsyncSession, *, user_id: Optional[int], company_id: Optional[int]
 ) -> list[str]:

@@ -61,16 +61,16 @@ class LotService:
         self._unidades_cache: Optional[list[str]] = None
 
     async def _unidades(self) -> list[str]:
-        """Las unidades efectivas de quien pregunta. `GA-REM-040` fase 3.
+        """El alcance de lectura productiva de quien pregunta (`OD-16`). Una vez por servicio.
 
-        Se resuelve una vez por servicio y no una vez por consulta: el alcance no cambia a
-        mitad de una petición, y repetir la consulta sería gasto sin garantía añadida.
+        La autoridad global lee por las **habilitadas** de la empresa (la concesión no se le
+        exige; la habilitación jamás se salta) — `GA-FE-02-D`.
         """
         if self._unidades_cache is None:
-            from ..business_units.service import unidades_efectivas_por_id
+            from ..business_units.service import unidades_de_alcance_productivo
 
-            self._unidades_cache = await unidades_efectivas_por_id(
-                self.db, user_id=self.current_user.get("id"), company_id=self.company_id
+            self._unidades_cache = await unidades_de_alcance_productivo(
+                self.db, current_user=self.current_user, company_id=self.company_id
             )
         return self._unidades_cache
 
