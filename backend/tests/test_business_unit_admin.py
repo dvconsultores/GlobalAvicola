@@ -315,25 +315,31 @@ async def test_deshabilitar_apaga_la_unidad(client, esc):
     assert await _habilitada(esc, esc["a"], "hatchery") is False
 
 
-async def test_deshabilitar_no_borra_las_concesiones_y_rehabilitar_las_devuelve(client, esc):
-    """`AC-A04` · `AC-A05` · `AC-A06`, y la razón de que `BU-D10` siga abierta.
+async def test_r188_deshabilitar_termina_y_rehabilitar_no_devuelve(client, esc):
+    """`OD-23` · `R-188`: apagar **termina** la concesión (marca, no borra); re-encender
+    **no** la devuelve; una concesión nueva la restaura.
 
-    Deshabilitar apaga la **efectividad** sin destruir la concesión. Que el ciclo completo
-    —apagar, comprobar que no es efectiva, encender, comprobar que vuelve— funcione sin
-    volver a conceder es lo que demuestra que no se ha borrado nada, y por tanto que ninguna
-    respuesta futura de `BU-D10` ha quedado cerrada por omisión.
+    Reemplaza la expectativa provisional (BU-D10: auto-reactivación `AC-A06`), superseded
+    por la decisión del propietario OD-23 = B.
     """
     assert await _efectivas(esc, esc["operario"]) == ["breeder"]
     vivas = await _concesiones_en_base(esc, esc["operario"], vivas=True)
 
     await client.patch("/api/v1/business-units/breeder/disable", headers=_token(esc["admin"]))
     assert await _efectivas(esc, esc["operario"]) == [], "deja de ser efectiva"
-    assert await _concesiones_en_base(esc, esc["operario"], vivas=True) == vivas, (
-        "y sigue escrita: deshabilitar no revoca")
+    assert await _concesiones_en_base(esc, esc["operario"], vivas=True) == 0, (
+        "OD-23: el apagado termina las concesiones vivas del ciclo")
+    assert await _concesiones_en_base(esc, esc["operario"]) == vivas, (
+        "terminar no borra: la historia sigue escrita")
 
     await client.patch("/api/v1/business-units/breeder/enable", headers=_token(esc["admin"]))
-    assert await _efectivas(esc, esc["operario"]) == ["breeder"], (
-        "`AC-A06`: vuelve sin volver a concederla")
+    assert await _efectivas(esc, esc["operario"]) == [], (
+        "re-encender no resucita accesos: hace falta concesión nueva")
+
+    r = await client.post(f"/api/v1/users/{esc['operario']}/business-units",
+                          headers=_token(esc["admin"]), json={"code": "breeder"})
+    assert r.status_code == 201, r.text
+    assert await _efectivas(esc, esc["operario"]) == ["breeder"], "con concesión nueva, sí"
 
 
 async def test_habilitar_dos_veces_es_idempotente(client, esc):
@@ -452,11 +458,12 @@ async def test_una_concesion_revocada_se_puede_volver_a_otorgar(client, esc):
     assert await _concesiones_en_base(esc, esc["sujeto"], vivas=False) == 2
 
 
-async def test_el_listado_separa_otorgada_de_efectiva(client, esc):
-    """`§65` · `AC-A05`. Una concesión viva sobre una unidad apagada **no** es efectiva.
+async def test_r188_el_listado_refleja_terminacion_y_efectividad(client, esc):
+    """`AC-A05` · `OD-23` (`R-188`): apagar **termina** la concesión del ciclo — el listado
+    la muestra con fecha de fin y `is_effective=False`, y el resolutor coincide.
 
-    Una pantalla que solo dijera «tiene Incubadora» mentiría, y quien administra decidiría
-    a ciegas.
+    (La observación provisional «viva pero no efectiva por unidad apagada» quedó superseded:
+    bajo `OD-23` la concesión viva desaparece al apagarse, marcada.)
     """
     await client.post(f"/api/v1/users/{esc['sujeto']}/business-units",
                       headers=_token(esc["admin"]), json={"code": "hatchery"})
@@ -467,8 +474,8 @@ async def test_el_listado_separa_otorgada_de_efectiva(client, esc):
                          headers=_token(esc["admin"]))
     assert r.status_code == 200, r.text
     fila = [c for c in r.json() if c["code"] == "hatchery"][0]
-    assert fila["revoked_at"] is None, "otorgada: no se ha revocado"
-    assert fila["is_effective"] is False, "y no efectiva: la empresa la tiene apagada"
+    assert fila["revoked_at"] is not None, "OD-23: terminada por el apagado del ciclo"
+    assert fila["is_effective"] is False, "y no efectiva"
     assert await _efectivas(esc, esc["sujeto"]) == [], "el resolutor dice lo mismo"
 
 

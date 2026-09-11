@@ -108,8 +108,9 @@ class UserBusinessUnit(Base):
     empresa de la habilitación sea la **actual** del usuario. Las dos hacen falta — la primera
     sola dejaría efectiva una concesión legítima de ayer cuando el usuario se mueve hoy.
 
-    Sin borrado en cascada. `BU-D10` sigue pendiente de ratificación, y una concesión de una
-    empresa anterior es **historia**: pierde la efectividad, no la existencia.
+    Sin borrado en cascada. `OD-23` (`R-188`): apagar una unidad de empresa **termina** sus
+    concesiones vivas marcándolas (`revoked_at`), y una concesión de una empresa anterior es
+    **historia**: pierde la efectividad, nunca la existencia.
     """
 
     __tablename__ = "user_business_units"

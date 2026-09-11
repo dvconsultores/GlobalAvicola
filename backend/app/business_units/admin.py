@@ -23,9 +23,10 @@ al otro.
 
 Lo que este módulo **no** decide:
 
-    BU-D10      qué pasa con el histórico cuando una empresa cierra una línea. Deshabilitar
-                aquí apaga la efectividad y **no toca ni un dato ni una concesión**
-                (`AC-A04`), que es lo mínimo que no cierra ninguna puerta.
+    El ciclo apagar/encender lo decide `OD-23` (ratificada el 2026-09-11; implementada por
+    `R-188`): apagar **termina** las concesiones vivas del ciclo —se marcan, nunca se borran
+    (`AC-A04`)— con auditoría individual y causa declarada; re-encender **no** las devuelve:
+    cada usuario requiere una concesión nueva y explícita. `BU-D10` queda resuelta.
     RBAC        qué acciones puede ejecutar el usuario. Conceder una cadena no concede
                 ninguna acción sobre ella (`AC-B06`).
     EMPRESA     el inquilino de la petición. Viene resuelto de `OD-11` y aquí solo se usa.
@@ -139,19 +140,21 @@ async def fijar_habilitacion(
 ) -> HabilitacionRead:
     """Habilita o deshabilita una unidad **para la empresa efectiva**. `AC-A03`.
 
-    Y **solo** eso. No concede a nadie, no crea roles, no toca permisos, no reclasifica dato
-    y no borra concesiones (`AC-A04`). Deshabilitar apaga la efectividad porque el resolutor
-    exige `is_enabled`, no porque aquí se destruya nada:
+    Y **solo** eso, más el ciclo de concesiones que `OD-23` ratifica: no concede a nadie, no
+    crea roles y no toca permisos. Sobre las concesiones:
 
     ```
-    DESHABILITAR   →  las concesiones siguen escritas y dejan de ser efectivas
-    REHABILITAR    →  vuelven a serlo, sin volver a concederlas       (`AC-A06`)
+    DESHABILITAR   →  las concesiones vivas se MARCAN (revoked_at): terminan para este ciclo
+                      de habilitación, con auditoría individual y causa declarada. No se borran.
+    REHABILITAR    →  NO devuelve efectividad a ninguna concesión histórica (`OD-23` = B).
+                      Cada usuario requiere una concesión nueva y explícita.
     ```
 
-    Esa reversibilidad es deliberada y es lo que deja `BU-D10` intacta. La decisión pendiente
-    —qué pasa con el histórico cuando una línea se cierra de verdad— sigue pudiendo resolverse
-    en cualquier sentido, porque esta fase no ha borrado nada que una respuesta futura pudiera
-    necesitar. Un borrado aquí habría contestado `BU-D10` por omisión.
+    `OD-23` (2026-09-11, elección del propietario «B»; implementada por `R-188`): reabrir una
+    línea no «resucita» accesos productivos — habilitar la línea y conceder acceso a personas
+    siguen siendo actos distintos. La historia completa queda (fila + fecha de fin) y un
+    apagado repetido sobre una unidad ya apagada **normaliza** el invariante («apagada bajo
+    `OD-23` ⇒ sin concesiones vivas») sin duplicar configuración ni eventos.
 
     Idempotente: fijar el estado que ya se tiene no falla ni duplica. La fila se crea si no
     existía, de modo que «apagada explícitamente» quede distinguible de «nunca configurada»,
@@ -172,6 +175,23 @@ async def fijar_habilitacion(
         fila.is_enabled = habilitada
     await db.flush()
 
+    # `OD-23` / `R-188`: apagar una unidad **termina** las concesiones vivas de esa unidad
+    # para este ciclo de habilitación. Se marca (nunca se borra: la historia es auditable) y
+    # el re-encendido deja de devolver efectividad alguna. Un apagado repetido normaliza el
+    # invariante sin duplicar nada.
+    terminadas: list[tuple[int, int]] = []
+    if not habilitada:
+        vivas = (await db.execute(
+            select(UserBusinessUnit).where(
+                UserBusinessUnit.company_business_unit_id == fila.id,
+                UserBusinessUnit.revoked_at.is_(None))
+        )).scalars().all()
+        ahora = datetime.now(timezone.utc)
+        for concesion in vivas:
+            concesion.revoked_at = ahora
+        await db.flush()
+        terminadas = [(c.id, c.user_id) for c in vivas]
+
     # `AC-I03`. Se emite **después** de persistir, para que el registro diga lo ocurrido y no
     # lo intentado. Una acción denegada no llega hasta aquí y por eso no deja rastro de éxito.
     await audit_accion(
@@ -181,6 +201,17 @@ async def fijar_habilitacion(
         new_state="enabled" if habilitada else "disabled",
         new_values={"business_unit": code, "is_enabled": habilitada},
     )
+
+    # `OD-23 §4`: cada concesión terminada por el ciclo queda auditada individualmente, con
+    # la causa declarada. No se fabrica ningún evento de concesión (no hubo acto de otorgar).
+    for concesion_id, usuario_id in terminadas:
+        await audit_accion(
+            db, usuario=actor, accion=AuditAction.PERMISSION_CHANGE, modulo=AuditModule.USERS,
+            entity_type="user_business_unit", entity_id=concesion_id, company_id=company_id,
+            previous_state="granted", new_state="revoked",
+            new_values={"target_user_id": usuario_id, "business_unit": code,
+                        "cause": "company_business_unit_disabled"},
+        )
     return HabilitacionRead(code=unidad.code, name_key=unidad.name_key,
                             is_enabled=bool(fila.is_enabled))
 
