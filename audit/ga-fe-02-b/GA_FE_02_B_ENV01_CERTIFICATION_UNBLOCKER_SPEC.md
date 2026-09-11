@@ -201,8 +201,13 @@ resultado: reportar el bloqueo exacto, sin certificar por partes.
 ## 13 · Estado de ejecución (2026-09-11)
 
 ```
-F1 ... BLOCKED_SERVER_ACCESS_F1 — comando canónico exacto en §4 (owner/ops); sin acceso
-       server-side legítimo desde la estación del agente
+F1 ... BLOCKED_SERVER_ACCESS_F1 — intento de ejecución por el agente (2026-09-11): ejecución
+       literal local imposible (`docker` ausente en la estación) y SSH sin clave autorizada
+       (`root@84.247.161.106` y `dvconsultores@84.247.161.106` → `Permission denied
+       (publickey,password)`; host no conocido previamente por la estación; sondeo detenido
+       conforme a §10 — nada de adivinar credenciales). Comando canónico exacto en §4 para
+       owner/ops, o autorizar la clave de esta estación (`~/.ssh/id_ed25519.pub`) para un
+       usuario con docker en el servidor y reintentar automáticamente
 F2 ... CLOSED — rol id=35 · exactamente business_units:read|update|create|delete (all) ·
        company_id NULL (plantilla) · GET /roles=14 · sin comodín/users/productivos ·
        sin asignaciones a humanos (0)
