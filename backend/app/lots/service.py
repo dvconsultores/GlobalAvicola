@@ -188,12 +188,17 @@ class LotService:
         # área de **otra empresa** se aceptaba (`201`) y quedaba ligada al lote. Se usa el
         # validador canónico de catálogos — `company_id` nulo = compartida; ajena = se
         # comporta como inexistente (`BR-07`), sin distinguir «no existe» de «no es tuyo».
+        #
+        # `GA-FE-07` · `OD-21`: además, un área **dada de baja lógica** no puede usarse
+        # para referencias nuevas — `exigir_activo` es la extensión de ese mismo validador
+        # (el resto de callers de `R-179` conservan su contrato sin cambios).
         if getattr(data, "area_id", None) is not None:
             from ..masters.models import Area
             from ..tenancy import verificar_catalogo_de_empresa
 
             await verificar_catalogo_de_empresa(
-                self.db, Area, data.area_id, self.company_id, "Área")
+                self.db, Area, data.area_id, self.company_id, "Área",
+                exigir_activo=True)
 
         # `GA-REM-037` / `OD-06`. La curva estándar contra la que se juzgará este lote se
         # fija ahora y no se recalcula: es lo que separa una referencia histórica de una
@@ -263,18 +268,25 @@ class LotService:
                                        unidades=await self._unidades())
         # `GA-REM-040-H` · `AC-L08`: el lote se resuelve como siempre (`404` por unidad para el
         # actor) y después se exige la habilitación, que a la autoridad global no le exigía nadie.
-        await self._exigir_unidad_operativa(self._codigo(await master_service.get_by_id(lot_id)))
+        lote_actual = await master_service.get_by_id(lot_id)
+        await self._exigir_unidad_operativa(self._codigo(lote_actual))
         # `GA-FE-06-A` · `R182-SEC-AC02`. La edición pasa por `MasterService.update`, cuyo
         # `_PADRES_TENANT` no incluye `area_id`: mover un lote al área de otra empresa era la
         # misma escritura entre inquilinos que crearlo ahí. Se valida **antes** de tocar el
         # objeto — una negativa no deja mutación parcial ni auditoría de éxito.
+        #
+        # `GA-FE-07` · `OD-21` (matriz H1–H5): **cambiar la referencia es una referencia
+        # nueva** — exige área activa y de la empresa. Omitir el campo, reenviar el mismo id
+        # o despejar a `null` **no** es referencia nueva: la historia se conserva y una baja
+        # lógica del área no invalida las ediciones ajenas al área.
         campos = data.model_dump(exclude_unset=True)
-        if campos.get("area_id") is not None:
+        if campos.get("area_id") is not None and campos["area_id"] != lote_actual.area_id:
             from ..masters.models import Area
             from ..tenancy import verificar_catalogo_de_empresa
 
             await verificar_catalogo_de_empresa(
-                self.db, Area, campos["area_id"], self.company_id, "Área")
+                self.db, Area, campos["area_id"], self.company_id, "Área",
+                exigir_activo=True)
         return await master_service.update(lot_id, data)
 
     async def close_lot(self, lot_id: int) -> dict:

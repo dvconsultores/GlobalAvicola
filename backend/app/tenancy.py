@@ -76,6 +76,8 @@ async def verificar_catalogo_de_empresa(
     recurso_id: int | None,
     company_id: int | None,
     etiqueta: str,
+    *,
+    exigir_activo: bool = False,
 ) -> None:
     """`GA-REM-002` enmienda D · `R-179`: un catálogo referenciado por un evento es de su empresa — o compartido.
 
@@ -88,19 +90,31 @@ async def verificar_catalogo_de_empresa(
     De ahí las dos ramas: `company_id IS NULL` es un catálogo compartido y se acepta desde cualquier empresa;
     fijado, tiene que ser la del evento. La denegación conserva la semántica de `verificar_pertenencia`: el ajeno
     **se comporta como inexistente** (`BR-07`), para no distinguir «no existe» de «no es tuyo» (`AC26`).
+
+    `exigir_activo` — **`OD-21`** (GA-FE-07): un recurso dado de baja lógica **no puede usarse para
+    referencias nuevas**. Lo pide quien establece una referencia nueva (alta de lote, cambio de área);
+    **no** se aplica por defecto, de modo que los callers de `R-179` conservan su contrato intacto y la
+    historia no se invalida. La inactiva del **mismo inquilino** se denuncia con mensaje propio
+    («inactiva») porque es distinguible sin filtrar información — el ajeno sigue siendo «no encontrado».
     """
     if recurso_id is None:
         return
     if company_id is None:
         raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
+    columnas = [modelo.company_id]
+    mirar_estado = exigir_activo and hasattr(modelo, "is_active")
+    if mirar_estado:
+        columnas.append(modelo.is_active)
     fila = (await db.execute(
-        select(modelo.company_id).where(modelo.id == recurso_id)
+        select(*columnas).where(modelo.id == recurso_id)
     )).one_or_none()
     if fila is None:
         raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
     duenio = fila[0]
     if duenio is not None and duenio != company_id:
         raise BusinessRuleViolation(f"{etiqueta} no encontrado", "BR-07")
+    if mirar_estado and fila[1] is False:
+        raise BusinessRuleViolation(f"{etiqueta} inactiva", "BR-07")
 
 
 async def verificar_catalogos_del_evento(db: AsyncSession, company_id: int | None, **campos) -> None:

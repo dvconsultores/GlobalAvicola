@@ -95,7 +95,12 @@ export default function LotFormPage() {
  if (houseRes.status === 'fulfilled') setHouses(houseRes.value.data ?? [])
  if (lineRes.status === 'fulfilled') setLines(lineRes.value.data ?? [])
  if (breedRes.status === 'fulfilled') setBreeds(breedRes.value.data ?? [])
- if (areaRes.status === 'fulfilled') setAreas(areaRes.value.data ?? [])
+ // `GA-FE-07` · `OD-21`. El selector es **transaccional**: un área dada de baja
+ // lógica no puede usarse para referencias nuevas. La administración de maestros
+ // conserva su listado completo (aquí solo se filtra la selección del alta).
+ if (areaRes.status === 'fulfilled') {
+ setAreas((areaRes.value.data ?? []).filter((a: any) => a.is_active !== false))
+ }
  } finally {
  setLoadingMasters(false)
  }
