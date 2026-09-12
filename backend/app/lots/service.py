@@ -36,18 +36,164 @@ def _inicio_declarado(valor: datetime | date | None) -> datetime:
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import select, func
+from sqlalchemy import select, func, text
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..masters.models import Lot
+from ..masters.models import BirdTypeEnum, Lot, LotStatus, SexEnum
 from ..tenancy import verificar_pertenencia
-from ..operations.validators import validate_lot_closure, validate_lot_records_approved
+from ..operations.validators import (
+    BusinessRuleViolation,
+    validate_lot_closure,
+    validate_lot_records_approved,
+)
 from ..operations.models import (
     OperationalEvent, EventType, EventStatus,
     BirdMovement, FeedMovement, EggMovement,
 )
 from . import models, schemas
 from ..masters.service import MasterService
+
+
+# ============================================================
+# `R-153` · `OD-25 (B)` — el lote de abuelas nace al aprobar la importación
+# ============================================================
+
+
+def _fecha_de_llegada_del_plan(valor: Any) -> date:
+    """Fecha de llegada declarada en el plan (`extra_data.import_plan.arrival_date`).
+
+    Se acepta fecha, instante o texto ISO — el JSONB guarda el texto tal como llegó. Si no
+    puede leerse, la aprobación **no** crea el lote: se levanta `BR-22` y la transacción
+    revierte entera (aprobación incluida), que es la atomicidad que exige `OD-25`.
+    """
+    if isinstance(valor, datetime):
+        return valor.date()
+    if isinstance(valor, date):
+        return valor
+    if isinstance(valor, str):
+        try:
+            return datetime.fromisoformat(valor.replace("Z", "+00:00")).date()
+        except ValueError:
+            try:
+                return date.fromisoformat(valor[:10])
+            except ValueError:
+                pass
+    raise BusinessRuleViolation(
+        "La importación no tiene fecha de llegada válida para crear el lote", "BR-22",
+    )
+
+
+def _sexo_del_plan(filas: list) -> SexEnum | None:
+    """Sexo del lote a partir de las filas ♂/♀ declaradas; mixto si vienen ambos."""
+    machos = any(getattr(s, "value", s) == "male" and int(q or 0) > 0 for s, q in filas)
+    hembras = any(getattr(s, "value", s) == "female" and int(q or 0) > 0 for s, q in filas)
+    if machos and hembras:
+        return SexEnum.MIXED
+    if machos:
+        return SexEnum.MALE
+    if hembras:
+        return SexEnum.FEMALE
+    return None
+
+
+async def _bloquear_secuencia(db: AsyncSession, clave: str) -> None:
+    """Lock asesor transaccional de PostgreSQL; en otros dialectos no hay nada que bloquear."""
+    try:
+        dialecto = db.get_bind().dialect.name
+    except Exception:  # pragma: no cover — sesión sin bind (pruebas unitarias puras)
+        dialecto = ""
+    if dialecto == "postgresql":
+        await db.execute(text("SELECT pg_advisory_xact_lock(hashtext(:clave))"),
+                         {"clave": clave})
+
+
+async def _siguiente_codigo_de_lote_gp(db: AsyncSession, company_id: int, anio: int, *,
+                                       global_: bool) -> str:
+    """`L-GP-{año}-{nn}`: siguiente consecutivo del año — de la empresa o, si una colisión
+    real lo exige, contra el máximo global (la unicidad de `lot_code` es global en la base)."""
+    prefijo = f"L-GP-{anio}-"
+    consulta = select(Lot.lot_code).where(Lot.lot_code.like(f"{prefijo}%"))
+    if not global_:
+        consulta = consulta.where(Lot.company_id == company_id)
+    codigos = (await db.execute(consulta)).scalars().all()
+    mayor = 0
+    for codigo in codigos:
+        sufijo = codigo[len(prefijo):]
+        if sufijo.isdigit():
+            mayor = max(mayor, int(sufijo))
+    return f"{prefijo}{mayor + 1:02d}"
+
+
+async def crear_lote_de_importacion_si_procede(db: AsyncSession, event: Any,
+                                               current_user: dict[str, Any]):
+    """Crea el lote de abuelas al aprobar una importación que no lo traía; no-op en el legado.
+
+    Invariante (`R-153`): la **aprobación** es lo único que convierte una importación en un
+    lote real — una devuelta o rechazada no lo deja, y si se aprueba después, nace entonces.
+    No **puebla**: la recepción sigue siendo la única entrada de aves (`R-152`, `R-130`).
+    Con lote preasignado (flujo legado), no hace nada: mismo resultado que `R-152`.
+    """
+    if getattr(event, "lot_id", None) is not None:
+        return None
+    if getattr(event, "event_type", None) != EventType.GRANDPARENT_IMPORT:
+        return None
+
+    plan = (event.extra_data or {}).get("import_plan") or {}
+    llegada = _fecha_de_llegada_del_plan(plan.get("arrival_date"))
+    filas = (await db.execute(
+        select(BirdMovement.sex, BirdMovement.quantity)
+        .where(BirdMovement.event_id == event.id)
+    )).all()
+    sexo = _sexo_del_plan(filas)
+    anio = llegada.year
+
+    # Un solo lote por (empresa, año) se está numerando a la vez.
+    await _bloquear_secuencia(db, f"lote-gp:{event.company_id}:{anio}")
+
+    lote: Lot | None = None
+    for intento in range(4):
+        codigo = await _siguiente_codigo_de_lote_gp(db, event.company_id, anio,
+                                                    global_=intento > 0)
+        candidato = Lot(
+            company_id=event.company_id,
+            farm_id=event.farm_id,
+            house_id=event.house_id,
+            lot_code=codigo,
+            bird_type=BirdTypeEnum.GRANDPARENT,
+            sex=sexo,
+            status=LotStatus.ACTIVE,
+            activation_type="normal",
+            start_date=_fecha_de_negocio(llegada),
+        )
+        db.add(candidato)
+        try:
+            async with db.begin_nested():
+                await db.flush()
+        except IntegrityError:
+            if intento >= 3:
+                raise
+            # Colisión real contra otra empresa (unicidad global): se reintenta contra el
+            # máximo global, bajo el lock del año compartido.
+            await _bloquear_secuencia(db, f"lote-gp:{anio}:global")
+            continue
+        lote = candidato
+        break
+    if lote is None:  # pragma: no cover — inalcanzable: el último intento re-lanza
+        raise BusinessRuleViolation("No se pudo asignar el código del lote de abuelas", "BR-22")
+
+    event.lot_id = lote.id
+    await db.flush()
+
+    from ..audit.helpers import audit_accion
+    from ..audit.models import AuditAction, AuditModule
+
+    await audit_accion(
+        db, usuario=current_user, accion=AuditAction.CREATED, modulo=AuditModule.LOTS,
+        entity_type="lot", entity_id=lote.id, company_id=event.company_id, lot_id=lote.id,
+        new_values={"lot_code": lote.lot_code, "origin": "grandparent_import_approval"},
+    )
+    return lote
 
 
 class LotService:

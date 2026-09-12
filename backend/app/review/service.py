@@ -344,6 +344,11 @@ class ReviewService(SegregacionMixin):
 
             if await efectuar_reverso_si_procede(self.db, event, self.current_user):
                 new_status = "reversed"
+            # `R-153` · `OD-25 (B)`: el nivel único de `complete_review` también **es** aprobar;
+            # la creación del lote va aquí, tras el reverso, en la misma transacción.
+            from ..lots.service import crear_lote_de_importacion_si_procede
+
+            await crear_lote_de_importacion_si_procede(self.db, event, self.current_user)
         else:
             # Multi-level: mark as corrected (awaiting approval step)
             event.status = EventStatus.CORRECTED
@@ -501,6 +506,13 @@ class ApprovalService(SegregacionMixin):
         from ..reversals.service import efectuar_reverso_si_procede
 
         new_status = "reversed" if await efectuar_reverso_si_procede(self.db, event, self.current_user) else "approved"
+        # `R-153` · `OD-25 (B)`: aprobar una importación de abuelas **sin lote** lo crea aquí
+        # mismo (`L-GP-{año}-{nn}`, sin poblar). No-op para el legado con lote y para los demás
+        # tipos. Si el lote no puede nacer (p. ej. plan ilegible), la `BR-22` revierte con la
+        # aprobación: no hay aprobación sin lote ni lote sin aprobación.
+        from ..lots.service import crear_lote_de_importacion_si_procede
+
+        await crear_lote_de_importacion_si_procede(self.db, event, self.current_user)
 
         self.db.add(models.ApprovalAction(
             event_id=event_id,

@@ -30,6 +30,14 @@ const LOT_OPTIONAL_INSPECTION_EVENTS = new Set([
  'hatchery_inspection',
 ])
 
+// `R-153` · `OD-25 (B)`: la importación de abuelas también puede registrarse sin lote — el
+// lote (`L-GP-{año}-{nn}`) nace al aprobarla, como consecuencia de `P-07`. La vía con lote
+// previo (legado `R-152`) sigue disponible eligiéndolo en el selector.
+const LOT_OPTIONAL_EVENTS = new Set<string>([
+ ...LOT_OPTIONAL_INSPECTION_EVENTS,
+ 'grandparent_import',
+])
+
 function getTempRange(birdType: string, ageWeeks: number): [number, number] {
  const zone = getThermalZone(birdType, 'rearing', ageWeeks)
  if (zone) return [zone.tempMin, zone.tempMax]
@@ -165,7 +173,7 @@ const operationSchema = z.object({
  })).optional(),
 }).superRefine((data, ctx) => {
  if (!data.event_type) return
- if (!LOT_OPTIONAL_INSPECTION_EVENTS.has(data.event_type) && (!data.lot_id || data.lot_id < 1)) {
+ if (!LOT_OPTIONAL_EVENTS.has(data.event_type) && (!data.lot_id || data.lot_id < 1)) {
  ctx.addIssue({
  code: z.ZodIssueCode.custom,
  path: ['lot_id'],
@@ -2028,6 +2036,9 @@ default: return (
  />
  {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
  {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
+ {eventType === 'grandparent_import' && (
+ <p className="text-xs text-slate-500 mt-1">{t('operations.importLotAutoNote', 'Si no selecciona un lote, se creará automáticamente al aprobar la importación.')}</p>
+ )}
  </div>
  )}
 

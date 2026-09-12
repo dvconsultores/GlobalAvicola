@@ -61,6 +61,10 @@ from .validators import (
 LOT_OPTIONAL_EVENTS = {
     models.EventType.FARM_INSPECTION,
     models.EventType.HATCHERY_INSPECTION,
+    # `R-153` · `OD-25 (B)`: la importación de abuelas **puede registrarse sin lote** — el lote
+    # de la cadena nace al aprobarla, como consecuencia de `P-07`. El flujo legado (importación
+    # con lote preasignado, `R-152`) se conserva tal cual: lote presente = comportamiento de antes.
+    models.EventType.GRANDPARENT_IMPORT,
 }
 
 # `GA-REM-006-A` §A.2 · mapa de transiciones de `P-07` (`R-135`, `R-140` PARTE A, `R-154`):
@@ -152,8 +156,13 @@ class OperationsService:
                    CompanyBusinessUnit.company_id == self.company_id)
         )).scalar_one_or_none()
 
-    async def exigir_unidad_operativa(self, *, lot_id: int | None = None, event=None) -> None:
+    async def exigir_unidad_operativa(self, *, lot_id: int | None = None, event=None,
+                                      unidad_directa: str | None = None) -> None:
         """La guarda de escritura. `GA-REM-040-G §G.3` · `AC-C05` · `AC-W02…W05, W13, W14`.
+
+        `unidad_directa` (`R-153`): la unidad que no puede derivarse de un lote ni de una
+        clasificación — la importación de abuelas sin lote usa la cadena de su propio tipo
+        (`grandparent`). Se deriva en el servidor, igual que las otras dos vías.
 
         La unidad se **deriva en el servidor** —del lote destino, o de la clasificación que el
         plano de control fijó en el evento— y nunca del cuerpo de la petición, que no la
@@ -173,7 +182,9 @@ class OperationsService:
         resuelta en la sesión, no una cadena. Todo ocurre antes de `db.add`: una denegación
         no deja fila, ni movimiento, ni auditoría (`AC-W11`).
         """
-        if event is not None:
+        if unidad_directa is not None:
+            unidad = unidad_directa
+        elif event is not None:
             if event.lot_id is not None:
                 unidad = await self._unidad_del_lote(event.lot_id)
             elif event.business_unit_id is not None:
@@ -196,7 +207,9 @@ class OperationsService:
             await _guarda(self.db, current_user=self.current_user, company_id=self.company_id,
                           unidad=unidad, efectivas=await self._unidades())
         except AccesoDeUnidadDenegado as exc:
-            if exc.motivo == "no_concedida":
+            # `R-153`: con `unidad_directa` no hay lote al que equiparar la denegación: un 403
+            # honesto dice la verdad sin inventar un «lote inexistente» que nunca existió.
+            if exc.motivo == "no_concedida" and unidad_directa is None:
                 raise BusinessRuleViolation("Lote no encontrado", "BR-07") from exc
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail=str(exc)) from exc
 
@@ -222,7 +235,15 @@ class OperationsService:
 
         # `GA-REM-040-G` · `R-160`: empresa y unidad del lote destino, antes de las reglas y
         # de cualquier `db.add`. El cuerpo no declara la unidad; se deriva del lote.
-        await self.exigir_unidad_operativa(lot_id=data.lot_id)
+        #
+        # `R-153` · `OD-25 (B)`: la importación de abuelas sin lote no tiene del qué derivarla
+        # — se usa la cadena de su propio tipo de evento (`grandparent`), la misma unidad que
+        # la de su lote legado. Con lote presente, la derivación es la de siempre.
+        await self.exigir_unidad_operativa(
+            lot_id=data.lot_id,
+            unidad_directa=("grandparent" if event_type == models.EventType.GRANDPARENT_IMPORT
+                            and data.lot_id is None else None),
+        )
 
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
@@ -900,8 +921,11 @@ class OperationsService:
         validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
                                     [(bm.sex, bm.quantity) for bm in data.bird_movements])
         if event_type == models.EventType.GRANDPARENT_IMPORT:
-            # `GA-REM-042` · `R-152` · `BR-22`: plan tipado, identidades, OC y proveedor; proveedor y transporte de la empresa
-            validate_import_plan(event_type, cadena_del_lote, (data.extra_data or {}).get("import_plan"),
+            # `GA-REM-042` · `R-152` · `BR-22`: plan tipado, identidades, OC y proveedor; proveedor y transporte de la empresa.
+            # `R-153` · `OD-25 (B)`: sin lote, la cadena ES el tipo del evento (`grandparent`);
+            # con lote, sigue siendo la del lote (`R-152`, incluido su rechazo si está pendiente).
+            cadena_del_plan = (cadena_del_lote if data.lot_id is not None else "grandparent")
+            validate_import_plan(event_type, cadena_del_plan, (data.extra_data or {}).get("import_plan"),
                                  [(bm.sex, bm.quantity) for bm in data.bird_movements], data.sap_document_ref, data.supplier_id)
             await self._verificar_maestros_de_importacion(data.supplier_id, data.transport_id)
         if event_type == models.EventType.MORTALITY_RECORDING:

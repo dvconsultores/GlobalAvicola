@@ -195,7 +195,18 @@ export default function OperationDetailPage() {
  <dl className="grid grid-cols-2 gap-4 text-sm">
  <div><dt className="text-slate-500">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
  <div><dt className="text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
- <div><dt className="text-slate-500">{t('lots.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
+ <div>
+ <dt className="text-slate-500">{t('lots.lot')}</dt>
+ <dd className="font-mono">
+ {event.lot_id ? (
+ <Link to={`/lots/${event.lot_id}`} className="text-[#5a9bba] hover:underline">#{event.lot_id}</Link>
+ ) : event.event_type === 'grandparent_import' ? (
+ <span className="text-slate-500">{t('operations.lotAutoPending', 'Se creará al aprobar')}</span>
+ ) : (
+ '—'
+ )}
+ </dd>
+ </div>
  <div><dt className="text-slate-500">{t('common.version')}</dt><dd>v{event.version}</dd></div>
  <div className="col-span-2"><dt className="text-slate-500">{t('common.observations')}</dt><dd>{event.observations || '—'}</dd></div>
  {event.sap_document_ref && <div className="col-span-2"><dt className="text-slate-500">{t('operations.sapRef')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>}

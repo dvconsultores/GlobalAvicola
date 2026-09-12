@@ -720,6 +720,8 @@
     "totalMortality": "Total mortality (%)",
     "importCountry": "Country of origin",
     "importCountryPlaceholder": "e.g. France",
+    "importLotAutoNote": "If you don't select a lot, one will be created automatically when the import is approved.",
+    "lotAutoPending": "Created on approval",
     "sanitaryCert": "Sanitary certificate",
     "sanitaryCertPlaceholder": "Certificate no.",
     "quarantineDays": "Quarantine days",

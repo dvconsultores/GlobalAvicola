@@ -24,7 +24,7 @@ PATCH /business-units/grandparent/disable ........ 200   (catálogo restaurado 4
 
 ## 3 · RED backend (PG — CI; local declarado)
 
-`backend/tests/test_r153_import_lot_auto.py` — 10 contratos (AC04…AC46): importar sin lote; aprobación crea 1 lote canónico; doble aprobación sin duplicar; legado sin segundo lote; devuelto sin lote y aprobado después sí; secuencia `-01/-02`; recepción puebla una sola vez; fallo de lote revierte la aprobación; BU OFF/sin concesión cerrados.
+`backend/tests/test_r153_import_lot_auto.py` — 9 casos (AC04…AC46): importar sin lote; aprobación crea 1 lote canónico; doble aprobación sin duplicar; legado sin segundo lote; devuelto sin lote y aprobado después sí; secuencia `-01/-02`; recepción puebla una sola vez; fallo de lote revierte la aprobación; BU OFF/sin concesión cerrados.
 
 - Local (sin PostgreSQL): corrida = **errores de conexión** (suite PG; misma línea base del repo — declarado; CI la ejecuta vía `backend/scripts/run_tests.sh`).
 - Pre-fix en CI: los casos de import-sin-lote (AC04) y auto-creación (AC06) fallarían contra el contrato actual (400 «El evento requiere lote» / cero lotes).
