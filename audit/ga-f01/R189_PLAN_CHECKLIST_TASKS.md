@@ -43,3 +43,13 @@ Fecha: 2026-09-12.
 | T5 | GREEN + regresión (dirigido, suite, tsc, build, R-153) | — | todas | T2-T4 | ⏳ |
 | T6 | C2 + deploy + E2E-01…13 + recertificación + evidencia + limpieza + C3 | `audit/ga-f01/**` | runtime | T5 | ⏳ |
 | T7 | Retry UAT-01…07 + paquete C4 + §81 | `audit/ga-r153/uat/**` | runtime | T6 | ⏳ |
+
+## AMPLIACIÓN F-01e (retry GA-UAT-09 · 2026-09-13)
+
+Anexo: `GA_F01E_SUBSANACION_ANNEX.md` · RED: `evidence/f01e/` · clarificación C29 · spec AC63-65.
+
+| Fase | Contenido | Estado |
+|---|---|---|
+| C2e | Gobernanza F-01e (anexo, C29, AC63-65, RED runtime + unit 1×) | ✅ |
+| C2f | Implementación D1 (`derivedHouseId` recepción) + GREEN local | ⏳ |
+| C3 | Runtime post-fix (rerun 7/7) + evidencia + cierre | ⏳ |
