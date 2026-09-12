@@ -125,6 +125,15 @@ describe('R-189 · payload de importación (F-01)', () => {
     expect(payload.event_type).toBe('grandparent_import')
     expect(payload.lot_id ?? null).toBeNull()
   })
+
+  it('AC55/AC56 · alimento e incubadora sin contenido ⇒ [] (F-01d, nunca [{}])', async () => {
+    montar()
+    await irAImportacion()
+    await llenarPlanDeImportacion()
+    const payload = await guardar()
+    expect(payload.feed_movements).toEqual([])
+    expect(payload.hatchery_params).toEqual([])
+  })
 })
 
 describe('R-189 · payload de recepción (F-01)', () => {
@@ -139,6 +148,8 @@ describe('R-189 · payload de recepción (F-01)', () => {
     if (q) cambio('bird_movements.0.quantity', '10')
     const payload = await guardar()
     expect(payload.egg_storage_records).toEqual([])
+    expect(payload.feed_movements).toEqual([])
+    expect(payload.hatchery_params).toEqual([])
     expect(payload.bird_movements).toHaveLength(1)
     expect(payload.bird_movements[0].quantity).toBe(10)
     expect(Number.isFinite(payload.bird_movements[0].avg_weight) || payload.bird_movements[0].avg_weight === undefined).toBe(true)

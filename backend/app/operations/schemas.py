@@ -2,7 +2,7 @@
 from datetime import date, datetime
 from typing import Optional
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 # ============================================================
@@ -56,12 +56,30 @@ class EggMovementSchema(BaseModel):
 
 
 class FeedMovementSchema(BaseModel):
+    """Lectura tolerante (`R-189`/`F-01d`).
+
+    El detalle del evento debe poder leerse aunque existan filas históricas con
+    `quantity_kg = 0.0` (creadas por versiones anteriores que enviaban `[{}]` y el
+    default no se validaba al registrar). La restricción de escritura vive en
+    `FeedMovementCreateSchema`.
+    """
+
     model_config = {"from_attributes": True}
     feed_type_id: Optional[int] = None
-    quantity_kg: float = Field(default=0.0, gt=0)
+    quantity_kg: float = 0.0
     sacks_count: Optional[int] = None
     week_number: Optional[int] = None
     sap_order_id: Optional[str] = None
+
+
+class FeedMovementCreateSchema(FeedMovementSchema):
+    """Escritura estricta (`R-189`/`F-01d`): una fila sin cantidad (> 0) no es una fila.
+
+    `validate_default=True` es el punto del defecto: con el default sin validar, un
+    `{}` del payload se colaba y se persistía como fila vacía.
+    """
+
+    quantity_kg: float = Field(default=0.0, gt=0, validate_default=True)
 
 
 class EggStorageSchema(BaseModel):
@@ -89,6 +107,16 @@ class HatcheryParamsSchema(BaseModel):
     turning: Optional[bool] = None
     quantity_loaded: Optional[int] = None
     quantity_transferred: Optional[int] = None
+
+
+class HatcheryParamsCreateSchema(HatcheryParamsSchema):
+    """Escritura estricta (`R-189`/`F-01d`): una fila `{}` no es una fila de incubadora."""
+
+    @model_validator(mode="after")
+    def _al_menos_un_campo(self):
+        if all(v is None for v in self.model_dump().values()):
+            raise ValueError("hatchery_params: cada fila debe declarar al menos un campo")
+        return self
 
 
 class InspectionDetailSchema(BaseModel):
@@ -158,8 +186,8 @@ IMMUTABLE_AFTER_CREATE: frozenset[str] = frozenset({"event_type", "idempotency_k
 class OperationalEventCreate(OperationalEventBase):
     bird_movements: list[BirdMovementSchema] = []
     egg_movements: list[EggMovementSchema] = []
-    feed_movements: list[FeedMovementSchema] = []
-    hatchery_params: list[HatcheryParamsSchema] = []
+    feed_movements: list[FeedMovementCreateSchema] = []
+    hatchery_params: list[HatcheryParamsCreateSchema] = []
     inspection_details: list[InspectionDetailSchema] = []
     egg_storage_records: list[EggStorageSchema] = []
 

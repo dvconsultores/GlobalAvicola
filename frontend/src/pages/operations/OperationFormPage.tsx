@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, identificadorDeOrdenSap } from './operationPayload'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap } from './operationPayload'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -435,8 +435,11 @@ export default function OperationFormPage() {
  observations,
  bird_movements: normalizedBirdMovements.filter(m => (m.quantity ?? 0) > 0),
  egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
- feed_movements: data.feed_movements || [],
- hatchery_params: (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
+ // `R-189 (F-01d)`: alimento e incubadora también se serializan — el `[{}]` de arranque nunca viaja.
+ feed_movements: serializarMovimientosDeAlimento(data.feed_movements),
+ hatchery_params: serializarParamsDeIncubadora(
+ (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
+ ),
  inspection_details: [...(data.inspection_details || []), ...houseDetails],
  egg_storage_records: serializarAlmacenamientoDeHuevos(data.egg_storage_records),
  house_inspections: undefined, // strip UI-only field

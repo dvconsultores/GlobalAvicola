@@ -1,0 +1,5 @@
+== F-01d · GREEN frontend (C2d) ==
+Dirigidos: vitest run f01.payloadContract + f01d.serializers -> 9/9
+Completo : vitest run -> 310/310 (43 archivos)
+tsc --noEmit -> OK
+npm run build -> OK (3.12s)

@@ -1,0 +1,7 @@
+]633;E;echo '== F-01d · GREEN backend (F-01d + R-153, PostgreSQL de pruebas local) ==';eb232449-4e1b-4ef3-b185-e401d32c113d]633;C== F-01d · GREEN backend (F-01d + R-153, PostgreSQL de pruebas local) ==
+Comando: cd backend && ./scripts/run_tests.sh tests/test_f01d_filas_vacias.py tests/test_r153_import_lot_auto.py -q
+
+................                                                         [100%]
+16 passed, 1 warning in 17.41s
+
+Cobertura: test_f01d_filas_vacias.py (5: 422 sin persistir, 422 incubadora, fila valida visible, historico 0.0 legible, detalle canonico sin 500) + R-153 completa (11 casos AC04..AC59) — primera ejecucion real de la suite (fixture corregido en C2d).

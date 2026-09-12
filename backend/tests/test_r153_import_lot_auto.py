@@ -96,7 +96,9 @@ async def esc(test_database_url):
         await conceder_unidad(s, user=u["operador"], company_business_unit=hab["breeder"])
         await conceder_unidad(s, user=u["op_breeder"], company_business_unit=hab["breeder"])
 
-        granja = Farm(company_id=a.id, name=f"{PREFIJO}GRANJA", farm_type=FarmType.GRANDPARENT, is_active=True)
+        # `F-01d`: `FarmType.GRANDPARENT` no existe en el enum (BREEDING/PRODUCTION/FATTENING/MIXED);
+        # la granja de la importación no depende del subtipo. El defecto impedía ejecutar la suite completa.
+        granja = Farm(company_id=a.id, name=f"{PREFIJO}GRANJA", farm_type=FarmType.BREEDING, is_active=True)
         s.add(granja)
         await s.flush()
         galpon = House(farm_id=granja.id, name=f"{PREFIJO}GALPON", capacity=100_000, is_active=True)
@@ -122,14 +124,25 @@ async def esc(test_database_url):
             "DELETE FROM audit_logs WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM audit_logs WHERE user_id IN (SELECT id FROM users WHERE username LIKE :p)",
             "DELETE FROM notifications WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM reversals WHERE original_event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR reversal_event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM approval_actions WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM correction_logs WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM operational_alerts WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM chick_batches WHERE destination_lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR broiler_lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR hatchery_lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR dispatch_event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR reception_event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM egg_batches WHERE source_lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR hatchery_lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR dispatch_event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR reception_event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM consolidated_movements WHERE lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM lot_phases WHERE lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM opening_balances WHERE lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM evidences WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM bird_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM egg_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM feed_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM hatchery_params WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM inspection_details WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM egg_storage WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)) OR lot_id IN (SELECT id FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM sap_references WHERE sap_code LIKE :p",
-            "DELETE FROM lots WHERE lot_code LIKE :p",
+            "DELETE FROM lots WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
             "DELETE FROM suppliers WHERE name LIKE :p",
@@ -151,6 +164,17 @@ async def _sql(esc, sql, **params):
     try:
         async with async_sessionmaker(motor)() as s:
             return (await s.execute(text(sql), params)).all()
+    finally:
+        await motor.dispose()
+
+
+async def _ejecutar(esc, sql, **params):
+    """Sentencia de escritura **comprometida** (el helper `_sql` es de solo lectura:
+    el cierre de su sesión descarta los cambios)."""
+    motor = create_async_engine(esc["url"])
+    try:
+        async with motor.begin() as conn:
+            await conn.execute(text(sql), params)
     finally:
         await motor.dispose()
 
@@ -233,8 +257,8 @@ async def test_r153_ac06_07_08_12_13_14_aprobacion_crea_un_lote_canonico(http_cl
     lot_id, code, bird_type, sex, start_date, company_id = lotes[0]
     anio = plan["arrival_date"][:4]
     assert code == f"L-GP-{anio}-01", f"AC09: código canónico, got {code}"
-    assert bird_type == "grandparent", "AC08: dominio"
-    assert sex == "mixed", "AC13: ambos sexos ⇒ mixed"
+    assert bird_type.lower() == "grandparent", "AC08: dominio"
+    assert sex.lower() == "mixed", "AC13: ambos sexos ⇒ mixed"
     assert str(start_date)[:10] == plan["arrival_date"], "AC12: fecha = llegada del plan"
     assert company_id == esc["a"], "AC07: misma empresa"
     assert await _lote_del_evento(esc, evento) == lot_id, "enlace evento→lote"
@@ -341,7 +365,7 @@ async def test_r153_ac31_ac32_fallo_de_lote_revierte_la_aprobacion(http_client, 
     r = await _post(http_client, esc, "operador", _importacion(esc))
     evento = r.json()["id"]
     # Corromper la fecha de llegada del plan ya registrado: la creación del lote falla en la misma transacción
-    await _sql(esc, "UPDATE operational_events SET extra_data = jsonb_set(extra_data, '{import_plan,arrival_date}', '\"no-es-fecha\"') WHERE id = :e", e=evento)
+    await _ejecutar(esc, "UPDATE operational_events SET extra_data = jsonb_set(extra_data, '{import_plan,arrival_date}', '\"no-es-fecha\"') WHERE id = :e", e=evento)
     resp = await _aprobar(http_client, esc, evento)
     assert resp.status_code == 400, f"fallo gobernado (BR-22), got {resp.status_code}: {resp.text}"
     estado = (await _sql(esc, "SELECT status::text FROM operational_events WHERE id = :e", e=evento))[0][0]
@@ -359,13 +383,13 @@ async def test_r153_ac45_ac46_bu_off_y_sin_concesion(http_client, esc):
     assert r.status_code == 403, f"sin concesión ⇒ 403, got {r.status_code}: {r.text}"
     assert len(await _lotes_gp(esc)) == 0
     # (b) empresa con la unidad apagada → falla cerrado
-    await _sql(esc, "UPDATE company_business_units SET is_enabled = false WHERE id = :h", h=esc["hab_gp"])
+    await _ejecutar(esc, "UPDATE company_business_units SET is_enabled = false WHERE id = :h", h=esc["hab_gp"])
     try:
         r = await _post(http_client, esc, "operador", _importacion(esc))
         assert r.status_code in (403, 400), f"BU OFF ⇒ cerrado, got {r.status_code}: {r.text}"
         assert len(await _lotes_gp(esc)) == 0
     finally:
-        await _sql(esc, "UPDATE company_business_units SET is_enabled = true WHERE id = :h", h=esc["hab_gp"])
+        await _ejecutar(esc, "UPDATE company_business_units SET is_enabled = true WHERE id = :h", h=esc["hab_gp"])
 
 
 # ═══════════════════════════════════════════════════════════════════════════
