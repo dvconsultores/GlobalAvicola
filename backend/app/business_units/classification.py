@@ -8,6 +8,10 @@ Un evento sin lote —las inspecciones de granja lo permiten desde `i9j0k1l2m3n4
 derivar su cadena. No se adivina, no se abre y no se borra: queda **pendiente**, y lo ven dos
 partes nombradas —quien lo registró y el control autorizado—, no «todos».
 
+La importación de abuelas (`R-153` · `OD-25 (B)`) es la excepción **nombrada**: su tipo ya
+dice su cadena —`grandparent`, y su plan la exige (`BR-22`)—, así que deriva de él y nunca
+queda pendiente; sin esa derivación su aprobación —la que crea el lote— sería inalcanzable.
+
 **El estado se deriva, no se guarda.** Un evento está pendiente cuando ni su lote ni su columna
 de clasificación dicen a qué cadena pertenece. Persistir además un `status` daría dos fuentes que
 discreparían el día que alguien rellene el lote sin tocar el estado — el mismo error que
@@ -51,6 +55,10 @@ async def estado_de_clasificacion(db: AsyncSession, evento) -> str:
             select(Lot.bird_type).where(Lot.id == evento.lot_id))).scalar_one_or_none()
         if tipo is not None:
             return "derived"
+    if (evento.lot_id is None and evento.business_unit_id is None
+            and getattr(evento.event_type, "value", evento.event_type) == "grandparent_import"):
+        # `R-153` · `OD-25 (B)`: el tipo es inequívoco; deriva de él (ver `predicado_de_evento`).
+        return "derived"
     return "manual" if evento.business_unit_id is not None else "pending"
 
 
@@ -86,7 +94,23 @@ def predicado_de_evento(unidades, company_id):
     ).where(BusinessUnit.is_active.is_(True),
             BusinessUnit.code.in_(list(unidades) or [""]))
 
-    return or_(por_lote, OperationalEvent.business_unit_id.in_(habilitaciones))
+    ramas = [por_lote, OperationalEvent.business_unit_id.in_(habilitaciones)]
+    # `R-153` · `OD-25 (B)`: tercer origen de cadena — el **tipo del evento** cuando es
+    # inequívoco. La importación de abuelas no admite otra cadena (su plan la exige), así que
+    # sin lote y sin clasificación manual se atribuye a `grandparent` en vez de quedar
+    # pendiente: pendiente significaría inaprobable —la aprobación es la que crea el lote—.
+    # La atribución manual manda cuando existe (la rama solo cubre `NULL`) y la unidad
+    # apagada sigue siendo inaccesible porque `unidades` son las efectivas.
+    if "grandparent" in (unidades or ()):
+        from ..operations.models import EventType
+
+        ramas.append(and_(
+            OperationalEvent.event_type == EventType.GRANDPARENT_IMPORT,
+            OperationalEvent.lot_id.is_(None),
+            OperationalEvent.business_unit_id.is_(None),
+        ))
+
+    return or_(*ramas)
 
 
 def predicado_de_pendientes(current_user: dict):
@@ -100,9 +124,8 @@ def predicado_de_pendientes(current_user: dict):
     **No** «todos los de la empresa» para cualquiera, ni «los de mi cadena»: un registro
     pendiente no tiene cadena, así que no hay cadena por la que reclamarlo.
     """
-    from ..operations.models import OperationalEvent
-
     from ..masters.models import Lot
+    from ..operations.models import EventType, OperationalEvent
 
     # Pendiente es **no poder derivar ni tener decidido**. Un campo nulable no basta: si el
     # evento tiene lote y el lote tiene cadena, se deriva y no pasa por aquí. Sin esta
@@ -112,6 +135,9 @@ def predicado_de_pendientes(current_user: dict):
         OperationalEvent.business_unit_id.is_(None),
         or_(OperationalEvent.lot_id.is_(None),
             OperationalEvent.lot_id.notin_(derivables)),
+        # `R-153` · `OD-25 (B)`: el tipo inequívoco deriva la cadena (`predicado_de_evento`);
+        # mientras derive, no hay nada que clasificar y la bandeja no lo reclama.
+        OperationalEvent.event_type != EventType.GRANDPARENT_IMPORT,
     )
     de_la_empresa = OperationalEvent.company_id == current_user.get("company_id")
 

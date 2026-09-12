@@ -366,3 +366,32 @@ async def test_r153_ac45_ac46_bu_off_y_sin_concesion(http_client, esc):
         assert len(await _lotes_gp(esc)) == 0
     finally:
         await _sql(esc, "UPDATE company_business_units SET is_enabled = true WHERE id = :h", h=esc["hab_gp"])
+
+
+# ═══════════════════════════════════════════════════════════════════════════
+#  R153-AC58/59 · la cadena se deriva del TIPO: visible para `grandparent` sin clasificar,
+#  fuera de la bandeja de pendientes, e invisible para otra cadena
+# ═══════════════════════════════════════════════════════════════════════════
+
+async def test_r153_ac58_derivacion_por_tipo_visible_y_sin_bandeja(http_client, esc):
+    r = await _post(http_client, esc, "operador", _importacion(esc))
+    assert r.status_code == 201, r.text
+    evento = r.json()["id"]
+    det = await http_client.get(f"/api/v1/operations/{evento}",
+                                headers=_token(esc["operador"], esc["a"]))
+    assert det.status_code == 200, f"deriva del tipo ⇒ alcanzable, got {det.status_code}: {det.text}"
+    bandeja = await http_client.get("/api/v1/operations/pending-classification",
+                                    headers=_token(esc["operador"], esc["a"]))
+    assert bandeja.status_code == 200
+    assert all(e["id"] != evento for e in bandeja.json()), "la importación no es pendiente"
+
+
+async def test_r153_ac59_derivacion_por_tipo_ajena_a_otra_cadena(http_client, esc):
+    r = await _post(http_client, esc, "operador", _importacion(esc))
+    evento = r.json()["id"]
+    det = await http_client.get(f"/api/v1/operations/{evento}",
+                                headers=_token(esc["op_breeder"], esc["a"]))
+    assert det.status_code == 404, f"otra cadena ⇒ no encontrado, got {det.status_code}"
+    bandeja = await http_client.get("/api/v1/operations/pending-classification",
+                                    headers=_token(esc["op_breeder"], esc["a"]))
+    assert all(e["id"] != evento for e in bandeja.json())
