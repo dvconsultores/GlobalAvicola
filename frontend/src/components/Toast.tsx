@@ -92,7 +92,49 @@ export function useToast(): ToastContextType {
  * NOTE: This is a standalone function so it cannot use hooks directly.
  * Callers should pass a translated fallback using t() from their component.
  */
+// `R-189 (F-01)`: el `detail` de FastAPI puede ser una lista de objetos de validación (o un objeto);
+// devolverlo crudo rompía el render (React #31). Se normaliza SIEMPRE a texto renderizable.
+function textoDeDetalle(detail: unknown): string | null {
+  if (detail === null || detail === undefined) return null
+  if (typeof detail === 'string') return detail.trim() ? detail : null
+  if (Array.isArray(detail)) {
+    const partes = detail
+      .map((item) => {
+        if (typeof item === 'string') return item
+        if (item && typeof item === 'object') {
+          const registro = item as { loc?: unknown; msg?: unknown; type?: unknown; message?: unknown }
+          const msg = typeof registro.msg === 'string'
+            ? registro.msg
+            : (typeof registro.message === 'string' ? registro.message : '')
+          const loc = Array.isArray(registro.loc)
+            ? registro.loc
+              .filter((p) => typeof p === 'string' || typeof p === 'number')
+              .slice(1) // se descarta el origen (`body`/`path`/`query`): el usuario necesita el campo
+              .join('.')
+            : ''
+          if (loc && msg) return `${loc}: ${msg}`
+          if (msg) return msg
+          if (typeof registro.type === 'string') return registro.type
+          return null
+        }
+        return null
+      })
+      .filter((p): p is string => Boolean(p))
+    return partes.length ? partes.join(' · ') : null
+  }
+  if (typeof detail === 'object') {
+    const registro = detail as { msg?: unknown; message?: unknown }
+    if (typeof registro.msg === 'string' && registro.msg) return registro.msg
+    if (typeof registro.message === 'string' && registro.message) return registro.message
+    return null
+  }
+  return null
+}
+
 export function getErrorMessage(err: any, fallback = 'Unexpected error'): string {
- if (typeof err === 'string') return err
- return err?.response?.data?.detail || err?.message || fallback
+  if (typeof err === 'string') return err
+  const detalle = textoDeDetalle(err?.response?.data?.detail)
+  if (detalle) return detalle
+  if (typeof err?.message === 'string' && err.message) return err.message
+  return fallback
 }

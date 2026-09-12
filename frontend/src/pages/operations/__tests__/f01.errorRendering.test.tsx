@@ -100,7 +100,7 @@ describe('R-189 · render seguro de errores (F-01 · React #31)', () => {
     // La página sigue montada y usable…
     await waitFor(() => expect(screen.getByRole('button', { name: /common\.save/ })).toBeInTheDocument())
     // …y el rechazo se explica en texto humano (con la ubicación del error, sin objetos crudos).
-    await waitFor(() => expect(screen.getByText(/Field required/)).toBeInTheDocument())
-    expect(screen.getByText(/egg_storage_records\.0\.arrival_date/)).toBeInTheDocument()
+    await waitFor(() => expect(screen.getAllByText(/Field required/).length).toBeGreaterThan(0))
+    expect(screen.getAllByText(/egg_storage_records\.0\.arrival_date/).length).toBeGreaterThan(0)
   })
 })

@@ -6,7 +6,8 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
-import { useToast } from '../../components/Toast'
+import { useToast, getErrorMessage } from '../../components/Toast'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, identificadorDeOrdenSap } from './operationPayload'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -81,7 +82,7 @@ function RangeIndicator({ value, min, max, unit, weekLabel }: {
 // ============================================================
 // Zod Schema — covers all 24 operation types
 // ============================================================
-const operationSchema = z.object({
+const operacionBase = z.object({
  lot_id: z.number({ message: 'operations.selectLot' }).min(1).optional(),
  farm_id: z.number().optional(),
  house_id: z.number().optional(),
@@ -89,6 +90,9 @@ const operationSchema = z.object({
  event_date: z.string().min(1),
  observations: z.string().optional(),
  // Operation-specific catalog FKs
+ // `R-189 (F-01)`: el campo tipado que la importación valida (`BR-22`) y la UI escribe
+ // (`GA-TD-014`); sin declararlo aquí, zod lo descartaba y nunca viajaba al API.
+ sap_document_ref: z.string().optional(),
  supplier_id: z.number().optional(),
  cause_id: z.number().optional(),
  cull_cause_id: z.number().optional(),
@@ -181,6 +185,26 @@ const operationSchema = z.object({
  })
  }
 })
+
+/** `R-189 (F-01)`: un campo numérico vacío llega como `NaN` (`valueAsNumber`) y zod invalida **en silencio**
+ * (el submit no viaja). Se normaliza a `undefined` ANTES de validar: el «vacío» es ausencia, no un número.
+ * No se inventan valores y la cantidad 0 declarada se conserva. */
+function limpiarNumerosNoFinitos(valor: unknown): unknown {
+ if (typeof valor === 'number') return Number.isFinite(valor) ? valor : undefined
+ if (Array.isArray(valor)) return valor.map(limpiarNumerosNoFinitos)
+ if (valor && typeof valor === 'object' && Object.getPrototypeOf(valor) === Object.prototype) {
+ const limpio: Record<string, unknown> = {}
+ for (const [clave, v] of Object.entries(valor as Record<string, unknown>)) {
+ limpio[clave] = limpiarNumerosNoFinitos(v)
+ }
+ return limpio
+ }
+ return valor
+}
+
+// El preprocesado normaliza el ENTRANTE (NaN ⇒ ausencia) sin cambiar la forma del formulario:
+// el cast conserva el tipado que el resolver ya usaba para `operacionBase`.
+const operationSchema = z.preprocess(limpiarNumerosNoFinitos, operacionBase) as unknown as typeof operacionBase
 
 type OperationFormData = z.infer<typeof operationSchema>
 
@@ -395,12 +419,14 @@ export default function OperationFormPage() {
  // Lo que el operador escribe en observaciones es lo que se persiste.
  const observations = data.observations || ''
 
- const normalizedBirdMovements = (data.bird_movements || []).map((m) => {
+ // `R-189 (F-01)` · el serializador limpia `NaN`/filas vacías y el almacenamiento sin contenido
+ // (el `[{}]` por omisión del formulario ya no viaja: el contrato canónico es `[]`).
+ const normalizedBirdMovements = serializarMovimientosDeAves((data.bird_movements || []).map((m) => {
  if (data.event_type === 'bird_reception' && (m.week_number == null || Number.isNaN(m.week_number))) {
  return { ...m, week_number: 0 }
  }
  return m
- })
+ }))
 
  const payload: any = {
  ...data,
@@ -412,7 +438,7 @@ export default function OperationFormPage() {
  feed_movements: data.feed_movements || [],
  hatchery_params: (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
  inspection_details: [...(data.inspection_details || []), ...houseDetails],
- egg_storage_records: data.egg_storage_records || [],
+ egg_storage_records: serializarAlmacenamientoDeHuevos(data.egg_storage_records),
  house_inspections: undefined, // strip UI-only field
  }
  await api.post('/operations', payload)
@@ -420,7 +446,8 @@ export default function OperationFormPage() {
  toast.success(t('operations.saveSuccess'))
  setTimeout(() => navigate('/operations'), 1500)
  } catch (err: any) {
- const message = err.response?.data?.detail || t('operations.saveError')
+ // `R-189 (F-01)`: mensaje siempre renderizable (lista de validación de FastAPI incluida).
+ const message = getErrorMessage(err, t('operations.saveError'))
  setResult({ ok: false, message })
  toast.error(message)
  } finally { setSubmitting(false) }
@@ -1913,7 +1940,7 @@ default: return (
  }`}>
  <input type="radio" name="reception_source" value="transfer"
  checked={watch('extra_data.reception_source' as any) === 'transfer'}
- onChange={() => { setValue('extra_data.reception_source' as any, 'transfer'); setValue('extra_data.sap_order_ref' as any, '') }}
+ onChange={() => { setValue('extra_data.reception_source' as any, 'transfer'); setValue('extra_data.sap_order_ref' as any, ''); setValue('sap_document_ref' as any, '') }}
  className="sr-only" />
  <span>{t('operations.receptionTransfer', 'Transferencia')}</span>
  </label>
@@ -1924,7 +1951,7 @@ default: return (
  }`}>
  <input type="radio" name="reception_source" value="purchase"
  checked={!watch('extra_data.reception_source' as any) || watch('extra_data.reception_source' as any) === 'purchase'}
- onChange={() => { setValue('extra_data.reception_source' as any, 'purchase'); setValue('extra_data.sap_order_ref' as any, '') }}
+ onChange={() => { setValue('extra_data.reception_source' as any, 'purchase'); setValue('extra_data.sap_order_ref' as any, ''); setValue('sap_document_ref' as any, '') }}
  className="sr-only" />
  <span>{t('operations.receptionPurchase', 'Orden de compra')}</span>
  </label>
@@ -1935,11 +1962,19 @@ default: return (
  : t('operations.sapImportOrder', 'Orden de compra / importación SAP')}
  </label>
  <SearchSelect
- value={watch('extra_data.sap_order_ref' as any) ?? ''}
+ value={(() => {
+ // `R-189 (F-01)`: `SearchSelect` trabaja con el id; el valor canónico guardado es el CÓDIGO.
+ const lista = watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders
+ const actual = lista.find((o: any) => identificadorDeOrdenSap(o) === watch('extra_data.sap_order_ref' as any))
+ return actual ? String(actual.id) : ''
+ })()}
  onChange={(v) => {
- setValue('extra_data.sap_order_ref' as any, v)
  const sourceList = watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders
- const order = sourceList.find((o: any) => (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === v)
+ const order = sourceList.find((o: any) => String(o.id) === String(v))
+ // `R-189 (F-01)`: el código canónico viaja al campo tipado que el dominio valida (`GA-TD-014`).
+ const referencia = identificadorDeOrdenSap(order)
+ setValue('extra_data.sap_order_ref' as any, referencia)
+ setValue('sap_document_ref' as any, referencia)
  if (order) {
  if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
  if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
@@ -1963,11 +1998,19 @@ default: return (
  : t('operations.sapImportOrder', 'Orden de compra / importación SAP')}
  </label>
  <SearchSelect
- value={watch('extra_data.sap_order_ref' as any) ?? ''}
+ value={(() => {
+ // `R-189 (F-01)`: `SearchSelect` trabaja con el id; el valor canónico guardado es el CÓDIGO.
+ const lista = (eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders
+ const actual = lista.find((o: any) => identificadorDeOrdenSap(o) === watch('extra_data.sap_order_ref' as any))
+ return actual ? String(actual.id) : ''
+ })()}
  onChange={(v) => {
- setValue('extra_data.sap_order_ref' as any, v)
- const orderList = (eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders
- const order = orderList.find((o: any) => (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === v)
+ const lista = (eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders
+ const order = lista.find((o: any) => String(o.id) === String(v))
+ // `R-189 (F-01)`: el código canónico viaja al campo tipado que el dominio valida (`GA-TD-014`).
+ const referencia = identificadorDeOrdenSap(order)
+ setValue('extra_data.sap_order_ref' as any, referencia)
+ setValue('sap_document_ref' as any, referencia)
  if (order) {
  if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
  if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
