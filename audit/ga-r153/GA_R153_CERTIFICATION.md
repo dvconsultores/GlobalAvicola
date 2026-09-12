@@ -33,3 +33,13 @@ La promesa del propietario (opción B) se cumple extremo a extremo: registrar la
 ## 4 · Límites declarados
 
 Ejecución local de la suite PG (PostgreSQL no disponible en esta máquina; CI la ejecuta) · concurrencia multi-proceso no provocada en runtime (primitiva compartida con `R-130`, cubierta en CI).
+
+---
+
+## Addendum 2026-09-12 · GA-UAT-09 (preparación de la aceptación del propietario)
+
+1. **`SPEC_DEVELOPMENT_SEQUENCE_DEVIATION` (C2b / `db8ae21`)** — la enmienda de spec/AC58-59/C26 se formalizó **después** de la implementación (llegó en `8564364`, C3); los tests AC58/59 viajaron con la implementación. Desviación **de secuencia documental**, declarada en `uat/GA_OWNER_UAT_R153_GOVERNANCE_PREFLIGHT.md` y en `uat/GA_OWNER_UAT_R153_EVIDENCE.md §B`. No se modifica producto por esta causa.
+2. **OBS-1 = `DATA_RESTORATION_ONLY`** — la reparación del incidente de roles fue únicamente de datos (`PUT /roles/{id}` `is_active`); ningún archivo de `auth`/roles fue tocado por los commits del tranche. Determinación y evidencia en la nota de preflight.
+3. **Hallazgo F-01 (nuevo, P1) descubierto en la verificación de referencia del UAT** — el alta de la importación **desde la interfaz** es rechazada (registro vacío de almacenamiento de huevos en el payload por omisión) y, además, el mensaje de error del servidor **rompe el render** (pantalla en blanco); una segunda brecha impide que la orden de compra elegida llegue al campo tipado que la importación valida. La misma causa de carga por omisión afecta al alta de recepción. Origen **preexistente del asistente** (default `[{}]` desde `a43507b`, 2026-06-26; esquema estricto desde el baseline) — **no introducido por R-153** (sus commits no tocan el guardado del asistente ni los esquemas de almacenamiento de huevos).
+4. **Efecto sobre el estado**: la **certificación técnica de R-153 se mantiene** (mecanismo certificado por API/E2E runtime: 0 fallos), pero la **aceptación visible del propietario queda BLOQUEADA** hasta corregir F-01 por el cauce `FINDING → SPEC → AC → IMPLEMENTACIÓN` (sin hotfix dentro de R-153). Estado: `R-153 CLOSED_FUNCTIONALLY_CERTIFIED` · `OD-25 RATIFIED_IMPLEMENTED` · `OWNER_ACCEPTANCE: BLOCKED_BY_F-01 (PENDING)`.
+5. Paquete: `audit/ga-r153/uat/` (guía, observaciones, evidencia A-H, índice de capturas C/F, ledger, preflight, journal y capturas).

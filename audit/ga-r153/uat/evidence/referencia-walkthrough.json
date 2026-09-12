@@ -1,0 +1,43 @@
+{
+  "steps": [
+    "limpieza-previos :: 0",
+    "login-op/ap :: ok",
+    "UAT-01-nota-visible :: 1",
+    "OC :: PO-C001-GPR-0001 · OC Progenitoras Cria - recepcion de abuelas",
+    "Proveedor :: Cobb-Vantress",
+    "Transporte :: ABC-123 — Camión Avícola 1",
+    "lot-trigger :: Seleccionar lote...",
+    "invalidos :: []",
+    "UAT-01-import-id :: null",
+    "post-save-banner",
+    "FALLO :: UAT-01 FAIL: el guardado de la importación fue rechazado (422) y el detalle no trata el error"
+  ],
+  "pageerror": [
+    "Minified React error #31; visit https://react.dev/errors/31?args[]=object%20with%20keys%20%7Btype%2C%20loc%2C%20msg%2C%20input%7D for the full message or use the non-minified dev environment for full errors and additional helpful warnings."
+  ],
+  "consoleError": [
+    "Failed to load resource: the server responded with a status of 403 (Forbidden)",
+    "Failed to load resource: the server responded with a status of 422 (Unprocessable Entity)"
+  ],
+  "http5xx": [],
+  "http4xx": {
+    "/api/v1/dashboard/admin": [
+      403,
+      403
+    ],
+    "/api/v1/operations": [
+      422
+    ]
+  },
+  "posts": [
+    "{\"event_type\":\"grandparent_import\",\"event_date\":\"2026-09-12\",\"observations\":\"\",\"supplier_id\":1,\"transport_id\":1,\"extra_data\":{\"import_plan\":{\"origin_country\":\"Francia\",\"purchased_total\":110,\"shipped_total\":105,\"received_total\":100,\"transit_mortality\":5,\"departure_date\":\"2026-09-05\",\"arrival_date\":\"2026-09-12\",\"reception_condition\":\"buena\",\"quarantine_days\":21,\"quarantine_end_date\":\"2026-10-03\",\"initial_health_inspection\":\"sin hallazgos\"},\"sap_order_ref\":\"33\"},\"bird_movements\":[{\"sex\":\"male\",\"quantity\":40,\"avg_weight\":3800},{\"sex\":\"female\",\"quantity\":60,\"avg_weight\":3600}],\"egg_movements\":[],\"feed_movements\":[{}],\"hatchery_params\":[{}],\"inspection_details\":[],\"egg_storage_records\":[{}]}"
+  ],
+  "resultado": {
+    "ok": false,
+    "error": "UAT-01 FAIL: el guardado de la importación fue rechazado (422) y el detalle no trata el error"
+  },
+  "netOps": [
+    "GET 200 /operations/new",
+    "POST 422 /api/v1/operations"
+  ]
+}
