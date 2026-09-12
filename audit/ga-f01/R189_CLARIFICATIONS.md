@@ -31,4 +31,7 @@ Fecha: 2026-09-12 · Resueltas antes de implementar (C1).
 | C25 | Criterio de repetición UAT | 7/7 casos del walkthrough de referencia en verde + 0 fatales | §72 |
 | C26 | Campos numéricos vacíos | `valueAsNumber` produce `NaN` ⇒ zod inválida **en silencio** (submit sin petición). Resolución: saneo en el serializador (NaN ⇒ omitido; filas sin contenido descartadas; cantidad 0 declarada se conserva) — no se relaja el esquema | RED v5 + E2E UAT-09 |
 
-Sin clarificaciones críticas abiertas ⇒ implementación habilitada tras C1.
+| C27 | Filas `{}` en `feed_movements`/`hatchery_params` | Tercera superficie del mismo defecto (F-01d): el `[{}]` de arranque del formulario se persiste (el default 0.0 no se valida en alta) y el detalle 500 al leerlo (`gt=0`). Resolución: serializadores frontend (fila sin contenido ⇒ descartada) + esquemas de escritura estrictos (422 ruidoso, sin persistencia) + lectura tolerante para históricos | RED v6 (`evidence/f01d/` matriz + traceback) + payload nube `[{}]` |
+| C28 | Compatibilidad de clientes con caché antigua | Un cliente desactualizado que envíe `[{}]` recibe 422 y el error se muestra seguro (S3 corregido); la UI nueva nunca lo envía; los datos históricos no se alteran (solo lectura tolerante) | anexo F-01d §4 (D2/D3) |
+
+Sin clarificaciones críticas abiertas ⇒ implementación habilitada (C1); ampliación F-01d habilitada tras C2 (anexo §4).

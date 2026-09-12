@@ -1,0 +1,6 @@
+sin-feed: id=1 GET=200 {"lot_id":null,"farm_id":3,"house_id":3,"event_type":"grandparent_import","event_date":"2026-09-05","observations":null,"sap_document_ref":"AUTOLOTE-OC-A","supp
+feed-vacio: id=2 GET=200 {"lot_id":null,"farm_id":3,"house_id":3,"event_type":"grandparent_import","event_date":"2026-09-05","observations":null,"sap_document_ref":"AUTOLOTE-OC-A","supp
+egg-vacio: id=3 GET=200 {"lot_id":null,"farm_id":3,"house_id":3,"event_type":"grandparent_import","event_date":"2026-09-05","observations":null,"sap_document_ref":"AUTOLOTE-OC-A","supp
+egg+feed-vacios: id=4 GET=200 {"lot_id":null,"farm_id":3,"house_id":3,"event_type":"grandparent_import","event_date":"2026-09-05","observations":null,"sap_document_ref":"AUTOLOTE-OC-A","supp
+feed-fila: id=5 GET=200 {"lot_id":null,"farm_id":3,"house_id":3,"event_type":"grandparent_import","event_date":"2026-09-05","observations":null,"sap_document_ref":"AUTOLOTE-OC-A","supp
+cliente estricto status: 200

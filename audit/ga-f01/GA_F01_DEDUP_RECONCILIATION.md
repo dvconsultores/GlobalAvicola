@@ -42,3 +42,12 @@ F-01 → R-189 (canónico) · P1 · afecta: alta de importación de abuelas y al
          UI: OperationFormPage (serializador + bloque OC + manejo de error) · Error UX: helper compartido getErrorMessage ·
          API: POST /api/v1/operations · Procesos: P-01/P-02 (alta), P-07 indirecto (sin alta no hay aprobación), R-153/OD-25 (flujo visible).
 ```
+
+## 5 · Ampliación F-01d (post-C2, subsanada en este tranche)
+
+La re-ejecución del E2E tras C2 destapó una **tercera superficie del mismo defecto de serializado**:
+`feed_movements: [{}]` y `hatchery_params: [{}]` seguían viajando (C2 solo cubrió almacenamiento y
+filas de aves). La fila vacía se persiste (default sin validar) y el detalle del evento devuelve 500
+al leerla (`FeedMovementSchema.quantity_kg gt=0`). Es el **mismo hallazgo R-189** (serializador
+incompleto por clave + asimetría del esquema entre alta y lectura), no un hallazgo nuevo; se subsana
+como extensión con anexo propio: `GA_F01D_SUBSANACION_ANNEX.md` (AC-F01D-01…10).

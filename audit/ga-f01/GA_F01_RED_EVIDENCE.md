@@ -31,3 +31,18 @@ Tests  6 failed | 3 passed (9)
 ```
 
 Fallo = comportamiento defectuoso real del formulario (no del arnés: los tres `/` de montaje — `ToastProvider`, rutas, `matchMedia` — quedaron resueltos y los positivos de contexto pasan). **RED válido** (S1/S2/S3 + familia NaN documentados en `GA_F01_*` y controles de contrato).
+
+## 4 · RED v6 — F-01d (`feed_movements`/`hatchery_params` con fila vacía)
+
+Detectado en la repetición del E2E post-C2 (UAT-02 bloqueado). Evidencia:
+
+| Prueba | Resultado | Artefacto |
+|---|---|---|
+| Nube · `GET` detalles con fila `{}` en alimento (ids 112/115/116/117) | **500** determinista (×2) | `evidence/f01d/RED_cloud_payload_y_500.md` |
+| Nube · controles (sin claves / `[]` / hatch-only) | 200 | ídem (nota de exactitud: el disparador es `[{}]`, no la clave) |
+| Local · matriz en PostgreSQL de pruebas (`feed[{}]`, `hatchery[{}]`, `egg[{}]`, sin claves) | `feed[{}]` ⇒ POST 201 + GET **500**; `hatchery[{}]` ⇒ 201 + 200 (fila basura persistida); controles 200 | `evidence/f01d/RED_local_matriz.txt` |
+| Local · traceback con cliente estricto | `ValidationError: FeedMovementSchema.quantity_kg gt=0 (0.0)` | `evidence/f01d/RED_local_traceback_exception.txt` |
+
+Causa: el default `0.0` de `quantity_kg` no se valida en alta (Pydantic v2) ⇒ la fila vacía se
+persiste; en lectura el valor presente viola `gt=0` ⇒ 500. Análisis completo en
+`GA_F01D_SUBSANACION_ANNEX.md`. **RED v6 válido** (reproducido localmente y en nube, con controles).

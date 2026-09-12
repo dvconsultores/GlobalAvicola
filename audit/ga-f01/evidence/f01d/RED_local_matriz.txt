@@ -1,0 +1,7 @@
+feed[{}]: POST=201
+feed[{}]: id=1 GET=500 Internal Server Error
+hatchery[{}]: POST=201
+hatchery[{}]: id=2 GET=200 {"lot_id":null,"farm_id":3,"house_id":3,"event_type":"grandparent_import","event_date":"2026-09-05","observations":null,
+feed[{}]+hatchery[{}]: POST=201
+feed[{}]+hatchery[{}]: id=3 GET=500 Internal Server Error
+POST: 201 {"lot_id":null,"farm_id":4,"house_id":4,"event_type":"grandparent_import","event_date":"2026-09-05",

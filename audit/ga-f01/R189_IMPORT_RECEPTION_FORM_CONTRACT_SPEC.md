@@ -14,6 +14,7 @@ GA-UAT-09 quedó bloqueada en UAT-01: el alta de importación por interfaz es re
 
 1. **Serializador de almacenamiento**: `egg_storage_records` → solo registros con contenido; sin contenido ⇒ `[]` (canónico). En import Y recepción (mismo `onSubmit`).
 1b. **Serializador de movimientos de aves**: los campos numéricos vacíos llegan como `NaN` (`valueAsNumber`) y **bloquean el submit en silencio** (validación zod); las filas sin contenido (p.ej. ♀ vacía) se descartan y los `NaN` se omiten — sin inventar valores, sin tocar cantidad 0 declarada.
+1c. **Serializador de alimento e incubadora** (`F-01d`): `feed_movements` y `hatchery_params` ⇒ filas sin contenido descartadas (`[{}]` de arranque jamás viaja); tercera superficie del mismo contrato de serializado.
 2. **Mapeo de OC**: el bloque compartido escribe el **código canónico** de la referencia en `sap_document_ref` (campo tipado que el dominio valida, precedente `GA-TD-014`) **y** en `extra_data.sap_order_ref` (consumo de UI existente); resuelve la orden por `id` (contrato de `SearchSelect`); completa los extras declarados. Aplica a la rama no-cría y a la rama cría (transferencia/compra) del bloque compartido.
 3. **Errores seguros**: `getErrorMessage` (helper compartido existente) normaliza `detail` string | lista FastAPI | objeto | Error | string | desconocido → **string siempre**; `OperationFormPage` lo usa en el `catch`. Sin stack, sin `[object Object]`, sin romper render.
 
@@ -36,14 +37,16 @@ R-153/OD-25: **AC27** flujo alcanzable por UI · **AC28** sin lote antes · **AC
 Seguridad: **AC35** tenant · **AC36** BU empresa OFF cierra · **AC37** sin concesión cierra · **AC38** RBAC cierra · **AC39** sin referencias ajenas nuevas · **AC40** sin autorización en frontend.
 UX/i18n: **AC41/42** escritorio import/recepción usables · **AC43** móvil · **AC44** overflow 0 · **AC45/46** ES/EN · **AC47** sin texto fijo nuevo.
 Gobernanza: **AC48** dedup · **AC49** finding canónico · **AC50** spec antes · **AC51** AC antes · **AC52** RED antes · **AC53** sin cambios no relacionados · **AC54** GA-UAT-09 re-ejecutable.
+F-01d (alimento/incubadora y detalle): **AC55** sin `{}` en alimento · **AC56** sin `{}` en incubadora · **AC57** escritura con `[{}]` rechazada (422) sin persistir fila · **AC58** lectura histórica 0.0 ⇒ 200 · **AC59** fila válida conservada y visible en detalle · **AC60** detalle sin 500 en E2E-01…13 · **AC61** suites backend ejecutadas localmente (incl. R-153 corregida) verdes · **AC62** payload import/recepción con `[]` canónico verificado en runtime.
 
 ## 6 · Pruebas
 
 - RED/GREEN frontend (jsdom, camino real del formulario): payload import (almacenamiento+OC), payload recepción, render de error con 422 realista; unit del normalizador.
 - Controles de contrato backend (API, runtime) documentados en la traza.
-- Regresión: suite vitest completa (≥295), tsc, build; suites R-153 (PG, CI declarada).
+- Regresión: suite vitest completa (≥295), tsc, build; suite backend íntegra en el PostgreSQL de pruebas en espacio de usuario (incl. R-153: la afirmación «CI declarada» se sustituye por ejecución local verificable tras corregir su fixture — anexo F-01d §7).
+- Backend F-01d: `tests/test_f01d_filas_vacias.py` (API real + conteo SQL; histórico 0.0 ⇒ 200; `[{}]` ⇒ 422).
 - Runtime E2E-01…13 + recertificación R-153 (addendum) + walkthrough UAT-01…07.
 
 ## 7 · Éxito
 
-Import válido sin lote por UI ⇒ 201; OC presente en `sap_document_ref`; almacenamiento `[]`; recepción válida por UI; 4xx visible y seguro; React fatal 0; sin pantalla en blanco; R-153 recertificada sobre la nueva generación; GA-UAT-09 re-ejecutable.
+Import válido sin lote por UI ⇒ 201; OC presente en `sap_document_ref`; almacenamiento, alimento e incubadora `[]`; recepción válida por UI; detalle sin 500 (histórico incluido); 4xx visible y seguro; React fatal 0; sin pantalla en blanco; R-153 recertificada sobre la nueva generación; GA-UAT-09 re-ejecutable.
