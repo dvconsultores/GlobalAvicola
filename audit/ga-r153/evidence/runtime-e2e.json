@@ -1,0 +1,196 @@
+{
+  "fecha": "2026-09-12",
+  "runtime": "https://avicola.globaldv.net",
+  "empresa": {
+    "id": 1,
+    "nombre": "company-1"
+  },
+  "semilla": "6cef89",
+  "pasos": [
+    {
+      "step": "login-admin",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "empresa-efectiva",
+      "status": 200,
+      "detail": {
+        "id": 1,
+        "nombre": "company-1"
+      }
+    },
+    {
+      "step": "catalogo-antes",
+      "status": 200,
+      "detail": {
+        "breeder": false,
+        "broiler": false,
+        "grandparent": true,
+        "hatchery": false
+      }
+    },
+    {
+      "step": "grandparent-ON",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "lotes-L-GP-antes",
+      "status": 200,
+      "detail": [
+        "L-GP-2026-01",
+        "L-GP-2026-06",
+        "L-GP-2026-07",
+        "L-GP-2026-08"
+      ]
+    },
+    {
+      "step": "maestros",
+      "status": 200,
+      "detail": {
+        "supplier": 1,
+        "transport": 1,
+        "farm": 1,
+        "house": 1
+      }
+    },
+    {
+      "step": "AC45-negativo-sin-concesion",
+      "status": 403,
+      "detail": {
+        "detail": "sin acceso operativo a la unidad de negocio 'grandparent'"
+      }
+    },
+    {
+      "step": "actores-y-concesiones",
+      "status": 200,
+      "detail": {
+        "op": "e2e-r153-op-6cef89",
+        "ap": "e2e-r153-ap-6cef89"
+      }
+    },
+    {
+      "step": "E2E-01-import-sin-lote",
+      "status": 201,
+      "detail": {
+        "event_id": 88,
+        "lot_id": null
+      }
+    },
+    {
+      "step": "E2E-02-detalle-antes",
+      "status": 200,
+      "detail": {
+        "lot_id": null,
+        "via": "operador"
+      }
+    },
+    {
+      "step": "E2E-03-cero-lotes-antes",
+      "status": 200,
+      "detail": [
+        "L-GP-2026-01",
+        "L-GP-2026-06",
+        "L-GP-2026-07",
+        "L-GP-2026-08"
+      ]
+    },
+    {
+      "step": "E2E-04-aprobacion-crea-lote",
+      "status": 200,
+      "detail": {
+        "via": "approve-explicito",
+        "lot_id": 62
+      }
+    },
+    {
+      "step": "E2E-05-datos-canonicos",
+      "status": 200,
+      "detail": {
+        "lot_code": "L-GP-2026-09",
+        "bird_type": "grandparent",
+        "sex": "mixed",
+        "status": "active",
+        "start_date": "2026-09-12T00:00:00Z",
+        "company_id": 1,
+        "farm_id": 1,
+        "activation_type": "normal"
+      }
+    },
+    {
+      "step": "E2E-06-sin-poblacion",
+      "status": 200,
+      "detail": {
+        "saldo": "{\"lot\": {\"id\": 62, \"lot_code\": \"L-GP-2026-09\", \"status\": \"active\", \"start_date\": \"2026-09-12 00:00:00+00:00\"}, \"opening_balance\": null, \"phases\": [], \"event_summary\": {\"total_events\": 1, \"by_type\": {\"grandparent_import\":",
+        "via": "admin (el operador no tiene permiso de reportes)"
+      }
+    },
+    {
+      "step": "E2E-12-recepcion-registrada",
+      "status": 201,
+      "detail": {
+        "event_id": 89
+      }
+    },
+    {
+      "step": "E2E-13-poblacion-tras-recepcion",
+      "status": 200,
+      "detail": {
+        "saldo": "{\"lot\": {\"id\": 62, \"lot_code\": \"L-GP-2026-09\", \"status\": \"active\", \"start_date\": \"2026-09-12 00:00:00+00:00\"}, \"opening_balance\": null, \"phases\": [], \"event_summary\": {\"total_events\": 2, \"by_type\": {\"bird_reception\": 1, "
+      }
+    },
+    {
+      "step": "E2E-17-lote-manual",
+      "status": 201,
+      "detail": {
+        "id": 63
+      }
+    },
+    {
+      "step": "E2E-18-import-legado-con-lote",
+      "status": 201,
+      "detail": {
+        "event_id": 90
+      }
+    },
+    {
+      "step": "E2E-19-legado-sin-duplicar",
+      "status": 200,
+      "detail": {
+        "lot_id_evento": 63,
+        "lotes_gp_total": 5
+      }
+    },
+    {
+      "step": "UI-activo-pendiente",
+      "status": 201,
+      "detail": {
+        "event_id": 91
+      }
+    }
+  ],
+  "activos": {
+    "IMPORT_1": 88,
+    "LOTE_1": 62,
+    "REC_1": 89,
+    "MANUAL": 63,
+    "LEGADO": 90,
+    "PENDIENTE": 91,
+    "actores": {
+      "op": "e2e-r153-op-6cef89",
+      "ap": "e2e-r153-ap-6cef89",
+      "neg": "e2e-r153-neg-6cef89"
+    },
+    "roles": {
+      "op": 123,
+      "ap": 124,
+      "neg": 122
+    },
+    "usuarios": {
+      "op": 179,
+      "ap": 180,
+      "neg": 178
+    }
+  }
+}

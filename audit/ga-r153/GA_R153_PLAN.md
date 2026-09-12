@@ -17,21 +17,22 @@ Fecha: 2026-09-12 · Baseline `9ad9b26`.
 | P11 | Spec | ✅ |
 | P12 | Clarificaciones C01-C25 | ✅ |
 | P13 | AC (57) | ✅ |
-| P14 | RED (runtime 400 + vitest estático + tests PG) | ▶ |
-| P15 | Commit C1 gobernanza + push | ⏳ |
-| P16 | Implementación backend (gate + hook + generador) | ⏳ |
-| P17 | Implementación frontend (form opcional + enlace/pendiente + i18n) | ⏳ |
-| P18 | GREEN dirigido (vitest + pytest declarado) | ⏳ |
-| P19 | Pruebas de concurrencia (PG/CI) | ⏳ |
-| P20-P22 | Regresión P-07 / P-01 / R-130 | ⏳ |
-| P23 | Regresión frontend (Vitest 292+ · tsc · build) | ⏳ |
-| P24 | Commit C2 + push | ⏳ |
-| P25 | Auto-deploy (observación de generación) | ⏳ |
-| P26 | Runtime autenticado E2E-01…16 | ⏳ |
-| P27 | Prueba de recepción (población una sola vez) | ⏳ |
-| P28 | Pruebas de seguridad (tenant/BU/RBAC/global) | ⏳ |
-| P29 | Limpieza | ⏳ |
-| P30 | Reconciliación de cierre | ⏳ |
-| P31 | Certificación técnica (R-153 CLOSED_FUNCTIONALLY_CERTIFIED) | ⏳ |
-| P32 | Preparación de UAT del propietario | ⏳ |
-| P33 | STOP | ⏳ |
+| P14 | RED (runtime 400 + vitest estático + tests PG) | ✅ |
+| P15 | Commit C1 gobernanza + push | ✅ `9651550` |
+| P16 | Implementación backend (gate + hook + generador) | ✅ |
+| P17 | Implementación frontend (form opcional + enlace/pendiente + i18n) | ✅ |
+| P18 | GREEN dirigido (vitest + pytest declarado) | ✅ |
+| P18b | Prerequisito descubierto: derivación de cadena por tipo (AC58/59) | ✅ C2b `db8ae21` |
+| P19 | Pruebas de concurrencia (PG/CI) | ✅ (CI declarada; diseño en evidencia de concurrencia) |
+| P20-P22 | Regresión P-07 / P-01 / R-130 | ✅ (CI declarada + bracketing runtime) |
+| P23 | Regresión frontend (Vitest 292+ · tsc · build) | ✅ 295/295 · tsc · build |
+| P24 | Commit C2 + push | ✅ `47ea484` |
+| P25 | Auto-deploy (observación de generación) | ✅ `index-DNXomVaS.js` + señal de comportamiento |
+| P26 | Runtime autenticado E2E-01…16 | ✅ 0 fallos |
+| P27 | Prueba de recepción (población una sola vez) | ✅ E2E-12/13 + bracketing |
+| P28 | Pruebas de seguridad (tenant/BU/RBAC/global) | ✅ E2E-AC45 · suite AC45/46/59 |
+| P29 | Limpieza | ✅ (incidente OBS-1 reparado y verificado) |
+| P30 | Reconciliación de cierre | ✅ `GA_R153_CLOSURE_RECONCILIATION.md` |
+| P31 | Certificación técnica (R-153 CLOSED_FUNCTIONALLY_CERTIFIED) | ✅ `GA_R153_CERTIFICATION.md` |
+| P32 | Preparación de UAT del propietario | ✅ `GA_R153_OWNER_UAT.md` |
+| P33 | STOP | ✅ (este commit) |

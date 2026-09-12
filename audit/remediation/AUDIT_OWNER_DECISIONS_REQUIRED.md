@@ -97,3 +97,5 @@ Pendientes sin cambio: `AOD-08`, `AOD-14`, `AOD-17`, `AOD-18`, `AOD-19`, `AOD-20
 `AOD-25` se resolverá como `OD-20+`. No se decide aquí (`NO DECIDIR POR EL PROPIETARIO`). `R-152` no requiere decisión (`GA-REM-042 §2`).
 
 > **Actualización 2026-09-12 — `AOD-25` RESUELTA.** El propietario eligió la **opción B** (auto-crear el lote de abuelas al **aprobar** la importación, **sin poblar**; la recepción sigue siendo la entrada de población; vía manual preservada). Decisión formalizada como **`OD-25`** (`audit/ga-r153/GA_OD_25_GRANDPARENT_LOT_ON_APPROVAL_DECISION.md`). `R-153` pasa a implementación (tranche `GA-R153`, en curso).
+
+> **Actualización 2026-09-12 (implementación)** — `OD-25 (B)` **implementada y certificada técnicamente** en `GA-R153` (C1 `9651550` · C2 `47ea484` · C2b `db8ae21`): E2E runtime 0 fallos, invariante «aprobación no puebla / recepción sí» probado, `L-GP-2026-09` creado en producción. **Aceptación del propietario PENDIENTE** (UAT de 7 casos, `GA_R153_OWNER_UAT.md`).

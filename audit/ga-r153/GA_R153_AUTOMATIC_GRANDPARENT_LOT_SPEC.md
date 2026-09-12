@@ -69,3 +69,8 @@ Regresión: 50 P-07 preservado · 51 P-01 sin regresión (paso afectado) · 52 P
 
 ## Pruebas / runtime / UAT / cierre
 Backend PG: `tests/test_r153_import_lot_auto.py` (CI; skip local declarado). Frontend: `r153.importLotOptional.test.ts` + suite completa. Runtime: E2E-01…16 (import sin lote → aprobación → lote → recepción; negativos de seguridad; manual; legado). UAT propietario: 7 casos (`GA_R153_OWNER_UAT.md`). Cierre: `R-153 CLOSED_FUNCTIONALLY_CERTIFIED` + OD-25 `RATIFIED_IMPLEMENTED` con `OWNER_ACCEPTANCE: PENDING`.
+
+## Anexo C2b · AC58/59 (prerequisito descubierto en runtime)
+- **AC58**: la importación sin lote y sin clasificación **deriva su cadena del tipo** (`grandparent`): es alcanzable por los actores de esa cadena y **no** aparece en la bandeja de pendientes fase-6.
+- **AC59**: la derivación **no abre alcance**: actores de otra cadena siguen sin verla (ni en detalle ni en bandeja).
+Motivo: sin la derivación, el evento quedaba fuera de todo alcance (bandeja sin superficie operativa: las habilitaciones no exponen id por API/UI) y la aprobación —la que crea el lote— era **inalcanzable**: `OD-25 (B)` resultaba inoperable. Fase-6 intacta para inspecciones (su caso permanente). Evidencia: suite AC58/59 · `GA_R153_RUNTIME_AUTHENTICATED_EVIDENCE.md §4` · certificación OBS-4.

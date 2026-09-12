@@ -1,0 +1,49 @@
+{
+  "62": {
+    "status": 200,
+    "report": {
+      "lot": {
+        "id": 62,
+        "lot_code": "L-GP-2026-09",
+        "status": "active",
+        "start_date": "2026-09-12 00:00:00+00:00"
+      },
+      "opening_balance": null,
+      "phases": [],
+      "event_summary": {
+        "total_events": 2,
+        "by_type": {
+          "bird_reception": 1,
+          "grandparent_import": 1
+        },
+        "by_status": {
+          "approved": 2
+        }
+      }
+    }
+  },
+  "61": {
+    "status": 200,
+    "report": {
+      "lot": {
+        "id": 61,
+        "lot_code": "L-GP-2026-08",
+        "status": "active",
+        "start_date": "2026-09-12 00:00:00+00:00"
+      },
+      "opening_balance": null,
+      "phases": [],
+      "event_summary": {
+        "total_events": 2,
+        "by_type": {
+          "bird_reception": 1,
+          "grandparent_import": 1
+        },
+        "by_status": {
+          "registered": 1,
+          "approved": 1
+        }
+      }
+    }
+  }
+}

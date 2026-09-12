@@ -29,5 +29,6 @@ Fecha: 2026-09-12. Todas resueltas con evidencia de repositorio (§ trazas del h
 | C23 | Impacto formulario | lote **opcional** para `grandparent_import` + nota i18n | §impacto frontend |
 | C24 | Comportamiento post-aprobación | detalle: enlace `/lots/{id}`; pendiente si null | §impacto frontend |
 | C25 | Criterios UAT | 7 casos (crear sin lote · sin lote antes · aparece al aprobar · datos · sin aves · recepción · manual) | `GA_R153_OWNER_UAT.md` |
+| C26 | Visibilidad del evento sin lote | **deriva del tipo** (`grandparent`, inequívoco por `BR-22`): visible a la cadena, fuera de la bandeja fase-6, cerrado a otras cadenas. Prerequisito sin el cual la aprobación era inalcanzable (hallado en runtime, C2b) | `classification.py` · AC58/59 · OBS-4 |
 
 **Críticas resueltas (C05…C11): sin bloqueos; sin conflicto de esquema (migración 0).**

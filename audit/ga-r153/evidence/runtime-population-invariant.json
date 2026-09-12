@@ -1,0 +1,37 @@
+{
+  "61": {
+    "crear": 201,
+    "event": 94,
+    "submit": 200,
+    "start": 200,
+    "complete": 200,
+    "approve": 200,
+    "final": "approved",
+    "etiqueta": "saldo esperado 0 (recepción sin aprobar)"
+  },
+  "62": {
+    "crear": 201,
+    "event": 95,
+    "submit": 200,
+    "start": 200,
+    "complete": 200,
+    "approve": 200,
+    "final": "approved",
+    "etiqueta": "saldo esperado 10 (recepción aprobada)"
+  },
+  "bracketing_lote_61": {
+    "mortalidad_10": {
+      "creacion_status": 400,
+      "detalle": "Mortalidad (10) excede el saldo de aves disponibles (0)",
+      "evento": null
+    },
+    "mortalidad_9": {
+      "evento": 96,
+      "aprobacion_status": 200,
+      "detalle": null
+    }
+  },
+  "nota": "saldo(61) = recepción 10 (registrada) − mortalidad 1 aprobada = 9; el import aprobado NO aporta (si aportara 100, x10 habría pasado)",
+  "conclusion": "saldo lote 61 = 9 exacto = recepción registrada (10) − mortalidad 1 aprobada; x10 rechazado (no basta), x9 aprobado (basta) ⇒ el import aprobado aportó 0 aves (si sus 100 contaran, x10 habría pasado). OD-25(B) «no poblar» verificada en runtime.",
+  "observacion_mensaje": "La negativa de BR-01 al crear la mortalidad x10 cita «saldo disponible (0)», mientras el límite efectivo del lote era 9 (x9 pasó, x10 no): el número del mensaje procede de una lectura distinta de la disponibilidad. Se anota como observación de mensajería para el propietario; no altera el resultado del bracketing."
+}

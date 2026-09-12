@@ -37,7 +37,7 @@ Fecha: 2026-09-11 · Regla: `OWNER_ACCEPTED` solo con artefacto de decisión exp
 | FVA-15 | YES | YES | GA-UAT-02 | A | 2026-09-11 | ACCEPTED |
 | FVA-16 | YES | YES | GA-UAT-01 | A | 2026-09-11 | ACCEPTED |
 | FVA-17..18 | NO | N/A | — | — | — | N/A |
-| FVA-19 | NO (decisión de producto) | N/A | AOD-25 pendiente | — | — | PENDING (decisión) |
+| FVA-19 | SI (certificación técnica 2026-09-12) | PENDING | GA-R153 (UAT de 7 casos propuesta) | — | — | AWAITING_OWNER_UAT |
 | FVA-20..25 | NO | N/A | — | — | — | N/A |
 | FVA-26 | YES (por componentes) | YES | GA-UAT-02/03 | A | 2026-09-11 | ACCEPTED (componentes) |
 | FVA-27 | YES | YES | GA-UAT-03 | A | 2026-09-11 | ACCEPTED |

@@ -2156,6 +2156,7 @@ IMPLEMENT.    Backend: gate de lote opcional para grandparent_import + hook de a
               Frontend: import sin lote (nota i18n) + enlace al lote en el detalle.
 INTOCADO      P-01 sin ascenso por transitividad · P-07 intacto · R-130/BR-17/18 intactos ·
               Wave B PAUSED · Wave C/SAP NOT STARTED.
-ESTADO        EN IMPLEMENTACIÓN (tranche GA-R153; certificación técnica + UAT del propietario
-              al cierre).
+ESTADO        CERTIFICACIÓN TÉCNICA OK (2026-09-12): implementado (C2 `47ea484` · C2b `db8ae21`),
+              E2E runtime 0 fallos, invariante de población probado (bracketing), UI verificada.
+              UAT DEL PROPIETARIO PENDIENTE (7 casos; `GA_R153_OWNER_UAT.md`).
 ```

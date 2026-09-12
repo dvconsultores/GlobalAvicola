@@ -1,0 +1,479 @@
+{
+  "eventos_cancelados": {
+    "79": {
+      "status": 200,
+      "detalle": "cancelled"
+    },
+    "81": {
+      "status": 200,
+      "detalle": "cancelled"
+    },
+    "82": {
+      "status": 200,
+      "detalle": "cancelled"
+    },
+    "83": {
+      "status": 200,
+      "detalle": "cancelled"
+    },
+    "84": {
+      "status": 200,
+      "detalle": "cancelled"
+    },
+    "87": {
+      "status": 400,
+      "detalle": "La anulación dejaría el saldo de aves del lote en -10 (saldo 0, entrada 10)"
+    },
+    "91": {
+      "status": 200,
+      "detalle": "cancelled"
+    }
+  },
+  "usuarios": [
+    {
+      "id": 160,
+      "username": "e2e-r153-neg-b0500a",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 161,
+      "username": "e2e-r153-op-b0500a",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 162,
+      "username": "e2e-r153-ap-b0500a",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 163,
+      "username": "e2e-r153-neg-8af151",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 164,
+      "username": "e2e-r153-op-8af151",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 165,
+      "username": "e2e-r153-ap-8af151",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 166,
+      "username": "e2e-r153-neg-d77a48",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 167,
+      "username": "e2e-r153-op-d77a48",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 168,
+      "username": "e2e-r153-ap-d77a48",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 169,
+      "username": "e2e-r153-neg-f3f044",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 170,
+      "username": "e2e-r153-op-f3f044",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 171,
+      "username": "e2e-r153-ap-f3f044",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 172,
+      "username": "e2e-r153-neg-56da20",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 173,
+      "username": "e2e-r153-op-56da20",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 174,
+      "username": "e2e-r153-ap-56da20",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 175,
+      "username": "e2e-r153-neg-da241a",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 176,
+      "username": "e2e-r153-op-da241a",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 177,
+      "username": "e2e-r153-ap-da241a",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 178,
+      "username": "e2e-r153-neg-6cef89",
+      "revocadas": [],
+      "baja": 204
+    },
+    {
+      "id": 179,
+      "username": "e2e-r153-op-6cef89",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    },
+    {
+      "id": 180,
+      "username": "e2e-r153-ap-6cef89",
+      "revocadas": [
+        {
+          "code": "grandparent",
+          "status": 200
+        }
+      ],
+      "baja": 204
+    }
+  ],
+  "roles": [
+    {
+      "id": 1,
+      "name": "Super Administrador",
+      "desactivado": 200
+    },
+    {
+      "id": 2,
+      "name": "Supervisor Avícola",
+      "desactivado": 200
+    },
+    {
+      "id": 3,
+      "name": "Operador de Granja",
+      "desactivado": 200
+    },
+    {
+      "id": 4,
+      "name": "Aprobador",
+      "desactivado": 200
+    },
+    {
+      "id": 5,
+      "name": "Analista SAP",
+      "desactivado": 200
+    },
+    {
+      "id": 6,
+      "name": "Auditor",
+      "desactivado": 200
+    },
+    {
+      "id": 28,
+      "name": "Operador Progenitoras",
+      "desactivado": 200
+    },
+    {
+      "id": 29,
+      "name": "Operador Reproductoras",
+      "desactivado": 200
+    },
+    {
+      "id": 30,
+      "name": "Operador Incubadora",
+      "desactivado": 200
+    },
+    {
+      "id": 31,
+      "name": "Operador Engorde",
+      "desactivado": 200
+    },
+    {
+      "id": 32,
+      "name": "Operador Multi-Proceso",
+      "desactivado": 200
+    },
+    {
+      "id": 33,
+      "name": "Contralor Avícola",
+      "desactivado": 200
+    },
+    {
+      "id": 34,
+      "name": "Supervisor General",
+      "desactivado": 200
+    },
+    {
+      "id": 35,
+      "name": "Administrador de Accesos",
+      "desactivado": 200
+    },
+    {
+      "id": 103,
+      "name": "e2e-r153-op-9502ac",
+      "desactivado": 200
+    },
+    {
+      "id": 104,
+      "name": "e2e-r153-neg-b0500a",
+      "desactivado": 200
+    },
+    {
+      "id": 105,
+      "name": "e2e-r153-op-b0500a",
+      "desactivado": 200
+    },
+    {
+      "id": 106,
+      "name": "e2e-r153-ap-b0500a",
+      "desactivado": 200
+    },
+    {
+      "id": 107,
+      "name": "e2e-r153-neg-8af151",
+      "desactivado": 200
+    },
+    {
+      "id": 108,
+      "name": "e2e-r153-op-8af151",
+      "desactivado": 200
+    },
+    {
+      "id": 109,
+      "name": "e2e-r153-ap-8af151",
+      "desactivado": 200
+    },
+    {
+      "id": 110,
+      "name": "e2e-r153-neg-d77a48",
+      "desactivado": 200
+    },
+    {
+      "id": 111,
+      "name": "e2e-r153-op-d77a48",
+      "desactivado": 200
+    },
+    {
+      "id": 112,
+      "name": "e2e-r153-ap-d77a48",
+      "desactivado": 200
+    },
+    {
+      "id": 113,
+      "name": "e2e-r153-neg-f3f044",
+      "desactivado": 200
+    },
+    {
+      "id": 114,
+      "name": "e2e-r153-op-f3f044",
+      "desactivado": 200
+    },
+    {
+      "id": 115,
+      "name": "e2e-r153-ap-f3f044",
+      "desactivado": 200
+    },
+    {
+      "id": 116,
+      "name": "e2e-r153-neg-56da20",
+      "desactivado": 200
+    },
+    {
+      "id": 117,
+      "name": "e2e-r153-op-56da20",
+      "desactivado": 200
+    },
+    {
+      "id": 118,
+      "name": "e2e-r153-ap-56da20",
+      "desactivado": 200
+    },
+    {
+      "id": 119,
+      "name": "e2e-r153-neg-da241a",
+      "desactivado": 200
+    },
+    {
+      "id": 120,
+      "name": "e2e-r153-op-da241a",
+      "desactivado": 200
+    },
+    {
+      "id": 121,
+      "name": "e2e-r153-ap-da241a",
+      "desactivado": 200
+    },
+    {
+      "id": 122,
+      "name": "e2e-r153-neg-6cef89",
+      "desactivado": 200
+    },
+    {
+      "id": 123,
+      "name": "e2e-r153-op-6cef89",
+      "desactivado": 200
+    },
+    {
+      "id": 124,
+      "name": "e2e-r153-ap-6cef89",
+      "desactivado": 200
+    }
+  ],
+  "catalogo_final": {
+    "breeder": false,
+    "broiler": false,
+    "grandparent": false,
+    "hatchery": false
+  },
+  "reparacion_roles_legitimos": {
+    "resultado": {
+      "Super Administrador": {
+        "id": 1,
+        "reactivado": 200
+      },
+      "Supervisor Avícola": {
+        "id": 2,
+        "reactivado": 200
+      },
+      "Operador de Granja": {
+        "id": 3,
+        "reactivado": 200
+      },
+      "Aprobador": {
+        "id": 4,
+        "reactivado": 200
+      },
+      "Analista SAP": {
+        "id": 5,
+        "reactivado": 200
+      },
+      "Auditor": {
+        "id": 6,
+        "reactivado": 200
+      },
+      "Operador Progenitoras": {
+        "id": 28,
+        "reactivado": 200
+      },
+      "Operador Reproductoras": {
+        "id": 29,
+        "reactivado": 200
+      },
+      "Operador Incubadora": {
+        "id": 30,
+        "reactivado": 200
+      },
+      "Operador Engorde": {
+        "id": 31,
+        "reactivado": 200
+      },
+      "Operador Multi-Proceso": {
+        "id": 32,
+        "reactivado": 200
+      },
+      "Contralor Avícola": {
+        "id": 33,
+        "reactivado": 200
+      },
+      "Supervisor General": {
+        "id": 34,
+        "reactivado": 200
+      },
+      "Administrador de Accesos": {
+        "id": 35,
+        "reactivado": 200
+      }
+    },
+    "aun_inactivos": []
+  }
+}
