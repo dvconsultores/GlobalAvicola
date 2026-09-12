@@ -2136,3 +2136,26 @@ RES           RES-02 (diseño fase-9) · RES-05/R-52 (ops, no bloquea) · RES-06
 REGISTRO      audit/final-frontend-audit/GA_FRONTEND_RESIDUAL_19_CERTIFICATION_MATRIX.md (+9 documentos)
 INTOCADO      Producto 0 · Wave B PAUSED · Wave C/SAP NOT STARTED · sin findings nuevos · sin decisiones inferidas
 ```
+
+---
+
+## GA-R153 · OD-25 (B) — LOTE DE ABUELAS AUTOMÁTICO AL APROBAR LA IMPORTACIÓN (2026-09-12)
+
+```
+DECISIÓN      OD-25 = B (propietario, explícita): al APROBAR la importación de abuelas se crea
+              el lote (1 exacto) SIN poblar; recepción sigue siendo la entrada de población;
+              vía manual preservada; legado con lote preasignado no duplica; sin migración.
+FINDING       R-153 (dueño; dependencia R-152 CLOSED confirmada).
+HOGAR         audit/ga-r153/ (decisión, trazas, mapeo de campos, secuencia, spec, clarificaciones,
+              plan, checklist, tareas, RED).
+RED           Runtime pre-fix: POST import sin lote ⇒ 400 "El evento requiere lote" (evidencia
+              red-runtime.json) · vitest estático 3 failed · suite PG de 10 contratos (CI).
+IMPLEMENT.    Backend: gate de lote opcional para grandparent_import + hook de aprobación
+              (approve y complete_review nivel único, misma transacción) + generador
+              L-GP-{año}-{nn} (lock asesor por empresa/año + savepoint/reintento global).
+              Frontend: import sin lote (nota i18n) + enlace al lote en el detalle.
+INTOCADO      P-01 sin ascenso por transitividad · P-07 intacto · R-130/BR-17/18 intactos ·
+              Wave B PAUSED · Wave C/SAP NOT STARTED.
+ESTADO        EN IMPLEMENTACIÓN (tranche GA-R153; certificación técnica + UAT del propietario
+              al cierre).
+```

@@ -1,0 +1,81 @@
+{
+  "ts": "2026-09-12T14:39:35.779Z",
+  "steps": [
+    {
+      "path": "/login",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/switch-company",
+      "method": "POST",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    },
+    {
+      "path": "/business-units/grandparent/enable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/operations",
+      "method": "POST",
+      "status": 400,
+      "detail": "El evento requiere lote"
+    },
+    {
+      "path": "/business-units/grandparent/disable",
+      "method": "PATCH",
+      "status": 200
+    },
+    {
+      "path": "/business-units",
+      "method": "GET",
+      "status": 200
+    }
+  ],
+  "bu_before": [
+    [
+      "breeder",
+      false
+    ],
+    [
+      "broiler",
+      false
+    ],
+    [
+      "grandparent",
+      false
+    ],
+    [
+      "hatchery",
+      false
+    ]
+  ],
+  "gp_on": 200,
+  "red_status": 400,
+  "red_detail": "El evento requiere lote",
+  "gp_off": 200,
+  "catalogo": [
+    [
+      "breeder",
+      false
+    ],
+    [
+      "broiler",
+      false
+    ],
+    [
+      "grandparent",
+      false
+    ],
+    [
+      "hatchery",
+      false
+    ]
+  ]
+}
