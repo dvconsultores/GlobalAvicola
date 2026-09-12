@@ -1,0 +1,33 @@
+
+ RUN  v4.1.9 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/f01e.receptionHouse.test.tsx (4 tests | 1 failed) 1679ms
+     × AC-F01E-01 · lote SIN galpón + galpón elegido en la fila ⇒ house_id del evento = galpón de la fila 718ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/f01e.receptionHouse.test.tsx > R-189 · F-01e · galpón de la recepción (house_id del evento) > AC-F01E-01 · lote SIN galpón + galpón elegido en la fila ⇒ house_id del evento = galpón de la fila
+AssertionError: expected undefined to be 11 // Object.is equality
+
+- Expected:
+11
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/f01e.receptionHouse.test.tsx:106:30
+    104|     expect(payload.lot_id).toBe(7)
+    105|     expect(payload.bird_movements[0].target_house_id).toBe(11)
+    106|     expect(payload.house_id).toBe(11)
+       |                              ^
+    107|   })
+    108|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  00:19:54
+   Duration  3.67s (transform 402ms, setup 68ms, import 752ms, tests 1.68s, environment 1.00s)
+

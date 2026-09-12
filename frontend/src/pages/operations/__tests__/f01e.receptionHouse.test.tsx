@@ -74,7 +74,8 @@ const cambio = (nombre: string, valor: string) => {
 const elegirEnSelector = async (boton: RegExp, opcion: RegExp) => {
   const botones = await screen.findAllByRole('button', { name: boton })
   fireEvent.click(botones[0])
-  const opciones = await screen.findAllByText(opcion)
+  // La opción es un <button> del desplegable; la etiqueta «Galpón N» de la fila es un <span> (no debe elegirse).
+  const opciones = await screen.findAllByRole('button', { name: opcion })
   fireEvent.click(opciones[0])
 }
 
@@ -101,8 +102,8 @@ describe('R-189 · F-01e · galpón de la recepción (house_id del evento)', () 
     cambio('bird_movements.0.quantity', '40')
     const payload = await guardar()
     expect(payload.lot_id).toBe(7)
-    expect(payload.house_id).toBe(11)
     expect(payload.bird_movements[0].target_house_id).toBe(11)
+    expect(payload.house_id).toBe(11)
   })
 
   it('AC-F01E-02 · lote CON galpón ⇒ el house_id del lote se conserva (sin regresión)', async () => {

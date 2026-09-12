@@ -1,0 +1,9 @@
+== F-01e · GREEN frontend (C2f) ==
+Comando: cd frontend && npx vitest run src/pages/operations/__tests__/f01e.receptionHouse.test.tsx
+Dirigido: 4/4 (AC-F01E-01 house_id=11 con lote sin galpón · AC-02 lote con galpón intacto (55) · AC-03 sin fuente ⇒ ausencia · AC-04 importación sin cambio)
+
+Completo : vitest run -> 314/314 (44 archivos)
+tsc --noEmit -> OK
+npm run build -> OK
+
+Cobertura: `derivedHouseId` de `bird_reception` cae al primer `target_house_id` declarado en las filas cuando el lote no declara galpón (lote manda si existe; sin inventar; demás tipos sin cambio). RED v2 previo en `RED_frontend_f01e_v2_raw.txt` (falla exacta en `house_id`; `target_house_id` verde en la línea previa).

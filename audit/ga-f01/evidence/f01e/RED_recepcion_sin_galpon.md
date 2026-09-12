@@ -31,7 +31,9 @@ Fecha: 2026-09-13 · Generación: `index-BwuucRxo.js` (C2d) · Run: `evidence/ru
 
 ## 4 · Artefactos
 
-`evidence/runtime-c2d/`: `F03-recepcion-bloqueada.png`, `C06a-recepcion-formulario.png`, `retry-walkthrough.json` (POSTs sanitizados, asserts, errores) · unit RED: `evidence/f01e/RED_frontend_f01e_raw.txt` (1× `expected undefined to be 11`).
+`evidence/runtime-c2d/`: `F03-recepcion-bloqueada.png`, `C06a-recepcion-formulario.png`, `retry-walkthrough.json` (POSTs sanitizados, asserts, errores) · unit RED: `evidence/f01e/RED_frontend_f01e_v2_raw.txt` (1× `expected undefined to be 11`).
+
+**Corrección declarada (RED v1 → v2)**: la primera captura unit usó un arnés que pulsaba la etiqueta de fila «Galpón N» (`<span>`) en vez de la opción del desplegable (`<button>`), de modo que el galpón no llegaba a fijarse y la falla no aislaba el defecto. Arnés corregido; **RED v2 recapturado con el componente sin el arreglo**: la fila 105 (`target_house_id = 11`) pasa y la 106 (`house_id`) falla — exactamente el defecto. v1 se conserva (`RED_frontend_f01e_raw.txt`); v2 en `RED_frontend_f01e_v2_raw.txt`. No se reescribe el histórico.
 
 ## 5 · Lectura
 

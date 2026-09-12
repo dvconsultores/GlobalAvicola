@@ -51,5 +51,5 @@ Anexo: `GA_F01E_SUBSANACION_ANNEX.md` · RED: `evidence/f01e/` · clarificación
 | Fase | Contenido | Estado |
 |---|---|---|
 | C2e | Gobernanza F-01e (anexo, C29, AC63-65, RED runtime + unit 1×) | ✅ |
-| C2f | Implementación D1 (`derivedHouseId` recepción) + GREEN local | ⏳ |
+| C2f | Implementación D1 (`derivedHouseId` recepción) + GREEN local (f01e 4/4 · vitest 314/314 · tsc · build) | ✅ |
 | C3 | Runtime post-fix (rerun 7/7) + evidencia + cierre | ⏳ |

@@ -60,7 +60,7 @@ Clase: misma familia R-189 («valor capturado que no llega al campo tipado que e
 
 ## 6 · Pruebas
 
-- Unit: `frontend/src/pages/operations/__tests__/f01e.receptionHouse.test.tsx` — RED capturado (1×: `expected undefined to be 11`; `RED_frontend_f01e_raw.txt`) y GREEN tras D1.
+- Unit: `frontend/src/pages/operations/__tests__/f01e.receptionHouse.test.tsx` — RED v2 capturado (1×: `expected undefined to be 11` con `target_house_id` ya verde en la línea previa; v1→v2 con corrección de arnés declarada — ver RED doc §4; `RED_frontend_f01e_v2_raw.txt`) y GREEN tras D1 (4/4; `GREEN_frontend_f01e.txt`).
 - Runtime: re-ejecución del recorrido (`scripts_e2e_f01_retry.mjs`, modo live) sobre la generación post-fix → `evidence/runtime-c2f/`.
 
 ## 7 · Fuera de alcance

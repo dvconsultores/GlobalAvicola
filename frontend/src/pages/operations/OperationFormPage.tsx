@@ -386,6 +386,11 @@ export default function OperationFormPage() {
  const derivedFarmId = selectedFarmId ?? selectedLot?.farm_id ?? undefined
  const derivedHouseId = data.event_type === 'farm_inspection'
  ? (firstInspectedHouseId ?? selectedLot?.house_id ?? undefined)
+ // `R-189 (F-01e)`: la recepción captura el galpón por fila («Distribución por galpón»); si el lote
+ // no declara uno (lotes autocreados `OD-25 (B)`), el primer galpón declarado es el `house_id` del
+ // evento que `BR-08`/`BR-17` validan. Sin fuente ⇒ ausencia (no se inventa); los demás tipos conservan su mapeo.
+ : data.event_type === 'bird_reception'
+ ? (selectedLot?.house_id ?? (data.bird_movements || []).find((m: any) => m?.target_house_id)?.target_house_id ?? undefined)
  : (selectedLot?.house_id ?? undefined)
 
  // Convert per-house inspection rows into inspection_details records with house_id
