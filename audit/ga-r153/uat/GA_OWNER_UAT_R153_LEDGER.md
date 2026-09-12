@@ -30,3 +30,21 @@ Credenciales: **fuera del repo** en `~/ga_uat09_credentials.txt` (600). Se destr
 ## 4 · Limpieza post-decisión (checklist)
 
 Revocar concesiones → baja de usuarios **181/182** → desactivar roles **125/126** (solo por ID exacto) → restaurar **Progenitoras OFF** → destruir `~/ga_uat09_credentials.txt` → verificar que humanos/roles legítimos quedan intactos → registrar resultado.
+
+## 5 · Retry de certificación (F-01d/F-01e · 2026-09-13)
+
+Fixture sintético del retry (empresa 1 · misma pareja `uat09-op`/`uat09-ap` · Progenitoras ON):
+
+| Elemento | ID / código | Estado | Nota |
+|---|---|---|---|
+| Importación RED (C2d) | evento **120** | approved | creada por UI; lote 64 |
+| Lote RED (sin galpón) | **64** · `L-GP-2026-10` | activo · `house_id` NULL · **sin recepción** | exhibe el bloqueo BR-08 de F-01e |
+| Importación retry (C2f) | evento **121** | approved | UI; lote 65 |
+| Lote retry | **65** · `L-GP-2026-11` | activo · `house_id` NULL | recibe la recepción |
+| Recepción retry | evento **122** | approved | UI; ♂40 ♀60 ⇒ población 100 |
+| Sonda mortalidad ×100 | evento **123** | **cancelada** | bracket de exactitud (saldo 100) |
+| Sondas sin artefacto | — | — | mortalidad ×1 / ×101 ⇒ 400 · feed `[{}]` ⇒ 422 · re-aprobación ⇒ 400 |
+
+Limpieza post-decisión (se añade a §4): cancelar/retener según ledger los eventos **120–123** y los lotes **64/65**
+(propuesta: retener como evidencia hasta la decisión; el propietario parte de cero con la guía). Credenciales: siguen vivas
+en `~/ga_uat09_credentials.txt` (se destruyen en la limpieza post-decisión).

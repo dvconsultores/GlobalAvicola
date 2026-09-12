@@ -93,6 +93,7 @@ async function loginUi(page, user) {
 }
 const waitPost = (page, frag) => page.waitForResponse(
   (r) => r.url().includes(frag) && r.request().method() === 'POST', { timeout: 45000 })
+const visible = (loc) => loc.waitFor({ state: 'visible', timeout: 6000 }).then(() => true).catch(() => false)
 
 // ── recorrido ─────────────────────────────────────────────────────────────
 const browser = await chromium.launch({ headless: true })
@@ -133,6 +134,19 @@ try {
   const baseGp = list0.map((l) => l.lot_code)
   paso('lotes-gp-antes', 200, baseGp)
   J.ids.base_gp = baseGp
+
+  // pruebas de generación backend C2d (sin mutación): escritura estricta + lectura tolerante
+  const pFeed = await api('POST', '/operations', tokOp, { event_type: 'grandparent_import', event_date: HOY, sap_document_ref: PO, feed_movements: [{}] })
+  paso('probe-backend-feed-vacio', pFeed.status, Array.isArray(pFeed.data?.detail) ? pFeed.data.detail[0]?.loc : pFeed.data?.detail)
+  assert('C2d-backend-escritura-estricta-422', pFeed.status === 422, pFeed.status)
+  for (const id of [100, 112, 115, 116, 117]) {
+    let r = await api('GET', `/operations/${id}`, tokOp)
+    let via = 'op'
+    if (r.status >= 400) { r = await api('GET', `/operations/${id}`, tokAp); via = 'ap' }
+    J.ids[`historico_${id}`] = { status: r.status, via }
+    paso(`historico-${id}`, r.status, { via })
+  }
+  assert('C2d-lectura-tolerante-historico-sin-500', [100, 112, 115, 116, 117].every((i) => J.ids[`historico_${i}`]?.status !== 500))
 
   // 1 · UI importación (UAT-01 / E2E-01)
   await loginUi(op, OP_USER); paso('login-ui-op', 200)
@@ -233,23 +247,23 @@ try {
 
     await loginUi(ap, AP_USER); paso('login-ui-ap', 200)
     let done = false
-    for (const intento of [1, 2, 3]) {
+    for (const intento of [1, 2, 3, 4]) {
       await ap.goto(`${BASE}/review/${eventId}`, { waitUntil: 'domcontentloaded' }); await ap.waitForTimeout(1500)
       const start = ap.getByRole('button', { name: /Iniciar Revisi/i }).first()
       const complete = ap.getByRole('button', { name: /Completar Revisi/i }).first()
       const approve = ap.getByRole('button', { name: /Aprobar/ }).first()
-      if (await start.isVisible().catch(() => false)) {
+      if (await visible(start)) {
         const [r] = await Promise.all([waitPost(ap, `/review/start/${eventId}`), start.click()]); paso('review-start', r.status())
         continue
       }
-      if (await complete.isVisible().catch(() => false)) {
+      if (await visible(complete)) {
         const [r] = await Promise.all([waitPost(ap, '/review/complete'), complete.click()])
         let d2 = null; try { d2 = await r.json() } catch {}
         paso('review-complete', r.status(), { status: d2?.status })
         if (d2?.status === 'approved') { done = true; break }
         continue
       }
-      if (await approve.isVisible().catch(() => false)) {
+      if (await visible(approve)) {
         const [r] = await Promise.all([waitPost(ap, '/approvals/approve'), approve.click()])
         paso('approve', r.status()); done = true; break
       }
@@ -331,14 +345,14 @@ try {
       } catch { viaR = 'api'; const r = await api('POST', `/operations/${recId}/submit`, tokOp); paso('recep-submit-api', r.status) }
       J.ids.via_recep_submit = viaR
       let doneR = false
-      for (const intento of [1, 2, 3]) {
+      for (const intento of [1, 2, 3, 4]) {
         await ap.goto(`${BASE}/review/${recId}`, { waitUntil: 'domcontentloaded' }); await ap.waitForTimeout(1200)
         const start = ap.getByRole('button', { name: /Iniciar Revisi/i }).first()
         const complete = ap.getByRole('button', { name: /Completar Revisi/i }).first()
         const approve = ap.getByRole('button', { name: /Aprobar/ }).first()
-        if (await start.isVisible().catch(() => false)) { const [r] = await Promise.all([waitPost(ap, `/review/start/${recId}`), start.click()]); paso('recep-review-start', r.status()); continue }
-        if (await complete.isVisible().catch(() => false)) { const [r] = await Promise.all([waitPost(ap, '/review/complete'), complete.click()]); let dd = null; try { dd = await r.json() } catch {}; paso('recep-review-complete', r.status(), { status: dd?.status }); if (dd?.status === 'approved') { doneR = true; break } continue }
-        if (await approve.isVisible().catch(() => false)) { const [r] = await Promise.all([waitPost(ap, '/approvals/approve'), approve.click()]); paso('recep-approve', r.status()); doneR = true; break }
+        if (await visible(start)) { const [r] = await Promise.all([waitPost(ap, `/review/start/${recId}`), start.click()]); paso('recep-review-start', r.status()); continue }
+        if (await visible(complete)) { const [r] = await Promise.all([waitPost(ap, '/review/complete'), complete.click()]); let dd = null; try { dd = await r.json() } catch {}; paso('recep-review-complete', r.status(), { status: dd?.status }); if (dd?.status === 'approved') { doneR = true; break } continue }
+        if (await visible(approve)) { const [r] = await Promise.all([waitPost(ap, '/approvals/approve'), approve.click()]); paso('recep-approve', r.status()); doneR = true; break }
         await ap.waitForTimeout(1000)
       }
       if (!doneR) { const r = await api('POST', '/approvals/approve', tokAp, { event_id: recId }); paso('recep-approve-api', r.status); doneR = r.status === 200 }

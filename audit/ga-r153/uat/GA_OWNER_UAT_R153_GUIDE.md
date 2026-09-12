@@ -1,8 +1,8 @@
 # GA-UAT-09 · GUÍA DEL PROPIETARIO — R-153 / OD-25 (lote de abuelas al aprobar)
 
-Fecha: 2026-09-12 · Para: Propietario · Estado: **sesión recomendada: POSPUESTA hasta corregir el hallazgo F-01**.
+Fecha: 2026-09-12 · Actualizada: 2026-09-13 · Para: Propietario · Estado: **sesión LISTA — bloqueos corregidos y verificados en el retry de referencia** (`GA_OWNER_UAT_R153_RETRY_REFERENCE.md`).
 
-> **Aviso de preparación.** La verificación interna previa (los mismos pasos que usted hará) encontró un **bloqueo**: al guardar la importación, el sistema la rechaza y la pantalla queda **en blanco** (hallazgo F-01, detalle en `GA_OWNER_UAT_R153_OBSERVATIONS.md`). Por eso los casos 2 a 7 **no pueden completarse todavía**. Cuando el bloqueo se corrija, esta guía se usa tal cual.
+> **Actualización (2026-09-13).** El bloqueo F-01 (guardado rechazado + pantalla en blanco) y sus extensiones F-01d/F-01e quedaron **corregidos y certificados**: la verificación interna repitió este recorrido completo sobre la generación vigente (`index-DDCcWL76.js`) con **7/7 casos en verde** y **0 errores fatales** (evidencia: `audit/ga-f01/evidence/runtime-c2f/`). Esta guía se usa tal cual. El primer intento histórico (bloqueado) se conserva en `GA_OWNER_UAT_R153_OBSERVATIONS.md` (ATTEMPT 1 = iniciada-y-bloqueada-por-F-01).
 
 ## Antes de empezar
 

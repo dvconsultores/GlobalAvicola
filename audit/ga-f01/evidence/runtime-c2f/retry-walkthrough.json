@@ -1,0 +1,604 @@
+{
+  "mode": "live",
+  "expectativa_recepcion": "success",
+  "fecha": "2026-09-12",
+  "base": "https://avicola.globaldv.net",
+  "pasos": [
+    {
+      "step": "generacion-desplegada",
+      "status": 200,
+      "detail": {
+        "bundle": "index-DDCcWL76.js"
+      }
+    },
+    {
+      "step": "login-api-op",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "login-api-ap",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "me-op",
+      "status": 200,
+      "detail": {
+        "company_id": 1,
+        "username": "uat09-op-8e60c2"
+      }
+    },
+    {
+      "step": "lotes-gp-antes",
+      "status": 200,
+      "detail": [
+        "L-GP-2026-01",
+        "L-GP-2026-06",
+        "L-GP-2026-07",
+        "L-GP-2026-08",
+        "L-GP-2026-09",
+        "L-GP-2026-10"
+      ]
+    },
+    {
+      "step": "probe-backend-feed-vacio",
+      "status": 422,
+      "detail": [
+        "body",
+        "feed_movements",
+        0,
+        "quantity_kg"
+      ]
+    },
+    {
+      "step": "historico-100",
+      "status": 200,
+      "detail": {
+        "via": "op"
+      }
+    },
+    {
+      "step": "historico-112",
+      "status": 200,
+      "detail": {
+        "via": "op"
+      }
+    },
+    {
+      "step": "historico-115",
+      "status": 200,
+      "detail": {
+        "via": "op"
+      }
+    },
+    {
+      "step": "historico-116",
+      "status": 200,
+      "detail": {
+        "via": "op"
+      }
+    },
+    {
+      "step": "historico-117",
+      "status": 200,
+      "detail": {
+        "via": "op"
+      }
+    },
+    {
+      "step": "login-ui-op",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "E2E-01-import-post",
+      "status": 201,
+      "detail": {
+        "id": 121
+      }
+    },
+    {
+      "step": "submit-a-revision",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "login-ui-ap",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "review-paso",
+      "status": "espera",
+      "detail": "intento 1"
+    },
+    {
+      "step": "review-start",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "review-complete",
+      "status": 200,
+      "detail": {
+        "status": "corrected"
+      }
+    },
+    {
+      "step": "approve-api",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "lote-creado",
+      "status": 200,
+      "detail": {
+        "codigo": "L-GP-2026-11",
+        "house_id": null,
+        "farm_id": 1
+      }
+    },
+    {
+      "step": "bracket-pre-recepcion-mortalidad-1",
+      "status": 400,
+      "detail": "Mortalidad (1) excede el saldo de aves disponibles (0)"
+    },
+    {
+      "step": "recepcion-lote-prefill",
+      "status": 200,
+      "detail": {
+        "placeholderVisible": 0
+      }
+    },
+    {
+      "step": "UAT-06-recepcion-post",
+      "status": 201,
+      "detail": 122
+    },
+    {
+      "step": "recep-submit",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "recep-review-start",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "recep-review-complete",
+      "status": 200,
+      "detail": {
+        "status": "corrected"
+      }
+    },
+    {
+      "step": "recep-approve-api",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "bracket-post-100",
+      "status": 201,
+      "detail": 123
+    },
+    {
+      "step": "bracket-100-cancelado",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "bracket-post-101",
+      "status": 400,
+      "detail": "Mortalidad (101) excede el saldo de aves disponibles (100)"
+    },
+    {
+      "step": "E2E-04-4xx-gobernado",
+      "status": 400,
+      "detail": "Plan de importación inválido: purchased_total: Field required; shipped_total: Field required; received_total: Field required; transit_mortality: Field required; departure_date: Input should be a valid date or datetime, input is too short; arrival_date: Input should be a valid date or datetime, input is too short"
+    },
+    {
+      "step": "reaprobacion",
+      "status": 400,
+      "detail": "El evento no está en estado aprobable (actual: approved)"
+    },
+    {
+      "step": "movil-390x844",
+      "status": 200,
+      "detail": null
+    }
+  ],
+  "posts": [
+    {
+      "url": "/api/v1/operations",
+      "status": 201,
+      "body": {
+        "event_type": "grandparent_import",
+        "event_date": "2026-09-12",
+        "observations": "",
+        "sap_document_ref": "PO-C001-GPR-0001",
+        "supplier_id": 1,
+        "transport_id": 1,
+        "extra_data": {
+          "import_plan": {
+            "origin_country": "Francia",
+            "purchased_total": 110,
+            "shipped_total": 105,
+            "received_total": 100,
+            "transit_mortality": 5,
+            "departure_date": "2026-09-05",
+            "arrival_date": "2026-09-12",
+            "reception_condition": "buena",
+            "quarantine_days": 21,
+            "quarantine_end_date": "2026-10-03",
+            "initial_health_inspection": "sin hallazgos"
+          },
+          "sap_order_ref": "PO-C001-GPR-0001",
+          "declared_quantity": 5600
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 40,
+            "avg_weight": 3800
+          },
+          {
+            "sex": "female",
+            "quantity": 60,
+            "avg_weight": 3600
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "respuesta": {
+        "id": 121,
+        "status": "registered"
+      }
+    },
+    {
+      "url": "/api/v1/operations",
+      "status": 201,
+      "body": {
+        "lot_id": 65,
+        "event_type": "bird_reception",
+        "event_date": "2026-09-12",
+        "observations": "",
+        "sap_document_ref": "PO-C001-GPR-0001",
+        "extra_data": {
+          "sap_order_ref": "PO-C001-GPR-0001",
+          "declared_quantity": 5600
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 40,
+            "avg_weight": 3800,
+            "target_house_id": 1,
+            "week_number": 0
+          },
+          {
+            "sex": "female",
+            "quantity": 60,
+            "avg_weight": 3600,
+            "target_house_id": 1,
+            "week_number": 0
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "respuesta": {
+        "id": 122
+      }
+    }
+  ],
+  "pageerror": [],
+  "consoleError": [],
+  "httpErrores": [
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=65"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/65"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/65"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=65"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/65"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/65"
+    },
+    {
+      "tag": "op",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    }
+  ],
+  "archivos": [
+    "C01-formulario-importacion.png",
+    "C01b-formulario-llenado.png",
+    "C02s-banner-exito.png",
+    "C02-pre-aprobacion.png",
+    "C03-detalle-aprobado-lote.png",
+    "C04-lote-datos.png",
+    "C05-lote-sin-aves.png",
+    "C06a-recepcion-formulario.png",
+    "C06-lote-con-recepcion.png",
+    "F02-error-ux.png",
+    "C07-via-manual.png",
+    "C08m-movil.png"
+  ],
+  "asserts": [
+    {
+      "name": "op-empresa-1",
+      "ok": true,
+      "detail": 1
+    },
+    {
+      "name": "C2d-backend-escritura-estricta-422",
+      "ok": true,
+      "detail": 422
+    },
+    {
+      "name": "C2d-lectura-tolerante-historico-sin-500",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "NOTA-lote-automatico-visible",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "E2E-01-import-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "E2E-03-almacenamiento-canonico",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "E2E-03b-alimento-canonico",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "E2E-03c-incubadora-canonico",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "E2E-02-oc-en-campo-tipado",
+      "ok": true,
+      "detail": "PO-C001-GPR-0001"
+    },
+    {
+      "name": "E2E-02b-oc-ref-ui",
+      "ok": true,
+      "detail": "PO-C001-GPR-0001"
+    },
+    {
+      "name": "UAT-01-sin-lote-en-payload",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "E2E-01b-aves-40-60",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "UAT-02-lote-pendiente-visible",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "UAT-02b-detalle-sin-lote",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "UAT-03-aprobado",
+      "ok": true,
+      "detail": "approved"
+    },
+    {
+      "name": "UAT-03b-lote-enlazado",
+      "ok": true,
+      "detail": 65
+    },
+    {
+      "name": "UAT-03c-enlace-lote-visible",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "UAT-04-codigo-canonico",
+      "ok": true,
+      "detail": "L-GP-2026-11"
+    },
+    {
+      "name": "UAT-04b-dominio-gp",
+      "ok": true,
+      "detail": "grandparent"
+    },
+    {
+      "name": "UAT-04c-sexo-plan",
+      "ok": true,
+      "detail": "mixed"
+    },
+    {
+      "name": "UAT-04d-fecha-llegada",
+      "ok": true,
+      "detail": "2026-09-12T00:00:00Z"
+    },
+    {
+      "name": "UAT-04e-misma-empresa",
+      "ok": true,
+      "detail": 1
+    },
+    {
+      "name": "AC06-exactamente-un-lote-nuevo",
+      "ok": true,
+      "detail": {
+        "antes": 6,
+        "despues": 7
+      }
+    },
+    {
+      "name": "UAT-05-sin-recepciones-antes",
+      "ok": true,
+      "detail": [
+        "grandparent_import"
+      ]
+    },
+    {
+      "name": "AC16-aprobacion-no-puebla",
+      "ok": true,
+      "detail": "Mortalidad (1) excede el saldo de aves disponibles (0)"
+    },
+    {
+      "name": "E2E-recepcion-almacenamiento-canonico",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "E2E-recepcion-alimento-incubadora-canonico",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "E2E-recepcion-lote-correcto",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "UAT-06-recepcion-aprobada",
+      "ok": true,
+      "detail": "approved"
+    },
+    {
+      "name": "UAT-06b-recepcion-una-vez",
+      "ok": true,
+      "detail": 1
+    },
+    {
+      "name": "AC21-poblacion-exacta-100",
+      "ok": true,
+      "detail": {
+        "p100": 201,
+        "p101": 400
+      }
+    },
+    {
+      "name": "E2E-04b-formulario-permanece",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "E2E-04c-sin-error-fatal-nuevo",
+      "ok": true,
+      "detail": {
+        "antes": 0,
+        "despues": 0
+      }
+    },
+    {
+      "name": "UAT-07-via-manual-visible",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "AC23-sin-segundo-lote",
+      "ok": true,
+      "detail": {
+        "total": 7
+      }
+    }
+  ],
+  "ids": {
+    "bundle": "index-DDCcWL76.js",
+    "base_gp": [
+      "L-GP-2026-01",
+      "L-GP-2026-06",
+      "L-GP-2026-07",
+      "L-GP-2026-08",
+      "L-GP-2026-09",
+      "L-GP-2026-10"
+    ],
+    "historico_100": {
+      "status": 200,
+      "via": "op"
+    },
+    "historico_112": {
+      "status": 200,
+      "via": "op"
+    },
+    "historico_115": {
+      "status": 200,
+      "via": "op"
+    },
+    "historico_116": {
+      "status": 200,
+      "via": "op"
+    },
+    "historico_117": {
+      "status": 200,
+      "via": "op"
+    },
+    "granja_texto": "Granja Norte (GN-01)",
+    "import": 121,
+    "via_submit": "ui",
+    "lote": 65,
+    "lote_codigo": "L-GP-2026-11",
+    "house_id_lote": null,
+    "farm_id_lote": 1,
+    "recepcion": 122,
+    "via_recep_submit": "ui"
+  },
+  "fatal_react": 0,
+  "http5xx": []
+}
