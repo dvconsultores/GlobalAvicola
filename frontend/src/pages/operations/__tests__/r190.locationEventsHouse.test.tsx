@@ -125,11 +125,10 @@ describe('R-190 · galpón del evento en location_events (sin recepción)', () =
     expect(payload.house_id).toBe(11)
   })
 
-  it('AC-R190-04a · inspección de granja sin granja ⇒ sin POST y operations.farmRequired', async () => {
+  it('AC-R190-04a · inspección de granja sin granja ni galpón en filas ⇒ sin POST y operations.farmRequired', async () => {
     montar()
     await abrirEvento(/Progenitoras — Cría/, /farm_inspection/)
     fireEvent.click(await screen.findByRole('button', { name: /Añadir galpón/ }))
-    await elegirEnSelector(/Seleccionar galpón/, /Galpón 1/)
     cambio('house_inspections.0.temperature', '25')
     fireEvent.click(await screen.findByRole('button', { name: /common\.save/ }))
     await waitFor(() => {
@@ -165,7 +164,7 @@ describe('R-190 · galpón del evento en location_events (sin recepción)', () =
     await abrirEvento(/Progenitoras — Cría/, /bird_transfer/)
     await elegirEnSelector(/Seleccionar lote/, /L-GP-2099-01/)
     await elegirEnSelector(/Seleccionar galpón/, /Galpón 1/, 0)
-    await elegirEnSelector(/Seleccionar galpón/, /Galpón 2/, 1)
+    await elegirEnSelector(/Seleccionar galpón/, /Galpón 2/)
     const payload = await guardar()
     expect(payload.house_id).toBe(11)
   })

@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap } from './operationPayload'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento } from './operationPayload'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -37,6 +37,17 @@ const LOT_OPTIONAL_INSPECTION_EVENTS = new Set([
 const LOT_OPTIONAL_EVENTS = new Set<string>([
  ...LOT_OPTIONAL_INSPECTION_EVENTS,
  'grandparent_import',
+])
+
+// `R-190`: tipos que requieren ubicación derivada del evento (la recepción ya F-01e).
+const EVENTOS_UBICACION_EVENTO = new Set([
+  'bird_distribution', 'bird_transfer', 'bird_exit', 'farm_inspection',
+  'transport_inspection', 'egg_collection', 'egg_dispatch',
+])
+
+// `R-190` · C-05: tipos con selector «Galpón del evento» (fuente sin fila propia).
+const EVENTOS_CON_SELECTOR_GALPON = new Set([
+  'bird_exit', 'egg_collection', 'egg_dispatch', 'transport_inspection',
 ])
 
 function getTempRange(birdType: string, ageWeeks: number): [number, number] {
@@ -269,6 +280,8 @@ export default function OperationFormPage() {
 
  const eventType = watch('event_type')
  const lotId = watch('lot_id')
+ // `R-190`: el lote seleccionado a nivel de componente — la derivación del JSX y de la guarda lo consulta.
+ const selectedLot = useMemo(() => lots.find((l: any) => l.id === lotId) ?? null, [lots, lotId])
 
  // Hatchery event types (for determining whether to show Farm or Hatchery selector)
  const HATCHERY_EVENTS = new Set([
@@ -315,6 +328,9 @@ export default function OperationFormPage() {
 
  const [stage, setStage] = useState<StageKey | null>(null)
  const [step, setStep] = useState<1 | 2 | 3>(prefillType ? 3 : 1)
+  // `R-190`: «Galpón del evento» (selector) y el error de ubicación en cliente.
+  const [eventHouseId, setEventHouseId] = useState<number | null>(null)
+  const [ubicacionError, setUbicacionError] = useState<string | null>(null)
 
  const goToStep2 = (s: StageKey) => { setStage(s); setValue('event_type', ''); setStep(2) }
  const chooseOperation = (evt: string) => { setValue('event_type', evt); setStep(3) }
@@ -383,16 +399,39 @@ export default function OperationFormPage() {
  try {
  const selectedLot = data.lot_id ? lots.find((l: any) => l.id === data.lot_id) : null
  const firstInspectedHouseId = data.house_inspections?.find((h: any) => h?.house_id)?.house_id
- const derivedFarmId = selectedFarmId ?? selectedLot?.farm_id ?? undefined
- const derivedHouseId = data.event_type === 'farm_inspection'
- ? (firstInspectedHouseId ?? selectedLot?.house_id ?? undefined)
- // `R-189 (F-01e)`: la recepción captura el galpón por fila («Distribución por galpón»); si el lote
- // no declara uno (lotes autocreados `OD-25 (B)`), el primer galpón declarado es el `house_id` del
- // evento que `BR-08`/`BR-17` validan. Sin fuente ⇒ ausencia (no se inventa); los demás tipos conservan su mapeo.
- : data.event_type === 'bird_reception'
- ? (selectedLot?.house_id ?? (data.bird_movements || []).find((m: any) => m?.target_house_id)?.target_house_id ?? undefined)
- : (selectedLot?.house_id ?? undefined)
-
+        // `R-190`: una sola fuente de verdad para la ubicación del evento (helper puro con test propio).
+        // La recepción conserva su regla F-01e dentro del helper (galpón del lote ?? fila de distribución);
+        // los demás tipos derivan según C-01/C-05/C-07 — sin fuente, ausencia (no se inventa).
+        const filasUbicacion = data.event_type === 'farm_inspection'
+          ? (data.house_inspections || []).map((h: any) => ({ target_house_id: h?.house_id }))
+          : (data.bird_movements || [])
+        const ubicacion = resolverUbicacionDelEvento({
+          eventType: data.event_type,
+          lote: selectedLot,
+          filas: filasUbicacion,
+          houseSeleccionado: eventHouseId,
+          granjaSeleccionada: selectedFarmId,
+          galpones: houses,
+        })
+        const derivedFarmId = ubicacion.farm_id ?? selectedFarmId ?? selectedLot?.farm_id ?? undefined
+        const derivedHouseId = ubicacion.house_id ?? undefined
+        // `R-190` · C-03: la ubicación obligatoria se exige en cliente — sin petición y con mensaje
+        // claro cuando falta (la recepción F-01e conserva su ausencia-no-inventada).
+        if (EVENTOS_UBICACION_EVENTO.has(data.event_type)) {
+          if (data.event_type === 'farm_inspection') {
+            if (!derivedFarmId) {
+              setUbicacionError('operations.farmRequired')
+              setSubmitting(false)
+              return
+            }
+          } else if (!derivedHouseId) {
+            setUbicacionError('operations.eventHouseRequired')
+            setSubmitting(false)
+            return
+          }
+        }
+        setUbicacionError(null)
+        void firstInspectedHouseId
  // Convert per-house inspection rows into inspection_details records with house_id
  const houseDetails: any[] = []
  for (const h of data.house_inspections || []) {
@@ -2093,6 +2132,21 @@ default: return (
  </div>
  )}
 
+ {/* `R-190` · C-05: «Galpón del evento» — la ubicación cuando el lote no declara galpón */}
+ {EVENTOS_CON_SELECTOR_GALPON.has(eventType) && (
+ <div>
+ <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.eventHouse', 'Galpón del evento')}</label>
+ <SearchSelect
+ value={eventHouseId ?? selectedLot?.house_id ?? ''}
+ onChange={(v) => { if (!selectedLot?.house_id) setEventHouseId(v ? Number(v) : null) }}
+ items={farmHouses.length > 0 ? farmHouses : houses}
+ placeholder={t('operations.eventHouse', 'Galpón del evento')}
+ renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
+ disabled={!!selectedLot?.house_id}
+ />
+ </div>
+ )}
+
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.date')}</label>
  <input type="date" {...register('event_date')}
@@ -2103,6 +2157,10 @@ default: return (
  <div>
  {renderOperationFields()}
  </div>
+
+ {ubicacionError && (
+ <p className="text-red-500 text-sm">{t(ubicacionError)}</p>
+ )}
 
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.observations')}</label>
