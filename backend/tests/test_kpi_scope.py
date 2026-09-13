@@ -283,8 +283,10 @@ async def test_el_panel_no_revela_las_cadenas_ajenas_como_grupo(http_client, kpi
 async def test_el_panel_del_usuario_de_dos_cadenas_las_muestra(http_client, kpi):
     r = await http_client.get("/api/v1/dashboard/admin", headers=_token(kpi["user_amb"]))
     assert r.status_code == 200, r.text
-    etiquetas = " ".join(str(k).lower() for k in (r.json().get("lots_by_type") or {}))
-    assert "breeder" in etiquetas and "hatchery" in etiquetas
+    # `R-216`: claves exactas del valor del enum (el substring dejaba pasar
+    # `'BirdTypeEnum.BROILER'` sin detectar el defecto).
+    claves = set(r.json().get("lots_by_type") or {})
+    assert "breeder" in claves and "hatchery" in claves, claves
 
 
 async def test_el_panel_del_usuario_sin_unidades_no_muestra_ninguna(http_client, kpi):
@@ -339,8 +341,8 @@ async def test_llamarse_contralor_no_amplia_el_agregado(http_client, kpi, test_d
 
     panel = await http_client.get("/api/v1/dashboard/admin", headers=_token(user_id))
     assert panel.status_code == 200
-    etiquetas = " ".join(str(k).lower() for k in (panel.json().get("lots_by_type") or {}))
-    assert "hatchery" not in etiquetas
+    claves = set(panel.json().get("lots_by_type") or {})
+    assert "hatchery" not in claves, claves
 
 
 async def test_el_filtro_de_seguridad_no_altera_la_regla_de_aprobacion(http_client, kpi):

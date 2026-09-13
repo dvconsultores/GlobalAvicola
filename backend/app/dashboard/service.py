@@ -167,7 +167,11 @@ class DashboardService:
         if lotes is not None:
             consulta = consulta.where(Lot.id.in_(lotes))
         rows = await self.db.execute(consulta.group_by(Lot.bird_type))
-        return {str(row.bird_type): row.cnt for row in rows.fetchall()}
+        # `R-216`: claves = **valor** del enum (`'broiler'`), no `str()` — `str()` de un
+        # `(str, Enum)` producía `'BirdTypeEnum.BROILER'` y `DashboardPage`, que busca
+        # `'broiler'`, mostraba **0** en las cuatro tarjetas mientras la suma era
+        # correcta. El contrato queda fijado por `test_r216_lots_by_type_contract.py`.
+        return {row.bird_type.value: row.cnt for row in rows.fetchall()}
 
     async def _get_mortality_trend(self) -> list[dict]:
         """Weekly mortality totals for the last 8 weeks."""
