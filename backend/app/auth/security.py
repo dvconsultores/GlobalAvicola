@@ -86,6 +86,17 @@ async def get_current_user(
 
     payload = decode_token(credentials.credentials)
 
+    # `R-200` · `AC01`…`AC04`: sólo un token de **acceso** autentica una petición. El
+    # refresh (7 días, almacenado en el cliente) renueva; no vale como credencial de
+    # acceso — la marca `type` se escribe al emitir y hasta aquí no se leía. La
+    # comprobación va **antes** de leer `sub` y de consultar la base: un token del tipo
+    # equivocado no produce ninguna consulta ni fija el usuario de auditoría.
+    if payload.get("type") != "access":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Token inválido: no es un token de acceso",
+        )
+
     user_id_str: str | None = payload.get("sub")
     if user_id_str is None:
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido: falta subject")

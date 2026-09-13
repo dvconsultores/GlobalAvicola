@@ -127,3 +127,10 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Nuevo** `backend/tests/test_r200_refresh_token_as_access.py` (login real con `test_credentials`; JWT firmado a mano para los casos sin `type`). **Verificado local: 4 rojas por el defecto** — RED-01/02: el refresh como `Bearer` autentica la ruta protegida y la de permiso (**200 con identidad completa, `is_super_admin: true`**); RED-03: un JWT firmado sin `type` autentica; RED-04: `type:"session"` autentica — **y 5 controles verdes** (CTL-05…08 + DOC-10 ventanas 30 min / 7 d). Evidencia: `audit/ga-claude-final-audit/evidence/r200/red_c1.log`.
 - Contexto declarado: `GA-REM-003 AC04` (logout/rotación/revocación) **no** se cierra aquí — esta spec restaura la frontera de 30 minutos del access.
 - **Siguiente**: C2 (una comprobación en `get_current_user`, antes de tocar la base) → GREEN 9/9 → suite completa → **C3 runtime ejecutable ya** con las credenciales UAT-09 (sondas no destructivas de refresh).
+
+## AE-16 · 2026-09-13 (noche-4) · R-200 C2 — IMPLEMENTACIÓN ✅ (GREEN 9/9 · suite 1247/0/49)
+
+- **C2 implementado** (`app/auth/security.py`): `get_current_user` rechaza con `401` («Token inválido: no es un token de acceso») cualquier token cuyo `payload["type"] != "access"`, **antes** de leer `sub` y de consultar la base (sin consulta; sin `set_current_audit_user`). `refresh_token` sin cambio (ya exigía `"refresh"`); emisión sin cambio (30 min / 7 d, mismos claims).
+- **GREEN**: dirigido **21/21** (R-200 9/9 + R-199 12/12; `green_r200_c2.log`); **suite completa `1247 passed / 0 failed / 49 skipped`** (18m56s; `full_suite_c2.log`; +9 = la suite nueva). Sin cambios frontend.
+- **Runtime pre-fix capturado** (`evidence/r200/runtime-prefix.json`, 2026-09-13 20:04:52 +0200): E2E-01/02 = **200** (el refresh autenticaba en producción); pendiente sondas post-deploy.
+- **Siguiente**: push → deploy EX-01 → sondas post-fix (esperado `401` en E2E-01/02; `200` en E2E-03/04) → `GA_CLAUDE_R200_RUNTIME_CERTIFICATION.md` → R-202 C1.
