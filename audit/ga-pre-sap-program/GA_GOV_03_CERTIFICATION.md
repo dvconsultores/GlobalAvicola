@@ -42,7 +42,7 @@
 
 - Workflow `Quality Suite (push)` **publicado** (`quality-suite.yml`): backend (pgserver efímero) + vitest, con artefactos JUnit+log; **independiente** del deploy (sin `needs:`, EX-01 intacto).
 - Push ejecutado (`66be1c1`); el run queda disparado por construcción.
-- **AC-GOV03-06 = `BLOCKED_EXTERNAL_CI_OBSERVATION`** (sin `gh`/token; API anónima 404 en repo privado; no se fabrica resultado). Detalle y mitigación local: `GA_GOV_03_CI_EVIDENCE.md`.
+- **AC-GOV03-06 = `BLOCKED_EXTERNAL_CI_OBSERVATION`** — reconfirmado en la micro-tranche AC-06 (2026-09-13): sin `gh`/token; API anónima 404; navegador sin sesión autenticada. La spec **no admite excepción** por bloqueo externo ⇒ la certificación queda **`CERTIFICATION_PENDING_AC06`** hasta la observación real del run (`GA_GOV_03_CI_EVIDENCE.md §4` — instrucciones exactas para el propietario).
 
 ## 6 · AC (12/12 con una salvedad externa)
 
@@ -53,7 +53,7 @@
 | AC-GOV03-03 sin diff `backend/app` | **PASS** (0) |
 | AC-GOV03-04 sin diff `frontend/src` | **PASS** (0) |
 | AC-GOV03-05 job de suite en push sin gate del deploy | **PASS** (workflow independiente) |
-| AC-GOV03-06 run real verde sobre el commit de cierre | **`BLOCKED_EXTERNAL_CI_OBSERVATION`** (entorno sin acceso; disparado por push; equivalente local verde) |
+| AC-GOV03-06 run real verde sobre el commit de cierre | **`BLOCKED_EXTERNAL_CI_OBSERVATION`** — la spec no contempla excepción ⇒ **pendiente** hasta la verificación del propietario (enlace del run + artefactos) |
 | AC-GOV03-07 regla «no GREEN por declaración» | **PASS** (`CERTIFICATION_EVIDENCE_TEMPLATE.md`) |
 | AC-GOV03-08 backlog/INDEX reconciliados | **PASS** (`R-189`, `GA-UAT-09`, `OD-21…25`, `GA-REM-016`) |
 | AC-GOV03-09 guardas temporales/Alembic | **PASS** |
@@ -61,8 +61,10 @@
 | AC-GOV03-11 p11 aislamiento con empresa del contexto | **PASS** (concesión AC-B01 añadida al fixture) |
 | AC-GOV03-12 certificación cita commit+comandos+logs+run | **PASS** (run: externamente bloqueado, citado como tal) |
 
-## 7 · Verdicto
+## 7 · Verdicto (reconciliado en la micro-tranche AC-06, 2026-09-13)
 
-- **GA-GOV-03 = `CLOSED_FUNCTIONALLY_CERTIFIED`** (con AC-06 documentada como bloqueo externo de observación; sin ningún resultado fabricado).
-- Efecto: **`QUALITY_GATES_READY = YES`** (suite fiable: expectativas canónicas, fixtures válidos, aserciones significativas, CI configurado y artefactos reales; único pendiente: ver el run desde GitHub con acceso).
+- **GA-GOV-03 = `CERTIFICATION_PENDING_AC06`** — 36/37 criterios cumplidos (AC-01…05 y 07…12 PASS); **AC-06** exige run real observado (enlace + artefacto) y la spec **no contempla excepción** por bloqueo externo ⇒ **no puede declararse `CLOSED_FUNCTIONALLY_CERTIFIED` hasta la observación**.
+- **T1 = `PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION`** — todo lo ejecutable está verde y evidenciado; falta la verificación externa.
+- **`QUALITY_GATES_READY = PARTIAL`** — suite fiable y CI configurado; pendiente la confirmación del run en GitHub.
+- **T2 no es autorizable** hasta AC-06 = PASS (gate del programa).
 - Sin efecto sobre procesos: **0/17** (T1 es gobernanza; la recertificación E2E es T12).

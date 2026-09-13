@@ -6,7 +6,7 @@ Determinista: cada tranche arranca solo cuando la anterior cumple su **criterio 
 
 | # | Tranche | Specs/findings | Procesos | Por qué ahora (§39) | Depende de | Bloquea a |
 |---|---|---|---|---|---|---|
-| T1 | Gobernanza de pruebas | GA-GOV-03 — **EJECUTADA (2026-09-13, `66be1c1`)**: 37 TEST_DEFECT corregidos; backend 1226/0/49; Playwright 129/0; CI `push` publicado (observación del run `BLOCKED_EXTERNAL`); backlog reconciliado | Todos (gate) | Sin suite verde no hay certificación válida; coste bajo, cero producto | — | T2-T13 (desbloqueadas) |
+| T1 | Gobernanza de pruebas | GA-GOV-03 — **EJECUTADA (2026-09-13, `66be1c1`)**: 37 TEST_DEFECT corregidos; backend 1226/0/49; Playwright 129/0; CI `push` publicado; backlog reconciliado. **Estado: `PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION` — AC-06 pendiente (observación real del run; la spec no admite excepción)** | Todos (gate) | Sin suite verde no hay certificación válida; coste bajo, cero producto | — | **T2-T13 bloqueadas hasta AC-06 = PASS** (verificación del propietario) |
 | T2 | Fundación de seguridad | R-199 · R-200 · R-202 · R-208 · GA-REM-003 AC04 | P-13 | La seguridad primero: invalida todo lo demás si falla | T1 | T9, T12, T13 |
 | T3 | Alcance de datos | R-201 · R-203 · R-204+R-216 · R-221 | P-04, P-08, P-12, P-15 | Cierra fugas de dimensión empresa/unidad antes de tocar servicios núcleo | T1 | T5, T7, T12 |
 | T4 | Eventos y recepción (FE) | R-190 + R-205 | P-01, P-03 | Primer eslabón visible roto de la cadena: sin ubicación/recepción no hay ciclo | T2, T3 | T5, T6, T12 |

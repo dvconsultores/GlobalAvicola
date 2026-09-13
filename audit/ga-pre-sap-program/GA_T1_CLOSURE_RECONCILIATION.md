@@ -17,6 +17,6 @@ Formato §41 del encargo. Commit de implementación `66be1c1` · baseline `e828c
 - **CI: configurado** (`Quality Suite (push)`; PG efímero; artefactos). Push `66be1c1` ejecutado; **observación del run = `BLOCKED_EXTERNAL_CI_OBSERVATION`** (entorno sin credenciales GitHub; API anónima 404; equivalente local verde).
 - **Artifact: disponible localmente** (`backend-junit-post-t1.xml`, `vitest-junit-post-t1.xml`, logs en `evidence/`); artefactos CI configurados (`backend-suite-<sha>` / `frontend-suite-<sha>`).
 - **Product changes: 0 / PASS** · **Migration changes: 0 / PASS** · **Deployment changes: 0 / PASS** (`git diff e828c3a..66be1c1`: solo tests, e2e, workflow y audit/**).
-- **Unresolved blocker: NONE** (única salvedad: verificación externa del run de CI desde GitHub, sin credenciales en este entorno).
-- **GA-GOV-03: `CLOSED_FUNCTIONALLY_CERTIFIED`** (AC-06 externamente bloqueada y así certificada).
-- **T1: CLOSED** (con la salvedad externa documentada; `QUALITY_GATES_READY = YES`).
+- **Unresolved blocker: AC-06 (verificación externa del run de CI)** — único pendiente; todo lo demás verificado. La spec **no permite** cerrar con `BLOCKED_EXTERNAL` (reconciliado 2026-09-13, micro-tranche AC-06).
+- **GA-GOV-03: `CERTIFICATION_PENDING_AC06`** (resto de AC PASS; sin resultados fabricados; observación externa pendiente).
+- **T1: `PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION`** — `QUALITY_GATES_READY = PARTIAL`; **T2 bloqueada** hasta AC-06 = PASS (verificación exacta del propietario en `GA_GOV_03_CI_EVIDENCE.md §4`).

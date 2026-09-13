@@ -63,5 +63,10 @@
   "migration_diff": 0,
   "deployment_policy_diff": 0,
   "outside_ga_gov_03_failures": [],
-  "verdict": { "ga_gov_03": "CLOSED_FUNCTIONALLY_CERTIFIED", "t1": "CLOSED", "quality_gates_ready": "YES" }
+  "verdict": {
+    "ga_gov_03": "CERTIFICATION_PENDING_AC06",
+    "t1": "PARTIAL_BLOCKED_EXTERNAL_CI_OBSERVATION",
+    "quality_gates_ready": "PARTIAL",
+    "owner_verification_required": "GitHub Actions → 'Quality Suite (push)' → run del SHA 66be1c1 (push) → confirmar conclusion verde + jobs backend-suite/frontend-suite + artefactos backend-suite-66be1c1 / frontend-suite-66be1c1 (con ello AC-06=PASS)"
+  }
 }

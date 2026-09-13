@@ -32,10 +32,16 @@
 
 ## 4 · Observación del run
 
-- **Estado: `BLOCKED_EXTERNAL_CI_OBSERVATION`.**
-- Motivo verificado en el entorno de ejecución: `gh` no está disponible; no hay `GITHUB_TOKEN` en el entorno; la API anónima responde **404** (repositorio privado) — `GET https://api.github.com/repos/dvconsultores/GlobalAvicola/actions/runs` = 404 (2026-09-13T05:40+02:00).
-- **No se fabrica ningún resultado de GitHub.** Verificación para el propietario: pestaña Actions del repositorio → run «Quality Suite (push)» sobre `66be1c1` → jobs `backend-suite`/`frontend-suite` → artefactos `backend-suite-66be1c1…` / `frontend-suite-66be1c1…`.
-- Mitigación de evidencia: la **misma lógica** de ambos jobs se ejecutó localmente con resultado verde y artefactos versionados (§2); el JUnit del backend y el de vitest quedan preservados en `evidence/`.
+- **Estado: `BLOCKED_EXTERNAL_CI_OBSERVATION`** (reconfirmado en la micro-tranche de cierre externo AC-06, 2026-09-13).
+- Motivos verificados en el entorno de ejecución: `gh` no está disponible; sin `GITHUB_TOKEN`/`GH_TOKEN`; API anónima 404 (repo privado); **nuevo intento legítimo vía navegador** — `https://github.com/dvconsultores/GlobalAvicola/actions?query=branch%3Amain` → «Page not found» + enlace «Sign in» (sesión del navegador **no autenticada**). Sin acceso autorizado ⇒ sin observación; **no se fabrica resultado**.
+- **Contrato AC-06 (spec, literal):** «run del workflow sobre el commit de cierre con ambas suites verdes (**enlace de run + artefacto**)»; la AC matrix exige «enlace al run + descarga de artefacto» y artefacto `evidence/ci-run.json`. **La spec NO contempla excepción** por bloqueo externo ⇒ mantener `CLOSED` era contradictorio: la certificación queda **`CERTIFICATION_PENDING_AC06`** hasta la observación real.
+- **Verificación manual del propietario (exacta; sin re-ejecutar pruebas funcionales):**
+  1. Abrir GitHub → pestaña **Actions** del repositorio `dvconsultores/GlobalAvicola`.
+  2. Localizar «**Quality Suite (push)**» — run del push con SHA **`66be1c1`** (secundario: `e0458b7`).
+  3. Confirmar conclusión **verde** y jobs `backend-suite` (pytest sobre PostgreSQL efímero vía pgserver) y `frontend-suite` (vitest).
+  4. Confirmar artefactos `backend-suite-66be1c1…` y `frontend-suite-66be1c1…` (JUnit + log saneado).
+  5. Registrar el enlace del run (evidencia `ci-run.json`): **con ello AC-06 = PASS y T1 cierra incondicionalmente**.
+- Mitigación de evidencia mientras tanto: la **misma lógica** de ambos jobs se ejecutó localmente con resultado verde y artefactos versionados (§2); el JUnit del backend y el de vitest quedan preservados en `evidence/`.
 
 ## 5 · Independencia del despliegue (prueba)
 
