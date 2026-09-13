@@ -39,3 +39,13 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Git**: commit único docs-only sobre `a3b53a8` («GA pre-SAP autonomo: …»); push verificado (`local == remote`).
 - **Parada**: §11/§56.A — sin trabajo seguro independiente restante. **STOP** (único gate inmediato: AC-06).
 - **Siguiente dependencia**: AC-06 = PASS (acción del propietario — G-01) → T1 CLOSED → **T2 arranca automáticamente** (autorización autónoma vigente).
+
+## AE-05 · 2026-09-13 06:19-06:21 +0200 · CONTINUACIÓN AUTORIZADA — VERIFICACIÓN DE LA SESIÓN PARA AC-06
+
+- **Pre-flight (§2 del prompt de continuación)**: HEAD `4df4732` == `origin/main`; worktree limpio; 0 commits después de `4df4732`; sin drift de producto ⇒ no aplica `PROGRAM_BLOCKED_BY_PRODUCT_DRIFT`.
+- **Autorización registrada**: el propietario autoriza la lectura directa del run `66be1c1` por el agente desde la «sesión autenticada del navegador integrado», con registro `AGENT_OBSERVED_GITHUB_EVIDENCE` — aplicable **solo si dicha sesión existe**.
+- **Verificación de la sesión declarada (06:20 +0200)**: navegación fresca a `github.com/dvconsultores/GlobalAvicola/actions/workflows/quality-suite.yml` → **404 «Page not found» + «Sign in»** (repo privado; navegador integrado **sin sesión de GitHub**) ⇒ la sesión autenticada declarada **no está disponible** en el entorno del agente.
+- **Vías adicionales (06:21 +0200)**: `gh` ABSENT · `glab` ABSENT · `GITHUB_TOKEN` UNSET · `GH_TOKEN` UNSET · propuesta de compartir otra página abierta: sin página compartida.
+- **Resultado**: **AC-06 NO observable**; no se generó evidencia `AGENT_OBSERVED_GITHUB_EVIDENCE`; **sin fabricación** (§5/§75). AC-06 sigue `BLOCKED_EXTERNAL_CI_OBSERVATION`; T1 `PARTIAL`; T2 no iniciada; diffs de producto/tests/CI/migraciones = 0.
+- **Acción mínima pendiente (G-01)**: (A) iniciar sesión el propietario en el navegador integrado (la pestaña ya apunta a la página de Actions; «Sign in» regresa a ella) — el agente lee el run y cierra AC-06 automáticamente; o (B) entregar los 5 valores (Run URL · Run ID · nombres exactos de artefactos · timestamp).
+- **Parada**: §65-A/C — el gate humano (sesión o valores) bloquea todo el trabajo autónomo restante.
