@@ -1,0 +1,26 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r210.weightUnit.test.tsx (5 tests | 1 failed) 589ms
+     × AC-R210-02 · los inputs de peso no llevan step 0.001 (captura en g) 104ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r210.weightUnit.test.tsx > R-210 · unidad única en gramos > AC-R210-02 · los inputs de peso no llevan step 0.001 (captura en g)
+AssertionError: expected '0.001' not to be '0.001' // Object.is equality
+ ❯ src/pages/operations/__tests__/r210.weightUnit.test.tsx:92:44
+     90|       return el!
+     91|     })
+     92|     expect(input.getAttribute('step')).not.toBe('0.001')
+       |                                            ^
+     93|     expect(input.getAttribute('step')).toBe('1')
+     94|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  01:24:18
+   Duration  1.75s (transform 241ms, setup 57ms, import 428ms, tests 589ms, environment 546ms)
+
