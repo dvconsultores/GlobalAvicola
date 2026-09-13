@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx (3 tests | 1 failed) 803ms
+     × AC-R209-02 · feed_registration guarda el código de la OT 167ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx > R-209 · selectores SAP guardan el código canónico > AC-R209-02 · feed_registration guarda el código de la OT
+AssertionError: expected '9' to be '4500009' // Object.is equality
+
+Expected: "4500009"
+Received: "9"
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx:112:55
+    110|     if (campo) fireEvent.change(campo, { target: { value: '100' } })
+    111|     const payload = await guardar()
+    112|     expect(payload.feed_movements?.[0]?.sap_order_id).toBe('4500009')
+       |                                                       ^
+    113|   })
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  01:19:46
+   Duration  1.96s (transform 210ms, setup 52ms, import 459ms, tests 803ms, environment 519ms)
+

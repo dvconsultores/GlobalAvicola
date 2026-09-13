@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx (3 tests | 1 failed) 807ms
+     × AC-R209-03 · referencia sin código ⇒ clave ausente (nunca String(id)) 208ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx > R-209 · selectores SAP guardan el código canónico > AC-R209-03 · referencia sin código ⇒ clave ausente (nunca String(id))
+AssertionError: expected '5' to be null
+
+- Expected:
+null
+
++ Received:
+"5"
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx:122:46
+    120|     await elegirEnSelector(/Seleccionar orden SAP/, /REFERENCIA-VACIA/)
+    121|     const payload = await guardar()
+    122|     expect(payload.sap_document_ref ?? null).toBeNull()
+       |                                              ^
+    123|   })
+    124| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  01:19:44
+   Duration  1.96s (transform 224ms, setup 52ms, import 453ms, tests 807ms, environment 531ms)
+
