@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/lots/__tests__/r191.phaseTransition.test.tsx (4 tests | 1 failed) 364ms
+     × AC-R191-03 · el POST lleva lot_id y phase_id (resuelto por código PROD) y nunca phase_code 209ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · transición de fase por UI > AC-R191-03 · el POST lleva lot_id y phase_id (resuelto por código PROD) y nunca phase_code
+AssertionError: expected undefined to be 66 // Object.is equality
+
+- Expected:
+66
+
++ Received:
+undefined
+
+ ❯ src/pages/lots/__tests__/r191.phaseTransition.test.tsx:97:27
+     95|     expect(llamada, 'POST /lots/66/phases').toBeTruthy()
+     96|     const cuerpo = llamada![1]
+     97|     expect(cuerpo.lot_id).toBe(66)
+       |                           ^
+     98|     expect(cuerpo.phase_id).toBe(2)
+     99|     expect(cuerpo.phase_code).toBeUndefined()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  01:10:28
+   Duration  1.47s (transform 192ms, setup 59ms, import 420ms, tests 364ms, environment 518ms)
+
