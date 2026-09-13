@@ -95,7 +95,8 @@ export function limpiarVacios(valor: unknown): unknown {
 /** Identificador canónico de una referencia SAP: su código (`doc_number`/`ref_id`/`sap_code`), no el id de UI. */
 export function identificadorDeOrdenSap(orden: any): string {
   if (!orden || typeof orden !== 'object') return ''
-  const valor = orden.doc_number ?? orden.ref_id ?? orden.sap_code ?? orden.id ?? ''
+  // `R-209` · C-02: sin código canónico se devuelve **ausencia** — el id de UI no viaja.
+  const valor = orden.doc_number ?? orden.ref_id ?? orden.sap_code ?? ''
   return valor === '' || valor === null || valor === undefined ? '' : String(valor)
 }
 

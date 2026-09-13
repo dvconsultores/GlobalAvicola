@@ -692,7 +692,7 @@ export default function OperationFormPage() {
  case 'bird_reception': {
  const sapOrderRef = watch('sap_document_ref' as any) ?? watch('extra_data.sap_order_ref' as any)
  const sapOrder = sapPurchaseOrders.find((o: any) =>
- (o.doc_number || o.ref_id || o.sap_code || String(o.id)) === sapOrderRef
+ identificadorDeOrdenSap(o) === sapOrderRef
  )
  const declaredQty = sapOrder?.quantity || (watch('extra_data.declared_quantity' as any) || 0)
  const declaredAvgM = sapOrder?.extra_data?.avg_weight_male || (watch('extra_data.declared_avg_weight_m' as any) || 0)
@@ -977,10 +977,13 @@ export default function OperationFormPage() {
  el que el dominio mira, y el de `extra_data`, que otras partes del formulario leen
  para mostrar la cantidad declarada. */}
  <SearchSelect
- value={watch('sap_document_ref' as any) ?? watch('extra_data.sap_order_ref' as any) ?? ''}
+ value={(() => { const o = sapPurchaseOrders.find((x: any) => identificadorDeOrdenSap(x) === watch('sap_document_ref' as any)); return o ? String(o.id) : '' })()}
  onChange={(v) => {
- setValue('sap_document_ref' as any, v)
- setValue('extra_data.sap_order_ref' as any, v)
+ const order = sapPurchaseOrders.find((o: any) => String(o.id) === String(v))
+ // `R-209`: siempre el código canónico; sin código ⇒ ausente (nunca `String(id)`).
+ const referencia = order ? identificadorDeOrdenSap(order) : ''
+ setValue('sap_document_ref' as any, (referencia || undefined) as any)
+ setValue('extra_data.sap_order_ref' as any, (referencia || undefined) as any)
  }}
  items={sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
@@ -1093,8 +1096,13 @@ export default function OperationFormPage() {
  <div>
  <label className={lc}>{t('operations.sapOrder', 'Orden SAP')}</label>
  <SearchSelect
- value={watch('feed_movements.0.sap_order_id' as any)}
- onChange={(v) => setValue('feed_movements.0.sap_order_id' as any, v || undefined)}
+ value={(() => { const o = sapOrders.find((x: any) => identificadorDeOrdenSap(x) === watch('feed_movements.0.sap_order_id' as any)); return o ? String(o.id) : '' })()}
+ onChange={(v) => {
+ const order = sapOrders.find((o: any) => String(o.id) === String(v))
+ // `R-209`: la OT de alimento viaja por su código — nunca por el id de UI.
+ const referencia = order ? identificadorDeOrdenSap(order) : ''
+ setValue('feed_movements.0.sap_order_id' as any, (referencia || undefined) as any)
+ }}
  items={sapOrders}
  placeholder={t('operations.noOrder', 'Sin orden')}
 
