@@ -50,5 +50,14 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 
 ## 4 · Repositorio y siguiente paso
 
-- Material del programa: `audit/ga-pre-sap-program/` (T0 + T1) + correcciones D-03 en el paquete de auditoría; **producto diff acumulado = 0**.
-- Tras el cierre de T1: **STOP** — no se ejecuta T2 sin autorización del propietario (queda definida arriba, con su criterio de salida).
+- Material del programa: `audit/ga-pre-sap-program/` (T0 + T1 + registros de ejecución autónoma) + correcciones D-03 en el paquete de auditoría; **producto diff acumulado = 0**.
+- Tras el cierre de T1: **STOP** hasta `AC-06 = PASS`. Con la autorización autónoma vigente (prompt maestro del propietario, 2026-09-13), **T2 arranca automáticamente al cerrarse T1** (criterio de salida definido arriba).
+
+## 5 · Ejecución autónoma (2026-09-13 06:08 +0200) — `PROGRAM_EXECUTION_BLOCKED_BY_OWNER_GATE`
+
+- **Intento final de AC-06 por vías legítimas**: SIN VÍA — navegador integrado sin sesión de GitHub (404 + «Sign in»), `gh`/`glab` ausentes, sin tokens, API anónima 404; sin búsqueda de credenciales. AC-06 sigue `BLOCKED_EXTERNAL_CI_OBSERVATION`; T1 `PARTIAL`.
+- **DAG consultado (9 documentos canónicos)**: T2-T13 dependen de T1 (o transitivamente; GA-GOV-03 es el gate de arranque) ⇒ **ninguna tranche independiente ejecutable**; T2 NO iniciada. **Pista OPS** (única línea independiente, «arrancable ya»): declarada **owner/ops** (acciones fuera del código) ⇒ encolada en `GA_OWNER_GATE_QUEUE.md` (bloquea solo T13).
+- **OD-13.c verificada**: **ya resuelta** en la gobernanza vigente (`specs/remediation/OD-13-ROLE-AND-PERMISSION-TENANCY.md §3`, 2026-09-08) — sin decisión redundante del propietario.
+- **Único gate inmediato**: `AC-06 (evidencia externa de CI)`.
+- **Registros**: `GA_AUTONOMOUS_EXECUTION_LEDGER.md` (AE-01…AE-04) · `GA_OWNER_GATE_QUEUE.md` (G-01…G-05 + programados §25). Commit docs-only sobre `a3b53a8`.
+- Sin cambios de producto/tests/CI/migraciones; KPI `0/17` sin cambio; veredicto `NO_GO_SAP_FUNCTIONAL_GAPS` sin cambio.
