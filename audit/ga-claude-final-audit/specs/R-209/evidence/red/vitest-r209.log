@@ -1,0 +1,50 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx (3 tests | 2 failed) 784ms
+     × AC-R209-02 · feed_registration guarda el código de la OT 170ms
+     × AC-R209-03 · referencia sin código ⇒ clave ausente (nunca String(id)) 193ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx > R-209 · selectores SAP guardan el código canónico > AC-R209-02 · feed_registration guarda el código de la OT
+AssertionError: expected '9' to be '4500009' // Object.is equality
+
+Expected: "4500009"
+Received: "9"
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx:112:55
+    110|     if (campo) fireEvent.change(campo, { target: { value: '100' } })
+    111|     const payload = await guardar()
+    112|     expect(payload.feed_movements?.[0]?.sap_order_id).toBe('4500009')
+       |                                                       ^
+    113|   })
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx > R-209 · selectores SAP guardan el código canónico > AC-R209-03 · referencia sin código ⇒ clave ausente (nunca String(id))
+AssertionError: expected '5' to be null
+
+- Expected:
+null
+
++ Received:
+"5"
+
+ ❯ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx:122:46
+    120|     await elegirEnSelector(/Seleccionar orden SAP/, /REFERENCIA-VACIA/)
+    121|     const payload = await guardar()
+    122|     expect(payload.sap_document_ref ?? null).toBeNull()
+       |                                              ^
+    123|   })
+    124| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  01:17:23
+   Duration  1.95s (transform 251ms, setup 50ms, import 466ms, tests 784ms, environment 531ms)
+
