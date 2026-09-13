@@ -1,0 +1,3883 @@
+{
+  "fecha": "2026-09-13",
+  "base": "http://127.0.0.1:5199",
+  "pasos": [
+    {
+      "step": "me-admin",
+      "status": 200,
+      "detail": {
+        "company_id": 1,
+        "permisos": 9,
+        "bu": [
+          "breeder",
+          "broiler",
+          "grandparent",
+          "hatchery"
+        ]
+      }
+    },
+    {
+      "step": "fixture-hatchery",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-incubator",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-hatcher",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-genetic-line",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-breed",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-supplier",
+      "status": 201,
+      "detail": 2
+    },
+    {
+      "step": "fixture-sap-refs",
+      "status": 201,
+      "detail": [
+        {
+          "company_id": 1,
+          "ref_type": "purchase_order",
+          "sap_code": "AUD-PO-GP",
+          "description": null,
+          "quantity": 200,
+          "extra_data": {
+            "vendor_name": "Cobb"
+          },
+          "imported_by_id": 1,
+          "id": 1,
+          "created_at": "2026-09-13T00:38:18.644127+00:00",
+          "updated_at": "2026-09-13T00:38:18.644127+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "purchase_order",
+          "sap_code": "AUD-PO-BR",
+          "description": null,
+          "quantity": 5000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 2,
+          "created_at": "2026-09-13T00:38:18.644127+00:00",
+          "updated_at": "2026-09-13T00:38:18.644127+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "purchase_order",
+          "sap_code": "AUD-PO-BO",
+          "description": null,
+          "quantity": 6000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 3,
+          "created_at": "2026-09-13T00:38:18.644127+00:00",
+          "updated_at": "2026-09-13T00:38:18.644127+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "transfer_order",
+          "sap_code": "AUD-STO-EGG",
+          "description": null,
+          "quantity": 2000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 4,
+          "created_at": "2026-09-13T00:38:18.644127+00:00",
+          "updated_at": "2026-09-13T00:38:18.644127+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "transfer_order",
+          "sap_code": "AUD-STO-CHK",
+          "description": null,
+          "quantity": 2000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 5,
+          "created_at": "2026-09-13T00:38:18.644127+00:00",
+          "updated_at": "2026-09-13T00:38:18.644127+00:00",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "step": "login-ui-admin",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "login-ui-approver",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "GP2-nav-hub-import",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=grandparent_import"
+    },
+    {
+      "step": "GP2-01a-import-cuarentena-vacia",
+      "status": 400,
+      "detail": {
+        "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "banner": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "zod": []
+      }
+    },
+    {
+      "step": "GP2-01-grandparent_import",
+      "status": 201,
+      "detail": {
+        "id": 1,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "GP2-02-submit-ui",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "GP2-03-review-approve-ui",
+      "status": "NO_BUTTON",
+      "detail": {
+        "approve": "NO_BUTTON"
+      }
+    },
+    {
+      "step": "GP2-05-bird_reception",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Recepción de Aves",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-07-mortality_recording",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Registro de Mortalidad",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-08-feed_registration",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Registro de Alimento",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-09-weight_recording",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Registro de Pesaje",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-10-vaccination",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Vacunación",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-11-medication",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Medicación",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-12-farm_inspection",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'farm_inspection' requiere una granja asignada",
+        "banner": "El evento 'farm_inspection' requiere una granja asignada",
+        "zod": []
+      }
+    },
+    {
+      "step": "GP2-13-cull_recording",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Registro de Descarte",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-14-bird_distribution",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Distribución de Aves",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-15-bird_exit",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Salida de Aves",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-17-egg_collection",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Recolección de Huevos",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "GP2-18-mortality-exceso",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Registro de Mortalidad",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "BR2-00-lote-ui",
+      "status": 201,
+      "detail": {
+        "id": 3,
+        "curvaAviso": 1
+      }
+    },
+    {
+      "step": "BR2-01-bird_reception-por-hub",
+      "status": 400,
+      "detail": {
+        "detail": "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo (falta: received_total, dead_on_arrival, rejected_on_arrival)",
+        "banner": "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo (falta: received_total, dead_on_arrival,",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR2-02-bird_reception-B01-asistente",
+      "status": 201,
+      "detail": {
+        "id": 2,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-bird_distribution",
+      "status": 201,
+      "detail": {
+        "id": 3,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-feed_registration",
+      "status": 201,
+      "detail": {
+        "id": 4,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-water_consumption",
+      "status": 201,
+      "detail": {
+        "id": 5,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-weight_recording",
+      "status": 201,
+      "detail": {
+        "id": 6,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-mortality_recording",
+      "status": 201,
+      "detail": {
+        "id": 7,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-cull_recording",
+      "status": 201,
+      "detail": {
+        "id": 8,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-vaccination",
+      "status": 201,
+      "detail": {
+        "id": 9,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-medication",
+      "status": 201,
+      "detail": {
+        "id": 10,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-bird_exit",
+      "status": 201,
+      "detail": {
+        "id": 11,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR2-transicion-ui",
+      "status": 422,
+      "detail": null
+    },
+    {
+      "step": "BR2-egg_collection",
+      "status": 201,
+      "detail": {
+        "id": 12,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR2-egg_dispatch",
+      "status": 201,
+      "detail": {
+        "id": 13,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR2-egg_dispatch-exceso",
+      "status": 400,
+      "detail": {
+        "detail": "Despacho de huevos (5000) excede el saldo disponible (100). Registre primero la recolección.",
+        "banner": "Despacho de huevos (5000) excede el saldo disponible (100). Registre primero la recolección.",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR2-P07-submit",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "BR2-EXCEPCION",
+      "status": "error",
+      "detail": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('input[placeholder]').filter({ hasNot: locator('[type=checkbox]') }).first()\n"
+    },
+    {
+      "step": "HAT2-00-lote-ui",
+      "status": 201,
+      "detail": 4
+    },
+    {
+      "step": "HAT2-nav-hub",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=hatchery_inspection"
+    },
+    {
+      "step": "HAT2-01-hatchery_inspection",
+      "status": 201,
+      "detail": {
+        "id": 14,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-02-egg_reception_hatchery",
+      "status": 422,
+      "detail": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "egg_storage_records",
+              0,
+              "arrival_date"
+            ],
+            "msg": "Field required",
+            "input": {
+              "eggs_received": 1000,
+              "storage_temp_c": 15,
+              "transport_temp_c": 15
+            }
+          }
+        ],
+        "banner": "egg_storage_records.0.arrival_date: Field required",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-02b-egg_reception-sin-almacen",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'egg_reception_hatchery' requiere una granja asignada",
+        "banner": "El evento 'egg_reception_hatchery' requiere una granja asignada",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-03-egg_reception_classification",
+      "status": 201,
+      "detail": {
+        "id": 16,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-04-incubation_load",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Carga de Incubación",
+        "zod": [
+          "Seleccionar lote..."
+        ]
+      }
+    },
+    {
+      "step": "HAT2-05-ovoscopy",
+      "status": 201,
+      "detail": {
+        "id": 17,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-06-transfer_to_hatcher",
+      "status": 201,
+      "detail": {
+        "id": 18,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-07-birth_registration-dosis-vacia",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Vacunacion al nacimiento\n\nVacuna\nSeleccionar vacuna...\nVía de administración\nSeleccionar via...\nAspersion (spray)\nAgua d",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-07b-birth_registration-con-dosis",
+      "status": "NO_REQUEST",
+      "detail": {
+        "banner": "Vacunacion al nacimiento\n\nVacuna\nSeleccionar vacuna...\nVía de administración\nSeleccionar via...\nAspersion (spray)\nAgua d",
+        "zod": []
+      }
+    },
+    {
+      "step": "HAT2-08-chick_dispatch",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'chick_dispatch' requiere una granja asignada",
+        "banner": "El evento 'chick_dispatch' requiere una granja asignada",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-nav-hub",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=farm_inspection"
+    },
+    {
+      "step": "BO2-01-farm_inspection",
+      "status": 201,
+      "detail": {
+        "id": 20,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-02-bird_reception",
+      "status": 201,
+      "detail": {
+        "id": 21,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-bird_distribution",
+      "status": 201,
+      "detail": {
+        "id": 22,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-feed_registration",
+      "status": 201,
+      "detail": {
+        "id": 23,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-water_consumption",
+      "status": 201,
+      "detail": {
+        "id": 24,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-weight_recording",
+      "status": 201,
+      "detail": {
+        "id": 25,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-mortality_recording",
+      "status": 201,
+      "detail": {
+        "id": 26,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-cull_recording",
+      "status": 201,
+      "detail": {
+        "id": 27,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-vaccination",
+      "status": 201,
+      "detail": {
+        "id": 28,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-medication",
+      "status": 201,
+      "detail": {
+        "id": 29,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-bird_exit",
+      "status": 201,
+      "detail": {
+        "id": 30,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO2-aprobaciones-ui",
+      "status": "OK",
+      "detail": {
+        "aprobados": 10,
+        "total": 10
+      }
+    },
+    {
+      "step": "BO2-close-aprobado",
+      "status": 200,
+      "detail": {
+        "mort": 40,
+        "feed": 850.5
+      }
+    },
+    {
+      "step": "MAS2-hatchery-create-ui",
+      "status": 422,
+      "detail": {
+        "req": {},
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "company_id"
+            ],
+            "msg": "Field required",
+            "input": {}
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "name"
+            ],
+            "msg": "Field required",
+            "input": {}
+          }
+        ]
+      }
+    },
+    {
+      "step": "OD23b-disable-ui",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "OD23b-enable-ui",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "OD23b-regrant-ui",
+      "status": 201,
+      "detail": null
+    }
+  ],
+  "posts": [
+    {
+      "label": "GP2-01a-import-cuarentena-vacia",
+      "status": 400,
+      "req": {
+        "event_type": "grandparent_import",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-GP",
+        "supplier_id": 2,
+        "transport_id": 1,
+        "extra_data": {
+          "import_plan": {
+            "origin_country": "Francia",
+            "purchased_total": 110,
+            "shipped_total": 105,
+            "received_total": 100,
+            "transit_mortality": 5,
+            "departure_date": "2026-09-06",
+            "arrival_date": "2026-09-13",
+            "reception_condition": "",
+            "quarantine_end_date": "",
+            "initial_health_inspection": ""
+          },
+          "sap_order_ref": "AUD-PO-GP",
+          "declared_quantity": 200,
+          "vendor_name": "Cobb"
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 40,
+            "avg_weight": 3800
+          },
+          {
+            "sex": "female",
+            "quantity": 60,
+            "avg_weight": 3600
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "rule": "BR-22"
+      },
+      "banner": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-01-grandparent_import",
+      "status": 201,
+      "req": {
+        "event_type": "grandparent_import",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-GP",
+        "supplier_id": 2,
+        "transport_id": 1,
+        "extra_data": {
+          "import_plan": {
+            "origin_country": "Francia",
+            "purchased_total": 110,
+            "shipped_total": 105,
+            "received_total": 100,
+            "transit_mortality": 5,
+            "departure_date": "2026-09-06",
+            "arrival_date": "2026-09-13",
+            "reception_condition": "",
+            "quarantine_days": 21,
+            "quarantine_end_date": "2026-10-04",
+            "initial_health_inspection": ""
+          },
+          "sap_order_ref": "AUD-PO-GP",
+          "declared_quantity": 200,
+          "vendor_name": "Cobb"
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 40,
+            "avg_weight": 3800
+          },
+          {
+            "sex": "female",
+            "quantity": 60,
+            "avg_weight": 3600
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "id": 1,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-05-bird_reception",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Recepción de Aves",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-07-mortality_recording",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Registro de Mortalidad",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-08-feed_registration",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Registro de Alimento",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-09-weight_recording",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Registro de Pesaje",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-10-vaccination",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Vacunación",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-11-medication",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Medicación",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-12-farm_inspection",
+      "status": 400,
+      "req": {
+        "event_type": "farm_inspection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [
+          {
+            "house_id": 1,
+            "parameter": "temperature",
+            "value": "28"
+          },
+          {
+            "house_id": 1,
+            "parameter": "humidity",
+            "value": "60"
+          },
+          {
+            "house_id": 1,
+            "parameter": "litter_condition",
+            "status": "seca"
+          }
+        ],
+        "egg_storage_records": [],
+        "house_id": 1
+      },
+      "resp": {
+        "detail": "El evento 'farm_inspection' requiere una granja asignada",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'farm_inspection' requiere una granja asignada",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-13-cull_recording",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Registro de Descarte",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-14-bird_distribution",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Distribución de Aves",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-15-bird_exit",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Salida de Aves",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-17-egg_collection",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Recolección de Huevos",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "GP2-18-mortality-exceso",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Registro de Mortalidad",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR2-01-bird_reception-por-hub",
+      "status": 400,
+      "req": {
+        "lot_id": 3,
+        "event_type": "bird_reception",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-BR",
+        "supplier_id": 2,
+        "extra_data": {
+          "sap_order_ref": "AUD-PO-BR",
+          "declared_quantity": 5000
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 200,
+            "avg_weight": 42,
+            "breed_id": 1,
+            "target_house_id": 1,
+            "week_number": 0
+          },
+          {
+            "sex": "female",
+            "quantity": 800,
+            "avg_weight": 40,
+            "target_house_id": 1,
+            "week_number": 0
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "detail": "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo (falta: received_total, dead_on_arrival, rejected_on_arrival)",
+        "rule": "BR-20"
+      },
+      "banner": "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo (falta: received_total, dead_on_arrival, rejected_on_arrival)",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR2-02-bird_reception-B01-asistente",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "bird_reception",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-BR",
+        "supplier_id": 2,
+        "sample_size": 50,
+        "received_total": 1010,
+        "dead_on_arrival": 6,
+        "rejected_on_arrival": 4,
+        "extra_data": {
+          "sap_order_ref": "AUD-PO-BR",
+          "declared_quantity": 5000
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 200,
+            "avg_weight": 42,
+            "breed_id": 1,
+            "target_house_id": 1,
+            "week_number": 0
+          },
+          {
+            "sex": "female",
+            "quantity": 800,
+            "avg_weight": 40,
+            "target_house_id": 1,
+            "week_number": 0
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 2,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-bird_distribution",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "bird_distribution",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [
+          {
+            "sex": "mixed",
+            "quantity": 300,
+            "target_house_id": 2
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 3,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-feed_registration",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "feed_registration",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "extra_data": {
+          "feed_phase": ""
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [
+          {
+            "feed_type_id": 1,
+            "quantity_kg": 120,
+            "week_number": 1
+          }
+        ],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 4,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-water_consumption",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "water_consumption",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "water_liters": 250.5,
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 5,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-weight_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "weight_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sample_size": 30,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 15,
+            "avg_weight": 45,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 15,
+            "avg_weight": 43
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 6,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-mortality_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "mortality_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 2,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 3
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 7,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-cull_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "cull_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cull_cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "female",
+            "quantity": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 8,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-vaccination",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "vaccination",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "vaccine_id": 1,
+        "vaccination_route": "spray",
+        "vaccine_lot_number": "",
+        "dosage_per_bird": 0.3,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 200
+          },
+          {
+            "sex": "female",
+            "quantity": 800
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 9,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-medication",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "medication",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "medication_id": 1,
+        "dosage_per_bird": 0.2,
+        "treatment_days": 5,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 200
+          },
+          {
+            "sex": "female",
+            "quantity": 800
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 10,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-bird_exit",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "bird_exit",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 10,
+            "avg_weight": 3000
+          },
+          {
+            "sex": "female",
+            "quantity": 10,
+            "avg_weight": 2800
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 11,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR2-egg_collection",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "egg_collection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [
+          {
+            "egg_type": "fertile",
+            "quantity": 500,
+            "avg_weight": 60
+          },
+          {
+            "egg_type": "dirty",
+            "quantity": 10
+          },
+          {
+            "egg_type": "broken",
+            "quantity": 5
+          }
+        ],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 12,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR2-egg_dispatch",
+      "status": 201,
+      "req": {
+        "lot_id": 3,
+        "event_type": "egg_dispatch",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-STO-EGG",
+        "transport_id": 1,
+        "extra_data": {
+          "sap_order_ref": "AUD-STO-EGG",
+          "declared_quantity": 2000,
+          "transport_cage_condition": "",
+          "transport_density": "",
+          "transport_temperature": "",
+          "transport_ventilation": "",
+          "transport_hygiene": "",
+          "transport_duration_min": ""
+        },
+        "bird_movements": [],
+        "egg_movements": [
+          {
+            "egg_type": "fertile",
+            "quantity": 400
+          }
+        ],
+        "feed_movements": [],
+        "hatchery_params": [
+          {
+            "incubator_id": 1
+          }
+        ],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 13,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR2-egg_dispatch-exceso",
+      "status": 400,
+      "req": {
+        "lot_id": 3,
+        "event_type": "egg_dispatch",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [
+          {
+            "egg_type": "fertile",
+            "quantity": 5000
+          }
+        ],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "detail": "Despacho de huevos (5000) excede el saldo disponible (100). Registre primero la recolección.",
+        "rule": "BR-02"
+      },
+      "banner": "Despacho de huevos (5000) excede el saldo disponible (100). Registre primero la recolección.",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-01-hatchery_inspection",
+      "status": 201,
+      "req": {
+        "event_type": "hatchery_inspection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [
+          {
+            "incubator_id": 1,
+            "temperature": 37.6,
+            "humidity": 56,
+            "co2": 0.4
+          }
+        ],
+        "inspection_details": [],
+        "egg_storage_records": []
+      },
+      "resp": {
+        "id": 14,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-02-egg_reception_hatchery",
+      "status": 422,
+      "req": {
+        "lot_id": 4,
+        "event_type": "egg_reception_hatchery",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-STO-EGG",
+        "extra_data": {
+          "dispatch_order": "D-AUD-1",
+          "sap_order_ref": "AUD-STO-EGG",
+          "declared_quantity": 2000,
+          "source_farm_id": 1
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [
+          {
+            "eggs_received": 1000,
+            "storage_temp_c": 15,
+            "transport_temp_c": 15
+          }
+        ],
+        "house_id": 2
+      },
+      "resp": {
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "egg_storage_records",
+              0,
+              "arrival_date"
+            ],
+            "msg": "Field required",
+            "input": {
+              "eggs_received": 1000,
+              "storage_temp_c": 15,
+              "transport_temp_c": 15
+            }
+          }
+        ]
+      },
+      "banner": "egg_storage_records.0.arrival_date: Field required",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-02b-egg_reception-sin-almacen",
+      "status": 400,
+      "req": {
+        "lot_id": 4,
+        "event_type": "egg_reception_hatchery",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "extra_data": {
+          "dispatch_order": "D-AUD-2",
+          "source_farm_id": 1
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "house_id": 2
+      },
+      "resp": {
+        "detail": "El evento 'egg_reception_hatchery' requiere una granja asignada",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'egg_reception_hatchery' requiere una granja asignada",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-03-egg_reception_classification",
+      "status": 201,
+      "req": {
+        "lot_id": 4,
+        "event_type": "egg_reception_classification",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [
+          {
+            "egg_type": "fertile",
+            "quantity": 950
+          },
+          {
+            "egg_type": "dirty",
+            "quantity": 10
+          }
+        ],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "house_id": 2
+      },
+      "resp": {
+        "id": 16,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-04-incubation_load",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Carga de Incubación",
+      "zodErrors": [
+        "Seleccionar lote..."
+      ],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-05-ovoscopy",
+      "status": 201,
+      "req": {
+        "lot_id": 4,
+        "event_type": "ovoscopy",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [
+          {
+            "egg_type": "infertile",
+            "quantity": 40
+          },
+          {
+            "egg_type": "dead_early",
+            "quantity": 5
+          }
+        ],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "house_id": 2
+      },
+      "resp": {
+        "id": 17,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-06-transfer_to_hatcher",
+      "status": 201,
+      "req": {
+        "lot_id": 4,
+        "event_type": "transfer_to_hatcher",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "extra_data": {
+          "incubation_day": "18"
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [
+          {
+            "hatcher_id": 1,
+            "temperature": 37,
+            "humidity": 68,
+            "quantity_transferred": 750
+          }
+        ],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "house_id": 2
+      },
+      "resp": {
+        "id": 18,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-07-birth_registration-dosis-vacia",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Vacunacion al nacimiento\n\nVacuna\nSeleccionar vacuna...\nVía de administración\nSeleccionar via...\nAspersion (spray)\nAgua de bebida\nInyeccion\nOcular\nGel\nLote de vacuna\nDosis por ave",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-07b-birth_registration-con-dosis",
+      "status": "NO_REQUEST",
+      "req": null,
+      "resp": null,
+      "banner": "Vacunacion al nacimiento\n\nVacuna\nSeleccionar vacuna...\nVía de administración\nSeleccionar via...\nAspersion (spray)\nAgua de bebida\nInyeccion\nOcular\nGel\nLote de vacuna\nDosis por ave",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "HAT2-08-chick_dispatch",
+      "status": 400,
+      "req": {
+        "lot_id": 4,
+        "event_type": "chick_dispatch",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-GP",
+        "destination_farm_id": 2,
+        "transport_id": 1,
+        "extra_data": {
+          "sanitary_cert": "",
+          "sap_order_ref": "AUD-PO-GP",
+          "declared_quantity": 200,
+          "vendor_name": "Cobb"
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 100
+          },
+          {
+            "sex": "female",
+            "quantity": 100
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "house_id": 2
+      },
+      "resp": {
+        "detail": "El evento 'chick_dispatch' requiere una granja asignada",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'chick_dispatch' requiere una granja asignada",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-01-farm_inspection",
+      "status": 201,
+      "req": {
+        "event_type": "farm_inspection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [
+          {
+            "house_id": 1,
+            "parameter": "temperature",
+            "value": "30"
+          },
+          {
+            "house_id": 1,
+            "parameter": "humidity",
+            "value": "60"
+          },
+          {
+            "house_id": 1,
+            "parameter": "litter_condition",
+            "status": "seca"
+          }
+        ],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 20,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-02-bird_reception",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "bird_reception",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-BO",
+        "supplier_id": 2,
+        "extra_data": {
+          "sap_order_ref": "AUD-PO-BO",
+          "declared_quantity": 6000
+        },
+        "bird_movements": [
+          {
+            "sex": "mixed",
+            "quantity": 5000,
+            "avg_weight": 42,
+            "target_house_id": 1,
+            "week_number": 0
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 21,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-bird_distribution",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "bird_distribution",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [
+          {
+            "sex": "mixed",
+            "quantity": 2000,
+            "target_house_id": 2
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 22,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-feed_registration",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "feed_registration",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "extra_data": {
+          "feed_phase": ""
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [
+          {
+            "feed_type_id": 1,
+            "quantity_kg": 850.5,
+            "week_number": 1
+          }
+        ],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 23,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-water_consumption",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "water_consumption",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "water_liters": 1200,
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 24,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-weight_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "weight_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sample_size": 100,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 50,
+            "avg_weight": 2400,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 50,
+            "avg_weight": 2200
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 25,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-mortality_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "mortality_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 20,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 20
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 26,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-cull_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "cull_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cull_cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 15,
+            "week_number": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 27,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-vaccination",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "vaccination",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "vaccine_id": 1,
+        "vaccination_route": "water",
+        "vaccine_lot_number": "",
+        "dosage_per_bird": 0.5,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 2500
+          },
+          {
+            "sex": "female",
+            "quantity": 2500
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 28,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-medication",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "medication",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "medication_id": 1,
+        "dosage_per_bird": 0.1,
+        "treatment_days": 5,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 2500
+          },
+          {
+            "sex": "female",
+            "quantity": 2500
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 29,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO2-bird_exit",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "bird_exit",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "destination_plant_id": 1,
+        "transport_id": 1,
+        "extra_data": {
+          "transport_cage_condition": "good",
+          "transport_density": "",
+          "transport_temperature": "",
+          "transport_ventilation": "",
+          "transport_hygiene": "",
+          "transport_duration_min": ""
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 100,
+            "avg_weight": 2500
+          },
+          {
+            "sex": "female",
+            "quantity": 100,
+            "avg_weight": 2300
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 30,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    }
+  ],
+  "pageerror": [
+    {
+      "tag": "admin",
+      "msg": "Objects are not valid as a React child (found: object with keys {type, loc, msg, input}). If you meant to render a collection of children, use an array instead."
+    }
+  ],
+  "consoleError": [
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "AxiosError: Request failed with status code 422\n    at settle (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:1838:14)\n    at XMLHttpRequest.onloadend (http://127.0.0.1:5199/node_modules/.vite/deps/axios.js?v=a4932722:2231:4)"
+    },
+    {
+      "tag": "admin",
+      "msg": "[Object, Object]"
+    },
+    {
+      "tag": "admin",
+      "msg": "No se puede cerrar el lote: 10 registro(s) sin aprobar (10 en «registered»). Apruébelos o anúlelos antes de cerrar."
+    },
+    {
+      "tag": "admin",
+      "msg": "In HTML, %s cannot be a descendant of <%s>.\nThis will cause a hydration error.%s <button> button \n\n  ...\n    <ProtectedRoute>\n      <AppLayout>\n        <div className=\"min-h-scre...\">\n          <Sidebar>\n          <Header>\n          <main className=\"pb-24 lg:p...\">\n            <div className=\"app-co"
+    },
+    {
+      "tag": "admin",
+      "msg": "<%s> cannot contain a nested %s.\nSee this log for the ancestor stack trace. button <button>"
+    }
+  ],
+  "httpErrores": [
+    {
+      "tag": "approver",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/dashboard/admin"
+    },
+    {
+      "tag": "approver",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/dashboard/admin"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "GET",
+      "url": "/api/v1/lots/null"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "POST",
+      "url": "/api/v1/lots/3/phases"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/lots/1/close"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "POST",
+      "url": "/api/v1/masters/hatcheries"
+    }
+  ],
+  "asserts": [
+    {
+      "name": "GP2-01a-contrato-fecha-vacia",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "quarantine_end_date_enviado": "\"\""
+      }
+    },
+    {
+      "name": "GP2-01a-opcional-vacio-aceptado",
+      "ok": false,
+      "detail": {
+        "status": 400,
+        "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short"
+      }
+    },
+    {
+      "name": "GP2-01-import-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "GP2-01-payload-canonico",
+      "ok": true,
+      "detail": {
+        "storage": [],
+        "ref": "AUD-PO-GP"
+      }
+    },
+    {
+      "name": "GP2-03-aprobado-y-lote",
+      "ok": false,
+      "detail": {
+        "status": "pending_review",
+        "lot_id": null
+      }
+    },
+    {
+      "name": "GP2-04-lote-auto-codigo",
+      "ok": false,
+      "detail": {}
+    },
+    {
+      "name": "GP2-04b-enlace-lote-en-detalle",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "GP2-lotdetail-poblacion-visible",
+      "ok": null,
+      "detail": {
+        "muestraSaldo": false,
+        "granjaComoId": false
+      }
+    },
+    {
+      "name": "lotdetail-sin-accion-bird_reception",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-05-recepcion-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "GP2-05-house-id-derivado",
+      "ok": false,
+      "detail": {}
+    },
+    {
+      "name": "GP2-06b-poblacion-100-bracket",
+      "ok": false,
+      "detail": "El evento requiere lote"
+    },
+    {
+      "name": "lotdetail-sin-accion-mortality_recording",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-07-mortalidad-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-feed_registration",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-08-alimento-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "GP2-08-sin-fila-vacia",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-weight_recording",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-09-pesaje-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-vaccination",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-10-vacunacion-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-medication",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-11-medicacion-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-farm_inspection",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-12-inspeccion-201",
+      "ok": false,
+      "detail": "El evento 'farm_inspection' requiere una granja asignada"
+    },
+    {
+      "name": "lotdetail-sin-accion-cull_recording",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-13-descarte-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-bird_distribution",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-14-distribucion-lote-sin-galpon",
+      "ok": null,
+      "detail": {
+        "status": "NO_REQUEST"
+      }
+    },
+    {
+      "name": "lotdetail-sin-accion-bird_exit",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-15-salida-lote-sin-galpon",
+      "ok": null,
+      "detail": {
+        "status": "NO_REQUEST"
+      }
+    },
+    {
+      "name": "GP2-16-boton-transicion",
+      "ok": null,
+      "detail": "no visible"
+    },
+    {
+      "name": "lotdetail-sin-accion-egg_collection",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-17-recoleccion-lote-sin-galpon",
+      "ok": null,
+      "detail": {
+        "status": "NO_REQUEST"
+      }
+    },
+    {
+      "name": "lotdetail-sin-accion-mortality_recording",
+      "ok": null,
+      "detail": {
+        "lotId": null
+      }
+    },
+    {
+      "name": "GP2-18-4xx-seguro",
+      "ok": false,
+      "detail": {
+        "status": "NO_REQUEST",
+        "banner": "Registro de Mortalidad"
+      }
+    },
+    {
+      "name": "BR2-00-lote-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BR2-entrada-asistente-sin-type",
+      "ok": null,
+      "detail": {
+        "enlaces_operations_new": 0,
+        "botones_nueva": 0
+      }
+    },
+    {
+      "name": "BR2-hub-campo-cuadre-visible",
+      "ok": null,
+      "detail": 0
+    },
+    {
+      "name": "BR2-01-hub-resultado",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo (falta: received_total, dead_on_arrival, rejected_on_arrival)",
+        "rule": "BR-20"
+      }
+    },
+    {
+      "name": "BR2-01-recepcion-por-hub-201",
+      "ok": false,
+      "detail": {
+        "status": 400,
+        "detail": "La recepción de reproductoras declara recibidas, mortalidad al arribo y rechazo (falta: received_total, dead_on_arrival, rejected_on_arrival)"
+      }
+    },
+    {
+      "name": "BR2-asistente-campo-cuadre-visible",
+      "ok": null,
+      "detail": 1
+    },
+    {
+      "name": "BR2-02-recepcion-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BR-bird_distribution-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-feed_registration-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-water_consumption-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-weight_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-mortality_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-cull_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-vaccination-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-medication-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR-bird_exit-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "lotdetail-sin-accion-egg_collection",
+      "ok": null,
+      "detail": {
+        "lotId": 3
+      }
+    },
+    {
+      "name": "BR2-egg_collection-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "lotdetail-sin-accion-egg_dispatch",
+      "ok": null,
+      "detail": {
+        "lotId": 3
+      }
+    },
+    {
+      "name": "BR2-egg_dispatch-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BR2-egg_dispatch-payload",
+      "ok": null,
+      "detail": {
+        "hp": [
+          {
+            "incubator_id": 1
+          }
+        ],
+        "ref": "AUD-STO-EGG",
+        "transport": 1,
+        "extra": {
+          "sap_order_ref": "AUD-STO-EGG",
+          "declared_quantity": 2000,
+          "transport_cage_condition": "",
+          "transport_density": "",
+          "transport_temperature": "",
+          "transport_ventilation": "",
+          "transport_hygiene": "",
+          "transport_duration_min": ""
+        }
+      }
+    },
+    {
+      "name": "lotdetail-sin-accion-egg_dispatch",
+      "ok": null,
+      "detail": {
+        "lotId": 3
+      }
+    },
+    {
+      "name": "BR2-BR02-4xx-seguro",
+      "ok": true,
+      "detail": {
+        "status": 400,
+        "banner": "Despacho de huevos (5000) excede el saldo disponible (100). Registre primero la recolección."
+      }
+    },
+    {
+      "name": "HAT2-01-inspeccion-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "HAT2-02-recepcion-huevos-ui",
+      "ok": null,
+      "detail": {
+        "status": 422,
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "egg_storage_records",
+              0,
+              "arrival_date"
+            ],
+            "msg": "Field required",
+            "input": {
+              "eggs_received": 1000,
+              "storage_temp_c": 15,
+              "transport_temp_c": 15
+            }
+          }
+        ],
+        "house_id": 2,
+        "egg_movements": [],
+        "storage": [
+          {
+            "eggs_received": 1000,
+            "storage_temp_c": 15,
+            "transport_temp_c": 15
+          }
+        ]
+      }
+    },
+    {
+      "name": "HAT2-02-recepcion-201",
+      "ok": false,
+      "detail": [
+        {
+          "type": "missing",
+          "loc": [
+            "body",
+            "egg_storage_records",
+            0,
+            "arrival_date"
+          ],
+          "msg": "Field required",
+          "input": {
+            "eggs_received": 1000,
+            "storage_temp_c": 15,
+            "transport_temp_c": 15
+          }
+        }
+      ]
+    },
+    {
+      "name": "HAT2-02b",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "El evento 'egg_reception_hatchery' requiere una granja asignada",
+        "house_id": 2,
+        "egg_movements": []
+      }
+    },
+    {
+      "name": "HAT2-02-sonda-con-granja",
+      "ok": null,
+      "detail": {
+        "status": 422,
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "egg_storage_records",
+              0,
+              "arrival_date"
+            ],
+            "msg": "Field required",
+            "input": {
+              "eggs_received": 1000,
+              "storage_temp_c": 15,
+              "transport_temp_c": 15
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "HAT2-02-sonda-sin-storage",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "id": 15
+      }
+    },
+    {
+      "name": "HAT2-02-saldo-tras-recepcion-ui",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "Carga de incubadora (1) excede los huevos disponibles en incubadora (0). Registre primero la recepción de huevos."
+      }
+    },
+    {
+      "name": "HAT2-03",
+      "ok": null,
+      "detail": {
+        "status": 201
+      }
+    },
+    {
+      "name": "HAT2-04-carga-ui",
+      "ok": null,
+      "detail": {
+        "status": "NO_REQUEST"
+      }
+    },
+    {
+      "name": "HAT2-04-carga-201",
+      "ok": false,
+      "detail": null
+    },
+    {
+      "name": "HAT2-05",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "bm": [],
+        "em": [
+          {
+            "egg_type": "infertile",
+            "quantity": 40
+          },
+          {
+            "egg_type": "dead_early",
+            "quantity": 5
+          }
+        ]
+      }
+    },
+    {
+      "name": "HAT2-06",
+      "ok": null,
+      "detail": {
+        "status": 201
+      }
+    },
+    {
+      "name": "HAT2-07-nacimiento-sin-dosis",
+      "ok": null,
+      "detail": {
+        "status": "NO_REQUEST",
+        "zod": [],
+        "banner": "Vacunacion al nacimiento\n\nVacuna\nSeleccionar vacuna...\nVía de administración\nSeleccionar via...\nAspersion (spray)\nAgua de bebida\nInyeccion\nOcular\nGel\nLote de vacuna\nDosis por ave"
+      }
+    },
+    {
+      "name": "HAT2-07b-nacimiento-con-dosis",
+      "ok": null,
+      "detail": {
+        "status": "NO_REQUEST",
+        "zod": []
+      }
+    },
+    {
+      "name": "HAT2-07-nacimiento-201",
+      "ok": false,
+      "detail": {
+        "sinDosis": "NO_REQUEST",
+        "conDosis": "NO_REQUEST"
+      }
+    },
+    {
+      "name": "HAT2-07-sonda-api-nacimiento",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "id": 19
+      }
+    },
+    {
+      "name": "HAT2-08-despacho-pollitos-ui",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "El evento 'chick_dispatch' requiere una granja asignada",
+        "house_id": 2,
+        "dest": 2
+      }
+    },
+    {
+      "name": "BO2-01-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BO2-02-recepcion-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BO2-bird_distribution-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-feed_registration-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-water_consumption-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-weight_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-mortality_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-cull_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-vaccination-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-medication-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-bird_exit-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO2-close-sin-aprobar",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cerrar el lote: 10 registro(s) sin aprobar (10 en «registered»). Apruébelos o anúlelos antes de cerrar.",
+        "toasts": [],
+        "bannerError": true
+      }
+    },
+    {
+      "name": "BO2-review-page-approver",
+      "ok": null,
+      "detail": {
+        "url": "http://127.0.0.1:5199/review/21",
+        "botones": [
+          "Cerrar Sesión",
+          "",
+          "EN",
+          "Cerrar Sesión"
+        ]
+      }
+    },
+    {
+      "name": "BO2-aprobaciones-detalle",
+      "ok": null,
+      "detail": [
+        {
+          "id": 21,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 22,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 23,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 24,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 25,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 26,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 27,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 28,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 29,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        {
+          "id": 30,
+          "submit": 200,
+          "approve": "NO_BUTTON",
+          "apiFallback": {
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        }
+      ]
+    },
+    {
+      "name": "BO2-lote-cerrado",
+      "ok": true,
+      "detail": "closed"
+    },
+    {
+      "name": "BO2-reporte-lote",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "keys": [
+          "lot",
+          "opening_balance",
+          "phases",
+          "event_summary"
+        ]
+      }
+    },
+    {
+      "name": "BO2-ipe",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "ipe": 59.3,
+        "fcr": 0.85,
+        "viab": 100
+      }
+    },
+    {
+      "name": "MAS2-form-inputs",
+      "ok": null,
+      "detail": 2
+    },
+    {
+      "name": "MAS2-form-fields",
+      "ok": null,
+      "detail": [
+        null,
+        null
+      ]
+    },
+    {
+      "name": "PAGE2-users",
+      "ok": null,
+      "detail": {
+        "chars": 632,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-roles",
+      "ok": null,
+      "detail": {
+        "chars": 768,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-audit",
+      "ok": null,
+      "detail": {
+        "chars": 4066,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-reports",
+      "ok": null,
+      "detail": {
+        "chars": 589,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-dashboard",
+      "ok": null,
+      "detail": {
+        "chars": 853,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-sap",
+      "ok": null,
+      "detail": {
+        "chars": 650,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-profile",
+      "ok": null,
+      "detail": {
+        "chars": 486,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE2-sap-comparison",
+      "ok": null,
+      "detail": {
+        "chars": 594,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "OD23b-grants-antes",
+      "ok": null,
+      "detail": [
+        {
+          "user_id": 2,
+          "code": "breeder",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "broiler",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "grandparent",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "hatchery",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        }
+      ]
+    },
+    {
+      "name": "OD23b-grants-tras-apagar",
+      "ok": null,
+      "detail": [
+        {
+          "user_id": 2,
+          "code": "breeder",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "broiler",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "grandparent",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "hatchery",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": "2026-09-13T00:54:45.626635Z",
+          "is_effective": false
+        }
+      ]
+    },
+    {
+      "name": "OD23b-operador-me-tras-apagar",
+      "ok": null,
+      "detail": {
+        "eff": [
+          "breeder",
+          "broiler",
+          "grandparent"
+        ]
+      }
+    },
+    {
+      "name": "OD16b-hub-sin-incubadora-tras-OFF",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "OD16b-global-actor-bu-off-api",
+      "ok": null,
+      "detail": {
+        "status": 201
+      }
+    },
+    {
+      "name": "OD23b-grants-tras-reencender",
+      "ok": null,
+      "detail": [
+        {
+          "user_id": 2,
+          "code": "breeder",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "broiler",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "grandparent",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "hatchery",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": "2026-09-13T00:54:45.626635Z",
+          "is_effective": false
+        }
+      ]
+    },
+    {
+      "name": "OD23b-reencender-no-revive",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "OD23b-regrant-restaura",
+      "ok": true,
+      "detail": [
+        {
+          "user_id": 2,
+          "code": "breeder",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "broiler",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "grandparent",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "hatchery",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:38:12.695532Z",
+          "revoked_at": "2026-09-13T00:54:45.626635Z",
+          "is_effective": false
+        },
+        {
+          "user_id": 2,
+          "code": "hatchery",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:54:51.384359Z",
+          "revoked_at": null,
+          "is_effective": true
+        }
+      ]
+    },
+    {
+      "name": "OD15b-self-grant-api",
+      "ok": null,
+      "detail": {
+        "status": 422,
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "code"
+            ],
+            "msg": "Field required",
+            "input": {
+              "business_unit_code": "hatchery"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "H8b-control-fixture",
+      "ok": null,
+      "detail": {
+        "lote": {
+          "status": 201,
+          "id": 5
+        },
+        "recepcion": {
+          "id": 32,
+          "aprob": {
+            "submit": 200,
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        "pesaje": {
+          "id": 33,
+          "aprob": {
+            "submit": 200,
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        "feed": {
+          "id": 34,
+          "aprob": {
+            "submit": 200,
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        }
+      }
+    },
+    {
+      "name": "H8b-control-cierre",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "resumen": {
+          "status": "closed",
+          "end_date": "2026-09-13"
+        }
+      }
+    },
+    {
+      "name": "H8b-control-cierra-200",
+      "ok": true,
+      "detail": {
+        "status": 200
+      }
+    },
+    {
+      "name": "H8b-reverso-fixture",
+      "ok": null,
+      "detail": {
+        "lote": {
+          "status": 201,
+          "id": 6
+        },
+        "recepcion": {
+          "id": 35,
+          "aprob": {
+            "submit": 200,
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        "pesaje": {
+          "id": 36,
+          "aprob": {
+            "submit": 200,
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        },
+        "feed": {
+          "id": 37,
+          "aprob": {
+            "submit": 200,
+            "start": 200,
+            "complete": 200,
+            "status": "approved"
+          }
+        }
+      }
+    },
+    {
+      "name": "H8b-reverso-solicitado",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "counterpart": 38
+      }
+    },
+    {
+      "name": "H8b-reverso-efectuado",
+      "ok": null,
+      "detail": {
+        "contraparteNace": "pending_review",
+        "aprobContraparte": {
+          "submit": 400,
+          "start": 200,
+          "complete": 200,
+          "status": "reversed"
+        },
+        "original": "reversed",
+        "contraparte": "reversed"
+      }
+    },
+    {
+      "name": "H8b-cierre-con-reverso",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cerrar el lote: 2 registro(s) sin aprobar (2 en «reversed»). Apruébelos o anúlelos antes de cerrar."
+      }
+    },
+    {
+      "name": "H8b-E02-cierre-bloqueado-por-reversed",
+      "ok": true,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cerrar el lote: 2 registro(s) sin aprobar (2 en «reversed»). Apruébelos o anúlelos antes de cerrar."
+      }
+    },
+    {
+      "name": "H8b-reversed-no-cancelable",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cancelar un evento aprobado, consolidado, enviado o confirmado por SAP, con error de SAP o ya anulado"
+      }
+    },
+    {
+      "name": "H8b-timeline-original",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "acciones": [
+          "created:registered",
+          "created:registered",
+          "created:pending_review",
+          "updated:pending_review",
+          "review_started:in_review",
+          "review_started:",
+          "review_started:in_review",
+          "approved:approved",
+          "corrected:",
+          "approved:approved",
+          "review_completed:",
+          "updated:reversed",
+          "reversed:reversed"
+        ]
+      }
+    },
+    {
+      "name": "H8b-timeline-contraparte",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "acciones": [
+          "created:pending_review",
+          "review_started:in_review",
+          "review_started:",
+          "review_started:in_review",
+          "approved:approved",
+          "updated:reversed",
+          "corrected:",
+          "reversed:reversed",
+          "review_completed:"
+        ]
+      }
+    }
+  ],
+  "ids": {
+    "company": 1,
+    "broilerLot": 1,
+    "gpImport": 1,
+    "gpLot": null,
+    "brLot": 3,
+    "brReception": 2,
+    "brEggCollection": 12,
+    "hatLot": 4
+  },
+  "fatal_react": 1,
+  "http5xx": []
+}

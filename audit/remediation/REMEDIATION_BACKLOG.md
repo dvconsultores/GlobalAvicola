@@ -2160,3 +2160,36 @@ ESTADO        CERTIFICACIÓN TÉCNICA OK (2026-09-12): implementado (C2 `47ea484
               E2E runtime 0 fallos, invariante de población probado (bracketing), UI verificada.
               UAT DEL PROPIETARIO PENDIENTE (7 casos; `GA_R153_OWNER_UAT.md`).
 ```
+
+---
+
+## GA-CLAUDE FINAL AUDIT · AUDITORÍA INDEPENDIENTE PRE-SAP — NO_GO_SAP_FUNCTIONAL_GAPS (2026-09-13)
+
+```
+MODO          AUDITORÍA + RECONCILIACIÓN + GENERACIÓN DE SPECS · producto intocado (diff 0) · HEAD c0b4afc
+HOGAR         audit/ga-claude-final-audit/ (20 documentos GA_CLAUDE_* · registro de brechas · specs/<ID>/ · evidence/)
+PARIDAD       runtime index-DDCcWL76.js == build local de HEAD · backend C2d vivo · health 200
+SUITES        backend 1201 passed · 25 failed · 49 skipped (25 × TEST_DEFECT: 17 obsoletos vs OD-16, 5 fixture R-188
+              con correo @e.test ⇒ /me 500, 3 guardas obsoletas) · vitest 314/314 · tsc · build ·
+              Playwright repo 117 passed · 12 failed (obsoletas vs BR-20/BR-21/BR-03/R-118 + 1 locator)
+CI            backend-ci.yml sólo en pull_request; pushes directos a main ⇒ «suite PG declarada a CI» nunca ejecutada
+E2E CLAUDE    runtime (empresa 1, actores UAT-09): P-01 import→lote L-GP-2026-12→recepción→P-07 OK; bird_distribution /
+              bird_exit / egg_collection 400 BR-08 (lote sin galpón) · transición de fase 422 · centro de revisión inerte
+              local aislado: P-06 cadena UI OK · P-03 recepción por hub 400 BR-20 (cuadre inalcanzable) · P-05 bloqueada
+              (BR-08/arrival_date/BR-03/dosis) · maestros {} ⇒ 422 + React #31 · auditoría duplicada ×2 · reverso sin UI
+HALLAZGOS     NUEVOS R-190…R-221 (32) + GA-GOV-03 · REAPERTURA P1-12 · R-214 (familia R-141) · véase
+              audit/ga-claude-final-audit/GA_CLAUDE_DISCOVERED_GAP_SPEC_REGISTER.md (ids asignados tras dedup: máximo previo R-189)
+P1            R-190 · R-191 · R-192 · R-194 · R-195 · R-196 · R-199 · R-205 · GA-GOV-03
+BLOQUEANTES   24 (9 P1 + 15 P2 de integridad/seguridad/flujo; +1 condicional de fase SAP: R-217) · paquetes Spec
+              Development en specs/<ID>/: 24 completos (6 ficheros) + 9 compactos (2 ficheros) + GA-GOV-03; sólo R-214
+              queda en backlog (corrección documental D-02)
+DERIVA        R-189/F-01/GA-UAT-09 ausentes de este backlog hasta hoy · OD-21..25 sin fichero en specs/remediation ·
+              certificaciones P-01..P-15 sin artefacto ni commit (6 suites fallan en HEAD) · aceptaciones GA-UAT-01..08 y
+              GA-FE-08 sin evidencia primaria del propietario (walkthroughs del agente; capturas duplicadas; limpieza previa)
+VEREDICTO     PRE_SAP_FUNCTIONAL_CERTIFICATION = FAIL · READY_TO_BEGIN_SAP_INTEGRATION = NO ·
+              FINAL VERDICT = NO_GO_SAP_FUNCTIONAL_GAPS · SAP NOT STARTED
+COLA          1 GA-GOV-03 · 2 R-199 R-200 R-203 R-204 R-221 R-208 R-201 · 3 R-205 R-190 R-191 R-206 R-209 R-210 R-211 ·
+              4 R-194 · 5 R-192 R-193 P1-12-REOPEN R-198 · 6 R-196 R-195 R-215 · 7 R-197 R-207 · 8 compactos ·
+              9 recertificación E2E P-01..P-15 + UAT del propietario (GA-UAT-09, R-153, GA-F01)
+INTOCADO      producto · OD-01..25 · fixture UAT-09 del propietario (sesión pendiente) · Wave B PAUSED · Wave C/SAP NOT STARTED
+```

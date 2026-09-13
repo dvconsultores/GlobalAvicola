@@ -1,0 +1,389 @@
+{
+ "fecha": "2026-09-13",
+ "base": "https://avicola.globaldv.net",
+ "pasos": [
+  {
+   "step": "generacion-frontend",
+   "status": 200,
+   "detail": "index-DDCcWL76.js"
+  },
+  {
+   "step": "me-op",
+   "status": 200,
+   "detail": {
+    "company": 1,
+    "keys": [
+     "first_name",
+     "last_name",
+     "email",
+     "username",
+     "phone",
+     "role_id",
+     "company_id",
+     "view_type",
+     "area_id",
+     "id",
+     "is_active",
+     "is_super_admin",
+     "last_login",
+     "created_at",
+     "company_name",
+     "effective_company_id",
+     "permissions",
+     "company_business_units",
+     "granted_business_units",
+     "effective_business_units"
+    ]
+   }
+  },
+  {
+   "step": "lotes-gp-antes",
+   "status": 200,
+   "detail": [
+    "L-GP-2026-01",
+    "L-GP-2026-06",
+    "L-GP-2026-07",
+    "L-GP-2026-08",
+    "L-GP-2026-09",
+    "L-GP-2026-10",
+    "L-GP-2026-11"
+   ]
+  },
+  {
+   "step": "login-ui",
+   "status": 200,
+   "detail": null
+  },
+  {
+   "step": "nav-hub-import",
+   "status": "OK",
+   "detail": "https://avicola.globaldv.net/operations/new?type=grandparent_import"
+  },
+  {
+   "step": "R-01-import-ui",
+   "status": 201,
+   "detail": {
+    "id": 124,
+    "banner": "Registro guardado exitosamente",
+    "zod": []
+   }
+  },
+  {
+   "step": "R-02-submit-ui",
+   "status": 200,
+   "detail": null
+  },
+  {
+   "step": "R-03-review-ui",
+   "status": 200,
+   "detail": {
+    "start": 200,
+    "complete": 200,
+    "status": "corrected"
+   }
+  },
+  {
+   "step": "lote-auto",
+   "status": 200,
+   "detail": {}
+  },
+  {
+   "step": "R-04-reception-ui",
+   "status": "NO_REQUEST",
+   "detail": {
+    "banner": "",
+    "zod": [
+     "Seleccionar lote..."
+    ]
+   }
+  },
+  {
+   "step": "R-08-mortality_recording",
+   "status": "NO_REQUEST",
+   "detail": {
+    "banner": "",
+    "zod": [
+     "Seleccionar lote..."
+    ]
+   }
+  },
+  {
+   "step": "R-08-feed_registration",
+   "status": "NO_REQUEST",
+   "detail": {
+    "banner": "",
+    "zod": []
+   }
+  },
+  {
+   "step": "R-08-weight_recording-EXC",
+   "status": "error",
+   "detail": "Error: page.goto: Target page, context or browser has been closed"
+  },
+  {
+   "step": "R-08-vaccination-EXC",
+   "status": "error",
+   "detail": "Error: page.goto: Target page, context or browser has been closed"
+  },
+  {
+   "step": "R-08-farm_inspection-EXC",
+   "status": "error",
+   "detail": "Error: page.goto: Target page, context or browser has been closed"
+  },
+  {
+   "step": "R-08-bird_distribution-EXC",
+   "status": "error",
+   "detail": "Error: page.goto: Target page, context or browser has been closed"
+  },
+  {
+   "step": "R-08-bird_exit-EXC",
+   "status": "error",
+   "detail": "Error: page.goto: Target page, context or browser has been closed"
+  },
+  {
+   "step": "ERROR-GLOBAL",
+   "status": "excepcion",
+   "detail": "Error: page.goto: Target page, context or browser has been closed"
+  }
+ ],
+ "posts": [
+  {
+   "label": "R-01-import-ui",
+   "status": 201,
+   "req": {
+    "event_type": "grandparent_import",
+    "event_date": "2026-09-13",
+    "observations": "",
+    "sap_document_ref": "PO-C001-GPR-0001",
+    "supplier_id": 1,
+    "transport_id": 1,
+    "extra_data": {
+     "import_plan": {
+      "origin_country": "Francia",
+      "purchased_total": 55,
+      "shipped_total": 52,
+      "received_total": 50,
+      "transit_mortality": 2,
+      "departure_date": "2026-09-06",
+      "arrival_date": "2026-09-13",
+      "reception_condition": "",
+      "quarantine_days": 21,
+      "quarantine_end_date": "2026-10-04",
+      "initial_health_inspection": ""
+     },
+     "sap_order_ref": "PO-C001-GPR-0001",
+     "declared_quantity": 5600
+    },
+    "bird_movements": [
+     {
+      "sex": "male",
+      "quantity": 20,
+      "avg_weight": 3800
+     },
+     {
+      "sex": "female",
+      "quantity": 30,
+      "avg_weight": 3600
+     }
+    ],
+    "egg_movements": [],
+    "feed_movements": [],
+    "hatchery_params": [],
+    "inspection_details": [],
+    "egg_storage_records": [],
+    "farm_id": 1
+   },
+   "resp": {
+    "id": 124,
+    "status": "registered"
+   },
+   "banner": "Registro guardado exitosamente",
+   "zod": [],
+   "formVisible": true,
+   "pageerrorDelta": 0
+  },
+  {
+   "label": "R-04-reception-ui",
+   "status": "NO_REQUEST",
+   "req": null,
+   "resp": null,
+   "banner": "",
+   "zod": [
+    "Seleccionar lote..."
+   ],
+   "formVisible": true,
+   "pageerrorDelta": 0
+  },
+  {
+   "label": "R-08-mortality_recording",
+   "status": "NO_REQUEST",
+   "req": null,
+   "resp": null,
+   "banner": "",
+   "zod": [
+    "Seleccionar lote..."
+   ],
+   "formVisible": true,
+   "pageerrorDelta": 0
+  },
+  {
+   "label": "R-08-feed_registration",
+   "status": "NO_REQUEST",
+   "req": null,
+   "resp": null,
+   "banner": "",
+   "zod": [],
+   "formVisible": false,
+   "pageerrorDelta": 0
+  }
+ ],
+ "pageerror": [],
+ "consoleError": [
+  {
+   "tag": "op",
+   "msg": "AxiosError: Request failed with status code 422\n    at Y_ (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:10521)\n    at XMLHttpRequest.g (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:16742)"
+  },
+  {
+   "tag": "op",
+   "msg": "AxiosError: Request failed with status code 422\n    at Y_ (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:10521)\n    at XMLHttpRequest.g (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:16742)"
+  },
+  {
+   "tag": "op",
+   "msg": "AxiosError: Request failed with status code 422\n    at Y_ (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:10521)\n    at XMLHttpRequest.g (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:16742)"
+  },
+  {
+   "tag": "op",
+   "msg": "AxiosError: Request failed with status code 422\n    at Y_ (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:10521)\n    at XMLHttpRequest.g (https://avicola.globaldv.net/assets/index-DDCcWL76.js:16:16742)"
+  }
+ ],
+ "httpErrores": [
+  {
+   "tag": "op",
+   "status": 403,
+   "method": "GET",
+   "url": "/api/v1/dashboard/admin"
+  },
+  {
+   "tag": "ap",
+   "status": 403,
+   "method": "GET",
+   "url": "/api/v1/dashboard/admin"
+  },
+  {
+   "tag": "op",
+   "status": 403,
+   "method": "GET",
+   "url": "/api/v1/dashboard/admin"
+  },
+  {
+   "tag": "ap",
+   "status": 403,
+   "method": "GET",
+   "url": "/api/v1/users?limit=100"
+  },
+  {
+   "tag": "op",
+   "status": 422,
+   "method": "GET",
+   "url": "/api/v1/lots/null"
+  },
+  {
+   "tag": "op",
+   "status": 422,
+   "method": "GET",
+   "url": "/api/v1/lots/null"
+  },
+  {
+   "tag": "op",
+   "status": 422,
+   "method": "GET",
+   "url": "/api/v1/lots/null"
+  },
+  {
+   "tag": "op",
+   "status": 422,
+   "method": "GET",
+   "url": "/api/v1/lots/null"
+  }
+ ],
+ "asserts": [
+  {
+   "name": "backend-C2d-feed-vacio-422",
+   "ok": true,
+   "detail": 422
+  },
+  {
+   "name": "backend-C2d-lectura-tolerante",
+   "ok": true,
+   "detail": 200
+  },
+  {
+   "name": "R-01-import-201",
+   "ok": true,
+   "detail": null
+  },
+  {
+   "name": "R-03-aprobado-lote",
+   "ok": false,
+   "detail": {
+    "status": "corrected",
+    "lotId": null
+   }
+  },
+  {
+   "name": "lotdetail-poblacion-visible",
+   "ok": null,
+   "detail": false
+  },
+  {
+   "name": "lotdetail-sin-accion-bird_reception",
+   "ok": null,
+   "detail": null
+  },
+  {
+   "name": "R-04-recepcion-201",
+   "ok": false,
+   "detail": null
+  },
+  {
+   "name": "lotdetail-sin-accion-mortality_recording",
+   "ok": null,
+   "detail": null
+  },
+  {
+   "name": "R-08-mortality_recording-resultado",
+   "ok": null,
+   "detail": {
+    "status": "NO_REQUEST"
+   }
+  },
+  {
+   "name": "lotdetail-sin-accion-feed_registration",
+   "ok": null,
+   "detail": null
+  },
+  {
+   "name": "R-08-feed_registration-resultado",
+   "ok": null,
+   "detail": {
+    "status": "NO_REQUEST"
+   }
+  }
+ ],
+ "ids": {
+  "bundle": "index-DDCcWL76.js",
+  "import": 124,
+  "lot": null
+ },
+ "ledger": [
+  {
+   "id": 124,
+   "type": "grandparent_import"
+  },
+  {
+   "lot": null
+  }
+ ],
+ "fatal_react": 0,
+ "http5xx": []
+}

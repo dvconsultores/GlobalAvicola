@@ -1,0 +1,3390 @@
+[
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/health",
+  "endpoint": "app.main.health_check",
+  "response_model": null,
+  "perm": null,
+  "deps": [],
+  "tags": [
+   "Health"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/login",
+  "endpoint": "app.auth.router.login",
+  "response_model": "TokenResponse",
+  "perm": null,
+  "deps": [
+   "get_db:[]"
+  ],
+  "tags": [
+   "Auth"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/refresh",
+  "endpoint": "app.auth.router.refresh_token",
+  "response_model": "TokenResponse",
+  "perm": null,
+  "deps": [
+   "get_db:[]"
+  ],
+  "tags": [
+   "Auth"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/me",
+  "endpoint": "app.auth.router.get_me",
+  "response_model": "SessionRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Auth"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/switch-company",
+  "endpoint": "app.auth.router.switch_company",
+  "response_model": "TokenResponse",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Auth"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/users",
+  "endpoint": "app.auth.router.list_users",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'users']"
+  ],
+  "tags": [
+   "Users"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/users",
+  "endpoint": "app.auth.router.create_user",
+  "response_model": "UserRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'users']"
+  ],
+  "tags": [
+   "Users"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/users/{user_id}",
+  "endpoint": "app.auth.router.get_user",
+  "response_model": "UserRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'users']"
+  ],
+  "tags": [
+   "Users"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/users/{user_id}",
+  "endpoint": "app.auth.router.update_user",
+  "response_model": "UserRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'users']"
+  ],
+  "tags": [
+   "Users"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/users/{user_id}/password",
+  "endpoint": "app.auth.router.change_password",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Users"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/users/{user_id}",
+  "endpoint": "app.auth.router.deactivate_user",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'users']"
+  ],
+  "tags": [
+   "Users"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/roles/permissions-catalog",
+  "endpoint": "app.auth.router.get_permissions_catalog",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'users']"
+  ],
+  "tags": [
+   "Roles"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/roles",
+  "endpoint": "app.auth.router.list_roles",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'users']"
+  ],
+  "tags": [
+   "Roles"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/roles",
+  "endpoint": "app.auth.router.create_role",
+  "response_model": "RoleRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'users']"
+  ],
+  "tags": [
+   "Roles"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/roles/{role_id}",
+  "endpoint": "app.auth.router.update_role",
+  "response_model": "RoleRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'users']"
+  ],
+  "tags": [
+   "Roles"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/companies",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/companies",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "CompanyCatalogRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/companies/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "CompanyCatalogRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/companies/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/companies/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "CompanyCatalogRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/farms",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/farms",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "FarmRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/farms/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "FarmRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/farms/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/farms/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "FarmRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/houses",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/houses",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "HouseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/houses/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "HouseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/houses/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/houses/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "HouseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/hatcheries",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/hatcheries",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "HatcheryRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/hatcheries/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "HatcheryRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/hatcheries/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/hatcheries/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "HatcheryRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/incubators",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/incubators",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "IncubatorRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/incubators/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "IncubatorRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/incubators/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/incubators/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "IncubatorRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/hatchers",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/hatchers",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "HatcherRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/hatchers/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "HatcherRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/hatchers/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/hatchers/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "HatcherRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/areas",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/areas",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "AreaRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/areas/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "AreaRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/areas/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/areas/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "AreaRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/genetic-lines",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/genetic-lines",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "GeneticLineRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/genetic-lines/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "GeneticLineRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/genetic-lines/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/genetic-lines/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "GeneticLineRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/breeds",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/breeds",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "BreedRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/breeds/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "BreedRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/breeds/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/breeds/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "BreedRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/productive-phases",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/productive-phases",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "ProductivePhaseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/productive-phases/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "ProductivePhaseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/productive-phases/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/productive-phases/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "ProductivePhaseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/suppliers",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/suppliers",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "SupplierRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/suppliers/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "SupplierRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/suppliers/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/suppliers/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "SupplierRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/feed-types",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/feed-types",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "FeedTypeRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/feed-types/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "FeedTypeRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/feed-types/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/feed-types/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "FeedTypeRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/vaccines",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/vaccines",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "VaccineRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/vaccines/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "VaccineRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/vaccines/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/vaccines/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "VaccineRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/medications",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/medications",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "MedicationRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/medications/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "MedicationRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/medications/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/medications/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "MedicationRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/mortality-causes",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/mortality-causes",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "MortalityCauseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/mortality-causes/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "MortalityCauseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/mortality-causes/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/mortality-causes/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "MortalityCauseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/cull-causes",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/cull-causes",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "CullCauseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/cull-causes/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "CullCauseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/cull-causes/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/cull-causes/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "CullCauseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/transports",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/transports",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "TransportRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/transports/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "TransportRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/transports/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/transports/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "TransportRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/processing-plants",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/processing-plants",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "ProcessingPlantRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/processing-plants/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "ProcessingPlantRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/processing-plants/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/processing-plants/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "ProcessingPlantRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/rejection-reasons",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/rejection-reasons",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "RejectionReasonRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/rejection-reasons/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "RejectionReasonRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/rejection-reasons/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/rejection-reasons/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "RejectionReasonRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/correction-types",
+  "endpoint": "app.masters.router.list_items",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/correction-types",
+  "endpoint": "app.masters.router.create_item",
+  "response_model": "CorrectionTypeRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/correction-types/{item_id}",
+  "endpoint": "app.masters.router.get_item",
+  "response_model": "CorrectionTypeRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/masters/correction-types/{item_id}",
+  "endpoint": "app.masters.router.deactivate_item",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/correction-types/{item_id}",
+  "endpoint": "app.masters.router.update_item",
+  "response_model": "CorrectionTypeRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/farms/{farm_id}/houses",
+  "endpoint": "app.masters.router.get_houses_by_farm",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/hatcheries/{hatchery_id}/incubators",
+  "endpoint": "app.masters.router.get_incubators_by_hatchery",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/genetic-lines/{genetic_line_id}/weight-curves",
+  "endpoint": "app.masters.router.list_weight_curves",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/masters/weight-curves",
+  "endpoint": "app.masters.router.create_weight_curve",
+  "response_model": "WeightCurveRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/masters/weight-curves/{curve_id}",
+  "endpoint": "app.masters.router.get_weight_curve",
+  "response_model": "WeightCurveRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/masters/weight-curves/{curve_id}/activate",
+  "endpoint": "app.masters.router.activate_weight_curve",
+  "response_model": "WeightCurveRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Masters"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/notifications",
+  "endpoint": "app.notifications.router.list_notifications",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Notifications"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/notifications/unread-count",
+  "endpoint": "app.notifications.router.unread_count",
+  "response_model": "UnreadCountRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Notifications"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/notifications/{notification_id}",
+  "endpoint": "app.notifications.router.get_notification",
+  "response_model": "NotificationRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Notifications"
+  ]
+ },
+ {
+  "methods": [
+   "PATCH"
+  ],
+  "path": "/notifications/{notification_id}/read",
+  "endpoint": "app.notifications.router.mark_read",
+  "response_model": "NotificationRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "get_current_user:[]"
+  ],
+  "tags": [
+   "Notifications"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/lots",
+  "endpoint": "app.lots.router.list_lots",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/lots",
+  "endpoint": "app.lots.router.create_lot",
+  "response_model": "LotRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/lots/{lot_id}",
+  "endpoint": "app.lots.router.get_lot",
+  "response_model": "LotDetailRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/lots/{lot_id}",
+  "endpoint": "app.lots.router.update_lot",
+  "response_model": "LotRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/lots/{lot_id}/close",
+  "endpoint": "app.lots.router.close_lot",
+  "response_model": "LotClosureSummary",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/lots/activate-manual",
+  "endpoint": "app.lots.router.activate_manual",
+  "response_model": "OpeningBalanceRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/lots/{lot_id}/opening-balance",
+  "endpoint": "app.lots.router.get_opening_balance",
+  "response_model": "OpeningBalanceRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/lots/{lot_id}/phases",
+  "endpoint": "app.lots.router.get_lot_phases",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/lots/{lot_id}/phases",
+  "endpoint": "app.lots.router.add_lot_phase",
+  "response_model": "LotPhaseRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/lots/{lot_id}/traceability",
+  "endpoint": "app.lots.router.get_lot_traceability",
+  "response_model": "TraceabilityNode",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/lots/egg-batches",
+  "endpoint": "app.lots.router.create_egg_batch",
+  "response_model": "EggBatchRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/lots/chick-batches",
+  "endpoint": "app.lots.router.create_chick_batch",
+  "response_model": "ChickBatchRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'lots']"
+  ],
+  "tags": [
+   "Lots"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/event-types",
+  "endpoint": "app.operations.router.list_event_types",
+  "response_model": null,
+  "perm": null,
+  "deps": [],
+  "tags": [
+   "Operations",
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations",
+  "endpoint": "app.operations.router.list_events",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/operations",
+  "endpoint": "app.operations.router.create_event",
+  "response_model": "OperationalEventRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/alerts",
+  "endpoint": "app.operations.router.list_alerts",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "PATCH"
+  ],
+  "path": "/operations/alerts/{alert_id}/resolve",
+  "endpoint": "app.operations.router.resolve_alert",
+  "response_model": "OperationalAlertRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/pending-classification",
+  "endpoint": "app.operations.router.pending_classification",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations",
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/operations/{event_id}/classify",
+  "endpoint": "app.operations.router.classify_event",
+  "response_model": "OperationalEventRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'masters']"
+  ],
+  "tags": [
+   "Operations",
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/operations/{event_id}/reclassify",
+  "endpoint": "app.operations.router.reclassify_event",
+  "response_model": "OperationalEventRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['correct', 'corrections']"
+  ],
+  "tags": [
+   "Operations",
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/{event_id}/weight-evaluation",
+  "endpoint": "app.operations.router.get_weight_evaluation",
+  "response_model": "WeightEvaluationRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/{event_id}",
+  "endpoint": "app.operations.router.get_event",
+  "response_model": "OperationalEventDetailRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/operations/{event_id}",
+  "endpoint": "app.operations.router.update_event",
+  "response_model": "OperationalEventRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/operations/{event_id}/submit",
+  "endpoint": "app.operations.router.submit_to_review",
+  "response_model": "OperationalEventRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/operations/{event_id}/cancel",
+  "endpoint": "app.operations.router.cancel_event",
+  "response_model": "OperationalEventRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/{event_id}/evidences",
+  "endpoint": "app.operations.router.list_evidences",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/operations/{event_id}/evidences",
+  "endpoint": "app.operations.router.upload_evidence",
+  "response_model": "EvidenceRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/operations/{event_id}/evidences/{evidence_id}/download",
+  "endpoint": "app.operations.router.download_evidence",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/operations/{event_id}/evidences/{evidence_id}",
+  "endpoint": "app.operations.router.delete_evidence",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'operations']"
+  ],
+  "tags": [
+   "Operations"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/review/pending",
+  "endpoint": "app.review.router.list_pending_review",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'review']"
+  ],
+  "tags": [
+   "Review"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/review/batches",
+  "endpoint": "app.review.router.create_review_batch",
+  "response_model": "ReviewBatchRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['review', 'review']"
+  ],
+  "tags": [
+   "Review"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/review/batches",
+  "endpoint": "app.review.router.list_review_batches",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'review']"
+  ],
+  "tags": [
+   "Review"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/review/start/{event_id}",
+  "endpoint": "app.review.router.start_review",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['review', 'review']"
+  ],
+  "tags": [
+   "Review"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/review/return",
+  "endpoint": "app.review.router.return_to_operator",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['review', 'review']"
+  ],
+  "tags": [
+   "Review"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/review/complete",
+  "endpoint": "app.review.router.complete_review",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['review', 'review']"
+  ],
+  "tags": [
+   "Review"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/approvals/pending",
+  "endpoint": "app.review.router.list_pending_approvals",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['approve', 'approvals']"
+  ],
+  "tags": [
+   "Approvals"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/approvals/approve",
+  "endpoint": "app.review.router.approve_event",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['approve', 'approvals']"
+  ],
+  "tags": [
+   "Approvals"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/approvals/reject",
+  "endpoint": "app.review.router.reject_event",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['reject', 'approvals']"
+  ],
+  "tags": [
+   "Approvals"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/approvals/batch-approve",
+  "endpoint": "app.review.router.batch_approve",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['review', 'review']"
+  ],
+  "tags": [
+   "Approvals"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/approvals/batch-reject",
+  "endpoint": "app.review.router.batch_reject",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['review', 'review']"
+  ],
+  "tags": [
+   "Approvals"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/approval-steps",
+  "endpoint": "app.review.router.list_approval_steps",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'review']"
+  ],
+  "tags": [
+   "Approval Steps"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/approval-steps",
+  "endpoint": "app.review.router.create_approval_step",
+  "response_model": "ApprovalStepRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'review']"
+  ],
+  "tags": [
+   "Approval Steps"
+  ]
+ },
+ {
+  "methods": [
+   "PUT"
+  ],
+  "path": "/approval-steps/{step_id}",
+  "endpoint": "app.review.router.update_approval_step",
+  "response_model": "ApprovalStepRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'review']"
+  ],
+  "tags": [
+   "Approval Steps"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/approval-steps/{step_id}",
+  "endpoint": "app.review.router.delete_approval_step",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'review']"
+  ],
+  "tags": [
+   "Approval Steps"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/approval-steps/seed-defaults",
+  "endpoint": "app.review.router.seed_default_steps",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'review']"
+  ],
+  "tags": [
+   "Approval Steps"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/corrections",
+  "endpoint": "app.corrections.router.create_correction",
+  "response_model": "CorrectionRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['correct', 'corrections']"
+  ],
+  "tags": [
+   "Corrections"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/corrections/event/{event_id}",
+  "endpoint": "app.corrections.router.get_event_corrections",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'corrections']"
+  ],
+  "tags": [
+   "Corrections"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/corrections",
+  "endpoint": "app.corrections.router.list_corrections",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'corrections']"
+  ],
+  "tags": [
+   "Corrections"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/reversals",
+  "endpoint": "app.reversals.router.solicitar_reverso",
+  "response_model": "ReversalRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'reversals']"
+  ],
+  "tags": [
+   "Reversals"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reversals",
+  "endpoint": "app.reversals.router.listar_reversos",
+  "response_model": "ReversalListResponse",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reversals']"
+  ],
+  "tags": [
+   "Reversals"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reversals/event/{event_id}",
+  "endpoint": "app.reversals.router.reversos_de_un_evento",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reversals']"
+  ],
+  "tags": [
+   "Reversals"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/audit",
+  "endpoint": "app.audit.router.list_audit_logs",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'audit']"
+  ],
+  "tags": [
+   "Audit"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/audit/{log_id}",
+  "endpoint": "app.audit.router.get_audit_log",
+  "response_model": "AuditLogRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'audit']"
+  ],
+  "tags": [
+   "Audit"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/audit/timeline/{entity_type}/{entity_id}",
+  "endpoint": "app.audit.router.get_entity_timeline",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'audit']"
+  ],
+  "tags": [
+   "Audit"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis",
+  "endpoint": "app.reports.router.get_all_kpis",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/mortality",
+  "endpoint": "app.reports.router.get_mortality_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/feed-conversion",
+  "endpoint": "app.reports.router.get_feed_conversion_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/egg-production",
+  "endpoint": "app.reports.router.get_egg_production_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/hatchery",
+  "endpoint": "app.reports.router.get_hatchery_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/animal-welfare",
+  "endpoint": "app.reports.router.get_animal_welfare_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/vaccination-efficiency",
+  "endpoint": "app.reports.router.get_vaccination_efficiency_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/transfer-efficiency",
+  "endpoint": "app.reports.router.get_transfer_efficiency_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/afcr",
+  "endpoint": "app.reports.router.get_afcr_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpis/production-index",
+  "endpoint": "app.reports.router.get_production_index_kpi",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpi/ipe/{lot_id}",
+  "endpoint": "app.reports.router.get_kpi_ipe",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/kpi/weight-uniformity/{lot_id}",
+  "endpoint": "app.reports.router.get_kpi_weight_uniformity",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/lot/{lot_id}",
+  "endpoint": "app.reports.router.get_lot_report",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/reports/sap-comparison",
+  "endpoint": "app.reports.router.get_sap_comparison",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'reports']"
+  ],
+  "tags": [
+   "Reports"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/dashboard/mobile",
+  "endpoint": "app.dashboard.router.get_mobile_dashboard",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'dashboard']"
+  ],
+  "tags": [
+   "Dashboard"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/dashboard/admin",
+  "endpoint": "app.dashboard.router.get_admin_dashboard",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'dashboard']"
+  ],
+  "tags": [
+   "Dashboard"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/business-units",
+  "endpoint": "app.business_units.router.listar_unidades_de_la_empresa",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "PATCH"
+  ],
+  "path": "/business-units/{code}/enable",
+  "endpoint": "app.business_units.router.habilitar_unidad",
+  "response_model": "HabilitacionRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "PATCH"
+  ],
+  "path": "/business-units/{code}/disable",
+  "endpoint": "app.business_units.router.deshabilitar_unidad",
+  "response_model": "HabilitacionRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['update', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/business-units/{code}/grant-candidates",
+  "endpoint": "app.business_units.router.candidatos_a_recibir_unidad",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/users/{user_id}/business-units",
+  "endpoint": "app.business_units.router.listar_concesiones_de_usuario",
+  "response_model": "list",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/users/{user_id}/business-units",
+  "endpoint": "app.business_units.router.conceder_unidad_a_usuario",
+  "response_model": "ConcesionRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['create', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "DELETE"
+  ],
+  "path": "/users/{user_id}/business-units/{code}",
+  "endpoint": "app.business_units.router.revocar_unidad_a_usuario",
+  "response_model": "ConcesionRead",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['delete', 'business_units']"
+  ],
+  "tags": [
+   "Business Units"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/sap/references/import",
+  "endpoint": "app.integrations.sap.router.import_sap_references",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['send_sap', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/sap/references",
+  "endpoint": "app.integrations.sap.router.list_sap_references",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/sap/consolidate",
+  "endpoint": "app.integrations.sap.router.consolidate_approved_events",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['send_sap', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/sap/consolidated",
+  "endpoint": "app.integrations.sap.router.list_consolidated",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/sap/export",
+  "endpoint": "app.integrations.sap.router.export_to_sap",
+  "response_model": "SapExportResponse",
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['send_sap', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "POST"
+  ],
+  "path": "/sap/retry",
+  "endpoint": "app.integrations.sap.router.retry_failed_payloads",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['send_sap', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/sap/sync/jobs",
+  "endpoint": "app.integrations.sap.router.list_sync_jobs",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/sap/payloads",
+  "endpoint": "app.integrations.sap.router.list_payloads",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/sap/errors",
+  "endpoint": "app.integrations.sap.router.list_sap_errors",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ },
+ {
+  "methods": [
+   "GET"
+  ],
+  "path": "/sap/connection-check",
+  "endpoint": "app.integrations.sap.router.check_sap_connection",
+  "response_model": null,
+  "perm": null,
+  "deps": [
+   "get_db:[]",
+   "_dependencia:['read', 'sap']"
+  ],
+  "tags": [
+   "SAP Integration"
+  ]
+ }
+]

@@ -1,0 +1,1187 @@
+{
+  "fecha": "2026-09-13",
+  "base": "https://avicola.globaldv.net",
+  "pasos": [
+    {
+      "step": "generacion-frontend",
+      "status": 200,
+      "detail": "index-DDCcWL76.js"
+    },
+    {
+      "step": "me-op",
+      "status": 200,
+      "detail": {
+        "company": 1,
+        "keys": [
+          "first_name",
+          "last_name",
+          "email",
+          "username",
+          "phone",
+          "role_id",
+          "company_id",
+          "view_type",
+          "area_id",
+          "id",
+          "is_active",
+          "is_super_admin",
+          "last_login",
+          "created_at",
+          "company_name",
+          "effective_company_id",
+          "permissions",
+          "company_business_units",
+          "granted_business_units",
+          "effective_business_units"
+        ]
+      }
+    },
+    {
+      "step": "lotes-gp-antes",
+      "status": 200,
+      "detail": [
+        "L-GP-2026-01",
+        "L-GP-2026-06",
+        "L-GP-2026-07",
+        "L-GP-2026-08",
+        "L-GP-2026-09",
+        "L-GP-2026-10",
+        "L-GP-2026-11"
+      ]
+    },
+    {
+      "step": "login-ui",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "R-01-import-ui",
+      "status": "REUSED",
+      "detail": {
+        "id": 124,
+        "nota": "importacion creada por UI en la corrida 2 (201, evidencia run2-partial); reutilizada para no crear un segundo lote"
+      }
+    },
+    {
+      "step": "R-02-submit-ui",
+      "status": "SKIP",
+      "detail": {
+        "status": "corrected"
+      }
+    },
+    {
+      "step": "R-03-review-ui",
+      "status": 200,
+      "detail": {
+        "approve": 200,
+        "status": "approved"
+      }
+    },
+    {
+      "step": "lote-auto",
+      "status": 200,
+      "detail": {
+        "code": "L-GP-2026-12",
+        "house": null,
+        "farm": 1
+      }
+    },
+    {
+      "step": "R-04-reception-ui",
+      "status": 201,
+      "detail": {
+        "id": 125,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-05-submit",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "R-05-return-ui",
+      "status": 200,
+      "detail": {
+        "start": 200,
+        "return": 200
+      }
+    },
+    {
+      "step": "R-06-resubmit-ui",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "R-08-mortality_recording",
+      "status": 201,
+      "detail": {
+        "id": 126,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-08-feed_registration",
+      "status": 201,
+      "detail": {
+        "id": 127,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-08-weight_recording",
+      "status": 201,
+      "detail": {
+        "id": 128,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-08-vaccination",
+      "status": 201,
+      "detail": {
+        "id": 129,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-08-farm_inspection",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'farm_inspection' requiere una granja asignada",
+        "banner": "El evento 'farm_inspection' requiere una granja asignada",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-08-bird_distribution",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'bird_distribution' requiere un galpón asignado",
+        "banner": "El evento 'bird_distribution' requiere un galpón asignado",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-08-bird_exit",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'bird_exit' requiere un galpón asignado",
+        "banner": "El evento 'bird_exit' requiere un galpón asignado",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-10-egg_collection",
+      "status": 400,
+      "detail": {
+        "detail": "El evento 'egg_collection' requiere un galpón asignado",
+        "banner": "El evento 'egg_collection' requiere un galpón asignado",
+        "zod": []
+      }
+    },
+    {
+      "step": "R-11-submit",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "R-11-resubmit",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "R-12-approve-in_review",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "R-13-mortality-exceso",
+      "status": 400,
+      "detail": {
+        "detail": "Mortalidad (99999) excede el saldo de aves disponibles (49)",
+        "banner": "Mortalidad (99999) excede el saldo de aves disponibles (49)",
+        "zod": []
+      }
+    }
+  ],
+  "posts": [
+    {
+      "label": "R-04-reception-ui",
+      "status": 201,
+      "req": {
+        "lot_id": 66,
+        "event_type": "bird_reception",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "PO-C001-GPR-0001",
+        "supplier_id": 1,
+        "extra_data": {
+          "sap_order_ref": "PO-C001-GPR-0001",
+          "declared_quantity": 5600
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 20,
+            "avg_weight": 3800,
+            "target_house_id": 1,
+            "week_number": 0
+          },
+          {
+            "sex": "female",
+            "quantity": 30,
+            "avg_weight": 3600,
+            "target_house_id": 1,
+            "week_number": 0
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 125,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-mortality_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 66,
+        "event_type": "mortality_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "female",
+            "quantity": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "id": 126,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-feed_registration",
+      "status": 201,
+      "req": {
+        "lot_id": 66,
+        "event_type": "feed_registration",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "extra_data": {
+          "feed_phase": ""
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [
+          {
+            "feed_type_id": 1,
+            "quantity_kg": 25,
+            "week_number": 1
+          }
+        ],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "id": 127,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-weight_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 66,
+        "event_type": "weight_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sample_size": 10,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 5,
+            "avg_weight": 3900,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 5,
+            "avg_weight": 3700
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "id": 128,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-vaccination",
+      "status": 201,
+      "req": {
+        "lot_id": 66,
+        "event_type": "vaccination",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "vaccine_id": 1,
+        "vaccination_route": "water",
+        "vaccine_lot_number": "",
+        "dosage_per_bird": 0.5,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 20
+          },
+          {
+            "sex": "female",
+            "quantity": 30
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "id": 129,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-farm_inspection",
+      "status": 400,
+      "req": {
+        "event_type": "farm_inspection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [
+          {
+            "house_id": 1,
+            "parameter": "temperature",
+            "value": "28"
+          },
+          {
+            "house_id": 1,
+            "parameter": "humidity",
+            "value": "60"
+          },
+          {
+            "house_id": 1,
+            "parameter": "litter_condition",
+            "status": "seca"
+          }
+        ],
+        "egg_storage_records": [],
+        "house_id": 1
+      },
+      "resp": {
+        "detail": "El evento 'farm_inspection' requiere una granja asignada",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'farm_inspection' requiere una granja asignada",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-bird_distribution",
+      "status": 400,
+      "req": {
+        "lot_id": 66,
+        "event_type": "bird_distribution",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [
+          {
+            "sex": "mixed",
+            "quantity": 10,
+            "target_house_id": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "detail": "El evento 'bird_distribution' requiere un galpón asignado",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'bird_distribution' requiere un galpón asignado",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-08-bird_exit",
+      "status": 400,
+      "req": {
+        "lot_id": 66,
+        "event_type": "bird_exit",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 2,
+            "avg_weight": 4000
+          },
+          {
+            "sex": "female",
+            "quantity": 2,
+            "avg_weight": 3800
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "detail": "El evento 'bird_exit' requiere un galpón asignado",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'bird_exit' requiere un galpón asignado",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-10-egg_collection",
+      "status": 400,
+      "req": {
+        "lot_id": 66,
+        "event_type": "egg_collection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [
+          {
+            "egg_type": "fertile",
+            "quantity": 10,
+            "avg_weight": 60
+          }
+        ],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "detail": "El evento 'egg_collection' requiere un galpón asignado",
+        "rule": "BR-08"
+      },
+      "banner": "El evento 'egg_collection' requiere un galpón asignado",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "R-13-mortality-exceso",
+      "status": 400,
+      "req": {
+        "lot_id": 66,
+        "event_type": "mortality_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 99999,
+            "week_number": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "detail": "Mortalidad (99999) excede el saldo de aves disponibles (49)",
+        "rule": "BR-01"
+      },
+      "banner": "Mortalidad (99999) excede el saldo de aves disponibles (49)",
+      "zod": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    }
+  ],
+  "pageerror": [],
+  "consoleError": [
+    {
+      "tag": "op",
+      "msg": "[Object, Object]"
+    }
+  ],
+  "httpErrores": [
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/dashboard/admin"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/dashboard/admin"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 422,
+      "method": "POST",
+      "url": "/api/v1/lots/66/phases"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "POST",
+      "url": "/api/v1/approvals/approve"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "ap",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/users?limit=100"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpis?lot_id=66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/ipe/66"
+    },
+    {
+      "tag": "op",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/reports/kpi/weight-uniformity/66"
+    },
+    {
+      "tag": "op",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    }
+  ],
+  "asserts": [
+    {
+      "name": "backend-C2d-feed-vacio-422",
+      "ok": true,
+      "detail": 422
+    },
+    {
+      "name": "backend-C2d-lectura-tolerante",
+      "ok": true,
+      "detail": 200
+    },
+    {
+      "name": "R-03-aprobado-lote",
+      "ok": true,
+      "detail": {
+        "status": "approved",
+        "lotId": 66
+      }
+    },
+    {
+      "name": "lotdetail-poblacion-visible",
+      "ok": null,
+      "detail": false
+    },
+    {
+      "name": "R-04-recepcion-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "R-05-devuelto",
+      "ok": true,
+      "detail": "returned"
+    },
+    {
+      "name": "R-05-notificacion-operador",
+      "ok": null,
+      "detail": {
+        "unread": 1
+      }
+    },
+    {
+      "name": "R-06-reenviado",
+      "ok": true,
+      "detail": "pending_review"
+    },
+    {
+      "name": "R-06-aprobado",
+      "ok": true,
+      "detail": {
+        "start": 200,
+        "complete": 200,
+        "status": "approved",
+        "approve": 200
+      }
+    },
+    {
+      "name": "R-07-poblacion-50",
+      "ok": true,
+      "detail": "Mortalidad (51) excede el saldo de aves disponibles (50)"
+    },
+    {
+      "name": "R-08-mortality_recording-resultado",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "farm_id": 1
+      }
+    },
+    {
+      "name": "R-08-feed_registration-resultado",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "farm_id": 1
+      }
+    },
+    {
+      "name": "R-08-weight_recording-resultado",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "farm_id": 1
+      }
+    },
+    {
+      "name": "R-08-vaccination-resultado",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "farm_id": 1
+      }
+    },
+    {
+      "name": "R-08-farm_inspection-resultado",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "El evento 'farm_inspection' requiere una granja asignada",
+        "house_id": 1
+      }
+    },
+    {
+      "name": "R-08-bird_distribution-resultado",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "El evento 'bird_distribution' requiere un galpón asignado",
+        "farm_id": 1
+      }
+    },
+    {
+      "name": "R-08-bird_exit-resultado",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "El evento 'bird_exit' requiere un galpón asignado",
+        "farm_id": 1
+      }
+    },
+    {
+      "name": "R-09-transicion-ui",
+      "ok": null,
+      "detail": {
+        "status": 422,
+        "req": {
+          "phase_code": "production",
+          "start_date": "2026-09-13",
+          "start_population_male": 0,
+          "start_population_female": 0
+        },
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "lot_id"
+            ],
+            "msg": "Field required",
+            "input": {
+              "phase_code": "production",
+              "start_date": "2026-09-13",
+              "start_population_male": 0,
+              "start_population_female": 0
+            }
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "phase_id"
+            ],
+            "msg": "Field required",
+            "input": {
+              "phase_code": "production",
+              "start_date": "2026-09-13",
+              "start_population_male": 0,
+              "start_population_female": 0
+            }
+          }
+        ],
+        "toasts": []
+      }
+    },
+    {
+      "name": "lotdetail-sin-accion-egg_collection",
+      "ok": null,
+      "detail": 66
+    },
+    {
+      "name": "R-10-recoleccion",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "El evento 'egg_collection' requiere un galpón asignado"
+      }
+    },
+    {
+      "name": "R-11-rechazado",
+      "ok": true,
+      "detail": {
+        "start": 200,
+        "reject": 200,
+        "status": "rejected"
+      }
+    },
+    {
+      "name": "R-11-rechazado-reenviado",
+      "ok": true,
+      "detail": "pending_review"
+    },
+    {
+      "name": "R-11-aprobado",
+      "ok": false,
+      "detail": {
+        "start": 200,
+        "complete": 200,
+        "status": "corrected",
+        "approve": 403
+      }
+    },
+    {
+      "name": "R-12-review-tabs-in_review",
+      "ok": null,
+      "detail": {
+        "pending_review": false,
+        "in_review": false
+      }
+    },
+    {
+      "name": "R-13-4xx-seguro",
+      "ok": true,
+      "detail": {
+        "status": 400,
+        "banner": "Mortalidad (99999) excede el saldo de aves disponibles (49)"
+      }
+    },
+    {
+      "name": "R-14-EN",
+      "ok": null,
+      "detail": {
+        "spanish": 0,
+        "rawKeys": [],
+        "sample": "Global Avícola |  | Operations Management |  | OPERATIONS | Poultry Management | INTEGRATION | SAP | ADMINISTRATION | Masters | Settings | U0 |  | UAT 09-op |  | uat09-op-8e60c2 |  | Profile | Sig"
+      }
+    },
+    {
+      "name": "R-14-EN-hub",
+      "ok": null,
+      "detail": "Global Avícola |  | Operations Management |  | OPERATIONS | Poultry Management | INTEGRATION | SAP | ADMINISTRATION | Masters | Settings | U0 |  | UAT 09-op |  | uat09-op-8e60c2 |  | Profile | Sign Out | 2 | ES | Avícola Global C.A. | U0 |  | UAT 0"
+    },
+    {
+      "name": "R-15-movil-overflow-lote",
+      "ok": null,
+      "detail": 0
+    },
+    {
+      "name": "R-15-movil-overflow-form",
+      "ok": null,
+      "detail": 0
+    },
+    {
+      "name": "AC06-un-solo-lote-nuevo",
+      "ok": true,
+      "detail": null
+    }
+  ],
+  "ids": {
+    "bundle": "index-DDCcWL76.js",
+    "import": 124,
+    "reused": true,
+    "lot": 66,
+    "lotCode": "L-GP-2026-12",
+    "reception": 125
+  },
+  "ledger": [
+    {
+      "lot": 66,
+      "code": "L-GP-2026-12"
+    },
+    {
+      "id": 125,
+      "type": "bird_reception",
+      "lot": 66,
+      "cleanup": "retenido (approved)"
+    },
+    {
+      "id": 126,
+      "type": "mortality_recording",
+      "lot": 66,
+      "cleanup": "cancel 200"
+    },
+    {
+      "id": 127,
+      "type": "feed_registration",
+      "lot": 66,
+      "cleanup": "retenido (corrected)"
+    },
+    {
+      "id": 128,
+      "type": "weight_recording",
+      "lot": 66,
+      "cleanup": "retenido (approved)"
+    },
+    {
+      "id": 129,
+      "type": "vaccination",
+      "lot": 66,
+      "cleanup": "cancel 200"
+    }
+  ],
+  "fatal_react": 0,
+  "http5xx": []
+}

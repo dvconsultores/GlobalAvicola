@@ -1,0 +1,1949 @@
+{
+  "fecha": "2026-09-13",
+  "base": "http://127.0.0.1:5199",
+  "pasos": [
+    {
+      "step": "me-admin",
+      "status": 200,
+      "detail": {
+        "company_id": 1,
+        "permisos": 9,
+        "bu": [
+          "breeder",
+          "broiler",
+          "grandparent",
+          "hatchery"
+        ]
+      }
+    },
+    {
+      "step": "fixture-hatchery",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-incubator",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-hatcher",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-genetic-line",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-breed",
+      "status": 201,
+      "detail": 1
+    },
+    {
+      "step": "fixture-supplier",
+      "status": 201,
+      "detail": 2
+    },
+    {
+      "step": "fixture-sap-refs",
+      "status": 201,
+      "detail": [
+        {
+          "company_id": 1,
+          "ref_type": "purchase_order",
+          "sap_code": "AUD-PO-GP",
+          "description": null,
+          "quantity": 200,
+          "extra_data": {
+            "vendor_name": "Cobb"
+          },
+          "imported_by_id": 1,
+          "id": 1,
+          "created_at": "2026-09-13T00:23:14.600920+00:00",
+          "updated_at": "2026-09-13T00:23:14.600920+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "purchase_order",
+          "sap_code": "AUD-PO-BR",
+          "description": null,
+          "quantity": 5000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 2,
+          "created_at": "2026-09-13T00:23:14.600920+00:00",
+          "updated_at": "2026-09-13T00:23:14.600920+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "purchase_order",
+          "sap_code": "AUD-PO-BO",
+          "description": null,
+          "quantity": 6000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 3,
+          "created_at": "2026-09-13T00:23:14.600920+00:00",
+          "updated_at": "2026-09-13T00:23:14.600920+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "transfer_order",
+          "sap_code": "AUD-STO-EGG",
+          "description": null,
+          "quantity": 2000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 4,
+          "created_at": "2026-09-13T00:23:14.600920+00:00",
+          "updated_at": "2026-09-13T00:23:14.600920+00:00",
+          "is_active": true
+        },
+        {
+          "company_id": 1,
+          "ref_type": "transfer_order",
+          "sap_code": "AUD-STO-CHK",
+          "description": null,
+          "quantity": 2000,
+          "extra_data": null,
+          "imported_by_id": 1,
+          "id": 5,
+          "created_at": "2026-09-13T00:23:14.600920+00:00",
+          "updated_at": "2026-09-13T00:23:14.600920+00:00",
+          "is_active": true
+        }
+      ]
+    },
+    {
+      "step": "login-ui-admin",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "login-ui-approver",
+      "status": 200,
+      "detail": null
+    },
+    {
+      "step": "GP-nav-hub-import",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=grandparent_import"
+    },
+    {
+      "step": "GP-01-grandparent_import",
+      "status": 400,
+      "detail": {
+        "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "banner": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-00-lote-ui",
+      "status": 201,
+      "detail": {
+        "id": 3,
+        "curvaAviso": 1
+      }
+    },
+    {
+      "step": "BR-nav-hub",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=farm_inspection"
+    },
+    {
+      "step": "BR-01-farm_inspection",
+      "status": 201,
+      "detail": {
+        "id": 1,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BR-EXCEPCION",
+      "status": "error",
+      "detail": "TimeoutError: locator.fill: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('[name=\"received_total\"]').first()\n"
+    },
+    {
+      "step": "HAT-00-lote-ui",
+      "status": 201,
+      "detail": 4
+    },
+    {
+      "step": "HAT-nav-hub",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=hatchery_inspection"
+    },
+    {
+      "step": "HAT-EXCEPCION",
+      "status": "error",
+      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('div.z-50 button').filter({ hasText: 'AUD Incubadora' }).first()\n"
+    },
+    {
+      "step": "BO-nav-hub",
+      "status": "OK",
+      "detail": "http://127.0.0.1:5199/operations/new?type=farm_inspection"
+    },
+    {
+      "step": "BO-01-farm_inspection",
+      "status": 201,
+      "detail": {
+        "id": 2,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-02-bird_reception",
+      "status": 201,
+      "detail": {
+        "id": 3,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-bird_distribution",
+      "status": 201,
+      "detail": {
+        "id": 4,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-feed_registration",
+      "status": 201,
+      "detail": {
+        "id": 5,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-water_consumption",
+      "status": 201,
+      "detail": {
+        "id": 6,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-weight_recording",
+      "status": 201,
+      "detail": {
+        "id": 7,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-mortality_recording",
+      "status": 201,
+      "detail": {
+        "id": 8,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-cull_recording",
+      "status": 201,
+      "detail": {
+        "id": 9,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-vaccination",
+      "status": 201,
+      "detail": {
+        "id": 10,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-medication",
+      "status": 201,
+      "detail": {
+        "id": 11,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-bird_exit",
+      "status": 201,
+      "detail": {
+        "id": 12,
+        "banner": "Registro guardado exitosamente",
+        "zod": []
+      }
+    },
+    {
+      "step": "BO-aprobaciones-ui",
+      "status": "OK",
+      "detail": {
+        "aprobados": 0,
+        "total": 10
+      }
+    },
+    {
+      "step": "BO-close-aprobado",
+      "status": 400,
+      "detail": "No se puede cerrar el lote: 10 registro(s) sin aprobar (10 en «pending_review»). Apruébelos o anúlelos antes de cerrar."
+    },
+    {
+      "step": "MAS-hatchery-create-ui",
+      "status": 422,
+      "detail": {
+        "req": {},
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "company_id"
+            ],
+            "msg": "Field required",
+            "input": {}
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "name"
+            ],
+            "msg": "Field required",
+            "input": {}
+          }
+        ]
+      }
+    },
+    {
+      "step": "ADM-EXCEPCION",
+      "status": "error",
+      "detail": "TimeoutError: locator.click: Timeout 30000ms exceeded.\nCall log:\n  - waiting for locator('li').filter({ hasText: /Incubadora/ }).first().getByRole('button', { name: /Deshabilitar|Apagar/ })\n"
+    },
+    {
+      "step": "MOB-login",
+      "status": 200,
+      "detail": "http://127.0.0.1:5199/menu/poultry"
+    },
+    {
+      "step": "MOB-mortality",
+      "status": 400,
+      "detail": {
+        "detail": "Mortalidad (1) excede el saldo de aves disponibles (0)",
+        "banner": "Mortalidad (1) excede el saldo de aves disponibles (0)",
+        "zod": []
+      }
+    }
+  ],
+  "posts": [
+    {
+      "label": "GP-01-grandparent_import",
+      "status": 400,
+      "req": {
+        "event_type": "grandparent_import",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-GP",
+        "supplier_id": 2,
+        "transport_id": 1,
+        "extra_data": {
+          "import_plan": {
+            "origin_country": "Francia",
+            "purchased_total": 110,
+            "shipped_total": 105,
+            "received_total": 100,
+            "transit_mortality": 5,
+            "departure_date": "2026-09-06",
+            "arrival_date": "2026-09-13",
+            "reception_condition": "",
+            "quarantine_end_date": "",
+            "initial_health_inspection": ""
+          },
+          "sap_order_ref": "AUD-PO-GP",
+          "declared_quantity": 200,
+          "vendor_name": "Cobb"
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 40,
+            "avg_weight": 3800
+          },
+          {
+            "sex": "female",
+            "quantity": 60,
+            "avg_weight": 3600
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1
+      },
+      "resp": {
+        "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+        "rule": "BR-22"
+      },
+      "banner": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BR-01-farm_inspection",
+      "status": 201,
+      "req": {
+        "event_type": "farm_inspection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [
+          {
+            "house_id": 1,
+            "parameter": "temperature",
+            "value": "27"
+          },
+          {
+            "house_id": 1,
+            "parameter": "humidity",
+            "value": "62"
+          },
+          {
+            "house_id": 1,
+            "parameter": "litter_condition",
+            "status": "seca"
+          }
+        ],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 1,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-01-farm_inspection",
+      "status": 201,
+      "req": {
+        "event_type": "farm_inspection",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [
+          {
+            "house_id": 1,
+            "parameter": "temperature",
+            "value": "30"
+          },
+          {
+            "house_id": 1,
+            "parameter": "humidity",
+            "value": "60"
+          },
+          {
+            "house_id": 1,
+            "parameter": "litter_condition",
+            "status": "seca"
+          }
+        ],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 2,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-02-bird_reception",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "bird_reception",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sap_document_ref": "AUD-PO-BO",
+        "supplier_id": 2,
+        "extra_data": {
+          "sap_order_ref": "AUD-PO-BO",
+          "declared_quantity": 6000
+        },
+        "bird_movements": [
+          {
+            "sex": "mixed",
+            "quantity": 5000,
+            "avg_weight": 42,
+            "target_house_id": 1,
+            "week_number": 0
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 3,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-bird_distribution",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "bird_distribution",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "bird_movements": [
+          {
+            "sex": "mixed",
+            "quantity": 2000,
+            "target_house_id": 2
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 4,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-feed_registration",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "feed_registration",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "extra_data": {
+          "feed_phase": ""
+        },
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [
+          {
+            "feed_type_id": 1,
+            "quantity_kg": 850.5,
+            "week_number": 1
+          }
+        ],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 5,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-water_consumption",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "water_consumption",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "water_liters": 1200,
+        "bird_movements": [],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 6,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-weight_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "weight_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "sample_size": 100,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 50,
+            "avg_weight": 2400,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 50,
+            "avg_weight": 2200
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 7,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-mortality_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "mortality_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 20,
+            "week_number": 1
+          },
+          {
+            "sex": "female",
+            "quantity": 20
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 8,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-cull_recording",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "cull_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cull_cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 15,
+            "week_number": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 9,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-vaccination",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "vaccination",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "vaccine_id": 1,
+        "vaccination_route": "water",
+        "vaccine_lot_number": "",
+        "dosage_per_bird": 0.5,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 2500
+          },
+          {
+            "sex": "female",
+            "quantity": 2500
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 10,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-medication",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "medication",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "medication_id": 1,
+        "dosage_per_bird": 0.1,
+        "treatment_days": 5,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 2500
+          },
+          {
+            "sex": "female",
+            "quantity": 2500
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 11,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "BO-bird_exit",
+      "status": 201,
+      "req": {
+        "lot_id": 1,
+        "event_type": "bird_exit",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "destination_plant_id": 1,
+        "transport_id": 1,
+        "extra_data": {
+          "transport_cage_condition": "good",
+          "transport_density": "",
+          "transport_temperature": "",
+          "transport_ventilation": "",
+          "transport_hygiene": "",
+          "transport_duration_min": ""
+        },
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 100,
+            "avg_weight": 2500
+          },
+          {
+            "sex": "female",
+            "quantity": 100,
+            "avg_weight": 2300
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "id": 12,
+        "status": "registered"
+      },
+      "banner": "Registro guardado exitosamente",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    },
+    {
+      "label": "MOB-mortality",
+      "status": 400,
+      "req": {
+        "lot_id": 2,
+        "event_type": "mortality_recording",
+        "event_date": "2026-09-13",
+        "observations": "",
+        "cause_id": 1,
+        "bird_movements": [
+          {
+            "sex": "male",
+            "quantity": 1,
+            "week_number": 1
+          }
+        ],
+        "egg_movements": [],
+        "feed_movements": [],
+        "hatchery_params": [],
+        "inspection_details": [],
+        "egg_storage_records": [],
+        "farm_id": 1,
+        "house_id": 1
+      },
+      "resp": {
+        "detail": "Mortalidad (1) excede el saldo de aves disponibles (0)",
+        "rule": "BR-01"
+      },
+      "banner": "Mortalidad (1) excede el saldo de aves disponibles (0)",
+      "zodErrors": [],
+      "formVisible": true,
+      "pageerrorDelta": 0
+    }
+  ],
+  "pageerror": [
+    {
+      "tag": "admin",
+      "msg": "Objects are not valid as a React child (found: object with keys {type, loc, msg, input}). If you meant to render a collection of children, use an array instead."
+    },
+    {
+      "tag": "admin",
+      "msg": "Objects are not valid as a React child (found: object with keys {type, loc, msg, input}). If you meant to render a collection of children, use an array instead."
+    }
+  ],
+  "consoleError": [
+    {
+      "tag": "admin",
+      "msg": "No se puede cerrar el lote: 10 registro(s) sin aprobar (10 en «registered»). Apruébelos o anúlelos antes de cerrar."
+    },
+    {
+      "tag": "admin",
+      "msg": "No se puede cerrar el lote: 10 registro(s) sin aprobar (10 en «pending_review»). Apruébelos o anúlelos antes de cerrar."
+    },
+    {
+      "tag": "admin",
+      "msg": "In HTML, %s cannot be a descendant of <%s>.\nThis will cause a hydration error.%s <button> button \n\n  ...\n    <ProtectedRoute>\n      <AppLayout>\n        <div className=\"min-h-scre...\">\n          <Sidebar>\n          <Header>\n          <main className=\"pb-24 lg:p...\">\n            <div className=\"app-co"
+    },
+    {
+      "tag": "admin",
+      "msg": "<%s> cannot contain a nested %s.\nSee this log for the ancestor stack trace. button <button>"
+    }
+  ],
+  "httpErrores": [
+    {
+      "tag": "approver",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/dashboard/admin"
+    },
+    {
+      "tag": "approver",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/dashboard/admin"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/lots/1/close"
+    },
+    {
+      "tag": "admin",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/lots/1/close"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "POST",
+      "url": "/api/v1/masters/hatcheries"
+    },
+    {
+      "tag": "mobile",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/sap/references?ref_type=purchase_order&limit=50"
+    },
+    {
+      "tag": "mobile",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/sap/references?ref_type=transfer_order&limit=50"
+    },
+    {
+      "tag": "mobile",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/sap/references?ref_type=purchase_order&limit=50"
+    },
+    {
+      "tag": "mobile",
+      "status": 403,
+      "method": "GET",
+      "url": "/api/v1/sap/references?ref_type=transfer_order&limit=50"
+    },
+    {
+      "tag": "mobile",
+      "status": 400,
+      "method": "POST",
+      "url": "/api/v1/operations"
+    },
+    {
+      "tag": "admin",
+      "status": 422,
+      "method": "POST",
+      "url": "/api/v1/masters/houses"
+    }
+  ],
+  "asserts": [
+    {
+      "name": "GP-01-import-201",
+      "ok": false,
+      "detail": "Plan de importación inválido: quarantine_end_date: Input should be a valid date or datetime, input is too short"
+    },
+    {
+      "name": "GP-01-payload-canonico",
+      "ok": true,
+      "detail": {
+        "storage": [],
+        "ref": "AUD-PO-GP"
+      }
+    },
+    {
+      "name": "BR-00-lote-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BR-01-inspeccion-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BO-01-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BO-02-recepcion-201",
+      "ok": true,
+      "detail": null
+    },
+    {
+      "name": "BO-bird_distribution-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-feed_registration-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-water_consumption-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-weight_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-mortality_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-cull_recording-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-vaccination-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-medication-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-bird_exit-201",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "BO-close-sin-aprobar",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cerrar el lote: 10 registro(s) sin aprobar (10 en «registered»). Apruébelos o anúlelos antes de cerrar.",
+        "toasts": [],
+        "bannerError": true
+      }
+    },
+    {
+      "name": "BO-lote-cerrado",
+      "ok": false,
+      "detail": "active"
+    },
+    {
+      "name": "BO-reporte-lote",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "keys": [
+          "lot",
+          "opening_balance",
+          "phases",
+          "event_summary"
+        ]
+      }
+    },
+    {
+      "name": "BO-ipe",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "ipe": 0,
+        "fcr": 0,
+        "viab": 100
+      }
+    },
+    {
+      "name": "MAS-form-inputs",
+      "ok": null,
+      "detail": 2
+    },
+    {
+      "name": "MAS-form-fields",
+      "ok": null,
+      "detail": [
+        null,
+        null
+      ]
+    },
+    {
+      "name": "PAGE-users",
+      "ok": null,
+      "detail": {
+        "chars": 632,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-roles",
+      "ok": null,
+      "detail": {
+        "chars": 768,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-audit",
+      "ok": null,
+      "detail": {
+        "chars": 3767,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-reports",
+      "ok": null,
+      "detail": {
+        "chars": 589,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-dashboard",
+      "ok": null,
+      "detail": {
+        "chars": 826,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-sap",
+      "ok": null,
+      "detail": {
+        "chars": 650,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-profile",
+      "ok": null,
+      "detail": {
+        "chars": 486,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "PAGE-sap-comparison",
+      "ok": null,
+      "detail": {
+        "chars": 465,
+        "rawKeys": [],
+        "cargando": false
+      }
+    },
+    {
+      "name": "OD23-grants-antes",
+      "ok": null,
+      "detail": [
+        {
+          "user_id": 2,
+          "code": "breeder",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:23:09.329708Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "broiler",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:23:09.329708Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "grandparent",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:23:09.329708Z",
+          "revoked_at": null,
+          "is_effective": true
+        },
+        {
+          "user_id": 2,
+          "code": "hatchery",
+          "company_id": 1,
+          "granted_at": "2026-09-13T00:23:09.329708Z",
+          "revoked_at": null,
+          "is_effective": true
+        }
+      ]
+    },
+    {
+      "name": "MOB-overflow-home",
+      "ok": null,
+      "detail": 0
+    },
+    {
+      "name": "MOB-overflow-form",
+      "ok": null,
+      "detail": 0
+    },
+    {
+      "name": "MOB-selects",
+      "ok": null,
+      "detail": 3
+    },
+    {
+      "name": "MOB-mortality-result",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "Mortalidad (1) excede el saldo de aves disponibles (0)"
+      }
+    },
+    {
+      "name": "MOB-lots-reachable",
+      "ok": null,
+      "detail": true
+    },
+    {
+      "name": "MOB-review-webonly-redirect",
+      "ok": null,
+      "detail": "http://127.0.0.1:5199/menu/poultry"
+    },
+    {
+      "name": "EN-hub",
+      "ok": null,
+      "detail": {
+        "sample": "Global Avícola |  | Operations Management |  | Dashboard | OPERATIONS | Poultry Management | REVIEW | Review | Approvals | INTEGRATION | SAP | REPORTS | Reports | ADMINISTRATION | Audit | Masters | Settings | TT |  | Test test_admin |  | test_a",
+        "rawKeys": []
+      }
+    },
+    {
+      "name": "EN-form",
+      "ok": null,
+      "detail": {
+        "spanishLeft": 0,
+        "rawKeys": []
+      }
+    },
+    {
+      "name": "GUARD-approver-operations-new",
+      "ok": null,
+      "detail": {
+        "alert": "No tiene permiso para ver esta sección.",
+        "url": "http://127.0.0.1:5199/operations/new?type=bird_reception"
+      }
+    },
+    {
+      "name": "GUARD-approver-unit-access",
+      "ok": null,
+      "detail": {
+        "alert": "No tiene permiso para administrar unidades de negocio."
+      }
+    },
+    {
+      "name": "GUARD-approver-lot-detail",
+      "ok": null,
+      "detail": {
+        "txt": "Global Avícola |  | Gestión Operativa |  | OPERATIVO | Gestión Avícola | REVISIÓN | Aprobaciones | ADMINISTRACIÓN | Configuración | TT |  | Test"
+      }
+    },
+    {
+      "name": "H2-review-tabs",
+      "ok": null,
+      "detail": {
+        "pending_review": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        },
+        "in_review": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        },
+        "returned": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        },
+        "approved": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        }
+      }
+    },
+    {
+      "name": "H2-in_review-visible-en-su-pestana",
+      "ok": false,
+      "detail": {
+        "pending_review": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        },
+        "in_review": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        },
+        "returned": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        },
+        "approved": {
+          "tieneEvento": false,
+          "estadosVisibles": []
+        }
+      }
+    },
+    {
+      "name": "H2-api-review-pending-status-in_review",
+      "ok": null,
+      "detail": {
+        "estados": []
+      }
+    },
+    {
+      "name": "H2-api-approvals-pending",
+      "ok": null,
+      "detail": {
+        "total": 0,
+        "estados": [],
+        "contieneInReview": false
+      }
+    },
+    {
+      "name": "H3-users-edit-boton",
+      "ok": null,
+      "detail": "no visible"
+    },
+    {
+      "name": "H4-masters-house-create-ui",
+      "ok": null,
+      "detail": {
+        "campos": [
+          null,
+          null
+        ],
+        "status": 422,
+        "req": {},
+        "detail": [
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "farm_id"
+            ],
+            "msg": "Field required",
+            "input": {}
+          },
+          {
+            "type": "missing",
+            "loc": [
+              "body",
+              "name"
+            ],
+            "msg": "Field required",
+            "input": {}
+          }
+        ],
+        "pageerrorDelta": [
+          {
+            "tag": "admin",
+            "msg": "Objects are not valid as a React child (found: object with keys {type, loc, msg, input}). If you meant to render a collection of children, use an array instead."
+          },
+          {
+            "tag": "admin",
+            "msg": "Objects are not valid as a React child (found: object with keys {type, loc, msg, input}). If you meant to render a collection of children, use an array instead."
+          }
+        ]
+      }
+    },
+    {
+      "name": "H5-dashboard-admin",
+      "ok": null,
+      "detail": {
+        "keys": [
+          "total_events",
+          "by_status",
+          "pending_review",
+          "pending_approval",
+          "top_event_types",
+          "last_7_days",
+          "lots_by_type",
+          "mortality_trend",
+          "active_alerts"
+        ],
+        "lots_by_type": {
+          "BirdTypeEnum.BREEDER": 1,
+          "BirdTypeEnum.BROILER": 2,
+          "BirdTypeEnum.HATCHERY": 1
+        }
+      }
+    },
+    {
+      "name": "H6-audit-api",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "sample": [
+          "logs",
+          "total"
+        ]
+      }
+    },
+    {
+      "name": "H6-audit-timeline",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "acciones": {
+          "entity_type": "operational_event",
+          "entity_id": "1",
+          "timeline": [
+            {
+              "entity_type": "operational_event",
+              "house_id": 1,
+              "comments": "",
+              "action": "created",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "01fc1464-fa4e-4868-950d-32594706bb04",
+              "ip_address": null,
+              "user_id": 1,
+              "user_agent": null,
+              "new_values": {
+                "id": 1,
+                "alerts": "[]",
+                "status": "registered",
+                "farm_id": 1,
+                "version": 1,
+                "house_id": 1,
+                "evidences": "[]",
+                "company_id": 1,
+                "created_at": "2026-09-13T00:23:28.436479+00:00",
+                "event_date": "2026-09-13",
+                "event_type": "farm_inspection",
+                "updated_at": "2026-09-13T00:23:28.436479+00:00",
+                "observations": "",
+                "egg_movements": "[]",
+                "bird_movements": "[]",
+                "feed_movements": "[]",
+                "hatchery_params": "[]",
+                "registered_by_id": 1,
+                "inspection_details": "[]",
+                "egg_storage_records": "[]",
+                "reversals_as_original": "[]"
+              },
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": null,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:23:28.450052+00:00",
+              "entity_id": "1",
+              "module": "operations",
+              "new_state": "registered",
+              "farm_id": 1,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": 1,
+              "comments": "",
+              "action": "created",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "17ded091-494f-4117-822d-780e2ca5d704",
+              "ip_address": null,
+              "user_id": 1,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": null,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:23:28.472184+00:00",
+              "entity_id": "1",
+              "module": "operations",
+              "new_state": "registered",
+              "farm_id": 1,
+              "change_reason": null
+            }
+          ],
+          "total_steps": 2
+        }
+      }
+    },
+    {
+      "name": "H7-cancel-ui-control",
+      "ok": null,
+      "detail": {
+        "cancelar": 0,
+        "editar": 0
+      }
+    },
+    {
+      "name": "H8-lote-api",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "id": 5
+      }
+    },
+    {
+      "name": "H8-feed-aprobado",
+      "ok": null,
+      "detail": {
+        "id": 15,
+        "submit": 200,
+        "start": 200,
+        "complete": 200,
+        "status": "approved"
+      }
+    },
+    {
+      "name": "H8-reverso-solicitado",
+      "ok": null,
+      "detail": {
+        "status": 201,
+        "id": 1,
+        "counterpart": 16
+      }
+    },
+    {
+      "name": "H8-reverso-efectuado",
+      "ok": null,
+      "detail": {
+        "contraparteNace": "pending_review",
+        "start": 200,
+        "complete": 200,
+        "original": "reversed",
+        "contraparte": "reversed"
+      }
+    },
+    {
+      "name": "H8-reversed-no-cancelable",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cancelar un evento aprobado, consolidado, enviado o confirmado por SAP, con error de SAP o ya anulado"
+      }
+    },
+    {
+      "name": "H8-cierre-lote-con-reverso",
+      "ok": null,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cerrar el lote sin al menos un registro de pesaje (requerido para calcular FCR y peso final)"
+      }
+    },
+    {
+      "name": "H8-E02-cierre-bloqueado-por-reversed",
+      "ok": false,
+      "detail": {
+        "status": 400,
+        "detail": "No se puede cerrar el lote sin al menos un registro de pesaje (requerido para calcular FCR y peso final)"
+      }
+    },
+    {
+      "name": "H8-audit-timeline-original",
+      "ok": null,
+      "detail": {
+        "status": 200,
+        "acciones": {
+          "entity_type": "operational_event",
+          "entity_id": "15",
+          "timeline": [
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "created",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "e740f606-6e6e-4a0e-b861-52ef9b953817",
+              "ip_address": null,
+              "user_id": 1,
+              "user_agent": null,
+              "new_values": {
+                "id": 15,
+                "alerts": "[]",
+                "lot_id": 5,
+                "status": "registered",
+                "version": 1,
+                "evidences": "[]",
+                "company_id": 1,
+                "created_at": "2026-09-13T00:29:11.156984+00:00",
+                "event_date": "2026-09-13",
+                "event_type": "feed_registration",
+                "updated_at": "2026-09-13T00:29:11.156984+00:00",
+                "egg_movements": "[]",
+                "bird_movements": "[]",
+                "feed_movements": "[]",
+                "hatchery_params": "[]",
+                "registered_by_id": 1,
+                "inspection_details": "[]",
+                "egg_storage_records": "[]",
+                "reversals_as_original": "[]"
+              },
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:29:11.164122+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "registered",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "created",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "dab55aa2-ec6e-433d-a6c0-38dff4dab278",
+              "ip_address": null,
+              "user_id": 1,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:29:11.168418+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "registered",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "created",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "16f41328-a328-40ca-a3d3-aec1790b14f4",
+              "ip_address": null,
+              "user_id": 1,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "registered",
+              "created_at": "2026-09-13T00:29:11.180578+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "pending_review",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": "Enviado a revisión",
+              "action": "updated",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "c54bc351-fb62-4a30-8137-e6dbe411a03c",
+              "ip_address": null,
+              "user_id": 1,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "registered",
+              "created_at": "2026-09-13T00:29:11.184242+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "pending_review",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "review_started",
+              "previous_values": {
+                "reviewed_by_id": {
+                  "new": 3,
+                  "old": null
+                }
+              },
+              "sap_reference_id": null,
+              "id": "baf315e9-f97c-406c-b5e7-6bacb8916c15",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "pending_review",
+              "created_at": "2026-09-13T00:29:11.197791+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "in_review",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "review_started",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "4303ae1a-a2af-4d49-86a9-c06d8bb63467",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": null,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:29:11.201800+00:00",
+              "entity_id": "15",
+              "module": "review",
+              "new_state": null,
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": "Revisión iniciada por supervisor",
+              "action": "review_started",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "6a20a0ac-5282-4fdb-b4d3-a202d79d9070",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "pending_review",
+              "created_at": "2026-09-13T00:29:11.205101+00:00",
+              "entity_id": "15",
+              "module": "review",
+              "new_state": "in_review",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "approved",
+              "previous_values": {
+                "approved_by_id": {
+                  "new": 3,
+                  "old": null
+                }
+              },
+              "sap_reference_id": null,
+              "id": "3162332c-ac94-44b0-84c7-ce394be952d3",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "in_review",
+              "created_at": "2026-09-13T00:29:11.230959+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "approved",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "corrected",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "aa02f898-aecd-4773-b0a5-d0e8189d36f5",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": null,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:29:11.234434+00:00",
+              "entity_id": "15",
+              "module": "approvals",
+              "new_state": null,
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "approved",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "790d77db-8161-4153-8aca-e8c3cce592db",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "in_review",
+              "created_at": "2026-09-13T00:29:11.238054+00:00",
+              "entity_id": "15",
+              "module": "approvals",
+              "new_state": "approved",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "review_completed",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "8164d999-aa4d-4c47-8b04-ba3265aaa1df",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": null,
+              "created_at": "2026-09-13T00:29:11.238592+00:00",
+              "entity_id": "15",
+              "module": "review",
+              "new_state": null,
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": null,
+              "action": "updated",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "cd5b197a-3e0e-4322-88f8-969d6e1f6bfc",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "approved",
+              "created_at": "2026-09-13T00:29:11.325400+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "reversed",
+              "farm_id": null,
+              "change_reason": null
+            },
+            {
+              "entity_type": "operational_event",
+              "house_id": null,
+              "comments": "Reverso de auditoría E-02 (Claude, sin producto)",
+              "action": "reversed",
+              "previous_values": null,
+              "sap_reference_id": null,
+              "id": "8a85bb07-2532-4e67-b879-590e4571307a",
+              "ip_address": null,
+              "user_id": 3,
+              "user_agent": null,
+              "new_values": null,
+              "is_sensitive": false,
+              "company_id": 1,
+              "lot_id": 5,
+              "previous_state": "approved",
+              "created_at": "2026-09-13T00:29:11.325649+00:00",
+              "entity_id": "15",
+              "module": "operations",
+              "new_state": "reversed",
+              "farm_id": null,
+              "change_reason": null
+            }
+          ],
+          "total_steps": 13
+        }
+      }
+    }
+  ],
+  "ids": {
+    "company": 1,
+    "broilerLot": 1,
+    "brLot": 3,
+    "hatLot": 4
+  },
+  "fatal_react": 2,
+  "http5xx": []
+}
