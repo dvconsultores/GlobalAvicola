@@ -1,0 +1,1056 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r210.weightUnit.test.tsx (5 tests | 3 failed) 2555ms
+     × AC-R210-01 · weight_recording rotula en gramos (sin «(kg)») 1244ms
+     × AC-R210-01b · lot_closure rotula en gramos (sin «(kg)») — control 1094ms
+     × AC-R210-02 · los inputs de peso no llevan step 0.001 (captura en g) 88ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r210.weightUnit.test.tsx > R-210 · unidad única en gramos > AC-R210-01 · weight_recording rotula en gramos (sin «(kg)»)
+TestingLibraryElementError: Unable to find an element with the text: /Peso prom\. \(g\)/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba]"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m1 · Proceso[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m2 · Operación[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m3 · Datos[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m15 18-6-6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m [0m
+          [0mAtrás[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-scale text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"22"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"22"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 3v18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m19 8 3 8a5 5 0 0 1-6 0zV7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m5 8 3 8a5 5 0 0 1-6 0zV7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7 21h10"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+            [36m>[39m
+              [0mweight_recording[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-900"[39m
+            [36m>[39m
+              [0mPollo de Engorde[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"space-y-5"[39m
+          [33mid[39m=[32m"operation-form"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0mGranja[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative "[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                [36m>[39m
+                  [0mSeleccionar granja...[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [3...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-scale text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 3v18"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m19 8 3 8a5 5 0 0 1-6 0zV7"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 7h1a17 17 0 0 0 8-2 17 17 0 0 0 8 2h1"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m5 8 3 8a5 5 0 0 1-6 0zV7"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 21h10"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mweight_recording[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-900"[39m
+              [36m>[39m
+                [0mPollo de Engorde[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mGranja[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar granja...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"roun...
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/operations/__tests__/r210.weightUnit.test.tsx:73:11
+     71|     montar()
+     72|     await abrirEvento(/Engorde/, /weight_recording/)
+     73|     await waitFor(() => expect(screen.getByText(/Peso prom\. \(g\)/)).…
+       |           ^
+     74|     expect(document.body.textContent).not.toContain('(kg)')
+     75|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/pages/operations/__tests__/r210.weightUnit.test.tsx > R-210 · unidad única en gramos > AC-R210-01b · lot_closure rotula en gramos (sin «(kg)») — control
+TestingLibraryElementError: Unable to find an element with the text: /Peso final prom\. \(g\)/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba]"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m1 · Proceso[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m2 · Operación[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m3 · Datos[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m15 18-6-6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m [0m
+          [0mAtrás[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-lock text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"22"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"22"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<rect[39m
+              [33mheight[39m=[32m"11"[39m
+              [33mrx[39m=[32m"2"[39m
+              [33mry[39m=[32m"2"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mx[39m=[32m"3"[39m
+              [33my[39m=[32m"11"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7 11V7a5 5 0 0 1 10 0v4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+            [36m>[39m
+              [0mlot_closure[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-900"[39m
+            [36m>[39m
+              [0mPollo de Engorde[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"space-y-5"[39m
+          [33mid[39m=[32m"operation-form"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0mGranja[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative "[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                [36m>[39m
+                  [0mSeleccionar granja...[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0moperations.lot[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative "[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                [36m>[39m
+                  [0mSeleccionar lote...[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0moperations.date[0m
+            [36m</label>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"[39m
+              [33mname[39m=[32m"event_date"[39m
+              [33mtype[39m=[32m"date"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-3 lg:grid lg:grid-cols-2"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                  [36m>[39m
+                    [0mPoblación final[0m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mmin[39m=[32m"0"[39m
+                    [33mname[39m=[32m"bird_movements.0.quantity"[39m
+                    [33mtype[39m=[32m"number"[39m
+                  [36m/>[39m
+                  [36m<input[39m
+                    [33mname[39m=[32m"bird_movements.0.sex"[39m
+                    [33mtype[39m=[32m"hidden"[39m
+                    [33mvalue[39m=[32m"male"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                  [36m>[39m
+                    [0mPeso final prom. (kg)[0m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mname[39m=[32m"bird_movements.0.avg_weight"[39m
+                    [33mstep[39m=[32m"0.001"[39m
+                    [33mtype[39m=[32m"number"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                  [36m>[39m
+                    [0mFCR (Conversión alimenticia)[0m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mname[39m=[32m"extra_data.fcr"[39m
+                    [33mplaceholder[39m=[32m"2.000"[39m
+                    [33mstep[39m=[32m"0.001"[39m
+                    [33mtype[39m=[32m"number"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+                [36m<div>[39m
+                  [36m<label[39m
+                    [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                  [36m>[39m
+                    [0mMortalidad total (%)[0m
+                  [36m</label>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mname[39m=[32m"extra_data.mortality_pct"[39m
+                    [33mstep[39m=[32m"0.01"[39m
+                    [33mtype[39m=[32m"number"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0moperations.observations[0m
+            [36m</label>[39m
+            [36m<textarea[39m
+              [33mclass[39m=[32m"w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"[39m
+              [33mname[39m=[32m"observations"[39m
+              [33mrows[39m=[32m"2"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50"[39m
+            [33mtype[39m=[32m"submit"[39m
+          [36m>[39m
+            [0mcommon.save[0m
+          [36m</button>[39m
+        [36m</form>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-lock text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"11"[39m
+                [33mrx[39m=[32m"2"[39m
+                [33mry[39m=[32m"2"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mx[39m=[32m"3"[39m
+                [33my[39m=[32m"11"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 11V7a5 5 0 0 1 10 0v4"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mlot_closure[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-900"[39m
+              [36m>[39m
+                [0mPollo de Engorde[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mGranja[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar granja...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0moperations.lot[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar lote...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</button>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0moperations.date[0m
+              [36m</label>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"[39m
+                [33mname[39m=[32m"event_date"[39m
+                [33mtype[39m=[32m"date"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"space-y-4"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col gap-3 lg:grid lg:grid-cols-2"[39m
+                [36m>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                    [36m>[39m
+                      [0mPoblación final[0m
+                    [36m</label>[39m
+                    [36m<input[39m
+                      [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                      [33mmin[39m=[32m"0"[39m
+                      [33mname[39m=[32m"bird_movements.0.quantity"[39m
+                      [33mtype[39m=[32m"number"[39m
+                    [36m/>[39m
+                    [36m<input[39m
+                      [33mname[39m=[32m"bird_movements.0.sex"[39m
+                      [33mtype[39m=[32m"hidden"[39m
+                      [33mvalue[39m=[32m"male"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                    [36m>[39m
+                      [0mPeso final prom. (kg)[0m
+                    [36m</label>[39m
+                    [36m<input[39m
+                      [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                      [33mname[39m=[32m"bird_movements.0.avg_weight"[39m
+                      [33mstep[39m=[32m"0.001"[39m
+                      [33mtype[39m=[32m"number"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                    [36m>[39m
+                      [0mFCR (Conversión alimenticia)[0m
+                    [36m</label>[39m
+                    [36m<input[39m
+                      [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                      [33mname[39m=[32m"extra_data.fcr"[39m
+                      [33mplaceholder[39m=[32m"2.000"[39m
+                      [33mstep[39m=[32m"0.001"[39m
+                      [33mtype[39m=[32m"number"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                  [36m<div>[39m
+                    [36m<label[39m
+                      [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1.5"[39m
+                    [36m>[39m
+                      [0mMortalidad total (%)[0m
+                    [36m</label>[39m
+                    [36m<input[39m
+                      [33mclass[39m=[32m"w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                      [33mname[39m=[32m"extra_data.mortality_pct"[39m
+                      [33mstep[39m=[32m"0.01"[39m
+                      [33mtype[39m=[32m"number"[39m
+                    [36m/>[39m
+                  [36m</div>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0moperations.observations[0m
+              [36m</label>[39m
+              [36m<textarea[39m
+                [33mclass[39m=[32m"w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none"[39m
+                [33mname[39m=[32m"observations"[39m
+                [33mrows[39m=[32m"2"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50"[39m
+              [33mtype[39m=[32m"submit"[39m
+            [36m>[39m
+              [0mcommon.save[0m
+            [36m</button>[39m
+          [36m</form>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/operations/__tests__/r210.weightUnit.test.tsx:80:11
+     78|     montar()
+     79|     await abrirEvento(/Engorde/, /lot_closure/)
+     80|     await waitFor(() => expect(screen.getByText(/Peso final prom\. \(g…
+       |           ^
+     81|     expect(document.body.textContent).not.toContain('(kg)')
+     82|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/pages/operations/__tests__/r210.weightUnit.test.tsx > R-210 · unidad única en gramos > AC-R210-02 · los inputs de peso no llevan step 0.001 (captura en g)
+AssertionError: expected '0.001' not to be '0.001' // Object.is equality
+ ❯ src/pages/operations/__tests__/r210.weightUnit.test.tsx:92:44
+     90|       return el!
+     91|     })
+     92|     expect(input.getAttribute('step')).not.toBe('0.001')
+       |                                            ^
+     93|     expect(input.getAttribute('step')).toBe('1')
+     94|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed | 2 passed (5)
+   Start at  01:22:34
+   Duration  3.94s (transform 291ms, setup 61ms, import 560ms, tests 2.55s, environment 652ms)
+
