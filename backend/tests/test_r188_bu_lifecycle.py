@@ -214,11 +214,13 @@ async def test_r188_auditoria_de_terminacion_por_ciclo(http_client, test_databas
     """§12/§38: cada concesión terminada por el apagado deja evento con causa declarada."""
     from app.audit.models import AuditAction, AuditLog
 
-    await http_client.post(_url_post(esc["u_op"]), headers=_cab(esc["u_admin"]), json={"code": CODIGO})
+    r = await http_client.post(_url_post(esc["u_op"]), headers=_cab(esc["u_admin"]), json={"code": CODIGO})
+    assert r.status_code == 201, r.text
     filas = await _concesiones(test_database_url, esc["u_op"])
     cid = filas[0][0]
 
-    await http_client.patch(f"/api/v1/business-units/{CODIGO}/disable", headers=_cab(esc["u_admin"]))
+    r = await http_client.patch(f"/api/v1/business-units/{CODIGO}/disable", headers=_cab(esc["u_admin"]))
+    assert r.status_code == 200, r.text
 
     motor = create_async_engine(test_database_url)
     try:
@@ -231,7 +233,14 @@ async def test_r188_auditoria_de_terminacion_por_ciclo(http_client, test_databas
 
     tipos = {e.action: e for e in eventos}
     assert AuditAction.PERMISSION_CHANGE in tipos, "terminación auditada individualmente"
-    term = tipos[AuditAction.PERMISSION_CHANGE]
+    # GA-GOV-03 · TEST_DEFECT 38 (C6): PostgreSQL no garantiza el orden de lectura sin
+    # `ORDER BY` — en CI el orden físico invirtió los dos eventos y el dict retenía el
+    # de concesión. La terminación se identifica por su semántica (`new_state` «revoked»),
+    # no por su posición, y su unicidad queda afirmada.
+    terminaciones = [e for e in eventos
+                     if e.action == AuditAction.PERMISSION_CHANGE and e.new_state == "revoked"]
+    assert len(terminaciones) == 1, "exactamente una terminación auditada por el ciclo"
+    term = terminaciones[0]
     assert term.previous_state == "granted" and term.new_state == "revoked"
     assert (term.new_values or {}).get("cause") == "company_business_unit_disabled"
     assert (term.new_values or {}).get("target_user_id") == esc["u_op"]
