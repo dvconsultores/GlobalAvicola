@@ -69,6 +69,29 @@ export function serializarParamsDeIncubadora(filas?: any[] | null): any[] {
   return filasConContenido(filas, CAMPOS_CON_CONTENIDO_INCUBADORA)
 }
 
+// ============================================================
+// `R-206` · vacíos del asistente — «cadena vacía de un opcional» ⇒ ausencia
+// ============================================================
+
+/**
+ * `''` ⇒ ausencia, recursivo (objetos y arrays). Conserva lo declarado — texto,
+ * números (incluido el cero) y `null`—; las claves que quedan ausentes se **omiten**
+ * (el contrato canónico no lleva `''` ni `undefined`).
+ */
+export function limpiarVacios(valor: unknown): unknown {
+  if (valor === '') return undefined
+  if (Array.isArray(valor)) return valor.map(limpiarVacios)
+  if (valor && typeof valor === 'object' && Object.getPrototypeOf(valor) === Object.prototype) {
+    const limpio: Record<string, unknown> = {}
+    for (const [clave, v] of Object.entries(valor as Record<string, unknown>)) {
+      const limpioV = limpiarVacios(v)
+      if (limpioV !== undefined) limpio[clave] = limpioV
+    }
+    return limpio
+  }
+  return valor
+}
+
 /** Identificador canónico de una referencia SAP: su código (`doc_number`/`ref_id`/`sap_code`), no el id de UI. */
 export function identificadorDeOrdenSap(orden: any): string {
   if (!orden || typeof orden !== 'object') return ''

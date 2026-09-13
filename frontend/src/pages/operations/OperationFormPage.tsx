@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente } from './operationPayload'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios } from './operationPayload'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -215,7 +215,10 @@ function limpiarNumerosNoFinitos(valor: unknown): unknown {
 
 // El preprocesado normaliza el ENTRANTE (NaN ⇒ ausencia) sin cambiar la forma del formulario:
 // el cast conserva el tipado que el resolver ya usaba para `operacionBase`.
-const operationSchema = z.preprocess(limpiarNumerosNoFinitos, operacionBase) as unknown as typeof operacionBase
+// `R-206`: la cadena vacía de un opcional es ausencia — se compone con la limpieza de
+// `NaN` para que el contrato canónico no lleve `''` (fecha de cuarentena, numéricos como
+// cadena, `sap_document_ref`/`vaccination_route` sin elegir).
+const operationSchema = z.preprocess((v) => limpiarVacios(limpiarNumerosNoFinitos(v)), operacionBase) as unknown as typeof operacionBase
 
 type OperationFormData = z.infer<typeof operationSchema>
 
@@ -1003,11 +1006,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.densityBirdsM2', 'Densidad (aves/m²)')}</label>
- <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
+ <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="22" />
+ <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="22" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
@@ -1029,7 +1032,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
- <input type="number" min="0" {...register('extra_data.transport_duration_min' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
+ <input type="number" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
  </div>
  </div>
  </div>
@@ -1187,11 +1190,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.eggDensity', 'Huevos por bandeja')}</label>
- <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
+ <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="18" />
+ <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="18" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
@@ -1213,7 +1216,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
- <input type="number" min="0" {...register('extra_data.transport_duration_min' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
+ <input type="number" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
  </div>
  </div>
  </div>
@@ -1621,7 +1624,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.incubationDay', 'Día de incubación')}</label>
- <input type="number" min="1" max="21" {...register('extra_data.incubation_day' as any)} className={ic} placeholder="18" />
+ <input type="number" min="1" max="21" {...register('extra_data.incubation_day' as any, { valueAsNumber: true })} className={ic} placeholder="18" />
  </div>
  <div>
  <label className={lc}>{t('operations.qtyTransferred', 'Cantidad transferida')}</label>
@@ -1764,7 +1767,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.fcr', 'FCR (Conversión alimenticia)')}</label>
- <input type="number" step="0.001" {...register('extra_data.fcr' as any)} className={ic} placeholder="2.000" />
+ <input type="number" step="0.001" {...register('extra_data.fcr' as any, { valueAsNumber: true })} className={ic} placeholder="2.000" />
  </div>
  <div>
  <label className={lc}>{t('operations.totalMortality', 'Mortalidad total (%)')}</label>

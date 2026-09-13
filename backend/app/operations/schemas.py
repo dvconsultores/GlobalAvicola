@@ -43,6 +43,19 @@ class PlanDeImportacion(BaseModel):
     quarantine_end_date: Optional[date] = None
     initial_health_inspection: Optional[str] = Field(default=None, max_length=1000)
 
+    @field_validator("reception_condition", "quarantine_end_date", "initial_health_inspection",
+                     "quarantine_days", mode="before")
+    @classmethod
+    def _vacio_es_ausente(cls, valor):
+        """`R-206` · C-02 (A): la cadena vacía de un **opcional** se comporta como ausente.
+
+        Defensa en profundidad — clientes antiguos que aún envían `''` no reciben
+        400 «Input should be a valid date». Los campos obligatorios no se relajan.
+        """
+        if isinstance(valor, str) and valor.strip() == "":
+            return None
+        return valor
+
 
 class EggMovementSchema(BaseModel):
     model_config = {"from_attributes": True}
