@@ -528,7 +528,7 @@ export default function OperationFormPage() {
  <div className={`grid ${showWeight ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} px-1 py-2 border-b border-slate-200`}>
  <span className="text-sm font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
  <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
- {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (kg)')}</span>}
+ {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (g)')}</span>}
  </div>
  {[
  { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
@@ -542,7 +542,7 @@ export default function OperationFormPage() {
  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })}
  className={ic} />
  {showWeight && (
- <input type="number" step="0.001" {...register(`bird_movements.${idx}.avg_weight`, { valueAsNumber: true })}
+ <input type="number" step="1" {...register(`bird_movements.${idx}.avg_weight`, { valueAsNumber: true })}
  className={ic} />
  )}
  </div>
@@ -1770,8 +1770,8 @@ export default function OperationFormPage() {
  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
  </div>
  <div>
- <label className={lc}>{t('operations.avgWeight', 'Peso final prom. (kg)')}</label>
- <input type="number" step="0.001" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} />
+ <label className={lc}>{t('operations.avgWeight', 'Peso final prom. (g)')}</label>
+ <input type="number" step="1" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.fcr', 'FCR (Conversión alimenticia)')}</label>
