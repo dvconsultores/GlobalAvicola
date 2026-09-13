@@ -1,6 +1,6 @@
 # GA · PRE-SAP — COLA DE GATES DEL PROPIETARIO (OWNER GATE QUEUE)
 
-Fecha: 2026-09-13 · Estado de ejecución: **`PROGRAM_EXECUTION_BLOCKED_BY_OWNER_GATE`** · **Único gate inmediato: G-01 (AC-06)**.
+Fecha: 2026-09-13 · Estado de ejecución: **`T1 CLOSED — T2 READY_FOR_EXECUTION`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)**.
 Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no se re-solicitan en bucle. Acciones humanas mínimas y deterministas (§50).
 
 ## G-01 · GA-GOV-03 · AC-06 — Evidencia externa de CI · **INMEDIATO (bloquea todo el programa)**
@@ -14,10 +14,10 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | **Acción mínima** | **A)** Iniciar sesión en GitHub *usted mismo* en la pestaña del navegador integrado de VS Code (el agente lee el run y transcribe lo observado; el agente no maneja credenciales) — **o B)** pegar los 5 valores: `Run URL` · `Run ID` · nombre exacto artefacto backend · nombre exacto artefacto frontend · `timestamp` (YYYY-MM-DD HH:MM ±hh:mm). |
 | **Evidencia exacta** | Run «Quality Suite (push)» del SHA `66be1c1`: URL + ID; conclusión `success`; `backend-suite` `success`; `frontend-suite` `success`; artefactos con nombre exacto; JUnit/log presentes. *(Ya declarados por el propietario: workflow/evento/rama/SHA y las tres conclusiones; siguen pendientes los 5 valores concretos: URL, ID, nombres de artefactos, timestamp.)* |
 | **¿Continúa trabajo independiente?** | **NO** (T2-T13 dependen de T1) |
-| **Estado** | `WAITING_ON_OWNER` |
+| **Estado** | `CLOSED` (2026-09-13 ~17:25 +0200 — run #10 `34764423545` `60e9d9d`: ambas suites verdes; artefactos sha256-verificados) |
 | **Qué desbloquea** | AC-06 PASS → GA-GOV-03 `CLOSED_FUNCTIONALLY_CERTIFIED` → **T1 CLOSED** → QUALITY_GATES_READY = YES → **T2 arranca automáticamente** (fundación de seguridad; OD-13.c ya resuelta — sin decisión pendiente). |
 
-> **Nota (2026-09-13 15:45 +0200 — actualiza las anteriores)** — observación directa (sesión autorizada): **runs en ROJO** (incl. `66be1c1`) ⇒ **AC-06 = FAIL observado** (sin fabricación). **Remediación CI completa (solo workflow)**: backend — `pip install -e` flat-layout ⇒ **C3**; frontend — peer `@testing-library/dom` ausente por `--legacy-peer-deps` (27 fallos; clasificado con el JUnit real del run #1) ⇒ **C4**; ambos pusheados y validados en CI (run #8: `frontend-suite` **VERDE**, 1m28s — primera suite verde). Backend run #7 clasificado: `25F/1192P/58S`, todos por flag SAP ⇒ **C5** (`FEATURE_SAP_ENABLED: "true"` en el paso de suite; A/B local 201→211) pusheado. Run #9 (`34761309595`): C5 ✓ (`1F/1225P/49S`; 24/25 resueltos) · fallo restante = **TEST_DEFECT nº38** (`r188` leía eventos sin `ORDER BY`) ⇒ **C6** (test determinista; local 10/10) ⇒ run #10. **Próximo hito: run #10 con dos suites VERDES ⇒ AC-06 = PASS ⇒ T1 CLOSED.**
+> **Nota (2026-09-13 15:45 +0200 — actualiza las anteriores)** — observación directa (sesión autorizada): **runs en ROJO** (incl. `66be1c1`) ⇒ **AC-06 = FAIL observado** (sin fabricación). **Remediación CI completa (solo workflow)**: backend — `pip install -e` flat-layout ⇒ **C3**; frontend — peer `@testing-library/dom` ausente por `--legacy-peer-deps` (27 fallos; clasificado con el JUnit real del run #1) ⇒ **C4**; ambos pusheados y validados en CI (run #8: `frontend-suite` **VERDE**, 1m28s — primera suite verde). Backend run #7 clasificado: `25F/1192P/58S`, todos por flag SAP ⇒ **C5** (`FEATURE_SAP_ENABLED: "true"` en el paso de suite; A/B local 201→211) pusheado. Run #9 (`34761309595`): C5 ✓ (`1F/1225P/49S`; 24/25 resueltos) · fallo restante = **TEST_DEFECT nº38** (`r188` leía eventos sin `ORDER BY`) ⇒ **C6** (test determinista; local 10/10). **DESENLACE: run #10 `34764423545` (`60e9d9d`) = `Success`** (backend ✅ 21m42s · frontend ✅ 1m22s; artefactos descargados, sha256 == digest) ⇒ **AC-06 = PASS ⇒ G-01 CERRADO ⇒ T1 CLOSED.**
 
 ## Pista OPS (paralela, owner/ops — arrancable ya; bloquea T13, no a T2-T13)
 

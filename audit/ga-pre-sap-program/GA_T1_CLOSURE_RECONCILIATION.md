@@ -14,9 +14,10 @@ Formato §41 del encargo. Commit de implementación `66be1c1` · baseline `e828c
 - **Backend full: 1226 passed · 0 failed · 0 errors · 49 skipped** (20:18; JUnit `tests=1275 failures=0 errors=0`).
 - **Frontend full: 314/314** vitest · TS 0 · build OK (`index-DDCcWL76.js`) · i18n 1041=1041.
 - **Alembic: 1 head `y5z6a7b8c9d0`** · 37 revisiones · 1 base.
-- **CI: configurado** (`Quality Suite (push)`; PG efímero; artefactos). Push `66be1c1` ejecutado; **observación del run = `BLOCKED_EXTERNAL_CI_OBSERVATION`** (entorno sin credenciales GitHub; API anónima 404; equivalente local verde).
-- **Artifact: disponible localmente** (`backend-junit-post-t1.xml`, `vitest-junit-post-t1.xml`, logs en `evidence/`); artefactos CI configurados (`backend-suite-<sha>` / `frontend-suite-<sha>`).
-- **Product changes: 0 / PASS** · **Migration changes: 0 / PASS** · **Deployment changes: 0 / PASS** (`git diff e828c3a..66be1c1`: solo tests, e2e, workflow y audit/**).
-- **Unresolved blocker: AC-06 (verificación externa del run de CI)** — único pendiente; todo lo demás verificado. La spec **no permite** cerrar con `BLOCKED_EXTERNAL` (reconciliado 2026-09-13, micro-tranche AC-06).
-- **GA-GOV-03: `CERTIFICATION_PENDING_AC06`** (resto de AC PASS; sin resultados fabricados; observación externa pendiente).
-- **T1: `PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION`** — `QUALITY_GATES_READY = PARTIAL`; **T2 bloqueada** hasta AC-06 = PASS (verificación exacta del propietario en `GA_GOV_03_CI_EVIDENCE.md §4`).
+- **CI: observado y verde** (`Quality Suite (push)`; PG efímero; artefactos) — observación directa (sesión autorizada del propietario): runs #1-#6 **rojos** (declaración previa contradicha) ⇒ remediación **C3** (`f965e9c` install backend) · **C4** (`b5e39db` peer frontend) · **C5** (`e52cad3` `FEATURE_SAP_ENABLED=true`) · **C6** (`60e9d9d` TEST_DEFECT 38 r188) ⇒ **run #10 `34764423545` (SHA `60e9d9d`) = `Success`**: backend ✅ 21m42s · frontend ✅ 1m22s.
+- **Artifacts: CI verificados** — `backend-suite-60e9d9d…` (JUnit `1275/0/0/49`; log `1226 passed, 49 skipped`) y `frontend-suite-60e9d9d…` (JUnit `314/0`), descargados con **sha256 recomputado == digest publicado**; versionados también en local (`backend-junit-post-t1.xml`, `vitest-junit-post-t1.xml`, logs en `evidence/`). Detalle: `GA_GOV_03_CI_EVIDENCE.md §4`.
+- **TEST_DEFECT 38 (descubierto en CI)**: `test_r188_auditoria_de_terminacion_por_ciclo` leía los eventos de auditoría sin `ORDER BY` (orden no garantizado en PostgreSQL; el dict retenía el último por posición física) — corregido a selección semántica determinista (`new_state == "revoked"`) + unicidad + asserts de contrato (solo test; local `10 passed`).
+- **Product changes: 0 / PASS** · **Migration changes: 0 / PASS** · **Deployment changes: 0 / PASS** (`git diff e828c3a..66be1c1`: solo tests, e2e, workflow y audit/**; `git diff 66be1c1..60e9d9d`: solo workflow (C3/C4/C5), un test (C6) y audit/** (registros)).
+- **Unresolved blocker: ninguno** — AC-06 = **PASS** (run #10, evidencia GitHub observada).
+- **GA-GOV-03: `CLOSED_FUNCTIONALLY_CERTIFIED`** (37/37 + AC-06 PASS con artefactos verificados).
+- **T1: CLOSED** — `QUALITY_GATES_READY = YES`; **T2 = READY_FOR_EXECUTION** (arranca automáticamente; `OD-13.c` ya resuelta).

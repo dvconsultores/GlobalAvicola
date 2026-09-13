@@ -1,6 +1,6 @@
 # GA · PRE-SAP — ESTADO DEL PROGRAMA (TRANCHE 0 · cierre)
 
-Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **remediación no iniciada — programa listo para arrancar en T1**.
+Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS observado) — T2 en arranque automático**.
 
 ## 1 · KPI del programa
 
@@ -11,11 +11,11 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Otras brechas abiertas | 10 (7 P2 no bloqueantes + 3 P3, incl. R-214) | cerradas o aceptadas |
 | Heredados que bloquean/condicionan | 36 filas (incl. 4 sin spec: Wave C P1 + condicionales por decisión) | resueltos por decisión/rider |
 | Suites | **0 rojos** — backend 1226/0/0/49 (JUnit) · Playwright 129/0 · vitest 314/314 | mantenido en cada tranche |
-| CI de tests | `Quality Suite (push)` publicado (PG efímero + vitest; artefactos JUnit/log). **AC-06 pendiente**: observación del run `66be1c1` externamente bloqueada en este entorno | verificación del propietario en GitHub (`GA_GOV_03_CI_EVIDENCE.md §4`) |
+| CI de tests | `Quality Suite (push)` **VERDE observado** — run #10 `34764423545` (`60e9d9d`): backend ✅ 21m42s + frontend ✅ 1m22s; artefactos descargados y sha256-verificados (1226/0/0/49 · 314/0). Historial honesto: runs #1-#9 rojos hasta C3/C4/C5/C6 | mantenido en cada push (`GA_GOV_03_CI_EVIDENCE.md §4`) |
 | Certificaciones con artefacto | informes históricos anotados `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`; plantilla de evidencia vigente | nuevas certificaciones con commit+artefacto (regla ya aplicada a T1) |
 | UAT con evidencia primaria | 0 de 11 registros + 2 pendientes | 8 lotes finales completos |
 | Decisiones del propietario pendientes (alcance actual) | 14 (+4 por tranche según roadmap) | registradas antes de su tranche |
-| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = `PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION`** (pendiente AC-06); T2-T13 + Pista OPS planificadas | todas cerradas |
+| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = READY_FOR_EXECUTION**; T3-T13 + Pista OPS planificadas | todas cerradas |
 | Veredicto pre-SAP | `NO_GO_SAP_FUNCTIONAL_GAPS` (sin cambios) | GO/NO-GO final en T13 |
 
 ## 2 · Estado por tranche
@@ -23,12 +23,12 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Tranche | Estado | Nota |
 |---|---|---|
 | T0 · Cierre de auditoría + programa | **CERRADA** (`e828c3a`, 2026-09-13) | 15 documentos del programa + correcciones D-03 |
-| T1 · GA-GOV-03 | **`PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION`** (`66be1c1`/`e0458b7`, 2026-09-13) | 37/37; suites verdes; CI push publicado; **AC-06 pendiente de verificación del propietario** ⇒ `CERTIFICATION_PENDING_AC06` |
+| T1 · GA-GOV-03 | **CERRADA** (2026-09-13) | 38/38 TEST_DEFECT (37 + nº38 hallado en CI); suites verdes en local **y en CI** (run #10 `34764423545`, `60e9d9d`); **AC-06 = PASS** (artefactos sha256-verificados) ⇒ `CLOSED_FUNCTIONALLY_CERTIFIED` |
 | T2-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
 
 ## 3 · NEXT_IMPLEMENTATION_TRANCHE (§52) — siguiente tras T1
 
-**GATE**: T2 solo es autorizable cuando **AC-06 = PASS** (observación del run de `66be1c1` en GitHub: enlace + jobs verdes + artefactos). La spec **no admite** cierre con `BLOCKED_EXTERNAL`. Verificación exacta para el propietario: `GA_GOV_03_CI_EVIDENCE.md §4`.
+**GATE SATISFECHO**: **AC-06 = PASS** (run #10 `34764423545`, `60e9d9d`: enlace + ambos jobs verdes + artefactos con sha256 verificado; `GA_GOV_03_CI_EVIDENCE.md §4.2`) ⇒ **T2 AUTORIZADA — arranca a continuación** (autorización autónoma vigente).
 
 - **ID**: `T2` · **Nombre**: Fundación de seguridad y sesión (auth/roles/permisos).
 - **Specs**: `R-199` · `R-200` · `R-202` · `R-208` (+ rider `GA-REM-003 AC04` — logout con revocación).
@@ -51,7 +51,7 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 ## 4 · Repositorio y siguiente paso
 
 - Material del programa: `audit/ga-pre-sap-program/` (T0 + T1 + registros de ejecución autónoma) + correcciones D-03 en el paquete de auditoría; **producto diff acumulado = 0**.
-- Tras el cierre de T1: **STOP** hasta `AC-06 = PASS`. Con la autorización autónoma vigente (prompt maestro del propietario, 2026-09-13), **T2 arranca automáticamente al cerrarse T1** (criterio de salida definido arriba).
+- T1 cerrada con AC-06 = PASS observado. Con la autorización autónoma vigente (prompt maestro del propietario, 2026-09-13), **T2 arranca automáticamente** (criterio de salida definido arriba).
 
 ## 5 · Ejecución autónoma (2026-09-13 06:08 +0200) — `PROGRAM_EXECUTION_BLOCKED_BY_OWNER_GATE`
 
@@ -62,3 +62,4 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 - **Registros**: `GA_AUTONOMOUS_EXECUTION_LEDGER.md` (AE-01…AE-05; AE-05 = continuación 06:19-06:21 sin sesión disponible) · `GA_OWNER_GATE_QUEUE.md` (G-01…G-05 + programados §25). Commit docs-only sobre `a3b53a8`.
 - Sin cambios de producto/tests/CI/migraciones; KPI `0/17` sin cambio; veredicto `NO_GO_SAP_FUNCTIONAL_GAPS` sin cambio.
 - **Actualización (2026-09-13 15:45 +0200) — AC-06 observado + remediación CI completa**: los runs están **ROJOS** (incl. `66be1c1`) ⇒ **AC-06 = FAIL observado**. Causas clasificadas y corregidas (solo `.github/workflows/quality-suite.yml`): backend — `pip install -e` flat-layout ⇒ **C3**; frontend — peer `@testing-library/dom` ausente por `--legacy-peer-deps` (27 fallos reales del run #1) ⇒ **C4** (**validado: run #8, `frontend-suite` VERDE**). Backend run #7: `25F/1192P/58S` — todos por flag SAP ausente ⇒ **C5** (`FEATURE_SAP_ENABLED=true`; A/B local 201→211) pusheado. Run #9: C5 ✓ (`1F/1225P/49S`; 24/25) · resto = **TEST_DEFECT nº38** (`r188`, orden de lectura) ⇒ **C6** (test determinista; local 10/10). Con el run #10 VERDE ⇒ AC-06 = PASS ⇒ T1 cierra. Producto/migraciones sin cambio (C6: solo test).
+- **Cierre (2026-09-13 ~17:25 +0200) — RUN #10 VERDE ⇒ T1 CERRADA**: run #10 `34764423545` (`60e9d9d`, C6) = `Success` (backend ✅ 21m42s · frontend ✅ 1m22s); artefactos descargados y **sha256 recomputado == digest de GitHub** (backend JUnit `1275/0/0/49`; frontend `314/0`). **AC-06 = PASS** ⇒ GA-GOV-03 `CLOSED_FUNCTIONALLY_CERTIFIED` ⇒ **T1 CLOSED** ⇒ `QUALITY_GATES_READY = YES` ⇒ **T2 READY_FOR_EXECUTION (arranque automático)**. KPI de procesos sin cambio: **0/17**.

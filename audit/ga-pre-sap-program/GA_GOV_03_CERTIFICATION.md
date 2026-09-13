@@ -6,7 +6,7 @@
 
 - **Spec**: `GA-GOV-03` (paquete completo ×6: FINDING/SPEC/CLARIFICATIONS/PLAN/AC/RED-E2E-UAT).
 - **Baseline congelada**: `e828c3a` — backend `1201/25/49`; Playwright `117/12`; RED dirigido documentado.
-- **Commit de implementación**: `66be1c1` (`GA-GOV-03 C1`). **Producto: 0.**
+- **Commit de implementación**: `66be1c1` (`GA-GOV-03 C1`); **commits de remediación CI**: `f965e9c` (C3) · `b5e39db` (C4) · `e52cad3` (C5) · `60e9d9d` (C6 = commit de cierre CI, run #10). **Producto: 0.**
 
 ## 2 · Contabilidad 37/37
 
@@ -38,11 +38,11 @@
 | TypeScript / build / i18n | 0 / OK / 1041=1041 | id. |
 | Alembic | 1 head `y5z6a7b8c9d0` · 37 revisiones | comando directo |
 
-## 5 · CI
+## 5 · CI — observada y verde (2026-09-13)
 
-- Workflow `Quality Suite (push)` **publicado** (`quality-suite.yml`): backend (pgserver efímero) + vitest, con artefactos JUnit+log; **independiente** del deploy (sin `needs:`, EX-01 intacto).
-- Push ejecutado (`66be1c1`); el run queda disparado por construcción.
-- **AC-GOV03-06 = `BLOCKED_EXTERNAL_CI_OBSERVATION`** — reconfirmado en la micro-tranche AC-06 (2026-09-13): sin `gh`/token; API anónima 404; navegador sin sesión autenticada. La spec **no admite excepción** por bloqueo externo ⇒ la certificación queda **`CERTIFICATION_PENDING_AC06`** hasta la observación real del run (`GA_GOV_03_CI_EVIDENCE.md §4` — instrucciones exactas para el propietario).
+- Workflow `Quality Suite (push)` (`quality-suite.yml`): backend (pgserver efímero) + vitest con artefactos JUnit+log; **independiente** del deploy (sin `needs:`, EX-01 intacto).
+- **Observación directa (sesión autorizada del propietario)**: la primera declaración quedó **contradicha** (runs #1-#6 rojos) ⇒ remediación C3/C4/C5 (solo workflow) + C6 (TEST_DEFECT 38, solo test) ⇒ **run #10 `34764423545` (SHA `60e9d9d`) = `Success`** con `backend-suite` ✅ (21m42s) y `frontend-suite` ✅ (1m22s); artefactos descargados y **sha256 recomputado == digest publicado** (JUnit: 1275/0/0/49 backend · 314/0 frontend). Detalle completo: `GA_GOV_03_CI_EVIDENCE.md §4`.
+- **AC-GOV03-06 = PASS.**
 
 ## 6 · AC (12/12 con una salvedad externa)
 
@@ -53,7 +53,7 @@
 | AC-GOV03-03 sin diff `backend/app` | **PASS** (0) |
 | AC-GOV03-04 sin diff `frontend/src` | **PASS** (0) |
 | AC-GOV03-05 job de suite en push sin gate del deploy | **PASS** (workflow independiente) |
-| AC-GOV03-06 run real verde sobre el commit de cierre | **`BLOCKED_EXTERNAL_CI_OBSERVATION`** — la spec no contempla excepción ⇒ **pendiente** hasta la verificación del propietario (enlace del run + artefactos) |
+| AC-GOV03-06 run real verde sobre el commit de cierre | **PASS** (run #10 `34764423545`, `60e9d9d`: ambas suites verdes + artefactos verificados; `GA_GOV_03_CI_EVIDENCE.md §4.2`) |
 | AC-GOV03-07 regla «no GREEN por declaración» | **PASS** (`CERTIFICATION_EVIDENCE_TEMPLATE.md`) |
 | AC-GOV03-08 backlog/INDEX reconciliados | **PASS** (`R-189`, `GA-UAT-09`, `OD-21…25`, `GA-REM-016`) |
 | AC-GOV03-09 guardas temporales/Alembic | **PASS** |
@@ -61,10 +61,10 @@
 | AC-GOV03-11 p11 aislamiento con empresa del contexto | **PASS** (concesión AC-B01 añadida al fixture) |
 | AC-GOV03-12 certificación cita commit+comandos+logs+run | **PASS** (run: externamente bloqueado, citado como tal) |
 
-## 7 · Verdicto (reconciliado en la micro-tranche AC-06, 2026-09-13)
+## 7 · Verdicto (cierre 2026-09-13, tras run #10 verde)
 
-- **GA-GOV-03 = `CERTIFICATION_PENDING_AC06`** — 36/37 criterios cumplidos (AC-01…05 y 07…12 PASS); **AC-06** exige run real observado (enlace + artefacto) y la spec **no contempla excepción** por bloqueo externo ⇒ **no puede declararse `CLOSED_FUNCTIONALLY_CERTIFIED` hasta la observación**.
-- **T1 = `PARTIAL / BLOCKED_EXTERNAL_CI_OBSERVATION`** — todo lo ejecutable está verde y evidenciado; falta la verificación externa.
-- **`QUALITY_GATES_READY = PARTIAL`** — suite fiable y CI configurado; pendiente la confirmación del run en GitHub.
-- **T2 no es autorizable** hasta AC-06 = PASS (gate del programa).
+- **GA-GOV-03 = `CLOSED_FUNCTIONALLY_CERTIFIED`** — 37/37 casos reconciliados + **AC-06 = PASS** con evidencia observada (run #10; artefactos con sha256 verificado). Nota: en la observación real se descubrió y corrigió un **TEST_DEFECT nº38** (r188, orden de lectura) — la corrección no cambia aserciones de contrato, las hace deterministas.
+- **T1 = CLOSED** — suite backend 1226/0/0/49 y vitest 314/314, ambas en local **y** en CI (run #10), con artefactos versionados y verificados.
+- **`QUALITY_GATES_READY = YES`** — la suite es fiable, corre en cada push y su resultado queda como artefacto por run/SHA.
+- **T2 = READY_FOR_EXECUTION** (fundación de seguridad; `OD-13.c` ya resuelta) — arranca automáticamente según la autorización autónoma vigente.
 - Sin efecto sobre procesos: **0/17** (T1 es gobernanza; la recertificación E2E es T12).

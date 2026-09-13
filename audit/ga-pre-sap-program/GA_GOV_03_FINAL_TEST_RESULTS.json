@@ -4,6 +4,7 @@
   "date": "2026-09-13",
   "baseline_commit": "e828c3a0c1507aaae3a407432764f6df0757e414",
   "final_commit": "66be1c15d8c299e2746faf6b5f90fec77b9bc758",
+  "ci_closure_commit": "60e9d9de7cd420ab3ed525477728cfa48f0468e5",
   "alembic_head": "y5z6a7b8c9d0",
   "alembic_heads_count": 1,
   "alembic_revisions": 37,
@@ -53,20 +54,41 @@
     "file": ".github/workflows/quality-suite.yml",
     "trigger": "push",
     "push_sha": "66be1c15d8c299e2746faf6b5f90fec77b9bc758",
-    "observed": false,
-    "status": "BLOCKED_EXTERNAL_CI_OBSERVATION",
-    "reason": "gh CLI no disponible; sin GITHUB_TOKEN; API anónima 404 (repositorio privado)",
-    "artifacts_configured": ["backend-suite-<sha>", "frontend-suite-<sha>"],
-    "local_equivalence": "PASS (misma lógica ejecutada localmente; JUnit+logs versionados)"
+    "observed": true,
+    "status": "PASS",
+    "closure_run": {
+      "number": 10,
+      "id": 34764423545,
+      "url": "https://github.com/dvconsultores/GlobalAvicola/actions/runs/34764423545",
+      "sha": "60e9d9de7cd420ab3ed525477728cfa48f0468e5",
+      "conclusion": "Success",
+      "total_duration": "21m 46s",
+      "backend_job": { "id": 103742748829, "result": "completed successfully", "duration": "21m 42s" },
+      "frontend_job": { "id": 103742748997, "result": "completed successfully", "duration": "1m 22s" },
+      "artifacts": {
+        "backend": { "name": "backend-suite-60e9d9de7cd420ab3ed525477728cfa48f0468e5", "id": 10321140011, "size": "29.6 KB", "sha256": "bae675f2a3286f3385920ecb33efb3e086960fd421dda459b1b01ad88015438d", "downloaded_sha256_match": true, "junit": "tests=1275 failures=0 errors=0 skipped=49", "log": "1226 passed, 49 skipped in 1275.94s" },
+        "frontend": { "name": "frontend-suite-60e9d9de7cd420ab3ed525477728cfa48f0468e5", "id": 10319729148, "size": "17 KB", "sha256": "46dff85b0486a9cde77f57feacc6de7b4c8f9a271ec8ddb1a23ea565036f276a", "downloaded_sha256_match": true, "junit": "tests=314 failures=0", "log": "Test Files 44 passed (44)" }
+      }
+    },
+    "remediation_commits": {
+      "C3_backend_install": "f965e9c",
+      "C4_frontend_peer": "b5e39db",
+      "C5_feature_sap_enabled": "e52cad3",
+      "C6_test_defect_38_r188": "60e9d9d"
+    },
+    "observed_failed_runs": ["34736026774", "34736137140", "34736367334", "34737396643", "34737731264", "34737937732", "34759922772", "34760530428", "34761309595"],
+    "test_defects_fixed_total": 38,
+    "local_equivalence": "PASS (1226/0/0/49 backend; 314/314 vitest; idéntico al run #10)"
   },
   "product_diff": 0,
   "migration_diff": 0,
   "deployment_policy_diff": 0,
   "outside_ga_gov_03_failures": [],
   "verdict": {
-    "ga_gov_03": "CERTIFICATION_PENDING_AC06",
-    "t1": "PARTIAL_BLOCKED_EXTERNAL_CI_OBSERVATION",
-    "quality_gates_ready": "PARTIAL",
-    "owner_verification_required": "GitHub Actions → 'Quality Suite (push)' → run del SHA 66be1c1 (push) → confirmar conclusion verde + jobs backend-suite/frontend-suite + artefactos backend-suite-66be1c1 / frontend-suite-66be1c1 (con ello AC-06=PASS)"
+    "ga_gov_03": "CLOSED_FUNCTIONALLY_CERTIFIED",
+    "t1": "CLOSED",
+    "quality_gates_ready": "YES",
+    "ac_06": "PASS",
+    "next": "T2 (READY_FOR_EXECUTION) — arranque automático según autorización autónoma vigente"
   }
 }

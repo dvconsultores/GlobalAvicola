@@ -1,0 +1,53 @@
+{
+  "artifact": "ci-run",
+  "tranche": "T1 · GA-GOV-03 · AC-06",
+  "captured_by": "AGENT_OBSERVED_GITHUB_EVIDENCE (sesión autorizada del propietario, navegador integrado de VS Code)",
+  "date": "2026-09-13",
+  "run": {
+    "number": 10,
+    "id": 34764423545,
+    "url": "https://github.com/dvconsultores/GlobalAvicola/actions/runs/34764423545",
+    "sha": "60e9d9de7cd420ab3ed525477728cfa48f0468e5",
+    "commit_subject": "GA-GOV-03 C6 (TEST_DEFECT 38): seleccion determinista del evento de terminacion en r188 (ORDER BY no garantizado) + ledger AE-09",
+    "trigger": "push",
+    "triggered_at": "2026-09-13 17:02 +0200",
+    "conclusion": "Success",
+    "total_duration": "21m 46s",
+    "jobs": {
+      "backend": { "name": "Backend · suite completa (pgserver efímero)", "id": 103742748829, "conclusion": "completed successfully", "duration": "21m 42s" },
+      "frontend": { "name": "Frontend · vitest (JUnit + log)", "id": 103742748997, "conclusion": "completed successfully", "duration": "1m 22s" }
+    },
+    "artifacts": {
+      "backend": {
+        "name": "backend-suite-60e9d9de7cd420ab3ed525477728cfa48f0468e5",
+        "id": 10321140011,
+        "size": "29.6 KB",
+        "github_digest_sha256": "bae675f2a3286f3385920ecb33efb3e086960fd421dda459b1b01ad88015438d",
+        "downloaded_sha256": "bae675f2a3286f3385920ecb33efb3e086960fd421dda459b1b01ad88015438d",
+        "sha256_match": true,
+        "junit_totals": { "tests": 1275, "failures": 0, "errors": 0, "skipped": 49 },
+        "log_summary": "1226 passed, 49 skipped, 17 warnings in 1275.94s"
+      },
+      "frontend": {
+        "name": "frontend-suite-60e9d9de7cd420ab3ed525477728cfa48f0468e5",
+        "id": 10319729148,
+        "size": "17 KB",
+        "github_digest_sha256": "46dff85b0486a9cde77f57feacc6de7b4c8f9a271ec8ddb1a23ea565036f276a",
+        "downloaded_sha256": "46dff85b0486a9cde77f57feacc6de7b4c8f9a271ec8ddb1a23ea565036f276a",
+        "sha256_match": true,
+        "junit_totals": { "tests": 314, "failures": 0, "errors": 0, "skipped": 0 },
+        "log_summary": "Test Files 44 passed (44)"
+      }
+    }
+  },
+  "remediation_history": {
+    "failed_runs_observed": {
+      "34736026774": { "sha": "66be1c1", "note": "backend install roto (C3); frontend 27 MODULE_NOT_FOUND (C4)" },
+      "34759922772": { "sha": "f965e9c", "note": "install OK; 25F/1192P/58S — flag SAP (C5)" },
+      "34761309595": { "sha": "e52cad3", "note": "1F/1225P/49S — C5 validado 24/25; resto TEST_DEFECT 38 (C6)" }
+    },
+    "commits": { "C3": "f965e9c", "C4": "b5e39db", "C5": "e52cad3", "C6": "60e9d9d" }
+  },
+  "ac_06": "PASS",
+  "notes": "Lectura directa de la página del run y descarga de artefactos vía URL firmada de GitHub Actions; digests recomputados localmente coinciden con los publicados. Sin datos fabricados; la historia incluye los runs rojos previos."
+}

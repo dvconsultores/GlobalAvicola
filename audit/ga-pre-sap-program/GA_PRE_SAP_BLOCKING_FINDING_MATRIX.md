@@ -18,7 +18,7 @@ Leyenda superficies: FE=frontend · BE=backend · INT=integración FE-BE · SEC=
 | R-191 | Transición de fase envía `phase_code` vs `lot_id`+`phase_id` (422 consola) | Ciclo de fases | FE·INT·(BE ok) | P-11 | — | GA-PRE-SAP | **SÍ** | T5 |
 | R-190 | BR-08 en lotes sin galpón (10 tipos de evento) — helper `resolverUbicacionDelEvento` | Eventos producción | FE·INT·(BE ok) | P-01/P-03 | — | GA-PRE-SAP | **SÍ** | T4 |
 | R-205 | BR-20 inalcanzable por navegación natural (`?type=`→`stage=null`→400) | Recepción reproductoras | FE·INT·(BE ok) | P-03 (recepción) | — | GA-PRE-SAP | **SÍ** | T4 |
-| ~~GA-GOV-03~~ | **T1 ejecutada (2026-09-13, `66be1c1`): 37/37 corregidos; suites verdes; CI `push` publicado** — estado final **`CERTIFICATION_PENDING_AC06`** (AC-06 exige observación real del run; la spec no admite excepción externa) | Gobernanza/calidad | GOV | — | OD-16 · OD-23 (aplicadas) | GA-GOV-03 | hasta AC-06 = PASS | **PENDIENTE AC-06** |
+| ~~GA-GOV-03~~ | **T1 CERRADA (2026-09-13): 37/37 + TEST_DEFECT 38 (r188, hallado en CI) corregidos; suites verdes en local y en CI; AC-06 = PASS con run #10 `34764423545` (`60e9d9d`) verde y artefactos sha256-verificados** | Gobernanza/calidad | GOV | — | OD-16 · OD-23 (aplicadas) | GA-GOV-03 | — | **CLOSED** |
 
 ### A.2 · P2 — bloqueantes (15)
 
@@ -64,7 +64,7 @@ Leyenda superficies: FE=frontend · BE=backend · INT=integración FE-BE · SEC=
 
 P0=0 · **P1=9** · **P2 bloqueantes=15** · P2 no bloqueantes=7 · P3=3 · **Total=34** · Con paquete de spec: 32/34; sin paquete: R-214 (backlog) y R-217 (compacto SAP-fase, sí tiene) — precisión: solo R-214 sin carpeta.
 
-**Estado post-T1 (2026-09-13)**: GA-GOV-03 **ejecutada y pendiente solo de AC-06** (observación externa del run, sin excepción en la spec) — de las 9 P1, **8 abiertas de producto**; el resto de conteos sin cambio (los hallazgos de producto se cierran en sus tranches T2+).
+**Estado post-T1 (2026-09-13)**: GA-GOV-03 **CERRADA** (AC-06 = PASS observado; run #10 `34764423545` verde, artefactos sha256-verificados) — de las 9 P1, **8 abiertas de producto**; el resto de conteos sin cambio (los hallazgos de producto se cierran en sus tranches T2+).
 
 ## B · Hallazgos heredados (71 filas) — disposición en el programa
 
