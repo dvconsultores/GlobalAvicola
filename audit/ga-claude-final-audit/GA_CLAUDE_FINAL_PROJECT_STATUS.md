@@ -9,7 +9,7 @@ ENTRY
   Repository:            https://github.com/dvconsultores/GlobalAvicola (origin sin cambios)
   Branch:                main
   HEAD start:            c0b4afc36a49ede241ef36aaec4da22f59208006 (GA-F01 C3, 2026-09-13 00:35 +0200)
-  HEAD final:            == HEAD start + commits de auditoría (solo documentación; ver §GIT)
+  HEAD final:            6c090788161a8fd808441f71385818d9ae3eb1f8 (commit de auditoría, solo audit/**; ver §GIT)
   Remote:                origin/main == c0b4afc al inicio (fetch por SSH, sin modificar origin)
   Runtime:               https://avicola.globaldv.net · /health 200 · /api/v1/me 200
   Frontend generation:   assets/index-DDCcWL76.js · sha256 d049408a… == build local de HEAD
@@ -269,6 +269,6 @@ STOP: YES
 
 ## 6 · Nota de cierre (GIT)
 
-- Commit de auditoría: ver `git log -1 --format=%H` tras el push (primer commit de esta serie).
-- Segundo commit: nota de cierre con el hash (documental).
-- `origin` sin cambios; `git ls-remote` verificado; `local == remote`; worktree limpio (solo `audit/**`).
+- Commit de auditoría: **`6c090788161a8fd808441f71385818d9ae3eb1f8`** («GA-CLAUDE FINAL AUDIT pre-SAP…»; 259 ficheros, +28 318 líneas; solo `audit/**`; producto diff 0) — pusheado a `origin/main`.
+- Segundo commit: **nota de cierre** (este documento con el hash; ver `git log -1` tras el push).
+- `origin` sin cambios; `git ls-remote origin main` devolvió el mismo hash del commit de auditoría; `local == remote`; worktree limpio (todo `audit/**` commiteado).
