@@ -15,7 +15,7 @@ Auditor: Claude (independiente) · Fecha: 2026-09-13 · Modo: AUDITORÍA + RECON
 | Generación frontend | `assets/index-DDCcWL76.js` sha256 `d049408a1c7def0d7ebfeb9a9013465c3f5b4d0c47483bd3b326419c39fed60d` **== `npm run build` local de HEAD** (JS/CSS/HTML idénticos) | build + sha256 |
 | Generación backend | marcadores C2d vivos: `POST /operations {feed_movements:[{}]}` ⇒ 422 · `GET /operations/100` ⇒ 200 (lectura tolerante) | sondas |
 | Paridad repo/runtime | **PASS** (sin despliegue obsoleto) | — |
-| Alembic | 38 revisiones · cabeza única `y5z6a7b8c9d0` (código y base de pruebas) | `run_tests.sh` |
+| Alembic | 37 revisiones · cabeza única `y5z6a7b8c9d0` (código y base de pruebas) · corrección D-03 (la cifra previa «38» contaba la entrada `__pycache__` del directorio) | `run_tests.sh` |
 | Commits intermedios | 126 commits desde 2026-09-10; **39** tocan producto (`backend/app`, `frontend/src`); 32 desde la última suite completa documentada (tranche 14, `8a9f3cc`) | `git log` |
 
 ## 2 · Reconstrucción del estado del programa (según el repositorio)

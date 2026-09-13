@@ -43,7 +43,7 @@ Auditoría independiente Claude · 2026-09-13 · HEAD `c0b4afc` (== `origin/main
 
 ### 1.3 Base de datos (§61)
 
-Alembic: 38 revisiones, cabeza única `y5z6a7b8c9d0` (código y base de pruebas); entrada ejecuta `alembic upgrade head`; sin drift detectado; restrictivas presentes (unicidades globales de `lot_code`/`username`/`email`/`idempotency_key` → oráculo P3 GAP-15). Dos guardas de test fijadas a `x4y5z6a7b8c9` (GA-GOV-03 grupo C). **Sin blocker de esquema**; `R-164` (`lots.company_id` nulable) queda condicional a una consulta de datos no ejecutada (UNKNOWN).
+Alembic: 37 revisiones (D-03), cabeza única `y5z6a7b8c9d0` (código y base de pruebas); entrada ejecuta `alembic upgrade head`; sin drift detectado; restrictivas presentes (unicidades globales de `lot_code`/`username`/`email`/`idempotency_key` → oráculo P3 GAP-15). Dos guardas de test fijadas a `x4y5z6a7b8c9` (GA-GOV-03 grupo C). **Sin blocker de esquema**; `R-164` (`lots.company_id` nulable) queda condicional a una consulta de datos no ejecutada (UNKNOWN).
 
 ## 2 · Scorecard basado en evidencia (§68)
 
