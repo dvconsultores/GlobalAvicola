@@ -134,3 +134,8 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **GREEN**: dirigido **21/21** (R-200 9/9 + R-199 12/12; `green_r200_c2.log`); **suite completa `1247 passed / 0 failed / 49 skipped`** (18m56s; `full_suite_c2.log`; +9 = la suite nueva). Sin cambios frontend.
 - **Runtime pre-fix capturado** (`evidence/r200/runtime-prefix.json`, 2026-09-13 20:04:52 +0200): E2E-01/02 = **200** (el refresh autenticaba en producción); pendiente sondas post-deploy.
 - **Siguiente**: push → deploy EX-01 → sondas post-fix (esperado `401` en E2E-01/02; `200` en E2E-03/04) → `GA_CLAUDE_R200_RUNTIME_CERTIFICATION.md` → R-202 C1.
+
+## AE-17 · 2026-09-13 (noche-5) · R-202 C1 — RED ✅ (3 rojas por el defecto · 2 controles)
+
+- **Nuevo** `backend/tests/test_r202_password_reset_scope.py` (fixture `esc202`, PREFIJO `R202-`; super sin contexto / super situado / admin de empresa × 2 empresas). **Verificado local: 3 rojas por el defecto** — RED-01: el super **sin contexto** restablece por API (**204**; debe ser 4xx fail-closed); RED-03: el admin de empresa con `users:update` **no puede** restablecer en su empresa (**403**; debe ser 204); RED-06: sin reset legítimo no hay asiento con la empresa efectiva del actor — **y 2 controles verdes** (CTL-02 super situado → 204; CTL-04 cross-company → 403). Evidencia: `evidence/r202/red_c1.log`.
+- **Siguiente**: C2 (`_usuario_alcanzable` + `tiene_permiso(users: update)` en `change_password`; auditoría con empresa efectiva) → GREEN 5/5 → suite completa → C3 runtime (misma necesidad de actores que R-199: **G-06**) → certificación.
