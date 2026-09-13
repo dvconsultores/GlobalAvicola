@@ -196,3 +196,23 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Inventario §12**: house=0 · line=0 · curve=0 filas cruzadas en la BD de pruebas (solo lectura, tras la suite).
 - **Suite completa conjunta** (fix de guarda R-201 + R-203 + todo lo anterior): **`1278 passed / 0 failed / 49 skipped`** (20:14; `evidence/r203/full_suite_c2.log`).
 - **Siguiente**: R-204 (+R-216) C1 → luego R-221 (rider; **AOD-13** encolada) → certificación T3.
+
+## AE-25 · 2026-09-14 · R-204 CERRADA (CLOSED_TECHNICALLY) — suite 1284/0/49
+
+- **C1** `ca1fa39` (RED 4F/2P: agregados incubadora sumaban unidad no concedida; alertas con lote ajeno; unidad apagada seguía sumando) · **C2** `c1a21bd`: `_filtro_de_lotes()` aplicado a todos los sumatorios de `get_kpi_hatchery` (helpers con parámetro `lotes`) y `_get_active_alerts` con `lot_id.in_(_lotes)` + fail-closed; `route_scope` de `/reports/kpis/hatchery` retirado con nota razonada (C-03).
+- **GREEN** dirigido 53/53 · **S1** (sin predicado ⇒ 3F) · **S2** (alertas sin filtro ⇒ 1F) · **suite completa** `1284 passed / 0 failed / 49 skipped` (1137.13s; `evidence/r204/full_suite_c2.log`).
+- **Siguiente**: R-216 C1/C2 (mismo panel) — luego certificación T3.
+
+## AE-26 · 2026-09-14 · R-216 CERRADA (CLOSED_TECHNICALLY) — contrato de claves
+
+- **C1** `074ee0a` (RED 1F/1P: claves `BirdTypeEnum.*` vs valores; control de suma verde) · **C2** `1ba1b11`: `row.bird_type.value` en `_get_lots_by_type` (las cuatro tarjetas del panel volvían 0 con la suma correcta); `test_kpi_scope` endurecido de substring a claves exactas (el substring dejaba pasar el defecto).
+- **GREEN** dirigido 49/49 · **S1** (restaurar `str()` ⇒ 2F) · **S2** (`.name` ⇒ 2F) · evidencia `evidence/r216/`.
+- **T3**: R-201/R-203/R-204/R-216 cerradas técnicamente; **R-221** en curso (C1 RED escrito; AC-04 espera **AOD-13**); suite final T3 en ejecución al cierre de esta entrada.
+
+## AE-27 · 2026-09-14 · T3 CERRADA TÉCNICAMENTE + R-221 parcial (rider)
+
+- **Suite completa T3**: **`1286 passed / 0 failed / 49 skipped`** (1171.11s, tip `1ba1b11`; `evidence/t3/full_suite_t3.log`) — R-201/R-203/R-204/R-216 incluidos.
+- **R-221 C1** `8126f97`: RED 3F/2P — con `hatchery` apagada la autoridad global registraba **201**; sin concesión, 201; con concesión, `business_unit_id` NULL. Controles verdes (statu quo C-02 fijado; evento con lote intacto).
+- **R-221 C2** `b056ef1`: lista explícita `UNIDAD_POR_TIPO_INEQUIVOCO` (grandparent·hatchery) → guarda estricta (`OD-16.e`/`OD-09`) + atribución al nacer (`business_unit_id` = habilitación) para `hatchery_inspection` sin lote; importación intacta (R-153). GREEN 134/134 con regresión BU/clasificación/R-153; S1 (sin atribución) 1F · S2 (sin guarda) 2F.
+- **Lecciones del ciclo**: (1) fixture de test de integración **exige `s.commit()`** antes del `yield` — su ausencia revirtió usuarios y dio 401 «Usuario no encontrado o inactivo» (diagnóstico por message-match, no por sospecha); (2) enum en SQL = **mayúsculas** (`'HATCHERY_INSPECTION'`), no el valor del miembro — mismo tropiezo que la lección de R-201, ahora aplicada a queries de conteo.
+- **T3**: certificación `GA_T3_CERTIFICATION.md` (CLOSED_TECHNICALLY) · **AOD-13** único pendiente (AC-04 de R-221) · T4 (R-190 + R-205) habilitada sin dependencia.

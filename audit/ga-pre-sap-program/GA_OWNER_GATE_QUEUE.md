@@ -1,6 +1,6 @@
 # GA · PRE-SAP — COLA DE GATES DEL PROPIETARIO (OWNER GATE QUEUE)
 
-Fecha: 2026-09-13 · Estado de ejecución: **`T1 CLOSED — T2 READY_FOR_EXECUTION`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)** · **G-06 encolado (credenciales runtime T2 — no bloquea C1/C2 locales)**.
+Fecha: 2026-09-13 · Estado de ejecución: **`T1 CLOSED — T2 CLOSED — T3 IN_PROGRESS`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)** · **G-06 encolado (credenciales runtime — bloquea C3 de R-199/R-201/R-202/R-203/R-204)** · **AOD-13 accionable (único pendiente para cerrar T3: rider R-221)**.
 Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no se re-solicitan en bucle. Acciones humanas mínimas y deterministas (§50).
 
 ## G-01 · GA-GOV-03 · AC-06 — Evidencia externa de CI · **INMEDIATO (bloquea todo el programa)**
@@ -65,24 +65,24 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | **¿Continúa trabajo independiente?** | SÍ |
 | **Estado** | `QUEUED` |
 
-### G-06 · T2 · Credenciales runtime para las sondas C3 (R-199 y siguientes)
+### G-06 · T2/T3 · Credenciales runtime para las sondas C3 (R-199, R-201, R-202, R-203, R-204)
 
 | Campo | Valor |
 |---|---|
 | **Tipo** | `PRIVATE_EXTERNAL_EVIDENCE` (runtime) |
-| **Por qué solo humano** | El agente no dispone de credenciales runtime con `users:read/create/update` (UAT-09 = Operador/Aprobador R-153, sin `users:*` ni super) y no se buscan ni fabrican credenciales |
-| **Acción mínima** | **A)** Proveer una credencial **efímera** de administrador de empresa 1 (users:read/create/update) o super admin, destruible tras las sondas — **o B)** ejecutar el script de sondas facilitado (E2E-01…07 + inventario §12) y devolver la salida |
-| **Evidencia exacta** | Códigos observados de E2E-01…07 + inventario §12 = 0 filas (o decisión `C-06`) |
-| **¿Continúa trabajo independiente?** | **SÍ** — T2 continúa (R-200/R-202/R-208); **R-200 C3 es ejecutable con las credenciales actuales** |
-| **Estado** | `QUEUED` |
-| **Qué desbloquea** | Cierre de C3 de R-199 (y sondas futuras que requieran actores privilegiados); no bloquea C1/C2 del resto de T2 |
+| **Por qué solo humano** | El agente no dispone de credenciales runtime con `users:read/create/update` ni super admin (UAT-09 = Operador/Aprobador R-153) y no se buscan ni fabrican credenciales |
+| **Acción mínima** | **A)** Proveer una credencial **efímera** de administrador de empresa 1 (users:read/create/update) o super admin, destruible tras las sondas — **o B)** ejecutar los scripts de sondas facilitados (E2E de cada certificación: R-199, R-201, R-202, R-203, R-204) y devolver la salida |
+| **Evidencia exacta** | Códigos observados por sonda + inventario §12 de R-203 = 0 filas |
+| **¿Continúa trabajo independiente?** | **SÍ** — T3 avanza (R-201/R-203/R-204/R-216 cerradas técnicamente); las cinco C3 quedan `PENDIENTE_G-06` documentadas por spec |
+| **Estado** | `QUEUED` (alcance ampliado a T3) |
+| **Qué desbloquea** | El cierre runtime (C3) de R-199/R-201/R-202/R-203/R-204; no bloquea C1/C2 ni el resto de T3 |
 
 ## Gates programados (referencia §25 del roadmap — no accionables hoy)
 
 | Ref | Qué decide | Tranche | Estado |
 |---|---|---|---|
 | `OD-13.c` | ¿Autoridad global `("*", all)` en roles de inquilino? | T2 | **RESUELTA — verificada** (`specs/remediation/OD-13-…§3`, VIGENTE); no requiere acción del propietario |
-| `AOD-13` | Módulos activables por empresa (incubadora) | T3 | `SCHEDULED` (antes de T3) |
+| `AOD-13` | **`farm_inspection` sin lote: ¿qué unidad tiene?** (micro-decisión C-02 de R-221; opciones: **(A)** derivarla de la granja/galpón declarados cuando declaran cadena única — recomendada, con fallback B; **(B)** exigir clasificación previa siempre; **(C)** mantener statu quo «alguna unidad» + bandeja). Contexto: `hatchery_inspection` sin lote ya deriva `hatchery` sin esperar decisión (tipo inequívoco, regla R-153 extendida); la habilitación por empresa gobierna el registro. | T3 | **`ACCIONABLE` — único pendiente para cerrar R-221/AC-R221-04 (rider de T3).** R-201/R-203/R-204/R-216 cerradas; R-221 C1/C2 (AC-01/02/03) en marcha sin depender de esto |
 | `AOD-16` | Captura offline móvil v1 (`idempotency_key`) | T5 | `SCHEDULED` (antes de T5) |
 | `AOD-14` | Evidencia obligatoria en captura | T8 | `SCHEDULED` (antes de T8) |
 | `OD-19 §18` · `AOD-17` · `AOD-18` | UI de reverso · semántica `CORRECTED` · cancelación | T10 | `SCHEDULED` (antes de T10) |
