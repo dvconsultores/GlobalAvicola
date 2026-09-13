@@ -1,0 +1,70 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r205.stageDerivation.test.ts (9 tests | 3 failed) 15ms
+     × ?stage= manda sobre todo 8ms
+     × ?stage= de producción 2ms
+     × con stage pero sin lote ⇒ stage 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > ?stage= manda sobre todo
+AssertionError: expected 'broiler' to be 'breeder_rearing' // Object.is equality
+
+Expected: "breeder_rearing"
+Received: "broiler"
+
+ ❯ src/pages/operations/__tests__/r205.stageDerivation.test.ts:46:52
+     44|       'broiler'],
+     45|   ] as const)('%s', (_nombre, args, esperado) => {
+     46|     expect(resolverStageDelAsistente(args as any)).toBe(esperado)
+       |                                                    ^
+     47|   })
+     48| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > ?stage= de producción
+AssertionError: expected null to be 'grandparent_production' // Object.is equality
+
+- Expected:
+"grandparent_production"
+
++ Received:
+null
+
+ ❯ src/pages/operations/__tests__/r205.stageDerivation.test.ts:46:52
+     44|       'broiler'],
+     45|   ] as const)('%s', (_nombre, args, esperado) => {
+     46|     expect(resolverStageDelAsistente(args as any)).toBe(esperado)
+       |                                                    ^
+     47|   })
+     48| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > con stage pero sin lote ⇒ stage
+AssertionError: expected null to be 'broiler' // Object.is equality
+
+- Expected:
+"broiler"
+
++ Received:
+null
+
+ ❯ src/pages/operations/__tests__/r205.stageDerivation.test.ts:46:52
+     44|       'broiler'],
+     45|   ] as const)('%s', (_nombre, args, esperado) => {
+     46|     expect(resolverStageDelAsistente(args as any)).toBe(esperado)
+       |                                                    ^
+     47|   })
+     48| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  3 failed | 11 passed (14)
+   Start at  00:40:46
+   Duration  2.26s (transform 251ms, setup 126ms, import 536ms, tests 763ms, environment 1.62s)
+
