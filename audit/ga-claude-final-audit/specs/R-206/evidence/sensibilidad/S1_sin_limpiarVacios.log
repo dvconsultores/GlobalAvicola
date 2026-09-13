@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r206.importQuarantine.test.tsx (1 test | 1 failed) 509ms
+     × el payload omite quarantine_end_date (canónico: vacío ⇒ ausencia) 507ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r206.importQuarantine.test.tsx > R-206 · importación con fecha de cuarentena en blanco > el payload omite quarantine_end_date (canónico: vacío ⇒ ausencia)
+AssertionError: plan={"origin_country":"Francia","purchased_total":110,"shipped_total":105,"received_total":100,"transit_mortality":5,"departure_date":"2026-09-05","arrival_date":"2026-09-12","reception_condition":"","quarantine_end_date":"","initial_health_inspection":""}: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/pages/operations/__tests__/r206.importQuarantine.test.tsx:107:75
+    105|     expect(llamada, 'POST /operations').toBeTruthy()
+    106|     const plan = llamada![1]?.extra_data?.import_plan ?? {}
+    107|     expect('quarantine_end_date' in plan, `plan=${JSON.stringify(plan)…
+       |                                                                           ^
+    108|   })
+    109| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 7 passed (8)
+   Start at  01:15:44
+   Duration  2.11s (transform 245ms, setup 106ms, import 502ms, tests 515ms, environment 1.92s)
+
