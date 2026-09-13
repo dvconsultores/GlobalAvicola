@@ -17,7 +17,7 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | **Estado** | `WAITING_ON_OWNER` |
 | **Qué desbloquea** | AC-06 PASS → GA-GOV-03 `CLOSED_FUNCTIONALLY_CERTIFIED` → **T1 CLOSED** → QUALITY_GATES_READY = YES → **T2 arranca automáticamente** (fundación de seguridad; OD-13.c ya resuelta — sin decisión pendiente). |
 
-> **Nota (2026-09-13 06:20 +0200)** — verificación del agente: la «sesión autenticada del navegador integrado» declarada en la autorización de continuación **no está presente** (navegación fresca al repo privado → 404 + «Sign in»; sin `gh`/tokens; sin página adicional compartida). Hasta que la sesión exista o se entreguen los 5 valores, AC-06 no puede observarse — **no se fabrica evidencia**. Con la sesión activa, el agente lee el run y cierra AC-06 sin más intervención.
+> **Nota (2026-09-13 06:20 +0200; re-verificado 06:25 +0200 tras «LISTO» del propietario)** — verificación del agente: la «sesión autenticada del navegador integrado» declarada **no está presente en el contexto del navegador que las herramientas del agente pueden usar** (navegación fresca al repo privado → 404 + «Sign in»; sin `gh`/tokens; sin página adicional compartida). Hasta que la sesión se complete EN ese contexto (la pestaña controlada ya está en la página de login de GitHub) o se entreguen los 5 valores, AC-06 no puede observarse — **no se fabrica evidencia**. Con la sesión activa, el agente lee el run y cierra AC-06 sin más intervención.
 
 ## Pista OPS (paralela, owner/ops — arrancable ya; bloquea T13, no a T2-T13)
 
