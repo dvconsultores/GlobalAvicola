@@ -1,6 +1,6 @@
 # GA · PRE-SAP — ESTADO DEL PROGRAMA (TRANCHE 0 · cierre)
 
-Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (certificación con CI run #26) · T3 CERRADA TÉCNICAMENTE (`9cb075f`) — T4 en arranque automático**.
+Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (certificación con CI run #26) · T3 CERRADA TÉCNICAMENTE (`9cb075f`) · T4 CERRADA TÉCNICAMENTE (`4a08382`) — T5 en arranque automático**.
 
 ## 1 · KPI del programa
 
@@ -15,7 +15,7 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Certificaciones con artefacto | informes históricos anotados `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`; plantilla de evidencia vigente | nuevas certificaciones con commit+artefacto (regla ya aplicada a T1) |
 | UAT con evidencia primaria | 0 de 11 registros + 2 pendientes | 8 lotes finales completos |
 | Decisiones del propietario pendientes (alcance actual) | 14 (+4 por tranche según roadmap) | registradas antes de su tranche |
-| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = CLOSED_TECHNICALLY** (`9cb075f`; R-201 · R-203 · R-204(+R-216) · R-221 parcial — AC-04 en cola AOD-13); **T4 = READY_FOR_EXECUTION**; T5-T13 + Pista OPS planificadas | todas cerradas |
+| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = CLOSED_TECHNICALLY** (`9cb075f`; R-201 · R-203 · R-204(+R-216) · R-221 parcial — AC-04 en cola AOD-13); **T4 = CLOSED_TECHNICALLY** (`4a08382`; R-190 · R-205); **T5 = READY_FOR_EXECUTION**; T6-T13 + Pista OPS planificadas | todas cerradas |
 | Veredicto pre-SAP | `NO_GO_SAP_FUNCTIONAL_GAPS` (sin cambios) | GO/NO-GO final en T13 |
 
 ## 2 · Estado por tranche
@@ -26,8 +26,9 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | T1 · GA-GOV-03 | **CERRADA** (2026-09-13) | 38/38 TEST_DEFECT (37 + nº38 hallado en CI); suites verdes en local **y en CI** (run #10 `34764423545`, `60e9d9d`); **AC-06 = PASS** (artefactos sha256-verificados) ⇒ `CLOSED_FUNCTIONALLY_CERTIFIED` |
 | T2 · Fundación de seguridad | **CERRADA** (2026-09-13) | R-199 · R-200 · R-202 · R-208 · GA-REM-003 AC04 — certificaciones por spec; suite completa `1263/0/49` local y **CI run #26 verde** (`5044788`; artefactos sha256-verificados) ⇒ `GA_T2_CERTIFICATION.md`. Límites declarados: **G-06** (C3 runtime de R-199/R-202, cola del propietario); GA-REM-003 AC01/02/03/05/06-resto/07 siguen su recorrido |
 | T3 · Alcance de datos | **CLOSED_TECHNICALLY** (`9cb075f`, 2026-09-14) | R-201 · R-203 · R-204(+R-216) cerradas — RED→GREEN→sensibilidad por spec; suite completa `1286/0/49` (`evidence/t3/full_suite_t3.log`) ⇒ `GA_T3_CERTIFICATION.md`. **R-221 parcial**: AC-01/02/03/05 cerradas (`8126f97`→`b056ef1`); AC-04 espera **AOD-13** (C-02, opciones A/B/C en cola). Límite declarado: **G-06** (C3 runtime de R-201/203/204/216) |
-| T4 · Operación (R-190 + R-205) | **READY_FOR_EXECUTION** | Arranque automático tras T3 (DAG: depende de T2/T3, satisfechos) |
-| T5-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
+| T4 · Operación (R-190 + R-205) | **CLOSED_TECHNICALLY** (`4a08382`, 2026-09-14) | R-190 (ubicación del evento: `a79fe0c`→`d1c16a7`→`801d18c`; S1-S4) · R-205 (cuadre alcanzable: `fe3bd3d`→`72aa7f4`→`dbc782d`; S1-S3); F-01e 4/4 intacto; **suite BE 1295/0/49** (`evidence/t4/…`) · **FE 360/360** + tsc 0 + build ⇒ `GA_T4_CERTIFICATION.md`. Límite: C3 runtime (deploy/credenciales — familia G-06); C-03 de R-190 opcional del propietario |
+| T5 · Contrato de captura (R-191 · R-206 · R-209 · R-210) | **READY_FOR_EXECUTION** | Arranque automático tras T4 (DAG: T5 ← T4, satisfecho); R-146 si AOD-16 |
+| T6-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
 
 ## 3 · NEXT_IMPLEMENTATION_TRANCHE (§52) — siguiente tras T1
 
