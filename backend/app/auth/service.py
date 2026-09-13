@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Permission, PermissionAction, Role, User
 from ..masters.models import Company
-from .security import create_access_token, create_refresh_token, decode_token, hash_password, verify_password
+from .security import (create_access_token, create_refresh_token, decode_token,
+                      hash_password, tiene_permiso, verify_password)
 from .schemas import (
     LoginRequest,
     PasswordChangeRequest,
@@ -434,30 +435,37 @@ class AuthService:
 
         * **el titular cambia la suya**: debe aportar la contraseña actual y acertarla;
         * **un administrador restablece la de otro**: no necesita la anterior —no la
-          conoce— pero sí autorización.
+          conoce— pero sí autorización (`users:update`) **y ámbito**: `R-202` resolvió
+          que el objetivo vive en la empresa efectiva del actor (`_usuario_alcanzable`,
+          fail-closed sin contexto) — la capacidad global suelta ya no basta.
 
-        Cualquier otro caso es un 403. Hoy la autorización se apoya en `is_super_admin`,
-        la única señal disponible: `GA-REM-002` la sustituirá por el permiso
-        `users:update` cuando exista el enforcement de RBAC.
+        Un objetivo fuera del ámbito se comporta como inexistente (404); sin
+        `users:update` (y sin ser el titular), `403`.
 
         Nunca responde con éxito sin haber cambiado nada: ese silencio era `P0-13`.
         """
         from ..audit.helpers import _insert_audit_log
         from ..audit.models import AuditAction, AuditModule
 
-        result = await self.db.execute(select(User).where(User.id == user_id))
-        user = result.scalar_one_or_none()
-        if not user:
-            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
-
         es_el_titular = current_user["id"] == user_id
-        es_administrador = bool(current_user.get("is_super_admin"))
 
-        if not es_el_titular and not es_administrador:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="No tiene autorización para cambiar la contraseña de otro usuario",
-            )
+        if es_el_titular:
+            result = await self.db.execute(select(User).where(User.id == user_id))
+            user = result.scalar_one_or_none()
+            if not user:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        else:
+            # `R-202` · `AC-R202-01…04`: la resolución del objetivo va **primero** y
+            # dentro del ámbito — sin empresa efectiva no hay ámbito (4xx) y un objetivo
+            # de otra empresa se comporta como inexistente.
+            user = await self._usuario_alcanzable(user_id, current_user)
+            if user is None:
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+            if not tiene_permiso(current_user, "users", "update"):
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="No tiene autorización para cambiar la contraseña de otro usuario",
+                )
 
         if es_el_titular:
             if not data.current_password:
@@ -479,10 +487,10 @@ class AuthService:
         await _insert_audit_log(
             db=self.db,
             user_id=current_user["id"],
-            # La compañía del titular, no la de quien actúa: un administrador puede
-            # restablecer la contraseña de un usuario de otra empresa. `0` no vale como
+            # `R-202` · `AC-R202-06`: la empresa **efectiva del actor** — el objetivo ya se
+            # resolvió dentro de su ámbito (para el titular coinciden). `0` no vale como
             # relleno — es una clave foránea y no existe la compañía 0 (`R-37`).
-            company_id=user.company_id or current_user.get("company_id"),
+            company_id=current_user.get("company_id") or user.company_id,
             action=AuditAction.UPDATED,
             entity_type="user_password",
             entity_id=str(user_id),
