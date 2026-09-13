@@ -1,0 +1,55 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/approvals/__tests__/r208.batchGates.test.tsx (2 tests | 1 failed) 367ms
+     × revisor sin approvals:* tras seleccionar ⇒ sin «Aprobar todos» ni «Rechazar todos» 247ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/approvals/__tests__/r208.batchGates.test.tsx > R-208 · botones de lote por approvals:* > revisor sin approvals:* tras seleccionar ⇒ sin «Aprobar todos» ni «Rechazar todos»
+AssertionError: expected <button …(1)>…(1)</button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  class="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow-sm"
+>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-check"
+    fill="none"
+    height="16"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="16"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M20 6 9 17l-5-5"
+    />
+  </svg>
+   
+  Aprobar todos
+</button>
+
+ ❯ src/pages/approvals/__tests__/r208.batchGates.test.tsx:68:69
+     66|     render(<MemoryRouter><ApprovalPanel /></MemoryRouter>)
+     67|     await seleccionarPrimerEvento()
+     68|     expect(screen.queryByRole('button', { name: /Aprobar todos/ })).to…
+       |                                                                     ^
+     69|     expect(screen.queryByRole('button', { name: /Rechazar todos/ })).t…
+     70|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  20:30:56
+   Duration  1.53s (transform 177ms, setup 50ms, import 413ms, tests 367ms, environment 592ms)
+
