@@ -181,3 +181,18 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Límites declarados**: G-06 (C3 runtime de R-199/R-202 — cola del propietario); GA-REM-003 AC01/02/03/05/06-resto/07 en su recorrido.
 - **KPI**: procesos 0/17 (T2 es plataforma). Veredicto pre-SAP sin cambio: `NO_GO_SAP_FUNCTIONAL_GAPS`.
 - **Siguiente**: **T3 · Alcance de datos** — R-201 C1 EN CURSO (RED ya ejecutado: 5F/18P; evidencia `evidence/r201/red_c1.log`) → C2/GREEN → R-203 → R-204+R-216 → R-221 (rider; **AOD-13** encolada al propietario) → certificación T3.
+
+## AE-23 · 2026-09-13/14 (noche-10) · R-201 CERRADA (CLOSED_TECHNICALLY) · T3 en marcha
+
+- **R-201** (SAP fail-closed): C1 `8a442ec` (RED 5F/18P — incluida la trampa: sin eventos aprobados `consolidate` respondía **201**) · C2 `4050eef` (`_company_filter`→`false()` + guardas de contexto tempranas; GREEN 32/32; S1/S2). C3 runtime pendiente **G-06**.
+- **Guarda de determinismo**: la primera suite conjunta marcó 1F (`t028_04`) por una fecha ISO literal en el fixture R-201 — remediada con `iso_days_ago(1)` (guarda+R-201: 17/17).
+- **Lección re-confirmada** (memoria del repo): `git checkout --` sin staging pierde la implementación — pasó de nuevo en el ciclo S1/S2 de R-203 y se recuperó re-aplicando con staging previo. La nota existía; ahora se aplica *siempre*.
+- **T3 en marcha**: R-203 C1 `fc8f193` (RED 5F/7P; clarificación **C-07**: contrato canónico 400/`BR-07`, verificado contra `main.py:88` y el precedente del área) · C2 implementado (galpón vía granja; línea por catálogo; edición con semántica `OD-21`) · S1/S2 (2F/2F).
+
+## AE-24 · 2026-09-14 · R-203 CERRADA (CLOSED_TECHNICALLY) — suite conjunta
+
+- **R-203 C2**: `lots/service.py` — galpón verificado **por la granja**, línea por `verificar_catalogo_de_empresa`, edición solo cuando el valor cambia. GREEN dirigido 86/86 (R-203 7 + área 6 + curvas + tenencia maestros + submovimientos + row scope); sensibilidades S1 (sin galpón ⇒ 01/04 rojas) y S2 (sin línea ⇒ 02/03 rojas).
+- **Extensión del fichero de clase** (`test_ga06a_06`): su primera versión usaba una `Connection` con `.add` (fallo de helper, no de producto); corregida con sesión ORM y **RED re-observado en la versión corregida** (log `red_c1_area_extension.log`).
+- **Inventario §12**: house=0 · line=0 · curve=0 filas cruzadas en la BD de pruebas (solo lectura, tras la suite).
+- **Suite completa conjunta** (fix de guarda R-201 + R-203 + todo lo anterior): **`1278 passed / 0 failed / 49 skipped`** (20:14; `evidence/r203/full_suite_c2.log`).
+- **Siguiente**: R-204 (+R-216) C1 → luego R-221 (rider; **AOD-13** encolada) → certificación T3.

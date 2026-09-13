@@ -108,11 +108,13 @@ Confirmaciones de la pasa 2 local (`evidence/ui-e2e-local-pass2.json`, 2026-09-1
 
 ### R-201 · SAP sin contexto fail-open (P2 · BLOQUEA fase SAP)
 - `sap/service.py:76-81` `_company_filter` ⇒ `true()` si `company_id is None`; afecta `list_references :128-135`, `consolidate_approved :158-161`, `export_to_sap :239-242`, `retry_failed :404-408` (escritura), `list_sync_jobs/consolidated/errors/payloads`. Esperado: `false()` sin contexto (patrón `_acotar_a_empresa`), `retry_failed` con `_require_company_id`; tests de autoridad global sin contexto.
+- **Estado (2026-09-13)**: `CLOSED_TECHNICALLY` · **C3 runtime pendiente de G-06** — C1 `8a442ec` (RED 5F/18P) · C2 `4050eef` (GREEN 32/32; suite conjunta `1278/0/49`; sensibilidad S1 3F/S2 1F); certificación `GA_CLAUDE_R201_RUNTIME_CERTIFICATION.md`.
 
 ### R-202 · Restablecimiento de contraseña (P2 · no bloquea) — `auth/service.py:434-455`: objetivo buscado sin empresa; sólo `is_super_admin`; esperado `_usuario_alcanzable(user_id, actor)` + `tiene_permiso(users:update)`; auditoría con empresa efectiva.
 - **Estado (2026-09-13)**: `CLOSED_TECHNICALLY` · **C3 runtime pendiente de G-06** — C1 `58b374a` (RED 3F/2P) · C2 `fafd262` (dirigidas 37/37; suite `1252/0/49`; sensibilidad M1/M2); certificación `GA_CLAUDE_R202_RUNTIME_CERTIFICATION.md`.
 
 ### R-203 · Referencias del lote sin verificar (P2 · BLOQUEA cruce) — `lots/service.py:362-392,275-307,411-436`; `masters/service.py:187` (`_PADRES_TENANT` sin `house_id`); `lots/schemas.py:14-20,65-67`. Esperado: `verificar_pertenencia(House vía Farm)`, `verificar_catalogo_de_empresa(GeneticLine)`, curva colgando de línea de la empresa; `weight-evaluation` no expone curvas ajenas.
+- **Estado (2026-09-13)**: `CLOSED_TECHNICALLY` · **C3 runtime pendiente de G-06** — C1 `fc8f193` (RED 5F/7P; clarificación C-07: contrato 400/`BR-07`) · C2 (implementación de las tres puertas; suite conjunta `1278/0/49`; sensibilidad S1 2F/S2 2F; inventario §12: 0/0/0); certificación `GA_CLAUDE_R203_RUNTIME_CERTIFICATION.md`.
 
 ### R-204 · Agregados sin unidad (P2 · BLOQUEA fuga BU) — `reports/service.py:191-207,262-308,415-420` (`_filtro_de_lotes` `:64-70` sin uso); `dashboard/service.py:206-242` (`_get_active_alerts` calcula `_ambito` y no lo aplica). Esperado: `lot_id.in_(lotes_alcanzables)` en los sumatorios y en las alertas; `route_scope` `UNIDAD_UNICA` aplicado o retirado (GAP-17).
 
