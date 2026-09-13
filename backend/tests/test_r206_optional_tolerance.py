@@ -12,6 +12,7 @@ import pytest
 from pydantic import ValidationError
 
 from app.operations.schemas import PlanDeImportacion
+from tests.time_reference import iso_days_ago
 
 BASE: dict = {
     "origin_country": "Francia",
@@ -19,8 +20,8 @@ BASE: dict = {
     "shipped_total": 105,
     "received_total": 100,
     "transit_mortality": 5,
-    "departure_date": "2026-09-05",
-    "arrival_date": "2026-09-12",
+    "departure_date": iso_days_ago(40),
+    "arrival_date": iso_days_ago(33),
 }
 
 
@@ -39,7 +40,7 @@ def test_r206_01_cadena_vacia_en_opcionales_se_tolera(campo):
 
 
 def test_r206_02_control_fecha_valida_pasa():
-    plan = PlanDeImportacion(**BASE, quarantine_end_date="2026-09-30")
+    plan = PlanDeImportacion(**BASE, quarantine_end_date=iso_days_ago(-10))
     assert plan.quarantine_end_date is not None
 
 
