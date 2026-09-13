@@ -154,3 +154,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Nota de proceso**: un `git checkout --` sin staging previo revirtió la implementación C2 al índice (pre-fix) — recuperada re-aplicando y **stageando antes** de mutar; lección en `/memories/repo/spec-dev-red-green-pitfalls.md`.
 - **R-208 C1 (arrancado)**: tests RED — backend `test_r208_batch_approval_authority.py` (4: 01/03 rojos por puerta `review:review`; 02/04 controles) y FE `r208.batchGates.test.tsx` (RED R1 ve botones de lote; control A1). Pitfall FE documentado: mocks de `t`/`toast` **estables** o el refetch resetea la selección.
 - **Siguiente**: RED backend R-208 (ejecutar + evidencia) → commit C1 → C2 (decoradores `approvals:*` en batch + gates del panel) → GREEN/regresión/sensibilidad → C3 runtime (actores UAT-09 aptos: operator sin approvals / aprobador con approvals) → **GA-REM-003 AC04** → regresión T2 → certificación T2.
+
+## AE-20 · 2026-09-13 (noche-7) · R-208 CERRADA (CLOSED_FUNCTIONALLY_CERTIFIED) · arranca GA-REM-003 AC04
+
+- **R-208 C1 `11b8f89`**: RED backend 2F/2P (01/03 rojos: la puerta del lote era `review:review`); RED FE (revisor veía botones de lote).
+- **R-208 C2 `331ad83`**: `require_permission("approvals",…)` en `batch-approve/reject`; barra del panel gateada por `approvals:*` (botones por permiso). GREEN BE 17/17, FE 5/5, **suite FE 316/316**, **suite BE `1256/0/49`** (20:43). Sensibilidad S1 (revertir puerta ⇒ 01/03 rojas) documentada en `evidence/r208/mutations/S1_sin_puerta.log`.
+- **Runtime (no destructivo)**: señales con ids inexistentes + detalle del 403 como prueba de la puerta desplegada — operador 403 «Permiso requerido: approvals:approve/reject»; aprobador 404 «Evento no encontrado». Deploy Docker #121 (`331ad83`). `runtime-c3.json`.
+- **Lección FE registrada**: mocks `t`/`toast` deben ser identidad estable o el refetch resetea la selección (`/memories/repo/spec-dev-red-green-pitfalls.md`).
+- **Siguiente**: **GA-REM-003 AC04** (logout + denylist `jti` + migración `revoked_tokens` + auditoría LOGOUT; test RED ya escrito `test_ga_rem_003_ac04_logout_revocation.py`) → C1 commit → C2 → regresión T2 (suite completa + FE) → runtime/E2E → **certificación T2** → T3.

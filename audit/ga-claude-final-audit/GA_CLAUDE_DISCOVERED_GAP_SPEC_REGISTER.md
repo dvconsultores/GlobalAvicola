@@ -127,6 +127,7 @@ Confirmaciones de la pasa 2 local (`evidence/ui-e2e-local-pass2.json`, 2026-09-1
 ### R-207 · Reverso interno sin UI (P2 · BLOQUEA §10) — `reversals` sin consumidor en `frontend/src` (grep 0); local `H8-*` sólo por API. Esperado: acción «Solicitar reverso» en el detalle de evento aprobado (permiso `reversals:create`), bandeja de contrapartidas en revisión, estado `reversed` en badges (`statusColors.ts`, C-27), enlace original↔contrapartida, motivo obligatorio (≥5).
 
 ### R-208 · Batch approve con `review:review` (P2 · BLOQUEA control) — `review/router.py:123-160` vs unitarias `approvals:approve/reject`; `ApprovalPanel.tsx:100,119,173`. Esperado: permisos `approvals:*` en rutas por lote y segregación BR-14 aplicada por evento.
+- **Estado (2026-09-13)**: **CERRADA — `CLOSED_FUNCTIONALLY_CERTIFIED`** — C1 `11b8f89` (RED 2F/2P) · C2 `331ad83` (GREEN BE 17/17; FE 5/5 + suite FE 316/316; suite BE `1256/0/49`; sensibilidad S1); runtime no destructivo (`runtime-c3.json`: operador 403 `approvals:*`; aprobador 404 tras la puerta; deploy Docker #121); certificación `GA_CLAUDE_R208_RUNTIME_CERTIFICATION.md`.
 
 ### R-209 · OC por id (P2 · BLOQUEA dato fuente SAP) — `OFP:917-927` (`sap_document_ref = String(id)` en bloque de salida) vs `OFP:2008-2035` (bloque compartido, código canónico); `OFP:1033-1040` (`feed_movements.sap_order_id ← String(id)`); `V:471-474,758`. Esperado: siempre el código canónico (`doc_number||ref_id||sap_code`), como R-189 §2.
 

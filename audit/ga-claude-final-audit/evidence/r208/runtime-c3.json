@@ -1,0 +1,62 @@
+{
+  "probe": "R-208 runtime",
+  "when": "2026-09-13 20:52:24+0200",
+  "nota": "ids inexistentes ⇒ sin mutación de estado; 403=puerta, 404=autorizado sin evento",
+  "results": [
+    {
+      "id": "R208-RT-01a",
+      "actor": "operador",
+      "ruta": "batch-approve",
+      "status": 403,
+      "detail": "Permiso requerido: approvals:approve"
+    },
+    {
+      "id": "R208-RT-03a",
+      "actor": "operador",
+      "ruta": "batch-reject",
+      "status": 403,
+      "detail": "Permiso requerido: approvals:reject"
+    },
+    {
+      "id": "R208-RT-02",
+      "actor": "aprobador",
+      "ruta": "batch-approve",
+      "status": 404,
+      "detail": "Evento no encontrado"
+    },
+    {
+      "id": "R208-RT-03b",
+      "actor": "aprobador",
+      "ruta": "batch-reject",
+      "status": 404,
+      "detail": "Evento no encontrado"
+    }
+  ],
+  "login_operador": 200,
+  "me_operador": {
+    "status": 200,
+    "permisos": {
+      "total": 7,
+      "approvals_approve": false,
+      "approvals_reject": false,
+      "review_review": false
+    }
+  },
+  "login_aprobador": 200,
+  "me_aprobador": {
+    "status": 200,
+    "permisos": {
+      "total": 9,
+      "approvals_approve": true,
+      "approvals_reject": true,
+      "review_review": true
+    }
+  },
+  "deploy": {
+    "commit": "331ad83",
+    "docker_run": "Docker Push — Backend #121 (success)",
+    "ruta_workflow": "https://github.com/dvconsultores/GlobalAvicola/actions/runs/34775796207",
+    "redespliegue": "Watchtower (EX-01)"
+  },
+  "limitacion": "Ningún actor runtime combina review:review sin approvals:*; la frontera pre/post se observa por el detalle del 403 («approvals:approve» sólo puede emitirlo el nuevo decorador) y por el code=E2E unitario C1/C2. RT-02/03b usan id inexistente: la puerta pasa y el servicio responde 404 sin tocar datos reales."
+}
