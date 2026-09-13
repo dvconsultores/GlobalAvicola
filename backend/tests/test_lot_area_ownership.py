@@ -188,3 +188,71 @@ async def test_ga06a_05_area_inexistente_da_contrato_no_500(
 ):
     r = await _lote(client, auth_headers, seeded_ids, area_id=999999)
     _assert_negativa_propia(r)
+
+
+# ── `R-203` · misma clase, tres puertas más: galpón, línea genética y curva ──
+
+
+async def test_ga06a_06_galpon_linea_y_curva_ajenos_se_rechazan(
+    client, auth_headers, seeded_ids, motor, unidades
+):
+    """`R-203` en el fichero de referencia de la clase: las tres referencias
+    estructurales del lote responden al mismo contrato que el área (`400`,
+    detalle neutro, `BR-07`).
+
+    La geometría ajena se crea aquí para poder demostrar el cruce; se retira en
+    el `finally` para no contaminar la siembra compartida.
+    """
+    import uuid as _uuid
+
+    from app.masters.models import (
+        Farm, GeneticLine, GeneticWeightCurve, House,
+    )
+
+    prefijo = f"{PREFIJO}R203X-{_uuid.uuid4().hex[:6]}"
+    ids = {}
+    async with motor.begin() as c:
+        b = seeded_ids["company_id_2"]
+        farm = Farm(company_id=b, name=f"{prefijo}F")
+        c.add(farm)
+        await c.flush()
+        house = House(farm_id=farm.id, name=f"{prefijo}H")
+        line = GeneticLine(company_id=b, name=f"{prefijo}L")
+        c.add_all([house, line])
+        await c.flush()
+        curve = GeneticWeightCurve(genetic_line_id=line.id,
+                                   version_label=f"{prefijo}C", is_active=True)
+        c.add(curve)
+        await c.flush()
+        ids = {"farm": farm.id, "house": house.id, "line": line.id,
+               "curve": curve.id}
+
+    try:
+        # Galpón de otra empresa: se comporta como inexistente.
+        r = await _lote(client, auth_headers, seeded_ids,
+                        lot_code=f"{prefijo}-H", house_id=ids["house"])
+        assert r.status_code == 400, r.text
+        assert r.json().get("detail") == "Galpón no encontrado", r.text
+        assert r.json().get("rule") == "BR-07", r.text
+
+        # Línea genética de otra empresa: igual; la nula sigue siendo compartida.
+        r = await _lote(client, auth_headers, seeded_ids,
+                        lot_code=f"{prefijo}-L", genetic_line_id=ids["line"])
+        assert r.status_code == 400, r.text
+        assert r.json().get("detail") == "Línea genética no encontrado", r.text
+
+        # Curva de una línea ajena: no se aplica.
+        r = await _lote(client, auth_headers, seeded_ids,
+                        lot_code=f"{prefijo}-C", genetic_line_id=ids["line"],
+                        weight_curve_id=ids["curve"])
+        assert r.status_code in (400, 404), r.text
+    finally:
+        async with motor.begin() as c:
+            await c.execute(text("DELETE FROM genetic_weight_curves WHERE id = :i"),
+                            {"i": ids["curve"]})
+            await c.execute(text("DELETE FROM genetic_lines WHERE id = :i"),
+                            {"i": ids["line"]})
+            await c.execute(text("DELETE FROM houses WHERE id = :i"),
+                            {"i": ids["house"]})
+            await c.execute(text("DELETE FROM farms WHERE id = :i"),
+                            {"i": ids["farm"]})

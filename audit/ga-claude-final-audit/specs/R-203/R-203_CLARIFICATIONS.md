@@ -13,3 +13,5 @@ Fecha: 2026-09-13 · HEAD `c0b4afc` · Resolver antes de C2. Ninguna decisión d
 | C-07 | Relación con R-50 (company_id de maestros) | Independientes; pueden ir en la misma tranche de seguridad pero con paquetes/commits separados. | registro §3 orden 2 | técnica |
 
 Sin decisiones abiertas.
+
+| C-07 | ¿`404` o `400` para referencia ajena? | **`400` con detalle neutro y `rule: "BR-07"`** — es el mapeo canónico del repo para `BusinessRuleViolation` (`app/main.py:88-102`) y el que fija el precedente certificado del alta de lote con área ajena (`test_lot_area_ownership.py:105-108`: `400`, «Área no encontrado»). El «404» de la spec era descripción del hallazgo, no del contrato; la indistinguibilidad «no existe»/«no es tuyo» se preserva. | `app/main.py:88`; `test_lot_area_ownership.py:105-108` | técnica (verificada contra código) |
