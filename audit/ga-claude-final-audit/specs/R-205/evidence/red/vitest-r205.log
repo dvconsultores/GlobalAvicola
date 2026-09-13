@@ -1,0 +1,598 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r205.stageDerivation.test.ts (9 tests | 9 failed) 11ms
+     × ?stage= manda sobre todo 5ms
+     × ?stage= de producción 1ms
+     × ?stage= inválido ⇒ fallback al lote 0ms
+     × lote breeder en cría ⇒ breeder_rearing 0ms
+     × lote breeder en producción ⇒ breeder_production 0ms
+     × lote broiler ⇒ broiler 0ms
+     × lote grandparent en cría ⇒ grandparent_rearing 1ms
+     × sin lote ni stage ⇒ null (paso 1) 0ms
+     × con stage pero sin lote ⇒ stage 0ms
+ ❯ src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx (5 tests | 3 failed) 3586ms
+     × AC-R205-01 · hub con deep link (type+lot) ⇒ cuadre visible y payload completo 1103ms
+     × AC-R205-02 · deep link con ?stage= explícito ⇒ paridad total 1047ms
+     × AC-R205-05 · cuadre incompleto ⇒ sin POST y mensaje operations.cuadreRequired 1065ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 12 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx > R-205 · recepción de reproductoras — paridad hub/detalle/URL > AC-R205-01 · hub con deep link (type+lot) ⇒ cuadre visible y payload completo
+AssertionError: expected null to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-bird text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 7h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m20 7 2 .5-2 .5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 18v3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M14 17.75V21"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 18a6 6 0 0 0 3.84-10.61"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mbird_reception[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mOrden de compra / importación SAP[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar orden SAP...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+...
+
+- Expected:
+true
+
++ Received:
+null
+
+ ❯ src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx:99:61
+     97|   it('AC-R205-01 · hub con deep link (type+lot) ⇒ cuadre visible y pay…
+     98|     montar('/operations/new?type=bird_reception&lot_id=1')
+     99|     await waitFor(() => expect(porNombre('received_total')).toBeTruthy…
+       |                                                             ^
+    100|     expect(screen.getByText(CUADRE)).toBeTruthy()
+    101|     llenarCuadre('100', '2', '3')
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/12]⎯
+
+ FAIL  src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx > R-205 · recepción de reproductoras — paridad hub/detalle/URL > AC-R205-02 · deep link con ?stage= explícito ⇒ paridad total
+AssertionError: expected null to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-bird text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 7h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m20 7 2 .5-2 .5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 18v3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M14 17.75V21"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 18a6 6 0 0 0 3.84-10.61"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mbird_reception[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mOrden de compra / importación SAP[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar orden SAP...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+...
+
+- Expected:
+true
+
++ Received:
+null
+
+ ❯ src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx:111:61
+    109|   it('AC-R205-02 · deep link con ?stage= explícito ⇒ paridad total', a…
+    110|     montar('/operations/new?type=bird_reception&lot_id=1&stage=breeder…
+    111|     await waitFor(() => expect(porNombre('received_total')).toBeTruthy…
+       |                                                             ^
+    112|     llenarCuadre('100', '2', '3')
+    113|     const payload = await guardar()
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/12]⎯
+
+ FAIL  src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx > R-205 · recepción de reproductoras — paridad hub/detalle/URL > AC-R205-05 · cuadre incompleto ⇒ sin POST y mensaje operations.cuadreRequired
+AssertionError: expected null to be truthy
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mdisabled[39m=[32m""[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-bird text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 7h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m20 7 2 .5-2 .5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 18v3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M14 17.75V21"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 18a6 6 0 0 0 3.84-10.61"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mbird_reception[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mOrden de compra / importación SAP[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar orden SAP...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+...
+
+- Expected:
+true
+
++ Received:
+null
+
+ ❯ src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx:121:61
+    119|   it('AC-R205-05 · cuadre incompleto ⇒ sin POST y mensaje operations.c…
+    120|     montar('/operations/new?type=bird_reception&lot_id=1')
+    121|     await waitFor(() => expect(porNombre('received_total')).toBeTruthy…
+       |                                                             ^
+    122|     cambio('bird_movements.0.quantity', '95')
+    123|     fireEvent.click(await screen.findByRole('button', { name: /common\…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/12]⎯
+
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > ?stage= manda sobre todo
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > ?stage= de producción
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > ?stage= inválido ⇒ fallback al lote
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > lote breeder en cría ⇒ breeder_rearing
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > lote breeder en producción ⇒ breeder_production
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > lote broiler ⇒ broiler
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > lote grandparent en cría ⇒ grandparent_rearing
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > sin lote ni stage ⇒ null (paso 1)
+ FAIL  src/pages/operations/__tests__/r205.stageDerivation.test.ts > R-205 · resolverStageDelAsistente (prioridad de fuentes) > con stage pero sin lote ⇒ stage
+TypeError: resolverStageDelAsistente is not a function
+ ❯ src/pages/operations/__tests__/r205.stageDerivation.test.ts:46:12
+     44|       'broiler'],
+     45|   ] as const)('%s', (_nombre, args, esperado) => {
+     46|     expect(resolverStageDelAsistente(args as any)).toBe(esperado)
+       |            ^
+     47|   })
+     48| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/12]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  12 failed | 2 passed (14)
+   Start at  00:28:33
+   Duration  4.93s (transform 248ms, setup 106ms, import 482ms, tests 3.60s, environment 1.41s)
+
