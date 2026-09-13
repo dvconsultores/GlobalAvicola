@@ -91,6 +91,13 @@ async def sap(test_database_url):
         rol_operario = _rol("Operario", a.id)
         rol_impostor = _rol("Analista SAP", a.id)   # el nombre, sin el permiso
         rol_b = _rol("AnalistaB", b.id)
+        # `R-201`: autoridad global de sistema (`R-199` · `OD-13.c`) para la
+        # frontera de contexto sin empresa.
+        rol_global = _rol("GlobalR201", None)
+        await s.flush()
+        for accion in PermissionAction:
+            s.add(Permission(role_id=rol_global.id, module="*", action=accion,
+                             scope_type="all"))
         await s.flush()
         for rol, permisos in (
             (rol_analista, [("sap", PermissionAction.READ), ("sap", PermissionAction.SEND_SAP),
@@ -117,7 +124,8 @@ async def sap(test_database_url):
         operario = _usuario(a.id, "OPERARIO", rol_operario)
         impostor = _usuario(a.id, "IMPOSTOR", rol_impostor)
         analista_b = _usuario(b.id, "ANALISTAB", rol_b)
-        s.add_all([analista, operario, impostor, analista_b])
+        u_global = _usuario(None, "GLOBAL", rol_global)
+        s.add_all([analista, operario, impostor, analista_b, u_global])
         await s.flush()
 
         # El analista tiene **una sola** cadena. Es el corazón de la prueba.
@@ -159,6 +167,7 @@ async def sap(test_database_url):
                  "consolidados": consolidados, "consolidado_b": cm_b.id,
                  "lote_b": lote_b.id, "analista": analista.id, "operario": operario.id,
                  "impostor": impostor.id, "analista_b": analista_b.id,
+                 "global_sin_contexto": u_global.id,
                  "hab_breeder": hab[(a.id, "breeder")].id}
 
     yield datos
@@ -415,3 +424,17 @@ def test_no_existe_una_funcion_generica_de_salto_de_alcance():
         texto = fichero.read_text(encoding="utf-8")
         hallazgos += [f"{fichero.name}: {s}" for s in sospechosas if s in texto]
     assert not hallazgos, hallazgos
+
+
+async def test_ac_sap02b_global_sin_contexto_no_ve_otra_empresa(http_client, sap):
+    """`R-201` · RED en HEAD: la autoridad global **sin contexto** ve las cinco filas.
+
+    Tras el fix: `∅`. La superficie SAP es transversal, y precisamente por eso no
+    puede llevar comodín: sin empresa efectiva no se sirve nada.
+    """
+    r = await http_client.get("/api/v1/sap/consolidated?limit=200",
+                              headers=_token(sap["global_sin_contexto"]))
+    assert r.status_code == 200, r.text
+    cuerpo = r.json()
+    filas = cuerpo.get("consolidated") or []
+    assert filas == [] and cuerpo.get("total", 0) == 0, cuerpo.get("total")
