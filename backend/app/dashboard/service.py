@@ -210,7 +210,9 @@ class DashboardService:
         # tomó con el lote sin cadena: `OD-10.c` lo manda a «pendiente de clasificar», que
         # es la fase 6, y hasta entonces lo seguro es que no sume. Queda declarado.
         _lotes = await self._lotes()
-        _ambito = [] if _lotes is None else [OperationalEvent.lot_id.in_(_lotes)]
+        if _lotes is None:
+            # `R-204` · fail-closed: sin resolutor de alcance no se sirve ninguna alerta.
+            return []
         rows = await self.db.execute(
             select(
                 OperationalAlert.id,
@@ -223,6 +225,10 @@ class DashboardService:
             )
             .where(
                 OperationalAlert.company_id == self.company_id,
+                # `R-204` · `OD-16`: solo alertas de lotes alcanzables — el `_ambito`
+                # se calculaba y **no se aplicaba**, y el panel nombraba lotes de
+                # unidades no concedidas.
+                OperationalAlert.lot_id.in_(_lotes),
                 OperationalAlert.is_resolved == False,  # noqa: E712
             )
             .order_by(OperationalAlert.created_at.desc())

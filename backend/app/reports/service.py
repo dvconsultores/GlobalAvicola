@@ -190,6 +190,10 @@ class ReportsService:
 
     async def get_kpi_hatchery(self, lot_id: Optional[int] = None) -> dict:
         await self._exigir_lote(lot_id)
+        # `R-204` · `OD-16`: agregado **sin lote** ⇒ predicado de lotes alcanzables. El
+        # bloque incubadora no suma unidades no concedidas ni apagadas; sin ninguna
+        # alcanzable la suma queda en 0 — subconjunto, no 403 (`C-01`).
+        lotes = await self._filtro_de_lotes() if lot_id is None else None
         base = select(
             func.coalesce(func.sum(BirdMovement.quantity), 0).label("total_born")
         ).join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id).where(
@@ -202,6 +206,8 @@ class ReportsService:
         )
         if lot_id:
             base = base.where(OperationalEvent.lot_id == lot_id)
+        elif lotes is not None:
+            base = base.where(OperationalEvent.lot_id.in_(lotes))
 
         result = await self.db.execute(base)
         born = result.scalar() or 0
@@ -209,8 +215,9 @@ class ReportsService:
         # `R-14` / `GA-REM-022 AC01-bis`. El campo devolvía una frase en español alegando que
         # faltaban los datos de carga. **La alegación era falsa**: `HatcheryParams` los
         # guarda y `get_hatchery_egg_balance` ya los sumaba desde antes.
-        cargados = await self._huevos_cargados(lot_id)
-        fertiles = await self._huevos_fertiles(lot_id, EventType.EGG_RECEPTION_HATCHERY)
+        cargados = await self._huevos_cargados(lot_id, lotes=lotes)
+        fertiles = await self._huevos_fertiles(lot_id, EventType.EGG_RECEPTION_HATCHERY,
+                                              lotes=lotes)
 
         # `R-85`. `docs/02 §3.12.1` separa dos cocientes con **denominadores distintos**, y el
         # endpoint los fundía en uno solo mal llamado. Un documento de proceso manda sobre una
@@ -225,7 +232,7 @@ class ReportsService:
         # el rendimiento coincide con el nacimiento, que es lo correcto, y se afina a medida
         # que se registran. No se usa `get_viable_chick_balance`, que resta **despachos** y
         # mide otra cosa: cuántos quedan disponibles, no cuántos nacieron viables.
-        descartados = await self._descartados(lot_id)
+        descartados = await self._descartados(lot_id, lotes=lotes)
         rendimiento = self._porcentaje(max(born - descartados, 0), cargados)
 
         return {
@@ -259,7 +266,7 @@ class ReportsService:
             EventStatus.SENT_TO_SAP, EventStatus.SAP_CONFIRMED,
         ]))
 
-    async def _huevos_cargados(self, lot_id: Optional[int]) -> int:
+    async def _huevos_cargados(self, lot_id: Optional[int], lotes=None) -> int:
         from ..operations.models import HatcheryParams
 
         q = self._aprobados(
@@ -272,10 +279,13 @@ class ReportsService:
         )
         if lot_id:
             q = q.where(OperationalEvent.lot_id == lot_id)
+        elif lotes is not None:  # `R-204`: agregado acotado a lotes alcanzables
+            q = q.where(OperationalEvent.lot_id.in_(lotes))
         return int((await self.db.execute(q)).scalar() or 0)
 
     async def _huevos_por_tipo(
         self, lot_id: Optional[int], evento: "EventType", tipo: Optional[str] = None,
+        lotes=None,
     ) -> int:
         q = self._aprobados(
             select(func.coalesce(func.sum(EggMovement.quantity), 0))
@@ -289,12 +299,15 @@ class ReportsService:
             q = q.where(EggMovement.egg_type == tipo)
         if lot_id:
             q = q.where(OperationalEvent.lot_id == lot_id)
+        elif lotes is not None:
+            q = q.where(OperationalEvent.lot_id.in_(lotes))
         return int((await self.db.execute(q)).scalar() or 0)
 
-    async def _huevos_fertiles(self, lot_id: Optional[int], evento: "EventType") -> int:
-        return await self._huevos_por_tipo(lot_id, evento, "fertile")
+    async def _huevos_fertiles(self, lot_id: Optional[int], evento: "EventType",
+                               lotes=None) -> int:
+        return await self._huevos_por_tipo(lot_id, evento, "fertile", lotes=lotes)
 
-    async def _descartados(self, lot_id: Optional[int]) -> int:
+    async def _descartados(self, lot_id: Optional[int], lotes=None) -> int:
         q = self._aprobados(
             select(func.coalesce(func.sum(BirdMovement.quantity), 0))
             .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
@@ -305,6 +318,8 @@ class ReportsService:
         )
         if lot_id:
             q = q.where(OperationalEvent.lot_id == lot_id)
+        elif lotes is not None:
+            q = q.where(OperationalEvent.lot_id.in_(lotes))
         return int((await self.db.execute(q)).scalar() or 0)
 
     # ============================================================

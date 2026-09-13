@@ -173,8 +173,13 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
         Alcance.MULTI_UNIDAD, None, "agregado; fase 4"),
     "/api/v1/reports/kpis/egg-production": (
         Alcance.MULTI_UNIDAD, None, "reproductoras y progenitoras; fase 4"),
+    # `R-204` · `C-03`: la declaración `UNIDAD_UNICA hatchery` se **retira con nota**.
+    # La lectura agregada devuelve el **subconjunto alcanzable** (ceros sin la unidad),
+    # patrón uniforme de `C-01`/`OD-16`; exigir `unidad_requerida` daría 404 y rompería
+    # ese contrato de lectura. El dato ya no agrega lo ajeno: el predicado vive en
+    # `reports/service.py` (`_filtro_de_lotes`).
     "/api/v1/reports/kpis/hatchery": (
-        Alcance.UNIDAD_UNICA, "hatchery", "indicadores de incubación"),
+        Alcance.MULTI_UNIDAD, None, "agregado acotado a lotes alcanzables (`R-204`)"),
     "/api/v1/reports/kpis/transfer-efficiency": (
         Alcance.CONTRATO, None, "mide el traspaso entre cadenas; fase 5"),
     "/api/v1/reports/sap-comparison": (Alcance.CONTRATO, None, "consolidado; flujo 5"),
