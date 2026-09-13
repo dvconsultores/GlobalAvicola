@@ -40,8 +40,14 @@ jobs:
       - name: Instalar PostgreSQL de usuario (pgserver) en el entorno del proyecto
         working-directory: ./backend
         run: uv pip install --python .venv/bin/python "pgserver==0.1.4"
+      # GA-GOV-03 C5 — la suite certificada corre con la integración SAP activa
+      # (equivalente al `.env` de desarrollo); sin el flag, las 10 rutas
+      # `/api/v1/sap/*` no se registran en CI y 25 tests fallan
+      # (404s + `assert 201 == 211`). A/B local validado: false→201, true→211.
       - name: Suite canónica (backend/scripts/run_tests.sh)
         working-directory: ./backend
+        env:
+          FEATURE_SAP_ENABLED: "true"
         run: |
           set -o pipefail
           mkdir -p reports
