@@ -216,3 +216,22 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **R-221 C2** `b056ef1`: lista explícita `UNIDAD_POR_TIPO_INEQUIVOCO` (grandparent·hatchery) → guarda estricta (`OD-16.e`/`OD-09`) + atribución al nacer (`business_unit_id` = habilitación) para `hatchery_inspection` sin lote; importación intacta (R-153). GREEN 134/134 con regresión BU/clasificación/R-153; S1 (sin atribución) 1F · S2 (sin guarda) 2F.
 - **Lecciones del ciclo**: (1) fixture de test de integración **exige `s.commit()`** antes del `yield` — su ausencia revirtió usuarios y dio 401 «Usuario no encontrado o inactivo» (diagnóstico por message-match, no por sospecha); (2) enum en SQL = **mayúsculas** (`'HATCHERY_INSPECTION'`), no el valor del miembro — mismo tropiezo que la lección de R-201, ahora aplicada a queries de conteo.
 - **T3**: certificación `GA_T3_CERTIFICATION.md` (CLOSED_TECHNICALLY) · **AOD-13** único pendiente (AC-04 de R-221) · T4 (R-190 + R-205) habilitada sin dependencia.
+
+## AE-28 · 2026-09-14 · R-190 CERRADA (CLOSED_TECHNICALLY) — ubicación del evento
+
+- **C1** `a79fe0c`: RED 26F/2P FE (payload sin `house_id` en 7 tipos; sin bloqueo cliente; i18n ausente) + control BE BR-08 4/4 verde.
+- **C2** `d1c16a7`: `resolverUbicacionDelEvento` (fuente única) + selector «Galpón del evento» ×4 + guardas cliente + i18n. GREEN 32/32; tsc 0; FE 360/360; build OK.
+- **C2s** `801d18c`: S1 2F · S2 9F · S3 2F · S4 2F.
+- **Lección**: el «tool» de edición difusa volvió a corromper JSX del formulario gigante (dos funciones comidas + fragmentos huérfanos) — remediado con hunks mínimos y verificación tras cada edición (memoria del repo ya lo advertía; ahora reforzada).
+
+## AE-29 · 2026-09-14 · R-205 CERRADA (CLOSED_TECHNICALLY) — cuadre alcanzable
+
+- **C1** `fe3bd3d`: RED 12F/2P (cuadre oculto en deep link; `?stage=` sin paridad; incompleto viaja) + control BR-20 10/10.
+- **C2** `72aa7f4`: `resolverStageDelAsistente` + visibilidad por lote + guarda `cuadreRequired`. GREEN 29/29; tsc 0; FE 360/360; build OK.
+- **C2s** `dbc782d`: S1 4F · S2 3F · S3 1F.
+
+## AE-30 · 2026-09-14 · T4 CERRADA TÉCNICAMENTE — suite 1295/0/49
+
+- **Suite completa**: `1295 passed / 0 failed / 49 skipped` (1170.30s; `evidence/t4/full_suite_t4.log`) = 1286 T3 + 5 R-221 + 4 control R-190.
+- **Certificación**: `GA_T4_CERTIFICATION.md` (CLOSED_TECHNICALLY); C3 runtime de R-190/R-205 en ventana de deploy/credenciales (G-06 familia); C-03 de R-190 opcional del propietario.
+- **Siguiente**: **T5** (DAG T5 ← T4) — arranque automático.
