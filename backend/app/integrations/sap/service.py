@@ -74,11 +74,18 @@ class SapService:
         return self.company_id
 
     def _company_filter(self, model_column):
-        """Return a where clause for company_id, or a no-op (True) for super admins."""
+        """Predicado de empresa. **Fail-closed**: sin contexto no se sirve nada. `R-201`.
+
+        Antes devolvía `true()` para la autoridad global sin contexto, y la superficie
+        SAP —referencias, jobs, consolidados, errores, payloads— quedaba abierta a todas
+        las empresas (`GAP-02`, `OD-14.d`). El resto del producto es ∅ sin contexto
+        (`_acotar_a_empresa`); SAP era la excepción. La autoridad global **situada**
+        (`switch-company`) opera normalmente: tiene empresa efectiva.
+        """
         if self.company_id is not None:
             return model_column == self.company_id
-        from sqlalchemy import true
-        return true()  # No filter for super admins — sees all companies
+        from sqlalchemy import false
+        return false()  # sin empresa efectiva, ninguna fila (`R-201`)
 
     # ============================================================
     # SAP References Import
@@ -153,6 +160,10 @@ class SapService:
         date_from: Optional[str] = None, date_to: Optional[str] = None,
     ) -> list[models.ConsolidatedMovement]:
         """Group approved events into consolidated movements ready for SAP export."""
+
+        # `R-201`: la escritura exige contexto **antes de leer** — sin empresa efectiva
+        # no hay consolidación, y no se lee ninguna fila para descubrirlo.
+        self._require_company_id()
 
         # Find approved events not yet consolidated
         base = select(OperationalEvent).where(
@@ -234,6 +245,9 @@ class SapService:
         self, consolidated_ids: Optional[list[int]] = None, file_name: Optional[str] = None,
     ) -> schemas.SapExportResponse:
         """Export consolidated movements to SAP via the active adapter."""
+
+        # `R-201`: contexto primero; el export es acción externa y no debe ni leer sin él.
+        self._require_company_id()
 
         # Find consolidated movements not yet exported
         base = select(models.ConsolidatedMovement).where(
@@ -401,6 +415,10 @@ class SapService:
 
     async def retry_failed(self, payload_ids: Optional[list[int]] = None, max_retries: int = 3) -> dict:
         """Retry failed SAP payloads with exponential backoff."""
+
+        # `R-201`: el reintento reenvía al exterior; sin contexto, cerrado y sin leer.
+        self._require_company_id()
+
         base = select(models.SapPayload).where(
             self._company_filter(models.SapPayload.company_id),
             models.SapPayload.status == models.PayloadStatus.FAILED,

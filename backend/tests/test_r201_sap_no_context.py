@@ -285,7 +285,7 @@ async def test_r201_04_retry_sin_contexto_no_reenvia(http_client, esc201,
         fila = await _escalar(esc201,
                               "SELECT retry_count || ':' || status::text FROM sap_payloads WHERE id = :p",
                               p=esc201[clave])
-        assert fila == "0:failed", f"payload {marca} intacto: {fila}"
+        assert str(fila).lower() == "0:failed", f"payload {marca} intacto: {fila}"
 
 
 async def test_r201_05_global_situada_opera_su_empresa(http_client, esc201,
