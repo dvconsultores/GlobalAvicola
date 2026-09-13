@@ -28,11 +28,18 @@ jobs:
         with:
           python-version: '3.11'
           cache: 'pip'
-      - name: Instalar dependencias del backend (dev)
+      # GA-GOV-03 C3 — el `pip install -e ".[dev]"` original fallaba siempre
+      # (setuptools flat-layout: `app` + `seeds` sin config de paquetes). Se usa
+      # el flujo canónico del repo: uv.lock + Python 3.11, y pgserver dentro del
+      # mismo venv que consume `scripts/run_tests.sh`.
+      - name: Instalar uv (versión validada)
+        run: pip install uv==0.11.23
+      - name: Sincronizar dependencias (uv.lock · Python 3.11)
         working-directory: ./backend
-        run: pip install -e ".[dev]"
-      - name: Instalar PostgreSQL de usuario (pgserver)
-        run: pip install pgserver
+        run: uv sync --frozen --python 3.11
+      - name: Instalar PostgreSQL de usuario (pgserver) en el entorno del proyecto
+        working-directory: ./backend
+        run: uv pip install --python .venv/bin/python "pgserver==0.1.4"
       - name: Suite canónica (backend/scripts/run_tests.sh)
         working-directory: ./backend
         run: |
