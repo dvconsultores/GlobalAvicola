@@ -346,6 +346,29 @@ class LotService:
                 self.db, Area, data.area_id, self.company_id, "Área",
                 exigir_activo=True)
 
+        # `R-203`. Galpón y línea genética son referencias **estructurales**: la misma
+        # clase que el área y el mismo contrato (`BR-07`, detalle neutro — el ajeno se
+        # comporta como inexistente, sin distinguir «no existe» de «no es tuyo»). El
+        # galpón no tiene `company_id` propio —cuelga de una granja—, así que su tenencia
+        # se resuelve **por la granja**. Sin empresa efectiva, fail-closed.
+        if data.house_id is not None:
+            from ..masters.models import Farm, House
+            from ..operations.validators import BusinessRuleViolation
+
+            empresa_del_galpon = (await self.db.execute(
+                select(Farm.company_id).join(House, House.farm_id == Farm.id)
+                .where(House.id == data.house_id))).scalar_one_or_none()
+            if empresa_del_galpon is None or empresa_del_galpon != self.company_id:
+                raise BusinessRuleViolation("Galpón no encontrado", "BR-07")
+
+        if data.genetic_line_id is not None:
+            from ..masters.models import GeneticLine
+            from ..tenancy import verificar_catalogo_de_empresa
+
+            await verificar_catalogo_de_empresa(
+                self.db, GeneticLine, data.genetic_line_id, self.company_id,
+                "Línea genética")
+
         # `GA-REM-037` / `OD-06`. La curva estándar contra la que se juzgará este lote se
         # fija ahora y no se recalcula: es lo que separa una referencia histórica de una
         # que cambia bajo los pies del dato ya registrado (`AC07`, `AC08`).
@@ -433,6 +456,29 @@ class LotService:
             await verificar_catalogo_de_empresa(
                 self.db, Area, campos["area_id"], self.company_id, "Área",
                 exigir_activo=True)
+
+        # `R-203`: mismo contrato que el alta para galpón y línea genética. Solo cuando
+        # el valor **cambia** (reenviar el mismo id o `null` no es referencia nueva —
+        # misma semántica que el área, `OD-21`).
+        if (campos.get("house_id") is not None
+                and campos["house_id"] != lote_actual.house_id):
+            from ..masters.models import Farm, House
+            from ..operations.validators import BusinessRuleViolation
+
+            empresa_del_galpon = (await self.db.execute(
+                select(Farm.company_id).join(House, House.farm_id == Farm.id)
+                .where(House.id == campos["house_id"]))).scalar_one_or_none()
+            if empresa_del_galpon is None or empresa_del_galpon != self.company_id:
+                raise BusinessRuleViolation("Galpón no encontrado", "BR-07")
+
+        if (campos.get("genetic_line_id") is not None
+                and campos["genetic_line_id"] != lote_actual.genetic_line_id):
+            from ..masters.models import GeneticLine
+            from ..tenancy import verificar_catalogo_de_empresa
+
+            await verificar_catalogo_de_empresa(
+                self.db, GeneticLine, campos["genetic_line_id"], self.company_id,
+                "Línea genética")
         return await master_service.update(lot_id, data)
 
     async def close_lot(self, lot_id: int) -> dict:

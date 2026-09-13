@@ -205,27 +205,31 @@ async def test_ga06a_06_galpon_linea_y_curva_ajenos_se_rechazan(
     """
     import uuid as _uuid
 
+    from sqlalchemy.ext.asyncio import async_sessionmaker
+
     from app.masters.models import (
         Farm, GeneticLine, GeneticWeightCurve, House,
     )
 
     prefijo = f"{PREFIJO}R203X-{_uuid.uuid4().hex[:6]}"
     ids = {}
-    async with motor.begin() as c:
+    Sesion = async_sessionmaker(motor, expire_on_commit=False)
+    async with Sesion() as s:
         b = seeded_ids["company_id_2"]
         farm = Farm(company_id=b, name=f"{prefijo}F")
-        c.add(farm)
-        await c.flush()
+        s.add(farm)
+        await s.flush()
         house = House(farm_id=farm.id, name=f"{prefijo}H")
         line = GeneticLine(company_id=b, name=f"{prefijo}L")
-        c.add_all([house, line])
-        await c.flush()
+        s.add_all([house, line])
+        await s.flush()
         curve = GeneticWeightCurve(genetic_line_id=line.id,
                                    version_label=f"{prefijo}C", is_active=True)
-        c.add(curve)
-        await c.flush()
+        s.add(curve)
+        await s.flush()
         ids = {"farm": farm.id, "house": house.id, "line": line.id,
                "curve": curve.id}
+        await s.commit()
 
     try:
         # Galpón de otra empresa: se comporta como inexistente.

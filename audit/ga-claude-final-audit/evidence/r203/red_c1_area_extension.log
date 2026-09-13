@@ -1,0 +1,444 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=56 (55 + alembic_version) · head en BD=z6a7b8c9d0e1 · head en código=z6a7b8c9d0e1
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 6 items
+
+tests/test_lot_area_ownership.py .....F                                  [100%]
+
+=================================== FAILURES ===================================
+____________ test_ga06a_06_galpon_linea_y_curva_ajenos_se_rechazan _____________
+
+self = <sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_cursor object at 0x7f4b783e52a0>
+operation = 'DELETE FROM houses WHERE id = $1', parameters = (3,)
+
+    async def _prepare_and_execute(self, operation, parameters):
+        adapt_connection = self._adapt_connection
+    
+        async with adapt_connection._execute_mutex:
+            if not adapt_connection._started:
+                await adapt_connection._start_transaction()
+    
+            if parameters is None:
+                parameters = ()
+    
+            try:
+                prepared_stmt, attributes = await adapt_connection._prepare(
+                    operation, self._invalidate_schema_cache_asof
+                )
+    
+                if attributes:
+                    self.description = [
+                        (
+                            attr.name,
+                            attr.type.oid,
+                            None,
+                            None,
+                            None,
+                            None,
+                            None,
+                        )
+                        for attr in attributes
+                    ]
+                else:
+                    self.description = None
+    
+                if self.server_side:
+                    self._cursor = await prepared_stmt.cursor(*parameters)
+                    self.rowcount = -1
+                else:
+>                   self._rows = deque(await prepared_stmt.fetch(*parameters))
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:550: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.11/site-packages/asyncpg/prepared_stmt.py:177: in fetch
+    data = await self.__bind_execute(args, 0, timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/asyncpg/prepared_stmt.py:268: in __bind_execute
+    data, status, _ = await self.__do_execute(
+.venv/lib/python3.11/site-packages/asyncpg/prepared_stmt.py:257: in __do_execute
+    return await executor(protocol)
+           ^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+>   ???
+E   asyncpg.exceptions.ForeignKeyViolationError: update or delete on table "houses" violates foreign key constraint "lots_house_id_fkey" on table "lots"
+E   DETAIL:  Key (id)=(3) is still referenced from table "lots".
+
+asyncpg/protocol/protocol.pyx:205: ForeignKeyViolationError
+
+The above exception was the direct cause of the following exception:
+
+self = <sqlalchemy.engine.base.Connection object at 0x7f4b782a4090>
+dialect = <sqlalchemy.dialects.postgresql.asyncpg.PGDialect_asyncpg object at 0x7f4b78436510>
+context = <sqlalchemy.dialects.postgresql.asyncpg.PGExecutionContext_asyncpg object at 0x7f4b782c2ed0>
+statement = <sqlalchemy.dialects.postgresql.asyncpg.PGCompiler_asyncpg object at 0x7f4b782c3150>
+parameters = [(3,)]
+
+    def _exec_single_context(
+        self,
+        dialect: Dialect,
+        context: ExecutionContext,
+        statement: Union[str, Compiled],
+        parameters: Optional[_AnyMultiExecuteParams],
+    ) -> CursorResult[Any]:
+        """continue the _execute_context() method for a single DBAPI
+        cursor.execute() or cursor.executemany() call.
+    
+        """
+        if dialect.bind_typing is BindTyping.SETINPUTSIZES:
+            generic_setinputsizes = context._prepare_set_input_sizes()
+    
+            if generic_setinputsizes:
+                try:
+                    dialect.do_set_input_sizes(
+                        context.cursor, generic_setinputsizes, context
+                    )
+                except BaseException as e:
+                    self._handle_dbapi_exception(
+                        e, str(statement), parameters, None, context
+                    )
+    
+        cursor, str_statement, parameters = (
+            context.cursor,
+            context.statement,
+            context.parameters,
+        )
+    
+        effective_parameters: Optional[_AnyExecuteParams]
+    
+        if not context.executemany:
+            effective_parameters = parameters[0]
+        else:
+            effective_parameters = parameters
+    
+        if self._has_events or self.engine._has_events:
+            for fn in self.dispatch.before_cursor_execute:
+                str_statement, effective_parameters = fn(
+                    self,
+                    cursor,
+                    str_statement,
+                    effective_parameters,
+                    context,
+                    context.executemany,
+                )
+    
+        if self._echo:
+            self._log_info(str_statement)
+    
+            stats = context._get_cache_stats()
+    
+            if not self.engine.hide_parameters:
+                self._log_info(
+                    "[%s] %r",
+                    stats,
+                    sql_util._repr_params(
+                        effective_parameters,
+                        batches=10,
+                        ismulti=context.executemany,
+                    ),
+                )
+            else:
+                self._log_info(
+                    "[%s] [SQL parameters hidden due to hide_parameters=True]",
+                    stats,
+                )
+    
+        evt_handled: bool = False
+        try:
+            if context.execute_style is ExecuteStyle.EXECUTEMANY:
+                effective_parameters = cast(
+                    "_CoreMultiExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_executemany:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_executemany(
+                        cursor,
+                        str_statement,
+                        effective_parameters,
+                        context,
+                    )
+            elif not effective_parameters and context.no_parameters:
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute_no_params:
+                        if fn(cursor, str_statement, context):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+                    self.dialect.do_execute_no_params(
+                        cursor, str_statement, context
+                    )
+            else:
+                effective_parameters = cast(
+                    "_CoreSingleExecuteParams", effective_parameters
+                )
+                if self.dialect._has_events:
+                    for fn in self.dialect.dispatch.do_execute:
+                        if fn(
+                            cursor,
+                            str_statement,
+                            effective_parameters,
+                            context,
+                        ):
+                            evt_handled = True
+                            break
+                if not evt_handled:
+>                   self.dialect.do_execute(
+                        cursor, str_statement, effective_parameters, context
+                    )
+
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1969: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:585: in execute
+    self._adapt_connection.await_(
+.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:563: in _prepare_and_execute
+    self._handle_exception(error)
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:513: in _handle_exception
+    self._adapt_connection._handle_exception(error)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AdaptedConnection <asyncpg.connection.Connection object at 0x7f4b78532110>>
+error = ForeignKeyViolationError('update or delete on table "houses" violates foreign key constraint "lots_house_id_fkey" on table "lots"')
+
+    def _handle_exception(self, error):
+        if self._connection.is_closed():
+            self._transaction = None
+            self._started = False
+    
+        if not isinstance(error, AsyncAdapt_asyncpg_dbapi.Error):
+            exception_mapping = self.dbapi._asyncpg_error_translate
+    
+            for super_ in type(error).__mro__:
+                if super_ in exception_mapping:
+                    translated_error = exception_mapping[super_](
+                        "%s: %s" % (type(error), error)
+                    )
+                    translated_error.pgcode = translated_error.sqlstate = (
+                        getattr(error, "sqlstate", None)
+                    )
+>                   raise translated_error from error
+E                   sqlalchemy.dialects.postgresql.asyncpg.AsyncAdapt_asyncpg_dbapi.IntegrityError: <class 'asyncpg.exceptions.ForeignKeyViolationError'>: update or delete on table "houses" violates foreign key constraint "lots_house_id_fkey" on table "lots"
+E                   DETAIL:  Key (id)=(3) is still referenced from table "lots".
+
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:797: IntegrityError
+
+The above exception was the direct cause of the following exception:
+
+client = <httpx.AsyncClient object at 0x7f4b783b5c10>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzMzYxOTMsInR5cGUiOiJhY2Nlc3MifQ.AsSJK-q-lLZFMNgV9cZHdmDcDIaIimjSIqEvmxH80sg'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7f4b78406180>
+unidades = None
+
+    async def test_ga06a_06_galpon_linea_y_curva_ajenos_se_rechazan(
+        client, auth_headers, seeded_ids, motor, unidades
+    ):
+        """`R-203` en el fichero de referencia de la clase: las tres referencias
+        estructurales del lote responden al mismo contrato que el área (`400`,
+        detalle neutro, `BR-07`).
+    
+        La geometría ajena se crea aquí para poder demostrar el cruce; se retira en
+        el `finally` para no contaminar la siembra compartida.
+        """
+        import uuid as _uuid
+    
+        from sqlalchemy.ext.asyncio import async_sessionmaker
+    
+        from app.masters.models import (
+            Farm, GeneticLine, GeneticWeightCurve, House,
+        )
+    
+        prefijo = f"{PREFIJO}R203X-{_uuid.uuid4().hex[:6]}"
+        ids = {}
+        Sesion = async_sessionmaker(motor, expire_on_commit=False)
+        async with Sesion() as s:
+            b = seeded_ids["company_id_2"]
+            farm = Farm(company_id=b, name=f"{prefijo}F")
+            s.add(farm)
+            await s.flush()
+            house = House(farm_id=farm.id, name=f"{prefijo}H")
+            line = GeneticLine(company_id=b, name=f"{prefijo}L")
+            s.add_all([house, line])
+            await s.flush()
+            curve = GeneticWeightCurve(genetic_line_id=line.id,
+                                       version_label=f"{prefijo}C", is_active=True)
+            s.add(curve)
+            await s.flush()
+            ids = {"farm": farm.id, "house": house.id, "line": line.id,
+                   "curve": curve.id}
+            await s.commit()
+    
+        try:
+            # Galpón de otra empresa: se comporta como inexistente.
+            r = await _lote(client, auth_headers, seeded_ids,
+                            lot_code=f"{prefijo}-H", house_id=ids["house"])
+            assert r.status_code == 400, r.text
+            assert r.json().get("detail") == "Galpón no encontrado", r.text
+            assert r.json().get("rule") == "BR-07", r.text
+    
+            # Línea genética de otra empresa: igual; la nula sigue siendo compartida.
+            r = await _lote(client, auth_headers, seeded_ids,
+                            lot_code=f"{prefijo}-L", genetic_line_id=ids["line"])
+            assert r.status_code == 400, r.text
+            assert r.json().get("detail") == "Línea genética no encontrado", r.text
+    
+            # Curva de una línea ajena: no se aplica.
+            r = await _lote(client, auth_headers, seeded_ids,
+                            lot_code=f"{prefijo}-C", genetic_line_id=ids["line"],
+                            weight_curve_id=ids["curve"])
+            assert r.status_code in (400, 404), r.text
+        finally:
+            async with motor.begin() as c:
+                await c.execute(text("DELETE FROM genetic_weight_curves WHERE id = :i"),
+                                {"i": ids["curve"]})
+                await c.execute(text("DELETE FROM genetic_lines WHERE id = :i"),
+                                {"i": ids["line"]})
+>               await c.execute(text("DELETE FROM houses WHERE id = :i"),
+                                {"i": ids["house"]})
+
+tests/test_lot_area_ownership.py:259: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py:201: in greenlet_spawn
+    result = context.throw(*sys.exc_info())
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1421: in execute
+    return meth(
+.venv/lib/python3.11/site-packages/sqlalchemy/sql/elements.py:526: in _execute_on_connection
+    return connection._execute_clauseelement(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1643: in _execute_clauseelement
+    ret = self._execute_context(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1848: in _execute_context
+    return self._exec_single_context(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1988: in _exec_single_context
+    self._handle_dbapi_exception(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:2365: in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/base.py:1969: in _exec_single_context
+    self.dialect.do_execute(
+.venv/lib/python3.11/site-packages/sqlalchemy/engine/default.py:952: in do_execute
+    cursor.execute(statement, parameters)
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:585: in execute
+    self._adapt_connection.await_(
+.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py:132: in await_only
+    return current.parent.switch(awaitable)  # type: ignore[no-any-return,attr-defined] # noqa: E501
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/sqlalchemy/util/_concurrency_py3k.py:196: in greenlet_spawn
+    value = await result
+            ^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:563: in _prepare_and_execute
+    self._handle_exception(error)
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:513: in _handle_exception
+    self._adapt_connection._handle_exception(error)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <AdaptedConnection <asyncpg.connection.Connection object at 0x7f4b78532110>>
+error = ForeignKeyViolationError('update or delete on table "houses" violates foreign key constraint "lots_house_id_fkey" on table "lots"')
+
+    def _handle_exception(self, error):
+        if self._connection.is_closed():
+            self._transaction = None
+            self._started = False
+    
+        if not isinstance(error, AsyncAdapt_asyncpg_dbapi.Error):
+            exception_mapping = self.dbapi._asyncpg_error_translate
+    
+            for super_ in type(error).__mro__:
+                if super_ in exception_mapping:
+                    translated_error = exception_mapping[super_](
+                        "%s: %s" % (type(error), error)
+                    )
+                    translated_error.pgcode = translated_error.sqlstate = (
+                        getattr(error, "sqlstate", None)
+                    )
+>                   raise translated_error from error
+E                   sqlalchemy.exc.IntegrityError: (sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.ForeignKeyViolationError'>: update or delete on table "houses" violates foreign key constraint "lots_house_id_fkey" on table "lots"
+E                   DETAIL:  Key (id)=(3) is still referenced from table "lots".
+E                   [SQL: DELETE FROM houses WHERE id = $1]
+E                   [parameters: (3,)]
+E                   (Background on this error at: https://sqlalche.me/e/20/gkpj)
+
+.venv/lib/python3.11/site-packages/sqlalchemy/dialects/postgresql/asyncpg.py:797: IntegrityError
+=============================== warnings summary ===============================
+tests/test_lot_area_ownership.py::test_ga06a_01_el_alta_rechaza_area_de_otra_empresa
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_lot_area_ownership.py::test_ga06a_06_galpon_linea_y_curva_ajenos_se_rechazan
+==================== 1 failed, 5 passed, 1 warning in 3.84s ====================

@@ -39,6 +39,7 @@ import app.integrations.sap.models  # noqa: F401
 import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 from app.auth.security import create_access_token
+from tests.time_reference import iso_days_ago
 
 pytestmark = pytest.mark.asyncio
 
@@ -156,7 +157,7 @@ async def esc201(test_database_url):
                                "idempotency_key": uuid.uuid4().hex,
                                "event_type": "mortality_recording",
                                "lot_id": lot_id, "company_id": company_id,
-                               "event_date": "2026-09-12", "quantity": 1.0,
+                               "event_date": iso_days_ago(1), "quantity": 1.0,
                                "unit": "units",
                            },
                            status=PayloadStatus.FAILED,
