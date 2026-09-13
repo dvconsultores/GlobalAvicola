@@ -116,7 +116,11 @@ async def get_current_user(
             for perm in user.role.permissions:
                 accion = perm.action.value if hasattr(perm.action, "value") else str(perm.action)
                 permisos.add((perm.module, accion))
-                if perm.module == "*" and perm.scope_type == "all":
+                # `R-199` · `OD-13.c`: la autoridad global exige el permiso **en un rol
+                # de sistema** (`company_id IS NULL`); en un rol de inquilino el comodín
+                # no es la capacidad — un permiso suelto no la concede.
+                if (perm.module == "*" and perm.scope_type == "all"
+                        and user.role.company_id is None):
                     is_super_admin = True
 
     # R-48: contexto de compania.
@@ -165,17 +169,6 @@ async def get_current_user(
     set_current_audit_user(user_dict)
 
     return user_dict
-
-
-def get_company_filter(current_user: dict = Depends(get_current_user)) -> int | None:
-    """
-    Returns the company_id to filter by.
-    Super Admin → None (no filter, sees all companies).
-    Regular user → their company_id.
-    """
-    if current_user.get("is_super_admin"):
-        return None  # No filter
-    return current_user.get("company_id")
 
 
 def require_company(current_user: dict = Depends(get_current_user)) -> int:

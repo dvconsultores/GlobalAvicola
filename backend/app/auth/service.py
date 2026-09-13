@@ -139,7 +139,9 @@ class AuthService:
         if rol.company_id is None:
             # Plantilla de producto: asignable salvo que reparta autoridad global.
             return not await self._es_autoridad_global(role_id)
-        return rol.company_id == empresa
+        # `R-199`: un rol de inquilino nunca confiere autoridad global; asignar uno con el
+        # comodín repartiría la escalada en vez de fabricarla, y también se deniega.
+        return rol.company_id == empresa and not await self._es_autoridad_global(role_id)
 
     async def _rol_administrable(self, role_id: int, actor: dict | None):
         """El rol, **si el actor puede administrarlo**. `AC-R03` · `AC-R04`.
@@ -231,6 +233,9 @@ class AuthService:
             .join(Role, Role.id == Permission.role_id)
             .where(
                 Role.id == user.role_id,
+                # `R-199` · `OD-13.c`: la capacidad exige el permiso **en un rol de
+                # sistema**; un rol de inquilino con el comodín no la confiere.
+                Role.company_id.is_(None),
                 Permission.module == "*",
                 Permission.scope_type == "all",
             )
@@ -552,6 +557,56 @@ class AuthService:
         "masters", "operations", "reports", "reversals", "review", "sap", "users",
     ]
 
+    #: `R-199` · `AC08`. Alcances admitidos; `docs/02 §3.1.4` no define otros.
+    SCOPE_TYPES = ("all", "company", "farm")
+
+    def _validar_permisos(self, permisos, *, rol_de_inquilino: bool) -> None:
+        """`R-199` · catálogo cerrado + invariante del comodín global.
+
+        `OD-13.c`: la autoridad global —`("*", scope_type="all")`, `docs/02 §3.1.4`— no se
+        fabrica desde una superficie de empresa. El catálogo es del producto: un módulo,
+        una acción o un alcance fuera de él se rechazan (`422`) antes de tocar la base.
+        """
+        acciones = [a.value for a in PermissionAction]
+        for perm in permisos:
+            if perm.module != "*" and perm.module not in self.MODULOS:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"Módulo fuera del catálogo: {perm.module!r}")
+            accion = getattr(perm.action, "value", perm.action)
+            if accion not in acciones:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"Acción fuera del catálogo: {accion!r}")
+            if perm.scope_type not in self.SCOPE_TYPES:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"Alcance fuera del catálogo: {perm.scope_type!r}")
+            if rol_de_inquilino and perm.module == "*" and perm.scope_type == "all":
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="La autoridad global no se concede desde la administración de una empresa")
+
+    async def _registrar_rechazo_de_autoridad(self, *, actor: dict | None,
+                                              role_id: int | None) -> None:
+        """`C-05`: el intento denegado de fabricar autoridad global deja asiento.
+
+        Mismo patrón que `LOGIN_FAILED`: el `403` provoca el rollback de la petición y el
+        registro debe sobrevivir al rechazo — se confirma aquí, solo aquí, y solo cuando no
+        hay otra escritura pendiente (la validación corre antes de tocar la base). Sin
+        empresa efectiva no hay asiento posible (`audit_logs.company_id` es `NOT NULL`).
+        """
+        empresa, _ = self._contexto(actor)
+        if actor is None or empresa is None:
+            return
+        await audit_accion(
+            self.db, usuario=actor, accion=AuditAction.PERMISSION_CHANGE,
+            modulo=AuditModule.USERS, entity_type="role", entity_id=role_id,
+            company_id=empresa,
+            comments="rechazado: autoridad global desde una superficie de empresa",
+        )
+        await self.db.commit()
+
     def get_permission_catalog(self) -> dict[str, list[str]]:
         """`GA-REM-034 AC01`. Qué se puede conceder, desde la fuente de verdad."""
         return {
@@ -590,6 +645,14 @@ class AuthService:
         es lo que las semillas del producto han hecho siempre.
         """
         empresa, global_ = self._contexto(current_user)
+        # `R-199` · `T-02`: validar **antes** de `db.add` — una denegación no deja fila.
+        try:
+            self._validar_permisos(data.permissions or [],
+                                   rol_de_inquilino=current_user is not None and not global_)
+        except HTTPException as exc:
+            if exc.status_code == status.HTTP_403_FORBIDDEN:
+                await self._registrar_rechazo_de_autoridad(actor=current_user, role_id=None)
+            raise
         role = Role(name=data.name, description=data.description,
                     company_id=None if (current_user is None or global_) else empresa)
         self.db.add(role)
@@ -628,6 +691,18 @@ class AuthService:
         role = await self._rol_administrable(role_id, current_user)
         if not role:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
+
+        # `R-199` · `T-02`: validar el conjunto **antes** de `sa_delete` — una denegación
+        # deja los permisos intactos (`AC02`).
+        if data.permissions is not None:
+            try:
+                self._validar_permisos(data.permissions,
+                                       rol_de_inquilino=role.company_id is not None)
+            except HTTPException as exc:
+                if exc.status_code == status.HTTP_403_FORBIDDEN:
+                    await self._registrar_rechazo_de_autoridad(actor=current_user,
+                                                               role_id=role.id)
+                raise
 
         # `permissions` se excluye del asignador genérico: es una relación y se sustituye
         # abajo. Asignarle una lista de diccionarios revienta el mapeador.

@@ -1,5 +1,4 @@
 from .auth.security import (
-    get_company_filter as get_company_filter,
     get_current_user as get_current_user,
     require_company as require_company,
     # GA-REM-002: la autorización se re-exporta junto a la autenticación a propósito.

@@ -1,7 +1,9 @@
 from datetime import datetime
-from typing import Optional
+from typing import Literal, Optional
 
 from pydantic import BaseModel, EmailStr, Field
+
+from .models import PermissionAction
 
 
 # ------------------- Auth -------------------
@@ -200,8 +202,12 @@ class RoleRead(RoleBase):
 
 class PermissionCreate(BaseModel):
     module: str
-    action: str  # read, create, update, delete, review, correct, approve, reject, send_sap
-    scope_type: str = "all"
+    #: `R-199` · `AC07`: la acción se valida contra el enum del producto. Fuera de él,
+    #: `422` en la forma estándar de pydantic (antes `PermissionAction("fly")` reventaba
+    #: en `500` dentro del servicio).
+    action: PermissionAction  # read, create, update, delete, review, correct, approve, reject, send_sap
+    #: `R-199` · `AC08`: los alcances del producto; cualquier otro valor es `422`.
+    scope_type: Literal["all", "company", "farm"] = "all"
     scope_id: Optional[int] = None
 
 

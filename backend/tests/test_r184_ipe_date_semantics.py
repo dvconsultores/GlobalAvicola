@@ -105,7 +105,9 @@ async def ipe(test_database_url, test_credentials):
             await s.flush()
 
         rol_ok = Role(name=f"{PREFIJO}R-{uuid.uuid4().hex[:6]}", company_id=a.id, is_active=True)
-        rol_global = Role(name=f"{PREFIJO}G-{uuid.uuid4().hex[:6]}", company_id=a.id, is_active=True)
+        # `R-199` · `OD-13.c`: la capacidad global se computa desde un rol de **sistema**
+        # (`company_id IS NULL`) — un rol de inquilino con el comodín ya no la confiere.
+        rol_global = Role(name=f"{PREFIJO}G-{uuid.uuid4().hex[:6]}", company_id=None, is_active=True)
         rol_sin = Role(name=f"{PREFIJO}S-{uuid.uuid4().hex[:6]}", company_id=a.id, is_active=True)
         s.add_all([rol_ok, rol_global, rol_sin])
         await s.flush()
