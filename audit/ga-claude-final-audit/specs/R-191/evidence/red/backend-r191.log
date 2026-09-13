@@ -1,0 +1,257 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=56 (55 + alembic_version) · head en BD=z6a7b8c9d0e1 · head en código=z6a7b8c9d0e1
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 9 items
+
+tests/test_r191_lot_phase_transition.py FFFFFF.F.                        [100%]
+
+=================================== FAILURES ===================================
+________________ test_r191_01_add_phase_cierra_la_fase_anterior ________________
+
+http_client = <httpx.AsyncClient object at 0x7f72c65d7f90>
+esc = {'lote': 3, 'cerrado': None, 'operador': 5, 'cria': 1, ...}
+
+    async def test_r191_01_add_phase_cierra_la_fase_anterior(http_client, esc):
+        r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                           "start_date": recent_event_date()})
+        assert r.status_code == 201, r.text
+        activas = await _activas(esc)
+>       assert sum(1 for f in activas if f["is_active"]) == 1, activas
+E       AssertionError: [{'phase_id': 1, 'is_active': True, 'end_date': None}, {'phase_id': 2, 'is_active': True, 'end_date': None}]
+E       assert 2 == 1
+E        +  where 2 = sum(<generator object test_r191_01_add_phase_cierra_la_fase_anterior.<locals>.<genexpr> at 0x7f72c4cf2330>)
+
+tests/test_r191_lot_phase_transition.py:199: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+_________________ test_r191_02_lectura_incluye_codigo_de_fase __________________
+
+http_client = <httpx.AsyncClient object at 0x7f72c65c0c90>
+esc = {'lote': 4, 'cerrado': None, 'operador': 6, 'cria': 1, ...}
+
+    async def test_r191_02_lectura_incluye_codigo_de_fase(http_client, esc):
+        r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                           "start_date": recent_event_date()})
+        assert r.status_code == 201, r.text
+>       assert r.json()["phase"]["code"] == "PROD"
+               ^^^^^^^^^^^^^^^^^
+E       KeyError: 'phase'
+
+tests/test_r191_lot_phase_transition.py:209: KeyError
+______________ test_r191_03_poblacion_por_sexo_derivada_del_saldo ______________
+
+http_client = <httpx.AsyncClient object at 0x7f72c4690bd0>
+esc = {'lote': 5, 'cerrado': None, 'operador': 7, 'cria': 1, ...}
+
+    async def test_r191_03_poblacion_por_sexo_derivada_del_saldo(http_client, esc):
+        r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                           "start_date": recent_event_date()})
+        assert r.status_code == 201, r.text
+>       assert r.json()["start_population_male"] == 35, r.text
+E       AssertionError: {"lot_id":5,"phase_id":2,"start_date":"2026-09-07","end_date":null,"start_population_male":0,"start_population_female":0,"start_weight_avg":null,"id":6,"is_active":true,"created_at":"2026-09-13T23:04:50.329870Z"}
+E       assert 0 == 35
+
+tests/test_r191_lot_phase_transition.py:221: AssertionError
+_____________________ test_r191_04a_lote_no_activo_es_400 ______________________
+
+http_client = <httpx.AsyncClient object at 0x7f72c45968d0>
+esc = {'lote': 6, 'cerrado': None, 'operador': 8, 'cria': 1, ...}
+
+    async def test_r191_04a_lote_no_activo_es_400(http_client, esc):
+        from app.masters.models import Lot, LotStatus
+    
+        motor = create_async_engine(esc["url"])
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            lote = (await s.execute(select(Lot).where(Lot.id == esc["lote"]))).scalar_one()
+            lote.status = LotStatus.CLOSED
+            await s.commit()
+        await motor.dispose()
+    
+        antes = await _activas(esc)
+        r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                           "start_date": recent_event_date()})
+>       assert r.status_code == 400, r.text
+E       AssertionError: {"lot_id":6,"phase_id":2,"start_date":"2026-09-07","end_date":null,"start_population_male":0,"start_population_female":0,"start_weight_avg":null,"id":8,"is_active":true,"created_at":"2026-09-13T23:04:50.689009Z"}
+E       assert 201 == 400
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests/test_r191_lot_phase_transition.py:238: AssertionError
+_____________________ test_r191_04b_fase_ya_activa_es_400 ______________________
+
+http_client = <httpx.AsyncClient object at 0x7f72c4535310>
+esc = {'lote': 7, 'cerrado': None, 'operador': 9, 'cria': 1, ...}
+
+    async def test_r191_04b_fase_ya_activa_es_400(http_client, esc):
+        antes = await _activas(esc)
+        r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["cria"],
+                                           "start_date": recent_event_date()})
+>       assert r.status_code == 400, r.text
+E       AssertionError: {"lot_id":7,"phase_id":1,"start_date":"2026-09-07","end_date":null,"start_population_male":0,"start_population_female":0,"start_weight_avg":null,"id":10,"is_active":true,"created_at":"2026-09-13T23:04:51.031115Z"}
+E       assert 201 == 400
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests/test_r191_lot_phase_transition.py:246: AssertionError
+________________ test_r191_04c_fecha_anterior_al_inicio_es_400 _________________
+
+http_client = <httpx.AsyncClient object at 0x7f72c449af50>
+esc = {'lote': 8, 'cerrado': None, 'operador': 10, 'cria': 1, ...}
+
+    async def test_r191_04c_fecha_anterior_al_inicio_es_400(http_client, esc):
+        antes = await _activas(esc)
+>       r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                           "start_date": days_ago(40)})
+
+tests/test_r191_lot_phase_transition.py:252: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_r191_lot_phase_transition.py:178: in _post
+    return await http_client.post(f"/api/v1/lots/{esc['lote']}/phases",
+.venv/lib/python3.11/site-packages/httpx/_client.py:1859: in post
+    return await self.request(
+.venv/lib/python3.11/site-packages/httpx/_client.py:1527: in request
+    request = self.build_request(
+.venv/lib/python3.11/site-packages/httpx/_client.py:378: in build_request
+    return Request(
+.venv/lib/python3.11/site-packages/httpx/_models.py:408: in __init__
+    headers, stream = encode_request(
+.venv/lib/python3.11/site-packages/httpx/_content.py:216: in encode_request
+    return encode_json(json)
+           ^^^^^^^^^^^^^^^^^
+.venv/lib/python3.11/site-packages/httpx/_content.py:177: in encode_json
+    body = json_dumps(
+/usr/lib/python3.11/json/__init__.py:238: in dumps
+    **kw).encode(obj)
+          ^^^^^^^^^^^
+/usr/lib/python3.11/json/encoder.py:200: in encode
+    chunks = self.iterencode(o, _one_shot=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/usr/lib/python3.11/json/encoder.py:258: in iterencode
+    return _iterencode(o, 0)
+           ^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = <json.encoder.JSONEncoder object at 0x7f72c4507090>
+o = datetime.date(2026, 8, 5)
+
+    def default(self, o):
+        """Implement this method in a subclass such that it returns
+        a serializable object for ``o``, or calls the base implementation
+        (to raise a ``TypeError``).
+    
+        For example, to support arbitrary iterators, you could
+        implement default like this::
+    
+            def default(self, o):
+                try:
+                    iterable = iter(o)
+                except TypeError:
+                    pass
+                else:
+                    return list(iterable)
+                # Let the base class default method raise the TypeError
+                return JSONEncoder.default(self, o)
+    
+        """
+>       raise TypeError(f'Object of type {o.__class__.__name__} '
+                        f'is not JSON serializable')
+E       TypeError: Object of type date is not JSON serializable
+
+/usr/lib/python3.11/json/encoder.py:180: TypeError
+__________ test_r191_06_dos_transiciones_concurrentes_una_sola_activa __________
+
+http_client = <httpx.AsyncClient object at 0x7f72c44aef10>
+esc = {'lote': 10, 'cerrado': None, 'operador': 12, 'cria': 1, ...}
+
+    async def test_r191_06_dos_transiciones_concurrentes_una_sola_activa(http_client, esc):
+        uno, dos = await asyncio.gather(
+            _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                     "start_date": recent_event_date()}),
+            _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
+                                     "start_date": recent_event_date()}),
+        )
+        codigos = sorted([uno.status_code, dos.status_code])
+>       assert codigos == [201, 400], f"{codigos}: {uno.text} | {dos.text}"
+E       AssertionError: [201, 201]: {"lot_id":10,"phase_id":2,"start_date":"2026-09-07","end_date":null,"start_population_male":0,"start_population_female":0,"start_weight_avg":null,"id":15,"is_active":true,"created_at":"2026-09-13T23:04:52.063194Z"} | {"lot_id":10,"phase_id":2,"start_date":"2026-09-07","end_date":null,"start_population_male":0,"start_population_female":0,"start_weight_avg":null,"id":16,"is_active":true,"created_at":"2026-09-13T23:04:52.063323Z"}
+E       assert [201, 201] == [201, 400]
+E         
+E         At index 1 diff: 201 != 400
+E         Use -v to get more diff
+
+tests/test_r191_lot_phase_transition.py:276: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_01_add_phase_cierra_la_fase_anterior
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_02_lectura_incluye_codigo_de_fase
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_03_poblacion_por_sexo_derivada_del_saldo
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_04a_lote_no_activo_es_400
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_04b_fase_ya_activa_es_400
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_04c_fecha_anterior_al_inicio_es_400
+FAILED tests/test_r191_lot_phase_transition.py::test_r191_06_dos_transiciones_concurrentes_una_sola_activa
+==================== 7 failed, 2 passed, 1 warning in 4.23s ====================

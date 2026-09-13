@@ -1,0 +1,121 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · transición de fase por UI > AC-R191-01 · tras 201 la fase activa se muestra y el botón desaparece
+An error occurred in the <TraceabilityTree> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+ ❯ src/pages/lots/__tests__/r191.phaseTransition.test.tsx (4 tests | 4 failed) 1241ms
+     × AC-R191-03 · el POST lleva lot_id y phase_id (resuelto por código PROD) y nunca phase_code 160ms
+     × AC-R191-02 · 422 del servidor ⇒ toast.error con mensaje legible 40ms
+     × AC-R191-01 · tras 201 la fase activa se muestra y el botón desaparece 1030ms
+     × AC-R191-10 · claves lots.transitionSuccess y lots.phaseAlreadyActive en ES/EN 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · transición de fase por UI > AC-R191-03 · el POST lleva lot_id y phase_id (resuelto por código PROD) y nunca phase_code
+ FAIL  src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · transición de fase por UI > AC-R191-02 · 422 del servidor ⇒ toast.error con mensaje legible
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ TraceabilityTree src/components/TraceabilityTree.tsx:136:24
+    134|
+    135|  const hasData = data && (
+    136|  data.egg_batches_sent.length > 0 ||
+       |                        ^
+    137|  data.egg_batches_received.length > 0 ||
+    138|  data.chick_batches_sent.length > 0 ||
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:28571:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:8030:22
+ ❯ updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:10569:19
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12205:18
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:1048:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:19176:22
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:19004:41
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:18985:11
+ ❯ performWorkOnRoot node_modules/react-dom/cjs/react-dom-client.development.js:18094:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · transición de fase por UI > AC-R191-01 · tras 201 la fase activa se muestra y el botón desaparece
+TestingLibraryElementError: Unable to find role="button" and name `/Confirmar/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ abrirYConfirmar src/pages/lots/__tests__/r191.phaseTransition.test.tsx:80:32
+     78| const abrirYConfirmar = async () => {
+     79|   fireEvent.click(await screen.findByRole('button', { name: /Iniciar P…
+     80|   fireEvent.click(await screen.findByRole('button', { name: /Confirmar…
+       |                                ^
+     81| }
+     82|
+ ❯ src/pages/lots/__tests__/r191.phaseTransition.test.tsx:114:5
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · i18n de transición > AC-R191-10 · claves lots.transitionSuccess y lots.phaseAlreadyActive en ES/EN
+AssertionError: es.lots.transitionSuccess: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/pages/lots/__tests__/r191.phaseTransition.test.tsx:128:80
+    126|       const ruta = resolve(__dirname, `../../../../public/locales/${id…
+    127|       const dict = JSON.parse(readFileSync(ruta, 'utf8'))
+    128|       expect(dict.lots?.transitionSuccess, `${idioma}.lots.transitionS…
+       |                                                                                ^
+    129|       expect(dict.lots?.phaseAlreadyActive, `${idioma}.lots.phaseAlrea…
+    130|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ TraceabilityTree src/components/TraceabilityTree.tsx:136:24
+    134|
+    135|  const hasData = data && (
+    136|  data.egg_batches_sent.length > 0 ||
+       |                        ^
+    137|  data.egg_batches_received.length > 0 ||
+    138|  data.chick_batches_sent.length > 0 ||
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:28571:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:8030:22
+ ❯ updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:10569:19
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12205:18
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:1048:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:19176:22
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:19004:41
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:18985:11
+ ❯ performWorkOnRoot node_modules/react-dom/cjs/react-dom-client.development.js:18094:35
+
+This error originated in "src/pages/lots/__tests__/r191.phaseTransition.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "AC-R191-01 · tras 201 la fase activa se muestra y el botón desaparece". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed (4)
+     Errors  1 error
+   Start at  01:05:00
+   Duration  2.28s (transform 175ms, setup 48ms, import 375ms, tests 1.24s, environment 510ms)
+
