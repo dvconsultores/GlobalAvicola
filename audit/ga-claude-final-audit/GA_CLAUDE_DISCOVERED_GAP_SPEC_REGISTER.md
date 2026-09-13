@@ -109,6 +109,7 @@ Confirmaciones de la pasa 2 local (`evidence/ui-e2e-local-pass2.json`, 2026-09-1
 - `sap/service.py:76-81` `_company_filter` ⇒ `true()` si `company_id is None`; afecta `list_references :128-135`, `consolidate_approved :158-161`, `export_to_sap :239-242`, `retry_failed :404-408` (escritura), `list_sync_jobs/consolidated/errors/payloads`. Esperado: `false()` sin contexto (patrón `_acotar_a_empresa`), `retry_failed` con `_require_company_id`; tests de autoridad global sin contexto.
 
 ### R-202 · Restablecimiento de contraseña (P2 · no bloquea) — `auth/service.py:434-455`: objetivo buscado sin empresa; sólo `is_super_admin`; esperado `_usuario_alcanzable(user_id, actor)` + `tiene_permiso(users:update)`; auditoría con empresa efectiva.
+- **Estado (2026-09-13)**: `CLOSED_TECHNICALLY` · **C3 runtime pendiente de G-06** — C1 `58b374a` (RED 3F/2P) · C2 `fafd262` (dirigidas 37/37; suite `1252/0/49`; sensibilidad M1/M2); certificación `GA_CLAUDE_R202_RUNTIME_CERTIFICATION.md`.
 
 ### R-203 · Referencias del lote sin verificar (P2 · BLOQUEA cruce) — `lots/service.py:362-392,275-307,411-436`; `masters/service.py:187` (`_PADRES_TENANT` sin `house_id`); `lots/schemas.py:14-20,65-67`. Esperado: `verificar_pertenencia(House vía Farm)`, `verificar_catalogo_de_empresa(GeneticLine)`, curva colgando de línea de la empresa; `weight-evaluation` no expone curvas ajenas.
 

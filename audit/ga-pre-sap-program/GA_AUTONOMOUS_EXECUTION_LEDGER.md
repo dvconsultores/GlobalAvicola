@@ -146,3 +146,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Sensibilidad M1**: neutralizar la comprobación ⇒ RED-01…04 rojas (`evidence/r200/mutations/M1_sin_comprobacion_tipo.log`); revertida; worktree limpio.
 - **Certificación**: `audit/ga-claude-final-audit/GA_CLAUDE_R200_RUNTIME_CERTIFICATION.md` — **R-200 = `CLOSED_FUNCTIONALLY_CERTIFIED`** (AC01–14 ✅). Registro actualizado; nota AC13: **no** cierra `GA-REM-003 AC04`.
 - **Siguiente**: **R-202 C2** (implementación de `change_password` contextual) → GREEN 5/5 → suite completa → certificación (C3 runtime = G-06) → R-208 → **GA-REM-003 AC04** → certificación T2.
+
+## AE-19 · 2026-09-13 (noche-6) · R-202 C2 ✅ (CLOSED_TECHNICALLY) · arranca R-208 C1
+
+- **R-202 C2 `fafd262`**: `change_password` — objetivo resuelto por `_usuario_alcanzable` (fail-closed sin contexto) + `tiene_permiso(users:update)`; auditoría con empresa efectiva del actor. Dirigidas **37/37**; **suite completa `1252 passed / 0 failed / 49 skipped`** (19:39); sensibilidad M1 (sin permiso ⇒ `test_t012_05` roja) y M2 (sin ámbito ⇒ RED-01/04 rojas).
+- **Certificación**: `GA_CLAUDE_R202_RUNTIME_CERTIFICATION.md` — `CLOSED_TECHNICALLY`, **C3 runtime pendiente de G-06**.
+- **Nota de proceso**: un `git checkout --` sin staging previo revirtió la implementación C2 al índice (pre-fix) — recuperada re-aplicando y **stageando antes** de mutar; lección en `/memories/repo/spec-dev-red-green-pitfalls.md`.
+- **R-208 C1 (arrancado)**: tests RED — backend `test_r208_batch_approval_authority.py` (4: 01/03 rojos por puerta `review:review`; 02/04 controles) y FE `r208.batchGates.test.tsx` (RED R1 ve botones de lote; control A1). Pitfall FE documentado: mocks de `t`/`toast` **estables** o el refetch resetea la selección.
+- **Siguiente**: RED backend R-208 (ejecutar + evidencia) → commit C1 → C2 (decoradores `approvals:*` en batch + gates del panel) → GREEN/regresión/sensibilidad → C3 runtime (actores UAT-09 aptos: operator sin approvals / aprobador con approvals) → **GA-REM-003 AC04** → regresión T2 → certificación T2.
