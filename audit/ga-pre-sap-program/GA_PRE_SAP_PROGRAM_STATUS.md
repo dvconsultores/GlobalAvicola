@@ -1,6 +1,6 @@
 # GA · PRE-SAP — ESTADO DEL PROGRAMA (TRANCHE 0 · cierre)
 
-Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS observado) — T2 en arranque automático**.
+Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (certificación con CI run #26) — T3 en arranque automático**.
 
 ## 1 · KPI del programa
 
@@ -10,12 +10,12 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Brechas bloqueantes abiertas | **24** (9 P1 + 15 P2) + GA-GOV-03 | 0 |
 | Otras brechas abiertas | 10 (7 P2 no bloqueantes + 3 P3, incl. R-214) | cerradas o aceptadas |
 | Heredados que bloquean/condicionan | 36 filas (incl. 4 sin spec: Wave C P1 + condicionales por decisión) | resueltos por decisión/rider |
-| Suites | **0 rojos** — backend 1226/0/0/49 (JUnit) · Playwright 129/0 · vitest 314/314 | mantenido en cada tranche |
-| CI de tests | `Quality Suite (push)` **VERDE observado** — run #10 `34764423545` (`60e9d9d`): backend ✅ 21m42s + frontend ✅ 1m22s; artefactos descargados y sha256-verificados (1226/0/0/49 · 314/0). Historial honesto: runs #1-#9 rojos hasta C3/C4/C5/C6 | mantenido en cada push (`GA_GOV_03_CI_EVIDENCE.md §4`) |
+| Suites | **0 rojos** — backend 1263/0/0/49 (JUnit CI T2: 1312 total) · Playwright 129/0 · vitest 318/318 | mantenido en cada tranche |
+| CI de tests | `Quality Suite (push)` **VERDE observado** — run #26 `34778950665` (`5044788`): backend ✅ 24m25s + frontend ✅ 1m1s; artefactos descargados y sha256-verificados (1312/0/0/49 · 318/0); `evidence/t2-ci-run.json`. Historial honesto de T2: #21/#24 rojos **por diseño** (RED) y #25 rojo por pines del harness, remediado en `5044788` (#26 verde) | mantenido en cada push |
 | Certificaciones con artefacto | informes históricos anotados `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`; plantilla de evidencia vigente | nuevas certificaciones con commit+artefacto (regla ya aplicada a T1) |
 | UAT con evidencia primaria | 0 de 11 registros + 2 pendientes | 8 lotes finales completos |
 | Decisiones del propietario pendientes (alcance actual) | 14 (+4 por tranche según roadmap) | registradas antes de su tranche |
-| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = READY_FOR_EXECUTION**; T3-T13 + Pista OPS planificadas | todas cerradas |
+| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = READY_FOR_EXECUTION**; T4-T13 + Pista OPS planificadas | todas cerradas |
 | Veredicto pre-SAP | `NO_GO_SAP_FUNCTIONAL_GAPS` (sin cambios) | GO/NO-GO final en T13 |
 
 ## 2 · Estado por tranche
@@ -24,7 +24,9 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 |---|---|---|
 | T0 · Cierre de auditoría + programa | **CERRADA** (`e828c3a`, 2026-09-13) | 15 documentos del programa + correcciones D-03 |
 | T1 · GA-GOV-03 | **CERRADA** (2026-09-13) | 38/38 TEST_DEFECT (37 + nº38 hallado en CI); suites verdes en local **y en CI** (run #10 `34764423545`, `60e9d9d`); **AC-06 = PASS** (artefactos sha256-verificados) ⇒ `CLOSED_FUNCTIONALLY_CERTIFIED` |
-| T2-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
+| T2 · Fundación de seguridad | **CERRADA** (2026-09-13) | R-199 · R-200 · R-202 · R-208 · GA-REM-003 AC04 — certificaciones por spec; suite completa `1263/0/49` local y **CI run #26 verde** (`5044788`; artefactos sha256-verificados) ⇒ `GA_T2_CERTIFICATION.md`. Límites declarados: **G-06** (C3 runtime de R-199/R-202, cola del propietario); GA-REM-003 AC01/02/03/05/06-resto/07 siguen su recorrido |
+| T3 · Alcance de datos | **READY_FOR_EXECUTION** | R-201 · R-203 · R-204(+R-216) · R-221 (rider condicionado a **AOD-13**, encolada) |
+| T4-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
 
 ## 3 · NEXT_IMPLEMENTATION_TRANCHE (§52) — siguiente tras T1
 

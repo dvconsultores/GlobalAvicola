@@ -172,3 +172,12 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Pines del harness actualizados** (lección en `/memories/repo/spec-dev-red-green-pitfalls.md`): recuento de tablas 56 · cabezas `z6a7b8c9d0e1` (`test_company_catalog t10`, `test_population_invariant ac14`) · rutas `/api/` 212 · clasificador `revoked_tokens` ⇒ `AUTH_REQUIRED`.
 - **Alcance**: AC04 (y parte LOGOUT de AC06) cerrados; AC01/02/03/05/06-resto/07 siguen su recorrido.
 - **Siguiente**: **regresión final T2** (suites completas ya verdes; consolidar) + **certificación T2** → T3.
+
+## AE-22 · 2026-09-13 (noche-9) · T2 CERRADA (CLOSED_FUNCTIONALLY_CERTIFIED) · arranca T3
+
+- **T2 = `CLOSED_FUNCTIONALLY_CERTIFIED`** — 5 items (R-199 · R-200 · R-202 · R-208 · GA-REM-003 AC04) con certificación individual; `GA_T2_CERTIFICATION.md` consolida: criterios de salida ✅ (4+1 ataques bloqueados con test, suites verdes con artefacto, `OD-13.c` registrada, evidencia en el hogar del programa, deploy EX-01 observado).
+- **CI de cierre**: Quality Suite **#26 `34778950665` (`5044788`) = Success** (backend 24m25s ✅ · frontend 1m1s ✅); artefactos descargados y **sha256 recomputado == digest**: backend `6f97466f…` (1312/0/0/49) · frontend `b919ac69…` (318/0); `evidence/t2-ci-run.json` + XML.
+- **Historial CI honesto de T2**: #20/#22/#23 verdes; #21/#24 rojos por diseño (RED); #25 rojo por pines del harness — remediado en el commit de cierre (#26 verde). Lección permanente en memoria del repo (5 pines a actualizar al añadir ruta/migración/tabla).
+- **Límites declarados**: G-06 (C3 runtime de R-199/R-202 — cola del propietario); GA-REM-003 AC01/02/03/05/06-resto/07 en su recorrido.
+- **KPI**: procesos 0/17 (T2 es plataforma). Veredicto pre-SAP sin cambio: `NO_GO_SAP_FUNCTIONAL_GAPS`.
+- **Siguiente**: **T3 · Alcance de datos** — R-201 C1 EN CURSO (RED ya ejecutado: 5F/18P; evidencia `evidence/r201/red_c1.log`) → C2/GREEN → R-203 → R-204+R-216 → R-221 (rider; **AOD-13** encolada al propietario) → certificación T3.
