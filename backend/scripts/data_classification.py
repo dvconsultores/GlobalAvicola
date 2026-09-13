@@ -70,6 +70,11 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
         Categoria.AUTH_REQUIRED,
         "Tenants. Se conservan los dos de certificación exigidos por R-42/R-48/R-59.",
     ),
+    "revoked_tokens": (
+        Categoria.AUTH_REQUIRED,
+        "Denylist de refresh revocados (`GA-REM-003` · AC04). Efímera por TTL; "
+        "conservarla no oculta historia de negocio.",
+    ),
     # ── Configuración ────────────────────────────────────────────────────────
     "approval_steps": (
         Categoria.CONFIGURATION_REQUIRED,

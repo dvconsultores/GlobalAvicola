@@ -94,6 +94,11 @@ async def _refresh(http_client, token):
     return await http_client.post("/api/v1/refresh", json={"refresh_token": token})
 
 
+def _auth(sesion):
+    """`logout` es ruta de titularidad (`AC08b`): exige sesión del propio titular."""
+    return {"Authorization": f"Bearer {sesion['access_token']}"}
+
+
 async def _cuenta(esc, sql, **params):
     motor = create_async_engine(esc["url"])
     try:
@@ -106,7 +111,7 @@ async def _cuenta(esc, sql, **params):
 async def test_ac04_01_logout_revoca_el_refresh(http_client, esc003):
     """RED en HEAD: sin endpoint, el refresh sigue emitiendo (y el logout es 404)."""
     sesion = await _login(http_client, esc003)
-    r = await http_client.post("/api/v1/logout",
+    r = await http_client.post("/api/v1/logout", headers=_auth(sesion),
                                json={"refresh_token": sesion["refresh_token"]})
     assert r.status_code == 204, r.text
     r2 = await _refresh(http_client, sesion["refresh_token"])
@@ -122,10 +127,10 @@ async def test_ac04_02_control_el_refresh_normal_sigue_renovando(http_client, es
 
 async def test_ac04_03_logout_es_idempotente(http_client, esc003):
     sesion = await _login(http_client, esc003)
-    r1 = await http_client.post("/api/v1/logout",
+    r1 = await http_client.post("/api/v1/logout", headers=_auth(sesion),
                                 json={"refresh_token": sesion["refresh_token"]})
     assert r1.status_code == 204, r1.text
-    r2 = await http_client.post("/api/v1/logout",
+    r2 = await http_client.post("/api/v1/logout", headers=_auth(sesion),
                                 json={"refresh_token": sesion["refresh_token"]})
     assert r2.status_code == 204, r2.text
     r3 = await _refresh(http_client, sesion["refresh_token"])
@@ -135,7 +140,7 @@ async def test_ac04_03_logout_es_idempotente(http_client, esc003):
 async def test_ac04_04_control_el_logout_de_una_sesion_no_anula_otra(http_client, esc003):
     s1 = await _login(http_client, esc003)
     s2 = await _login(http_client, esc003)
-    await http_client.post("/api/v1/logout",
+    await http_client.post("/api/v1/logout", headers=_auth(s1),
                            json={"refresh_token": s1["refresh_token"]})
     r = await _refresh(http_client, s2["refresh_token"])
     assert r.status_code == 200, r.text
@@ -144,7 +149,7 @@ async def test_ac04_04_control_el_logout_de_una_sesion_no_anula_otra(http_client
 async def test_ac04_05_auditoria_del_logout(http_client, esc003):
     """RED en HEAD: no hay asiento LOGOUT (ni endpoint que lo produzca)."""
     sesion = await _login(http_client, esc003)
-    r = await http_client.post("/api/v1/logout",
+    r = await http_client.post("/api/v1/logout", headers=_auth(sesion),
                                json={"refresh_token": sesion["refresh_token"]})
     assert r.status_code == 204, r.text
     n = await _cuenta(esc003,
@@ -155,7 +160,7 @@ async def test_ac04_05_auditoria_del_logout(http_client, esc003):
 
 async def test_ac04_06_control_logout_con_token_invalido_no_afecta(http_client, esc003):
     sesion = await _login(http_client, esc003)
-    await http_client.post("/api/v1/logout",
+    await http_client.post("/api/v1/logout", headers=_auth(sesion),
                            json={"refresh_token": "no-es-un-jwt"})
     r = await _refresh(http_client, sesion["refresh_token"])
     assert r.status_code == 200, r.text

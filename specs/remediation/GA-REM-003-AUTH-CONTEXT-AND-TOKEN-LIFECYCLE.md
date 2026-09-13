@@ -100,6 +100,7 @@ Given una sesión con access token y refresh token válidos
 When  el usuario hace POST /api/v1/logout
 Then  el refresh token deja de emitir tokens nuevos (401)
 ```
+**Estado (2026-09-13)**: ✅ **CERRADO — `CLOSED_FUNCTIONALLY_CERTIFIED`** — C1 `52d0077` (RED 4F/3P) · C2 `80ffd82` (denylist `jti` + `revoked_tokens` + endpoint de titularidad; sensibilidad S1; runtime: logout 204 → refresh revocado **401 «Token revocado»**; controles 200/401). Certificación: `audit/ga-claude-final-audit/GA_CLAUDE_GA_REM_003_AC04_CERTIFICATION.md`.
 **AC05 — Usuario desactivado**
 ```
 Given un usuario desactivado por un administrador

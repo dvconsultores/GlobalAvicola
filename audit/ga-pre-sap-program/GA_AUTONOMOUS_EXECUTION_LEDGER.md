@@ -162,3 +162,13 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Runtime (no destructivo)**: señales con ids inexistentes + detalle del 403 como prueba de la puerta desplegada — operador 403 «Permiso requerido: approvals:approve/reject»; aprobador 404 «Evento no encontrado». Deploy Docker #121 (`331ad83`). `runtime-c3.json`.
 - **Lección FE registrada**: mocks `t`/`toast` deben ser identidad estable o el refetch resetea la selección (`/memories/repo/spec-dev-red-green-pitfalls.md`).
 - **Siguiente**: **GA-REM-003 AC04** (logout + denylist `jti` + migración `revoked_tokens` + auditoría LOGOUT; test RED ya escrito `test_ga_rem_003_ac04_logout_revocation.py`) → C1 commit → C2 → regresión T2 (suite completa + FE) → runtime/E2E → **certificación T2** → T3.
+
+## AE-21 · 2026-09-13 (noche-8) · GA-REM-003 AC04 CERRADA (logout revoca) · pines del harness actualizados
+
+- **C1 `52d0077`**: RED BE 4F/3P (sin endpoint, sin jti, sin asiento, sin idempotencia) · FE 1F/1P (logout no llama al servidor).
+- **C2 `80ffd82`**: `jti` en refresh · tabla `revoked_tokens` (migración `z6a7b8c9d0e1`, TTL 7d, purga oportunista) · `POST /logout` 204 **ruta de titularidad** (exige sesión + `sub` propio — `AC08b` limita la superficie anónima a login/refresh) · `/refresh` rechaza revocado ⇒ 401 «Token revocado» · FE logout best-effort. GREEN BE 28/28 · FE 8/8 · **suite FE 318/318** · **suite BE `1263/0/49`** (23:43).
+- **Sensibilidad S1** (sin consulta de revocación ⇒ 01/03 rojas, 2F/5P).
+- **Runtime** (`runtime-c3.json`, deploy Docker #123 + Watchtower): logout **204** → refresh revocado **401 «Token revocado»**; control segunda sesión 200; sin sesión 401. Auditoría LOGOUT escrita.
+- **Pines del harness actualizados** (lección en `/memories/repo/spec-dev-red-green-pitfalls.md`): recuento de tablas 56 · cabezas `z6a7b8c9d0e1` (`test_company_catalog t10`, `test_population_invariant ac14`) · rutas `/api/` 212 · clasificador `revoked_tokens` ⇒ `AUTH_REQUIRED`.
+- **Alcance**: AC04 (y parte LOGOUT de AC06) cerrados; AC01/02/03/05/06-resto/07 siguen su recorrido.
+- **Siguiente**: **regresión final T2** (suites completas ya verdes; consolidar) + **certificación T2** → T3.

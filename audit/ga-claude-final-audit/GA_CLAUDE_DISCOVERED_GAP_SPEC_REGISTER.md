@@ -104,6 +104,7 @@ Confirmaciones de la pasa 2 local (`evidence/ui-e2e-local-pass2.json`, 2026-09-1
 ### R-200 · Refresh token como access (P2 · BLOQUEA)
 - `security.py:59-65,87-93` no comprueban `type == "access"`; `create_refresh_token` `:48-56` (7 d, `localStorage`). Esperado: `get_current_user` rechaza `type != access` (401); `refresh` sólo con `type == refresh` (ya); test de cruce; documentar interacción con GA-REM-003 (logout/rotación, sigue abierta).
 - **Estado (2026-09-13)**: **CERRADA — `CLOSED_FUNCTIONALLY_CERTIFIED`** — C1 `9406573` · C2 `bf1746c`; suite `1247/0/49`; sensibilidad M1; runtime **pre/post observado** (`runtime-prefix.json` → 200; `runtime-c3.json` → 401 «no es un token de acceso»); certificación `GA_CLAUDE_R200_RUNTIME_CERTIFICATION.md`. **No cierra `GA-REM-003 AC04`** (logout/rotación — rider siguiente de T2).
+- **Actualización (2026-09-13, noche-8)**: `GA-REM-003 AC04` **cerrado** (logout con denylist `jti`; runtime 204 → 401 «Token revocado») — `GA_CLAUDE_GA_REM_003_AC04_CERTIFICATION.md`; la nota anterior queda levantada.
 
 ### R-201 · SAP sin contexto fail-open (P2 · BLOQUEA fase SAP)
 - `sap/service.py:76-81` `_company_filter` ⇒ `true()` si `company_id is None`; afecta `list_references :128-135`, `consolidate_approved :158-161`, `export_to_sap :239-242`, `retry_failed :404-408` (escritura), `list_sync_jobs/consolidated/errors/payloads`. Esperado: `false()` sin contexto (patrón `_acotar_a_empresa`), `retry_failed` con `_require_company_id`; tests de autoridad global sin contexto.

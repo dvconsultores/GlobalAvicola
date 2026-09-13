@@ -1,0 +1,36 @@
+{
+  "probe": "GA-REM-003 AC04 runtime",
+  "when": "2026-09-13 21:23:04+0200",
+  "results": [
+    {
+      "id": "AC04-01",
+      "desc": "logout con sesión",
+      "status": 204,
+      "detail": ""
+    },
+    {
+      "id": "AC04-02",
+      "desc": "refresh del token revocado",
+      "status": 401,
+      "detail": "Token revocado"
+    },
+    {
+      "id": "AC04-03",
+      "desc": "control: segunda sesión renueva",
+      "status": 200
+    },
+    {
+      "id": "AC04-04",
+      "desc": "control: logout sin sesión",
+      "status": 401,
+      "detail": "Token de autenticación requerido"
+    }
+  ],
+  "login_1": 200,
+  "deploy": {
+    "commit": "80ffd82",
+    "docker_run": "Docker Push — Backend #123 (success)",
+    "redespliegue": "Watchtower (EX-01)"
+  },
+  "nota": "Operación legítima del propio titular sobre su sesión efímera; sin datos de negocio tocados. El 401 de AC04-04 confirma la ruta de titularidad (superficie anónima = login/refresh, AC08b)."
+}
