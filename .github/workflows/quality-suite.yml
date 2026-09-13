@@ -67,9 +67,11 @@ jobs:
           node-version: '24'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      - name: Instalar dependencias
+      # GA-GOV-03 C4 — `--legacy-peer-deps` no instala peers: se agrega el peer
+      # explícito de @testing-library/react (27 fallos de CI por MODULE_NOT_FOUND).
+      - name: Instalar dependencias (+ peer de @testing-library/react)
         working-directory: ./frontend
-        run: npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps --no-save "@testing-library/dom@10.4.1"
       - name: Vitest (JUnit + log)
         working-directory: ./frontend
         run: |

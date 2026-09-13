@@ -17,7 +17,7 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | **Estado** | `WAITING_ON_OWNER` |
 | **Qué desbloquea** | AC-06 PASS → GA-GOV-03 `CLOSED_FUNCTIONALLY_CERTIFIED` → **T1 CLOSED** → QUALITY_GATES_READY = YES → **T2 arranca automáticamente** (fundación de seguridad; OD-13.c ya resuelta — sin decisión pendiente). |
 
-> **Nota (2026-09-13 15:25 +0200 — actualiza las notas de 06:20/06:25)** — con la sesión autorizada del propietario, el agente **leyó directamente los runs**: **están en ROJO** (incluido el del SHA de implementación `66be1c1`) ⇒ **AC-06 = FAIL observado** (contradice la declaración previa `success`; sin fabricación). **En remediación**: corrección CI del job backend validada localmente y enviada (C3, solo workflow); job frontend **pendiente de clasificación** (requiere su log). La pestaña compartida se desconectó tras la lectura — se necesita volver a compartirla o iniciar sesión en la pestaña controlada para: (1) leer el log del frontend, (2) re-capturar IDs/timestamps, (3) observar los runs VERDES futuros. **Próximo hito: runs VERDES ⇒ AC-06 = PASS ⇒ T1 CLOSED.**
+> **Nota (2026-09-13 15:45 +0200 — actualiza las anteriores)** — observación directa (sesión autorizada): **runs en ROJO** (incl. `66be1c1`) ⇒ **AC-06 = FAIL observado** (sin fabricación). **Remediación CI completa (solo workflow)**: backend — `pip install -e` flat-layout ⇒ **C3**; frontend — peer `@testing-library/dom` ausente por `--legacy-peer-deps` (27 fallos; clasificado con el JUnit real del run #1) ⇒ **C4**; ambos pusheados; runs #7/#8 en curso. **Próximo hito: runs VERDES ⇒ AC-06 = PASS ⇒ T1 CLOSED.**
 
 ## Pista OPS (paralela, owner/ops — arrancable ya; bloquea T13, no a T2-T13)
 
