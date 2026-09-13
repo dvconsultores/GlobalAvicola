@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento } from './operationPayload'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente } from './operationPayload'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -331,6 +331,13 @@ export default function OperationFormPage() {
   // `R-190`: «Galpón del evento» (selector) y el error de ubicación en cliente.
   const [eventHouseId, setEventHouseId] = useState<number | null>(null)
   const [ubicacionError, setUbicacionError] = useState<string | null>(null)
+ // `R-205`: la etapa también se deriva del contexto — `?stage=` o el lote — no sólo del paso 1.
+ const stageDerivada = useMemo(() => resolverStageDelAsistente({
+ search: searchParams.toString() ? `?${searchParams.toString()}` : '',
+ lote: selectedLot ? { bird_type: selectedLot.bird_type, fase: selectedLot.fase } : null,
+ eventType,
+ }) as StageKey | null, [selectedLot, eventType, searchParams])
+ const stageFinal = stage ?? stageDerivada
 
  const goToStep2 = (s: StageKey) => { setStage(s); setValue('event_type', ''); setStep(2) }
  const chooseOperation = (evt: string) => { setValue('event_type', evt); setStep(3) }
@@ -426,6 +433,18 @@ export default function OperationFormPage() {
             }
           } else if (!derivedHouseId) {
             setUbicacionError('operations.eventHouseRequired')
+            setSubmitting(false)
+            return
+          }
+        }
+        // `R-205`: el cuadre de reproductoras (BR-20 · `B01` · RR-12) se exige en cliente — sin
+        // petición y con mensaje claro cuando falta. La regla del servidor no cambia (control BR-20).
+        if (data.event_type === 'bird_reception' && selectedLot?.bird_type === 'breeder') {
+          const d: any = data
+          const completos = [d.received_total, d.dead_on_arrival, d.rejected_on_arrival]
+            .every((v) => v !== undefined && v !== null && Number.isFinite(Number(v)))
+          if (!completos) {
+            setUbicacionError('operations.cuadreRequired')
             setSubmitting(false)
             return
           }
@@ -702,7 +721,8 @@ export default function OperationFormPage() {
  )}
 
  {/* `GA-REM-021-B` · B01: cuadre de la recepción de reproductoras (Rec. §6). Solo aritmética informativa; la regla (BR-20) la aplica el backend. */}
- {stage === 'breeder_rearing' && (() => {
+ {/* `R-205`: visible por etapa derivada **o** por el lote (bird_type=breeder en recepción, C-02). */}
+ {(stageFinal === 'breeder_rearing' || (eventType === 'bird_reception' && selectedLot?.bird_type === 'breeder')) && (() => {
  const dead = Number(watch('dead_on_arrival' as any) || 0)
  const rejected = Number(watch('rejected_on_arrival' as any) || 0)
  const received = Number(watch('received_total' as any) || 0)

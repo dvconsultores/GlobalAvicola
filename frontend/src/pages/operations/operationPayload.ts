@@ -127,3 +127,32 @@ export function resolverUbicacionDelEvento({
   }
   return { farm_id: farm ?? undefined, house_id: house ?? undefined }
 }
+
+// ============================================================
+// `R-205` · etapa del asistente — derivada, no sólo por navegación
+// ============================================================
+
+const STAGES_VALIDOS = new Set([
+  'grandparent_rearing', 'grandparent_production', 'breeder_rearing',
+  'breeder_production', 'hatchery', 'broiler',
+])
+
+/** Etapa del asistente: `?stage=` manda; si no, el lote (`bird_type` + fase); sin contexto ⇒ `null` (paso 1). */
+export function resolverStageDelAsistente({ search, lote, eventType }: {
+  search?: string
+  lote?: { bird_type?: string | null; fase?: string | null } | null
+  eventType?: string | null
+}): string | null {
+  void eventType
+  const pedida = new URLSearchParams(search || '').get('stage')
+  if (pedida && STAGES_VALIDOS.has(pedida)) return pedida
+  const tipo = lote?.bird_type
+  if (!tipo) return null
+  const fase = String(lote?.fase || '').toLowerCase()
+  const enProduccion = fase.includes('prod') || fase.includes('producc')
+  if (tipo === 'breeder') return enProduccion ? 'breeder_production' : 'breeder_rearing'
+  if (tipo === 'grandparent') return enProduccion ? 'grandparent_production' : 'grandparent_rearing'
+  if (tipo === 'broiler') return 'broiler'
+  if (tipo === 'hatchery') return 'hatchery'
+  return null
+}

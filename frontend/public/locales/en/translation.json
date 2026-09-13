@@ -622,6 +622,7 @@
     "receptionReconciliation": "Reception reconciliation",
     "eventHouse": "Event house",
     "eventHouseRequired": "This event requires a house (the lot does not declare one)",
+    "cuadreRequired": "Complete the reception reconciliation (received, dead on arrival and rejected)",
     "farmRequired": "This event requires a farm",
     "receivedTotal": "Received quantity (birds)",
     "deadOnArrival": "Dead on arrival",

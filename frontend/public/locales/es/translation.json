@@ -622,6 +622,7 @@
     "receptionReconciliation": "Cuadre de la recepción",
     "eventHouse": "Galpón del evento",
     "eventHouseRequired": "Este evento requiere un galpón (el lote no lo declara)",
+    "cuadreRequired": "Completa el cuadre de la recepción (recibidas, mortalidad al arribo y rechazo)",
     "farmRequired": "Este evento requiere una granja",
     "receivedTotal": "Cantidad recibida (aves)",
     "deadOnArrival": "Mortalidad al arribo",
