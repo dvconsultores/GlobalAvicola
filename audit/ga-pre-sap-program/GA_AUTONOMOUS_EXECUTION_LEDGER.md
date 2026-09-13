@@ -89,3 +89,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Historia honesta (observada)**: runs #1-#6 rojos ⇒ C3 `f965e9c`; #7 `25F/1192P/58S` (flag SAP) ⇒ C5 `e52cad3`; #8 frontend verde (C4 `b5e39db`); #9 `1F/1225P/49S` ⇒ TEST_DEFECT nº38 ⇒ C6 `60e9d9d`; #10 **VERDE**.
 - **Cierre de programa**: **AC-06 = PASS** ⇒ GA-GOV-03 `CLOSED_FUNCTIONALLY_CERTIFIED` ⇒ **T1 CLOSED** ⇒ `QUALITY_GATES_READY = YES` ⇒ **T2 = READY_FOR_EXECUTION**. Documentos actualizados: CI_EVIDENCE §4 · CERTIFICATION §5-§7 · T1_CLOSURE_RECONCILIATION · FINAL_TEST_RESULTS.json · RECOVERY_PLAN E1 · BLOCKING_FINDING_MATRIX · MASTER_ROADMAP T1 · PROGRAM_STATUS · OWNER_GATE_QUEUE G-01.
 - Producto/migraciones: 0. KPI de procesos: **0/17** (T1 gobernanza; recertificación E2E = T12). G-01 de la cola de gates: **CLOSED** (G-02…G-05 OPS siguen `QUEUED`, bloquean solo T13).
+
+## AE-11 · 2026-09-13 (tarde-5) · T2 INICIADA — R-199 · C1 (Gobernanza + RED) ✅
+
+- **Run #11 (`34765778836`, `448b918`, C7 docs-only) = `Success`** (15m37s) — el HEAD de cierre también quedó verde en CI (además del run #10).
+- **T2 arrancada** (fundación de seguridad): paquetes leídos en `audit/ga-claude-final-audit/specs/` (`R-199` 6f · `R-200` 6f · `R-202` compacto · `R-208` 6f — todos `SPEC_READY`). Ejecución iniciada por **R-199** (P1: fabricación de autoridad global desde un rol de inquilino; `GAP-01`).
+- **R-199 · C1 (RED)** — nuevo `backend/tests/test_r199_global_authority_fabrication.py` (fixture `esc199`, PREFIJO `R199-`; `RED-01…06` + controles). **Verificado local: 9 rojas por el defecto** (01/02/03/04/05/06a/06b/06c + higiene CTL-10) **y 3 controles verdes** (CTL-07/08/09); cada roja falla en la aserción prevista (auditoría línea a línea del log). Evidencia: `audit/ga-claude-final-audit/evidence/r199/red_c1.log`.
+- Nota de diseño: CTL-07 se corrigió durante C1 — el actor global **sin contexto** no crea usuarios por API («No hay empresa efectiva…»); el usuario del control se inserta directo (se prueba la capacidad del rol, no el alta).
+- **El push de C1 deja el run de CI rojo por diseño** (ciclo canónico RED→GREEN); **C2 (implementación) restaura GREEN**. Criterio de cierre de T2: suites verdes + E2E runtime + sensibilidad + certificación.

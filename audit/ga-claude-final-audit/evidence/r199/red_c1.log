@@ -1,0 +1,234 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=55 (47 + alembic_version) · head en BD=y5z6a7b8c9d0 · head en código=y5z6a7b8c9d0
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+FFFFFFFF...F                                                             [100%]
+=================================== FAILURES ===================================
+______ test_r199_01_crear_rol_de_inquilino_con_comodin_global_se_rechaza _______
+
+http_client = <httpx.AsyncClient object at 0x7f9ba6527490>
+esc199 = {'a': 3, 'b': 4, 'admin_a': 5, 'user_a': 6, ...}
+
+    async def test_r199_01_crear_rol_de_inquilino_con_comodin_global_se_rechaza(http_client, esc199):
+        """`AC01` · `AC12` · `AC13` — `OD-13.c`/`GAP-01`."""
+        antes = await _recuentos(esc199)
+        marca = f"{PREFIJO}X-{uuid.uuid4().hex[:6]}"
+        r = await http_client.post("/api/v1/roles", headers=_token(esc199["admin_a"]),
+                                   json={"name": marca,
+                                         "permissions": [{"module": "*", "action": "read",
+                                                          "scope_type": "all"}]})
+>       assert r.status_code == 403, r.text
+E       AssertionError: {"name":"R199-X-15e6a9","description":null,"id":13,"company_id":3,"is_active":true,"created_at":"2026-09-13T16:51:15.691291Z","permissions":[{"module":"*","action":"read","scope_type":"all","scope_id":null,"id":57}]}
+E       assert 201 == 403
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests/test_r199_global_authority_fabrication.py:202: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+___ test_r199_02_editar_rol_de_inquilino_para_inyectar_el_comodin_se_rechaza ___
+
+http_client = <httpx.AsyncClient object at 0x7f9ba78bea90>
+esc199 = {'a': 5, 'b': 6, 'admin_a': 9, 'user_a': 10, ...}
+
+    async def test_r199_02_editar_rol_de_inquilino_para_inyectar_el_comodin_se_rechaza(http_client, esc199):
+        """`AC02` — la edición no es una puerta trasera del alta."""
+        antes = await _permisos_en_base(esc199, esc199["rol_a"])
+        r = await http_client.put(f"/api/v1/roles/{esc199['rol_a']}",
+                                  headers=_token(esc199["admin_a"]),
+                                  json={"permissions": [{"module": "*", "action": "update",
+                                                         "scope_type": "all"}]})
+>       assert r.status_code == 403, r.text
+E       AssertionError: {"name":"R199-OperA-7a8acf","description":null,"id":15,"company_id":5,"is_active":true,"created_at":"2026-09-13T16:51:15.771914Z","permissions":[{"module":"*","action":"update","scope_type":"all","scope_id":null,"id":81}]}
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_r199_global_authority_fabrication.py:215: AssertionError
+_________ test_r199_03_un_rol_de_inquilino_envenenado_no_es_asignable __________
+
+http_client = <httpx.AsyncClient object at 0x7f9ba5dc59d0>
+esc199 = {'a': 7, 'b': 8, 'admin_a': 13, 'user_a': 14, ...}
+
+    async def test_r199_03_un_rol_de_inquilino_envenenado_no_es_asignable(http_client, esc199):
+        """`AC03` — asignable ≠ visible: la rama de inquilino también pregunta por el comodín."""
+        r = await http_client.put(f"/api/v1/users/{esc199['user_a']}",
+                                  headers=_token(esc199["admin_a"]),
+                                  json={"role_id": esc199["rol_env"]})
+>       assert r.status_code == 403, r.text
+E       AssertionError: {"first_name":"USERA","last_name":"R199","email":"R199-usera-e971c6@globalavicola.com","username":"R199-USERA-303e12","phone":null,"role_id":20,"company_id":7,"view_type":"web","area_id":null,"id":14,"is_active":true,"is_super_admin":false,"last_login":null,"created_at":"2026-09-13T16:51:16.791919Z","company_name":null}
+E       assert 200 == 403
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_r199_global_authority_fabrication.py:225: AssertionError
+___ test_r199_04_un_rol_de_inquilino_envenenado_no_confiere_autoridad_global ___
+
+http_client = <httpx.AsyncClient object at 0x7f9ba5bb6c90>
+esc199 = {'a': 9, 'b': 10, 'admin_a': 17, 'user_a': 18, ...}
+
+    async def test_r199_04_un_rol_de_inquilino_envenenado_no_confiere_autoridad_global(http_client, esc199):
+        """`AC04` — la capacidad global se computa del permiso **en un rol de sistema**."""
+        me = await http_client.get("/api/v1/me", headers=_token(esc199["user_env"]))
+        assert me.status_code == 200, me.text
+>       assert me.json()["is_super_admin"] is False, (
+            "un rol de inquilino con el comodín concedió is_super_admin")
+E       AssertionError: un rol de inquilino con el comodín concedió is_super_admin
+E       assert True is False
+
+tests/test_r199_global_authority_fabrication.py:242: AssertionError
+___ test_r199_05_la_renovacion_no_honra_un_contexto_ajeno_con_rol_envenenado ___
+
+http_client = <httpx.AsyncClient object at 0x7f9ba5bb4a50>
+esc199 = {'a': 11, 'b': 12, 'admin_a': 21, 'user_a': 22, ...}
+
+    async def test_r199_05_la_renovacion_no_honra_un_contexto_ajeno_con_rol_envenenado(http_client, esc199):
+        """`AC05` — la renovación recalcula: manda la empresa persistida, no el claim."""
+        refresh = create_refresh_token({"sub": str(esc199["user_env"]),
+                                        "company_id": esc199["b"]})
+        r = await http_client.post("/api/v1/refresh", json={"refresh_token": refresh})
+        assert r.status_code == 200, r.text
+        access = r.json()["access_token"]
+        me = await http_client.get("/api/v1/me",
+                                   headers={"Authorization": f"Bearer {access}"})
+        assert me.status_code == 200, me.text
+>       assert me.json()["effective_company_id"] == esc199["a"], (
+            "la renovación honró un contexto ajeno reclamado")
+E       AssertionError: la renovación honró un contexto ajeno reclamado
+E       assert 12 == 11
+
+tests/test_r199_global_authority_fabrication.py:265: AssertionError
+_________________ test_r199_06_modulo_fuera_de_catalogo_es_422 _________________
+
+http_client = <httpx.AsyncClient object at 0x7f9ba5bef590>
+esc199 = {'a': 13, 'b': 14, 'admin_a': 25, 'user_a': 26, ...}
+
+    async def test_r199_06_modulo_fuera_de_catalogo_es_422(http_client, esc199):
+        """`AC06` · `GAP-16` — el catálogo del producto es cerrado (`MODULOS ∪ {"*"}`)."""
+        antes = await _recuentos(esc199)
+        r = await http_client.post("/api/v1/roles", headers=_token(esc199["admin_a"]),
+                                   json={"name": f"{PREFIJO}H-{uuid.uuid4().hex[:6]}",
+                                         "permissions": [{"module": "hacking", "action": "read",
+                                                          "scope_type": "company"}]})
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"name":"R199-H-1164cd","description":null,"id":34,"company_id":13,"is_active":true,"created_at":"2026-09-13T16:51:20.876510Z","permissions":[{"module":"hacking","action":"read","scope_type":"company","scope_id":null,"id":174}]}
+E       assert 201 == 422
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests/test_r199_global_authority_fabrication.py:276: AssertionError
+_________________ test_r199_06_accion_invalida_es_422_y_no_500 _________________
+
+http_client = <httpx.AsyncClient object at 0x7f9ba5c96590>
+esc199 = {'a': 15, 'b': 16, 'admin_a': 29, 'user_a': 30, ...}
+
+    async def test_r199_06_accion_invalida_es_422_y_no_500(http_client, esc199):
+        """`AC07` — hoy `PermissionAction("fly")` revienta en `500`."""
+        r = await http_client.post("/api/v1/roles", headers=_token(esc199["admin_a"]),
+                                   json={"name": f"{PREFIJO}F-{uuid.uuid4().hex[:6]}",
+                                         "permissions": [{"module": "lots", "action": "fly",
+                                                          "scope_type": "company"}]})
+>       assert r.status_code == 422, r.text
+E       AssertionError: Internal Server Error
+E       assert 500 == 422
+E        +  where 500 = <Response [500 Internal Server Error]>.status_code
+
+tests/test_r199_global_authority_fabrication.py:286: AssertionError
+_____________________ test_r199_06_alcance_invalido_es_422 _____________________
+
+http_client = <httpx.AsyncClient object at 0x7f9ba5d05650>
+esc199 = {'a': 17, 'b': 18, 'admin_a': 33, 'user_a': 34, ...}
+
+    async def test_r199_06_alcance_invalido_es_422(http_client, esc199):
+        """`AC08` — `scope_type` sólo `{all, company, farm}`."""
+        r = await http_client.post("/api/v1/roles", headers=_token(esc199["admin_a"]),
+                                   json={"name": f"{PREFIJO}G-{uuid.uuid4().hex[:6]}",
+                                         "permissions": [{"module": "lots", "action": "read",
+                                                          "scope_type": "galaxy"}]})
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"name":"R199-G-f31b3d","description":null,"id":44,"company_id":17,"is_active":true,"created_at":"2026-09-13T16:51:22.947633Z","permissions":[{"module":"lots","action":"read","scope_type":"galaxy","scope_id":null,"id":221}]}
+E       assert 201 == 422
+E        +  where 201 = <Response [201 Created]>.status_code
+
+tests/test_r199_global_authority_fabrication.py:295: AssertionError
+________________ test_r199_10_no_queda_atajo_legado_sin_filtro _________________
+
+    async def test_r199_10_no_queda_atajo_legado_sin_filtro():
+        """`AC17` · `C-07` — `get_company_filter` (fail-open, muerto) se retira en C2."""
+        import app.auth.security as s
+        import app.dependencies as d
+    
+>       assert not hasattr(s, "get_company_filter"), "security.py aún expone get_company_filter"
+E       AssertionError: security.py aún expone get_company_filter
+E       assert not True
+E        +  where True = hasattr(<module 'app.auth.security' from '/home/maria/Proyectos/GlobalAvicola/backend/app/auth/security.py'>, 'get_company_filter')
+
+tests/test_r199_global_authority_fabrication.py:385: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_01_crear_rol_de_inquilino_con_comodin_global_se_rechaza
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_02_editar_rol_de_inquilino_para_inyectar_el_comodin_se_rechaza
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_03_un_rol_de_inquilino_envenenado_no_es_asignable
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_04_un_rol_de_inquilino_envenenado_no_confiere_autoridad_global
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_05_la_renovacion_no_honra_un_contexto_ajeno_con_rol_envenenado
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_06_modulo_fuera_de_catalogo_es_422
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_06_accion_invalida_es_422_y_no_500
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_06_alcance_invalido_es_422
+FAILED tests/test_r199_global_authority_fabrication.py::test_r199_10_no_queda_atajo_legado_sin_filtro
+9 failed, 3 passed, 1 warning in 12.73s
