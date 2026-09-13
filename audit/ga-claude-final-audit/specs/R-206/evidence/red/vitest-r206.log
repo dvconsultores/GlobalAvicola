@@ -1,0 +1,70 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r206.emptyOptional.test.ts (7 tests | 7 failed) 9ms
+     × cadena vacía ⇒ ausencia 4ms
+     × texto ⇒ texto 0ms
+     × número ⇒ número 0ms
+     × cero declarado se conserva 0ms
+     × espacios ⇒ tal cual (no es vacío) 0ms
+     × null/undefined se conservan como ausencia 0ms
+     × recursivo: objetos y arrays anidados 0ms
+ ❯ src/pages/operations/__tests__/r206.importQuarantine.test.tsx (1 test | 1 failed) 464ms
+     × el payload omite quarantine_end_date (canónico: vacío ⇒ ausencia) 461ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > cadena vacía ⇒ ausencia
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > texto ⇒ texto
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > número ⇒ número
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > cero declarado se conserva
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > espacios ⇒ tal cual (no es vacío)
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > null/undefined se conservan como ausencia
+TypeError: limpiarVacios is not a function
+ ❯ src/pages/operations/__tests__/r206.emptyOptional.test.ts:24:12
+     22|     ['null/undefined se conservan como ausencia', null, null],
+     23|   ] as const)('%s', (_n, entrada, salida) => {
+     24|     expect(limpiarVacios(entrada as any)).toEqual(salida as any)
+       |            ^
+     25|   })
+     26|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/pages/operations/__tests__/r206.emptyOptional.test.ts > R-206 · limpiarVacios (canónico: vacío ⇒ ausencia) > recursivo: objetos y arrays anidados
+TypeError: limpiarVacios is not a function
+ ❯ src/pages/operations/__tests__/r206.emptyOptional.test.ts:33:12
+     31|       vacio: '',
+     32|     }
+     33|     expect(limpiarVacios(entrada)).toEqual({
+       |            ^
+     34|       plan: { quarantine_end_date: undefined, quarantine_days: undefin…
+     35|       filas: [{ note: undefined, qty: 0 }, { note: 'ok' }],
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/pages/operations/__tests__/r206.importQuarantine.test.tsx > R-206 · importación con fecha de cuarentena en blanco > el payload omite quarantine_end_date (canónico: vacío ⇒ ausencia)
+AssertionError: plan={"origin_country":"Francia","purchased_total":110,"shipped_total":105,"received_total":100,"transit_mortality":5,"departure_date":"2026-09-05","arrival_date":"2026-09-12","reception_condition":"","quarantine_end_date":"","initial_health_inspection":""}: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/pages/operations/__tests__/r206.importQuarantine.test.tsx:107:75
+    105|     expect(llamada, 'POST /operations').toBeTruthy()
+    106|     const plan = llamada![1]?.extra_data?.import_plan ?? {}
+    107|     expect('quarantine_end_date' in plan, `plan=${JSON.stringify(plan)…
+       |                                                                           ^
+    108|   })
+    109| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  8 failed (8)
+   Start at  01:12:34
+   Duration  1.87s (transform 218ms, setup 157ms, import 441ms, tests 473ms, environment 1.49s)
+
