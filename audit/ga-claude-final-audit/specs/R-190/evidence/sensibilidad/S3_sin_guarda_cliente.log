@@ -1,0 +1,696 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r190.locationEventsHouse.test.tsx (11 tests | 2 failed) 3898ms
+     × AC-R190-04a · inspección de granja sin granja ni galpón en filas ⇒ sin POST y operations.farmRequired 1118ms
+     × AC-R190-09 · salida sin galpón elegido ⇒ sin POST y operations.eventHouseRequired 1134ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r190.locationEventsHouse.test.tsx > R-190 · galpón del evento en location_events (sin recepción) > AC-R190-04a · inspección de granja sin granja ni galpón en filas ⇒ sin POST y operations.farmRequired
+TestingLibraryElementError: Unable to find an element with the text: operations.farmRequired. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba]"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m1 · Proceso[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m2 · Operación[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m3 · Datos[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m15 18-6-6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m [0m
+          [0mAtrás[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-building-complex lucide-building-2 text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"22"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"22"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 12h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 8h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M14 21v-3a2 2 0 0 0-4 0v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+            [36m>[39m
+              [0mfarm_inspection[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-900"[39m
+            [36m>[39m
+              [0mProgenitoras — Cría[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"px-4 py-3 rounded-lg text-sm font-medium mb-4 bg-green-50 text-green-700"[39m
+        [36m>[39m
+          [0moperations.saveSuccess[0m
+        [36m</div>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"space-y-5"[39m
+          [33mid[39m=[32m"operation-form"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0mGranja[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative "[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                [36m>[39m
+                  [0mSeleccionar granja...[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-building-complex lucide-building-2 text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 12h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 8h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M14 21v-3a2 2 0 0 0-4 0v3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mfarm_inspection[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-900"[39m
+              [36m>[39m
+                [0mProgenitoras — Cría[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 py-3 rounded-lg text-sm font-medium mb-4 bg-green-50 text-green-700"[39m
+          [36m>[39m
+            [0moperations.saveSuccess[0m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mGranja[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar granja...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                  ...
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/operations/__tests__/r190.locationEventsHouse.test.tsx:134:11
+    132|     cambio('house_inspections.0.temperature', '25')
+    133|     fireEvent.click(await screen.findByRole('button', { name: /common\…
+    134|     await waitFor(() => {
+       |           ^
+    135|       expect(screen.getByText('operations.farmRequired')).toBeTruthy()
+    136|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/pages/operations/__tests__/r190.locationEventsHouse.test.tsx > R-190 · galpón del evento en location_events (sin recepción) > AC-R190-09 · salida sin galpón elegido ⇒ sin POST y operations.eventHouseRequired
+TestingLibraryElementError: Unable to find an element with the text: operations.eventHouseRequired. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+    [36m>[39m
+      [36m<nav[39m
+        [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba]"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m1 · Proceso[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m2 · Operación[0m
+        [36m</button>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"text-slate-900"[39m
+        [36m>[39m
+          [0m/[0m
+        [36m</span>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [0m3 · Datos[0m
+        [36m</button>[39m
+      [36m</nav>[39m
+      [36m<div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+          [33mtype[39m=[32m"button"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m15 18-6-6 6-6"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m [0m
+          [0mAtrás[0m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-arrow-up-right text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"22"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"22"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7 7h10v10"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7 17 17 7"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+            [36m>[39m
+              [0mbird_exit[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-900"[39m
+            [36m>[39m
+              [0mProgenitoras — Cría[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"px-4 py-3 rounded-lg text-sm font-medium mb-4 bg-green-50 text-green-700"[39m
+        [36m>[39m
+          [0moperations.saveSuccess[0m
+        [36m</div>[39m
+        [36m<form[39m
+          [33mclass[39m=[32m"space-y-5"[39m
+          [33mid[39m=[32m"operation-form"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<label[39m
+              [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+            [36m>[39m
+              [0mOrden de compra / importación SAP[0m
+            [36m</label>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative "[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                [33mtype[39m=[32m"button"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"11"[39m
+                    [33mcy[39m=[32m"11"[39m
+                    [33mr[39m=[32m"8"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                [36m>[39m
+                  [0mSeleccionar orden SAP...[0m
+                [36m</span>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"15"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"15"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                  [36m/>[39m
+       ...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-arrow-up-right text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 7h10v10"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7 17 17 7"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mbird_exit[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-900"[39m
+              [36m>[39m
+                [0mProgenitoras — Cría[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 py-3 rounded-lg text-sm font-medium mb-4 bg-green-50 text-green-700"[39m
+          [36m>[39m
+            [0moperations.saveSuccess[0m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mOrden de compra / importación SAP[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar orden SAP...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=...
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/operations/__tests__/r190.locationEventsHouse.test.tsx:195:11
+    193|     await elegirEnSelector(/Seleccionar lote/, /L-GP-2099-01/)
+    194|     fireEvent.click(await screen.findByRole('button', { name: /common\…
+    195|     await waitFor(() => {
+       |           ^
+    196|       expect(screen.getByText('operations.eventHouseRequired')).toBeTr…
+    197|     })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 9 passed (11)
+   Start at  00:37:11
+   Duration  5.08s (transform 248ms, setup 61ms, import 482ms, tests 3.90s, environment 525ms)
+

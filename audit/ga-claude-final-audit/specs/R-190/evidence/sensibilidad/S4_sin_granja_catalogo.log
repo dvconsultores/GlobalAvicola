@@ -1,0 +1,38 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r190.resolverUbicacion.test.ts (17 tests | 2 failed) 17ms
+     × farm_inspection · sin granja ⇒ granja del catálogo del galpón de la fila 10ms
+     × lote sin granja + selector ⇒ farm del catálogo 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r190.resolverUbicacion.test.ts > R-190 · resolverUbicacionDelEvento (tabla tipo × fuente) > farm_inspection · sin granja ⇒ granja del catálogo del galpón de la fila
+ FAIL  src/pages/operations/__tests__/r190.resolverUbicacion.test.ts > R-190 · resolverUbicacionDelEvento (tabla tipo × fuente) > lote sin granja + selector ⇒ farm del catálogo
+AssertionError: expected { farm_id: undefined, house_id: 11 } to deeply equal { farm_id: 1, house_id: 11 }
+
+- Expected
++ Received
+
+  {
+-   "farm_id": 1,
++   "farm_id": undefined,
+    "house_id": 11,
+  }
+
+ ❯ src/pages/operations/__tests__/r190.resolverUbicacion.test.ts:91:53
+     89|       { farm_id: 1, house_id: 55 }],
+     90|   ] as const)('%s', (_nombre, args, esperado) => {
+     91|     expect(resolverUbicacionDelEvento(args as any)).toEqual(esperado)
+       |                                                     ^
+     92|   })
+     93| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  2 failed | 26 passed (28)
+   Start at  00:37:24
+   Duration  3.36s (transform 279ms, setup 145ms, import 581ms, tests 1.90s, environment 1.54s)
+
