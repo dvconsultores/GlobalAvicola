@@ -25,7 +25,7 @@ import app.audit.models  # noqa: F401
 import app.business_units.models  # noqa: F401
 import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
-from app.auth.security import create_access_token, create_refresh_token
+from app.auth.security import create_access_token, create_refresh_token, decode_token
 
 pytestmark = pytest.mark.asyncio
 
@@ -259,6 +259,14 @@ async def test_r199_05_la_renovacion_no_honra_un_contexto_ajeno_con_rol_envenena
     r = await http_client.post("/api/v1/refresh", json={"refresh_token": refresh})
     assert r.status_code == 200, r.text
     access = r.json()["access_token"]
+
+    # `C2s` (sensibilidad): la renovación tampoco debe **estampar** el contexto ajeno en
+    # el token — `/me` lo ignora por defensa en profundidad, así que la capa directa de
+    # `_es_super_admin` se afirma aquí (sin esto, su mutación quedaba enmascarada).
+    claims = decode_token(access)
+    assert str(claims.get("company_id")) == str(esc199["a"]), (
+        "la renovación estampó un contexto ajeno en el token")
+
     me = await http_client.get("/api/v1/me",
                                headers={"Authorization": f"Bearer {access}"})
     assert me.status_code == 200, me.text

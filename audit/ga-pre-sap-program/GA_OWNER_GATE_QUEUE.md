@@ -1,6 +1,6 @@
 # GA · PRE-SAP — COLA DE GATES DEL PROPIETARIO (OWNER GATE QUEUE)
 
-Fecha: 2026-09-13 · Estado de ejecución: **`T1 CLOSED — T2 READY_FOR_EXECUTION`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)**.
+Fecha: 2026-09-13 · Estado de ejecución: **`T1 CLOSED — T2 READY_FOR_EXECUTION`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)** · **G-06 encolado (credenciales runtime T2 — no bloquea C1/C2 locales)**.
 Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no se re-solicitan en bucle. Acciones humanas mínimas y deterministas (§50).
 
 ## G-01 · GA-GOV-03 · AC-06 — Evidencia externa de CI · **INMEDIATO (bloquea todo el programa)**
@@ -64,6 +64,18 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | **Evidencia exacta** | Evidencia operativa del ciclo ejecutado (alta, restauración verificada, política) |
 | **¿Continúa trabajo independiente?** | SÍ |
 | **Estado** | `QUEUED` |
+
+### G-06 · T2 · Credenciales runtime para las sondas C3 (R-199 y siguientes)
+
+| Campo | Valor |
+|---|---|
+| **Tipo** | `PRIVATE_EXTERNAL_EVIDENCE` (runtime) |
+| **Por qué solo humano** | El agente no dispone de credenciales runtime con `users:read/create/update` (UAT-09 = Operador/Aprobador R-153, sin `users:*` ni super) y no se buscan ni fabrican credenciales |
+| **Acción mínima** | **A)** Proveer una credencial **efímera** de administrador de empresa 1 (users:read/create/update) o super admin, destruible tras las sondas — **o B)** ejecutar el script de sondas facilitado (E2E-01…07 + inventario §12) y devolver la salida |
+| **Evidencia exacta** | Códigos observados de E2E-01…07 + inventario §12 = 0 filas (o decisión `C-06`) |
+| **¿Continúa trabajo independiente?** | **SÍ** — T2 continúa (R-200/R-202/R-208); **R-200 C3 es ejecutable con las credenciales actuales** |
+| **Estado** | `QUEUED` |
+| **Qué desbloquea** | Cierre de C3 de R-199 (y sondas futuras que requieran actores privilegiados); no bloquea C1/C2 del resto de T2 |
 
 ## Gates programados (referencia §25 del roadmap — no accionables hoy)
 

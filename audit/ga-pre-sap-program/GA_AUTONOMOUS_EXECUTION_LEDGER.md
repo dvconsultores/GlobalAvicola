@@ -107,3 +107,17 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Incidente de edición resuelto**: un reemplazo con indentación desplazada corrompió un bloque de `security.py` (`IndentationError` en seeds) — detectado por parseo AST inmediato, reparado y re-verificado (`AST OK` ×4).
 - **Siguiente**: push C2 (run #13) → sensibilidad (6 mutaciones) → certificación R-199 (+ C3 runtime: deploy EX-01 → E2E-01…07 API + inventario) → R-200 C1.
 - **Evidencia saneada**: los logs de pytest incluyen la URL del PostgreSQL efímero de test con su contraseña **de un solo uso** (generada por `run_tests.sh`, destruida con el run); sanitizados (`:***@`) antes del commit — incluida la versión HEAD de `red_c1.log` (la original en la historia de C1 contiene esa credencial efímera, ya rotada; riesgo nulo, corregido hacia delante).
+
+## AE-13 · 2026-09-13 (noche-2) · R-199 C2s + C3 — SENSIBILIDAD 6/6 · DEPLOY OK · G-06
+
+- **Sensibilidad (C2s)**: 6 mutaciones, cada una rompe ≥1 prueba — M1→RED-01/06a · M2→RED-02 · M3→RED-03 · M4→RED-04 · **M5 (renovación) inicialmente enmascarada** (defensa en profundidad: el resolutor de `/me` re-decide el contexto aunque el token estampe el claim) ⇒ **RED-05 reforzada** (afirma también `decode_token(access).company_id == A` en el token renovado; 12/12 con refuerzo, `green_r199_c2s.log`) ⇒ M5 rompe RED-05 · M6→RED-06b/06c. Logs en `evidence/r199/mutations/`; reversión `git checkout` verificada tras cada una.
+- **C3 runtime — parcial**: `Docker Push — Backend` run 114 (`62cd0e1`) = **success** (imagen publicada ⇒ deploy EX-01). **Sondas E2E-01…07 bloqueadas por credenciales**: las UAT-09 disponibles (Operador/Aprobador R-153) no tienen `users:*` ni son super ⇒ se encola **G-06** (credencial efímera de admin/super, o ejecución del script de sondas por el propietario); inventario §12 (SQL a runtime) dentro de G-06. Sin fabricar evidencia.
+- **Certificación**: `audit/ga-claude-final-audit/GA_CLAUDE_R199_RUNTIME_CERTIFICATION.md` — **R-199 = `CLOSED_TECHNICALLY` · `C3_PENDING_OWNER_CREDENTIALS` (G-06)**; AC01–15/17/18 ✅; AC16 pendiente del inventario runtime.
+- **Hallazgo colateral → C8**: el workflow **`Quality Gates`** (GA-REM-013) está **ROJO** en HEAD (incl. `448b918` del cierre T1 y `62cd0e1`): backend job falla ~10s y frontend job falla — mismos root causes C3/C4 + pasos que invocan el `python` del sistema ⇒ AE-14.
+
+## AE-14 · 2026-09-13 (noche-2) · C8 — WORKFLOW «QUALITY GATES» REPARADO (root cause C3/C4)
+
+- **Evidencia del fallo**: run 208 (`62cd0e1`) — `Backend · compilación, Alembic y guarda` failed (10s; repro local de `pip install -e ".[dev]"` en venv limpio ⇒ setuptools flat-layout, exit 1) · `Frontend · typecheck, tests, lint e i18n` failed (vitest sin peer; patrón C4) · `scope-guard EX-01` ✅ verde.
+- **Fix C8 (solo workflow)**: `quality-gates.yml` — backend: `uv sync --frozen --python 3.11` + `.venv/bin/python` en compileall/Alembic/guarda; frontend: peer `@testing-library/dom@10.4.1` explícito. EX-01 intacto (el workflow sigue siendo señal, no puerta; scope-guard preservado).
+- **Equivalencia local verificada**: compileall OK · guarda de entorno **25/25** (env del workflow) · i18n `ES=1041 EN=1041 faltantes=0` · Alembic `heads=['y5z6a7b8c9d0'] bases=['0c661168cb12'] revisiones=37` exit 0 · YAML OK. Push ⇒ run 209 esperado VERDE.
+- Nota: este workflow **no forma parte de AC-06** (que cubría `quality-suite.yml`); su rojo era preexistente a la sesión y se corrige aquí como higiene de compuertas (coherente con `QUALITY_GATES_READY=YES`).
