@@ -1,0 +1,29 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/stores/__tests__/gaRem003.logoutRevocation.test.ts (2 tests | 1 failed) 66ms
+     × logout envía el refresh token a POST /logout antes de limpiar 52ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/stores/__tests__/gaRem003.logoutRevocation.test.ts > GA-REM-003 AC04 · logout con revocación > logout envía el refresh token a POST /logout antes de limpiar
+AssertionError: expected "vi.fn()" to be called with arguments: [ '/logout', …(1) ]
+
+Number of calls: 0
+
+ ❯ src/stores/__tests__/gaRem003.logoutRevocation.test.ts:37:22
+     35|     setTokens('tok', 'ref-123')
+     36|     logout()
+     37|     expect(api.post).toHaveBeenCalledWith('/logout', { refresh_token: …
+       |                      ^
+     38|   })
+     39|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  21:14:18
+   Duration  6.40s (transform 259ms, setup 377ms, import 308ms, tests 66ms, environment 5.00s)
+
