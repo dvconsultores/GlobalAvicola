@@ -144,7 +144,8 @@ async def reject_event(
 async def batch_approve(
     data: schemas.BatchApproveRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(require_permission("review", "review")),
+    # `R-208`: misma puerta que la unitaria `approve` — aprobar por lote es aprobar.
+    current_user: dict = Depends(require_permission("approvals", "approve")),
 ):
     """Approve multiple events."""
     return await ApprovalService(db, current_user).batch_approve(data.event_ids, data.observations)
@@ -154,7 +155,8 @@ async def batch_approve(
 async def batch_reject(
     data: schemas.BatchRejectRequest,
     db: AsyncSession = Depends(get_db),
-    current_user: dict = Depends(require_permission("review", "review")),
+    # `R-208`: simetrico a la unitaria `reject`.
+    current_user: dict = Depends(require_permission("approvals", "reject")),
 ):
     """Reject multiple events (reason mandatory)."""
     return await ApprovalService(db, current_user).batch_reject(data.event_ids, data.observations)

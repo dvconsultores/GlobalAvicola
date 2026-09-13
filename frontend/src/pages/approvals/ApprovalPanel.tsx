@@ -170,18 +170,19 @@ export default function ApprovalPanel() {
  </div>
 
  {/* Batch Actions Bar */}
- {can({ permission: 'review:review' }) && selectedCount > 0 && (
+ {/* `R-208`: la barra depende de `approvals:*` — `review:review` no autoriza una aprobación. */}
+ {(can({ permission: 'approvals:approve' }) || can({ permission: 'approvals:reject' })) && selectedCount > 0 && (
  <div className="bg-[#1E3A5F] text-white rounded-xl px-5 py-3 mb-4 flex items-center justify-between shadow-sm">
  <span className="text-sm font-semibold">{selectedCount} {t('review.selectedEvents', 'seleccionados')}</span>
  <div className="flex gap-2">
- <button onClick={handleBatchApprove}
+ {can({ permission: 'approvals:approve' }) && <button onClick={handleBatchApprove}
  className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
  <Check size={16} /> {t('review.approveAll', 'Aprobar todos')}
- </button>
- <button onClick={openBatchReject}
+ </button>}
+ {can({ permission: 'approvals:reject' }) && <button onClick={openBatchReject}
  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
  <X size={16} /> {t('review.rejectAll', 'Rechazar todos')}
- </button>
+ </button>}
  </div>
  </div>
  )}
