@@ -67,6 +67,16 @@ LOT_OPTIONAL_EVENTS = {
     models.EventType.GRANDPARENT_IMPORT,
 }
 
+# `R-221` · `OD-16.e`/`OD-09`: tipos **inequívocos** sin lote — su cadena se deriva del propio
+# tipo y la guarda de escritura exige esa unidad (no «alguna»). Lista explícita, ampliable por
+# decisión de dominio; sin heurísticas (`C-06`). Para `HATCHERY_INSPECTION` la unidad además
+# se **persiste al nacer** (`business_unit_id`), patrón `OD-25 (B)`; la importación conserva
+# su derivación de lectura de `R-153` (el lote nace al aprobarla).
+UNIDAD_POR_TIPO_INEQUIVOCO = {
+    models.EventType.GRANDPARENT_IMPORT: "grandparent",
+    models.EventType.HATCHERY_INSPECTION: "hatchery",
+}
+
 # `GA-REM-006-A` §A.2 · mapa de transiciones de `P-07` (`R-135`, `R-140` PARTE A, `R-154`):
 # estados **desde** los que cada acto es válido. `OD-17.a`: `RETURNED` y `REJECTED` son
 # devoluciones internas, vivas; `CANCELLED` y el ciclo SAP son terminales o diferidos.
@@ -156,6 +166,22 @@ class OperationsService:
                    CompanyBusinessUnit.company_id == self.company_id)
         )).scalar_one_or_none()
 
+    async def _habilitacion_de_unidad(self, code: str) -> int | None:
+        """La fila de habilitación (`CompanyBusinessUnit.id`) de esa cadena en la empresa.
+
+        `R-221`: la atribución al nacer persiste el **id de la habilitación**, la misma
+        referencia que usa la clasificación manual (`fase 6`). Si la fila no existe no hay
+        nada que persistir: el evento queda pendiente.
+        """
+        from ..business_units.models import BusinessUnit, CompanyBusinessUnit
+
+        return (await self.db.execute(
+            select(CompanyBusinessUnit.id)
+            .join(BusinessUnit, BusinessUnit.id == CompanyBusinessUnit.business_unit_id)
+            .where(CompanyBusinessUnit.company_id == self.company_id,
+                   BusinessUnit.code == code)
+        )).scalar_one_or_none()
+
     async def exigir_unidad_operativa(self, *, lot_id: int | None = None, event=None,
                                       unidad_directa: str | None = None) -> None:
         """La guarda de escritura. `GA-REM-040-G §G.3` · `AC-C05` · `AC-W02…W05, W13, W14`.
@@ -239,11 +265,25 @@ class OperationsService:
         # `R-153` · `OD-25 (B)`: la importación de abuelas sin lote no tiene del qué derivarla
         # — se usa la cadena de su propio tipo de evento (`grandparent`), la misma unidad que
         # la de su lote legado. Con lote presente, la derivación es la de siempre.
+        #
+        # `R-221`: la regla deja de ser un parche puntual — los tipos **inequívocos** sin
+        # lote declaran su unidad (`UNIDAD_POR_TIPO_INEQUIVOCO`) y la guarda la exige
+        # estricta: con `hatchery` apagada la autoridad global deniega (`OD-16.e`) y sin
+        # concesión el actor de empresa también (`OD-09`). `farm_inspection` no está en la
+        # lista: su regla espera la decisión del propietario (`C-02`/`AOD-13`).
         await self.exigir_unidad_operativa(
             lot_id=data.lot_id,
-            unidad_directa=("grandparent" if event_type == models.EventType.GRANDPARENT_IMPORT
-                            and data.lot_id is None else None),
+            unidad_directa=(UNIDAD_POR_TIPO_INEQUIVOCO.get(event_type)
+                            if data.lot_id is None else None),
         )
+
+        # `R-221`: el tipo inequívoco deja de nacer en la bandeja de pendientes — la inspección
+        # de incubadora se persiste **en su unidad** (la importación conserva su derivación de
+        # lectura: su lote nace al aprobarla). Sin fila de habilitación no hay nada que
+        # persistir y el evento queda pendiente como cualquier dato sin cadena.
+        unidad_al_nacer = None
+        if data.lot_id is None and event_type == models.EventType.HATCHERY_INSPECTION:
+            unidad_al_nacer = await self._habilitacion_de_unidad("hatchery")
 
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
@@ -258,6 +298,8 @@ class OperationsService:
         # faltaran: cualquier campo añadido después se habría perdido igual y en silencio.
         event_fields = data.model_dump(exclude=set(schemas.SUBMOVEMENT_FIELDS))
         event_fields["event_type"] = event_type  # el enum ya validado, no la cadena
+        if unidad_al_nacer is not None:  # `R-221`: nace atribuido a su unidad
+            event_fields["business_unit_id"] = unidad_al_nacer
         event = models.OperationalEvent(
             **event_fields,
             company_id=self.company_id,
