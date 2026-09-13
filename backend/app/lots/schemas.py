@@ -113,7 +113,14 @@ class LotPhaseRead(LotPhaseBase):
     id: int
     is_active: bool
     created_at: datetime
+    # `R-191`: la lectura incluye la fase maestra (código y nombre) — la UI distingue
+    # producción de cría sin una segunda consulta.
+    phase: Optional["ProductivePhaseRead"] = None
     model_config = {"from_attributes": True}
+
+
+from ..masters.schemas import ProductivePhaseRead  # noqa: E402  (evita ciclo al importar)
+LotPhaseRead.model_rebuild()
 
 
 # ============================================================

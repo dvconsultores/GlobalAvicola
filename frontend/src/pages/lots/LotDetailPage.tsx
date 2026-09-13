@@ -29,6 +29,8 @@ export default function LotDetailPage() {
  const [lotAlerts, setLotAlerts] = useState<any[]>([])
  const [events, setEvents] = useState<any[]>([])
  const [phases, setPhases] = useState<any[]>([])
+ // `R-191`: fases maestras (`masters/productive-phases`) para resolver el id por código.
+ const [masterPhases, setMasterPhases] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [closeResult, setCloseResult] = useState<any>(null)
  const [closing, setClosing] = useState(false)
@@ -49,13 +51,14 @@ export default function LotDetailPage() {
  const { data: found } = await api.get(`/lots/${id}`)
  setLot(found || null)
 
- const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes] = await Promise.allSettled([
+ const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes, mastersRes] = await Promise.allSettled([
  api.get(`/reports/kpis?lot_id=${id}`),
  api.get(`/operations?lot_id=${id}&limit=50`),
  api.get(`/lots/${id}/phases`),
  api.get(`/reports/kpi/ipe/${id}`),
  api.get(`/reports/kpi/weight-uniformity/${id}`),
  api.get(`/operations/alerts?lot_id=${id}&is_resolved=false&limit=20`),
+ api.get('/masters/productive-phases'),
  ])
  if (kpiRes.status === 'fulfilled') setKpis(kpiRes.value.data)
  if (evtRes.status === 'fulfilled') setEvents(evtRes.value.data || [])
@@ -63,6 +66,7 @@ export default function LotDetailPage() {
  if (ipeRes.status === 'fulfilled') setKpiIpe(ipeRes.value.data)
  if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
  if (alertsRes.status === 'fulfilled') setLotAlerts(alertsRes.value.data || [])
+ if (mastersRes.status === 'fulfilled') setMasterPhases(mastersRes.value.data || [])
  } catch (err) {
  console.error(err)
  } finally {
@@ -122,16 +126,25 @@ export default function LotDetailPage() {
  setShowTransitionModal(false)
  setTransitioning(true)
  try {
+ // `R-191`: el contrato exige ids — la fase destino se resuelve por **código**
+ // contra las fases maestras (mismo nombre de campo que el backend: `lot_id`/`phase_id`).
+ const destino = masterPhases.find((f: any) => String(f.code || '').toUpperCase() === 'PROD')
+ || masterPhases.find((f: any) => /producc|production/i.test(`${f.name || ''} ${f.code || ''}`))
+ if (!destino) {
+ toast.error(t('lots.phaseNotFound', 'No se encontró la fase de producción'))
+ return
+ }
  await api.post(`/lots/${id}/phases`, {
- phase_code: 'production',
+ lot_id: Number(id),
+ phase_id: destino.id,
  start_date: transitionDate || new Date().toISOString().split('T')[0],
- start_population_male: Number(transitionMale) || activePhase?.start_population_male || 0,
- start_population_female: Number(transitionFemale) || activePhase?.start_population_female || 0,
  })
  const { data: newPhases } = await api.get(`/lots/${id}/phases`)
  setPhases(newPhases || [])
+ toast.success(t('lots.transitionSuccess', 'Fase de producción iniciada'))
  } catch (err: any) {
- console.error(err.response?.data?.detail || t('lots.transitionError', 'Error al transicionar fase'))
+ // `R-191`: el 422/400 del servidor se muestra legible — nunca en consola y en silencio.
+ toast.error(getErrorMessage(err, t('lots.transitionError', 'Error al transicionar fase')))
  } finally {
  setTransitioning(false)
  }

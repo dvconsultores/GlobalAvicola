@@ -890,6 +890,8 @@
     "status": "Estado",
     "lotCode": "Código de Lote",
     "transitionToProduction": "Iniciar Producción",
+ "transitionSuccess": "Fase de producción iniciada",
+ "phaseAlreadyActive": "El lote ya está en esa fase",
     "transitionConfirm": "¿Confirmar transición a Fase Producción? El lote pasará a registrar postura de huevos.",
     "transitionError": "Error al transicionar fase",
     "currentPhase": "Fase activa",

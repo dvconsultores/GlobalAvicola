@@ -890,6 +890,8 @@
     "status": "Status",
     "lotCode": "Lot Code",
     "transitionToProduction": "Start Production",
+ "transitionSuccess": "Production phase started",
+ "phaseAlreadyActive": "The lot is already in that phase",
     "transitionConfirm": "Confirm transition to Production Phase? The lot will start recording egg laying.",
     "transitionError": "Error transitioning phase",
     "currentPhase": "Active phase",

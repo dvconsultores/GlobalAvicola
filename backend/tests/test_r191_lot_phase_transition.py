@@ -250,7 +250,7 @@ async def test_r191_04b_fase_ya_activa_es_400(http_client, esc):
 async def test_r191_04c_fecha_anterior_al_inicio_es_400(http_client, esc):
     antes = await _activas(esc)
     r = await _post(http_client, esc, {"lot_id": esc["lote"], "phase_id": esc["prod"],
-                                       "start_date": days_ago(40)})
+                                       "start_date": days_ago(40).isoformat()})
     assert r.status_code == 400, r.text
     assert await _activas(esc) == antes
 

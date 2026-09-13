@@ -18,7 +18,8 @@ class BusinessRuleViolation(Exception):
 
 # ─── Balance helpers ──────────────────────────────────────────────────────────
 
-async def _suma_neta(db: AsyncSession, lot_id: int, columna, columna_evento, tipos) -> int:
+async def _suma_neta(db: AsyncSession, lot_id: int, columna, columna_evento, tipos,
+                     sexo: str | None = None) -> int:
     """Σ natural de los eventos del lote de esos tipos, **menos** las contrapartidas efectivas.
 
     `GA-REM-041 §3.4` · `OD-19 §3, §5`. El original revertido sigue sumando en su signo (la
@@ -35,6 +36,8 @@ async def _suma_neta(db: AsyncSession, lot_id: int, columna, columna_evento, tip
         .join(OperationalEvent, columna_evento == OperationalEvent.id)
         .where(OperationalEvent.lot_id == lot_id, OperationalEvent.event_type.in_(list(tipos)))
     )
+    if sexo is not None:  # `R-191`: saldo por sexo (misma semántica de contrapartidas)
+        base = base.where(BirdMovement.sex == sexo)
     natural = (await db.execute(base.where(
         OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         OperationalEvent.id.not_in(contrapartidas),
@@ -86,6 +89,38 @@ async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
     )
 
     return (apertura.scalar() or 0) + entradas - salidas
+
+
+async def get_current_bird_balance_by_sex(db: AsyncSession, lot_id: int) -> tuple[int, int]:
+    """Saldo vivo por sexo `(machos, hembras)` — `R-191` (poblaciones de una transición).
+
+    Misma taxonomía, contrapartidas y apertura que `get_current_bird_balance`. Las filas
+    `mixed` no se reparten (no se inventa): solo cuenta cada sexo declarado; un lote con
+    filas mixtas sigue teniendo su saldo total en el helper original.
+    """
+    in_types = [EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION]
+    out_types = [
+        EventType.MORTALITY_RECORDING,
+        EventType.CULL_RECORDING,
+        EventType.BIRD_EXIT,
+        EventType.CHICK_DISPATCH,
+    ]
+    from ..lots.models import OpeningBalance
+
+    saldos = []
+    for sexo in ("male", "female"):
+        entradas = await _suma_neta(db, lot_id, BirdMovement.quantity,
+                                    BirdMovement.event_id, in_types, sexo=sexo)
+        salidas = await _suma_neta(db, lot_id, BirdMovement.quantity,
+                                   BirdMovement.event_id, out_types, sexo=sexo)
+        apertura = (await db.execute(
+            select(func.coalesce(
+                OpeningBalance.initial_male_count if sexo == "male" else OpeningBalance.initial_female_count,
+                0,
+            )).where(OpeningBalance.lot_id == lot_id)
+        )).scalar() or 0
+        saldos.append((apertura or 0) + entradas - salidas)
+    return int(saldos[0]), int(saldos[1])
 
 
 TIPO_DISPONIBLE = "fertile"

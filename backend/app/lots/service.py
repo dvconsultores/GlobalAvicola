@@ -729,15 +729,61 @@ class LotService:
         return list(result.scalars().all())
 
     async def add_phase(self, data: schemas.LotPhaseCreate) -> models.LotPhase:
-        """Añade una fase a un lote **alcanzable**.
+        """Transición de fase con cierre de la anterior — `R-191`.
 
-        Creaba la fila sin comprobar de quién era el lote: se podía colgar una fase del lote
-        de otra empresa, o de otra cadena de la propia. Escribir contra lo ajeno es la misma
-        clase de defecto que `R-42`, y aquí se cierra por el mismo camino que la lectura.
+        El contrato de la UI (`phase_id` resuelto por código) se vuelve completo: la fase
+        activa se cierra (`end_date = start_date`) **bajo bloqueo del lote** —una sola
+        activa incluso con transiciones concurrentes, sin migración—, las poblaciones
+        ausentes (0/0) se derivan del saldo por sexo, y las transiciones inválidas se
+        rechazan sin dejar rastro: lote no activo, misma fase ya activa, fecha anterior al
+        inicio de la fase vigente (`BR-23`). El aislamiento por empresa y unidad sigue
+        primero (`AC-L08`, `R-203`).
         """
-        await self._exigir_unidad_operativa(self._codigo(await self.get_lot(data.lot_id)))  # `AC-L08`
-        phase = models.LotPhase(**data.model_dump())
+        lote = await self.get_lot(data.lot_id)
+        await self._exigir_unidad_operativa(self._codigo(lote))  # `AC-L08`
+
+        # Bloqueo pesimista del lote: serializa transiciones del mismo lote (la fila de la
+        # fase activa no sirve como cerrojo cuando aún no existe o va a cambiar).
+        await self.db.execute(
+            select(models.Lot).where(models.Lot.id == data.lot_id).with_for_update()
+        )
+
+        estado = getattr(lote.status, "value", lote.status)
+        if estado != "active":
+            raise BusinessRuleViolation("El lote no está activo", "BR-23")
+
+        valor = lambda v: getattr(v, "value", v)  # noqa: E731
+        activa = (await self.db.execute(
+            select(models.LotPhase).where(models.LotPhase.lot_id == data.lot_id,
+                                         models.LotPhase.is_active.is_(True))
+        )).scalar_one_or_none()
+        if activa is not None:
+            if activa.phase_id == data.phase_id:
+                raise BusinessRuleViolation("El lote ya está en esa fase", "BR-23")
+            if data.start_date < valor(activa.start_date):
+                raise BusinessRuleViolation(
+                    "La fecha de inicio es anterior a la fase vigente", "BR-23")
+            activa.is_active = False
+            activa.end_date = data.start_date
+        _ = valor
+
+        campos = data.model_dump()
+        if campos.get("start_population_male", 0) == 0 and campos.get("start_population_female", 0) == 0:
+            # `R-191`: sin poblaciones declaradas se derivan del saldo vivo por sexo.
+            from ..operations.validators import get_current_bird_balance_by_sex
+
+            machos, hembras = await get_current_bird_balance_by_sex(self.db, data.lot_id)
+            campos["start_population_male"] = machos
+            campos["start_population_female"] = hembras
+        campos["is_active"] = True
+        phase = models.LotPhase(**campos)
         self.db.add(phase)
         await self.db.flush()
-        await self.db.refresh(phase)
-        return phase
+
+        from sqlalchemy.orm import selectinload
+
+        return (await self.db.execute(
+            select(models.LotPhase)
+            .options(selectinload(models.LotPhase.phase))
+            .where(models.LotPhase.id == phase.id)
+        )).scalar_one()

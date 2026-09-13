@@ -63,6 +63,12 @@ beforeEach(() => {
     const u = String(url)
     if (u === '/lots/66/phases') return Promise.resolve({ data: fasesActuales })
     if (u === '/lots/66') return Promise.resolve({ data: LOTE })
+    if (u.includes('/traceability')) {
+      return Promise.resolve({ data: {
+        egg_batches_sent: [], egg_batches_received: [],
+        chick_batches_sent: [], chick_batches_received: [],
+      } })
+    }
     if (u.startsWith('/masters/productive-phases')) return Promise.resolve({ data: FASES_MAESTRAS })
     return Promise.resolve({ data: [] })
   })
@@ -113,7 +119,7 @@ describe('R-191 · transición de fase por UI', () => {
     })
     await abrirYConfirmar()
     await waitFor(() => expect(toastSuccess).toHaveBeenCalled())
-    expect(await screen.findByText('Producción')).toBeTruthy()
+    expect((await screen.findAllByText('Producción')).length).toBeGreaterThan(0)
     await waitFor(() => {
       expect(screen.queryByRole('button', { name: /Iniciar Producción/ })).toBeNull()
     })
@@ -131,3 +137,4 @@ describe('R-191 · i18n de transición', () => {
   })
 })
 
+void fireEvent; void MemoryRouter
