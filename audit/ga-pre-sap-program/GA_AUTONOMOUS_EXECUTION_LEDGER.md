@@ -121,3 +121,9 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Fix C8 (solo workflow)**: `quality-gates.yml` — backend: `uv sync --frozen --python 3.11` + `.venv/bin/python` en compileall/Alembic/guarda; frontend: peer `@testing-library/dom@10.4.1` explícito. EX-01 intacto (el workflow sigue siendo señal, no puerta; scope-guard preservado).
 - **Equivalencia local verificada**: compileall OK · guarda de entorno **25/25** (env del workflow) · i18n `ES=1041 EN=1041 faltantes=0` · Alembic `heads=['y5z6a7b8c9d0'] bases=['0c661168cb12'] revisiones=37` exit 0 · YAML OK. Push ⇒ run 209 esperado VERDE.
 - Nota: este workflow **no forma parte de AC-06** (que cubría `quality-suite.yml`); su rojo era preexistente a la sesión y se corrige aquí como higiene de compuertas (coherente con `QUALITY_GATES_READY=YES`).
+
+## AE-15 · 2026-09-13 (noche-3) · R-200 C1 — RED ✅ (4 rojas por el defecto · 5 controles)
+
+- **Nuevo** `backend/tests/test_r200_refresh_token_as_access.py` (login real con `test_credentials`; JWT firmado a mano para los casos sin `type`). **Verificado local: 4 rojas por el defecto** — RED-01/02: el refresh como `Bearer` autentica la ruta protegida y la de permiso (**200 con identidad completa, `is_super_admin: true`**); RED-03: un JWT firmado sin `type` autentica; RED-04: `type:"session"` autentica — **y 5 controles verdes** (CTL-05…08 + DOC-10 ventanas 30 min / 7 d). Evidencia: `audit/ga-claude-final-audit/evidence/r200/red_c1.log`.
+- Contexto declarado: `GA-REM-003 AC04` (logout/rotación/revocación) **no** se cierra aquí — esta spec restaura la frontera de 30 minutos del access.
+- **Siguiente**: C2 (una comprobación en `get_current_user`, antes de tocar la base) → GREEN 9/9 → suite completa → **C3 runtime ejecutable ya** con las credenciales UAT-09 (sondas no destructivas de refresh).
