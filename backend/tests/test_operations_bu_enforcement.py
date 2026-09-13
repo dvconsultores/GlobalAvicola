@@ -418,29 +418,30 @@ async def test_w13_la_autoridad_global_situada_no_crea_sobre_unidad_apagada(http
     await _sin_efectos(esc, esc["lh"], antes, saldo)
 
 
-async def test_w13_submit_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_w13_submit_sobre_unidad_apagada_falla_cerrado_para_la_autoridad_global(http_client, esc):
+    # `OD-16` (`9ffc5ec`): frontera productiva fail-closed (404, sin enumerar el recurso).
     r = await http_client.post(f"/api/v1/operations/{esc['ev_h']}/submit", headers=_token(esc["global"], esc["a"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM operational_events WHERE id = :e AND upper(status::text) = 'REGISTERED'", e=esc["ev_h"]) == 1
 
 
-async def test_w13_cancel_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_w13_cancel_sobre_unidad_apagada_falla_cerrado_para_la_autoridad_global(http_client, esc):
     r = await http_client.post(f"/api/v1/operations/{esc['ev_h2']}/cancel", headers=_token(esc["global"], esc["a"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM operational_events WHERE id = :e AND upper(status::text) = 'REGISTERED'", e=esc["ev_h2"]) == 1
 
 
-async def test_w13_upload_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_w13_upload_sobre_unidad_apagada_falla_cerrado_para_la_autoridad_global(http_client, esc):
     antes = await _cuenta(esc, "SELECT count(*) FROM evidences WHERE event_id = :e", e=esc["ev_h"])
     r = await http_client.post(f"/api/v1/operations/{esc['ev_h']}/evidences", headers=_token(esc["global"], esc["a"]),
                                files={"file": ("foto.png", PNG, "image/png")})
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM evidences WHERE event_id = :e", e=esc["ev_h"]) == antes
 
 
-async def test_w13_delete_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_w13_delete_sobre_unidad_apagada_falla_cerrado_para_la_autoridad_global(http_client, esc):
     r = await http_client.delete(f"/api/v1/operations/{esc['ev_h']}/evidences/{esc['evi_h']}", headers=_token(esc["global"], esc["a"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM evidences WHERE id = :i", i=esc["evi_h"]) == 1
 
 
@@ -515,9 +516,11 @@ async def test_a07_el_filtro_por_lote_no_salta_el_predicado(http_client, esc):
     assert _filas(r) == []
 
 
-async def test_a08_control_la_autoridad_global_situada_ve_toda_la_empresa(http_client, esc):
+async def test_a08_control_la_autoridad_global_situada_ve_la_empresa_habilitada(http_client, esc):
     r = await _alertas(http_client, esc, "global", esc["a"])
-    assert _ids(r) == {esc["al_r"], esc["al_p"], esc["al_g"], esc["al_h"]}, "visibilidad de control certificada, unidades apagadas incluidas"
+    # `GA-FE-02-D` / `OD-16` (`9ffc5ec`): las alertas de una unidad apagada quedan fuera de la
+    # frontera productiva — la visibilidad de control no incluye unidades apagadas.
+    assert _ids(r) == {esc["al_r"], esc["al_p"], esc["al_g"]}, "la unidad apagada no debe aportar alertas a la autoridad global"
 
 
 async def test_a09_control_la_autoridad_global_sin_contexto_obtiene_cero(http_client, esc):
@@ -544,8 +547,9 @@ async def test_a13_resolver_una_alerta_de_unidad_no_alcanzable_es_404(http_clien
 
 
 async def test_a13_la_autoridad_global_no_resuelve_sobre_unidad_apagada(http_client, esc):
+    # `OD-16` (`9ffc5ec`): unidad apagada = recurso fuera de la frontera productiva (404).
     r = await http_client.patch(f"/api/v1/operations/alerts/{esc['al_h']}/resolve", headers=_token(esc["global"], esc["a"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM operational_alerts WHERE id = :i AND is_resolved = false", i=esc["al_h"]) == 1
 
 

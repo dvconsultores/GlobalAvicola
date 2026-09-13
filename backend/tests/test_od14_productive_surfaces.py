@@ -306,14 +306,15 @@ async def test_s02_la_autoridad_global_sin_contexto_obtiene_cero_eventos(http_cl
         assert r.headers["x-total-count"] == "0", "el total revela filas ajenas"
 
 
-async def test_s02_situada_en_a_solo_ve_a_incluidas_todas_sus_unidades(http_client, esc):
-    """Situada en A: solo A (`OD-14.c`) — y todas las unidades de A, exención de visibilidad
-    certificada en la fase 3 que `R-139` preserva."""
+async def test_s02_situada_en_a_ve_solo_sus_unidades_habilitadas(http_client, esc):
+    """Situada en A: solo A (`OD-14.c`) y solo unidades *habilitadas* — `GA-FE-02-D`/`OD-16`
+    (`9ffc5ec`) derogó la exención de visibilidad de la fase 3 para la unidad apagada."""
     r = await http_client.get("/api/v1/operations?limit=100", headers=_token(esc["global"], esc["a"]))
     assert r.status_code == 200, r.text
     ids = {x["id"] for x in _filas(r)}
     assert esc["ev_b"] not in ids, "situada en A vio eventos de B"
-    assert {esc["ev_a"], esc["ev_a_h"]} <= ids
+    assert esc["ev_a"] in ids, "falta el evento de la unidad habilitada"
+    assert esc["ev_a_h"] not in ids, "evento de unidad apagada visible (debe ser fail-closed)"
 
 
 async def test_s02_situada_en_b_solo_ve_b(http_client, esc):

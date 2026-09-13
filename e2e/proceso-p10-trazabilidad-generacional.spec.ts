@@ -56,7 +56,9 @@ async function tresGeneraciones(request: any, cab: any) {
   const nacimiento = await registrar(request, cab, {
     lot_id: incub.lotId, farm_id: incub.farmId, house_id: incub.houseId,
     event_type: 'birth_registration', event_date: hoy(),
+    // `BR-21` (`GA-REM-021-C` / `B13`): sanos + débiles explícitos (Σ ≤ nacidos).
     bird_movements: [{ sex: 'mixed', quantity: POLLITOS * 2 }],
+    chicks_healthy: POLLITOS * 2, chicks_weak: 0,
   })
   expect(nacimiento.status(), await nacimiento.text()).toBe(201)
 

@@ -393,7 +393,11 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     from app.authorization_coverage import enumerar_rutas
     from app.main import app
     raiz = pathlib.Path(__file__).resolve().parents[1]
-    # `GA-REM-041 §5`: la cabeza avanza a `t0u1v2w3x4y5` (REVERSED, `OD-19`) y hay tres rutas
-    # nuevas de `reversals` (208 → 211). Recuentos exactos, nunca `>=`.
-    assert ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads() == ["x4y5z6a7b8c9"]  # `GA-REM-021-C §C.5`
+    # GA-GOV-03 (T1): la cadena avanzó desde `t0u1v2w3x4y5` (REVERSED, `OD-19`) y
+    # `x4y5z6a7b8c9` (sanos y débiles) hasta la cabeza canónica `y5z6a7b8c9d0` (catálogo de
+    # unidades, `GA-FE-02-C §2`). Cabeza única, fijada; recuentos exactos, nunca `>=`.
+    cabezas = ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads()
+    assert len(cabezas) == 1, cabezas
+    assert cabezas == ["y5z6a7b8c9d0"], cabezas
+    # y hay tres rutas nuevas de `reversals` (208 → 211).
     assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 211

@@ -353,7 +353,8 @@ async def test_r166_12_la_cadena_de_seguridad_se_mantiene(http_client, esc):
     assert r.status_code in (400, 403, 404), ("AC-R166-12: autoridad global sin contexto", r.status_code, r.text)
     ev_h = await _sembrar_evento_sql(esc, esc["lote_h"], "CORRECTED")
     r = await _aprobar(http_client, esc, "global", ev_h, company_id=esc["a"])
-    assert r.status_code == 403, ("AC-R166-12: unidad apagada (R-165 · OD-16)", r.status_code, r.text)
+    # `OD-16` (`9ffc5ec`): la unidad apagada responde fail-closed (404), no 403.
+    assert r.status_code == 404, ("AC-R166-12: unidad apagada (R-165 · OD-16)", r.status_code, r.text)
     assert (await _verdad(esc, ev))["acciones"] == {}, "ninguna denegación deja historia"
 
 

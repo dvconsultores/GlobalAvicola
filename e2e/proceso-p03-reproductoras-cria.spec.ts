@@ -114,7 +114,10 @@ test.describe('P-03 · cadena de cría de reproductoras', () => {
     const pasos: [string, any][] = [
       ['farm_inspection', { inspection_details: [{ parameter: 'Bioseguridad', value: 'ok', status: 'ok' }] }],
       ['transport_inspection', { inspection_details: [{ parameter: 'Higiene', value: 'ok', status: 'ok' }] }],
-      ['bird_reception', { sap_document_ref: oc, bird_movements: [{ sex: 'mixed', quantity: PRIMERA }] }],
+      // `BR-20` (`GA-REM-021-B` / `B01`): la recepción de reproductoras declara el cuadre exacto
+      // (recibidas = alojadas + mortalidad al arribo + rechazo).
+      ['bird_reception', { sap_document_ref: oc, bird_movements: [{ sex: 'mixed', quantity: PRIMERA }],
+                           received_total: PRIMERA, dead_on_arrival: 0, rejected_on_arrival: 0 }],
       ['bird_distribution', { bird_movements: [{ sex: 'mixed', quantity: PRIMERA }] }],
       ['feed_registration', { feed_movements: [{ quantity_kg: 380.0, feed_type_id: m.alimentoId }] }],
       // Dentro de norma: la cadena no debe generar alerta por sí misma.

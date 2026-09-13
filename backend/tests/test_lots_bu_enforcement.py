@@ -337,27 +337,29 @@ async def test_l07_la_autoridad_global_situada_no_crea_en_unidad_apagada(http_cl
     assert await _lotes_nuevos(esc) == antes
 
 
-async def test_l08_put_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_l08_put_sobre_unidad_apagada_falla_cerrada_para_la_autoridad_global(http_client, esc):
+    # `OD-16` (`9ffc5ec`): la unidad apagada prevalece para todos los actores productivos;
+    # la frontera productiva es fail-closed (404, sin enumerar el recurso).
     r = await http_client.put(f"/api/v1/lots/{esc['lh']}", headers=_token(esc["global"], esc["a"]), json={"farm_id": esc["granja_a"]})
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT coalesce(farm_id, 0) FROM lots WHERE id = :l", l=esc["lh"]) == 0, "el lote no cambia"
 
 
-async def test_l08_close_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_l08_close_sobre_unidad_apagada_falla_cerrada_para_la_autoridad_global(http_client, esc):
     r = await http_client.post(f"/api/v1/lots/{esc['lh']}/close", headers=_token(esc["global"], esc["a"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert (await _estado(esc, esc["lh"])).lower().endswith("active")
 
 
-async def test_l08_activate_manual_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_l08_activate_manual_sobre_unidad_apagada_falla_cerrada_para_la_autoridad_global(http_client, esc):
     r = await http_client.post("/api/v1/lots/activate-manual", headers=_token(esc["global"], esc["a"]), json=_apertura(esc, esc["lh2"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM opening_balances WHERE lot_id = :l", l=esc["lh2"]) == 0
 
 
-async def test_l08_phases_sobre_unidad_apagada_es_403_para_la_autoridad_global(http_client, esc):
+async def test_l08_phases_sobre_unidad_apagada_falla_cerrada_para_la_autoridad_global(http_client, esc):
     r = await http_client.post(f"/api/v1/lots/{esc['lh2']}/phases", headers=_token(esc["global"], esc["a"]), json=_fase(esc, esc["lh2"]))
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _cuenta(esc, "SELECT count(*) FROM lot_phases WHERE lot_id = :l", l=esc["lh2"]) == 0
 
 
@@ -386,13 +388,17 @@ async def test_l10_control_el_actor_edita_el_suyo_y_no_el_de_otra_cadena(http_cl
     assert r.status_code == 200, r.text
 
 
-async def test_l11_frontera_de_lectura_la_autoridad_global_situada_sigue_viendo_la_unidad_apagada(http_client, esc):
-    """Control: este tranche no reabre las lecturas (fase 3 `:88`, `R-139` S02)."""
+async def test_l11_frontera_de_lectura_la_autoridad_global_situada_no_ve_la_unidad_apagada(http_client, esc):
+    """`GA-FE-02-D` / `OD-16` (`9ffc5ec`): la frontera de lectura productiva es fail-closed —
+    la autoridad global situada lee por unidades *habilitadas*; la exención de visibilidad
+    de la fase 3 quedó derogada en lecturas productivas."""
     cab = _token(esc["global"], esc["a"])
     r = await http_client.get("/api/v1/lots?limit=100", headers=cab)
-    assert r.status_code == 200 and esc["lh"] in {f["id"] for f in _filas(r)}
-    r = await http_client.get(f"/api/v1/lots/{esc['lh']}", headers=cab)
     assert r.status_code == 200, r.text
+    ids = {f["id"] for f in _filas(r)}
+    assert esc["lh"] not in ids, "fila de unidad apagada visible para la autoridad global situada"
+    r = await http_client.get(f"/api/v1/lots/{esc['lh']}", headers=cab)
+    assert r.status_code == 404, r.text
 
 
 async def test_l11_frontera_de_lectura_el_actor_no_ve_la_unidad_apagada_ni_la_no_concedida(http_client, esc):
@@ -469,8 +475,11 @@ async def test_e05_control_la_evidencia_de_otra_empresa_sigue_siendo_403(http_cl
 async def test_e06_control_la_autoridad_global(http_client, esc):
     r = await _descarga(http_client, esc, "global", "ev_r", "evi_r")
     assert r.status_code == 403, "sin contexto no descarga (R-139)"
+    # `GA-FE-02-D` / `OD-16` (`9ffc5ec`): la descarga es lectura productiva fail-closed —
+    # la evidencia de una unidad apagada no es alcanzable ni para la autoridad global situada.
     r = await _descarga(http_client, esc, "global", "ev_h", "evi_h", company_id=esc["a"])
-    assert r.status_code == 200 and f"{PREFIJO}CONTENIDO-H" in r.text, "situada: visibilidad de control, unidad apagada incluida"
+    assert r.status_code == 404, "situada: unidad apagada fuera de la frontera productiva"
+    assert f"{PREFIJO}CONTENIDO-H" not in r.text
     r = await _descarga(http_client, esc, "global", "ev_b", "evi_b", company_id=esc["a"])
     assert r.status_code == 403
 

@@ -382,7 +382,8 @@ async def test_s01_s02_otra_empresa_y_la_global_sin_contexto_fallan_cerradas(htt
 async def test_s03_s04_la_unidad_apagada_o_no_concedida_no_se_reversa(http_client, esc):
     assert (await _solicitar(http_client, esc, "solicitante", "ev_lh")).status_code == 404, "apagada con concesión histórica"
     r = await _solicitar(http_client, esc, "global", "ev_lh", company_id=esc["a"])
-    assert r.status_code == 403, r.text
+    # `OD-16` (`9ffc5ec`): la unidad apagada es fail-closed en la frontera productiva (404).
+    assert r.status_code == 404, r.text
     assert (await _solicitar(http_client, esc, "solicitante", "ev_lg")).status_code == 404, "habilitada, no concedida"
     assert await _cuenta(esc, "SELECT count(*) FROM reversals WHERE company_id = :a", a=esc["a"]) == 0
 

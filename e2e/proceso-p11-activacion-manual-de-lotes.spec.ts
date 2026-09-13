@@ -165,7 +165,9 @@ test.describe('P-11 · Activación manual de lotes existentes', () => {
     const recepcion = await registrar(request, cab, {
       lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId,
       event_type: 'bird_reception', event_date: hoy(),
+      // `BR-20` (`GA-REM-021-B` / `B01`): cuadre exacto (recibidas = alojadas + muertas + rechazadas).
       bird_movements: [{ sex: 'mixed', quantity: 800, target_house_id: esc.houseId }],
+      received_total: 800, dead_on_arrival: 0, rejected_on_arrival: 0,
     })
     expect(recepcion.status(), await recepcion.text()).toBe(201)
 
@@ -221,8 +223,10 @@ test.describe('P-11 · Activación manual de lotes existentes', () => {
     // empresa B y con el permiso funcional**, para que la única razón posible de una
     // denegación sea la pertenencia — la lección de `T-067-11` y de `R-72`.
     const s = sufijo()
+    // `R-118` / `OD-14.c`: la empresa del ACTOR manda — el rol y el usuario se crean con la
+    // cabecera del administrador situado en la empresa B (no con la del admin situado en A).
     const rol = await request.post(`${API}/roles`, {
-      headers: cab,
+      headers: adminAlla,
       data: {
         name: `P11 Operador B ${s}`,
         description: 'Rol de certificación con permiso de alta de lotes',
@@ -237,7 +241,7 @@ test.describe('P-11 · Activación manual de lotes existentes', () => {
 
     const clave = `P11-Cert-${s}-Pwd`
     const usuario = await request.post(`${API}/users`, {
-      headers: cab,
+      headers: adminAlla,
       data: {
         first_name: 'P11', last_name: `CertB${s}`,
         email: `p11.certb.${s}@fixtures.globalavicola.com`,
@@ -246,6 +250,15 @@ test.describe('P-11 · Activación manual de lotes existentes', () => {
       },
     })
     expect(usuario.status(), await usuario.text()).toBe(201)
+
+    // `OD-09`/`AC-B01`: la concesión pertenece a usuario + empresa + unidad. Sin conceder la
+    // unidad habilitada de B al sujeto, su 404 en el control mediría un problema de alcance
+    // y no la pertenencia — que es lo único que este caso debe aislar.
+    const concesion = await request.post(`${API}/users/${(await usuario.json()).id}/business-units`, {
+      headers: adminAlla,
+      data: { code: 'breeder' },
+    })
+    expect(concesion.status(), await concesion.text()).toBe(201)
 
     const sesion = await request.post(`${API}/login`, {
       data: { username: `p11_certb_${s}`, password: clave },

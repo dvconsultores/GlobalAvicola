@@ -1,6 +1,6 @@
 """R-187 — Escala estándar del IPE (`GET /reports/kpi/ipe/{lot_id}`) — OD-22.
 
-Contrato canónico (G-06) tras OD-22 (2026-09-11, decisión del propietario «Opción A»):
+Contrato canónico (G-06) tras OD-22 (decisión del propietario «Opción A»; fecha en el registro):
 
     IPE = (Viabilidad% × Ganancia_Diaria_g) / (FCR × 10)
     Ganancia_Diaria_g = avg_weight_g / age_days

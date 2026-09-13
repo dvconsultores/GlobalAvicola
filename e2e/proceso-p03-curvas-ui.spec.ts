@@ -435,7 +435,9 @@ test.describe('P-03 · administración de curvas desde el producto', () => {
 
       await expect(page.getByText(/bajo/i),
         'el producto no informa de la desviación que §4.5 exige').toBeVisible({ timeout: 15_000 })
-      await expect(page.getByText(new RegExp(`${MINIMO_A_LOS_15}`)),
+      // Locator desambiguado (GA-GOV-03): el texto del rango interpolado («135–165 g») no debe
+      // confundirse con un encabezado tipo «Evento #135» cuando el id del evento coincide.
+      await expect(page.getByText(new RegExp(`${MINIMO_A_LOS_15}\\s*[–-]\\s*${MAXIMO_A_LOS_15}`)),
         'no se muestra el rango interpolado contra el que se juzgó').toBeVisible()
       await expect(page.getByText(etiqueta),
         'no consta con qué versión de curva se juzgó').toBeVisible()

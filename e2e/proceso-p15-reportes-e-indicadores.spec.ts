@@ -14,7 +14,8 @@ import { API, cabeceraAdmin, crearEscenario, hoy, registrar, sufijo } from '../t
 
 const FERTILES = 800
 const INFERTILES = 200
-const CARGADOS = 1_000
+// `BR-03` (`R-172`): la disponibilidad en incubadora es el huevo FÉRTIL — la carga no la excede.
+const CARGADOS = 800
 const NACIDOS = 600
 
 async function kpi(request: any, cab: any, ruta: string, lotId?: number) {
@@ -35,7 +36,9 @@ test.describe('P-15 · indicadores y reportes', () => {
         { quantity: FERTILES, egg_type: 'fertile' },
         { quantity: INFERTILES, egg_type: 'infertile' }] }],
       ['incubation_load', { hatchery_params: [{ quantity_loaded: CARGADOS }] }],
-      ['birth_registration', { bird_movements: [{ sex: 'mixed', quantity: NACIDOS }] }],
+      // `BR-21` (`GA-REM-021-C` / `B13`): sanos + débiles explícitos (Σ ≤ nacidos).
+      ['birth_registration', { bird_movements: [{ sex: 'mixed', quantity: NACIDOS }],
+                               chicks_healthy: 580, chicks_weak: 20 }],
     ] as [string, any][]) {
       const r = await registrar(request, cab, { ...base, event_type: tipo, ...extra })
       expect(r.status(), `${tipo}: ${await r.text()}`).toBe(201)

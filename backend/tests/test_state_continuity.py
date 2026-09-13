@@ -326,10 +326,11 @@ async def test_s07_la_unidad_apagada_no_se_corrige_aunque_haya_concesion(http_cl
 
 
 async def test_s07_la_autoridad_global_no_corrige_ni_reenvia_sobre_unidad_apagada(http_client, esc):
+    # `OD-16` (`9ffc5ec`): la unidad apagada responde fail-closed (404), no 403 de autorización.
     r = await _corregir(http_client, esc, "global", "ev_ret_h2", company_id=esc["a"])
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     r = await _submit(http_client, esc, "global", "ev_ret_h2", company_id=esc["a"])
-    assert r.status_code == 403, r.text
+    assert r.status_code == 404, r.text
     assert await _estado(esc, esc["ev_ret_h2"]) == "returned"
 
 

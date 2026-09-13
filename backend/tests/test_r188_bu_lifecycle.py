@@ -1,6 +1,6 @@
 """R-188 — BU-D10 (OD-23 · B): ciclo apagar/encender una unidad de empresa.
 
-Regla canónica ratificada por el propietario (OD-23, 2026-09-11):
+Regla canónica ratificada por el propietario (OD-23; fecha en el registro de decisión):
 
     APAGAR una unidad de empresa TERMINA la efectividad futura de las concesiones vivas
     de esa unidad en ese ciclo: quedan MARCADAS como historia (revoked_at), nunca borradas.
@@ -75,8 +75,11 @@ async def esc(test_database_url, test_credentials):
         await s.flush()
 
         def _u(company_id: int, marca: str, role_id: int) -> User:
+            # GA-GOV-03 (T1): el fixture usa un dominio válido para `EmailStr` — los dominios
+            # reservados (`@e.test`) hacían fallar la lectura de `/me` (R-213 es del producto de
+            # lectura y se corrige en su propio paquete; aquí solo se corrige el fixture).
             return User(first_name=marca, last_name="Bu188",
-                        email=f"{PREFIJO}{marca.lower()}-{uuid.uuid4().hex[:6]}@e.test",
+                        email=f"{PREFIJO}{marca.lower()}-{uuid.uuid4().hex[:6]}@example.com",
                         username=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}",
                         hashed_password=hash_password("x"), company_id=company_id,
                         role_id=role_id, is_active=True)

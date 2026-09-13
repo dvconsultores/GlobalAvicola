@@ -77,7 +77,9 @@ test.describe('P-04 · Reproductoras — producción de huevo fértil', () => {
     // Población de partida: sin aves no hay mortalidad, descarte ni salida.
     const recepcion = await registrar(request, cab, {
       ...comun, event_type: 'bird_reception',
+      // `BR-20` (`GA-REM-021-B` / `B01`): cuadre exacto de la recepción de reproductoras.
       bird_movements: [{ sex: 'mixed', quantity: 5000, target_house_id: esc.houseId }],
+      received_total: 5000, dead_on_arrival: 0, rejected_on_arrival: 0,
     })
     expect(recepcion.status(), await recepcion.text()).toBe(201)
 

@@ -70,7 +70,9 @@ test.describe('P-05 · Incubación', () => {
       ['incubation_load', { hatchery_params: [{ quantity_loaded: 900, temperature: 37.6, humidity: 55, co2: 0.4, turning: true }] }],
       ['ovoscopy', { egg_movements: [{ egg_type: 'infertile', quantity: 50 }] }],
       ['transfer_to_hatcher', { hatchery_params: [{ quantity_transferred: 850, temperature: 36.9, humidity: 65 }] }],
-      ['birth_registration', { bird_movements: [{ sex: 'mixed', quantity: 800 }] }],
+      // `BR-21` (`GA-REM-021-C` / `B13`): sanos + débiles explícitos (Σ ≤ nacidos).
+      ['birth_registration', { bird_movements: [{ sex: 'mixed', quantity: 800 }],
+                               chicks_healthy: 780, chicks_weak: 20 }],
       ['chick_dispatch', { bird_movements: [{ sex: 'mixed', quantity: 700 }] }],
     ]
 

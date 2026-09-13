@@ -1,7 +1,7 @@
 """R-184 — Semántica temporal del IPE (`GET /reports/kpi/ipe/{lot_id}`).
 
 Contrato canónico (G-06): `app/reports/router.py` y `app/reports/service.py`.
-`OD-22` / `R-187` (2026-09-11) sustituyó el régimen numérico (`× 100` histórico
+`OD-22` / `R-187` (fecha en el registro de decisión) sustituyó el régimen numérico (`× 100` histórico
 retirado; escala estándar). Esta suite conserva los **invariantes técnicos** de
 R-184 (200, fechas, esquema, seguridad) y su aserción numérica usa los mismos
 insumos crudos con el valor OD-22 calculado a mano (no congela el valor anterior).
@@ -47,7 +47,7 @@ MUERTES = 50              # 5 % ⇒ viabilidad 95.0
 PESO_MEDIO_G = 2000.0     # ganancia = 2000 / 19
 ALIMENTO_KG = 3000.0      # FCR simplificado = 3000 / 1000 = 3.0
 
-# Valor esperado calculado a mano (NO desde el código). `OD-22` / `R-187` (2026-09-11):
+# Valor esperado calculado a mano (NO desde el código). `OD-22` / `R-187` (fecha en el registro):
 # la fórmula estándar ya no lleva el `× 100` histórico (la viabilidad llega como %).
 #   viabilidad = 100 − (50 / 1000 × 100) = 95.0
 #   ganancia   = 2000 / 19               = 105.263157…

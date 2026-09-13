@@ -150,7 +150,8 @@ async def _acciones(http_client, esc, cab, marca):
 async def test_165_01_la_autoridad_global_situada_no_revisa_ni_decide_sobre_unidad_apagada(http_client, esc):
     r = await _acciones(http_client, esc, _token(esc["global"], esc["a"]), "h")
     for accion, resp in r.items():
-        assert resp.status_code == 403, (accion, resp.text)
+        # `OD-16` (`9ffc5ec`): frontera productiva fail-closed — 404 sin enumerar el recurso.
+        assert resp.status_code == 404, (accion, resp.text)
     for clave, estado in (("pend", "pending_review"), ("rev1", "in_review"), ("rev2", "in_review"), ("corr1", "corrected"), ("corr2", "corrected")):
         assert await _estado(esc, esc[f"ev_h_{clave}"]) == estado, "cero cambios"
 
