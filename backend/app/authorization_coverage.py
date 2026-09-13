@@ -42,6 +42,11 @@ RUTAS_PUBLICAS: dict[str, str] = {
 RUTAS_DE_TITULAR: dict[str, str] = {
     "/api/v1/me": "la identidad del propio titular; `get_current_user` la resuelve del token",
     "/api/v1/switch-company": "el servicio valida que la compañía sea suya",
+    # `GA-REM-003` · AC04: exige sesión y solo revoca el refresh **del propio
+    # titular** — el servicio compara el `sub` del refresh con el actor. Entrar como
+    # pública habría roto `AC08b` (la superficie anónima son login y refresh, y son
+    # dos): cerrar sesión no es un acto anónimo.
+    "/api/v1/logout": "revoca el refresh del propio titular; el servicio compara el `sub`",
     "/api/v1/operations/event-types": "catálogo estático, sin datos de ninguna compañía",
     "/api/v1/users/{user_id}/password": (
         "el titular con su contraseña actual, o un administrador. Lo decide el servicio "

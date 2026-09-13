@@ -131,11 +131,28 @@ export const useAuthStore = create<AuthState>((set, get) => ({
   },
 
   logout: () => {
+    // `GA-REM-003` · AC04: revocar en el servidor antes de olvidar la credencial.
+    // Best-effort: el estado local se limpia igual (una red caída no debe dejar la UI
+    // «dentro»); el refresh queda sin revocar sólo si la petición no llegó.
+    const revocable = refreshToken
     accessToken = null
     refreshToken = null
     tokenStorage.removeItem('access_token')
     tokenStorage.removeItem('refresh_token')
     set({ user: null, token: null, refreshToken: null, isAuthenticated: false, isLoading: false })
+    if (revocable) {
+      // Best-effort de verdad: el almacén no puede garantizar que `api` devuelva una
+      // promesa (mocks, interceptores, errores síncronos) — la limpieza local ya ocurrió.
+      try {
+        const peticion = api.post('/logout', { refresh_token: revocable }) as unknown as
+          { catch?: (fn: () => void) => unknown } | undefined
+        if (peticion && typeof peticion.catch === 'function') {
+          void peticion.catch(() => {})
+        }
+      } catch {
+        /* sin revocación; la sesión local ya terminó */
+      }
+    }
   },
 
   fetchMe: async () => {

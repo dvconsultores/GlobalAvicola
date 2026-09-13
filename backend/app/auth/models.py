@@ -71,3 +71,20 @@ class Permission(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
 
     role: Mapped["Role"] = relationship("Role", back_populates="permissions")
+
+
+class RevokedToken(Base):
+    """Refresh tokens revocados por `logout` — `GA-REM-003` · AC04.
+
+    Denylist por `jti` con TTL: la fila vive hasta la expiración del refresh (7 días)
+    y la purga es oportunista en cada inserción. El almacén en memoria se descartó en
+    revisión de spec: multi-instancia lo vuelve una lotería.
+    """
+
+    __tablename__ = "revoked_tokens"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    jti: Mapped[str] = mapped_column(String(64), unique=True, index=True)
+    user_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"), index=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

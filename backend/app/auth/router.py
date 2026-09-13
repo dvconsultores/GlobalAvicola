@@ -37,6 +37,20 @@ async def refresh_token(data: RefreshRequest, db: AsyncSession = Depends(get_db)
     return await AuthService(db).refresh_token(data.refresh_token)
 
 
+@router.post("/logout", status_code=204, tags=["Auth"])
+async def logout(data: RefreshRequest, db: AsyncSession = Depends(get_db),
+                 current_user: dict = Depends(get_current_user)):
+    """`GA-REM-003` · AC04: revoca el refresh token presentado.
+
+    Exige sesión (`AC08b` — la superficie anónima son solo login y refresh) y el
+    servicio comprueba que el refresh pertenece **al propio titular**: cerrar la
+    sesión de otro no es una operación de usuario. Tampoco hay ventana ciega: si el
+    access expiró, el interceptor renueva primero — y si el refresh ya no vale, no
+    había nada que revocar.
+    """
+    await AuthService(db).logout(data.refresh_token, current_user)
+
+
 @router.get("/me", response_model=SessionRead, tags=["Auth"])
 async def get_me(
     db: AsyncSession = Depends(get_db),

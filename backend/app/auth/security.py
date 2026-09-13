@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timezone, timedelta
 from typing import Any
 
@@ -52,7 +53,9 @@ def create_refresh_token(data: dict[str, Any]) -> str:
     if "company_id" in to_encode and to_encode["company_id"] is not None:
         to_encode["company_id"] = str(to_encode["company_id"])
     expire = datetime.now(timezone.utc) + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS)
-    to_encode.update({"exp": expire, "type": "refresh"})
+    # `GA-REM-003` · AC04: el `jti` identifica **este** token para poder revocarlo
+    # en el logout (denylist con TTL). Sin él no hay nada que revocar por token.
+    to_encode.update({"exp": expire, "type": "refresh", "jti": uuid.uuid4().hex})
     return jwt.encode(to_encode, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
 

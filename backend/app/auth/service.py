@@ -252,6 +252,21 @@ class AuthService:
                 detail="Token inválido: no es refresh token",
             )
 
+        # `GA-REM-003` · AC04: un refresh revocado por `logout` no vuelve a emitir.
+        # La denylist es por `jti` (token, no usuario): cerrar sesión en un sitio no
+        # cierra las demás sesiones — eso es lo que un usuario espera de «cerrar
+        # sesión».
+        from .models import RevokedToken
+
+        jti = payload.get("jti")
+        if jti and (await self.db.execute(
+            select(RevokedToken.id).where(RevokedToken.jti == jti).limit(1)
+        )).scalar_one_or_none() is not None:
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED,
+                detail="Token revocado",
+            )
+
         # R-43: `sub` viaja como cadena en el JWT y aquí se comparaba tal cual contra
         # `User.id`, que es entero. PostgreSQL rechazaba la comparación
         # (`operator does not exist: integer = character varying`) y **el refresco nunca
@@ -290,6 +305,72 @@ class AuthService:
             access_token=create_access_token(token_data),
             refresh_token=create_refresh_token(token_data),
             expires_in=30 * 60,
+        )
+
+    async def logout(self, refresh_token: str, actor: dict) -> None:
+        """`GA-REM-003` · AC04: revoca el refresh token presentado (denylist `jti`).
+
+        Idempotente y sin oráculo: un token irrecuperable o ya revocado no produce
+        error — no hay nada que revocar, y distinguir casos daría una señal legible
+        para un atacante. La revocación es **del propio titular**: el `sub` del
+        refresh debe ser el actor; cerrar sesiones ajenas no es una operación de
+        usuario (y con un refresh robado, además, habría sido un cierre de sesión
+        a distancia gratis).
+
+        La revocación es **por token**, no por usuario: cerrar sesión aquí no derriba
+        las demás sesiones. «Cerrar todas» sería otra operación y otra decisión.
+        """
+        from datetime import datetime, timezone
+
+        from sqlalchemy import delete as sa_delete
+
+        from .models import RevokedToken
+
+        try:
+            payload = decode_token(refresh_token)
+        except HTTPException:
+            return
+        if payload.get("type") != "refresh":
+            return
+        jti = payload.get("jti")
+        if not jti:
+            return
+        try:
+            user_id = int(payload.get("sub"))
+        except (TypeError, ValueError):
+            return
+        if user_id != actor.get("id"):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No autoriza revocar la sesión de otro usuario",
+            )
+
+        user = (await self.db.execute(
+            select(User).where(User.id == user_id))).scalar_one_or_none()
+        if user is None:
+            return
+
+        # TTL: la fila vive hasta la expiración del refresh; la purga es oportunista —
+        # una tabla de revocación que crece sin límite es deuda, no mecanismo.
+        ahora = datetime.now(timezone.utc)
+        await self.db.execute(
+            sa_delete(RevokedToken).where(RevokedToken.expires_at < ahora))
+        existe = (await self.db.execute(
+            select(RevokedToken.id).where(RevokedToken.jti == jti).limit(1)
+        )).scalar_one_or_none()
+        if existe is None:
+            self.db.add(RevokedToken(
+                jti=jti, user_id=user.id,
+                expires_at=datetime.fromtimestamp(payload["exp"], tz=timezone.utc),
+            ))
+        await self.db.flush()
+
+        # `GA-REM-003` · AC06 (parte): el logout deja asiento, con la empresa del
+        # dueño del token — es a quien pertenece la sesión que termina.
+        await audit_accion(
+            self.db, usuario={"id": user.id, "company_id": user.company_id},
+            accion=AuditAction.LOGOUT, modulo=AuditModule.AUTH,
+            entity_type="user", entity_id=user.id,
         )
 
     # ---- User CRUD ----

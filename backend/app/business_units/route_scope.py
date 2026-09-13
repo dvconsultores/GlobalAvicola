@@ -72,6 +72,8 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/refresh": (Alcance.PUBLICA, None, "renueva la sesión"),
     # ── Identidad y contexto ──────────────────────────────────────────────────
     "/api/v1/me": (Alcance.CORE, None, "la identidad del titular"),
+    # `GA-REM-003` · AC04: termina la sesión del propio titular; no toca producción.
+    "/api/v1/logout": (Alcance.CORE, None, "revoca el refresh propio, no dato productivo"),
     "/api/v1/switch-company": (
         Alcance.CORE, None,
         "fija el CONTEXTO de empresa, que no es acceso a unidad (`OD-11 §5`)"),
