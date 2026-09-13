@@ -23,7 +23,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-023` | Persistencia de campos de evento y contrato de error | DATA INTEGRITY + API CONTRACT | **P0** | **`CERTIFIED`** | — | [GA-REM-023](GA-REM-023-EVENT-FIELD-PERSISTENCE-AND-ERROR-CONTRACT.md) |
 | `GA-REM-020` | Validación de cobertura funcional contra la documentación del cliente | VALIDATION | P1 | **`CERTIFIED`** | A | [GA-REM-020](GA-REM-020-FUNCTIONAL-COVERAGE-VALIDATION.md) |
 | `GA-REM-015` | Certificación de tests de backend | QA | P1 | **`CERTIFIED`** | F | [GA-REM-015](GA-REM-015-BACKEND-TEST-CERTIFICATION.md) |
-| `GA-REM-016` | Certificación E2E y de procesos | QA + CERTIFICATION | P1 | `SPEC_DRAFT` — **en uso** por 15 informes de certificación; pasar a `SPEC_READY` en `WAVE F` (`R-149`) | G | [GA-REM-016](GA-REM-016-E2E-AND-PROCESS-CERTIFICATION.md) |
+| `GA-REM-016` | Certificación E2E y de procesos | QA + CERTIFICATION | P1 | `SPEC_DRAFT` — **en uso** por 15 informes de certificación; pasar a `SPEC_READY` en `WAVE F` (`R-149`). **`GA-GOV-03` (2026-09-13):** suite verde reproducible + CI en `push` + regla de evidencia publicada — la recertificación E2E de procesos queda **habilitada** (T12 del programa pre-SAP) | G | [GA-REM-016](GA-REM-016-E2E-AND-PROCESS-CERTIFICATION.md) |
 | `GA-REM-018` | Recuperación de trazabilidad Spec Development | METHODOLOGY | P1 | `SPEC_READY` | I | [GA-REM-018](GA-REM-018-SPEC-TRACEABILITY-RECOVERY.md) |
 | `GA-REM-017` | Integración SAP real | INTEGRATION | P1 | **`BLOCKED_EXTERNAL`** | H | [GA-REM-017](GA-REM-017-SAP-REAL-INTEGRATION.md) |
 | `GA-REM-019` | Reevaluación de deuda P2/P3 | TECHNICAL DEBT | P2 | `DEFERRED` | J | [GA-REM-019](GA-REM-019-P2-P3-DEBT-REASSESSMENT.md) |
@@ -66,6 +66,11 @@ se interpretan.
 | `OD-19` | Reverso interno de registros aprobados pre-SAP — `REVERSED` distinto de `CANCELLED`; contrapartida explícita, aprobada, exactamente única; consolidados diferidos; huevos/incubación `BLOCKED_BY_R-161`; SAP diferido (alias `AOD-21`) | **VIGENTE** · gobierna `R-136` interno | [OD-19](OD-19-INTERNAL-REVERSAL-OF-APPROVED-RECORDS.md) |
 | `OD-18` | El catálogo general de empresas no contiene configuración SAP — `sap_config` fuera de `GET /masters/companies`; persistencia diferida (alias `AOD-12`) | **VIGENTE** · gobierna `R-127` | [OD-18](OD-18-COMPANY-CATALOG-EXCLUDES-SAP-CONFIGURATION.md) |
 | `OD-20` | Fase 9 autorizada para `GA-FE-02` — administración multi-empresa y de unidades de negocio en el frontend: cuatro unidades, encender ≠ conceder, contexto de empresa visible, navegación administrativa mínima, E2E autenticado como requisito de certificación (alias: autorización de fase 9) | **VIGENTE** · gobierna `GA-FE-02` | [OD-20](OD-20-PHASE-9-AUTHORIZATION-MULTI-COMPANY-AND-BUSINESS-UNIT-ADMINISTRATION-FRONTEND.md) |
+| `OD-21` | Elegibilidad de referencias por estado — un área inactiva no es elegible para referencias nuevas (decisión «Option C»; `GA-FE-07`/`R-185`) | **VIGENTE** · implementado y aceptado (GA-UAT-05) | [OD-21](OD-21-INACTIVE-AREA-ELIGIBILITY.md) |
+| `OD-22` | Escala estándar del IPE (G-06) — retirado el `× 100` histórico | **VIGENTE** · implementado y aceptado (GA-UAT-07) | [OD-22](OD-22-IPE-STANDARD-SCALE.md) |
+| `OD-23` | Ciclo apagar/encender de una unidad de empresa (BU-D10, opción B) — apagar termina; re-encender no devuelve | **VIGENTE** · implementado y aceptado (GA-UAT-08) | [OD-23](OD-23-BU-DISABLE-ENABLE-CYCLE.md) |
+| `OD-24` | Empresas y granjas desde SAP — decisión registrada; convergencia antes de `P-08` | **RESUELTO** (sin producto hoy) | [OD-24](OD-24-COMPANIES-FARMS-FROM-SAP.md) |
+| `OD-25` | Lote de abuelas automático al aprobar la importación (opción B) — `R-153` | **VIGENTE** · implementado; UAT del propietario pendiente (`GA-UAT-09`) | [OD-25](OD-25-GRANDPARENT-LOT-ON-IMPORT-APPROVAL.md) |
 
 ## Resumen
 ```

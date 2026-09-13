@@ -1,5 +1,8 @@
 # CERTIFICACIÓN — P-02 · Progenitoras — producción de huevo
 
+> **Vigencia — anotación `GA-GOV-03` (T1, 2026-09-13). Estado: `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`.**
+> Este informe histórico no cita commit certificado ni artefacto de corrida (regla «no GREEN por declaración», §52) y varias suites de proceso (P-03/P-04/P-05/P-10/P-11/P-15) contenían TEST_DEFECT rojos hasta la T1 de GA-GOV-03. El contenido no se reescribe; la recertificación E2E de cada proceso corresponde a la T12 del programa pre-SAP (`audit/ga-pre-sap-program/GA_PRE_SAP_REMEDIATION_MASTER_ROADMAP.md`).
+
 **`GA-REM-016`** · 2026-09-05 · **`CERTIFIED`**
 
 ---

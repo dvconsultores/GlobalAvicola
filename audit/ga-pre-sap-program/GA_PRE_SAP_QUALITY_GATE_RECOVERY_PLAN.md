@@ -26,7 +26,7 @@
 | Etapa | Cuándo | Estado objetivo | Criterio de salida |
 |---|---|---|---|
 | **E0 · Línea base** | T0 (ahora) | Roja documentada (25+12), evidencia materializada | Este programa + commit de T0 |
-| **E1 · Verde de gobernanza** | T1 (GA-GOV-03) | **0 failed** en ambas suites + CI en `push` + regla de evidencia publicada + backlog reconciliado | Corridas verdes con artefacto; CI disparado y verde; plantilla de certificación creada |
+| **E1 · Verde de gobernanza** | **T1 (GA-GOV-03) — EJECUTADA 2026-09-13 (commit `66be1c1`)** | **0 failed** en ambas suites + CI en `push` + regla de evidencia publicada + backlog reconciliado | ✔ Backend `1226/0/0/49` + JUnit (`evidence/backend-junit-post-t1.xml`); ✔ Playwright `129/0`; ✔ workflow `Quality Suite (push)` publicado SIN dependencia del deploy (EX-01 intacto); ✔ plantilla `CERTIFICATION_EVIDENCE_TEMPLATE.md`; ✔ backlog (`R-189`, `GA-UAT-09`, `OD-21…25`). Salvedad: primer run del workflow = `BLOCKED_EXTERNAL_CI_OBSERVATION` (sin credenciales GitHub en el entorno; el push lo disparó). |
 | **E2 · Por tranche** | T2-T11 | Suites globales verdes + tests nuevos de la spec (RED→GREEN) + E2E del proceso afectado | Gate de tranche (§39 roadmap) |
 | **E3 · Recertificación** | T12 | 17 procesos recorridos E2E con artefacto; suites verdes completas; runtime paridad; Wave C decidida | Matriz de procesos 17/17 en estado certificable |
 | **E4 · Gate final** | T13 | Todo verde + Pista OPS cerrada + decisiones registradas + UAT del propietario con evidencia primaria | GO/NO-GO final defendible |

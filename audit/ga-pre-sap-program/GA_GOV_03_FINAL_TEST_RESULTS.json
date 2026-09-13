@@ -1,0 +1,67 @@
+{
+  "artifact": "GA_GOV_03_FINAL_TEST_RESULTS",
+  "tranche": "T1 · GA-GOV-03",
+  "date": "2026-09-13",
+  "baseline_commit": "e828c3a0c1507aaae3a407432764f6df0757e414",
+  "final_commit": "66be1c15d8c299e2746faf6b5f90fec77b9bc758",
+  "alembic_head": "y5z6a7b8c9d0",
+  "alembic_heads_count": 1,
+  "alembic_revisions": 37,
+  "targeted_37": {
+    "total": 37,
+    "backend_25": { "total": 25, "passed": 25, "failed": 0, "errors": 0 },
+    "playwright_12": { "total": 12, "passed": 12, "failed": 0, "errors": 0 },
+    "reclassified_product_defect": 0,
+    "renamed_tests": [
+      "test_l08_{put,close,activate_manual,phases}_sobre_unidad_apagada_falla_cerrada_para_la_autoridad_global",
+      "test_w13_{submit,cancel,upload,delete}_sobre_unidad_apagada_falla_cerrado_para_la_autoridad_global",
+      "test_l11_frontera_de_lectura_la_autoridad_global_situada_no_ve_la_unidad_apagada",
+      "test_a08_control_la_autoridad_global_situada_ve_la_empresa_habilitada",
+      "test_s02_situada_en_a_ve_solo_sus_unidades_habilitadas"
+    ]
+  },
+  "backend_full": {
+    "collected": 1275,
+    "passed": 1226,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 49,
+    "warnings": 16,
+    "duration_s": 1218.04,
+    "junit": { "tests": 1275, "failures": 0, "errors": 0, "skipped": 49, "path": "audit/ga-pre-sap-program/evidence/backend-junit-post-t1.xml" },
+    "log": "audit/ga-pre-sap-program/evidence/backend_full_suite_post_t1.log"
+  },
+  "playwright_full": {
+    "total": 129,
+    "passed": 129,
+    "failed": 0,
+    "duration": "3.0m",
+    "log": "audit/ga-pre-sap-program/evidence/playwright_full_suite_post_t1.log"
+  },
+  "frontend": {
+    "vitest_passed": 314,
+    "vitest_failed": 0,
+    "vitest_files": 44,
+    "typescript": "PASS",
+    "build": "PASS (index-DDCcWL76.js)",
+    "i18n": "PASS (ES=1041 EN=1041 faltantes=0)",
+    "log": "audit/ga-pre-sap-program/evidence/frontend_checks_post_t1.log",
+    "junit": "audit/ga-pre-sap-program/evidence/vitest-junit-post-t1.xml"
+  },
+  "ci": {
+    "workflow": "Quality Suite (push)",
+    "file": ".github/workflows/quality-suite.yml",
+    "trigger": "push",
+    "push_sha": "66be1c15d8c299e2746faf6b5f90fec77b9bc758",
+    "observed": false,
+    "status": "BLOCKED_EXTERNAL_CI_OBSERVATION",
+    "reason": "gh CLI no disponible; sin GITHUB_TOKEN; API anónima 404 (repositorio privado)",
+    "artifacts_configured": ["backend-suite-<sha>", "frontend-suite-<sha>"],
+    "local_equivalence": "PASS (misma lógica ejecutada localmente; JUnit+logs versionados)"
+  },
+  "product_diff": 0,
+  "migration_diff": 0,
+  "deployment_policy_diff": 0,
+  "outside_ga_gov_03_failures": [],
+  "verdict": { "ga_gov_03": "CLOSED_FUNCTIONALLY_CERTIFIED", "t1": "CLOSED", "quality_gates_ready": "YES" }
+}

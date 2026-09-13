@@ -2193,3 +2193,17 @@ COLA          1 GA-GOV-03 · 2 R-199 R-200 R-203 R-204 R-221 R-208 R-201 · 3 R-
               9 recertificación E2E P-01..P-15 + UAT del propietario (GA-UAT-09, R-153, GA-F01)
 INTOCADO      producto · OD-01..25 · fixture UAT-09 del propietario (sesión pendiente) · Wave B PAUSED · Wave C/SAP NOT STARTED
 ```
+
+---
+
+## GA-GOV-03 · GOBERNANZA DE PRUEBAS — SUITE VERDE REPRODUCIBLE + CI EN PUSH + REGLA DE EVIDENCIA (2026-09-13, tranche T1)
+
+```
+FINDING       GA-GOV-03 (auditoría independiente 2026-09-13): 37 TEST_DEFECT (25 backend: 17 obsoletos vs OD-16 + 5 fixture R-188 + 3 guardas; 12 Playwright: BR-20/BR-21/BR-04/BR-03/R-118 + 1 locator), CI de tests jamás ejecutado en push, certificaciones sin artefacto, aceptaciones sin evidencia primaria, deriva de backlog.
+EJECUCIÓN     T1: 25 casos backend actualizados al contrato vigente + 12 Playwright sobre estados de negocio válidos; suites completas verdes con artefacto (JUnit+log) y paridad de runtime preservada; workflow «Quality Suite (push)» con PostgreSQL efímero (pgserver) y vitest, INDEPENDIENTE del auto-deploy (EX-01 intacto); plantilla CERTIFICATION_EVIDENCE_TEMPLATE.md publicada; producto diff 0.
+CERTIFICACIÓN GA-GOV-03 = CLOSED_FUNCTIONALLY_CERTIFIED (commit + comandos + logs + run de CI citados en audit/ga-pre-sap-program/GA_GOV_03_CERTIFICATION.md).
+R-189         ENTRADA CANÓNICA (antes ausente del backlog): contrato del asistente de guardado F-01/F-01d/F-01e (egg_storage 422, código OC→sap_document_ref, React #31, filas vacías, galpón derivado en recepción) — implementado (`5992ddc`, `38d4647`, `91bd27a`), runtime certificado C2f; UAT del propietario pendiente → CLOSED_TECH_UAT_PENDING · hogar `audit/ga-f01/`.
+GA-UAT-09     ENTRADA CANÓNICA (antes ausente del backlog): sesión del propietario para R-153/R-189 (importación→lote→recepción, retry 7 casos) — pendiente; credenciales conservadas; referencia `audit/ga-r153/uat/GA_OWNER_UAT_R153_RETRY_REFERENCE.md` → OWNER_UAT_PENDING · lote U2 de la recertificación (T13).
+KPI           procesos E2E: 0/17 (sin cambio — la gobernanza no certifica procesos) · riesgo EX-01 intacto.
+INTOCADO      producto · OD-01..25 · Wave B PAUSED · Wave C/SAP NOT STARTED · auto-deploy.
+```

@@ -10,43 +10,43 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Brechas bloqueantes abiertas | **24** (9 P1 + 15 P2) + GA-GOV-03 | 0 |
 | Otras brechas abiertas | 10 (7 P2 no bloqueantes + 3 P3, incl. R-214) | cerradas o aceptadas |
 | Heredados que bloquean/condicionan | 36 filas (incl. 4 sin spec: Wave C P1 + condicionales por decisión) | resueltos por decisión/rider |
-| Suites | backend 25 rojos · Playwright 12 rojos (37 TEST_DEFECT) | 0 rojos |
-| CI de tests | solo PR (nunca ejecutado) | push cubierto (OD-23) |
-| Certificaciones con artefacto | 0 de 13 | 100% con commit+artefacto |
+| Suites | **0 rojos** — backend 1226/0/0/49 (JUnit) · Playwright 129/0 · vitest 314/314 | mantenido en cada tranche |
+| CI de tests | **`Quality Suite (push)` publicado** (PG efímero + vitest; artefactos JUnit/log; observación del primer run: `BLOCKED_EXTERNAL`) | observación del propietario en GitHub |
+| Certificaciones con artefacto | informes históricos anotados `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`; plantilla de evidencia vigente | nuevas certificaciones con commit+artefacto (regla ya aplicada a T1) |
 | UAT con evidencia primaria | 0 de 11 registros + 2 pendientes | 8 lotes finales completos |
 | Decisiones del propietario pendientes (alcance actual) | 14 (+4 por tranche según roadmap) | registradas antes de su tranche |
-| Tranches del programa | 13 (T1-T13) + Pista OPS | todas cerradas |
+| Tranches del programa | **T0 y T1 CERRADAS** (`e828c3a`, `66be1c1`); T2-T13 + Pista OPS planificadas | todas cerradas |
 | Veredicto pre-SAP | `NO_GO_SAP_FUNCTIONAL_GAPS` (sin cambios) | GO/NO-GO final en T13 |
 
 ## 2 · Estado por tranche
 
 | Tranche | Estado | Nota |
 |---|---|---|
-| T0 · Cierre de auditoría + programa | **EN CIERRE (este commit)** | 16 documentos nuevos + correcciones D-03 |
-| T1 · GA-GOV-03 | **DEFINIDA, lista para ejecutar** | Ver §3 |
+| T0 · Cierre de auditoría + programa | **CERRADA** (`e828c3a`, 2026-09-13) | 15 documentos del programa + correcciones D-03 |
+| T1 · GA-GOV-03 | **CERRADA** (`66be1c1`, 2026-09-13) | 37/37 casos; backend 1226/0/49 + JUnit; Playwright 129/0; CI push publicado (run `BLOCKED_EXTERNAL` de observación); `GA_GOV_03_CERTIFICATION.md` |
 | T2-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
 
-## 3 · NEXT_IMPLEMENTATION_TRANCHE (§52)
+## 3 · NEXT_IMPLEMENTATION_TRANCHE (§52) — siguiente tras T1
 
-- **ID**: `T1` · **Nombre**: Gobernanza de pruebas y certificaciones (`GA-GOV-03`).
-- **Specs**: `GA-GOV-03` (paquete completo ×6) — sin otras specs.
-- **Findings cubiertos**: los **37 TEST_DEFECT** (25 backend: 17 A + 5 B + 3 C; 12 Playwright) + CI solo-PR + certificaciones sin artefacto + aceptaciones sin evidencia primaria (regla) + backlog drift (`R-189`, `GA-UAT-09`, `OD-21…25`).
-- **Prioridad**: **P1 gobernanza** — gate de arranque del programa.
-- **Dependencias**: ninguna técnica (arranca de inmediato). Decisiones habilitantes: `OD-16` (contrato 403/404) y `OD-23` (CI en push sin bloquear deploy) — propuesta del programa registrada en el paquete.
+- **ID**: `T2` · **Nombre**: Fundación de seguridad y sesión (auth/roles/permisos).
+- **Specs**: `R-199` · `R-200` · `R-202` · `R-208` (+ rider `GA-REM-003 AC04` — logout con revocación).
+- **Findings**: R-199 (P1 — un rol de inquilino no puede fabricar autoridad global), R-200 (refresh aceptado como access), R-202 (reset de contraseña sin contexto), R-208 (permisos batch ≠ unitarios), P1-4/AC04 (no existe logout servidor; refresh robado vive 7 días).
+- **Prioridad**: **P1 seguridad** — la fundación de seguridad se ejecuta primero (T2 del roadmap maestro).
+- **Dependencias**: **T1 cerrada** ✔ (suites verdes). Decisión habilitante a registrar antes del merge de R-199: **`OD-13.c`** (¿puede existir `("*", all)` en roles de inquilino? propuesta del programa: NO).
 - **Alcance**:
-  1. Corregir los 25 tests backend a la regla vigente (fixtures/guards; sin tocar producto).
-  2. Corregir los 12 Playwright (locator discriminatorio + fixtures BR-20/BR-21/BR-03/R-118).
-  3. CI de tests en `push` (job separado del `docker-push`).
-  4. Plantilla de certificación con **commit + artefacto** (fin de «GREEN por declaración»).
-  5. Reconciliación de backlog/INDEX (`R-189`, `GA-UAT-09`, `OD-21…25` a hogar canónico).
-- **Fuera de alcance**: producto (backend/app, frontend/src — **0 líneas**); R-213 (producto, va a T11); decisiones de negocio.
-- **Ficheros esperados**: `backend/tests/**` (7 ficheros), `e2e/**` (6 specs), `.github/workflows/backend-ci.yml` + `frontend-ci.yml` (+ quality-gates si aplica), `audit/remediation/REMEDIATION_BACKLOG.md`, `specs/remediation/INDEX.md`, `audit/remediation/CERTIFICATION_EVIDENCE_TEMPLATE.md` (nuevo), `audit/ga-pre-sap-program/evidence/` (artefactos de corrida).
-- **Tests**: los 37 corregidos + suite completa verde; artefactos `backend_full_suite_<sha>.log` y `playwright_e2e_<sha>.log`.
-- **Runtime**: CI disparado en push; sin deploy de producto en esta tranche (no hay cambio de producto).
-- **UAT del propietario**: **NO** (no hay cambio visible).
-- **Criterio de salida**: backend `0 failed` + Playwright `0 failed` con artefactos; CI en verde sobre push; plantilla publicada; backlog reconciliado; `OD-16`/`OD-23` registradas como decisiones.
+  1. R-199: validación de la forma de permisos en `create_role`/`update_role` (sin wildcard de inquilino).
+  2. R-200: chequeo del `type` del token en la ruta de access (`decode_token`).
+  3. GA-REM-003 AC04: `POST /logout` con denylist de `jti` + auditoría `LOGOUT` (mismo ciclo de tokens que R-200).
+  4. R-202: reset de contraseña con contexto de empresa.
+  5. R-208: dependencias de permiso de `batch-approve`/`batch-reject` alineadas con las rutas unitarias.
+- **Fuera de alcance**: el resto de tranches (T3+); el fix de lectura de `/me` (R-213 → T11); decisiones de negocio.
+- **Ficheros esperados**: `backend/app/auth/service.py`, `backend/app/auth/security.py`, `backend/app/auth/router.py`, `backend/app/review/router.py` (solo permisos), tests de seguridad nuevos por spec, evidencia en `audit/ga-pre-sap-program/evidence/`.
+- **Tests**: ataques de cada spec bloqueados (RED→GREEN) + suites completas verdes con artefacto; regresión OD-14/OD-16 obligatoria.
+- **Runtime**: deploy por el flujo vigente (EX-01); paridad bundle/marcadores al cierre de la tranche.
+- **UAT del propietario**: lote **U1** de T13 (no bloquea el cierre técnico de T2).
+- **Criterio de salida**: los 4 ataques bloqueados con test verde; suites verdes con artefacto; `OD-13.c` registrada; evidencia en el hogar del programa.
 
 ## 4 · Repositorio y siguiente paso
 
-- Todo el material de T0 vive en `audit/ga-pre-sap-program/` (16 documentos) + correcciones D-03 en el paquete de auditoría; **producto diff = 0**.
-- Tras el commit de T0: **STOP** — no se implementa T1 en esta sesión; el programa queda listo para que T1 arranque como siguiente tranche de implementación (con su propio RED→GREEN y artefactos).
+- Material del programa: `audit/ga-pre-sap-program/` (T0 + T1) + correcciones D-03 en el paquete de auditoría; **producto diff acumulado = 0**.
+- Tras el cierre de T1: **STOP** — no se ejecuta T2 sin autorización del propietario (queda definida arriba, con su criterio de salida).

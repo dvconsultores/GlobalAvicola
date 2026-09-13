@@ -6,7 +6,7 @@ Determinista: cada tranche arranca solo cuando la anterior cumple su **criterio 
 
 | # | Tranche | Specs/findings | Procesos | Por qué ahora (§39) | Depende de | Bloquea a |
 |---|---|---|---|---|---|---|
-| T1 | Gobernanza de pruebas | GA-GOV-03 (37 tests + CI + regla evidencia + backlog + R-189 registro) | Todos (gate) | Sin suite verde no hay certificación válida; coste bajo, cero producto | — | T2-T13 |
+| T1 | Gobernanza de pruebas | GA-GOV-03 — **EJECUTADA (2026-09-13, `66be1c1`)**: 37 TEST_DEFECT corregidos; backend 1226/0/49; Playwright 129/0; CI `push` publicado (observación del run `BLOCKED_EXTERNAL`); backlog reconciliado | Todos (gate) | Sin suite verde no hay certificación válida; coste bajo, cero producto | — | T2-T13 (desbloqueadas) |
 | T2 | Fundación de seguridad | R-199 · R-200 · R-202 · R-208 · GA-REM-003 AC04 | P-13 | La seguridad primero: invalida todo lo demás si falla | T1 | T9, T12, T13 |
 | T3 | Alcance de datos | R-201 · R-203 · R-204+R-216 · R-221 | P-04, P-08, P-12, P-15 | Cierra fugas de dimensión empresa/unidad antes de tocar servicios núcleo | T1 | T5, T7, T12 |
 | T4 | Eventos y recepción (FE) | R-190 + R-205 | P-01, P-03 | Primer eslabón visible roto de la cadena: sin ubicación/recepción no hay ciclo | T2, T3 | T5, T6, T12 |
@@ -114,8 +114,8 @@ Determinista: cada tranche arranca solo cuando la anterior cumple su **criterio 
 | Ref | Pregunta | Bloquea | Cuándo se necesita |
 |---|---|---|---|
 | OD-13.c | ¿La autoridad global `("*", all)` puede existir en roles de inquilino? (propuesta del programa: NO; solo super admin) | T2 | Antes de T2 |
-| OD-23 | ¿CI de tests en push a main sin bloquear docker-push? (propuesta: sí, job separado) | T1 | Antes de T1 |
-| OD-16 | Contrato 403/404 fail-closed como canónico (propuesta: sí) | T1 | Antes de T1 |
+| OD-23 | ¿CI de tests en push a main sin bloquear docker-push? (propuesta: sí, job separado) | T1 | **Aplicada en T1** (workflow `Quality Suite (push)` independiente; EX-01 intacto) |
+| OD-16 | Contrato 403/404 fail-closed como canónico (propuesta: sí) | T1 | **Aplicada en T1** (17 casos actualizados a 404/no-visibilidad) |
 | AOD-16 | ¿La captura móvil genera `idempotency_key`? | Rider T5 | Antes de T5 |
 | AOD-13 | ¿Módulos activables por empresa (incubadora)? | T3 (R-221) | Antes de T3 |
 | AOD-14 | ¿Evidencia obligatoria en captura? | T8 (R-198) | Antes de T8 |

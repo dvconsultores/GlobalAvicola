@@ -1,0 +1,878 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="314" failures="0" errors="0" time="17.154315961">
+    <testsuite name="src/__tests__/gaFe03.routeGuards.test.tsx" timestamp="2026-09-13T03:38:18.498Z" hostname="techmachine2" tests="8" failures="0" errors="0" skipped="0" time="1.080012146">
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; D: /users, /roles, /audit, /masters/farms, /sap → denegadas" time="0.400641176">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; Z: /review, /approvals, /reports → denegadas (sin permiso y sin unidades)" time="0.14494927">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; D: /lots → denegada (sin lots:read)" time="0.094341871">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; D: /poultry/breeder → denegada (sin operations:read)" time="0.112335253">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; D: /poultry (hub web) → denegada; C con broiler → permitida" time="0.079952174">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; C con concesión solo de broiler: /poultry/breeder denegada por unidad; /poultry/broiler permitida" time="0.117618487">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; E sin contexto: /poultry/broiler falla cerrada; el control global sigue accesible" time="0.083097821">
+            <system-err>
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error fetching farms: TypeError: Cannot read properties of undefined (reading &apos;x-total-count&apos;)
+    at /home/maria/Proyectos/GlobalAvicola/frontend/src/pages/masters/MasterListPage.tsx:57:31
+    at processTicksAndRejections (node:internal/process/task_queues:103:5)
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/__tests__/gaFe03.routeGuards.test.tsx" name="GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) &gt; control verde existente: /admin/unit-access ya deniega para D (referencia)" time="0.042862993">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/__tests__/gaFe04.routeParity.test.tsx" timestamp="2026-09-13T03:38:18.502Z" hostname="techmachine2" tests="4" failures="0" errors="0" skipped="0" time="0.444305116">
+        <testcase classname="src/__tests__/gaFe04.routeParity.test.tsx" name="GA-FE-04 · Paridad ruta↔acción (deep links de alta) &gt; R: /lots/new ⇒ negativa visual" time="0.234686769">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe04.routeParity.test.tsx" name="GA-FE-04 · Paridad ruta↔acción (deep links de alta) &gt; R: /operations/new ⇒ negativa visual" time="0.041755921">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe04.routeParity.test.tsx" name="GA-FE-04 · Paridad ruta↔acción (deep links de alta) &gt; R: /review/1/correct ⇒ negativa visual (sin corrections:correct)" time="0.05123383">
+        </testcase>
+        <testcase classname="src/__tests__/gaFe04.routeParity.test.tsx" name="GA-FE-04 · Paridad ruta↔acción (deep links de alta) &gt; control: C con create en su unidad ⇒ /lots/new permitido" time="0.111947574">
+            <system-err>
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/__tests__/f01.getErrorMessage.test.ts" timestamp="2026-09-13T03:38:18.503Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.006606225">
+        <testcase classname="src/components/__tests__/f01.getErrorMessage.test.ts" name="R-189 · normalizador de errores (F-01) &gt; detail estructurado (lista FastAPI) ⇒ string legible con ubicación y mensaje" time="0.002861385">
+        </testcase>
+        <testcase classname="src/components/__tests__/f01.getErrorMessage.test.ts" name="R-189 · normalizador de errores (F-01) &gt; detail string ⇒ se conserva" time="0.00031003">
+        </testcase>
+        <testcase classname="src/components/__tests__/f01.getErrorMessage.test.ts" name="R-189 · normalizador de errores (F-01) &gt; Error de red con message ⇒ string" time="0.00079336">
+        </testcase>
+        <testcase classname="src/components/__tests__/f01.getErrorMessage.test.ts" name="R-189 · normalizador de errores (F-01) &gt; objeto desconocido ⇒ fallback humano (nunca un objeto)" time="0.000285003">
+        </testcase>
+        <testcase classname="src/components/__tests__/f01.getErrorMessage.test.ts" name="R-189 · normalizador de errores (F-01) &gt; detail objeto con msg ⇒ string" time="0.000253287">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/auth/__tests__/gaFe02.permissions.test.ts" timestamp="2026-09-13T03:38:18.504Z" hostname="techmachine2" tests="7" failures="0" errors="0" skipped="0" time="0.006732217">
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; permite cuando el permiso exacto está presente" time="0.002369006">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; deniega cuando falta el permiso" time="0.000427678">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; un actor ordinario con permiso ajeno no obtiene el de unidades" time="0.00025199">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; el Super Administrador (comodín) pasa siempre" time="0.000260566">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; admite el comodín de módulo `*:accion`" time="0.00031198">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; sin sesión no autoriza nada (fail-closed)" time="0.000309281">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe02.permissions.test.ts" name="GA-FE-02 · hasPermission &gt; el Administrador de Accesos obtiene exactamente sus cuatro capacidades" time="0.00047897">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/auth/__tests__/gaFe03.navigation.test.ts" timestamp="2026-09-13T03:38:18.506Z" hostname="techmachine2" tests="16" failures="0" errors="0" skipped="0" time="0.026843583">
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · canAccessCapability — dimensiones de autoridad &gt; un permiso ausente deniega SIEMPRE (aunque tenga unidades)" time="0.001900082">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · canAccessCapability — dimensiones de autoridad &gt; unidad productiva: normal exige EFECTIVA, global exige HABILITADA + contexto" time="0.000493621">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · canAccessCapability — dimensiones de autoridad &gt; conjunto productivo «cualquiera»: exige ≥1 unidad disponible" time="0.000319045">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · canAccessCapability — dimensiones de autoridad &gt; el comodín global (is_super_admin) es la única vía de permiso global" time="0.000150486">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; C con broiler: ve broiler, no las demás unidades; review/reports ocultos sin permiso" time="0.005538417">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; Z (cero unidades): sin producto, sin grupos vacíos, CORE intacto" time="0.001777972">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; E sin contexto: inquilino fail-closed; control global intacto" time="0.000837585">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; E con broiler ON: solo la unidad habilitada + productivo multi-unidad" time="0.00065939">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; E con TODO OFF: cero producto (BU OFF absoluto, global incluido)" time="0.003774752">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; D y B: sin superficies ajenas a su autoridad" time="0.000821096">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; A: descubribilidad de su superficie y nada más" time="0.000413108">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · filterNavItemsBySession — política sobre el árbol real &gt; sin sesión: árbol vacío (el login no pinta navegación)" time="0.000286257">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · atajos del Dashboard derivan del mismo evaluador (§33) &gt; Z no ve atajos de unidades productivas; C ve solo su unidad; global solo habilitadas" time="0.000398437">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · metadatos de la definición canónica &gt; todas las entradas declaran clase de capacidad" time="0.00129238">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · metadatos de la definición canónica &gt; las entradas productivas declaran su dependencia de unidad" time="0.004356519">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe03.navigation.test.ts" name="GA-FE-03 · metadatos de la definición canónica &gt; ninguna entrada declara gating por nombre de rol/usuario (metadatos)" time="0.001650783">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/auth/__tests__/gaFe04.actionAuthority.test.tsx" timestamp="2026-09-13T03:38:18.509Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.067493529">
+        <testcase classname="src/auth/__tests__/gaFe04.actionAuthority.test.tsx" name="GA-FE-04 · canPerformAction (capa de acción sobre el evaluador GA-FE-03) &gt; permiso ausente ⇒ acción no permitida; presente ⇒ permitida" time="0.002024499">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe04.actionAuthority.test.tsx" name="GA-FE-04 · canPerformAction (capa de acción sobre el evaluador GA-FE-03) &gt; el comodín global es la única autoridad global" time="0.000449211">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe04.actionAuthority.test.tsx" name="GA-FE-04 · canPerformAction (capa de acción sobre el evaluador GA-FE-03) &gt; acción productiva: exige permiso ∧ unidad (efectiva normal / habilitada+contexto global)" time="0.000486407">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe04.actionAuthority.test.tsx" name="GA-FE-04 · canPerformAction (capa de acción sobre el evaluador GA-FE-03) &gt; sin sesión nada es accionable" time="0.000291445">
+        </testcase>
+        <testcase classname="src/auth/__tests__/gaFe04.actionAuthority.test.tsx" name="GA-FE-04 · ActionGate (declarativo) &gt; oculta el control cuando falta la autoridad y lo pinta cuando existe" time="0.059393644">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/__tests__/gaFe02.i18n.test.ts" timestamp="2026-09-13T03:38:18.511Z" hostname="techmachine2" tests="44" failures="0" errors="0" skipped="0" time="0.011751268">
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave nav.unitAccess existe en ES y EN" time="0.002167081">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave businessUnits.grandparent existe en ES y EN" time="0.000290436">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave businessUnits.breeder existe en ES y EN" time="0.000267443">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave businessUnits.hatchery existe en ES y EN" time="0.000232357">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave businessUnits.broiler existe en ES y EN" time="0.000266823">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.context.company existe en ES y EN" time="0.00019368">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.context.none existe en ES y EN" time="0.000290484">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.context.noneHint existe en ES y EN" time="0.000219988">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.heading existe en ES y EN" time="0.000218924">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.state.enabled existe en ES y EN" time="0.000282619">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.state.disabled existe en ES y EN" time="0.000210657">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.enable existe en ES y EN" time="0.000187332">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.disable existe en ES y EN" time="0.000138536">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.disableConfirmTitle existe en ES y EN" time="0.00014901">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.disableConfirmMessage existe en ES y EN" time="0.00012597">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.enableConfirmTitle existe en ES y EN" time="0.000130043">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.enableConfirmMessage existe en ES y EN" time="0.000106063">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.enabledSuccess existe en ES y EN" time="0.000307099">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.disabledSuccess existe en ES y EN" time="0.000143733">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.saveError existe en ES y EN" time="0.000132506">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.units.loadError existe en ES y EN" time="0.000121668">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.heading existe en ES y EN" time="0.000125709">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.unitLabel existe en ES y EN" time="0.000119313">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.unitDisabledNotice existe en ES y EN" time="0.000111008">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.empty existe en ES y EN" time="0.000136447">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.loadError existe en ES y EN" time="0.000121901">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.state.effective existe en ES y EN" time="0.000129563">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.state.granted existe en ES y EN" time="0.000122546">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.state.notGranted existe en ES y EN" time="0.000126313">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.grant existe en ES y EN" time="0.000121102">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.revoke existe en ES y EN" time="0.000125181">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.revokeConfirmTitle existe en ES y EN" time="0.000121622">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.revokeConfirmMessage existe en ES y EN" time="0.000127919">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.grantedSuccess existe en ES y EN" time="0.000143098">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.revokedSuccess existe en ES y EN" time="0.000128665">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.grants.saveError existe en ES y EN" time="0.000131967">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave admin.forbidden existe en ES y EN" time="0.000132296">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.open existe en ES y EN" time="0.00012359">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.title existe en ES y EN" time="0.00012481">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.companyState existe en ES y EN" time="0.000122828">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.userState existe en ES y EN" time="0.000164655">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.loadError existe en ES y EN" time="0.000129844">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.selfNote existe en ES y EN" time="0.000116495">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.i18n.test.ts" name="GA-FE-02 · i18n &gt; la clave users.businessUnits.revokedHistoric existe en ES y EN" time="0.000117902">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/__tests__/gaFe02.nav.test.ts" timestamp="2026-09-13T03:38:18.522Z" hostname="techmachine2" tests="6" failures="0" errors="0" skipped="0" time="0.012297497">
+        <testcase classname="src/data/__tests__/gaFe02.nav.test.ts" name="GA-FE-02 · navegación admin mínima &gt; existe una entrada hacia /admin/unit-access con permiso declarado" time="0.004677292">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.nav.test.ts" name="GA-FE-02 · navegación admin mínima &gt; un actor con business_units:read ve la entrada" time="0.000693642">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.nav.test.ts" name="GA-FE-02 · navegación admin mínima &gt; el Super Administrador ve la entrada" time="0.000484579">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.nav.test.ts" name="GA-FE-02 · navegación admin mínima &gt; un actor sin el permiso NO ve la entrada (AC-NAV-03)" time="0.000380105">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.nav.test.ts" name="GA-FE-02 · navegación admin mínima &gt; sin sesión no se muestra nada" time="0.001058451">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe02.nav.test.ts" name="GA-FE-02 · navegación admin mínima &gt; el resto del menú también se evalúa (frontera GA-FE-03 cerrada, AC-NAV-05)" time="0.002553543">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/__tests__/gaFe08.lotsNav.test.ts" timestamp="2026-09-13T03:38:18.523Z" hostname="techmachine2" tests="12" failures="0" errors="0" skipped="0" time="0.041449462">
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; existe una entrada declarativa hacia la ruta existente /lots, con permiso y dependencia de unidad declarados (AC01-04)" time="0.006163639">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; vive bajo Gestión Avícola como primera opción del hub, sin raíz nueva (AC19, AC26)" time="0.000479103">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; el operador autorizado descubre «Lotes» (AC01/02)" time="0.003363249">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; sin el permiso de lotes no hay entrada (AC11)" time="0.000916584">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; sin unidades efectivas (BU negativa) no hay entrada ni raíz productiva (AC08)" time="0.000536638">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; empresa con BU OFF: sin producto, global incluido (AC07, AC14)" time="0.000642614">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; OD-23: la concesión histórica terminada NO revive; la concesión fresca sí (AC09/10)" time="0.000589151">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; zero-BU y Access Administrator no obtienen «Lotes» (AC12/13)" time="0.000557553">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · contrato de la entrada «Lotes» &gt; actor global: sin contexto fail-closed; con unidad habilitada descubre (AC06/14)" time="0.000574785">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · vistas y estado activo &gt; la entrada viaja en ambas vistas: web completa y móvil bajo Gestión Avícola (AC19/20)" time="0.000626222">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · vistas y estado activo &gt; la ruta activa cubre lista y detalle y resalta el contenedor (AC05)" time="0.012444509">
+        </testcase>
+        <testcase classname="src/data/__tests__/gaFe08.lotsNav.test.ts" name="GA-FE-08 · i18n por reuso &gt; nav.lots existe en ES («Lotes») y EN («Lots») — clave reusada, sin copy nuevo (AC21-23)" time="0.011622317">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/data/__tests__/processCatalog.test.ts" timestamp="2026-09-13T03:38:18.526Z" hostname="techmachine2" tests="7" failures="0" errors="0" skipped="0" time="0.015348126">
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · water_consumption (B05) &gt; está en breeder_rearing, breeder_production y broiler" time="0.003744368">
+        </testcase>
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · water_consumption (B05) &gt; no está en grandparent_* ni en hatchery (no aplica por fuente)" time="0.0010637">
+        </testcase>
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · incubadora ofrece mortalidad y descarte de pollitos (R-171 · GA-REM-021-D) &gt; AC-R171-01 · STAGE_OPERATIONS.hatchery contiene mortality_recording" time="0.00041627">
+        </testcase>
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · incubadora ofrece mortalidad y descarte de pollitos (R-171 · GA-REM-021-D) &gt; AC-R171-02 · STAGE_OPERATIONS.hatchery contiene cull_recording" time="0.00025744">
+        </testcase>
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · incubadora ofrece mortalidad y descarte de pollitos (R-171 · GA-REM-021-D) &gt; AC-R171-03 · el flujo de incubadora tiene ambos pasos, tras el nacimiento y antes del despacho, con su clave de descripción" time="0.000897423">
+        </testcase>
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · incubadora ofrece mortalidad y descarte de pollitos (R-171 · GA-REM-021-D) &gt; AC-R171-04 · las etiquetas ES/EN existen y no están vacías (sin cadena nueva ni texto fijo)" time="0.001045447">
+        </testcase>
+        <testcase classname="src/data/__tests__/processCatalog.test.ts" name="processCatalog · incubadora ofrece mortalidad y descarte de pollitos (R-171 · GA-REM-021-D) &gt; AC-R171-05 · aplicabilidad: las demás etapas no cambian y hatchery solo gana los dos eventos" time="0.001931916">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/hooks/__tests__/useMediaQuery.test.ts" timestamp="2026-09-13T03:38:18.535Z" hostname="techmachine2" tests="4" failures="0" errors="0" skipped="0" time="0.0425072">
+        <testcase classname="src/hooks/__tests__/useMediaQuery.test.ts" name="useMediaQuery &gt; returns mobile when width &lt; 640" time="0.025468977">
+        </testcase>
+        <testcase classname="src/hooks/__tests__/useMediaQuery.test.ts" name="useMediaQuery &gt; returns tablet when width between 640-1023" time="0.003511001">
+        </testcase>
+        <testcase classname="src/hooks/__tests__/useMediaQuery.test.ts" name="useMediaQuery &gt; returns desktop when width &gt;= 1024" time="0.002430966">
+        </testcase>
+        <testcase classname="src/hooks/__tests__/useMediaQuery.test.ts" name="useMediaQuery &gt; responds to window resize" time="0.006462405">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/services/__tests__/gaFe02.businessUnitsService.test.ts" timestamp="2026-09-13T03:38:18.536Z" hostname="techmachine2" tests="7" failures="0" errors="0" skipped="0" time="0.012180211">
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; lista las unidades de la empresa por GET /business-units" time="0.005420501">
+        </testcase>
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; habilita por PATCH /business-units/{code}/enable sin cuerpo" time="0.001136176">
+        </testcase>
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; deshabilita por PATCH /business-units/{code}/disable" time="0.000491606">
+        </testcase>
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; lee las concesiones del usuario por GET /users/{id}/business-units" time="0.000444336">
+        </testcase>
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; lee candidatos por GET /business-units/{code}/grant-candidates" time="0.000563767">
+        </testcase>
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; concede por POST /users/{id}/business-units con {code} y SIN company_id" time="0.000852116">
+        </testcase>
+        <testcase classname="src/services/__tests__/gaFe02.businessUnitsService.test.ts" name="GA-FE-02 · businessUnitsService &gt; revoca por DELETE /users/{id}/business-units/{code}" time="0.000352828">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/services/__tests__/weightCurves.test.ts" timestamp="2026-09-13T03:38:18.538Z" hostname="techmachine2" tests="6" failures="0" errors="0" skipped="0" time="0.029825422">
+        <testcase classname="src/services/__tests__/weightCurves.test.ts" name="parsearTabla &gt; lee una tabla con cabecera en el orden del backend" time="0.014900957">
+        </testcase>
+        <testcase classname="src/services/__tests__/weightCurves.test.ts" name="parsearTabla &gt; acepta cabeceras en español y punto y coma como separador" time="0.007572939">
+        </testcase>
+        <testcase classname="src/services/__tests__/weightCurves.test.ts" name="parsearTabla &gt; acepta la coma decimal cuando el separador es punto y coma" time="0.000742398">
+        </testcase>
+        <testcase classname="src/services/__tests__/weightCurves.test.ts" name="parsearTabla &gt; no descarta ni corrige filas incoherentes: eso lo juzga el backend" time="0.003763389">
+        </testcase>
+        <testcase classname="src/services/__tests__/weightCurves.test.ts" name="parsearTabla &gt; deja el objetivo nulo cuando la tabla no lo trae" time="0.00039666">
+        </testcase>
+        <testcase classname="src/services/__tests__/weightCurves.test.ts" name="parsearTabla &gt; devuelve nada ante un texto vacío" time="0.000281894">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/stores/__tests__/auth.store.test.ts" timestamp="2026-09-13T03:38:18.539Z" hostname="techmachine2" tests="6" failures="0" errors="0" skipped="0" time="0.011945845">
+        <testcase classname="src/stores/__tests__/auth.store.test.ts" name="auth.store &gt; starts unauthenticated when no token in storage" time="0.003026701">
+        </testcase>
+        <testcase classname="src/stores/__tests__/auth.store.test.ts" name="auth.store &gt; setTokens updates state and sessionStorage" time="0.001530688">
+        </testcase>
+        <testcase classname="src/stores/__tests__/auth.store.test.ts" name="auth.store &gt; getAccessToken returns the current token" time="0.000504783">
+        </testcase>
+        <testcase classname="src/stores/__tests__/auth.store.test.ts" name="auth.store &gt; getRefreshToken returns the current refresh token" time="0.000361407">
+        </testcase>
+        <testcase classname="src/stores/__tests__/auth.store.test.ts" name="auth.store &gt; logout clears state and sessionStorage" time="0.003404802">
+        </testcase>
+        <testcase classname="src/stores/__tests__/auth.store.test.ts" name="auth.store &gt; logout clears state and marks unauthenticated" time="0.000678144">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/stores/__tests__/gaFe02.session.test.ts" timestamp="2026-09-13T03:38:18.540Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.014927513">
+        <testcase classname="src/stores/__tests__/gaFe02.session.test.ts" name="GA-FE-02 · fetchMe conserva la sesión extendida &gt; guarda permisos y las listas de unidades del contrato" time="0.006894501">
+        </testcase>
+        <testcase classname="src/stores/__tests__/gaFe02.session.test.ts" name="GA-FE-02 · fetchMe conserva la sesión extendida &gt; usuario de empresa: la empresa efectiva es la persistida y NO consulta el catálogo" time="0.000892988">
+        </testcase>
+        <testcase classname="src/stores/__tests__/gaFe02.session.test.ts" name="GA-FE-02 · fetchMe conserva la sesión extendida &gt; contexto desplazado: resuelve el nombre de la empresa efectiva por el catálogo" time="0.000890355">
+        </testcase>
+        <testcase classname="src/stores/__tests__/gaFe02.session.test.ts" name="GA-FE-02 · fetchMe conserva la sesión extendida &gt; actor global sin empresa seleccionada: sin empresa activa (fail-closed, OD-14.d)" time="0.000617258">
+        </testcase>
+        <testcase classname="src/stores/__tests__/gaFe02.session.test.ts" name="GA-FE-02 · switchCompany &gt; publica /switch-company, reemplaza tokens y refetchea /me" time="0.003342988">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/stores/__tests__/gaFe02.sessionBoot.test.ts" timestamp="2026-09-13T03:38:18.542Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.071667895">
+        <testcase classname="src/stores/__tests__/gaFe02.sessionBoot.test.ts" name="GA-FE-02 · arranque de sesión (D1) &gt; con token en storage el store arranca en restauración (isLoading=true) para que /me hidrate la sesión extendida" time="0.057355017">
+        </testcase>
+        <testcase classname="src/stores/__tests__/gaFe02.sessionBoot.test.ts" name="GA-FE-02 · arranque de sesión (D1) &gt; sin token el store arranca resuelto (isLoading=false)" time="0.0103949">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/layout/__tests__/gaFe02b.companySelector.test.tsx" timestamp="2026-09-13T03:38:18.542Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.291224636">
+        <testcase classname="src/components/layout/__tests__/gaFe02b.companySelector.test.tsx" name="F4 · Header — alcanzabilidad del selector &gt; autoridad global SIN contexto: el selector es visible (RED antes del fix)" time="0.228657292">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe02b.companySelector.test.tsx" name="F4 · Header — alcanzabilidad del selector &gt; autoridad global CON empresa activa: selector presente" time="0.023230799">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe02b.companySelector.test.tsx" name="F4 · Header — alcanzabilidad del selector &gt; usuario común con empresa: badge sin selector" time="0.016928646">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe02b.companySelector.test.tsx" name="F4 · Header — alcanzabilidad del selector &gt; usuario común sin empresa: sin selector" time="0.017175437">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe02b.companySelector.test.tsx" name="F4 · fetchMe — nombre de la empresa efectiva con persistida nula (bootstrap admin) &gt; resuelve el nombre por el catálogo cuando la persistida es null" time="0.001216913">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/layout/__tests__/gaFe03.mobileNav.test.tsx" timestamp="2026-09-13T03:38:18.544Z" hostname="techmachine2" tests="3" failures="0" errors="0" skipped="0" time="0.187047287">
+        <testcase classname="src/components/layout/__tests__/gaFe03.mobileNav.test.tsx" name="GA-FE-03 · MobileNav derivada del evaluador &gt; Z: sin Operativo; Home y KPI presentes" time="0.169210994">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe03.mobileNav.test.tsx" name="GA-FE-03 · MobileNav derivada del evaluador &gt; C con broiler: Operativo presente (misma semántica que desktop)" time="0.009221179">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe03.mobileNav.test.tsx" name="GA-FE-03 · MobileNav derivada del evaluador &gt; sin dashboard:read (B) la barra no ofrece Home/KPI" time="0.004353069">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/layout/__tests__/gaFe03.sidebar.test.tsx" timestamp="2026-09-13T03:38:18.545Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.44628911">
+        <testcase classname="src/components/layout/__tests__/gaFe03.sidebar.test.tsx" name="GA-FE-03 · Sidebar derivado del evaluador canónico (§23) &gt; D (dashboard:read): sin admin/productivo; CORE y Configuración presentes; sin grupos vacíos" time="0.252367898">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe03.sidebar.test.tsx" name="GA-FE-03 · Sidebar derivado del evaluador canónico (§23) &gt; Z (cero unidades): el área operativa desaparece; Configuración permanece" time="0.031199308">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe03.sidebar.test.tsx" name="GA-FE-03 · Sidebar derivado del evaluador canónico (§23) &gt; C con broiler: el área operativa aparece (hub) y el resto no" time="0.031845307">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe03.sidebar.test.tsx" name="GA-FE-03 · Sidebar derivado del evaluador canónico (§23) &gt; B (Access Admin): descubre Configuración; sin productivo, sin dashboard (D-4), sin admin ajeno" time="0.023951063">
+        </testcase>
+        <testcase classname="src/components/layout/__tests__/gaFe03.sidebar.test.tsx" name="GA-FE-03 · Sidebar derivado del evaluador canónico (§23) &gt; A (CBU Admin): CORE + Configuración; sin planos ajenos" time="0.099084321">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/notifications/__tests__/NotificationBell.test.tsx" timestamp="2026-09-13T03:38:18.546Z" hostname="techmachine2" tests="8" failures="0" errors="0" skipped="0" time="0.465956087">
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; `AC16` · el número de sin leer viaja en el nombre accesible, no solo en un color" time="0.058352032">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; `AC16` · el contador sale del servidor, no de contar la primera página" time="0.012266918">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; sin nada sin leer, la campana no anuncia número" time="0.006048419">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; `AC17` · distingue leída de no leída por texto" time="0.198519077">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; `AC18` · abrir una la marca leída, baja el contador y navega" time="0.074126559">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; no navega cuando el aviso no tiene pantalla destino" time="0.054472671">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; `AC19` · la bandeja vacía se declara" time="0.029870046">
+        </testcase>
+        <testcase classname="src/components/notifications/__tests__/NotificationBell.test.tsx" name="NotificationBell &gt; `AC19` · un fallo de API no se presenta como bandeja vacía" time="0.028282102">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/operations/__tests__/WeightEvaluation.test.tsx" timestamp="2026-09-13T03:38:18.549Z" hostname="techmachine2" tests="7" failures="0" errors="0" skipped="0" time="0.244262996">
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; `AC-FE12` · un peso bajo norma se nombra y muestra su rango" time="0.160712914">
+        </testcase>
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; `AC-FE12` · un peso dentro de norma también muestra su rango" time="0.019768284">
+        </testcase>
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; `AC-FE12` · un peso sobre norma se distingue del que está bajo ella" time="0.0222367">
+        </testcase>
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; `AC-FE13` · sin referencia se declara, y nunca como normalidad" time="0.012663877">
+        </testcase>
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; `AC-FE11` · cita la versión de curva y la edad que el backend usó" time="0.014139431">
+        </testcase>
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; `AC-FE14` · no calcula: pinta exactamente lo que el backend concluyó" time="0.006812914">
+        </testcase>
+        <testcase classname="src/components/operations/__tests__/WeightEvaluation.test.tsx" name="WeightEvaluation &gt; no pinta nada si el evento no trae pesajes" time="0.00191699">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ui/__tests__/signature-pad.test.tsx" timestamp="2026-09-13T03:38:18.551Z" hostname="techmachine2" tests="8" failures="0" errors="0" skipped="0" time="0.201700658">
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; renders canvas and buttons" time="0.088467341">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; renders with custom label" time="0.025181699">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; renders canvas with correct dimensions" time="0.008333973">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; calls onCancel when cancel button clicked" time="0.011638401">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; confirm button is disabled when no signature drawn" time="0.011955877">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; calls onSign with data URL after drawing and confirming" time="0.026054481">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; clear button is present and clickable" time="0.010088273">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/signature-pad.test.tsx" name="SignaturePad &gt; stops drawing on pointer leave" time="0.015616522">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/ui/__tests__/ui-components.test.tsx" timestamp="2026-09-13T03:38:18.553Z" hostname="techmachine2" tests="43" failures="0" errors="0" skipped="0" time="0.635731689">
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button &gt; renders children" time="0.301093717">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button &gt; applies variant classes" time="0.007769328">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button &gt; shows loading spinner when loading" time="0.017425836">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button &gt; disables when disabled prop is set" time="0.010723933">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button &gt; has minimum 44px height for touch targets" time="0.010502803">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Badge &gt; renders with variant" time="0.010375377">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Badge &gt; maps status strings to variants" time="0.000800442">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Input &gt; renders label and input" time="0.016177014">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Input &gt; shows error state" time="0.033682347">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Card &gt; renders header and body" time="0.007197999">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Breadcrumbs &gt; renders items with chevrons" time="0.024780053">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Breadcrumbs &gt; renders nothing with empty items" time="0.001638293">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard &gt; renders value and label" time="0.004354012">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard &gt; renders trend indicator" time="0.004436736">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard &gt; renders with different color variants" time="0.00279854">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="EmptyState &gt; renders title and description" time="0.00926898">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="ConfirmDialog &gt; renders when open" time="0.03406085">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="ConfirmDialog &gt; does not render when closed" time="0.001316058">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="FormSection &gt; renders title" time="0.005494019">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="FilterPanel &gt; renders children when expanded" time="0.003982738">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="StatusTimeline &gt; renders events" time="0.005956169">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="StatusTimeline &gt; renders nothing with empty events" time="0.001441861">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button — edge cases &gt; renders with left and right icons" time="0.003002793">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button — edge cases &gt; applies all 5 variant classes" time="0.008231197">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button — edge cases &gt; applies all 3 size classes" time="0.003933076">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Button — edge cases &gt; renders as submit type when specified" time="0.005764243">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Badge — status resolution &gt; resolves all 13 operational statuses" time="0.001179453">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Badge — status resolution &gt; renders with dot indicator" time="0.003003996">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Badge — status resolution &gt; renders with sm size" time="0.00173251">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="ConfirmDialog — interaction &gt; calls onConfirm when confirm button clicked" time="0.021330039">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="ConfirmDialog — interaction &gt; calls onClose when cancel button clicked" time="0.015567584">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="ConfirmDialog — interaction &gt; renders danger variant with red confirm button" time="0.011590842">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with blue color" time="0.002033175">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with green color" time="0.001929666">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with red color" time="0.00223071">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with amber color" time="0.002746493">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with teal color" time="0.007263144">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with indigo color" time="0.003610523">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="KpiCard — all colors &gt; renders with slate color" time="0.002338081">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="FormSection — collapsible &gt; toggles collapse" time="0.005029372">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="FilterPanel — with results count &gt; shows total results" time="0.004152849">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="Card — variants &gt; renders default card" time="0.001577228">
+        </testcase>
+        <testcase classname="src/components/ui/__tests__/ui-components.test.tsx" name="EmptyState — with action &gt; renders action button when provided" time="0.004796628">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" timestamp="2026-09-13T03:38:18.560Z" hostname="techmachine2" tests="15" failures="0" errors="0" skipped="0" time="1.338914427">
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — render &gt; muestra las CUATRO unidades canónicas con estados mixtos independientes (AC-CBU-02/03)" time="0.535877975">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — render &gt; sin empresa efectiva: fail-closed, sin ninguna llamada (AC-COMP-06, OD-14.d)" time="0.027401768">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — render &gt; muestra la empresa efectiva en el contexto (AC-COMP-01)" time="0.048109583">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — mutaciones &gt; habilitar llama PATCH enable, refetchea y confirma éxito (AC-CBU-04/06)" time="0.130546353">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — mutaciones &gt; deshabilitar pide confirmación y llama PATCH disable (AC-CBU-05)" time="0.076258664">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — mutaciones &gt; habilitar NO dispara ninguna llamada de concesión (AC-CBU-08)" time="0.067830167">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — mutaciones &gt; fallo de mutación: error + reconciliación con refetch, sin falso éxito (AC-CBU-15)" time="0.051401659">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — mutaciones &gt; sin business_units:update: sin acciones de mutación (AC-CBU-12)" time="0.024354653">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — concesiones &gt; unidad deshabilitada: aviso y SIN llamada a candidatos (contrato 409 evitado)" time="0.036825795">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — concesiones &gt; unidad habilitada: candidatos con estado y acciones por permiso (AC-UBU-05)" time="0.05450418">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — concesiones &gt; conceder llama POST /users/{id}/business-units {code} y refetchea (AC-UBU-05/06)" time="0.05734029">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — concesiones &gt; revocar pide confirmación y llama DELETE con code (AC-UBU-08/09)" time="0.074246172">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — concesiones &gt; sin business_units:create|delete: sin botones de concesión (AC-UBU-13 UI)" time="0.052073833">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — concesiones &gt; el actor (self) no gestiona concesiones desde esta lista si apareciera (AC-UBU-11 UI)" time="0.049559736">
+        </testcase>
+        <testcase classname="src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx" name="GA-FE-02 · Acceso por unidad — cambio de empresa &gt; al cambiar la empresa refetchea y limpia la selección (AC-COMP-04/05)" time="0.046691649">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/approvals/__tests__/gaFe04.approvalGates.test.tsx" timestamp="2026-09-13T03:38:18.567Z" hostname="techmachine2" tests="3" failures="0" errors="0" skipped="0" time="0.570403361">
+        <testcase classname="src/pages/approvals/__tests__/gaFe04.approvalGates.test.tsx" name="GA-FE-04 · ApprovalPanel — autoridad de acción &gt; sin permisos de revisión ni aprobación ⇒ sin Aprobar ni Rechazar" time="0.357447341">
+        </testcase>
+        <testcase classname="src/pages/approvals/__tests__/gaFe04.approvalGates.test.tsx" name="GA-FE-04 · ApprovalPanel — autoridad de acción &gt; approvals:approve sin approvals:reject ⇒ Aprobar sí, Rechazar no" time="0.116111402">
+        </testcase>
+        <testcase classname="src/pages/approvals/__tests__/gaFe04.approvalGates.test.tsx" name="GA-FE-04 · ApprovalPanel — autoridad de acción &gt; control: approvals:approve+reject+review:review ⇒ ambos visibles" time="0.093965304">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/lots/__tests__/gaFe04.lotsGates.test.tsx" timestamp="2026-09-13T03:38:18.568Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.145542894">
+        <testcase classname="src/pages/lots/__tests__/gaFe04.lotsGates.test.tsx" name="GA-FE-04 · LotListPage — CTA de alta &gt; lots:read sin lots:create ⇒ sin CTA «Nuevo lote»" time="0.115736905">
+        </testcase>
+        <testcase classname="src/pages/lots/__tests__/gaFe04.lotsGates.test.tsx" name="GA-FE-04 · LotListPage — CTA de alta &gt; control: con lots:create ⇒ CTA visible" time="0.024802459">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx" timestamp="2026-09-13T03:38:18.569Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="1.425533191">
+        <testcase classname="src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx" name="GA-FE-06 · R-182 · contrato de alta de lote (RED) &gt; PLD capturada ⇒ viaja en POST /lots como planned_close_date (YYYY-MM-DD)" time="0.628330867">
+        </testcase>
+        <testcase classname="src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx" name="GA-FE-06 · R-182 · contrato de alta de lote (RED) &gt; selector «Área» alimentado por /masters/areas (nombres, sin IDs crudos)" time="0.236998861">
+        </testcase>
+        <testcase classname="src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx" name="GA-FE-06 · R-182 · contrato de alta de lote (RED) &gt; área elegida ⇒ viaja en POST /lots como area_id" time="0.235859906">
+        </testcase>
+        <testcase classname="src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx" name="GA-FE-06 · R-182 · contrato de alta de lote (RED) &gt; sin fecha y sin área ⇒ null explícito en el payload (opcionalidad real)" time="0.153164318">
+        </testcase>
+        <testcase classname="src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx" name="GA-FE-06 · R-182 · contrato de alta de lote (RED) &gt; control · alta mínima sigue funcionando tras el cambio (código/tipo/granja + éxito)" time="0.16673187">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/lots/__tests__/gaFe07.inactiveAreaEligibility.test.tsx" timestamp="2026-09-13T03:38:18.569Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.219108349">
+        <testcase classname="src/pages/lots/__tests__/gaFe07.inactiveAreaEligibility.test.tsx" name="GA-FE-07 · selector de área — elegibilidad por estado (RED) &gt; la inactiva no se ofrece; la activa sí (filtro de selección)" time="0.153031668">
+        </testcase>
+        <testcase classname="src/pages/lots/__tests__/gaFe07.inactiveAreaEligibility.test.tsx" name="GA-FE-07 · selector de área — elegibilidad por estado (RED) &gt; control · el API sí devuelve las inactivas (el filtro es del selector, no de los datos)" time="0.061469894">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/masters/__tests__/gaFe04.mastersGates.test.tsx" timestamp="2026-09-13T03:38:18.570Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.176605377">
+        <testcase classname="src/pages/masters/__tests__/gaFe04.mastersGates.test.tsx" name="GA-FE-04 · MasterListPage — autoridad de acción &gt; R (masters:read): sin Nuevo/Editar/Eliminar" time="0.142757685">
+        </testcase>
+        <testcase classname="src/pages/masters/__tests__/gaFe04.mastersGates.test.tsx" name="GA-FE-04 · MasterListPage — autoridad de acción &gt; control: con masters:* los controles aparecen" time="0.029813262">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/eggDispatchFormContract.test.ts" timestamp="2026-09-13T03:38:18.571Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.004849109">
+        <testcase classname="src/pages/operations/__tests__/eggDispatchFormContract.test.ts" name="formulario de despacho de huevos · R-172 (solo huevo fértil) &gt; AC-R172-08 · el caso egg_dispatch registra únicamente la fila fertile" time="0.002389799">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/eggDispatchFormContract.test.ts" name="formulario de despacho de huevos · R-172 (solo huevo fértil) &gt; AC-R172-08 · la recolección conserva los cinco tipos capturados" time="0.000428833">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/f01.errorRendering.test.tsx" timestamp="2026-09-13T03:38:18.571Z" hostname="techmachine2" tests="1" failures="0" errors="0" skipped="0" time="0.858048495">
+        <testcase classname="src/pages/operations/__tests__/f01.errorRendering.test.tsx" name="R-189 · render seguro de errores (F-01 · React #31) &gt; AC19-AC26 · 422 estructurado ⇒ mensaje legible y página usable (sin excepción de React)" time="0.854604491">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/f01.payloadContract.test.tsx" timestamp="2026-09-13T03:38:18.572Z" hostname="techmachine2" tests="4" failures="0" errors="0" skipped="0" time="2.209861455">
+        <testcase classname="src/pages/operations/__tests__/f01.payloadContract.test.tsx" name="R-189 · payload de importación (F-01) &gt; AC03/AC04 · sin almacenamiento capturado ⇒ egg_storage_records = [] (nunca [{}])" time="0.928318925">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01.payloadContract.test.tsx" name="R-189 · payload de importación (F-01) &gt; AC08-AC11 · la OC elegida viaja en sap_document_ref con su código canónico" time="0.529033195">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01.payloadContract.test.tsx" name="R-189 · payload de importación (F-01) &gt; AC55/AC56 · alimento e incubadora sin contenido ⇒ [] (F-01d, nunca [{}])" time="0.394879428">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01.payloadContract.test.tsx" name="R-189 · payload de recepción (F-01) &gt; AC15 · sin almacenamiento capturado ⇒ egg_storage_records = [] en recepción" time="0.353714795">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/f01d.serializers.test.ts" timestamp="2026-09-13T03:38:18.573Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.011531594">
+        <testcase classname="src/pages/operations/__tests__/f01d.serializers.test.ts" name="R-189 · F-01d · serializadores de alimento/incubadora &gt; alimento: [{}] y NaN ⇒ [] (nunca un objeto vacío)" time="0.007016476">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01d.serializers.test.ts" name="R-189 · F-01d · serializadores de alimento/incubadora &gt; alimento: la fila con contenido se conserva y los NaN se omiten" time="0.000657975">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01d.serializers.test.ts" name="R-189 · F-01d · serializadores de alimento/incubadora &gt; incubadora: [{}] y fila con solo machine_type (campo de UI) ⇒ []" time="0.000605766">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01d.serializers.test.ts" name="R-189 · F-01d · serializadores de alimento/incubadora &gt; incubadora: la fila con contenido se conserva" time="0.000425282">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01d.serializers.test.ts" name="R-189 · F-01d · serializadores de alimento/incubadora &gt; aves: el comportamiento del C2 queda intacto (cantidad 0 declarada se conserva)" time="0.00043356">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/f01e.receptionHouse.test.tsx" timestamp="2026-09-13T03:38:18.575Z" hostname="techmachine2" tests="4" failures="0" errors="0" skipped="0" time="2.392343662">
+        <testcase classname="src/pages/operations/__tests__/f01e.receptionHouse.test.tsx" name="R-189 · F-01e · galpón de la recepción (house_id del evento) &gt; AC-F01E-01 · lote SIN galpón + galpón elegido en la fila ⇒ house_id del evento = galpón de la fila" time="1.006396499">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01e.receptionHouse.test.tsx" name="R-189 · F-01e · galpón de la recepción (house_id del evento) &gt; AC-F01E-02 · lote CON galpón ⇒ el house_id del lote se conserva (sin regresión)" time="0.522902788">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01e.receptionHouse.test.tsx" name="R-189 · F-01e · galpón de la recepción (house_id del evento) &gt; AC-F01E-03 · sin galpón en el lote NI en las filas ⇒ house_id ausente (sin inventar)" time="0.343779101">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/f01e.receptionHouse.test.tsx" name="R-189 · F-01e · galpón de la recepción (house_id del evento) &gt; AC-F01E-04 · frontera: la importación no cambia (sin fallback de galpón)" time="0.514182744">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/gaFe03.menuHub.test.tsx" timestamp="2026-09-13T03:38:18.576Z" hostname="techmachine2" tests="4" failures="0" errors="0" skipped="0" time="0.169716642">
+        <testcase classname="src/pages/operations/__tests__/gaFe03.menuHub.test.tsx" name="GA-FE-03 · MenuHub obedece la misma política (§34, NAV-AC07/44) &gt; D (dashboard:read) NO ve la tarjeta «Acceso por unidad» en /menu/settings" time="0.106860632">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe03.menuHub.test.tsx" name="GA-FE-03 · MenuHub obedece la misma política (§34, NAV-AC07/44) &gt; Z (cero unidades) no ve unidades productivas en /menu/poultry (raíz no visible → home)" time="0.010158656">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe03.menuHub.test.tsx" name="GA-FE-03 · MenuHub obedece la misma política (§34, NAV-AC07/44) &gt; C con broiler ve la unidad concedida en /menu/poultry" time="0.02793878">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe03.menuHub.test.tsx" name="GA-FE-03 · MenuHub obedece la misma política (§34, NAV-AC07/44) &gt; B (Access Admin) sí ve su tarjeta en /menu/settings" time="0.020895413">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" timestamp="2026-09-13T03:38:18.578Z" hostname="techmachine2" tests="10" failures="0" errors="0" skipped="0" time="0.754280208">
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; registered + operations:create + unidad ⇒ «Enviar a revisión» visible" time="0.418928028">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; un clic ⇒ una mutación + GET fresco + estado actualizado y CTA desaparece" time="0.082441225">
+            <system-err>
+An update to OperationDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; returned ⇒ «Reenviar a revisión» visible" time="0.040995451">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; rejected ⇒ «Reenviar a revisión» visible (no terminal, OD-17.a)" time="0.039074533">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; pending_review ⇒ sin CTA" time="0.021507076">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; approved ⇒ sin CTA (final inmutable)" time="0.023263145">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; sin operations:create ⇒ sin CTA aunque el estado sea reenviable" time="0.017113936">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; cero unidades efectivas ⇒ sin CTA aunque haya permiso (fail-closed)" time="0.015805766">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; doble clic ⇒ una sola mutación (loading deshabilita)" time="0.054415978">
+            <system-err>
+An update to OperationDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/gaFe05.submitGates.test.tsx" name="GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) &gt; fallo (403) ⇒ sin éxito falso + error + reconciliación por GET" time="0.035974401">
+            <system-err>
+An update to OperationDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() =&gt; {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you&apos;re testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+            </system-err>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/grandparentImportContract.test.ts" timestamp="2026-09-13T03:38:18.584Z" hostname="techmachine2" tests="6" failures="0" errors="0" skipped="0" time="0.009372354">
+        <testcase classname="src/pages/operations/__tests__/grandparentImportContract.test.ts" name="importación de abuelas · formulario (AC-R152-20) &gt; registra cada campo del plan bajo extra_data.import_plan.*" time="0.002431323">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/grandparentImportContract.test.ts" name="importación de abuelas · formulario (AC-R152-20) &gt; ya no registra las claves libres que no eran las del documento" time="0.000469022">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/grandparentImportContract.test.ts" name="importación de abuelas · formulario (AC-R152-20) &gt; ofrece proveedor y transporte dentro de la importación y las filas ♂/♀ recibidas" time="0.000305932">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/grandparentImportContract.test.ts" name="importación de abuelas · formulario (AC-R152-20) &gt; las etiquetas del plan existen en ES y EN (sin texto fijo)" time="0.001395638">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/grandparentImportContract.test.ts" name="importación de abuelas · detalle y adjuntos (AC-R152-21) &gt; el detalle muestra el plan de importación con sus etiquetas" time="0.000523922">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/grandparentImportContract.test.ts" name="importación de abuelas · detalle y adjuntos (AC-R152-21) &gt; ofrece las cinco clases de adjunto del plan al adjuntar en una importación y las etiqueta en ES/EN" time="0.000675083">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/r153.importLotOptional.test.ts" timestamp="2026-09-13T03:38:18.585Z" hostname="techmachine2" tests="3" failures="0" errors="0" skipped="0" time="0.006735588">
+        <testcase classname="src/pages/operations/__tests__/r153.importLotOptional.test.ts" name="R-153/OD-25 (B) · importación de abuelas sin lote previo &gt; AC04/36 · el esquema deja de exigir lote para grandparent_import" time="0.002930168">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/r153.importLotOptional.test.ts" name="R-153/OD-25 (B) · importación de abuelas sin lote previo &gt; AC36 · nota informativa del lote automático (i18n ES/EN)" time="0.000494804">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/r153.importLotOptional.test.ts" name="R-153/OD-25 (B) · importación de abuelas sin lote previo &gt; AC38 · el detalle enlaza el lote creado y muestra el estado pendiente" time="0.000506638">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/operations/__tests__/receptionFormContract.test.ts" timestamp="2026-09-13T03:38:18.586Z" hostname="techmachine2" tests="6" failures="0" errors="0" skipped="0" time="0.005984045">
+        <testcase classname="src/pages/operations/__tests__/receptionFormContract.test.ts" name="formulario de recepción · R-169 (sin tolerancia ±10 % sin fuente; OD-04 / BR-18) &gt; AC15 · no calcula ni muestra una diferencia porcentual con umbral frente a la cantidad declarada" time="0.002032543">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/receptionFormContract.test.ts" name="formulario de recepción · R-169 (sin tolerancia ±10 % sin fuente; OD-04 / BR-18) &gt; AC16 · el envío no inyecta textos generados por umbral en observations" time="0.000741075">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/receptionFormContract.test.ts" name="formulario de recepción · R-169 (sin tolerancia ±10 % sin fuente; OD-04 / BR-18) &gt; AC17 · la tarjeta informativa de la OC se conserva" time="0.000248137">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/receptionFormContract.test.ts" name="formulario de recepción · R-168 (la muestra tomada se persiste) &gt; la recepción registra sample_size a nivel de evento y ningún campo por galpón que el esquema descarte" time="0.00042504">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/receptionFormContract.test.ts" name="formulario de nacimiento · R-170 (una sola contabilidad) y B13 (sanos/débiles) &gt; AC-R170-07 · no registra una fila «Total nacidos» ni «Débiles» como nacidos; el total se deriva" time="0.000408192">
+        </testcase>
+        <testcase classname="src/pages/operations/__tests__/receptionFormContract.test.ts" name="formulario de nacimiento · R-170 (una sola contabilidad) y B13 (sanos/débiles) &gt; B13 · registra sanos y débiles como datos del evento" time="0.000251928">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/review/__tests__/gaFe04.reviewGates.test.tsx" timestamp="2026-09-13T03:38:18.587Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.633669506">
+        <testcase classname="src/pages/review/__tests__/gaFe04.reviewGates.test.tsx" name="GA-FE-04 · ReviewCenter — autoridad de acción &gt; solo review:read ⇒ sin Iniciar/Completar/Devolver" time="0.462249833">
+            <system-err>
+In HTML, &lt;button&gt; cannot be a descendant of &lt;button&gt;.
+This will cause a hydration error.
+
+  &lt;MemoryRouter&gt;
+    &lt;Router basename={undefined} location={{pathname:&quot;/&quot;, ...}} navigationType=&quot;POP&quot; navigator={{index:0, ...}} ...&gt;
+      &lt;ReviewCenter&gt;
+        &lt;div&gt;
+          &lt;div&gt;
+          &lt;div&gt;
+          &lt;FilterPanel onClear={function clearFilters} totalResults={0}&gt;
+            &lt;div className=&quot;bg-white r...&quot;&gt;
+&gt;             &lt;button
+&gt;               onClick={function onClick}
+&gt;               className=&quot;w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hov...&quot;
+&gt;               aria-expanded={true}
+&gt;             &gt;
+                &lt;div&gt;
+                &lt;div className=&quot;flex items...&quot;&gt;
+                  &lt;span&gt;
+&gt;                 &lt;button
+&gt;                   onClick={function onClick}
+&gt;                   className=&quot;text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transitio...&quot;
+&gt;                 &gt;
+              ...
+          ...
+
+&lt;button&gt; cannot contain a nested &lt;button&gt;.
+See this log for the ancestor stack trace.
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/pages/review/__tests__/gaFe04.reviewGates.test.tsx" name="GA-FE-04 · ReviewCenter — autoridad de acción &gt; control: con review:review ⇒ acción de inicio visible" time="0.166055304">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/sap/__tests__/gaFe04.sapGates.test.tsx" timestamp="2026-09-13T03:38:18.588Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.420211172">
+        <testcase classname="src/pages/sap/__tests__/gaFe04.sapGates.test.tsx" name="GA-FE-04 · SapManagerPage — autoridad de acción &gt; solo sap:read ⇒ sin Consolidar ni Exportar" time="0.334728331">
+        </testcase>
+        <testcase classname="src/pages/sap/__tests__/gaFe04.sapGates.test.tsx" name="GA-FE-04 · SapManagerPage — autoridad de acción &gt; control: con sap:send_sap ⇒ controles visibles" time="0.081851104">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/users/__tests__/UsersPage.test.tsx" timestamp="2026-09-13T03:38:18.588Z" hostname="techmachine2" tests="5" failures="0" errors="0" skipped="0" time="0.386201892">
+        <testcase classname="src/pages/users/__tests__/UsersPage.test.tsx" name="UsersPage · estados de carga &gt; un 403 se muestra como permiso insuficiente, nunca como tabla vacía" time="0.275775274">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/UsersPage.test.tsx" name="UsersPage · estados de carga &gt; un 500 ofrece reintentar, y tampoco es una lista vacía" time="0.021235118">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/UsersPage.test.tsx" name="UsersPage · estados de carga &gt; doscientos con lista vacía es el único caso que dice «no hay usuarios»" time="0.016460254">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/UsersPage.test.tsx" name="UsersPage · estados de carga &gt; con datos se pintan las filas y ningún estado de excepción" time="0.046974654">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/UsersPage.test.tsx" name="UsersPage · estados de carga &gt; un catálogo auxiliar caído degrada el desplegable, no la pantalla" time="0.021767401">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" timestamp="2026-09-13T03:38:18.589Z" hostname="techmachine2" tests="6" failures="0" errors="0" skipped="0" time="0.907547915">
+        <testcase classname="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" name="GA-FE-02 · Panel de unidades del usuario &gt; muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)" time="0.463395685">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" name="GA-FE-02 · Panel de unidades del usuario &gt; conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)" time="0.109960399">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" name="GA-FE-02 · Panel de unidades del usuario &gt; revocar pide confirmación, llama DELETE y refetchea (AC-UBU-08/09)" time="0.167056611">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" name="GA-FE-02 · Panel de unidades del usuario &gt; sobre uno mismo: sin acción de concesión y nota visible (AC-UBU-11 UI)" time="0.075218664">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" name="GA-FE-02 · Panel de unidades del usuario &gt; fallo al cargar concesiones: error claro, no silencio (AC-UBU-19)" time="0.05991574">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx" name="GA-FE-02 · Panel de unidades del usuario &gt; sin business_units:read no hay entrada al panel en la tabla (AC-NAV-03)" time="0.027401528">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/pages/users/__tests__/gaFe04.usersGates.test.tsx" timestamp="2026-09-13T03:38:18.590Z" hostname="techmachine2" tests="2" failures="0" errors="0" skipped="0" time="0.139749007">
+        <testcase classname="src/pages/users/__tests__/gaFe04.usersGates.test.tsx" name="GA-FE-04 · UsersPage — autoridad de acción &gt; R (users:read): ve el listado y NINGÚN control de escritura" time="0.102507505">
+        </testcase>
+        <testcase classname="src/pages/users/__tests__/gaFe04.usersGates.test.tsx" name="GA-FE-04 · UsersPage — autoridad de acción &gt; control: con users:* los controles aparecen" time="0.033642336">
+        </testcase>
+    </testsuite>
+</testsuites>
