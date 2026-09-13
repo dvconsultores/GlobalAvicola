@@ -1,0 +1,34 @@
+{
+  "probe": "R-200 runtime",
+  "when": "2026-09-13 20:04:52+0200",
+  "results": [
+    {
+      "id": "E2E-01",
+      "desc": "GET /me con Bearer refresh",
+      "status": 200,
+      "detail": ""
+    },
+    {
+      "id": "E2E-02",
+      "desc": "GET /lots con Bearer refresh",
+      "status": 200,
+      "detail": ""
+    },
+    {
+      "id": "E2E-03",
+      "desc": "GET /me con access",
+      "status": 200
+    },
+    {
+      "id": "E2E-04a",
+      "desc": "POST /refresh con refresh",
+      "status": 200
+    },
+    {
+      "id": "E2E-04b",
+      "desc": "GET /me con access renovado",
+      "status": 200
+    }
+  ],
+  "login": 200
+}

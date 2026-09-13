@@ -139,3 +139,10 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 
 - **Nuevo** `backend/tests/test_r202_password_reset_scope.py` (fixture `esc202`, PREFIJO `R202-`; super sin contexto / super situado / admin de empresa × 2 empresas). **Verificado local: 3 rojas por el defecto** — RED-01: el super **sin contexto** restablece por API (**204**; debe ser 4xx fail-closed); RED-03: el admin de empresa con `users:update` **no puede** restablecer en su empresa (**403**; debe ser 204); RED-06: sin reset legítimo no hay asiento con la empresa efectiva del actor — **y 2 controles verdes** (CTL-02 super situado → 204; CTL-04 cross-company → 403). Evidencia: `evidence/r202/red_c1.log`.
 - **Siguiente**: C2 (`_usuario_alcanzable` + `tiene_permiso(users: update)` en `change_password`; auditoría con empresa efectiva) → GREEN 5/5 → suite completa → C3 runtime (misma necesidad de actores que R-199: **G-06**) → certificación.
+
+## AE-18 · 2026-09-13 (noche-5) · R-200 C3 — RUNTIME ✅ · R-200 CERRADA
+
+- **Sondas post-fix (observadas, 20:20:41 +0200)**: E2E-01/02 = **401 «Token inválido: no es un token de acceso»** (pre-fix eran 200); E2E-03 access = 200; E2E-04a/b renovación = 200/200. Evidencia `evidence/r200/runtime-{prefix,c3}.json`; deploy `Docker Push — Backend` run 117 (`bf1746c`) success + Watchtower.
+- **Sensibilidad M1**: neutralizar la comprobación ⇒ RED-01…04 rojas (`evidence/r200/mutations/M1_sin_comprobacion_tipo.log`); revertida; worktree limpio.
+- **Certificación**: `audit/ga-claude-final-audit/GA_CLAUDE_R200_RUNTIME_CERTIFICATION.md` — **R-200 = `CLOSED_FUNCTIONALLY_CERTIFIED`** (AC01–14 ✅). Registro actualizado; nota AC13: **no** cierra `GA-REM-003 AC04`.
+- **Siguiente**: **R-202 C2** (implementación de `change_password` contextual) → GREEN 5/5 → suite completa → certificación (C3 runtime = G-06) → R-208 → **GA-REM-003 AC04** → certificación T2.
