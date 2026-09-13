@@ -30,18 +30,24 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      - name: Instalar dependencias
+      # GA-REM-013 · C8 — el `pip install -e ".[dev]"` original fallaba siempre
+      # (setuptools flat-layout: `app` + `seeds`; reproducido local; mismo patrón que el
+      # C3 de `quality-suite.yml`). Se adopta el flujo canónico del repo: uv.lock + 3.11.
+      - name: Instalar uv (versión validada)
+        run: pip install uv==0.11.23
+
+      - name: Sincronizar dependencias (uv.lock · Python 3.11)
         working-directory: ./backend
-        run: pip install -e ".[dev]"
+        run: uv sync --frozen --python 3.11
 
       - name: Compilación del backend
         working-directory: ./backend
-        run: python -m compileall -q app seeds tests
+        run: .venv/bin/python -m compileall -q app seeds tests
 
       - name: Integridad de la cadena Alembic (1 head, 1 base)
         working-directory: ./backend
         run: |
-          python - <<'PY'
+          .venv/bin/python - <<'PY'
           import sys
           from alembic.config import Config
           from alembic.script import ScriptDirectory
@@ -58,7 +64,7 @@ jobs:
           ENVIRONMENT: test
           GA_TEST_DATABASE_URL: postgresql+asyncpg://u:p@127.0.0.1:5432/test_ci_guard
           JWT_SECRET_KEY: ci_only_not_a_real_secret_value_for_tests
-        run: python -m pytest tests/test_environment_guard.py -v
+        run: .venv/bin/python -m pytest tests/test_environment_guard.py -v
 
       - name: Sin credenciales literales en seeds (GA-REM-004)
         working-directory: ./backend
@@ -78,9 +84,11 @@ jobs:
           node-version: '24'
           cache: 'npm'
           cache-dependency-path: frontend/package-lock.json
-      - name: Instalar dependencias
+      # GA-REM-013 · C8 — `--legacy-peer-deps` no instala peers: `@testing-library/dom`
+      # explícito para que vitest cargue (mismo fix C4 de `quality-suite.yml`).
+      - name: Instalar dependencias (+ peer de @testing-library/react)
         working-directory: ./frontend
-        run: npm install --legacy-peer-deps
+        run: npm install --legacy-peer-deps --no-save "@testing-library/dom@10.4.1"
 
       - name: Typecheck
         working-directory: ./frontend
