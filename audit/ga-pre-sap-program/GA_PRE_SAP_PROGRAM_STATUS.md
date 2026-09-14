@@ -1,6 +1,6 @@
 # GA · PRE-SAP — ESTADO DEL PROGRAMA (TRANCHE 0 · cierre)
 
-Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (CI run #26) · T3 CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13 (`9cb075f`; R-221 PARTIAL) · T4 CERRADA TÉCNICAMENTE (`976201d`) · T5 CERRADA TÉCNICAMENTE (`0f587b1`) · T6 CERRADA TÉCNICAMENTE (`cd33d23`; R-194) — T7 en arranque automático**.
+Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (CI run #26) · T3 CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13 (`9cb075f`; R-221 PARTIAL) · T4 CERRADA TÉCNICAMENTE (`976201d`) · T5 CERRADA TÉCNICAMENTE (`0f587b1`) · T6 CERRADA TÉCNICAMENTE (`cd33d23`; R-194) · T7 CERRADA TÉCNICAMENTE (`e30178b`; R-192/R-193/R-211) — T8 en arranque automático**.
 
 ## 1 · KPI del programa
 
@@ -15,7 +15,7 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Certificaciones con artefacto | informes históricos anotados `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`; plantilla de evidencia vigente | nuevas certificaciones con commit+artefacto (regla ya aplicada a T1) |
 | UAT con evidencia primaria | 0 de 11 registros + 2 pendientes | 8 lotes finales completos |
 | Decisiones del propietario pendientes (alcance actual) | 14 (+4 por tranche según roadmap) | registradas antes de su tranche |
-| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13** (`9cb075f`; R-221 PARTIAL); **T4 = CLOSED_TECHNICALLY** (`4a08382`); **T5 = CLOSED_TECHNICALLY** (`0f587b1`; R-146 ↔ AOD-16); **T6 = CLOSED_TECHNICALLY** (`cd33d23`; R-194 — P-04/P-05 reparados), **T7 = READY_FOR_EXECUTION**; T8-T13 + Pista OPS planificadas | todas cerradas |
+| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13** (`9cb075f`; R-221 PARTIAL); **T4 = CLOSED_TECHNICALLY** (`4a08382`); **T5 = CLOSED_TECHNICALLY** (`0f587b1`; R-146 ↔ AOD-16); **T6 = CLOSED_TECHNICALLY** (`cd33d23`; R-194 — P-04/P-05 reparados), **T7 = CLOSED_TECHNICALLY** (`e30178b`; R-192/R-193/R-211), **T8 = READY_FOR_EXECUTION**; T9-T13 + Pista OPS planificadas | todas cerradas |
 | Veredicto pre-SAP | `NO_GO_SAP_FUNCTIONAL_GAPS` (sin cambios) | GO/NO-GO final en T13 |
 
 ## 2 · Estado por tranche
@@ -29,8 +29,9 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | T4 · Operación (R-190 + R-205) | **CLOSED_TECHNICALLY** (`4a08382`, 2026-09-14) | R-190 (ubicación del evento: `a79fe0c`→`d1c16a7`→`801d18c`; S1-S4) · R-205 (cuadre alcanzable: `fe3bd3d`→`72aa7f4`→`dbc782d`; S1-S3); F-01e 4/4 intacto; **suite BE 1295/0/49** (`evidence/t4/…`) · **FE 360/360** + tsc 0 + build ⇒ `GA_T4_CERTIFICATION.md`. Límite: C3 runtime (deploy/credenciales — familia G-06); C-03 de R-190 opcional del propietario |
 | T5 · Contrato de captura (R-191 · R-206 · R-209 · R-210) | **CLOSED_TECHNICALLY** (`0f587b1`, 2026-09-14) | Cuatro paquetes RED→GREEN→sensibilidad; **FE 380/380** + tsc 0; suite BE **1316/0/49** (`evidence/t5/full_suite_t5.log`) ⇒ `GA_T5_CERTIFICATION.md`. Riders: **R-146 ↔ AOD-16** (cola) y **AOD-21** (R-210 C-01 confirmatoria); C3 runtime de los cuatro en ventana (familia G-06) |
 | T6 · Cadena de incubadora (R-194) | **CLOSED_TECHNICALLY** (`cd33d23`, 2026-09-14) | 5 causas acopladas + hallazgo colateral B-03b (`egg_storage.lot_id` NULL ⇒ 500) reparadas; **cadena real probada en BE** (recepción→saldo→carga→BR-03→nacimiento→despacho→BR-04→destino→`ChickBatch`→X-BU 5/5); FE 386/386; C2s S1-S4; suite BE **1321/0/49** (`evidence/t6/full_suite_t6.log`) ⇒ `GA_T6_CERTIFICATION.md`. **P-04/P-05 REPARADOS técnicamente** (E2E en ventana G-06); defaults AOD-25/26 encolados |
-| T7 · Cierre y reversos (R-192 · R-193 · R-211) | **READY_FOR_EXECUTION** | Arranque automático tras T6 (DAG: T7 ← T3+T6, satisfechos) |
-| T8-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
+| T7 · Cierre y reversos (R-192 · R-193 · R-211) | **CLOSED_TECHNICALLY** (`e30178b`, 2026-09-14) | R7 por estado terminal (`REVERSED` no bloquea, C-07) + resumen neto + BR-05 vigente + toast UI (`f65a633`/`0e49add`/`929b2f6`); BR-18 neto contra la OC (`0f61769`/`0008541`); BR-17 por fila con `target_house_id` (`b00a83b`/`e30178b`); **suite BE 1349/0/49** (`evidence/t7/full_suite_t7.log`) · FE 390/390 + tsc 0 ⇒ `GA_T7_CERTIFICATION.md`. **P-01/P-02/P-03/P-06 reparados técnicamente**; AOD-27/AOD-28 encoladas (no bloquean); C3 runtime en ventana (G-06) |
+| T8 · Auditoría y evidencias (P1-12-REOPEN · R-198 · R-219) | **READY_FOR_EXECUTION** | Arranque automático tras T7 (DAG: T8 ← T7, satisfecho) |
+| T9-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
 
 > **Nota de gobernanza (2026-09-14)**: `CLOSED_TECHNICALLY` de una tranche **≠** proceso `FUNCTIONALLY_CERTIFIED_E2E`. La métrica final del programa es la **matriz de procesos (0/17)** — los procesos se certifican con runtime/E2E incrementales (cola **G-06**) y UAT del propietario. R-221 permanece **PARTIAL** hasta resolver **AOD-13**.
 

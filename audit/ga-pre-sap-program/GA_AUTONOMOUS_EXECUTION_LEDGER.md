@@ -272,3 +272,29 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Suite completa = 1321/0/49** (`evidence/t6/full_suite_t6.log`); FE 386/386 + tsc 0; certificación `GA_T6_CERTIFICATION.md` + `GA_CLAUDE_R194_RUNTIME_CERTIFICATION.md`.
 - **Procesos**: P-04/P-05 **REPARADOS técnicamente** (E2E en ventana); X-BU demostrado a nivel API-integrada. KPI global sigue 0/17 hasta runtime/UAT.
 - **Siguiente**: **T7 · Cierre y reversos (R-192 · R-193 · R-211)** — arranque automático (DAG T7 ← T3+T6).
+
+## AE-38 · 2026-09-14 · R-192 CERRADA (CLOSED_TECHNICALLY) — cierre con reversos
+
+- **C1** `582f513`: BE 6F/13P (R7 bloquea el par `REVERSED`; resumen sin filtro de estado; BR-05; C-07) + FE 3F/1P (toast ausente).
+- **C2** `f65a633` + `0e49add`: R7 decide por estado terminal (`REVERSED` aceptable, C-07 nombra «reverso pendiente»); resumen neto excluye `CANCELLED`/`REVERSED`; BR-05 vigente (C-05); toast de cierre UI. BE 19/19 · regresión 87/87 · FE 390/390 · tsc 0. `test_t_073_01` actualizado a escenario neutro (codificaba la semántica previa).
+- **C2s** `929b2f6`: S1 3F (R7 sin `REVERSED`) / S2 2F (resumen sin filtro) / S3 3F (sin toast).
+- **Lección**: la edición de `handleCloseLot` consumió un `} finally {` (no lo cubrían los tests FE) — detectado y reparado en `0e49add`; verificar estructura tras ediciones en archivos grandes.
+
+## AE-39 · 2026-09-14 · R-193 CERRADA (CLOSED_TECHNICALLY) — acumulado BR-18 neto
+
+- **C1** `c97b14e`: BE 5F (reverso efectivo no libera la OC; contrapartida rechazada cuenta; mensaje inflado).
+- **C2** `0f61769`: `validate_oc_limit` sobre Σ neta (excluye `REVERSED` y contrapartidas; el original cuenta hasta la efectividad). BE 5/5 · regresión 86/86.
+- **C2s** `0008541`: S1 3F (02/04/05; 01 no cruza el límite) / S2 1F (03). OBS-R193-01/02 al backlog.
+
+## AE-40 · 2026-09-14 · R-211 CERRADA (CLOSED_TECHNICALLY) — capacidad por fila
+
+- **C1** `3dd397b`: BE 2F/2P (reparto 500+500 rechazado con 400; mensaje sin galpón).
+- **C2** `b00a83b`: BR-17 por fila (`target_house_id`; fallback `house_id` del evento; C-02=A) con mensaje «galpón + capacidad». BE 4/4 · regresión 140/140 (incluye paridad de edición, tenencia, BU y R-190 contigua).
+- **C2s** `e30178b`: S1 2F (01 reparto falso positivo; 02 mensaje). **AOD-28** (C-02 A/B) encolada.
+
+## AE-41 · 2026-09-14 · T7 CERRADA TÉCNICAMENTE — suite 1349/0/49
+
+- **Suite completa** `evidence/t7/full_suite_t7.log` (1349/0/49; 1 207 s) · FE 390/390 + `tsc` 0 · certificaciones `GA_T7_CERTIFICATION.md` + R-192/R-193/R-211.
+- **Procesos**: P-01/P-02/P-03/P-06 **reparados técnicamente**; KPI 0/17 sin cambio (runtime/UAT pendientes; G-06 ampliada con R-192/R-193/R-211).
+- **Owner gates nuevos**: AOD-27 (R-192 C-01/C-05), AOD-28 (R-211 C-02) — confirmatorias, no bloquean.
+- **Siguiente**: **T8 · Auditoría y evidencias (P1-12-REOPEN · R-198 · R-219)** — arranque automático (T8 ← T7 satisfecho).
