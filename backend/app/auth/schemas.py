@@ -29,7 +29,11 @@ class RefreshRequest(BaseModel):
 class UserBase(BaseModel):
     first_name: str = Field(..., min_length=1, max_length=100)
     last_name: str = Field(..., min_length=1, max_length=100)
-    email: EmailStr
+    # `R-213`: la LECTURA es tolerante (`str`). Hay correos heredados/se sembrados que
+    # `email_validator` rechaza hoy (`.test`, `.invalid`, `.local`): serializar no es
+    # validar, y un valor viejo jamás debe tumbar `/me` ni `/users` con un 500. La
+    # validación estricta vive en la ESCRITURA (`UserCreate`/`UserUpdate`).
+    email: str
     username: str = Field(..., min_length=3, max_length=100)
     phone: Optional[str] = None
     role_id: Optional[int] = None
@@ -40,6 +44,9 @@ class UserBase(BaseModel):
 
 
 class UserCreate(UserBase):
+    # `R-213`: aquí (y en `UserUpdate`) sí se valida el correo — lo nuevo entra con
+    # la política vigente; lo viejo solo se lee.
+    email: EmailStr
     password: str = Field(..., min_length=8)
 
 
