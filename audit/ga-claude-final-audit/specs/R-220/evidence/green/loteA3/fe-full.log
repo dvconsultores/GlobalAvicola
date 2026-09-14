@@ -1,0 +1,13 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+ Test Files  70 passed (70)
+      Tests  456 passed (456)
+   Start at  19:07:56
+   Duration  55.96s (transform 2.90s, setup 4.91s, import 28.18s, tests 39.04s, environment 77.39s)
+

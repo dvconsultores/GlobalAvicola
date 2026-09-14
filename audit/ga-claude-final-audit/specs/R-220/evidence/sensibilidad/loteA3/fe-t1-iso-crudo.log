@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA3.test.tsx (2 tests | 1 failed) 331ms
+     × AC-R220-A·A1 · las fechas se muestran formateadas (nunca el ISO crudo) 169ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA3.test.tsx > R-220 · Lote A tercera tanda (RED) > AC-R220-A·A1 · las fechas se muestran formateadas (nunca el ISO crudo)
+AssertionError: fecha ISO cruda visible: expected <td …(1)></td> to be null
+
+- Expected:
+null
+
++ Received:
+<td
+  class="px-4 py-3 text-slate-500"
+>
+  2026-09-10
+</td>
+
+ ❯ src/__tests__/r220.loteA3.test.tsx:66:75
+     64|     await waitFor(() => expect(screen.getAllByText(/L-05/).length).toB…
+     65|     // el ISO crudo no debe aparecer en ninguna celda
+     66|     expect(screen.queryByText(/^2026-09-10$/), 'fecha ISO cruda visibl…
+       |                                                                           ^
+     67|     expect(screen.queryByText(/2026-09-10/), 'fecha ISO cruda visible'…
+     68|     // y sí una fecha localizada (10/09/2026 o 09/10/2026 según locale…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  19:07:40
+   Duration  1.92s (transform 287ms, setup 62ms, import 842ms, tests 331ms, environment 570ms)
+

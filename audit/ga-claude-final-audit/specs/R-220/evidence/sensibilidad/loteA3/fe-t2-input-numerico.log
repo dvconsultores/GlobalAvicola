@@ -1,0 +1,434 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA3.test.tsx (2 tests | 1 failed) 1099ms
+     × AC-R220-A·A2 · ReportsPage ofrece un selector real de lote (no un input con lote fijo) 1023ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA3.test.tsx > R-220 · Lote A tercera tanda (RED) > AC-R220-A·A2 · ReportsPage ofrece un selector real de lote (no un input con lote fijo)
+TestingLibraryElementError: Unable to find role="combobox"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6 flex-wrap gap-3"[39m
+      [36m>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mnav.reports[0m
+        [36m</h1>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-2 items-center"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"h-9 px-2 border border-slate-300 rounded text-sm bg-white"[39m
+            [33mdata-filtro[39m=[32m"lote"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"2"[39m
+          [36m/>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Seleccionar lote"[39m
+            [33mclass[39m=[32m"h-9 px-2 border border-slate-300 rounded text-sm bg-white"[39m
+            [33mdata-filtro[39m=[32m"lote-legacy"[39m
+            [33mhidden[39m=[32m""[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"5"[39m
+            [36m>[39m
+              [0mL-05[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"6"[39m
+            [36m>[39m
+              [0mL-06[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-slate-100 text-slate-700 hover:bg-slate-200:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [0mExcel[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-400 shadow-sm hover:shadow-md h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [0mPDF[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mreports.quickAccess[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/lot/2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreports.lotReportLink[0m
+          [36m</a>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/sap"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreports.sapComparisonLink[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6 flex-wrap gap-3"[39m
+      [36m>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mnav.reports[0m
+        [36m</h1>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-2 items-center"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"h-9 px-2 border border-slate-300 rounded text-sm bg-white"[39m
+            [33mdata-filtro[39m=[32m"lote"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"2"[39m
+          [36m/>[39m
+          [36m<select[39m
+            [33maria-label[39m=[32m"Seleccionar lote"[39m
+            [33mclass[39m=[32m"h-9 px-2 border border-slate-300 rounded text-sm bg-white"[39m
+            [33mdata-filtro[39m=[32m"lote-legacy"[39m
+            [33mhidden[39m=[32m""[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"5"[39m
+            [36m>[39m
+              [0mL-05[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"6"[39m
+            [36m>[39m
+              [0mL-06[0m
+            [36m</option>[39m
+          [36m</select>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-slate-100 text-slate-700 hover:bg-slate-200:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [0mExcel[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-400 shadow-sm hover:shadow-md h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [0mPDF[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mreports.quickAccess[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/lot/2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreports.lotReportLink[0m
+          [36m</a>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/sap"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreports.sapComparisonLink[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteA3.test.tsx:86:35
+     84|       </MemoryRouter>,
+     85|     )
+     86|     const selector = await screen.findByRole('combobox')
+       |                                   ^
+     87|     expect(selector).toBeTruthy()
+     88|     // opciones reales del listado de lotes
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  19:07:42
+   Duration  3.40s (transform 281ms, setup 81ms, import 840ms, tests 1.10s, environment 1.06s)
+
