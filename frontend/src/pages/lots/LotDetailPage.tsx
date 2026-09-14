@@ -7,6 +7,7 @@ import { Button, Modal, Input } from '../../components/ui'
 import { TraceabilityTree } from '../../components/TraceabilityTree'
 import { STAGE_OPERATIONS, resolveStageKey } from '../../data/processCatalog'
 import api from '../../services/api'
+import { formatFecha } from '../../utils/dates'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
@@ -351,7 +352,7 @@ export default function LotDetailPage() {
  <Calendar size={18} /> {t('lots.info')}
  </h2>
  <dl className="space-y-2 text-sm">
- <div className="flex justify-between"><dt className="text-slate-500">{t('lots.start')}</dt><dd>{lot.start_date || '—'}</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.start')}</dt><dd>{formatFecha(lot.start_date)}</dd></div>
  {/* `R-182`: día natural tal como se capturó (corte del ISO en UTC, sin salto de zona). */}
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.plannedClose')}</dt><dd>{lot.planned_close_date ? String(lot.planned_close_date).slice(0, 10) : '—'}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>

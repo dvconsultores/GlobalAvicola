@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Egg, Baby, ArrowRight, RefreshCw } from 'lucide-react'
 import api from '../services/api'
+import { formatFecha } from '../utils/dates'
 import { getErrorMessage } from './Toast'
 import { Badge, statusToVariant } from './ui'
 import { Button, Input, Modal } from './ui'
@@ -178,7 +179,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  <div className="space-y-2">
  {data!.egg_batches_sent.map(b => (
  <div key={b.id} className="flex items-center gap-2 text-sm">
- <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+ <span className="text-slate-500">{formatFecha(b.dispatch_date)}</span>
  <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
  <span className="text-slate-400">{t('traceability.eggs', 'huevos')}</span>
  {b.quantity_received != null && (
@@ -212,7 +213,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  <ArrowRight size={13} className="text-slate-300 shrink-0" />
  </>
  )}
- <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+ <span className="text-slate-500">{formatFecha(b.dispatch_date)}</span>
  <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
  <span className="text-slate-400">{t('traceability.eggs', 'huevos')}</span>
  </div>
@@ -231,7 +232,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  <div className="space-y-2">
  {data!.chick_batches_sent.map(b => (
  <div key={b.id} className="flex items-center gap-2 text-sm">
- <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+ <span className="text-slate-500">{formatFecha(b.dispatch_date)}</span>
  <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
  <span className="text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
  {b.quantity_received != null && (
@@ -265,7 +266,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  <ArrowRight size={13} className="text-slate-300 shrink-0" />
  </>
  )}
- <span className="text-slate-500">{new Date(b.dispatch_date).toLocaleDateString()}</span>
+ <span className="text-slate-500">{formatFecha(b.dispatch_date)}</span>
  <span className="font-semibold text-slate-700">{b.quantity_dispatched.toLocaleString()}</span>
  <span className="text-slate-400">{t('traceability.chicks', 'pollitos')}</span>
  </div>

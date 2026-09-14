@@ -12,12 +12,17 @@ export default function ReportsPage() {
  const { t } = useTranslation()
  const [kpis, setKpis] = useState<any>(null)
  const [lotId, setLotId] = useState(2)
+ // `R-220` · A2 (C#18): selector real de lote — el listado de lotes alimenta la lista.
+ const [lotes, setLotes] = useState<any[]>([])
  const [chartData, setChartData] = useState<any[]>([])
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
  const [refresco, setRefresco] = useState(0)
 
  useEffect(() => {
+ // `R-220` · A2: opciones del selector (si la sesión no puede listar, se conserva
+ // el lote actual como única opción — la pantalla nunca queda sin contexto).
+ api.get('/lots?limit=100').then(r => setLotes(r.data || [])).catch(() => setLotes([]))
  api.get(`/reports/kpis?lot_id=${lotId}`).then(r => { setKpis(r.data); setEstado('ok') }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
  // G-12: Fetch events for chart visualization
  // `R-218` · C-01=A: las series salen del agregado semanal del lote — la LISTA de
@@ -75,8 +80,17 @@ export default function ReportsPage() {
  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
  <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('nav.reports')}</h1>
  <div className="flex gap-2 items-center">
- <input type="number" value={lotId} onChange={e => setLotId(Number(e.target.value))}
- className="w-24 h-9 px-2 border border-slate-300 rounded text-sm" placeholder={t('review.lot') + ' ID'} />
+ <select
+ data-filtro="lote"
+ aria-label={t('reports.selectLot', 'Seleccionar lote')}
+ value={lotId}
+ onChange={e => setLotId(Number(e.target.value))}
+ className="h-9 px-2 border border-slate-300 rounded text-sm bg-white"
+ >
+ {(lotes.length ? lotes : [{ id: lotId, lot_code: `#${lotId}` }]).map((l: any) => (
+ <option key={l.id} value={l.id}>{l.lot_code || `#${l.id}`}</option>
+ ))}
+ </select>
  <Button
  size="sm"
  variant="secondary"

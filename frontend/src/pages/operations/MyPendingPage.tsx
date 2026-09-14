@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { Clock, RefreshCw } from 'lucide-react'
 import api from '../../services/api'
+import { formatFecha } from '../../utils/dates'
 import { Badge, statusToVariant } from '../../components/ui'
 
 interface Operation {
@@ -99,7 +100,7 @@ export default function MyPendingPage() {
  </div>
  <div className="flex items-center gap-3 text-xs text-slate-500">
  {op.lot && <span>{op.lot.name}</span>}
- <span>{new Date(op.event_date).toLocaleDateString()}</span>
+ <span>{formatFecha(op.event_date)}</span>
  </div>
  </button>
  ))}

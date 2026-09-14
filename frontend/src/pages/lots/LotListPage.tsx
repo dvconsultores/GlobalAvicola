@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import api from '../../services/api'
+import { formatFecha } from '../../utils/dates'
 import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import { useAuthStore } from '../../stores/auth.store'
@@ -97,7 +98,7 @@ export default function LotListPage() {
  </span>
  </div>
  <p className="text-sm text-slate-600">{t(`birdTypes.${lot.bird_type}`, String(lot.bird_type || t('lots.noType')))}</p>
- <p className="text-xs text-slate-400 mt-1">{t('lots.startPrefix')}{lot.start_date || '—'}</p>
+ <p className="text-xs text-slate-400 mt-1">{t('lots.startPrefix')}{formatFecha(lot.start_date)}</p>
  </Link>
  ))}
  </div>
@@ -126,7 +127,7 @@ export default function LotListPage() {
  {t(`lotStatus.${lot.status}`, String(lot.status))}
  </span>
  </td>
- <td className="px-4 py-3 text-slate-500">{lot.start_date || '—'}</td>
+ <td className="px-4 py-3 text-slate-500">{formatFecha(lot.start_date)}</td>
  <td className="px-4 py-3">
  <Link to={`/lots/${lot.id}`}
  className="bg-[#1E3A5F] text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-800 transition">
