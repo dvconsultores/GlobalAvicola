@@ -82,6 +82,16 @@ async def _baja(client, cab, area_id):
     assert r.status_code == 204, r.text
 
 
+async def _cab_otra_empresa(client, cab, company_id_2):
+    """`R-196`. Token del mismo actor con el contexto en la empresa 2: los
+    maestros se crean para la empresa del contexto — el `company_id` del cuerpo
+    ya no impone empresa."""
+    r = await client.post("/api/v1/switch-company", headers=cab,
+                          json={"company_id": company_id_2})
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
 async def _lote(client, cab, seeded_ids, **extra):
     cuerpo = {
         "company_id": seeded_ids["company_id"],
@@ -121,7 +131,10 @@ async def test_g07_02_alta_activa_permitida(client, auth_headers, seeded_ids, mo
 async def test_g07_03_alta_ajena_denegada_sin_enumerar(
     client, auth_headers, seeded_ids, motor, unidades
 ):
-    y = (await _area(client, auth_headers, seeded_ids["company_id_2"], "Y1")).json()
+    # `R-196`: el área «ajena» se crea con el contexto de la empresa 2.
+    cab2 = await _cab_otra_empresa(client, auth_headers, seeded_ids["company_id_2"])
+    y = (await _area(client, cab2, seeded_ids["company_id_2"], "Y1")).json()
+    assert y["company_id"] == seeded_ids["company_id_2"], y
     r = await _lote(client, auth_headers, seeded_ids, area_id=y["id"])
     assert r.status_code == 400, r.text
     assert r.json().get("detail") == "Área no encontrado", r.text
@@ -223,7 +236,10 @@ async def test_g07_10_inactiva_a_inactiva_denegado(
 
 async def test_g07_11_cambio_a_ajena_denegado(client, auth_headers, seeded_ids, motor, unidades):
     a = (await _area(client, auth_headers, seeded_ids["company_id"], "A5")).json()
-    y = (await _area(client, auth_headers, seeded_ids["company_id_2"], "Y5")).json()
+    # `R-196`: contexto de la empresa 2 para la creación del área ajena.
+    cab2 = await _cab_otra_empresa(client, auth_headers, seeded_ids["company_id_2"])
+    y = (await _area(client, cab2, seeded_ids["company_id_2"], "Y5")).json()
+    assert y["company_id"] == seeded_ids["company_id_2"], y
     lote = (await _lote(client, auth_headers, seeded_ids, area_id=a["id"])).json()
 
     r = await client.put(f"/api/v1/lots/{lote['id']}", headers=auth_headers,

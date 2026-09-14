@@ -5,6 +5,8 @@ import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
 import DataTable, { type RowAction } from '../../components/data-table/DataTable'
 import { Button, Modal, Input } from '../../components/ui'
+import SearchSelect from '../../components/ui/SearchSelect'
+import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import { getErrorMessage } from '../../components/Toast'
 
 interface MasterListPageProps {
@@ -19,6 +21,23 @@ interface MasterListPageProps {
  rowActions?: RowAction<any>[]
 }
 
+/**
+ * `R-196`. Configuración por entidad: padre obligatorio (selector) y campos
+ * numéricos que, vacíos, viajan como `null` — nunca como `''` (422 del int).
+ */
+const PADRE_DE: Record<string, { key: string; entidad: string; labelKey: string; fallback: string }> = {
+ houses: { key: 'farm_id', entidad: 'farms', labelKey: 'masters.selectFarm', fallback: 'Seleccionar granja' },
+ incubators: { key: 'hatchery_id', entidad: 'hatcheries', labelKey: 'masters.selectPlant', fallback: 'Seleccionar planta' },
+ hatchers: { key: 'hatchery_id', entidad: 'hatcheries', labelKey: 'masters.selectPlant', fallback: 'Seleccionar planta' },
+}
+
+const NUMERICOS_DE: Record<string, string[]> = {
+ houses: ['capacity'],
+ incubators: ['capacity'],
+ hatchers: ['capacity'],
+ 'productive-phases': ['order'],
+}
+
 export default function MasterListPage({
  entity,
  titleKey,
@@ -28,6 +47,7 @@ export default function MasterListPage({
 }: MasterListPageProps) {
  const { t } = useTranslation()
  const can = useCan()
+ const padre = PADRE_DE[entity]
  const [items, setItems] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [search, setSearch] = useState('')
@@ -43,6 +63,8 @@ export default function MasterListPage({
  const [formError, setFormError] = useState('')
  const [deleteTarget, setDeleteTarget] = useState<any | null>(null)
  const [deleting, setDeleting] = useState(false)
+ const [padreOpciones, setPadreOpciones] = useState<any[]>([])
+ const [activarConfirm, setActivarConfirm] = useState(false)
 
  const fetchItems = useCallback(async () => {
  setLoading(true)
@@ -66,6 +88,17 @@ export default function MasterListPage({
 
  useEffect(() => { fetchItems() }, [fetchItems])
 
+ // `R-196`. Opciones del padre (granja/planta) para el selector del formulario.
+ useEffect(() => {
+ const p = PADRE_DE[entity]
+ if (!p) { setPadreOpciones([]); return }
+ let vivo = true
+ api.get(`/masters/${p.entidad}`, { params: { limit: 100 } })
+ .then((res) => { if (vivo) setPadreOpciones((res.data ?? []).filter((x: any) => x.is_active !== false)) })
+ .catch(() => { if (vivo) setPadreOpciones([]) })
+ return () => { vivo = false }
+ }, [entity])
+
  // ── Open create modal ──
  const openCreate = () => {
  setEditItem(null)
@@ -79,9 +112,38 @@ export default function MasterListPage({
  setEditItem(item)
  const vals: Record<string, string> = {}
  columns.forEach(c => { vals[c.key] = item[c.key] ?? '' })
+ if (padre) vals[padre.key] = item[padre.key] ?? ''
  setFormValues(vals)
  setFormError('')
  setModalOpen(true)
+ }
+
+ // `R-196`. Numéricos vacíos ⇒ `null`; el padre viaja como número.
+ const construirPayload = () => {
+ const payload: Record<string, any> = { ...formValues }
+ if (padre) payload[padre.key] = formValues[padre.key] ? Number(formValues[padre.key]) : null
+ for (const k of NUMERICOS_DE[entity] ?? []) {
+ const v = formValues[k]
+ payload[k] = v === '' || v === undefined || v === null ? null : Number(v)
+ }
+ return payload
+ }
+
+ // ── Reactivar (`R-196`) ──
+ const reactivar = async () => {
+ if (!editItem) return
+ setSaving(true)
+ setFormError('')
+ try {
+ await api.put(`/masters/${entity}/${editItem.id}`, { is_active: true })
+ setActivarConfirm(false)
+ setModalOpen(false)
+ fetchItems()
+ } catch (err: any) {
+ setFormError(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
+ } finally {
+ setSaving(false)
+ }
  }
 
  // ── Save (create or update) ──
@@ -90,9 +152,9 @@ export default function MasterListPage({
  setFormError('')
  try {
  if (editItem) {
- await api.put(`/masters/${entity}/${editItem.id}`, formValues)
+ await api.put(`/masters/${entity}/${editItem.id}`, construirPayload())
  } else {
- await api.post(`/masters/${entity}`, formValues)
+ await api.post(`/masters/${entity}`, construirPayload())
  }
  setModalOpen(false)
  fetchItems()
@@ -185,6 +247,11 @@ export default function MasterListPage({
  <Button variant="secondary" onClick={() => setModalOpen(false)}>
  {t('common.cancel', 'Cancelar')}
  </Button>
+ {editItem && editItem.is_active === false && !activarConfirm && (
+ <Button variant="secondary" onClick={() => setActivarConfirm(true)}>
+ {t('masters.activate', 'Activar')}
+ </Button>
+ )}
  <Button onClick={handleSave} loading={saving}>
  {t('common.save', 'Guardar')}
  </Button>
@@ -192,10 +259,24 @@ export default function MasterListPage({
  }
  >
  <div className="space-y-4">
+ {padre && (
+ <div>
+ <p className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-1.5">
+ {t(padre.labelKey, padre.fallback)}
+ </p>
+ <SearchSelect
+ value={formValues[padre.key] ?? ''}
+ onChange={(v: string) => setFormValues(prev => ({ ...prev, [padre.key]: v }))}
+ items={padreOpciones}
+ placeholder={t(padre.labelKey, padre.fallback)}
+ />
+ </div>
+ )}
  {columns.map(col => (
  <Input
  key={col.key}
  label={t(col.labelKey)}
+ type={(NUMERICOS_DE[entity] ?? []).includes(col.key) ? 'number' : undefined}
  value={formValues[col.key] ?? ''}
  onChange={e => setFormValues(prev => ({ ...prev, [col.key]: e.target.value }))}
  />
@@ -207,6 +288,17 @@ export default function MasterListPage({
  )}
  </div>
  </Modal>
+
+ {/* `R-196`. Reactivación con confirmación explícita (PUT is_active:true). */}
+ <ConfirmDialog
+ open={activarConfirm}
+ onClose={() => setActivarConfirm(false)}
+ onConfirm={reactivar}
+ title={t('masters.activate', 'Activar')}
+ message={t('masters.activateConfirm', '¿Confirmás reactivar este registro?')}
+ confirmLabel={t('masters.activate', 'Activar')}
+ loading={saving}
+ />
 
  {/* ── Delete Confirmation Modal ── */}
  <Modal

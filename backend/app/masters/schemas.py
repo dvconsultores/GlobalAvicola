@@ -70,7 +70,10 @@ class FarmBase(BaseModel):
 
 
 class FarmCreate(FarmBase):
-    pass
+    # `R-196`/`R-50`: la empresa la resuelve el servidor desde el contexto del
+    # actor; el campo se acepta por compatibilidad pero no impone valor
+    # (ver `MasterService.create`).
+    company_id: Optional[int] = None
 
 
 class FarmUpdate(BaseModel):
@@ -129,7 +132,8 @@ class HatcheryBase(BaseModel):
 
 
 class HatcheryCreate(HatcheryBase):
-    pass
+    # `R-196`/`R-50`: ídem `FarmCreate` — empresa resuelta en servidor.
+    company_id: Optional[int] = None
 
 
 class HatcheryUpdate(BaseModel):

@@ -8,6 +8,7 @@ import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
 import { normalizeLanguage } from './i18n'
 import { ToastProvider } from './components/Toast'
 import AppLayout from './components/layout/AppLayout'
+import MastersHubPage from './pages/masters/MastersHubPage'
 import LoginPage from './pages/auth/LoginPage'
 import DashboardPage from './pages/dashboard/DashboardPage'
 import MasterListPage from './pages/masters/MasterListPage'
@@ -217,7 +218,8 @@ export default function App() {
  {/* Menu hubs — grilla de opciones por área (capa de presentación) */}
  <Route path="/menu/:menuKey" element={<MenuHubPage />} />
  {/* Web-only: Masters */}
- <Route path="/masters" element={<WebOnlyRoute><CapabilityRoute permission="masters:read"><Navigate to="/masters/farms" replace /></CapabilityRoute></WebOnlyRoute>} />
+ {/* `R-196` (AC-07). Antes: `Navigate` fijo a `farms` — las demás entidades solo por URL. */}
+ <Route path="/masters" element={<WebOnlyRoute><CapabilityRoute permission="masters:read"><MastersHubPage entities={masterEntities} /></CapabilityRoute></WebOnlyRoute>} />
  {/*
  `R-96` / `OD-06`. Las curvas de peso cuelgan de la línea genética: se llega a ellas
  desde su fila, no desde un módulo nuevo de primer nivel. La capacidad es lo que el

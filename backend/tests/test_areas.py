@@ -62,6 +62,14 @@ async def _area(client, cab, company_id, nombre=None):
     })
 
 
+async def _cab_otra_empresa(client, cab, company_id_2):
+    """`R-196`. Contexto de empresa 2 para crear/leer datos «ajenos» legítimos."""
+    r = await client.post("/api/v1/switch-company", headers=cab,
+                          json={"company_id": company_id_2})
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
 # ── AC-A01 · el área es dato maestro configurable ─────────────────────────────
 
 async def test_t_039_01_el_area_se_administra_como_maestro(
@@ -167,7 +175,11 @@ async def test_t_039_05_las_areas_no_cruzan_de_empresa(
     from app.auth.security import create_access_token
 
     propia = (await _area(client, auth_headers, seeded_ids["company_id"])).json()
-    ajena = (await _area(client, auth_headers, seeded_ids["company_id_2"])).json()
+    # `R-196`: el área ajena nace en la empresa 2 por el CONTEXTO del token, no
+    # por el `company_id` del cuerpo (que ya no impone valor).
+    cab2 = await _cab_otra_empresa(client, auth_headers, seeded_ids["company_id_2"])
+    ajena = (await _area(client, cab2, seeded_ids["company_id_2"])).json()
+    assert ajena["company_id"] == seeded_ids["company_id_2"], ajena
 
     operador = {"Authorization": "Bearer " + create_access_token(
         data={"sub": str(seeded_ids["user_other_company_id"])})}

@@ -89,6 +89,14 @@ async def _area(client, cab, company_id, sufijo):
         "description": "Fixture de aislamiento de área en lote (GA-FE-06-A)"})
 
 
+async def _cab_otra_empresa(client, cab, company_id_2):
+    """`R-196`. Contexto de empresa 2 para crear el área «ajena» legítimamente."""
+    r = await client.post("/api/v1/switch-company", headers=cab,
+                          json={"company_id": company_id_2})
+    assert r.status_code == 200, r.text
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+
 async def _lote(client, cab, seeded_ids, **extra):
     cuerpo = {
         "company_id": seeded_ids["company_id"],
@@ -119,7 +127,9 @@ def _assert_negativa_propia(r):
 async def test_ga06a_01_el_alta_rechaza_area_de_otra_empresa(
     client, auth_headers, seeded_ids, motor, unidades
 ):
-    ajena = (await _area(client, auth_headers, seeded_ids["company_id_2"], "AJENA")).json()
+    cab2 = await _cab_otra_empresa(client, auth_headers, seeded_ids["company_id_2"])
+    ajena = (await _area(client, cab2, seeded_ids["company_id_2"], "AJENA")).json()
+    assert ajena["company_id"] == seeded_ids["company_id_2"], ajena
     codigo = f"{PREFIJO}{uuid.uuid4().hex[:10]}"
 
     r = await _lote(client, auth_headers, seeded_ids, lot_code=codigo, area_id=ajena["id"])
@@ -139,7 +149,9 @@ async def test_ga06a_02_la_edicion_rechaza_area_de_otra_empresa(
     client, auth_headers, seeded_ids, motor, unidades
 ):
     propia = (await _area(client, auth_headers, seeded_ids["company_id"], "PROPIA2")).json()
-    ajena = (await _area(client, auth_headers, seeded_ids["company_id_2"], "AJENA2")).json()
+    cab2 = await _cab_otra_empresa(client, auth_headers, seeded_ids["company_id_2"])
+    ajena = (await _area(client, cab2, seeded_ids["company_id_2"], "AJENA2")).json()
+    assert ajena["company_id"] == seeded_ids["company_id_2"], ajena
     lote = (await _lote(client, auth_headers, seeded_ids, area_id=propia["id"])).json()
 
     r = await client.put(f"/api/v1/lots/{lote['id']}", headers=auth_headers,

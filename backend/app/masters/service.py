@@ -10,6 +10,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import Base
 from ..audit.models import AuditAction
+from ..operations.validators import BusinessRuleViolation
 
 
 def _serializable(valor: Any) -> Any:
@@ -228,10 +229,15 @@ class MasterService:
         """Create a new item. Auto-assigns company_id from current user."""
         item_data = data.model_dump()
 
-        # Auto-assign company_id if model has it and user has one
-        if hasattr(self.model, "company_id") and "company_id" in item_data:
-            if item_data["company_id"] is None and self.user_company_id:
+        # `R-196`/`R-50`. La empresa de un maestro con `company_id` la resuelve
+        # el servidor desde el contexto del actor: un valor del cliente nunca
+        # se impone (ni siquiera el de otra empresa), y sin contexto la
+        # creación falla cerrada.
+        if hasattr(self.model, "company_id"):
+            if self.user_company_id:
                 item_data["company_id"] = self.user_company_id
+            elif item_data.get("company_id") is None:
+                raise BusinessRuleViolation("No hay empresa efectiva", "BR-07")
 
         await self._verificar_padres(item_data)
 

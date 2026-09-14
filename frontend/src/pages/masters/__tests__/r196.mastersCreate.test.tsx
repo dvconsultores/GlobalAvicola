@@ -308,9 +308,11 @@ describe('R-196 · creación de maestros por entidad (RED)', () => {
     const claves = Object.keys(modulos)
     expect(claves.length, 'MastersHubPage no existe todavía (AC-07)').toBeGreaterThan(0)
     const mod: any = await modulos[claves[0]]()
+    const entidades = ['farms', 'houses', 'hatcheries', 'incubators', 'hatchers', 'areas', 'suppliers', 'breeds']
+      .map((entity) => ({ entity, title: `masters.${entity}` }))
     render(
       <MemoryRouter initialEntries={['/masters']}>
-        <mod.default />
+        <mod.default entities={entidades} />
       </MemoryRouter>,
     )
     const accesos = await screen.findAllByRole('link')

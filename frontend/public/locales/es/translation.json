@@ -325,6 +325,12 @@
     "cancelled": "Cancelado"
   },
   "masters": {
+    "selectFarm": "Seleccionar granja",
+    "selectPlant": "Seleccionar planta",
+    "activate": "Activar",
+    "activateConfirm": "¿Confirmás reactivar este registro? Su historial se conserva.",
+    "hubTitle": "Maestros",
+    "hubHint": "Elegí una entidad para administrarla.",
     "companies": "Empresas",
     "farms": "Granjas",
     "houses": "Galpones",
