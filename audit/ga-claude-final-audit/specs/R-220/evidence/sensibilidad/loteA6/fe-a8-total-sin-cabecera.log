@@ -1,0 +1,374 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA6.test.tsx (2 tests | 1 failed) 1137ms
+     × AC-R220-A·A8 · lotes: «Cargar más» usa X-Total-Count y trae la página siguiente 1073ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA6.test.tsx > R-220 · Lote A sexta tanda (RED) > AC-R220-A·A8 · lotes: «Cargar más» usa X-Total-Count y trae la página siguiente
+TestingLibraryElementError: Unable to find role="button" and name `/Cargar más/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mlots.title[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500 mt-1"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m [0m
+            [0mlots.activeCount[0m
+            [0m · [0m
+            [0m0[0m
+            [0m [0m
+            [0mlots.closedCount[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap gap-2 mb-4"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-[#1E3A5F] text-white"[39m
+        [36m>[39m
+          [0mcommon.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.grandparent[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.breeder[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.broiler[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"lg:hidden space-y-3"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"block bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:border-[#5a9bba] transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/lots/5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center justify-between mb-2"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"font-mono font-semibold text-[#1E3A5F]"[39m
+            [36m>[39m
+              [0mL-05[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+            [36m>[39m
+              [0mactive[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-600"[39m
+          [36m>[39m
+            [0mbroiler[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+          [36m>[39m
+            [0mlots.startPrefix[0m
+            [0m10/09/2026[0m
+          [36m</p>[39m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+      [36m>[39m
+        [36m<table[39m
+          [33mclass[39m=[32m"w-full text-sm"[39m
+        [36m>[39m
+          [36m<thead[39m
+            [33mclass[39m=[32m"bg-slate-50 border-b border-slate-200"[39m
+          [36m>[39m
+            [36m<tr>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.code[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.type[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.status[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.start[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.actions[0m
+              [36m</th>[39m
+            [36m</tr>[39m
+          [36m</thead>[39m
+          [36m<tbody[39m
+            [33mclass[39m=[32m"divide-y divide-slate-100"[39m
+          [36m>[39m
+            [36m<tr[39m
+              [33mclass[39m=[32m"hover:bg-slate-50 transition"[39m
+            [36m>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 font-mono font-medium text-[#1E3A5F]"[39m
+              [36m>[39m
+                [0mL-05[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [0mbroiler[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+                [36m>[39m
+                  [0mactive[0m
+                [36m</span>[39m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 text-slate-500"[39m
+              [36m>[39m
+                [0m10/09/2026[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-800 transition"[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/lots/5"[39m
+                [36m>[39m
+                  [0mlots.viewDetail[0m
+                [36m</a>[39m
+              [36m</td>[39m
+            [36m</tr>[39m
+          [36m</tbody>[39m
+        [36m</table>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mlots.title[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500 mt-1"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m [0m
+            [0mlots.activeCount[0m
+            [0m · [0m
+            [0m0[0m
+            [0m [0m
+            [0mlots.closedCount[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap gap-2 mb-4"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-[#1E3A5F] text-white"[39m
+        [36m>[39m
+          [0mcommon.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.grandparent[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.breeder[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.broiler[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"lg:hidden space-y-3"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"block bg-white rounded-xl shadow-sm border border-slate-200 p-4 hover:border-[#5a9bba] transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/lots/5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center justify-between mb-2"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"font-mono font-semibold text-[#1E3A5F]"[39m
+            [36m>[39m
+              [0mL-05[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+            [36m>[39m
+              [0mactive[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-600"[39m
+          [36m>[39m
+            [0mbroiler[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+          [36m>[39m
+            [0mlots.startPrefix[0m
+            [0m10/09/2026[0m
+          [36m</p>[39m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+      [36m>[39m
+        [36m<table[39m
+          [33mclass[39m=[32m"w-full text-sm"[39m
+        [36m>[39m
+          [36m<thead[39m
+            [33mclass[39m=[32m"bg-slate-50 border-b border-slate-200"[39m
+          [36m>[39m
+            [36m<tr>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.code[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.type[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.status[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.start[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.actions[0m
+              [36m</th>[39m
+            [36m</tr>[39m
+          [36m</thead>[39m
+          [36m<tbody[39m
+            [33mclass[39m=[32m"divide-y divide-slate-100"[39m
+          [36m>[39m
+            [36m<tr[39m
+              [33mclass[39m=[32m"hover:bg-slate-50 transition"[39m
+            [36m>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 font-mono font-medium text-[#1E3A5F]"[39m
+              [36m>[39m
+                [0mL-05[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [0mbroiler[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+                [36m>[39m
+                  [0mactive[0m
+                [36m</span>[39m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 text-slate-500"[39m
+              [36m>[39m
+                [0m10/09/2026[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-3 py-1 rounded text-xs font-medium hover:bg-blue-800 transition"[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/lots/5"[39m
+                [36m>[39m
+                  [0mlots.viewDetail[0m
+                [36m</a>[39m
+              [36m</td>[39m
+            [36m</tr>[39m
+          [36m</tbody>[39m
+        [36m</table>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteA6.test.tsx:63:30
+     61|     )
+     62|     await waitFor(() => expect(screen.getAllByText(/L-05/).length).toB…
+     63|     const mas = await screen.findByRole('button', { name: /Cargar más/…
+       |                              ^
+     64|     fireEvent.click(mas)
+     65|     await waitFor(() => expect(screen.getAllByText(/L-06/).length).toB…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  20:11:54
+   Duration  2.14s (transform 107ms, setup 49ms, import 289ms, tests 1.14s, environment 548ms)
+
