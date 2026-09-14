@@ -109,6 +109,30 @@ export const NAV_ITEMS: NavItem[] = [
         permission: 'lots:read',
         requiresUnits: true,
       },
+      // `R-220` · B5 (F G-19) y B3 (F G-05): el historial operativo y «mis
+      // pendientes» existían como rutas y pantallas, pero sin entrada de menú.
+      {
+        key: 'operations_history',
+        icon: FileText,
+        labelKey: 'nav.operationsHistory',
+        fallback: 'Historial',
+        to: '/operations',
+        section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'operations:read',
+        requiresUnits: true,
+      },
+      {
+        key: 'my_pending',
+        icon: Clock,
+        labelKey: 'nav.myPending',
+        fallback: 'Mis pendientes',
+        to: '/my-pending',
+        section: 'operational',
+        capability: 'PRODUCTIVE',
+        permission: 'operations:read',
+        requiresUnits: true,
+      },
       {
         key: 'grandparent',
         icon: Plane,
