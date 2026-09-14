@@ -108,9 +108,11 @@ function PoultryStageRoute() {
  )
 }
 
-function HomeRoute() {
+export function HomeRoute() {
  const { user } = useAuthStore()
  if (user?.view_type === 'mobile') return <Navigate to="/menu/poultry" replace />
+ // `R-212` · AC-02: sin `dashboard:read` el home lleva a un hub útil, no a un error.
+ if (user && !hasPermission(user, 'dashboard:read')) return <Navigate to="/menu/poultry" replace />
  return <DashboardPage />
 }
 

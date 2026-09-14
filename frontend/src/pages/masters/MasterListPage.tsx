@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Search, Trash2 } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import DataTable, { type RowAction } from '../../components/data-table/DataTable'
 import { Button, Modal, Input } from '../../components/ui'
@@ -65,6 +66,8 @@ export default function MasterListPage({
  const [deleting, setDeleting] = useState(false)
  const [padreOpciones, setPadreOpciones] = useState<any[]>([])
  const [activarConfirm, setActivarConfirm] = useState(false)
+ // `R-212` · AC-04.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
  const fetchItems = useCallback(async () => {
  setLoading(true)
@@ -79,8 +82,10 @@ export default function MasterListPage({
  // `X-Total-Count`. Se conserva la longitud como reserva por si la cabecera no viaja.
  const totalHeader = response.headers['x-total-count']
  setTotal(totalHeader !== undefined ? Number(totalHeader) : response.data.length)
+ setEstado('ok')
  } catch (err) {
  console.error(`Error fetching ${entity}:`, err)
+ setEstado((err as any)?.response?.status === 403 ? 'prohibido' : 'error')
  } finally {
  setLoading(false)
  }
@@ -185,6 +190,14 @@ export default function MasterListPage({
  key: col.key,
  label: t(col.labelKey),
  }))
+
+ if (estado !== 'ok') {
+ return (
+ <div className="py-4 sm:py-6">
+ <ErrorState kind={estado} onRetry={fetchItems} />
+ </div>
+ )
+ }
 
  return (
  <div className="py-4 sm:py-6">

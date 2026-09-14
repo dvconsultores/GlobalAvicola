@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Pencil } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
@@ -16,6 +17,9 @@ export default function CorrectionForm() {
  const toast = useToast()
  const [loading, setLoading] = useState(true)
  const [submitting, setSubmitting] = useState(false)
+ // `R-212` · AC-04/05.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
+ const [refresco, setRefresco] = useState(0)
 
  const [fieldName, setFieldName] = useState('observations')
  const [originalValue, setOriginalValue] = useState('')
@@ -35,14 +39,18 @@ export default function CorrectionForm() {
 
  const { data: ctypes } = await api.get('/masters/correction-types')
  setCorrectionTypes(Array.isArray(ctypes) ? ctypes : [])
- } catch (err) {
+ setEstado('ok')
+ } catch (err: any) {
  console.error(err)
+ setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
  } finally {
  setLoading(false)
  }
  }
  fetch()
- }, [id])
+ }, [id, refresco])
+
+ if (estado !== 'ok') return <div className="py-4 sm:py-6"><ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} /></div>
 
  const handleSubmit = async (e: React.FormEvent) => {
  e.preventDefault()

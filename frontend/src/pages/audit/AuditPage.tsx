@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Shield, RotateCcw } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { FilterPanel, FilterGroup, Badge, StatusTimeline, EmptyState } from '../../components/ui'
@@ -60,6 +61,9 @@ export default function AuditPage() {
  const can = useCan()
  const [usuarios, setUsuarios] = useState<Record<number, string>>({})
  const [pagina, setPagina] = useState(0)
+ // `R-212` · AC-04.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
+ const [refresco, setRefresco] = useState(0)
 
  useEffect(() => {
  setLoading(true)
@@ -76,10 +80,10 @@ export default function AuditPage() {
  if (activeTab === 'corrections') params.set('action', 'corrected')
 
  api.get(`/audit?${params}`)
- .then(r => { setLogs(r.data.logs || []); setTotal(r.data.total || 0) })
- .catch(() => {})
+ .then(r => { setLogs(r.data.logs || []); setTotal(r.data.total || 0); setEstado('ok') })
+ .catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
  .finally(() => setLoading(false))
- }, [activeTab, accion, modulo, dateFrom, dateTo, pagina])
+ }, [activeTab, accion, modulo, dateFrom, dateTo, pagina, refresco])
 
  // `R-219` · AC-01 (`C-01=A`): el esquema real expone `user_id`; el nombre se resuelve con
  // `/users` cuando el rol puede leerlo (si no, se muestra `Usuario #id`).
@@ -145,6 +149,14 @@ export default function AuditPage() {
  type: mapActionToType(log.action),
  }
  })
+
+ if (estado !== 'ok') {
+ return (
+ <div className="py-4 sm:py-6">
+ <ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} />
+ </div>
+ )
+ }
 
  return (
  <div>

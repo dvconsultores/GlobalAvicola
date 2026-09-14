@@ -3,16 +3,28 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useToast, getErrorMessage } from '../../components/Toast'
 
 export default function SapComparisonPage() {
  const { t } = useTranslation()
  const toast = useToast()
  const [data, setData] = useState<any>(null)
+ // `R-212` · AC-05: nunca spinner eterno.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
- useEffect(() => {
- api.get('/reports/sap-comparison').then(r => setData(r.data)).catch((e: any) => toast.error(getErrorMessage(e, t('reports.errorLoading'))))
- }, [])
+ const cargar = () => {
+ api.get('/reports/sap-comparison')
+ .then(r => { setData(r.data); setEstado('ok') })
+ .catch((e: any) => {
+ setEstado(e?.response?.status === 403 ? 'prohibido' : 'error')
+ toast.error(getErrorMessage(e, t('reports.errorLoading')))
+ })
+ }
+
+ useEffect(() => { cargar() }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+ if (estado !== 'ok') return <div className="py-4 sm:py-6"><ErrorState kind={estado} onRetry={cargar} /></div>
 
  if (!data) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
 

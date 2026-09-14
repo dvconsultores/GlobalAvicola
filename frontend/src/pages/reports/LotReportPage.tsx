@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
 import { ArrowLeft, Download, TrendingUp, Activity } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Button } from '../../components/ui'
 import { exportToExcel, exportToPDF, lotReportToRows } from '../../utils/export'
@@ -20,10 +21,15 @@ export default function LotReportPage() {
  const [kpiTraslado, setKpiTraslado] = useState<any>(null)
  const [kpiIncubadora, setKpiIncubadora] = useState<any>(null)
  const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
+ // `R-212` · AC-05: 403/500 ⇒ estado con reintento, nunca spinner eterno.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
  const toast = useToast()
 
- useEffect(() => {
- api.get(`/reports/lot/${id}`).then(r => setReport(r.data)).catch((e: any) => toast.error(getErrorMessage(e, t('reports.errorLoading'))))
+ const cargar = () => {
+ api.get(`/reports/lot/${id}`).then(r => { setReport(r.data); setEstado('ok') }).catch((e: any) => {
+ setEstado(e?.response?.status === 403 ? 'prohibido' : 'error')
+ toast.error(getErrorMessage(e, t('reports.errorLoading')))
+ })
  Promise.allSettled([
  api.get(`/reports/kpi/ipe/${id}`),
  api.get(`/reports/kpi/weight-uniformity/${id}`),
@@ -39,7 +45,9 @@ export default function LotReportPage() {
  if (traRes.status === 'fulfilled') setKpiTraslado(traRes.value.data)
  if (incRes.status === 'fulfilled') setKpiIncubadora(incRes.value.data)
  })
- }, [id])
+ }
+
+ useEffect(() => { cargar() }, [id]) // eslint-disable-line react-hooks/exhaustive-deps
 
  const handleExport = async (format: 'excel'|'pdf') => {
  setExporting(format)
@@ -60,6 +68,8 @@ export default function LotReportPage() {
  setExporting(null)
  }
  }
+
+ if (estado !== 'ok') return <div className="py-4 sm:py-6"><ErrorState kind={estado} onRetry={cargar} /></div>
 
  if (!report) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
 

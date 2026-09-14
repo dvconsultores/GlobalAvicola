@@ -12,6 +12,7 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Pencil, Trash2, X, ShieldCheck } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 
 interface Permiso { module: string; action: string; scope_type?: string }
@@ -29,6 +30,8 @@ export default function RolesPage() {
   const [editingId, setEditingId] = useState<number | null>(null)
   const [form, setForm] = useState<RolForm>(formVacio)
   const [saving, setSaving] = useState(false)
+  // `R-212` · AC-04.
+  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
   const fetchData = useCallback(async () => {
     setLoading(true)
@@ -39,14 +42,24 @@ export default function RolesPage() {
       ])
       setRoles(rr.data || [])
       setCatalogo(cr.data || { modules: [], actions: [] })
-    } catch (e) {
+      setEstado('ok')
+    } catch (e: any) {
       console.error(e)
+      setEstado(e?.response?.status === 403 ? 'prohibido' : 'error')
     } finally {
       setLoading(false)
     }
   }, [])
 
   useEffect(() => { fetchData() }, [fetchData])
+
+  if (estado !== 'ok') {
+    return (
+      <div className="p-4 sm:p-6">
+        <ErrorState kind={estado} onRetry={fetchData} />
+      </div>
+    )
+  }
 
   const tiene = (module: string, action: string) =>
     form.permissions.some(p => p.module === module && p.action === action)

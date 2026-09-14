@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { ClipboardList } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { PROCESS_STAGES, flowForStage, type StageKey } from '../../data/processCatalog'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
@@ -18,6 +19,8 @@ export default function OperationListPage() {
  const { t } = useTranslation()
  const [events, setEvents] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
+ // `R-212` · AC-04: denegación ≠ vacío.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
  const [lotId, setLotId] = useState('')
  const [eventType, setEventType] = useState('')
 
@@ -40,11 +43,22 @@ export default function OperationListPage() {
  result = result.filter((ev: any) => flowEvents.has(ev.event_type))
  }
  setEvents(result)
- } catch { setEvents([]) }
+ setEstado('ok')
+ } catch (err: any) {
+ setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
+ }
  finally { setLoading(false) }
  }, [lotId, eventType])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
+
+ if (estado !== 'ok') {
+ return (
+ <div className="py-4 sm:py-6">
+ <ErrorState kind={estado} onRetry={fetchEvents} />
+ </div>
+ )
+ }
 
  return (
  <div className="py-4 sm:py-6">

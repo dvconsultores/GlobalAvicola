@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Plus } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import { useAuthStore } from '../../stores/auth.store'
 
@@ -22,6 +23,8 @@ export default function LotListPage() {
  const [lots, setLots] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [birdType, setBirdType] = useState('')
+ // `R-212` · AC-04.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
  const fetchLots = useCallback(async () => {
  setLoading(true)
@@ -29,8 +32,9 @@ export default function LotListPage() {
  const { data } = await api.get('/lots?limit=100')
  const filtered = birdType ? (data || []).filter((l: any) => l.bird_type === birdType) : (data || [])
  setLots(filtered)
- } catch (err) {
- console.error(err)
+ setEstado('ok')
+ } catch (err: any) {
+ setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
  } finally {
  setLoading(false)
  }
@@ -40,6 +44,14 @@ export default function LotListPage() {
 
  const activeLots = lots.filter(l => l.status === 'active').length
  const closedLots = lots.filter(l => l.status === 'closed').length
+
+ if (estado !== 'ok') {
+ return (
+ <div className="py-4 sm:py-6">
+ <ErrorState kind={estado} onRetry={fetchLots} />
+ </div>
+ )
+ }
 
  return (
  <div className="py-4 sm:py-6">

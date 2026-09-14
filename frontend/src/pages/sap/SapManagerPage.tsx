@@ -5,6 +5,7 @@ import {
  Send, AlertTriangle, FileText, Building2,
 } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import SubNavHeader from '../../components/layout/SubNavHeader'
@@ -33,20 +34,28 @@ export default function SapManagerPage() {
  const [jobs, setJobs] = useState<any[]>([])
  const [payloads, setPayloads] = useState<any[]>([])
  const [conn, setConn] = useState<any>(null)
+ // `R-212` · AC-04: 403 no se disfraza de «vacío».
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
+ const [refresco, setRefresco] = useState(0)
 
  useEffect(() => {
+ const propaga403 = (e: any) => {
+ if (e?.response?.status === 403) throw e
+ return null
+ }
  Promise.all([
- api.get('/sap/references?limit=10').catch(() => ({ data: { references: [] } })),
- api.get('/sap/sync/jobs?limit=5').catch(() => ({ data: { jobs: [] } })),
- api.get('/sap/payloads?limit=5').catch(() => ({ data: { payloads: [] } })),
- api.get('/sap/connection-check').catch(() => ({ data: null })),
+ api.get('/sap/references?limit=10').catch((e: any) => propaga403(e) ?? { data: { references: [] } }),
+ api.get('/sap/sync/jobs?limit=5').catch((e: any) => propaga403(e) ?? { data: { jobs: [] } }),
+ api.get('/sap/payloads?limit=5').catch((e: any) => propaga403(e) ?? { data: { payloads: [] } }),
+ api.get('/sap/connection-check').catch((e: any) => propaga403(e) ?? { data: null }),
  ]).then(([refRes, jobsRes, payloadRes, connRes]) => {
  setRefs(refRes.data.references || [])
  setJobs(jobsRes.data.jobs || [])
  setPayloads(payloadRes.data.payloads || [])
  setConn(connRes.data)
- })
- }, [])
+ setEstado('ok')
+ }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
+ }, [refresco])
 
  const handleConsolidate = async () => {
  try {
@@ -70,6 +79,14 @@ export default function SapManagerPage() {
  const pendingCount = payloads.filter(p => p.status === 'pending' || p.status === 'draft').length
  const sentCount = payloads.filter(p => p.status === 'sent' || p.status === 'confirmed').length
  const errorCount = payloads.filter(p => p.status === 'error').length
+
+ if (estado !== 'ok') {
+ return (
+ <div className="py-4 sm:py-6">
+ <ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} />
+ </div>
+ )
+ }
 
  return (
  <div>

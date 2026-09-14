@@ -51,12 +51,16 @@ export default function LotDetailPage() {
  const { data: found } = await api.get(`/lots/${id}`)
  setLot(found || null)
 
+ // `R-212` · AC-01: no se piden KPIs de reportes sin `reports:read` (el
+ // servidor deniega; la UI deja de emitir la petición).
+ const puedeReportes = can({ permission: 'reports:read' })
+ const omitido = Promise.resolve({ data: null } as any)
  const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes, mastersRes] = await Promise.allSettled([
- api.get(`/reports/kpis?lot_id=${id}`),
+ puedeReportes ? api.get(`/reports/kpis?lot_id=${id}`) : omitido,
  api.get(`/operations?lot_id=${id}&limit=50`),
  api.get(`/lots/${id}/phases`),
- api.get(`/reports/kpi/ipe/${id}`),
- api.get(`/reports/kpi/weight-uniformity/${id}`),
+ puedeReportes ? api.get(`/reports/kpi/ipe/${id}`) : omitido,
+ puedeReportes ? api.get(`/reports/kpi/weight-uniformity/${id}`) : omitido,
  api.get(`/operations/alerts?lot_id=${id}&is_resolved=false&limit=20`),
  api.get('/masters/productive-phases'),
  ])

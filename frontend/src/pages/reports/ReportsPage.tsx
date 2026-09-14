@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
 import { Droplets, Download, BarChart2, Wheat, Egg, Baby, Syringe, Truck, ClipboardList, RefreshCw } from 'lucide-react'
 import api from '../../services/api'
+import ErrorState from '../../components/ui/ErrorState'
 import { exportToExcel, exportToPDF, kpisToRows } from '../../utils/export'
 import { Button } from '../../components/ui'
 
@@ -12,9 +13,12 @@ export default function ReportsPage() {
  const [kpis, setKpis] = useState<any>(null)
  const [lotId, setLotId] = useState(2)
  const [chartData, setChartData] = useState<any[]>([])
+ // `R-212` · AC-04.
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
+ const [refresco, setRefresco] = useState(0)
 
  useEffect(() => {
- api.get(`/reports/kpis?lot_id=${lotId}`).then(r => setKpis(r.data)).catch(() => {})
+ api.get(`/reports/kpis?lot_id=${lotId}`).then(r => { setKpis(r.data); setEstado('ok') }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
  // G-12: Fetch events for chart visualization
  api.get(`/operations?lot_id=${lotId}&limit=100`  /* GA-REM-011 C-06 */).then(r => {
  const events = r.data?.events || r.data || []
@@ -30,8 +34,8 @@ export default function ReportsPage() {
  if (e.water_liters) byDate[d].water_l += e.water_liters
  })
  setChartData(Object.values(byDate).sort((a: any, b: any) => a.date.localeCompare(b.date)))
- }).catch(() => {})
- }, [lotId])
+ }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
+ }, [lotId, refresco])
 
  // T-081: Real client-side export
  const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
@@ -62,6 +66,14 @@ export default function ReportsPage() {
  } finally {
  setExporting(null)
  }
+ }
+
+ if (estado !== 'ok') {
+ return (
+ <div className="py-4 sm:py-6">
+ <ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} />
+ </div>
+ )
  }
 
  return (

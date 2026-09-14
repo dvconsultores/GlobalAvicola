@@ -23,6 +23,9 @@ vi.mock('../components/Toast', () => ({
   getErrorMessage: (_e: any, f: string) => f,
 }))
 vi.mock('../pages/dashboard/DashboardPage', () => ({ default: () => <div>DASHBOARD-MOCK</div> }))
+// Colateral no relacionado con R-212: el árbol de trazabilidad espera props que este
+// harness no sirve; se aisla (su contrato tiene sus propias pruebas).
+vi.mock('../components/TraceabilityTree', () => ({ TraceabilityTree: () => null }))
 
 import OperationListPage from '../pages/operations/OperationListPage'
 import LotListPage from '../pages/lots/LotListPage'
@@ -57,9 +60,9 @@ function setSession(permissions: string[]) {
   })
 }
 
-const renderAt = (path: string, element: React.ReactNode) =>
+const renderAt = (path: string, element: React.ReactNode, entry?: string) =>
   render(
-    <MemoryRouter initialEntries={[path]}>
+    <MemoryRouter initialEntries={[entry ?? path]}>
       <Routes><Route path={path} element={element as any} /></Routes>
     </MemoryRouter>,
   )
@@ -80,22 +83,21 @@ describe('R-212 · superficies conscientes del permiso (RED)', () => {
       if (u === '/lots/9') return Promise.resolve({ data: { id: 9, lot_code: 'L-9', status: 'active' } })
       return Promise.resolve({ data: [], headers: {} })
     })
-    const vista = renderAt('/lots/:id', <LotDetailPage />)
-    await waitFor(() => expect(urls().includes('/lots/9')).toBe(true))
+    renderAt('/lots/:id', <LotDetailPage />, '/lots/9')
+    await waitFor(() => expect(urls(), 'llamada /lots/9 ausente').toContain('/lots/9'))
     const kpis = urls().filter((u) => u.includes('/reports/kpis') || u.includes('/kpi/ipe') || u.includes('weight-uniformity'))
     expect(kpis, 'no se deben pedir KPIs sin permiso').toEqual([])
-    vista.unmount()
+  })
 
-    // control: con permiso sí viajan
+  it('AC-R212-01 · control con `reports:read`: los KPIs sí viajan', async () => {
     setSession(['lots:read', 'reports:read'])
-    get.mockReset()
     get.mockImplementation((url: string) => {
       const u = String(url)
       if (u === '/lots/9') return Promise.resolve({ data: { id: 9, lot_code: 'L-9', status: 'active' } })
       if (u.includes('/reports/kpis?lot_id=9')) return Promise.resolve({ data: { mortality_rate: 1 } })
       return Promise.resolve({ data: [], headers: {} })
     })
-    renderAt('/lots/:id', <LotDetailPage />)
+    renderAt('/lots/:id', <LotDetailPage />, '/lots/9')
     await waitFor(() => expect(urls().some((u) => u.includes('/reports/kpis?lot_id=9'))).toBe(true))
   })
 
@@ -154,7 +156,7 @@ describe('R-212 · superficies conscientes del permiso (RED)', () => {
   it('AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta', async () => {
     setSession(['reports:read'])
     get.mockImplementation(() => Promise.reject({ response: { status: 403 } }))
-    renderAt('/reports/lot/:id', <LotReportPage />)
+    renderAt('/reports/lot/:id', <LotReportPage />, '/reports/lot/9')
     const alerta = await screen.findByRole('alert')
     expect(alerta.textContent).toMatch(PROHIBIDO)
     expect(screen.queryByText('common.loading')).toBeNull()
