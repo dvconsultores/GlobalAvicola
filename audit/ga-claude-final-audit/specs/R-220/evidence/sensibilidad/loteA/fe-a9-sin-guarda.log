@@ -1,0 +1,199 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/__tests__/r220.loteA.test.tsx > R-220 · Lote A (representativos, RED) > AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+stderr | src/__tests__/r220.loteA.test.tsx > R-220 · Lote A (representativos, RED) > AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+stderr | src/__tests__/r220.loteA.test.tsx > R-220 · Lote A (representativos, RED) > AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+ ❯ src/__tests__/r220.loteA.test.tsx (2 tests | 1 failed) 1405ms
+     × AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve 1367ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA.test.tsx > R-220 · Lote A (representativos, RED) > AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve
+AssertionError: doble gesto ⇒ doble POST: expected 2 to be 1 // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+              [36m>[39m
+                [0mAprobaciones[0m
+              [36m</h1>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/review"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m12 19-7-7 7-7"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M19 12H5"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [0m [0m
+                  [0mRevisión[0m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"min-w-0 flex-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                    [36m/>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                    [36m>[39m
+                      [0mPendientes[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                  [36m>[39m
+                    [0m1[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"12"[39m
+                      [33mcy[39m=[32m"12"[39m
+                      [33mr[39m=[32m"10"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M12 6v6l4 2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"min-w-0 flex-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500"[39m
+                    [36m/>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                    [36m>[39m
+                      [0mAprobados[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                  [36m>[39m
+                    [0m0[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-emerald-50"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-ci...
+
+- Expected
++ Received
+
+- 1
++ 2
+
+ ❯ src/__tests__/r220.loteA.test.tsx:71:45
+     69|     await waitFor(() => {
+     70|       const n = urls(post).filter((u) => u.includes('/approvals/approv…
+     71|       expect(n, 'doble gesto ⇒ doble POST').toBe(1)
+       |                                             ^
+     72|     })
+     73|   })
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  17:33:06
+   Duration  4.80s (transform 309ms, setup 170ms, import 650ms, tests 1.41s, environment 2.30s)
+
