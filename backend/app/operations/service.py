@@ -9,7 +9,8 @@ from fastapi import status as status_mod
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from ..audit.helpers import audit_event_created, audit_state_transition
+from ..audit.helpers import audit_accion, audit_event_created, audit_state_transition
+from ..audit.models import AuditAction, AuditModule
 from ..config import settings
 from ..masters.service import MasterService
 
@@ -1432,6 +1433,16 @@ class OperationsService:
             uploaded_by_id=self.current_user["id"],
         )
         self.db.add(evidence)
+        await self.db.flush()
+
+        # `P1-12-REOPEN` (`E-15` · T-06): subir evidencia deja fila (sin binario).
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.CREATED,
+            modulo=AuditModule.OPERATIONS, entity_type="evidence",
+            entity_id=str(evidence.id), lot_id=event.lot_id,
+            new_values={"file_name": file_name, "mime_type": mime_type,
+                        "evidence_type": evidence_type},
+        )
         await self.db.commit()
         await self.db.refresh(evidence)
         return evidence
@@ -1458,11 +1469,21 @@ class OperationsService:
         # orden preserva el contrato certificado de `R-139` (`403` entre inquilinos).
         event = await self.get_event(event_id)
         await self.exigir_unidad_operativa(event=event)
+        nombre = evidence.file_name
         try:
             os.remove(evidence.file_path)
         except OSError:
             pass
         await self.db.delete(evidence)
+        await self.db.flush()
+
+        # `P1-12-REOPEN` (`E-15` · T-06): borrar evidencia deja fila con su nombre.
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.DELETED,
+            modulo=AuditModule.OPERATIONS, entity_type="evidence",
+            entity_id=str(evidence_id), lot_id=event.lot_id,
+            new_values={"file_name": nombre},
+        )
         await self.db.commit()
 
     async def get_evidence_for_download(self, event_id: int, evidence_id: int) -> models.Evidence:

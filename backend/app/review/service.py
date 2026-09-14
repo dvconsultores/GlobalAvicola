@@ -206,6 +206,8 @@ class ReviewService(SegregacionMixin):
     async def create_review_batch(self, data: schemas.ReviewBatchCreate) -> models.ReviewBatch:
         """Create a review batch from a list of event IDs."""
         # Validate all events exist, belong to company, and are in reviewable status
+        eventos: dict[int, OperationalEvent] = {}
+        estados_previos: dict[int, str] = {}
         for event_id in data.event_ids:
             event = await self._get_event(event_id)
             if event.status not in (EventStatus.REGISTERED, EventStatus.PENDING_REVIEW):
@@ -213,6 +215,8 @@ class ReviewService(SegregacionMixin):
                     status_code=status.HTTP_400_BAD_REQUEST,
                     detail=f"Evento #{event_id} no está en estado revisable (actual: {event.status.value})",
                 )
+            eventos[event_id] = event
+            estados_previos[event_id] = event.status.value
 
         batch = models.ReviewBatch(
             company_id=self.company_id,
@@ -239,6 +243,16 @@ class ReviewService(SegregacionMixin):
             ))
 
         await self.db.flush()
+
+        # `P1-12-REOPEN` (`E-06` · T-07): el update masivo no pasa por el listener — la
+        # transición a `pending_review` se escribe explícitamente, una fila por evento.
+        for event_id, evento in eventos.items():
+            await audit_state_transition(
+                self.db, evento, self.current_user,
+                estados_previos.get(event_id, "registered"), "pending_review",
+                comments=f"Batch «{batch.batch_name}»",
+            )
+
         await self.db.refresh(batch)
         return batch
 

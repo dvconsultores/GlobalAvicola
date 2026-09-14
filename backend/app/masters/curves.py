@@ -134,13 +134,25 @@ async def crear_version(
     await db.flush()
 
     if datos.is_active:
-        await activar(db, curva)
+        await activar(db, curva, usuario=current_user)
 
     await db.refresh(curva)
+
+    # `P1-12-REOPEN` (`E-12` · T-06): crear la versión deja fila.
+    from ..audit.helpers import audit_accion
+    from ..audit.models import AuditAction, AuditModule
+
+    await audit_accion(
+        db, usuario=current_user, accion=AuditAction.CREATED, modulo=AuditModule.MASTERS,
+        entity_type="weight_curve", entity_id=str(curva.id),
+        new_values={"genetic_line_id": curva.genetic_line_id,
+                    "version_label": curva.version_label, "is_active": curva.is_active},
+    )
     return curva
 
 
-async def activar(db: AsyncSession, curva: models.GeneticWeightCurve) -> None:
+async def activar(db: AsyncSession, curva: models.GeneticWeightCurve,
+                  usuario: dict | None = None) -> None:
     """Marca esta versión como la activa de su línea, desactivando la anterior.
 
     «Activa» significa *la que toma un lote nuevo por defecto* (`AC09`), y solo puede
@@ -160,6 +172,17 @@ async def activar(db: AsyncSession, curva: models.GeneticWeightCurve) -> None:
         anterior.is_active = False
     curva.is_active = True
     await db.flush()
+
+    # `P1-12-REOPEN` (`E-12` · T-06): publicar la activa deja fila.
+    from ..audit.helpers import audit_accion
+    from ..audit.models import AuditAction, AuditModule
+
+    await audit_accion(
+        db, usuario=usuario, accion=AuditAction.UPDATED, modulo=AuditModule.MASTERS,
+        entity_type="weight_curve", entity_id=str(curva.id), new_state="active",
+        new_values={"version_label": curva.version_label,
+                    "previous_active_ids": [a.id for a in anteriores]},
+    )
 
 
 async def version_activa(

@@ -237,6 +237,6 @@ async def activate_weight_curve(
     if curva is None:
         raise HTTPException(status_code=404, detail="Curva no encontrada")
     await curves._linea_del_usuario(db, curva.genetic_line_id, current_user)
-    await curves.activar(db, curva)
+    await curves.activar(db, curva, usuario=current_user)
     await db.refresh(curva)
     return schemas.WeightCurveRead.model_validate(curva)

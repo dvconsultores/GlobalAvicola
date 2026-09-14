@@ -134,6 +134,13 @@ class ReversalService:
         )
         self.db.add(contrapartida)
         await self.db.flush()
+
+        # `P1-12-REOPEN` (`E-06` · T-07): la contrapartida nace en `pending_review`; su
+        # fila de transición se escribe explícitamente (el alta ya la cubre el listener).
+        await audit_state_transition(
+            self.db, contrapartida, self.current_user, None, "pending_review",
+            comments=f"Reverso de #{original.id}: {data.reason}",
+        )
         movimientos: dict[str, list[dict]] = {}
         for modelo, clave in ((BirdMovement, "bird_movements"), (FeedMovement, "feed_movements"),
                               (InspectionDetail, "inspection_details"), (HatcheryParams, "hatchery_params")):

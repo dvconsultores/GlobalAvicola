@@ -4,8 +4,15 @@ SQLAlchemy event listeners for automatic audit logging.
 Principle: Everything is audited. Nothing is deleted. Records are immutable.
 
 Listens on:
-  - Session.after_flush → detect new/changed OperationalEvent,
-    CorrectionLog, ApprovalAction and create corresponding AuditLog entries.
+  - Session.after_flush → detect new/changed OperationalEvent (alta y transiciones de
+    estado) y nuevos CorrectionLog (corrección con diff por campo).
+
+`P1-12-REOPEN` (C-01 registrada): la ruta `ApprovalAction` se **retiró** — cada decisión
+(`start`/`return`/`complete`/`approve`/`reject`) transita el estado del evento, que es la
+fuente única; el batch y la contrapartida (update masivo / alta directa) producen su fila
+de transición de forma explícita en el servicio. El registro compartido
+(`helpers.ya_emitida`/`marcar_emitida`) garantiza **un productor por acción** tanto aquí
+como en contextos sin listener.
 
 The current user is obtained from the context variable set by
 get_current_user in app.auth.security.
@@ -19,6 +26,7 @@ from sqlalchemy import event, inspect
 from sqlalchemy.orm import Session
 
 from .context import get_current_audit_user
+from .helpers import marcar_emitida, ya_emitida
 from .models import AuditAction, AuditLog, AuditModule
 
 logger = logging.getLogger(__name__)
@@ -33,16 +41,12 @@ def _get_correction_log():
     from ..corrections.models import CorrectionLog
     return CorrectionLog
 
-def _get_approval_action():
-    from ..review.models import ActionType, ApprovalAction
-    return ApprovalAction, ActionType
-
 
 # ── Status → AuditAction mapping ──────────────────────────────────────────
 
 _STATUS_TO_AUDIT_ACTION: dict[str, AuditAction] = {
     "registered":      AuditAction.CREATED,
-    "pending_review":  AuditAction.CREATED,       # submit = state transition tracked separately
+    "pending_review":  AuditAction.UPDATED,       # `P1-12-REOPEN`: enviar a revisión **es** una actualización
     "in_review":       AuditAction.REVIEW_STARTED,
     "returned":        AuditAction.RETURNED,
     "corrected":       AuditAction.CORRECTED,
@@ -53,14 +57,7 @@ _STATUS_TO_AUDIT_ACTION: dict[str, AuditAction] = {
     "sap_confirmed":   AuditAction.SAP_CONFIRMED,
     "sap_error":       AuditAction.SAP_ERROR,
     "cancelled":       AuditAction.CANCELLED,
-}
-
-_APPROVAL_ACTION_TO_AUDIT: dict[str, AuditAction] = {
-    "started_review":  AuditAction.REVIEW_STARTED,
-    "returned":        AuditAction.RETURNED,
-    "corrected":       AuditAction.CORRECTED,
-    "approved":        AuditAction.APPROVED,
-    "rejected":        AuditAction.REJECTED,
+    "reversed":        AuditAction.REVERSED,      # `OD-19` · `GA-REM-041`
 }
 
 
@@ -97,20 +94,16 @@ def audit_after_flush(session: Session, flush_context: Any) -> None:
             _audit_event_modified(session, obj, user_id, company_id, EventStatus)
 
     # ═══════════════════════════════════════════════════════
-    # 3. NEW CorrectionLog → CORRECTED
+    # 3. NEW CorrectionLog → CORRECTED (diff por campo)
     # ═══════════════════════════════════════════════════════
     CorrectionLog = _get_correction_log()
     for obj in session.new:
         if isinstance(obj, CorrectionLog):
             _audit_correction(session, obj, user_id, company_id)
 
-    # ═══════════════════════════════════════════════════════
-    # 4. NEW ApprovalAction → APPROVED / REJECTED / REVIEW_STARTED / RETURNED
-    # ═══════════════════════════════════════════════════════
-    ApprovalAction, ActionType = _get_approval_action()
-    for obj in session.new:
-        if isinstance(obj, ApprovalAction):
-            _audit_approval_action(session, obj, user_id, company_id)
+    # `P1-12-REOPEN`: fin de la ruta `ApprovalAction` (C-01). Las decisiones se auditan por
+    # la transición de estado del evento; el batch y la contrapartida añaden su fila de
+    # transición en el servicio.
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -167,6 +160,9 @@ def _audit_event_created(
     company_id: int | None,
 ) -> None:
     """A new operational event was created."""
+    if ya_emitida(session, entity_type="operational_event", entity_id=event.id,
+                  action=AuditAction.CREATED):
+        return  # `P1-12-REOPEN`: el helper ya la escribió en esta sesión
     insp = inspect(event)
     new_vals: dict[str, Any] = {}
 
@@ -195,6 +191,8 @@ def _audit_event_created(
         comments=getattr(event, 'observations', None),
     )
     session.add(log)
+    marcar_emitida(session, entity_type="operational_event", entity_id=event.id,
+                   action=AuditAction.CREATED)
 
 
 def _audit_event_modified(
@@ -229,6 +227,25 @@ def _audit_event_modified(
         # Unrecognized transition — still log it as UPDATED
         audit_action = AuditAction.UPDATED
 
+    # `P1-12-REOPEN`: la corrección rica (diff por campo) la escribe la ruta
+    # `CorrectionLog` del mismo flush — si está presente, esta ruta se abstiene.
+    if new_str == "corrected":
+        CorrectionLog = _get_correction_log()
+        if any(isinstance(o, CorrectionLog) and o.event_id == event.id for o in session.new):
+            return
+
+    if ya_emitida(session, entity_type="operational_event", entity_id=event.id,
+                  action=audit_action):
+        return  # `P1-12-REOPEN`: el helper ya la escribió en esta sesión
+
+    # Módulo alineado con los helpers (`audit_state_transition`): la misma transición
+    # produce la misma fila con listener o sin él.
+    module = AuditModule.OPERATIONS
+    if audit_action in (AuditAction.REVIEW_STARTED, AuditAction.RETURNED, AuditAction.CORRECTED):
+        module = AuditModule.REVIEW
+    elif audit_action in (AuditAction.APPROVED, AuditAction.REJECTED):
+        module = AuditModule.APPROVALS
+
     # Collect other changed fields (non-status)
     changed_fields: dict[str, Any] = {}
     for attr in insp.attrs:
@@ -251,7 +268,7 @@ def _audit_event_modified(
         action=audit_action,
         entity_type="operational_event",
         entity_id=str(event.id),
-        module=AuditModule.OPERATIONS,
+        module=module,
         lot_id=getattr(event, 'lot_id', None),
         farm_id=getattr(event, 'farm_id', None),
         house_id=getattr(event, 'house_id', None),
@@ -261,6 +278,8 @@ def _audit_event_modified(
         change_reason=getattr(event, 'observations', None),
     )
     session.add(log)
+    marcar_emitida(session, entity_type="operational_event", entity_id=event.id,
+                   action=audit_action)
 
 
 # ═══════════════════════════════════════════════════════════════════════════
@@ -274,6 +293,9 @@ def _audit_correction(
     company_id: int | None,
 ) -> None:
     """A correction was registered → log field-level change."""
+    if ya_emitida(session, entity_type="operational_event", entity_id=correction.event_id,
+                  action=AuditAction.CORRECTED):
+        return  # `P1-12-REOPEN`: el helper ya la escribió en esta sesión
     log = _make_audit_log(
         user_id=user_id,
         company_id=company_id,
@@ -286,43 +308,8 @@ def _audit_correction(
         change_reason=correction.reason,
     )
     session.add(log)
-
-
-# ═══════════════════════════════════════════════════════════════════════════
-# ApprovalAction handler
-# ═══════════════════════════════════════════════════════════════════════════
-
-def _audit_approval_action(
-    session: Session,
-    action_obj: Any,  # ApprovalAction
-    user_id: int,
-    company_id: int | None,
-) -> None:
-    """An approval action was recorded → log it."""
-    action_type_str = (
-        action_obj.action_type.value
-        if hasattr(action_obj.action_type, 'value')
-        else str(action_obj.action_type)
-    )
-    audit_action = _APPROVAL_ACTION_TO_AUDIT.get(
-        action_type_str, AuditAction.UPDATED
-    )
-
-    # Determine module based on action type
-    module = AuditModule.APPROVALS
-    if audit_action in (AuditAction.REVIEW_STARTED, AuditAction.RETURNED):
-        module = AuditModule.REVIEW
-
-    log = _make_audit_log(
-        user_id=user_id,
-        company_id=company_id,
-        action=audit_action,
-        entity_type="operational_event",
-        entity_id=str(action_obj.event_id),
-        module=module,
-        comments=action_obj.observations,
-    )
-    session.add(log)
+    marcar_emitida(session, entity_type="operational_event", entity_id=correction.event_id,
+                   action=AuditAction.CORRECTED)
 
 
 # ═══════════════════════════════════════════════════════════════════════════

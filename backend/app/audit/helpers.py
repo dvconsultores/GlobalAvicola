@@ -67,6 +67,35 @@ async def _insert_audit_log(
 
 
 # ═══════════════════════════════════════════════════════════════════════════
+# Guarda de idempotencia compartida con el listener — `P1-12-REOPEN` (C-01/C-02)
+# ═══════════════════════════════════════════════════════════════════════════
+
+#: Clave en `session.info` con las emisiones ya encoladas en la sesión actual.
+_CLAVE_EMITIDOS = "_audit_emitidos"
+
+
+def _clave_emision(entity_type: str, entity_id: Any, action: AuditAction) -> tuple[str, str, str]:
+    return (entity_type, str(entity_id), action.value)
+
+
+def ya_emitida(session: Any, *, entity_type: str, entity_id: Any, action: AuditAction) -> bool:
+    """¿Esta emisión ya está encolada en la sesión?
+
+    `P1-12-REOPEN`: listener y helpers comparten el registro para que «un productor por
+    acción» sea verdad tanto en runtime (listener registrado por el `lifespan`) como en
+    contextos sin listener (scripts, arnés de tests): quien llega primero escribe; el otro
+    se abstiene. La clave es `(entidad, id, acción)` — mismo par listener↔helper.
+    """
+    return _clave_emision(entity_type, entity_id, action) in session.info.get(_CLAVE_EMITIDOS, set())
+
+
+def marcar_emitida(session: Any, *, entity_type: str, entity_id: Any, action: AuditAction) -> None:
+    """Registra la emisión para que el otro productor no la duplique."""
+    session.info.setdefault(_CLAVE_EMITIDOS, set()).add(
+        _clave_emision(entity_type, entity_id, action))
+
+
+# ═══════════════════════════════════════════════════════════════════════════
 # Convenience functions for each action type
 # ═══════════════════════════════════════════════════════════════════════════
 
@@ -74,9 +103,16 @@ async def audit_event_created(
     db: AsyncSession,
     event: Any,  # OperationalEvent
     current_user: dict[str, Any],
-) -> AuditLog:
-    """An operational event was created by an operator."""
-    return await _insert_audit_log(
+) -> AuditLog | None:
+    """An operational event was created by an operator.
+
+    `P1-12-REOPEN`: con el listener activo (runtime) este helper se abstiene — el listener
+    ya escribió la fila `created` en esta sesión; sin listener (scripts/tests) escribe él.
+    """
+    if ya_emitida(db, entity_type="operational_event", entity_id=event.id,
+                  action=AuditAction.CREATED):
+        return None
+    log = await _insert_audit_log(
         db=db,
         user_id=current_user["id"],
         company_id=current_user.get("company_id", 0),
@@ -90,6 +126,9 @@ async def audit_event_created(
         new_state=_status_str(event),
         comments=getattr(event, "observations", None),
     )
+    marcar_emitida(db, entity_type="operational_event", entity_id=event.id,
+                   action=AuditAction.CREATED)
+    return log
 
 
 async def audit_state_transition(
@@ -101,11 +140,14 @@ async def audit_state_transition(
     comments: str | None = None,
     previous_values: dict | None = None,
     new_values: dict | None = None,
-) -> AuditLog:
+) -> AuditLog | None:
     """The event's status changed (submit, review, approve, reject, cancel, etc.).
 
     `GA-REM-005-E` `AC-R173-10` · `docs/13 §2`: la edición registra campo modificado, valor
     anterior y valor nuevo (`previous_values`/`new_values`), no solo «Evento actualizado».
+
+    `P1-12-REOPEN`: con el listener activo (runtime) la transición ya quedó escrita en esta
+    sesión — este helper no la duplica; sin listener es el productor.
     """
     action_map: dict[str, AuditAction] = {
         "pending_review": AuditAction.UPDATED,         # submitted for review
@@ -129,7 +171,10 @@ async def audit_state_transition(
     elif audit_action in (AuditAction.REVIEW_STARTED, AuditAction.RETURNED, AuditAction.CORRECTED):
         module = AuditModule.REVIEW
 
-    return await _insert_audit_log(
+    if ya_emitida(db, entity_type="operational_event", entity_id=event.id, action=audit_action):
+        return None
+
+    log = await _insert_audit_log(
         db=db,
         user_id=current_user["id"],
         company_id=current_user.get("company_id", 0),
@@ -146,6 +191,8 @@ async def audit_state_transition(
         new_values=new_values,
         comments=comments,
     )
+    marcar_emitida(db, entity_type="operational_event", entity_id=event.id, action=audit_action)
+    return log
 
 
 async def audit_correction(
@@ -157,9 +204,16 @@ async def audit_correction(
     corrected_value: str | None,
     reason: str,
     lot_id: int | None = None,
-) -> AuditLog:
-    """A field-level correction was registered."""
-    return await _insert_audit_log(
+) -> AuditLog | None:
+    """A field-level correction was registered.
+
+    `P1-12-REOPEN`: con el listener activo la corrección ya quedó escrita (ruta
+    `CorrectionLog` del listener, que es la rica); sin listener escribe este helper.
+    """
+    if ya_emitida(db, entity_type="operational_event", entity_id=event_id,
+                  action=AuditAction.CORRECTED):
+        return None
+    log = await _insert_audit_log(
         db=db,
         user_id=current_user["id"],
         company_id=current_user.get("company_id", 0),
@@ -172,6 +226,9 @@ async def audit_correction(
         new_values={field_name: corrected_value},
         change_reason=reason,
     )
+    marcar_emitida(db, entity_type="operational_event", entity_id=event_id,
+                   action=AuditAction.CORRECTED)
+    return log
 
 
 async def audit_approval_action(

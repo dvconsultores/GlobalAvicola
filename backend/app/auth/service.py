@@ -466,6 +466,15 @@ class AuthService:
         self.db.add(user)
         await self.db.flush()
         await self.db.refresh(user)
+
+        # `P1-12-REOPEN` (`E-13` · T-05): el alta escribe su fila — sin secretos.
+        if actor is not None:
+            await audit_accion(
+                self.db, usuario=actor, accion=AuditAction.CREATED, modulo=AuditModule.USERS,
+                entity_type="user", entity_id=str(user.id), company_id=company_id,
+                new_values={"username": user.username, "role_id": user.role_id,
+                            "company_id": company_id, "view_type": user.view_type},
+            )
         return UserRead.model_validate(user)
 
     async def update_user(self, user_id: int, data: UserUpdate,
@@ -500,11 +509,22 @@ class AuthService:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Ese rol no es asignable desde la administración de esta empresa")
+        cambios = {clave: {"old": getattr(user, clave, None), "new": valor}
+                   for clave, valor in update_data.items()}
         for key, value in update_data.items():
             setattr(user, key, value)
 
         await self.db.flush()
         await self.db.refresh(user)
+
+        # `P1-12-REOPEN` (`E-13` · T-05): la edición deja fila con el diff — sin secretos.
+        if actor is not None and cambios:
+            await audit_accion(
+                self.db, usuario=actor, accion=AuditAction.UPDATED, modulo=AuditModule.USERS,
+                entity_type="user", entity_id=str(user.id), company_id=user.company_id,
+                previous_values={k: v["old"] for k, v in cambios.items()},
+                new_values={k: v["new"] for k, v in cambios.items()},
+            )
         return UserRead.model_validate(user)
 
     async def change_password(
@@ -597,6 +617,14 @@ class AuthService:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
         user.is_active = False
         await self.db.flush()
+
+        # `P1-12-REOPEN` (`E-13` · T-05): la baja deja fila.
+        if actor is not None:
+            await audit_accion(
+                self.db, usuario=actor, accion=AuditAction.DELETED, modulo=AuditModule.USERS,
+                entity_type="user", entity_id=str(user.id), company_id=user.company_id,
+                new_values={"is_active": False},
+            )
 
     async def switch_company(self, company_id: int, current_user: dict) -> "TokenResponse":
         """Issue new tokens scoped to a different company. Super-admin only."""

@@ -597,6 +597,16 @@ class LotService:
         await self.db.flush()
         await self.db.refresh(lot)
 
+        # `P1-12-REOPEN` (`E-10` · T-04): el cierre escribe su fila con el resumen neto.
+        from ..audit.helpers import audit_accion
+        from ..audit.models import AuditAction, AuditModule
+
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.UPDATED,
+            modulo=AuditModule.LOTS, entity_type="lot", entity_id=str(lot_id),
+            lot_id=lot_id, new_state="closed", new_values=summary,
+        )
+
         return summary
 
     # ============================================================
@@ -707,6 +717,22 @@ class LotService:
 
         await self.db.flush()
         await self.db.refresh(ob)
+
+        # `P1-12-REOPEN` (`E-10` · T-04): la activación manual escribe su fila con saldos.
+        from ..audit.helpers import audit_accion
+        from ..audit.models import AuditAction, AuditModule
+
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.UPDATED,
+            modulo=AuditModule.LOTS, entity_type="lot", entity_id=str(data.lot_id),
+            lot_id=data.lot_id,
+            new_values={
+                "activation_type": "manual",
+                "activation_date": str(data.activation_date),
+                "initial_male_count": data.initial_male_count,
+                "initial_female_count": data.initial_female_count,
+            },
+        )
         return ob
 
     async def get_opening_balance(self, lot_id: int) -> Optional[models.OpeningBalance]:
@@ -784,6 +810,22 @@ class LotService:
         phase = models.LotPhase(**campos)
         self.db.add(phase)
         await self.db.flush()
+
+        # `P1-12-REOPEN` (`E-10` · T-04): la transición de fase escribe su fila.
+        from ..audit.helpers import audit_accion
+        from ..audit.models import AuditAction, AuditModule
+
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.UPDATED,
+            modulo=AuditModule.LOTS, entity_type="lot", entity_id=str(data.lot_id),
+            lot_id=data.lot_id,
+            new_values={
+                "phase_id": data.phase_id,
+                "start_date": str(data.start_date),
+                "start_population_male": campos.get("start_population_male", 0),
+                "start_population_female": campos.get("start_population_female", 0),
+            },
+        )
 
         from sqlalchemy.orm import selectinload
 
