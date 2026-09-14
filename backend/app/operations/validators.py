@@ -804,11 +804,13 @@ async def validate_oc_limit(
     Antes se comparaba **solo la recepción en curso**, de modo que tres entregas de 400 contra
     una orden de 1000 pasaban las tres y sumaban 1200: el límite nunca llegó a comprobarse.
 
-    Qué cuenta para el acumulado no se decide aquí por criterio. Los ocho saldos de este mismo
-    fichero excluyen exactamente `CANCELLED` y nada más, y se sigue ese precedente. **No** se
-    traslada la semántica de los indicadores de `P-15`, que solo cuentan lo aprobado: un
-    control de recepción no puede esperar a la aprobación, porque si tres entregas sin aprobar
-    suman más que la orden el exceso ya ocurrió físicamente.
+    Qué cuenta para el acumulado sigue el precedente de `_suma_neta` (`OD-19`): la suma es
+    **neta**. El original revertido sigue contando en su signo (la historia dice que ocurrió)
+    y su contrapartida efectiva resta exactamente lo mismo: por eso basta excluir `REVERSED`
+    —ambos miembros del par comparten estado— y, además, toda contrapartida
+    (`id ∈ reversals.reversal_event_id`): una contrapartida pendiente o rechazada **no es**
+    una recepción y no puede sumar. El original mientras no sea `REVERSED` sí cuenta: la
+    entrega ocurrió hasta que el reverso sea efectivo (`OD-19 §2`).
 
     Sin tolerancia: ninguna fuente normativa la establece. Y sin cierre automático de la
     orden: `OD-04` respondió si caben entregas parciales, no qué ocurre al completarla.
@@ -816,6 +818,7 @@ async def validate_oc_limit(
     if not sap_document_ref:
         return
     from ..integrations.sap.models import SapReference, SapReferenceType
+    from .models import Reversal
 
     consulta = select(SapReference).where(
         SapReference.sap_code == sap_document_ref,
@@ -835,7 +838,13 @@ async def validate_oc_limit(
         .where(
             OperationalEvent.sap_document_ref == sap_document_ref,
             OperationalEvent.event_type == EventType.BIRD_RECEPTION,
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
+            OperationalEvent.status.not_in([EventStatus.CANCELLED, EventStatus.REVERSED]),
+            # `R-193` · `OD-19 §2`: una contrapartida —pendiente o rechazada— no es una
+            # recepción; solo suma el original vigente, y el par efectivo ya queda fuera
+            # por estado.
+            OperationalEvent.id.not_in(
+                select(Reversal.reversal_event_id).where(
+                    Reversal.reversal_event_id.is_not(None))),
         )
     )
     if company_id is not None:
