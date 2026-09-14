@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/components/__tests__/r215.errorRendering.test.tsx (6 tests | 1 failed) 449ms
+     × 02 · lotes: 422 lista ⇒ toast legible (cadena, no objeto) 85ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/__tests__/r215.errorRendering.test.tsx > R-215 · render seguro de errores (RED) > 02 · lotes: 422 lista ⇒ toast legible (cadena, no objeto)
+AssertionError: expected 'object' to be 'string' // Object.is equality
+
+Expected: "string"
+Received: "object"
+
+ ❯ src/components/__tests__/r215.errorRendering.test.tsx:127:28
+    125|     await waitFor(() => expect(toastError).toHaveBeenCalledTimes(1))
+    126|     const mensaje = toastError.mock.calls[0][0]
+    127|     expect(typeof mensaje).toBe('string')
+       |                            ^
+    128|     expect(String(mensaje)).toMatch(/name: String should have at least…
+    129|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  13:52:27
+   Duration  1.69s (transform 243ms, setup 50ms, import 539ms, tests 449ms, environment 519ms)
+

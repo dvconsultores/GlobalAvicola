@@ -1,0 +1,76 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/components/__tests__/r215.errorRendering.test.tsx > R-215 · render seguro de errores (RED) > 04 · perfil: 422 lista al cambiar contraseña ⇒ texto, sin React #31
+An error occurred in the <p> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+ ❯ src/components/__tests__/r215.errorRendering.test.tsx (6 tests | 1 failed) 1451ms
+     × 04 · perfil: 422 lista al cambiar contraseña ⇒ texto, sin React #31 1033ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/__tests__/r215.errorRendering.test.tsx > R-215 · render seguro de errores (RED) > 04 · perfil: 422 lista al cambiar contraseña ⇒ texto, sin React #31
+TestingLibraryElementError: Unable to find an element with the text: /name: String should have at least 1 character/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body[39m
+    [33mstyle[39m=[32m""[39m
+  [36m>[39m
+    [36m<div />[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/components/__tests__/r215.errorRendering.test.tsx:177:11
+    175|
+    176|     await waitFor(() => expect(post).toHaveBeenCalled())
+    177|     await waitFor(() => expect(
+       |           ^
+    178|       screen.getByText(/name: String should have at least 1 character/…
+    179|     ).toBeTruthy())
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+Error: Objects are not valid as a React child (found: object with keys {type, loc, msg, input}). If you meant to render a collection of children, use an array instead.
+ ❯ throwOnInvalidObjectTypeImpl node_modules/react-dom/cjs/react-dom-client.development.js:6461:13
+ ❯ throwOnInvalidObjectType node_modules/react-dom/cjs/react-dom-client.development.js:6475:11
+ ❯ createChild node_modules/react-dom/cjs/react-dom-client.development.js:6764:11
+ ❯ reconcileChildrenArray node_modules/react-dom/cjs/react-dom-client.development.js:7033:25
+ ❯ reconcileChildFibersImpl node_modules/react-dom/cjs/react-dom-client.development.js:7357:20
+ ❯ node_modules/react-dom/cjs/react-dom-client.development.js:7456:33
+ ❯ reconcileChildren node_modules/react-dom/cjs/react-dom-client.development.js:10096:13
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12468:13
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:1048:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:19176:22
+
+This error originated in "src/components/__tests__/r215.errorRendering.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "04 · perfil: 422 lista al cambiar contraseña ⇒ texto, sin React #31". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+     Errors  1 error
+   Start at  13:52:39
+   Duration  2.65s (transform 237ms, setup 50ms, import 501ms, tests 1.45s, environment 531ms)
+

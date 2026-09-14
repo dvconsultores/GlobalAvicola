@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/components/__tests__/r215.errorRendering.test.tsx (6 tests | 1 failed) 452ms
+     × 06 · ErrorBoundary global con recuperación (no existe en HEAD) 13ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/components/__tests__/r215.errorRendering.test.tsx > R-215 · render seguro de errores (RED) > 06 · ErrorBoundary global con recuperación (no existe en HEAD)
+Error: boom de prueba
+ ❯ Bomb src/components/__tests__/r215.errorRendering.test.tsx:228:32
+    226|     expect(mod?.ErrorBoundary, 'ErrorBoundary sin export nombrado').to…
+    227|
+    228|     const Bomb = () => { throw new Error('boom de prueba') }
+       |                                ^
+    229|     render(
+    230|       <MemoryRouter>
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:28571:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:8030:22
+ ❯ updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:10569:19
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12205:18
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:1048:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:19176:22
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:19004:41
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:18985:11
+ ❯ performWorkOnRoot node_modules/react-dom/cjs/react-dom-client.development.js:18094:35
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  13:52:05
+   Duration  1.87s (transform 341ms, setup 47ms, import 673ms, tests 452ms, environment 547ms)
+
