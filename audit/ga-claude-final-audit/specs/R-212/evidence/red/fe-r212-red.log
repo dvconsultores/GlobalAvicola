@@ -1,0 +1,2596 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-01 · detalle de lote sin `reports:read`: 0 llamadas a KPIs de reportes
+An error occurred in the <TraceabilityTree> component.
+
+Consider adding an error boundary to your tree to customize error handling behavior.
+Visit https://react.dev/link/error-boundaries to learn more about error boundaries.
+
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · lotes: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · auditoría: 403/500 ⇒ estado distinguido (no «vacío»)
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter initialEntries={[...]}>
+    <Router basename={undefined} location={{pathname:"...", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <Routes>
+        <RenderedRoute match={{params:{}, ...}} routeContext={{outlet:null, ...}}>
+          <AuditPage>
+            <div>
+              <div>
+              <div>
+              <FilterPanel onClear={function clearFilters} totalResults={0}>
+                <div className="bg-white r...">
+>                 <button
+>                   onClick={function onClick}
+>                   className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700..."
+>                   aria-expanded={true}
+>                 >
+                    <div>
+                    <div className="flex items...">
+                      <span>
+>                     <button
+>                       onClick={function onClick}
+>                       className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 trans..."
+>                     >
+                  ...
+              ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío»)
+Error fetching farms: { response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx (14 tests | 13 failed) 13141ms
+     × AC-R212-01 · detalle de lote sin `reports:read`: 0 llamadas a KPIs de reportes 1034ms
+     × AC-R212-02 · Home sin `dashboard:read` ⇒ hub útil; con permiso ⇒ dashboard 1003ms
+     × AC-R212-04 · operaciones: 403/500 ⇒ estado distinguido (no «vacío») 1011ms
+     × AC-R212-04 · lotes: 403/500 ⇒ estado distinguido (no «vacío») 1011ms
+     × AC-R212-04 · auditoría: 403/500 ⇒ estado distinguido (no «vacío») 1024ms
+     × AC-R212-04 · reportes: 403/500 ⇒ estado distinguido (no «vacío») 1010ms
+     × AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío») 1008ms
+     × AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío») 1004ms
+     × AC-R212-04 · SAP: 403/500 ⇒ estado distinguido (no «vacío») 1015ms
+     × AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío») 1005ms
+     × AC-R212-04 · operaciones · 500: 403/500 ⇒ estado distinguido (no «vacío») 1006ms
+     × AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta 1004ms
+     × AC-R212-05 · SapComparisonPage 500 ⇒ estado con reintento 1003ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 13 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-01 · detalle de lote sin `reports:read`: 0 llamadas a KPIs de reportes
+AssertionError: expected false to be true // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div />[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:84:60
+     82|     })
+     83|     const vista = renderAt('/lots/:id', <LotDetailPage />)
+     84|     await waitFor(() => expect(urls().includes('/lots/9')).toBe(true))
+       |                                                            ^
+     85|     const kpis = urls().filter((u) => u.includes('/reports/kpis') || u…
+     86|     expect(kpis, 'no se deben pedir KPIs sin permiso').toEqual([])
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-02 · Home sin `dashboard:read` ⇒ hub útil; con permiso ⇒ dashboard
+TestingLibraryElementError: Unable to find an element with the text: HUB-POULTRY. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div />[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div />[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:112:11
+    110|     )
+    111|     setSession(['operations:read'])
+    112|     await waitFor(() => expect(screen.getByText('HUB-POULTRY')).toBeTr…
+       |           ^
+    113|     expect(screen.queryByText('DASHBOARD-MOCK')).toBeNull()
+    114|     vista.unmount()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · operaciones: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · operaciones · 500: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mnav.operations[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500"[39m
+          [36m>[39m
+            [0m0[0m
+            [0m [0m
+            [0mcommon.results[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/menu/poultry"[39m
+        [36m>[39m
+          [0m+ [0m
+          [0mcommon.create[0m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+          [33mplaceholder[39m=[32m"review.lot ID"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mcommon.allTypes[0m
+          [36m</option>[39m
+          [36m<optgroup[39m
+            [33mlabel[39m=[32m"Etapas de producción"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+            [36m>[39m
+              [0mProgenitoras — Cría[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+            [36m>[39m
+              [0mProgenitoras — Producción[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+            [36m>[39m
+              [0mReproductoras — Cría[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_production"[39m
+            [36m>[39m
+              [0mReproductoras — Producción[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__hatchery"[39m
+            [36m>[39m
+              [0mIncubadora[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__broiler"[39m
+            [36m>[39m
+              [0mPollo de Engorde[0m
+            [36m</option>[39m
+          [36m</optgroup>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-slate-400 text-sm py-8 text-center"[39m
+      [36m>[39m
+        [0mcommon.noResults[0m
+      [36m</p>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+            [36m>[39m
+              [0mnav.operations[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-500"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m [0m
+              [0mcommon.results[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/menu/poultry"[39m
+          [36m>[39m
+            [0m+ [0m
+            [0mcommon.create[0m
+          [36m</a>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+            [33mplaceholder[39m=[32m"review.lot ID"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+          [36m<select[39m
+            [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mcommon.allTypes[0m
+            [36m</option>[39m
+            [36m<optgroup[39m
+              [33mlabel[39m=[32m"Etapas de producción"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+              [36m>[39m
+                [0mProgenitoras — Cría[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+              [36m>[39m
+                [0mProgenitoras — Producción[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+              [36m>[39m
+                [0mReproductoras — Cría[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__breeder_production"[39m
+              [36m>[39m
+                [0mReproductoras — Producción[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__hatchery"[39m
+              [36m>[39m
+                [0mIncubadora[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__broiler"[39m
+              [36m>[39m
+                [0mPollo de Engorde[0m
+              [36m</option>[39m
+            [36m</optgroup>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-slate-400 text-sm py-8 text-center"[39m
+        [36m>[39m
+          [0mcommon.noResults[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · lotes: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mlots.title[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500 mt-1"[39m
+          [36m>[39m
+            [0m0[0m
+            [0m [0m
+            [0mlots.activeCount[0m
+            [0m · [0m
+            [0m0[0m
+            [0m [0m
+            [0mlots.closedCount[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap gap-2 mb-4"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-[#1E3A5F] text-white"[39m
+        [36m>[39m
+          [0mcommon.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.grandparent[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.breeder[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+        [36m>[39m
+          [0mbirdTypes.broiler[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"lg:hidden space-y-3"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-slate-500 text-center py-8"[39m
+        [36m>[39m
+          [0mlots.noLots[0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+      [36m>[39m
+        [36m<table[39m
+          [33mclass[39m=[32m"w-full text-sm"[39m
+        [36m>[39m
+          [36m<thead[39m
+            [33mclass[39m=[32m"bg-slate-50 border-b border-slate-200"[39m
+          [36m>[39m
+            [36m<tr>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.code[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.type[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.status[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.start[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mlots.actions[0m
+              [36m</th>[39m
+            [36m</tr>[39m
+          [36m</thead>[39m
+          [36m<tbody[39m
+            [33mclass[39m=[32m"divide-y divide-slate-100"[39m
+          [36m>[39m
+            [36m<tr>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-8 text-center text-slate-500"[39m
+                [33mcolspan[39m=[32m"5"[39m
+              [36m>[39m
+                [0mlots.noLots[0m
+              [36m</td>[39m
+            [36m</tr>[39m
+          [36m</tbody>[39m
+        [36m</table>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between mb-6"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+            [36m>[39m
+              [0mlots.title[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-500 mt-1"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m [0m
+              [0mlots.activeCount[0m
+              [0m · [0m
+              [0m0[0m
+              [0m [0m
+              [0mlots.closedCount[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-2 mb-4"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-[#1E3A5F] text-white"[39m
+          [36m>[39m
+            [0mcommon.all[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+          [36m>[39m
+            [0mbirdTypes.grandparent[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+          [36m>[39m
+            [0mbirdTypes.breeder[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"px-3 py-1.5 rounded-lg text-sm font-medium transition bg-slate-100 text-slate-600 hover:bg-slate-200"[39m
+          [36m>[39m
+            [0mbirdTypes.broiler[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"lg:hidden space-y-3"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-slate-500 text-center py-8"[39m
+          [36m>[39m
+            [0mlots.noLots[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+        [36m>[39m
+          [36m<table[39m
+            [33mclass[39m=[32m"w-full text-sm"[39m
+          [36m>[39m
+            [36m<thead[39m
+              [33mclass[39m=[32m"bg-slate-50 border-b border-slate-200"[39m
+            [36m>[39m
+              [36m<tr>[39m
+                [36m<th[39m
+                  [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+                [36m>[39m
+                  [0mlots.code[0m
+                [36m</th>[39m
+                [36m<th[39m
+                  [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+                [36m>[39m
+                  [0mlots.type[0m
+                [36m</th>[39m
+                [36m<th[39m
+                  [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+                [36m>[39m
+                  [0mlots.status[0m
+                [36m</th>[39m
+                [36m<th[39m
+                  [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+                [36m>[39m
+                  [0mlots.start[0m
+                [36m</th>[39m
+                [36m<th[39m
+                  [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+                [36m>[39m
+                  [0mlots.actions[0m
+                [36m</th>[39m
+              [36m</tr>[39m
+            [36m</thead>[39m
+            [36m<tbody[39m
+              [33mclass[39m=[32m"divide-y divide-slate-100"[39m
+            [36m>[39m
+              [36m<tr>[39m
+                [36m<td[39m
+                  [33mclass[39m=[32m"px-4 py-8 text-center text-slate-500"[39m
+                  [33mcolspan[39m=[32m"5"[39m
+                [36m>[39m
+                  [0mlots.noLots[0m
+                [36m</td>[39m
+              [36m</tr>[39m
+            [36m</tbody>[39m
+          [36m</table>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · auditoría: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAuditoría[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+              [36m>[39m
+                [0m0[0m
+                [0m [0m
+                [0mregistros[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 3v5h5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.corrections[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mFiltros[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m [0m
+              [0mresultados[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"12"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"12"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mLimpiar[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mTipo de operación[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodas[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"created"[39m
+                  [36m>[39m
+                    [0mcreated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"updated"[39m
+                  [36m>[39m
+                    [0mupdated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrected"[39m
+                  [36m>[39m
+                    [0mcorrected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_started"[39m
+                  [36m>[39m
+                    [0mreview_started[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_completed"[39m
+                  [36m>[39m
+                    [0mreview_completed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"returned"[39m
+                  [36m>[39m
+                    [0mreturned[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approved"[39m
+                  [36m>[39m
+                    [0mapproved[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"rejected"[39m
+                  [36m>[39m
+                    [0mrejected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"consolidated"[39m
+                  [36m>[39m
+                    [0mconsolidated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sent_to_sap"[39m
+                  [36m>[39m
+                    [0msent_to_sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_confirmed"[39m
+                  [36m>[39m
+                    [0msap_confirmed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_error"[39m
+                  [36m>[39m
+                    [0msap_error[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"cancelled"[39m
+                  [36m>[39m
+                    [0mcancelled[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login"[39m
+                  [36m>[39m
+                    [0mlogin[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login_failed"[39m
+                  [36m>[39m
+                    [0mlogin_failed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"permission_change"[39m
+                  [36m>[39m
+                    [0mpermission_change[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"import"[39m
+                  [36m>[39m
+                    [0mimport[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"export"[39m
+                  [36m>[39m
+                    [0mexport[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"deleted"[39m
+                  [36m>[39m
+                    [0mdeleted[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mMódulo[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodos[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"auth"[39m
+                  [36m>[39m
+                    [0mauth[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"masters"[39m
+                  [36m>[39m
+                    [0mmasters[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"lots"[39m
+                  [36m>[39m
+                    [0mlots[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"operations"[39m
+                  [36m>[39m
+                    [0moperations[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review"[39m
+                  [36m>[39m
+                    [0mreview[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approvals"[39m
+                  [36m>[39m
+                    [0mapprovals[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrections"[39m
+                  [36m>[39m
+                    [0mcorrections[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap"[39m
+                  [36m>[39m
+                    [0msap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"reports"[39m
+                  [36m>[39m
+                    [0mreports[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"users"[39m
+                  [36m>[39m
+                    [0musers[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mFecha[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                [36m>[39m
+                  [0m—[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"py-12"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-col items-center justify-center py-12 px-4 "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-shield text-slate-400"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"28"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"28"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-sm font-bold text-slate-600 text-center mb-1"[39m
+            [36m>[39m
+              [0mSin registros de auditoría[0m
+            [36m</h3>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 text-center max-w-sm mb-4"[39m
+            [36m>[39m
+              [0mNo se encontraron registros con los filtros actuales[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+              [36m>[39m
+                [0mAuditoría[0m
+              [36m</h1>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+                [36m>[39m
+                  [0m0[0m
+                  [0m [0m
+                  [0mregistros[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-shield"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0maudit.all[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v5h5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0maudit.corrections[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mFiltros[0m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+              [36m>[39m
+                [0m0[0m
+                [0m [0m
+                [0mresultados[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"12"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"12"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 3v5h5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0mLimpiar[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+                [36m>[39m
+                  [0mTipo de operación[0m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+                [36m>[39m
+                  [36m<select[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                  [36m>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m>[39m
+                      [0mTodas[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"created"[39m
+                    [36m>[39m
+                      [0mcreated[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"updated"[39m
+                    [36m>[39m
+                      [0mupdated[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"corrected"[39m
+                    [36m>[39m
+                      [0mcorrected[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"review_started"[39m
+                    [36m>[39m
+                      [0mreview_started[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"review_completed"[39m
+                    [36m>[39m
+                      [0mreview_completed[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"returned"[39m
+                    [36m>[39m
+                      [0mreturned[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"approved"[39m
+                    [36m>[39m
+                      [0mapproved[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"rejected"[39m
+                    [36m>[39m
+                      [0mrejected[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"consolidated"[39m
+                    [36m>[39m
+                      [0mconsolidated[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sent_to_sap"[39m
+                    [36m>[39m
+                      [0msent_to_sap[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sap_confirmed"[39m
+                    [36m>[39m
+                      [0msap_confirmed[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sap_error"[39m
+                    [36m>[39m
+                      [0msap_error[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"cancelled"[39m
+                    [36m>[39m
+                      [0mcancelled[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"login"[39m
+                    [36m>[39m
+                      [0mlogin[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"login_failed"[39m
+                    [36m>[39m
+                      [0mlogin_failed[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"permission_change"[39m
+                    [36m>[39m
+                      [0mpermission_change[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"import"[39m
+                    [36m>[39m
+                      [0mimport[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"export"[39m
+                    [36m>[39m
+                      [0mexport[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"deleted"[39m
+                    [36m>[39m
+                      [0mdeleted[0m
+                    [36m</option>[39m
+                  [36m</select>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+                [36m>[39m
+                  [0mMódulo[0m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+                [36m>[39m
+                  [36m<select[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [36m>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m>[39m
+                      [0mTodos[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"auth"[39m
+                    [36m>[39m
+                      [0mauth[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"masters"[39m
+                    [36m>[39m
+                      [0mmasters[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"lots"[39m
+                    [36m>[39m
+                      [0mlots[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"operations"[39m
+                    [36m>[39m
+                      [0moperations[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"review"[39m
+                    [36m>[39m
+                      [0mreview[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"approvals"[39m
+                    [36m>[39m
+                      [0mapprovals[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"corrections"[39m
+                    [36m>[39m
+                      [0mcorrections[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sap"[39m
+                    [36m>[39m
+                      [0msap[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"reports"[39m
+                    [36m>[39m
+                      [0mreports[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"users"[39m
+                    [36m>[39m
+                      [0musers[0m
+                    [36m</option>[39m
+                  [36m</select>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+                [36m>[39m
+                  [0mFecha[0m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mtype[39m=[32m"date"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                  [36m>[39m
+                    [0m—[0m
+                  [36m</span>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mtype[39m=[32m"date"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"py-12"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col items-center justify-center py-12 px-4 "[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mb-4"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-shield text-slate-400"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"28"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"28"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+              [36m<h3[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-600 text-center mb-1"[39m
+              [36m>[39m
+                [0mSin registros de auditoría[0m
+              [36m</h3>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-400 text-center max-w-sm mb-4"[39m
+              [36m>[39m
+                [0mNo se encontraron registros con los filtros actuales[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · reportes: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6 flex-wrap gap-3"[39m
+      [36m>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mnav.reports[0m
+        [36m</h1>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-2 items-center"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"w-24 h-9 px-2 border border-slate-300 rounded text-sm"[39m
+            [33mplaceholder[39m=[32m"review.lot ID"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m"2"[39m
+          [36m/>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-slate-100 text-slate-700 hover:bg-slate-200:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [0mExcel[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-400 shadow-sm hover:shadow-md h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"shrink-0"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-download"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 15V3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</span>[39m
+            [0mPDF[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mreports.quickAccess[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/lot/2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreports.lotReportLink[0m
+          [36m</a>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/sap"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreports.sapComparisonLink[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between mb-6 flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mnav.reports[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"w-24 h-9 px-2 border border-slate-300 rounded text-sm"[39m
+              [33mplaceholder[39m=[32m"review.lot ID"[39m
+              [33mtype[39m=[32m"number"[39m
+              [33mvalue[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-slate-100 text-slate-700 hover:bg-slate-200:bg-slate-700 active:bg-slate-300 focus-visible:ring-slate-400 border border-slate-200 h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"shrink-0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-download"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 15V3"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mExcel[0m
+            [36m</button>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"inline-flex items-center justify-center font-semibold transition-all duration-150 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none bg-red-600 text-white hover:bg-red-700 active:bg-red-800 focus-visible:ring-red-400 shadow-sm hover:shadow-md h-9 px-3.5 text-xs gap-1.5 rounded-lg "[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"shrink-0"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-download"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 15V3"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m7 10 5 5 5-5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</span>[39m
+              [0mPDF[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 mb-6"[39m
+        [36m/>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+          [36m>[39m
+            [0mreports.quickAccess[0m
+          [36m</h2>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+          [36m>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/reports/lot/2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreports.lotReportLink[0m
+            [36m</a>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/reports/sap"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 3v5h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16H3v5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreports.sapComparisonLink[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mmasters.farms[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500 mt-1"[39m
+          [36m>[39m
+            [0m0[0m
+            [0m [0m
+            [0mcommon.results[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+          [36m>[39m
+            [0mactions.readOnlyViewer[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-3"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"11"[39m
+                [33mcy[39m=[32m"11"[39m
+                [33mr[39m=[32m"8"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"h-10 pl-9 pr-3 border border-slate-300 rounded-lg text-sm focus:border-[#5a9bba] focus:ring-2 focus:ring-blue-200 outline-none"[39m
+              [33mplaceholder[39m=[32m"common.search..."[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+      [36m>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-slate-400 text-sm py-8 text-center"[39m
+        [36m>[39m
+          [0mcommon.noResults[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+            [36m>[39m
+              [0mmasters.farms[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-500 mt-1"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m [0m
+              [0mcommon.results[0m
+            [36m</p>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+            [36m>[39m
+              [0mactions.readOnlyViewer[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"relative"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"11"[39m
+                  [33mcy[39m=[32m"11"[39m
+                  [33mr[39m=[32m"8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"h-10 pl-9 pr-3 border border-slate-300 rounded-lg text-sm focus:border-[#5a9bba] focus:ring-2 focus:ring-blue-200 outline-none"[39m
+                [33mplaceholder[39m=[32m"common.search..."[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-slate-400 text-sm py-8 text-center"[39m
+          [36m>[39m
+            [0mcommon.noResults[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"p-4 sm:p-6 max-w-6xl mx-auto"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-5"[39m
+      [36m>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-slate-800 flex items-center gap-2"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield-check text-blue-600"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m9 12 2 2 4-4"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0m [0m
+          [0mRoles y permisos[0m
+        [36m</h1>[39m
+      [36m</div>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-sm text-slate-500"[39m
+      [36m>[39m
+        [0mSin roles[0m
+      [36m</p>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"p-4 sm:p-6 max-w-6xl mx-auto"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between mb-5"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-slate-800 flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-shield-check text-blue-600"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m9 12 2 2 4-4"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mRoles y permisos[0m
+          [36m</h1>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-sm text-slate-500"[39m
+        [36m>[39m
+          [0mSin roles[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · SAP: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"min-w-0"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+              [36m>[39m
+                [0mIntegración SAP[0m
+              [36m</h1>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-2 flex-wrap"[39m
+                [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mDocumentos Pendientes[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m0[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 6v6l4 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mEnviados a SAP[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m0[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-emerald-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-send text-emerald-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m21.854 2.147-10.94 10.939"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"min-w-0"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"mb-5"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-3"[39m
+              [36m>[39m
+                [36m<h1[39m
+                  [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+                [36m>[39m
+                  [0mIntegración SAP[0m
+                [36m</h1>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-2 flex-wrap"[39m
+                  [36m/>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"min-w-0 flex-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                    [36m/>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                    [36m>[39m
+                      [0mDocumentos Pendientes[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                  [36m>[39m
+                    [0m0[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"12"[39m
+                      [33mcy[39m=[32m"12"[39m
+                      [33mr[39m=[32m"10"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M12 6v6l4 2"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"min-w-0 flex-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500"[39m
+                    [36m/>[39m
+                    [36m<p[39m
+                      [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                    [36m>[39m
+                      [0mEnviados a SAP[0m
+                    [36m</p>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                  [36m>[39m
+                    [0m0[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-emerald-50"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-send text-emerald-600"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21.854 2.147-10.94 10.939"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+          ...
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-8 text-center text-slate-500"[39m
+    [36m>[39m
+      [0mreview.eventNotFound[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-8 text-center text-slate-500"[39m
+      [36m>[39m
+        [0mreview.eventNotFound[0m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:147:11
+    145|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    146|     renderAt(path, Cmp())
+    147|     await waitFor(() => {
+       |           ^
+    148|       const alerta = screen.getByRole('alert')
+    149|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-500"[39m
+    [36m>[39m
+      [0mcommon.loading[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-500"[39m
+    [36m>[39m
+      [0mcommon.loading[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:158:33
+    156|     get.mockImplementation(() => Promise.reject({ response: { status: …
+    157|     renderAt('/reports/lot/:id', <LotReportPage />)
+    158|     const alerta = await screen.findByRole('alert')
+       |                                 ^
+    159|     expect(alerta.textContent).toMatch(PROHIBIDO)
+    160|     expect(screen.queryByText('common.loading')).toBeNull()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[11/13]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-05 · SapComparisonPage 500 ⇒ estado con reintento
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-500"[39m
+    [36m>[39m
+      [0mcommon.loading[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-500"[39m
+    [36m>[39m
+      [0mcommon.loading[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:170:33
+    168|     get.mockImplementation(() => Promise.reject({ response: { status: …
+    169|     renderAt('/reports/sap-comparison', <SapComparisonPage />)
+    170|     const alerta = await screen.findByRole('alert')
+       |                                 ^
+    171|     expect(alerta.textContent).toMatch(ERROR_TXT)
+    172|     const antes = get.mock.calls.length
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[12/13]⎯
+
+⎯⎯⎯⎯⎯⎯ Unhandled Errors ⎯⎯⎯⎯⎯⎯
+
+Vitest caught 1 unhandled error during the test run.
+This might cause false positive tests. Resolve unhandled errors to make sure your tests are not affected.
+
+⎯⎯⎯⎯⎯ Uncaught Exception ⎯⎯⎯⎯⎯
+TypeError: Cannot read properties of undefined (reading 'length')
+ ❯ TraceabilityTree src/components/TraceabilityTree.tsx:137:24
+    135|
+    136|  const hasData = data && (
+    137|  data.egg_batches_sent.length > 0 ||
+       |                        ^
+    138|  data.egg_batches_received.length > 0 ||
+    139|  data.chick_batches_sent.length > 0 ||
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:28571:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:8030:22
+ ❯ updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:10569:19
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12205:18
+ ❯ runWithFiberInDEV node_modules/react-dom/cjs/react-dom-client.development.js:1048:13
+ ❯ performUnitOfWork node_modules/react-dom/cjs/react-dom-client.development.js:19176:22
+ ❯ workLoopSync node_modules/react-dom/cjs/react-dom-client.development.js:19004:41
+ ❯ renderRootSync node_modules/react-dom/cjs/react-dom-client.development.js:18985:11
+ ❯ performWorkOnRoot node_modules/react-dom/cjs/react-dom-client.development.js:18094:35
+
+This error originated in "src/__tests__/r212.permissionAwareness.test.tsx" test file. It doesn't mean the error was thrown inside the file itself, but while it was running.
+The latest test that might've caused the error is "AC-R212-01 · detalle de lote sin `reports:read`: 0 llamadas a KPIs de reportes". It might mean one of the following:
+- The error was thrown, while Vitest was running this test.
+- If the error occurred after the test had been completed, this was the last documented test before it was thrown.
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯
+
+
+ Test Files  1 failed (1)
+      Tests  13 failed | 1 passed (14)
+     Errors  1 error
+   Start at  16:35:24
+   Duration  15.53s (transform 859ms, setup 53ms, import 1.47s, tests 13.14s, environment 728ms)
+
