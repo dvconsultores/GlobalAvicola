@@ -511,6 +511,8 @@ class LotService:
         await validate_lot_records_approved(self.db, lot_id, self.company_id)
 
         # Calculate final summary
+        # `R-192` · `OD-19 §3.3`: los tres sumatorios del resumen son **netos** — excluyen
+        # anulados (`CANCELLED`) y pares revertidos (`REVERSED`), como `_suma_neta`.
         # Total mortality
         mort_q = select(func.coalesce(func.sum(BirdMovement.quantity), 0)).join(
             OperationalEvent, BirdMovement.event_id == OperationalEvent.id
@@ -518,6 +520,7 @@ class LotService:
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.company_id == self.company_id,
             OperationalEvent.event_type == EventType.MORTALITY_RECORDING,
+            OperationalEvent.status.not_in([EventStatus.CANCELLED, EventStatus.REVERSED]),
         )
         mort_result = await self.db.execute(mort_q)
         total_mortality = mort_result.scalar() or 0
@@ -528,6 +531,7 @@ class LotService:
         ).where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.company_id == self.company_id,
+            OperationalEvent.status.not_in([EventStatus.CANCELLED, EventStatus.REVERSED]),
         )
         feed_result = await self.db.execute(feed_q)
         total_feed_kg = round(feed_result.scalar() or 0.0, 2)
@@ -539,6 +543,7 @@ class LotService:
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.company_id == self.company_id,
             OperationalEvent.event_type == EventType.EGG_COLLECTION,
+            OperationalEvent.status.not_in([EventStatus.CANCELLED, EventStatus.REVERSED]),
         )
         egg_result = await self.db.execute(egg_q)
         total_eggs = egg_result.scalar() or 0

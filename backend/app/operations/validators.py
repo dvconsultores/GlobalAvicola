@@ -398,12 +398,15 @@ async def validate_lot_closure(db: AsyncSession, lot_id: int) -> None:
     """
     BR-05: Lot closure requires at least one weight_recording AND one feed_registration.
     Without these, FCR and final weight cannot be computed.
+
+    `R-192` · `OD-19 §3.3`: un pesaje o alimento con el par `REVERSED` **no está vigente**
+    — su efecto neto es cero y no puede ser la base del FCR/peso final.
     """
     has_weight = await db.execute(
         select(OperationalEvent.id).where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
+            OperationalEvent.status.not_in([EventStatus.CANCELLED, EventStatus.REVERSED]),
         ).limit(1)
     )
     if not has_weight.scalar_one_or_none():
@@ -415,7 +418,7 @@ async def validate_lot_closure(db: AsyncSession, lot_id: int) -> None:
         select(OperationalEvent.id).where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.event_type == EventType.FEED_REGISTRATION,
-            OperationalEvent.status.not_in([EventStatus.CANCELLED]),
+            OperationalEvent.status.not_in([EventStatus.CANCELLED, EventStatus.REVERSED]),
         ).limit(1)
     )
     if not has_feed.scalar_one_or_none():
@@ -458,6 +461,10 @@ async def validate_lot_records_approved(
     **`cancelled` no cuenta**: un registro anulado no representa operación alguna, y es lo que
     excluyen los ocho saldos de este mismo fichero.
 
+    **`reversed` cuenta como decidido** (`R-192` · `OD-19 §6`): el par original+contrapartida
+    se decide por el motor de aprobación; `REVERSED` es terminal y no admite acción, luego
+    bloquear por él dejaría el lote cerrable solo por intervención en datos.
+
     **`rejected` sí cuenta**: no está aprobado. Y no atrapa el lote, porque `docs/12 §4`
     muestra que no es terminal — el operador lo reenvía corregido.
 
@@ -469,7 +476,7 @@ async def validate_lot_records_approved(
         .where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.status.not_in(
-                (*ESTADOS_APROBADOS, EventStatus.CANCELLED)
+                (*ESTADOS_APROBADOS, EventStatus.CANCELLED, EventStatus.REVERSED)
             ),
         )
         .group_by(OperationalEvent.status)
@@ -481,10 +488,31 @@ async def validate_lot_records_approved(
     if not pendientes:
         return
 
+    # `R-192` · `C-07` (`OD-19 §6`): cuando lo vivo son **contrapartidas de reverso**, el
+    # detalle lo dice: la acción posible no es «aprobar el registro» sino decidir el reverso.
+    from .models import Reversal
+
+    vivos = (*ESTADOS_APROBADOS, EventStatus.CANCELLED, EventStatus.REVERSED)
+    cuenta_reversos = (
+        select(func.count(OperationalEvent.id))
+        .join(Reversal, Reversal.reversal_event_id == OperationalEvent.id)
+        .where(OperationalEvent.lot_id == lot_id, OperationalEvent.status.not_in(vivos))
+    )
+    if company_id is not None:
+        cuenta_reversos = cuenta_reversos.where(OperationalEvent.company_id == company_id)
+    reversos_pendientes = (await db.execute(cuenta_reversos)).scalar() or 0
+
     total = sum(n for _, n in pendientes)
     detalle = ", ".join(f"{n} en «{estado.value}»" for estado, n in pendientes)
+    aviso = ""
+    if reversos_pendientes:
+        aviso = (
+            f" {reversos_pendientes} reverso pendiente de decisión."
+            if reversos_pendientes == 1
+            else f" {reversos_pendientes} reversos pendientes de decisión."
+        )
     raise BusinessRuleViolation(
-        f"No se puede cerrar el lote: {total} registro(s) sin aprobar ({detalle}). "
+        f"No se puede cerrar el lote: {total} registro(s) sin aprobar ({detalle}).{aviso} "
         "Apruébelos o anúlelos antes de cerrar.",
         "R7",
     )

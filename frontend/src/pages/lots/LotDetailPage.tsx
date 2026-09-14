@@ -116,8 +116,10 @@ export default function LotDetailPage() {
  setCloseResult(data)
  setLot((prev: any) => ({ ...prev, status: 'closed' }))
  } catch (err: any) {
- console.error(err.response?.data?.detail || t('lots.closeError'))
- } finally {
+      // `R-192`: la verdad del rechazo es del backend (`R7`/`BR-05`/403/404) — se muestra
+      // legible con el patrón vigente de la página; un cierre fallido nunca queda solo en
+      // consola con el modal cerrado y el operador sin saber por qué.
+      toast.error(getErrorMessage(err, t('lots.closeError', 'Error al cerrar lote')))
  setClosing(false)
  }
  }

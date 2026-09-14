@@ -1,0 +1,9 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  02:53:42
+   Duration  1.62s (transform 202ms, setup 51ms, import 447ms, tests 441ms, environment 564ms)
+

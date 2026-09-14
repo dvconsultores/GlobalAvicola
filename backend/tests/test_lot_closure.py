@@ -150,7 +150,7 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
     """`AC01`, `AC03`, `AC08` · 200 con cifras ciertas, no un 500.
 
     El escenario fija mortalidad, alimento y huevos en valores distintos entre sí, y deja
-    **uno de los cinco eventos anulado**: así `approved_events` y `total_events` no pueden
+    **uno de los seis eventos anulado**: así `approved_events` y `total_events` no pueden
     coincidir por casualidad y se comprueba que son dos cuentas distintas.
 
     Antes se distinguían dejando un evento sin aprobar. Desde `GA-REM-036` eso impide cerrar
@@ -171,8 +171,14 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
     await _requisitos_br05(client, auth_headers, seeded_ids, lot_id)
     await _evento(client, auth_headers, seeded_ids, lot_id, "egg_collection",
                   egg_movements=[{"quantity": HUEVOS, "egg_type": "fertile"}])
+    # El evento que se anula es la inspección: sin efecto en los totales del resumen.
+    # `R-192` (`OD-19 §3.3`): los tres totales son **netos** — un evento con métrica anulado
+    # bajaría su total, y eso es lo que fijan las pruebas de `R-192`.
+    await _evento(client, auth_headers, seeded_ids, lot_id, "farm_inspection",
+                  inspection_details=[
+                      {"parameter": "Bioseguridad", "value": "ok", "status": "ok"}])
 
-    # Cuatro aprobados y uno anulado. `R7` exige que no quede ninguno sin aprobar; lo anulado
+    # Cinco aprobados y uno anulado. `R7` exige que no quede ninguno sin aprobar; lo anulado
     # queda fuera de su alcance, y es lo que hace que las dos cuentas difieran.
     from app.operations.models import EventStatus, OperationalEvent
 
@@ -195,8 +201,8 @@ async def test_t_073_01_el_cierre_responde_con_el_resumen(
     assert resumen["total_mortality"] == MORTALIDAD, resumen
     assert resumen["total_feed_kg"] == pytest.approx(ALIMENTO_KG), resumen
     assert resumen["total_eggs"] == HUEVOS, resumen
-    assert resumen["total_events"] == 5, resumen
-    assert resumen["approved_events"] == 4, resumen
+    assert resumen["total_events"] == 6, resumen
+    assert resumen["approved_events"] == 5, resumen
     assert resumen["approved_events"] != resumen["total_events"], (
         "aprobados y totales no pueden ser la misma cuenta"
     )
