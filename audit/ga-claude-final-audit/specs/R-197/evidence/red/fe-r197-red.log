@@ -1,0 +1,3550 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter initialEntries={[...]}>
+    <Router basename={undefined} location={{pathname:"...", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <ToastProvider>
+        <ReviewCenter>
+          <div>
+            <div>
+            <div>
+            <FilterPanel onClear={function clearFilters} totalResults={0}>
+              <div className="bg-white r...">
+>               <button
+>                 onClick={function onClick}
+>                 className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 h..."
+>                 aria-expanded={true}
+>               >
+                  <div>
+                  <div className="flex items...">
+                    <span>
+>                   <button
+>                     onClick={function onClick}
+>                     className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transit..."
+>                   >
+                ...
+            ...
+        ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+stderr | src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC04 · con users:read el filtro viaja como `registered_by_id` (no `operator_id`)
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+stderr | src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC07/AC20 · «Devolver» no usa prompt nativo y exige ≥10 caracteres
+An update to ReviewCenter inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC07/AC20 · «Devolver» no usa prompt nativo y exige ≥10 caracteres
+An update to ReviewCenter inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ReviewCenter inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to ReviewCenter inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx (5 tests | 5 failed) 2430ms
+     × AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL 303ms
+     × AC18/AC04 · sin users:read: no se llama /users y el filtro de operador no existe 32ms
+     × AC04 · con users:read el filtro viaja como `registered_by_id` (no `operator_id`) 1029ms
+     × AC07/AC20 · «Devolver» no usa prompt nativo y exige ≥10 caracteres 47ms
+     × AC19 · 403 en la carga ⇒ mensaje de permiso (no «Sin resultados») 1017ms
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx (5 tests | 5 failed) 5105ms
+     × AC13 · el historial viene de /review/events/{id}/actions (no de /review/batches) 1059ms
+     × AC15 · tras completar la revisión permanece en el detalle y recarga (no navega a /review) 1015ms
+     × AC21 · el badge de estado usa i18n (`status.in_review`) 1007ms
+     × AC20 · «Devolver» desde el detalle no usa alert/prompt nativos 1011ms
+     × AC14/16/17 · aprobar muestra enlace al lote creado, KPIs veraces y 1 solo POST por doble clic 1009ms
+
+⎯⎯⎯⎯⎯⎯ Failed Tests 10 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewDetail.test.tsx > R-197 · detalle de revisión (RED) > AC13 · el historial viene de /review/events/{id}/actions (no de /review/batches)
+AssertionError: expected false to be true // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-slate-400 hover"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/review"[39m
+          [36m>[39m
+            [0m← [0m
+            [0mcommon.back[0m
+          [36m</a>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mreview.detailTitle[0m
+          [36m</h1>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.originalData[0m
+            [36m</h2>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"space-y-2 text-sm"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.type[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0meventsShort.undefined[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.date[0m
+                [36m</dt>[39m
+                [36m<dd />[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.lot[0m
+                [36m</dt>[39m
+                [36m<dd[39m
+                  [33mclass[39m=[32m"font-mono"[39m
+                [36m>[39m
+                  [0m#[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.farm[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.house[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.observations[0m
+                [36m</dt>[39m
+                [36m<dd[39m
+                  [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+                [36m>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.version[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mv[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 22 16 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.feedMovements[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 3v5h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16H3v5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.sapReference[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+            [36m>[39m
+              [0mreview.noSapRef[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+          [36m>[39m
+            [0mcommon.actions[0m
+          [36m</h2>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+          [36m/>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx:88:90
+     86|     setSession(['review:read', 'review:review'])
+     87|     renderPage()
+     88|     await waitFor(() => expect(urls(get).some((u) => u === '/review/ev…
+       |                                                                                          ^
+     89|     expect(urls(get).some((u) => u.startsWith('/review/batches')), '/r…
+     90|     await waitFor(() => expect(screen.getAllByText(/started/).length).…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewDetail.test.tsx > R-197 · detalle de revisión (RED) > AC15 · tras completar la revisión permanece en el detalle y recarga (no navega a /review)
+TestingLibraryElementError: Unable to find an element with the text: /mortality/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx:97:18
+     95|     post.mockResolvedValue({ data: { ok: true } })
+     96|     renderPage()
+     97|     await screen.findByText(/mortality/)
+       |                  ^
+     98|     fireEvent.click(screen.getAllByRole('button', { name: /Completar/ …
+     99|     await waitFor(() => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewDetail.test.tsx > R-197 · detalle de revisión (RED) > AC21 · el badge de estado usa i18n (`status.in_review`)
+TestingLibraryElementError: Unable to find an element with the text: /status\.in_review/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-slate-400 hover"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/review"[39m
+          [36m>[39m
+            [0m← [0m
+            [0mcommon.back[0m
+          [36m</a>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mreview.detailTitle[0m
+          [36m</h1>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+          [36m/>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.originalData[0m
+            [36m</h2>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"space-y-2 text-sm"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.type[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0meventsShort.undefined[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.date[0m
+                [36m</dt>[39m
+                [36m<dd />[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.lot[0m
+                [36m</dt>[39m
+                [36m<dd[39m
+                  [33mclass[39m=[32m"font-mono"[39m
+                [36m>[39m
+                  [0m#[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.farm[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.house[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.observations[0m
+                [36m</dt>[39m
+                [36m<dd[39m
+                  [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+                [36m>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.version[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mv[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 22 16 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.feedMovements[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 3v5h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16H3v5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.sapReference[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+            [36m>[39m
+              [0mreview.noSapRef[0m
+            [36m</p>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+          [36m>[39m
+            [0mcommon.actions[0m
+          [36m</h2>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+          [36m/>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx:110:11
+    108|     setSession(['review:read', 'review:review'])
+    109|     renderPage()
+    110|     await waitFor(() => expect(screen.getByText(/status\.in_review/)).…
+       |           ^
+    111|   })
+    112|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewDetail.test.tsx > R-197 · detalle de revisión (RED) > AC20 · «Devolver» desde el detalle no usa alert/prompt nativos
+TestingLibraryElementError: Unable to find an element with the text: /mortality/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx:118:18
+    116|     const promptSpy = vi.spyOn(window, 'prompt').mockImplementation(()…
+    117|     renderPage()
+    118|     await screen.findByText(/mortality/)
+       |                  ^
+    119|     fireEvent.click(screen.getAllByRole('button', { name: /Devolver/ }…
+    120|     expect(alertSpy).not.toHaveBeenCalled()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewDetail.test.tsx > R-197 · detalle de revisión (RED) > AC14/16/17 · aprobar muestra enlace al lote creado, KPIs veraces y 1 solo POST por doble clic
+TestingLibraryElementError: Unable to find an element with the text: /mortality/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100"[39m
+        [36m/>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.undefined[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd />[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m/>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx:136:18
+    134|     post.mockResolvedValue({ data: { id: 55, status: 'approved', lot_i…
+    135|     renderPage()
+    136|     await screen.findByText(/mortality/)
+       |                  ^
+    137|     const aprobar = screen.getAllByRole('button', { name: /Aprobar/ })…
+    138|     fireEvent.click(aprobar)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name `/Corregidos/`
+
+Here are the accessible roles:
+
+  heading:
+
+  Name "review.center":
+  [36m<h1[39m
+    [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "review.createBatch":
+  [36m<button[39m
+    [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5 shadow-sm"[39m
+  [36m/>[39m
+
+  Name "Pendientes":
+  [36m<button[39m
+    [33mclass[39m=[32m"
+   inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+   bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+   "[39m
+  [36m/>[39m
+
+  Name "En revisión":
+  [36m<button[39m
+    [33mclass[39m=[32m"
+   inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+   bg-[#1E3A5F] text-white shadow-md
+   "[39m
+  [36m/>[39m
+
+  Name "Devueltos":
+  [36m<button[39m
+    [33mclass[39m=[32m"
+   inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+   bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+   "[39m
+  [36m/>[39m
+
+  Name "Aprobados":
+  [36m<button[39m
+    [33mclass[39m=[32m"
+   inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+   bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+   "[39m
+  [36m/>[39m
+
+  Name "Consolidados":
+  [36m<button[39m
+    [33mclass[39m=[32m"
+   inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+   bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+   "[39m
+  [36m/>[39m
+
+  Name "Filtros 1 resultados Limpiar":
+  [36m<button[39m
+    [33maria-expanded[39m=[32m"true"[39m
+    [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+  [36m/>[39m
+
+  Name "Limpiar":
+  [36m<button[39m
+    [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+  [36m/>[39m
+
+  Name "Completar":
+  [36m<button[39m
+    [33mclass[39m=[32m"flex-1 bg-teal-50 text-teal-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-teal-100 transition flex items-center justify-center gap-1.5"[39m
+  [36m/>[39m
+
+  Name "Devolver":
+  [36m<button[39m
+    [33mclass[39m=[32m"flex-1 bg-orange-50 text-orange-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-orange-100 transition flex items-center justify-center gap-1.5"[39m
+  [36m/>[39m
+
+  Name "Completar":
+  [36m<button[39m
+    [33mclass[39m=[32m"bg-teal-50 text-teal-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-teal-100 transition flex items-center gap-1"[39m
+  [36m/>[39m
+
+  Name "Devolver":
+  [36m<button[39m
+    [33mclass[39m=[32m"bg-orange-50 text-orange-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-orange-100 transition flex items-center gap-1"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  link:
+
+  Name "nav.approvals":
+  [36m<a[39m
+    [33mclass[39m=[32m"bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-sm"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/approvals"[39m
+  [36m/>[39m
+
+  Name "Detalle":
+  [36m<a[39m
+    [33mclass[39m=[32m"flex-1 bg-slate-50 text-slate-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/review/301"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<a[39m
+    [33mclass[39m=[32m"bg-slate-50 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center gap-1"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/review/301"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  textbox:
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+    [33mplaceholder[39m=[32m"ID"[39m
+    [33mtype[39m=[32m"text"[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  combobox:
+
+  Name "":
+  [36m<select[39m
+    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<select[39m
+    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<select[39m
+    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  option:
+
+  Name "Todas":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "Todos":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "bird_reception":
+  [36m<option[39m
+    [33mvalue[39m=[32m"bird_reception"[39m
+  [36m/>[39m
+
+  Name "bird_distribution":
+  [36m<option[39m
+    [33mvalue[39m=[32m"bird_distribution"[39m
+  [36m/>[39m
+
+  Name "bird_transfer":
+  [36m<option[39m
+    [33mvalue[39m=[32m"bird_transfer"[39m
+  [36m/>[39m
+
+  Name "bird_exit":
+  [36m<option[39m
+    [33mvalue[39m=[32m"bird_exit"[39m
+  [36m/>[39m
+
+  Name "feed_registration":
+  [36m<option[39m
+    [33mvalue[39m=[32m"feed_registration"[39m
+  [36m/>[39m
+
+  Name "water_consumption":
+  [36m<option[39m
+    [33mvalue[39m=[32m"water_consumption"[39m
+  [36m/>[39m
+
+  Name "weight_recording":
+  [36m<option[39m
+    [33mvalue[39m=[32m"weight_recording"[39m
+  [36m/>[39m
+
+  Name "mortality_recording":
+  [36m<option[39m
+    [33mvalue[39m=[32m"mortality_recording"[39m
+  [36m/>[39m
+
+  Name "cull_recording":
+  [36m<option[39m
+    [33mvalue[39m=[32m"cull_recording"[39m
+  [36m/>[39m
+
+  Name "vaccination":
+  [36m<option[39m
+    [33mvalue[39m=[32m"vaccination"[39m
+  [36m/>[39m
+
+  Name "medication":
+  [36m<option[39m
+    [33mvalue[39m=[32m"medication"[39m
+  [36m/>[39m
+
+  Name "farm_inspection":
+  [36m<option[39m
+    [33mvalue[39m=[32m"farm_inspection"[39m
+  [36m/>[39m
+
+  Name "transport_inspection":
+  [36m<option[39m
+    [33mvalue[39m=[32m"transport_inspection"[39m
+  [36m/>[39m
+
+  Name "hatchery_inspection":
+  [36m<option[39m
+    [33mvalue[39m=[32m"hatchery_inspection"[39m
+  [36m/>[39m
+
+  Name "egg_collection":
+  [36m<option[39m
+    [33mvalue[39m=[32m"egg_collection"[39m
+  [36m/>[39m
+
+  Name "egg_classification":
+  [36m<option[39m
+    [33mvalue[39m=[32m"egg_classification"[39m
+  [36m/>[39m
+
+  Name "egg_reception_classification":
+  [36m<option[39m
+    [33mvalue[39m=[32m"egg_reception_classification"[39m
+  [36m/>[39m
+
+  Name "egg_dispatch":
+  [36m<option[39m
+    [33mvalue[39m=[32m"egg_dispatch"[39m
+  [36m/>[39m
+
+  Name "egg_reception_hatchery":
+  [36m<option[39m
+    [33mvalue[39m=[32m"egg_reception_hatchery"[39m
+  [36m/>[39m
+
+  Name "incubation_load":
+  [36m<option[39m
+    [33mvalue[39m=[32m"incubation_load"[39m
+  [36m/>[39m
+
+  Name "ovoscopy":
+  [36m<option[39m
+    [33mvalue[39m=[32m"ovoscopy"[39m
+  [36m/>[39m
+
+  Name "transfer_to_hatcher":
+  [36m<option[39m
+    [33mvalue[39m=[32m"transfer_to_hatcher"[39m
+  [36m/>[39m
+
+  Name "birth_registration":
+  [36m<option[39m
+    [33mvalue[39m=[32m"birth_registration"[39m
+  [36m/>[39m
+
+  Name "chick_dispatch":
+  [36m<option[39m
+    [33mvalue[39m=[32m"chick_dispatch"[39m
+  [36m/>[39m
+
+  Name "lot_closure":
+  [36m<option[39m
+    [33mvalue[39m=[32m"lot_closure"[39m
+  [36m/>[39m
+
+  Name "grandparent_import":
+  [36m<option[39m
+    [33mvalue[39m=[32m"grandparent_import"[39m
+  [36m/>[39m
+
+  Name "Todos":
+  [36m<option[39m
+    [33mvalue[39m=[32m""[39m
+  [36m/>[39m
+
+  Name "operador":
+  [36m<option[39m
+    [33mvalue[39m=[32m"9"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  checkbox:
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"rounded border-slate-300 text-blue-600 focus:ring-blue-500"[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<input[39m
+    [33mclass[39m=[32m"rounded border-slate-300 text-blue-600 focus:ring-blue-500"[39m
+    [33mtype[39m=[32m"checkbox"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"text-sm font-medium text-slate-700"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"text-xs text-slate-400 mt-0.5"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  table:
+
+  Name "":
+  [36m<table[39m
+    [33mclass[39m=[32m"w-full text-sm"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  rowgroup:
+
+  Name "":
+  [36m<thead[39m
+    [33mclass[39m=[32m"bg-slate-50 border-b border-slate-200"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<tbody[39m
+    [33mclass[39m=[32m"divide-y divide-slate-100"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  row:
+
+  Name "ID Tipo Lote Fecha Estado Acciones":
+  [36m<tr />[39m
+
+  Name "#301 mortality #7 2026-09-10 in_review Completar Devolver":
+  [36m<tr[39m
+    [33mclass[39m=[32m"hover:bg-blue-50/40 transition-colors"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  columnheader:
+
+  Name "":
+  [36m<th[39m
+    [33mclass[39m=[32m"w-12 px-4 py-3.5 text-left"[39m
+  [36m/>[39m
+
+  Name "ID":
+  [36m<th[39m
+    [33mclass[39m=[32m"px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider"[39m
+  [36m/>[39m
+
+  Name "Tipo":
+  [36m<th[39m
+    [33mclass[39m=[32m"px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider"[39m
+  [36m/>[39m
+
+  Name "Lote":
+  [36m<th[39m
+    [33mclass[39m=[32m"px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider"[39m
+  [36m/>[39m
+
+  Name "Fecha":
+  [36m<th[39m
+    [33mclass[39m=[32m"px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider"[39m
+  [36m/>[39m
+
+  Name "Estado":
+  [36m<th[39m
+    [33mclass[39m=[32m"px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider"[39m
+  [36m/>[39m
+
+  Name "Acciones":
+  [36m<th[39m
+    [33mclass[39m=[32m"px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  cell:
+
+  Name "":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3"[39m
+  [36m/>[39m
+
+  Name "#301":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3 font-mono text-xs text-slate-500"[39m
+  [36m/>[39m
+
+  Name "mortality":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3"[39m
+  [36m/>[39m
+
+  Name "#7":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3"[39m
+  [36m/>[39m
+
+  Name "2026-09-10":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3 text-slate-500 text-sm"[39m
+  [36m/>[39m
+
+  Name "in_review":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3"[39m
+  [36m/>[39m
+
+  Name "Completar Devolver":
+  [36m<td[39m
+    [33mclass[39m=[32m"px-4 py-3"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mreview.center[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-2"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5 shadow-sm"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-package"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M12 22V12"[39m
+                    [36m/>[39m
+                    [36m<polyline[39m
+                      [33mpoints[39m=[32m"3.29 7 12 12 20.71 7"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m7.5 4.27 9 5.15"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [0m [0m
+                  [0mreview.createBatch[0m
+                [36m</button>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-sm"[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/approvals"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-circle-check-big lucide-check-circle"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m9 11 3 3L22 4"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [0m [0m
+                  [0mnav.approvals[0m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"12"[39m
+              [33mcy[39m=[32m"12"[39m
+              [33mr[39m=[32m"10"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 6v6l4 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mPendientes[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-search text-white"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m21 21-4.34-4.34"[39m
+            [36m/>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"11"[39m
+              [33mcy[39m=[32m"11"[39m
+              [33mr[39m=[32m"8"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mEn revisión[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:109:15
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx:81:21
+     79|     // pestañas solicitadas por el diseño C-03 (las 7 de bandeja)
+     80|     for (const etiqueta of ['Devueltos', 'Aprobados', 'Consolidados', …
+     81|       expect(screen.getAllByRole('button', { name: new RegExp(etiqueta…
+       |                     ^
+     82|     }
+     83|     expect(urlsLlamadas().some((u) => u.includes('status=in_review')))…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC18/AC04 · sin users:read: no se llama /users y el filtro de operador no existe
+AssertionError: GET /users sin users:read: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx:90:102
+     88|     renderPage()
+     89|     await waitFor(() => expect(urlsLlamadas().some((u) => u.includes('…
+     90|     expect(urlsLlamadas().filter((u) => u.startsWith('/users')).length…
+       |                                                                                                      ^
+     91|     expect(screen.queryByText(/Operador/)).toBeNull()
+     92|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC04 · con users:read el filtro viaja como `registered_by_id` (no `operator_id`)
+AssertionError: selector de operador ausente: expected null to be truthy
+
+- Expected:
+true
+
++ Received:
+null
+
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx:100:54
+     98|     const selector = await screen.findByLabelText(/Operador/) .catch((…
+     99|       ?? document.querySelector('select[data-filtro="operador"]')
+    100|     expect(selector, 'selector de operador ausente').toBeTruthy()
+       |                                                      ^
+    101|     fireEvent.change(selector as Element, { target: { value: '9' } })
+    102|     await waitFor(() => {
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC07/AC20 · «Devolver» no usa prompt nativo y exige ≥10 caracteres
+AssertionError: expected "bound " to not be called at all, but actually been called 1 times
+
+Received:
+
+  1st bound  call:
+
+    Array [
+      "review.obsPrompt",
+    ]
+
+
+Number of calls: 1
+
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx:117:27
+    115|
+    116|     // sin diálogo nativo
+    117|     expect(promptSpy).not.toHaveBeenCalled()
+       |                           ^
+    118|     // con observación corta no se emite POST
+    119|     const caja = await screen.findByRole('textbox', { name: /observaci…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[9/10]⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC19 · 403 en la carga ⇒ mensaje de permiso (no «Sin resultados»)
+TestingLibraryElementError: Unable to find an element with the text: /review\.noPermissionQueue/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mreview.center[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex gap-2"[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5 shadow-sm"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-package"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M12 22V12"[39m
+                    [36m/>[39m
+                    [36m<polyline[39m
+                      [33mpoints[39m=[32m"3.29 7 12 12 20.71 7"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m7.5 4.27 9 5.15"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [0m [0m
+                  [0mreview.createBatch[0m
+                [36m</button>[39m
+                [36m<a[39m
+                  [33mclass[39m=[32m"bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-sm"[39m
+                  [33mdata-discover[39m=[32m"true"[39m
+                  [33mhref[39m=[32m"/approvals"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-circle-check-big lucide-check-circle"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+                    [36m/>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m9 11 3 3L22 4"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [0m [0m
+                  [0mnav.approvals[0m
+                [36m</a>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"12"[39m
+              [33mcy[39m=[32m"12"[39m
+              [33mr[39m=[32m"10"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 6v6l4 2"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mPendientes[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-search text-white"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m21 21-4.34-4.34"[39m
+            [36m/>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"11"[39m
+              [33mcy[39m=[32m"11"[39m
+              [33mr[39m=[32m"8"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mEn revisión[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex...
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+              [36m>[39m
+                [0mreview.center[0m
+              [36m</h1>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex gap-2"[39m
+                [36m>[39m
+                  [36m<button[39m
+                    [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition flex items-center gap-1.5 shadow-sm"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-package"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"16"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"16"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M12 22V12"[39m
+                      [36m/>[39m
+                      [36m<polyline[39m
+                        [33mpoints[39m=[32m"3.29 7 12 12 20.71 7"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"m7.5 4.27 9 5.15"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [0m [0m
+                    [0mreview.createBatch[0m
+                  [36m</button>[39m
+                  [36m<a[39m
+                    [33mclass[39m=[32m"bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-emerald-700 transition flex items-center gap-1.5 shadow-sm"[39m
+                    [33mdata-discover[39m=[32m"true"[39m
+                    [33mhref[39m=[32m"/approvals"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33maria-hidden[39m=[32m"true"[39m
+                      [33mclass[39m=[32m"lucide lucide-circle-check-big lucide-check-circle"[39m
+                      [33mfill[39m=[32m"none"[39m
+                      [33mheight[39m=[32m"16"[39m
+                      [33mstroke[39m=[32m"currentColor"[39m
+                      [33mstroke-linecap[39m=[32m"round"[39m
+                      [33mstroke-linejoin[39m=[32m"round"[39m
+                      [33mstroke-width[39m=[32m"2"[39m
+                      [33mviewBox[39m=[32m"0 0 24 24"[39m
+                      [33mwidth[39m=[32m"16"[39m
+                      [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                    [36m>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"M21.801 10A10 10 0 1 1 17 3.335"[39m
+                      [36m/>[39m
+                      [36m<path[39m
+                        [33md[39m=[32m"m9 11 3 3L22 4"[39m
+                      [36m/>[39m
+                    [36m</svg>[39m
+                    [0m [0m
+                    [0mnav.approvals[0m
+                  [36m</a>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50 hover:border-slate-300
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"10"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 6v6l4 2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mPendientes[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-search text-white"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m21 21-4.34-4.34"[39m
+              [36m/>[39m
+              [36m<cir...
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx:137:11
+    135|     })
+    136|     renderPage()
+    137|     await waitFor(() => expect(screen.getByText(/review\.noPermissionQ…
+       |           ^
+    138|     expect(screen.queryByText('common.noResults')).toBeNull()
+    139|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[10/10]⎯
+
+
+ Test Files  2 failed (2)
+      Tests  10 failed (10)
+   Start at  15:36:31
+   Duration  6.39s (transform 288ms, setup 98ms, import 902ms, tests 7.54s, environment 1.34s)
+

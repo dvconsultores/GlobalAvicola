@@ -1,0 +1,172 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=56 (55 + alembic_version) · head en BD=z6a7b8c9d0e1 · head en código=z6a7b8c9d0e1
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 6 items
+
+tests/test_r197_review_queue_contract.py F.FFFF                          [100%]
+
+=================================== FAILURES ===================================
+____________ test_r197_01_status_in_review_devuelve_solo_in_review _____________
+
+client = <httpx.AsyncClient object at 0x7f121d11bcd0>
+esc_r197 = {'url': 'postgresql+asyncpg://global_avicola_test_user:***@/global_avicola_test?host=/hom...0>, 'op': <app.auth.models.User object at 0x7f121cb70e10>, 'rev': <app.auth.models.User object at 0x7f121c9e2cd0>, ...}
+
+    async def test_r197_01_status_in_review_devuelve_solo_in_review(client, esc_r197):
+        r = await client.get("/api/v1/review/pending?status=in_review", headers=esc_r197["token_rev"])
+        assert r.status_code == 200, r.text
+        ids = {e["id"] for e in r.json()["events"]}
+>       assert ids == {esc_r197["eventos"]["in_review"].id}, ids
+E       AssertionError: {1, 2}
+E       assert {1, 2} == {3}
+E         
+E         Extra items in the left set:
+E         1
+E         2
+E         Extra items in the right set:
+E         3
+E         Use -v to get more diff
+
+tests/test_r197_review_queue_contract.py:142: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+_____________________ test_r197_03_status_invalido_es_422 ______________________
+
+client = <httpx.AsyncClient object at 0x7f121c152990>
+esc_r197 = {'url': 'postgresql+asyncpg://global_avicola_test_user:***@/global_avicola_test?host=/hom...0>, 'op': <app.auth.models.User object at 0x7f121c08d510>, 'rev': <app.auth.models.User object at 0x7f121c603ed0>, ...}
+
+    async def test_r197_03_status_invalido_es_422(client, esc_r197):
+        r = await client.get("/api/v1/review/pending?status=foo", headers=esc_r197["token_rev"])
+>       assert r.status_code == 422, r.text
+E       AssertionError: {"events":[{"approved_by_id":null,"vaccination_route":null,"sample_size":null,"classified_by_id":null,"id":9,"lot_id":5,"supplier_id":null,"treatment_days":null,"received_total":null,"observations":null,"status":"registered","vaccine_id":null,"destination_farm_id":null,"dead_on_arrival":null,"created_at":"2026-09-14T13:41:27.050698+00:00","version":1,"reviewed_by_id":null,"cull_cause_id":null,"rejected_on_arrival":null,"updated_at":"2026-09-14T13:41:27.050698+00:00","event_type":"mortality_recording","idempotency_key":null,"cause_id":null,"chicks_healthy":null,"house_id":5,"event_date":"2026-09-07","registered_by_id":11,"sap_document_ref":null,"chicks_weak":null,"event_time":null,"vaccine_lot_number":null,"destination_plant_id":null,"extra_data":null,"business_unit_id":11,"classified_at":null,"company_id":5,"farm_id":5,"medication_id":null,"dosage_per_bird":null,"transport_id":null,"water_liters":null,"bird_movements":[],"egg_movements":[],"feed_movements":[],"hatchery_params":[],"inspection_details":[],"egg_storage_records":[],"evidences":[],"alerts":[]},{"approved_by_id":null,"vaccination_route":null,"sample_size":null,"classified_by_id":null,"id":10,"lot_id":5,"supplier_id":null,"treatment_days":null,"received_total":null,"observations":null,"status":"pending_review","vaccine_id":null,"destination_farm_id":null,"dead_on_arrival":null,"created_at":"2026-09-14T13:41:27.050698+00:00","version":1,"reviewed_by_id":null,"cull_cause_id":null,"rejected_on_arrival":null,"updated_at":"2026-09-14T13:41:27.050698+00:00","event_type":"mortality_recording","idempotency_key":null,"cause_id":null,"chicks_healthy":null,"house_id":5,"event_date":"2026-09-07","registered_by_id":11,"sap_document_ref":null,"chicks_weak":null,"event_time":null,"vaccine_lot_number":null,"destination_plant_id":null,"extra_data":null,"business_unit_id":11,"classified_at":null,"company_id":5,"farm_id":5,"medication_id":null,"dosage_per_bird":null,"transport_id":null,"water_liters":null,"bird_movements":[],"egg_movements":[],"feed_movements":[],"hatchery_params":[],"inspection_details":[],"egg_storage_records":[],"evidences":[],"alerts":[]}],"total":2}
+E       assert 200 == 422
+E        +  where 200 = <Response [200 OK]>.status_code
+
+tests/test_r197_review_queue_contract.py:154: AssertionError
+_____________________ test_r197_04_registered_by_id_filtra _____________________
+
+client = <httpx.AsyncClient object at 0x7f121c107dd0>
+esc_r197 = {'url': 'postgresql+asyncpg://global_avicola_test_user:***@/global_avicola_test?host=/hom...0>, 'op': <app.auth.models.User object at 0x7f121c0d5010>, 'rev': <app.auth.models.User object at 0x7f121c0d75d0>, ...}
+
+    async def test_r197_04_registered_by_id_filtra(client, esc_r197):
+        r = await client.get(
+            f"/api/v1/review/pending?status=in_review,returned&registered_by_id={esc_r197['op'].id}",
+            headers=esc_r197["token_rev"])
+        assert r.status_code == 200, r.text
+        ids = {e["id"] for e in r.json()["events"]}
+>       assert ids == {esc_r197["eventos"]["in_review"].id, esc_r197["eventos"]["returned"].id}, ids
+E       AssertionError: {13, 14}
+E       assert {13, 14} == {15, 16}
+E         
+E         Extra items in the left set:
+E         13
+E         14
+E         Extra items in the right set:
+E         16
+E         15
+E         Use -v to get more diff
+
+tests/test_r197_review_queue_contract.py:163: AssertionError
+_______________________ test_r197_05_acciones_por_evento _______________________
+
+client = <httpx.AsyncClient object at 0x7f121c0a5550>
+esc_r197 = {'url': 'postgresql+asyncpg://global_avicola_test_user:***@/global_avicola_test?host=/hom...0>, 'op': <app.auth.models.User object at 0x7f1217f5e050>, 'rev': <app.auth.models.User object at 0x7f1217f5dad0>, ...}
+
+    async def test_r197_05_acciones_por_evento(client, esc_r197):
+        ev = esc_r197["eventos"]["in_review"]
+        r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_rev"])
+>       assert r.status_code == 200, r.text
+E       AssertionError: {"detail":"Not Found"}
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_r197_review_queue_contract.py:169: AssertionError
+__________________ test_r197_06_acciones_sin_review_read_403 ___________________
+
+client = <httpx.AsyncClient object at 0x7f1217f998d0>
+esc_r197 = {'url': 'postgresql+asyncpg://global_avicola_test_user:***@/global_avicola_test?host=/hom...0>, 'op': <app.auth.models.User object at 0x7f1217ebf910>, 'rev': <app.auth.models.User object at 0x7f1217ebdf50>, ...}
+
+    async def test_r197_06_acciones_sin_review_read_403(client, esc_r197):
+        ev = esc_r197["eventos"]["in_review"]
+        r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_np"])
+>       assert r.status_code == 403, r.text
+E       AssertionError: {"detail":"Not Found"}
+E       assert 404 == 403
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/test_r197_review_queue_contract.py:177: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_r197_review_queue_contract.py::test_r197_01_status_in_review_devuelve_solo_in_review
+FAILED tests/test_r197_review_queue_contract.py::test_r197_03_status_invalido_es_422
+FAILED tests/test_r197_review_queue_contract.py::test_r197_04_registered_by_id_filtra
+FAILED tests/test_r197_review_queue_contract.py::test_r197_05_acciones_por_evento
+FAILED tests/test_r197_review_queue_contract.py::test_r197_06_acciones_sin_review_read_403
+==================== 5 failed, 1 passed, 1 warning in 6.15s ====================
