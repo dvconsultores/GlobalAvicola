@@ -367,3 +367,12 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Placement**: **T14** con orden de ejecución T11 → **T14** → T12 → T13 (antes del E2E/GO); `T10_BLOCKED_BY_CUTOVER = NO`; `OWNER_GATE = NONE` en esta fase.
 - **Estado**: `CUTOVER_SPEC_STATUS = SPEC_READY` · `CUTOVER_IMPLEMENTATION_STATUS = NOT_STARTED` · `PRODUCT_DIFF = 0`.
 - **Siguiente**: reanudar **T10** (R-197 · R-207) automáticamente.
+
+## AE-51 · 2026-09-14 · T10 EN CURSO — R-197 CERRADA TÉCNICAMENTE (bandeja por estado · historial por evento · resultado de aprobación)
+
+- **R-197** (T10): RED `afea748` · IMPL `10f7b53` · C2b `e21629a` · CERT `f128218` · EV `6baf4ae`.
+- **Gates**: BE targeted **10/10** · BE full **1373/0/49** · guardián de rutas 212→213 (213) · FE targeted **10/10** · FE full **429/429** · `npm run build` **EXIT 0**.
+- **Sensibilidad** S1-S4 (BE) y F1-F6 (FE) con RED quirúrgica por test y restore desde `10f7b53`; post-mutación BE 10/10 · FE 10/10 · worktree limpio.
+- **Push**: `afea748..6baf4ae` → `origin/main` (fast-forward; sin force). `LOCAL_SHA = 6baf4ae319403ef8d20eca38ef53b10ab6f83ce8 = REMOTE_SHA` ⇒ `REMOTE_SHA_MATCH = PASS`.
+- **Política**: `GITHUB_ACTIONS = NOT_APPLICABLE_BY_OWNER_DECISION`; `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION`; `PUSH != DEPLOY`.
+- **Siguiente**: **R-207** (reverso — superficie autorizada) en T10; después R-142 según AOD-17.
