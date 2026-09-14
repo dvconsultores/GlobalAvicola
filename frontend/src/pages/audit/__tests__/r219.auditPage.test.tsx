@@ -76,7 +76,7 @@ describe('R-219 · AuditPage contra el contrato real (RED)', () => {
       return Promise.resolve({ data: { logs: [LOG_BASE], total: 1 } })
     })
     renderPage()
-    await waitFor(() => expect(screen.getByText('Ana Pérez')).toBeTruthy())
+    await waitFor(() => expect(screen.getByText(/Ana Pérez/)).toBeTruthy())
   })
 
   it('02 · Correcciones muestra el diff real (previous_values → new_values)', async () => {
@@ -115,7 +115,8 @@ describe('R-219 · AuditPage contra el contrato real (RED)', () => {
     await waitFor(() => expect(
       get.mock.calls.some((c) => String(c[0]).includes('offset=50')),
     ).toBe(true))
-    await waitFor(() => expect(screen.getByText('TR-login')).toBeTruthy())
+    // El filtro también traduce `login`; el timeline de la página 2 suma otro.
+    await waitFor(() => expect(screen.getAllByText('TR-login').length).toBeGreaterThanOrEqual(2))
   })
 
   it('05 · acciones traducidas (sin crudos)', async () => {

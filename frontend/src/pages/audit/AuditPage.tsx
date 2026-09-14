@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Shield, RotateCcw } from 'lucide-react'
 import api from '../../services/api'
+import { useCan } from '../../auth/actionAuthority'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { FilterPanel, FilterGroup, Badge, StatusTimeline, EmptyState } from '../../components/ui'
 import type { TimelineEvent, TimelineEventType } from '../../components/ui/StatusTimeline'
@@ -55,10 +56,15 @@ export default function AuditPage() {
  const [modulo, setModulo] = useState('')
  const [dateFrom, setDateFrom] = useState('')
  const [dateTo, setDateTo] = useState('')
+ // `R-219`: nombre de usuario resuelto y página real.
+ const can = useCan()
+ const [usuarios, setUsuarios] = useState<Record<number, string>>({})
+ const [pagina, setPagina] = useState(0)
 
  useEffect(() => {
  setLoading(true)
- const params = new URLSearchParams({ limit: '50' })
+ // `R-219` · AC-04: `offset` paginado; `limit` fijo en 50 como declara la página.
+ const params = new URLSearchParams({ limit: '50', offset: String(pagina * 50) })
  // `GA-REM-032 AC11`. `search`, `action_contains` y `group_by` no aparecen en ninguna
  // fuente normativa y FastAPI los descartaba en silencio: la caja de búsqueda no buscaba y
  // la pestaña de correcciones mostraba todo. Ahora solo viajan filtros que el backend
@@ -73,7 +79,27 @@ export default function AuditPage() {
  .then(r => { setLogs(r.data.logs || []); setTotal(r.data.total || 0) })
  .catch(() => {})
  .finally(() => setLoading(false))
- }, [activeTab, accion, modulo, dateFrom, dateTo])
+ }, [activeTab, accion, modulo, dateFrom, dateTo, pagina])
+
+ // `R-219` · AC-01 (`C-01=A`): el esquema real expone `user_id`; el nombre se resuelve con
+ // `/users` cuando el rol puede leerlo (si no, se muestra `Usuario #id`).
+ useEffect(() => {
+ if (!can({ permission: 'users:read' })) return
+ api.get('/users?limit=100')
+ .then(r => {
+ const lista = r.data.users || r.data || []
+ const mapa: Record<number, string> = {}
+ for (const u of lista) {
+ const nombre = `${u.first_name || ''} ${u.last_name || ''}`.trim()
+ mapa[u.id] = nombre || u.username || `#${u.id}`
+ }
+ setUsuarios(mapa)
+ })
+ .catch(() => {})
+ }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+ // `R-219` · AC-04: cambiar de filtro o pestaña vuelve a la primera página.
+ useEffect(() => { setPagina(0) }, [activeTab, accion, modulo, dateFrom, dateTo])
 
  const clearFilters = () => {
  setAccion('')
@@ -82,20 +108,42 @@ export default function AuditPage() {
  setDateTo('')
  }
 
+ // `R-219` · AC-02/03: el diff real (`previous_values/new_values`, `previous_state/new_state`)
+ // y el motivo/comentario se componen en el detalle; `old_value/new_value` no existen.
+ const diffDe = (log: any): string[] => {
+ const partes: string[] = []
+ const previos = log.previous_values || {}
+ const nuevos = log.new_values || {}
+ for (const clave of Object.keys(nuevos)) {
+ partes.push(`${clave}: ${previos[clave] ?? '—'} → ${nuevos[clave]}`)
+ }
+ for (const clave of Object.keys(previos)) {
+ if (!(clave in nuevos)) partes.push(`${clave}: ${previos[clave]}`)
+ }
+ if (log.previous_state || log.new_state) {
+ partes.push(`${log.previous_state ?? '—'} → ${log.new_state ?? '—'}`)
+ }
+ return partes
+ }
+
  // Convertir logs a TimelineEvent
- const timelineEvents: TimelineEvent[] = logs.map((log: any) => ({
+ const timelineEvents: TimelineEvent[] = logs.map((log: any) => {
+ const detalle = [...diffDe(log), log.change_reason, log.comments].filter(Boolean).join(' · ')
+ return {
  id: log.id,
  date: new Date(log.created_at).toLocaleString(),
- action: log.action,
- user: log.user_name || log.user_id || t('common.unknown', 'Desconocido'),
+ // `R-219` · AC-05: acción traducida (`audit.actions.*`), nunca el enumerado crudo.
+ action: t(`audit.actions.${log.action}`, log.action),
+ // `R-219` · AC-01: nombre resuelto si hay permiso; si no, `Usuario #id` legible.
+ user: usuarios[log.user_id]
+ || (log.user_id ? `${t('audit.userPrefix', 'Usuario')} #${log.user_id}` : t('common.unknown', 'Desconocido')),
  description: log.entity_type
  ? `${log.entity_type}#${log.entity_id}`
  : undefined,
- detail: log.change_reason || (log.old_value && log.new_value
- ? `${log.old_value} → ${log.new_value}`
- : undefined),
+ detail: detalle || undefined,
  type: mapActionToType(log.action),
- }))
+ }
+ })
 
  return (
  <div>
@@ -231,6 +279,31 @@ export default function AuditPage() {
  </div>
  )}
  </div>
+
+ {/* `R-219` · AC-04: paginador real sobre `total` */}
+ {total > 50 && (
+ <div className="flex items-center justify-between mt-4">
+ <button
+ type="button"
+ onClick={() => setPagina(p => Math.max(0, p - 1))}
+ disabled={pagina === 0}
+ className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+ >
+ {t('common.previous', 'Anterior')}
+ </button>
+ <span className="text-xs text-slate-500">
+ {pagina + 1} / {Math.max(1, Math.ceil(total / 50))}
+ </span>
+ <button
+ type="button"
+ onClick={() => setPagina(p => p + 1)}
+ disabled={(pagina + 1) * 50 >= total}
+ className="px-3 py-1.5 text-sm rounded-lg border border-slate-200 bg-white text-slate-600 disabled:opacity-40"
+ >
+ {t('common.next', 'Siguiente')}
+ </button>
+ </div>
+ )}
  </div>
  )
 }
