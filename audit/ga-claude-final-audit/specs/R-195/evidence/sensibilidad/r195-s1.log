@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/users/__tests__/r195.usersEdit.test.tsx (5 tests | 1 failed) 480ms
+     × AC-01 · el PUT envía SOLO el subconjunto permitido (sin username/company_id) 221ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/users/__tests__/r195.usersEdit.test.tsx > R-195 · edición de usuario (RED) > AC-01 · el PUT envía SOLO el subconjunto permitido (sin username/company_id)
+AssertionError: expected { username: 'jperez', …(10) } to not have property "username"
+
+- Expected:
+undefined
+
++ Received:
+"jperez"
+
+ ❯ src/pages/users/__tests__/r195.usersEdit.test.tsx:118:25
+    116|     expect(payload.first_name).toBe('Juan Carlos')
+    117|     expect(payload.role_id).toBe(3)
+    118|     expect(payload).not.toHaveProperty('username')
+       |                         ^
+    119|     expect(payload).not.toHaveProperty('company_id')
+    120|     for (const k of SUBCONJUNTO) expect(Object.keys(payload)).toContai…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  15:17:13
+   Duration  1.66s (transform 214ms, setup 70ms, import 437ms, tests 480ms, environment 561ms)
+
