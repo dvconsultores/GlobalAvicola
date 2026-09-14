@@ -64,10 +64,13 @@ async def esc_r197(test_database_url):
 
     role_rev = Role(name=f"{PREFIJO}rev-{uuid.uuid4().hex[:6]}", company_id=empresa.id, is_active=True)
     role_vacio = Role(name=f"{PREFIJO}vacio-{uuid.uuid4().hex[:6]}", company_id=empresa.id, is_active=True)
-    s.add_all([role_rev, role_vacio])
+    # Solo `operations:read`: no puede ver el historial de revisión (`07`).
+    role_ops = Role(name=f"{PREFIJO}ops-{uuid.uuid4().hex[:6]}", company_id=empresa.id, is_active=True)
+    s.add_all([role_rev, role_vacio, role_ops])
     await s.flush()
     for modulo, accion in revisar:
         s.add(Permission(role_id=role_rev.id, module=modulo, action=accion, scope_type="company"))
+    s.add(Permission(role_id=role_ops.id, module="operations", action=PA.READ, scope_type="company"))
     await s.flush()
 
     def _usuario(marca: str, rol: Role, empresa_obj: Company = empresa) -> User:
@@ -78,9 +81,12 @@ async def esc_r197(test_database_url):
     op = _usuario("OP", role_rev)
     rev = _usuario("REV", role_rev)
     np = _usuario("NP", role_vacio)
-    s.add_all([op, rev, np])
+    ops = _usuario("OPS", role_ops)
+    # Supervisor con `review:read` pero **sin concesión** de unidad: fuera de ámbito (`06c`).
+    rev_sc = _usuario("REVSC", role_rev)
+    s.add_all([op, rev, np, ops, rev_sc])
     await s.flush()
-    for u in (op, rev, np):
+    for u in (op, rev, np, ops):
         await conceder_unidad(s, user=u, company_business_unit=hab)
 
     granja = Farm(company_id=empresa.id, name=f"{PREFIJO}granja", code=f"{PREFIJO}G-{uuid.uuid4().hex[:4]}",
@@ -132,7 +138,7 @@ async def esc_r197(test_database_url):
     yield {
         "url": test_database_url, "empresa": empresa, "op": op, "rev": rev, "np": np,
         "eventos": eventos, "lote": lote, "token_rev": _token(rev.id), "token_np": _token(np.id),
-        "token_rev_b": _token(rev_b.id),
+        "token_rev_b": _token(rev_b.id), "token_ops": _token(ops.id), "token_rev_sc": _token(rev_sc.id),
     }
 
     async with motor.begin() as c:
@@ -212,3 +218,17 @@ async def test_r197_06b_acciones_de_evento_ajeno_404(client, esc_r197):
     # Control, mismo sujeto y consulta: el supervisor de la empresa dueña ve 200.
     r2 = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_rev"])
     assert r2.status_code == 200, r2.text
+
+
+async def test_r197_06c_acciones_fuera_de_ambito_de_cadena_404(client, esc_r197):
+    """Misma empresa, sin concesión a la unidad del evento ⇒ 404 (S3, capa de cadena)."""
+    ev = esc_r197["eventos"]["in_review"]
+    r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_rev_sc"])
+    assert r.status_code == 404, r.text
+
+
+async def test_r197_07_acciones_sin_review_read_403(client, esc_r197):
+    """`operations:read` no basta: el permiso declarado es `review:read` (S4)."""
+    ev = esc_r197["eventos"]["in_review"]
+    r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_ops"])
+    assert r.status_code == 403, r.text
