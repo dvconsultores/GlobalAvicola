@@ -4,6 +4,8 @@
 > **Versión:** 1.0.0
 > **Fecha:** 2026-06-22
 
+> **Enmienda (AOD-29 · 2026-09-14):** GitHub Actions dejó de ser un gate obligatorio del programa PRE-SAP por decisión del propietario (costo de minutos). La certificación técnica usa **gates locales reproducibles** (RED→GREEN→regresión→sensibilidad con restauración por SHA explícito→suites completas BE/FE→`tsc`→`build`→E2E local). Los requisitos históricos de CI permanecen como evidencia histórica; los AC futuros que dependieran de Actions se clasifican `NOT_APPLICABLE_BY_OWNER_DECISION`. Registro: `audit/ga-pre-sap-program/GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`.
+
 ---
 
 ## 1. ESTRATEGIA DE PRUEBAS

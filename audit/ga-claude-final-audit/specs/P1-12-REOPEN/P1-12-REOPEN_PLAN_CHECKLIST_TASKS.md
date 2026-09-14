@@ -9,7 +9,7 @@ Fecha: 2026-09-13 · HEAD de partida `c0b4afc` · GA-REM a asignar al autorizar 
 | Tranche | Contenido | Entrada | Salida | Estado |
 |---|---|---|---|---|
 | **C1 · Gobernanza + RED** | Finding/spec/clarificaciones/AC/diseño (hecho); arnés con listener; RED `test_p112_audit_single_producer.py`; ejecución (rojos: duplicados y 0-filas) | este paquete | commit C1 + `evidence/red/` | ☒ |
-| **C2 · Implementación** | Productor único (C-01); fix `complete_review`; productores nuevos (lotes/usuarios/evidencias/curvas/batch); GREEN + regresión; sensibilidad | C1 | commit C2 + `evidence/green/` | ☐ |
+| **C2 · Implementación** | Productor único (C-01); fix `complete_review`; productores nuevos (lotes/usuarios/evidencias/curvas/batch); GREEN + regresión; sensibilidad | C1 | commit C2 + `evidence/green/` | ☒ |
 | **C3 · Certificación** | Recuento por acción en runtime (API/UI local + nube si aplica); artefactos; reconciliación GA-REM-032 | C2 | `evidence/p112/runtime-c3.json` | ☐ |
 | **C4 · Cierre** | Backlog: P1-12 `CLOSED`; registro de la reapertura; referencias | C3 | backlog | ☐ |
 
@@ -18,13 +18,13 @@ Fecha: 2026-09-13 · HEAD de partida `c0b4afc` · GA-REM a asignar al autorizar 
 - ☒ C1.1 Arnés con `lifespan` (o registro explícito) y RED ejecutada
 - ☒ C1.2 C-01 registrada (opción)
 - ☒ C1.3 Commit C1 sin producto
-- ☐ C2.1 Duplicados retirados (una fila por acción)
-- ☐ C2.2 `complete_review` sin `corrected` espuria
-- ☐ C2.3 Productores nuevos (7 acciones)
-- ☐ C2.4 Batch/contrapartida con transición
-- ☐ C2.5 GREEN + regresión + sensibilidad
-- ☐ C3.1 Recuentos exactos con artefacto; GA-REM-032 anotado
-- ☐ C4.1 Backlog
+- ☒ C2.1 Duplicados retirados (una fila por acción)
+- ☒ C2.2 `complete_review` sin `corrected` espuria
+- ☒ C2.3 Productores nuevos (7 acciones)
+- ☒ C2.4 Batch/contrapartida con transición
+- ☒ C2.5 GREEN + regresión + sensibilidad
+- ☐ C3.1 Recuentos exactos con artefacto; GA-REM-032 anotado (GA-REM-032 anotado; recuento runtime en ventana)
+- ☒ C4.1 Backlog (registro: estado CERRADA)
 
 ## TAREAS
 

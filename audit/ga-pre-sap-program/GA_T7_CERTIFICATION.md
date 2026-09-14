@@ -35,6 +35,7 @@ Fecha: 2026-09-14 · Tranche **T7** del programa Pre-SAP · Baseline de entrada:
 ## 4 · CI
 
 - Pendiente de observación (registro `evidence/t7-ci-run.json` cuando se observe). Patrón: C1 RED rojos por diseño; cierres verdes.
+- **Actualización (AOD-29, 2026-09-14)**: la observación de runs de GitHub Actions queda **NOT_APPLICABLE_BY_OWNER_DECISION** — el propietario retiró Actions del camino de certificación; la certificación se sostiene en los gates locales (RED/GREEN/regresión/sensibilidad/suites). Registro: `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`.
 
 ## 5 · Veredicto
 

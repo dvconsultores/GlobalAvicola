@@ -31,6 +31,7 @@ Fecha: 2026-09-14 · Tranche **T4** del programa Pre-SAP (R-190 · R-205) · Bas
 ## 4 · CI
 
 - Pendiente de observación de los runs de los commits T4 (patrón habitual: C1 RED = rojos por diseño; cierres verdes). Registro en `evidence/t4-ci-run.json` cuando se observe.
+- **Actualización (AOD-29, 2026-09-14)**: la observación de runs de GitHub Actions queda **NOT_APPLICABLE_BY_OWNER_DECISION** — el propietario retiró Actions del camino de certificación; la certificación se sostiene en los gates locales (RED/GREEN/regresión/sensibilidad/suites). Registro: `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`.
 
 ## 5 · Veredicto
 

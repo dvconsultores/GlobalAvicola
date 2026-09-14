@@ -298,3 +298,28 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Procesos**: P-01/P-02/P-03/P-06 **reparados técnicamente**; KPI 0/17 sin cambio (runtime/UAT pendientes; G-06 ampliada con R-192/R-193/R-211).
 - **Owner gates nuevos**: AOD-27 (R-192 C-01/C-05), AOD-28 (R-211 C-02) — confirmatorias, no bloquean.
 - **Siguiente**: **T8 · Auditoría y evidencias (P1-12-REOPEN · R-198 · R-219)** — arranque automático (T8 ← T7 satisfecho).
+
+## AE-42 · 2026-09-14 · P1-12 (REAPERTURA) CERRADA (CLOSED_TECHNICALLY) — un productor por acción
+
+- **C1** `d228eac` + **C1b** `ce363af`: arnés con listener (`tests/audit_harness.py`) y RED de 8 rojos exactos (created×2, review_started×3, approved×2+corrected espuria; cierre/activación/fase/usuarios/evidencias/curvas/batch = 0).
+- **C2** `0bbad13`+`0de63c2`: **guarda de idempotencia compartida** listener↔helpers (`(entidad,id,acción)` en `session.info`) = un productor por acción en runtime y sin listener; ruta `ApprovalAction` retirada; mapa `pending_review→UPDATED`/`reversed→REVERSED`; productores nuevos (lotes/usuarios/evidencias/curvas/batch/contrapartida). BE 8/8 · regresión 207/207 · arnés runtime migrado en `test_audit_coverage`/`test_edit_cancel_balance`.
+- **C2s** `5940f6a`: S1 2F / S2 1F.
+- **Lección**: `git checkout --` restaura desde INDEX — en ciclos de mutación hay que **commitear C2 primero**; un checkout antes del commit del producto borra la implementación (ocurrió en R-219 y se reaplicó).
+
+## AE-43 · 2026-09-14 · R-198 CERRADA (CLOSED_TECHNICALLY) — evidencias del detalle
+
+- **C1** `dc69375` (BE 5F/2P + FE 3F/1P) · **C2** `244ab43`: detalle devuelve `evidences`+`egg_storage_records` (C-01=A/C-04); gate por estado en servidor (C-02); borrado físico **tras** commit (C-03); FE relee del servidor, gate espejo, acciones visibles en táctil; BE 7/7 + 122/122; FE 394/394 + tsc 0.
+- **C2s** `5b8b865`: S1 3F / S2 1F / S3 1F.
+- Nota: el test 05 instrumenta el **orden** `commit→remove` con un proxy de sesión — verifica la propiedad anti-pérdida sin simulacros frágiles.
+
+## AE-44 · 2026-09-14 · R-219 CERRADA (CLOSED_TECHNICALLY) — AuditPage contra el contrato real
+
+- **C1** `5b9bde5` (FE 5F) · **C2** `2f5d52f`: nombre de usuario (vía `/users` con permiso; `Usuario #id` sin él), diff `previous_values/new_values` + estados, `change_reason`+`comments`, paginador 50/página, i18n `audit.actions/modules` (22/11 ES/EN). FE 5/5 + 399/399 + tsc 0.
+- **C2s** `45acbf8`: S1/S2/S3 1F c/u.
+
+## AE-45 · 2026-09-14 · OWNER DECISION AOD-29 — GitHub Actions retirado del camino PRE-SAP
+
+- **Decisión del propietario** (verbatim en `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`): Actions deja de ser gate obligatorio de nuevas tranches; certificación con **gates locales reproducibles**; evidencia dependiente de Actions ⇒ `NOT_APPLICABLE_BY_OWNER_DECISION`; **`PUSH = NO`** (`NOT_PERFORMED_BY_OWNER_POLICY`) mientras dispare Actions; históricos (T1/AC-06, T2 #26) intactos.
+- **Reconciliado sin reescribir historia**: roadmap (addendum), status (política + campos de publicación local), cola (fila AOD-29 + header), certificaciones T3-T8 (addendum CI), `docs/07-qa-plan.md` (enmienda), ledger.
+- **Efecto inmediato**: runs de la sesión cancelados (los cancelables); sin nuevos push; T8 (cierre) y T9+ pasan a flujo **local** con `LOCAL_CERTIFIED_SHA`.
+- **Lección duradera**: mutaciones con restauración desde `IMPLEMENTATION_COMMIT` explícito (`git restore --source=<sha>`), nunca `checkout` implícito (ya ocurrió una vez en R-219).

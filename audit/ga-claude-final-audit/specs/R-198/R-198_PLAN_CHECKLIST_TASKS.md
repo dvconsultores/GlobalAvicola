@@ -6,23 +6,23 @@ Fecha: 2026-09-13 · HEAD de partida `c0b4afc` · GA-REM a asignar al autorizar 
 
 | Tranche | Contenido | Entrada | Salida | Estado |
 |---|---|---|---|---|
-| **C1 · Gobernanza + RED** | Finding/spec/clarificaciones/AC/diseño (hecho); RED backend (detalle/gate/auditoría/borrado); C-01 registrada | este paquete | commit C1 + `evidence/red/` | ☐ |
-| **C2 · Implementación** | Detalle/ruta (C-01), gate servidor, auditoría (⇒ P1-12 T-06), orden de borrado, carga/gate UI, táctil | C1 | commit C2 + `evidence/green/` | ☐ |
+| **C1 · Gobernanza + RED** | Finding/spec/clarificaciones/AC/diseño (hecho); RED backend (detalle/gate/auditoría/borrado); C-01 registrada | este paquete | commit C1 + `evidence/red/` | ☒ |
+| **C2 · Implementación** | Detalle/ruta (C-01), gate servidor, auditoría (⇒ P1-12 T-06), orden de borrado, carga/gate UI, táctil | C1 | commit C2 + `evidence/green/` | ☒ |
 | **C3 · Certificación + UAT mínima** | Subir→F5→visible; gate; borrar auditado; móvil | C2 | `evidence/r198/runtime-c3.json` + acta | ☐ |
 | **C4 · Cierre** | Backlog: R-198 `CLOSED` | C3 | backlog | ☐ |
 
 ## CHECKLIST
 
-- ☐ C1.1 RED ejecutada (AC-01/03/04 rojos)
-- ☐ C1.2 C-01/C-02/C-03 registradas
-- ☐ C2.1 Detalle (o relectura UI) devuelve evidencias
-- ☐ C2.2 Gate de servidor por estado
-- ☐ C2.3 Auditoría alta/baja (coordina P1-12 T-06)
-- ☐ C2.4 Orden de borrado seguro
-- ☐ C2.5 Botones visibles en táctil (C-06)
-- ☐ C2.6 GREEN + regresión
-- ☐ C3.1 E2E + UAT mínima + certificación
-- ☐ C4.1 Backlog
+- ☒ C1.1 RED ejecutada (AC-01/03/04 rojos)
+- ☒ C1.2 C-01/C-02/C-03 registradas
+- ☒ C2.1 Detalle (o relectura UI) devuelve evidencias
+- ☒ C2.2 Gate de servidor por estado
+- ☒ C2.3 Auditoría alta/baja (coordina P1-12 T-06)
+- ☒ C2.4 Orden de borrado seguro
+- ☒ C2.5 Botones visibles en táctil (C-06)
+- ☒ C2.6 GREEN + regresión
+- ☐ C3.1 E2E + UAT mínima + certificación (certificación técnica emitida; E2E/UAT en ventana)
+- ☒ C4.1 Backlog (registro: estado CERRADA)
 
 ## TAREAS
 
