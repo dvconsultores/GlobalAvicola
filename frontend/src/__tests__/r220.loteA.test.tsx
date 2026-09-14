@@ -49,7 +49,7 @@ describe('R-220 · Lote A (representativos, RED)', () => {
     setSession(['review:read', 'approvals:approve', 'approvals:reject'])
     get.mockImplementation((url: string) => {
       const u = String(url)
-      if (u.includes('/review/pending')) {
+      if (u.includes('/approvals/pending')) {
         return Promise.resolve({ data: { events: [{ id: 31, status: 'corrected', event_type: 'mortality_recording', event_date: '2026-09-10' }], total: 1 } })
       }
       return Promise.resolve({ data: [], headers: {} })
@@ -59,9 +59,11 @@ describe('R-220 · Lote A (representativos, RED)', () => {
         <Routes><Route path="/approvals" element={<ApprovalPanel />} /></Routes>
       </MemoryRouter>,
     )
-    const fila = await screen.findByRole('button', { name: /review\.approve$|^Aprobar$/ })
-    fireEvent.click(fila)
-    const confirmar = await screen.findByRole('button', { name: /Confirmar/ })
+    const filas = await screen.findAllByRole('button', { name: /^Aprobar$/ })
+    fireEvent.click(filas[0])
+    // el diálogo añade su propio «Aprobar» (confirmLabel) — el último es su confirmación
+    const abiertos = await screen.findAllByRole('button', { name: /^Aprobar$/ })
+    const confirmar = abiertos[abiertos.length - 1]
     fireEvent.click(confirmar)
     fireEvent.click(confirmar)
     await waitFor(() => {

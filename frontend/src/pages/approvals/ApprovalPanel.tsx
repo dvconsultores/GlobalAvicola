@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react'
+import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Check, CheckCircle, X, ArrowLeft, Search, Clock, AlertTriangle } from 'lucide-react'
@@ -28,6 +28,8 @@ export default function ApprovalPanel() {
  const [rejectReason, setRejectReason] = useState('')
  const [showRejectModal, setShowRejectModal] = useState(false)
  const [showApproveModal, setShowApproveModal] = useState(false)
+ // `R-220` · A9: guarda de vuelo de la aprobación (una mutación por gesto).
+ const approvingRef = useRef(false)
  const [singleApproveId, setSingleApproveId] = useState<number | null>(null)
  const [rejectTarget, setRejectTarget] = useState<'single' | 'batch'>('single')
  const [singleRejectId, setSingleRejectId] = useState<number | null>(null)
@@ -51,6 +53,9 @@ export default function ApprovalPanel() {
  useEffect(() => { fetchEvents() }, [fetchEvents])
 
  const handleApprove = async (eventId: number) => {
+ // `R-220` · A9 (C#35): un gesto, una mutación — el doble clic no duplica POSTs.
+ if (approvingRef.current) return
+ approvingRef.current = true
  try {
  await api.post('/approvals/approve', { event_id: eventId })
  toast.success(t('review.eventApproved'))
@@ -59,6 +64,8 @@ export default function ApprovalPanel() {
  fetchEvents()
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('review.errorApprove')))
+ } finally {
+ approvingRef.current = false
  }
  }
 

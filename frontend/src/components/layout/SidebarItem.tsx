@@ -39,7 +39,7 @@ export default function SidebarItem({
  flex items-center gap-2 py-1.5 rounded-lg text-sm transition-colors duration-100
  ${paddingByDepth[depth] ?? paddingByDepth[0]}
  ${active
- ? 'bg-white[0.12] text-white font-medium'
+ ? 'bg-white/[0.12] text-white font-medium'
  : 'text-white/55 font-normal hover:text-white/90 hover:bg-white/[0.06]'
  }
  `}

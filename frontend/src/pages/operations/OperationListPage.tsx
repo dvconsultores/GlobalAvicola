@@ -99,7 +99,7 @@ export default function OperationListPage() {
  <span className="text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 text-slate-600'}`}>{ev.status}</span>
  </div>
- <p className="text-xs text-slate-500">{t('review.lot')} #{ev.lot_id} — {ev.event_date}</p>
+ <p className="text-xs text-slate-500">{ev.lot_id ? `${t('review.lot')} #${ev.lot_id}` : t('operations.lotAutoPending', 'Se creará al aprobar')} — {ev.event_date}</p>
  </div>
  <Link to={`/operations/${ev.id}`} className="text-blue-600 text-sm hover:underline ml-3">{t('common.edit')}</Link>
  </div>

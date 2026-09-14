@@ -333,6 +333,8 @@ ALL_EVENT_TYPES = [
     {"type": "cull_recording", "label": "Registro de Descarte"},
     {"type": "vaccination", "label": "Vacunación"},
     {"type": "medication", "label": "Medicación"},
+    # `R-220` · A14 (B-24): el tipo informativo existe y el cliente debe poder rotularlo.
+    {"type": "water_consumption", "label": "Consumo de Agua"},
     {"type": "farm_inspection", "label": "Inspección de Granja"},
     {"type": "transport_inspection", "label": "Inspección de Transporte"},
     {"type": "hatchery_inspection", "label": "Inspección de Incubadora"},
