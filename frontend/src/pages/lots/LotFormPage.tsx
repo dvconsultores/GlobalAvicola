@@ -2,7 +2,7 @@
  * LotFormPage — Crear nuevo lote (T-073)
  * Ruta: /lots/new
  * Llama POST /lots
- * Campos: lot_code, bird_type, farm_id, house_id, genetic_line_id, breed_id, start_date, sap_reference
+ * Campos: lot_code, bird_type, farm_id, house_id, genetic_line_id, breed_id, start_date
  */
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -20,14 +20,15 @@ const BIRD_TYPES = ['grandparent', 'breeder', 'broiler', 'hatchery'] as const
 const schema = z.object({
  lot_code: z.string().min(2, 'Mínimo 2 caracteres').max(50),
  bird_type: z.enum(BIRD_TYPES, { error: 'Requerido' }),
- farm_id: z.coerce.number().min(1, 'Requerido'),
+ // `R-220` · A11 (B-19): el esquema del servidor declara `farm_id` opcional
+ // (un lote de incubadora no siempre tiene granja); la UI lo exigía de más.
+ farm_id: z.coerce.number().optional().nullable(),
  house_id: z.coerce.number().optional().nullable(),
  genetic_line_id: z.coerce.number().optional().nullable(),
  area_id: z.coerce.number().optional().nullable(),
  planned_close_date: z.string().optional().nullable(),
  breed_id: z.coerce.number().optional().nullable(),
  start_date: z.string().optional(),
- sap_reference: z.string().optional(),
 })
 
 type FormInput = z.input<typeof schema>
@@ -128,7 +129,8 @@ export default function LotFormPage() {
  genetic_line_id: values.genetic_line_id || null,
  breed_id: values.breed_id || null,
  start_date: values.start_date || null,
- sap_reference: values.sap_reference || null,
+ // `R-220` · A10 (B-18): `sap_reference` viajaba y el esquema lo descartaba en
+ // silencio (patrón P0-14) — sin columna ni contrato, el campo se retira.
  }
  const { data } = await api.post('/lots', payload)
  toast.success(t('lots.createdSuccess', 'Lote creado exitosamente'))
@@ -280,18 +282,6 @@ export default function LotFormPage() {
  {breeds.map(b => <option key={b.id} value={b.id}>{b.name}</option>)}
  </select>
  </div>
- </CardBody>
- </Card>
-
- <Card className="mt-4">
- <CardHeader title={t('lots.integration', 'Integración SAP')} />
- <CardBody>
- <Input
- label={t('lots.sapReference', 'Referencia SAP')}
- placeholder="SAP-2024-..."
- helperText={t('lots.sapRefHelper', 'Opcional. Centro de costo o referencia en SAP.')}
- {...register('sap_reference')}
- />
  </CardBody>
  </Card>
 
