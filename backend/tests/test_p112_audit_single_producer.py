@@ -196,6 +196,21 @@ async def _aprobar_todo(motor, lot_id) -> None:
         await s.commit()
 
 
+async def _fase_produccion(client, cabecera, ids) -> int:
+    """Id de la fase maestra de producción (`PROD`); la crea si el catálogo está vacío."""
+    r = await client.get("/api/v1/masters/productive-phases", headers=cabecera)
+    assert r.status_code == 200, r.text
+    fases = r.json()
+    prod = next((f for f in fases if f.get("code") == "PROD"), None)
+    if prod is None:
+        creada = await client.post("/api/v1/masters/productive-phases", headers=cabecera,
+                                   json={"company_id": ids["company_id"],
+                                         "name": f"{PREFIJO}fase-produccion", "code": "PROD"})
+        assert creada.status_code in (200, 201), creada.text
+        prod = creada.json()
+    return prod["id"]
+
+
 # ── 01 · alta de evento: exactamente una fila `created` ───────────────────────
 
 async def test_p112_01_alta_una_fila(client, auth_headers, seeded_ids, motor):
@@ -264,6 +279,39 @@ async def test_p112_03_cierre_auditado(client, auth_headers, seeded_ids, motor):
                              module=AuditModule.LOTS, entity_id=str(lot_id))
     assert len(filas) == 1, f"el cierre escribió {len(filas)} filas (sin productor: 0)"
     assert filas[0].new_values, "la fila del cierre no registró el resumen del lote"
+
+
+async def test_p112_03b_activacion_auditada(client, auth_headers, seeded_ids, motor):
+    """`AC-P112-04` · la activación manual (saldo de apertura) deja fila con saldos."""
+    lot_id = await _lote(client, auth_headers, seeded_ids)
+    r = await client.post("/api/v1/lots/activate-manual", headers=auth_headers, json={
+        "lot_id": lot_id,
+        "activation_date": iso_days_ago(30),
+        "phase_at_activation_id": await _fase_produccion(client, auth_headers, seeded_ids),
+        "age_days": 30,
+        "initial_male_count": 120,
+        "initial_female_count": 880,
+    })
+    assert r.status_code == 201, r.text
+
+    filas = await _registros(motor, AuditAction.UPDATED,
+                             module=AuditModule.LOTS, entity_id=str(lot_id))
+    assert len(filas) == 1, f"la activación escribió {len(filas)} filas (sin productor: 0)"
+    assert filas[0].new_values, "la fila de activación no registró los saldos de apertura"
+
+
+async def test_p112_03c_fase_auditada(client, auth_headers, seeded_ids, motor):
+    """`AC-P112-04` · la transición de fase deja fila con el código y la fecha."""
+    lot_id = await _lote(client, auth_headers, seeded_ids)
+    fase_id = await _fase_produccion(client, auth_headers, seeded_ids)
+    r = await client.post(f"/api/v1/lots/{lot_id}/phases", headers=auth_headers, json={
+        "lot_id": lot_id, "phase_id": fase_id, "start_date": iso_days_ago(1)})
+    assert r.status_code == 201, r.text
+
+    filas = await _registros(motor, AuditAction.UPDATED,
+                             module=AuditModule.LOTS, entity_id=str(lot_id))
+    assert len(filas) == 1, f"la transición de fase escribió {len(filas)} filas (sin productor: 0)"
+    assert filas[0].new_values, "la fila de fase no registró el código y la fecha"
 
 
 # ── 04 · usuarios: alta, edición y baja con rastro ────────────────────────────

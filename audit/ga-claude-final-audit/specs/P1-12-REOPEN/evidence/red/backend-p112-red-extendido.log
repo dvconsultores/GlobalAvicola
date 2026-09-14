@@ -1,0 +1,310 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=56 (55 + alembic_version) · head en BD=z6a7b8c9d0e1 · head en código=z6a7b8c9d0e1
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 8 items
+
+tests/test_p112_audit_single_producer.py FFFFFFFF                        [100%]
+
+=================================== FAILURES ===================================
+__________________________ test_p112_01_alta_una_fila __________________________
+
+client = <httpx.AsyncClient object at 0x7fa10c73c950>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTUsInR5cGUiOiJhY2Nlc3MifQ.njuchaz0341H9IFMi5kgNQJ2yKBCcSP4zQccDdE_Bb8'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10ace0c80>
+
+    async def test_p112_01_alta_una_fila(client, auth_headers, seeded_ids, motor):
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        event_id = await _evento(client, auth_headers, seeded_ids, lot_id, "weight_recording",
+                                 bird_movements=[{"sex": "mixed", "quantity": 10, "avg_weight": 2000}])
+    
+        filas = await _registros(motor, AuditAction.CREATED,
+                                 module=AuditModule.OPERATIONS,
+                                 entity_type="operational_event", entity_id=str(event_id))
+>       assert len(filas) == 1, (
+            f"el alta escribió {len(filas)} filas `created` (runtime con listener: "
+            "listener + helper `audit_event_created`)"
+        )
+E       AssertionError: el alta escribió 2 filas `created` (runtime con listener: listener + helper `audit_event_created`)
+E       assert 2 == 1
+E        +  where 2 = len([<AuditLog created on operational_event#1>, <AuditLog created on operational_event#1>])
+
+tests/test_p112_audit_single_producer.py:224: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+_______________________ test_p112_02_aprobacion_una_fila _______________________
+
+client = <httpx.AsyncClient object at 0x7fa10a9fba50>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTYsInR5cGUiOiJhY2Nlc3MifQ.xiUP0eqqm6fU0XxEDmeNSZkah-ljFxghxLKrXH4ExQQ'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10c82e680>
+
+    async def test_p112_02_aprobacion_una_fila(client, auth_headers, seeded_ids, motor):
+        from app.auth.security import create_access_token
+    
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        event_id = await _evento(client, auth_headers, seeded_ids, lot_id, "weight_recording",
+                                 bird_movements=[{"sex": "mixed", "quantity": 10, "avg_weight": 2000}])
+    
+        envio = await client.post(f"/api/v1/operations/{event_id}/submit", headers=auth_headers)
+        assert envio.status_code == 200, envio.text
+    
+        # `BR-14` (segregación): quien registra no aprueba; la revisión la hace el aprobador.
+        revisor = {"Authorization": "Bearer " + create_access_token(
+            data={"sub": str(seeded_ids["user_approver_id"])})}
+        inicio = await client.post(f"/api/v1/review/start/{event_id}", headers=revisor)
+        assert inicio.status_code == 200, inicio.text
+        fin = await client.post("/api/v1/review/complete", headers=revisor,
+                                json={"event_id": event_id, "observations": "sin hallazgos"})
+        assert fin.status_code == 200, fin.text
+        assert fin.json()["status"] == "approved", "la empresa de siembra tiene un nivel de aprobación"
+    
+        iniciadas = await _registros(motor, AuditAction.REVIEW_STARTED,
+                                     entity_type="operational_event", entity_id=str(event_id))
+>       assert len(iniciadas) == 1, f"`review_started` escribió {len(iniciadas)} filas"
+E       AssertionError: `review_started` escribió 3 filas
+E       assert 3 == 1
+E        +  where 3 = len([<AuditLog review_started on operational_event#2>, <AuditLog review_started on operational_event#2>, <AuditLog review_started on operational_event#2>])
+
+tests/test_p112_audit_single_producer.py:254: AssertionError
+_________________________ test_p112_03_cierre_auditado _________________________
+
+client = <httpx.AsyncClient object at 0x7fa10a3fa950>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTYsInR5cGUiOiJhY2Nlc3MifQ.xiUP0eqqm6fU0XxEDmeNSZkah-ljFxghxLKrXH4ExQQ'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10a3fa200>
+
+    async def test_p112_03_cierre_auditado(client, auth_headers, seeded_ids, motor):
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        await _requisitos_br05(client, auth_headers, seeded_ids, lot_id)
+        await _aprobar_todo(motor, lot_id)
+    
+        cierre = await client.post(f"/api/v1/lots/{lot_id}/close", headers=auth_headers)
+        assert cierre.status_code == 200, cierre.text
+    
+        filas = await _registros(motor, AuditAction.UPDATED,
+                                 module=AuditModule.LOTS, entity_id=str(lot_id))
+>       assert len(filas) == 1, f"el cierre escribió {len(filas)} filas (sin productor: 0)"
+E       AssertionError: el cierre escribió 0 filas (sin productor: 0)
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_p112_audit_single_producer.py:280: AssertionError
+______________________ test_p112_03b_activacion_auditada _______________________
+
+client = <httpx.AsyncClient object at 0x7fa10a2f1450>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTcsInR5cGUiOiJhY2Nlc3MifQ.lQ8_2oZFovQtQuAT0QOfwHVyAcDP4Jo-546qaNCqdrA'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10a1c43c0>
+
+    async def test_p112_03b_activacion_auditada(client, auth_headers, seeded_ids, motor):
+        """`AC-P112-04` · la activación manual (saldo de apertura) deja fila con saldos."""
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        r = await client.post("/api/v1/lots/activate-manual", headers=auth_headers, json={
+            "lot_id": lot_id,
+            "activation_date": iso_days_ago(30),
+            "phase_at_activation_id": await _fase_produccion(client, auth_headers, seeded_ids),
+            "age_days": 30,
+            "initial_male_count": 120,
+            "initial_female_count": 880,
+        })
+        assert r.status_code == 201, r.text
+    
+        filas = await _registros(motor, AuditAction.UPDATED,
+                                 module=AuditModule.LOTS, entity_id=str(lot_id))
+>       assert len(filas) == 1, f"la activación escribió {len(filas)} filas (sin productor: 0)"
+E       AssertionError: la activación escribió 0 filas (sin productor: 0)
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_p112_audit_single_producer.py:299: AssertionError
+_________________________ test_p112_03c_fase_auditada __________________________
+
+client = <httpx.AsyncClient object at 0x7fa10a356fd0>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTcsInR5cGUiOiJhY2Nlc3MifQ.lQ8_2oZFovQtQuAT0QOfwHVyAcDP4Jo-546qaNCqdrA'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10a1d81c0>
+
+    async def test_p112_03c_fase_auditada(client, auth_headers, seeded_ids, motor):
+        """`AC-P112-04` · la transición de fase deja fila con el código y la fecha."""
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        fase_id = await _fase_produccion(client, auth_headers, seeded_ids)
+        r = await client.post(f"/api/v1/lots/{lot_id}/phases", headers=auth_headers, json={
+            "lot_id": lot_id, "phase_id": fase_id, "start_date": iso_days_ago(1)})
+        assert r.status_code == 201, r.text
+    
+        filas = await _registros(motor, AuditAction.UPDATED,
+                                 module=AuditModule.LOTS, entity_id=str(lot_id))
+>       assert len(filas) == 1, f"la transición de fase escribió {len(filas)} filas (sin productor: 0)"
+E       AssertionError: la transición de fase escribió 0 filas (sin productor: 0)
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_p112_audit_single_producer.py:313: AssertionError
+_______________________ test_p112_04_usuarios_auditados ________________________
+
+client = <httpx.AsyncClient object at 0x7fa10a217a50>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTgsInR5cGUiOiJhY2Nlc3MifQ.zIcewzrWzcOD_iYbKKc5sTwXN0TEf9Z-jXJa5ekwuMA'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10a1b9740>
+
+    async def test_p112_04_usuarios_auditados(client, auth_headers, seeded_ids, motor):
+        sufijo = uuid.uuid4().hex[:8]
+        alta = await client.post("/api/v1/users", headers=auth_headers, json={
+            "username": f"{PREFIJO}{sufijo}",
+            "first_name": "Uno", "last_name": "Auditado",
+            "email": f"{PREFIJO}{sufijo}@example.com".lower(),
+            "password": uuid.uuid4().hex,
+            "role_id": seeded_ids["role_operator_id"],
+            "company_id": seeded_ids["company_id"],
+            "view_type": "web",
+        })
+        assert alta.status_code == 201, alta.text
+        user_id = alta.json()["id"]
+    
+        creadas = await _registros(motor, AuditAction.CREATED,
+                                   module=AuditModule.USERS, entity_id=str(user_id))
+>       assert len(creadas) == 1, "el alta de usuario no dejó una fila de auditoría"
+E       AssertionError: el alta de usuario no dejó una fila de auditoría
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_p112_audit_single_producer.py:335: AssertionError
+________________________ test_p112_05_evidencias_curvas ________________________
+
+client = <httpx.AsyncClient object at 0x7fa10a2149d0>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTgsInR5cGUiOiJhY2Nlc3MifQ.zIcewzrWzcOD_iYbKKc5sTwXN0TEf9Z-jXJa5ekwuMA'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10a214bc0>
+
+    async def test_p112_05_evidencias_curvas(client, auth_headers, seeded_ids, motor):
+        # Evidencias: subir y borrar dejan fila cada uno.
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        event_id = await _evento(client, auth_headers, seeded_ids, lot_id, "weight_recording",
+                                 bird_movements=[{"sex": "mixed", "quantity": 10, "avg_weight": 2000}])
+    
+        subida = await client.post(
+            f"/api/v1/operations/{event_id}/evidences", headers=auth_headers,
+            files={"file": (f"{PREFIJO}{uuid.uuid4().hex[:6]}.png", PNG, "image/png")})
+        assert subida.status_code == 201, subida.text
+        ev_id = subida.json()["id"]
+    
+        alta_ev = await _registros(motor, AuditAction.CREATED,
+                                   module=AuditModule.OPERATIONS,
+                                   entity_type="evidence", entity_id=str(ev_id))
+>       assert len(alta_ev) == 1, "subir una evidencia no dejó fila de auditoría"
+E       AssertionError: subir una evidencia no dejó fila de auditoría
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_p112_audit_single_producer.py:368: AssertionError
+________________________ test_p112_06_batch_transicion _________________________
+
+client = <httpx.AsyncClient object at 0x7fa10a06aad0>
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3ODkzNjYwOTksInR5cGUiOiJhY2Nlc3MifQ.Cku2drpS9Mo1nY1EXXQ2YI2G4bfoPjVPKna4CN4lzkc'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+motor = <sqlalchemy.ext.asyncio.engine.AsyncEngine object at 0x7fa10a0f5400>
+
+    async def test_p112_06_batch_transicion(client, auth_headers, seeded_ids, motor):
+        lot_id = await _lote(client, auth_headers, seeded_ids)
+        event_id = await _evento(client, auth_headers, seeded_ids, lot_id, "weight_recording",
+                                 bird_movements=[{"sex": "mixed", "quantity": 10, "avg_weight": 2000}])
+    
+        batch = await client.post("/api/v1/review/batches", headers=auth_headers, json={
+            "batch_name": f"{PREFIJO}batch-{uuid.uuid4().hex[:6]}",
+            "event_ids": [event_id],
+            "notes": "P1-12",
+        })
+        assert batch.status_code == 201, batch.text
+    
+        filas = await _registros(motor, AuditAction.UPDATED,
+                                 entity_type="operational_event", entity_id=str(event_id))
+        transiciones = [f for f in filas if f.new_state == "pending_review"]
+>       assert len(transiciones) == 1, (
+            f"el batch escribió {len(transiciones)} transiciones `pending_review` "
+            "(el update masivo no pasa por el listener: sin productor son 0)"
+        )
+E       AssertionError: el batch escribió 0 transiciones `pending_review` (el update masivo no pasa por el listener: sin productor son 0)
+E       assert 0 == 1
+E        +  where 0 = len([])
+
+tests/test_p112_audit_single_producer.py:422: AssertionError
+=============================== warnings summary ===============================
+tests/test_p112_audit_single_producer.py::test_p112_01_alta_una_fila
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_p112_audit_single_producer.py::test_p112_01_alta_una_fila
+FAILED tests/test_p112_audit_single_producer.py::test_p112_02_aprobacion_una_fila
+FAILED tests/test_p112_audit_single_producer.py::test_p112_03_cierre_auditado
+FAILED tests/test_p112_audit_single_producer.py::test_p112_03b_activacion_auditada
+FAILED tests/test_p112_audit_single_producer.py::test_p112_03c_fase_auditada
+FAILED tests/test_p112_audit_single_producer.py::test_p112_04_usuarios_auditados
+FAILED tests/test_p112_audit_single_producer.py::test_p112_05_evidencias_curvas
+FAILED tests/test_p112_audit_single_producer.py::test_p112_06_batch_transicion
+========================= 8 failed, 1 warning in 5.31s =========================
