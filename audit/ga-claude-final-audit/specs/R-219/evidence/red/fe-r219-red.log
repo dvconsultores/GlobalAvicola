@@ -1,0 +1,2713 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/pages/audit/__tests__/r219.auditPage.test.tsx > R-219 · AuditPage contra el contrato real (RED) > 01 · muestra el nombre del usuario (con permiso users:read)
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter>
+    <Router basename={undefined} location={{pathname:"/", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <AuditPage>
+        <div>
+          <div>
+          <div>
+          <FilterPanel onClear={function clearFilters} totalResults={0}>
+            <div className="bg-white r...">
+>             <button
+>               onClick={function onClick}
+>               className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hov..."
+>               aria-expanded={true}
+>             >
+                <div>
+                <div className="flex items...">
+                  <span>
+>                 <button
+>                   onClick={function onClick}
+>                   className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transitio..."
+>                 >
+              ...
+          ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+ ❯ src/pages/audit/__tests__/r219.auditPage.test.tsx (5 tests | 5 failed) 3279ms
+     × 01 · muestra el nombre del usuario (con permiso users:read) 1052ms
+     × 02 · Correcciones muestra el diff real (previous_values → new_values) 1158ms
+     × 03 · motivo y comentario visibles cuando existen 28ms
+     × 04 · paginador con total (50 por página) 1017ms
+     × 05 · acciones traducidas (sin crudos) 21ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 5 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/audit/__tests__/r219.auditPage.test.tsx > R-219 · AuditPage contra el contrato real (RED) > 01 · muestra el nombre del usuario (con permiso users:read)
+TestingLibraryElementError: Unable to find an element with the text: Ana Pérez. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAuditoría[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+              [36m>[39m
+                [0m1[0m
+                [0m [0m
+                [0mregistros[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 3v5h5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.corrections[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mFiltros[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+            [36m>[39m
+              [0m1[0m
+              [0m [0m
+              [0mresultados[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"12"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"12"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mLimpiar[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mTipo de operación[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodas[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"created"[39m
+                  [36m>[39m
+                    [0mTR-created[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"updated"[39m
+                  [36m>[39m
+                    [0mTR-updated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrected"[39m
+                  [36m>[39m
+                    [0mTR-corrected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_started"[39m
+                  [36m>[39m
+                    [0mTR-review_started[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_completed"[39m
+                  [36m>[39m
+                    [0mTR-review_completed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"returned"[39m
+                  [36m>[39m
+                    [0mTR-returned[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approved"[39m
+                  [36m>[39m
+                    [0mTR-approved[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"rejected"[39m
+                  [36m>[39m
+                    [0mTR-rejected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"consolidated"[39m
+                  [36m>[39m
+                    [0mTR-consolidated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sent_to_sap"[39m
+                  [36m>[39m
+                    [0mTR-sent_to_sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_confirmed"[39m
+                  [36m>[39m
+                    [0mTR-sap_confirmed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_error"[39m
+                  [36m>[39m
+                    [0mTR-sap_error[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"cancelled"[39m
+                  [36m>[39m
+                    [0mTR-cancelled[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login"[39m
+                  [36m>[39m
+                    [0mTR-login[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login_failed"[39m
+                  [36m>[39m
+                    [0mTR-login_failed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"permission_change"[39m
+                  [36m>[39m
+                    [0mTR-permission_change[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"import"[39m
+                  [36m>[39m
+                    [0mTR-import[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"export"[39m
+                  [36m>[39m
+                    [0mTR-export[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"deleted"[39m
+                  [36m>[39m
+                    [0mTR-deleted[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mMódulo[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodos[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"auth"[39m
+                  [36m>[39m
+                    [0mTM-auth[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"masters"[39m
+                  [36m>[39m
+                    [0mTM-masters[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"lots"[39m
+                  [36m>[39m
+                    [0mTM-lots[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"operations"[39m
+                  [36m>[39m
+                    [0mTM-operations[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review"[39m
+                  [36m>[39m
+                    [0mTM-review[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approvals"[39m
+                  [36m>[39m
+                    [0mTM-approvals[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrections"[39m
+                  [36m>[39m
+                    [0mTM-corrections[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap"[39m
+                  [36m>[39m
+                    [0mTM-sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"reports"[39m
+                  [36m>[39m
+                    [0mTM-reports[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"users"[39m
+                  [36m>[39m
+                    [0mTM-users[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mFecha[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                [36m>[39m
+                  [0m—[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"p-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"absolute left-[19px] top-3 bottom-3 w-0.5 bg-slate-200 rounded-full"[39m
+            [36m/>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-0"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative flex gap-4 pb-6 last:pb-0"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"
+ relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0
+ bg-indigo-50 ring-4 ring-white
+ "[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-indigo-600"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex-1 min-w-0 pt-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-2 flex-wrap"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-sm font-bold text-slate-800"[39m
+                    [36m>[39m
+                      [0mreview_started[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-xs text-slate-400 font-medium"[39m
+                    [36m>[39m
+                      [0m14/9/2026, 12:00:00 p. m.[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-sm text-slate-600 mt-0.5"[39m
+                  [36m>[39m
+                    [0moperational_event#55[0m
+                  [36m</p>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+                  [36m>[39m
+                    [0mpor[0m
+                    [0m [0m
+                    [0m7[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+              [36m>[39m
+                [0mAuditoría[0m
+              [36m</h1>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m [0m
+                  [0mregistros[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-shield"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0maudit.all[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v5h5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0maudit.corrections[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mFiltros[0m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+              [36m>[39m
+                [0m1[0m
+                [0m [0m
+                [0mresultados[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"12"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"12"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 3v5h5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+           ...
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/audit/__tests__/r219.auditPage.test.tsx:79:11
+     77|     })
+     78|     renderPage()
+     79|     await waitFor(() => expect(screen.getByText('Ana Pérez')).toBeTrut…
+       |           ^
+     80|   })
+     81|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/5]⎯
+
+ FAIL  src/pages/audit/__tests__/r219.auditPage.test.tsx > R-219 · AuditPage contra el contrato real (RED) > 02 · Correcciones muestra el diff real (previous_values → new_values)
+TestingLibraryElementError: Unable to find an element with the text: /10\s*→\s*20/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAuditoría[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+              [36m>[39m
+                [0m1[0m
+                [0m [0m
+                [0mregistros[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 3v5h5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.corrections[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mFiltros[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+            [36m>[39m
+              [0m1[0m
+              [0m [0m
+              [0mresultados[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"12"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"12"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mLimpiar[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mTipo de operación[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                  [33mdisabled[39m=[32m""[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodas[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"created"[39m
+                  [36m>[39m
+                    [0mTR-created[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"updated"[39m
+                  [36m>[39m
+                    [0mTR-updated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrected"[39m
+                  [36m>[39m
+                    [0mTR-corrected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_started"[39m
+                  [36m>[39m
+                    [0mTR-review_started[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_completed"[39m
+                  [36m>[39m
+                    [0mTR-review_completed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"returned"[39m
+                  [36m>[39m
+                    [0mTR-returned[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approved"[39m
+                  [36m>[39m
+                    [0mTR-approved[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"rejected"[39m
+                  [36m>[39m
+                    [0mTR-rejected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"consolidated"[39m
+                  [36m>[39m
+                    [0mTR-consolidated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sent_to_sap"[39m
+                  [36m>[39m
+                    [0mTR-sent_to_sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_confirmed"[39m
+                  [36m>[39m
+                    [0mTR-sap_confirmed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_error"[39m
+                  [36m>[39m
+                    [0mTR-sap_error[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"cancelled"[39m
+                  [36m>[39m
+                    [0mTR-cancelled[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login"[39m
+                  [36m>[39m
+                    [0mTR-login[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login_failed"[39m
+                  [36m>[39m
+                    [0mTR-login_failed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"permission_change"[39m
+                  [36m>[39m
+                    [0mTR-permission_change[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"import"[39m
+                  [36m>[39m
+                    [0mTR-import[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"export"[39m
+                  [36m>[39m
+                    [0mTR-export[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"deleted"[39m
+                  [36m>[39m
+                    [0mTR-deleted[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mMódulo[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodos[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"auth"[39m
+                  [36m>[39m
+                    [0mTM-auth[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"masters"[39m
+                  [36m>[39m
+                    [0mTM-masters[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"lots"[39m
+                  [36m>[39m
+                    [0mTM-lots[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"operations"[39m
+                  [36m>[39m
+                    [0mTM-operations[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review"[39m
+                  [36m>[39m
+                    [0mTM-review[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approvals"[39m
+                  [36m>[39m
+                    [0mTM-approvals[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrections"[39m
+                  [36m>[39m
+                    [0mTM-corrections[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap"[39m
+                  [36m>[39m
+                    [0mTM-sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"reports"[39m
+                  [36m>[39m
+                    [0mTM-reports[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"users"[39m
+                  [36m>[39m
+                    [0mTM-users[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mFecha[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                [36m>[39m
+                  [0m—[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"p-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"space-y-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"p-4 bg-amber-50 border border-amber-200 rounded-xl"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-2 mb-2"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"inline-flex items-center gap-1 rounded-full font-medium bg-purple-50 text-purple-700 px-1.5 py-0.5 text-xs "[39m
+                [36m>[39m
+                  [0mCorrección[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-500"[39m
+                [36m>[39m
+                  [0m14/9/2026, 12:00:00 p. m.[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-medium text-slate-800"[39m
+              [36m>[39m
+                [0mcorrected[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-500"[39m
+              [36m>[39m
+                [0moperational_event#55[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-400 mt-2"[39m
+              [36m>[39m
+                [0mpor[0m
+                [0m [0m
+                [0m7[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mb-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<h1[39m
+                [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+              [36m>[39m
+                [0mAuditoría[0m
+              [36m</h1>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+                [36m>[39m
+                  [0m1[0m
+                  [0m [0m
+                  [0mregistros[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-shield"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0maudit.all[0m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 3v5h5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0maudit.corrections[0m
+          [36m</button>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33maria-expanded[39m=[32m"true"[39m
+            [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m6 9 6 6 6-6"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mFiltros[0m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-3"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+              [36m>[39m
+                [0m1[0m
+                [0m [0m
+                [0mresultados[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"12"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"12"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 3v5h5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0mLimpiar[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+                [36m>[39m
+                  [0mTipo de operación[0m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+                [36m>[39m
+                  [36m<select[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                    [33mdisabled[39m=[32m""[39m
+                  [36m>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m>[39m
+                      [0mTodas[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"created"[39m
+                    [36m>[39m
+                      [0mTR-created[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"updated"[39m
+                    [36m>[39m
+                      [0mTR-updated[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"corrected"[39m
+                    [36m>[39m
+                      [0mTR-corrected[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"review_started"[39m
+                    [36m>[39m
+                      [0mTR-review_started[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"review_completed"[39m
+                    [36m>[39m
+                      [0mTR-review_completed[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"returned"[39m
+                    [36m>[39m
+                      [0mTR-returned[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"approved"[39m
+                    [36m>[39m
+                      [0mTR-approved[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"rejected"[39m
+                    [36m>[39m
+                      [0mTR-rejected[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"consolidated"[39m
+                    [36m>[39m
+                      [0mTR-consolidated[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sent_to_sap"[39m
+                    [36m>[39m
+                      [0mTR-sent_to_sap[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sap_confirmed"[39m
+                    [36m>[39m
+                      [0mTR-sap_confirmed[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sap_error"[39m
+                    [36m>[39m
+                      [0mTR-sap_error[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"cancelled"[39m
+                    [36m>[39m
+                      [0mTR-cancelled[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"login"[39m
+                    [36m>[39m
+                      [0mTR-login[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"login_failed"[39m
+                    [36m>[39m
+                      [0mTR-login_failed[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"permission_change"[39m
+                    [36m>[39m
+                      [0mTR-permission_change[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"import"[39m
+                    [36m>[39m
+                      [0mTR-import[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"export"[39m
+                    [36m>[39m
+                      [0mTR-export[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"deleted"[39m
+                    [36m>[39m
+                      [0mTR-deleted[0m
+                    [36m</option>[39m
+                  [36m</select>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+                [36m>[39m
+                  [0mMódulo[0m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+                [36m>[39m
+                  [36m<select[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [36m>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m""[39m
+                    [36m>[39m
+                      [0mTodos[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"auth"[39m
+                    [36m>[39m
+                      [0mTM-auth[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"masters"[39m
+                    [36m>[39m
+                      [0mTM-masters[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"lots"[39m
+                    [36m>[39m
+                      [0mTM-lots[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"operations"[39m
+                    [36m>[39m
+                      [0mTM-operations[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"review"[39m
+                    [36m>[39m
+                      [0mTM-review[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"approvals"[39m
+                    [36m>[39m
+                      [0mTM-approvals[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"corrections"[39m
+                    [36m>[39m
+                      [0mTM-corrections[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"sap"[39m
+                    [36m>[39m
+                      [0mTM-sap[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"reports"[39m
+                    [36m>[39m
+                      [0mTM-reports[0m
+                    [36m</option>[39m
+                    [36m<option[39m
+                      [33mvalue[39m=[32m"users"[39m
+                    [36m>[39m
+                      [0mTM-users[0m
+                    [36m</option>[39m
+                  [36m</select>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+                [36m>[39m
+                  [0mFecha[0m
+                [36m</span>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+                [36m>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mtype[39m=[32m"date"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                  [36m>[39m
+                    [0m—[0m
+                  [36m</span>[39m
+                  [36m<input[39m
+                    [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                    [33mtype[39m=[32m"date"[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m/>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-5"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-4"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"p-4 bg-amber-50 border border-amber-200 rounded-xl"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-2 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"inline-flex items-center gap-1 rounded-full font-medium bg-purple-50 text-purple-700 px-1.5 py-0.5 text-xs "[39m
+                  [36m>[39m
+                    [0mCorrección[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"text-xs text-slate-500"[39m
+                  [36m>[39m
+                    [0m14/9/2026, 12:00:00 p. m.[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-sm font-medium text-slate-800"[39m
+                [36m>[39m
+                  [0mcorrected[0m
+                [36m</p>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-xs text-slate-500"[39m
+                [36m>[39m
+                  [0moperational_event#55[0m
+                [36m</p>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-xs text-slate-400 mt-2"[39m
+                [36m>[39m
+                  [0mpor[0m
+                  [0m [0m
+                  [0m7[0m
+                [36m</p>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/audit/__tests__/r219.auditPage.test.tsx:90:11
+     88|     renderPage()
+     89|     fireEvent.click(await screen.findByRole('button', { name: 'audit.c…
+     90|     await waitFor(() => expect(screen.getByText(/10\s*→\s*20/)).toBeTr…
+       |           ^
+     91|   })
+     92|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/5]⎯
+
+ FAIL  src/pages/audit/__tests__/r219.auditPage.test.tsx > R-219 · AuditPage contra el contrato real (RED) > 03 · motivo y comentario visibles cuando existen
+TestingLibraryElementError: Unable to find an element with the text: /Nota del auditor/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAuditoría[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+              [36m>[39m
+                [0m1[0m
+                [0m [0m
+                [0mregistros[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 3v5h5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.corrections[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mFiltros[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+            [36m>[39m
+              [0m1[0m
+              [0m [0m
+              [0mresultados[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"12"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"12"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mLimpiar[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[3...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/pages/audit/__tests__/r219.auditPage.test.tsx:102:19
+    100|     renderPage()
+    101|     await waitFor(() => expect(screen.getByText(/Motivo: error de digi…
+    102|     expect(screen.getByText(/Nota del auditor/)).toBeTruthy()
+       |                   ^
+    103|   })
+    104|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/5]⎯
+
+ FAIL  src/pages/audit/__tests__/r219.auditPage.test.tsx > R-219 · AuditPage contra el contrato real (RED) > 04 · paginador con total (50 por página)
+TestingLibraryElementError: Unable to find role="button" and name `/Siguiente/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAuditoría[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+              [36m>[39m
+                [0m120[0m
+                [0m [0m
+                [0mregistros[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 3v5h5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.corrections[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mFiltros[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+            [36m>[39m
+              [0m120[0m
+              [0m [0m
+              [0mresultados[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"12"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"12"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mLimpiar[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mTipo de operación[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodas[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"created"[39m
+                  [36m>[39m
+                    [0mTR-created[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"updated"[39m
+                  [36m>[39m
+                    [0mTR-updated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrected"[39m
+                  [36m>[39m
+                    [0mTR-corrected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_started"[39m
+                  [36m>[39m
+                    [0mTR-review_started[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_completed"[39m
+                  [36m>[39m
+                    [0mTR-review_completed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"returned"[39m
+                  [36m>[39m
+                    [0mTR-returned[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approved"[39m
+                  [36m>[39m
+                    [0mTR-approved[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"rejected"[39m
+                  [36m>[39m
+                    [0mTR-rejected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"consolidated"[39m
+                  [36m>[39m
+                    [0mTR-consolidated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sent_to_sap"[39m
+                  [36m>[39m
+                    [0mTR-sent_to_sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_confirmed"[39m
+                  [36m>[39m
+                    [0mTR-sap_confirmed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_error"[39m
+                  [36m>[39m
+                    [0mTR-sap_error[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"cancelled"[39m
+                  [36m>[39m
+                    [0mTR-cancelled[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login"[39m
+                  [36m>[39m
+                    [0mTR-login[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login_failed"[39m
+                  [36m>[39m
+                    [0mTR-login_failed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"permission_change"[39m
+                  [36m>[39m
+                    [0mTR-permission_change[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"import"[39m
+                  [36m>[39m
+                    [0mTR-import[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"export"[39m
+                  [36m>[39m
+                    [0mTR-export[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"deleted"[39m
+                  [36m>[39m
+                    [0mTR-deleted[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mMódulo[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodos[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"auth"[39m
+                  [36m>[39m
+                    [0mTM-auth[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"masters"[39m
+                  [36m>[39m
+                    [0mTM-masters[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"lots"[39m
+                  [36m>[39m
+                    [0mTM-lots[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"operations"[39m
+                  [36m>[39m
+                    [0mTM-operations[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review"[39m
+                  [36m>[39m
+                    [0mTM-review[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approvals"[39m
+                  [36m>[39m
+                    [0mTM-approvals[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrections"[39m
+                  [36m>[39m
+                    [0mTM-corrections[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap"[39m
+                  [36m>[39m
+                    [0mTM-sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"reports"[39m
+                  [36m>[39m
+                    [0mTM-reports[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"users"[39m
+                  [36m>[39m
+                    [0mTM-users[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mFecha[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                [36m>[39m
+                  [0m—[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"p-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"absolute left-[19px] top-3 bottom-3 w-0.5 bg-slate-200 rounded-full"[39m
+            [36m/>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-0"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative flex gap-4 pb-6 last:pb-0"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"
+ relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0
+ bg-indigo-50 ring-4 ring-white
+ "[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-indigo-600"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex-1 min-w-0 pt-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-2 flex-wrap"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-sm font-bold text-slate-800"[39m
+                    [36m>[39m
+                      [0mreview_started[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-xs text-slate-400 font-medium"[39m
+                    [36m>[39m
+                      [0m14/9/2026, 12:00:00 p. m.[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-sm text-slate-600 mt-0.5"[39m
+                  [36m>[39m
+                    [0moperational_event#55[0m
+                  [36m</p>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+                  [36m>[39m
+                    [0mpor[0m
+                    [0m [0m
+                    [0m7[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAuditoría[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full font-medium"[39m
+              [36m>[39m
+                [0m120[0m
+                [0m [0m
+                [0mregistros[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-1 mb-5 overflow-x-auto pb-1 scrollbar-hide"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-[#1E3A5F] text-white shadow-md
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-shield"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.all[0m
+        [36m</button>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"
+ inline-flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all whitespace-nowrap shrink-0
+ bg-white text-slate-600 border border-slate-200 hover:bg-slate-50
+ "[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"16"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"16"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3 3v5h5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0maudit.corrections[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden"[39m
+      [36m>[39m
+        [36m<button[39m
+          [33maria-expanded[39m=[32m"true"[39m
+          [33mclass[39m=[32m"w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 transition-transform duration-200 rotate-0"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 9 6 6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mFiltros[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-xs text-slate-400 font-normal"[39m
+            [36m>[39m
+              [0m120[0m
+              [0m [0m
+              [0mresultados[0m
+            [36m</span>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-rotate-ccw"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"12"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"12"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 3v5h5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mLimpiar[0m
+            [36m</button>[39m
+          [36m</div>[39m
+        [36m</button>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"transition-all duration-200 ease-in-out overflow-hidden max-h-[1000px] opacity-100"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"px-4 pb-4 flex flex-wrap gap-3 border-t border-slate-100 pt-3"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mTipo de operación[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none disabled:bg-slate-100"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodas[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"created"[39m
+                  [36m>[39m
+                    [0mTR-created[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"updated"[39m
+                  [36m>[39m
+                    [0mTR-updated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrected"[39m
+                  [36m>[39m
+                    [0mTR-corrected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_started"[39m
+                  [36m>[39m
+                    [0mTR-review_started[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review_completed"[39m
+                  [36m>[39m
+                    [0mTR-review_completed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"returned"[39m
+                  [36m>[39m
+                    [0mTR-returned[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approved"[39m
+                  [36m>[39m
+                    [0mTR-approved[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"rejected"[39m
+                  [36m>[39m
+                    [0mTR-rejected[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"consolidated"[39m
+                  [36m>[39m
+                    [0mTR-consolidated[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sent_to_sap"[39m
+                  [36m>[39m
+                    [0mTR-sent_to_sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_confirmed"[39m
+                  [36m>[39m
+                    [0mTR-sap_confirmed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap_error"[39m
+                  [36m>[39m
+                    [0mTR-sap_error[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"cancelled"[39m
+                  [36m>[39m
+                    [0mTR-cancelled[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login"[39m
+                  [36m>[39m
+                    [0mTR-login[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"login_failed"[39m
+                  [36m>[39m
+                    [0mTR-login_failed[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"permission_change"[39m
+                  [36m>[39m
+                    [0mTR-permission_change[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"import"[39m
+                  [36m>[39m
+                    [0mTR-import[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"export"[39m
+                  [36m>[39m
+                    [0mTR-export[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"deleted"[39m
+                  [36m>[39m
+                    [0mTR-deleted[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mMódulo[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<select[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                [36m>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m""[39m
+                  [36m>[39m
+                    [0mTodos[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"auth"[39m
+                  [36m>[39m
+                    [0mTM-auth[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"masters"[39m
+                  [36m>[39m
+                    [0mTM-masters[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"lots"[39m
+                  [36m>[39m
+                    [0mTM-lots[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"operations"[39m
+                  [36m>[39m
+                    [0mTM-operations[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"review"[39m
+                  [36m>[39m
+                    [0mTM-review[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"approvals"[39m
+                  [36m>[39m
+                    [0mTM-approvals[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"corrections"[39m
+                  [36m>[39m
+                    [0mTM-corrections[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"sap"[39m
+                  [36m>[39m
+                    [0mTM-sap[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"reports"[39m
+                  [36m>[39m
+                    [0mTM-reports[0m
+                  [36m</option>[39m
+                  [36m<option[39m
+                    [33mvalue[39m=[32m"users"[39m
+                  [36m>[39m
+                    [0mTM-users[0m
+                  [36m</option>[39m
+                [36m</select>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex flex-col gap-1.5"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase tracking-wide"[39m
+              [36m>[39m
+                [0mFecha[0m
+              [36m</span>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center gap-1.5 sm:gap-2"[39m
+              [36m>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-xs text-slate-400"[39m
+                [36m>[39m
+                  [0m—[0m
+                [36m</span>[39m
+                [36m<input[39m
+                  [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"[39m
+                  [33mtype[39m=[32m"date"[39m
+                  [33mvalue[39m=[32m""[39m
+                [36m/>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"p-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"relative "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"absolute left-[19px] top-3 bottom-3 w-0.5 bg-slate-200 rounded-full"[39m
+            [36m/>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-0"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative flex gap-4 pb-6 last:pb-0"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"
+ relative z-10 w-10 h-10 rounded-full flex items-center justify-center shrink-0
+ bg-indigo-50 ring-4 ring-white
+ "[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-indigo-600"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"16"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"16"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex-1 min-w-0 pt-1"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mclass[39m=[32m"flex items-center gap-2 flex-wrap"[39m
+                  [36m>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-sm font-bold text-slate-800"[39m
+                    [36m>[39m
+                      [0mreview_started[0m
+                    [36m</span>[39m
+                    [36m<span[39m
+                      [33mclass[39m=[32m"text-xs text-slate-400 font-medium"[39m
+                    [36m>[39m
+                      [0m14/9/2026, 12:00:00 p. m.[0m
+                    [36m</span>[39m
+                  [36m</div>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-sm text-slate-600 mt-0.5"[39m
+                  [36m>[39m
+                    [0moperational_event#55[0m
+                  [36m</p>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+                  [36m>[39m
+                    [0mpor[0m
+                    [0m [0m
+                    [0m7[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/audit/__tests__/r219.auditPage.test.tsx:113:36
+    111|     })
+    112|     renderPage()
+    113|     const siguiente = await screen.findByRole('button', { name: /Sigui…
+       |                                    ^
+    114|     fireEvent.click(siguiente)
+    115|     await waitFor(() => expect(
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/5]⎯
+
+ FAIL  src/pages/audit/__tests__/r219.auditPage.test.tsx > R-219 · AuditPage contra el contrato real (RED) > 05 · acciones traducidas (sin crudos)
+AssertionError: expected <span …(1)></span> to be null
+
+- Expected:
+null
+
++ Received:
+<span
+  class="text-sm font-bold text-slate-800"
+>
+  review_started
+</span>
+
+ ❯ src/pages/audit/__tests__/r219.auditPage.test.tsx:126:50
+    124|     renderPage()
+    125|     await waitFor(() => expect(screen.getByText('TR-review_started')).…
+    126|     expect(screen.queryByText('review_started')).toBeNull()
+       |                                                  ^
+    127|   })
+    128| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/5]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  5 failed (5)
+   Start at  08:03:54
+   Duration  4.32s (transform 134ms, setup 50ms, import 334ms, tests 3.28s, environment 539ms)
+
