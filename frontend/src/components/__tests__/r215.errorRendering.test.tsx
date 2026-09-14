@@ -201,6 +201,8 @@ describe('R-215 · render seguro de errores (RED)', () => {
     }
     await rellenar('users.usernamePlaceholder', 'r215u')
     await rellenar('users.firstNamePlaceholder', 'Uno')
+    // `R-195`: `last_name` también es obligatorio en cliente (B-28).
+    await rellenar('users.lastNamePlaceholder', 'Pérez')
     await rellenar('users.emailPlaceholder', 'r215u@example.com')
     await rellenar('users.passwordPlaceholder', 'Clave12345')
     fireEvent.click(screen.getByRole('button', { name: 'common.save' }))

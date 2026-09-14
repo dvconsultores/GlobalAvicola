@@ -2,7 +2,9 @@ import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Pencil, Trash2, X, Users, Monitor, Smartphone, Building2 } from 'lucide-react'
 import api from '../../services/api'
+import ConfirmDialog from '../../components/ui/ConfirmDialog'
 import UserBusinessUnitsButton from './UserBusinessUnitsButton'
+import { useAuthStore } from '../../stores/auth.store'
 // GA-FE-04 · R-98/P-13: la autoridad de ACCIÓN es del permiso de la acción, no de la página.
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -17,6 +19,11 @@ export default function UsersPage() {
  const { t } = useTranslation()
  const can = useCan()
  const toast = useToast()
+ const usuarioActual = useAuthStore((s) => s.user)
+ // `R-195` C-03: para actores acotados la empresa la resuelve el servidor
+ // (`R-118`); el selector de empresa solo aplica a autoridad global.
+ const mostrarEmpresa = !usuarioActual?.company_id
+ const [deleteTarget, setDeleteTarget] = useState<any | null>(null)
  const [users, setUsers] = useState<any[]>([])
  const [roles, setRoles] = useState<any[]>([])
  // `GA-REM-039`. Desde el maestro real: nunca una lista fija de nombres de área.
@@ -70,19 +77,33 @@ export default function UsersPage() {
  const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, area_id: user.area_id ?? null, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setShowModal(true) }
 
  const handleSave = async () => {
- if (!form.username || !form.first_name || !form.email) return alert(t('users.fieldsRequired'))
+ // `R-195`/B-28: `last_name` también es obligatorio en cliente; sin diálogos
+ // nativos (C-02): el aviso va por toast.
+ if (!form.username || !form.first_name || !form.last_name || !form.email) {
+ toast.error(t('users.fieldsRequired'))
+ return
+ }
  setSaving(true)
  try {
- // La contraseña no viaja en el cuerpo de edición: `UserUpdate` la rechaza. Enviarla ahí
- // devolvía 200 sin cambiar nada (P0-13). El restablecimiento tiene endpoint propio.
- const { password, ...datos } = form
- const payload: any = { ...datos, role_id: form.role_id || null, area_id: form.area_id || null }
+ // `R-195`/`R-118`. El contrato de edición (`UserUpdate`, `extra=forbid`)
+ // admite SOLO este subconjunto: `username` es inmutable y la empresa la
+ // resuelve el servidor por contexto. Enviar el formulario completo
+ // (`username`/`company_id` incluidos) producía 422 «Extra inputs».
+ const { password } = form
+ const comunes = {
+ first_name: form.first_name, last_name: form.last_name, email: form.email,
+ phone: form.phone, role_id: form.role_id || null, area_id: form.area_id || null,
+ view_type: form.view_type, is_active: form.is_active,
+ }
  if (editingId) {
- await api.put(`/users/${editingId}`, payload)
+ await api.put(`/users/${editingId}`, comunes)
  if (password) await api.post(`/users/${editingId}/password`, { new_password: password })
  } else {
- if (!password) return alert(t('users.passwordRequired'))
- await api.post('/users', { ...payload, password })
+ if (!password) { toast.error(t('users.passwordRequired')); return }
+ await api.post('/users', {
+ ...comunes, username: form.username, password,
+ ...(mostrarEmpresa ? { company_id: form.company_id || null } : {}),
+ })
  }
  setShowModal(false); fetchData() } catch (err: any) {
       // `R-215`. Antes: `alert(detail)` con la lista cruda ⇒ «[object Object]».
@@ -90,10 +111,18 @@ export default function UsersPage() {
     } finally { setSaving(false) }
  }
 
- const handleDelete = async (userId: number) => { if (!confirm(t('users.deleteConfirm'))) return; try { await api.delete(`/users/${userId}`); fetchData() } catch { alert(t('users.deleteError')) } }
+ const handleDelete = async (userId: number) => {
+ // `R-195`: la baja se confirma con `ConfirmDialog` (sin `confirm` nativo) y
+ // el fallo se muestra normalizado — antes el modal quedaba mudo.
+ try { await api.delete(`/users/${userId}`); setDeleteTarget(null); fetchData() }
+ catch (err: any) {
+ setDeleteTarget(null)
+ toast.error(getErrorMessage(err, t('users.deleteError', 'No se pudo dar de baja al usuario')))
+ }
+ }
  // Solo se envían los campos que `UserUpdate` admite: propagar el usuario entero
  // arrastraba `id`, `created_at` y demás, que el contrato rechaza.
- const handleToggleActive = async (user: any) => { try { await api.put(`/users/${user.id}`, { is_active: !user.is_active }); fetchData() } catch { alert(t('common.error')) } }
+ const handleToggleActive = async (user: any) => { try { await api.put(`/users/${user.id}`, { is_active: !user.is_active }); fetchData() } catch (err: any) { toast.error(getErrorMessage(err, t('common.error'))) } }
 
  if (loading) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
 
@@ -110,30 +139,39 @@ export default function UsersPage() {
  {!loading && estado === 'ok' && catalogosParciales && <div role="alert" className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-3 text-xs text-amber-800">{t('users.partialCatalogs')}</div>}
 
  {!loading && estado === 'ok' && users.length > 0 && <>
- <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><table className="w-full text-sm"><thead className="bg-slate-50 border-b border-slate-200"><tr><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.username')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.firstName')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.email')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.role')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.view')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.status')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.actions')}</th></tr></thead><tbody className="divide-y divide-slate-100">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <tr key={u.id} className="hover:bg-slate-50 transition"><td className="px-4 py-3 font-medium text-[#1E3A5F]">{u.username}</td><td className="px-4 py-3">{u.first_name} {u.last_name}</td><td className="px-4 py-3 text-slate-500">{u.email}</td><td className="px-4 py-3 text-slate-500">{role?.name || '—'}</td><td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${u.view_type === 'mobile' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>{u.view_type === 'mobile' ? <Smartphone size={12} /> : <Monitor size={12} />} {u.view_type === 'mobile' ? t('users.mobile') : t('users.web')}</span></td><td className="px-4 py-3">{can({ permission: 'users:update' }) ? <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button> : <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</span>}</td><td className="px-4 py-3"><div className="flex gap-1.5">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><Pencil size={14} /></button>}{can({ permission: 'users:delete' }) && <button onClick={() => handleDelete(u.id)} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"><Trash2 size={14} /></button>}<UserBusinessUnitsButton user={u} /></div></td></tr> })}</tbody></table></div>
+ <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><table className="w-full text-sm"><thead className="bg-slate-50 border-b border-slate-200"><tr><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.username')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.firstName')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.email')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.role')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.view')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.status')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.actions')}</th></tr></thead><tbody className="divide-y divide-slate-100">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <tr key={u.id} className="hover:bg-slate-50 transition"><td className="px-4 py-3 font-medium text-[#1E3A5F]">{u.username}</td><td className="px-4 py-3">{u.first_name} {u.last_name}</td><td className="px-4 py-3 text-slate-500">{u.email}</td><td className="px-4 py-3 text-slate-500">{role?.name || '—'}</td><td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${u.view_type === 'mobile' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>{u.view_type === 'mobile' ? <Smartphone size={12} /> : <Monitor size={12} />} {u.view_type === 'mobile' ? t('users.mobile') : t('users.web')}</span></td><td className="px-4 py-3">{can({ permission: 'users:update' }) ? <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button> : <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</span>}</td><td className="px-4 py-3"><div className="flex gap-1.5">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><Pencil size={14} /></button>}{can({ permission: 'users:delete' }) && <button onClick={() => setDeleteTarget(u)} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"><Trash2 size={14} /></button>}<UserBusinessUnitsButton user={u} /></div></td></tr> })}</tbody></table></div>
 
  <div className="lg:hidden space-y-3">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <div key={u.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4"><div className="flex items-center justify-between mb-2"><span className="font-semibold text-[#1E3A5F]">{u.username}</span>{can({ permission: 'users:update' }) && <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button>}</div><p className="text-sm text-slate-600">{u.first_name} {u.last_name}</p><p className="text-xs text-slate-400">{u.email} · {role?.name || t('users.noRole')} · {u.view_type === 'mobile'
  ? <><Smartphone size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.mobile')}</>
- : <><Monitor size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.web')}</>}</p><div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition flex items-center justify-center gap-1"><Pencil size={12} /> {t('users.editUser')}</button>}{can({ permission: 'users:delete' }) && <button onClick={() => handleDelete(u.id)} className="flex-1 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-100 transition flex items-center justify-center gap-1"><Trash2 size={12} /> {t('users.deleteUser')}</button>}</div></div> })}</div>
+ : <><Monitor size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.web')}</>}</p><div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition flex items-center justify-center gap-1"><Pencil size={12} /> {t('users.editUser')}</button>}{can({ permission: 'users:delete' }) && <button onClick={() => setDeleteTarget(u)} className="flex-1 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-100 transition flex items-center justify-center gap-1"><Trash2 size={12} /> {t('users.deleteUser')}</button>}</div></div> })}</div>
  </>}
 
  {showModal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowModal(false)}><div className="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-4"><h2 className="text-lg font-bold text-[#1E3A5F]">{editingId ? t('users.editUserTitle') : t('users.createUser')}</h2><button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-slate-100"><X size={20} /></button></div><div className="space-y-3">
- <input placeholder={t('users.usernamePlaceholder')} value={form.username} onChange={e => setForm({ ...form, username: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ <input placeholder={t('users.usernamePlaceholder')} value={form.username} readOnly={!!editingId} disabled={!!editingId} onChange={e => setForm({ ...form, username: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm disabled:bg-slate-50 disabled:text-slate-500" />
  <div className="grid grid-cols-2 gap-3"><input placeholder={t('users.firstNamePlaceholder')} value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /><input placeholder={t('users.lastNamePlaceholder')} value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /></div>
  <input placeholder={t('users.emailPlaceholder')} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <input placeholder={t('users.phonePlaceholder')} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <input placeholder={editingId ? t('users.newPasswordHint') : t('users.passwordPlaceholder')} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <select value={form.role_id || ''} onChange={e => setForm({ ...form, role_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noRole')}</option>{roles.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></div>
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.area')}</label><select value={form.area_id || ''} onChange={e => setForm({ ...form, area_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noArea')}</option>{areas.map((a: any) => <option key={a.id} value={a.id}>{a.name}</option>)}</select>
- <div>
+ {mostrarEmpresa && <div>
  <label className="block text-sm font-medium text-slate-700 mb-1.5 flex items-center gap-1.5"><Building2 size={14} /> {t('masters.companies', 'Empresa')}</label>
  <select value={form.company_id || ''} onChange={e => setForm({ ...form, company_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('company.noCompany')}</option>{companies.filter((c: any) => c.is_active !== false).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
- </div>
- <div className="grid grid-cols-2 gap-3"><input placeholder={t('users.firstNamePlaceholder')} value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /><input placeholder={t('users.lastNamePlaceholder')} value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /></div>
- <input placeholder={t('users.emailPlaceholder')} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
- <input placeholder={t('users.phonePlaceholder')} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
- <input placeholder={editingId ? t('users.newPasswordHint') : t('users.passwordPlaceholder')} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ </div>}
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.viewType')}</label><div className="flex gap-3"><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'mobile' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="mobile" checked={form.view_type === 'mobile'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Smartphone size={20} className={form.view_type === 'mobile' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.mobile')}</span></label><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'web' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="web" checked={form.view_type === 'web'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Monitor size={20} className={form.view_type === 'web' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.web')}</span></label></div></div>
  </div><div className="flex gap-3 mt-5"><button onClick={handleSave} disabled={saving} className="flex-1 bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">{saving ? t('common.saving') : t('common.save')}</button><button onClick={() => setShowModal(false)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel')}</button></div></div></div>}
+
+ {/* `R-195`: baja con ConfirmDialog (sin `confirm` nativo). */}
+ {deleteTarget && (
+ <ConfirmDialog
+ open={!!deleteTarget}
+ onClose={() => setDeleteTarget(null)}
+ onConfirm={() => handleDelete(deleteTarget.id)}
+ title={t('users.deleteUserTitle', 'Dar de baja usuario')}
+ message={`${t('users.deleteConfirm', '¿Dar de baja a este usuario?')} ${deleteTarget.username}`}
+ confirmLabel={t('common.delete', 'Eliminar')}
+ variant="danger"
+ />
+ )}
  </div>)
 }
