@@ -1,0 +1,176 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA2.test.tsx (2 tests | 1 failed) 1094ms
+     × AC-R220-A·A5 · la evaluación muestra el `reason` cuando el motor lo declara 1010ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA2.test.tsx > R-220 · Lote A segunda tanda (RED) > AC-R220-A·A5 · la evaluación muestra el `reason` cuando el motor lo declara
+TestingLibraryElementError: Unable to find an element with the text: /Sin curva declarada para la edad del lote/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+    [36m>[39m
+      [36m<h3[39m
+        [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2"[39m
+      [36m>[39m
+        [0mcurves.evaluationTitle[0m
+        [36m<span[39m
+          [33mclass[39m=[32m"ml-2 font-normal text-xs text-slate-500"[39m
+        [36m>[39m
+          [0mcurves.atAge[0m
+        [36m</span>[39m
+      [36m</h3>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-2"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap items-center gap-2 text-xs border rounded-lg px-3 py-2 text-slate-600 bg-slate-50 border-slate-200"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-circle-question-mark lucide-help-circle lucide-circle-help"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"12"[39m
+              [33mcy[39m=[32m"12"[39m
+              [33mr[39m=[32m"10"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"font-semibold"[39m
+          [36m>[39m
+            [0mcurves.noReference[0m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-600"[39m
+          [36m>[39m
+            [0mcurves.recorded[0m
+            [0m: [0m
+            [36m<strong>[39m
+              [0m1200[0m
+              [0m g[0m
+            [36m</strong>[39m
+          [36m</span>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-500"[39m
+          [36m>[39m
+            [0mcurves.noReferenceHelp[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+      [36m>[39m
+        [36m<h3[39m
+          [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2"[39m
+        [36m>[39m
+          [0mcurves.evaluationTitle[0m
+          [36m<span[39m
+            [33mclass[39m=[32m"ml-2 font-normal text-xs text-slate-500"[39m
+          [36m>[39m
+            [0mcurves.atAge[0m
+          [36m</span>[39m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"space-y-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap items-center gap-2 text-xs border rounded-lg px-3 py-2 text-slate-600 bg-slate-50 border-slate-200"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-circle-question-mark lucide-help-circle lucide-circle-help"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"10"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 17h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"font-semibold"[39m
+            [36m>[39m
+              [0mcurves.noReference[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-slate-600"[39m
+            [36m>[39m
+              [0mcurves.recorded[0m
+              [0m: [0m
+              [36m<strong>[39m
+                [0m1200[0m
+                [0m g[0m
+              [36m</strong>[39m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcurves.noReferenceHelp[0m
+            [36m</span>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r220.loteA2.test.tsx:81:11
+     79|     })
+     80|     render(<WeightEvaluation eventId={5} />)
+     81|     await waitFor(() =>
+       |           ^
+     82|       expect(screen.getByText(/Sin curva declarada para la edad del lo…
+     83|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  18:51:23
+   Duration  2.17s (transform 154ms, setup 50ms, import 328ms, tests 1.09s, environment 567ms)
+

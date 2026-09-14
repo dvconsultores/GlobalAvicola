@@ -1,0 +1,37 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA2.test.tsx (2 tests | 1 failed) 95ms
+     × AC-R220-A·A3 · el panel no muestra KPIs que no puede contar (Aprobados/Rechazados ficticios) 86ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA2.test.tsx > R-220 · Lote A segunda tanda (RED) > AC-R220-A·A3 · el panel no muestra KPIs que no puede contar (Aprobados/Rechazados ficticios)
+AssertionError: KPI ficticio «Aprobados» siempre 0: expected <p …(1)></p> to be null
+
+- Expected:
+null
+
++ Received:
+<p
+  class="text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"
+>
+  Aprobados
+</p>
+
+ ❯ src/__tests__/r220.loteA2.test.tsx:61:83
+     59|     )
+     60|     await waitFor(() => expect(screen.getAllByText(/Aprobar/).length).…
+     61|     expect(screen.queryByText('Aprobados'), 'KPI ficticio «Aprobados» …
+       |                                                                                   ^
+     62|     expect(screen.queryByText('Rechazados'), 'KPI ficticio «Rechazados…
+     63|     expect(screen.getAllByText('Pendientes').length).toBeGreaterThan(0)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  18:51:21
+   Duration  1.20s (transform 142ms, setup 50ms, import 358ms, tests 95ms, environment 580ms)
+
