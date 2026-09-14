@@ -1,0 +1,404 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx (5 tests | 4 failed) 2803ms
+     × AC-R194-01 · recepción con ubicación y arrival_date en el payload 291ms
+     × AC-R194-02 · los fértiles viajan como egg_movements[fertile] 139ms
+     × AC-R194-04 · nacimiento: dosis válida envía; negativa muestra error sin POST 1125ms
+     × AC-R194-06 · hatchery_id viaja en la fila 1150ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-01 · recepción con ubicación y arrival_date en el payload
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected:
+1
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:100:29
+     98|     cambio('egg_storage_records.0.eggs_received', '1000')
+     99|     const payload = await guardar()
+    100|     expect(payload.farm_id).toBe(1)
+       |                             ^
+    101|     expect(payload.house_id).toBe(80)
+    102|     expect(payload.egg_storage_records?.[0]?.arrival_date).toBeTruthy()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-02 · los fértiles viajan como egg_movements[fertile]
+AssertionError: expected undefined to be 1000 // Object.is equality
+
+- Expected:
+1000
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:112:32
+    110|     const payload = await guardar()
+    111|     const fertiles = (payload.egg_movements || []).find((m: any) => m?…
+    112|     expect(fertiles?.quantity).toBe(1000)
+       |                                ^
+    113|   })
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-04 · nacimiento: dosis válida envía; negativa muestra error sin POST
+AssertionError: expected "vi.fn()" to be called at least once
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-baby text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10 16c.5.3 1.2.5 2 .5s1.5-.2 2-.5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15 12h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M19.38 6.813A9 9 0 0 1 20.8 10.2a2 2 0 0 1 0 3.6 9 9 0 0 1-17.6 0 2 2 0 0 1 0-3.6A9 9 0 0 1 12 3c2 0 3.5 1.1 3.5 2.5s-.9 2.5-2 2.5c-.8 0-1.5-.4-1.5-1"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M9 12h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0mbirth_registration[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-900"[39m
+              [36m>[39m
+                [0mIncubadora[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mIncubadora[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar incubadora...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"roun...
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:87:36
+     85| const guardar = async () => {
+     86|   fireEvent.click(await screen.findByRole('button', { name: /common\.s…
+     87|   await waitFor(() => expect(post).toHaveBeenCalled())
+       |                                    ^
+     88|   const llamada = post.mock.calls.find((c) => c[0] === '/operations')
+     89|   expect(llamada, 'POST /operations').toBeTruthy()
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-06 · hatchery_id viaja en la fila
+AssertionError: expected "vi.fn()" to be called at least once
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6 text-slate-900"[39m
+      [36m>[39m
+        [36m<nav[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 text-sm font-semibold mb-5 select-none"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba]"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m1 · Proceso[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m2 · Operación[0m
+          [36m</button>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-slate-900"[39m
+          [36m>[39m
+            [0m/[0m
+          [36m</span>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"text-[#5a9bba] disabled:cursor-not-allowed"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [0m3 · Datos[0m
+          [36m</button>[39m
+        [36m</nav>[39m
+        [36m<div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-chevron-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"16"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"16"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m15 18-6-6 6-6"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mAtrás[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-arrow-down-right text-[#5a9bba]"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"22"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"22"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m7 7 10 10"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M17 7v10H7"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [36m<div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm font-bold text-slate-900"[39m
+              [36m>[39m
+                [0megg_reception_hatchery[0m
+              [36m</p>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-900"[39m
+              [36m>[39m
+                [0mIncubadora[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<form[39m
+            [33mclass[39m=[32m"space-y-5"[39m
+            [33mid[39m=[32m"operation-form"[39m
+          [36m>[39m
+            [36m<div>[39m
+              [36m<label[39m
+                [33mclass[39m=[32m"block text-sm font-semibold text-slate-700 mb-1"[39m
+              [36m>[39m
+                [0mOrden de traslado SAP[0m
+              [36m</label>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"relative "[39m
+              [36m>[39m
+                [36m<button[39m
+                  [33mclass[39m=[32m"flex items-center w-full h-11 px-3 border border-slate-300 rounded-lg text-sm bg-white disabled:opacity-50 hover:border-slate-400 transition-colors text-left"[39m
+                  [33mtype[39m=[32m"button"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-search text-slate-400 shrink-0 mr-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<path[39m
+                      [33md[39m=[32m"m21 21-4.34-4.34"[39m
+                    [36m/>[39m
+                    [36m<circle[39m
+                      [33mcx[39m=[32m"11"[39m
+                      [33mcy[39m=[32m"11"[39m
+                      [33mr[39m=[32m"8"[39m
+                    [36m/>[39m
+                  [36m</svg>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"flex-1 truncate text-slate-400"[39m
+                  [36m>[39m
+                    [0mSeleccionar orden SAP...[0m
+                  [36m</span>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-chevron-down text-slate-400 shrink-0 ml-2"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"15"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"15"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+       ...
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:87:36
+     85| const guardar = async () => {
+     86|   fireEvent.click(await screen.findByRole('button', { name: /common\.s…
+     87|   await waitFor(() => expect(post).toHaveBeenCalled())
+       |                                    ^
+     88|   const llamada = post.mock.calls.find((c) => c[0] === '/operations')
+     89|   expect(llamada, 'POST /operations').toBeTruthy()
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  4 failed | 1 passed (5)
+   Start at  02:14:31
+   Duration  3.82s (transform 190ms, setup 46ms, import 395ms, tests 2.80s, environment 467ms)
+
