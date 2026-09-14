@@ -50,12 +50,19 @@ export async function markRead(id: number): Promise<Notification> {
 /**
  * A dónde lleva un aviso, o `null` si no hay pantalla destino.
  *
- * Devolver `null` es deliberado: un enlace roto es peor que ninguno. `sap_payload` no tiene
- * vista propia, de modo que ese aviso se lee y no navega.
+ * Devolver `null` es deliberado: un enlace roto es peor que ninguno. `R-220` · A7
+ * (C#32/INT-30): `lot` navega al lote y `sap_payload` al gestor SAP (la pantalla
+ * donde se ven los payloads); antes solo el evento operativo tenía destino.
  */
 export function destino(n: Notification): string | null {
   if (n.related_entity_type === 'operational_event' && n.related_entity_id) {
     return `/operations/${n.related_entity_id}`
+  }
+  if (n.related_entity_type === 'lot' && n.related_entity_id) {
+    return `/lots/${n.related_entity_id}`
+  }
+  if (n.related_entity_type === 'sap_payload') {
+    return '/sap'
   }
   return null
 }
