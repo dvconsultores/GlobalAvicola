@@ -323,3 +323,10 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Reconciliado sin reescribir historia**: roadmap (addendum), status (política + campos de publicación local), cola (fila AOD-29 + header), certificaciones T3-T8 (addendum CI), `docs/07-qa-plan.md` (enmienda), ledger.
 - **Efecto inmediato**: runs de la sesión cancelados (los cancelables); sin nuevos push; T8 (cierre) y T9+ pasan a flujo **local** con `LOCAL_CERTIFIED_SHA`.
 - **Lección duradera**: mutaciones con restauración desde `IMPLEMENTATION_COMMIT` explícito (`git restore --source=<sha>`), nunca `checkout` implícito (ya ocurrió una vez en R-219).
+
+## AE-46 · 2026-09-14 · T8 CERRADA TÉCNICAMENTE (LOCAL) — suite 1364/0/49
+
+- **Suite completa BE (local)**: **1364 passed / 0 failed / 49 skipped** (21:16; `evidence/t8/full_suite_t8.log`; 1349 de T7 + 8 de P1-12 + 7 de R-198). FE **399/399** + `tsc -b`/`npm run build` verdes — el build detectó un defecto de tipos de `AuditPage` (`t()` no-string; `tsc --noEmit` no lo veía) corregido con `String(...)` **antes** del cierre.
+- **Certificación**: `GA_T8_CERTIFICATION.md` + `GA_CLAUDE_P112/R198/R219_RUNTIME_CERTIFICATION.md`; CI = `NOT_APPLICABLE_BY_OWNER_DECISION` (AOD-29). **P-02/P-09 reparados técnicamente**; KPI de procesos 0/17 sin cambio.
+- **Publicación local (AOD-29)**: `LOCAL_CERTIFIED_SHA` = commit de este cierre (registrado en AE-46b); `REMOTE_SYNC_STATUS=NOT_REQUIRED_CURRENT_OWNER_POLICY`; `PUSH = NOT_PERFORMED_BY_OWNER_POLICY`.
+- **Siguiente**: **T9 · Maestros y usuarios (R-215 · R-196 · R-195)** — arranque automático en flujo local.

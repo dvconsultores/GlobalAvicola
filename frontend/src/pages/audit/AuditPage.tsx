@@ -133,7 +133,8 @@ export default function AuditPage() {
  id: log.id,
  date: new Date(log.created_at).toLocaleString(),
  // `R-219` · AC-05: acción traducida (`audit.actions.*`), nunca el enumerado crudo.
- action: t(`audit.actions.${log.action}`, log.action),
+ // `String(...)`: `tsc -b` exige `string` estricto (el retorno de `t` es unión amplia).
+ action: String(t(`audit.actions.${log.action}`, log.action)),
  // `R-219` · AC-01: nombre resuelto si hay permiso; si no, `Usuario #id` legible.
  user: usuarios[log.user_id]
  || (log.user_id ? `${t('audit.userPrefix', 'Usuario')} #${log.user_id}` : t('common.unknown', 'Desconocido')),
