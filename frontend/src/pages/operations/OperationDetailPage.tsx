@@ -301,6 +301,36 @@ export default function OperationDetailPage() {
  {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600">{em.quantity} · {em.egg_type}</div>)}
  </div>
  )}
+ {/* `R-220` · A6 (C#29): campos que viajan en el contrato y no se pintaban. */}
+ {event.water_liters != null && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.water', 'Agua')}</h3>
+ <div className="text-xs text-slate-600">{t('operations.waterConsumed', 'Agua')}: {event.water_liters} L</div>
+ </div>
+ )}
+ {event.chicks_healthy != null && (
+ <div className="mt-4 pt-4 border-t">
+ <div className="text-xs text-slate-600">
+ {t('operations.chicksHealthy', 'Sanos')}: {event.chicks_healthy} · {t('operations.chicksWeak', 'Débiles')}: {event.chicks_weak ?? 0}
+ </div>
+ </div>
+ )}
+ {event.hatchery_params?.length > 0 && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.hatcheryParams', 'Incubadora')}</h3>
+ {event.hatchery_params.map((hp: any, i: number) => (
+ <div key={i} className="text-xs text-slate-600">{t('operations.loaded', 'Cargados')}: {hp.quantity_loaded ?? '—'}</div>
+ ))}
+ </div>
+ )}
+ {event.inspection_details?.length > 0 && (
+ <div className="mt-4 pt-4 border-t">
+ <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.inspections', 'Inspecciones')}</h3>
+ {event.inspection_details.map((ins: any, i: number) => (
+ <div key={i} className="text-xs text-slate-600">{t('operations.inspection', 'Inspección')}: {ins.value_numeric ?? ins.value_text ?? '—'}</div>
+ ))}
+ </div>
+ )}
  {/* `GA-REM-042` · `R-152`: el plan de importación de abuelas (`docs/02 §3.4.1`) */}
  {event.event_type === 'grandparent_import' && event.extra_data?.import_plan && (
  <div className="mt-4 pt-4 border-t">
