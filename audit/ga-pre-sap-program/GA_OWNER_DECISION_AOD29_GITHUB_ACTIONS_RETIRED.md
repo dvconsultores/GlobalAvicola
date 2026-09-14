@@ -9,6 +9,20 @@
 | **Estado** | **RESUELTA — POLÍTICA VIGENTE** (no es un gate pendiente; es una decisión informativa de gobernanza) |
 | **Reemplaza a** | — (los requisitos históricos de CI **no se reescriben**; ver §4) |
 
+## 0 · Addendum — AOD-29 **Clarification 01** (2026-09-14) — «GitHub Actions Retired · Git Push Preserved»
+
+El propietario **aclara** el alcance de AOD-29: retirar GitHub Actions **no**
+retira GitHub como repositorio remoto ni suspende `git push`. La interpretación
+previa registrada en este documento (`PUSH = NOT_PERFORMED_BY_OWNER_POLICY`) era
+**parcialmente incorrecta** y queda **corregida prospectivamente, sin reescribir
+historia**. Política efectiva: `GITHUB_REPOSITORY = ACTIVE` · `GITHUB_ACTIONS =
+RETIRED` · `LOCAL_CERTIFICATION = REQUIRED` · `PUSH_POLICY = REQUIRED` ·
+`PUSH_TARGET = origin/main` · `REMOTE_SHA_VERIFICATION = REQUIRED`. Los workflows
+activos fueron movidos a `.github/workflows-retired/` (`ACTIVE_WORKFLOW_COUNT =
+0`). Registro canónico:
+`GA_OWNER_DECISION_AOD29_CLARIFICATION_01_PUSH_PRESERVED.md` (incluye inventario
+de workflows e impacto de deploy `AOD29-DEPLOY-IMPACT`).
+
 ## 1 · Decisión (texto del propietario, verbatim)
 
 > «A partir del 14-09-2026, GitHub Actions deja de formar parte del camino obligatorio de certificación de nuevas tranches PRE-SAP. La certificación técnica se ejecutará mediante gates locales reproducibles. Los requisitos históricos de GitHub Actions permanecen como evidencia histórica. Los AC futuros que dependan exclusivamente de GitHub Actions se clasifican `NOT_APPLICABLE_BY_OWNER_DECISION` y deben apuntar a esta Owner Decision.»
@@ -20,7 +34,7 @@ Motivo declarado: **consumo/coste de minutos de ejecución**. La decisión **no*
 | Materia | Política |
 |---|---|
 | GitHub Actions | **NO USAR** como gate de nuevas tranches (no esperar runs, no observar, no descargar artifacts, no `gh`). |
-| Git | **COMMIT LOCAL = SÍ · PUSH = NO** mientras el push dispare Actions (`NOT_PERFORMED_BY_OWNER_POLICY`). Sin force-push, sin reescribir historia publicada. |
+| Git | **COMMIT LOCAL = SÍ · PUSH = SÍ** (requerido tras la certificación local; **AOD-29 Clar. 01**). Sin force-push, sin reescribir historia publicada. *(La interpretación original «PUSH = NO» quedó corregida en §0.)* |
 | Certificación | Gates **locales reproducibles**: SPEC→AC→BASELINE→RED→commit→IMPL→targeted GREEN→regresión dirigida→commit local→sensibilidad→**restauración por SHA explícito** (`git restore --source=$IMPL_COMMIT`)—>post-mutation GREEN→suite BE completa→suite FE completa→`tsc`→`build`→E2E local cuando sea posible→evidencia→certificación local→commit local→siguiente tranche. |
 | Clasificación de evidencia | Lo que dependía de Actions se registra **`NOT_APPLICABLE_BY_OWNER_DECISION`** — nunca `PASS/GREEN/OBSERVED/VERIFIED` si no se ejecutó. |
 | Publicación de cierre | `LOCAL_CERTIFIED_SHA=<sha>` · `REMOTE_SYNC_STATUS=NOT_REQUIRED_CURRENT_OWNER_POLICY` · `GITHUB_ACTIONS_STATUS=NOT_APPLICABLE_BY_OWNER_DECISION`. **No** se usa `HEAD == origin/main` como gate (el retraso de `origin` es esperado). |

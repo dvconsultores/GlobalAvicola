@@ -319,18 +319,26 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 
 ## AE-45 · 2026-09-14 · OWNER DECISION AOD-29 — GitHub Actions retirado del camino PRE-SAP
 
-- **Decisión del propietario** (verbatim en `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`): Actions deja de ser gate obligatorio de nuevas tranches; certificación con **gates locales reproducibles**; evidencia dependiente de Actions ⇒ `NOT_APPLICABLE_BY_OWNER_DECISION`; **`PUSH = NO`** (`NOT_PERFORMED_BY_OWNER_POLICY`) mientras dispare Actions; históricos (T1/AC-06, T2 #26) intactos.
+- **Decisión del propietario** (verbatim en `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`): Actions deja de ser gate obligatorio de nuevas tranches; certificación con **gates locales reproducibles**; evidencia dependiente de Actions ⇒ `NOT_APPLICABLE_BY_OWNER_DECISION`; **`PUSH = NO`** (`NOT_PERFORMED_BY_OWNER_POLICY`) mientras dispare Actions; históricos (T1/AC-06, T2 #26) intactos. → **CORREGIDO prospectivamente por AOD-29 Clar. 01 (AE-47): el push NO estaba retirado; `PUSH = REQUIRED`.**
 - **Reconciliado sin reescribir historia**: roadmap (addendum), status (política + campos de publicación local), cola (fila AOD-29 + header), certificaciones T3-T8 (addendum CI), `docs/07-qa-plan.md` (enmienda), ledger.
-- **Efecto inmediato**: runs de la sesión cancelados (los cancelables); sin nuevos push; T8 (cierre) y T9+ pasan a flujo **local** con `LOCAL_CERTIFIED_SHA`.
+- **Efecto inmediato**: runs de la sesión cancelados (los cancelables); sin nuevos push durante la aplicación *(corregido por AOD-29 Clar. 01 — ver AE-47: el push certificado continúa y es obligatorio)*; T8 (cierre) y T9+ pasan a flujo **local** con `LOCAL_CERTIFIED_SHA` + sincronización a `origin/main`.
 - **Lección duradera**: mutaciones con restauración desde `IMPLEMENTATION_COMMIT` explícito (`git restore --source=<sha>`), nunca `checkout` implícito (ya ocurrió una vez en R-219).
 
 ## AE-46 · 2026-09-14 · T8 CERRADA TÉCNICAMENTE (LOCAL) — suite 1364/0/49
 
 - **Suite completa BE (local)**: **1364 passed / 0 failed / 49 skipped** (21:16; `evidence/t8/full_suite_t8.log`; 1349 de T7 + 8 de P1-12 + 7 de R-198). FE **399/399** + `tsc -b`/`npm run build` verdes — el build detectó un defecto de tipos de `AuditPage` (`t()` no-string; `tsc --noEmit` no lo veía) corregido con `String(...)` **antes** del cierre.
 - **Certificación**: `GA_T8_CERTIFICATION.md` + `GA_CLAUDE_P112/R198/R219_RUNTIME_CERTIFICATION.md`; CI = `NOT_APPLICABLE_BY_OWNER_DECISION` (AOD-29). **P-02/P-09 reparados técnicamente**; KPI de procesos 0/17 sin cambio.
-- **Publicación local (AOD-29)**: `LOCAL_CERTIFIED_SHA` = commit de este cierre (registrado en AE-46b); `REMOTE_SYNC_STATUS=NOT_REQUIRED_CURRENT_OWNER_POLICY`; `PUSH = NOT_PERFORMED_BY_OWNER_POLICY`.
+- **Publicación local (AOD-29)**: `LOCAL_CERTIFIED_SHA` = commit de este cierre (registrado en AE-46b); `REMOTE_SYNC_STATUS` → **corregido por AE-47: sincronización a `origin/main` obligatoria**; `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION`.
 - **Siguiente**: **T9 · Maestros y usuarios (R-215 · R-196 · R-195)** — arranque automático en flujo local.
 
 ## AE-46b · 2026-09-14 · T8 — registro de publicación local (AOD-29)
 
-- `LOCAL_CERTIFIED_SHA = 8eb6e90` · `WORKTREE_CLEAN = YES` · `LOCAL_CERTIFICATION = PASS (gates locales: BE 1364/0/49 · FE 399/399 · tsc -b · build)` · `REMOTE_SYNC_STATUS = NOT_REQUIRED_CURRENT_OWNER_POLICY` (origin en `45acbf8` — esperado) · `GITHUB_ACTIONS_STATUS = NOT_APPLICABLE_BY_OWNER_DECISION` · `PUSH = NOT_PERFORMED_BY_OWNER_POLICY`.
+- `LOCAL_CERTIFIED_SHA = 8eb6e90` · `WORKTREE_CLEAN = YES` · `LOCAL_CERTIFICATION = PASS (gates locales: BE 1364/0/49 · FE 399/399 · tsc -b · build)` · `REMOTE_SYNC_STATUS = NOT_REQUIRED_CURRENT_OWNER_POLICY` (origin en `45acbf8` — esperado) · `GITHUB_ACTIONS_STATUS = NOT_APPLICABLE_BY_OWNER_DECISION` · `PUSH = NOT_PERFORMED_BY_OWNER_POLICY`. → **CORREGIDO por AOD-29 Clar. 01 (AE-47): `PUSH = REQUIRED`; este checkpoint se sincroniza al remoto.**
+
+## AE-47 · 2026-09-14 · AOD-29 CLARIFICATION 01 — GitHub Actions retirado · Git push preservado
+
+- **Aclaratoria del propietario** (documento canónico `GA_OWNER_DECISION_AOD29_CLARIFICATION_01_PUSH_PRESERVED.md`): `GITHUB_REPOSITORY = ACTIVE`; `GITHUB_ACTIONS = RETIRED`; `LOCAL_QUALITY_GATES = REQUIRED`; `LOCAL_CERTIFICATION = REQUIRED`; `PUSH_POLICY = REQUIRED`; `PUSH_TARGET = origin/main`; `REMOTE_SHA_VERIFICATION = REQUIRED`. La interpretación previa «AOD-29 también detenía los pushes» queda **corregida prospectivamente, sin reescribir historia** (AE-45/46/46b llevan marca de corrección).
+- **Retiro estructural de Actions**: 7 workflows movidos de `.github/workflows/` a `.github/workflows-retired/` (+ README «RETIRED BY AOD-29 · NOT EXECUTED · HISTORICAL REFERENCE ONLY»): `backend-ci`, `frontend-ci`, `quality-gates`, `quality-suite`, `docker-push-backend`, `docker-push-frontend`, `docker-build-push`. `ACTIVE_WORKFLOW_COUNT = 0` · `AUTOMATIC_ACTION_TRIGGER_COUNT = 0` ⇒ un push a `origin/main` **no puede** disparar Actions.
+- **Impacto de deploy auditado** (`AOD29-DEPLOY-IMPACT`): el auto-deploy compartido (Docker Hub `:latest` + Watchtower) dependía exclusivamente de los workflows retirados ⇒ `SHARED_RUNTIME_AUTO_DEPLOY = NOT_AVAILABLE_WITH_GITHUB_ACTIONS_RETIRED`; `PUSH != DEPLOY`. Sin sustituto implementado (prohibido sin Spec/Owner Decision).
+- **Commits locales certificados a sincronizar** (historia local desde `45acbf8`): `5d3a687` (AOD-29 governance) · `8eb6e90` (T8 C2 impl) · `0cefb68` (T8 registro) · `4fc63b4` (R-215 RED) · `cd2e7bc` (R-215 IMPL) · `73a4fb9` (R-215 evidencia) · `4c0f819` (R-196 RED) · `571b4d5` (R-196 C2 IMPL) · + commits de esta micro-tranche y C2b de R-196.
+- **Estado real T9 (2026-09-14)**: R-215 cerrada local (FE 405/405; sensibilidad S1-S6); R-196: C1 `4c0f819` + C2 `571b4d5` (FE 414/414 + build; BE targeted 3/3 y 5/5 tras adaptar 5 setups que usaban creación cross-tenant; sensibilidad S1-S6 completa); siguiente: C2b (harness AC-04 + evidencia) y R-195.

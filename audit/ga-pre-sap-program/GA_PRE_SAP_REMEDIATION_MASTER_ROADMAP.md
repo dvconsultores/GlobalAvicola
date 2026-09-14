@@ -2,7 +2,7 @@
 
 Determinista: cada tranche arranca solo cuando la anterior cumple su **criterio de salida**. Todas las tranches parten del baseline congelado (`f270d0b` + commits de governance) y dejan **producto desplegable**. Fase actual: remediación pre-SAP → después: certificación → después: SAP (no iniciado).
 
-> **Addendum de gobernanza (2026-09-14 · `AOD-29`)**: GitHub Actions deja de ser gate obligatorio de las nuevas tranches PRE-SAP (decisión del propietario por costo de minutos). La certificación técnica pasa a **gates locales reproducibles** (RED→GREEN→regresión→sensibilidad con restauración por SHA explícito→suites completas→`tsc`→`build`→E2E local); `PUSH = NO` mientras dispare Actions; evidencia dependiente de CI externo ⇒ `NOT_APPLICABLE_BY_OWNER_DECISION`. Los requisitos históricos de CI (T1/AC-06, T2) permanecen como evidencia histórica **sin reescritura**. Registro: `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`.
+> **Addendum de gobernanza (2026-09-14 · `AOD-29`)**: GitHub Actions deja de ser gate obligatorio de las nuevas tranches PRE-SAP (decisión del propietario por costo de minutos). La certificación técnica pasa a **gates locales reproducibles** (RED→GREEN→regresión→sensibilidad con restauración por SHA explícito→suites completas→`tsc`→`build`→E2E local); `PUSH = REQUIRED` (**AOD-29 Clar. 01**: lo retirado es GitHub Actions; el push certificado a `origin/main` es obligatorio y no debe disparar Actions); evidencia dependiente de CI externo ⇒ `NOT_APPLICABLE_BY_OWNER_DECISION`. Los requisitos históricos de CI (T1/AC-06, T2) permanecen como evidencia histórica **sin reescritura**. Registro: `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md`.
 
 ## 1 · Vista general
 
