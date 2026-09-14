@@ -235,3 +235,27 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Suite completa**: `1295 passed / 0 failed / 49 skipped` (1170.30s; `evidence/t4/full_suite_t4.log`) = 1286 T3 + 5 R-221 + 4 control R-190.
 - **Certificación**: `GA_T4_CERTIFICATION.md` (CLOSED_TECHNICALLY); C3 runtime de R-190/R-205 en ventana de deploy/credenciales (G-06 familia); C-03 de R-190 opcional del propietario.
 - **Siguiente**: **T5** (DAG T5 ← T4) — arranque automático.
+
+## AE-31 · 2026-09-14 · R-191 CERRADA (CLOSED_TECHNICALLY) — transición de fase
+
+- **C1** `921a3a0` (BE 7F/2P · FE 4F/4) · **C2** `d330ae5` (bloqueo del lote + cierre de activa + saldo por sexo + `phase` en lectura + `BR-23`; FE por ids + toast; BE 9/9; FE 364/364; tsc 0) · **C2s** `1f8dfb6` (S1 1F/S2 1F/S3 3F/S4 1F).
+- **Defecto de test detectado en GREEN**: `days_ago(40)` devuelve `date` — httpx exige ISO (`isoformat()`); corregido en el mismo ciclo (evidencia en log).
+
+## AE-32 · 2026-09-14 · R-206 CERRADA (CLOSED_TECHNICALLY) — vacíos del asistente
+
+- **C1** `ce1ea7e` (FE 8F/8 · BE 4F/2P) · **C2** `da66344` (`limpiarVacios` recursivo + `valueAsNumber` ×8 + tolerancia BE de opcionales C-02=A; FE 372/372; BE 35/35; tsc 0) · **C2s** `4fdd131` (S1 1F/S2 4F).
+
+## AE-33 · 2026-09-14 · R-209 CERRADA (CLOSED_TECHNICALLY) — códigos SAP canónicos
+
+- **C1** `3fc1b91` (FE 2F/1P; AC-01 control: R-189 ya canonicalizó el selector compartido; comparativo BE 2/2) · **C2** `ae85a4e` (helper sin fallback de id + OT de feed + selector interno de salida + barrido C-04; FE 375/375; tsc 0) · **C2s** `0073d57` (S1 1F/S2 1F).
+
+## AE-34 · 2026-09-14 · R-210 CERRADA (CLOSED_TECHNICALLY) — gramos como unidad única
+
+- **C1** `6da1b3c` (FE 3F/2P; control BE 4/4) · **C2** `5c1b5af` (rótulos g + step 1; FE 380/380; tsc 0) · **C2s** `0f587b1` (S1 2F/S2 1F).
+- **Lección de mutación**: no inyectar marcadores `#` dentro de literales JS — rompe el transform (S1 inicial «no tests»); mutar el texto directo y detectar por contenido.
+
+## AE-35 · 2026-09-14 · T5 CERRADA TÉCNICAMENTE — suite 1316/0/49
+
+- **Suite completa**: `1316 passed / 0 failed / 49 skipped` (1167.72s; `evidence/t5/full_suite_t5.log`; re-ejecutada tras remediar el guard de determinismo — literales ISO en `test_r206_optional_tolerance.py`, fix `0e60038`).
+- **Certificación**: `GA_T5_CERTIFICATION.md` (CLOSED_TECHNICALLY); FE 380/380 + tsc 0; riders: R-146 ↔ AOD-16 y AOD-21 (R-210 C-01); C3 runtime de R-191/206/209/210 en ventana (familia G-06).
+- **Siguiente**: **T6 · Cadena de incubadora (R-194)** — arranque automático (DAG T6 ← T4+T5).

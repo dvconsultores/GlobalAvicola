@@ -1,6 +1,6 @@
 # GA · PRE-SAP — ESTADO DEL PROGRAMA (TRANCHE 0 · cierre)
 
-Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (certificación con CI run #26) · T3 CERRADA TÉCNICAMENTE (`9cb075f`) · T4 CERRADA TÉCNICAMENTE (`4a08382`) — T5 en arranque automático**.
+Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (CI run #26) · T3 CERRADA TÉCNICAMENTE (`9cb075f`) · T4 CERRADA TÉCNICAMENTE (`976201d`) · T5 CERRADA TÉCNICAMENTE (`0f587b1`) — T6 en arranque automático**.
 
 ## 1 · KPI del programa
 
@@ -15,7 +15,7 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | Certificaciones con artefacto | informes históricos anotados `NOT_REPRODUCIBLE_EN_HEAD (pre-GA-GOV-03)`; plantilla de evidencia vigente | nuevas certificaciones con commit+artefacto (regla ya aplicada a T1) |
 | UAT con evidencia primaria | 0 de 11 registros + 2 pendientes | 8 lotes finales completos |
 | Decisiones del propietario pendientes (alcance actual) | 14 (+4 por tranche según roadmap) | registradas antes de su tranche |
-| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = CLOSED_TECHNICALLY** (`9cb075f`; R-201 · R-203 · R-204(+R-216) · R-221 parcial — AC-04 en cola AOD-13); **T4 = CLOSED_TECHNICALLY** (`4a08382`; R-190 · R-205); **T5 = READY_FOR_EXECUTION**; T6-T13 + Pista OPS planificadas | todas cerradas |
+| Tranches del programa | T0 **CERRADA** (`e828c3a`); **T1 = CLOSED** (AC-06 = PASS; run #10 `60e9d9d`); **T2 = CLOSED** (5 specs + rider AC04; run #26 `5044788`); **T3 = CLOSED_TECHNICALLY** (`9cb075f`); **T4 = CLOSED_TECHNICALLY** (`4a08382`); **T5 = CLOSED_TECHNICALLY** (`0f587b1`; R-146 ↔ AOD-16); **T6 = READY_FOR_EXECUTION**; T7-T13 + Pista OPS planificadas | todas cerradas |
 | Veredicto pre-SAP | `NO_GO_SAP_FUNCTIONAL_GAPS` (sin cambios) | GO/NO-GO final en T13 |
 
 ## 2 · Estado por tranche
@@ -27,8 +27,9 @@ Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase
 | T2 · Fundación de seguridad | **CERRADA** (2026-09-13) | R-199 · R-200 · R-202 · R-208 · GA-REM-003 AC04 — certificaciones por spec; suite completa `1263/0/49` local y **CI run #26 verde** (`5044788`; artefactos sha256-verificados) ⇒ `GA_T2_CERTIFICATION.md`. Límites declarados: **G-06** (C3 runtime de R-199/R-202, cola del propietario); GA-REM-003 AC01/02/03/05/06-resto/07 siguen su recorrido |
 | T3 · Alcance de datos | **CLOSED_TECHNICALLY** (`9cb075f`, 2026-09-14) | R-201 · R-203 · R-204(+R-216) cerradas — RED→GREEN→sensibilidad por spec; suite completa `1286/0/49` (`evidence/t3/full_suite_t3.log`) ⇒ `GA_T3_CERTIFICATION.md`. **R-221 parcial**: AC-01/02/03/05 cerradas (`8126f97`→`b056ef1`); AC-04 espera **AOD-13** (C-02, opciones A/B/C en cola). Límite declarado: **G-06** (C3 runtime de R-201/203/204/216) |
 | T4 · Operación (R-190 + R-205) | **CLOSED_TECHNICALLY** (`4a08382`, 2026-09-14) | R-190 (ubicación del evento: `a79fe0c`→`d1c16a7`→`801d18c`; S1-S4) · R-205 (cuadre alcanzable: `fe3bd3d`→`72aa7f4`→`dbc782d`; S1-S3); F-01e 4/4 intacto; **suite BE 1295/0/49** (`evidence/t4/…`) · **FE 360/360** + tsc 0 + build ⇒ `GA_T4_CERTIFICATION.md`. Límite: C3 runtime (deploy/credenciales — familia G-06); C-03 de R-190 opcional del propietario |
-| T5 · Contrato de captura (R-191 · R-206 · R-209 · R-210) | **READY_FOR_EXECUTION** | Arranque automático tras T4 (DAG: T5 ← T4, satisfecho); R-146 si AOD-16 |
-| T6-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
+| T5 · Contrato de captura (R-191 · R-206 · R-209 · R-210) | **CLOSED_TECHNICALLY** (`0f587b1`, 2026-09-14) | Cuatro paquetes RED→GREEN→sensibilidad; **FE 380/380** + tsc 0; suite BE **«PENDING»** (`evidence/t5/…`) ⇒ `GA_T5_CERTIFICATION.md`. Riders: **R-146 ↔ AOD-16** (cola) y **AOD-21** (R-210 C-01 confirmatoria); C3 runtime de los cuatro en ventana (familia G-06) |
+| T6 · Cadena de incubadora (R-194) | **READY_FOR_EXECUTION** | Arranque automático tras T5 (DAG: T6 ← T4+T5, satisfechos); 5 causas acopladas de P-04/P-05 según el roadmap maestro |
+| T7-T13 + OPS | PLANIFICADAS | Orden y gates en el roadmap maestro |
 
 ## 3 · NEXT_IMPLEMENTATION_TRANCHE (§52) — siguiente tras T1
 

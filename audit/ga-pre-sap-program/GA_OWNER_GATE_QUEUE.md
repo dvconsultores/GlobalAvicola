@@ -87,6 +87,7 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | `AOD-14` | Evidencia obligatoria en captura | T8 | `SCHEDULED` (antes de T8) |
 | `OD-19 §18` · `AOD-17` · `AOD-18` | UI de reverso · semántica `CORRECTED` · cancelación | T10 | `SCHEDULED` (antes de T10) |
 | `AOD-19bis (R-190 C-03)` | **Opcional**: ¿persistir `house_id` en el lote al aprobar la primera recepción de un lote sin galpón (alternativa B), para que los eventos posteriores lo hereden sin selector? Implementación vigente = **A** (derivación en el asistente, sin tocar el lote); B sería un anexo (cambia el modelo al aprobar y toca OD-25(B)). | T5+ | `SCHEDULED OPTIONAL` — no bloquea; si se elige B, se especifica como anexo |
+| `AOD-21 (R-210 C-01)` | **Confirmatoria**: «el pesaje se captura en gramos» — la implementación ya opera en g (curva/evaluación/i18n); el propietario confirma y queda registrado (acta). Si eligiera kg, se especificaría conversión explícita (C-02). | T5+ | `SCHEDULED CONFIRMATORIA` — no bloquea (por defecto A=g) |
 | `OD-10.c` | UI activación manual / clasificación pendiente | T11 | `SCHEDULED` (antes de T11) |
 | `AOD-08` · `AOD-10` | Cierre/FCR y fórmulas KPI (Wave C) | T12 | `SCHEDULED` (antes de T12) |
 | `GA-UAT-09` | Retry R-153/R-189 (UAT del propietario) | T13 | `SCHEDULED` (antes de T13) |
