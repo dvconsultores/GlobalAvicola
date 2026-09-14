@@ -27,6 +27,8 @@ const STATUS_VARIANT: Record<string, string> = {
  rejected: 'rejected',
  cancelled: 'cancelled',
  consolidated: 'consolidated',
+ // `R-207`: el reverso tiene variante propia (no cae a neutral/gris).
+ reversed: 'reversed',
 }
 
 // Tabs de estado

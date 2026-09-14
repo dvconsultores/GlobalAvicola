@@ -13,6 +13,7 @@ const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 const STATUS_VARIANT: Record<string, string> = {
  corrected: 'corrected', in_review: 'in_review',
  approved: 'approved', rejected: 'rejected',
+ reversed: 'reversed',
 }
 
 export default function ApprovalPanel() {

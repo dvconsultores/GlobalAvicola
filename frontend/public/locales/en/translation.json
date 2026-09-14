@@ -74,6 +74,15 @@
       "apply": "Apply"
     }
   },
+  "reversals": {
+    "request": "Request reversal",
+    "reason": "Reason (min 5 chars)",
+    "reasonTooShort": "Reason must be at least 5 characters",
+    "confirm": "A counterpart will be created and must be approved to neutralize the record.",
+    "counterpart": "Counterpart",
+    "requested": "Reversal requested",
+    "requestError": "Could not request the reversal"
+  },
   "status": {
     "registered": "Registered",
     "pending_review": "Pending Review",

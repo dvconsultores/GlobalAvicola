@@ -80,9 +80,10 @@ describe('R-207 · superficie de reverso (RED)', () => {
   it('AC-R207-01 · «Solicitar reverso» visible solo con `reversals:create` (evento approved)', async () => {
     setSession(['operations:read'])
     get.mockResolvedValue({ data: baseEvent('approved') })
-    renderPage()
+    const primera = renderPage()
     await esperarDetalle()
     expect(solicitarBtn(), 'sin permiso no debe ofrecerse la acción').toBeNull()
+    primera.unmount()
 
     setSession(['operations:read', 'reversals:create'])
     get.mockReset()

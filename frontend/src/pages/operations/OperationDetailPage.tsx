@@ -1,9 +1,10 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Activity, Paperclip, Upload, Trash2, FileText, Image, Download, X } from 'lucide-react'
+import { ArrowLeft, Activity, Paperclip, Upload, Trash2, FileText, Image, Download, X, RotateCcw } from 'lucide-react'
 import api from '../../services/api'
 import { operationsService } from '../../services/operations.service'
+import { reversalsService } from '../../services/reversals.service'
 import { useCan } from '../../auth/actionAuthority'
 import WeightEvaluation from '../../components/operations/WeightEvaluation'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -15,6 +16,8 @@ const STATUS_COLORS: Record<string, string> = {
  approved: 'bg-emerald-100 text-emerald-800', rejected: 'bg-red-100 text-red-800',
  consolidated: 'bg-purple-100 text-purple-800', sent_to_sap: 'bg-cyan-100 text-cyan-800',
  sap_confirmed: 'bg-green-100 text-green-800',
+ // `R-207`: estado propio del reverso (nunca el gris de fallback).
+ reversed: 'bg-rose-100 text-rose-800',
 }
 
 const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif', 'image/webp', 'application/pdf']
@@ -57,6 +60,12 @@ export default function OperationDetailPage() {
  const [submitting, setSubmitting] = useState(false)
  const submittingRef = useRef(false)
  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
+ // `R-207` · AC-01/02/04: superficie de reverso (gate `reversals:create`).
+ const [showReversal, setShowReversal] = useState(false)
+ const [reversalReason, setReversalReason] = useState('')
+ const [reversalError, setReversalError] = useState('')
+ const [contrapartidaId, setContrapartidaId] = useState<number | null>(null)
+ const reversalRef = useRef(false)
  const fileRef = useRef<HTMLInputElement>(null)
  const toast = useToast()
  // `R-198` · `AC-03` (`C-02`): estados en los que el backend acepta adjuntar/borrar; la UI
@@ -125,6 +134,9 @@ export default function OperationDetailPage() {
  // Tras éxito **y** tras fallo se relee la verdad del backend (nada optimista).
  const canSubmit = !!event && SUBMITTABLE_STATUSES.includes(event.status)
  && can({ permission: 'operations:create', requiresUnits: true })
+ // `R-207` · AC-01: reverso solo desde un aprobado y con el permiso de la acción.
+ const canReverse = !!event && event.status === 'approved'
+ && can({ permission: 'reversals:create' })
  const isResubmit = !!event && (event.status === 'returned' || event.status === 'rejected')
  const submitLabel = isResubmit
  ? String(t('operations.resubmitToReview', 'Reenviar a revisión'))
@@ -146,6 +158,28 @@ export default function OperationDetailPage() {
  submittingRef.current = false
  setSubmitting(false)
  loadEvent()
+ }
+ }
+
+ // `R-207` · AC-R207-02/04: motivo ≥5 validado en cliente (el servidor es autoridad);
+ // la contrapartida se enlaza desde la respuesta 201 (verdad del contrato de reverso).
+ const confirmarReverso = async () => {
+ if (!event || reversalRef.current) return
+ if (reversalReason.trim().length < 5) {
+ setReversalError(t('reversals.reasonTooShort', 'El motivo debe tener al menos 5 caracteres'))
+ return
+ }
+ reversalRef.current = true
+ try {
+ const { data } = await reversalsService.solicitar(event.id, reversalReason.trim())
+ if (data?.reversal_event_id) setContrapartidaId(data.reversal_event_id)
+ setShowReversal(false)
+ toast.success(t('reversals.requested', 'Reverso solicitado'))
+ await loadEvent()
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('reversals.requestError', 'No se pudo solicitar el reverso')))
+ } finally {
+ reversalRef.current = false
  }
  }
 
@@ -185,6 +219,15 @@ export default function OperationDetailPage() {
  <h1 className="text-xl font-bold text-[#1E3A5F]">{t('operations.eventDetail', { id: event.id })}</h1>
  <span className={`px-3 py-1 rounded-full text-sm font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100'}`}>{String(t(`status.${event.status}`, event.status))}</span>
  </div>
+ {/* `R-207` · AC-R207-02: enlace original ↔ contrapartida (respuesta 201 o campo del detalle). */}
+ {(contrapartidaId || event.reversal_event_id) && (
+ <div className="mb-4 bg-rose-50 border border-rose-200 rounded-lg px-4 py-3 text-sm text-rose-800">
+ {t('reversals.counterpart', 'Contrapartida')}{' '}
+ <Link to={`/operations/${contrapartidaId ?? event.reversal_event_id}`} className="font-mono underline">
+ #{contrapartidaId ?? event.reversal_event_id}
+ </Link>
+ </div>
+ )}
  {/* `GA-FE-05` · `R-181`: acción primaria state-aware (desktop y móvil comparten vista). */}
  {canSubmit && (
  <div className="flex flex-wrap justify-end mb-4">
@@ -195,6 +238,18 @@ export default function OperationDetailPage() {
  className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
  >
  {submitting ? t('common.saving') : submitLabel}
+ </button>
+ </div>
+ )}
+ {/* `R-207` · AC-01: acción «Solicitar reverso» (gate espejo `reversals:create`). */}
+ {canReverse && (
+ <div className="flex flex-wrap justify-end mb-4">
+ <button
+ type="button"
+ onClick={() => { setShowReversal(true); setReversalReason(''); setReversalError('') }}
+ className="bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-700 transition inline-flex items-center gap-1"
+ >
+ <RotateCcw size={14} aria-hidden="true" /> {t('reversals.request', 'Solicitar reverso')}
  </button>
  </div>
  )}
@@ -374,6 +429,28 @@ export default function OperationDetailPage() {
  className="max-w-full max-h-[90vh] rounded-lg shadow-xl object-contain"
  onClick={e => e.stopPropagation()}
  />
+ </div>
+ )}
+
+ {/* `R-207` · modal de solicitud de reverso (sin diálogos nativos). */}
+ {showReversal && (
+ <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4" onClick={() => setShowReversal(false)}>
+ <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+ <h2 className="text-lg font-bold text-[#1E3A5F] mb-1">{t('reversals.request', 'Solicitar reverso')}</h2>
+ <p className="text-xs text-slate-500 mb-3">{t('reversals.confirm', 'Se creará una contrapartida que deberá aprobarse para neutralizar el registro.')}</p>
+ <textarea
+ aria-label={t('reversals.reason', 'Motivo (mín. 5 caracteres)')}
+ value={reversalReason}
+ onChange={(e) => setReversalReason(e.target.value)}
+ rows={3}
+ className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
+ />
+ {reversalError && <p role="alert" className="text-xs text-red-600 mt-1">{reversalError}</p>}
+ <div className="flex gap-3 mt-4">
+ <button onClick={() => setShowReversal(false)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel', 'Cancelar')}</button>
+ <button onClick={confirmarReverso} className="flex-1 bg-rose-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-rose-700 transition">{t('common.confirm', 'Confirmar')}</button>
+ </div>
+ </div>
  </div>
  )}
  </div>

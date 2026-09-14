@@ -26,6 +26,7 @@ export type EventStatus =
   | 'corrected'
   | 'approved'
   | 'rejected'
+  | 'reversed'
   | 'consolidated'
   | 'sent_to_sap'
   | 'sap_confirmed'

@@ -74,6 +74,15 @@
       "apply": "Aplicar"
     }
   },
+  "reversals": {
+    "request": "Solicitar reverso",
+    "reason": "Motivo (mín. 5 caracteres)",
+    "reasonTooShort": "El motivo debe tener al menos 5 caracteres",
+    "confirm": "Se creará una contrapartida que deberá aprobarse para neutralizar el registro.",
+    "counterpart": "Contrapartida",
+    "requested": "Reverso solicitado",
+    "requestError": "No se pudo solicitar el reverso"
+  },
   "status": {
     "registered": "Registrado",
     "pending_review": "Enviado a Revisión",

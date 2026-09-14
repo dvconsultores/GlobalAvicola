@@ -13,6 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
  in_review: 'bg-indigo-100 text-indigo-800', returned: 'bg-orange-100 text-orange-800',
  corrected: 'bg-teal-100 text-teal-800', approved: 'bg-emerald-100 text-emerald-800',
  rejected: 'bg-red-100 text-red-800', cancelled: 'bg-slate-100 text-slate-600',
+ reversed: 'bg-rose-100 text-rose-800',
 }
 
 export default function ReviewDetail() {
@@ -110,6 +111,14 @@ export default function ReviewDetail() {
  {t(`status.${event.status}`)}
  </span>
  </div>
+
+ {/* `R-207` · AC-02: enlace a la contrapartida cuando el detalle trae el campo. */}
+ {event.reversal_event_id && (
+ <div className="mb-5 bg-rose-50 border border-rose-200 rounded-xl px-4 py-3 text-sm text-rose-800">
+ {t('reversals.counterpart', 'Contrapartida')}{' '}
+ <Link to={`/operations/${event.reversal_event_id}`} className="font-mono underline">#{event.reversal_event_id}</Link>
+ </div>
+ )}
 
  {loteCreado && (
  <div className="mb-5 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800">

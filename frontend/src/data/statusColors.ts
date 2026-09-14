@@ -20,7 +20,7 @@ import {
 export type StatusKey =
   | 'draft' | 'registered' | 'pending_review' | 'pending'
   | 'in_review' | 'returned' | 'corrected' | 'approved'
-  | 'rejected' | 'cancelled' | 'consolidated'
+  | 'rejected' | 'cancelled' | 'reversed' | 'consolidated'
   | 'sent_sap' | 'confirmed_sap' | 'error_sap'
   | 'info' | 'warning' | 'neutral'
 
@@ -85,6 +85,11 @@ export const STATUS_STYLES: Record<StatusKey, StatusStyle> = {
     bg: 'bg-teal-50', text: 'text-teal-700', border: 'border-teal-200',
     dot: 'bg-teal-500', icon: Package, iconColor: 'text-teal-600',
   },
+  // `R-207` · OD-19 §18: el reverso neutraliza pero no borra — color propio, nunca gris.
+  reversed: {
+    bg: 'bg-rose-50', text: 'text-rose-700', border: 'border-rose-200',
+    dot: 'bg-rose-500', icon: RotateCcw, iconColor: 'text-rose-600',
+  },
 
   // ===== Estados SAP =====
   sent_sap: {
@@ -128,6 +133,7 @@ const STATUS_ALIASES: Record<string, StatusKey> = {
   'approved': 'approved',
   'rejected': 'rejected',
   'cancelled': 'cancelled',
+  'reversed': 'reversed',
   'consolidated': 'consolidated',
   'sent_to_sap': 'sent_sap',
   'sent': 'sent_sap',
