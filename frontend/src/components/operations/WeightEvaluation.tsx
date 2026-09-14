@@ -71,6 +71,12 @@ export default function WeightEvaluation({ eventId }: { eventId: number }) {
         )}
       </h3>
 
+      {/* `R-220` · A5 (C#28): lo que el motor declara (p. ej. por qué no hay
+ referencia) se muestra; callarlo obligaría a adivinar el motivo. */}
+      {datos.reason && (
+        <p className="text-xs text-slate-500 mb-2">{datos.reason}</p>
+      )}
+
       <div className="space-y-2">
         {datos.evaluations.map((fila, i) => {
           const { clave, Icono, clase } = PRESENTACION[fila.status]

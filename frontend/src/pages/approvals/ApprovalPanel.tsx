@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
-import { Check, CheckCircle, X, ArrowLeft, Search, Clock, AlertTriangle } from 'lucide-react'
+import { Check, CheckCircle, X, ArrowLeft, Search, Clock } from 'lucide-react'
 import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -151,7 +151,6 @@ export default function ApprovalPanel() {
 
  const selectedCount = events.filter((e: any) => e._checked).length
  const pendingCount = events.filter(e => e.status === 'corrected').length
- const approvedCount = events.filter(e => e.status === 'approved').length
 
  return (
  <div>
@@ -169,11 +168,11 @@ export default function ApprovalPanel() {
  />
  </div>
 
- {/* KPI Summary */}
- <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+ {/* `R-220` · A3 (C#25): esta bandeja son PENDIENTES — «Aprobados/Rechazados»
+ no son contables aquí (siempre 0) y un cero indistinguible de «no hay nada»
+ engaña: se retiran en lugar de fabricar métricas. */}
+ <div className="grid grid-cols-2 gap-4 mb-6">
  <KpiCard icon={Clock} label={t('review.pendingApprovals', 'Pendientes')} value={pendingCount} color="amber" />
- <KpiCard icon={CheckCircle} label={t('review.approvedToday', 'Aprobados')} value={approvedCount} color="green" />
- <KpiCard icon={AlertTriangle} label={t('review.rejectedToday', 'Rechazados')} value={events.filter(e => e.status === 'rejected').length} color="red" />
  <KpiCard icon={Search} label={t('common.results', 'Total')} value={total} color="blue" />
  </div>
 
