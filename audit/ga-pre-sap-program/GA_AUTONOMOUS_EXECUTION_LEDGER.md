@@ -350,3 +350,12 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Actions tras el push**: `ACTION_RUN_TRIGGERED_BY_PUSH = NO` (observación: sin runs nuevos en la ventana del push; estructural: `.github/workflows/` en el árbol remoto = **0 archivos**). Nota histórica: la sincronización externa previa de `571b4d5` (~25 min antes del retiro) sí produjo runs con los workflows aún activos — historia intacta, no reescrita.
 - **R-196 cerrada local en este punto**: C2b `aa459ac` (harness AC-04 + evidencia completa); gates: FE **414/414** · build OK · BE full **1367/0/49** · sensibilidad S1-S6 con restore desde `571b4d5`.
 - **Siguiente**: T9 continúa con **R-195** (C1 RED → C2 → gates → commit → push).
+
+## AE-49 · 2026-09-14 · T9 CERRADA TÉCNICAMENTE — R-215 · R-196 · R-195
+
+- **R-215** (render seguro): RED `4fc63b4` · IMPL `cd2e7bc` · evidencia `73a4fb9` — FE 405/405; sensibilidad S1-S6 quirúrgica; `ErrorBoundary` global + `getErrorMessage` ×5 + red de seguridad en `ToastProvider`.
+- **R-196** (maestros): RED `4c0f819` · IMPL `571b4d5` · C2b `aa459ac` — FE 414/414 · build · **BE full 1367/0/49**; sensibilidad S1-S6; hallazgo: 5 setups cross-tenant adaptados a `switch-company`; `company_id` resuelto en servidor (fail-closed).
+- **R-195** (usuarios): RED `7bde916` · IMPL `bcfdebd` · C2b `e515858` — FE final **419/419** · build; sensibilidad S1-S4 (S4 clúster de la guarda); modal duplicado deduplicado; sin `alert`/`confirm`; payload `UserUpdate` estricto (`username` inmutable, empresa por contexto).
+- **Certificación**: `GA_T9_CERTIFICATION.md`; `GITHUB_ACTIONS = NOT_APPLICABLE_BY_OWNER_DECISION`; `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION` con `REMOTE_SHA_MATCH = YES` en cada checkpoint (remoto final `e515858`).
+- **UAT**: pendiente acumulable (R-215 2 · R-196 4 · R-195 3 casos) — no bloquea cierre técnico; se agrupa en el gate PRE-SAP. Procesos 0/17 sin cambio; SAP NOT_STARTED.
+- **Siguiente**: **T10** (R-197 · R-207; +R-142 si AOD-17) — arranque automático.
