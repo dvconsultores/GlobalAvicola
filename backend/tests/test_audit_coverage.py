@@ -19,6 +19,10 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.audit.models import AuditAction, AuditLog, AuditModule
+from tests.audit_harness import listener_auditoria_como_runtime  # noqa: F401
+
+# `P1-12-REOPEN` (§1.3): los conteos «exactamente 1» se verifican en runtime (con listener).
+pytestmark = pytest.mark.usefixtures("listener_auditoria_como_runtime")
 
 PREFIJO = "AC-TEST-"
 
