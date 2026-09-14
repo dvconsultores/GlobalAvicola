@@ -94,9 +94,9 @@ async def esc_r218(test_database_url):
     s.add_all([galpon, galpon_b])
     await s.flush()
     lote = Lot(company_id=empresa.id, lot_code=f"{PREFIJO}L-{uuid.uuid4().hex[:6]}", status=LotStatus.ACTIVE,
-               farm_id=granja.id, house_id=galpon.id)
+               farm_id=granja.id, house_id=galpon.id, bird_type="breeder")
     lote_b = Lot(company_id=empresa_b.id, lot_code=f"{PREFIJO}LB-{uuid.uuid4().hex[:6]}", status=LotStatus.ACTIVE,
-                 farm_id=granja_b.id, house_id=galpon_b.id)
+                 farm_id=granja_b.id, house_id=galpon_b.id, bird_type="breeder")
     s.add_all([lote, lote_b])
     await s.flush()
 

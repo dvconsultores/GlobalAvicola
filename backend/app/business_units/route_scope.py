@@ -165,6 +165,7 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/dashboard/mobile": (Alcance.MULTI_UNIDAD, None, "agregado; fase 4"),
     "/api/v1/reports/kpis": (Alcance.MULTI_UNIDAD, None, "agregado; fase 4"),
     "/api/v1/reports/lot/{lot_id}": (Alcance.MULTI_UNIDAD, None, "del lote"),
+    "/api/v1/reports/lot/{lot_id}/weekly": (Alcance.MULTI_UNIDAD, None, "serie semanal del lote (R-218)"),
     "/api/v1/reports/kpi/ipe/{lot_id}": (Alcance.MULTI_UNIDAD, None, "del lote"),
     "/api/v1/reports/kpi/weight-uniformity/{lot_id}": (Alcance.MULTI_UNIDAD, None, "del lote"),
     "/api/v1/reports/kpis/mortality": (Alcance.MULTI_UNIDAD, None, "agregado; fase 4"),

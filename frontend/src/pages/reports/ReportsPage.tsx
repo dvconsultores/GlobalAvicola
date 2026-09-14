@@ -20,20 +20,14 @@ export default function ReportsPage() {
  useEffect(() => {
  api.get(`/reports/kpis?lot_id=${lotId}`).then(r => { setKpis(r.data); setEstado('ok') }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
  // G-12: Fetch events for chart visualization
- api.get(`/operations?lot_id=${lotId}&limit=100`  /* GA-REM-011 C-06 */).then(r => {
- const events = r.data?.events || r.data || []
- const byDate: Record<string, any> = {}
- events.forEach((e: any) => {
- const d = e.event_date || ''
- if (!byDate[d]) byDate[d] = { date: d, mortality: 0, feed_kg: 0, water_l: 0, weight_g: 0 }
- e.bird_movements?.forEach((bm: any) => {
- if (e.event_type === 'mortality_recording') byDate[d].mortality += bm.quantity || 0
- if (e.event_type === 'weight_recording' && bm.avg_weight) byDate[d].weight_g = bm.avg_weight
- })
- e.feed_movements?.forEach((fm: any) => { byDate[d].feed_kg += fm.quantity_kg || 0 })
- if (e.water_liters) byDate[d].water_l += e.water_liters
- })
- setChartData(Object.values(byDate).sort((a: any, b: any) => a.date.localeCompare(b.date)))
+ // `R-218` · C-01=A: las series salen del agregado semanal del lote — la LISTA de
+ // `/operations` no expone sublistas (C#4) y los gráficos quedaban planos.
+ api.get(`/reports/lot/${lotId}/weekly`).then(r => {
+ const semanas = r.data?.weeks || []
+ setChartData(semanas.map((s: any) => ({
+ date: `S${s.week}`, mortality: s.mortality || 0, feed_kg: s.feed_kg || 0,
+ water_l: s.water_l || 0, weight_g: s.weight_g || 0,
+ })))
  }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
  }, [lotId, refresco])
 

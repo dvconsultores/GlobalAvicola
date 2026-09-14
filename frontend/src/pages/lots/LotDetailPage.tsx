@@ -28,6 +28,8 @@ export default function LotDetailPage() {
  const [kpiUniformity, setKpiUniformity] = useState<any>(null)
  const [lotAlerts, setLotAlerts] = useState<any[]>([])
  const [events, setEvents] = useState<any[]>([])
+ // `R-218`: serie semanal del backend (la lista de operaciones no trae sublistas).
+ const [semanal, setSemanal] = useState<any[]>([])
  const [phases, setPhases] = useState<any[]>([])
  // `R-191`: fases maestras (`masters/productive-phases`) para resolver el id por código.
  const [masterPhases, setMasterPhases] = useState<any[]>([])
@@ -55,7 +57,7 @@ export default function LotDetailPage() {
  // servidor deniega; la UI deja de emitir la petición).
  const puedeReportes = can({ permission: 'reports:read' })
  const omitido = Promise.resolve({ data: null } as any)
- const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes, mastersRes] = await Promise.allSettled([
+ const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes, mastersRes, semanalRes] = await Promise.allSettled([
  puedeReportes ? api.get(`/reports/kpis?lot_id=${id}`) : omitido,
  api.get(`/operations?lot_id=${id}&limit=50`),
  api.get(`/lots/${id}/phases`),
@@ -63,6 +65,7 @@ export default function LotDetailPage() {
  puedeReportes ? api.get(`/reports/kpi/weight-uniformity/${id}`) : omitido,
  api.get(`/operations/alerts?lot_id=${id}&is_resolved=false&limit=20`),
  api.get('/masters/productive-phases'),
+ puedeReportes ? api.get(`/reports/lot/${id}/weekly`) : omitido,
  ])
  if (kpiRes.status === 'fulfilled') setKpis(kpiRes.value.data)
  if (evtRes.status === 'fulfilled') setEvents(evtRes.value.data || [])
@@ -71,6 +74,7 @@ export default function LotDetailPage() {
  if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
  if (alertsRes.status === 'fulfilled') setLotAlerts(alertsRes.value.data || [])
  if (mastersRes.status === 'fulfilled') setMasterPhases(mastersRes.value.data || [])
+ if (semanalRes.status === 'fulfilled') setSemanal(semanalRes.value.data?.weeks || [])
  } catch (err) {
  console.error(err)
  } finally {
@@ -262,29 +266,17 @@ export default function LotDetailPage() {
  </div>}
  </div>
 
- {/* G-11: Weekly Summary Table (matching old app's week-based organization) */}
- {events.length > 0 && (() => {
+ {/* G-11: Weekly Summary Table — `R-218` C-01=A: serie del agregado `/reports/lot/{id}/weekly`
+ (la LISTA de `/operations` no expone sublistas por contrato). */}
+ {semanal.length > 0 && (() => {
  const weekly: Record<number, any> = {}
- events.forEach(e => {
- e.bird_movements?.forEach((bm: any) => {
- const w = bm.week_number || 0
- if (!weekly[w]) weekly[w] = { week: w, male_weight: 0, female_weight: 0, male_mort: 0, female_mort: 0, feed_kg: 0, date: e.event_date }
- if (e.event_type === 'weight_recording') {
- if (bm.sex === 'male') weekly[w].male_weight = bm.avg_weight || 0
- else if (bm.sex === 'female') weekly[w].female_weight = bm.avg_weight || 0
- else weekly[w].male_weight = bm.avg_weight || 0
+ semanal.forEach((s: any) => {
+ const w = s.week || 0
+ weekly[w] = {
+ week: w, male_weight: s.weight_g || 0, female_weight: 0,
+ male_mort: s.mortality || 0, female_mort: 0,
+ feed_kg: s.feed_kg || 0, water_l: s.water_l || 0, date: '',
  }
- if (e.event_type === 'mortality_recording') {
- if (bm.sex === 'male') weekly[w].male_mort += bm.quantity || 0
- else if (bm.sex === 'female') weekly[w].female_mort += bm.quantity || 0
- else weekly[w].male_mort += bm.quantity || 0
- }
- })
- e.feed_movements?.forEach((fm: any) => {
- const w = fm.week_number || 0
- if (!weekly[w]) weekly[w] = { week: w, male_weight: 0, female_weight: 0, male_mort: 0, female_mort: 0, feed_kg: 0, date: e.event_date }
- weekly[w].feed_kg += fm.quantity_kg || 0
- })
  })
  const weeks = Object.values(weekly).sort((a: any, b: any) => a.week - b.week)
  if (weeks.length === 0) return null

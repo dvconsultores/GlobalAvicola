@@ -137,6 +137,70 @@ class ReportsService:
     # KPI Calculations
     # ============================================================
 
+    async def get_weekly_series(self, lot_id: int) -> dict:
+        """`R-218` · C-01=A: serie semanal del lote (agregado de solo lectura).
+
+        La LISTA de `/operations` se aligeró por contrato y ya no expone sublistas,
+        de modo que la vista semanal y los gráficos leían el vacío. Este agregado
+        pasa por `_exigir_lote` (tenencia/unidad) y suma solo eventos aceptados,
+        como el resto de indicadores (`P-15`): mortalidad, alimento, agua y peso por
+        `week_number`. El agua se atribuye una vez por (evento, semana).
+        """
+        await self._exigir_lote(lot_id)
+        aceptados = [EventStatus.APPROVED, EventStatus.CONSOLIDATED,
+                     EventStatus.SENT_TO_SAP, EventStatus.SAP_CONFIRMED]
+
+        filas = (await self.db.execute(
+            select(BirdMovement.week_number, BirdMovement.quantity, BirdMovement.avg_weight,
+                   OperationalEvent.event_type, OperationalEvent.water_liters,
+                   OperationalEvent.id)
+            .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.lot_id == lot_id,
+                OperationalEvent.status.in_(aceptados),
+            )
+        )).all()
+        filas_feed = (await self.db.execute(
+            select(FeedMovement.week_number, FeedMovement.quantity_kg,
+                   OperationalEvent.water_liters, OperationalEvent.id)
+            .join(OperationalEvent, FeedMovement.event_id == OperationalEvent.id)
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.lot_id == lot_id,
+                OperationalEvent.status.in_(aceptados),
+            )
+        )).all()
+
+        semanas: dict[int, dict] = {}
+        agua_vista: set[tuple[int, int]] = set()
+
+        def _semana(w):
+            return semanas.setdefault(w, {"week": w, "mortality": 0,
+                                          "feed_kg": 0.0, "water_l": 0.0,
+                                          "weight_g": None})
+
+        for week, cantidad, peso, tipo, agua, eid in filas:
+            w = week or 0
+            s = _semana(w)
+            if tipo == "mortality_recording":
+                s["mortality"] += cantidad or 0
+            if tipo == "weight_recording" and peso:
+                s["weight_g"] = max(s["weight_g"] or 0.0, peso)
+            if agua and (eid, w) not in agua_vista:
+                agua_vista.add((eid, w))
+                s["water_l"] += agua
+        for week, kg, agua, eid in filas_feed:
+            w = week or 0
+            s = _semana(w)
+            s["feed_kg"] += kg or 0.0
+            if agua and (eid, w) not in agua_vista:
+                agua_vista.add((eid, w))
+                s["water_l"] += agua
+
+        semanas_ordenadas = [semanas[w] for w in sorted(semanas)]
+        return {"lot_id": lot_id, "weeks": semanas_ordenadas}
+
     async def get_kpi_mortality(self, lot_id: int) -> dict:
         await self._exigir_lote(lot_id)
         total_deaths = await self._sum_bird_quantity(lot_id, [EventType.MORTALITY_RECORDING])

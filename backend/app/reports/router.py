@@ -146,6 +146,20 @@ async def get_lot_report(
     return await ReportsService(db, current_user).get_lot_report(lot_id)
 
 
+@router.get("/lot/{lot_id}/weekly")
+async def get_lot_weekly(
+    lot_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("reports", "read")),
+):
+    """`R-218` · C-01=A. Serie semanal del lote (mortalidad/alimento/agua/peso).
+
+    Existe porque la LISTA de `/operations` ya no expone sublistas y la vista
+    semanal/graficos leian el vacio (C#4). Solo lectura; tenencia via `_exigir_lote`.
+    """
+    return await ReportsService(db, current_user).get_weekly_series(lot_id)
+
+
 @router.get("/sap-comparison")
 async def get_sap_comparison(
     lot_id: Optional[int] = Query(None),
