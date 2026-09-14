@@ -249,6 +249,11 @@ describe('R-196 · creación de maestros por entidad (RED)', () => {
     )
     await abrirNuevo()
     cambio((await enModal().findAllByRole('textbox'))[0], 'Galpón sin capacidad')
+    // Limpiar un opcional (queda `''`) es el caso real del defecto: debe viajar
+    // `null`, nunca cadena vacía (el int del servidor la rechaza con 422).
+    const capacidad = await enModal().findByRole('spinbutton')
+    cambio(capacidad, '250')
+    cambio(capacidad, '')
     await elegirEnSelector(/Seleccionar granja/, /Granja A/)
     await guardar()
 

@@ -1,0 +1,160 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/masters/__tests__/r196.mastersCreate.test.tsx (9 tests | 1 failed) 1623ms
+     × AC-07 · /masters ofrece selector con todas las entidades 1016ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-07 · /masters ofrece selector con todas las entidades
+TestingLibraryElementError: Unable to find role="link"
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<h1[39m
+        [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F] mb-2"[39m
+      [36m>[39m
+        [0mMaestros[0m
+      [36m</h1>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-sm text-slate-500 mb-5"[39m
+      [36m>[39m
+        [0mElegí una entidad para administrarla.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.farms[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.houses[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.hatcheries[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.incubators[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.hatchers[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.areas[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.suppliers[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.breeds[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m""[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<h1[39m
+        [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F] mb-2"[39m
+      [36m>[39m
+        [0mMaestros[0m
+      [36m</h1>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-sm text-slate-500 mb-5"[39m
+      [36m>[39m
+        [0mElegí una entidad para administrarla.[0m
+      [36m</p>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3"[39m
+      [36m>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.farms[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.houses[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.hatcheries[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.incubators[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.hatchers[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.areas[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.suppliers[0m
+        [36m</span>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"bg-white border border-slate-200 rounded-xl p-4 text-sm font-medium text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mmasters.breeds[0m
+        [36m</span>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/pages/masters/__tests__/r196.mastersCreate.test.tsx:323:34
+    321|       </MemoryRouter>,
+    322|     )
+    323|     const accesos = await screen.findAllByRole('link')
+       |                                  ^
+    324|     expect(accesos.length).toBeGreaterThanOrEqual(8)
+    325|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  14:47:22
+   Duration  2.85s (transform 333ms, setup 57ms, import 538ms, tests 1.62s, environment 520ms)
+
