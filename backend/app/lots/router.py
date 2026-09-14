@@ -1,5 +1,5 @@
 """REST API router for Lot management."""
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, Query, Response
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
@@ -22,6 +22,7 @@ def _service(db: AsyncSession, user: dict):
 
 @router.get("", response_model=list[schemas.LotRead])
 async def list_lots(
+    response: Response,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     search: str = Query(""),
@@ -33,6 +34,9 @@ async def list_lots(
     items, total = await _service(db, current_user).get_lots(
         skip=skip, limit=limit, search=search, farm_id=farm_id, status=status,
     )
+    # `R-220` · A8 (C#33): el total ya se calculaba y se descartaba — paginación real.
+    response.headers["X-Total-Count"] = str(total)
+    response.headers["Access-Control-Expose-Headers"] = "X-Total-Count"
     return [schemas.LotRead.model_validate(item) for item in items]
 
 

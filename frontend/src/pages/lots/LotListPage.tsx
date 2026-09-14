@@ -21,25 +21,45 @@ export default function LotListPage() {
  const { t } = useTranslation()
  const { user } = useAuthStore()
  const isWebUser = user?.view_type !== 'mobile'
- const [lots, setLots] = useState<any[]>([])
+ const [brutos, setBrutos] = useState<any[]>([])
+ const [total, setTotal] = useState(0)
+ const [cargandoMas, setCargandoMas] = useState(false)
  const [loading, setLoading] = useState(true)
  const [birdType, setBirdType] = useState('')
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
+ // `R-220` · A8 (C#33): el filtro por tipo es de cliente; la paginación no.
+ const lots = birdType ? brutos.filter((l: any) => l.bird_type === birdType) : brutos
+
  const fetchLots = useCallback(async () => {
  setLoading(true)
  try {
- const { data } = await api.get('/lots?limit=100')
- const filtered = birdType ? (data || []).filter((l: any) => l.bird_type === birdType) : (data || [])
- setLots(filtered)
+ const r = await api.get('/lots?limit=100&skip=0')
+ const data = r.data || []
+ setBrutos(data)
+ setTotal(Number(r.headers?.['x-total-count'] ?? data.length))
  setEstado('ok')
  } catch (err: any) {
  setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
  } finally {
  setLoading(false)
  }
- }, [birdType])
+ }, [])
+
+ // `R-220` · A8: trae la página siguiente y la acumula (total del backend).
+ const cargarMas = async () => {
+ setCargandoMas(true)
+ try {
+ const r = await api.get(`/lots?limit=100&skip=${brutos.length}`)
+ setBrutos(prev => [...prev, ...(r.data || [])])
+ setTotal(Number(r.headers?.['x-total-count'] ?? total))
+ } catch (err: any) {
+ setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
+ } finally {
+ setCargandoMas(false)
+ }
+ }
 
  useEffect(() => { fetchLots() }, [fetchLots])
 
@@ -139,6 +159,20 @@ export default function LotListPage() {
  </tbody>
  </table>
  </div>
+
+ {/* `R-220` · A8: paginación real — el total viene del backend (`X-Total-Count`). */}
+ {!loading && brutos.length < total && (
+ <div className="flex justify-center py-4">
+ <button
+ type="button"
+ onClick={cargarMas}
+ disabled={cargandoMas}
+ className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+ >
+ {cargandoMas ? t('common.loading') : t('common.loadMore', 'Cargar más')}
+ </button>
+ </div>
+ )}
  </div>
  )
 }

@@ -5,7 +5,7 @@ from datetime import date
 from typing import Optional
 
 import aiofiles
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, Query, Response, UploadFile
 from fastapi.responses import FileResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -41,6 +41,7 @@ async def list_event_types():
 
 @router.get("", response_model=list[schemas.OperationalEventRead])
 async def list_events(
+    response: Response,
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     lot_id: Optional[int] = Query(None),
@@ -64,6 +65,9 @@ async def list_events(
         registered_by_me=registered_by_me,
         date_from=date_from, date_to=date_to,
     )
+    # `R-220` · A8 (C#33): el total ya se calculaba y se descartaba — paginación real.
+    response.headers["X-Total-Count"] = str(total)
+    response.headers["Access-Control-Expose-Headers"] = "X-Total-Count"
     return [schemas.OperationalEventRead.model_validate(item) for item in items]
 
 

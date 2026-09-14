@@ -95,8 +95,7 @@ describe('NotificationBell', () => {
       expect(screen.getByLabelText('notifications.bell')).toBeInTheDocument())
   })
 
-  it('no navega cuando el aviso no tiene pantalla destino', async () => {
-    // Un enlace roto es peor que ninguno: `sap_payload` no tiene vista propia.
+  it('navega al gestor SAP cuando el aviso es de payload SAP (`R-220` · A7)', async () => {
     responder(1, [aviso({ notification_type: 'sap_send_failed',
                           related_entity_type: 'sap_payload', related_entity_id: 9,
                           payload: { error_message: 'SAP no disponible' } })])
@@ -105,6 +104,22 @@ describe('NotificationBell', () => {
 
     await userEvent.click(await screen.findByLabelText(/notifications.bell/))
     await userEvent.click(await screen.findByText('notifications.types.sap_send_failed'))
+
+    await waitFor(() => expect(patch).toHaveBeenCalled())
+    // `R-220` · A7 (C#32/INT-30): el payload SAP tiene pantalla (el gestor) — antes no navegaba.
+    expect(navigate).toHaveBeenCalledWith('/sap')
+  })
+
+  it('no navega cuando el aviso no tiene pantalla destino', async () => {
+    // Un enlace roto es peor que ninguno: un tipo sin vista propia se lee y no navega.
+    responder(1, [aviso({ notification_type: 'record_rejected',
+                          related_entity_type: 'desconocido', related_entity_id: null,
+                          payload: { observations: 'x' } })])
+    patch.mockResolvedValue({ data: aviso({ read_at: new Date().toISOString() }) })
+    render(<NotificationBell />)
+
+    await userEvent.click(await screen.findByLabelText(/notifications.bell/))
+    await userEvent.click(await screen.findByText('notifications.types.record_rejected'))
 
     await waitFor(() => expect(patch).toHaveBeenCalled())
     expect(navigate).not.toHaveBeenCalled()

@@ -17,7 +17,9 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function OperationListPage() {
  const { t } = useTranslation()
- const [events, setEvents] = useState<any[]>([])
+ const [brutos, setBrutos] = useState<any[]>([])
+ const [total, setTotal] = useState(0)
+ const [cargandoMas, setCargandoMas] = useState(false)
  const [loading, setLoading] = useState(true)
  // `R-212` · AC-04: denegación ≠ vacío.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
@@ -27,7 +29,7 @@ export default function OperationListPage() {
  const fetchEvents = useCallback(async () => {
  setLoading(true)
  try {
- const params: any = { limit: 100 }
+ const params: any = { limit: 100, skip: 0 }
  if (lotId) params.lot_id = lotId
  // For stage-based filter: fetch all and filter client-side
  // (backend doesn't support multi event_type yet)
@@ -35,20 +37,34 @@ export default function OperationListPage() {
  params.event_type = eventType
  }
  const r = await api.get('/operations', { params })
- let result = r.data ?? []
- // Client-side filter by stage
- if (eventType && eventType.startsWith('__stage__')) {
- const stageKey = eventType.replace('__stage__', '') as StageKey
- const flowEvents = new Set(flowForStage(stageKey).map(s => s.event))
- result = result.filter((ev: any) => flowEvents.has(ev.event_type))
- }
- setEvents(result)
+ setBrutos(r.data ?? [])
+ setTotal(Number(r.headers?.['x-total-count'] ?? (r.data ?? []).length))
  setEstado('ok')
  } catch (err: any) {
  setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
  }
  finally { setLoading(false) }
  }, [lotId, eventType])
+
+ // `R-220` · A8 (C#33): página siguiente acumulada (skip por lo ya cargado).
+ const cargarMas = async () => {
+ setCargandoMas(true)
+ try {
+ const params: any = { limit: 100, skip: brutos.length }
+ if (lotId) params.lot_id = lotId
+ if (eventType && !eventType.startsWith('__stage__')) params.event_type = eventType
+ const r = await api.get('/operations', { params })
+ setBrutos(prev => [...prev, ...(r.data ?? [])])
+ setTotal(Number(r.headers?.['x-total-count'] ?? total))
+ } catch (err: any) {
+ setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
+ } finally { setCargandoMas(false) }
+ }
+
+ // El filtro por etapa es de cliente; la paginación no (`R-220` · A8).
+ const events = (eventType && eventType.startsWith('__stage__'))
+ ? brutos.filter((ev: any) => flowForStage(eventType.replace('__stage__', '') as StageKey).map(s => s.event).includes(ev.event_type))
+ : brutos
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
 
@@ -106,6 +122,19 @@ export default function OperationListPage() {
  ))}
  </div>
  }
+ {/* `R-220` · A8: paginación real con `X-Total-Count`. */}
+ {!loading && brutos.length < total && (
+ <div className="flex justify-center py-4">
+ <button
+ type="button"
+ onClick={cargarMas}
+ disabled={cargandoMas}
+ className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
+ >
+ {cargandoMas ? t('common.loading') : t('common.loadMore', 'Cargar más')}
+ </button>
+ </div>
+ )}
  </div>
  )
 }
