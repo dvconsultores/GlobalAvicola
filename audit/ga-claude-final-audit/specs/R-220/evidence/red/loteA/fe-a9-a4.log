@@ -1,0 +1,693 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA.test.tsx (2 tests | 2 failed) 2143ms
+     × AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve 1125ms
+     × AC-R220-A·A4 · `lot_id` nulo ⇒ «Se creará al aprobar» (nunca «#null») 1014ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA.test.tsx > R-220 · Lote A (representativos, RED) > AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve
+TestingLibraryElementError: Unable to find role="button" and name `/review\.approve$|^Aprobar$/`
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAprobaciones[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"[39m
+                [33mdata-discover[39m=[32m"true"[39m
+                [33mhref[39m=[32m"/review"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m12 19-7-7 7-7"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M19 12H5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mRevisión[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mPendientes[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m0[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 6v6l4 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mAprobados[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m0[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-emerald-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-circle-check-big lucide-check-circle text-emerald-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[3...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mAprobaciones[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"[39m
+                [33mdata-discover[39m=[32m"true"[39m
+                [33mhref[39m=[32m"/review"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m12 19-7-7 7-7"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M19 12H5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mRevisión[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mPendientes[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m0[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 6v6l4 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-emerald-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mAprobados[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m0[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-emerald-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-circle-check-big lucide-check-circle text-emerald-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[3...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteA.test.tsx:62:31
+     60|       </MemoryRouter>,
+     61|     )
+     62|     const fila = await screen.findByRole('button', { name: /review\.ap…
+       |                               ^
+     63|     fireEvent.click(fila)
+     64|     const confirmar = await screen.findByRole('button', { name: /Confi…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/r220.loteA.test.tsx > R-220 · Lote A (representativos, RED) > AC-R220-A·A4 · `lot_id` nulo ⇒ «Se creará al aprobar» (nunca «#null»)
+TestingLibraryElementError: Unable to find an element with the text: /Se creará al aprobar/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mnav.operations[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m [0m
+            [0mcommon.results[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/menu/poultry"[39m
+        [36m>[39m
+          [0m+ [0m
+          [0mcommon.create[0m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+          [33mplaceholder[39m=[32m"review.lot ID"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mcommon.allTypes[0m
+          [36m</option>[39m
+          [36m<optgroup[39m
+            [33mlabel[39m=[32m"Etapas de producción"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+            [36m>[39m
+              [0mProgenitoras — Cría[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+            [36m>[39m
+              [0mProgenitoras — Producción[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+            [36m>[39m
+              [0mReproductoras — Cría[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_production"[39m
+            [36m>[39m
+              [0mReproductoras — Producción[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__hatchery"[39m
+            [36m>[39m
+              [0mIncubadora[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__broiler"[39m
+            [36m>[39m
+              [0mPollo de Engorde[0m
+            [36m</option>[39m
+          [36m</optgroup>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-3"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 min-w-0"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mb-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list text-slate-400"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm font-medium text-slate-700"[39m
+              [36m>[39m
+                [0mgrandparent_import[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800"[39m
+              [36m>[39m
+                [0mapproved[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-500"[39m
+            [36m>[39m
+              [0mreview.lot[0m
+              [0m #[0m
+              [0m — [0m
+              [0m2026-09-10[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-blue-600 text-sm hover:underline ml-3"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/operations/77"[39m
+          [36m>[39m
+            [0mcommon.edit[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+            [36m>[39m
+              [0mnav.operations[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-500"[39m
+            [36m>[39m
+              [0m1[0m
+              [0m [0m
+              [0mcommon.results[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/menu/poultry"[39m
+          [36m>[39m
+            [0m+ [0m
+            [0mcommon.create[0m
+          [36m</a>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+            [33mplaceholder[39m=[32m"review.lot ID"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+          [36m<select[39m
+            [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mcommon.allTypes[0m
+            [36m</option>[39m
+            [36m<optgroup[39m
+              [33mlabel[39m=[32m"Etapas de producción"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+              [36m>[39m
+                [0mProgenitoras — Cría[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+              [36m>[39m
+                [0mProgenitoras — Producción[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+              [36m>[39m
+                [0mReproductoras — Cría[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__breeder_production"[39m
+              [36m>[39m
+                [0mReproductoras — Producción[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__hatchery"[39m
+              [36m>[39m
+                [0mIncubadora[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__broiler"[39m
+              [36m>[39m
+                [0mPollo de Engorde[0m
+              [36m</option>[39m
+            [36m</optgroup>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"space-y-3"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex-1 min-w-0"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center gap-2 mb-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-clipboard-list text-slate-400"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"20"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"20"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<rect[39m
+                    [33mheight[39m=[32m"4"[39m
+                    [33mrx[39m=[32m"1"[39m
+                    [33mry[39m=[32m"1"[39m
+                    [33mwidth[39m=[32m"8"[39m
+                    [33mx[39m=[32m"8"[39m
+                    [33my[39m=[32m"2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 11h4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 16h4"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 11h.01"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 16h.01"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-sm font-medium text-slate-700"[39m
+                [36m>[39m
+                  [0mgrandparent_import[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800"[39m
+                [36m>[39m
+                  [0mapproved[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-xs text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+                [0m #[0m
+                [0m — [0m
+                [0m2026-09-10[0m
+              [36m</p>[39m
+            [36m</div>[39m
+            [36m<a[39m
+              [33mclass[39m=[32m"text-blue-600 text-sm hover:underline ml-3"[39m
+              [33mdata-discover[39m=[32m"true"[39m
+              [33mhref[39m=[32m"/operations/77"[39m
+            [36m>[39m
+              [0mcommon.edit[0m
+            [36m</a>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r220.loteA.test.tsx:87:11
+     85|       </MemoryRouter>,
+     86|     )
+     87|     await waitFor(() => expect(screen.getAllByText(/Se creará al aprob…
+       |           ^
+     88|     expect(screen.queryByText(/#null/)).toBeNull()
+     89|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  17:30:38
+   Duration  4.71s (transform 517ms, setup 161ms, import 1.18s, tests 2.14s, environment 1.02s)
+
