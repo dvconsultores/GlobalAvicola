@@ -342,3 +342,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Impacto de deploy auditado** (`AOD29-DEPLOY-IMPACT`): el auto-deploy compartido (Docker Hub `:latest` + Watchtower) dependía exclusivamente de los workflows retirados ⇒ `SHARED_RUNTIME_AUTO_DEPLOY = NOT_AVAILABLE_WITH_GITHUB_ACTIONS_RETIRED`; `PUSH != DEPLOY`. Sin sustituto implementado (prohibido sin Spec/Owner Decision).
 - **Commits locales certificados a sincronizar** (historia local desde `45acbf8`): `5d3a687` (AOD-29 governance) · `8eb6e90` (T8 C2 impl) · `0cefb68` (T8 registro) · `4fc63b4` (R-215 RED) · `cd2e7bc` (R-215 IMPL) · `73a4fb9` (R-215 evidencia) · `4c0f819` (R-196 RED) · `571b4d5` (R-196 C2 IMPL) · + commits de esta micro-tranche y C2b de R-196.
 - **Estado real T9 (2026-09-14)**: R-215 cerrada local (FE 405/405; sensibilidad S1-S6); R-196: C1 `4c0f819` + C2 `571b4d5` (FE 414/414 + build; BE targeted 3/3 y 5/5 tras adaptar 5 setups que usaban creación cross-tenant; sensibilidad S1-S6 completa); siguiente: C2b (harness AC-04 + evidencia) y R-195.
+
+## AE-48 · 2026-09-14 · AOD-29 CLARIFICATION 01 APLICADA — primer push bajo política corregida
+
+- **Push**: `571b4d5..aa459ac` → `origin/main` (fast-forward; sin force; sin reescribir historia). `LOCAL_SHA = aa459acffe5e93fbff86d9e4c0e324b964c55af9` = `REMOTE_SHA` ⇒ `PUSH_STATUS = SUCCESS` · `REMOTE_SHA_VERIFICATION = PASS`.
+- **Ancestría verificada**: 10/10 SHAs certificados presentes en `origin/main` (`5d3a687` · `8eb6e90` · `0cefb68` · `4fc63b4` · `cd2e7bc` · `73a4fb9` · `4c0f819` · `571b4d5` · `75593f7` · `aa459ac`).
+- **Actions tras el push**: `ACTION_RUN_TRIGGERED_BY_PUSH = NO` (observación: sin runs nuevos en la ventana del push; estructural: `.github/workflows/` en el árbol remoto = **0 archivos**). Nota histórica: la sincronización externa previa de `571b4d5` (~25 min antes del retiro) sí produjo runs con los workflows aún activos — historia intacta, no reescrita.
+- **R-196 cerrada local en este punto**: C2b `aa459ac` (harness AC-04 + evidencia completa); gates: FE **414/414** · build OK · BE full **1367/0/49** · sensibilidad S1-S6 con restore desde `571b4d5`.
+- **Siguiente**: T9 continúa con **R-195** (C1 RED → C2 → gates → commit → push).
