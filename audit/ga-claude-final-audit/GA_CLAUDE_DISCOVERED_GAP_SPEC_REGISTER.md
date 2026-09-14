@@ -194,3 +194,9 @@ Confirmaciones de la pasa 2 local (`evidence/ui-e2e-local-pass2.json`, 2026-09-1
 7. **R-197** · **R-207** — revisión y reverso con superficie.
 8. Compactos no bloqueantes: **R-202**, **R-212**, **R-213**, **R-216**, **R-218**, **R-219**, **R-220**; **R-217** en la fase SAP; **R-214** en Wave C.
 9. Recertificación E2E de P-01…P-15 (UI + API) con artefactos de ejecución y UAT del propietario (GA-UAT-09 retry, R-153 7 casos, GA-F01) — sólo entonces se reevalúa el veredicto GO/NO-GO.
+
+## Adición 2026-09-14 — GA-REQ-061 · Cutover Operacional (requerimiento transversal nuevo)
+
+| ID | Requerimiento | Origen | Prio | Procesos | Spec | Estado |
+|---|---|---|---|---|---|---|
+| **G-35 / GA-REQ-061** | Carga inicial de lotes en proceso y saldos operacionales de cutover (estado inicial certificado a fecha de corte; sin reconstruir historia; 4 BUs; Excel→staging→aprobar→apply atómico; correcciones auditadas) | Mandato del propietario 2026-09-14 (implantación/Go-Live) | **P1 (pre-Go-Live)** | P-01…P-15 (transversal) + 4 BUs | `specs/GA-REQ-061/` (11 docs; AC01-85) | **SPEC_READY · NOT_STARTED** — tranche **T14** (orden T11 → T14 → T12 → T13) |

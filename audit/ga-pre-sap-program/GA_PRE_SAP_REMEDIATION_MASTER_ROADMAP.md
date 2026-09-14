@@ -21,6 +21,7 @@ Determinista: cada tranche arranca solo cuando la anterior cumple su **criterio 
 | T11 | Residuales FE | R-213 · R-212 · R-218 · R-220 | Transversal, P-15 | Pulido final sin cambio de proceso; justo antes de recertificar | T9, T10 | T12 |
 | T12 | Recertificación E2E | 17 procesos + decisión Wave C (AOD-10) | Todos | Recorrido integral con producto remediado y artefactos | T1-T11, Wave C decidida | T13 |
 | T13 | UAT del propietario + gate final | Plan UAT (8 lotes) + Pista OPS | Todos | Validación del propietario con evidencia primaria + GO/NO-GO | T12, OPS, decisiones | GO/SAP |
+| **T14** | **Cutover operacional — GA-REQ-061** (lotes en proceso + saldos de apertura) | GA-REQ-061 | Transversal, P-12/P-13 + 4 BUs | Implantación real: operar desde un estado inicial certificado a fecha de corte | T2/T3-T7/T8/T9 ✅; **orden: después de T11, antes de T12** | T12 (la cubre), T13 |
 | OPS | Pista de operaciones (paralela) | R-52/RES-05 · GA-REM-004 AC03/AC07 · P1-6 | Infra | Acciones fuera del código que bloquean el gate final | — (arrancable ya) | T13 |
 
 ## 2 · Ficha por tranche (estándar §39)

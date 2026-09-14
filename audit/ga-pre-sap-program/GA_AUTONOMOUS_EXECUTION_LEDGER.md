@@ -359,3 +359,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Certificación**: `GA_T9_CERTIFICATION.md`; `GITHUB_ACTIONS = NOT_APPLICABLE_BY_OWNER_DECISION`; `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION` con `REMOTE_SHA_MATCH = YES` en cada checkpoint (remoto final `e515858`).
 - **UAT**: pendiente acumulable (R-215 2 · R-196 4 · R-195 3 casos) — no bloquea cierre técnico; se agrupa en el gate PRE-SAP. Procesos 0/17 sin cambio; SAP NOT_STARTED.
 - **Siguiente**: **T10** (R-197 · R-207; +R-142 si AOD-17) — arranque automático.
+
+## AE-50 · 2026-09-14 · GA-REQ-061 FORMALIZADO (SPEC_READY) — Cutover operacional / Opening Balance
+
+- **Requerimiento transversal nuevo** (mandato del propietario 2026-09-14): operar con lotes ya iniciados desde un **estado operacional inicial certificado a fecha de corte**; prohibido reconstruir historia o fabricar movimientos/SAP; semántica `0 ≠ UNKNOWN`; saldo vivo ≠ acumulado (`10.000−35=9.965`; `lifetime=535`).
+- **Paquete** `audit/ga-claude-final-audit/specs/GA-REQ-061/` (11 docs): SPEC · GAP analysis · **reconciliación R-67 = `PARTIAL_REUSE`** (se extiende `OpeningBalance`/`activate_manual`, sin concepto paralelo) · ACs **85** · arquitectura/modelo (`CutoverBatch`/`CutoverItem`/corrección; atomicidad/idempotencia/concurrencia; sin JSONB indiscriminado) · Excel/staging (plantilla por BU versionada; celda vacía=UNKNOWN) · seguridad (tenancy/BU OD-16/grants/RBAC `cutover:*` PROPOSED/segregación) · **plan RED 22+6 controles** · **sensibilidad S1-S10** · **E2E 4 BUs** (caso broiler obligatorio) · **placement**.
+- **Placement**: **T14** con orden de ejecución T11 → **T14** → T12 → T13 (antes del E2E/GO); `T10_BLOCKED_BY_CUTOVER = NO`; `OWNER_GATE = NONE` en esta fase.
+- **Estado**: `CUTOVER_SPEC_STATUS = SPEC_READY` · `CUTOVER_IMPLEMENTATION_STATUS = NOT_STARTED` · `PRODUCT_DIFF = 0`.
+- **Siguiente**: reanudar **T10** (R-197 · R-207) automáticamente.
