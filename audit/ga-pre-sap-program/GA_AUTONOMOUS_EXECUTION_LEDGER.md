@@ -259,3 +259,16 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Suite completa**: `1316 passed / 0 failed / 49 skipped` (1167.72s; `evidence/t5/full_suite_t5.log`; re-ejecutada tras remediar el guard de determinismo — literales ISO en `test_r206_optional_tolerance.py`, fix `0e60038`).
 - **Certificación**: `GA_T5_CERTIFICATION.md` (CLOSED_TECHNICALLY); FE 380/380 + tsc 0; riders: R-146 ↔ AOD-16 y AOD-21 (R-210 C-01); C3 runtime de R-191/206/209/210 en ventana (familia G-06).
 - **Siguiente**: **T6 · Cadena de incubadora (R-194)** — arranque automático (DAG T6 ← T4+T5).
+
+## AE-36 · 2026-09-14 · R-194 CERRADA (CLOSED_TECHNICALLY) — cadena de incubadora
+
+- **C1** `c413fdb`: FE 4F/1P (BR-08 por ubicación, fértiles, dosis silenciosa, `hatchery_id`; carga = control) · BE 1F/4P — la cadena canónica destapó un **defecto real de servidor** (`egg_storage.lot_id` NULL ⇒ 500; `setdefault` inoperante con `lot_id: None` explícito).
+- **C2** `0bfba2e`: fértiles + `arrival_date` (C-02=A) + ubicación de etapa (C-01=A) + `hatchery_id` + dosis `valueAsNumber` con error visible; fix B-03b en alta **y** verificación. **BE 5/5**: cadena real recepción→saldo→carga→BR-03→nacimiento→despacho→BR-04→recepción destino→`ChickBatch`→trazabilidad X-BU. FE 386/386; tsc 0.
+- **C2s** `cd33d23`: S1-S4 1F c/u.
+- **Lección de UI**: `min` nativo HTML bloquea el submit **sin** errores RHF — para errores visibles, validar por schema y sin constraint nativo.
+
+## AE-37 · 2026-09-14 · T6 CERRADA TÉCNICAMENTE — suite 1321/0/49
+
+- **Suite completa = 1321/0/49** (`evidence/t6/full_suite_t6.log`); FE 386/386 + tsc 0; certificación `GA_T6_CERTIFICATION.md` + `GA_CLAUDE_R194_RUNTIME_CERTIFICATION.md`.
+- **Procesos**: P-04/P-05 **REPARADOS técnicamente** (E2E en ventana); X-BU demostrado a nivel API-integrada. KPI global sigue 0/17 hasta runtime/UAT.
+- **Siguiente**: **T7 · Cierre y reversos (R-192 · R-193 · R-211)** — arranque automático (DAG T7 ← T3+T6).

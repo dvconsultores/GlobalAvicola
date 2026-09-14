@@ -1,6 +1,6 @@
 # GA · PRE-SAP — COLA DE GATES DEL PROPIETARIO (OWNER GATE QUEUE)
 
-Fecha: 2026-09-14 · Estado de ejecución: **`T1 CLOSED — T2 CLOSED — T3 CLOSED_TECHNICALLY — T4 IN_PROGRESS`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)** · **G-06 encolado (credenciales runtime — bloquea C3 de R-199/R-201/R-202/R-203/R-204 y verificación visual R-216)** · **AOD-13 accionable (único pendiente de R-221/AC-04 en T3)**.
+Fecha: 2026-09-14 · Estado de ejecución: **`T1 CLOSED — T2 CLOSED — T3 CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13 — T4 CLOSED_TECHNICALLY — T5 CLOSED_TECHNICALLY — T6 CLOSED_TECHNICALLY — T7 READY`** · **G-01 (AC-06) CERRADO — run #10 `34764423545` verde (evidencia observada)** · **G-06 encolado (credenciales runtime — bloquea C3 de R-199/R-201/R-202/R-203/R-204/R-190/R-205/R-191/R-206/R-209/R-210/R-194 y verificación visual R-216)** · **AOD-13 accionable (único pendiente de R-221/AC-04 en T3)** · **Confirmatorias nuevas: AOD-25/AOD-26 (R-194 C-01/C-02 — no bloquean)**.
 Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no se re-solicitan en bucle. Acciones humanas mínimas y deterministas (§50).
 
 ## G-01 · GA-GOV-03 · AC-06 — Evidencia externa de CI · **INMEDIATO (bloquea todo el programa)**
@@ -88,6 +88,8 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 | `OD-19 §18` · `AOD-17` · `AOD-18` | UI de reverso · semántica `CORRECTED` · cancelación | T10 | `SCHEDULED` (antes de T10) |
 | `AOD-19bis (R-190 C-03)` | **Opcional**: ¿persistir `house_id` en el lote al aprobar la primera recepción de un lote sin galpón (alternativa B), para que los eventos posteriores lo hereden sin selector? Implementación vigente = **A** (derivación en el asistente, sin tocar el lote); B sería un anexo (cambia el modelo al aprobar y toca OD-25(B)). | T5+ | `SCHEDULED OPTIONAL` — no bloquea; si se elige B, se especifica como anexo |
 | `AOD-21 (R-210 C-01)` | **Confirmatoria**: «el pesaje se captura en gramos» — la implementación ya opera en g (curva/evaluación/i18n); el propietario confirma y queda registrado (acta). Si eligiera kg, se especificaría conversión explícita (C-02). | T5+ | `SCHEDULED CONFIRMATORIA` — no bloquea (por defecto A=g) |
+| `AOD-25 (R-194 C-01)` | **Confirmatoria (A/B)**: la recepción de huevos y el despacho de pollitos (etapa incubadora, `location_events`) llevan la granja/galpón del **lote incubadora** (A, implementado) — alternativa B: eximir la etapa de BR-08 por decisión. | T6+ | `SCHEDULED CONFIRMATORIA` — no bloquea (por defecto A) |
+| `AOD-26 (R-194 C-02)` | **Confirmatoria (capturar/derivar)**: `arrival_date` de la recepción capturada con default `event_date` (A, implementado) — alternativa: derivarla siempre en servidor. | T6+ | `SCHEDULED CONFIRMATORIA` — no bloquea (por defecto A) |
 | `OD-10.c` | UI activación manual / clasificación pendiente | T11 | `SCHEDULED` (antes de T11) |
 | `AOD-08` · `AOD-10` | Cierre/FCR y fórmulas KPI (Wave C) | T12 | `SCHEDULED` (antes de T12) |
 | `GA-UAT-09` | Retry R-153/R-189 (UAT del propietario) | T13 | `SCHEDULED` (antes de T13) |
