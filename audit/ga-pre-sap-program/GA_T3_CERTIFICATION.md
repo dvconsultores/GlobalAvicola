@@ -36,4 +36,4 @@ Fecha: 2026-09-14 · Tranche **T3** del programa Pre-SAP (R-201 · R-203 · R-20
 
 ## 5 · Veredicto
 
-**T3 = `CLOSED_TECHNICALLY`** — alcance de datos cerrado en lectura agregada (R-204), contrato de panel (R-216), escritura cross-tenant (R-201) y referencias de tenencia (R-203); R-221 (rider) en curso con AC-04 en la cola del propietario. KPI de procesos sin cambio (0/17): T3 es plataforma de datos. **T4 (R-190 + R-205) queda HABILITADA.**
+**T3 = `CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13`** — alcance de datos cerrado en lectura agregada (R-204), contrato de panel (R-216), escritura cross-tenant (R-201) y referencias de tenencia (R-203). **R-221 = `PARTIAL`** (AC-01/02/03/05 cerradas técnicamente; **AC-04 ↔ AOD-13**, T-05 sin ejecutar) — todo lo técnicamente ejecutable de T3 terminó, pero el cierre funcional total queda condicionado a esa micro-decisión del propietario. `CLOSED_TECHNICALLY` ≠ proceso `FUNCTIONALLY_CERTIFIED_E2E`: KPI de procesos sin cambio (0/17). **T4 (R-190 + R-205) queda HABILITADA.**
