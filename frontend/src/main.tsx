@@ -7,6 +7,7 @@ import { registerTokenAccessors } from './services/api'
 import { initTelegramEarly } from './hooks/useTelegram'
 import './index.css'
 import App from './App'
+import { ErrorBoundary } from './components/ErrorBoundary'
 
 // Telegram Mini App: initialize SDK early to set header color and expand
 initTelegramEarly()
@@ -30,8 +31,11 @@ registerTokenAccessors(
 
 createRoot(document.getElementById('root')!).render(
  <StrictMode>
- <BrowserRouter>
- <App />
- </BrowserRouter>
+  {/* R-215: una excepción de render ya no deja la app en blanco. */}
+  <ErrorBoundary>
+   <BrowserRouter>
+    <App />
+   </BrowserRouter>
+  </ErrorBoundary>
  </StrictMode>,
 )

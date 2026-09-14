@@ -231,7 +231,8 @@ describe('R-215 · render seguro de errores (RED)', () => {
         <mod.ErrorBoundary><Bomb /></mod.ErrorBoundary>
       </MemoryRouter>,
     )
-    expect(await screen.findByRole('button', { name: /Reintentar|Recargar|Volver/ })).toBeTruthy()
+    expect(await screen.findByRole('button', { name: /Reintentar/ })).toBeTruthy()
+    expect(screen.getByRole('button', { name: /Recargar/ })).toBeTruthy()
     expect(screen.getByText(/boundary|error/i)).toBeTruthy()
     expect(screen.queryByText(/boom de prueba/)).toBeNull()
     errSpy.mockRestore()

@@ -18,6 +18,7 @@ vi.mock('../../../services/api', () => ({
 }))
 vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k: string, f?: string) => f ?? k }) }))
 
+import { ToastProvider } from '../../../components/Toast'
 import UsersPage from '../UsersPage'
 import { useAuthStore } from '../../../stores/auth.store'
 
@@ -48,7 +49,7 @@ beforeEach(() => {
 describe('GA-FE-04 · UsersPage — autoridad de acción', () => {
   it('R (users:read): ve el listado y NINGÚN control de escritura', async () => {
     setSession(['users:read'])
-    render(<MemoryRouter><UsersPage /></MemoryRouter>)
+    render(<MemoryRouter><ToastProvider><UsersPage /></ToastProvider></MemoryRouter>)
     await waitFor(() => expect(screen.getAllByText('ana').length).toBeGreaterThan(0))
     expect(screen.queryByText('common.create')).toBeNull()
     expect(document.querySelectorAll('.lucide-pencil').length).toBe(0)
@@ -57,7 +58,7 @@ describe('GA-FE-04 · UsersPage — autoridad de acción', () => {
 
   it('control: con users:* los controles aparecen', async () => {
     setSession(['users:read', 'users:create', 'users:update', 'users:delete'])
-    render(<MemoryRouter><UsersPage /></MemoryRouter>)
+    render(<MemoryRouter><ToastProvider><UsersPage /></ToastProvider></MemoryRouter>)
     await waitFor(() => expect(screen.getAllByText('ana').length).toBeGreaterThan(0))
     expect(screen.getByText('common.create')).toBeTruthy()
     expect(document.querySelectorAll('.lucide-pencil').length).toBeGreaterThan(0)

@@ -21,10 +21,24 @@ const ToastContext = createContext<ToastContextType | null>(null)
 
 let toastId = 0
 
-export function ToastProvider({ children }: { children: ReactNode }) {
- const [toasts, setToasts] = useState<Toast[]>([])
+/**
+ * `R-215 (C-03)`: red de seguridad — un mensaje no-string (p. ej. una `detail`
+ * cruda de FastAPI) nunca debe romper el toast ni pintar «[object Object]».
+ */
+function normalizarMensaje(mensaje: unknown): string {
+  if (typeof mensaje === 'string') return mensaje
+  const deDetalle = textoDeDetalle(mensaje)
+  if (deDetalle) return deDetalle
+  const deError = getErrorMessage(mensaje, '')
+  if (deError) return deError
+  return String(mensaje)
+}
 
- const addToast = useCallback((type: ToastType, message: string) => {
+export function ToastProvider({ children }: { children: ReactNode }) {
+  const [toasts, setToasts] = useState<Toast[]>([])
+
+  const addToast = useCallback((type: ToastType, mensaje: unknown) => {
+    const message = normalizarMensaje(mensaje)
  const id = ++toastId
  setToasts(prev => [...prev.slice(-4), { id, type, message }])
  setTimeout(() => {

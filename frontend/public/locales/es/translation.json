@@ -1,4 +1,9 @@
 {
+  "boundary": {
+    "title": "Se produjo un error inesperado",
+    "retry": "Reintentar",
+    "reload": "Recargar la página"
+  },
   "common": {
     "save": "Guardar",
     "cancel": "Cancelar",

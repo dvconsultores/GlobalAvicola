@@ -13,6 +13,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
 
+import { ToastProvider } from '../../../components/Toast'
 import UsersPage from '../UsersPage'
 
 const get = vi.fn()
@@ -51,7 +52,7 @@ describe('UsersPage · estados de carga', () => {
     get.mockImplementation((url: string) =>
       url === '/users' ? Promise.reject(fallo(403)) : Promise.resolve(CATALOGOS_OK))
 
-    render(<UsersPage />)
+    render(<ToastProvider><UsersPage /></ToastProvider>)
 
     await waitFor(() => expect(screen.getByRole('alert')).toBeTruthy())
     expect(screen.getByText('users.forbidden')).toBeTruthy()
@@ -63,7 +64,7 @@ describe('UsersPage · estados de carga', () => {
     get.mockImplementation((url: string) =>
       url === '/users' ? Promise.reject(fallo(500)) : Promise.resolve(CATALOGOS_OK))
 
-    render(<UsersPage />)
+    render(<ToastProvider><UsersPage /></ToastProvider>)
 
     await waitFor(() => expect(screen.getByText('users.loadError')).toBeTruthy())
     expect(screen.getByText('common.retry')).toBeTruthy()
@@ -73,7 +74,7 @@ describe('UsersPage · estados de carga', () => {
   it('doscientos con lista vacía es el único caso que dice «no hay usuarios»', async () => {
     get.mockResolvedValue({ data: [] })
 
-    render(<UsersPage />)
+    render(<ToastProvider><UsersPage /></ToastProvider>)
 
     await waitFor(() => expect(screen.getByText('users.noUsers')).toBeTruthy())
     expect(screen.queryByText('users.forbidden')).toBeNull()
@@ -86,7 +87,7 @@ describe('UsersPage · estados de carga', () => {
         ? Promise.resolve({ data: [usuario(), usuario({ id: 2, username: 'mlopez' })] })
         : Promise.resolve(CATALOGOS_OK))
 
-    render(<UsersPage />)
+    render(<ToastProvider><UsersPage /></ToastProvider>)
 
     await waitFor(() => expect(screen.getAllByText('jperez').length).toBeGreaterThan(0))
     expect(screen.getAllByText('mlopez').length).toBeGreaterThan(0)
@@ -102,7 +103,7 @@ describe('UsersPage · estados de carga', () => {
         : url.startsWith('/masters/areas') ? Promise.reject(fallo(403))
         : Promise.resolve(CATALOGOS_OK))
 
-    render(<UsersPage />)
+    render(<ToastProvider><UsersPage /></ToastProvider>)
 
     await waitFor(() => expect(screen.getAllByText('jperez').length).toBeGreaterThan(0))
     expect(screen.getByText('users.partialCatalogs')).toBeTruthy()

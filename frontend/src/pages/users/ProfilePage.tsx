@@ -4,6 +4,7 @@ import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
 import { User, Lock, Save, Building2 } from 'lucide-react'
 import api from '../../services/api'
+import { getErrorMessage } from '../../components/Toast'
 
 export default function ProfilePage() {
  const { t } = useTranslation()
@@ -34,8 +35,8 @@ export default function ProfilePage() {
  setCurrentPassword(''); setNewPassword(''); setConfirmPassword('')
  } catch (err: any) {
  // El servidor es la fuente de verdad: si rechaza, el usuario debe ver por qué y
- // nunca «contraseña actualizada».
- setMessage(err?.response?.data?.detail || t('profile.passwordError'))
+ // nunca «contraseña actualizada». `R-215`: `detail` lista ⇒ texto, no React #31.
+ setMessage(getErrorMessage(err, t('profile.passwordError')))
  } finally { setSaving(false) }
  }
 

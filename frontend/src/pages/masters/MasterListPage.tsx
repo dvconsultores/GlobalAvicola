@@ -5,6 +5,7 @@ import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
 import DataTable, { type RowAction } from '../../components/data-table/DataTable'
 import { Button, Modal, Input } from '../../components/ui'
+import { getErrorMessage } from '../../components/Toast'
 
 interface MasterListPageProps {
  entity: string
@@ -96,7 +97,8 @@ export default function MasterListPage({
  setModalOpen(false)
  fetchItems()
  } catch (err: any) {
- setFormError(err?.response?.data?.detail ?? t('errors.saveFailed', 'Error al guardar'))
+ // `R-215`. `detail` puede ser lista (422): pintarla cruda lanzaba React #31.
+ setFormError(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
  } finally {
  setSaving(false)
  }

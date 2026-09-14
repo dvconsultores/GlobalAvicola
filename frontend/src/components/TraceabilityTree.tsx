@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { Egg, Baby, ArrowRight, RefreshCw } from 'lucide-react'
 import api from '../services/api'
+import { getErrorMessage } from './Toast'
 import { Badge, statusToVariant } from './ui'
 import { Button, Input, Modal } from './ui'
 
@@ -92,7 +93,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  setShowEggLink(false)
  load()
  } catch (err: any) {
- setLinkError(err?.response?.data?.detail ?? t('errors.saveFailed', 'Error al guardar'))
+ setLinkError(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
  } finally {
  setLinking(false)
  }
@@ -111,7 +112,7 @@ export function TraceabilityTree({ lotId, birdType }: Props) {
  setShowChickLink(false)
  load()
  } catch (err: any) {
- setLinkError(err?.response?.data?.detail ?? t('errors.saveFailed', 'Error al guardar'))
+ setLinkError(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
  } finally {
  setLinking(false)
  }

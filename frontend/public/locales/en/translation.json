@@ -1,4 +1,9 @@
 {
+  "boundary": {
+    "title": "Something went wrong",
+    "retry": "Retry",
+    "reload": "Reload the page"
+  },
   "common": {
     "save": "Save",
     "cancel": "Cancel",

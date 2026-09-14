@@ -12,7 +12,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
 import { ArrowLeft, Bird } from 'lucide-react'
 import api from '../../services/api'
-import { useToast } from '../../components/Toast'
+import { useToast, getErrorMessage } from '../../components/Toast'
 import { Button, Input, Card, CardHeader, CardBody } from '../../components/ui'
 
 const BIRD_TYPES = ['grandparent', 'breeder', 'broiler', 'hatchery'] as const
@@ -134,7 +134,8 @@ export default function LotFormPage() {
  toast.success(t('lots.createdSuccess', 'Lote creado exitosamente'))
  navigate(`/lots/${data.id}`)
  } catch (err: any) {
- toast.error(err?.response?.data?.detail ?? t('errors.saveFailed', 'Error al guardar'))
+      // `R-215`. El toast recibía la lista `detail` cruda (objeto como hijo).
+      toast.error(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
  }
  }
 

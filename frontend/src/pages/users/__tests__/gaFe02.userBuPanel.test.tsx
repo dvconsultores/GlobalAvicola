@@ -27,12 +27,15 @@ const toastError = vi.fn()
 vi.mock('../../../components/Toast', () => ({
   useToast: () => ({ success: toastSuccess, error: toastError, warning: vi.fn(), info: vi.fn() }),
   getErrorMessage: (_e: any, fallback: string) => fallback,
+  // `R-215`: UsersPage usa `useToast`; el provider real existe en App.
+  ToastProvider: ({ children }: any) => children,
 }))
 
 vi.mock('react-i18next', () => ({
   useTranslation: () => ({ t: (k: string, f?: string) => f ?? k }),
 }))
 
+import { ToastProvider } from '../../../components/Toast'
 import UsersPage from '../UsersPage'
 import { useAuthStore } from '../../../stores/auth.store'
 import { useCompanyStore } from '../../../stores/company.store'
@@ -90,7 +93,7 @@ beforeEach(() => {
 })
 
 async function openPanel(username: string) {
-  render(<UsersPage />)
+  render(<ToastProvider><UsersPage /></ToastProvider>)
   const openBtn = await screen.findByRole('button', { name: `users.businessUnits.open — ${username}` })
   fireEvent.click(openBtn)
   await screen.findByText('users.businessUnits.title')
@@ -161,7 +164,7 @@ describe('GA-FE-02 · Panel de unidades del usuario', () => {
 
   it('sin business_units:read no hay entrada al panel en la tabla (AC-NAV-03)', async () => {
     setSession(['users:read'])
-    render(<UsersPage />)
+    render(<ToastProvider><UsersPage /></ToastProvider>)
     await screen.findAllByText('carlos')
     expect(screen.queryByRole('button', { name: /users.businessUnits.open/ })).toBeNull()
   })

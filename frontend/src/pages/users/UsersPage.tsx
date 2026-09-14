@@ -5,6 +5,7 @@ import api from '../../services/api'
 import UserBusinessUnitsButton from './UserBusinessUnitsButton'
 // GA-FE-04 · R-98/P-13: la autoridad de ACCIÓN es del permiso de la acción, no de la página.
 import { useCan } from '../../auth/actionAuthority'
+import { useToast, getErrorMessage } from '../../components/Toast'
 
 
 interface UserForm { username: string; first_name: string; last_name: string; email: string; phone: string; password: string; role_id: number | null; area_id: number | null; company_id: number | null; view_type: string; is_active: boolean }
@@ -15,6 +16,7 @@ const emptyForm: UserForm = { username: '', first_name: '', last_name: '', email
 export default function UsersPage() {
  const { t } = useTranslation()
  const can = useCan()
+ const toast = useToast()
  const [users, setUsers] = useState<any[]>([])
  const [roles, setRoles] = useState<any[]>([])
  // `GA-REM-039`. Desde el maestro real: nunca una lista fija de nombres de área.
@@ -82,7 +84,10 @@ export default function UsersPage() {
  if (!password) return alert(t('users.passwordRequired'))
  await api.post('/users', { ...payload, password })
  }
- setShowModal(false); fetchData() } catch (err: any) { alert(err.response?.data?.detail || t('common.error')) } finally { setSaving(false) }
+ setShowModal(false); fetchData() } catch (err: any) {
+      // `R-215`. Antes: `alert(detail)` con la lista cruda ⇒ «[object Object]».
+      toast.error(getErrorMessage(err, t('common.error')))
+    } finally { setSaving(false) }
  }
 
  const handleDelete = async (userId: number) => { if (!confirm(t('users.deleteConfirm'))) return; try { await api.delete(`/users/${userId}`); fetchData() } catch { alert(t('users.deleteError')) } }
