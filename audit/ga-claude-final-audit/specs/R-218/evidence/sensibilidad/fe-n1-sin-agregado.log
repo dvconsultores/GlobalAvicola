@@ -1,0 +1,343 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/reports/__tests__/r218.weeklySeries.test.tsx (2 tests | 1 failed) 1082ms
+     × AC-R218-03 · la vista semanal del lote se sirve del agregado `/reports/lot/{id}/weekly` 1046ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/reports/__tests__/r218.weeklySeries.test.tsx > R-218 · serie semanal del lote (RED) > AC-R218-03 · la vista semanal del lote se sirve del agregado `/reports/lot/{id}/weekly`
+AssertionError: expected false to be true // Object.is equality
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-slate-400 hover transition-colors"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/lots"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m12 19-7-7 7-7"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M19 12H5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</a>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 min-w-0"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F] truncate"[39m
+            [36m>[39m
+              [0mL-9[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mt-0.5 flex-wrap"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm text-slate-500"[39m
+              [36m>[39m
+                [0mbroiler[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-slate-300"[39m
+              [36m>[39m
+                [0m·[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+              [36m>[39m
+                [0mactive[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-3 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"lg:col-span-2 space-y-6"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+            [36m>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"font-semibold text-slate-700 mb-4 flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-plus text-[#5a9bba]"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M5 12h14"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 5v14"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0mlots.registerOperation[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+            [36m>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-activity"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mlots.lastRecords[0m
+              [36m</h2>[39m
+              [36m<p[39m
+                [33mclass[39m=[32m"text-sm text-slate-400"[39m
+              [36m>[39m
+                [0mlots.noOperationalRecords[0m
+              [36m</p>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"space-y-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+            [36m>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-calendar"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M8 2v3"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M16 2v3"[39m
+                  [36m/>[39m
+                  [36m<rect[39m
+                    [33mheight[39m=[32m"18"[39m
+                    [33mrx[39m=[32m"2"[39m
+                    [33mwidth[39m=[32m"18"[39m
+                    [33mx[39m=[32m"3"[39m
+                    [33my[39m=[32m"3"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 9h18"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mlots.info[0m
+              [36m</h2>[39m
+              [36m<dl[39m
+                [33mclass[39m=[32m"space-y-2 text-sm"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex justify-between"[39m
+                [36m>[39m
+                  [36m<dt[39m
+                    [33mclass[39m=[32m"text-slate-500"[39m
+                  [36m>[39m
+                    [0mlots.start[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0m—[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex justify-between"[39m
+                [36m>[39m
+                  [36m<dt[39m
+                    [33mclass[39m=[32m"text-slate-500"[39m
+                  [36m>[39m
+                    [0mlots.plannedClose[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0m—[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex justify-between"[39m
+                [36m>[39m
+                  [36m<dt[39m
+                    [33mclass[39m=[32m"text-slate-500"[39m
+                  [36m>[39m
+                    [0mlots.type[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0mbroiler[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex justify-between"[39m
+                [36m>[39m
+                  [36m<dt[39m
+                    [33mclass[39m=[32m"text-slate-500"[39m
+                  [36m>[39m
+                    [0mlots.farm[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0m—[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex justify-between"[39m
+                [36m>[39m
+                  [36m<dt[39m
+                    [33mclass[39m=[32m"text-slate-500"[39m
+                  [36m>[39m
+                    [0mlots.house[0m
+                  [36m</dt>[39m
+                  [36m<dd>[39m
+                    [0m—[0m
+                  [36m</dd>[39m
+                [36m</div>[39m
+              [36m</dl>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+            [36m>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-trending-up"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M16 7h6v6"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m22 7-8.5 8.5-5-5L2 17"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mlots.kpis[0m
+              [36m</h2>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"space-y-3"[39m
+              [36m/>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+            [36m>[39m
+              [36m<h2[39m
+                [33mclass[39m=[32m"font-semibold text-slate-700 mb-4 flex items-center gap-2"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-activity text-teal-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0mTrazabilidad Generacional[0m
+              [36m</h2>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pages/reports/__tests__/r218.weeklySeries.test.tsx:69:89
+     67|       </MemoryRouter>,
+     68|     )
+     69|     await waitFor(() => expect(urls().some((u) => u.includes('/reports…
+       |                                                                                         ^
+     70|     // filas reales de la serie (semana 1: 30 bajas; semana 2: 1500 g)
+     71|     await waitFor(() => expect(screen.getAllByText('30').length).toBeG…
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  17:27:07
+   Duration  3.53s (transform 388ms, setup 160ms, import 1.11s, tests 1.08s, environment 995ms)
+
