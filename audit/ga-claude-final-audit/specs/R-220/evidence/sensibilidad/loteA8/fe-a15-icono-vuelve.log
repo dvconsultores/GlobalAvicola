@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA8.test.tsx (2 tests | 1 failed) 8ms
+     × AC-R220-A·A15 · `egg_classification` deja de figurar como huérfana en los mapas 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA8.test.tsx > R-220 · Lote A octava tanda (RED) > AC-R220-A·A15 · `egg_classification` deja de figurar como huérfana en los mapas
+AssertionError: icono huérfano: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ src/__tests__/r220.loteA8.test.tsx:14:70
+     12| describe('R-220 · Lote A octava tanda (RED)', () => {
+     13|   it('AC-R220-A·A15 · `egg_classification` deja de figurar como huérfa…
+     14|     expect('egg_classification' in EVENT_ICON_MAP, 'icono huérfano').t…
+       |                                                                      ^
+     15|     expect('egg_classification' in EVENT_COLOR_MAP, 'color huérfano').…
+     16|     // control: la entrada real (alcanzable por el flujo de recepción)…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  23:57:50
+   Duration  1.06s (transform 59ms, setup 56ms, import 129ms, tests 8ms, environment 717ms)
+
