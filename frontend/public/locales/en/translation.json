@@ -353,6 +353,11 @@
     "areas": "Functional Areas"
   },
   "review": {
+    "noPermissionQueue": "No permission to view the review queue",
+    "observationsLabel": "Observations",
+    "observationsHint": "Reason (at least 10 characters).",
+    "observationsMin": "Observation must be at least 10 characters",
+    "lotCreated": "Approval created the lot",
     "center": "Review Center",
     "createBatch": "Create Review Batch",
     "detailTitle": "Review: Event #{{id}}",

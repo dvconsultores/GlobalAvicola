@@ -119,7 +119,7 @@ describe('R-197 · bandeja de revisión (RED)', () => {
     const caja = await screen.findByRole('textbox', { name: /observaci/i }).catch(() => null)
     expect(caja, 'campo de observaciones ausente').toBeTruthy()
     fireEvent.change(caja as Element, { target: { value: 'corto' } })
-    fireEvent.click(screen.getByRole('button', { name: /^(Devolver|Confirmar)/ }))
+    fireEvent.click(screen.getByRole('button', { name: 'Confirmar' }))
     expect(post.mock.calls.filter((c) => String(c[0]).includes('/review/return')).length).toBe(0)
     promptSpy.mockRestore()
   })

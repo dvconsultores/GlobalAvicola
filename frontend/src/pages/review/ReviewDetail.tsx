@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams, useNavigate, Link } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { ClipboardList, Bird, Wheat, Egg, RefreshCw, Pencil, FileText } from 'lucide-react'
 import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
@@ -19,13 +19,15 @@ export default function ReviewDetail() {
  const can = useCan()
  const { t } = useTranslation()
  const { id } = useParams<{ id: string }>()
- const navigate = useNavigate()
  const toast = useToast()
+ const enVuelo = useRef(false)
  const [event, setEvent] = useState<any>(null)
  const [corrections, setCorrections] = useState<any[]>([])
  const [actions, setActions] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [obs, setObs] = useState('')
+ const [obsError, setObsError] = useState('')
+ const [loteCreado, setLoteCreado] = useState<{ id: number; code: string | null } | null>(null)
 
  useEffect(() => {
  const fetch = async () => {
@@ -41,16 +43,10 @@ export default function ReviewDetail() {
  setCorrections(Array.isArray(corr) ? corr : [])
  } catch { /* no corrections yet */ }
 
- // Get approval actions for this event (via batches)
+ // `R-197` AC13: historial real por evento (individuales + de lote).
  try {
- const { data: batches } = await api.get('/review/batches?limit=50')
- const allActions: any[] = []
- for (const b of (batches.batches || [])) {
- if (b.actions) {
- allActions.push(...b.actions.filter((a: any) => a.event_id === Number(id)))
- }
- }
- setActions(allActions)
+ const { data: acts } = await api.get(`/review/events/${id}/actions`)
+ setActions(Array.isArray(acts) ? acts : [])
  } catch { /* no actions */ }
  } catch (err) {
  console.error(err)
@@ -61,22 +57,41 @@ export default function ReviewDetail() {
  fetch()
  }, [id])
 
+ const recargar = async () => {
+ try {
+ const { data: ev } = await api.get(`/operations/${id}`)
+ setEvent(ev || null)
+ } catch { /* mantiene el detalle actual */ }
+ }
+
  const handleAction = async (action: string) => {
+ // `R-197` AC17: una sola mutación por gesto (guard de vuelo).
+ if (enVuelo.current) return
+ enVuelo.current = true
  try {
  if (action === 'start') await api.post(`/review/start/${id}`)
  else if (action === 'complete') await api.post('/review/complete', { event_id: Number(id) })
  else if (action === 'return') {
- if (!obs) return alert(t('review.obsRequired'))
+ if (obs.trim().length < 10) { setObsError(t('review.observationsMin', 'La observación debe tener al menos 10 caracteres')); return }
+ setObsError('')
  await api.post('/review/return', { event_id: Number(id), observations: obs })
  }
- else if (action === 'approve') await api.post('/approvals/approve', { event_id: Number(id) })
+ else if (action === 'approve') {
+ const { data } = await api.post('/approvals/approve', { event_id: Number(id) })
+ // `R-197` AC14: si la aprobación creó el lote, se ofrece el enlace.
+ if (data?.lot_id) setLoteCreado({ id: data.lot_id, code: data.lot_code || null })
+ }
  else if (action === 'reject') {
- if (!obs) return alert(t('review.obsRequired'))
+ if (!obs.trim()) { setObsError(t('review.obsRequired')); return }
+ setObsError('')
  await api.post('/approvals/reject', { event_id: Number(id), observations: obs })
  }
- navigate('/review')
+ // `R-197` AC15: permanecer en el detalle y refrescarlo (sin navegar fuera).
+ await recargar()
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('review.errorAction')))
+ } finally {
+ enVuelo.current = false
  }
  }
 
@@ -92,9 +107,18 @@ export default function ReviewDetail() {
  {t('review.detailTitle', { id: event.id })}
  </h1>
  <span className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[event.status] || 'bg-slate-100'}`}>
- {event.status}
+ {t(`status.${event.status}`)}
  </span>
  </div>
+
+ {loteCreado && (
+ <div className="mb-5 bg-emerald-50 border border-emerald-200 rounded-xl px-4 py-3 text-sm text-emerald-800">
+ {t('review.lotCreated', 'La aprobación creó el lote')}{' '}
+ <Link to={`/lots/${loteCreado.id}`} className="font-mono underline">
+ #{loteCreado.id}{loteCreado.code ? ` · ${loteCreado.code}` : ''}
+ </Link>
+ </div>
+ )}
 
  <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
  {/* Original Data */}
@@ -257,8 +281,7 @@ export default function ReviewDetail() {
  <Pencil size={14} aria-hidden="true" />
  {t('review.correct')}
  </Link>}
- </div>
- </div>
+ </div> {obsError && <p role="alert" className="text-xs text-red-600 mt-2">{obsError}</p>} </div>
  </div>
  )
 }

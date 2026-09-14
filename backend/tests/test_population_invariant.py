@@ -400,4 +400,5 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     assert len(cabezas) == 1, cabezas
     assert cabezas == ["z6a7b8c9d0e1"], cabezas
     # y hay una ruta nueva de `GA-REM-003` · AC04 (`/api/v1/logout`), 211 → 212.
-    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 212
+    # `R-197` · C2 añade `/api/v1/review/events/{event_id}/actions`, 212 → 213.
+    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 213

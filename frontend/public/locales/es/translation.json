@@ -353,6 +353,11 @@
     "areas": "Áreas Funcionales"
   },
   "review": {
+    "noPermissionQueue": "Sin permiso para ver la bandeja de revisión",
+    "observationsLabel": "Observaciones",
+    "observationsHint": "Motivo (mínimo 10 caracteres).",
+    "observationsMin": "La observación debe tener al menos 10 caracteres",
+    "lotCreated": "La aprobación creó el lote",
     "center": "Centro de Revisión",
     "createBatch": "Crear Lote de Revisión",
     "detailTitle": "Revisión: Evento #{{id}}",

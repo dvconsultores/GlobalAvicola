@@ -1,14 +1,14 @@
 """Review & Approval REST API router."""
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..database import get_db
 from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
-from .service import ApprovalService, ApprovalStepService, ReviewService
+from .service import ESTADOS_BANDEJA, ApprovalService, ApprovalStepService, ReviewService
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/review", tags=["Review"])
 approval_router = APIRouter(route_class=RutaTransaccional, prefix="/approvals", tags=["Approvals"])
@@ -26,18 +26,47 @@ async def list_pending_review(
     event_type: Optional[str] = Query(None),
     date_from: Optional[str] = Query(None),
     date_to: Optional[str] = Query(None),
+    status: Optional[str] = Query(None),
+    registered_by_id: Optional[int] = Query(None),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("review", "read")),
 ):
-    """Get events pending review (registered / pending_review)."""
+    """Bandeja de revisión. Sin `status`: `registered,pending_review` (defecto
+    histórico). Con `status` (lista separada por comas del catálogo cerrado):
+    filtra en servidor; valor fuera del catálogo ⇒ 422 (`R-197` C-03).
+    `operator_id` no forma parte del contrato y se ignora si llega.
+    """
+    estados: Optional[list[str]] = None
+    if status:
+        pedidos = [s.strip() for s in status.split(",") if s.strip()]
+        invalidos = [s for s in pedidos if s not in ESTADOS_BANDEJA]
+        if invalidos or not pedidos:
+            raise HTTPException(
+                status_code=422,
+                detail=f"status inválido: {', '.join(invalidos) or status}",
+            )
+        estados = pedidos
     svc = ReviewService(db, current_user)
     events, total = await svc.get_pending_review_events(
         farm_id=farm_id, lot_id=lot_id, event_type=event_type,
-        date_from=date_from, date_to=date_to, limit=limit, offset=offset,
+        date_from=date_from, date_to=date_to,
+        statuses=estados, registered_by_id=registered_by_id,
+        limit=limit, offset=offset,
     )
     return {"events": events, "total": total}
+
+
+@router.get("/events/{event_id}/actions")
+async def list_event_actions(
+    event_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("review", "read")),
+):
+    """`R-197`/C-08. Historial por evento: acciones individuales y de lote,
+    orden cronológico ascendente. Tenancy vía evento + ámbito de cadena."""
+    return await ReviewService(db, current_user).get_event_actions(event_id)
 
 
 # ============================================================

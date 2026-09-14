@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
  CheckCircle, Check, Play, Undo2, ZoomIn, Package, Search,
- Clock, ListChecks,
+ Clock, ListChecks, Pencil, XCircle,
 } from 'lucide-react'
 import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
@@ -34,7 +34,10 @@ const STATUS_TABS = [
  { key: 'pending_review', labelKey: 'review.pending', fallback: 'Pendientes', icon: Clock, color: 'text-amber-600' },
  { key: 'in_review', labelKey: 'review.inReview', fallback: 'En revisión', icon: Search, color: 'text-indigo-600' },
  { key: 'returned', labelKey: 'review.returned', fallback: 'Devueltos', icon: Undo2, color: 'text-orange-600' },
+ // `R-197` C-03: las siete pestañas de bandeja.
+ { key: 'corrected', labelKey: 'review.corrected', fallback: 'Corregidos', icon: Pencil, color: 'text-amber-700' },
  { key: 'approved', labelKey: 'review.approved', fallback: 'Aprobados', icon: CheckCircle, color: 'text-emerald-600' },
+ { key: 'rejected', labelKey: 'review.rejected', fallback: 'Rechazados', icon: XCircle, color: 'text-red-600' },
  { key: 'consolidated', labelKey: 'review.consolidated', fallback: 'Consolidados', icon: ListChecks, color: 'text-teal-600' },
 ] as const
 
@@ -61,6 +64,10 @@ export default function ReviewCenter() {
  const [farms, setFarms] = useState<any[]>([])
  const [users, setUsers] = useState<any[]>([])
  const [page, setPage] = useState(0)
+ const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
+ const [returnTarget, setReturnTarget] = useState<number | null>(null)
+ const [returnObs, setReturnObs] = useState('')
+ const [returnError, setReturnError] = useState('')
  const limit = 20
 
  const setActiveTab = (tab: StatusTab) => {
@@ -70,12 +77,15 @@ export default function ReviewCenter() {
 
  const statusFilter = useMemo(() => {
  switch (activeTab) {
- case 'pending_review': return 'pending_review'
+ // C-04: el «Pendientes» del supervisor conserva lo registrado aún no enviado.
+ case 'pending_review': return 'registered,pending_review'
  case 'in_review': return 'in_review'
  case 'returned': return 'returned'
+ case 'corrected': return 'corrected'
  case 'approved': return 'approved'
+ case 'rejected': return 'rejected'
  case 'consolidated': return 'consolidated'
- default: return 'pending_review'
+ default: return 'registered,pending_review'
  }
  }, [activeTab])
 
@@ -92,21 +102,32 @@ export default function ReviewCenter() {
  if (dateFrom) params.set('date_from', dateFrom)
  if (dateTo) params.set('date_to', dateTo)
  if (farmId) params.set('farm_id', farmId)
- if (operatorId) params.set('operator_id', operatorId)
+ if (operatorId && can({ permission: 'users:read' })) params.set('registered_by_id', operatorId)
  const { data } = await api.get(`/review/pending?${params}`)
  setEvents(data.events || [])
  setTotal(data.total || 0)
+ setEstado('ok')
  } catch (err: any) {
+ // `R-197` AC19: 403 es falta de permiso — jamás «sin resultados».
+ if (err?.response?.status === 403) {
+ setEstado('prohibido')
+ } else {
+ setEstado('error')
  toast.error(getErrorMessage(err, t('review.errorLoading')))
+ }
  } finally {
  setLoading(false)
  }
- }, [lotId, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, t, toast])
+ }, [lotId, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, t, toast, can])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
  useEffect(() => {
  api.get('/masters/farms?limit=100').then(r => setFarms(r.data || [])).catch(() => {})
+ // `R-197` AC18/C-05: administración de acceso ≠ acceso operativo. Sin
+ // `users:read` no se pide `/users` y el filtro de operador no se muestra.
+ if (can({ permission: 'users:read' })) {
  api.get('/users?limit=100').then(r => setUsers(r.data || [])).catch(() => {})
+ }
  }, [])
 
  const clearFilters = () => {
@@ -120,14 +141,35 @@ export default function ReviewCenter() {
  }
 
  const handleAction = async (eventId: number, action: 'start' | 'return' | 'complete') => {
- const observations = action === 'return' ? prompt(t('review.obsPrompt')) : undefined
- if (action === 'return' && !observations) return
+ // `R-197` AC07/AC20: la devolución usa modal propio (sin `prompt` nativo)
+ // y exige observación ≥ 10 en cliente (el servidor ya la exige).
+ if (action === 'return') {
+ setReturnTarget(eventId)
+ setReturnObs('')
+ setReturnError('')
+ return
+ }
 
  try {
  if (action === 'start') await api.post(`/review/start/${eventId}`)
  else if (action === 'complete') await api.post('/review/complete', { event_id: eventId })
- else if (action === 'return') await api.post('/review/return', { event_id: eventId, observations })
  toast.success(t('review.actionCompleted', { action }))
+ fetchEvents()
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('review.errorAction')))
+ }
+ }
+
+ const confirmarDevolucion = async () => {
+ if (returnTarget === null) return
+ if (returnObs.trim().length < 10) {
+ setReturnError(t('review.observationsMin', 'La observación debe tener al menos 10 caracteres'))
+ return
+ }
+ try {
+ await api.post('/review/return', { event_id: returnTarget, observations: returnObs })
+ setReturnTarget(null)
+ toast.success(t('review.actionCompleted', { action: 'return' }))
  fetchEvents()
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('review.errorAction')))
@@ -242,8 +284,10 @@ export default function ReviewCenter() {
  </select>
  </FilterGroup>
 
+ {can({ permission: 'users:read' }) && (
  <FilterGroup label={t('review.operator', 'Operador')}>
  <select
+ data-filtro="operador"
  value={operatorId}
  onChange={e => { setOperatorId(e.target.value); setPage(0) }}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
@@ -254,6 +298,7 @@ export default function ReviewCenter() {
  ))}
  </select>
  </FilterGroup>
+ )}
 
  <FilterGroup label={t('common.date', 'Fecha')}>
  <input
@@ -272,6 +317,28 @@ export default function ReviewCenter() {
  </FilterGroup>
  </FilterPanel>
 
+ {/* `R-197` AC07/AC20: devolución con modal propio (sin diálogos nativos). */}
+ {returnTarget !== null && (
+ <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setReturnTarget(null)}>
+ <div className="bg-white rounded-2xl shadow-xl p-6 max-w-md w-full mx-4" onClick={(e) => e.stopPropagation()}>
+ <h2 className="text-lg font-bold text-[#1E3A5F] mb-1">{t('review.returnToOperator', 'Devolver al operador')}</h2>
+ <p className="text-xs text-slate-500 mb-3">{t('review.observationsHint', 'Motivo (mínimo 10 caracteres).')}</p>
+ <textarea
+ aria-label={t('review.observationsLabel', 'Observaciones')}
+ value={returnObs}
+ onChange={(e) => setReturnObs(e.target.value)}
+ rows={3}
+ className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm"
+ />
+ {returnError && <p className="text-xs text-red-600 mt-1">{returnError}</p>}
+ <div className="flex gap-3 mt-4">
+ <button onClick={() => setReturnTarget(null)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel', 'Cancelar')}</button>
+ <button onClick={confirmarDevolucion} className="flex-1 bg-orange-600 text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-orange-700 transition">{t('common.confirm', 'Confirmar')}</button>
+ </div>
+ </div>
+ </div>
+ )}
+
  {/* Mobile Cards */}
  <div className="lg:hidden space-y-3">
  {loading && (
@@ -285,7 +352,12 @@ export default function ReviewCenter() {
  ))}
  </div>
  )}
- {!loading && events.length === 0 && (
+ {!loading && estado === 'prohibido' && (
+ <div role="alert" className="bg-amber-50 border border-amber-200 rounded-xl p-6 text-center">
+ <p className="text-sm font-medium text-amber-800">{t('review.noPermissionQueue')}</p>
+ </div>
+ )}
+ {!loading && estado === 'ok' && events.length === 0 && (
  <div className="text-center py-12">
  <Search size={32} className="mx-auto text-slate-300 mb-3" />
  <p className="text-sm text-slate-500">{t('common.noResults', 'Sin resultados')}</p>

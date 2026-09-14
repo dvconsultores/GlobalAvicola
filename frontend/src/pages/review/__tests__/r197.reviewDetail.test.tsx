@@ -13,7 +13,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
-import { MemoryRouter } from 'react-router-dom'
+import { MemoryRouter, Routes, Route } from 'react-router-dom'
 
 const get = vi.fn()
 const post = vi.fn()
@@ -77,7 +77,9 @@ beforeEach(() => {
 
 const renderPage = () => render(
   <MemoryRouter initialEntries={['/review/55']}>
-    <ToastProvider><ReviewDetail /></ToastProvider>
+    <Routes>
+      <Route path="/review/:id" element={<ToastProvider><ReviewDetail /></ToastProvider>} />
+    </Routes>
   </MemoryRouter>,
 )
 
@@ -95,7 +97,7 @@ describe('R-197 · detalle de revisión (RED)', () => {
     post.mockResolvedValue({ data: { ok: true } })
     renderPage()
     await screen.findByText(/mortality/)
-    fireEvent.click(screen.getAllByRole('button', { name: /Completar/ })[0])
+    fireEvent.click(screen.getAllByRole('button', { name: /completeReview/ })[0])
     await waitFor(() => {
       const recargas = urls(get).filter((u) => u === '/operations/55').length
       expect(recargas, 'no recargó el detalle').toBeGreaterThan(1)
@@ -116,7 +118,7 @@ describe('R-197 · detalle de revisión (RED)', () => {
     const promptSpy = vi.spyOn(window, 'prompt').mockImplementation(() => 'x')
     renderPage()
     await screen.findByText(/mortality/)
-    fireEvent.click(screen.getAllByRole('button', { name: /Devolver/ })[0])
+    fireEvent.click(screen.getAllByRole('button', { name: /returnToOperator/ })[0])
     expect(alertSpy).not.toHaveBeenCalled()
     expect(promptSpy).not.toHaveBeenCalled()
     alertSpy.mockRestore(); promptSpy.mockRestore()
@@ -134,7 +136,7 @@ describe('R-197 · detalle de revisión (RED)', () => {
     post.mockResolvedValue({ data: { id: 55, status: 'approved', lot_id: 88, lot_created: true } })
     renderPage()
     await screen.findByText(/mortality/)
-    const aprobar = screen.getAllByRole('button', { name: /Aprobar/ })[0]
+    const aprobar = screen.getAllByRole('button', { name: /review\.approve/ })[0]
     fireEvent.click(aprobar)
     fireEvent.click(aprobar)
     await waitFor(() => expect(urls(post).filter((u) => u.includes('/approvals/approve')).length).toBe(1))

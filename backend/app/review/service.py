@@ -11,6 +11,14 @@ from ..audit.models import AuditAction, AuditModule
 from ..operations.models import EventStatus, OperationalEvent
 from . import models, schemas
 
+# `R-197`/C-03. Catálogo cerrado de estados de BANDEJA (no todos los del ciclo de
+# vida: `draft`, `sent_to_sap`, `sap_confirmed`, `sap_error` y `cancelled` viven
+# en otras superficies). Otro valor ⇒ 422 en el router.
+ESTADOS_BANDEJA = (
+    "registered", "pending_review", "in_review", "returned",
+    "corrected", "approved", "rejected", "consolidated", "reversed",
+)
+
 
 class SegregacionMixin:
     """`BR-14` en un unico sitio, para todo el que apruebe.
@@ -157,20 +165,30 @@ class ReviewService(SegregacionMixin):
         event_type: Optional[str] = None,
         date_from: Optional[str] = None,
         date_to: Optional[str] = None,
+        statuses: Optional[list[str]] = None,
+        registered_by_id: Optional[int] = None,
         limit: int = 50,
         offset: int = 0,
     ) -> tuple[list[OperationalEvent], int]:
-        """Get events pending review (status=registered or pending_review)."""
+        """Eventos de la bandeja de revisión.
+
+        `R-197`/C-03: sin `status` se conserva el defecto histórico
+        (`registered,pending_review`); con `status` (lista ya validada por el
+        router contra `ESTADOS_BANDEJA`) se filtra en la consulta, antes de
+        paginar (`GA-REM-032 AC10`). `registered_by_id` filtra por operador.
+        """
         _ambito = await self._ambito_de_unidad()
+        estados = [EventStatus(s) for s in statuses] if statuses else [
+            EventStatus.REGISTERED, EventStatus.PENDING_REVIEW]
         base = select(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
             *_ambito,
-            OperationalEvent.status.in_([EventStatus.REGISTERED, EventStatus.PENDING_REVIEW]),
+            OperationalEvent.status.in_(estados),
         )
         count_q = select(func_count()).select_from(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
             *_ambito,
-            OperationalEvent.status.in_([EventStatus.REGISTERED, EventStatus.PENDING_REVIEW]),
+            OperationalEvent.status.in_(estados),
         )
 
         if farm_id:
@@ -188,6 +206,9 @@ class ReviewService(SegregacionMixin):
         if date_to:
             base = base.where(OperationalEvent.event_date <= date_to)
             count_q = count_q.where(OperationalEvent.event_date <= date_to)
+        if registered_by_id:
+            base = base.where(OperationalEvent.registered_by_id == registered_by_id)
+            count_q = count_q.where(OperationalEvent.registered_by_id == registered_by_id)
 
         base = base.order_by(OperationalEvent.event_date.desc()).offset(offset).limit(limit)
 
@@ -198,6 +219,43 @@ class ReviewService(SegregacionMixin):
         total = count_result.scalar() or 0
 
         return events, total
+
+    # ============================================================
+    # `R-197` · historial por evento (approval_actions)
+    # ============================================================
+
+    async def get_event_actions(self, event_id: int) -> list[dict]:
+        """Historial real por evento: individuales y de lote, orden cronológico.
+
+        `ApprovalAction` no declara `company_id` (finding C1-B): la tenancy se
+        resuelve por el EVENTO; además se exige el mismo ámbito de cadena de las
+        colas (`GA-REM-040` fase 6) — sin bloqueo (solo lectura; R-166 serializa
+        decisiones, no lecturas).
+        """
+        from .models import ApprovalAction
+
+        event = await self._get_event(event_id)  # 404 fuera de empresa
+        _ambito = await self._ambito_de_unidad()
+        en_ambito = await self.db.execute(
+            select(OperationalEvent.id).where(
+                OperationalEvent.id == event.id, *_ambito)
+        )
+        if en_ambito.scalar_one_or_none() is None:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Evento no encontrado")
+        result = await self.db.execute(
+            select(ApprovalAction)
+            .where(ApprovalAction.event_id == event.id)
+            .order_by(ApprovalAction.created_at.asc(), ApprovalAction.id.asc()))
+        return [
+            {
+                "id": a.id, "event_id": a.event_id, "batch_id": a.batch_id,
+                "step_id": a.step_id, "user_id": a.user_id,
+                "action_type": a.action_type.value,
+                "observations": a.observations, "created_at": a.created_at,
+            }
+            for a in result.scalars().all()
+        ]
 
     # ============================================================
     # Review batches

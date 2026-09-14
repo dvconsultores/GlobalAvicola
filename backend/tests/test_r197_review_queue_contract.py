@@ -70,10 +70,10 @@ async def esc_r197(test_database_url):
         s.add(Permission(role_id=role_rev.id, module=modulo, action=accion, scope_type="company"))
     await s.flush()
 
-    def _usuario(marca: str, rol: Role) -> User:
+    def _usuario(marca: str, rol: Role, empresa_obj: Company = empresa) -> User:
         return User(first_name=marca, last_name="R197", email=f"{PREFIJO}{uuid.uuid4().hex[:8]}@globalavicola.com",
                     username=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}", hashed_password=hash_password("x1234567"),
-                    company_id=empresa.id, role_id=rol.id, is_active=True)
+                    company_id=empresa_obj.id, role_id=rol.id, is_active=True)
 
     op = _usuario("OP", role_rev)
     rev = _usuario("REV", role_rev)
@@ -109,11 +109,30 @@ async def esc_r197(test_database_url):
     s.add(ApprovalAction(event_id=eventos["in_review"].id, action_type="started_review",
                          user_id=rev.id))
     await s.flush()
+
+    # Empresa B: negativo de tenencia (`06b` — el evento de A es invisible en B).
+    empresa_b = Company(name=f"{PREFIJO}B-{uuid.uuid4().hex[:6]}", is_active=True)
+    s.add(empresa_b)
+    await s.flush()
+    hab_b = CompanyBusinessUnit(company_id=empresa_b.id, business_unit_id=unidades["breeder"].id, is_enabled=True)
+    s.add(hab_b)
+    await s.flush()
+    role_rev_b = Role(name=f"{PREFIJO}revb-{uuid.uuid4().hex[:6]}", company_id=empresa_b.id, is_active=True)
+    s.add(role_rev_b)
+    await s.flush()
+    for modulo, accion in revisar:
+        s.add(Permission(role_id=role_rev_b.id, module=modulo, action=accion, scope_type="company"))
+    await s.flush()
+    rev_b = _usuario("REVB", role_rev_b, empresa_b)
+    s.add(rev_b)
+    await s.flush()
+    await conceder_unidad(s, user=rev_b, company_business_unit=hab_b)
     await s.commit()
 
     yield {
         "url": test_database_url, "empresa": empresa, "op": op, "rev": rev, "np": np,
         "eventos": eventos, "lote": lote, "token_rev": _token(rev.id), "token_np": _token(np.id),
+        "token_rev_b": _token(rev_b.id),
     }
 
     async with motor.begin() as c:
@@ -163,6 +182,14 @@ async def test_r197_04_registered_by_id_filtra(client, esc_r197):
     assert ids == {esc_r197["eventos"]["in_review"].id, esc_r197["eventos"]["returned"].id}, ids
 
 
+async def test_r197_04b_status_multiple(client, esc_r197):
+    r = await client.get("/api/v1/review/pending?status=returned,pending_review",
+                         headers=esc_r197["token_rev"])
+    assert r.status_code == 200, r.text
+    ids = {e["id"] for e in r.json()["events"]}
+    assert ids == {esc_r197["eventos"]["returned"].id, esc_r197["eventos"]["pending_review"].id}, ids
+
+
 async def test_r197_05_acciones_por_evento(client, esc_r197):
     ev = esc_r197["eventos"]["in_review"]
     r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_rev"])
@@ -175,3 +202,13 @@ async def test_r197_06_acciones_sin_review_read_403(client, esc_r197):
     ev = esc_r197["eventos"]["in_review"]
     r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_np"])
     assert r.status_code == 403, r.text
+
+
+async def test_r197_06b_acciones_de_evento_ajeno_404(client, esc_r197):
+    """La tenencia se deriva del evento, no del rol (`R-197` S3)."""
+    ev = esc_r197["eventos"]["in_review"]
+    r = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_rev_b"])
+    assert r.status_code == 404, r.text
+    # Control, mismo sujeto y consulta: el supervisor de la empresa dueña ve 200.
+    r2 = await client.get(f"/api/v1/review/events/{ev.id}/actions", headers=esc_r197["token_rev"])
+    assert r2.status_code == 200, r2.text

@@ -145,6 +145,9 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/reversals/event/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),
     # ── Revisión y aprobación · `P-07`, flujo 6 ───────────────────────────────
     "/api/v1/review/pending": (Alcance.MULTI_UNIDAD, None, "cola de las cuatro"),
+    # `R-197`/C-09: lectura de control del historial por evento; empresa +
+    # ámbito de cadena (mismo predicado que las colas), sin bloqueo.
+    "/api/v1/review/events/{event_id}/actions": (Alcance.MULTI_UNIDAD, None, "historial del evento"),
     "/api/v1/review/batches": (Alcance.MULTI_UNIDAD, None, "cola de las cuatro"),
     "/api/v1/review/start/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),
     "/api/v1/review/complete": (Alcance.MULTI_UNIDAD, None, "ídem"),
