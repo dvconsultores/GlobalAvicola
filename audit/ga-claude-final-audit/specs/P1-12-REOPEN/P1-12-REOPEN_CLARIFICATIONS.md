@@ -4,7 +4,7 @@ Fecha: 2026-09-13 · HEAD `c0b4afc` · Resolver antes de C2. C-01 es decisión t
 
 | # | Pregunta | Supuesto por defecto | Fuente | Decisión |
 |---|---|---|---|---|
-| C-01 | ¿Qué productor queda para `OperationalEvent`/`CorrectionLog`/`ApprovalAction`? | **Híbrido determinista (recomendado)**: listener único para las 3 entidades + retirada de las llamadas helper que duplican; helpers solo donde el listener no llega (lotes/usuarios/evidencias/curvas/acciones administrativas). Alternativas: (B) solo helpers (retirar listener), (C) solo listener (pierde `audit_accion`). | `listeners.py:71-113`; `helpers.py`; evidencia H6/H8b | técnica (registrar en C1) |
+| C-01 | ¿Qué productor queda para `OperationalEvent`/`CorrectionLog`/`ApprovalAction`? | **Híbrido determinista refinado (registrado en C1)**: (1) listener único para `OperationalEvent` (alta + transiciones) y `CorrectionLog`; (2) **ruta `ApprovalAction` retirada del listener** — cada decisión transita el estado del evento (fuente única) y el batch (update masivo invisible) recibe productor explícito de transición (T-07); (3) retirada de helpers que solapan (`audit_event_created`; `audit_state_transition` donde el estado ya transita; `audit_correction`); (4) `audit_accion` para lo que el listener no ve (lotes/usuarios/evidencias/curvas/batch/administrativas); (5) mapa del listener: `pending_review→UPDATED`, `reversed→REVERSED`. Alternativas: (B) solo helpers, (C) solo listener. | `listeners.py:71-113`; `helpers.py`; evidencia H6/H8b | **REGISTRADA (C1)** |
 | C-02 | ¿Idempotencia por (entidad, id, acción, estado) además de retirar duplicados? | Sí, como defensa en profundidad si C-01=B/C. | diseño | técnica |
 | C-03 | Exportaciones cliente (Excel/PDF): ¿auditar? | Por defecto **A**: documentar `NOT_APPLICABLE_CLIENT` (no hay endpoint; GA-REM-032 AC04 se anota); alternativa B: endpoint de auditoría de exportación (fuera de alcance por defecto). | E-16 | técnica |
 | C-04 | ¿Se limpian históricos duplicados? | No (inmutabilidad; R-148). Inventario de lectura opcional. | encargo §61 | técnica |
@@ -12,4 +12,4 @@ Fecha: 2026-09-13 · HEAD `c0b4afc` · Resolver antes de C2. C-01 es decisión t
 | C-06 | ¿Se toca el SLA de 24 h? | Sin cambio de lógica; tras el fix, las filas `pending_review` existen también para batch/contrapartida (E-06) y el SLA las ve. | `sla.py:44-60` | técnica |
 | C-07 | ¿Logout (GA-REM-003 AC04)? | Fuera de aquí; se anota el estado real en GA-REM-032. | registro §7 | técnica |
 
-Decisiones abiertas: C-01 (registrar opción en C1). El resto tiene default claro.
+Decisiones abiertas: ninguna — C-01 registrada en C1 (híbrido determinista refinado; detalle en la tabla).
