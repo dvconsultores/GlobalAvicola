@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB.test.tsx (3 tests | 2 failed) 11ms
+     × AC-R220-B·B5 · `/operations` tiene entrada de menú (Historial) con `operations:read` 7ms
+     × AC-R220-B·B3 · `/my-pending` tiene entrada de menú (Mis pendientes) con `operations:read` 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB.test.tsx > R-220 · Lote B primera tanda (RED) > AC-R220-B·B5 · `/operations` tiene entrada de menú (Historial) con `operations:read`
+AssertionError: historial operativo sin entrada de menú: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteB.test.tsx:25:64
+     23|   it('AC-R220-B·B5 · `/operations` tiene entrada de menú (Historial) c…
+     24|     const entrada = rutas(NAV_ITEMS as Nodo[]).find((r) => r.to === '/…
+     25|     expect(entrada, 'historial operativo sin entrada de menú').toBeTru…
+       |                                                                ^
+     26|     expect(entrada?.permission).toBe('operations:read')
+     27|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/r220.loteB.test.tsx > R-220 · Lote B primera tanda (RED) > AC-R220-B·B3 · `/my-pending` tiene entrada de menú (Mis pendientes) con `operations:read`
+AssertionError: /my-pending huérfana: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteB.test.tsx:31:45
+     29|   it('AC-R220-B·B3 · `/my-pending` tiene entrada de menú (Mis pendient…
+     30|     const entrada = rutas(NAV_ITEMS as Nodo[]).find((r) => r.to === '/…
+     31|     expect(entrada, '/my-pending huérfana').toBeTruthy()
+       |                                             ^
+     32|     expect(entrada?.permission).toBe('operations:read')
+     33|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  00:04:13
+   Duration  1.27s (transform 86ms, setup 62ms, import 169ms, tests 11ms, environment 846ms)
+
