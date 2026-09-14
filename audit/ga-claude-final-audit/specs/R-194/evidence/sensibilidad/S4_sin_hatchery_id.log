@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx (6 tests | 1 failed) 1092ms
+     × AC-R194-06 · hatchery_id viaja en la fila 207ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-06 · hatchery_id viaja en la fila
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected:
+1
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:153:55
+    151|     cambio('egg_storage_records.0.eggs_received', '1000')
+    152|     const payload = await guardar()
+    153|     expect(payload.hatchery_params?.[0]?.hatchery_id).toBe(1)
+       |                                                       ^
+    154|   })
+    155| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  02:22:47
+   Duration  2.28s (transform 214ms, setup 51ms, import 458ms, tests 1.09s, environment 545ms)
+

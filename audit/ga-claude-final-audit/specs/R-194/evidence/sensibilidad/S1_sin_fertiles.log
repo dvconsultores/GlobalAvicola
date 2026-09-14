@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx (6 tests | 1 failed) 1039ms
+     × AC-R194-02 · los fértiles viajan como egg_movements[fertile] 172ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-02 · los fértiles viajan como egg_movements[fertile]
+AssertionError: expected undefined to be 1000 // Object.is equality
+
+- Expected:
+1000
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:112:32
+    110|     const payload = await guardar()
+    111|     const fertiles = (payload.egg_movements || []).find((m: any) => m?…
+    112|     expect(fertiles?.quantity).toBe(1000)
+       |                                ^
+    113|   })
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  02:22:26
+   Duration  2.21s (transform 229ms, setup 72ms, import 424ms, tests 1.04s, environment 554ms)
+

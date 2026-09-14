@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx (6 tests | 1 failed) 1075ms
+     × AC-R194-01 · recepción con ubicación y arrival_date en el payload 342ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r194.hatcheryChain.test.tsx > R-194 · cadena de incubadora por UI > AC-R194-01 · recepción con ubicación y arrival_date en el payload
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected:
+1
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx:100:29
+     98|     cambio('egg_storage_records.0.eggs_received', '1000')
+     99|     const payload = await guardar()
+    100|     expect(payload.farm_id).toBe(1)
+       |                             ^
+    101|     expect(payload.house_id).toBe(80)
+    102|     expect(payload.egg_storage_records?.[0]?.arrival_date).toBeTruthy()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  02:22:44
+   Duration  2.26s (transform 217ms, setup 56ms, import 435ms, tests 1.08s, environment 579ms)
+
