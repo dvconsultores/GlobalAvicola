@@ -330,3 +330,7 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Certificación**: `GA_T8_CERTIFICATION.md` + `GA_CLAUDE_P112/R198/R219_RUNTIME_CERTIFICATION.md`; CI = `NOT_APPLICABLE_BY_OWNER_DECISION` (AOD-29). **P-02/P-09 reparados técnicamente**; KPI de procesos 0/17 sin cambio.
 - **Publicación local (AOD-29)**: `LOCAL_CERTIFIED_SHA` = commit de este cierre (registrado en AE-46b); `REMOTE_SYNC_STATUS=NOT_REQUIRED_CURRENT_OWNER_POLICY`; `PUSH = NOT_PERFORMED_BY_OWNER_POLICY`.
 - **Siguiente**: **T9 · Maestros y usuarios (R-215 · R-196 · R-195)** — arranque automático en flujo local.
+
+## AE-46b · 2026-09-14 · T8 — registro de publicación local (AOD-29)
+
+- `LOCAL_CERTIFIED_SHA = 8eb6e90` · `WORKTREE_CLEAN = YES` · `LOCAL_CERTIFICATION = PASS (gates locales: BE 1364/0/49 · FE 399/399 · tsc -b · build)` · `REMOTE_SYNC_STATUS = NOT_REQUIRED_CURRENT_OWNER_POLICY` (origin en `45acbf8` — esperado) · `GITHUB_ACTIONS_STATUS = NOT_APPLICABLE_BY_OWNER_DECISION` · `PUSH = NOT_PERFORMED_BY_OWNER_POLICY`.

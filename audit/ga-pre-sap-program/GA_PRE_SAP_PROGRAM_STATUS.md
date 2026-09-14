@@ -1,6 +1,6 @@
 # GA · PRE-SAP — ESTADO DEL PROGRAMA (TRANCHE 0 · cierre)
 
-Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (CI run #26) · T3 CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13 (`9cb075f`; R-221 PARTIAL) · T4 CERRADA TÉCNICAMENTE (`976201d`) · T5 CERRADA TÉCNICAMENTE (`0f587b1`) · T6 CERRADA TÉCNICAMENTE (`cd33d23`; R-194) · T7 CERRADA TÉCNICAMENTE (`e30178b`; R-192/R-193/R-211) · T8 CERRADA TÉCNICAMENTE (`45acbf8`; P1-12/R-198/R-219) — T9 en arranque automático**.
+Fecha: 2026-09-13 · Baseline: `f270d0b` (+ commits de governance de T0) · Fase: **T1 CERRADA (AC-06 = PASS) · T2 CERRADA (CI run #26) · T3 CLOSED_TECHNICALLY / OWNER_GATE_PENDING_AOD13 (`9cb075f`; R-221 PARTIAL) · T4 CERRADA TÉCNICAMENTE (`976201d`) · T5 CERRADA TÉCNICAMENTE (`0f587b1`) · T6 CERRADA TÉCNICAMENTE (`cd33d23`; R-194) · T7 CERRADA TÉCNICAMENTE (`e30178b`; R-192/R-193/R-211) · T8 CERRADA TÉCNICAMENTE (local `8eb6e90`; P1-12/R-198/R-219) — T9 en arranque automático**. **Política AOD-29: certificación local, sin push**.
 
 ## 1 · KPI del programa
 
