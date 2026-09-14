@@ -376,3 +376,12 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Push**: `afea748..6baf4ae` → `origin/main` (fast-forward; sin force). `LOCAL_SHA = 6baf4ae319403ef8d20eca38ef53b10ab6f83ce8 = REMOTE_SHA` ⇒ `REMOTE_SHA_MATCH = PASS`.
 - **Política**: `GITHUB_ACTIONS = NOT_APPLICABLE_BY_OWNER_DECISION`; `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION`; `PUSH != DEPLOY`.
 - **Siguiente**: **R-207** (reverso — superficie autorizada) en T10; después R-142 según AOD-17.
+
+## AE-52 · 2026-09-14 · T10 CERRADA TÉCNICAMENTE — R-197 · R-207 (R-142 diferida por AOD-17)
+
+- **R-197**: RED `afea748` · IMPL `10f7b53` · C2b `e21629a` · CERT `f128218`/`6baf4ae`. Bandeja por los 7 estados, historial real por evento, resultado de aprobación en el detalle. Gates: BE 10/10 + full 1373/0/49 + guardián rutas=213; FE 10/10 + 429/429; build 0; sensibilidad S1-S4/F1-F6 con restore `10f7b53`.
+- **R-207**: RED `3eb1193` · IMPL `4e8d999` · CERT `00d4bea`. Superficie de reverso (botón gate `reversals:create`, modal sin diálogos nativos con motivo ≥5, contrapartida enlazada desde el 201, `reversed` con color propio en mapa central/listas/bandejas). Gates: FE 4/4 + 433/433; build 0; BE no requerida (diff 0); sensibilidad R1-R5 con restore `4e8d999`.
+- **Push**: `c880cd5..00d4bea` → `origin/main` (fast-forward). `LOCAL_SHA = 00d4bea9c817541a687bebdf713c28ad7b4f3a5f = REMOTE_SHA` ⇒ `REMOTE_SHA_MATCH = PASS`.
+- **Certificación de tranche**: `GA_T10_CERTIFICATION.md`.
+- **R-142**: condición `AOD-17` (semántica `CORRECTED` multinivel) **no cumplida** — decisión del propietario `SCHEDULED` (lote §25); diferida y documentada en la cola; no bloquea el cierre de T10.
+- **Siguiente**: **T11** (residuales FE `R-213` · `R-212` · `R-218` · `R-220`) — arranque automático.
