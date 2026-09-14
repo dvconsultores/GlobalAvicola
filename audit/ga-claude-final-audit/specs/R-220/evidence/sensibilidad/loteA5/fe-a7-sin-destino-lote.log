@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA5.test.tsx (3 tests | 1 failed) 10ms
+     × AC-R220-A·A7 · los avisos de lote y de payload SAP tienen destino 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA5.test.tsx > R-220 · Lote A quinta tanda (RED) > AC-R220-A·A7 · los avisos de lote y de payload SAP tienen destino
+AssertionError: expected null to be '/lots/7' // Object.is equality
+
+- Expected:
+"/lots/7"
+
++ Received:
+null
+
+ ❯ src/__tests__/r220.loteA5.test.tsx:27:38
+     25| describe('R-220 · Lote A quinta tanda (RED)', () => {
+     26|   it('AC-R220-A·A7 · los avisos de lote y de payload SAP tienen destin…
+     27|     expect(destino(aviso('lot', 7))).toBe('/lots/7')
+       |                                      ^
+     28|     expect(destino(aviso('sap_payload', 12))).toBe('/sap')
+     29|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  20:04:20
+   Duration  929ms (transform 108ms, setup 64ms, import 171ms, tests 10ms, environment 559ms)
+
