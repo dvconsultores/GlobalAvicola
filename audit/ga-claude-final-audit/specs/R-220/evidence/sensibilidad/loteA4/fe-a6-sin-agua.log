@@ -1,0 +1,241 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA4.test.tsx (1 test | 1 failed) 94ms
+     × AC-R220-A·A6 · el detalle pinta agua, sanos/débiles, params de incubadora e inspecciones 90ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA4.test.tsx > R-220 · Lote A cuarta tanda (RED) > AC-R220-A·A6 · el detalle pinta agua, sanos/débiles, params de incubadora e inspecciones
+TestingLibraryElementError: Unable to find an element with the text: /Agua:? 700/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 space-y-4"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"text-slate-400 hover flex items-center gap-1 text-sm"[39m
+        [33mdata-discover[39m=[32m"true"[39m
+        [33mhref[39m=[32m"/operations"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"16"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"16"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"m12 19-7-7 7-7"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M19 12H5"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+        [0m [0m
+        [0moperations.backToOperations[0m
+      [36m</a>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between mb-4"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0moperations.eventDetail[0m
+          [36m</h1>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800"[39m
+          [36m>[39m
+            [0mapproved[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<dl[39m
+          [33mclass[39m=[32m"grid grid-cols-2 gap-4 text-sm"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.type[0m
+            [36m</dt>[39m
+            [36m<dd[39m
+              [33mclass[39m=[32m"font-medium"[39m
+            [36m>[39m
+              [0mbirth_registration[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.date[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m2026-09-10[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mlots.lot[0m
+            [36m</dt>[39m
+            [36m<dd[39m
+              [33mclass[39m=[32m"font-mono"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"text-[#5a9bba] hover:underline"[39m
+                [33mdata-discover[39m=[32m"true"[39m
+                [33mhref[39m=[32m"/lots/1"[39m
+              [36m>[39m
+                [0m#[0m
+                [0m1[0m
+              [36m</a>[39m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.version[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0mv[0m
+              [0m1[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"col-span-2"[39m
+          [36m>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.observations[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m—[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+        [36m</dl>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0mSanos[0m
+            [0m: [0m
+            [0m300[0m
+            [0m · [0m
+            [0mDébiles[0m
+            [0m: [0m
+            [0m4[0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2"[39m
+          [36m>[39m
+            [0mIncubadora[0m
+          [36m</h3>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0mCargados[0m
+            [0m: [0m
+            [0m500[0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2"[39m
+          [36m>[39m
+            [0mInspecciones[0m
+          [36m</h3>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0mInspección[0m
+            [0m: [0m
+            [0m7[0m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-2 mb-4"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-paperclip text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"text-base font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mevidence.title[0m
+          [36m</h2>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ml-auto text-xs text-slate-400"[39m
+          [36m>[39m
+            [0mevidence.allowedTypes[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-sm text-slate-400 mb-4 italic"[39m
+        [36m>[39m
+          [0mevidence.noFiles[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/r220.loteA4.test.tsx:69:19
+     67|     )
+     68|     await waitFor(() => expect(screen.getByText(/birth_registration/))…
+     69|     expect(screen.getByText(/Agua:? 700/), 'agua omitida').toBeTruthy()
+       |                   ^
+     70|     expect(screen.getByText(/Sanos:? 300/), 'sanos/débiles omitidos').…
+     71|     expect(screen.getByText(/Cargados:? 500/), 'params de incubadora o…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  19:10:03
+   Duration  1.31s (transform 126ms, setup 71ms, import 302ms, tests 94ms, environment 693ms)
+
