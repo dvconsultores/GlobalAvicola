@@ -1,0 +1,65 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter initialEntries={[...]}>
+    <Router basename={undefined} location={{pathname:"...", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <ToastProvider>
+        <ReviewCenter>
+          <div>
+            <div>
+            <div>
+            <FilterPanel onClear={function clearFilters} totalResults={0}>
+              <div className="bg-white r...">
+>               <button
+>                 onClick={function onClick}
+>                 className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 h..."
+>                 aria-expanded={true}
+>               >
+                  <div>
+                  <div className="flex items...">
+                    <span>
+>                   <button
+>                     onClick={function onClick}
+>                     className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transit..."
+>                   >
+                ...
+            ...
+        ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx (5 tests | 1 failed) 1493ms
+     × AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL 224ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewQueue.test.tsx > R-197 · bandeja de revisión (RED) > AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL
+AssertionError: expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/pages/review/__tests__/r197.reviewQueue.test.tsx:83:72
+     81|       expect(screen.getAllByRole('button', { name: new RegExp(etiqueta…
+     82|     }
+     83|     expect(urlsLlamadas().some((u) => u.includes('status=in_review')))…
+       |                                                                        ^
+     84|   })
+     85|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  16:19:21
+   Duration  2.56s (transform 177ms, setup 49ms, import 362ms, tests 1.49s, environment 547ms)
+

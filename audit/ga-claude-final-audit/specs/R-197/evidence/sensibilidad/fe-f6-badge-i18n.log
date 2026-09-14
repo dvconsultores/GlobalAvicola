@@ -1,0 +1,770 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx (5 tests | 1 failed) 1266ms
+     × AC21 · el badge de estado usa i18n (`status.in_review`) 1021ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/review/__tests__/r197.reviewDetail.test.tsx > R-197 · detalle de revisión (RED) > AC21 · el badge de estado usa i18n (`status.in_review`)
+TestingLibraryElementError: Unable to find an element with the text: /status\.in_review/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"[39m
+        [36m>[39m
+          [0min_review[0m
+        [36m</span>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mmortality[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m2026-09-10[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m1[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m2[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+                [0m1[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-4 pt-4 border-t border-slate-100"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase mb-2 flex items-center gap-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 9H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 13H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17H8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.actionsHistory[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-xs text-slate-600 mb-1"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"font-medium"[39m
+              [36m>[39m
+                [0mstarted[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+              [36m>[39m
+                [0m10/9/2026, 11:00:00 a. m.[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-xs text-slate-600 mb-1"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"font-medium"[39m
+              [36m>[39m
+                [0mbatch_created[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+              [36m>[39m
+                [0m10/9/2026, 11:05:00 a. m.[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition"[39m
+          [36m>[39m
+            [0m✓ [0m
+            [0mreview.completeReview[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+              [33mplaceholder[39m=[32m"review.observationsPlaceholder"[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-orange-700 transition"[39m
+            [36m>[39m
+              [0m↩ [0m
+              [0mreview.returnToOperator[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+              [33mplaceholder[39m=[32m"review.rejectionReason"[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+    [36m/>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+        [36m>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-slate-400 hover"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/review"[39m
+          [36m>[39m
+            [0m← [0m
+            [0mcommon.back[0m
+          [36m</a>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0mreview.detailTitle[0m
+          [36m</h1>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"[39m
+          [36m>[39m
+            [0min_review[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.originalData[0m
+            [36m</h2>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"space-y-2 text-sm"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.type[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mmortality[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.date[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m2026-09-10[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.lot[0m
+                [36m</dt>[39m
+                [36m<dd[39m
+                  [33mclass[39m=[32m"font-mono"[39m
+                [36m>[39m
+                  [0m#[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.farm[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m1[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mreview.house[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m2[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.observations[0m
+                [36m</dt>[39m
+                [36m<dd[39m
+                  [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+                [36m>[39m
+                  [0m-[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mcommon.version[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mv[0m
+                  [0m1[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 22 16 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.feedMovements[0m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 3v5h-5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16H3v5"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.sapReference[0m
+            [36m</h2>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+            [36m>[39m
+              [0mreview.noSapRef[0m
+            [36m</p>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"mt-4 pt-4 border-t border-slate-100"[39m
+            [36m>[39m
+              [36m<h3[39m
+                [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase mb-2 flex items-center gap-1"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M10 9H8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M16 13H8"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M16 17H8"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0mreview.actionsHistory[0m
+              [36m</h3>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-xs text-slate-600 mb-1"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"font-medium"[39m
+                [36m>[39m
+                  [0mstarted[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+                [36m>[39m
+                  [0m10/9/2026, 11:00:00 a. m.[0m
+                [36m</span>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"text-xs text-slate-600 mb-1"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"font-medium"[39m
+                [36m>[39m
+                  [0mbatch_created[0m
+                [36m</span>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+                [36m>[39m
+                  [0m10/9/2026, 11:05:00 a. m.[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+          [36m>[39m
+            [0mcommon.actions[0m
+          [36m</h2>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+          [36m>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition"[39m
+            [36m>[39m
+              [0m✓ [0m
+              [0mreview.completeReview[0m
+            [36m</button>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex gap-2 items-center"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+                [33mplaceholder[39m=[32m"review.observationsPlaceholder"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-orange-700 transition"[39m
+              [36m>[39m
+                [0m↩ [0m
+                [0mreview.returnToOperator[0m
+              [36m</button>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex gap-2 items-center"[39m
+            [36m>[39m
+              [36m<input[39m
+                [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+                [33mplaceholder[39m=[32m"review.rejectionReason"[39m
+                [33mtype[39m=[32m"text"[39m
+                [33mvalue[39m=[32m""[39m
+              [36m/>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [0m [0m
+          [0m [0m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/pages/review/__tests__/r197.reviewDetail.test.tsx:112:11
+    110|     setSession(['review:read', 'review:review'])
+    111|     renderPage()
+    112|     await waitFor(() => expect(screen.getByText(/status\.in_review/)).…
+       |           ^
+    113|   })
+    114|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 4 passed (5)
+   Start at  16:19:43
+   Duration  2.26s (transform 112ms, setup 58ms, import 278ms, tests 1.27s, environment 533ms)
+
