@@ -1,0 +1,2 @@
+B8 · verificación dirigida (lectura)
+Panel de notificaciones: width w-[min(22rem,calc(100vw-2rem))] (NotificationBell.tsx:142) — responsive a 390px; el recorte de F G-17 no aplica al código actual.

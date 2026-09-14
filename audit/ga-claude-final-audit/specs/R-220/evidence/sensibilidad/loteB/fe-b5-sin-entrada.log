@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB.test.tsx (3 tests | 1 failed) 11ms
+     × AC-R220-B·B5 · `/operations` tiene entrada de menú (Historial) con `operations:read` 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB.test.tsx > R-220 · Lote B primera tanda (RED) > AC-R220-B·B5 · `/operations` tiene entrada de menú (Historial) con `operations:read`
+AssertionError: historial operativo sin entrada de menú: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteB.test.tsx:25:64
+     23|   it('AC-R220-B·B5 · `/operations` tiene entrada de menú (Historial) c…
+     24|     const entrada = rutas(NAV_ITEMS as Nodo[]).find((r) => r.to === '/…
+     25|     expect(entrada, 'historial operativo sin entrada de menú').toBeTru…
+       |                                                                ^
+     26|     expect(entrada?.permission).toBe('operations:read')
+     27|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  00:05:04
+   Duration  1.03s (transform 58ms, setup 62ms, import 147ms, tests 11ms, environment 629ms)
+
