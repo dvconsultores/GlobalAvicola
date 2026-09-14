@@ -322,7 +322,10 @@ class OperationsService:
             self.db.add(models.InspectionDetail(event_id=event.id, **ins.model_dump()))
         for es in data.egg_storage_records:
             es_data = es.model_dump()
-            es_data.setdefault("lot_id", data.lot_id)
+            # `R-194`: el hijo hereda el lote del evento también cuando el schema emite
+            # `lot_id: None` explícito — el `setdefault` no operaba y el INSERT NULL
+            # rompía con 500 la recepción canónica de incubadora.
+            es_data["lot_id"] = es_data.get("lot_id") or data.lot_id
             self.db.add(models.EggStorage(event_id=event.id, **es_data))
 
         await self.db.flush()
@@ -911,7 +914,9 @@ class OperationsService:
             await verificar_estructurales_del_submovimiento(self.db, self.company_id, house_id=ins.house_id)
         for es in data.egg_storage_records:
             # El alta hereda el lote del evento cuando el hijo no lo declara; ese ya está verificado.
-            await verificar_estructurales_del_submovimiento(self.db, self.company_id, lot_id=es.lot_id)
+            # `R-194`: mismo fallback que en el alta (`None` explícito del schema).
+            await verificar_estructurales_del_submovimiento(self.db, self.company_id,
+                                                            lot_id=es.lot_id or data.lot_id)
         for hp in data.hatchery_params:
             await verificar_catalogos_del_evento(
                 self.db, self.company_id,

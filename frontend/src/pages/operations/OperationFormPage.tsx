@@ -111,7 +111,7 @@ const operacionBase = z.object({
  vaccination_route: z.string().optional(),
  vaccine_lot_number: z.string().optional(),
  medication_id: z.number().optional(),
- dosage_per_bird: z.number().optional(),
+ dosage_per_bird: z.number().min(0, { message: 'operations.dosageInvalid' }).optional(),
  treatment_days: z.number().optional(),
  destination_farm_id: z.number().optional(),
  destination_plant_id: z.number().optional(),
@@ -494,20 +494,46 @@ export default function OperationFormPage() {
  return m
  }))
 
+ // `R-194`: la cadena de incubadora — recepción de huevos y despacho de pollitos son
+ // `location_events`: llevan la granja/galpón reales (los del lote incubadora); los demás
+ // eventos de la etapa incubadora conservan su mapeo anterior.
+ const eventosUbicacionIncubadora = ['egg_reception_hatchery', 'chick_dispatch']
+ let movimientosHuevo = (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0)
+ let almacenamiento = serializarAlmacenamientoDeHuevos(data.egg_storage_records)
+ if (data.event_type === 'egg_reception_hatchery') {
+ // El saldo de incubadora (BR-03) lee `egg_movements[fertile]`: la recepción escribe la
+ // fila fértil con lo declarado como recibido (C-04) y `arrival_date` capturada (default `event_date`).
+ const recibidos = Number((data.egg_storage_records?.[0] as any)?.eggs_received ?? 0)
+ if (recibidos > 0 && !movimientosHuevo.some((m: any) => m?.egg_type === 'fertile')) {
+ movimientosHuevo = [...movimientosHuevo, { egg_type: 'fertile', quantity: recibidos }]
+ }
+ almacenamiento = (almacenamiento.length > 0 ? almacenamiento : [{}]).map((r: any) => ({
+ ...r,
+ arrival_date: r?.arrival_date ?? data.event_date,
+ }))
+ }
+ let paramsIncubadora = serializarParamsDeIncubadora(
+ (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
+ )
+ if (selectedHatcheryId) {
+ // `R-194` · B-22: la incubadora elegida viaja en la fila (`hatchery_id`); la tenencia la
+ // verifica el servidor contra el catálogo de la empresa.
+ if (paramsIncubadora.length === 0) paramsIncubadora = [{}]
+ paramsIncubadora = [{ ...paramsIncubadora[0], hatchery_id: selectedHatcheryId },
+ ...paramsIncubadora.slice(1)]
+ }
  const payload: any = {
  ...data,
- farm_id: data.farm_id ?? (!isHatcheryStage ? derivedFarmId : undefined),
+ farm_id: data.farm_id ?? ((isHatcheryStage && !eventosUbicacionIncubadora.includes(data.event_type)) ? undefined : derivedFarmId),
  house_id: data.house_id ?? derivedHouseId,
  observations,
  bird_movements: normalizedBirdMovements.filter(m => (m.quantity ?? 0) > 0),
- egg_movements: (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
+ egg_movements: movimientosHuevo,
  // `R-189 (F-01d)`: alimento e incubadora también se serializan — el `[{}]` de arranque nunca viaja.
  feed_movements: serializarMovimientosDeAlimento(data.feed_movements),
- hatchery_params: serializarParamsDeIncubadora(
- (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
- ),
+ hatchery_params: paramsIncubadora,
  inspection_details: [...(data.inspection_details || []), ...houseDetails],
- egg_storage_records: serializarAlmacenamientoDeHuevos(data.egg_storage_records),
+ egg_storage_records: almacenamiento,
  house_inspections: undefined, // strip UI-only field
  }
  await api.post('/operations', payload)
@@ -1718,7 +1744,8 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-green-700">{t('operations.dosePerBird', 'Dosis por ave')}</label>
- <input type="number" step="0.001" min="0" {...register('dosage_per_bird' as any)} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="0.2" />
+ <input type="number" step="0.001" {...register('dosage_per_bird' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="0.2" />
+ {errors.dosage_per_bird && <p className="text-red-500 text-xs mt-1">{t('operations.dosageInvalid', 'La dosis debe ser un número ≥ 0')}</p>}
  </div>
  </div>
  </div>

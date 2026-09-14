@@ -120,15 +120,16 @@ describe('R-194 · cadena de incubadora por UI', () => {
     await guardar()
   })
 
-  it('AC-R194-04 · nacimiento: dosis válida envía; negativa muestra error sin POST', async () => {
+  it('AC-R194-04a · nacimiento: dosis válida envía', async () => {
     montar()
     await abrirEvento(/birth_registration/)
     await elegirEnSelector(/Seleccionar lote/, /L-HAT-194-01/)
     cambio('dosage_per_bird', '0.2')
     cambio('bird_movements.0.quantity', '300')
     await guardar()
+  })
 
-    post.mockClear()
+  it('AC-R194-04b · nacimiento: dosis negativa ⇒ sin POST y operations.dosageInvalid', async () => {
     montar()
     await abrirEvento(/birth_registration/)
     await elegirEnSelector(/Seleccionar lote/, /L-HAT-194-01/)
@@ -136,7 +137,7 @@ describe('R-194 · cadena de incubadora por UI', () => {
     cambio('bird_movements.0.quantity', '300')
     fireEvent.click(await screen.findByRole('button', { name: /common\.save/ }))
     await waitFor(() => {
-      expect(screen.getByText('operations.dosageInvalid')).toBeTruthy()
+      expect(screen.getByText('La dosis debe ser un número ≥ 0')).toBeTruthy()
     })
     expect(post).not.toHaveBeenCalled()
   })
@@ -144,8 +145,9 @@ describe('R-194 · cadena de incubadora por UI', () => {
   it('AC-R194-06 · hatchery_id viaja en la fila', async () => {
     montar()
     await abrirEvento(/egg_reception_hatchery/)
-    await elegirEnSelector(/Seleccionar lote/, /L-HAT-194-01/)
+    // El selector de incubadora acota el catálogo de lotes: primero la incubadora.
     await elegirEnSelector(/Seleccionar incubadora/, /Planta Incubadora/)
+    await elegirEnSelector(/Seleccionar lote/, /L-HAT-194-01/)
     cambio('egg_storage_records.0.eggs_received', '1000')
     const payload = await guardar()
     expect(payload.hatchery_params?.[0]?.hatchery_id).toBe(1)

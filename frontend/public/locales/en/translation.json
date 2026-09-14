@@ -621,6 +621,7 @@
     "waterLiters": "Water consumption (L)",
     "receptionReconciliation": "Reception reconciliation",
     "eventHouse": "Event house",
+    "dosageInvalid": "Dosage must be a number ≥ 0",
     "eventHouseRequired": "This event requires a house (the lot does not declare one)",
     "cuadreRequired": "Complete the reception reconciliation (received, dead on arrival and rejected)",
     "farmRequired": "This event requires a farm",

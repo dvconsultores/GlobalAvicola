@@ -108,6 +108,9 @@ export function identificadorDeOrdenSap(orden: any): string {
 const EVENTOS_CON_UBICACION_DERIVADA = new Set([
   'bird_reception', 'bird_distribution', 'bird_transfer', 'bird_exit',
   'farm_inspection', 'transport_inspection', 'egg_collection', 'egg_dispatch',
+  // `R-194`: la cadena de incubadora también es de `location_events` — su ubicación son
+  // las declaradas por el lote incubadora (planta/galpón), nunca inventadas.
+  'egg_reception_hatchery', 'chick_dispatch',
 ])
 
 export interface FuentesDeUbicacion {

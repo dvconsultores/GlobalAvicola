@@ -56,10 +56,13 @@ async def esc(test_database_url):
         await s.flush()
 
         unidades = {u.code: u for u in (await s.execute(select(BusinessUnit))).scalars()}
-        fila = CompanyBusinessUnit(company_id=a.id, business_unit_id=unidades["hatchery"].id,
-                                   is_enabled=True)
-        s.add(fila)
-        await s.flush()
+        filas_hab = {}
+        for code in ("hatchery", "broiler"):
+            fila = CompanyBusinessUnit(company_id=a.id, business_unit_id=unidades[code].id,
+                                       is_enabled=True)
+            s.add(fila)
+            await s.flush()
+            filas_hab[code] = fila
 
         rol = Role(name=f"{PREFIJO}Op-{uuid.uuid4().hex[:6]}", company_id=a.id, is_active=True)
         s.add(rol)
@@ -78,7 +81,8 @@ async def esc(test_database_url):
                         role_id=rol.id, is_active=True)
         s.add(operador)
         await s.flush()
-        await conceder_unidad(s, user=operador, company_business_unit=fila)
+        await conceder_unidad(s, user=operador, company_business_unit=filas_hab["hatchery"])
+        await conceder_unidad(s, user=operador, company_business_unit=filas_hab["broiler"])
 
         planta = Farm(company_id=a.id, name=f"{PREFIJO}PLANTA",
                       code=f"{PREFIJO}P-{uuid.uuid4().hex[:4]}",
@@ -99,12 +103,15 @@ async def esc(test_database_url):
                        farm_id=planta.id, house_id=galpon_p.id)
 
         lh, lh2 = _lote("LH"), _lote("LH2")
-        s.add_all([lh, lh2])
+        ld = Lot(company_id=a.id, lot_code=f"{PREFIJO}LD-{uuid.uuid4().hex[:6]}",
+                 bird_type=BirdTypeEnum.BROILER, status=LotStatus.ACTIVE,
+                 farm_id=destino.id, house_id=galpon_d.id)
+        s.add_all([lh, lh2, ld])
         await s.commit()
 
         datos = {"a": a.id, "operador": operador.id, "planta": planta.id,
                  "galpon_p": galpon_p.id, "destino": destino.id,
-                 "galpon_d": galpon_d.id, "lh": lh.id, "lh2": lh2.id,
+                 "galpon_d": galpon_d.id, "lh": lh.id, "lh2": lh2.id, "ld": ld.id,
                  "url": test_database_url}
     yield datos
 
@@ -220,15 +227,25 @@ async def test_r194_01_cadena_persistente_recepcion_carga_nacimiento_despacho(ht
     r = await _op(http_client, esc, "lh", "chick_dispatch", 10000)
     assert _es_br(r, "BR-04"), ("despacho sobre viables", r.text)
 
+    # Handoff X-BU: la recepción en el destino declarado completa el vínculo generacional.
+    cuerpo = {"lot_id": esc["ld"], "event_type": "bird_reception",
+              "event_date": recent_event_date(),
+              "farm_id": esc["destino"], "house_id": esc["galpon_d"],
+              "bird_movements": [{"sex": "mixed", "quantity": 100}]}
+    r = await http_client.post("/api/v1/operations", headers=_token(esc["operador"]),
+                               json=cuerpo)
+    assert r.status_code == 201, ("recepción en destino", r.text)
+
     pollitos = await _cuenta(esc, "SELECT count(*) FROM chick_batches "
                                   "WHERE hatchery_lot_id = :l", l=esc["lh"])
-    assert pollitos >= 1, "el despacho deja vínculo persistente (ChickBatch)"
+    assert pollitos >= 1, "el despacho + recepción deja vínculo persistente (ChickBatch)"
 
     tr = await http_client.get(f"/api/v1/lots/{esc['lh']}/traceability",
                                headers=_token(esc["operador"]))
     assert tr.status_code == 200, tr.text
     nodo = tr.json()
     assert set(nodo.keys()) >= {"egg_batches_sent", "chick_batches_sent"}, nodo.keys()
+    assert len(nodo["chick_batches_sent"]) >= 1, "X-BU: el lote incubadora ve su despacho"
 
 
 async def test_r194_02_recepcion_sin_ubicacion_es_400_br08(http_client, esc):

@@ -621,6 +621,7 @@
     "waterLiters": "Consumo de agua (L)",
     "receptionReconciliation": "Cuadre de la recepción",
     "eventHouse": "Galpón del evento",
+    "dosageInvalid": "La dosis debe ser un número ≥ 0",
     "eventHouseRequired": "Este evento requiere un galpón (el lote no lo declara)",
     "cuadreRequired": "Completa el cuadre de la recepción (recibidas, mortalidad al arribo y rechazo)",
     "farmRequired": "Este evento requiere una granja",
