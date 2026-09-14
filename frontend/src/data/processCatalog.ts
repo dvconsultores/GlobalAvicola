@@ -254,7 +254,9 @@ export const EVENT_ICON_MAP: Record<string, LucideIcon> = {
   transport_inspection: Truck,
   hatchery_inspection: Thermometer,
   egg_collection: Egg,
-  egg_classification: ClipboardList,
+ // `R-220` · A15 (B-25): `egg_classification` no pertenece a ningún flujo de
+ // etapa (la recepción de huevos usa `egg_reception_classification`): se retira
+ // el icono huérfano en lugar de dejar una entrada que nadie produce.
   egg_reception_classification: ClipboardCheck,
   egg_dispatch: ArrowUpRight,
   egg_reception_hatchery: ArrowDownRight,
@@ -289,7 +291,7 @@ export const EVENT_COLOR_MAP: Record<string, { bg: string; ring: string; text: s
   mortality_recording:    { bg: 'bg-slate-600',   ring: 'ring-slate-200',   text: 'text-slate-600' },
   cull_recording:         { bg: 'bg-stone-500',   ring: 'ring-stone-200',   text: 'text-stone-600' },
   egg_collection:         { bg: 'bg-yellow-500',  ring: 'ring-yellow-200',  text: 'text-yellow-600' },
-  egg_classification:              { bg: 'bg-orange-500',  ring: 'ring-orange-200',  text: 'text-orange-600' },
+
   egg_reception_classification:    { bg: 'bg-teal-500',    ring: 'ring-teal-200',    text: 'text-teal-600' },
   egg_dispatch:                    { bg: 'bg-orange-600',  ring: 'ring-orange-200',  text: 'text-orange-700' },
   egg_reception_hatchery:          { bg: 'bg-amber-600',   ring: 'ring-amber-200',   text: 'text-amber-700' },
