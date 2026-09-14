@@ -1421,6 +1421,13 @@ class OperationsService:
         if not self.current_user.get("is_super_admin") and event.company_id != self.company_id:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Acceso denegado")
         await self.exigir_unidad_operativa(event=event)  # `AC-W13`
+        # `R-198` · `AC-03` (`C-02`): adjuntar solo en estados editables; el servidor decide
+        # y la UI es espejo.
+        if event.status not in EDITABLES:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se pueden adjuntar evidencias en el estado actual del evento",
+            )
         evidence = models.Evidence(
             event_id=event_id,
             company_id=event.company_id,
@@ -1469,11 +1476,14 @@ class OperationsService:
         # orden preserva el contrato certificado de `R-139` (`403` entre inquilinos).
         event = await self.get_event(event_id)
         await self.exigir_unidad_operativa(event=event)
+        # `R-198` · `AC-03` (`C-02`): borrar solo en estados editables.
+        if event.status not in EDITABLES:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="No se pueden borrar evidencias en el estado actual del evento",
+            )
         nombre = evidence.file_name
-        try:
-            os.remove(evidence.file_path)
-        except OSError:
-            pass
+        ruta = evidence.file_path
         await self.db.delete(evidence)
         await self.db.flush()
 
@@ -1485,6 +1495,14 @@ class OperationsService:
             new_values={"file_name": nombre},
         )
         await self.db.commit()
+
+        # `R-198` · `AC-05` (`C-03`): el fichero se retira **después** del commit — si el
+        # commit falla, el fichero sobrevive (una evidencia sin fichero sería peor que un
+        # fichero sin evidencia; mitigación de `R-52`/`GA-REM-009`).
+        try:
+            os.remove(ruta)
+        except OSError:
+            pass
 
     async def get_evidence_for_download(self, event_id: int, evidence_id: int) -> models.Evidence:
         result = await self.db.execute(

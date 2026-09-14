@@ -410,7 +410,7 @@ async def test_r198_07_el_detalle_devuelve_el_almacenamiento(client, test_databa
         "house_id": datos["galpon"],
         "event_type": "egg_reception_hatchery",
         "event_date": iso_days_ago(2),
-        "egg_storage_records": [{"quantity": 100, "arrival_date": iso_days_ago(2)}],
+        "egg_storage_records": [{"eggs_received": 100, "arrival_date": iso_days_ago(2)}],
         "egg_movements": [{"egg_type": "fertile", "quantity": 100}],
     })
     assert alta.status_code == 201, alta.text
@@ -421,4 +421,4 @@ async def test_r198_07_el_detalle_devuelve_el_almacenamiento(client, test_databa
     almacen = detalle.json().get("egg_storage_records") or []
     assert len(almacen) == 1, (
         f"el detalle no devuelve el almacenamiento de huevos (vio {len(almacen)})")
-    assert almacen[0]["quantity"] == 100
+    assert almacen[0]["eggs_received"] == 100

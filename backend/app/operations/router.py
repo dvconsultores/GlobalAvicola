@@ -289,6 +289,10 @@ async def get_event(
     result.feed_movements = [schemas.FeedMovementSchema.model_validate(fm) for fm in event.feed_movements]
     result.hatchery_params = [schemas.HatcheryParamsSchema.model_validate(hp) for hp in event.hatchery_params]
     result.inspection_details = [schemas.InspectionDetailSchema.model_validate(detail) for detail in event.inspection_details]
+    # `R-198` · `AC-01/02` (C-01=A) y C-04: el detalle devuelve lo que el esquema ya declara
+    # —evidencias y almacenamiento de huevos—; antes se descartaban y la UI quedaba ciega.
+    result.egg_storage_records = [schemas.EggStorageSchema.model_validate(es) for es in event.egg_storage_records]
+    result.evidences = [schemas.EvidenceRead.model_validate(e) for e in event.evidences]
     return result
 
 

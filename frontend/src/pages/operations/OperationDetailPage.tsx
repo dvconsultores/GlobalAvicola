@@ -59,6 +59,9 @@ export default function OperationDetailPage() {
  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
  const fileRef = useRef<HTMLInputElement>(null)
  const toast = useToast()
+ // `R-198` · `AC-03` (`C-02`): estados en los que el backend acepta adjuntar/borrar; la UI
+ // es espejo del servidor (que es quien decide).
+ const EVIDENCE_EDITABLE_STATUSES = ['draft', 'registered', 'pending_review', 'in_review', 'returned', 'rejected', 'corrected']
 
  const loadEvent = () => {
  api.get(`/operations/${id}`).then(({ data }) => {
@@ -90,12 +93,14 @@ export default function OperationDetailPage() {
  fd.append('file', file)
  fd.append('description', description)
  if (evidenceType) fd.append('evidence_type', evidenceType)
- const { data } = await api.post(`/operations/${id}/evidences`, fd, {
+ await api.post(`/operations/${id}/evidences`, fd, {
  headers: { 'Content-Type': 'multipart/form-data' },
  })
- setEvidences(prev => [...prev, data])
  setDescription('')
  if (fileRef.current) fileRef.current.value = ''
+ // `R-198` · `AC-01/02` (`C-01=A`): relee la verdad del servidor tras mutar — la
+ // respuesta local no es fuente; el contrato del detalle es el que manda.
+ await loadEvent()
  toast.success(t('evidence.uploadSuccess'))
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('evidence.uploadError')))
@@ -106,7 +111,8 @@ export default function OperationDetailPage() {
  setDeletingId(evidenceId)
  try {
  await api.delete(`/operations/${id}/evidences/${evidenceId}`)
- setEvidences(prev => prev.filter(e => e.id !== evidenceId))
+ // `R-198` · `AC-02`: relee del servidor tras borrar.
+ await loadEvent()
  toast.success(t('evidence.deleteSuccess'))
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('evidence.deleteError')))
@@ -284,7 +290,7 @@ export default function OperationDetailPage() {
 {ev.description ? ` · ${ev.description}` : ''}
  </p>
  </div>
- <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+ <div className="flex items-center gap-1">
  <button
  type="button"
  onClick={() => handlePreview(ev)}
@@ -293,7 +299,7 @@ export default function OperationDetailPage() {
  >
  <Download size={14} />
  </button>
- {can({ permission: 'operations:delete' }) && <button
+ {can({ permission: 'operations:delete' }) && event && EVIDENCE_EDITABLE_STATUSES.includes(event.status) && <button
  type="button"
  onClick={() => handleDelete(ev.id)}
  disabled={deletingId === ev.id}
@@ -323,7 +329,7 @@ export default function OperationDetailPage() {
  </select>
  </div>
  )}
- {can({ permission: 'operations:create' }) && (
+ {can({ permission: 'operations:create' }) && event && EVIDENCE_EDITABLE_STATUSES.includes(event.status) && (
  <div className="border-2 border-dashed border-slate-200 rounded-lg p-4 space-y-3">
  <input
  ref={fileRef}
