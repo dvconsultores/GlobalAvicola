@@ -788,6 +788,42 @@ async def validate_house_capacity(db: AsyncSession, house_id: int, quantity: int
         )
 
 
+async def validate_house_capacity_by_rows(
+    db: AsyncSession, fallback_house_id: int | None, movimientos,
+) -> None:
+    """`R-211` · `BR-17` **por fila**: cada `target_house_id` se compara con su capacidad.
+
+    La recepción captura filas por galpón; validar la Σ del evento contra un solo galpón (el
+    `house_id` del evento) rechazaba un reparto válido (500+500 a dos galpones de 500 ⇒ 400
+    falso) y el mensaje no decía qué galpón. Aquí la Σ es **por destino**: las filas sin
+    `target_house_id` caen al `house_id` del evento (contrato F-01e de la UI, hoy el camino
+    real de la API).
+
+    `C-02` (decisión del propietario, defecto A): se valida el evento; el exceso
+    **acumulado** entre eventos al mismo galpón queda como residual documentado.
+    """
+    from ..masters.models import House
+
+    grupos: dict[int, int] = {}
+    for bm in movimientos:
+        destino = bm.target_house_id or fallback_house_id
+        if destino is None or (bm.quantity or 0) <= 0:
+            continue
+        grupos[destino] = grupos.get(destino, 0) + bm.quantity
+
+    for casa_id, cantidad in sorted(grupos.items()):
+        casa = (await db.execute(
+            select(House).where(House.id == casa_id))).scalar_one_or_none()
+        if casa is None:
+            raise BusinessRuleViolation(f"Galpón {casa_id} no encontrado", "BR-17")
+        if casa.capacity and cantidad > casa.capacity:
+            raise BusinessRuleViolation(
+                f"La operación excede la capacidad del galpón {casa.name} "
+                f"({casa.capacity} aves): se intentan registrar {cantidad}",
+                "BR-17",
+            )
+
+
 async def validate_oc_limit(
     db: AsyncSession,
     sap_document_ref: str | None,

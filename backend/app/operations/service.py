@@ -42,6 +42,7 @@ from .validators import (
     validate_event_date,
     validate_farm_house,
     validate_house_capacity,
+    validate_house_capacity_by_rows,
     validate_incubation_load,
     validate_lot_active,
     validate_lot_closure,
@@ -944,8 +945,12 @@ class OperationsService:
         total_qty = sum(bm.quantity for bm in data.bird_movements) + sum(em.quantity for em in data.egg_movements)
 
         # G-R04: Validate house capacity for reception/distribution events
+        # `R-211`: la Σ es **por fila** (`target_house_id`), no por el `house_id` del evento.
         if event_type in (models.EventType.BIRD_RECEPTION, models.EventType.BIRD_DISTRIBUTION):
-            if data.house_id and total_qty > 0:
+            if data.bird_movements:
+                await validate_house_capacity_by_rows(
+                    self.db, data.house_id, data.bird_movements)
+            elif data.house_id and total_qty > 0:
                 await validate_house_capacity(self.db, data.house_id, total_qty)
             # G-R05: Validate quantity ≤ OC
             await validate_oc_limit(
