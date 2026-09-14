@@ -1,0 +1,292 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · auditoría: 403/500 ⇒ estado distinguido (no «vacío»)
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter initialEntries={[...]}>
+    <Router basename={undefined} location={{pathname:"...", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <Routes>
+        <RenderedRoute match={{params:{}, ...}} routeContext={{outlet:null, ...}}>
+          <AuditPage>
+            <div>
+              <div>
+              <div>
+              <FilterPanel onClear={function clearFilters} totalResults={0}>
+                <div className="bg-white r...">
+>                 <button
+>                   onClick={function onClick}
+>                   className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700..."
+>                   aria-expanded={true}
+>                 >
+                    <div>
+                    <div className="flex items...">
+                      <span>
+>                     <button
+>                       onClick={function onClick}
+>                       className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 trans..."
+>                     >
+                  ...
+              ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío»)
+Error fetching farms: { response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx (15 tests | 9 failed) 8263ms
+     × AC-R212-04 · operaciones: 403/500 ⇒ estado distinguido (no «vacío») 1029ms
+     × AC-R212-04 · lotes: 403/500 ⇒ estado distinguido (no «vacío») 1019ms
+     × AC-R212-04 · auditoría: 403/500 ⇒ estado distinguido (no «vacío») 1019ms
+     × AC-R212-04 · reportes: 403/500 ⇒ estado distinguido (no «vacío») 1011ms
+     × AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío») 1018ms
+     × AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío») 1009ms
+     × AC-R212-04 · SAP: 403/500 ⇒ estado distinguido (no «vacío») 1011ms
+     × AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío») 1005ms
+     × AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta 9ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · operaciones: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · lotes: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · auditoría: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · reportes: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · SAP: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío»)
+AssertionError: expected 'No se pudieron cargar los datos Reint…' to match /Permiso requerido para ver esta secci…/
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"rounded-xl border p-6 text-center bg-red-50 border-red-200"[39m
+          [33mdata-estado[39m=[32m"prohibido"[39m
+          [33mrole[39m=[32m"alert"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-triangle-alert lucide-alert-triangle mx-auto text-red-500 mb-2"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"28"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"28"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 9v4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm font-medium text-red-700"[39m
+          [36m>[39m
+            [0mNo se pudieron cargar los datos[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#1E3A5F] hover:underline"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mReintentar[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected:
+/Permiso requerido para ver esta sección/
+
++ Received:
+"No se pudieron cargar los datos Reintentar"
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:151:34
+    149|     await waitFor(() => {
+    150|       const alerta = screen.getByRole('alert')
+    151|       expect(alerta.textContent).toMatch(texto)
+       |                                  ^
+    152|     })
+    153|     expect(screen.queryByText('common.noResults')).toBeNull()
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío»)
+AssertionError: expected 'No se pudieron cargar los datos Reint…' to match /Permiso requerido para ver esta secci…/
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"p-4 sm:p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"rounded-xl border p-6 text-center bg-red-50 border-red-200"[39m
+          [33mdata-estado[39m=[32m"prohibido"[39m
+          [33mrole[39m=[32m"alert"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-triangle-alert lucide-alert-triangle mx-auto text-red-500 mb-2"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"28"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"28"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 9v4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M12 17h.01"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm font-medium text-red-700"[39m
+          [36m>[39m
+            [0mNo se pudieron cargar los datos[0m
+          [36m</p>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"mt-3 inline-flex items-center gap-1 text-sm font-medium text-[#1E3A5F] hover:underline"[39m
+            [33mtype[39m=[32m"button"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mReintentar[0m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+
+- Expected:
+/Permiso requerido para ver esta sección/
+
++ Received:
+"No se pudieron cargar los datos Reintentar"
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:151:34
+    149|     await waitFor(() => {
+    150|       const alerta = screen.getByRole('alert')
+    151|       expect(alerta.textContent).toMatch(texto)
+       |                                  ^
+    152|     })
+    153|     expect(screen.queryByText('common.noResults')).toBeNull()
+ ❯ runWithExpensiveErrorDiagnosticsDisabled node_modules/@testing-library/dom/dist/config.js:47:12
+ ❯ checkCallback node_modules/@testing-library/dom/dist/wait-for.js:124:77
+ ❯ Timeout.checkRealTimersCallback node_modules/@testing-library/dom/dist/wait-for.js:118:16
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta
+AssertionError: expected 'No se pudieron cargar los datos Reint…' to match /Permiso requerido para ver esta secci…/
+
+- Expected:
+/Permiso requerido para ver esta sección/
+
++ Received:
+"No se pudieron cargar los datos Reintentar"
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:161:32
+    159|     renderAt('/reports/lot/:id', <LotReportPage />, '/reports/lot/9')
+    160|     const alerta = await screen.findByRole('alert')
+    161|     expect(alerta.textContent).toMatch(PROHIBIDO)
+       |                                ^
+    162|     expect(screen.queryByText('common.loading')).toBeNull()
+    163|     const antes = get.mock.calls.length
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  9 failed | 6 passed (15)
+   Start at  16:41:06
+   Duration  10.94s (transform 1.16s, setup 52ms, import 1.79s, tests 8.26s, environment 671ms)
+

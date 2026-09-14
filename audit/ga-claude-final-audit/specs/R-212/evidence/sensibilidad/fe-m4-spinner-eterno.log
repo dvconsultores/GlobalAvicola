@@ -1,0 +1,50 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx (15 tests | 1 failed) 1385ms
+     × AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta 1005ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-05 · LotReportPage 403 ⇒ estado con reintento (no spinner eterno) y reintenta
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-500"[39m
+    [36m>[39m
+      [0mcommon.loading[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 text-slate-500"[39m
+    [36m>[39m
+      [0mcommon.loading[0m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:160:33
+    158|     get.mockImplementation(() => Promise.reject({ response: { status: …
+    159|     renderAt('/reports/lot/:id', <LotReportPage />, '/reports/lot/9')
+    160|     const alerta = await screen.findByRole('alert')
+       |                                 ^
+    161|     expect(alerta.textContent).toMatch(PROHIBIDO)
+    162|     expect(screen.queryByText('common.loading')).toBeNull()
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  16:41:01
+   Duration  4.26s (transform 1.03s, setup 88ms, import 1.67s, tests 1.39s, environment 808ms)
+

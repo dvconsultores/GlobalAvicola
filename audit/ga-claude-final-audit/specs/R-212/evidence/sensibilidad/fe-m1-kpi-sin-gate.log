@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx (15 tests | 1 failed) 410ms
+     × AC-R212-01 · detalle de lote sin `reports:read`: 0 llamadas a KPIs de reportes 49ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-01 · detalle de lote sin `reports:read`: 0 llamadas a KPIs de reportes
+AssertionError: no se deben pedir KPIs sin permiso: expected [ '/reports/kpis?lot_id=9' ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   "/reports/kpis?lot_id=9",
++ ]
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:89:56
+     87|     await waitFor(() => expect(urls(), 'llamada /lots/9 ausente').toCo…
+     88|     const kpis = urls().filter((u) => u.includes('/reports/kpis') || u…
+     89|     expect(kpis, 'no se deben pedir KPIs sin permiso').toEqual([])
+       |                                                        ^
+     90|   })
+     91|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 14 passed (15)
+   Start at  16:40:43
+   Duration  3.64s (transform 1.30s, setup 76ms, import 2.28s, tests 410ms, environment 730ms)
+

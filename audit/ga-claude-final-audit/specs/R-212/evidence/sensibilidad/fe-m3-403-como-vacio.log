@@ -1,0 +1,220 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx (15 tests | 2 failed) 2418ms
+     × AC-R212-04 · operaciones: 403/500 ⇒ estado distinguido (no «vacío») 1013ms
+     × AC-R212-04 · operaciones · 500: 403/500 ⇒ estado distinguido (no «vacío») 1006ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · operaciones: 403/500 ⇒ estado distinguido (no «vacío»)
+ FAIL  src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · operaciones · 500: 403/500 ⇒ estado distinguido (no «vacío»)
+TestingLibraryElementError: Unable to find role="alert"
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mnav.operations[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500"[39m
+          [36m>[39m
+            [0m0[0m
+            [0m [0m
+            [0mcommon.results[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/menu/poultry"[39m
+        [36m>[39m
+          [0m+ [0m
+          [0mcommon.create[0m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+          [33mplaceholder[39m=[32m"review.lot ID"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mcommon.allTypes[0m
+          [36m</option>[39m
+          [36m<optgroup[39m
+            [33mlabel[39m=[32m"Etapas de producción"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+            [36m>[39m
+              [0mProgenitoras — Cría[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+            [36m>[39m
+              [0mProgenitoras — Producción[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+            [36m>[39m
+              [0mReproductoras — Cría[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_production"[39m
+            [36m>[39m
+              [0mReproductoras — Producción[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__hatchery"[39m
+            [36m>[39m
+              [0mIncubadora[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__broiler"[39m
+            [36m>[39m
+              [0mPollo de Engorde[0m
+            [36m</option>[39m
+          [36m</optgroup>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<p[39m
+        [33mclass[39m=[32m"text-slate-400 text-sm py-8 text-center"[39m
+      [36m>[39m
+        [0mcommon.noResults[0m
+      [36m</p>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<html>[39m
+  [36m<head />[39m
+  [36m<body>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"py-4 sm:py-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+            [36m>[39m
+              [0mnav.operations[0m
+            [36m</h1>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-sm text-slate-500"[39m
+            [36m>[39m
+              [0m0[0m
+              [0m [0m
+              [0mcommon.results[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/menu/poultry"[39m
+          [36m>[39m
+            [0m+ [0m
+            [0mcommon.create[0m
+          [36m</a>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+        [36m>[39m
+          [36m<input[39m
+            [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+            [33mplaceholder[39m=[32m"review.lot ID"[39m
+            [33mtype[39m=[32m"number"[39m
+            [33mvalue[39m=[32m""[39m
+          [36m/>[39m
+          [36m<select[39m
+            [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m""[39m
+            [36m>[39m
+              [0mcommon.allTypes[0m
+            [36m</option>[39m
+            [36m<optgroup[39m
+              [33mlabel[39m=[32m"Etapas de producción"[39m
+            [36m>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+              [36m>[39m
+                [0mProgenitoras — Cría[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+              [36m>[39m
+                [0mProgenitoras — Producción[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+              [36m>[39m
+                [0mReproductoras — Cría[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__breeder_production"[39m
+              [36m>[39m
+                [0mReproductoras — Producción[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__hatchery"[39m
+              [36m>[39m
+                [0mIncubadora[0m
+              [36m</option>[39m
+              [36m<option[39m
+                [33mvalue[39m=[32m"__stage__broiler"[39m
+              [36m>[39m
+                [0mPollo de Engorde[0m
+              [36m</option>[39m
+            [36m</optgroup>[39m
+          [36m</select>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-slate-400 text-sm py-8 text-center"[39m
+        [36m>[39m
+          [0mcommon.noResults[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</body>[39m
+[36m</html>[39m
+ ❯ Proxy.waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ src/__tests__/r212.permissionAwareness.test.tsx:149:11
+    147|     get.mockImplementation(() => Promise.reject({ response: { status }…
+    148|     renderAt(path, Cmp())
+    149|     await waitFor(() => {
+       |           ^
+    150|       const alerta = screen.getByRole('alert')
+    151|       expect(alerta.textContent).toMatch(texto)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 13 passed (15)
+   Start at  16:40:54
+   Duration  5.42s (transform 1.12s, setup 76ms, import 1.82s, tests 2.42s, environment 781ms)
+
