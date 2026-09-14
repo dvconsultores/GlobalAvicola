@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r207.reversalSurface.test.tsx (4 tests | 1 failed) 248ms
+     × AC-R207-03 · evento `reversed`: badge con estilo propio (no el gris de fallback) y mapa central 4ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r207.reversalSurface.test.tsx > R-207 · superficie de reverso (RED) > AC-R207-03 · evento `reversed`: badge con estilo propio (no el gris de fallback) y mapa central
+AssertionError: STATUS_STYLES sin `reversed`: expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/pages/operations/__tests__/r207.reversalSurface.test.tsx:125:53
+    123|   it('AC-R207-03 · evento `reversed`: badge con estilo propio (no el g…
+    124|     const central = (STATUS_STYLES as any)['reversed']
+    125|     expect(central, 'STATUS_STYLES sin `reversed`').toBeTruthy()
+       |                                                     ^
+    126|
+    127|     setSession(['operations:read'])
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  16:26:35
+   Duration  1.31s (transform 113ms, setup 50ms, import 330ms, tests 248ms, environment 564ms)
+

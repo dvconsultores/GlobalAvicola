@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r207.reversalSurface.test.tsx (4 tests | 1 failed) 252ms
+     × AC-R207-04 · motivo <5 ⇒ sin POST y aviso visible (validación de cliente) 41ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r207.reversalSurface.test.tsx > R-207 · superficie de reverso (RED) > AC-R207-04 · motivo <5 ⇒ sin POST y aviso visible (validación de cliente)
+AssertionError: no debe emitirse POST con motivo corto: expected 1 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 1
+
+ ❯ src/pages/operations/__tests__/r207.reversalSurface.test.tsx:147:49
+    145|
+    146|     expect(post.mock.calls.filter((c) => String(c[0]).includes('/rever…
+    147|       'no debe emitirse POST con motivo corto').toBe(0)
+       |                                                 ^
+    148|     expect(screen.getByRole('alert'), 'aviso de motivo corto ausente')…
+    149|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  16:26:24
+   Duration  1.29s (transform 109ms, setup 50ms, import 319ms, tests 252ms, environment 554ms)
+

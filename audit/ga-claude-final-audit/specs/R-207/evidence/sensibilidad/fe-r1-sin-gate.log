@@ -1,0 +1,59 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/operations/__tests__/r207.reversalSurface.test.tsx (4 tests | 1 failed) 277ms
+     × AC-R207-01 · «Solicitar reverso» visible solo con `reversals:create` (evento approved) 149ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/operations/__tests__/r207.reversalSurface.test.tsx > R-207 · superficie de reverso (RED) > AC-R207-01 · «Solicitar reverso» visible solo con `reversals:create` (evento approved)
+AssertionError: sin permiso no debe ofrecerse la acción: expected <button type="button" …(1)>…(1)</button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  class="bg-rose-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-rose-700 transition inline-flex items-center gap-1"
+  type="button"
+>
+  <svg
+    aria-hidden="true"
+    class="lucide lucide-rotate-ccw"
+    fill="none"
+    height="14"
+    stroke="currentColor"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="2"
+    viewBox="0 0 24 24"
+    width="14"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"
+    />
+    <path
+      d="M3 3v5h5"
+    />
+  </svg>
+   
+  Solicitar reverso
+</button>
+
+ ❯ src/pages/operations/__tests__/r207.reversalSurface.test.tsx:85:71
+     83|     const primera = renderPage()
+     84|     await esperarDetalle()
+     85|     expect(solicitarBtn(), 'sin permiso no debe ofrecerse la acción').…
+       |                                                                       ^
+     86|     primera.unmount()
+     87|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 3 passed (4)
+   Start at  16:26:22
+   Duration  1.30s (transform 120ms, setup 49ms, import 281ms, tests 277ms, environment 577ms)
+
