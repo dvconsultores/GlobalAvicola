@@ -47,6 +47,7 @@ async def _escenario(client, auth_headers, seeded_ids, etiqueta: str):
     assert r.status_code == 200, r.text
     items = (await client.get(f"/api/v1/cutover-batches/{batch_id}/items", headers=auth_headers)).json()["items"]
     lote1 = next(it["lot_id"] for it in items if it["legacy_lot_reference"] == f"CUT-G6-{etiqueta}-1")
+    await _evento_mortalidad(lote1, seeded_ids["company_id"], seeded_ids["user_admin_id"], "2026-09-30", 999, 0)
     await _evento_mortalidad(lote1, seeded_ids["company_id"], seeded_ids["user_admin_id"], "2026-10-09", 20, 15)
     return batch_id, lote1, await _opening_de(lote1)
 
@@ -144,9 +145,21 @@ async def test_c6_correccion_no_borra_post_9865(auth_headers, client, seeded_ids
 @pytest.mark.asyncio
 async def test_c6_correccion_cross_tenant_denegada(auth_headers, client, seeded_ids):
     """Seguridad: opening de otra empresa ⇒ 404 fail-closed (POST y GET)."""
+    from sqlalchemy import select as _select
+
+    from app.auth.models import User
     from app.auth.security import create_access_token
+    from test_ga_req_061_cutover_c3_lifecycle import _otorgar
 
     _, _, opening = await _escenario(client, auth_headers, seeded_ids, "G5")
+
+    # El rol del usuario ajeno necesita el permiso para que el gate RBAC no oculte
+    # la comprobación de tenancy que es lo que aquí se verifica (fallo 404, no 403).
+    async with database.async_session() as session:
+        ajeno = (await session.execute(
+            _select(User).where(User.id == seeded_ids["user_other_company_id"]))).scalars().first()
+    await _otorgar(ajeno.role_id, ("corrections", "correct"), ("corrections", "read"))
+
     headers_ajenos = {"Authorization": "Bearer " + create_access_token(data={
         "sub": str(seeded_ids["user_other_company_id"]), "role": "operator"})}
 

@@ -126,3 +126,34 @@ class CutoverReconciliationRead(BaseModel):
     applied_by_id: Optional[int] = None
     applied_at: Optional[datetime] = None
     lots: list[CutoverReconciliationLot]
+
+
+# ── C6: correcciones formales del Opening (AC59-65) ────────────────────────────
+
+
+class OpeningCorrectionCreate(BaseModel):
+    #: Campo corregible del opening (lista blanca del servicio).
+    field: str
+    new_value: int
+    #: Razón obligatoria (AC62 / CUT-RED-17): ≥5 caracteres.
+    reason: str = Field(min_length=5, max_length=500)
+
+
+class OpeningCorrectionRead(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
+
+    id: int
+    opening_id: int
+    field: str
+    old_value: Optional[str] = None
+    new_value: Optional[str] = None
+    delta: Optional[str] = None
+    reason: str
+    requested_by_id: int
+    approved_by_id: Optional[int] = None
+    created_at: datetime
+    applied_at: Optional[datetime] = None
+
+
+class OpeningCorrectionList(BaseModel):
+    items: list[OpeningCorrectionRead]
