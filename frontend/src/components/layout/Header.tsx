@@ -1,16 +1,22 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useNavigate } from 'react-router-dom'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
 import { normalizeLanguage, nextLanguage } from '../../i18n'
-import { Globe, Bird, Building2, ChevronDown, Check } from 'lucide-react'
+import { Globe, Bird, Building2, ChevronDown, Check, Menu, LogOut } from 'lucide-react'
 import NotificationBell from '../notifications/NotificationBell'
+import MobileDrawer from './MobileDrawer'
 
 export default function Header() {
  const { t, i18n } = useTranslation()
+ const navigate = useNavigate()
  const { user, logout } = useAuthStore()
  const { activeCompanyId, activeCompanyName, companies, isSwitching, fetchCompanies, switchCompany } = useCompanyStore()
  const [companyOpen, setCompanyOpen] = useState(false)
+ // `R-220` · B1 (F G-03/R1): el menú lateral es `hidden lg:flex` — en <1024px se monta el
+ // `MobileDrawer` (patrón ya construido, D3) desde esta hamburguesa.
+ const [drawerOpen, setDrawerOpen] = useState(false)
  const companyRef = useRef<HTMLDivElement>(null)
  const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
 
@@ -160,6 +166,16 @@ export default function Header() {
  style={{ background: 'linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%)', height: '56px' }}
  >
  <div className="flex items-center gap-2 min-w-0 flex-1">
+ {/* `R-220` · B1: hamburguesa (patrón de navegación <1024px) */}
+ <button
+ onClick={() => setDrawerOpen(true)}
+ aria-label={t('nav.menu', 'Menú')}
+ aria-expanded={drawerOpen}
+ className="w-8 h-8 flex items-center justify-center rounded-lg shrink-0 transition-colors"
+ style={{ background: 'rgba(255,255,255,0.08)' }}
+ >
+ <Menu size={17} />
+ </button>
  <div
  className="w-7 h-7 rounded-lg flex items-center justify-center shrink-0"
  style={{ background: 'rgba(90,155,186,0.7)' }}
@@ -184,6 +200,30 @@ export default function Header() {
  <NotificationBell />
  </div>
 
+ {/* `R-220` · B2 (F G-04/R2): perfil y logout accesibles en la cabecera móvil. */}
+ {user && (
+ <>
+ <button
+ onClick={() => navigate('/profile')}
+ aria-label={t('nav.profile', 'Mi Perfil')}
+ title={t('nav.profile', 'Mi Perfil')}
+ className="w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"
+ style={{ background: 'rgba(90,155,186,0.7)' }}
+ >
+ {initials}
+ </button>
+ <button
+ onClick={logout}
+ aria-label={t('auth.logout')}
+ title={t('auth.logout')}
+ className="w-8 h-8 flex items-center justify-center rounded-lg transition-colors"
+ style={{ background: 'rgba(255,255,255,0.08)' }}
+ >
+ <LogOut size={15} />
+ </button>
+ </>
+ )}
+
  {/* Language */}
  <button
  onClick={toggleLang}
@@ -196,6 +236,9 @@ export default function Header() {
  </button>
  </div>
  </header>
+
+ {/* `R-220` · B1: drawer de navegación para <1024px (web y móvil según view_type). */}
+ <MobileDrawer open={drawerOpen} onClose={() => setDrawerOpen(false)} />
 
  </>
  )

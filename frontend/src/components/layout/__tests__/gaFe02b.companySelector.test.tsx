@@ -8,6 +8,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 
 const get = vi.fn()
 const post = vi.fn()
@@ -55,27 +56,27 @@ beforeEach(() => {
 describe('F4 · Header — alcanzabilidad del selector', () => {
   it('autoridad global SIN contexto: el selector es visible (RED antes del fix)', () => {
     setUser({ is_super_admin: true })
-    render(<Header />)
+    render(<MemoryRouter><Header /></MemoryRouter>)
     expect(screen.getByTitle('company.selector')).toBeInTheDocument()
   })
 
   it('autoridad global CON empresa activa: selector presente', () => {
     setUser({ is_super_admin: true })
     useCompanyStore.setState({ activeCompanyId: 1, activeCompanyName: 'Avícola Global C.A.' } as any)
-    render(<Header />)
+    render(<MemoryRouter><Header /></MemoryRouter>)
     expect(screen.getByTitle('company.selector')).toBeInTheDocument()
   })
 
   it('usuario común con empresa: badge sin selector', () => {
     setUser({ is_super_admin: false, company_id: 1, company_name: 'Avícola Global C.A.' })
     useCompanyStore.setState({ activeCompanyId: 1, activeCompanyName: 'Avícola Global C.A.' } as any)
-    render(<Header />)
+    render(<MemoryRouter><Header /></MemoryRouter>)
     expect(screen.queryByTitle('company.selector')).toBeNull()
   })
 
   it('usuario común sin empresa: sin selector', () => {
     setUser({ is_super_admin: false })
-    render(<Header />)
+    render(<MemoryRouter><Header /></MemoryRouter>)
     expect(screen.queryByTitle('company.selector')).toBeNull()
   })
 })

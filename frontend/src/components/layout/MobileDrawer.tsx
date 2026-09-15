@@ -93,7 +93,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  className={`lg:hidden fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-200 ${open ? 'opacity-100' : 'opacity-0 pointer-events-none'}`} />
 
  {/* Panel */}
- <nav className={`lg:hidden fixed top-0 left-0 h-full w-[88vw] max-w-[340px] z-50 flex flex-col bg-white transition-transform duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
+ <nav data-state={open ? 'open' : 'closed'} className={`lg:hidden fixed top-0 left-0 h-full w-[88vw] max-w-[340px] z-50 flex flex-col bg-white transition-transform duration-200 ease-out ${open ? 'translate-x-0' : '-translate-x-full'}`}>
  {/* Header */}
  <div className="flex items-center justify-between px-4 py-3.5 border-b border-slate-100">
  {selectedSection ? (
@@ -114,7 +114,7 @@ export default function MobileDrawer({ open, onClose }: MobileDrawerProps) {
  <span className="font-bold text-slate-900 text-sm">{t('brand.name', 'Global Avícola')}</span>
  </div>
  )}
- <button ref={closeRef} onClick={onClose} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 hover:bg-slate-100:bg-slate-800">
+ <button ref={closeRef} onClick={onClose} aria-label={t('common.close', 'Cerrar')} className="w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 hover:bg-slate-100:bg-slate-800">
  <X size={18} />
  </button>
  </div>
