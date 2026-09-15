@@ -426,3 +426,20 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Push**: `32f5d40..3c3ab3d` + cierre → `origin/main` (fast-forward); `REMOTE_SHA_MATCH = PASS` en cada checkpoint; política `GITHUB_ACTIONS = NOT_APPLICABLE_BY_OWNER_DECISION`, `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION`.
 - **T11 = CLOSED_TECHNICALLY**: R-213 (`c32d873`) · R-212 (`a7a9087`) · R-218 (`356de95`) · R-220 (este cierre). **Certificación de tranche**: `GA_T11_CERTIFICATION.md`.
 - **Siguiente**: **T14** (GA-REQ-061 · Cutover operacional — `SPEC_READY`) — orden T11 → **T14** → T12 → T13. R-142 permanece diferida por AOD-17.
+
+## AE-57 · 2026-09-15 · T14 CERRADA TÉCNICAMENTE — GA-REQ-061 (Cutover operacional / Cargas Iniciales), por checkpoints C1–C9
+
+- **C1 fundación** `cf03253` (RED `cad5e3c`): tablas `cutover_batches/items/staging_rows/opening_balance_corrections` + extensiones `OpeningBalance`/`Lot`; migraciones `b7c8d9e0f1a2` y `c8d9e0f1a2b3` (acciones RBAC/auditoría, **nombres de miembro en MAYÚSCULAS**); `AuditModule.CUTOVER`.
+- **C2 parser+staging** `3e138a1` (RED `efb098d`): openpyxl v1, error codes estructurados, checksum idempotente, preview sin efectos.
+- **C3 ciclo de aprobación** `3e3f2cb` (RED `b7f596f`): `submit/approve/reject`; segregación creador≠aprobador (también super admin); REJECTED terminal; 409 deterministas.
+- **C4 apply atómico** `fe5fe98` (RED `b30a58a` · IMPL `782547b`): lotes MIGRATED con reuso (origen NATIVE intacto), snapshots de apertura = **saldo vivo al corte**, BU habilitada + alcance del actor, rollback total con `FAILED_APPLY` en transacción propia.
+- **C5 reporting** `4b8bc74` (RED `81ea05f` · IMPL `3452117`): `GET /reconciliation` Opening/Post/Lifetime; golden **9.965** (nunca 9.465); UNKNOWN = `null` (jamás 0); post-cutover estricto `event_date > corte` con contrapartidas `GA-REM-041`.
+- **C6 correcciones** `02e0632` (RED `bfadb41` · IMPL `f7819f1`): AC59-65 — lista blanca, razón ≥5, before/after/delta, auditoría `CORRECT`, tenancy 404, 9.900⇒9.865 sin borrar el post.
+- **C7 matriz+controles** `69f5aa8` (RED `b3217ac` · IMPL `5f40842`): `CUT-RED-01..22` + `CUT-CTL-01..06`; **dos deficits reales cerrados**: `MASTER_INACTIVE` (OD-21/AC52; histórica AC53 se conserva) y **alcance BU del actor no-super-admin jamás resuelto** (leía claves de sesión inexistentes ⇒ resuelto en BD, patrón `/me`).
+- **C8 FE** `a7ada1f`: «Cargas Iniciales» `/cutover` — flujo completo, status visible, preview, apply bloqueado con errores (AC81), UNKNOWN≠0 visual (AC77), i18n ES/EN; jsdom 4/4 · FE **524/524** · build 0.
+- **C9 plantilla+E2E** `1976011` (RED `C9-RED`): `GET /cutover-templates/{bu}` v1 versionada (Instrucciones/Meta/Datos, semántica UNKNOWN impresa) + descarga en UI + **E2E 4/4 BUs** con journals (`evidence/e2e/`): golden broiler 9.965/535/UNKNOWN y negativas (cross-company 404, re-apply 409, submit bloqueado 409).
+- **Gates**: BE targeted por checkpoint + guardias **67/67** · rutas `/api/` **214→226** · tablas **60** · cabeza única `c8d9e0f1a2b3` · **BE full 1428/0F/49S** · FE 524/524 · build 0 · E2E 4/4.
+- **Sensibilidad S1–S10** completas con RED quirúrgica y restore desde SHA de implementación (S4 = clúster 4:4 del apply-path, documentado; S7 = mutación de oro 1:1/2:2); post-mutación en verde en cada checkpoint.
+- **Push**: cada checkpoint empujado y verificado (`REMOTE_SHA_MATCH = PASS`). La primera corrida full detectó 9 fallos (gobernanza de matriz RBAC/purga/pin de cabeza + contaminación de fase/lote sembrado + literales de fecha en tests) — **todos resueltos** en `4b859b2`; doc-fixup final ancla el cierre `__CLOSURE__`.
+- **Certificación**: `specs/GA-REQ-061/GA_REQ_061_CERTIFICATION.md` + `GA_T14_CERTIFICATION.md` (evidencia `specs/GA-REQ-061/evidence/{red,green,sensibilidad,post-mutation,fe,e2e}`).
+- **Siguiente**: **T12** en el orden canónico; R-142 permanece diferida (AOD-17).
