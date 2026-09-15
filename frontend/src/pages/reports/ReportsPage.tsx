@@ -210,7 +210,7 @@ export default function ReportsPage() {
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mb-6">
  <h2 className="font-semibold text-slate-700 mb-3">{t('reports.quickAccess')}</h2>
  <div className="flex flex-wrap gap-3">
- <Link to="/reports/lot/2" className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
+ <Link to={`/reports/lot/${lotId}`} className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
  <ClipboardList size={16} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />
  {t('reports.lotReportLink', { id: 2 })}
  </Link>

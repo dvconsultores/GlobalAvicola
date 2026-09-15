@@ -45,6 +45,8 @@ export default function LotDetailPage() {
  const [transitionMale, setTransitionMale] = useState('')
  const [transitionFemale, setTransitionFemale] = useState('')
  const toast = useToast()
+ // `R-220` · AC-01 (R-212) y B4: gate y enlace del reporte del lote a nivel de componente.
+ const puedeReportes = can({ permission: 'reports:read' })
 
  useEffect(() => {
  const fetchAll = async () => {
@@ -56,7 +58,6 @@ export default function LotDetailPage() {
 
  // `R-212` · AC-01: no se piden KPIs de reportes sin `reports:read` (el
  // servidor deniega; la UI deja de emitir la petición).
- const puedeReportes = can({ permission: 'reports:read' })
  const omitido = Promise.resolve({ data: null } as any)
  const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes, mastersRes, semanalRes] = await Promise.allSettled([
  puedeReportes ? api.get(`/reports/kpis?lot_id=${id}`) : omitido,
@@ -193,6 +194,12 @@ export default function LotDetailPage() {
  {t(`lotStatus.${lot.status}`, String(lot.status))}
  </span>
  </div>
+ {/* `R-220` · B4 (F G-18): el reporte del lote deja de ser casi huérfano. */}
+ {puedeReportes && (
+ <Link to={`/reports/lot/${lot.id}`} className="inline-block mt-1 text-sm font-medium text-[#5a9bba] hover:underline">
+ {t('reports.lotReport', 'Reporte del lote')}
+ </Link>
+ )}
  </div>
 
  {/* Phase transition button (Cría → Producción) */}
