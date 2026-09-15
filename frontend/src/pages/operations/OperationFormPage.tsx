@@ -1495,7 +1495,7 @@ export default function OperationFormPage() {
  {incubatorFields.map((field, i) => {
  const machineType = watch(`hatchery_params.${i}.machine_type` as any)
  return (
- <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">
+ <div key={field.id} className="relative space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">{/* `R-220` · B9 (F G-22): ancestro posicionado del botón eliminar */}
  <p className="text-sm font-semibold text-slate-600">{t('operations.machine', 'Máquina')} {i + 1}</p>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
  <div>
