@@ -152,6 +152,7 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/cutover-batches/{batch_id}/submit": (Alcance.MULTI_UNIDAD, None, "envía a aprobación el batch"),
     "/api/v1/cutover-batches/{batch_id}/approve": (Alcance.MULTI_UNIDAD, None, "aprueba el batch (segregación)"),
     "/api/v1/cutover-batches/{batch_id}/reject": (Alcance.MULTI_UNIDAD, None, "rechaza el batch (segregación)"),
+    "/api/v1/cutover-batches/{batch_id}/apply": (Alcance.MULTI_UNIDAD, None, "aplica el batch (BU habilitada, OD-16)"),
     # ── Revisión y aprobación · `P-07`, flujo 6 ───────────────────────────────
     "/api/v1/review/pending": (Alcance.MULTI_UNIDAD, None, "cola de las cuatro"),
     # `R-197`/C-09: lectura de control del historial por evento; empresa +

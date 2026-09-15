@@ -71,6 +71,16 @@ async def rechazar_batch(
     return await CutoverService(db, current_user).rechazar(batch_id, data.reason)
 
 
+@router.post("/{batch_id}/apply", response_model=schemas.CutoverBatchRead)
+async def aplicar_batch(
+    batch_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("cutover", "apply")),
+):
+    """APPROVED → APPLIED (terminal): lotes migrados + snapshots de opening, todo-o-nada."""
+    return await CutoverService(db, current_user).aplicar(batch_id)
+
+
 @router.get("/{batch_id}/validation", response_model=schemas.CutoverValidationRead)
 async def validacion_del_batch(
     batch_id: int,

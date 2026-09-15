@@ -8,7 +8,7 @@ valida (AC45); el re-upload del mismo archivo no duplica filas (AC50); el
 from __future__ import annotations
 
 import hashlib
-from datetime import datetime, timezone
+from datetime import date, datetime, time, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -17,7 +17,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..audit.helpers import audit_accion
 from ..audit.models import AuditAction, AuditModule
-from ..masters.models import Farm
+from ..business_units.service import unidades_habilitadas
+from ..lots.models import OpeningBalance
+from ..masters.models import BirdTypeEnum, Farm, Lot, LotStatus, ProductivePhase
 from .models import CutoverBatch, CutoverBatchStatus, CutoverItem, CutoverItemStatus, CutoverStagingRow
 from .parser import CutoverParseError, parse_cutover_workbook
 from .schemas import CutoverBatchCreate
@@ -27,6 +29,15 @@ _ESTADOS_CARGABLES = {
     CutoverBatchStatus.VALIDATING.value,
     CutoverBatchStatus.VALIDATED.value,
 }
+
+
+class CutoverApplyError(Exception):
+    """Fallo de dominio durante el apply — viaja como `error_code` y dispara rollback."""
+
+    def __init__(self, code: str, message: str):
+        super().__init__(f"{code}: {message}")
+        self.code = code
+        self.message = message
 
 
 class CutoverService:
@@ -258,6 +269,156 @@ class CutoverService:
         await self.db.commit()
         await self.db.refresh(batch)
         return batch
+
+    # ── C4 · apply atómico ────────────────────────────────────────────────────
+
+    async def _resolver_fase(self) -> int:
+        fase = (await self.db.execute(
+            select(ProductivePhase).where(ProductivePhase.is_active == True)  # noqa: E712
+            .order_by(ProductivePhase.order, ProductivePhase.id).limit(1))).scalar_one_or_none()
+        if fase is None:
+            raise CutoverApplyError("PHASE_REQUIRED",
+                                    "No hay fases productivas activas para anclar el opening.")
+        return fase.id
+
+    async def _crear_o_reusar_lote(self, batch: CutoverBatch, item: CutoverItem, ref: str,
+                                   vistos: set[str]) -> tuple[Lot, bool]:
+        """AC20-22: reusa el lote existente (no duplica); crea el migrado si no existe."""
+        if ref in vistos:
+            raise CutoverApplyError("LOT_DUPLICATE", f"referencia de lote repetida en el batch: {ref}")
+        vistos.add(ref)
+        existente = (await self.db.execute(select(Lot).where(Lot.lot_code == ref))).scalar_one_or_none()
+        if existente is not None:
+            if existente.company_id != batch.company_id:
+                raise CutoverApplyError("LOT_DUPLICATE", f"el código {ref} pertenece a otra empresa")
+            if not existente.legacy_lot_code:
+                existente.legacy_lot_code = ref
+            return existente, False
+        estado = item.opening_state or {}
+        arranque = estado.get("real_start_date")
+        lote = Lot(
+            company_id=batch.company_id, lot_code=ref, origin="MIGRATED", legacy_lot_code=ref,
+            bird_type=BirdTypeEnum(batch.business_unit),
+            start_date=(datetime.combine(date.fromisoformat(arranque), time.min, tzinfo=timezone.utc)
+                        if arranque else None),
+            status=LotStatus.ACTIVE, activation_type="normal", farm_id=estado.get("farm_id"),
+        )
+        self.db.add(lote)
+        await self.db.flush()
+        return lote, True
+
+    def _construir_opening(self, batch: CutoverBatch, item: CutoverItem, lote: Lot, fase_id: int) -> OpeningBalance:
+        """`initial_*` = **saldo vivo al corte** (lo histórico NO se resta otra vez, RC-08)."""
+        estado = item.opening_state or {}
+        fecha_corte = batch.cutover_datetime.date() if batch.cutover_datetime else date.today()
+        arranque = estado.get("real_start_date")
+        try:
+            age = max(0, (fecha_corte - date.fromisoformat(arranque)).days) if arranque else 0
+        except (ValueError, TypeError):
+            age = 0
+        hm, hf = estado.get("historical_mortality_males"), estado.get("historical_mortality_females")
+        bu = batch.business_unit
+        return OpeningBalance(
+            lot_id=lote.id, activation_date=fecha_corte, phase_at_activation_id=fase_id, age_days=age,
+            initial_male_count=estado.get("live_males") or 0,
+            initial_female_count=estado.get("live_females") or 0,
+            accumulated_mortality_male=hm or 0, accumulated_mortality_female=hf or 0,
+            accumulated_culls_male=0, accumulated_culls_female=0,
+            is_manual_activation=False, activated_by_id=int(self.current_user["id"]),
+            activation_reason="Cutover operacional (GA-REQ-061)",
+            cutover_item_id=item.id, cutover_datetime=batch.cutover_datetime,
+            mortality_status="KNOWN" if (hm is not None and hf is not None) else "UNKNOWN",
+            culls_status="UNKNOWN", feed_status="UNKNOWN",
+            egg_production_status="NOT_APPLICABLE" if bu in ("hatchery", "broiler") else "UNKNOWN",
+            chicks_hatched_status="NOT_APPLICABLE" if bu == "broiler" else "UNKNOWN",
+            broiler_received_status="UNKNOWN" if bu == "broiler" else "NOT_APPLICABLE",
+            source_system=batch.source_system or "EXCEL", source_reference=batch.source_reference,
+            legacy_lot_code=item.legacy_lot_reference,
+        )
+
+    async def _auditar_fallo_de_apply(self, batch_id: int, company_id: int, error: CutoverApplyError) -> None:
+        """`FAILED_APPLY` sobrevive al rollback (patrón `LOGIN_FAILED`): transacción propia."""
+        try:
+            await audit_accion(
+                self.db, usuario=self.current_user, accion=AuditAction.FAILED_APPLY,
+                modulo=AuditModule.CUTOVER, entity_type="cutover_batch", entity_id=str(batch_id),
+                company_id=company_id, comments=f"{error.code}: {error.message}"[:500],
+            )
+            await self.db.commit()
+        except Exception:
+            await self.db.rollback()
+
+    async def aplicar(self, batch_id: int) -> CutoverBatch:
+        """APPROVED → APPLIED en UNA transacción: lotes + openings o nada (AC26-30)."""
+        batch = await self._batch_propio(batch_id, bloquear=True)
+        empresa = batch.company_id
+        if batch.status != CutoverBatchStatus.APPROVED.value:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail=f"El batch está en estado {batch.status}: solo uno APPROVED se aplica.")
+
+        # OD-16: la BU de la empresa debe estar habilitada y el actor tener alcance.
+        habilitadas = await unidades_habilitadas(self.db, empresa)
+        if batch.business_unit not in habilitadas:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                detail=f"BU_DISABLED: la unidad {batch.business_unit} no está habilitada para la empresa.")
+        if not self.current_user.get("is_super_admin"):
+            alcance = set(self.current_user.get("effective_business_units") or []) | \
+                set(self.current_user.get("granted_business_units") or [])
+            if batch.business_unit not in alcance:
+                raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                                    detail=f"La unidad {batch.business_unit} no está concedida al actor.")
+
+        items = list((await self.db.execute(
+            select(CutoverItem).where(CutoverItem.batch_id == batch.id)
+            .order_by(CutoverItem.source_row_number))).scalars().all())
+        if any(item.validation_status != CutoverItemStatus.VALID.value for item in items):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="El batch tiene filas inválidas o pendientes: no se aplica.")
+
+        try:
+            fase_id = await self._resolver_fase()
+            vistos: set[str] = set()
+            creados = reusados = 0
+            for item in items:
+                ref = item.legacy_lot_reference or f"CUT-ITEM-{item.id}"
+                lote, nuevo = await self._crear_o_reusar_lote(batch, item, ref, vistos)
+                ya = (await self.db.execute(
+                    select(OpeningBalance).where(OpeningBalance.lot_id == lote.id))).scalar_one_or_none()
+                if ya is not None:
+                    raise CutoverApplyError("OPENING_ALREADY_EXISTS",
+                                            f"el lote {ref} ya tiene un saldo de apertura vigente")
+                self.db.add(self._construir_opening(batch, item, lote, fase_id))
+                item.lot_id = lote.id
+                item.validation_status = CutoverItemStatus.APPLIED.value
+                item.applied_at = datetime.now(timezone.utc)
+                creados += int(nuevo)
+                reusados += int(not nuevo)
+
+            batch.status = CutoverBatchStatus.APPLIED.value  # terminal (AC25)
+            batch.applied_by_id = int(self.current_user["id"])
+            batch.applied_at = datetime.now(timezone.utc)
+            await audit_accion(
+                self.db, usuario=self.current_user, accion=AuditAction.APPLY, modulo=AuditModule.CUTOVER,
+                entity_type="cutover_batch", entity_id=str(batch.id), company_id=empresa,
+                new_state=batch.status, new_values={"lots_created": creados, "lots_reused": reusados},
+            )
+            await self.db.commit()
+            await self.db.refresh(batch)
+            return batch
+        except CutoverApplyError as exc:
+            await self.db.rollback()
+            await self._auditar_fallo_de_apply(batch_id, empresa, exc)
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail=f"{exc.code}: {exc.message}") from exc
+        except HTTPException:
+            await self.db.rollback()
+            raise
+        except Exception as exc:  # rollback total + rastro FAILED_APPLY
+            await self.db.rollback()
+            await self._auditar_fallo_de_apply(batch_id, empresa,
+                                               CutoverApplyError("APPLY_FAILED", str(exc)[:300]))
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail=f"APPLY_FAILED: {exc}") from exc
 
     async def validacion(self, batch_id: int) -> dict:
         batch = await self._batch_propio(batch_id)

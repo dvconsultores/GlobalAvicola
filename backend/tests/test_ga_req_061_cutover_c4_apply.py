@@ -107,9 +107,14 @@ async def test_c4_apply_solo_desde_approved_y_una_vez(auth_headers, client, seed
     """Un VALIDATED no se aplica; un APPLIED es terminal (re-apply ⇒ 409)."""
     await _fase()
     await _otorgar(seeded_ids["role_approver_id"], ("cutover", "approve"))
+    # Referencias propias de este test: los lotes persisten entre tests del módulo.
+    filas_propias = [
+        ["CUT-MG-101", "2026-08-15", 5000, 5000, 300, 200, None, ""],
+        ["CUT-MG-102", "2026-09-01", 2000, 2000, None, None, None, ""],
+    ]
     batch_id = await _crear_batch(client, auth_headers, cutover="2026-10-07T00:00:00+00:00")
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
-                          headers=auth_headers, files=_subir(_xlsx(FILAS)))
+                          headers=auth_headers, files=_subir(_xlsx(filas_propias)))
     assert r.status_code == 200
 
     no_aprobado = await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)
