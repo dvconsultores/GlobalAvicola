@@ -1444,7 +1444,7 @@ export default function OperationFormPage() {
  <select {...register(`house_inspections.${i}.equipment_items.${j}.equipment_type`)} className={ic}>
  <option value="">{t('operations.selectEquipment', 'Tipo de equipo...')}</option>
  {EQUIPMENT_TYPES.map(eq => (
- <option key={eq} value={eq}>{eq.charAt(0).toUpperCase() + eq.slice(1)}</option>
+ <option key={eq} value={eq}>{t(`operations.equipment.${eq}`, eq.charAt(0).toUpperCase() + eq.slice(1))}</option>
  ))}
  </select>
  <input type="text"
@@ -2115,7 +2115,7 @@ default: return (
  }}
  items={watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder={watch('extra_data.reception_source' as any) === 'transfer' ? 'Buscar transferencia...' : 'Buscar orden de compra...'}
+ searchPlaceholder={watch('extra_data.reception_source' as any) === 'transfer' ? t('operations.searchTransfer', 'Buscar transferencia...') : t('operations.searchPurchaseOrder', 'Buscar orden de compra...')}
  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
  />
  </>
@@ -2151,7 +2151,7 @@ default: return (
  }}
  items={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders}
  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? 'Buscar orden de traslado...' : 'Buscar orden de compra...'}
+ searchPlaceholder={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? t('operations.searchTransferOrder', 'Buscar orden de traslado...') : t('operations.searchPurchaseOrder', 'Buscar orden de compra...')}
  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
  />
  </>

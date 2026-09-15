@@ -8,8 +8,8 @@
 import api from './api'
 
 /**
- * Los cinco tipos accionables de `docs/02 §3.14`. Falta el sexto —«lote próximo a cierre»—
- * porque «próximo» no está definido en ninguna fuente y `OD-08` sigue abierta en esa mitad.
+ * Los seis tipos de `docs/02 §3.14`. `lot_near_close` ya lo emite el backend
+ * (`notifications/service.py` · `LOT_NEAR_CLOSE`, con contra qué medir: `planned_close_date`).
  */
 export type NotificationType =
   | 'record_rejected'
@@ -17,6 +17,7 @@ export type NotificationType =
   | 'mortality_over_threshold'
   | 'weight_out_of_standard'
   | 'review_pending_24h'
+  | 'lot_near_close'
 
 export interface Notification {
   id: number

@@ -5,6 +5,8 @@
  * Compatible con Chrome, Edge, Firefox, Safari, Opera, iOS Safari, Android Chrome
  */
 
+import { formatFechaHora } from './dates'
+
 // ─── Excel ────────────────────────────────────────────────────────────────────
 
 export async function exportToExcel(
@@ -33,6 +35,8 @@ export async function exportToPDF(
   headers: Record<string, string>,
   title: string,
   filename: string,
+  /** `R-220` · C6: locale de la app — el export no fija idioma por su cuenta. */
+  locale?: string,
 ): Promise<void> {
   const { default: jsPDF } = await import('jspdf')
   const { default: autoTable } = await import('jspdf-autotable')
@@ -47,7 +51,7 @@ export async function exportToPDF(
   // Date
   doc.setFontSize(9)
   doc.setTextColor(100, 116, 139)  // slate-500
-  doc.text(new Date().toLocaleString('es-VE'), 40, 56)
+  doc.text(formatFechaHora(new Date(), locale), 40, 56)
 
   const cols = Object.values(headers)
   const bodyRows = rows.map(row => Object.keys(headers).map(k => String(row[k] ?? '')))

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { formatFechaHora } from '../../utils/dates'
 import { Shield, RotateCcw } from 'lucide-react'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
@@ -48,7 +49,7 @@ function mapActionToType(action: string): TimelineEventType {
 }
 
 export default function AuditPage() {
- const { t } = useTranslation()
+ const { t, i18n } = useTranslation()
  const [logs, setLogs] = useState<any[]>([])
  const [total, setTotal] = useState(0)
  const [loading, setLoading] = useState(true)
@@ -135,7 +136,7 @@ export default function AuditPage() {
  const detalle = [...diffDe(log), log.change_reason, log.comments].filter(Boolean).join(' · ')
  return {
  id: log.id,
- date: new Date(log.created_at).toLocaleString(),
+ date: formatFechaHora(log.created_at, i18n.language),
  // `R-219` · AC-05: acción traducida (`audit.actions.*`), nunca el enumerado crudo.
  // `String(...)`: `tsc -b` exige `string` estricto (el retorno de `t` es unión amplia).
  action: String(t(`audit.actions.${log.action}`, log.action)),

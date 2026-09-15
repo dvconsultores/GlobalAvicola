@@ -29,6 +29,7 @@ vi.mock('react-i18next', () => ({
       if (k.startsWith('audit.modules.')) return `TM-${k.split('.').pop()}`
       return typeof f === 'string' ? f : k
     },
+    i18n: { language: 'es', resolvedLanguage: 'es' },
   }),
 }))
 

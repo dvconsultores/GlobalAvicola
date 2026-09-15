@@ -67,7 +67,12 @@
     "options": "opciones",
     "pending": "Pendiente",
     "prev": "Anterior",
-    "viewDetail": "Ver detalle"
+    "viewDetail": "Ver detalle",
+    "forbidden": "Permiso requerido para ver esta sección",
+    "loadError": "No se pudieron cargar los datos",
+    "loadMore": "Cargar más",
+    "previous": "Anterior",
+    "required": "Requerido"
   },
   "ui": {
     "filterPanel": {
@@ -322,7 +327,8 @@
       "birth_registration": "Registrar el nacimiento de los pollitos",
       "chick_dispatch": "Despachar los pollitos nacidos",
       "lot_closure": "Cerrar el lote al finalizar el ciclo",
-      "transport_inspection": "Inspeccionar el transporte"
+      "transport_inspection": "Inspeccionar el transporte",
+      "bird_transfer": "Traslado de aves entre galpones"
     }
   },
   "birdTypes": {
@@ -479,7 +485,8 @@
     "hasPendingCorrections": "Tienes correcciones pendientes",
     "checkAndReview": "Revisa tus operaciones rechazadas",
     "processKpi": "KPIs de procesos avicolas",
-    "processes": "Procesos"
+    "processes": "Procesos",
+    "operator": "Operador"
   },
   "reports": {
     "mortality": "Mortalidad",
@@ -512,14 +519,28 @@
     "waterL": "Agua (L)",
     "weightG": "Peso (g)",
     "lotReportLink": "Reporte Lote #{{id}}",
-    "sapComparisonLink": "SAP Comparison",
+    "sapComparisonLink": "Comparación SAP",
     "animalWelfare": "Bienestar Animal",
     "vaccinationEfficiency": "Eficiencia Vacunación",
     "transferEfficiency": "Eficiencia Traslado",
     "pollitosNacidos": "pollitos nacidos",
     "huevos": "huevos",
     "bajas": "bajas",
-    "inicial": "inicial"
+    "inicial": "inicial",
+    "onlyApproved": "Los indicadores se calculan solo con datos aprobados",
+    "onlyApprovedDetail": "Este lote todavía no tiene registros aprobados suficientes, por lo que sus indicadores aparecen sin valor en lugar de en cero.",
+    "selectLot": "Seleccionar lote",
+    "exportHeaders": {
+      "lot_id": "Lote ID",
+      "mortality_rate": "Mortalidad %",
+      "total_deaths": "Bajas",
+      "feed_conversion": "Conv. Alimento",
+      "total_feed_kg": "Alimento (kg)",
+      "total_eggs": "Huevos",
+      "hen_day_pct": "% Postura",
+      "chicks_born": "Pollitos nacidos",
+      "hatchability_pct": "% Nacimiento"
+    }
   },
   "audit": {
     "recentActivity": "Actividad Reciente",
@@ -570,7 +591,9 @@
       "reports": "Reportes",
       "users": "Usuarios",
       "config": "Configuración"
-    }
+    },
+    "action": "Tipo de operación",
+    "module": "Módulo"
   },
   "sap": {
     "consolidate": "Consolidar Aprobados",
@@ -626,7 +649,7 @@
     "status": "Estado",
     "active": "Activo",
     "inactive": "Inactivo",
-    "mobile": "Mobile",
+    "mobile": "Móvil",
     "web": "Web",
     "noRole": "Sin rol",
     "editUser": "Editar",
@@ -650,7 +673,8 @@
     "noUsers": "No hay usuarios registrados en esta empresa",
     "forbidden": "No tienes permiso para ver la administración de usuarios",
     "loadError": "No se pudo cargar la lista de usuarios",
-    "partialCatalogs": "Algunos catálogos no se pudieron cargar; los desplegables pueden estar incompletos"
+    "partialCatalogs": "Algunos catálogos no se pudieron cargar; los desplegables pueden estar incompletos",
+    "deleteUserTitle": "Dar de baja usuario"
   },
   "profile": {
     "title": "Perfil",
@@ -904,7 +928,26 @@
     "submittedToReview": "Enviado a revisión",
     "resubmittedToReview": "Reenviado a revisión",
     "submitError": "No se pudo enviar a revisión",
-    "stagesGroup": "Etapas de producción"
+    "stagesGroup": "Etapas de producción",
+    "hatcheryParams": "Incubadora",
+    "inspections": "Inspecciones",
+    "loaded": "Cargados",
+    "water": "Agua",
+    "waterConsumed": "Agua",
+    "searchTransfer": "Buscar transferencia...",
+    "searchPurchaseOrder": "Buscar orden de compra...",
+    "searchTransferOrder": "Buscar orden de traslado...",
+    "equipment": {
+      "bebedero": "Bebedero",
+      "comedero": "Comedero",
+      "ventilador": "Ventilador",
+      "calefactor": "Calefactor",
+      "nebulizador": "Nebulizador",
+      "iluminación": "Iluminación",
+      "cortina": "Cortina",
+      "extractor": "Extractor",
+      "otro": "Otro"
+    }
   },
   "weekly": {
     "weekNumber": "N° Sem",
@@ -987,7 +1030,9 @@
     "end": "Cierre",
     "plannedClose": "Fecha prevista de cierre",
     "selectArea": "Seleccionar área...",
-    "area": "Área"
+    "area": "Área",
+    "phaseNotFound": "No se encontró la fase de producción",
+    "codeMin": "Mínimo 2 caracteres"
   },
   "phases": {
     "rearing": "Fase Cría",
@@ -1105,7 +1150,9 @@
       "vaccination_certificate": "Certificado de vacunación",
       "origin_certificate": "Certificado de origen",
       "photo": "Foto",
-      "document": "Documento"
+      "document": "Documento",
+      "signature": "Firma",
+      "audio": "Audio"
     }
   },
   "alerts": {
@@ -1143,7 +1190,14 @@
     "europeanProductionIndex": "Índice Europeo de Producción",
     "afcr": "FCR ajustado",
     "totalFeed": "Alimento total",
-    "totalWeight": "Peso total"
+    "totalWeight": "Peso total",
+    "birthRate": "Nacimiento",
+    "chicksBorn": "Nacidos",
+    "hatchRate": "Eclosión",
+    "hatchery": "Incubadora",
+    "hatcheryYield": "Rendimiento",
+    "transferEfficiency": "Eficiencia de Traslado",
+    "vaccinationEfficiency": "Eficiencia de Vacunación"
   },
   "roles": {
     "title": "Roles y permisos",

@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
+import { formatFechaHora } from '../../utils/dates'
 import { useParams, Link } from 'react-router-dom'
 import { ClipboardList, Bird, Wheat, Egg, RefreshCw, Pencil, FileText } from 'lucide-react'
 import api from '../../services/api'
@@ -18,7 +19,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function ReviewDetail() {
  const can = useCan()
- const { t } = useTranslation()
+ const { t, i18n } = useTranslation()
  const { id } = useParams<{ id: string }>()
  const toast = useToast()
  const enVuelo = useRef(false)
@@ -213,7 +214,7 @@ export default function ReviewDetail() {
  {corrections.map((c: any) => (
  <div key={c.id} className="text-xs text-slate-600 mb-2 p-2 bg-amber-50 rounded-lg">
  <p><strong>{c.field_name}:</strong> "{c.original_value}" → "{c.corrected_value}"</p>
- <p className="text-slate-400 mt-0.5">{c.reason} — {new Date(c.created_at).toLocaleString()}</p>
+ <p className="text-slate-400 mt-0.5">{c.reason} — {formatFechaHora(c.created_at, i18n.language)}</p>
  </div>
  ))}
  </div>
@@ -230,7 +231,7 @@ export default function ReviewDetail() {
  <div key={a.id} className="text-xs text-slate-600 mb-1">
  <span className="font-medium">{t(`audit.actions.${a.action_type}`, String(a.action_type))}</span>
  {a.observations && <span className="text-slate-400"> — {a.observations}</span>}
- <span className="text-slate-400 ml-2">{new Date(a.created_at).toLocaleString()}</span>
+ <span className="text-slate-400 ml-2">{formatFechaHora(a.created_at, i18n.language)}</span>
  </div>
  ))}
  </div>

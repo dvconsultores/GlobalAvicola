@@ -10,7 +10,7 @@ const post = vi.fn()
 vi.mock('../../../services/api', () => ({
   default: { get: (...a: any[]) => get(...a), post: (...a: any[]) => post(...a) },
 }))
-vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k: string, f?: string) => f ?? k }) }))
+vi.mock('react-i18next', () => ({ useTranslation: () => ({ t: (k: string, f?: string) => f ?? k, i18n: { language: 'es', resolvedLanguage: 'es' } }) }))
 vi.mock('../../../components/Toast', () => ({
   useToast: () => ({ success: vi.fn(), error: vi.fn(), warning: vi.fn(), info: vi.fn() }),
   getErrorMessage: (_e: any, f: string) => f,

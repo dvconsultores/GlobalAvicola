@@ -23,3 +23,16 @@ export function formatFecha(value?: string | null, locale?: string): string {
   if (Number.isNaN(d.getTime())) return String(value)
   return d.toLocaleDateString(locale, { day: '2-digit', month: '2-digit', year: 'numeric' })
 }
+
+/**
+ * `R-220` · C6 (F G-13): fecha-HORA (marca de tiempo) con el locale de la app — nunca el
+ * del navegador. Complementa `formatFecha` (fechas civiles) para `created_at`/`updated_at`.
+ */
+export function formatFechaHora(value?: string | Date | null, locale?: string): string {
+  if (!value) return '—'
+  const d = value instanceof Date ? value : new Date(value)
+  if (Number.isNaN(d.getTime())) return String(value)
+  return d.toLocaleString(locale, {
+    day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit',
+  })
+}

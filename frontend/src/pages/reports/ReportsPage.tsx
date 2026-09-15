@@ -9,7 +9,7 @@ import { exportToExcel, exportToPDF, kpisToRows } from '../../utils/export'
 import { Button } from '../../components/ui'
 
 export default function ReportsPage() {
- const { t } = useTranslation()
+ const { t, i18n } = useTranslation()
  const [kpis, setKpis] = useState<any>(null)
  const [lotId, setLotId] = useState(2)
  // `R-220` · A2 (C#18): selector real de lote — el listado de lotes alimenta la lista.
@@ -42,23 +42,24 @@ export default function ReportsPage() {
  const handleExport = async (format: 'excel' | 'pdf') => {
  setExporting(format)
  try {
+ // `R-220` · C6 (F G-14): cabeceras de exportación por clave i18n, no ES fijo.
  const headers: Record<string, string> = {
- lot_id: 'Lote ID',
- mortality_rate: 'Mortalidad %',
- total_deaths: 'Bajas',
- feed_conversion: 'Conv. Alimento',
- total_feed_kg: 'Alimento (kg)',
- total_eggs: 'Huevos',
- hen_day_pct: '% Postura',
- chicks_born: 'Pollitos nacidos',
- hatchability_pct: '% Nacimiento',
+ lot_id: t('reports.exportHeaders.lot_id', 'Lote ID'),
+ mortality_rate: t('reports.exportHeaders.mortality_rate', 'Mortalidad %'),
+ total_deaths: t('reports.exportHeaders.total_deaths', 'Bajas'),
+ feed_conversion: t('reports.exportHeaders.feed_conversion', 'Conv. Alimento'),
+ total_feed_kg: t('reports.exportHeaders.total_feed_kg', 'Alimento (kg)'),
+ total_eggs: t('reports.exportHeaders.total_eggs', 'Huevos'),
+ hen_day_pct: t('reports.exportHeaders.hen_day_pct', '% Postura'),
+ chicks_born: t('reports.exportHeaders.chicks_born', 'Pollitos nacidos'),
+ hatchability_pct: t('reports.exportHeaders.hatchability_pct', '% Nacimiento'),
  }
  const rows = kpisToRows(kpis, lotId)
  const filename = `GlobalAvicola_KPI_Lote${lotId}_${new Date().toISOString().slice(0,10)}`
  if (format === 'excel') {
  await exportToExcel(rows, headers, filename)
  } else {
- await exportToPDF(rows, headers, `KPIs — Lote ${lotId}`, filename)
+ await exportToPDF(rows, headers, `KPIs — Lote ${lotId}`, filename, i18n.language)
  }
  } catch {
  console.error('Export failed')

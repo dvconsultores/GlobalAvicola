@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import { formatFechaHora } from '../../utils/dates'
 import {
  RefreshCw, CheckCircle, XCircle, Package, Upload, Clock,
  Send, AlertTriangle, FileText, Building2,
@@ -25,7 +26,7 @@ const SAP_TABS = [
 
 export default function SapManagerPage() {
  const can = useCan()
- const { t } = useTranslation()
+ const { t, i18n } = useTranslation()
  const toast = useToast()
  const { user } = useAuthStore()
  const { activeCompanyName } = useCompanyStore()
@@ -253,7 +254,7 @@ export default function SapManagerPage() {
  <div key={p.id} className="py-3 flex items-center justify-between hover:bg-slate-50 px-2 rounded-lg transition">
  <div>
  <p className="text-sm font-medium text-slate-700">{p.sap_document_id || `#${p.id}`}</p>
- <p className="text-xs text-slate-500">{new Date(p.created_at).toLocaleString()}</p>
+ <p className="text-xs text-slate-500">{formatFechaHora(p.created_at, i18n.language)}</p>
  </div>
  <Badge variant={p.status === 'confirmed' ? 'approved' : 'sent_sap'} size="sm">{p.status}</Badge>
  </div>
@@ -311,7 +312,7 @@ export default function SapManagerPage() {
  </div>
  <p className="text-xs text-slate-500 mt-1">
  {j.direction} · {j.success_count}/{j.total_records} {t('sap.records', 'registros')}
- {j.created_at && ` · ${new Date(j.created_at).toLocaleString()}`}
+ {j.created_at && ` · ${formatFechaHora(j.created_at, i18n.language)}`}
  </p>
  </div>
  ))}

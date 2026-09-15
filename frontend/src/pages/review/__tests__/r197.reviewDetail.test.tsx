@@ -24,7 +24,7 @@ vi.mock('../../../services/api', () => ({
   },
 }))
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k: string, f?: any) => (typeof f === 'string' ? f : k) }),
+  useTranslation: () => ({ t: (k: string, f?: any) => (typeof f === 'string' ? f : k), i18n: { language: 'es', resolvedLanguage: 'es' } }),
 }))
 const toastError = vi.fn()
 const toastSuccess = vi.fn()

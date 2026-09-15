@@ -18,8 +18,8 @@ import { Button, Input, Card, CardHeader, CardBody } from '../../components/ui'
 const BIRD_TYPES = ['grandparent', 'breeder', 'broiler', 'hatchery'] as const
 
 const schema = z.object({
- lot_code: z.string().min(2, 'Mínimo 2 caracteres').max(50),
- bird_type: z.enum(BIRD_TYPES, { error: 'Requerido' }),
+ lot_code: z.string().min(2, 'lots.codeMin').max(50),
+ bird_type: z.enum(BIRD_TYPES, { error: 'common.required' }),
  // `R-220` · A11 (B-19): el esquema del servidor declara `farm_id` opcional
  // (un lote de incubadora no siempre tiene granja); la UI lo exigía de más.
  farm_id: z.coerce.number().optional().nullable(),
@@ -38,6 +38,8 @@ interface SelectOption { id: number; name: string; code?: string }
 
 export default function LotFormPage() {
  const { t } = useTranslation()
+ // `R-220` · C3 (F G-09): los mensajes del esquema son CLAVES i18n; aquí se traducen.
+ const et = (m?: string) => (m ? t(m) : undefined)
  const navigate = useNavigate()
  const toast = useToast()
 
@@ -169,7 +171,7 @@ export default function LotFormPage() {
  label={t('lots.code', 'Código')}
  required
  placeholder="AVI-REP-PES-2024-001"
- error={errors.lot_code?.message}
+ error={et(errors.lot_code?.message)}
  {...register('lot_code')}
  />
 
@@ -186,7 +188,7 @@ export default function LotFormPage() {
  ))}
  </select>
  {errors.bird_type && (
- <p className="text-xs text-red-600">{errors.bird_type.message}</p>
+ <p className="text-xs text-red-600">{et(errors.bird_type.message)}</p>
  )}
  </div>
 
@@ -194,7 +196,7 @@ export default function LotFormPage() {
  <Input
  label={t('lots.start', 'Fecha inicio')}
  type="date"
- error={errors.start_date?.message}
+ error={et(errors.start_date?.message)}
  {...register('start_date')}
  />
 
@@ -204,7 +206,7 @@ export default function LotFormPage() {
  <Input
  label={t('lots.plannedClose')}
  type="date"
- error={errors.planned_close_date?.message}
+ error={et(errors.planned_close_date?.message)}
  {...register('planned_close_date')}
  />
  </CardBody>
@@ -227,7 +229,7 @@ export default function LotFormPage() {
  <option value="">{loadingMasters ? t('common.loading') : t('lots.selectFarm', 'Seleccionar granja...')}</option>
  {farms.map(f => <option key={f.id} value={f.id}>{f.name}</option>)}
  </select>
- {errors.farm_id && <p className="text-xs text-red-600">{errors.farm_id.message}</p>}
+ {errors.farm_id && <p className="text-xs text-red-600">{et(errors.farm_id.message)}</p>}
  </div>
 
  {/* Galpón */}

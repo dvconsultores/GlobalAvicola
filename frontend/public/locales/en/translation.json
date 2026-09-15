@@ -67,7 +67,12 @@
     "options": "options",
     "pending": "Pending",
     "prev": "Previous",
-    "viewDetail": "View detail"
+    "viewDetail": "View detail",
+    "forbidden": "Permission required to view this section",
+    "loadError": "Could not load the data",
+    "loadMore": "Load more",
+    "previous": "Previous",
+    "required": "Required"
   },
   "ui": {
     "filterPanel": {
@@ -322,7 +327,8 @@
       "birth_registration": "Record the birth of the chicks",
       "chick_dispatch": "Dispatch the hatched chicks",
       "lot_closure": "Close the lot at the end of the cycle",
-      "transport_inspection": "Inspect the transport"
+      "transport_inspection": "Inspect the transport",
+      "bird_transfer": "Bird transfer between houses"
     }
   },
   "birdTypes": {
@@ -479,7 +485,8 @@
     "hasPendingCorrections": "You have pending corrections",
     "checkAndReview": "Review your rejected operations",
     "processKpi": "Poultry process KPIs",
-    "processes": "Processes"
+    "processes": "Processes",
+    "operator": "Operator"
   },
   "reports": {
     "mortality": "Mortality",
@@ -519,7 +526,21 @@
     "pollitosNacidos": "chicks born",
     "huevos": "eggs",
     "bajas": "deaths",
-    "inicial": "initial"
+    "inicial": "initial",
+    "onlyApproved": "Indicators are computed only from approved data",
+    "onlyApprovedDetail": "This lot does not yet have enough approved records, so its indicators show no value instead of zero.",
+    "selectLot": "Select lot",
+    "exportHeaders": {
+      "lot_id": "Lot ID",
+      "mortality_rate": "Mortality %",
+      "total_deaths": "Deaths",
+      "feed_conversion": "Feed conv.",
+      "total_feed_kg": "Feed (kg)",
+      "total_eggs": "Eggs",
+      "hen_day_pct": "% Laying",
+      "chicks_born": "Chicks born",
+      "hatchability_pct": "% Hatchability"
+    }
   },
   "audit": {
     "recentActivity": "Recent Activity",
@@ -570,7 +591,9 @@
       "reports": "Reports",
       "users": "Users",
       "config": "Config"
-    }
+    },
+    "action": "Action type",
+    "module": "Module"
   },
   "sap": {
     "consolidate": "Consolidate Approved",
@@ -650,7 +673,8 @@
     "noUsers": "No users registered in this company",
     "forbidden": "You do not have permission to view user administration",
     "loadError": "The user list could not be loaded",
-    "partialCatalogs": "Some catalogs could not be loaded; dropdowns may be incomplete"
+    "partialCatalogs": "Some catalogs could not be loaded; dropdowns may be incomplete",
+    "deleteUserTitle": "Deactivate user"
   },
   "profile": {
     "title": "Profile",
@@ -904,7 +928,26 @@
     "submittedToReview": "Submitted for review",
     "resubmittedToReview": "Resubmitted for review",
     "submitError": "Could not submit for review",
-    "stagesGroup": "Production stages"
+    "stagesGroup": "Production stages",
+    "hatcheryParams": "Hatchery",
+    "inspections": "Inspections",
+    "loaded": "Loaded",
+    "water": "Water",
+    "waterConsumed": "Water",
+    "searchTransfer": "Search transfer...",
+    "searchPurchaseOrder": "Search purchase order...",
+    "searchTransferOrder": "Search transfer order...",
+    "equipment": {
+      "bebedero": "Drinker",
+      "comedero": "Feeder",
+      "ventilador": "Fan",
+      "calefactor": "Heater",
+      "nebulizador": "Mister",
+      "iluminación": "Lighting",
+      "cortina": "Curtain",
+      "extractor": "Exhaust fan",
+      "otro": "Other"
+    }
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -987,7 +1030,9 @@
     "end": "Close Date",
     "plannedClose": "Planned close date",
     "selectArea": "Select area...",
-    "area": "Area"
+    "area": "Area",
+    "phaseNotFound": "Production phase not found",
+    "codeMin": "At least 2 characters"
   },
   "phases": {
     "rearing": "Rearing Phase",
@@ -1105,7 +1150,9 @@
       "vaccination_certificate": "Vaccination certificate",
       "origin_certificate": "Certificate of origin",
       "photo": "Photo",
-      "document": "Document"
+      "document": "Document",
+      "signature": "Signature",
+      "audio": "Audio"
     }
   },
   "alerts": {
@@ -1143,7 +1190,14 @@
     "europeanProductionIndex": "European Production Index",
     "afcr": "Adjusted FCR",
     "totalFeed": "Total feed",
-    "totalWeight": "Total weight"
+    "totalWeight": "Total weight",
+    "birthRate": "Birth rate",
+    "chicksBorn": "Chicks born",
+    "hatchRate": "Hatch rate",
+    "hatchery": "Hatchery",
+    "hatcheryYield": "Yield",
+    "transferEfficiency": "Transfer efficiency",
+    "vaccinationEfficiency": "Vaccination efficiency"
   },
   "roles": {
     "title": "Roles and permissions",

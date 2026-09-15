@@ -190,7 +190,7 @@ export default function DashboardPage() {
  <p className="text-sm text-blue-200/80">
  {isKpiRoute
  ? t('dashboard.todayMetrics', 'Hoy')
- : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
+ : `${t('dashboard.welcome')}, ${user?.first_name || t('dashboard.operator', 'Operador')}`}
  </p>
  {(activeCompanyName || user?.company_name) && (
  <span className="text-xs px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(180,210,230,0.95)' }}>
