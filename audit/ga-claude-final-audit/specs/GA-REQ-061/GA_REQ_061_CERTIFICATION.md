@@ -1,7 +1,7 @@
 # GA-REQ-061 · CUTOVER OPERACIONAL (T14) — CERTIFICACIÓN TÉCNICA
 
 Fecha: 2026-09-15 · Tranche: **T14** (`GA-REQ-061` · Cutover operacional / Cargas
-Iniciales) · Cabeza de cierre: `__CLOSURE__` · Política `AOD-29 Clar.
+Iniciales) · Cabeza de cierre: `bed4b3f` · Política `AOD-29 Clar.
 01`: certificación local + `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION` +
 `REMOTE_SHA_MATCH` en cada checkpoint.
 
