@@ -60,17 +60,18 @@ const renderForm = () =>
 describe('R-220 · Lote A séptima tanda (RED)', () => {
   it('AC-R220-A·A10 · el formulario no ofrece ni envía `sap_reference` (el contrato lo descarta)', async () => {
     renderForm()
-    await waitFor(() => expect(screen.getByText('lots.lotCode')).toBeTruthy())
+    await waitFor(() => expect(screen.getAllByText('Código').length).toBeGreaterThan(0))
     // el campo prometía integración SAP que jamás llegaba
     expect(screen.queryByText(/Referencia SAP/), 'campo sap_reference aún visible').toBeNull()
   })
 
   it('AC-R220-A·A11 · `farm_id` deja de ser obligatorio en UI (esquema `Optional`)', async () => {
     renderForm()
-    await waitFor(() => expect(screen.getByText('lots.lotCode')).toBeTruthy())
-    fireEvent.change(screen.getByLabelText(/lots\.lotCode/), { target: { value: 'L-T1' } })
-    fireEvent.change(screen.getByLabelText(/birdTypes\.|lots\.birdType/), { target: { value: 'broiler' } })
-    fireEvent.click(screen.getByRole('button', { name: /common\.save|Guardar/ }))
+    await waitFor(() => expect(screen.getAllByText('Código').length).toBeGreaterThan(0))
+    fireEvent.change(screen.getByLabelText(/Código/), { target: { value: 'L-T1' } })
+    const selects = document.querySelectorAll('select')
+    fireEvent.change(selects[0], { target: { value: 'broiler' } })
+    fireEvent.click(screen.getByRole('button', { name: /Crear Lote|common\.save/ }))
     await waitFor(() => {
       const llamadas = post.mock.calls.filter((c) => String(c[0]) === '/lots')
       expect(llamadas.length, 'sin farm_id el formulario debe poder guardar').toBe(1)
