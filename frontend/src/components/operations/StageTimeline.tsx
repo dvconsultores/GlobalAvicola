@@ -7,7 +7,8 @@ import { EVENT_ICONS } from '../Icon'
 
 interface StageTimelineProps {
  stages: FlowStep[]
- onStageSelect: (event: string) => void
+ /** `R-220` · B6: sin autoridad de acción el consumidor lo omite y no se ofrece el botón. */
+ onStageSelect?: (event: string) => void
  completedStages?: string[]
  currentStage?: string
 }
@@ -150,7 +151,7 @@ export default function StageTimeline({
  </div>
 
  {/* Expanded content */}
- {isExpanded && (
+ {isExpanded && onStageSelect && (
  <div id={`stage-content-${index}`} className="mt-4 pt-4 border-t border-slate-200">
  <button
  onClick={(e) => {

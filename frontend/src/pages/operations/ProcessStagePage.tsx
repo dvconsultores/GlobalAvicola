@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
 import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered, Building2 } from 'lucide-react'
 import { useAuthStore } from '../../stores/auth.store'
+import { useCan } from '../../auth/actionAuthority'
 import { useCompanyStore } from '../../stores/company.store'
 import {
  PROCESS_STAGES, flowForStage,
@@ -29,6 +30,11 @@ export default function ProcessStagePage() {
  const { user } = useAuthStore()
  const { activeCompanyName } = useCompanyStore()
  const isMobileUser = user?.view_type === 'mobile'
+ // `R-220` · B6 (F G-20): la página es legible con `operations:read`, pero el registro
+ // de operación exige la autoridad de ACCIÓN `operations:create` (misma política que la
+ // ruta `/operations/new`). Sin ella: tiles read-only y timeline sin "Registrar" ⇒ sin callejón.
+ const can = useCan()
+ const puedeRegistrar = can({ permission: 'operations:create' })
  const { stage: stageParam, birdType, phase } = useParams<{ stage?: string; birdType?: string; phase?: string }>()
  // Compatibilidad: soporta tanto :stage (legacy) como :birdType/:phase? (nuevo ruteo)
  const stage = stageParam || (birdType && phase ? `${birdType}_${phase}` : birdType || '')
@@ -100,14 +106,14 @@ export default function ProcessStagePage() {
  {view === 'grid' ? (
  <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-6">
  {flow.map((s, i) => (
- <OperationTile key={s.event} step={s} index={i + 1} />
+ <OperationTile key={s.event} step={s} index={i + 1} readOnly={!puedeRegistrar} />
  ))}
  </div>
  ) : (
  <div className="mb-6">
  <StageTimeline
  stages={flow}
- onStageSelect={goToOperation}
+ onStageSelect={puedeRegistrar ? goToOperation : undefined}
  completedStages={[]}
  currentStage={undefined}
  />
