@@ -1,0 +1,4360 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB10.test.tsx (8 tests | 8 failed) 46ms
+     × R7 · ReviewDetail: los renglones observación+botón envuelven en <420px 9ms
+     × R8 · Toast: contenedor limitado al viewport en móvil (no sobresale a 390px) 15ms
+     × R9 · OperationFormPage: etiqueta de parámetros a ancho completo en móvil 5ms
+     × R10 · Dashboard: KPIs apilan en <420px (sin corte de etiquetas) 1ms
+     × R11 · LotDetail: cabecera con wrap (el título no se comprime) 1ms
+     × R12 · ApprovalPanel: barra de lote con wrap 8ms
+     × R14 · los 65 input number declaran inputMode decimal 1ms
+     × R15 · selects <1024px con chevron propio (no "parecen inputs") 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R7 · ReviewDetail: los renglones observación+botón envuelven en <420px
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:22:74
+     20|     const s = src('pages/review/ReviewDetail.tsx')
+     21|     // Dos contenedores (revisión y devolución) deben poder envolver.
+     22|     expect((s.match(/flex flex-wrap gap-2 items-center/g) ?? []).lengt…
+       |                                                                          ^
+     23|   })
+     24|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R8 · Toast: contenedor limitado al viewport en móvil (no sobresale a 390px)
+AssertionError: expected 'import { useState, useCallback, creat…' to contain 'max-w-[calc(100vw-2rem)]'
+
+- Expected
++ Received
+
+- max-w-[calc(100vw-2rem)]
++ import { useState, useCallback, createContext, useContext } from 'react'
++ import type { ReactNode } from 'react'
++ import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react'
++
++ type ToastType = 'success' | 'error' | 'warning' | 'info'
++
++ interface Toast {
++  id: number
++  type: ToastType
++  message: string
++ }
++
++ interface ToastContextType {
++  success: (msg: string) => void
++  error: (msg: string) => void
++  warning: (msg: string) => void
++  info: (msg: string) => void
++ }
++
++ const ToastContext = createContext<ToastContextType | null>(null)
++
++ let toastId = 0
++
++ /**
++  * `R-215 (C-03)`: red de seguridad — un mensaje no-string (p. ej. una `detail`
++  * cruda de FastAPI) nunca debe romper el toast ni pintar «[object Object]».
++  */
++ function normalizarMensaje(mensaje: unknown): string {
++   if (typeof mensaje === 'string') return mensaje
++   const deDetalle = textoDeDetalle(mensaje)
++   if (deDetalle) return deDetalle
++   const deError = getErrorMessage(mensaje, '')
++   if (deError) return deError
++   return String(mensaje)
++ }
++
++ export function ToastProvider({ children }: { children: ReactNode }) {
++   const [toasts, setToasts] = useState<Toast[]>([])
++
++   const addToast = useCallback((type: ToastType, mensaje: unknown) => {
++     const message = normalizarMensaje(mensaje)
++  const id = ++toastId
++  setToasts(prev => [...prev.slice(-4), { id, type, message }])
++  setTimeout(() => {
++  setToasts(prev => prev.filter(t => t.id !== id))
++  }, 4000)
++  }, [])
++
++  const ctx: ToastContextType = {
++  success: (msg: string) => addToast('success', msg),
++  error: (msg: string) => addToast('error', msg),
++  warning: (msg: string) => addToast('warning', msg),
++  info: (msg: string) => addToast('info', msg),
++  }
++
++  const icons: Record<ToastType, ReactNode> = {
++  success: <CheckCircle size={18} className="text-emerald-500" />,
++  error: <XCircle size={18} className="text-red-500" />,
++  warning: <AlertTriangle size={18} className="text-amber-500" />,
++  info: <Info size={18} className="text-blue-500" />,
++  }
++
++  const bgColors: Record<ToastType, string> = {
++  success: 'border-emerald-300 bg-emerald-50',
++  error: 'border-red-300 bg-red-50',
++  warning: 'border-amber-300 bg-amber-50',
++  info: 'border-blue-300 bg-blue-50',
++  }
++
++  const textColors: Record<ToastType, string> = {
++  success: 'text-emerald-800',
++  error: 'text-red-800',
++  warning: 'text-amber-800',
++  info: 'text-blue-800',
++  }
++
++  return (
++  <ToastContext.Provider value={ctx}>
++  {children}
++  {/* Toast container */}
++  <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-sm">
++  {toasts.map(t => (
++  <div
++  key={t.id}
++  className={`flex items-start gap-2 px-4 py-3 rounded-lg border shadow-lg text-sm font-medium animate-slide-in ${bgColors[t.type]} ${textColors[t.type]}`}
++  >
++  {icons[t.type]}
++  <span className="flex-1">{t.message}</span>
++  <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))} className="opacity-60 hover:opacity-100">
++  <X size={14} />
++  </button>
++  </div>
++  ))}
++  </div>
++  </ToastContext.Provider>
++  )
++ }
++
++ export function useToast(): ToastContextType {
++  const ctx = useContext(ToastContext)
++  if (!ctx) throw new Error('useToast must be used within ToastProvider')
++  return ctx
++ }
++
++ /** Helper: extract error message from axios error. 
++  * NOTE: This is a standalone function so it cannot use hooks directly.
++  * Callers should pass a translated fallback using t() from their component.
++  */
++ // `R-189 (F-01)`: el `detail` de FastAPI puede ser una lista de objetos de validación (o un objeto);
++ // devolverlo crudo rompía el render (React #31). Se normaliza SIEMPRE a texto renderizable.
++ function textoDeDetalle(detail: unknown): string | null {
++   if (detail === null || detail === undefined) return null
++   if (typeof detail === 'string') return detail.trim() ? detail : null
++   if (Array.isArray(detail)) {
++     const partes = detail
++       .map((item) => {
++         if (typeof item === 'string') return item
++         if (item && typeof item === 'object') {
++           const registro = item as { loc?: unknown; msg?: unknown; type?: unknown; message?: unknown }
++           const msg = typeof registro.msg === 'string'
++             ? registro.msg
++             : (typeof registro.message === 'string' ? registro.message : '')
++           const loc = Array.isArray(registro.loc)
++             ? registro.loc
++               .filter((p) => typeof p === 'string' || typeof p === 'number')
++               .slice(1) // se descarta el origen (`body`/`path`/`query`): el usuario necesita el campo
++               .join('.')
++             : ''
++           if (loc && msg) return `${loc}: ${msg}`
++           if (msg) return msg
++           if (typeof registro.type === 'string') return registro.type
++           return null
++         }
++         return null
++       })
++       .filter((p): p is string => Boolean(p))
++     return partes.length ? partes.join(' · ') : null
++   }
++   if (typeof detail === 'object') {
++     const registro = detail as { msg?: unknown; message?: unknown }
++     if (typeof registro.msg === 'string' && registro.msg) return registro.msg
++     if (typeof registro.message === 'string' && registro.message) return registro.message
++     return null
++   }
++   return null
++ }
++
++ export function getErrorMessage(err: any, fallback = 'Unexpected error'): string {
++   if (typeof err === 'string') return err
++   const detalle = textoDeDetalle(err?.response?.data?.detail)
++   if (detalle) return detalle
++   if (typeof err?.message === 'string' && err.message) return err.message
++   return fallback
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:27:15
+     25|   it('R8 · Toast: contenedor limitado al viewport en móvil (no sobresa…
+     26|     const s = src('components/Toast.tsx')
+     27|     expect(s).toContain('max-w-[calc(100vw-2rem)]')
+       |               ^
+     28|     expect(s).not.toContain('gap-2 max-w-sm')
+     29|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R9 · OperationFormPage: etiqueta de parámetros a ancho completo en móvil
+AssertionError: expected 'import { useState, useEffect, useMemo…' to contain 'flex flex-wrap items-center gap-3'
+
+- Expected
++ Received
+
+- flex flex-wrap items-center gap-3
++ import { useState, useEffect, useMemo } from 'react'
++ import { useForm, useFieldArray } from 'react-hook-form'
++ import { zodResolver } from '@hookform/resolvers/zod'
++ import { z } from 'zod'
++ import { useTranslation } from 'react-i18next'
++ import { useNavigate, useSearchParams } from 'react-router-dom'
++ import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
++ import api from '../../services/api'
++ import { useToast, getErrorMessage } from '../../components/Toast'
++ import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios } from './operationPayload'
++ import SearchSelect from '../../components/ui/SearchSelect'
++ import { EVENT_ICONS } from '../../components/Icon'
++ import {
++  PROCESS_STAGES, EVENT_ICON_MAP, categoriesForStage,
++  type StageKey,
++ } from '../../data/processCatalog'
++
++ // ============================================================
++ // Technical ranges — Ross/Cobb guidelines
++ // ============================================================
++ // Thermal zones — Ross/Cobb dynamic curves by bird type + week
++ import { getThermalZone, DEFAULT_THERMAL_ZONE } from '../../data/thermalCurves'
++ // Incubator (setter) and Hatcher fixed ranges
++ const INCUBATOR_TEMP_RANGE: [number, number] = [37.5, 38.0]
++ const HATCHER_TEMP_RANGE: [number, number] = [37.0, 37.5]
++ const INCUBATOR_HUM_RANGE: [number, number] = [55, 62]
++ const HATCHER_HUM_RANGE: [number, number] = [65, 75]
++
++ const LOT_OPTIONAL_INSPECTION_EVENTS = new Set([
++  'farm_inspection',
++  'hatchery_inspection',
++ ])
++
++ // `R-153` · `OD-25 (B)`: la importación de abuelas también puede registrarse sin lote — el
++ // lote (`L-GP-{año}-{nn}`) nace al aprobarla, como consecuencia de `P-07`. La vía con lote
++ // previo (legado `R-152`) sigue disponible eligiéndolo en el selector.
++ const LOT_OPTIONAL_EVENTS = new Set<string>([
++  ...LOT_OPTIONAL_INSPECTION_EVENTS,
++  'grandparent_import',
++ ])
++
++ // `R-190`: tipos que requieren ubicación derivada del evento (la recepción ya F-01e).
++ const EVENTOS_UBICACION_EVENTO = new Set([
++   'bird_distribution', 'bird_transfer', 'bird_exit', 'farm_inspection',
++   'transport_inspection', 'egg_collection', 'egg_dispatch',
++ ])
++
++ // `R-190` · C-05: tipos con selector «Galpón del evento» (fuente sin fila propia).
++ const EVENTOS_CON_SELECTOR_GALPON = new Set([
++   'bird_exit', 'egg_collection', 'egg_dispatch', 'transport_inspection',
++ ])
++
++ function getTempRange(birdType: string, ageWeeks: number): [number, number] {
++  const zone = getThermalZone(birdType, 'rearing', ageWeeks)
++  if (zone) return [zone.tempMin, zone.tempMax]
++  return [DEFAULT_THERMAL_ZONE.tempMin, DEFAULT_THERMAL_ZONE.tempMax]
++ }
++
++ function getHumidityRange(ageWeeks: number): [number, number] {
++  const zone = getThermalZone('broiler', 'rearing', ageWeeks)
++  if (zone) return [zone.humidMin, zone.humidMax]
++  return [DEFAULT_THERMAL_ZONE.humidMin, DEFAULT_THERMAL_ZONE.humidMax]
++ }
++
++ type RangeStatus = 'ok' | 'warn' | 'error' | 'none'
++ function getRangeStatus(value: number | undefined, min: number, max: number): RangeStatus {
++  if (value == null || isNaN(value)) return 'none'
++  if (value >= min && value <= max) return 'ok'
++  const margin = (max - min) * 0.5
++  if (value >= min - margin && value <= max + margin) return 'warn'
++  return 'error'
++ }
++
++ function RangeIndicator({ value, min, max, unit, weekLabel }: {
++  value: number | undefined; min: number; max: number; unit: string; weekLabel?: string
++ }) {
++  const s = getRangeStatus(value, min, max)
++  if (s === 'none') return null
++  const cfg: Record<RangeStatus, { bg: string; text: string; icon: string }> = {
++  ok: { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', icon: '✅' },
++  warn: { bg: 'bg-amber-50 border-amber-200', text: 'text-amber-700', icon: '⚠️' },
++  error: { bg: 'bg-red-50 border-red-200', text: 'text-red-700', icon: '❌' },
++  none: { bg: '', text: '', icon: '' },
++  }
++  const { bg, text, icon } = cfg[s]
++  return (
++  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs border ${bg} ${text} mt-1`}>
++  {icon} {min}–{max}{unit}{weekLabel ? ` (${weekLabel})` : ''}
++  </span>
++  )
++ }
++
++ // ============================================================
++ // Zod Schema — covers all 24 operation types
++ // ============================================================
++ const operacionBase = z.object({
++  lot_id: z.number({ message: 'operations.selectLot' }).min(1).optional(),
++  farm_id: z.number().optional(),
++  house_id: z.number().optional(),
++  event_type: z.string().min(1),
++  event_date: z.string().min(1),
++  observations: z.string().optional(),
++  // Operation-specific catalog FKs
++  // `R-189 (F-01)`: el campo tipado que la importación valida (`BR-22`) y la UI escribe
++  // (`GA-TD-014`); sin declararlo aquí, zod lo descartaba y nunca viajaba al API.
++  sap_document_ref: z.string().optional(),
++  supplier_id: z.number().optional(),
++  cause_id: z.number().optional(),
++  cull_cause_id: z.number().optional(),
++  vaccine_id: z.number().optional(),
++  vaccination_route: z.string().optional(),
++  vaccine_lot_number: z.string().optional(),
++  medication_id: z.number().optional(),
++  dosage_per_bird: z.number().min(0, { message: 'operations.dosageInvalid' }).optional(),
++  treatment_days: z.number().optional(),
++  destination_farm_id: z.number().optional(),
++  destination_plant_id: z.number().optional(),
++  transport_id: z.number().optional(),
++  sample_size: z.number().optional(),
++  water_liters: z.number().positive().optional(), // `GA-REM-021-A` · B05 (L, RR-11)
++  received_total: z.number().int().min(1).optional(), // `GA-REM-021-B` · B01 (aves)
++  dead_on_arrival: z.number().int().min(0).optional(),
++  rejected_on_arrival: z.number().int().min(0).optional(),
++  chicks_healthy: z.number().int().min(0).optional(), // `GA-REM-021-C` · B13
++  chicks_weak: z.number().int().min(0).optional(),
++  extra_data: z.record(z.string(), z.any()).optional(),
++  // Sub-models
++  bird_movements: z.array(z.object({
++  sex: z.string().optional(),
++  quantity: z.number().min(0).optional(),
++  avg_weight: z.number().optional(),
++  sample_size: z.number().optional(),
++  week_number: z.number().optional(),
++  breed_id: z.number().optional(),
++  source_house_id: z.number().optional(),
++  target_house_id: z.number().optional(),
++  })).optional(),
++  egg_movements: z.array(z.object({
++  egg_type: z.string(),
++  quantity: z.number().min(0).optional(),
++  avg_weight: z.number().optional(),
++  })).optional(),
++  feed_movements: z.array(z.object({
++  feed_type_id: z.number().optional(),
++  quantity_kg: z.number().min(0).optional(),
++  sacks_count: z.number().optional(),
++  week_number: z.number().optional(),
++  sap_order_id: z.string().optional(),
++  })).optional(),
++  hatchery_params: z.array(z.object({
++  machine_type: z.enum(['incubator', 'hatcher']).optional(), // UI-only, stripped on submit
++  incubator_id: z.number().optional(),
++  hatcher_id: z.number().optional(),
++  temperature: z.number().optional(),
++  humidity: z.number().optional(),
++  co2: z.number().optional(),
++  turning: z.boolean().optional(),
++  quantity_loaded: z.number().optional(),
++  quantity_transferred: z.number().optional(),
++  })).optional(),
++  inspection_details: z.array(z.object({
++  house_id: z.number().optional(),
++  parameter: z.string(),
++  value: z.string().optional(),
++  status: z.string().optional(),
++  })).optional(),
++  // UI-only: per-house inspection rows → converted to inspection_details on submit
++  house_inspections: z.array(z.object({
++  house_id: z.number().optional(),
++  temperature: z.number().optional(),
++  humidity: z.number().optional(),
++  litter_condition: z.string().optional(),
++  litter_notes: z.string().optional(),
++  equipment_notes: z.string().optional(),
++  equipment_count: z.number().optional(),
++  equipment_items: z.array(z.object({
++  equipment_type: z.string(),
++  observation: z.string().optional(),
++  })).optional(),
++  })).optional(),
++  egg_storage_records: z.array(z.object({
++  eggs_received: z.number().optional(),
++  storage_temp_c: z.number().optional(),
++  storage_humidity_pct: z.number().optional(),
++  transport_temp_c: z.number().optional(),
++  transport_duration_min: z.number().optional(),
++  notes: z.string().optional(),
++  })).optional(),
++ }).superRefine((data, ctx) => {
++  if (!data.event_type) return
++  if (!LOT_OPTIONAL_EVENTS.has(data.event_type) && (!data.lot_id || data.lot_id < 1)) {
++  ctx.addIssue({
++  code: z.ZodIssueCode.custom,
++  path: ['lot_id'],
++  message: 'operations.selectLot',
++  })
++  }
++ })
++
++ /** `R-189 (F-01)`: un campo numérico vacío llega como `NaN` (`valueAsNumber`) y zod invalida **en silencio**
++  * (el submit no viaja). Se normaliza a `undefined` ANTES de validar: el «vacío» es ausencia, no un número.
++  * No se inventan valores y la cantidad 0 declarada se conserva. */
++ function limpiarNumerosNoFinitos(valor: unknown): unknown {
++  if (typeof valor === 'number') return Number.isFinite(valor) ? valor : undefined
++  if (Array.isArray(valor)) return valor.map(limpiarNumerosNoFinitos)
++  if (valor && typeof valor === 'object' && Object.getPrototypeOf(valor) === Object.prototype) {
++  const limpio: Record<string, unknown> = {}
++  for (const [clave, v] of Object.entries(valor as Record<string, unknown>)) {
++  limpio[clave] = limpiarNumerosNoFinitos(v)
++  }
++  return limpio
++  }
++  return valor
++ }
++
++ // El preprocesado normaliza el ENTRANTE (NaN ⇒ ausencia) sin cambiar la forma del formulario:
++ // el cast conserva el tipado que el resolver ya usaba para `operacionBase`.
++ // `R-206`: la cadena vacía de un opcional es ausencia — se compone con la limpieza de
++ // `NaN` para que el contrato canónico no lleve `''` (fecha de cuarentena, numéricos como
++ // cadena, `sap_document_ref`/`vaccination_route` sin elegir).
++ const operationSchema = z.preprocess((v) => limpiarVacios(limpiarNumerosNoFinitos(v)), operacionBase) as unknown as typeof operacionBase
++
++ type OperationFormData = z.infer<typeof operationSchema>
++
++ // Shared CSS helpers (module-level to avoid recreating on each render)
++ const ic = 'w-full h-11 px-3 border border-slate-300 rounded-lg text-base text-slate-900 bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none'
++ const lc = 'block text-sm font-semibold text-slate-700 mb-1.5'
++
++ // ============================================================
++ // Component
++ // ============================================================
++ export default function OperationFormPage() {
++  const { t } = useTranslation()
++  const navigate = useNavigate()
++  const [searchParams] = useSearchParams()
++  const prefillLotId = searchParams.get('lot_id')
++  const prefillType = searchParams.get('type')
++
++  const [lots, setLots] = useState<any[]>([])
++  const [lotsLoadError, setLotsLoadError] = useState(false)
++  const [sapOrders, setSapOrders] = useState<any[]>([])
++  const [sapPurchaseOrders, setSapPurchaseOrders] = useState<any[]>([])
++  const [submitting, setSubmitting] = useState(false)
++  const [result, setResult] = useState<{ ok: boolean; message: string } | null>(null)
++
++  // Multi-company: farm/hatchery filter for lot narrowing
++  const [selectedFarmId, setSelectedFarmId] = useState<number | null>(null)
++  const [selectedHatcheryId, setSelectedHatcheryId] = useState<number | null>(null)
++
++  // Catalogs
++  const [vaccines, setVaccines] = useState<any[]>([])
++  const [medications, setMedications] = useState<any[]>([])
++  const [mortalityCauses, setMortalityCauses] = useState<any[]>([])
++  const [cullCauses, setCullCauses] = useState<any[]>([])
++  const [transports, setTransports] = useState<any[]>([])
++  const [farms, setFarms] = useState<any[]>([])
++  const [processingPlants, setProcessingPlants] = useState<any[]>([])
++  const [suppliers, setSuppliers] = useState<any[]>([])
++  const [breeds, setBreeds] = useState<any[]>([])
++  const [houses, setHouses] = useState<any[]>([])
++  const [feedTypes, setFeedTypes] = useState<any[]>([])
++  const [incubators, setIncubators] = useState<any[]>([])
++  const [hatchers, setHatchers] = useState<any[]>([])
++  const [hatcheries, setHatcheries] = useState<any[]>([])
++
++  const toast = useToast()
++
++  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<OperationFormData>({
++  resolver: zodResolver(operationSchema),
++  defaultValues: {
++  event_date: new Date().toISOString().split('T')[0],
++  lot_id: prefillLotId ? Number(prefillLotId) : undefined,
++  event_type: prefillType || '',
++  bird_movements: [{ sex: 'male' }, { sex: 'female' }],
++  egg_movements: [],
++  feed_movements: [{}],
++  hatchery_params: [{}],
++  inspection_details: [],
++  house_inspections: [],
++  egg_storage_records: [{}],
++  },
++  })
++
++  const eventType = watch('event_type')
++  const lotId = watch('lot_id')
++  // `R-190`: el lote seleccionado a nivel de componente — la derivación del JSX y de la guarda lo consulta.
++  const selectedLot = useMemo(() => lots.find((l: any) => l.id === lotId) ?? null, [lots, lotId])
++
++  // Hatchery event types (for determining whether to show Farm or Hatchery selector)
++  const HATCHERY_EVENTS = new Set([
++  'egg_reception_classification', 'egg_reception_hatchery', 'incubation_load',
++  'ovoscopy', 'transfer_to_hatcher', 'birth_registration', 'chick_dispatch',
++  'hatchery_inspection',
++  ])
++  const isHatcheryStage = eventType ? HATCHERY_EVENTS.has(eventType) : false
++  const isLotOptionalInspection = eventType ? LOT_OPTIONAL_INSPECTION_EVENTS.has(eventType) : false
++
++  // Lots filtered by selected farm
++  const filteredLots = useMemo(() => {
++  if (!isHatcheryStage && selectedFarmId) {
++  return lots.filter((l: any) => l.farm_id === selectedFarmId)
++  }
++  return lots
++  }, [lots, selectedFarmId, isHatcheryStage])
++
++  // Houses filtered to the farm of the selected lot (for farm_inspection per-house rows)
++  const farmHouses = useMemo(() => {
++  if (selectedFarmId) {
++  return houses.filter((h: any) => h.farm_id === selectedFarmId)
++  }
++  const lot = lots.find((l: any) => l.id === lotId)
++  if (!lot?.farm_id) return houses
++  return houses.filter((h: any) => h.farm_id === lot.farm_id)
++  }, [selectedFarmId, lots, lotId, houses])
++
++  // Age of selected lot in weeks (for technical range indicators)
++  const { lotAgeWeeks, lotBirdType } = useMemo(() => {
++  const lot = lots.find((l: any) => l.id === lotId)
++  if (!lot?.start_date) return { lotAgeWeeks: 0, lotBirdType: 'default' }
++  const startMs = new Date(lot.start_date).getTime()
++  const weeks = Math.max(0, Math.floor((Date.now() - startMs) / (7 * 24 * 60 * 60 * 1000)))
++  return { lotAgeWeeks: weeks, lotBirdType: lot.bird_type ?? 'default' }
++  }, [lots, lotId])
++
++  const { fields: birdFields, append: appendBird, remove: removeBird } =
++  useFieldArray({ control, name: 'bird_movements' })
++  const { fields: incubatorFields, append: appendIncubator, remove: removeIncubator } =
++  useFieldArray({ control, name: 'hatchery_params' })
++  const { fields: houseInspFields, append: appendHouseInsp, remove: removeHouseInsp } =
++  useFieldArray({ control, name: 'house_inspections' })
++
++  const [stage, setStage] = useState<StageKey | null>(null)
++  const [step, setStep] = useState<1 | 2 | 3>(prefillType ? 3 : 1)
++   // `R-190`: «Galpón del evento» (selector) y el error de ubicación en cliente.
++   const [eventHouseId, setEventHouseId] = useState<number | null>(null)
++   const [ubicacionError, setUbicacionError] = useState<string | null>(null)
++  // `R-205`: la etapa también se deriva del contexto — `?stage=` o el lote — no sólo del paso 1.
++  const stageDerivada = useMemo(() => resolverStageDelAsistente({
++  search: searchParams.toString() ? `?${searchParams.toString()}` : '',
++  lote: selectedLot ? { bird_type: selectedLot.bird_type, fase: selectedLot.fase } : null,
++  eventType,
++  }) as StageKey | null, [selectedLot, eventType, searchParams])
++  const stageFinal = stage ?? stageDerivada
++
++  const goToStep2 = (s: StageKey) => { setStage(s); setValue('event_type', ''); setStep(2) }
++  const chooseOperation = (evt: string) => { setValue('event_type', evt); setStep(3) }
++
++  // Auto-init: add one empty house row when farm_inspection is selected
++  useEffect(() => {
++  if (eventType === 'farm_inspection' && houseInspFields.length === 0) {
++  appendHouseInsp({ litter_condition: '' })
++  }
++  }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
++
++  // Auto-init: add one empty machine row when hatchery_inspection is selected
++  useEffect(() => {
++  if (eventType === 'hatchery_inspection' && incubatorFields.length === 0) {
++  appendIncubator({ machine_type: 'incubator' } as any)
++  }
++  }, [eventType]) // eslint-disable-line react-hooks/exhaustive-deps
++
++  useEffect(() => {
++  if (isLotOptionalInspection && lotId) {
++  setValue('lot_id', undefined as any)
++  }
++  }, [isLotOptionalInspection, lotId, setValue])
++
++  useEffect(() => {
++  api.get('/lots?limit=100')
++  .then(r => {
++  setLots(Array.isArray(r.data) ? r.data : [])
++  setLotsLoadError(false)
++  })
++  .catch(() => {
++  setLots([])
++  setLotsLoadError(true)
++  })
++  api.get('/sap/references?ref_type=transfer_order&limit=50').then(r => setSapOrders(r.data?.references || [])).catch(() => {})
++  api.get('/sap/references?ref_type=purchase_order&limit=50').then(r => setSapPurchaseOrders(r.data?.references || [])).catch(() => {})
++  Promise.allSettled([
++  api.get('/masters/vaccines?limit=100'),
++  api.get('/masters/medications?limit=100'),
++  api.get('/masters/mortality-causes?limit=100'),
++  api.get('/masters/cull-causes?limit=100'),
++  api.get('/masters/transports?limit=100'),
++  api.get('/masters/farms?limit=100'),
++  api.get('/masters/processing-plants?limit=100'),
++  api.get('/masters/suppliers?limit=100'),
++  api.get('/masters/breeds?limit=100'),
++  api.get('/masters/houses?limit=100'),
++  api.get('/masters/feed-types?limit=100'),
++  api.get('/masters/incubators?limit=100'),
++  api.get('/masters/hatchers?limit=100'),
++  api.get('/masters/hatcheries?limit=100'),
++  ]).then(results => {
++  const get = (r: PromiseSettledResult<any>) => r.status === 'fulfilled' ? (r.value.data || []) : []
++  setVaccines(get(results[0])); setMedications(get(results[1]))
++  setMortalityCauses(get(results[2])); setCullCauses(get(results[3]))
++  setTransports(get(results[4])); setFarms(get(results[5]))
++  setProcessingPlants(get(results[6])); setSuppliers(get(results[7]))
++  setBreeds(get(results[8])); setHouses(get(results[9]))
++  setFeedTypes(get(results[10])); setIncubators(get(results[11]))
++  setHatchers(get(results[12])); setHatcheries(get(results[13]))
++  })
++  }, []) // eslint-disable-line react-hooks/exhaustive-deps
++
++  const onSubmit = async (data: OperationFormData) => {
++  setSubmitting(true); setResult(null)
++  try {
++  const selectedLot = data.lot_id ? lots.find((l: any) => l.id === data.lot_id) : null
++  const firstInspectedHouseId = data.house_inspections?.find((h: any) => h?.house_id)?.house_id
++         // `R-190`: una sola fuente de verdad para la ubicación del evento (helper puro con test propio).
++         // La recepción conserva su regla F-01e dentro del helper (galpón del lote ?? fila de distribución);
++         // los demás tipos derivan según C-01/C-05/C-07 — sin fuente, ausencia (no se inventa).
++         const filasUbicacion = data.event_type === 'farm_inspection'
++           ? (data.house_inspections || []).map((h: any) => ({ target_house_id: h?.house_id }))
++           : (data.bird_movements || [])
++         const ubicacion = resolverUbicacionDelEvento({
++           eventType: data.event_type,
++           lote: selectedLot,
++           filas: filasUbicacion,
++           houseSeleccionado: eventHouseId,
++           granjaSeleccionada: selectedFarmId,
++           galpones: houses,
++         })
++         const derivedFarmId = ubicacion.farm_id ?? selectedFarmId ?? selectedLot?.farm_id ?? undefined
++         const derivedHouseId = ubicacion.house_id ?? undefined
++         // `R-190` · C-03: la ubicación obligatoria se exige en cliente — sin petición y con mensaje
++         // claro cuando falta (la recepción F-01e conserva su ausencia-no-inventada).
++         if (EVENTOS_UBICACION_EVENTO.has(data.event_type)) {
++           if (data.event_type === 'farm_inspection') {
++             if (!derivedFarmId) {
++               setUbicacionError('operations.farmRequired')
++               setSubmitting(false)
++               return
++             }
++           } else if (!derivedHouseId) {
++             setUbicacionError('operations.eventHouseRequired')
++             setSubmitting(false)
++             return
++           }
++         }
++         // `R-205`: el cuadre de reproductoras (BR-20 · `B01` · RR-12) se exige en cliente — sin
++         // petición y con mensaje claro cuando falta. La regla del servidor no cambia (control BR-20).
++         if (data.event_type === 'bird_reception' && selectedLot?.bird_type === 'breeder') {
++           const d: any = data
++           const completos = [d.received_total, d.dead_on_arrival, d.rejected_on_arrival]
++             .every((v) => v !== undefined && v !== null && Number.isFinite(Number(v)))
++           if (!completos) {
++             setUbicacionError('operations.cuadreRequired')
++             setSubmitting(false)
++             return
++           }
++         }
++         setUbicacionError(null)
++         void firstInspectedHouseId
++  // Convert per-house inspection rows into inspection_details records with house_id
++  const houseDetails: any[] = []
++  for (const h of data.house_inspections || []) {
++  if (h.temperature != null && !isNaN(Number(h.temperature)))
++  houseDetails.push({ house_id: h.house_id, parameter: 'temperature', value: String(h.temperature) })
++  if (h.humidity != null && !isNaN(Number(h.humidity)))
++  houseDetails.push({ house_id: h.house_id, parameter: 'humidity', value: String(h.humidity) })
++  if (h.litter_condition)
++  houseDetails.push({ house_id: h.house_id, parameter: 'litter_condition', status: h.litter_condition })
++  if (h.litter_notes)
++  houseDetails.push({ house_id: h.house_id, parameter: 'litter_notes', value: h.litter_notes })
++  if (h.equipment_notes)
++  houseDetails.push({ house_id: h.house_id, parameter: 'equipment_notes', value: h.equipment_notes })
++  // Equipment items → individual inspection_details per equipment type
++  if (h.equipment_items) {
++  for (const item of h.equipment_items) {
++  if (item.equipment_type) {
++  houseDetails.push({
++  house_id: h.house_id,
++  parameter: `equipment_${item.equipment_type}`,
++  value: item.observation || '',
++  })
++  }
++  }
++  }
++  }
++
++  // `R-169` (`GA-REM-035-A`): sin tolerancia ±10 % en el cliente; la verdad de cantidades es BR-18 (backend).
++  // Lo que el operador escribe en observaciones es lo que se persiste.
++  const observations = data.observations || ''
++
++  // `R-189 (F-01)` · el serializador limpia `NaN`/filas vacías y el almacenamiento sin contenido
++  // (el `[{}]` por omisión del formulario ya no viaja: el contrato canónico es `[]`).
++  const normalizedBirdMovements = serializarMovimientosDeAves((data.bird_movements || []).map((m) => {
++  if (data.event_type === 'bird_reception' && (m.week_number == null || Number.isNaN(m.week_number))) {
++  return { ...m, week_number: 0 }
++  }
++  return m
++  }))
++
++  // `R-194`: la cadena de incubadora — recepción de huevos y despacho de pollitos son
++  // `location_events`: llevan la granja/galpón reales (los del lote incubadora); los demás
++  // eventos de la etapa incubadora conservan su mapeo anterior.
++  const eventosUbicacionIncubadora = ['egg_reception_hatchery', 'chick_dispatch']
++  let movimientosHuevo = (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0)
++  let almacenamiento = serializarAlmacenamientoDeHuevos(data.egg_storage_records)
++  if (data.event_type === 'egg_reception_hatchery') {
++  // El saldo de incubadora (BR-03) lee `egg_movements[fertile]`: la recepción escribe la
++  // fila fértil con lo declarado como recibido (C-04) y `arrival_date` capturada (default `event_date`).
++  const recibidos = Number((data.egg_storage_records?.[0] as any)?.eggs_received ?? 0)
++  if (recibidos > 0 && !movimientosHuevo.some((m: any) => m?.egg_type === 'fertile')) {
++  movimientosHuevo = [...movimientosHuevo, { egg_type: 'fertile', quantity: recibidos }]
++  }
++  almacenamiento = (almacenamiento.length > 0 ? almacenamiento : [{}]).map((r: any) => ({
++  ...r,
++  arrival_date: r?.arrival_date ?? data.event_date,
++  }))
++  }
++  let paramsIncubadora = serializarParamsDeIncubadora(
++  (data.hatchery_params || []).map(({ machine_type: _mt, ...hp }: any) => hp), // strip UI-only machine_type
++  )
++  if (selectedHatcheryId) {
++  // `R-194` · B-22: la incubadora elegida viaja en la fila (`hatchery_id`); la tenencia la
++  // verifica el servidor contra el catálogo de la empresa.
++  if (paramsIncubadora.length === 0) paramsIncubadora = [{}]
++  paramsIncubadora = [{ ...paramsIncubadora[0], hatchery_id: selectedHatcheryId },
++  ...paramsIncubadora.slice(1)]
++  }
++  const payload: any = {
++  ...data,
++  farm_id: data.farm_id ?? ((isHatcheryStage && !eventosUbicacionIncubadora.includes(data.event_type)) ? undefined : derivedFarmId),
++  house_id: data.house_id ?? derivedHouseId,
++  observations,
++  bird_movements: normalizedBirdMovements.filter(m => (m.quantity ?? 0) > 0),
++  egg_movements: movimientosHuevo,
++  // `R-189 (F-01d)`: alimento e incubadora también se serializan — el `[{}]` de arranque nunca viaja.
++  feed_movements: serializarMovimientosDeAlimento(data.feed_movements),
++  hatchery_params: paramsIncubadora,
++  inspection_details: [...(data.inspection_details || []), ...houseDetails],
++  egg_storage_records: almacenamiento,
++  house_inspections: undefined, // strip UI-only field
++  }
++  await api.post('/operations', payload)
++  setResult({ ok: true, message: t('operations.saveSuccess') })
++  toast.success(t('operations.saveSuccess'))
++  setTimeout(() => navigate('/operations'), 1500)
++  } catch (err: any) {
++  // `R-189 (F-01)`: mensaje siempre renderizable (lista de validación de FastAPI incluida).
++  const message = getErrorMessage(err, t('operations.saveError'))
++  setResult({ ok: false, message })
++  toast.error(message)
++  } finally { setSubmitting(false) }
++  }
++
++  // ── M+F rows helper ──────────────────────────────────────────────
++  const renderMFRows = (showWeight = true) => (
++  <div>
++  <div className={`grid ${showWeight ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} px-1 py-2 border-b border-slate-200`}>
++  <span className="text-sm font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
++  <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
++  {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (g)')}</span>}
++  </div>
++  {[
++  { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
++  { idx: 1, defaultSex: 'female', label: t('operations.females', 'Hembras'), color: 'text-pink-700' },
++  ].map(({ idx, defaultSex, label, color }) => (
++  <div key={idx} className={`grid ${showWeight ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0`}>
++  <div className="flex items-center gap-1.5">
++  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={defaultSex} />
++  <span className={`text-sm font-semibold ${color}`}>{label}</span>
++  </div>
++  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })}
++  className={ic} />
++  {showWeight && (
++  <input type="number" step="1" {...register(`bird_movements.${idx}.avg_weight`, { valueAsNumber: true })}
++  className={ic} />
++  )}
++  </div>
++  ))}
++  </div>
++  )
++
++  // ── Select helper ─────────────────────────────────────────────────
++  const sel = (field: any, items: any[], placeholder: string, renderLabel = (x: any) => x.name) => (
++  <select {...field} className={ic}>
++  <option value="">{placeholder}</option>
++  {items.map((x: any) => <option key={x.id} value={x.id}>{renderLabel(x)}</option>)}
++  </select>
++  )
++
++  // ── Operation-specific fields switch ─────────────────────────────
++  const renderOperationFields = () => {
++  switch (eventType) {
++
++  case 'mortality_recording': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.mortalityCause', 'Causa de mortalidad')}</label>
++  <SearchSelect
++  value={watch('cause_id' as any) ?? ''}
++  onChange={(v) => setValue('cause_id' as any, v ? Number(v) : undefined)}
++  items={mortalityCauses}
++  placeholder={t('operations.selectCause', 'Seleccionar causa...')}
++
++  renderLabel={(x: any) => x.name}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
++  <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
++  </div>
++  </div>
++  {renderMFRows(false)}
++  </div>
++  )
++
++  case 'cull_recording': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.cullCause', 'Causa de descarte')}</label>
++  <SearchSelect
++  value={watch('cull_cause_id' as any) ?? ''}
++  onChange={(v) => setValue('cull_cause_id' as any, v ? Number(v) : undefined)}
++  items={cullCauses}
++  placeholder={t('operations.selectCause', 'Seleccionar causa...')}
++
++  renderLabel={(x: any) => x.name}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
++  <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
++  </div>
++  </div>
++  {renderMFRows(false)}
++  </div>
++  )
++
++  case 'vaccination': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.vaccine', 'Vacuna')}</label>
++  <SearchSelect
++  value={watch('vaccine_id' as any) ?? ''}
++  onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
++  items={vaccines}
++  placeholder={t('operations.selectVaccine', 'Seleccionar vacuna...')}
++
++  renderLabel={(x: any) => x.name}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.vaccinationRoute', 'Vía de administración')}</label>
++  <select {...register('vaccination_route')} className={ic}>
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="spray">{t('operations.spray', 'Aspersión (spray)')}</option>
++  <option value="water">{t('operations.waterRoute', 'Agua de bebida')}</option>
++  <option value="injection">{t('operations.injection', 'Inyectable')}</option>
++  <option value="eye">{t('operations.eye', 'Ocular')}</option>
++  <option value="gel">{t('operations.gel', 'Gel')}</option>
++  </select>
++  </div>
++  <div>
++  <label className={lc}>{t('operations.vaccineLot', 'Lote de vacuna')}</label>
++  <input {...register('vaccine_lot_number')} className={ic} placeholder="LOT-2024-001" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave')}</label>
++  <input type="number" step="0.01" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
++  </div>
++  </div>
++  {renderMFRows(false)}
++  </div>
++  )
++
++  case 'medication': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.medication', 'Medicamento')}</label>
++  <SearchSelect
++  value={watch('medication_id' as any) ?? ''}
++  onChange={(v) => setValue('medication_id' as any, v ? Number(v) : undefined)}
++  items={medications}
++  placeholder={t('operations.selectMedication', 'Seleccionar medicamento...')}
++
++  renderLabel={(x: any) => x.name}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave (mL/mg)')}</label>
++  <input type="number" step="0.001" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.treatmentDays', 'Días de tratamiento')}</label>
++  <input type="number" min="1" {...register('treatment_days', { valueAsNumber: true })} className={ic} placeholder="5" />
++  </div>
++  </div>
++  {renderMFRows(false)}
++  </div>
++  )
++
++  case 'weight_recording': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3">
++  <div>
++  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
++  <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.sampleSize', 'Aves pesadas')}</label>
++  <input type="number" min="1" {...register('sample_size', { valueAsNumber: true })} className={ic} placeholder="50" />
++  </div>
++  </div>
++  {renderMFRows(true)}
++  </div>
++  )
++
++  case 'bird_reception': {
++  const sapOrderRef = watch('sap_document_ref' as any) ?? watch('extra_data.sap_order_ref' as any)
++  const sapOrder = sapPurchaseOrders.find((o: any) =>
++  identificadorDeOrdenSap(o) === sapOrderRef
++  )
++  const declaredQty = sapOrder?.quantity || (watch('extra_data.declared_quantity' as any) || 0)
++  const declaredAvgM = sapOrder?.extra_data?.avg_weight_male || (watch('extra_data.declared_avg_weight_m' as any) || 0)
++  const declaredAvgF = sapOrder?.extra_data?.avg_weight_female || (watch('extra_data.declared_avg_weight_f' as any) || 0)
++  const dispatchDate = sapOrder?.extra_data?.dispatch_date || watch('extra_data.dispatch_date' as any) || ''
++  const vendorName = sapOrder?.extra_data?.vendor_name || watch('extra_data.vendor_name' as any) || ''
++
++  // Total alojado (Σ filas), solo informativo; la regla del cuadre (BR-20) y de la OC (BR-18) viven en el backend.
++  const totalReceived = birdFields.reduce((sum, _, i) => {
++  const qty = watch(`bird_movements.${i}.quantity` as any) || 0
++  return sum + Number(qty)
++  }, 0)
++
++  return (
++  <div className="space-y-4">
++  {/* SAP Order info card */}
++  {sapOrder && (
++  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-sm space-y-1">
++  <p className="font-semibold text-blue-800">{t('operations.sapOrderInfo', 'Información de la orden SAP')}</p>
++  <p><strong>{t('operations.purchaseOrderAbbrev')}:</strong> {sapOrder.sap_code || sapOrder.ref_id} {vendorName ? `— ${vendorName}` : ''}</p>
++  {sapOrder.description && <p className="text-slate-600">{sapOrder.description}</p>}
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-1 mt-1">
++  {declaredQty > 0 && <p><strong>{t('operations.declaredQty', 'Cantidad declarada')}:</strong> {declaredQty} aves</p>}
++  {dispatchDate && <p><strong>{t('operations.dispatchDate', 'Fecha despacho')}:</strong> {dispatchDate}</p>}
++  {declaredAvgM > 0 && <p><strong>{t('operations.declaredAvgWeightM', 'Peso prom. machos')}:</strong> {declaredAvgM}g</p>}
++  {declaredAvgF > 0 && <p><strong>{t('operations.declaredAvgWeightF', 'Peso prom. hembras')}:</strong> {declaredAvgF}g</p>}
++  </div>
++  </div>
++  )}
++
++  {/* `GA-REM-021-B` · B01: cuadre de la recepción de reproductoras (Rec. §6). Solo aritmética informativa; la regla (BR-20) la aplica el backend. */}
++  {/* `R-205`: visible por etapa derivada **o** por el lote (bird_type=breeder en recepción, C-02). */}
++  {(stageFinal === 'breeder_rearing' || (eventType === 'bird_reception' && selectedLot?.bird_type === 'breeder')) && (() => {
++  const dead = Number(watch('dead_on_arrival' as any) || 0)
++  const rejected = Number(watch('rejected_on_arrival' as any) || 0)
++  const received = Number(watch('received_total' as any) || 0)
++  return (
++  <div className="bg-slate-50 rounded-lg p-3 space-y-2">
++  <p className="text-sm font-semibold text-slate-700">{t('operations.receptionReconciliation', 'Cuadre de la recepción')}</p>
++  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.receivedTotal', 'Cantidad recibida (aves)')}</label>
++  <input type="number" min="1" step="1" {...register('received_total' as any, { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.deadOnArrival', 'Mortalidad al arribo')}</label>
++  <input type="number" min="0" step="1" {...register('dead_on_arrival' as any, { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.rejectedOnArrival', 'Rechazo')}</label>
++  <input type="number" min="0" step="1" {...register('rejected_on_arrival' as any, { valueAsNumber: true })} className={ic} />
++  </div>
++  </div>
++  <div>
++  {/* `R-168` (`GA-REM-021-C §C.2`): «Muestra tomada» (Rec. §6) es un dato de la recepción, en el campo de evento */}
++  <label className="text-xs font-medium text-slate-500">{t('operations.sampleTaken', 'Muestra tomada (aves pesadas)')}</label>
++  <input type="number" min="1" step="1" {...register('sample_size', { valueAsNumber: true })} className={ic} />
++  </div>
++  <p className="text-xs text-slate-500">
++  {t('operations.reconciliationHint', { placed: totalReceived, dead, rejected, sum: totalReceived + dead + rejected, received })}
++  </p>
++  </div>
++  )
++  })()}
++
++  {/* Supplier & Breed — stacked on mobile, side-by-side on desktop */}
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
++  <div>
++  <label className={lc}>{t('operations.supplier', 'Proveedor')}</label>
++  <SearchSelect
++  value={watch('supplier_id' as any) ?? ''}
++  onChange={(v) => setValue('supplier_id' as any, v ? Number(v) : undefined)}
++  items={suppliers}
++  placeholder={t('operations.selectSupplier', 'Seleccionar proveedor...')}
++
++  renderLabel={(s: any) => s.name}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.breed', 'Línea / Raza')}</label>
++  <SearchSelect
++  value={watch('bird_movements.0.breed_id' as any) ?? ''}
++  onChange={(v) => setValue('bird_movements.0.breed_id' as any, v ? Number(v) : undefined)}
++  items={breeds}
++  placeholder={t('operations.selectBreed', 'Seleccionar línea...')}
++
++  renderLabel={(b: any) => b.name}
++  />
++  </div>
++  </div>
++
++  {/* Per-house distribution */}
++  <div className="bg-slate-50 rounded-lg p-3 space-y-3">
++  <p className="text-sm font-semibold text-slate-700">{t('operations.houseDistribution', 'Distribución por galpón')}</p>
++  {birdFields.map((field, i) => (
++  <div key={field.id} className="space-y-2 pb-3 mb-2 border-b border-slate-200 last:border-0">
++  <div className="flex items-center justify-between">
++  <span className="text-xs font-semibold text-slate-500">{t('operations.house', 'Galpón')} {i + 1}</span>
++  {i > 0 && (
++  <button type="button" onClick={() => removeBird(i)}
++  className="text-red-400 hover:text-red-600 p-0.5"><Trash2 size={14} /></button>
++  )}
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.targetHouse', 'Galpón')}</label>
++  <SearchSelect
++  value={watch(`bird_movements.${i}.target_house_id` as any) ?? ''}
++  onChange={(v) => setValue(`bird_movements.${i}.target_house_id` as any, v ? Number(v) : undefined)}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
++
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  />
++  </div>
++  <div className="grid grid-cols-1 gap-2">
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.sex', 'Sexo')}</label>
++  <select {...register(`bird_movements.${i}.sex`)} className={ic}>
++  <option value="male">{t('operations.male', 'Macho')}</option>
++  <option value="female">{t('operations.female', 'Hembra')}</option>
++  <option value="mixed">{t('operations.mixed', 'Mixto')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
++  <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
++  <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
++  </div>
++  </div>
++  </div>
++  ))}
++  <button type="button" onClick={() => appendBird({ sex: 'female' })}
++  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
++  <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
++  </button>
++  </div>
++
++
++  </div>
++  )}
++
++  case 'bird_distribution': return (
++  <div className="space-y-3">
++  <p className="text-xs text-slate-500">{t('operations.distributionHint', 'Confirma la distribución de la recepción o registra movimiento de aves entre galpones')}</p>
++  {birdFields.map((field, i) => (
++  <div key={field.id} className="space-y-2 pb-3 mb-2 border-b border-slate-200 last:border-0">
++  <div className="flex items-center justify-between">
++  <span className="text-xs font-semibold text-slate-500">{t('operations.house', 'Galpón')} {i + 1}</span>
++  {i > 0 && (
++  <button type="button" onClick={() => removeBird(i)}
++  className="text-red-400 hover:text-red-600 p-0.5"><Trash2 size={14} /></button>
++  )}
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.sourceHouse', 'Galpón origen (si hubo movimiento)')}</label>
++  <SearchSelect
++  value={watch(`bird_movements.${i}.source_house_id` as any) ?? ''}
++  onChange={(v) => setValue(`bird_movements.${i}.source_house_id` as any, v ? Number(v) : undefined)}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.selectSourceHouse', 'Opcional — solo si moviste aves...')}
++
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.targetHouse', 'Galpón destino')}</label>
++  <SearchSelect
++  value={watch(`bird_movements.${i}.target_house_id` as any) ?? ''}
++  onChange={(v) => setValue(`bird_movements.${i}.target_house_id` as any, v ? Number(v) : undefined)}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
++
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  />
++  </div>
++  <div className="grid grid-cols-1 gap-2">
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.sex', 'Sexo')}</label>
++  <select {...register(`bird_movements.${i}.sex`)} className={ic}>
++  <option value="male">{t('operations.male', 'Macho')}</option>
++  <option value="female">{t('operations.female', 'Hembra')}</option>
++  <option value="mixed">{t('operations.mixed', 'Mixto')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
++  <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
++  <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
++  </div>
++  </div>
++  </div>
++  ))}
++  <button type="button" onClick={() => appendBird({ sex: 'mixed' })}
++  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
++  <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
++  </button>
++  </div>
++  )
++
++  case 'bird_transfer': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.sourceHouse', 'Galpón origen')}</label>
++  <SearchSelect
++  value={watch('bird_movements.0.source_house_id' as any) ?? ''}
++  onChange={(v) => setValue('bird_movements.0.source_house_id' as any, v ? Number(v) : undefined)}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
++
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.targetHouse', 'Galpón destino')}</label>
++  <SearchSelect
++  value={watch('bird_movements.0.target_house_id' as any) ?? ''}
++  onChange={(v) => setValue('bird_movements.0.target_house_id' as any, v ? Number(v) : undefined)}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
++
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  />
++  </div>
++  </div>
++  {renderMFRows(true)}
++  </div>
++  )
++
++  case 'bird_exit': {
++  const transportId = watch('transport_id' as any)
++  return (
++  <div className="space-y-4">
++  <p className="text-xs text-slate-500">{t('operations.birdExitHint', 'Registra la salida de aves para traslado o cierre de ciclo de cría. Si las aves no se mueven físicamente, deja los campos de destino y transporte vacíos para el cierre de ciclo.')}</p>
++
++  {/* Destination & Transport */}
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
++  <div>
++  <label className={lc}>{t('operations.destinationFarm', 'Granja destino')}</label>
++  <SearchSelect
++  value={watch('destination_farm_id' as any) ?? ''}
++  onChange={(v) => setValue('destination_farm_id' as any, v ? Number(v) : undefined)}
++  items={farms}
++  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
++
++  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.destinationPlant', 'Planta procesadora')}</label>
++  <SearchSelect
++  value={watch('destination_plant_id' as any) ?? ''}
++  onChange={(v) => setValue('destination_plant_id' as any, v ? Number(v) : undefined)}
++  items={processingPlants}
++  placeholder={t('operations.selectType', 'Seleccionar planta...')}
++
++  renderLabel={(p: any) => p.name}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
++  <SearchSelect
++  value={transportId ?? ''}
++  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
++  items={transports}
++  placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
++
++  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.sapOrderRef', 'Ref. OC SAP')}</label>
++  {/* `GA-TD-014` / `GA-REM-035 AC13`. El selector escribía en `extra_data.sap_order_ref`
++  y el campo tipado `sap_document_ref` quedaba nulo, de modo que `BR-18` salía por su
++  primera línea y el comparativo SAP salía vacío. Se escriben ambos: el tipado, que es
++  el que el dominio mira, y el de `extra_data`, que otras partes del formulario leen
++  para mostrar la cantidad declarada. */}
++  <SearchSelect
++  value={(() => { const o = sapPurchaseOrders.find((x: any) => identificadorDeOrdenSap(x) === watch('sap_document_ref' as any)); return o ? String(o.id) : '' })()}
++  onChange={(v) => {
++  const order = sapPurchaseOrders.find((o: any) => String(o.id) === String(v))
++  // `R-209`: siempre el código canónico; sin código ⇒ ausente (nunca `String(id)`).
++  const referencia = order ? identificadorDeOrdenSap(order) : ''
++  setValue('sap_document_ref' as any, (referencia || undefined) as any)
++  setValue('extra_data.sap_order_ref' as any, (referencia || undefined) as any)
++  }}
++  items={sapPurchaseOrders}
++  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
++
++  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}`}
++  />
++  </div>
++  </div>
++
++  {/* ── Transport inspection (only when transport is selected) ── */}
++  {transportId && (
++  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 space-y-3">
++  <p className="text-sm font-semibold text-amber-800">{t('operations.transportInspection', 'Inspección del transporte')}</p>
++  <div className="grid grid-cols-1 gap-3">
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.cageCondition', 'Estado de jaulas')}</label>
++  <select {...register('extra_data.transport_cage_condition' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="good">{t('operations.good', 'Bueno')}</option>
++  <option value="regular">{t('operations.regular', 'Regular')}</option>
++  <option value="bad">{t('operations.bad', 'Malo')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.densityBirdsM2', 'Densidad (aves/m²)')}</label>
++  <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
++  <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="22" />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
++  <select {...register('extra_data.transport_ventilation' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="good">{t('operations.good', 'Buena')}</option>
++  <option value="regular">{t('operations.regular', 'Regular')}</option>
++  <option value="bad">{t('operations.bad', 'Mala')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.hygiene', 'Higiene del vehículo')}</label>
++  <select {...register('extra_data.transport_hygiene' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="good">{t('operations.good', 'Buena')}</option>
++  <option value="regular">{t('operations.regular', 'Regular')}</option>
++  <option value="bad">{t('operations.bad', 'Mala')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
++  <input type="number" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
++  </div>
++  </div>
++  </div>
++  )}
++
++  {/* Same-house transition note */}
++  {!transportId && (
++  <div className="bg-blue-50 border border-blue-100 rounded-lg p-3 text-xs text-blue-700">
++  {t('operations.sameHouseTransition', 'Sin transporte ni destino = cierre de ciclo de cría e inicio de producción en el mismo galpón. Las aves saldrán y reingresarán al mismo lote para marcar la transición.')}
++  </div>
++  )}
++
++  {/* M/F rows */}
++  {renderMFRows(true)}
++  </div>
++  )}
++
++  case 'water_consumption': return (
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.waterLiters', 'Consumo de agua (L)')}</label>
++  <input type="number" step="0.1" min="0.1" {...register('water_liters', { valueAsNumber: true })} className={ic} />
++  </div>
++  </div>
++  )
++
++  case 'feed_registration': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.feedPhase', 'Fase de alimento')}</label>
++  <select {...register('extra_data.feed_phase' as any)} className={ic}>
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="pre_starter">{t('operations.feedPreStarter', 'Pre-iniciador')}</option>
++  <option value="starter">{t('operations.feedStarter', 'Iniciador')}</option>
++  <option value="grower">{t('operations.feedGrower', 'Crecimiento')}</option>
++  <option value="finisher">{t('operations.feedFinisher', 'Finalizador')}</option>
++  </select>
++  </div>
++  <div>
++  <label className={lc}>{t('operations.feedType', 'Tipo de Alimento')}</label>
++  {sel(register('feed_movements.0.feed_type_id', { valueAsNumber: true }), feedTypes, t('operations.selectType', 'Seleccionar...'))}
++  </div>
++  <div>
++  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
++  <input type="number" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
++  </div>
++  </div>
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
++  <div>
++  <label className={lc}>{t('operations.quantityKg', 'Cantidad (kg)')}</label>
++  <input type="number" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.sacks', 'Sacos / bultos')}</label>
++  <input type="number" min="0" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.sapOrder', 'Orden SAP')}</label>
++  <SearchSelect
++  value={(() => { const o = sapOrders.find((x: any) => identificadorDeOrdenSap(x) === watch('feed_movements.0.sap_order_id' as any)); return o ? String(o.id) : '' })()}
++  onChange={(v) => {
++  const order = sapOrders.find((o: any) => String(o.id) === String(v))
++  // `R-209`: la OT de alimento viaja por su código — nunca por el id de UI.
++  const referencia = order ? identificadorDeOrdenSap(order) : ''
++  setValue('feed_movements.0.sap_order_id' as any, (referencia || undefined) as any)
++  }}
++  items={sapOrders}
++  placeholder={t('operations.noOrder', 'Sin orden')}
++
++  renderLabel={(s: any) => s.sap_code || s.reference || s.id}
++  />
++  </div>
++  </div>
++  </div>
++  )
++
++  case 'egg_collection':
++  case 'egg_classification':
++  case 'egg_reception_classification': {
++  const eggTypes = [
++  { key: 'fertile', label: t('operations.fertile', 'Fértiles') },
++  { key: 'dirty', label: t('operations.dirty', 'Sucios') },
++  { key: 'broken', label: t('operations.broken', 'Rotos') },
++  { key: 'infertile', label: t('operations.infertile', 'Infértiles') },
++  { key: 'discarded', label: t('operations.discarded', 'Descartados') },
++  ]
++  return (
++  <div className="space-y-4">
++  <div>
++  <div className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2 border-b border-slate-200">
++  <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
++  <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
++  </div>
++  {eggTypes.map(({ key, label }, i) => (
++  <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
++  <div>
++  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
++  <span className="text-sm text-slate-700">{label}</span>
++  </div>
++  <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
++  </div>
++  ))}
++  </div>
++  {eventType === 'egg_collection' && (
++  <div className="flex flex-col gap-3">
++  <label className="text-sm font-medium text-slate-600">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
++  <input type="number" step="0.1" min="0" {...register('egg_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="60.0" />
++  </div>
++  )}
++  </div>
++  )
++  }
++
++  case 'egg_dispatch': {
++  const transportId = watch('transport_id' as any)
++  return (
++  <div className="space-y-4">
++  <p className="text-xs text-slate-500">{t('operations.eggDispatchHint', 'Registra el despacho de huevos a la incubadora con la orden de traslado SAP y los datos del transporte')}</p>
++
++  {/* Incubator & Transport */}
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
++  <div>
++  <label className={lc}>{t('operations.destinationIncubator', 'Incubadora destino')}</label>
++  <SearchSelect
++  value={watch('hatchery_params.0.incubator_id' as any) ?? ''}
++  onChange={(v) => setValue('hatchery_params.0.incubator_id' as any, v ? Number(v) : undefined)}
++  items={incubators}
++  placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
++
++  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
++  <SearchSelect
++  value={transportId ?? ''}
++  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
++  items={transports}
++  placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
++
++  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
++  />
++  </div>
++  </div>
++
++  {/* ── Transport inspection (only when transport is selected) ── */}
++  {transportId && (
++  <div className="bg-amber-50 border border-amber-100 rounded-lg p-3 space-y-3">
++  <p className="text-sm font-semibold text-amber-800">{t('operations.transportInspection', 'Inspección del transporte')}</p>
++  <div className="grid grid-cols-1 gap-3">
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.cageCondition', 'Estado de jaulas')}</label>
++  <select {...register('extra_data.transport_cage_condition' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="good">{t('operations.good', 'Bueno')}</option>
++  <option value="regular">{t('operations.regular', 'Regular')}</option>
++  <option value="bad">{t('operations.bad', 'Malo')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.eggDensity', 'Huevos por bandeja')}</label>
++  <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
++  <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="18" />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
++  <select {...register('extra_data.transport_ventilation' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="good">{t('operations.good', 'Buena')}</option>
++  <option value="regular">{t('operations.regular', 'Regular')}</option>
++  <option value="bad">{t('operations.bad', 'Mala')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.hygiene', 'Higiene del vehículo')}</label>
++  <select {...register('extra_data.transport_hygiene' as any)} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
++  <option value="good">{t('operations.good', 'Buena')}</option>
++  <option value="regular">{t('operations.regular', 'Regular')}</option>
++  <option value="bad">{t('operations.bad', 'Mala')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
++  <input type="number" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
++  </div>
++  </div>
++  </div>
++  )}
++
++  {/* Egg type rows */}
++  <div>
++  <div className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2 border-b border-slate-200">
++  <span className="text-xs font-semibold text-slate-500">{t('operations.eggType', 'Tipo de huevo')}</span>
++  <span className="text-xs font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
++  </div>
++  {/* `GA-REM-005-F` · `R-172` · `RR-17`: a la incubadora solo se despacha huevo fértil (`Bases` p.7-9,
++      `docs/02 §3.6.4/§3.7.1`); el backend rechaza cualquier otra fila (`BR-02`). */}
++  {[
++  { key: 'fertile', label: t('operations.fertile', 'Fértiles') },
++  ].map(({ key, label }, i) => (
++  <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
++  <div>
++  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
++  <span className="text-sm text-slate-700">{label}</span>
++  </div>
++  <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
++  </div>
++  ))}
++  </div>
++  </div>
++  )
++  }
++
++  case 'egg_reception_hatchery': return (
++  <div className="space-y-4">
++  <p className="text-xs text-slate-500">{t('operations.eggReceptionHint', 'Registra la recepción de huevos en la incubadora. Referencia la orden de traslado SAP del despacho.')}</p>
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
++  <div>
++  <label className={lc}>{t('operations.sourceOriginFarm', 'Granja de origen')}</label>
++  <SearchSelect
++  value={watch('extra_data.source_farm_id' as any) ?? ''}
++  onChange={(v) => setValue('extra_data.source_farm_id' as any, v ? Number(v) : undefined)}
++  items={farms}
++  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
++
++  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
++  <SearchSelect
++  value={watch('transport_id' as any) ?? ''}
++  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
++  items={transports}
++  placeholder={t('operations.selectTransport', 'Seleccionar...')}
++
++  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.dispatchOrder', 'No. de orden de despacho')}</label>
++  <input {...register('extra_data.dispatch_order' as any)} className={ic} placeholder="D-2024-001" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.quantity', 'Huevos recibidos')}</label>
++  <input type="number" min="0" {...register('egg_storage_records.0.eggs_received', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.tempTransport', 'Temp. transporte (°C)')}</label>
++  <input type="number" step="0.1" {...register('egg_storage_records.0.transport_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.durationTransport', 'Duración transporte (min)')}</label>
++  <input type="number" min="0" {...register('egg_storage_records.0.transport_duration_min', { valueAsNumber: true })} className={ic} placeholder="60" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.storageTemp', 'Temp. almacén (°C)')}</label>
++  <input type="number" step="0.1" {...register('egg_storage_records.0.storage_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.storageHumidity', 'Humedad almacén (%)')}</label>
++  <input type="number" step="0.1" {...register('egg_storage_records.0.storage_humidity_pct', { valueAsNumber: true })} className={ic} placeholder="75" />
++  </div>
++  </div>
++  </div>
++  )
++
++  case 'farm_inspection': {
++  const EQUIPMENT_TYPES = [
++  'bebedero', 'comedero', 'ventilador', 'calefactor',
++  'nebulizador', 'iluminación', 'cortina', 'extractor', 'otro',
++  ]
++  return (
++  <div className="space-y-4">
++  <p className="text-xs text-slate-500">{t('operations.inspectionPerHouse', 'Registra T°, H° y estado de cama por cada galpón inspeccionado')}</p>
++  {houseInspFields.map((field, i) => {
++  const eqCount = watch(`house_inspections.${i}.equipment_count` as any) || 0
++  return (
++  <div key={field.id} className="space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">
++  <div className="flex items-center justify-between mb-1">
++  <span className="text-sm font-semibold text-slate-600">{t('operations.house', 'Galpón')} {i + 1}</span>
++  {i > 0 && (
++  <button type="button" onClick={() => removeHouseInsp(i)}
++  className="text-red-400 hover:text-red-600 p-1"><Trash2 size={16} /></button>
++  )}
++  </div>
++  {/* House selector — SearchSelect for large farm lists */}
++  <div>
++  <label className={lc}>{t('operations.selectHouse', 'Galpón')}</label>
++  <SearchSelect
++  value={watch(`house_inspections.${i}.house_id` as any) ?? ''}
++  onChange={(v) => setValue(`house_inspections.${i}.house_id` as any, v ? Number(v) : undefined as any)}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.selectHouse', 'Seleccionar galpón...')}
++
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  />
++  </div>
++  {/* T° and H° row */}
++  <div className="flex flex-col gap-3">
++  <div>
++  <label className={lc}>{t('operations.tempC', 'Temperatura (°C)')}</label>
++  <input type="number" step="0.1" min="0" max="60"
++  {...register(`house_inspections.${i}.temperature`, { valueAsNumber: true })}
++  className={ic} placeholder="28.0" />
++  {(() => {
++  const v = watch(`house_inspections.${i}.temperature` as any)
++  const [tMin, tMax] = getTempRange(lotBirdType, lotAgeWeeks)
++  return <RangeIndicator value={v} min={tMin} max={tMax} unit="°C" weekLabel={`sem.${lotAgeWeeks}`} />
++  })()}
++  </div>
++  <div>
++  <label className={lc}>{t('operations.humidityPct', 'Humedad (%)')}</label>
++  <input type="number" step="0.1" min="0" max="100"
++  {...register(`house_inspections.${i}.humidity`, { valueAsNumber: true })}
++  className={ic} placeholder="65" />
++  {(() => {
++  const v = watch(`house_inspections.${i}.humidity` as any)
++  const [hMin, hMax] = getHumidityRange(lotAgeWeeks)
++  return <RangeIndicator value={v} min={hMin} max={hMax} unit="%" />
++  })()}
++  </div>
++  </div>
++  {/* Litter condition */}
++  <div>
++  <label className={lc}>{t('operations.litterCondition', 'Condición de cama')}</label>
++  <select {...register(`house_inspections.${i}.litter_condition`)} className={ic}>
++  <option value="">{t('operations.selectState', 'Seleccionar...')}</option>
++  <option value="seca">{t('operations.litterDry', 'Seca')}</option>
++  <option value="húmeda">{t('operations.litterWet', 'Húmeda')}</option>
++  <option value="amoniacal">{t('operations.litterAmmoniacal', 'Amoniacal')}</option>
++  <option value="compactada">{t('operations.litterCompacted', 'Compactada')}</option>
++  </select>
++  </div>
++  {/* Litter notes */}
++  <div>
++  <label className={lc}>{t('operations.litterNotes', 'Observaciones de cama')}</label>
++  <input type="text" {...register(`house_inspections.${i}.litter_notes`)}
++  className={ic} placeholder={t('operations.litterNotesPlaceholder', 'Profundidad, renovación, etc.')} />
++  </div>
++  {/* ── Equipment items per house ── */}
++  <div className="bg-slate-50 rounded-lg p-3 space-y-3">
++  <label className={lc}>{t('operations.equipmentCount', '¿Cuántos equipos inspeccionar?')}</label>
++  <input type="number" min="0" max="20"
++  {...register(`house_inspections.${i}.equipment_count`, { valueAsNumber: true })}
++  className={ic} />
++  {Array.from({ length: Math.min(eqCount, 20) }).map((_, j) => (
++  <div key={j} className="flex items-start gap-2 pl-2 border-l-2 border-blue-200">
++  <span className="text-xs font-bold text-blue-500 mt-3 shrink-0 w-5">{j + 1}</span>
++  <div className="flex-1 space-y-2">
++  <select {...register(`house_inspections.${i}.equipment_items.${j}.equipment_type`)} className={ic}>
++  <option value="">{t('operations.selectEquipment', 'Tipo de equipo...')}</option>
++  {EQUIPMENT_TYPES.map(eq => (
++  <option key={eq} value={eq}>{eq.charAt(0).toUpperCase() + eq.slice(1)}</option>
++  ))}
++  </select>
++  <input type="text"
++  {...register(`house_inspections.${i}.equipment_items.${j}.observation`)}
++  className={ic}
++  placeholder={t('operations.equipmentObservation', 'Observación del equipo...')} />
++  </div>
++  </div>
++  ))}
++  {eqCount > 0 && (
++  <p className="text-xs text-slate-400">{t('operations.equipmentHint', 'Selecciona el tipo de equipo y registra su estado para cada uno')}</p>
++  )}
++  </div>
++  </div>
++  )})}
++  <button type="button"
++  onClick={() => appendHouseInsp({ litter_condition: '' })}
++  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
++  <Plus size={14} /> {t('operations.addHouse', 'Añadir galpón')}
++  </button>
++  </div>
++  )
++  }
++
++  case 'transport_inspection': {
++  const params = [
++  { key: 'cage_condition', label: t('operations.cageCondition', 'Estado de jaulas'), numeric: false },
++  { key: 'density', label: t('operations.densityBirdsM2', 'Densidad (aves/m²)'), numeric: true },
++  { key: 'temperature', label: t('operations.temperature', 'Temperatura (°C)'), numeric: true },
++  { key: 'ventilation', label: t('operations.ventilation', 'Ventilación'), numeric: false },
++  { key: 'hygiene', label: t('operations.hygiene', 'Higiene del vehículo'), numeric: false },
++  { key: 'duration_min', label: t('operations.durationMin', 'Duración viaje (min)'), numeric: true },
++  ]
++  return (
++  <div className="space-y-4">
++  <div>
++  <label className={lc}>{t('operations.transport', 'Vehículo / Transporte')}</label>
++  <SearchSelect
++  value={watch('transport_id' as any) ?? ''}
++  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
++  items={transports}
++  placeholder={t('operations.selectTransport', 'Seleccionar...')}
++
++  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
++  />
++  </div>
++  {params.map((param, i) => (
++  <div key={param.key} className="flex items-center gap-3">
++  <input type="hidden" {...register(`inspection_details.${i}.parameter`)} defaultValue={param.key} />
++  <span className="text-sm text-slate-600 w-44 shrink-0">{param.label}</span>
++  {param.numeric ? (
++  <input type="number" step="0.1" {...register(`inspection_details.${i}.value`)}
++  className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none" placeholder="--" />
++  ) : (
++  <select {...register(`inspection_details.${i}.status`)}
++  className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none">
++  <option value="">{t('operations.selectState', 'Seleccionar...')}</option>
++  <option value="good">✅ {t('operations.good', 'Bueno')}</option>
++  <option value="regular">⚠️ {t('operations.regular', 'Regular')}</option>
++  <option value="bad">❌ {t('operations.bad', 'Malo')}</option>
++  </select>
++  )}
++  </div>
++  ))}
++  </div>
++  )
++  }
++
++  case 'hatchery_inspection': return (
++  <div className="space-y-4">
++  <p className="text-xs text-slate-500">{t('operations.addMachineRows', 'Registra los parámetros de cada máquina (incubadora o nacedora)')}</p>
++  {incubatorFields.map((field, i) => {
++  const machineType = watch(`hatchery_params.${i}.machine_type` as any)
++  return (
++  <div key={field.id} className="relative space-y-3 pb-4 mb-3 border-b border-slate-200 last:border-0">{/* `R-220` · B9 (F G-22): ancestro posicionado del botón eliminar */}
++  <p className="text-sm font-semibold text-slate-600">{t('operations.machine', 'Máquina')} {i + 1}</p>
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
++  <div>
++  <label className={lc}>{t('operations.machineType', 'Tipo de máquina')}</label>
++  <select {...register(`hatchery_params.${i}.machine_type` as any)} className={ic}>
++  <option value="incubator">{t('operations.incubatorMachine', 'Incubadora')}</option>
++  <option value="hatcher">{t('operations.hatcherMachine', 'Nacedora')}</option>
++  </select>
++  </div>
++  <div>
++  <label className={lc}>{machineType === 'hatcher' ? t('operations.hatcher', 'Nacedora') : t('operations.incubator', 'Incubadora')}</label>
++  {machineType === 'hatcher'
++  ? (
++  <SearchSelect
++  value={watch(`hatchery_params.${i}.hatcher_id` as any) ?? ''}
++  onChange={(v) => setValue(`hatchery_params.${i}.hatcher_id` as any, v ? Number(v) : undefined)}
++  items={hatchers}
++  placeholder={t('operations.selectHatcher', 'Seleccionar nacedora...')}
++
++  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
++  />
++  )
++  : (
++  <SearchSelect
++  value={watch(`hatchery_params.${i}.incubator_id` as any) ?? ''}
++  onChange={(v) => setValue(`hatchery_params.${i}.incubator_id` as any, v ? Number(v) : undefined)}
++  items={incubators}
++  placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
++
++  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
++  />
++  )
++  }
++  </div>
++  <div>
++  <label className={lc}>{t('operations.temp', 'T° (°C)')}</label>
++  <input type="number" step="0.1" {...register(`hatchery_params.${i}.temperature`, { valueAsNumber: true })} className={ic} placeholder="37.5" />
++  {(() => {
++  const v = watch(`hatchery_params.${i}.temperature` as any)
++  const [tMin, tMax] = machineType === 'hatcher' ? HATCHER_TEMP_RANGE : INCUBATOR_TEMP_RANGE
++  return <RangeIndicator value={v} min={tMin} max={tMax} unit="°C" />
++  })()}
++  </div>
++  <div>
++  <label className={lc}>{t('operations.humidity', 'H° (%)')}</label>
++  <input type="number" step="0.1" min="0" max="100" {...register(`hatchery_params.${i}.humidity`, { valueAsNumber: true })} className={ic} placeholder="56" />
++  {(() => {
++  const v = watch(`hatchery_params.${i}.humidity` as any)
++  const [hMin, hMax] = machineType === 'hatcher' ? HATCHER_HUM_RANGE : INCUBATOR_HUM_RANGE
++  return <RangeIndicator value={v} min={hMin} max={hMax} unit="%" />
++  })()}
++  </div>
++  <div>
++  <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
++  <input type="number" step="0.01" min="0" {...register(`hatchery_params.${i}.co2`, { valueAsNumber: true })} className={ic} placeholder="0.50" />
++  {(() => {
++  const v = watch(`hatchery_params.${i}.co2` as any)
++  return <RangeIndicator value={v} min={0} max={0.5} unit="%" />
++  })()}
++  </div>
++  </div>
++  {i > 0 && (
++  <button type="button" onClick={() => removeIncubator(i)}
++  className="absolute top-2 right-2 text-red-400 hover:text-red-600 p-1">
++  <Trash2 size={14} />
++  </button>
++  )}
++  </div>
++  )
++  })}
++  <button type="button" onClick={() => appendIncubator({ machine_type: 'incubator' } as any)}
++  className="flex items-center gap-1.5 text-sm text-blue-600 hover:text-blue-800 font-medium">
++  <Plus size={14} /> {t('operations.addMachine', 'Añadir máquina')}
++  </button>
++  </div>
++  )
++
++  case 'incubation_load': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.incubator', 'Incubadora')}</label>
++  <SearchSelect
++  value={watch('hatchery_params.0.incubator_id' as any) ?? ''}
++  onChange={(v) => setValue('hatchery_params.0.incubator_id' as any, v ? Number(v) : undefined)}
++  items={incubators}
++  placeholder={t('operations.selectIncubator', 'Seleccionar incubadora...')}
++
++  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.quantityLoaded', 'Cantidad cargada')}</label>
++  <input type="number" min="0" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.temp', 'Temperatura (°C)')}</label>
++  <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} className={ic} placeholder="37.5" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.humidity', 'Humedad (%)')}</label>
++  <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} className={ic} placeholder="55" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
++  <input type="number" step="0.01" {...register('hatchery_params.0.co2', { valueAsNumber: true })} className={ic} placeholder="0.5" />
++  </div>
++  <div className="flex items-center gap-2 pt-5">
++  <input type="checkbox" id="turning" {...register('hatchery_params.0.turning')}
++  className="h-4 w-4 rounded border-slate-300 text-blue-600" />
++  <label htmlFor="turning" className="text-sm text-slate-700">{t('operations.turning', 'Volteo activo')}</label>
++  </div>
++  </div>
++  </div>
++  )
++
++  case 'ovoscopy': {
++  const types = [
++  { key: 'fertile', label: t('operations.fertile', 'Fértiles') },
++  { key: 'infertile', label: t('operations.infertile', 'Infértiles') },
++  { key: 'dead_early', label: t('operations.deadEarly', 'Muertos tempranos') },
++  { key: 'dead_late', label: t('operations.deadLate', 'Muertos tardíos') },
++  { key: 'contaminated', label: t('operations.contaminated', 'Contaminados') },
++  ]
++  return (
++  <div className="space-y-4">
++  <div>
++  <label className={lc}>{t('operations.candlingDay', 'Día de ovoscopía')}</label>
++  <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="10" />
++  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
++  </div>
++  <div>
++  {types.map(({ key, label }, i) => (
++  <div key={key} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
++  <div>
++  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
++  <span className="text-sm text-slate-700">{label}</span>
++  </div>
++  <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
++  </div>
++  ))}
++  </div>
++  </div>
++  )
++  }
++
++  case 'transfer_to_hatcher': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.hatcher', 'Nacedora')}</label>
++  <SearchSelect
++  value={watch('hatchery_params.0.hatcher_id' as any) ?? ''}
++  onChange={(v) => setValue('hatchery_params.0.hatcher_id' as any, v ? Number(v) : undefined)}
++  items={hatchers}
++  placeholder={t('operations.selectHatcher', 'Seleccionar nacedora...')}
++
++  renderLabel={(x: any) => `${x.name}${x.code ? ` (${x.code})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.incubationDay', 'Día de incubación')}</label>
++  <input type="number" min="1" max="21" {...register('extra_data.incubation_day' as any, { valueAsNumber: true })} className={ic} placeholder="18" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.qtyTransferred', 'Cantidad transferida')}</label>
++  <input type="number" min="0" {...register('hatchery_params.0.quantity_transferred', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.temp', 'Temperatura (°C)')}</label>
++  <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} className={ic} placeholder="37.0" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.humidity', 'Humedad (%)')}</label>
++  <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} className={ic} placeholder="68" />
++  </div>
++  </div>
++  </div>
++  )
++
++  case 'birth_registration': {
++  // `R-170` (`GA-REM-005-C`, BR-21): los nacidos son la suma de las filas, una por sexo; no hay fila «total»
++  // (se deriva). `B13` (`GA-REM-021-C`): sanos y débiles son datos del nacimiento, no filas de nacidos.
++  const rows = [
++  { sex: 'male', label: t('operations.hatchedMale', 'Nacidos machos'), idx: 0 },
++  { sex: 'female', label: t('operations.hatchedFemale', 'Nacidos hembras'), idx: 1 },
++  { sex: 'mixed', label: t('operations.hatchedUnsexed', 'Nacidos sin sexar'), idx: 2 },
++  ]
++  const hatchedTotal = rows.reduce((sum, { idx }) => sum + Number(watch(`bird_movements.${idx}.quantity` as any) || 0), 0)
++  return (
++  <div className="space-y-5">
++  {/* Birth counts */}
++  <div>
++  <p className="text-sm font-semibold text-slate-700 mb-2">{t('operations.birthCounts', 'Conteo de nacimientos')}</p>
++  {rows.map(({ sex, label, idx }) => (
++  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 px-1 py-2.5 gap-2 items-center border-b border-slate-100 last:border-0">
++  <div>
++  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={sex} />
++  <span className="text-sm text-slate-700">{label}</span>
++  </div>
++  <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} />
++  </div>
++  ))}
++  <p className="text-xs text-slate-500 mt-2">{t('operations.hatchedTotalHint', { total: hatchedTotal })}</p>
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.chicksHealthy', 'Pollitos sanos')}</label>
++  <input type="number" min="0" step="1" {...register('chicks_healthy' as any, { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-slate-500">{t('operations.chicksWeak', 'Pollitos débiles')}</label>
++  <input type="number" min="0" step="1" {...register('chicks_weak' as any, { valueAsNumber: true })} className={ic} />
++  </div>
++  </div>
++  </div>
++
++  {/* Vaccination at birth */}
++  <div className="bg-green-50 border border-green-100 rounded-lg p-3 space-y-3">
++  <p className="text-sm font-semibold text-green-800">{t('operations.birthVaccination', 'Vacunación al nacimiento')}</p>
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
++  <div>
++  <label className="text-xs font-medium text-green-700">{t('operations.vaccine', 'Vacuna')}</label>
++  <SearchSelect
++  value={watch('vaccine_id' as any) ?? ''}
++  onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
++  items={vaccines}
++  placeholder={t('operations.selectVaccine', 'Seleccionar vacuna...')}
++
++  renderLabel={(v: any) => v.name}
++  />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-green-700">{t('operations.vaccinationRoute', 'Vía de aplicación')}</label>
++  <select {...register('vaccination_route' as any)} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white">
++  <option value="">{t('operations.selectRoute', 'Seleccionar vía...')}</option>
++  <option value="spray">{t('operations.routeSpray', 'Spray')}</option>
++  <option value="water">{t('operations.routeWater', 'Agua de bebida')}</option>
++  <option value="injection">{t('operations.routeInjection', 'Inyección')}</option>
++  <option value="eye">{t('operations.routeEye', 'Ocular')}</option>
++  <option value="gel">{t('operations.routeGel', 'Gel')}</option>
++  </select>
++  </div>
++  <div>
++  <label className="text-xs font-medium text-green-700">{t('operations.vaccineLotNumber', 'Lote de la vacuna')}</label>
++  <input type="text" {...register('vaccine_lot_number' as any)} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="L-001" />
++  </div>
++  <div>
++  <label className="text-xs font-medium text-green-700">{t('operations.dosePerBird', 'Dosis por ave')}</label>
++  <input type="number" step="0.001" {...register('dosage_per_bird' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="0.2" />
++  {errors.dosage_per_bird && <p className="text-red-500 text-xs mt-1">{t('operations.dosageInvalid', 'La dosis debe ser un número ≥ 0')}</p>}
++  </div>
++  </div>
++  </div>
++  </div>
++  )
++  }
++
++  case 'chick_dispatch': return (
++  <div className="space-y-4">
++  <p className="text-xs text-slate-500">{t('operations.chickDispatchHint', 'Registra el despacho de pollitos desde la incubadora a la granja de engorde')}</p>
++  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
++  <div>
++  <label className={lc}>{t('operations.destinationFarm', 'Granja destino')}</label>
++  <SearchSelect
++  value={watch('destination_farm_id' as any) ?? ''}
++  onChange={(v) => setValue('destination_farm_id' as any, v ? Number(v) : undefined)}
++  items={farms}
++  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
++
++  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.transport', 'Transporte')}</label>
++  <SearchSelect
++  value={watch('transport_id' as any) ?? ''}
++  onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
++  items={transports}
++  placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
++
++  renderLabel={(x: any) => `${x.plate} — ${x.name}`}
++  />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.sanitaryCert', 'Certificado sanitario')}</label>
++  <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder={t('operations.sanitaryCertPlaceholder')} />
++  </div>
++  </div>
++  {renderMFRows(false)}
++  </div>
++  )
++
++  case 'lot_closure': return (
++  <div className="space-y-4">
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  <div>
++  <label className={lc}>{t('operations.finalPopulation', 'Población final')}</label>
++  <input type="number" min="0" {...register('bird_movements.0.quantity', { valueAsNumber: true })} className={ic} />
++  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.avgWeight', 'Peso final prom. (g)')}</label>
++  <input type="number" step="1" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.fcr', 'FCR (Conversión alimenticia)')}</label>
++  <input type="number" step="0.001" {...register('extra_data.fcr' as any, { valueAsNumber: true })} className={ic} placeholder="2.000" />
++  </div>
++  <div>
++  <label className={lc}>{t('operations.totalMortality', 'Mortalidad total (%)')}</label>
++  <input type="number" step="0.01" {...register('extra_data.mortality_pct' as any)} className={ic} />
++  </div>
++  </div>
++  </div>
++  )
++
++  case 'grandparent_import': return (
++    // `GA-REM-042` · `R-152` · `BR-22`: el plan de importación de `docs/02 §3.4.1` con claves tipadas bajo
++    // `extra_data.import_plan.*`; OC (bloque común), proveedor y transporte de la empresa; ♂/♀ recibidas.
++    <div className="space-y-4">
++      <p className="text-xs text-slate-500">{t('operations.importPlanTitle', 'Plan de importación')} · {t('operations.importIdentityHint', 'Embarcada = recibida + mortalidad en traslado; recibida = machos + hembras')}</p>
++      <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++        <div>
++          <label className={lc}>{t('operations.supplier', 'Proveedor')}</label>
++          <SearchSelect
++            value={watch('supplier_id' as any) ?? ''}
++            onChange={(v) => setValue('supplier_id' as any, v ? Number(v) : undefined)}
++            items={suppliers}
++            placeholder={t('operations.selectSupplier', 'Seleccionar proveedor...')}
++            renderLabel={(x: any) => x.name}
++          />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.transport', 'Transporte')}</label>
++          <SearchSelect
++            value={watch('transport_id' as any) ?? ''}
++            onChange={(v) => setValue('transport_id' as any, v ? Number(v) : undefined)}
++            items={transports}
++            placeholder={t('operations.selectTransport', 'Seleccionar transporte...')}
++            renderLabel={(x: any) => `${x.plate ? `${x.plate} — ` : ''}${x.name}`}
++          />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importOriginCountry', 'País de origen')}</label>
++          <input {...register('extra_data.import_plan.origin_country' as any)} className={ic} placeholder={t('operations.importCountryPlaceholder')} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importPurchasedTotal', 'Cantidad comprada')}</label>
++          <input type="number" min="1" {...register('extra_data.import_plan.purchased_total' as any, { valueAsNumber: true })} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importShippedTotal', 'Cantidad embarcada')}</label>
++          <input type="number" min="1" {...register('extra_data.import_plan.shipped_total' as any, { valueAsNumber: true })} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importReceivedTotal', 'Cantidad recibida')}</label>
++          <input type="number" min="0" {...register('extra_data.import_plan.received_total' as any, { valueAsNumber: true })} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importTransitMortality', 'Mortalidad en traslado')}</label>
++          <input type="number" min="0" {...register('extra_data.import_plan.transit_mortality' as any, { valueAsNumber: true })} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importDepartureDate', 'Fecha de salida (origen)')}</label>
++          <input type="date" {...register('extra_data.import_plan.departure_date' as any)} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importArrivalDate', 'Fecha de llegada (destino)')}</label>
++          <input type="date" {...register('extra_data.import_plan.arrival_date' as any)} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importReceptionCondition', 'Condición de recepción')}</label>
++          <input {...register('extra_data.import_plan.reception_condition' as any)} className={ic} />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importQuarantineDays', 'Cuarentena (días)')}</label>
++          <input type="number" min="0" {...register('extra_data.import_plan.quarantine_days' as any, { valueAsNumber: true })} className={ic} placeholder="21" />
++        </div>
++        <div>
++          <label className={lc}>{t('operations.importQuarantineEndDate', 'Cuarentena (fecha fin)')}</label>
++          <input type="date" {...register('extra_data.import_plan.quarantine_end_date' as any)} className={ic} />
++        </div>
++        <div className="lg:col-span-2">
++          <label className={lc}>{t('operations.importInitialHealthInspection', 'Inspección sanitaria inicial')}</label>
++          <input {...register('extra_data.import_plan.initial_health_inspection' as any)} className={ic} />
++        </div>
++      </div>
++      <p className="text-xs font-semibold text-slate-600">{t('operations.importReceivedBySex', 'Aves recibidas por sexo')}</p>
++      {renderMFRows(true)}
++    </div>
++  )
++
++ default: return (
++  <div className="py-6 text-sm text-slate-900 text-center italic">
++  {t('operations.noSpecificFields', 'Registra tus observaciones en el campo de abajo.')}
++  </div>
++  )
++  }
++  }
++
++  const selectedStageMeta = PROCESS_STAGES.find(s => s.key === stage)
++  const SelectedEventIcon = eventType ? (EVENT_ICON_MAP[eventType] ?? EVENT_ICONS[eventType]) : null
++  const SelectedStageIcon = selectedStageMeta?.Icon
++
++  return (
++  <div className="py-4 sm:py-6 text-slate-900">
++  {/* Stepper */}
++  <nav className="flex items-center gap-1.5 text-sm font-semibold mb-5 select-none">
++  <button type="button" onClick={() => setStep(1)} className={step >= 1 ? 'text-[#5a9bba]' : 'text-slate-900'}>
++  {t('process.step1', '1 · Proceso')}
++  </button>
++  <span className="text-slate-900">/</span>
++  <button type="button" disabled={!stage} onClick={() => stage && setStep(2)}
++  className={`${step >= 2 ? 'text-[#5a9bba]' : 'text-slate-900'} disabled:cursor-not-allowed`}>
++  {t('process.step2', '2 · Operación')}
++  </button>
++  <span className="text-slate-900">/</span>
++  <button type="button" disabled={!eventType} onClick={() => eventType && setStep(3)}
++  className={`${step >= 3 ? 'text-[#5a9bba]' : 'text-slate-900'} disabled:cursor-not-allowed`}>
++  {t('process.step3', '3 · Datos')}
++  </button>
++  </nav>
++
++  {/* ===================== STEP 1 — PROCESS ===================== */}
++  {step === 1 && (
++  <div>
++  <h1 className="text-xl font-bold text-slate-900">{t('process.title', 'Registrar Operación')}</h1>
++  <p className="text-sm text-slate-900 mt-1 mb-5">{t('process.subtitle', '¿Qué proceso vas a registrar?')}</p>
++  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
++  {PROCESS_STAGES.map(s => {
++  const Icon = s.Icon
++  return (
++  <button key={s.key} type="button" onClick={() => goToStep2(s.key)}
++  className={`flex items-center gap-3 p-4 min-h-[5rem] rounded-xl border border-slate-200 bg-white text-left active:bg-slate-50 transition-colors ${s.accent}`}>
++  <div className={`shrink-0 w-12 h-12 rounded-lg flex items-center justify-center ${s.iconBg}`}>
++  <Icon size={26} className={s.iconColor} />
++  </div>
++  <div className="min-w-0">
++  <p className="font-semibold text-slate-900 leading-tight">{t(s.labelKey, s.fallback)}</p>
++  <p className="text-sm text-slate-500 leading-snug mt-1">{t(s.descKey, s.descFallback)}</p>
++  </div>
++  </button>
++  )
++  })}
++  </div>
++  </div>
++  )}
++
++  {/* ============== STEP 2 — OPERATION ============== */}
++  {step === 2 && stage && selectedStageMeta && (
++  <div>
++  <button type="button" onClick={() => setStep(1)}
++  className="inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3">
++  <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
++  </button>
++  <div className="flex items-center gap-3 mb-5">
++  <div className={`shrink-0 w-10 h-10 rounded-lg flex items-center justify-center ${selectedStageMeta.iconBg}`}>
++  {SelectedStageIcon && <SelectedStageIcon size={22} className={selectedStageMeta.iconColor} />}
++  </div>
++  <h1 className="text-lg font-bold text-slate-900">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</h1>
++  </div>
++
++  <p className="text-sm font-semibold text-slate-700 mt-1 mb-1">{t('process.chooseOperation', 'Elige la operación')}</p>
++  <div className="space-y-5 mt-3">
++  {categoriesForStage(stage).map(({ category, events }) => {
++  const CatIcon = category.Icon
++  return (
++  <div key={category.key}>
++  <div className="flex items-center gap-2 mb-2">
++  <CatIcon size={16} className={category.color} />
++  <span className="text-sm font-bold uppercase tracking-wide text-slate-600">
++  {t(category.labelKey, category.fallback)}
++  </span>
++  </div>
++  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
++  {events.map(evt => {
++  const EvIcon = EVENT_ICON_MAP[evt] ?? EVENT_ICONS[evt]
++  return (
++  <button key={evt} type="button" onClick={() => chooseOperation(evt)}
++  className="flex flex-col items-center gap-1.5 p-3 min-h-[4.5rem] rounded-lg border border-slate-200 bg-white hover:border-[#5a9bba] hover:bg-blue-50:bg-blue-900/20 transition-colors text-center group">
++  {EvIcon && <EvIcon size={22} className="text-[#5a9bba] group-hover:scale-110 transition-transform" />}
++  <span className="text-sm text-slate-700 leading-tight">{t(`eventsShort.${evt}`, evt)}</span>
++  </button>
++  )
++  })}
++  </div>
++  </div>
++  )
++  })}
++  </div>
++  </div>
++  )}
++
++  {/* ===================== STEP 3 — DATA FORM ===================== */}
++  {step === 3 && (
++  <div>
++  <button
++  type="button"
++  onClick={() => {
++  if (prefillType && !stage) {
++  const target = sessionStorage.getItem('operationBackTarget')
++  if (target && (target.startsWith('/poultry') || target.startsWith('/menu/poultry'))) {
++  navigate(target)
++  return
++  }
++  navigate('/menu/poultry')
++  return
++  }
++  setStep(stage ? 2 : 1)
++  }}
++  className="inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"
++  >
++  <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
++  </button>
++
++  {eventType && (
++  <div className="flex items-center gap-3 mb-4 p-3 rounded-lg bg-blue-50 border border-blue-100">
++  {SelectedEventIcon && <SelectedEventIcon size={22} className="text-[#5a9bba]" />}
++  <div>
++  <p className="text-sm font-bold text-slate-900">{t(`events.${eventType}`, eventType)}</p>
++  {selectedStageMeta && (
++  <p className="text-xs text-slate-900">{t(selectedStageMeta.labelKey, selectedStageMeta.fallback)}</p>
++  )}
++  </div>
++  </div>
++  )}
++
++  {result && (
++  <div className={`px-4 py-3 rounded-lg text-sm font-medium mb-4 ${result.ok ? 'bg-green-50 text-green-700' : 'bg-red-50 text-red-700'}`}>
++  {result.message}
++  </div>
++  )}
++
++  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
++  {/* ── SAP Order selector (grandparent_import, bird_reception, bird_exit, egg_dispatch, egg_reception_hatchery & chick_dispatch: must be first) ── */}
++  {(eventType === 'grandparent_import' || eventType === 'bird_reception' || eventType === 'bird_exit' || eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery' || eventType === 'chick_dispatch') && (
++  <div>
++  {/* For breeder bird_reception: source type selector (transfer vs purchase) */}
++  {eventType === 'bird_reception' && stage?.startsWith('breeder') ? (
++  <>
++  <label className="block text-sm font-semibold text-slate-700 mb-1.5">{t('operations.receptionSource', 'Origen de las aves')}</label>
++  <div className="flex gap-3 mb-3">
++  <label className={`flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg border-2 cursor-pointer transition text-sm font-medium ${
++  watch('extra_data.reception_source' as any) === 'transfer'
++  ? 'border-[#5a9bba] bg-blue-50 text-[#5a9bba]'
++  : 'border-slate-200 text-slate-600'
++  }`}>
++  <input type="radio" name="reception_source" value="transfer"
++  checked={watch('extra_data.reception_source' as any) === 'transfer'}
++  onChange={() => { setValue('extra_data.reception_source' as any, 'transfer'); setValue('extra_data.sap_order_ref' as any, ''); setValue('sap_document_ref' as any, '') }}
++  className="sr-only" />
++  <span>{t('operations.receptionTransfer', 'Transferencia')}</span>
++  </label>
++  <label className={`flex-1 flex items-center justify-center gap-2 p-2.5 rounded-lg border-2 cursor-pointer transition text-sm font-medium ${
++  (watch('extra_data.reception_source' as any) || 'purchase') === 'purchase'
++  ? 'border-[#5a9bba] bg-blue-50 text-[#5a9bba]'
++  : 'border-slate-200 text-slate-600'
++  }`}>
++  <input type="radio" name="reception_source" value="purchase"
++  checked={!watch('extra_data.reception_source' as any) || watch('extra_data.reception_source' as any) === 'purchase'}
++  onChange={() => { setValue('extra_data.reception_source' as any, 'purchase'); setValue('extra_data.sap_order_ref' as any, ''); setValue('sap_document_ref' as any, '') }}
++  className="sr-only" />
++  <span>{t('operations.receptionPurchase', 'Orden de compra')}</span>
++  </label>
++  </div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">
++  {watch('extra_data.reception_source' as any) === 'transfer'
++  ? t('operations.sapTransferOrder', 'Orden de transferencia SAP')
++  : t('operations.sapImportOrder', 'Orden de compra / importación SAP')}
++  </label>
++  <SearchSelect
++  value={(() => {
++  // `R-189 (F-01)`: `SearchSelect` trabaja con el id; el valor canónico guardado es el CÓDIGO.
++  const lista = watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders
++  const actual = lista.find((o: any) => identificadorDeOrdenSap(o) === watch('extra_data.sap_order_ref' as any))
++  return actual ? String(actual.id) : ''
++  })()}
++  onChange={(v) => {
++  const sourceList = watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders
++  const order = sourceList.find((o: any) => String(o.id) === String(v))
++  // `R-189 (F-01)`: el código canónico viaja al campo tipado que el dominio valida (`GA-TD-014`).
++  const referencia = identificadorDeOrdenSap(order)
++  setValue('extra_data.sap_order_ref' as any, referencia)
++  setValue('sap_document_ref' as any, referencia)
++  if (order) {
++  if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
++  if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
++  if (order.extra_data?.breed_name) setValue('extra_data.breed_name' as any, order.extra_data.breed_name)
++  if (order.extra_data?.dispatch_date) setValue('extra_data.dispatch_date' as any, order.extra_data.dispatch_date)
++  if (order.extra_data?.avg_weight_male) setValue('extra_data.declared_avg_weight_m' as any, order.extra_data.avg_weight_male)
++  if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
++  }
++  }}
++  items={watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders}
++  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
++  searchPlaceholder={watch('extra_data.reception_source' as any) === 'transfer' ? 'Buscar transferencia...' : 'Buscar orden de compra...'}
++  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
++  />
++  </>
++  ) : (
++  <>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">
++  {(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery')
++  ? t('operations.sapTransferOrder', 'Orden de traslado SAP')
++  : t('operations.sapImportOrder', 'Orden de compra / importación SAP')}
++  </label>
++  <SearchSelect
++  value={(() => {
++  // `R-189 (F-01)`: `SearchSelect` trabaja con el id; el valor canónico guardado es el CÓDIGO.
++  const lista = (eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders
++  const actual = lista.find((o: any) => identificadorDeOrdenSap(o) === watch('extra_data.sap_order_ref' as any))
++  return actual ? String(actual.id) : ''
++  })()}
++  onChange={(v) => {
++  const lista = (eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders
++  const order = lista.find((o: any) => String(o.id) === String(v))
++  // `R-189 (F-01)`: el código canónico viaja al campo tipado que el dominio valida (`GA-TD-014`).
++  const referencia = identificadorDeOrdenSap(order)
++  setValue('extra_data.sap_order_ref' as any, referencia)
++  setValue('sap_document_ref' as any, referencia)
++  if (order) {
++  if (order.quantity) setValue('extra_data.declared_quantity' as any, order.quantity)
++  if (order.extra_data?.vendor_name) setValue('extra_data.vendor_name' as any, order.extra_data.vendor_name)
++  if (order.extra_data?.breed_name) setValue('extra_data.breed_name' as any, order.extra_data.breed_name)
++  if (order.extra_data?.dispatch_date) setValue('extra_data.dispatch_date' as any, order.extra_data.dispatch_date)
++  if (order.extra_data?.avg_weight_male) setValue('extra_data.declared_avg_weight_m' as any, order.extra_data.avg_weight_male)
++  if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
++  }
++  }}
++  items={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders}
++  placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
++  searchPlaceholder={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? 'Buscar orden de traslado...' : 'Buscar orden de compra...'}
++  renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
++  />
++  </>
++  )}
++  </div>
++  )}
++  {/* ── Farm or Hatchery selector (multi-company scoped) ── */}
++  {isHatcheryStage ? (
++  <div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('masters.hatcheries', 'Incubadora')}</label>
++  <SearchSelect
++  value={selectedHatcheryId ?? ''}
++  onChange={(v) => {
++  const id = v ? Number(v) : null
++  setSelectedHatcheryId(id)
++  setValue('lot_id', undefined as any)
++  }}
++  items={hatcheries}
++  placeholder={t('operations.selectHatchery', 'Seleccionar incubadora...')}
++
++  renderLabel={(h: any) => h.name}
++  />
++  </div>
++  ) : (
++  <div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('masters.farms', 'Granja')}</label>
++  <SearchSelect
++  value={selectedFarmId ?? ''}
++  onChange={(v) => {
++  const id = v ? Number(v) : null
++  setSelectedFarmId(id)
++  setValue('lot_id', undefined as any)
++  }}
++  items={farms}
++  placeholder={t('operations.selectFarm', 'Seleccionar granja...')}
++
++  renderLabel={(f: any) => `${f.name}${f.code ? ` (${f.code})` : ''}`}
++  />
++  </div>
++  )}
++
++  {/* ── Lot selector (optional for inspection forms) ── */}
++  {!isLotOptionalInspection && (
++  <div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.lot')}</label>
++  <SearchSelect
++  value={lotId}
++  onChange={(v) => setValue('lot_id', v ? Number(v) : undefined as any)}
++  items={filteredLots}
++  placeholder={t('operations.selectLot', 'Seleccionar lote...')}
++
++  renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${l.status}` : ''}`}
++  error={!!errors.lot_id}
++  />
++  {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}
++  {errors.lot_id && <p className="text-red-500 text-xs mt-1">{t(errors.lot_id.message ?? '')}</p>}
++  {eventType === 'grandparent_import' && (
++  <p className="text-xs text-slate-500 mt-1">{t('operations.importLotAutoNote', 'Si no selecciona un lote, se creará automáticamente al aprobar la importación.')}</p>
++  )}
++  </div>
++  )}
++
++  {/* `R-190` · C-05: «Galpón del evento» — la ubicación cuando el lote no declara galpón */}
++  {EVENTOS_CON_SELECTOR_GALPON.has(eventType) && (
++  <div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.eventHouse', 'Galpón del evento')}</label>
++  <SearchSelect
++  value={eventHouseId ?? selectedLot?.house_id ?? ''}
++  onChange={(v) => { if (!selectedLot?.house_id) setEventHouseId(v ? Number(v) : null) }}
++  items={farmHouses.length > 0 ? farmHouses : houses}
++  placeholder={t('operations.eventHouse', 'Galpón del evento')}
++  renderLabel={(h: any) => `${h.name}${h.capacity ? ` (cap. ${h.capacity})` : ''}`}
++  disabled={!!selectedLot?.house_id}
++  />
++  </div>
++  )}
++
++  <div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.date')}</label>
++  <input type="date" {...register('event_date')}
++  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
++  </div>
++
++  {/* Operation-specific fields */}
++  <div>
++  {renderOperationFields()}
++  </div>
++
++  {ubicacionError && (
++  <p className="text-red-500 text-sm">{t(ubicacionError)}</p>
++  )}
++
++  <div>
++  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.observations')}</label>
++  <textarea {...register('observations')} rows={2}
++  className="w-full px-3 py-2 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
++  </div>
++
++  <button type="submit" disabled={submitting || !eventType}
++  className="w-full h-12 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition disabled:opacity-50">
++  {submitting ? t('common.loading') : t('common.save')}
++  </button>
++  </form>
++  </div>
++  )}
++  </div>
++  )
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:33:15
+     31|   it('R9 · OperationFormPage: etiqueta de parámetros a ancho completo …
+     32|     const s = src('pages/operations/OperationFormPage.tsx')
+     33|     expect(s).toContain('flex flex-wrap items-center gap-3')
+       |               ^
+     34|     expect(s).toContain('w-full sm:w-44 shrink-0')
+     35|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R10 · Dashboard: KPIs apilan en <420px (sin corte de etiquetas)
+AssertionError: expected 'import { useState, useEffect } from \…' to contain 'max-[419px]:grid-cols-1'
+
+- Expected
++ Received
+
+- max-[419px]:grid-cols-1
++ import { useState, useEffect } from 'react'
++ import { useTranslation } from 'react-i18next'
++ import { Link, useLocation } from 'react-router-dom'
++ import { useAuthStore } from '../../stores/auth.store'
++ import { useCompanyStore } from '../../stores/company.store'
++ import { Bird, FileText, Clock, CheckCircle, TrendingDown, Egg, Sparkles, AlertCircle, AlertTriangle, X, Sprout, Feather, ChevronRight, ChevronDown, Building2 } from 'lucide-react'
++ import {
++  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
++ } from 'recharts'
++ import api from '../../services/api'
++ import { useCan } from '../../auth/actionAuthority'
++ import { useToast, getErrorMessage } from '../../components/Toast'
++ import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
++ import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
++ import { stageVisibleForSession } from '../../auth/navigation'
++ import { normalizeLanguage } from '../../i18n'
++
++ // ── Alert severity styles ───────────────────────────────────────────────────
++ const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
++  critical: { bar: 'bg-red-500', bg: 'bg-red-50', text: 'text-red-800', badge: 'bg-red-100 text-red-700 border-red-200' },
++  warning: { bar: 'bg-amber-400', bg: 'bg-amber-50', text: 'text-amber-800', badge: 'bg-amber-100 text-amber-700 border-amber-200' },
++  info: { bar: 'bg-blue-400', bg: 'bg-blue-50', text: 'text-blue-800', badge: 'bg-blue-100 text-blue-700 border-blue-200' },
++ }
++
++ function AlertsWidget({ alerts, onResolve }: {
++  alerts: any[]
++  onResolve: (id: number) => void
++ }) {
++  const { t } = useTranslation()
++  const can = useCan()
++  if (!alerts || alerts.length === 0) return null
++  return (
++  <Card>
++  <CardHeader
++  title={t('alerts.activeTitle', 'Alertas activas')}
++  subtitle={`${alerts.length} ${t('alerts.unresolved', 'sin resolver')}`}
++  action={<AlertTriangle size={18} className="text-amber-500" />}
++  />
++  <CardBody>
++  <div className="space-y-2">
++  {alerts.map((a: any) => {
++  const s = ALERT_STYLE[a.severity] ?? ALERT_STYLE.info
++  return (
++  <div key={a.id} className={`flex items-start gap-3 rounded-xl border p-3 ${s.bg}`}>
++  <div className={`w-1 self-stretch rounded-full shrink-0 ${s.bar}`} />
++  <div className="flex-1 min-w-0">
++  <div className="flex items-center gap-2 flex-wrap mb-0.5">
++  <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
++  {String(t(`alerts.severity.${a.severity}`, a.severity))}
++  </span>
++  <span className="text-xs text-slate-500">
++  {String(t(`alerts.type.${a.alert_type}`, a.alert_type.replace(/_/g, ' ')))}
++  </span>
++  {a.lot_id && (
++  <Link to={`/lots/${a.lot_id}`} className="text-xs text-blue-600 hover:underline">
++  {t('lots.lot', 'Lote')} #{a.lot_id}
++  </Link>
++  )}
++  </div>
++  <p className={`text-xs leading-snug ${s.text}`}>{a.message}</p>
++  </div>
++  {can({ permission: 'operations:update' }) && <button
++  onClick={() => onResolve(a.id)}
++  className="shrink-0 text-slate-400 hover p-1 rounded"
++  title={t('alerts.resolve', 'Marcar como resuelta')}
++  >
++  <X size={14} />
++  </button>}
++  </div>
++  )
++  })}
++  </div>
++  </CardBody>
++  </Card>
++  )
++ }
++
++ export default function DashboardPage() {
++  const { t, i18n } = useTranslation()
++  const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
++  const location = useLocation()
++  const { user } = useAuthStore()
++  const { activeCompanyName } = useCompanyStore()
++  const isMobileUser = user?.view_type === 'mobile'
++  const isKpiRoute = location.pathname === '/kpi'
++  const [data, setData] = useState<any>(null)
++  const [loading, setLoading] = useState(true)
++  const [error, setError] = useState('')
++  const [activeAlerts, setActiveAlerts] = useState<any[]>([])
++  const [expandedBird, setExpandedBird] = useState<string | null>(null) // For mobile bird-type → phase expansion
++  const toast = useToast()
++
++  useEffect(() => {
++  const endpoint = isMobileUser && !isKpiRoute ? '/dashboard/mobile' : '/dashboard/admin'
++  api.get(endpoint)
++  .then(r => {
++  setData(r.data)
++  setActiveAlerts(r.data?.active_alerts ?? [])
++  })
++  .catch((e: any) => {
++  const msg = getErrorMessage(e, t('dashboard.errorLoading'))
++  setError(msg)
++  toast.error(msg)
++  })
++  .finally(() => setLoading(false))
++  }, [isMobileUser, isKpiRoute])
++
++  const handleResolveAlert = async (alertId: number) => {
++  try {
++  await api.patch(`/operations/alerts/${alertId}/resolve`)
++  setActiveAlerts(prev => prev.filter(a => a.id !== alertId))
++  toast.success(t('alerts.resolvedOk', 'Alerta resuelta'))
++  } catch (e: any) {
++  toast.error(getErrorMessage(e, t('alerts.resolveError', 'Error al resolver la alerta')))
++  }
++  }
++
++  if (loading) {
++  return (
++  <div className="py-4 sm:py-6">
++  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
++  {[1,2,3,4].map(i => (
++  <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 h-24 animate-pulse bg-slate-100" />
++  ))}
++  </div>
++  </div>
++  )
++  }
++
++  if (error) {
++  return (
++  <div className="py-4 sm:py-6">
++  <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
++  <p className="text-red-600 mb-3">{error}</p>
++  <button
++  onClick={() => window.location.reload()}
++  className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
++  >
++  {t('common.retry', 'Reintentar')}
++  </button>
++  </div>
++  </div>
++  )
++  }
++
++  const lotsByType: Record<string, number> = data?.lots_by_type ?? {}
++  const totalActiveLots = Object.values(lotsByType).reduce((a, b) => a + (b as number), 0)
++  const mortalityTrend: { week: string; mortality: number }[] = data?.mortality_trend ?? []
++
++  // ── MOBILE OPERATOR DASHBOARD — BIRD TYPE → PHASE → OPERATIONS ─────────────
++  if (isMobileUser) {
++  // Group stages by bird type for hierarchical navigation
++  const birdTypeGroups = [
++  { 
++  id: 'grandparent', labelKey: 'process.grandparent.title', fallback: 'Progenitoras',
++  icon: Sprout, color: 'from-indigo-500 to-indigo-700',
++  stages: PROCESS_STAGES.filter(s => s.key.startsWith('grandparent')),
++  },
++  { 
++  id: 'breeder', labelKey: 'process.breeder.title', fallback: 'Reproductoras',
++  icon: Feather, color: 'from-blue-500 to-blue-700',
++  stages: PROCESS_STAGES.filter(s => s.key.startsWith('breeder')),
++  },
++  { 
++  id: 'hatchery', labelKey: 'process.hatchery.title', fallback: 'Incubadora',
++  icon: Egg, color: 'from-teal-500 to-teal-700',
++  stages: PROCESS_STAGES.filter(s => s.key === 'hatchery'),
++  },
++  { 
++  id: 'broiler', labelKey: 'process.broiler.title', fallback: 'Pollo de Engorde',
++  icon: Bird, color: 'from-orange-500 to-orange-700',
++  stages: PROCESS_STAGES.filter(s => s.key === 'broiler'),
++  },
++  ]
++
++  // GA-FE-03 (§33): los atajos accionables del Dashboard obedecen la MISMA política que el menú.
++  const visibleGroups = birdTypeGroups.filter((group) =>
++  group.stages.some((s) => stageVisibleForSession(s.key, user)),
++  )
++
++  return (
++  <>
++  {/* Welcome header — slim, corporate */}
++  <div className="bg-gradient-to-r from-[#264c5f] to-[#3d748f] text-white px-4 py-4">
++  <div className="flex items-center gap-2">
++  <Sparkles size={16} className="text-blue-300" />
++  <div className="min-w-0 flex-1">
++  <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
++  <div className="flex items-center gap-2">
++  <p className="text-sm text-blue-200/80">
++  {isKpiRoute
++  ? t('dashboard.todayMetrics', 'Hoy')
++  : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
++  </p>
++  {(activeCompanyName || user?.company_name) && (
++  <span className="text-xs px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(180,210,230,0.95)' }}>
++  <Building2 size={10} />
++  {activeCompanyName || user?.company_name}
++  </span>
++  )}
++  </div>
++  </div>
++  </div>
++  </div>
++
++  <div className="pt-6 pb-4 space-y-5">
++  {isKpiRoute ? (
++  <>
++  {/* KPI summary for poultry processes */}
++  <div className="space-y-2">
++  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
++  {t('dashboard.processKpi', 'KPIs de Procesos Avicolas')}
++  </h2>
++  <div className="grid grid-cols-2 gap-2.5">
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
++  <p className="text-xl font-bold text-slate-800 mt-1">{data?.total_events ?? 0}</p>
++  </div>
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
++  <p className="text-xl font-bold text-blue-700 mt-1">{data?.last_7_days ?? 0}</p>
++  </div>
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
++  <p className="text-xl font-bold text-amber-600 mt-1">{data?.pending_review ?? 0}</p>
++  </div>
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
++  <p className="text-xl font-bold text-emerald-600 mt-1">{data?.pending_approval ?? 0}</p>
++  </div>
++  </div>
++  </div>
++
++  {/* Active lots by stage */}
++  <Card>
++  <CardHeader
++  title={t('dashboard.activeLotsByStage', 'Lotes activos por etapa')}
++  subtitle={`${totalActiveLots} ${t('dashboard.totalActive', 'lotes activos')}`}
++  action={<Bird size={16} />}
++  />
++  <CardBody>
++  {totalActiveLots === 0 ? (
++  <p className="text-sm text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
++  ) : (
++  <div className="grid grid-cols-2 gap-2">
++  {[
++  { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700', bg: 'bg-purple-50' },
++  { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50' },
++  { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50' },
++  { key: 'broiler', dot: 'bg-emerald-400', text: 'text-emerald-700', bg: 'bg-emerald-50' },
++  ].map(({ key, dot, text, bg }) => (
++  <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-2.5`}>
++  <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
++  <div className="min-w-0">
++  <p className={`text-lg font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
++  <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
++  </div>
++  </div>
++  ))}
++  </div>
++  )}
++  </CardBody>
++  </Card>
++
++  {/* Mortality trend */}
++  {mortalityTrend.length > 0 && (
++  <Card>
++  <CardHeader
++  title={t('dashboard.mortalityTrend', 'Tendencia de mortalidad')}
++  subtitle={t('dashboard.last8Weeks', 'Ultimas 8 semanas')}
++  />
++  <CardBody>
++  <ResponsiveContainer width="100%" height={190}>
++  <LineChart data={mortalityTrend} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
++  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
++  <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <Tooltip
++  contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}
++  labelStyle={{ fontWeight: 600 }}
++  />
++  <Line
++  type="monotone"
++  dataKey="mortality"
++  stroke="#DC2626"
++  strokeWidth={2}
++  dot={{ r: 3, fill: '#DC2626' }}
++  activeDot={{ r: 5 }}
++  />
++  </LineChart>
++  </ResponsiveContainer>
++  </CardBody>
++  </Card>
++  )}
++
++  {/* Events generated by process */}
++  {data?.top_event_types && Object.keys(data.top_event_types).length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.topEventTypes', 'Eventos generados por tipo')} />
++  <CardBody>
++  <div className="space-y-2">
++  {Object.entries(data.top_event_types).map(([etype, count]) => {
++  const max = Math.max(...Object.values(data.top_event_types) as number[])
++  const pct = Math.round(((count as number) / max) * 100)
++  return (
++  <div key={etype}>
++  <div className="flex justify-between text-xs mb-1">
++  <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
++  <span className="font-semibold text-slate-800">{count as number}</span>
++  </div>
++  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
++  <div className="h-full bg-[#5a9bba] rounded-full transition-all" style={{ width: `${pct}%` }} />
++  </div>
++  </div>
++  )
++  })}
++  </div>
++  </CardBody>
++  </Card>
++  )}
++  </>
++  ) : (
++  <>
++  {/* KPI Section */}
++  <div className="space-y-2">
++  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
++  {t('dashboard.todayMetrics', 'Hoy')}
++  </h2>
++  <div className="grid grid-cols-3 gap-2.5">
++  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
++  <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
++  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
++  {t('dashboard.todayEvents', 'Registros')}
++  </div>
++  </div>
++  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
++  <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
++  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
++  {t('dashboard.pendingCorrections', 'Pendientes')}
++  </div>
++  </div>
++  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
++  <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
++  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
++  {t('dashboard.approvedToday', 'Aprobados')}
++  </div>
++  </div>
++  </div>
++  </div>
++
++  {/* Alerts */}
++  {data?.pending_corrections && data.pending_corrections > 0 && (
++  <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
++  <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
++  <div>
++  <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
++  <p className="text-sm text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
++  </div>
++  </div>
++  )}
++
++  {visibleGroups.length > 0 && (
++  <div className="space-y-2">
++  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
++  {t('process.hub.title', 'Procesos')}
++  </h2>
++  <div className="space-y-2.5">
++  {visibleGroups.map((group) => {
++  const hasSubPhases = group.stages.length > 1
++  return (
++  <div key={group.id} className="space-y-2">
++  {/* Bird type card */}
++  {hasSubPhases ? (
++  <button
++  onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
++  className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
++  >
++  <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
++  <group.icon size={18} className="text-white" />
++  </span>
++  <div className="flex-1 min-w-0">
++  <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
++  <p className="text-sm text-slate-400 mt-0.5">
++  {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
++  </p>
++  </div>
++  {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronRight size={16} className="text-slate-400" />}
++  </button>
++  ) : (
++  <Link
++  to={stagePathForKey(group.stages[0].key)}
++  className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
++  >
++  <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
++  <group.icon size={18} className="text-white" />
++  </span>
++  <div className="flex-1 min-w-0">
++  <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
++  <p className="text-sm text-slate-400 mt-0.5">
++  {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
++  </p>
++  </div>
++  <ChevronRight size={16} className="text-slate-400" />
++  </Link>
++  )}
++
++  {/* Sub-phase cards (Cría / Producción) */}
++  {hasSubPhases && expandedBird === group.id && (
++  <div className="pl-2 space-y-2 border-l-2 border-slate-200 ml-5">
++  {group.stages.map((stage) => {
++  const count = flowForStage(stage.key).length
++  const isRearing = stage.key.includes('rearing')
++  return (
++  <Link
++  key={stage.key}
++  to={stagePathForKey(stage.key)}
++  className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
++  >
++  <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
++  {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
++  </span>
++  <div className="flex-1 min-w-0">
++  <span className="text-sm font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
++  <span className="text-xs text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
++  </div>
++  <ChevronRight size={14} className="text-slate-300" />
++  </Link>
++  )
++  })}
++  </div>
++  )}
++  </div>
++  )
++  })}
++  </div>
++  </div>
++  )}
++  </>
++  )}
++  </div>
++  </>
++  )
++  }
++
++  // ── ADMIN / WEB DASHBOARD ──────────────────────────────────
++
++  const summaryCards = [
++  { label: t('dashboard.totalEvents'), value: data?.total_events ?? 0, icon: <FileText size={16} /> },
++  { label: t('dashboard.pendingReview'), value: data?.pending_review ?? 0, icon: <Clock size={16} /> },
++  { label: t('dashboard.pendingApproval'),value: data?.pending_approval ?? 0, icon: <CheckCircle size={16} /> },
++  { label: t('dashboard.last7Days'), value: data?.last_7_days ?? 0, icon: <TrendingDown size={16} /> },
++  ]
++
++  const CARD_ACCENT_COLORS = [
++  { dot: 'bg-blue-500', icon: 'text-blue-600 bg-blue-50' },
++  { dot: 'bg-amber-500', icon: 'text-amber-600 bg-amber-50' },
++  { dot: 'bg-teal-500', icon: 'text-teal-600 bg-teal-50' },
++  { dot: 'bg-emerald-500', icon: 'text-emerald-600 bg-emerald-50' },
++  ]
++
++  return (
++  <div className="space-y-5">
++  {/* Page header */}
++  <div>
++  <h1 className="text-xl font-semibold text-slate-900">{t('nav.dashboard')}</h1>
++  <p className="text-sm text-slate-400 mt-0.5">
++  {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(currentLang === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
++  </p>
++  </div>
++
++  {/* Summary KPI cards */}
++  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
++  {summaryCards.map((card, i) => {
++  const ac = CARD_ACCENT_COLORS[i]
++  return (
++  <div key={i} className="bg-white rounded-xl border border-slate-200/80 p-4">
++  <div className="flex items-center gap-1.5 mb-2">
++  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ac.dot}`} />
++  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none truncate">{card.label}</p>
++  </div>
++  <div className="flex items-end justify-between gap-2">
++  <p className="text-2xl font-semibold text-slate-900 stat-value">{card.value}</p>
++  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ac.icon}`}>
++  {card.icon}
++  </div>
++  </div>
++  </div>
++  )
++  })}
++  </div>
++
++  {/* Active lots by stage */}
++  <Card>
++  <CardHeader
++  title={t('dashboard.activeLotsByStage', 'Lotes activos por etapa')}
++  subtitle={`${totalActiveLots} ${t('dashboard.totalActive', 'lotes activos')}`}
++  action={<Bird size={16} />}
++  />
++  <CardBody>
++  {totalActiveLots === 0 ? (
++  <p className="text-sm text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
++  ) : (
++  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
++  {[
++  { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700', bg: 'bg-purple-50' },
++  { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50' },
++  { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50' },
++  { key: 'broiler', dot: 'bg-emerald-400',text: 'text-emerald-700',bg: 'bg-emerald-50' },
++  ].map(({ key, dot, text, bg }) => (
++  <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-3`}>
++  <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
++  <div className="min-w-0">
++  <p className={`text-xl font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
++  <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
++  </div>
++  </div>
++  ))}
++  </div>
++  )}
++  </CardBody>
++  </Card>
++
++  {/* Mortality trend chart */}
++  {mortalityTrend.length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.mortalityTrend', 'Tendencia de mortalidad')} subtitle={t('dashboard.last8Weeks', 'Últimas 8 semanas')} />
++  <CardBody>
++  <ResponsiveContainer width="100%" height={200}>
++  <LineChart data={mortalityTrend} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
++  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
++  <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <Tooltip
++  contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}
++  labelStyle={{ fontWeight: 600 }}
++  />
++  <Line
++  type="monotone"
++  dataKey="mortality"
++  stroke="#DC2626"
++  strokeWidth={2}
++  dot={{ r: 3, fill: '#DC2626' }}
++  activeDot={{ r: 5 }}
++  />
++  </LineChart>
++  </ResponsiveContainer>
++  </CardBody>
++  </Card>
++  )}
++
++  {/* Status distribution + top event types */}
++  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
++  {/* Status distribution */}
++  {data?.by_status && Object.keys(data.by_status).length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.statusDistribution')} />
++  <CardBody>
++  <div className="flex flex-wrap gap-2">
++  {Object.entries(data.by_status).map(([status, count]) => (
++  <div key={status} className="flex items-center gap-1.5">
++  <Badge variant={statusToVariant(status)} dot>
++  {t(`status.${status}`, status)}: {count as number}
++  </Badge>
++  </div>
++  ))}
++  </div>
++  </CardBody>
++  </Card>
++  )}
++
++  {/* Top event types */}
++  {data?.top_event_types && Object.keys(data.top_event_types).length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.topEventTypes')} />
++  <CardBody>
++  <div className="space-y-2">
++  {Object.entries(data.top_event_types).map(([etype, count]) => {
++  const max = Math.max(...Object.values(data.top_event_types) as number[])
++  const pct = Math.round(((count as number) / max) * 100)
++  return (
++  <div key={etype}>
++  <div className="flex justify-between text-xs mb-1">
++  <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
++  <span className="font-semibold text-slate-800">{count as number}</span>
++  </div>
++  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
++  <div
++  className="h-full bg-[#5a9bba] rounded-full transition-all"
++  style={{ width: `${pct}%` }}
++  />
++  </div>
++  </div>
++  )
++  })}
++  </div>
++  </CardBody>
++  </Card>
++  )}
++  </div>
++
++  {/* Active operational alerts */}
++  <AlertsWidget alerts={activeAlerts} onResolve={handleResolveAlert} />
++  </div>
++  )
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:39:15
+     37|   it('R10 · Dashboard: KPIs apilan en <420px (sin corte de etiquetas)'…
+     38|     const s = src('pages/dashboard/DashboardPage.tsx')
+     39|     expect(s).toContain('max-[419px]:grid-cols-1')
+       |               ^
+     40|     expect(s).not.toContain('grid grid-cols-3 gap-2.5"')
+     41|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R11 · LotDetail: cabecera con wrap (el título no se comprime)
+AssertionError: expected 'import { useState, useEffect } from \…' to contain 'flex flex-wrap items-center gap-3 mb-6'
+
+- Expected
++ Received
+
+- flex flex-wrap items-center gap-3 mb-6
++ import { useState, useEffect } from 'react'
++ import { useTranslation } from 'react-i18next'
++ import { useParams, Link } from 'react-router-dom'
++ import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock, AlertTriangle, X } from 'lucide-react'
++ import { EVENT_ICONS } from '../../components/Icon'
++ import { Button, Modal, Input } from '../../components/ui'
++ import { TraceabilityTree } from '../../components/TraceabilityTree'
++ import { STAGE_OPERATIONS, resolveStageKey } from '../../data/processCatalog'
++ import api from '../../services/api'
++ import { formatFecha } from '../../utils/dates'
++ import { useCan } from '../../auth/actionAuthority'
++ import { useToast, getErrorMessage } from '../../components/Toast'
++
++ // ─── Status badge colours ────────────────────────────────────────────────────
++ const STATUS_COLORS: Record<string, string> = {
++  active: 'bg-emerald-100 text-emerald-800',
++  closed: 'bg-slate-100 text-slate-600',
++  cancelled: 'bg-red-100 text-red-800',
++ }
++
++
++ export default function LotDetailPage() {
++  const can = useCan()
++  const { t } = useTranslation()
++  const { id } = useParams<{ id: string }>()
++  const [lot, setLot] = useState<any>(null)
++  const [kpis, setKpis] = useState<any>(null)
++  const [kpiIpe, setKpiIpe] = useState<any>(null)
++  const [kpiUniformity, setKpiUniformity] = useState<any>(null)
++  const [lotAlerts, setLotAlerts] = useState<any[]>([])
++  const [events, setEvents] = useState<any[]>([])
++  // `R-218`: serie semanal del backend (la lista de operaciones no trae sublistas).
++  const [semanal, setSemanal] = useState<any[]>([])
++  const [phases, setPhases] = useState<any[]>([])
++  // `R-191`: fases maestras (`masters/productive-phases`) para resolver el id por código.
++  const [masterPhases, setMasterPhases] = useState<any[]>([])
++  const [loading, setLoading] = useState(true)
++  const [closeResult, setCloseResult] = useState<any>(null)
++  const [closing, setClosing] = useState(false)
++  const [transitioning, setTransitioning] = useState(false)
++  // Modal states
++  const [showTransitionModal, setShowTransitionModal] = useState(false)
++  const [showCloseModal, setShowCloseModal] = useState(false)
++  const [transitionDate, setTransitionDate] = useState(() => new Date().toISOString().split('T')[0])
++  const [transitionMale, setTransitionMale] = useState('')
++  const [transitionFemale, setTransitionFemale] = useState('')
++  const toast = useToast()
++  // `R-220` · AC-01 (R-212) y B4: gate y enlace del reporte del lote a nivel de componente.
++  const puedeReportes = can({ permission: 'reports:read' })
++
++  useEffect(() => {
++  const fetchAll = async () => {
++  try {
++  // GA-REM-011 C-03: se consulta el lote por identificador en lugar de
++  // listar 200 (el backend acepta le=100 y devolvía 422, abortando la pantalla).
++  const { data: found } = await api.get(`/lots/${id}`)
++  setLot(found || null)
++
++  // `R-212` · AC-01: no se piden KPIs de reportes sin `reports:read` (el
++  // servidor deniega; la UI deja de emitir la petición).
++  const omitido = Promise.resolve({ data: null } as any)
++  const [kpiRes, evtRes, phaseRes, ipeRes, uniformRes, alertsRes, mastersRes, semanalRes] = await Promise.allSettled([
++  puedeReportes ? api.get(`/reports/kpis?lot_id=${id}`) : omitido,
++  api.get(`/operations?lot_id=${id}&limit=50`),
++  api.get(`/lots/${id}/phases`),
++  puedeReportes ? api.get(`/reports/kpi/ipe/${id}`) : omitido,
++  puedeReportes ? api.get(`/reports/kpi/weight-uniformity/${id}`) : omitido,
++  api.get(`/operations/alerts?lot_id=${id}&is_resolved=false&limit=20`),
++  api.get('/masters/productive-phases'),
++  puedeReportes ? api.get(`/reports/lot/${id}/weekly`) : omitido,
++  ])
++  if (kpiRes.status === 'fulfilled') setKpis(kpiRes.value.data)
++  if (evtRes.status === 'fulfilled') setEvents(evtRes.value.data || [])
++  if (phaseRes.status === 'fulfilled') setPhases(phaseRes.value.data || [])
++  if (ipeRes.status === 'fulfilled') setKpiIpe(ipeRes.value.data)
++  if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
++  if (alertsRes.status === 'fulfilled') setLotAlerts(alertsRes.value.data || [])
++  if (mastersRes.status === 'fulfilled') setMasterPhases(mastersRes.value.data || [])
++  if (semanalRes.status === 'fulfilled') setSemanal(semanalRes.value.data?.weeks || [])
++  } catch (err) {
++  console.error(err)
++  } finally {
++  setLoading(false)
++  }
++  }
++  fetchAll()
++  }, [id])
++
++  const handleResolveAlert = async (alertId: number) => {
++  try {
++  await api.patch(`/operations/alerts/${alertId}/resolve`)
++  setLotAlerts(prev => prev.filter(a => a.id !== alertId))
++  toast.success(t('alerts.resolvedOk', 'Alerta resuelta'))
++  } catch (e: any) {
++  toast.error(getErrorMessage(e, t('alerts.resolveError', 'Error al resolver')))
++  }
++  }
++
++  if (loading) return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
++  if (!lot) return <div className="py-4 sm:py-6 text-slate-500">{t('lots.lotNotFound')}</div>
++
++  const birdType: string = lot.bird_type || 'broiler'
++  const activePhase = phases.find((p: any) => p.is_active)
++  const activePhaseName: string | null = activePhase?.phase?.name ?? activePhase?.phase?.code ?? null
++  const stageKey = resolveStageKey(birdType, activePhaseName)
++  const stageOps = STAGE_OPERATIONS[stageKey] ?? STAGE_OPERATIONS.broiler
++  const stageLabel = t(`birdTypes.${birdType}`, birdType)
++
++  // Phase label for breeder/grandparent badge
++  const phaseLabel = (stageKey === 'breeder_production' || stageKey === 'grandparent_production')
++  ? t('phases.production', 'Producción')
++  : (stageKey === 'breeder_rearing' || stageKey === 'grandparent_rearing')
++  ? t('phases.rearing', 'Cría')
++  : null
++
++  // Can transition from rearing to production
++  const canTransition = (birdType === 'breeder' || birdType === 'grandparent')
++  && (stageKey === 'breeder_rearing' || stageKey === 'grandparent_rearing')
++  && lot.status === 'active'
++
++  const handleCloseLot = async () => {
++  setShowCloseModal(false)
++  setClosing(true)
++  try {
++  const { data } = await api.post(`/lots/${id}/close`)
++  setCloseResult(data)
++  setLot((prev: any) => ({ ...prev, status: 'closed' }))
++  } catch (err: any) {
++       // `R-192`: la verdad del rechazo es del backend (`R7`/`BR-05`/403/404) — se muestra
++       // legible con el patrón vigente de la página; un cierre fallido nunca queda solo en
++       // consola con el modal cerrado y el operador sin saber por qué.
++       toast.error(getErrorMessage(err, t('lots.closeError', 'Error al cerrar lote')))
++     } finally {
++       setClosing(false)
++     }
++   }
++
++  const handleTransitionPhase = async () => {
++  setShowTransitionModal(false)
++  setTransitioning(true)
++  try {
++  // `R-191`: el contrato exige ids — la fase destino se resuelve por **código**
++  // contra las fases maestras (mismo nombre de campo que el backend: `lot_id`/`phase_id`).
++  const destino = masterPhases.find((f: any) => String(f.code || '').toUpperCase() === 'PROD')
++  || masterPhases.find((f: any) => /producc|production/i.test(`${f.name || ''} ${f.code || ''}`))
++  if (!destino) {
++  toast.error(t('lots.phaseNotFound', 'No se encontró la fase de producción'))
++  return
++  }
++  await api.post(`/lots/${id}/phases`, {
++  lot_id: Number(id),
++  phase_id: destino.id,
++  start_date: transitionDate || new Date().toISOString().split('T')[0],
++  })
++  const { data: newPhases } = await api.get(`/lots/${id}/phases`)
++  setPhases(newPhases || [])
++  toast.success(t('lots.transitionSuccess', 'Fase de producción iniciada'))
++  } catch (err: any) {
++  // `R-191`: el 422/400 del servidor se muestra legible — nunca en consola y en silencio.
++  toast.error(getErrorMessage(err, t('lots.transitionError', 'Error al transicionar fase')))
++  } finally {
++  setTransitioning(false)
++  }
++  }
++
++  // Group events by type for weekly table
++  const eventsByType: Record<string, any[]> = {}
++  events.forEach(e => {
++  if (!eventsByType[e.event_type]) eventsByType[e.event_type] = []
++  eventsByType[e.event_type].push(e)
++  })
++
++  return (
++  <>
++  <div className="py-4 sm:py-6">
++  {/* ── Header ── */}
++  <div className="flex items-center gap-3 mb-6">
++  <Link to="/lots" className="text-slate-400 hover transition-colors">
++  <ArrowLeft size={20} />
++  </Link>
++  <div className="flex-1 min-w-0">
++  <h1 className="text-2xl font-bold text-[#1E3A5F] truncate">
++  {lot.lot_code || `${t('lots.title')} #${lot.id}`}
++  </h1>
++  <div className="flex items-center gap-2 mt-0.5 flex-wrap">
++  <span className="text-sm text-slate-500">{stageLabel}</span>
++  {phaseLabel && (
++  <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
++  {phaseLabel}
++  </span>
++  )}
++  <span className="text-slate-300">·</span>
++  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100 text-slate-600'}`}>
++  {t(`lotStatus.${lot.status}`, String(lot.status))}
++  </span>
++  </div>
++  {/* `R-220` · B4 (F G-18): el reporte del lote deja de ser casi huérfano. */}
++  {puedeReportes && (
++  <Link to={`/reports/lot/${lot.id}`} className="inline-block mt-1 text-sm font-medium text-[#5a9bba] hover:underline">
++  {t('reports.lotReport', 'Reporte del lote')}
++  </Link>
++  )}
++  </div>
++
++  {/* Phase transition button (Cría → Producción) */}
++  {canTransition && can({ permission: 'lots:create' }) && (
++  <Button
++  size="sm"
++  onClick={() => setShowTransitionModal(true)}
++  loading={transitioning}
++  >
++  {t('lots.transitionToProduction', 'Iniciar Producción')}
++  </Button>
++  )}
++
++  {/* Close lot button */}
++  {lot.status === 'active' && can({ permission: 'lots:create' }) && (
++  <Button
++  variant="danger"
++  size="sm"
++  onClick={() => setShowCloseModal(true)}
++  loading={closing}
++  leftIcon={<Lock size={13} />}
++  >
++  {t('lots.closeButton', 'Cerrar Lote')}
++  </Button>
++  )}
++  </div>
++
++  {/* Close summary */}
++  {closeResult && (
++  <div className="mb-6 p-5 bg-emerald-50 border border-emerald-200 rounded-xl">
++  <h3 className="text-lg font-bold text-emerald-800 mb-3">{t('lots.closedSummary')}</h3>
++  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-sm">
++  <div><span className="text-slate-500">{t('lots.age')}:</span> <strong>{closeResult.age_days} {t('lots.days')}</strong></div>
++  <div><span className="text-slate-500">{t('lots.totalMortality')}:</span> <strong className="text-red-600">{closeResult.total_mortality}</strong></div>
++  <div><span className="text-slate-500">{t('lots.totalFeed')}:</span> <strong>{closeResult.total_feed_kg} {t('lots.kg')}</strong></div>
++  <div><span className="text-slate-500">{t('lots.totalEggs')}:</span> <strong>{closeResult.total_eggs}</strong></div>
++  <div><span className="text-slate-500">{t('lots.totalEvents')}:</span> <strong>{closeResult.total_events}</strong></div>
++  <div><span className="text-slate-500">{t('lots.approvedEvents')}:</span> <strong className="text-emerald-600">{closeResult.approved_events}</strong></div>
++  <div><span className="text-slate-500">{t('lots.closure')}:</span> <strong>{closeResult.end_date}</strong></div>
++  </div>
++  </div>
++  )}
++
++  <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
++  {/* Left: Operations Panel */}
++  <div className="lg:col-span-2 space-y-6">
++  {/* ── Quick Actions: stage-specific operations ── */}
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
++  <Plus size={18} className="text-[#5a9bba]" />
++  {t('lots.registerOperation')}
++  {phaseLabel && (
++  <span className="ml-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
++  {phaseLabel}
++  </span>
++  )}
++  </h2>
++  {can({ permission: 'operations:create' }) && <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
++  {stageOps.map(eventType => {
++  const Icon = EVENT_ICONS[eventType] ?? Activity
++  return (
++  <Link
++  key={eventType}
++  to={`/operations/new?type=${eventType}&lot_id=${lot.id}`}
++  className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-slate-200 hover:border-[#5a9bba] hover:bg-blue-50 transition-colors text-center group"
++  >
++  <Icon size={20} className="text-[#5a9bba] group-hover:scale-110 transition-transform" />
++  <span className="text-xs text-slate-600 leading-tight">{t(`eventsShort.${eventType}`, eventType)}</span>
++  </Link>
++  )
++  })}
++  </div>}
++  </div>
++
++  {/* G-11: Weekly Summary Table — `R-218` C-01=A: serie del agregado `/reports/lot/{id}/weekly`
++  (la LISTA de `/operations` no expone sublistas por contrato). */}
++  {semanal.length > 0 && (() => {
++  const weekly: Record<number, any> = {}
++  semanal.forEach((s: any) => {
++  const w = s.week || 0
++  weekly[w] = {
++  week: w, male_weight: s.weight_g || 0, female_weight: 0,
++  male_mort: s.mortality || 0, female_mort: 0,
++  feed_kg: s.feed_kg || 0, water_l: s.water_l || 0, date: '',
++  }
++  })
++  const weeks = Object.values(weekly).sort((a: any, b: any) => a.week - b.week)
++  if (weeks.length === 0) return null
++  return (
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 mt-4">
++  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
++  <Calendar size={18} className="text-[#5a9bba]" /> {t('lots.weeklyView')}</h2>
++  <div className="overflow-x-auto">
++  <table className="w-full text-xs">
++  <thead className="bg-slate-50">
++  <tr>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.weekNumber')}</th>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.maleWeight')}</th>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.femaleWeight')}</th>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.maleMort')}</th>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.femaleMort')}</th>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.feed')}</th>
++  <th className="px-3 py-2 text-left font-semibold text-slate-600">{t('weekly.date')}</th>
++  </tr>
++  </thead>
++  <tbody>
++  {weeks.map((w: any) => (
++  <tr key={w.week} className="border-b border-slate-50 hover:bg-slate-50">
++  <td className="px-3 py-2 font-mono font-medium">{w.week || '—'}</td>
++  <td className="px-3 py-2">{w.male_weight > 0 ? w.male_weight : '—'}</td>
++  <td className="px-3 py-2">{w.female_weight > 0 ? w.female_weight : '—'}</td>
++  <td className="px-3 py-2 text-red-600">{w.male_mort > 0 ? w.male_mort : '—'}</td>
++  <td className="px-3 py-2 text-red-600">{w.female_mort > 0 ? w.female_mort : '—'}</td>
++  <td className="px-3 py-2">{w.feed_kg > 0 ? w.feed_kg.toFixed(1) : '—'}</td>
++  <td className="px-3 py-2 text-slate-400">{w.date || '—'}</td>
++  </tr>
++  ))}
++  </tbody>
++  </table>
++  </div>
++  </div>
++  )
++  })()}
++
++  {/* Recent Events */}
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
++  <Activity size={18} /> {t('lots.lastRecords')}
++  </h2>
++  {events.length === 0 ? (
++  <p className="text-sm text-slate-400">{t('lots.noOperationalRecords')}</p>
++  ) : (
++  <div className="space-y-2 max-h-80 overflow-y-auto">
++  {events.slice(0, 15).map((ev: any) => (
++  <div key={ev.id} className="flex items-center justify-between text-sm py-2 border-b border-slate-50 last:border-0">
++  <div>
++  <span className="font-medium text-slate-700">{ev.event_type}</span>
++  <span className="text-slate-400 ml-2">{ev.event_date}</span>
++  </div>
++  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
++  ev.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
++  ev.status === 'registered' ? 'bg-blue-100 text-blue-700' :
++  'bg-slate-100 text-slate-600'
++  }`}>{ev.status}</span>
++  </div>
++  ))}
++  </div>
++  )}
++  </div>
++  </div>
++
++  {/* Right: KPIs + Info */}
++  <div className="space-y-4">
++  {/* Lot Info */}
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
++  <Calendar size={18} /> {t('lots.info')}
++  </h2>
++  <dl className="space-y-2 text-sm">
++  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.start')}</dt><dd>{formatFecha(lot.start_date)}</dd></div>
++  {/* `R-182`: día natural tal como se capturó (corte del ISO en UTC, sin salto de zona). */}
++  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.plannedClose')}</dt><dd>{lot.planned_close_date ? String(lot.planned_close_date).slice(0, 10) : '—'}</dd></div>
++  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
++  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
++  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
++  </dl>
++  </div>
++
++  {/* KPIs */}
++  {kpis && (
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
++  <TrendingUp size={18} /> {t('lots.kpis')}
++  </h2>
++  <div className="space-y-3">
++  {kpis.mortality && (
++  <div className="p-3 bg-red-50 rounded-lg">
++  <p className="text-xs text-red-600 font-medium">{t('lots.mortalityKpi')}</p>
++  <p className="text-lg font-bold text-red-700">{kpis.mortality.mortality_rate_pct}%</p>
++  <p className="text-xs text-red-500">{kpis.mortality.total_deaths} {t('lots.bajas')}</p>
++  </div>
++  )}
++  {kpis.feed_conversion && (
++  <div className="p-3 bg-amber-50 rounded-lg">
++  <p className="text-xs text-amber-600 font-medium">{t('lots.feedConversionKpi')}</p>
++  <p className="text-lg font-bold text-amber-700">{kpis.feed_conversion.total_feed_kg} {t('lots.kg')}</p>
++  </div>
++  )}
++  {kpis.egg_production && kpis.egg_production.total_eggs > 0 && (
++  <div className="p-3 bg-blue-50 rounded-lg">
++  <p className="text-xs text-blue-600 font-medium">{t('lots.eggProdKpi')}</p>
++  <p className="text-lg font-bold text-blue-700">{kpis.egg_production.total_eggs}</p>
++  <p className="text-xs text-blue-500">{kpis.egg_production.hen_day_production_pct}% {t('lots.henDay')}</p>
++  </div>
++  )}
++  {kpis.hatchery_yield && kpis.hatchery_yield.total_chicks_born > 0 && (
++  <div className="p-3 bg-purple-50 rounded-lg">
++  <p className="text-xs text-purple-600 font-medium">{t('lots.birthsKpi')}</p>
++  <p className="text-lg font-bold text-purple-700">{kpis.hatchery_yield.total_chicks_born}</p>
++  </div>
++  )}
++  </div>
++  </div>
++  )}
++
++  {/* IPE */}
++  {kpiIpe && kpiIpe.ipe != null && (
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
++  <TrendingUp size={18} className="text-emerald-600" /> IPE
++  </h2>
++  <p className="text-3xl font-bold text-emerald-700">{kpiIpe.ipe}</p>
++  <p className="text-xs text-slate-500 mt-1">
++  {kpiIpe.ipe >= 300 ? '🟢' : kpiIpe.ipe >= 250 ? '🟡' : '🔴'}{' '}
++  {kpiIpe.ipe >= 300 ? t('kpi.excellent', 'Excelente') : kpiIpe.ipe >= 250 ? t('kpi.good', 'Bueno') : t('kpi.average', 'Regular')}
++  </p>
++  <div className="mt-2 grid grid-cols-2 gap-1 text-xs text-slate-500">
++  <span>{t('kpi.viability', 'Viab.')} {kpiIpe.viabilidad_pct}%</span>
++  <span>{t('kpi.fcr', 'FCR')} {kpiIpe.fcr}</span>
++  <span>{t('kpi.avgWeight', 'Peso')} {kpiIpe.avg_weight_g}g</span>
++  <span>{t('kpi.ageDays', 'Días')} {kpiIpe.age_days}</span>
++  </div>
++  </div>
++  )}
++
++  {/* Weight Uniformity */}
++  {kpiUniformity && kpiUniformity.cv_pct != null && (
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
++  <Activity size={18} className="text-blue-600" /> {t('kpi.uniformity', 'Uniformidad')}
++  </h2>
++  <p className={`text-2xl font-bold ${
++  kpiUniformity.uniformity_status === 'excellent' ? 'text-emerald-700' :
++  kpiUniformity.uniformity_status === 'acceptable' ? 'text-amber-700' : 'text-red-700'
++  }`}>CV {kpiUniformity.cv_pct}%</p>
++  <p className="text-xs text-slate-500 mt-1">
++  {kpiUniformity.uniformity_status === 'excellent' ? '🟢 ' : kpiUniformity.uniformity_status === 'acceptable' ? '🟡 ' : '🔴 '}
++  {t(`kpi.${kpiUniformity.uniformity_status}`, kpiUniformity.uniformity_status)}
++  {' · '}{kpiUniformity.n_samples} {t('kpi.samples', 'muestras')}
++  </p>
++  </div>
++  )}
++
++  {/* Lot Alerts */}
++  {lotAlerts.length > 0 && (
++  <div className="bg-white rounded-xl shadow-sm border border-amber-200 p-5">
++  <h2 className="font-semibold text-amber-700 mb-3 flex items-center gap-2">
++  <AlertTriangle size={18} className="text-amber-500" />
++  {t('alerts.activeTitle', 'Alertas activas')}
++  <span className="ml-auto text-xs font-bold bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full">{lotAlerts.length}</span>
++  </h2>
++  <div className="space-y-2">
++  {lotAlerts.map((a: any) => (
++  <div key={a.id} className={`flex items-start gap-2 rounded-lg p-2.5 text-xs ${
++  a.severity === 'critical' ? 'bg-red-50 border border-red-200' : 'bg-amber-50 border border-amber-200'
++  }`}>
++  <div className="flex-1 min-w-0">
++  <span className={`font-bold uppercase ${a.severity === 'critical' ? 'text-red-700' : 'text-amber-700'}`}>
++  {String(t(`alerts.severity.${a.severity}`, a.severity))}
++  </span>
++  <p className="text-slate-700 mt-0.5 leading-snug">{a.message}</p>
++  </div>
++  {can({ permission: 'operations:update' }) && <button onClick={() => handleResolveAlert(a.id)} className="text-slate-400 hover shrink-0 p-0.5" title={t('alerts.resolve', 'Resolver')}>
++  <X size={12} />
++  </button>}
++  </div>
++  ))}
++  </div>
++  </div>
++  )}
++
++  {/* ── Traceability Tree (T-083) ── */}
++  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
++  <h2 className="font-semibold text-slate-700 mb-4 flex items-center gap-2">
++  <Activity size={18} className="text-teal-600" />
++  {t('traceability.title', 'Trazabilidad Generacional')}
++  </h2>
++  <TraceabilityTree lotId={Number(id)} birdType={birdType} />
++  </div>
++  </div>
++  </div>
++  </div>
++
++  {/* ── Modal: Phase Transition (Cría → Producción) ── */}
++  <Modal
++  open={showTransitionModal}
++  onClose={() => setShowTransitionModal(false)}
++  title={t('lots.transitionToProduction', 'Iniciar Fase Producción')}
++  description={t('lots.transitionConfirm', '¿Confirmar transición a Fase Producción? Esta acción no se puede deshacer.')}
++  footer={
++  <>
++  <Button variant="secondary" onClick={() => setShowTransitionModal(false)}>
++  {t('common.cancel', 'Cancelar')}
++  </Button>
++  <Button onClick={handleTransitionPhase} loading={transitioning}>
++  {t('lots.confirmTransition', 'Confirmar')}
++  </Button>
++  </>
++  }
++  >
++  <div className="space-y-4">
++  <Input
++  label={t('lots.transitionDate', 'Fecha de transición')}
++  type="date"
++  value={transitionDate}
++  onChange={e => setTransitionDate(e.target.value)}
++  />
++  <Input
++  label={t('lots.populationMale', 'Población machos')}
++  type="number"
++  min={0}
++  placeholder={String(activePhase?.start_population_male ?? 0)}
++  value={transitionMale}
++  onChange={e => setTransitionMale(e.target.value)}
++  />
++  <Input
++  label={t('lots.populationFemale', 'Población hembras')}
++  type="number"
++  min={0}
++  placeholder={String(activePhase?.start_population_female ?? 0)}
++  value={transitionFemale}
++  onChange={e => setTransitionFemale(e.target.value)}
++  />
++  </div>
++  </Modal>
++
++  {/* ── Modal: Close Lot confirmation ── */}
++  <Modal
++  open={showCloseModal}
++  onClose={() => setShowCloseModal(false)}
++  title={t('lots.closeButton', 'Cerrar Lote')}
++  description={t('lots.closeConfirm', '¿Estás seguro de cerrar este lote? No podrás registrar más operaciones.')}
++  footer={
++  <>
++  <Button variant="secondary" onClick={() => setShowCloseModal(false)}>
++  {t('common.cancel', 'Cancelar')}
++  </Button>
++  <Button variant="danger" onClick={handleCloseLot} loading={closing}>
++  {t('lots.closeButton', 'Cerrar Lote')}
++  </Button>
++  </>
++  }
++  >
++  <p className="text-sm text-slate-600">
++  {t('lots.closeWarning', 'Se generará un resumen final con todas las métricas del lote.')}
++  </p>
++  </Modal>
++  </>
++  )
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:45:15
+     43|   it('R11 · LotDetail: cabecera con wrap (el título no se comprime)', …
+     44|     const s = src('pages/lots/LotDetailPage.tsx')
+     45|     expect(s).toContain('flex flex-wrap items-center gap-3 mb-6')
+       |               ^
+     46|   })
+     47|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R12 · ApprovalPanel: barra de lote con wrap
+AssertionError: expected 'import { useState, useEffect, useCall…' to contain 'flex flex-wrap items-center justify-b…'
+
+- Expected
++ Received
+
+- flex flex-wrap items-center justify-between gap-2 shadow-sm
++ import { useState, useEffect, useCallback, useRef } from 'react'
++ import { useTranslation } from 'react-i18next'
++ import { Link } from 'react-router-dom'
++ import { Check, CheckCircle, X, ArrowLeft, Search, Clock } from 'lucide-react'
++ import api from '../../services/api'
++ import { useCan } from '../../auth/actionAuthority'
++ import { useToast, getErrorMessage } from '../../components/Toast'
++ import SubNavHeader from '../../components/layout/SubNavHeader'
++ import { KpiCard, ConfirmDialog, Badge, FilterPanel, FilterGroup } from '../../components/ui'
++
++ const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
++
++ const STATUS_VARIANT: Record<string, string> = {
++  corrected: 'corrected', in_review: 'in_review',
++  approved: 'approved', rejected: 'rejected',
++  reversed: 'reversed',
++ }
++
++ export default function ApprovalPanel() {
++  const can = useCan()
++  const { t } = useTranslation()
++  const toast = useToast()
++  const [events, setEvents] = useState<any[]>([])
++  const [loading, setLoading] = useState(true)
++  const [total, setTotal] = useState(0)
++  const [lotId, setLotId] = useState('')
++  const [page, setPage] = useState(0)
++  const [rejectReason, setRejectReason] = useState('')
++  const [showRejectModal, setShowRejectModal] = useState(false)
++  const [showApproveModal, setShowApproveModal] = useState(false)
++  // `R-220` · A9: guarda de vuelo de la aprobación (una mutación por gesto).
++  const approvingRef = useRef(false)
++  const [singleApproveId, setSingleApproveId] = useState<number | null>(null)
++  const [rejectTarget, setRejectTarget] = useState<'single' | 'batch'>('single')
++  const [singleRejectId, setSingleRejectId] = useState<number | null>(null)
++  const limit = 20
++
++  const fetchEvents = useCallback(async () => {
++  setLoading(true)
++  try {
++  const params = new URLSearchParams({ limit: String(limit), offset: String(page * limit) })
++  if (lotId) params.set('lot_id', lotId)
++  const { data } = await api.get(`/approvals/pending?${params}`)
++  setEvents(data.events || [])
++  setTotal(data.total || 0)
++  } catch (err: any) {
++  toast.error(getErrorMessage(err, t('review.errorLoadingApprovals')))
++  } finally {
++  setLoading(false)
++  }
++  }, [lotId, page, t, toast])
++
++  useEffect(() => { fetchEvents() }, [fetchEvents])
++
++  const handleApprove = async (eventId: number) => {
++  // `R-220` · A9 (C#35): un gesto, una mutación — el doble clic no duplica POSTs.
++  if (approvingRef.current) return
++  approvingRef.current = true
++  try {
++  await api.post('/approvals/approve', { event_id: eventId })
++  toast.success(t('review.eventApproved'))
++  setShowApproveModal(false)
++  setSingleApproveId(null)
++  fetchEvents()
++  } catch (err: any) {
++  toast.error(getErrorMessage(err, t('review.errorApprove')))
++  } finally {
++  approvingRef.current = false
++  }
++  }
++
++  const handleRejectSingle = async () => {
++  if (!rejectReason || rejectReason.length < 10) {
++  toast.warning(t('review.reasonMinLength'))
++  return
++  }
++  try {
++  await api.post('/approvals/reject', { event_id: singleRejectId, observations: rejectReason })
++  setShowRejectModal(false)
++  setRejectReason('')
++  setSingleRejectId(null)
++  toast.success(t('review.eventRejected'))
++  fetchEvents()
++  } catch (err: any) {
++  toast.error(getErrorMessage(err, t('review.errorReject')))
++  }
++  }
++
++  const openApproveSingle = (eventId: number) => {
++  setSingleApproveId(eventId)
++  setShowApproveModal(true)
++  }
++
++  const openRejectSingle = (eventId: number) => {
++  setSingleRejectId(eventId)
++  setRejectTarget('single')
++  setRejectReason('')
++  setShowRejectModal(true)
++  }
++
++  const handleBatchApprove = async () => {
++  const selected = events.filter((e: any) => e._checked)
++  if (selected.length === 0) {
++  toast.warning(t('common.noSelection'))
++  return
++  }
++  try {
++  await api.post('/approvals/batch-approve', { event_ids: selected.map((e: any) => e.id) })
++  toast.success(t('review.batchApproved', { count: selected.length }))
++  fetchEvents()
++  } catch (err: any) {
++  toast.error(getErrorMessage(err, t('common.error')))
++  }
++  }
++
++  const handleBatchReject = async () => {
++  if (!rejectReason || rejectReason.length < 10) {
++  toast.warning(t('review.reasonMinLength'))
++  return
++  }
++  const selected = events.filter((e: any) => e._checked)
++  if (selected.length === 0) {
++  toast.warning(t('common.noSelection'))
++  return
++  }
++  try {
++  await api.post('/approvals/batch-reject', { event_ids: selected.map((e: any) => e.id), observations: rejectReason })
++  setShowRejectModal(false)
++  setRejectReason('')
++  toast.success(t('review.batchRejected', { count: selected.length }))
++  fetchEvents()
++  } catch (err: any) {
++  toast.error(getErrorMessage(err, t('common.error')))
++  }
++  }
++
++  const openBatchReject = () => {
++  const selected = events.filter((e: any) => e._checked)
++  if (selected.length === 0) {
++  toast.warning(t('common.noSelection'))
++  return
++  }
++  setRejectTarget('batch')
++  setRejectReason('')
++  setShowRejectModal(true)
++  }
++
++  const toggleCheck = (id: number) => {
++  setEvents(prev => prev.map(e => e.id === id ? { ...e, _checked: !e._checked } : e))
++  }
++
++  const selectedCount = events.filter((e: any) => e._checked).length
++  const pendingCount = events.filter(e => e.status === 'corrected').length
++
++  return (
++  <div>
++  {/* Header */}
++  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5">
++  <SubNavHeader
++  title={t('review.approvalPanel', 'Aprobaciones')}
++  hideBack
++  actions={
++  <Link to="/review"
++  className="inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors">
++  <ArrowLeft size={16} /> {t('nav.review', 'Revisión')}
++  </Link>
++  }
++  />
++  </div>
++
++  {/* `R-220` · A3 (C#25): esta bandeja son PENDIENTES — «Aprobados/Rechazados»
++  no son contables aquí (siempre 0) y un cero indistinguible de «no hay nada»
++  engaña: se retiran en lugar de fabricar métricas. */}
++  <div className="grid grid-cols-2 gap-4 mb-6">
++  <KpiCard icon={Clock} label={t('review.pendingApprovals', 'Pendientes')} value={pendingCount} color="amber" />
++  <KpiCard icon={Search} label={t('common.results', 'Total')} value={total} color="blue" />
++  </div>
++
++  {/* Batch Actions Bar */}
++  {/* `R-208`: la barra depende de `approvals:*` — `review:review` no autoriza una aprobación. */}
++  {(can({ permission: 'approvals:approve' }) || can({ permission: 'approvals:reject' })) && selectedCount > 0 && (
++  <div className="bg-[#1E3A5F] text-white rounded-xl px-5 py-3 mb-4 flex items-center justify-between shadow-sm">
++  <span className="text-sm font-semibold">{selectedCount} {t('review.selectedEvents', 'seleccionados')}</span>
++  <div className="flex gap-2">
++  {can({ permission: 'approvals:approve' }) && <button onClick={handleBatchApprove}
++  className="bg-emerald-500 hover:bg-emerald-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
++  <Check size={16} /> {t('review.approveAll', 'Aprobar todos')}
++  </button>}
++  {can({ permission: 'approvals:reject' }) && <button onClick={openBatchReject}
++  className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg text-sm font-semibold transition flex items-center gap-1.5 shadow-sm">
++  <X size={16} /> {t('review.rejectAll', 'Rechazar todos')}
++  </button>}
++  </div>
++  </div>
++  )}
++
++  {/* Filter Panel */}
++  <FilterPanel totalResults={total}>
++  <FilterGroup label={t('review.lot', 'Lote')}>
++  <input
++  type="text"
++  placeholder={t('common.id', 'ID')}
++  value={lotId}
++  onChange={e => { setLotId(e.target.value); setPage(0) }}
++  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
++  />
++  </FilterGroup>
++  </FilterPanel>
++
++  {/* Mobile Cards */}
++  <div className="lg:hidden space-y-3">
++  {loading && (
++  <div className="space-y-3">
++  {[1,2,3].map(i => (
++  <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 animate-pulse">
++  <div className="h-4 bg-slate-100 rounded w-1/3 mb-3" />
++  <div className="h-3 bg-slate-100 rounded w-2/3 mb-2" />
++  <div className="h-3 bg-slate-100 rounded w-1/2" />
++  </div>
++  ))}
++  </div>
++  )}
++  {!loading && events.length === 0 && (
++  <div className="text-center py-12">
++  <CheckCircle size={40} className="mx-auto mb-2 text-emerald-300" />
++  <p className="text-sm text-slate-500">{t('review.noPendingApprovals', 'Sin aprobaciones pendientes')}</p>
++  </div>
++  )}
++  {events.map((event: any) => (
++  <div key={event.id} className="bg-white rounded-xl border border-slate-200 p-4 shadow-sm hover:shadow-md transition-shadow">
++  <div className="flex items-start gap-3">
++  {can({ permission: 'review:review' }) && <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)}
++  className="mt-1 h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" />}
++  <div className="flex-1 min-w-0">
++  <div className="flex items-center gap-2 mb-1.5">
++  <span className="font-semibold text-slate-800 font-mono text-xs">#{event.id}</span>
++  <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
++  {String(t(`status.${event.status}`, event.status))}
++  </Badge>
++  </div>
++  <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
++  <p className="text-xs text-slate-400 mt-0.5">{String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}</p>
++  </div>
++  </div>
++  <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
++  {can({ permission: 'approvals:approve' }) && <button onClick={() => openApproveSingle(event.id)}
++  className="flex-1 bg-emerald-50 text-emerald-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition flex items-center justify-center gap-1.5">
++  <Check size={14} /> {t('review.approve', 'Aprobar')}
++  </button>}
++  {can({ permission: 'approvals:reject' }) && <button onClick={() => openRejectSingle(event.id)}
++  className="flex-1 bg-red-50 text-red-700 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-red-100 transition flex items-center justify-center gap-1.5">
++  <X size={14} /> {t('review.reject', 'Rechazar')}
++  </button>}
++  <Link to={`/review/${event.id}`}
++  className="flex-1 bg-slate-50 text-slate-600 px-3 py-2 rounded-lg text-xs font-semibold hover:bg-slate-100 transition text-center flex items-center justify-center gap-1.5">
++  <Search size={14} />
++  </Link>
++  </div>
++  </div>
++  ))}
++  </div>
++
++  {/* Desktop Table */}
++  <div className="hidden lg:block bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
++  <table className="w-full text-sm">
++  <thead className="bg-slate-50 border-b border-slate-200">
++  <tr>
++  <th className="w-12 px-4 py-3.5 text-left">
++  {can({ permission: 'review:review' }) && <input type="checkbox"
++  onChange={e => setEvents(prev => prev.map(ev => ({ ...ev, _checked: e.target.checked })))}
++  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />}
++  </th>
++  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.id')}</th>
++  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
++  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
++  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
++  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
++  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
++  </tr>
++  </thead>
++  <tbody className="divide-y divide-slate-100">
++  {loading && (
++  <tr>
++  <td colSpan={7} className="px-4 py-12 text-center">
++  <div className="flex items-center justify-center gap-2 text-slate-400">
++  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
++  <span className="text-sm">{t('common.loading', 'Cargando...')}</span>
++  </div>
++  </td>
++  </tr>
++  )}
++  {!loading && events.length === 0 && (
++  <tr>
++  <td colSpan={7} className="px-4 py-12 text-center">
++  <CheckCircle size={28} className="mx-auto mb-2 text-emerald-300" />
++  <p className="text-sm text-slate-500">{t('review.noPendingApprovals', 'Sin aprobaciones pendientes')}</p>
++  </td>
++  </tr>
++  )}
++  {events.map((event: any) => (
++  <tr key={event.id} className="hover:bg-blue-50/40 transition-colors">
++  <td className="px-4 py-3">
++  {can({ permission: 'review:review' }) && <input type="checkbox" checked={!!event._checked} onChange={() => toggleCheck(event.id)}
++  className="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />}
++  </td>
++  <td className="px-4 py-3 font-mono text-xs text-slate-500">#{event.id}</td>
++  <td className="px-4 py-3 text-slate-700">{getEventLabel(t, event.event_type)}</td>
++  <td className="px-4 py-3">
++  <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded">#{event.lot_id}</span>
++  </td>
++  <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
++  <td className="px-4 py-3">
++  <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
++  {String(t(`status.${event.status}`, event.status))}
++  </Badge>
++  </td>
++  <td className="px-4 py-3">
++  <div className="flex gap-1.5">
++  {can({ permission: 'approvals:approve' }) && <button onClick={() => openApproveSingle(event.id)}
++  className="bg-emerald-50 text-emerald-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-emerald-100 transition flex items-center gap-1">
++  <Check size={12} /> {t('review.approve', 'Aprobar')}
++  </button>}
++  {can({ permission: 'approvals:reject' }) && <button onClick={() => openRejectSingle(event.id)}
++  className="bg-red-50 text-red-700 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-red-100 transition flex items-center gap-1">
++  <X size={12} /> {t('review.reject', 'Rechazar')}
++  </button>}
++  <Link to={`/review/${event.id}`}
++  className="bg-slate-50 text-slate-600 px-2.5 py-1.5 rounded-lg text-xs font-semibold hover:bg-slate-100 transition flex items-center">
++  <Search size={12} />
++  </Link>
++  </div>
++  </td>
++  </tr>
++  ))}
++  </tbody>
++  </table>
++  </div>
++
++  {/* Pagination */}
++  {total > limit && (
++  <div className="flex items-center justify-center gap-3 mt-5">
++  <button
++  disabled={page === 0}
++  onClick={() => setPage(p => p - 1)}
++  className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
++  >
++  ← {t('common.back', 'Anterior')}
++  </button>
++  <span className="text-sm font-medium text-slate-500">
++  {page + 1} / {Math.ceil(total / limit)}
++  </span>
++  <button
++  disabled={(page + 1) * limit >= total}
++  onClick={() => setPage(p => p + 1)}
++  className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
++  >
++  {t('common.next', 'Siguiente')} →
++  </button>
++  </div>
++  )}
++
++  {/* Approve Dialog */}
++  <ConfirmDialog
++  open={showApproveModal}
++  onClose={() => setShowApproveModal(false)}
++  onConfirm={() => handleApprove(singleApproveId!)}
++  title={t('review.confirmApprove', '¿Aprobar registro?')}
++  message={t('review.confirmApproveMsg', 'El registro será marcado como aprobado y pasará a la etapa de consolidación.')}
++  confirmLabel={t('review.approve', 'Aprobar')}
++  variant="success"
++  showWarning={false}
++  />
++
++  {/* Reject Dialog */}
++  <ConfirmDialog
++  open={showRejectModal}
++  onClose={() => setShowRejectModal(false)}
++  onConfirm={rejectTarget === 'batch' ? handleBatchReject : handleRejectSingle}
++  title={t('review.confirmReject', '¿Rechazar registro?')}
++  message={t('review.confirmRejectMsg', 'El registro será devuelto al operador con las observaciones. Esta acción no se puede deshacer.')}
++  confirmLabel={t('review.reject', 'Rechazar')}
++  variant="danger"
++  showWarning
++  />
++  </div>
++  )
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:50:15
+     48|   it('R12 · ApprovalPanel: barra de lote con wrap', () => {
+     49|     const s = src('pages/approvals/ApprovalPanel.tsx')
+     50|     expect(s).toContain('flex flex-wrap items-center justify-between g…
+       |               ^
+     51|   })
+     52|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R14 · los 65 input number declaran inputMode decimal
+AssertionError: expected +0 to be 65 // Object.is equality
+
+- Expected
++ Received
+
+- 65
++ 0
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:58:19
+     56|     const modes = (s.match(/type="number" inputMode="decimal"/g) ?? []…
+     57|     expect(nums).toBe(65)
+     58|     expect(modes).toBe(nums)
+       |                   ^
+     59|   })
+     60|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R15 · selects <1024px con chevron propio (no "parecen inputs")
+AssertionError: expected '/* ==================================…' not to contain 'background-image: none !important;'
+
+- Expected
++ Received
+
+- background-image: none !important;
++ /* ============================================================
++    Global Avícola — Design System (basado en Atenea)
++    Marca: Teal-Azul corporativo
++    ============================================================ */
++
++ @import '@fontsource/inter/300.css';
++ @import '@fontsource/inter/400.css';
++ @import '@fontsource/inter/500.css';
++ @import '@fontsource/inter/600.css';
++ @import '@fontsource/inter/700.css';
++
++ @import 'tailwindcss';
++
++ /* ── Atenea Brand Gradients ─────────────────────────────── */
++ .gradient-brand {
++   background: linear-gradient(145deg, #4e8fad 0%, #6fabc5 50%, #8fb5d2 100%);
++ }
++ .gradient-brand-soft {
++   background: linear-gradient(145deg, #b3d5e8 0%, #6fabc5 40%, #5a9bba 100%);
++ }
++ .gradient-brand-header {
++   background: linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%);
++ }
++
++ /* ── Glass morphism ─────────────────────────────────────── */
++ .glass {
++   background: rgba(255, 255, 255, 0.7);
++   backdrop-filter: blur(10px);
++ }
++
++ /* ── Base Reset ──────────────────────────────────────────── */
++ *, *::before, *::after { box-sizing: border-box; }
++
++ html {
++   -webkit-font-smoothing: antialiased;
++   -moz-osx-font-smoothing: grayscale;
++   text-rendering: optimizeLegibility;
++   -webkit-text-size-adjust: 100%;
++   touch-action: manipulation;
++   -webkit-tap-highlight-color: transparent;
++ }
++
++ /* Prevent iOS zoom on input focus */
++ input, textarea, select {
++   font-size: 16px !important;
++ }
++
++ @media (max-width: 1023px) {
++   html { font-size: 16px; }
++   body {
++     overscroll-behavior: none;
++     -webkit-overflow-scrolling: touch;
++     touch-action: pan-x pan-y;
++   }
++
++   /* Mobile Mini App: use native-like controls for better platform consistency */
++   input:not([type='checkbox']):not([type='radio']),
++   select,
++   textarea {
++     -webkit-appearance: auto;
++     appearance: auto;
++     background-color: #ffffff !important;
++     color: #0f172a !important;
++     border-color: #cbd5e1 !important;
++     border-radius: 10px !important;
++     box-shadow: none !important;
++   }
++
++   input:not([type='checkbox']):not([type='radio']):focus,
++   select:focus,
++   textarea:focus {
++     border-color: #5a9bba !important;
++     box-shadow: 0 0 0 2px rgba(90, 155, 186, 0.18) !important;
++   }
++
++   select {
++     background-image: none !important;
++     padding-right: 0.75rem !important;
++   }
++ }
++
++ body {
++   margin: 0;
++   min-height: 100vh;
++   font-family: 'Inter', system-ui, -apple-system, sans-serif;
++   font-size: 16px;
++   line-height: 1.6;
++   color: #0F172A;
++   background: #f1f5f9;
++ }
++
++ :root {
++   --app-content-max-width: 1280px;
++   --app-content-mobile-x: 12px;
++   --app-content-web-x: 16px;
++ }
++
++ @media (min-width: 640px) {
++   :root { --app-content-web-x: 20px; }
++ }
++
++ @media (min-width: 1024px) {
++   :root { --app-content-web-x: 24px; }
++ }
++
++ /* Global page shell: one place to control margins for every routed page. */
++ .app-content-shell > * {
++   width: 100%;
++   max-width: var(--app-content-max-width) !important;
++   margin-left: auto !important;
++   margin-right: auto !important;
++   padding-left: var(--app-content-mobile-x) !important;
++   padding-right: var(--app-content-mobile-x) !important;
++ }
++
++ .app-content-shell.app-content-shell-web > * {
++   padding-left: var(--app-content-web-x) !important;
++   padding-right: var(--app-content-web-x) !important;
++ }
++
++ #root { min-height: 100vh; }
++ p { margin: 0; }
++
++ /* ── Scrollbar (atenea style) ───────────────────────────── */
++ ::-webkit-scrollbar { width: 5px; height: 5px; }
++ ::-webkit-scrollbar-track { background: transparent; }
++ ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
++ ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
++
++ /* ── Sidebar scrollbar ──────────────────────────────────── */
++ .sidebar-scroll::-webkit-scrollbar { width: 3px; }
++ .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
++ .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
++
++ /* ── Focus ring ──────────────────────────────────────────── */
++ :focus-visible { outline: 2px solid #5a9bba; outline-offset: 2px; }
++
++ /* ── Selection ───────────────────────────────────────────── */
++ ::selection { background: rgba(90, 155, 186, 0.2); color: inherit; }
++
++ /* ── Toast animation ─────────────────────────────────────── */
++ @keyframes slide-in {
++   from { transform: translateX(calc(100% + 16px)); opacity: 0; }
++   to   { transform: translateX(0);              opacity: 1; }
++ }
++ .animate-slide-in { animation: slide-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
++
++ /* ── Modal slide-up ──────────────────────────────────────── */
++ @keyframes slide-up {
++   from { transform: translateY(16px); opacity: 0; }
++   to   { transform: translateY(0);   opacity: 1; }
++ }
++ .animate-modal {
++   animation: slide-up 0.2s cubic-bezier(0.4, 0, 0.2, 1);
++ }
++
++ /* ── Fade in ─────────────────────────────────────────────── */
++ @keyframes fade-in {
++   from { opacity: 0; }
++   to   { opacity: 1; }
++ }
++ .animate-fade-in {
++   animation: fade-in 0.3s ease;
++ }
++
++ /* ── Scale in ────────────────────────────────────────────── */
++ @keyframes scale-in {
++   from { opacity: 0; transform: scale(0.96); }
++   to   { opacity: 1; transform: scale(1); }
++ }
++ .animate-scale-in {
++   animation: scale-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
++ }
++
++ /* ── Page enter ──────────────────────────────────────────── */
++ @keyframes page-enter {
++   from { opacity: 0; transform: translateY(8px); }
++   to   { opacity: 1; transform: translateY(0); }
++ }
++ .page-enter {
++   animation: page-enter 0.25s cubic-bezier(0.4, 0, 0.2, 1);
++ }
++
++ /* ── KPI number sparkle ──────────────────────────────────── */
++ @keyframes number-enter {
++   from { opacity: 0; transform: translateY(6px) scale(0.92); }
++   to   { opacity: 1; transform: translateY(0)   scale(1); }
++ }
++ .animate-number {
++   animation: number-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
++ }
++
++ /* ── Skeleton shimmer ────────────────────────────────────── */
++ @keyframes shimmer {
++   0%   { background-position: -800px 0; }
++   100% { background-position: 800px 0; }
++ }
++ .skeleton {
++   background: linear-gradient(90deg, #f0f2f5 25%, #e4e7eb 50%, #f0f2f5 75%);
++   background-size: 800px 100%;
++   animation: shimmer 1.5s infinite;
++ }
++
++ /* ── Safe area for mobile ────────────────────────────────── */
++ .safe-area-bottom {
++   padding-bottom: max(env(safe-area-inset-bottom), 8px);
++ }
++
++ /* ── Card hover lift ─────────────────────────────────────── */
++ .card-hover {
++   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
++ }
++ .card-hover:hover {
++   transform: translateY(-1px);
++   box-shadow: var(--shadow-md);
++ }
++
++ /* ── Brand gradient bg ───────────────────────────────────── */
++ .bg-brand-gradient {
++   background: linear-gradient(160deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%);
++ }
++
++ /* ── Accent dot — minimal semantic color indicator ────────── */
++ /* accent-bar classes retained for compatibility but render nothing now */
++ .accent-bar { position: relative; }
++ .accent-bar-blue,
++ .accent-bar-green,
++ .accent-bar-amber,
++ .accent-bar-red,
++ .accent-bar-teal,
++ .accent-bar-indigo,
++ .accent-bar-slate { /* semantic class kept, no decorative stripe */ }
++
++ /* ── Stat value typography ───────────────────────────────── */
++ .stat-value {
++   font-variant-numeric: tabular-nums;
++   letter-spacing: -0.025em;
++   line-height: 1;
++ }
++
++ /* ── Accessibility: prefers-reduced-motion (WCAG 2.2.2) ──── */
++ @media (prefers-reduced-motion: reduce) {
++   *,
++   *::before,
++   *::after {
++     animation-duration: 0.01ms !important;
++     animation-iteration-count: 1 !important;
++     transition-duration: 0.01ms !important;
++     scroll-behavior: auto !important;
++   }
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:63:19
+     61|   it('R15 · selects <1024px con chevron propio (no "parecen inputs")',…
+     62|     const s = src('index.css')
+     63|     expect(s).not.toContain('background-image: none !important;')
+       |                   ^
+     64|     expect(s).toContain('data:image/svg+xml')
+     65|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  04:35:23
+   Duration  891ms (transform 32ms, setup 59ms, import 24ms, tests 46ms, environment 580ms)
+

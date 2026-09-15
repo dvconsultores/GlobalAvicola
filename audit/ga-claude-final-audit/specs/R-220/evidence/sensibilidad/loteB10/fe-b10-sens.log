@@ -1,0 +1,284 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB10.test.tsx (8 tests | 1 failed) 19ms
+     × R15 · selects <1024px con chevron propio (no "parecen inputs") 12ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB10.test.tsx > R-220 · B10 · cosméticos R7–R12/R14/R15 > R15 · selects <1024px con chevron propio (no "parecen inputs")
+AssertionError: expected '/* ==================================…' not to contain 'background-image: none !important;'
+
+- Expected
++ Received
+
+- background-image: none !important;
++ /* ============================================================
++    Global Avícola — Design System (basado en Atenea)
++    Marca: Teal-Azul corporativo
++    ============================================================ */
++
++ @import '@fontsource/inter/300.css';
++ @import '@fontsource/inter/400.css';
++ @import '@fontsource/inter/500.css';
++ @import '@fontsource/inter/600.css';
++ @import '@fontsource/inter/700.css';
++
++ @import 'tailwindcss';
++
++ /* ── Atenea Brand Gradients ─────────────────────────────── */
++ .gradient-brand {
++   background: linear-gradient(145deg, #4e8fad 0%, #6fabc5 50%, #8fb5d2 100%);
++ }
++ .gradient-brand-soft {
++   background: linear-gradient(145deg, #b3d5e8 0%, #6fabc5 40%, #5a9bba 100%);
++ }
++ .gradient-brand-header {
++   background: linear-gradient(135deg, #264c5f 0%, #3d748f 50%, #4e8fad 100%);
++ }
++
++ /* ── Glass morphism ─────────────────────────────────────── */
++ .glass {
++   background: rgba(255, 255, 255, 0.7);
++   backdrop-filter: blur(10px);
++ }
++
++ /* ── Base Reset ──────────────────────────────────────────── */
++ *, *::before, *::after { box-sizing: border-box; }
++
++ html {
++   -webkit-font-smoothing: antialiased;
++   -moz-osx-font-smoothing: grayscale;
++   text-rendering: optimizeLegibility;
++   -webkit-text-size-adjust: 100%;
++   touch-action: manipulation;
++   -webkit-tap-highlight-color: transparent;
++ }
++
++ /* Prevent iOS zoom on input focus */
++ input, textarea, select {
++   font-size: 16px !important;
++ }
++
++ @media (max-width: 1023px) {
++   html { font-size: 16px; }
++   body {
++     overscroll-behavior: none;
++     -webkit-overflow-scrolling: touch;
++     touch-action: pan-x pan-y;
++   }
++
++   /* Mobile Mini App: use native-like controls for better platform consistency */
++   input:not([type='checkbox']):not([type='radio']),
++   select,
++   textarea {
++     -webkit-appearance: auto;
++     appearance: auto;
++     background-color: #ffffff !important;
++     color: #0f172a !important;
++     border-color: #cbd5e1 !important;
++     border-radius: 10px !important;
++     box-shadow: none !important;
++   }
++
++   input:not([type='checkbox']):not([type='radio']):focus,
++   select:focus,
++   textarea:focus {
++     border-color: #5a9bba !important;
++     box-shadow: 0 0 0 2px rgba(90, 155, 186, 0.18) !important;
++   }
++
++   select {
++     background-image: none !important;
++     padding-right: 0.75rem !important;
++   }
++ }
++
++ body {
++   margin: 0;
++   min-height: 100vh;
++   font-family: 'Inter', system-ui, -apple-system, sans-serif;
++   font-size: 16px;
++   line-height: 1.6;
++   color: #0F172A;
++   background: #f1f5f9;
++ }
++
++ :root {
++   --app-content-max-width: 1280px;
++   --app-content-mobile-x: 12px;
++   --app-content-web-x: 16px;
++ }
++
++ @media (min-width: 640px) {
++   :root { --app-content-web-x: 20px; }
++ }
++
++ @media (min-width: 1024px) {
++   :root { --app-content-web-x: 24px; }
++ }
++
++ /* Global page shell: one place to control margins for every routed page. */
++ .app-content-shell > * {
++   width: 100%;
++   max-width: var(--app-content-max-width) !important;
++   margin-left: auto !important;
++   margin-right: auto !important;
++   padding-left: var(--app-content-mobile-x) !important;
++   padding-right: var(--app-content-mobile-x) !important;
++ }
++
++ .app-content-shell.app-content-shell-web > * {
++   padding-left: var(--app-content-web-x) !important;
++   padding-right: var(--app-content-web-x) !important;
++ }
++
++ #root { min-height: 100vh; }
++ p { margin: 0; }
++
++ /* ── Scrollbar (atenea style) ───────────────────────────── */
++ ::-webkit-scrollbar { width: 5px; height: 5px; }
++ ::-webkit-scrollbar-track { background: transparent; }
++ ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
++ ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
++
++ /* ── Sidebar scrollbar ──────────────────────────────────── */
++ .sidebar-scroll::-webkit-scrollbar { width: 3px; }
++ .sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
++ .sidebar-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 9999px; }
++
++ /* ── Focus ring ──────────────────────────────────────────── */
++ :focus-visible { outline: 2px solid #5a9bba; outline-offset: 2px; }
++
++ /* ── Selection ───────────────────────────────────────────── */
++ ::selection { background: rgba(90, 155, 186, 0.2); color: inherit; }
++
++ /* ── Toast animation ─────────────────────────────────────── */
++ @keyframes slide-in {
++   from { transform: translateX(calc(100% + 16px)); opacity: 0; }
++   to   { transform: translateX(0);              opacity: 1; }
++ }
++ .animate-slide-in { animation: slide-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1); }
++
++ /* ── Modal slide-up ──────────────────────────────────────── */
++ @keyframes slide-up {
++   from { transform: translateY(16px); opacity: 0; }
++   to   { transform: translateY(0);   opacity: 1; }
++ }
++ .animate-modal {
++   animation: slide-up 0.2s cubic-bezier(0.4, 0, 0.2, 1);
++ }
++
++ /* ── Fade in ─────────────────────────────────────────────── */
++ @keyframes fade-in {
++   from { opacity: 0; }
++   to   { opacity: 1; }
++ }
++ .animate-fade-in {
++   animation: fade-in 0.3s ease;
++ }
++
++ /* ── Scale in ────────────────────────────────────────────── */
++ @keyframes scale-in {
++   from { opacity: 0; transform: scale(0.96); }
++   to   { opacity: 1; transform: scale(1); }
++ }
++ .animate-scale-in {
++   animation: scale-in 0.2s cubic-bezier(0.4, 0, 0.2, 1);
++ }
++
++ /* ── Page enter ──────────────────────────────────────────── */
++ @keyframes page-enter {
++   from { opacity: 0; transform: translateY(8px); }
++   to   { opacity: 1; transform: translateY(0); }
++ }
++ .page-enter {
++   animation: page-enter 0.25s cubic-bezier(0.4, 0, 0.2, 1);
++ }
++
++ /* ── KPI number sparkle ──────────────────────────────────── */
++ @keyframes number-enter {
++   from { opacity: 0; transform: translateY(6px) scale(0.92); }
++   to   { opacity: 1; transform: translateY(0)   scale(1); }
++ }
++ .animate-number {
++   animation: number-enter 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
++ }
++
++ /* ── Skeleton shimmer ────────────────────────────────────── */
++ @keyframes shimmer {
++   0%   { background-position: -800px 0; }
++   100% { background-position: 800px 0; }
++ }
++ .skeleton {
++   background: linear-gradient(90deg, #f0f2f5 25%, #e4e7eb 50%, #f0f2f5 75%);
++   background-size: 800px 100%;
++   animation: shimmer 1.5s infinite;
++ }
++
++ /* ── Safe area for mobile ────────────────────────────────── */
++ .safe-area-bottom {
++   padding-bottom: max(env(safe-area-inset-bottom), 8px);
++ }
++
++ /* ── Card hover lift ─────────────────────────────────────── */
++ .card-hover {
++   transition: transform var(--transition-normal), box-shadow var(--transition-normal);
++ }
++ .card-hover:hover {
++   transform: translateY(-1px);
++   box-shadow: var(--shadow-md);
++ }
++
++ /* ── Brand gradient bg ───────────────────────────────────── */
++ .bg-brand-gradient {
++   background: linear-gradient(160deg, var(--sidebar-from) 0%, var(--sidebar-to) 100%);
++ }
++
++ /* ── Accent dot — minimal semantic color indicator ────────── */
++ /* accent-bar classes retained for compatibility but render nothing now */
++ .accent-bar { position: relative; }
++ .accent-bar-blue,
++ .accent-bar-green,
++ .accent-bar-amber,
++ .accent-bar-red,
++ .accent-bar-teal,
++ .accent-bar-indigo,
++ .accent-bar-slate { /* semantic class kept, no decorative stripe */ }
++
++ /* ── Stat value typography ───────────────────────────────── */
++ .stat-value {
++   font-variant-numeric: tabular-nums;
++   letter-spacing: -0.025em;
++   line-height: 1;
++ }
++
++ /* ── Accessibility: prefers-reduced-motion (WCAG 2.2.2) ──── */
++ @media (prefers-reduced-motion: reduce) {
++   *,
++   *::before,
++   *::after {
++     animation-duration: 0.01ms !important;
++     animation-iteration-count: 1 !important;
++     transition-duration: 0.01ms !important;
++     scroll-behavior: auto !important;
++   }
++ }
++
+
+ ❯ src/__tests__/r220.loteB10.test.tsx:63:19
+     61|   it('R15 · selects <1024px con chevron propio (no "parecen inputs")',…
+     62|     const s = src('index.css')
+     63|     expect(s).not.toContain('background-image: none !important;')
+       |                   ^
+     64|     expect(s).toContain('data:image/svg+xml')
+     65|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  04:35:54
+   Duration  1.13s (transform 45ms, setup 66ms, import 25ms, tests 19ms, environment 735ms)
+
