@@ -1,0 +1,35 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB3.test.tsx (1 test | 1 failed) 59ms
+     × AC-R220-B·B9 · el botón eliminar máquina se ancla a su propia fila (relative) 56ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB3.test.tsx > R-220 · Lote B tercera tanda (RED) > AC-R220-B·B9 · el botón eliminar máquina se ancla a su propia fila (relative)
+TypeError: window.matchMedia is not a function
+ ❯ src/components/ui/SearchSelect.tsx:39:41
+     37|  const [search, setSearch] = useState('')
+     38|  const [isMobileView, setIsMobileView] = useState(() =>
+     39|  typeof window !== 'undefined' ? window.matchMedia('(max-width: 1023px…
+       |                                         ^
+     40|  )
+     41|  const containerRef = useRef<HTMLDivElement>(null)
+ ❯ mountStateImpl node_modules/react-dom/cjs/react-dom-client.development.js:8650:24
+ ❯ mountState node_modules/react-dom/cjs/react-dom-client.development.js:8671:22
+ ❯ Object.useState node_modules/react-dom/cjs/react-dom-client.development.js:28913:18
+ ❯ process.env.NODE_ENV.exports.useState node_modules/react/cjs/react.development.js:1309:34
+ ❯ SearchSelect src/components/ui/SearchSelect.tsx:38:42
+ ❯ Object.react_stack_bottom_frame node_modules/react-dom/cjs/react-dom-client.development.js:28571:20
+ ❯ renderWithHooks node_modules/react-dom/cjs/react-dom-client.development.js:8030:22
+ ❯ updateFunctionComponent node_modules/react-dom/cjs/react-dom-client.development.js:10569:19
+ ❯ beginWork node_modules/react-dom/cjs/react-dom-client.development.js:12205:18
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed (1)
+   Start at  04:20:58
+   Duration  1.31s (transform 233ms, setup 59ms, import 462ms, tests 59ms, environment 560ms)
+
