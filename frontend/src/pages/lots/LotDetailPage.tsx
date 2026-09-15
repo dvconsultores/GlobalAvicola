@@ -174,7 +174,7 @@ export default function LotDetailPage() {
  <>
  <div className="py-4 sm:py-6">
  {/* ── Header ── */}
- <div className="flex items-center gap-3 mb-6">
+ <div className="flex flex-wrap items-center gap-3 mb-6">
  <Link to="/lots" className="text-slate-400 hover transition-colors">
  <ArrowLeft size={20} />
  </Link>

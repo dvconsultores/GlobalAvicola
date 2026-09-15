@@ -565,10 +565,10 @@ export default function OperationFormPage() {
  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={defaultSex} />
  <span className={`text-sm font-semibold ${color}`}>{label}</span>
  </div>
- <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })}
+ <input type="number" inputMode="decimal" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })}
  className={ic} />
  {showWeight && (
- <input type="number" step="1" {...register(`bird_movements.${idx}.avg_weight`, { valueAsNumber: true })}
+ <input type="number" inputMode="decimal" step="1" {...register(`bird_movements.${idx}.avg_weight`, { valueAsNumber: true })}
  className={ic} />
  )}
  </div>
@@ -604,7 +604,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
  </div>
  </div>
  {renderMFRows(false)}
@@ -627,7 +627,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
  </div>
  </div>
  {renderMFRows(false)}
@@ -665,7 +665,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave')}</label>
- <input type="number" step="0.01" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="0.01" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  {renderMFRows(false)}
@@ -688,11 +688,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.dosePerBird', 'Dosis por ave (mL/mg)')}</label>
- <input type="number" step="0.001" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="0.001" {...register('dosage_per_bird', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.treatmentDays', 'Días de tratamiento')}</label>
- <input type="number" min="1" {...register('treatment_days', { valueAsNumber: true })} className={ic} placeholder="5" />
+ <input type="number" inputMode="decimal" min="1" {...register('treatment_days', { valueAsNumber: true })} className={ic} placeholder="5" />
  </div>
  </div>
  {renderMFRows(false)}
@@ -704,11 +704,11 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3">
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
  </div>
  <div>
  <label className={lc}>{t('operations.sampleSize', 'Aves pesadas')}</label>
- <input type="number" min="1" {...register('sample_size', { valueAsNumber: true })} className={ic} placeholder="50" />
+ <input type="number" inputMode="decimal" min="1" {...register('sample_size', { valueAsNumber: true })} className={ic} placeholder="50" />
  </div>
  </div>
  {renderMFRows(true)}
@@ -761,21 +761,21 @@ export default function OperationFormPage() {
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.receivedTotal', 'Cantidad recibida (aves)')}</label>
- <input type="number" min="1" step="1" {...register('received_total' as any, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="1" step="1" {...register('received_total' as any, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.deadOnArrival', 'Mortalidad al arribo')}</label>
- <input type="number" min="0" step="1" {...register('dead_on_arrival' as any, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" step="1" {...register('dead_on_arrival' as any, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.rejectedOnArrival', 'Rechazo')}</label>
- <input type="number" min="0" step="1" {...register('rejected_on_arrival' as any, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" step="1" {...register('rejected_on_arrival' as any, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  <div>
  {/* `R-168` (`GA-REM-021-C §C.2`): «Muestra tomada» (Rec. §6) es un dato de la recepción, en el campo de evento */}
  <label className="text-xs font-medium text-slate-500">{t('operations.sampleTaken', 'Muestra tomada (aves pesadas)')}</label>
- <input type="number" min="1" step="1" {...register('sample_size', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="1" step="1" {...register('sample_size', { valueAsNumber: true })} className={ic} />
  </div>
  <p className="text-xs text-slate-500">
  {t('operations.reconciliationHint', { placed: totalReceived, dead, rejected, sum: totalReceived + dead + rejected, received })}
@@ -844,11 +844,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
- <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  </div>
@@ -908,11 +908,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.quantity', 'Cantidad')}</label>
- <input type="number" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register(`bird_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.avgWeightG', 'Peso prom. (g)')}</label>
- <input type="number" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="0.1" min="0" {...register(`bird_movements.${i}.avg_weight`, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  </div>
@@ -1035,11 +1035,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.densityBirdsM2', 'Densidad (aves/m²)')}</label>
- <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
+ <input type="number" inputMode="decimal" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="22" />
+ <input type="number" inputMode="decimal" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="22" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
@@ -1061,7 +1061,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
- <input type="number" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
+ <input type="number" inputMode="decimal" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
  </div>
  </div>
  </div>
@@ -1083,7 +1083,7 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.waterLiters', 'Consumo de agua (L)')}</label>
- <input type="number" step="0.1" min="0.1" {...register('water_liters', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="0.1" min="0.1" {...register('water_liters', { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  )
@@ -1107,17 +1107,17 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
  </div>
  </div>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
  <div>
  <label className={lc}>{t('operations.quantityKg', 'Cantidad (kg)')}</label>
- <input type="number" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.sacks', 'Sacos / bultos')}</label>
- <input type="number" min="0" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register('feed_movements.0.sacks_count', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.sapOrder', 'Orden SAP')}</label>
@@ -1162,14 +1162,14 @@ export default function OperationFormPage() {
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
  {eventType === 'egg_collection' && (
  <div className="flex flex-col gap-3">
  <label className="text-sm font-medium text-slate-600">{t('operations.avgWeight', 'Peso prom. huevo (g)')}</label>
- <input type="number" step="0.1" min="0" {...register('egg_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="60.0" />
+ <input type="number" inputMode="decimal" step="0.1" min="0" {...register('egg_movements.0.avg_weight', { valueAsNumber: true })} className={ic} placeholder="60.0" />
  </div>
  )}
  </div>
@@ -1224,11 +1224,11 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.eggDensity', 'Huevos por bandeja')}</label>
- <input type="number" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
+ <input type="number" inputMode="decimal" step="0.1" min="0" {...register('extra_data.transport_density' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.temperature', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="18" />
+ <input type="number" inputMode="decimal" step="0.1" min="0" max="50" {...register('extra_data.transport_temperature' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="18" />
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.ventilation', 'Ventilación')}</label>
@@ -1250,7 +1250,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-amber-700">{t('operations.durationMin', 'Duración viaje (min)')}</label>
- <input type="number" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
+ <input type="number" inputMode="decimal" min="0" {...register('extra_data.transport_duration_min' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-amber-200 rounded-lg text-sm bg-white" placeholder="30" />
  </div>
  </div>
  </div>
@@ -1272,7 +1272,7 @@ export default function OperationFormPage() {
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
@@ -1312,23 +1312,23 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.quantity', 'Huevos recibidos')}</label>
- <input type="number" min="0" {...register('egg_storage_records.0.eggs_received', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register('egg_storage_records.0.eggs_received', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.tempTransport', 'Temp. transporte (°C)')}</label>
- <input type="number" step="0.1" {...register('egg_storage_records.0.transport_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('egg_storage_records.0.transport_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
  </div>
  <div>
  <label className={lc}>{t('operations.durationTransport', 'Duración transporte (min)')}</label>
- <input type="number" min="0" {...register('egg_storage_records.0.transport_duration_min', { valueAsNumber: true })} className={ic} placeholder="60" />
+ <input type="number" inputMode="decimal" min="0" {...register('egg_storage_records.0.transport_duration_min', { valueAsNumber: true })} className={ic} placeholder="60" />
  </div>
  <div>
  <label className={lc}>{t('operations.storageTemp', 'Temp. almacén (°C)')}</label>
- <input type="number" step="0.1" {...register('egg_storage_records.0.storage_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('egg_storage_records.0.storage_temp_c', { valueAsNumber: true })} className={ic} placeholder="15.0" />
  </div>
  <div>
  <label className={lc}>{t('operations.storageHumidity', 'Humedad almacén (%)')}</label>
- <input type="number" step="0.1" {...register('egg_storage_records.0.storage_humidity_pct', { valueAsNumber: true })} className={ic} placeholder="75" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('egg_storage_records.0.storage_humidity_pct', { valueAsNumber: true })} className={ic} placeholder="75" />
  </div>
  </div>
  </div>
@@ -1369,7 +1369,7 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3">
  <div>
  <label className={lc}>{t('operations.tempC', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" min="0" max="60"
+ <input type="number" inputMode="decimal" step="0.1" min="0" max="60"
  {...register(`house_inspections.${i}.temperature`, { valueAsNumber: true })}
  className={ic} placeholder="28.0" />
  {(() => {
@@ -1380,7 +1380,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.humidityPct', 'Humedad (%)')}</label>
- <input type="number" step="0.1" min="0" max="100"
+ <input type="number" inputMode="decimal" step="0.1" min="0" max="100"
  {...register(`house_inspections.${i}.humidity`, { valueAsNumber: true })}
  className={ic} placeholder="65" />
  {(() => {
@@ -1410,7 +1410,7 @@ export default function OperationFormPage() {
  {/* ── Equipment items per house ── */}
  <div className="bg-slate-50 rounded-lg p-3 space-y-3">
  <label className={lc}>{t('operations.equipmentCount', '¿Cuántos equipos inspeccionar?')}</label>
- <input type="number" min="0" max="20"
+ <input type="number" inputMode="decimal" min="0" max="20"
  {...register(`house_inspections.${i}.equipment_count`, { valueAsNumber: true })}
  className={ic} />
  {Array.from({ length: Math.min(eqCount, 20) }).map((_, j) => (
@@ -1468,11 +1468,11 @@ export default function OperationFormPage() {
  />
  </div>
  {params.map((param, i) => (
- <div key={param.key} className="flex items-center gap-3">
+ <div key={param.key} className="flex flex-wrap items-center gap-3">
  <input type="hidden" {...register(`inspection_details.${i}.parameter`)} defaultValue={param.key} />
- <span className="text-sm text-slate-600 w-44 shrink-0">{param.label}</span>
+ <span className="text-sm text-slate-600 w-full sm:w-44 shrink-0">{param.label}</span>
  {param.numeric ? (
- <input type="number" step="0.1" {...register(`inspection_details.${i}.value`)}
+ <input type="number" inputMode="decimal" step="0.1" {...register(`inspection_details.${i}.value`)}
  className="flex-1 h-11 px-3 border border-slate-300 rounded-lg text-sm focus:border-blue-500 outline-none" placeholder="--" />
  ) : (
  <select {...register(`inspection_details.${i}.status`)}
@@ -1532,7 +1532,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.temp', 'T° (°C)')}</label>
- <input type="number" step="0.1" {...register(`hatchery_params.${i}.temperature`, { valueAsNumber: true })} className={ic} placeholder="37.5" />
+ <input type="number" inputMode="decimal" step="0.1" {...register(`hatchery_params.${i}.temperature`, { valueAsNumber: true })} className={ic} placeholder="37.5" />
  {(() => {
  const v = watch(`hatchery_params.${i}.temperature` as any)
  const [tMin, tMax] = machineType === 'hatcher' ? HATCHER_TEMP_RANGE : INCUBATOR_TEMP_RANGE
@@ -1541,7 +1541,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.humidity', 'H° (%)')}</label>
- <input type="number" step="0.1" min="0" max="100" {...register(`hatchery_params.${i}.humidity`, { valueAsNumber: true })} className={ic} placeholder="56" />
+ <input type="number" inputMode="decimal" step="0.1" min="0" max="100" {...register(`hatchery_params.${i}.humidity`, { valueAsNumber: true })} className={ic} placeholder="56" />
  {(() => {
  const v = watch(`hatchery_params.${i}.humidity` as any)
  const [hMin, hMax] = machineType === 'hatcher' ? HATCHER_HUM_RANGE : INCUBATOR_HUM_RANGE
@@ -1550,7 +1550,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
- <input type="number" step="0.01" min="0" {...register(`hatchery_params.${i}.co2`, { valueAsNumber: true })} className={ic} placeholder="0.50" />
+ <input type="number" inputMode="decimal" step="0.01" min="0" {...register(`hatchery_params.${i}.co2`, { valueAsNumber: true })} className={ic} placeholder="0.50" />
  {(() => {
  const v = watch(`hatchery_params.${i}.co2` as any)
  return <RangeIndicator value={v} min={0} max={0.5} unit="%" />
@@ -1589,19 +1589,19 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.quantityLoaded', 'Cantidad cargada')}</label>
- <input type="number" min="0" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register('hatchery_params.0.quantity_loaded', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.temp', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} className={ic} placeholder="37.5" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} className={ic} placeholder="37.5" />
  </div>
  <div>
  <label className={lc}>{t('operations.humidity', 'Humedad (%)')}</label>
- <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} className={ic} placeholder="55" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} className={ic} placeholder="55" />
  </div>
  <div>
  <label className={lc}>{t('operations.co2', 'CO₂ (%)')}</label>
- <input type="number" step="0.01" {...register('hatchery_params.0.co2', { valueAsNumber: true })} className={ic} placeholder="0.5" />
+ <input type="number" inputMode="decimal" step="0.01" {...register('hatchery_params.0.co2', { valueAsNumber: true })} className={ic} placeholder="0.5" />
  </div>
  <div className="flex items-center gap-2 pt-5">
  <input type="checkbox" id="turning" {...register('hatchery_params.0.turning')}
@@ -1624,7 +1624,7 @@ export default function OperationFormPage() {
  <div className="space-y-4">
  <div>
  <label className={lc}>{t('operations.candlingDay', 'Día de ovoscopía')}</label>
- <input type="number" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="10" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="10" />
  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
  </div>
  <div>
@@ -1634,7 +1634,7 @@ export default function OperationFormPage() {
  <input type="hidden" {...register(`egg_movements.${i}.egg_type`)} defaultValue={key} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register(`egg_movements.${i}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  </div>
@@ -1658,19 +1658,19 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.incubationDay', 'Día de incubación')}</label>
- <input type="number" min="1" max="21" {...register('extra_data.incubation_day' as any, { valueAsNumber: true })} className={ic} placeholder="18" />
+ <input type="number" inputMode="decimal" min="1" max="21" {...register('extra_data.incubation_day' as any, { valueAsNumber: true })} className={ic} placeholder="18" />
  </div>
  <div>
  <label className={lc}>{t('operations.qtyTransferred', 'Cantidad transferida')}</label>
- <input type="number" min="0" {...register('hatchery_params.0.quantity_transferred', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register('hatchery_params.0.quantity_transferred', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.temp', 'Temperatura (°C)')}</label>
- <input type="number" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} className={ic} placeholder="37.0" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('hatchery_params.0.temperature', { valueAsNumber: true })} className={ic} placeholder="37.0" />
  </div>
  <div>
  <label className={lc}>{t('operations.humidity', 'Humedad (%)')}</label>
- <input type="number" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} className={ic} placeholder="68" />
+ <input type="number" inputMode="decimal" step="0.1" {...register('hatchery_params.0.humidity', { valueAsNumber: true })} className={ic} placeholder="68" />
  </div>
  </div>
  </div>
@@ -1696,18 +1696,18 @@ export default function OperationFormPage() {
  <input type="hidden" {...register(`bird_movements.${idx}.sex`)} defaultValue={sex} />
  <span className="text-sm text-slate-700">{label}</span>
  </div>
- <input type="number" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register(`bird_movements.${idx}.quantity`, { valueAsNumber: true })} className={ic} />
  </div>
  ))}
  <p className="text-xs text-slate-500 mt-2">{t('operations.hatchedTotalHint', { total: hatchedTotal })}</p>
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mt-2">
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.chicksHealthy', 'Pollitos sanos')}</label>
- <input type="number" min="0" step="1" {...register('chicks_healthy' as any, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" step="1" {...register('chicks_healthy' as any, { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className="text-xs font-medium text-slate-500">{t('operations.chicksWeak', 'Pollitos débiles')}</label>
- <input type="number" min="0" step="1" {...register('chicks_weak' as any, { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" step="1" {...register('chicks_weak' as any, { valueAsNumber: true })} className={ic} />
  </div>
  </div>
  </div>
@@ -1744,7 +1744,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className="text-xs font-medium text-green-700">{t('operations.dosePerBird', 'Dosis por ave')}</label>
- <input type="number" step="0.001" {...register('dosage_per_bird' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="0.2" />
+ <input type="number" inputMode="decimal" step="0.001" {...register('dosage_per_bird' as any, { valueAsNumber: true })} className="w-full h-10 px-2 border border-green-200 rounded-lg text-sm bg-white" placeholder="0.2" />
  {errors.dosage_per_bird && <p className="text-red-500 text-xs mt-1">{t('operations.dosageInvalid', 'La dosis debe ser un número ≥ 0')}</p>}
  </div>
  </div>
@@ -1793,20 +1793,20 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.finalPopulation', 'Población final')}</label>
- <input type="number" min="0" {...register('bird_movements.0.quantity', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" min="0" {...register('bird_movements.0.quantity', { valueAsNumber: true })} className={ic} />
  <input type="hidden" {...register('bird_movements.0.sex')} defaultValue="mixed" />
  </div>
  <div>
  <label className={lc}>{t('operations.avgWeight', 'Peso final prom. (g)')}</label>
- <input type="number" step="1" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} />
+ <input type="number" inputMode="decimal" step="1" {...register('bird_movements.0.avg_weight', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
  <label className={lc}>{t('operations.fcr', 'FCR (Conversión alimenticia)')}</label>
- <input type="number" step="0.001" {...register('extra_data.fcr' as any, { valueAsNumber: true })} className={ic} placeholder="2.000" />
+ <input type="number" inputMode="decimal" step="0.001" {...register('extra_data.fcr' as any, { valueAsNumber: true })} className={ic} placeholder="2.000" />
  </div>
  <div>
  <label className={lc}>{t('operations.totalMortality', 'Mortalidad total (%)')}</label>
- <input type="number" step="0.01" {...register('extra_data.mortality_pct' as any)} className={ic} />
+ <input type="number" inputMode="decimal" step="0.01" {...register('extra_data.mortality_pct' as any)} className={ic} />
  </div>
  </div>
  </div>
@@ -1844,19 +1844,19 @@ export default function OperationFormPage() {
        </div>
        <div>
          <label className={lc}>{t('operations.importPurchasedTotal', 'Cantidad comprada')}</label>
-         <input type="number" min="1" {...register('extra_data.import_plan.purchased_total' as any, { valueAsNumber: true })} className={ic} />
+         <input type="number" inputMode="decimal" min="1" {...register('extra_data.import_plan.purchased_total' as any, { valueAsNumber: true })} className={ic} />
        </div>
        <div>
          <label className={lc}>{t('operations.importShippedTotal', 'Cantidad embarcada')}</label>
-         <input type="number" min="1" {...register('extra_data.import_plan.shipped_total' as any, { valueAsNumber: true })} className={ic} />
+         <input type="number" inputMode="decimal" min="1" {...register('extra_data.import_plan.shipped_total' as any, { valueAsNumber: true })} className={ic} />
        </div>
        <div>
          <label className={lc}>{t('operations.importReceivedTotal', 'Cantidad recibida')}</label>
-         <input type="number" min="0" {...register('extra_data.import_plan.received_total' as any, { valueAsNumber: true })} className={ic} />
+         <input type="number" inputMode="decimal" min="0" {...register('extra_data.import_plan.received_total' as any, { valueAsNumber: true })} className={ic} />
        </div>
        <div>
          <label className={lc}>{t('operations.importTransitMortality', 'Mortalidad en traslado')}</label>
-         <input type="number" min="0" {...register('extra_data.import_plan.transit_mortality' as any, { valueAsNumber: true })} className={ic} />
+         <input type="number" inputMode="decimal" min="0" {...register('extra_data.import_plan.transit_mortality' as any, { valueAsNumber: true })} className={ic} />
        </div>
        <div>
          <label className={lc}>{t('operations.importDepartureDate', 'Fecha de salida (origen)')}</label>
@@ -1872,7 +1872,7 @@ export default function OperationFormPage() {
        </div>
        <div>
          <label className={lc}>{t('operations.importQuarantineDays', 'Cuarentena (días)')}</label>
-         <input type="number" min="0" {...register('extra_data.import_plan.quarantine_days' as any, { valueAsNumber: true })} className={ic} placeholder="21" />
+         <input type="number" inputMode="decimal" min="0" {...register('extra_data.import_plan.quarantine_days' as any, { valueAsNumber: true })} className={ic} placeholder="21" />
        </div>
        <div>
          <label className={lc}>{t('operations.importQuarantineEndDate', 'Cuarentena (fecha fin)')}</label>

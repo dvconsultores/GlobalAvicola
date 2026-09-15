@@ -179,7 +179,7 @@ export default function ApprovalPanel() {
  {/* Batch Actions Bar */}
  {/* `R-208`: la barra depende de `approvals:*` — `review:review` no autoriza una aprobación. */}
  {(can({ permission: 'approvals:approve' }) || can({ permission: 'approvals:reject' })) && selectedCount > 0 && (
- <div className="bg-[#1E3A5F] text-white rounded-xl px-5 py-3 mb-4 flex items-center justify-between shadow-sm">
+ <div className="bg-[#1E3A5F] text-white rounded-xl px-5 py-3 mb-4 flex flex-wrap items-center justify-between gap-2 shadow-sm">
  <span className="text-sm font-semibold">{selectedCount} {t('review.selectedEvents', 'seleccionados')}</span>
  <div className="flex gap-2">
  {can({ permission: 'approvals:approve' }) && <button onClick={handleBatchApprove}

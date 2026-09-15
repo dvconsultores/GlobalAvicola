@@ -326,7 +326,7 @@ export default function DashboardPage() {
  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
  {t('dashboard.todayMetrics', 'Hoy')}
  </h2>
- <div className="grid grid-cols-3 gap-2.5">
+ <div className="grid grid-cols-3 gap-2.5 max-[419px]:grid-cols-1">
  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
  <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">

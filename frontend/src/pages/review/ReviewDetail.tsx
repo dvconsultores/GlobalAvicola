@@ -254,7 +254,7 @@ export default function ReviewDetail() {
  className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition">
  ✓ {t('review.completeReview')}
  </button>
- <div className="flex gap-2 items-center">
+ <div className="flex flex-wrap gap-2 items-center">
  <input type="text" placeholder={t('review.observationsPlaceholder')} value={obs} onChange={e => setObs(e.target.value)}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-48" />
  <button onClick={() => handleAction('return')}
@@ -275,7 +275,7 @@ export default function ReviewDetail() {
  className="bg-emerald-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-emerald-700 transition">
  ✓ {t('review.approve')}
  </button>}
- <div className="flex gap-2 items-center">
+ <div className="flex flex-wrap gap-2 items-center">
  <input type="text" placeholder={t('review.rejectionReason')} value={obs} onChange={e => setObs(e.target.value)}
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-48" />
  {can({ permission: 'approvals:reject' }) && <button onClick={() => handleAction('reject')}
