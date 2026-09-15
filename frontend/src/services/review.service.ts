@@ -14,9 +14,20 @@ export interface ReviewBatch {
 export interface ApprovalAction {
   id: number
   event_id: number
-  action_type: string
-  user_id: number
-  observations?: string
+  /** `R-220` · D2 (C#34): enumerado tipado (el `string` laxo ocultaba los valores reales). */
+  action_type:
+    | 'started'
+    | 'review_started'
+    | 'completed'
+    | 'review_completed'
+    | 'returned'
+    | 'approved'
+    | 'rejected'
+    | 'batch_created'
+    | 'corrected'
+    | (string & {})
+  user_id?: number | null
+  observations?: string | null
   created_at: string
 }
 

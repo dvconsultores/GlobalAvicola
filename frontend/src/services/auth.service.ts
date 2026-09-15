@@ -11,6 +11,10 @@ export interface TokenResponse {
   token_type: string
 }
 
+/**
+ * `R-220` · D2 (C#34): alineado a `UserRead` del backend — faltaban `is_super_admin`,
+ * `company_name` y `created_at` (el laxo obligaba a `as any` en los consumidores).
+ */
 export interface UserResponse {
   id: number
   username: string
@@ -22,7 +26,10 @@ export interface UserResponse {
   company_id: number
   view_type: 'web' | 'mobile'
   is_active: boolean
+  is_super_admin: boolean
+  company_name?: string | null
   last_login?: string
+  created_at?: string
 }
 
 export interface RoleResponse {

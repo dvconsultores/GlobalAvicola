@@ -38,7 +38,10 @@ import LotFormPage from './pages/lots/LotFormPage'
 import ProfilePage from './pages/users/ProfilePage'
 import { STAGE_PATH_MAP } from './data/processCatalog'
 
-function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNode; roles?: string[]; webOnly?: boolean }) {
+// `R-220` · D5 (F G-26): el prop `roles` era un chequeo MUERTO (comparaba contra una
+// cadena vacía/'super_admin' fabricada y nadie lo pasaba) — retirado; la política va por
+// capacidad (`CapabilityRoute`), nunca por nombre de rol.
+function ProtectedRoute({ children, webOnly }: { children: React.ReactNode; webOnly?: boolean }) {
  const { t } = useTranslation()
  const { isAuthenticated, isLoading, user } = useAuthStore()
  
@@ -56,13 +59,6 @@ function ProtectedRoute({ children, roles, webOnly }: { children: React.ReactNod
  return <Navigate to="/" replace />
  }
  
- // Role check: if roles specified, user must have one of them (or be super admin)
- if (roles && roles.length > 0) {
- const userRoleName = user?.role_id ? '' : 'super_admin'
- if (!roles.includes(userRoleName) && !user?.is_super_admin) {
- return <Navigate to="/" replace />
- }
- }
  return <>{children}</>
 }
 

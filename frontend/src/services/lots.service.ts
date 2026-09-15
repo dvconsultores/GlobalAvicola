@@ -13,7 +13,6 @@ export interface LotResponse {
   genetic_line_id?: number
   breed_id?: number
   current_phase?: string
-  sap_reference?: string
 }
 
 export interface KpiResponse {
