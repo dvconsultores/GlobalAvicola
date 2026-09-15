@@ -1,5 +1,11 @@
 # GA-REM-022 · MICRO-TRANCHE WAVE C (KPI P1) — SPEC
 
+Estado: **IMPLEMENTATION_PROVISIONAL_PENDING_OWNER_DECISION** — implementación
+local (`2385688` RED · `80b2cb9` IMPL), evidencia **PROVISIONAL**, **no
+certificada**; sujeta a la decisión del propietario en
+`GA_OWNER_GATE_WAVE_C_MATRIX.md`. No alterar esta clasificación sin decisión
+explícita.
+
 Derivada de `AOD-08/AOD-10` (decisión de actor provisional
 `GA_OWNER_DECISION_AOD10_ACTING_WAVE_C.md`, revisable). Corrige los dos
 hallazgos P1 con corrupción de valor operacional:

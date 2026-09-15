@@ -1,8 +1,9 @@
 # T12 · RECERTIFICACIÓN E2E — BASELINE PRE-DECISIÓN WAVE C
 
-Fecha: 2026-09-15 · Estado: **BASELINE VERDE · CLOSURE BLOQUEADO POR OWNER GATE
-`AOD-08`/`AOD-10`** (Encuesta `SCHEDULED (antes de T12)` en
-`GA_OWNER_GATE_QUEUE.md:97`).
+Fecha: 2026-09-15 · Estado: **IN_PROGRESS / BLOCKED_OWNER_DECISION_WAVE_C** —
+el baseline E2E 111/111 permanece válido como *baseline técnico*; el cierre de
+T12 espera la decisión del propietario sobre `GA_OWNER_GATE_WAVE_C_MATRIX.md`)
+(`AOD-08`/`AOD-10` en `GA_OWNER_GATE_QUEUE.md` = `BLOCKED_OWNER_DECISION`).
 
 ## 1 · Corrida de recertificación (producto remediado T1–T14)
 

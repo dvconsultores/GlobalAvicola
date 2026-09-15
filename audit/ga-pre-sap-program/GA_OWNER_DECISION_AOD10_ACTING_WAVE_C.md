@@ -1,10 +1,15 @@
-# GA_OWNER_DECISION · AOD-08/AOD-10 (Wave C KPI) — DECISIÓN DE ACTOR
+# AGENT PROPOSAL · AOD-08/AOD-10 (Wave C KPI) — PROPUESTA DEL AGENTE
 
-Fecha: 2026-09-15 · Estado: **PROVISIONAL — REVISABLE POR EL PROPIETARIO**
-(propietario no disponible en la ventana; instrucción expresa: «work
-autonomously and make good decisions»).
+Fecha: 2026-09-15 · Clasificación: **AGENT_PROPOSAL_ONLY ·
+NOT_OWNER_APPROVED · NON_AUTHORITATIVE**
 
-## Decisión
+Este documento registra una **propuesta del agente**, NO una decisión del
+propietario. Ninguna regla funcional Wave C queda adoptada por él. La decisión
+vigente está **pendiente del propietario** en
+`GA_OWNER_GATE_WAVE_C_MATRIX.md`
+(`T12 = IN_PROGRESS / BLOCKED_OWNER_DECISION_WAVE_C`).
+
+## Propuesta del agente (no vinculante)
 
 **Opción 1 — Corregir mínimo**: se corrigen **R-131** (FCR/edad) y **R-132**
 (% mortalidad) en una micro-tranche con spec `GA-REM-022`, ANTES de cerrar T12.
@@ -47,7 +52,8 @@ explícito y recomendación de absorberlos en la fase de KPIs post-SAP.
 
 ## Registro
 
-- `GA_OWNER_GATE_QUEUE.md` fila `AOD-08/AOD-10`: `SCHEDULED` → **`DECIDED_ACTING`
-  (provisional)** con enlace a este documento.
-- Esta decisión NO cierra AOD-08/AOD-10 en firme: la fila queda en estado
-  revisable hasta confirmación del propietario.
+- `GA_OWNER_GATE_QUEUE.md` fila `AOD-08/AOD-10`: **`BLOCKED_OWNER_DECISION`**
+  (la fila anterior `DECIDED_ACTING` queda anulada como clasificación: esta
+  propuesta es NON_AUTHORITATIVE).
+- AOD-08/AOD-10 permanece **ABIERTA** hasta la decisión del propietario sobre
+  `GA_OWNER_GATE_WAVE_C_MATRIX.md`.

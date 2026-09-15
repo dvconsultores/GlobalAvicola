@@ -1,0 +1,286 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=60 (55 + alembic_version) · head en BD=c8d9e0f1a2b3 · head en código=c8d9e0f1a2b3
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+testpaths: tests
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 1480 items
+
+tests/security/test_multitenant_isolation.py ............                [  0%]
+tests/test_access_administration.py ................                     [  1%]
+tests/test_areas.py .....                                                [  2%]
+tests/test_audit_coverage.py ......                                      [  2%]
+tests/test_audit_query.py ...........                                    [  3%]
+tests/test_audit_reports.py ......                                       [  3%]
+tests/test_auth.py .......                                               [  4%]
+tests/test_birth_classification.py ......                                [  4%]
+tests/test_business_unit_admin.py ...................................... [  7%]
+.                                                                        [  7%]
+tests/test_business_unit_guard.py .........................              [  8%]
+tests/test_business_units.py ...............................             [ 11%]
+tests/test_clean_baseline.py ..................                          [ 12%]
+tests/test_company_catalog.py ...........                                [ 13%]
+tests/test_corrections.py ..................                             [ 14%]
+tests/test_edit_cancel_balance.py ................                       [ 15%]
+tests/test_edit_validation_parity.py .......                             [ 15%]
+tests/test_egg_incubation_concurrency.py .......                         [ 16%]
+tests/test_egg_type_availability.py .........                            [ 16%]
+tests/test_environment_guard.py .........................                [ 18%]
+tests/test_f01d_filas_vacias.py .....                                    [ 18%]
+tests/test_full_workflow_audit.py .......................                [ 20%]
+tests/test_ga_rem_003_ac04_logout_revocation.py .......                  [ 20%]
+tests/test_ga_rem_022_wave_c_kpi.py ...                                  [ 21%]
+tests/test_ga_req_061_cutover_c1_schema.py ..                            [ 21%]
+tests/test_ga_req_061_cutover_c2_lifecycle.py .....                      [ 21%]
+tests/test_ga_req_061_cutover_c3_lifecycle.py ....                       [ 21%]
+tests/test_ga_req_061_cutover_c4_apply.py ....                           [ 22%]
+tests/test_ga_req_061_cutover_c5_reporting.py ....                       [ 22%]
+tests/test_ga_req_061_cutover_c6_corrections.py .....                    [ 22%]
+tests/test_ga_req_061_cutover_c7_controls.py ......                      [ 23%]
+tests/test_ga_req_061_cutover_c7_matrix.py .........                     [ 23%]
+tests/test_genetic_curves.py ................                            [ 24%]
+tests/test_grandparent_import.py ..................                      [ 26%]
+tests/test_grant_candidates.py ..............                            [ 27%]
+tests/test_handoff_contract.py .............                             [ 27%]
+tests/test_internal_reversal.py ......................                   [ 29%]
+tests/test_kpi_hatchery.py .......                                       [ 29%]
+tests/test_kpi_scope.py ...............                                  [ 30%]
+tests/test_lineage_cancel_move.py .......                                [ 31%]
+tests/test_lot_area_eligibility.py ...........                           [ 32%]
+tests/test_lot_area_ownership.py ......                                  [ 32%]
+tests/test_lot_close_approval.py .................                       [ 33%]
+tests/test_lot_closure.py ........                                       [ 34%]
+tests/test_lot_planned_close.py ..............                           [ 35%]
+tests/test_lot_row_scope.py .....................                        [ 36%]
+tests/test_lot_start_date.py ......                                      [ 36%]
+tests/test_lots_bu_enforcement.py ............................           [ 38%]
+tests/test_master_management.py ...........                              [ 39%]
+tests/test_master_reference_tenancy.py ..........................        [ 41%]
+tests/test_master_tenant_isolation.py ................                   [ 42%]
+tests/test_masters.py .......                                            [ 42%]
+tests/test_migration_bu_catalog.py ......                                [ 43%]
+tests/test_mortality.py ..................                               [ 44%]
+tests/test_multi_company.py .....                                        [ 44%]
+tests/test_multicompany_isolation.py ............                        [ 45%]
+tests/test_mutation_guard.py ......                                      [ 46%]
+tests/test_notification_recipients.py ..............                     [ 47%]
+tests/test_notifications.py ...........                                  [ 47%]
+tests/test_od14_productive_surfaces.py ................................. [ 50%]
+..                                                                       [ 50%]
+tests/test_od16_global_read_boundary.py ...                              [ 50%]
+tests/test_opening_balance.py ............                               [ 51%]
+tests/test_operations.py ............                                    [ 51%]
+tests/test_operations_bu_enforcement.py ................................ [ 54%]
+........                                                                 [ 54%]
+tests/test_p013_password.py ...........                                  [ 55%]
+tests/test_p014_persistence.py ........................                  [ 57%]
+tests/test_p112_audit_single_producer.py ........                        [ 57%]
+tests/test_pending_classification.py ................................... [ 59%]
+                                                                         [ 59%]
+tests/test_population_invariant.py .....................                 [ 61%]
+tests/test_purchase_order_receipt.py .......                             [ 61%]
+tests/test_r153_import_lot_auto.py ...........                           [ 62%]
+tests/test_r184_ipe_date_semantics.py ..........                         [ 63%]
+tests/test_r186_g05_date_semantics.py ...........                        [ 63%]
+tests/test_r187_ipe_od22_scale.py .............                          [ 64%]
+tests/test_r188_bu_lifecycle.py ..........                               [ 65%]
+tests/test_r190_br08_contract.py ....                                    [ 65%]
+tests/test_r191_lot_phase_transition.py .........                        [ 66%]
+tests/test_r192_lot_close_after_reversal.py ...................          [ 67%]
+tests/test_r193_oc_limit_after_reversal.py .....                         [ 68%]
+tests/test_r194_hatchery_controls.py .....                               [ 68%]
+tests/test_r196_masters_create_context.py ...                            [ 68%]
+tests/test_r197_review_queue_contract.py ..........                      [ 69%]
+tests/test_r198_evidences_contract.py .......                            [ 69%]
+tests/test_r199_global_authority_fabrication.py ............             [ 70%]
+tests/test_r200_refresh_token_as_access.py .........                     [ 71%]
+tests/test_r201_sap_no_context.py .......                                [ 71%]
+tests/test_r202_password_reset_scope.py .....                            [ 71%]
+tests/test_r203_lot_reference_tenancy.py ......                          [ 72%]
+tests/test_r204_unit_scope_aggregates.py ......                          [ 72%]
+tests/test_r206_optional_tolerance.py ......                             [ 73%]
+tests/test_r208_batch_approval_authority.py ....                         [ 73%]
+tests/test_r209_sap_document_ref_contract.py ..                          [ 73%]
+tests/test_r210_weight_evaluation_grams.py ....                          [ 73%]
+tests/test_r211_house_capacity_rows.py ....                              [ 74%]
+tests/test_r213_me_email_tolerance.py ....                               [ 74%]
+tests/test_r216_lots_by_type_contract.py ..                              [ 74%]
+tests/test_r218_weekly_aggregate.py ...                                  [ 74%]
+tests/test_r220_a18_egg_storage_lot.py ..                                [ 74%]
+tests/test_r220_a8_totals.py ..                                          [ 75%]
+tests/test_r220_catalogo_eventos.py .                                    [ 75%]
+tests/test_r221_unit_derivation_no_lot.py .....                          [ 75%]
+tests/test_r26_error_contract.py .........                               [ 76%]
+tests/test_rbac.py .....................                                 [ 77%]
+tests/test_reception_lineage.py .....                                    [ 77%]
+tests/test_reception_reconciliation.py ..........                        [ 78%]
+tests/test_reception_weight_range.py ........                            [ 78%]
+tests/test_reversal_role_matrix.py .....                                 [ 79%]
+tests/test_reversal_role_migration.py ...                                [ 79%]
+tests/test_review.py .......                                             [ 80%]
+tests/test_review_bu_enforcement.py .....                                [ 80%]
+tests/test_review_decision_concurrency.py ........                       [ 80%]
+tests/test_role_administration.py .......                                [ 81%]
+tests/test_role_tenancy.py ............                                  [ 82%]
+tests/test_runtime_startup.py ssssssssssssss                             [ 83%]
+tests/test_sap.py .........                                              [ 83%]
+tests/test_sap_transversal.py ................                           [ 84%]
+tests/test_security_regression.py ...............                        [ 85%]
+tests/test_seed_email_domains.py ..                                      [ 85%]
+tests/test_segregation_r143.py ......                                    [ 86%]
+tests/test_session_payload.py ................                           [ 87%]
+tests/test_smoke.py ..........                                           [ 88%]
+tests/test_state_continuity.py ........................                  [ 89%]
+tests/test_submovement_structural_tenancy.py ...........                 [ 90%]
+tests/test_time_determinism.py ..........                                [ 91%]
+tests/test_traceability.py ....                                          [ 91%]
+tests/test_traceability_ownership.py .........                           [ 92%]
+tests/test_transaction_boundary.py ............                          [ 92%]
+tests/test_upgrade_path.py sssssssssssssssssssssssssssssssssss           [ 95%]
+tests/test_user_tenant_isolation.py ..................                   [ 96%]
+tests/test_usuarios_de_revision.py .....                                 [ 96%]
+tests/test_water_capture.py ................                             [ 97%]
+tests/test_weight_alert.py ........                                      [ 98%]
+tests/test_weight_curve_evaluation.py ..............                     [ 99%]
+tests/test_weight_evaluation_endpoint.py ..........                      [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+tests/test_access_administration.py::test_s06_el_rol_sembrado_tiene_exactamente_los_cuatro_permisos
+  tests/test_access_administration.py:324: PytestWarning: The test <Function test_s06_el_rol_sembrado_tiene_exactamente_los_cuatro_permisos> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_s06_el_rol_sembrado_tiene_exactamente_los_cuatro_permisos():
+
+tests/test_access_administration.py::test_s07_el_supervisor_no_recibe_permisos_de_administracion_de_acceso
+  tests/test_access_administration.py:348: PytestWarning: The test <Function test_s07_el_supervisor_no_recibe_permisos_de_administracion_de_acceso> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_s07_el_supervisor_no_recibe_permisos_de_administracion_de_acceso():
+
+tests/test_company_catalog.py::test_t10_ac20_ac21_sin_migracion_y_sin_conector
+  tests/test_company_catalog.py:255: PytestWarning: The test <Function test_t10_ac20_ac21_sin_migracion_y_sin_conector> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_t10_ac20_ac21_sin_migracion_y_sin_conector():
+
+tests/test_company_catalog.py::test_t10_ac20_ac21_sin_migracion_y_sin_conector
+tests/test_population_invariant.py::test_ac14_sin_migracion_ni_rutas_nuevas
+tests/test_smoke.py::test_humo_10_esquema_al_dia
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/alembic/config.py:612: DeprecationWarning: No path_separator found in configuration; falling back to legacy splitting on spaces, commas, and colons for prepend_sys_path.  Consider adding path_separator=os to Alembic config.
+    util.warn_deprecated(
+
+tests/test_ga_req_061_cutover_c2_lifecycle.py::test_c2_template_version_no_soportada
+  /home/maria/Proyectos/GlobalAvicola/backend/app/cutover/router.py:39: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await CutoverService(db, current_user).subir_y_validar(
+
+tests/test_ga_req_061_cutover_c2_lifecycle.py::test_c2_plantilla_descargable_y_cargable
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/fastapi/routing.py:344: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+tests/test_ga_req_061_cutover_c4_apply.py::test_c4_duplicado_en_lote_rollback_total
+tests/test_ga_req_061_cutover_c7_matrix.py::test_c7_red22_colision_legacy_code_en_batch
+  /home/maria/Proyectos/GlobalAvicola/backend/app/cutover/router.py:81: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await CutoverService(db, current_user).aplicar(batch_id)
+
+tests/test_population_invariant.py::test_ac14_sin_migracion_ni_rutas_nuevas
+  tests/test_population_invariant.py:389: PytestWarning: The test <Function test_ac14_sin_migracion_ni_rutas_nuevas> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_ac14_sin_migracion_ni_rutas_nuevas():
+
+tests/test_r187_ipe_od22_scale.py::test_r187_ac25_matematica_independiente
+  tests/test_r187_ipe_od22_scale.py:301: PytestWarning: The test <Function test_r187_ac25_matematica_independiente> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_r187_ac25_matematica_independiente():
+
+tests/test_r199_global_authority_fabrication.py::test_r199_06_modulo_fuera_de_catalogo_es_422
+  /home/maria/Proyectos/GlobalAvicola/backend/app/auth/service.py:770: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    self._validar_permisos(data.permissions or [],
+
+tests/test_r201_sap_no_context.py::test_r201_05_global_situada_opera_su_empresa
+tests/test_r201_sap_no_context.py::test_r201_06_actor_de_empresa_intacto
+  sys:1: SAWarning: fully NULL primary key identity cannot load any object.  This condition may raise an error in a future release.
+
+tests/test_reversal_role_matrix.py::test_rev_r01_r02_el_supervisor_avicola_solicita_y_lee_reversos
+  tests/test_reversal_role_matrix.py:56: PytestWarning: The test <Function test_rev_r01_r02_el_supervisor_avicola_solicita_y_lee_reversos> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_rev_r01_r02_el_supervisor_avicola_solicita_y_lee_reversos():
+
+tests/test_reversal_role_matrix.py::test_rev_r03_r04_la_contraloria_lee_y_no_solicita
+  tests/test_reversal_role_matrix.py:62: PytestWarning: The test <Function test_rev_r03_r04_la_contraloria_lee_y_no_solicita> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_rev_r03_r04_la_contraloria_lee_y_no_solicita():
+
+tests/test_reversal_role_matrix.py::test_rev_r05_r06_acceso_y_operador_no_reciben_reverso
+  tests/test_reversal_role_matrix.py:68: PytestWarning: The test <Function test_rev_r05_r06_acceso_y_operador_no_reciben_reverso> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_rev_r05_r06_acceso_y_operador_no_reciben_reverso():
+
+tests/test_reversal_role_matrix.py::test_rev_r07_nadie_gana_comodin_ni_autoridad_ajena
+  tests/test_reversal_role_matrix.py:76: PytestWarning: The test <Function test_rev_r07_nadie_gana_comodin_ni_autoridad_ajena> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_rev_r07_nadie_gana_comodin_ni_autoridad_ajena():
+
+tests/test_sap_transversal.py::test_la_excepcion_sap_esta_declarada_y_no_puede_crecer_en_silencio
+  tests/test_sap_transversal.py:379: PytestWarning: The test <Function test_la_excepcion_sap_esta_declarada_y_no_puede_crecer_en_silencio> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_la_excepcion_sap_esta_declarada_y_no_puede_crecer_en_silencio():
+
+tests/test_sap_transversal.py::test_las_rutas_de_configuracion_sap_quedan_fuera_de_la_excepcion
+  tests/test_sap_transversal.py:402: PytestWarning: The test <Function test_las_rutas_de_configuracion_sap_quedan_fuera_de_la_excepcion> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_las_rutas_de_configuracion_sap_quedan_fuera_de_la_excepcion():
+
+tests/test_sap_transversal.py::test_no_existe_una_funcion_generica_de_salto_de_alcance
+  tests/test_sap_transversal.py:411: PytestWarning: The test <Function test_no_existe_una_funcion_generica_de_salto_de_alcance> is marked with '@pytest.mark.asyncio' but it is not an async function. Please remove the asyncio mark. If the test is not marked explicitly, check for global marks applied via 'pytestmark'.
+    def test_no_existe_una_funcion_generica_de_salto_de_alcance():
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========== 1431 passed, 49 skipped, 23 warnings in 1273.66s (0:21:13) ==========
