@@ -362,7 +362,7 @@ export default function DashboardPage() {
  {visibleGroups.length > 0 && (
  <div className="space-y-2">
  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
- {t('process.hub.title', 'Procesos')}
+ {t('dashboard.processes', 'Procesos')}
  </h2>
  <div className="space-y-2.5">
  {visibleGroups.map((group) => {

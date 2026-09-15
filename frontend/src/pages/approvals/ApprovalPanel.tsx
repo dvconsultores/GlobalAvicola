@@ -344,7 +344,7 @@ export default function ApprovalPanel() {
  onClick={() => setPage(p => p - 1)}
  className="px-4 py-2 rounded-lg text-sm font-semibold border border-slate-300 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed transition"
  >
- ← {t('common.back', 'Anterior')}
+ ← {t('common.prev', 'Anterior')}
  </button>
  <span className="text-sm font-medium text-slate-500">
  {page + 1} / {Math.ceil(total / limit)}

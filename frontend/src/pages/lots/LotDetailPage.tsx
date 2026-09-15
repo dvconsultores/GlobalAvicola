@@ -19,6 +19,10 @@ const STATUS_COLORS: Record<string, string> = {
 }
 
 
+const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
+
+// `R-220` · C1 (F G-07): los registros recientes muestran el evento traducido.
+
 export default function LotDetailPage() {
  const can = useCan()
  const { t } = useTranslation()
@@ -336,7 +340,7 @@ export default function LotDetailPage() {
  {events.slice(0, 15).map((ev: any) => (
  <div key={ev.id} className="flex items-center justify-between text-sm py-2 border-b border-slate-50 last:border-0">
  <div>
- <span className="font-medium text-slate-700">{ev.event_type}</span>
+ <span className="font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
  <span className="text-slate-400 ml-2">{ev.event_date}</span>
  </div>
  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${

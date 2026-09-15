@@ -65,7 +65,9 @@
     "max": "Máx",
     "confirmSignature": "Firmar",
     "options": "opciones",
-    "pending": "Pendiente"
+    "pending": "Pendiente",
+    "prev": "Anterior",
+    "viewDetail": "Ver detalle"
   },
   "ui": {
     "filterPanel": {
@@ -139,11 +141,10 @@
     "settings": "Configuración",
     "profile": "Perfil",
     "register": "Registrar",
-    "myPending": "Mis Pendientes",
+    "myPending": "Mis pendientes",
     "menu": "Menú",
     "poultry": "Gestión Avícola",
     "operationsHistory": "Historial",
-    "myPending": "Mis pendientes",
     "grandparent": "Progenitoras",
     "gpRearing": "Cría",
     "gpProduction": "Producción",
@@ -477,7 +478,8 @@
     "quickActions": "Acciones Rápidas",
     "hasPendingCorrections": "Tienes correcciones pendientes",
     "checkAndReview": "Revisa tus operaciones rechazadas",
-    "processKpi": "KPIs de procesos avicolas"
+    "processKpi": "KPIs de procesos avicolas",
+    "processes": "Procesos"
   },
   "reports": {
     "mortality": "Mortalidad",
@@ -901,7 +903,8 @@
     "resubmitToReview": "Reenviar a revisión",
     "submittedToReview": "Enviado a revisión",
     "resubmittedToReview": "Reenviado a revisión",
-    "submitError": "No se pudo enviar a revisión"
+    "submitError": "No se pudo enviar a revisión",
+    "stagesGroup": "Etapas de producción"
   },
   "weekly": {
     "weekNumber": "N° Sem",
@@ -958,8 +961,8 @@
     "status": "Estado",
     "lotCode": "Código de Lote",
     "transitionToProduction": "Iniciar Producción",
- "transitionSuccess": "Fase de producción iniciada",
- "phaseAlreadyActive": "El lote ya está en esa fase",
+    "transitionSuccess": "Fase de producción iniciada",
+    "phaseAlreadyActive": "El lote ya está en esa fase",
     "transitionConfirm": "¿Confirmar transición a Fase Producción? El lote pasará a registrar postura de huevos.",
     "transitionError": "Error al transicionar fase",
     "currentPhase": "Fase activa",
@@ -1152,7 +1155,33 @@
     "module": "Módulo",
     "noRoles": "Sin roles",
     "deactivate": "Desactivar rol",
-    "deactivateConfirm": "¿Desactivar este rol?"
+    "deactivateConfirm": "¿Desactivar este rol?",
+    "actions": {
+      "read": "Ver",
+      "create": "Crear",
+      "update": "Editar",
+      "delete": "Eliminar",
+      "review": "Revisar",
+      "correct": "Corregir",
+      "approve": "Aprobar",
+      "reject": "Rechazar",
+      "send_sap": "Enviar a SAP"
+    },
+    "modules": {
+      "approvals": "Aprobaciones",
+      "audit": "Auditoría",
+      "business_units": "Unidades de negocio",
+      "corrections": "Correcciones",
+      "dashboard": "Panel",
+      "lots": "Lotes",
+      "masters": "Maestros",
+      "operations": "Operaciones",
+      "reports": "Reportes",
+      "reversals": "Reversos",
+      "review": "Revisión",
+      "sap": "SAP",
+      "users": "Usuarios"
+    }
   },
   "curves": {
     "title": "Curvas de peso",
@@ -1221,5 +1250,10 @@
   },
   "actions": {
     "readOnlyViewer": "Vista de solo lectura: su rol no permite acciones en esta pantalla."
+  },
+  "sex": {
+    "male": "Macho",
+    "female": "Hembra",
+    "mixed": "Mixto"
   }
 }

@@ -93,7 +93,7 @@ export default function OperationListPage() {
  <input type="number" placeholder={t('review.lot') + ' ID'} value={lotId} onChange={e => setLotId(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm w-28" />
  <select value={eventType} onChange={e => setEventType(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]">
  <option value="">{t('common.allTypes')}</option>
- <optgroup label={t('process.hub.title', 'Etapas de producción')}>
+ <optgroup label={t('operations.stagesGroup', 'Etapas de producción')}>
  {PROCESS_STAGES.map(s => (
  <option key={s.key} value={`__stage__${s.key}`}>
  {t(s.labelKey, s.fallback)}
@@ -113,11 +113,11 @@ export default function OperationListPage() {
  <div className="flex items-center gap-2 mb-1">
  <ClipboardList size={20} className="text-slate-400" aria-hidden="true" />
  <span className="text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
- <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 text-slate-600'}`}>{ev.status}</span>
+ <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 text-slate-600'}`}>{t(`status.${ev.status}`)}</span>
  </div>
  <p className="text-xs text-slate-500">{ev.lot_id ? `${t('review.lot')} #${ev.lot_id}` : t('operations.lotAutoPending', 'Se creará al aprobar')} — {ev.event_date}</p>
  </div>
- <Link to={`/operations/${ev.id}`} className="text-blue-600 text-sm hover:underline ml-3">{t('common.edit')}</Link>
+ <Link to={`/operations/${ev.id}`} className="text-blue-600 text-sm hover:underline ml-3">{t('common.viewDetail', 'Ver detalle')}</Link>
  </div>
  ))}
  </div>

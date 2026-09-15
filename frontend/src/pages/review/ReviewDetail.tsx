@@ -155,7 +155,7 @@ export default function ReviewDetail() {
  </h3>
  {event.bird_movements.map((bm: any, i: number) => (
  <div key={i} className="text-xs text-slate-600 flex gap-3">
- <span>{bm.sex || t('review.mixto')}</span>
+ <span>{bm.sex ? t(`sex.${bm.sex}`, String(bm.sex)) : t('review.mixto')}</span>
  <span>{bm.quantity} {t('review.aves')}</span>
  <span>{bm.avg_weight ? `${bm.avg_weight}g` : ''}</span>
  </div>
@@ -228,7 +228,7 @@ export default function ReviewDetail() {
  </h3>
  {actions.map((a: any) => (
  <div key={a.id} className="text-xs text-slate-600 mb-1">
- <span className="font-medium">{a.action_type}</span>
+ <span className="font-medium">{t(`audit.actions.${a.action_type}`, String(a.action_type))}</span>
  {a.observations && <span className="text-slate-400"> — {a.observations}</span>}
  <span className="text-slate-400 ml-2">{new Date(a.created_at).toLocaleString()}</span>
  </div>

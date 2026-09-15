@@ -65,7 +65,9 @@
     "max": "Max",
     "confirmSignature": "Sign",
     "options": "options",
-    "pending": "Pending"
+    "pending": "Pending",
+    "prev": "Previous",
+    "viewDetail": "View detail"
   },
   "ui": {
     "filterPanel": {
@@ -139,11 +141,10 @@
     "settings": "Settings",
     "profile": "Profile",
     "register": "Register",
-    "myPending": "My Pending",
+    "myPending": "My pending items",
     "menu": "Menu",
     "poultry": "Poultry Management",
     "operationsHistory": "History",
-    "myPending": "My pending items",
     "grandparent": "Grandparents",
     "gpRearing": "Rearing",
     "gpProduction": "Production",
@@ -477,7 +478,8 @@
     "quickActions": "Quick Actions",
     "hasPendingCorrections": "You have pending corrections",
     "checkAndReview": "Review your rejected operations",
-    "processKpi": "Poultry process KPIs"
+    "processKpi": "Poultry process KPIs",
+    "processes": "Processes"
   },
   "reports": {
     "mortality": "Mortality",
@@ -901,7 +903,8 @@
     "resubmitToReview": "Resubmit for review",
     "submittedToReview": "Submitted for review",
     "resubmittedToReview": "Resubmitted for review",
-    "submitError": "Could not submit for review"
+    "submitError": "Could not submit for review",
+    "stagesGroup": "Production stages"
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -958,8 +961,8 @@
     "status": "Status",
     "lotCode": "Lot Code",
     "transitionToProduction": "Start Production",
- "transitionSuccess": "Production phase started",
- "phaseAlreadyActive": "The lot is already in that phase",
+    "transitionSuccess": "Production phase started",
+    "phaseAlreadyActive": "The lot is already in that phase",
     "transitionConfirm": "Confirm transition to Production Phase? The lot will start recording egg laying.",
     "transitionError": "Error transitioning phase",
     "currentPhase": "Active phase",
@@ -1152,7 +1155,33 @@
     "module": "Module",
     "noRoles": "No roles",
     "deactivate": "Deactivate role",
-    "deactivateConfirm": "Deactivate this role?"
+    "deactivateConfirm": "Deactivate this role?",
+    "actions": {
+      "read": "View",
+      "create": "Create",
+      "update": "Edit",
+      "delete": "Delete",
+      "review": "Review",
+      "correct": "Correct",
+      "approve": "Approve",
+      "reject": "Reject",
+      "send_sap": "Send to SAP"
+    },
+    "modules": {
+      "approvals": "Approvals",
+      "audit": "Audit",
+      "business_units": "Business units",
+      "corrections": "Corrections",
+      "dashboard": "Dashboard",
+      "lots": "Lots",
+      "masters": "Masters",
+      "operations": "Operations",
+      "reports": "Reports",
+      "reversals": "Reversals",
+      "review": "Review",
+      "sap": "SAP",
+      "users": "Users"
+    }
   },
   "curves": {
     "title": "Weight curves",
@@ -1221,5 +1250,10 @@
   },
   "actions": {
     "readOnlyViewer": "Read-only view: your role cannot perform actions on this screen."
+  },
+  "sex": {
+    "male": "Male",
+    "female": "Female",
+    "mixed": "Mixed"
   }
 }

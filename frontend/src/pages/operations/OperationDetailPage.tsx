@@ -45,6 +45,11 @@ interface Evidence {
  created_at: string
 }
 
+const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
+
+// `R-220` · C1 (F G-07): el tipo de evento nunca se pinta crudo.
+
+/** Detalle de la operación seleccionada. */
 export default function OperationDetailPage() {
  const can = useCan()
  const { t } = useTranslation()
@@ -254,7 +259,7 @@ export default function OperationDetailPage() {
  </div>
  )}
  <dl className="grid grid-cols-2 gap-4 text-sm">
- <div><dt className="text-slate-500">{t('common.type')}</dt><dd className="font-medium">{event.event_type}</dd></div>
+ <div><dt className="text-slate-500">{t('common.type')}</dt><dd className="font-medium">{getEventLabel(t, event.event_type)}</dd></div>
  <div><dt className="text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
  <div>
  <dt className="text-slate-500">{t('lots.lot')}</dt>
@@ -279,7 +284,7 @@ export default function OperationDetailPage() {
  <Activity size={14} /> {t('review.birdMovements')}
  </h3>
  {event.bird_movements.map((bm: any, i: number) => (
- <div key={i} className="text-xs text-slate-600">{bm.quantity} {t('review.aves')} {bm.sex || ''} {bm.avg_weight ? `· ${bm.avg_weight}g` : ''}</div>
+ <div key={i} className="text-xs text-slate-600">{bm.quantity} {t('review.aves')} {bm.sex ? t(`sex.${bm.sex}`, bm.sex) : ''} {bm.avg_weight ? `· ${bm.avg_weight}g` : ''}</div>
  ))}
  </div>
  )}
@@ -298,7 +303,7 @@ export default function OperationDetailPage() {
  {event.egg_movements?.length > 0 && (
  <div className="mt-4 pt-4 border-t">
  <h3 className="font-semibold text-sm text-slate-600 mb-2">{t('operations.eggs')}</h3>
- {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600">{em.quantity} · {em.egg_type}</div>)}
+ {event.egg_movements.map((em: any, i: number) => <div key={i} className="text-xs text-slate-600">{em.quantity} · {t(`operations.${em.egg_type}`, em.egg_type)}</div>)}
  </div>
  )}
  {/* `R-220` · A6 (C#29): campos que viajan en el contrato y no se pintaban. */}
