@@ -70,6 +70,56 @@ export function serializarParamsDeIncubadora(filas?: any[] | null): any[] {
 }
 
 // ============================================================
+// `R-220` · A17 (B-38/B-39) — campos de EVENTO anclados a la primera fila viva
+// ============================================================
+
+/**
+ * La «Semana» o el «Peso prom.» del evento se capturan UNA vez (fila 0 de la UI), pero el
+ * submit descarta las filas sin cantidad: si la fila 0 cae, el dato declarado se perdía.
+ * Esta canonización re-ancla el valor declarado a la PRIMERA fila superviviente.
+ *
+ * Sin filas, sin valor declarado, o si la primera fila ya trae el campo ⇒ filas intactas
+ * (nunca se inventa contenido).
+ */
+export function anclarCampoEnPrimeraFila<T extends Record<string, any>>(
+  filas: T[],
+  campo: string,
+  valor: unknown,
+): T[] {
+  if (filas.length === 0 || vacio(valor)) return filas
+  const primera = filas[0] as Record<string, unknown>
+  if (!vacio(primera[campo])) return filas
+  return [{ ...primera, [campo]: valor } as T, ...filas.slice(1)]
+}
+
+// ============================================================
+// `R-220` · A16 (B-35 · BR-21) — reglas de nacimiento advertidas en cliente
+// ============================================================
+
+/**
+ * Valida en cliente las reglas de `birth_registration` que el servidor aplica (BR-21):
+ * `mixed` es excluyente con las filas sexadas, y sanos/débiles son obligatorios en la
+ * cadena de incubadora. Devuelve la clave i18n del problema, o `null` si es válido.
+ * El backend sigue siendo la autoridad final.
+ */
+export function validarReglasDeNacimiento(datos: {
+  bird_movements?: Array<{ quantity?: unknown }> | null
+  chicks_healthy?: unknown
+  chicks_weak?: unknown
+} | null | undefined): string | null {
+  const filas = datos?.bird_movements || []
+  const cantidad = (i: number) => Number((filas[i] as any)?.quantity || 0)
+  const hayMixto = cantidad(2) > 0
+  const haySexadas = cantidad(0) > 0 || cantidad(1) > 0
+  if (hayMixto && haySexadas) return 'operations.mixedExclusive'
+  const completos = [datos?.chicks_healthy, datos?.chicks_weak].every(
+    (v) => v !== undefined && v !== null && Number.isFinite(Number(v)),
+  )
+  if (!completos) return 'operations.chicksRequired'
+  return null
+}
+
+// ============================================================
 // `R-206` · vacíos del asistente — «cadena vacía de un opcional» ⇒ ausencia
 // ============================================================
 

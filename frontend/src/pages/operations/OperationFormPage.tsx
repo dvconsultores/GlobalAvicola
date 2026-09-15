@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios } from './operationPayload'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios, anclarCampoEnPrimeraFila, validarReglasDeNacimiento } from './operationPayload'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -452,6 +452,16 @@ export default function OperationFormPage() {
             return
           }
         }
+        // `R-220` · A16 (B-35 · BR-21): reglas de nacimiento advertidas EN CLIENTE — el 400
+        // ya no es la primera fuente de verdad: `mixed` excluyente y sanos/débiles obligatorios.
+        if (data.event_type === 'birth_registration') {
+          const faltaDeNacimiento = validarReglasDeNacimiento(data as any)
+          if (faltaDeNacimiento) {
+            setUbicacionError(faltaDeNacimiento)
+            setSubmitting(false)
+            return
+          }
+        }
         setUbicacionError(null)
         void firstInspectedHouseId
  // Convert per-house inspection rows into inspection_details records with house_id
@@ -493,12 +503,26 @@ export default function OperationFormPage() {
  }
  return m
  }))
+ // `R-220` · A17 (B-38): la «Semana» se captura una vez (fila 0 de la UI); se ancla a la
+ // primera fila superviviente para que no muera con el descarte de filas sin cantidad.
+ const semanaDelEvento = (data.bird_movements?.[0] as any)?.week_number
+ const movimientosAves = anclarCampoEnPrimeraFila(
+ normalizedBirdMovements.filter((m) => (m.quantity ?? 0) > 0),
+ 'week_number',
+ semanaDelEvento,
+ )
 
  // `R-194`: la cadena de incubadora — recepción de huevos y despacho de pollitos son
  // `location_events`: llevan la granja/galpón reales (los del lote incubadora); los demás
  // eventos de la etapa incubadora conservan su mapeo anterior.
  const eventosUbicacionIncubadora = ['egg_reception_hatchery', 'chick_dispatch']
- let movimientosHuevo = (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0)
+ let movimientosHuevo = anclarCampoEnPrimeraFila(
+ (data.egg_movements || []).filter(m => (m.quantity ?? 0) > 0),
+ // `R-220` · A17 (B-39): el «Peso prom.» declarado en la fila fértil viaja anclado a la
+ // primera fila superviviente (mismo criterio que B-38).
+ 'avg_weight',
+ (data.egg_movements?.[0] as any)?.avg_weight,
+ )
  let almacenamiento = serializarAlmacenamientoDeHuevos(data.egg_storage_records)
  if (data.event_type === 'egg_reception_hatchery') {
  // El saldo de incubadora (BR-03) lee `egg_movements[fertile]`: la recepción escribe la
@@ -527,7 +551,7 @@ export default function OperationFormPage() {
  farm_id: data.farm_id ?? ((isHatcheryStage && !eventosUbicacionIncubadora.includes(data.event_type)) ? undefined : derivedFarmId),
  house_id: data.house_id ?? derivedHouseId,
  observations,
- bird_movements: normalizedBirdMovements.filter(m => (m.quantity ?? 0) > 0),
+ bird_movements: movimientosAves,
  egg_movements: movimientosHuevo,
  // `R-189 (F-01d)`: alimento e incubadora también se serializan — el `[{}]` de arranque nunca viaja.
  feed_movements: serializarMovimientosDeAlimento(data.feed_movements),

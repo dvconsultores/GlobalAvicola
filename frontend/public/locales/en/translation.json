@@ -690,6 +690,8 @@
     "eventHouseRequired": "This event requires a house (the lot does not declare one)",
     "cuadreRequired": "Complete the reception reconciliation (received, dead on arrival and rejected)",
     "farmRequired": "This event requires a farm",
+    "mixedExclusive": "Do not mix unsexed chicks with males or females in the same record",
+    "chicksRequired": "Complete healthy and weak chicks (required in the hatchery chain)",
     "receivedTotal": "Received quantity (birds)",
     "deadOnArrival": "Dead on arrival",
     "rejectedOnArrival": "Rejected",

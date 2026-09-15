@@ -690,6 +690,8 @@
     "eventHouseRequired": "Este evento requiere un galpón (el lote no lo declara)",
     "cuadreRequired": "Completa el cuadre de la recepción (recibidas, mortalidad al arribo y rechazo)",
     "farmRequired": "Este evento requiere una granja",
+    "mixedExclusive": "No mezcles pollitos sin sexar con machos o hembras en el mismo registro",
+    "chicksRequired": "Completa los pollitos sanos y débiles (obligatorios en la cadena de incubadora)",
     "receivedTotal": "Cantidad recibida (aves)",
     "deadOnArrival": "Mortalidad al arribo",
     "rejectedOnArrival": "Rechazo",
