@@ -310,6 +310,12 @@ class Lot(Base):
     #: seis avisos de `P-14` convergen para resolver gerente y supervisores.
     area_id: Mapped[Optional[int]] = mapped_column(
         Integer, ForeignKey("areas.id"), nullable=True, index=True)
+    # ── GA-REQ-061 · T14 (C1): NATIVE vs MIGRATED + provenance (el PK interno manda) ──
+    origin: Mapped[str] = mapped_column(String(15), default="NATIVE")
+    legacy_lot_code: Mapped[Optional[str]] = mapped_column(String(60), nullable=True)
+    source_system: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    source_reference: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 

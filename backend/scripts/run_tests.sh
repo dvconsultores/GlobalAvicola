@@ -97,8 +97,8 @@ async def main():
     print(f"   tablas={n} (55 + alembic_version) · head en BD={db_head} · head en código={heads[0]}")
     if db_head != heads[0]:
         sys.exit(f"   head desincronizado: BD={db_head} código={heads[0]}")
-    if n != 56:  # 55 + alembic_version (`revoked_tokens`, GA-REM-003 · AC04)
-        sys.exit(f"   recuento de tablas inesperado: {n} (esperado 56)")
+    if n != 60:  # 59 + alembic_version — +4 del cutover (`GA-REQ-061` · T14 · C1)
+        sys.exit(f"   recuento de tablas inesperado: {n} (esperado 60)")
 asyncio.run(main())
 PY
 

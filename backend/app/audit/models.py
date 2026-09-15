@@ -61,6 +61,8 @@ class AuditModule(str, enum.Enum):
     REPORTS = "reports"
     USERS = "users"
     CONFIG = "config"
+    # `GA-REQ-061` · T14: eventos CREATE_BATCH…APPLY/CORRECT del cutover.
+    CUTOVER = "cutover"
 
 
 # ============================================================

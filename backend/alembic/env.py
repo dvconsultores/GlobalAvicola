@@ -30,6 +30,9 @@ from app.integrations.sap.models import (  # noqa: F401
     SapReference, SapSyncJob, SapPayload, SapResponse, ConsolidatedMovement,
 )
 from app.audit.models import AuditLog  # noqa: F401
+from app.cutover.models import (  # noqa: F401
+    CutoverBatch, CutoverItem, CutoverStagingRow, OpeningBalanceCorrection,
+)
 from app.business_units.models import (  # noqa: F401
     BusinessUnit, CompanyBusinessUnit, UserBusinessUnit,
 )

@@ -69,6 +69,24 @@ class OpeningBalance(Base):
     # Broiler phase specific
     accumulated_broiler_received: Mapped[Optional[int]] = mapped_column(nullable=True)
 
+    # ── GA-REQ-061 · T14 (C1): extensiones del cutover sobre la pieza canónica R-67 ──
+    #: Item de batch que originó este opening (`null` ⇒ activación manual clásica).
+    cutover_item_id: Mapped[Optional[int]] = mapped_column(
+        Integer, ForeignKey("cutover_items.id"), nullable=True)
+    cutover_datetime: Mapped[Optional[datetime]] = mapped_column(
+        DateTime(timezone=True), nullable=True)
+    #: Semántica por métrica: KNOWN · UNKNOWN · NOT_APPLICABLE (`UNKNOWN` nunca es `0`).
+    mortality_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    culls_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    feed_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    egg_production_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    chicks_hatched_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    broiler_received_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    #: Provenance (batch/Excel/legacy): con `source_system=SAP` solo referencias reales.
+    source_system: Mapped[Optional[str]] = mapped_column(String(40), nullable=True)
+    source_reference: Mapped[Optional[str]] = mapped_column(String(200), nullable=True)
+    legacy_lot_code: Mapped[Optional[str]] = mapped_column(String(60), nullable=True)
+
     # Audit
     is_manual_activation: Mapped[bool] = mapped_column(Boolean, default=True)
     activated_by_id: Mapped[int] = mapped_column(Integer, ForeignKey("users.id"))

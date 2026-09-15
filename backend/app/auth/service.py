@@ -666,6 +666,9 @@ class AuthService:
     #: Módulos que el enforcement reconoce, recogidos de las llamadas a `require_permission`.
     #: Se enumeran aquí y no en el frontend para que no puedan desincronizarse.
     MODULOS = [
+        # `GA-REQ-061` · T14: el cutover es una capacidad operativa con permisos propios
+        # (`cutover:{create,validate,approve,apply}`); no se reutiliza el módulo de otro.
+        "cutover",
         # `GA-REM-040 §5` fase 7: «el plano de control tiene permisos propios». Administrar
         # qué cadenas opera una empresa y quién accede a ellas no es administrar usuarios ni
         # editar un maestro, y reutilizar el módulo de otro habría atado dos autoridades que
