@@ -1,0 +1,148 @@
+{
+  "batchId": 4,
+  "items": [
+    {
+      "id": 4,
+      "source_row_number": 2,
+      "legacy_lot_reference": "E2E-broiler-9p7qomaf-A",
+      "lot_id": 6,
+      "real_start_date": "2026-07-01",
+      "validation_status": "applied",
+      "validation_errors": null
+    },
+    {
+      "id": 5,
+      "source_row_number": 3,
+      "legacy_lot_reference": "E2E-broiler-9p7qomaf-B",
+      "lot_id": 7,
+      "real_start_date": "2026-07-01",
+      "validation_status": "applied",
+      "validation_errors": null
+    }
+  ],
+  "reconciliacion": {
+    "batch_id": 4,
+    "company_id": 1,
+    "business_unit": "broiler",
+    "cutover_datetime": "2026-08-01T00:00:00Z",
+    "status": "applied",
+    "source": {
+      "type": "EXCEL",
+      "system": null,
+      "reference": null,
+      "filename": "corte.xlsx",
+      "checksum": "03d7a37cd896d3e3e8d35ba3add72adf1731930971f8cb3e57906ffbf4845411",
+      "template_version": "v1"
+    },
+    "items": 2,
+    "openings": 2,
+    "unknown_metrics": 7,
+    "applied_by_id": 1,
+    "applied_at": "2026-09-15T19:37:18.305658Z",
+    "lots": [
+      {
+        "lot_id": 6,
+        "legacy_lot_code": "E2E-broiler-9p7qomaf-A",
+        "origin": "MIGRATED",
+        "opening": {
+          "live": 10000,
+          "historical_mortality": 500,
+          "mortality_status": "KNOWN",
+          "feed_status": "UNKNOWN"
+        },
+        "post": {
+          "mortality": 0,
+          "culls": 0,
+          "feed_kg": null
+        },
+        "lifetime": {
+          "mortality": 500
+        },
+        "current_live": 10000
+      },
+      {
+        "lot_id": 7,
+        "legacy_lot_code": "E2E-broiler-9p7qomaf-B",
+        "origin": "MIGRATED",
+        "opening": {
+          "live": 4000,
+          "historical_mortality": null,
+          "mortality_status": "UNKNOWN",
+          "feed_status": "UNKNOWN"
+        },
+        "post": {
+          "mortality": 0,
+          "culls": 0,
+          "feed_kg": null
+        },
+        "lifetime": {
+          "mortality": null
+        },
+        "current_live": 4000
+      }
+    ]
+  },
+  "s": "c0186mdz",
+  "rec": {
+    "batch_id": 4,
+    "company_id": 1,
+    "business_unit": "broiler",
+    "cutover_datetime": "2026-08-01T00:00:00Z",
+    "status": "applied",
+    "source": {
+      "type": "EXCEL",
+      "system": null,
+      "reference": null,
+      "filename": "corte.xlsx",
+      "checksum": "03d7a37cd896d3e3e8d35ba3add72adf1731930971f8cb3e57906ffbf4845411",
+      "template_version": "v1"
+    },
+    "items": 2,
+    "openings": 2,
+    "unknown_metrics": 7,
+    "applied_by_id": 1,
+    "applied_at": "2026-09-15T19:37:18.305658Z",
+    "lots": [
+      {
+        "lot_id": 6,
+        "legacy_lot_code": "E2E-broiler-9p7qomaf-A",
+        "origin": "MIGRATED",
+        "opening": {
+          "live": 10000,
+          "historical_mortality": 500,
+          "mortality_status": "KNOWN",
+          "feed_status": "UNKNOWN"
+        },
+        "post": {
+          "mortality": 35,
+          "culls": 0,
+          "feed_kg": null
+        },
+        "lifetime": {
+          "mortality": 535
+        },
+        "current_live": 9965
+      },
+      {
+        "lot_id": 7,
+        "legacy_lot_code": "E2E-broiler-9p7qomaf-B",
+        "origin": "MIGRATED",
+        "opening": {
+          "live": 4000,
+          "historical_mortality": null,
+          "mortality_status": "UNKNOWN",
+          "feed_status": "UNKNOWN"
+        },
+        "post": {
+          "mortality": 0,
+          "culls": 0,
+          "feed_kg": null
+        },
+        "lifetime": {
+          "mortality": null
+        },
+        "current_live": 4000
+      }
+    ]
+  }
+}

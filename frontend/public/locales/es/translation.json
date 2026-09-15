@@ -12,6 +12,7 @@
     "batch": "Batch",
     "uploadTemplate": "Subir plantilla Excel",
     "uploaded": "Plantilla cargada y validada",
+    "downloadTemplate": "Descargar plantilla",
     "rows": "filas",
     "totalRows": "Filas leídas",
     "validRows": "Válidas",

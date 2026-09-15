@@ -12,6 +12,7 @@
     "batch": "Batch",
     "uploadTemplate": "Upload Excel template",
     "uploaded": "Template uploaded and validated",
+    "downloadTemplate": "Download template",
     "rows": "rows",
     "totalRows": "Rows read",
     "validRows": "Valid",

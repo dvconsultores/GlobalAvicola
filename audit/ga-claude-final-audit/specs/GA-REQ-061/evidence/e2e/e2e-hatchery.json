@@ -1,0 +1,57 @@
+{
+  "batchId": 3,
+  "items": [
+    {
+      "id": 3,
+      "source_row_number": 2,
+      "legacy_lot_reference": "E2E-hatchery-hpyyvde6-1",
+      "lot_id": 5,
+      "real_start_date": "2026-07-01",
+      "validation_status": "applied",
+      "validation_errors": null
+    }
+  ],
+  "reconciliacion": {
+    "batch_id": 3,
+    "company_id": 1,
+    "business_unit": "hatchery",
+    "cutover_datetime": "2026-08-01T00:00:00Z",
+    "status": "applied",
+    "source": {
+      "type": "EXCEL",
+      "system": null,
+      "reference": null,
+      "filename": "corte.xlsx",
+      "checksum": "849b680acb4379ec7b41122b6bdbf89c2dfa1568973d5754bc1429c55c74b1d0",
+      "template_version": "v1"
+    },
+    "items": 1,
+    "openings": 1,
+    "unknown_metrics": 3,
+    "applied_by_id": 1,
+    "applied_at": "2026-09-15T19:37:16.170904Z",
+    "lots": [
+      {
+        "lot_id": 5,
+        "legacy_lot_code": "E2E-hatchery-hpyyvde6-1",
+        "origin": "MIGRATED",
+        "opening": {
+          "live": 2000,
+          "historical_mortality": 70,
+          "mortality_status": "KNOWN",
+          "feed_status": "UNKNOWN"
+        },
+        "post": {
+          "mortality": 0,
+          "culls": 0,
+          "feed_kg": null
+        },
+        "lifetime": {
+          "mortality": 70
+        },
+        "current_live": 2000
+      }
+    ]
+  },
+  "s": "wsup55s1"
+}

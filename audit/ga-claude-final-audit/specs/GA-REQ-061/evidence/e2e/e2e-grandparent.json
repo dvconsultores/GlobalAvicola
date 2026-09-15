@@ -1,0 +1,57 @@
+{
+  "batchId": 1,
+  "items": [
+    {
+      "id": 1,
+      "source_row_number": 2,
+      "legacy_lot_reference": "E2E-grandparent-0gcwxqga-1",
+      "lot_id": 3,
+      "real_start_date": "2026-07-01",
+      "validation_status": "applied",
+      "validation_errors": null
+    }
+  ],
+  "reconciliacion": {
+    "batch_id": 1,
+    "company_id": 1,
+    "business_unit": "grandparent",
+    "cutover_datetime": "2026-08-01T00:00:00Z",
+    "status": "applied",
+    "source": {
+      "type": "EXCEL",
+      "system": null,
+      "reference": null,
+      "filename": "corte.xlsx",
+      "checksum": "f4371980e6813cb3354096a41d4b9af7d51b103a25156dcac80becb7e9665157",
+      "template_version": "v1"
+    },
+    "items": 1,
+    "openings": 1,
+    "unknown_metrics": 4,
+    "applied_by_id": 1,
+    "applied_at": "2026-09-15T19:37:13.331609Z",
+    "lots": [
+      {
+        "lot_id": 3,
+        "legacy_lot_code": "E2E-grandparent-0gcwxqga-1",
+        "origin": "MIGRATED",
+        "opening": {
+          "live": 2000,
+          "historical_mortality": 70,
+          "mortality_status": "KNOWN",
+          "feed_status": "UNKNOWN"
+        },
+        "post": {
+          "mortality": 0,
+          "culls": 0,
+          "feed_kg": null
+        },
+        "lifetime": {
+          "mortality": 70
+        },
+        "current_live": 2000
+      }
+    ]
+  },
+  "s": "k4dyuzr2"
+}

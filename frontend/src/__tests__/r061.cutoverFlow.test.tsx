@@ -197,7 +197,7 @@ describe('GA-REQ-061 · C8 · Cargas Iniciales (jsdom)', () => {
   it('AC84/85: claves del namespace cutover presentes en ES y EN (sin hardcodes)', () => {
     const REQUERIDAS = [
       'title', 'newBatch', 'businessUnit', 'cutoverDatetime', 'createBatch', 'created',
-      'emptyTitle', 'uploadTemplate', 'uploaded', 'totalRows', 'validRows', 'invalidRows',
+      'emptyTitle', 'uploadTemplate', 'uploaded', 'downloadTemplate', 'totalRows', 'validRows', 'invalidRows',
       'unknownMetrics', 'validationErrors', 'row', 'field', 'code', 'receivedValue',
       'submit', 'approve', 'reject', 'rejectReason', 'apply', 'applied', 'applyBlocked',
       'preview', 'sourceRow', 'legacyCode', 'realStartDate', 'reconciliation', 'source',

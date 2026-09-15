@@ -138,6 +138,20 @@ export default function CargasInicialesPage() {
     await run(() => cutoverService.upload(batch.id, file).then(r => r.data), 'cutover.uploaded')
   }
 
+  const handleDownloadTemplate = async () => {
+    try {
+      const res = await cutoverService.template(businessUnit)
+      const url = URL.createObjectURL(res.data as Blob)
+      const enlace = document.createElement('a')
+      enlace.href = url
+      enlace.download = `cutover_template_${businessUnit}_v1.xlsx`
+      enlace.click()
+      URL.revokeObjectURL(url)
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('common.error')))
+    }
+  }
+
   return (
     <div className="p-4 lg:p-6 space-y-6 max-w-6xl mx-auto">
       <SubNavHeader title={t('cutover.title', 'Cargas Iniciales')} />
@@ -203,6 +217,11 @@ export default function CargasInicialesPage() {
 
               {canValidate && ['draft', 'validating', 'validated'].includes(batch.status) && (
                 <div className="flex flex-wrap items-center gap-3">
+                  {canCreate && (
+                    <Button variant="outline" onClick={handleDownloadTemplate}>
+                      {t('cutover.downloadTemplate', 'Descargar plantilla')}
+                    </Button>
+                  )}
                   <label className="inline-flex items-center gap-2 text-sm cursor-pointer border rounded-md px-3 py-2 bg-white hover:bg-slate-50">
                     <Upload className="w-4 h-4" aria-hidden />
                     {t('cutover.uploadTemplate', 'Subir plantilla Excel')}

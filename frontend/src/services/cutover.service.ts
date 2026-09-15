@@ -113,6 +113,10 @@ export const cutoverService = {
     })
   },
 
+  /** Plantilla Excel v1 de la BU (AC45: la versión viaja en la hoja Meta). */
+  template: (businessUnit: BusinessUnitCode) =>
+    api.get(`/cutover-templates/${businessUnit}`, { responseType: 'blob' }),
+
   submit: (batchId: number) => api.post<CutoverBatch>(`/cutover-batches/${batchId}/submit`),
   approve: (batchId: number) => api.post<CutoverBatch>(`/cutover-batches/${batchId}/approve`),
   reject: (batchId: number, reason: string) =>
