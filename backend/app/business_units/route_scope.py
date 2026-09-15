@@ -150,6 +150,7 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/cutover-batches/{batch_id}/validation": (Alcance.MULTI_UNIDAD, None, "staging del batch"),
     "/api/v1/cutover-batches/{batch_id}/items": (Alcance.MULTI_UNIDAD, None, "filas del batch"),
     "/api/v1/cutover-batches/{batch_id}/reconciliation": (Alcance.MULTI_UNIDAD, None, "reconciliación Opening/Post/Lifetime"),
+    "/api/v1/cutover-templates/{business_unit}": (Alcance.MULTI_UNIDAD, None, "plantilla Excel versionada por BU"),
     "/api/v1/opening-balances/{opening_id}/corrections": (Alcance.MULTI_UNIDAD, None, "corrección formal del opening (AC59-65)"),
     "/api/v1/cutover-batches/{batch_id}/submit": (Alcance.MULTI_UNIDAD, None, "envía a aprobación el batch"),
     "/api/v1/cutover-batches/{batch_id}/approve": (Alcance.MULTI_UNIDAD, None, "aprueba el batch (segregación)"),

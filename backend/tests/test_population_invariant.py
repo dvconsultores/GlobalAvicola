@@ -406,5 +406,6 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # `R-218` · C2 añade `/api/v1/reports/lot/{lot_id}/weekly`, 213 → 214.
     # `GA-REQ-061` · T14: C2 añade 4 rutas del cutover (214 → 218), C3 tres más
     # (`submit/approve/reject`) y C4 el apply, 221 → 222; C5 la reconciliación y
-    # C6 las correcciones del opening (POST/GET), 222 → 225.
-    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 225
+    # C6 las correcciones del opening (POST/GET), 222 → 225; C9 la plantilla
+    # descargable por BU, 225 → 226.
+    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 226
