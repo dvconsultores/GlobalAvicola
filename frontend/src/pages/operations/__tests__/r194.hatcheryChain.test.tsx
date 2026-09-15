@@ -126,6 +126,10 @@ describe('R-194 · cadena de incubadora por UI', () => {
     await elegirEnSelector(/Seleccionar lote/, /L-HAT-194-01/)
     cambio('dosage_per_bird', '0.2')
     cambio('bird_movements.0.quantity', '300')
+    // `R-220` · A16 (BR-21): sanos y débiles son obligatorios en el nacimiento de incubadora
+    // (el servidor los exige; el cliente ahora también) — sin ellos el payload no es válido.
+    cambio('chicks_healthy', '280')
+    cambio('chicks_weak', '20')
     await guardar()
   })
 
