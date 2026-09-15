@@ -385,3 +385,44 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Certificación de tranche**: `GA_T10_CERTIFICATION.md`.
 - **R-142**: condición `AOD-17` (semántica `CORRECTED` multinivel) **no cumplida** — decisión del propietario `SCHEDULED` (lote §25); diferida y documentada en la cola; no bloquea el cierre de T10.
 - **Siguiente**: **T11** (residuales FE `R-213` · `R-212` · `R-218` · `R-220`) — arranque automático.
+
+## AE-53 · 2026-09-14 · T11 EN CURSO — R-213 CERRADA TÉCNICAMENTE (`/me` y `/users` toleran correos legacy)
+
+- **R-213**: C1 RED `3bed31d` (BE 2F por causa exacta: `ValidationError` ⇒ 500 en `/me` y `/users`) · C2 `81de57f` (`UserBase.email: str` lectura tolerante · `UserCreate.email: EmailStr` escritura estricta).
+- **Gates**: BE targeted **4/4** · guardianes de sesión/tenant/password/roles **52 passed** · BE full **1381/0/49**.
+- **Sensibilidad** S1-S2 con RED quirúrgica y restore `81de57f`; post-mutación verde.
+- **Push**: cierre `c32d873` → `origin/main` (fast-forward). `REMOTE_SHA_MATCH = PASS`.
+- **Cert**: `specs/R-213/R-213_CERTIFICATION.md` (evidencia `c32d873`).
+- **Siguiente**: **R-212** (conciencia de permisos) en T11.
+
+## AE-54 · 2026-09-14 · R-212 CERRADA TÉCNICAMENTE (UI consciente del permiso — 403 ≠ «vacío»)
+
+- **R-212**: C1 RED `0583426` (FE 13F: 10× «alert» ausente con 403/500; home sin landing; KPIs sin gate) · C2 `abf1888` (`ErrorState` reutilizable; `HomeRoute` cae a `/menu/poultry` sin `dashboard:read`; estados distinguidos en 8 pantallas; SAP deja de silenciar 403).
+- **Gates**: FE targeted **15/15** · FE full **448/448** · `npm run build` **EXIT 0**.
+- **Sensibilidad** M1-M5 con RED quirúrgica y restore `abf1888`; post-mutación verde.
+- **Push**: cierre `a7a9087` → `origin/main`. `REMOTE_SHA_MATCH = PASS`.
+- **Cert**: `specs/R-212/R-212_CERTIFICATION.md` (evidencia `a7a9087`).
+- **Siguiente**: **R-218** (serie semanal del lote) en T11.
+
+## AE-55 · 2026-09-14 · R-218 CERRADA TÉCNICAMENTE (serie semanal del lote — opción A)
+
+- **R-218**: C1 RED `0376305` (BE 2F ruta inexistente `GET /reports/lot/{id}/weekly`; FE 2F tabla/gráficos leían la lista sin sublistas) · C2 `d5cc5fb` (agregado de solo lectura con `_exigir_lote`; agua atribuida una vez por (evento, semana); `route_scope` `MULTI_UNIDAD`; guardián de rutas **213→214**).
+- **Gates**: BE targeted **24/24** (rutas = **214**) · BE full **1384/0/49** · FE targeted **2/2** · FE full **450/450** · build **EXIT 0**.
+- **Sensibilidad** B1-B3 (BE) y N1-N3 (FE) con RED quirúrgica y restore `d5cc5fb`; post-mutación verde.
+- **Push**: cierre `356de95` → `origin/main`. `REMOTE_SHA_MATCH = PASS`.
+- **Cert**: `specs/R-218/R-218_CERTIFICATION.md` (evidencia `356de95`).
+- **Siguiente**: **R-220** (residuales itemizados, por lotes) y cierre de T11.
+
+## AE-56 · 2026-09-14 · T11 CERRADA TÉCNICAMENTE — R-220 (lotes A+extra/B/C/D) y cierre de la tranche de residuales FE
+
+- **R-220** ejecutada **por lotes** con gobernanza completa por lote (SPEC→AC→RED→IMPL→GREEN→SENSIBILIDAD→POST-MUTACIÓN→EVIDENCIA→COMMIT→PUSH→VERIFY):
+  - **Lote A** (A1–A18): contrato de lectura/UX (fechas civiles, lote dinámico en reportes, KPIs retirados, `Se creará al aprobar`, regla/motivo en 4xx, detalle completo, notificaciones con destino, `X-Total-Count`+«Cargar más», sin `sap_reference`, `farm_id` opcional, ovoscopía con día, serializador F-01d, `water_consumption` al catálogo (B-24), `egg_classification` retirado, `egg_storage` 4xx); commits `ddc225f`…`6c84895` (evidencias `loteA1…loteA8`).
+  - **A-extra** (A16/A17): validador cliente BR-21 del nacimiento (mixed excluyente; sanos/débiles obligatorios) + anclaje de «Semana»/«Peso prom.» a la primera fila viva; RED `f11786c` · IMPL `30c1660` · add `ad9896e` · evidencia `2432ce7`.
+  - **Lote B** (B1–B10): navegación <1024px (hamburguesa monta `MobileDrawer`; perfil/logout móvil), entradas de menú, reporte del lote dinámico, gate `operations:create` en tiles/timeline, contador de procesos dinámico, notificaciones a 390px, botón eliminar máquina con ancestro posicionado, cosméticos R7–R12/R14/R15; commits `2723b44`…`9451bf5`.
+  - **Lote C** (C1–C9): enumerados traducidos, `roles.actions/modules` (9/13), claves engañosas corregidas, zod de lote por claves, +33 claves ES/EN, `formatFechaHora` con locale de la app, export con `locale` por parámetro, ES sin texto EN, `NotificationType.lot_near_close`; commits `1d9c131` · `efe6130`.
+  - **Lote D** (D1–D5): 8 hooks muertos + `api.types.ts` retirados, tipos alineados (`UserResponse`=UserRead; sin `sap_reference`; `action_type` enumerado), `ProtectedRoute.roles` retirado; commit `da31f52`.
+- **Gates finales**: **BE full 1389/0/49** (19:51, tras alineación `8604a60`; la primera corrida completa `1386/3F` capturó la **deriva de 3 tests de conteo 25→26** por `water_consumption` — alineados + presencia verificada; observada duplicación preexistente de `test_list_event_types`) · guardián de rutas `/api/` = **214** · **FE full 520/520** · `npm run build` **EXIT 0** · sensibilidades RED-1:1 por lote con restore desde SHA de implementación.
+- **Certificación de paquete**: `specs/R-220/R-220_CERTIFICATION.md` (evidencia `evidence/{red,green,sensibilidad,post-mutation}/lote*`, `be-full-1389.log`).
+- **Push**: `32f5d40..3c3ab3d` + cierre → `origin/main` (fast-forward); `REMOTE_SHA_MATCH = PASS` en cada checkpoint; política `GITHUB_ACTIONS = NOT_APPLICABLE_BY_OWNER_DECISION`, `PUSH = REQUIRED_AFTER_LOCAL_CERTIFICATION`.
+- **T11 = CLOSED_TECHNICALLY**: R-213 (`c32d873`) · R-212 (`a7a9087`) · R-218 (`356de95`) · R-220 (este cierre). **Certificación de tranche**: `GA_T11_CERTIFICATION.md`.
+- **Siguiente**: **T14** (GA-REQ-061 · Cutover operacional — `SPEC_READY`) — orden T11 → **T14** → T12 → T13. R-142 permanece diferida por AOD-17.
