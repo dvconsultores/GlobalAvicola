@@ -124,3 +124,33 @@ async def test_c2_mismo_checksum_no_duplica(auth_headers, http_client):
     assert r2.json()["total_rows"] == 3  # no 6
     listado = await http_client.get(f"/api/v1/cutover-batches/{batch_id}/items", headers=auth_headers)
     assert len(listado.json()["items"]) == 3
+
+
+@pytest.mark.asyncio
+async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
+    """`GET /cutover-templates/{bu}`: plantilla versionada descargable; el propio archivo re-cargado vale."""
+    from openpyxl import load_workbook
+
+    for bu in ("grandparent", "breeder", "hatchery", "broiler"):
+        r = await http_client.get(f"/api/v1/cutover-templates/{bu}", headers=auth_headers)
+        assert r.status_code == 200, r.text
+        assert "spreadsheetml" in r.headers["content-type"]
+        wb = load_workbook(io.BytesIO(r.content))
+        assert {"Instrucciones", "Meta", "Datos"} <= set(wb.sheetnames)
+        meta = {fila[0].value: fila[1].value for fila in wb["Meta"].iter_rows(min_row=2)}
+        assert meta["template_version"] == "v1"
+        assert meta["business_unit"] == bu
+
+    # La plantilla broiler descargada se puede subir tal cual (0 filas, sin efectos).
+    r = await http_client.get("/api/v1/cutover-templates/broiler", headers=auth_headers)
+    batch_id = await _crear_batch(http_client, auth_headers)
+    subida = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
+                                    headers=auth_headers, files={"file": ("plantilla.xlsx", r.content,
+                                    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")})
+    assert subida.status_code == 200, subida.text
+    assert subida.json()["total_rows"] == 0
+
+    # Unidad inexistente ⇒ 422 determinista.
+    r = await http_client.get("/api/v1/cutover-templates/aves", headers=auth_headers)
+    assert r.status_code == 422
+    assert "BUSINESS_UNIT_INVALID" in r.text
