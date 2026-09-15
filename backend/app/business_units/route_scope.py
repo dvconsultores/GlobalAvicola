@@ -149,6 +149,7 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/cutover-batches/{batch_id}/upload": (Alcance.MULTI_UNIDAD, None, "plantilla de la cadena del batch"),
     "/api/v1/cutover-batches/{batch_id}/validation": (Alcance.MULTI_UNIDAD, None, "staging del batch"),
     "/api/v1/cutover-batches/{batch_id}/items": (Alcance.MULTI_UNIDAD, None, "filas del batch"),
+    "/api/v1/cutover-batches/{batch_id}/reconciliation": (Alcance.MULTI_UNIDAD, None, "reconciliación Opening/Post/Lifetime"),
     "/api/v1/cutover-batches/{batch_id}/submit": (Alcance.MULTI_UNIDAD, None, "envía a aprobación el batch"),
     "/api/v1/cutover-batches/{batch_id}/approve": (Alcance.MULTI_UNIDAD, None, "aprueba el batch (segregación)"),
     "/api/v1/cutover-batches/{batch_id}/reject": (Alcance.MULTI_UNIDAD, None, "rechaza el batch (segregación)"),

@@ -71,3 +71,58 @@ class CutoverItemRead(BaseModel):
 
 class CutoverItemsResponse(BaseModel):
     items: list[CutoverItemRead]
+
+
+# ── C5: reconciliación Opening / Post / Lifetime (goldens de la spec) ──────────
+
+
+class CutoverReconciliationSource(BaseModel):
+    type: str
+    system: Optional[str] = None
+    reference: Optional[str] = None
+    filename: Optional[str] = None
+    checksum: Optional[str] = None
+    template_version: Optional[str] = None
+
+
+class CutoverOpeningRead(BaseModel):
+    live: int
+    historical_mortality: Optional[int] = None
+    mortality_status: str
+    feed_status: str
+
+
+class CutoverPostRead(BaseModel):
+    mortality: int
+    culls: int
+    feed_kg: Optional[float] = None
+
+
+class CutoverLifetimeRead(BaseModel):
+    #: `null` cuando alguna pieza es UNKNOWN (jamás un número fabricado).
+    mortality: Optional[int] = None
+
+
+class CutoverReconciliationLot(BaseModel):
+    lot_id: int
+    legacy_lot_code: Optional[str] = None
+    origin: Optional[str] = None
+    opening: CutoverOpeningRead
+    post: CutoverPostRead
+    lifetime: CutoverLifetimeRead
+    current_live: int
+
+
+class CutoverReconciliationRead(BaseModel):
+    batch_id: int
+    company_id: int
+    business_unit: str
+    cutover_datetime: datetime
+    status: str
+    source: CutoverReconciliationSource
+    items: int
+    openings: int
+    unknown_metrics: int
+    applied_by_id: Optional[int] = None
+    applied_at: Optional[datetime] = None
+    lots: list[CutoverReconciliationLot]

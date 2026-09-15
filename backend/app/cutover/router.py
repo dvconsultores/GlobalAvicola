@@ -99,3 +99,13 @@ async def items_del_batch(
 ):
     """Filas del batch (staging normalizado) con su estado de validación."""
     return {"items": await CutoverService(db, current_user).items(batch_id)}
+
+
+@router.get("/{batch_id}/reconciliation", response_model=schemas.CutoverReconciliationRead)
+async def reconciliacion_del_batch(
+    batch_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("cutover", "read")),
+):
+    """Opening/Post/Lifetime por lote: saldo vivo real (9.965, nunca 9.465), UNKNOWN visible."""
+    return await CutoverService(db, current_user).reconciliacion(batch_id)

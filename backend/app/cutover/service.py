@@ -24,6 +24,12 @@ from .models import CutoverBatch, CutoverBatchStatus, CutoverItem, CutoverItemSt
 from .parser import CutoverParseError, parse_cutover_workbook
 from .schemas import CutoverBatchCreate
 
+#: Estados por métrica del opening (`UNKNOWN` nunca se muestra como `0`).
+_METRICAS_DE_OPENING = (
+    "mortality_status", "culls_status", "feed_status",
+    "egg_production_status", "chicks_hatched_status", "broiler_received_status",
+)
+
 _ESTADOS_CARGABLES = {
     CutoverBatchStatus.DRAFT.value,
     CutoverBatchStatus.VALIDATING.value,
@@ -439,3 +445,87 @@ class CutoverService:
         resultado = await self.db.execute(
             select(CutoverItem).where(CutoverItem.batch_id == batch.id).order_by(CutoverItem.source_row_number))
         return list(resultado.scalars().all())
+
+    async def reconciliacion(self, batch_id: int) -> dict:
+        """C5: Opening + Post (motor, `event_date > corte`) + Lifetime, por lote.
+
+        El saldo vivo es `apertura − salidas post-cutover`; el histórico **no** se
+        vuelve a restar (el doble descuento 10.000−500−35=9.465 está prohibido,
+        golden 9.965 — `docs/02 §3.9.2`). Toda métrica sin dato queda `null` con
+        su estado `UNKNOWN`, jamás un `0` fabricado.
+        """
+        from .reporting import post_corte_del_lote
+
+        batch = await self._batch_propio(batch_id)
+        corte = batch.cutover_datetime.date() if batch.cutover_datetime else None
+        resultado = await self.db.execute(select(CutoverItem)
+                                          .where(CutoverItem.batch_id == batch.id)
+                                          .order_by(CutoverItem.source_row_number))
+        items = list(resultado.scalars().all())
+
+        lots: list[dict] = []
+        unknown_total = 0
+        for item in items:
+            if item.lot_id is None:
+                continue
+            opening = (await self.db.execute(
+                select(OpeningBalance).where(OpeningBalance.cutover_item_id == item.id))).scalars().first()
+            if opening is None:
+                continue
+            lote = (await self.db.execute(
+                select(Lot).where(Lot.id == item.lot_id))).scalars().first()
+            post = await post_corte_del_lote(self.db, item.lot_id, corte) if corte else {
+                "mortality": 0, "culls": 0, "salidas": 0, "feed_kg": 0.0}
+
+            live = int(opening.initial_male_count or 0) + int(opening.initial_female_count or 0)
+            conocido = opening.mortality_status == "KNOWN"
+            historico = None
+            if conocido:
+                historico = (int(opening.accumulated_mortality_male or 0)
+                             + int(opening.accumulated_mortality_female or 0))
+            lifetime = (historico + post["mortality"]) if conocido else None
+            feed_kg = post["feed_kg"] if opening.feed_status == "KNOWN" else None
+
+            unknown_total += sum(
+                1 for campo in _METRICAS_DE_OPENING if getattr(opening, campo) == "UNKNOWN")
+
+            lots.append({
+                "lot_id": item.lot_id,
+                "legacy_lot_code": (lote.legacy_lot_code if lote else None) or item.legacy_lot_reference,
+                "origin": lote.origin if lote else None,
+                "opening": {
+                    "live": live,
+                    "historical_mortality": historico,
+                    "mortality_status": opening.mortality_status,
+                    "feed_status": opening.feed_status,
+                },
+                "post": {
+                    "mortality": post["mortality"],
+                    "culls": post["culls"],
+                    "feed_kg": feed_kg,
+                },
+                "lifetime": {"mortality": lifetime},
+                "current_live": live - post["salidas"],
+            })
+
+        return {
+            "batch_id": batch.id,
+            "company_id": batch.company_id,
+            "business_unit": batch.business_unit,
+            "cutover_datetime": batch.cutover_datetime,
+            "status": batch.status,
+            "source": {
+                "type": batch.source_type,
+                "system": batch.source_system,
+                "reference": batch.source_reference,
+                "filename": batch.source_filename,
+                "checksum": batch.source_checksum_sha256,
+                "template_version": batch.template_version,
+            },
+            "items": len(items),
+            "openings": len(lots),
+            "unknown_metrics": unknown_total,
+            "applied_by_id": batch.applied_by_id,
+            "applied_at": batch.applied_at,
+            "lots": lots,
+        }
