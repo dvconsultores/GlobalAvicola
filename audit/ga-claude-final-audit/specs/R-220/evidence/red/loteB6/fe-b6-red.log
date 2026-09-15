@@ -1,0 +1,98 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/__tests__/r220.loteB6.test.tsx > R-220 · B6 · sin operations:create no hay callejón hacia /operations/new > solo-lectura: la vista Secuencia no ofrece «Registrar operación»
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter initialEntries={[...]}>
+    <Router basename={undefined} location={{pathname:"...", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <Routes>
+        <RenderedRoute match={{params:{...}, ...}} routeContext={{outlet:null, ...}}>
+          <ProcessStagePage>
+            <div>
+            <div>
+              <div>
+              <div className="mb-6">
+                <StageTimeline stages={[...]} onStageSelect={function goToOperation} completedStages={[...]} ...>
+                  <div className="space-y-2 ...">
+                    <div className="relative">
+                      <div>
+>                     <button
+>                       type="button"
+>                       onClick={function onClick}
+>                       className="w-full relative group transition-all rounded-xl border overflow-hidden ring-2 ring-..."
+>                       aria-expanded={true}
+>                       aria-controls="stage-content-0"
+>                       aria-label="farm_inspection - Pending"
+>                     >
+                        <div className={"relative..."}>
+                          <div>
+                          <div id="stage-cont..." className="mt-4 pt-4 ...">
+>                           <button
+>                             onClick={function onClick}
+>                             className="w-full py-2.5 px-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue..."
+>                             aria-label="Registrar operación farm_inspection"
+>                           >
+                    ...
+              ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+ ❯ src/__tests__/r220.loteB6.test.tsx (3 tests | 2 failed) 300ms
+     × solo-lectura: el grid no renderiza enlaces al formulario de operación 49ms
+     × solo-lectura: la vista Secuencia no ofrece «Registrar operación» 170ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB6.test.tsx > R-220 · B6 · sin operations:create no hay callejón hacia /operations/new > solo-lectura: el grid no renderiza enlaces al formulario de operación
+AssertionError: expected 12 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 12
+
+ ❯ src/__tests__/r220.loteB6.test.tsx:64:77
+     62|     setSession(['operations:read'])
+     63|     const { container } = renderStage()
+     64|     expect(container.querySelectorAll('a[href^="/operations/new"]').le…
+       |                                                                             ^
+     65|   })
+     66|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/r220.loteB6.test.tsx > R-220 · B6 · sin operations:create no hay callejón hacia /operations/new > solo-lectura: la vista Secuencia no ofrece «Registrar operación»
+AssertionError: expected <button …(2)></button> to be null
+
+- Expected:
+null
+
++ Received:
+<button
+  aria-label="Registrar operación farm_inspection"
+  class="w-full py-2.5 px-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700:from-blue-700:to-blue-800 text-white font-semibold rounded-lg transition-all hover:shadow-md active:scale-95"
+>
+  Registrar operación
+   →
+</button>
+
+ ❯ src/__tests__/r220.loteB6.test.tsx:71:75
+     69|     renderStage()
+     70|     expandirPrimerPaso()
+     71|     expect(screen.queryByRole('button', { name: /Registrar operación/ …
+       |                                                                           ^
+     72|   })
+     73|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 1 passed (3)
+   Start at  04:28:35
+   Duration  1.30s (transform 167ms, setup 53ms, import 357ms, tests 300ms, environment 480ms)
+

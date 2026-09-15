@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB6.test.tsx (3 tests | 1 failed) 362ms
+     × solo-lectura: el grid no renderiza enlaces al formulario de operación 63ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB6.test.tsx > R-220 · B6 · sin operations:create no hay callejón hacia /operations/new > solo-lectura: el grid no renderiza enlaces al formulario de operación
+AssertionError: expected 12 to be +0 // Object.is equality
+
+- Expected
++ Received
+
+- 0
++ 12
+
+ ❯ src/__tests__/r220.loteB6.test.tsx:64:77
+     62|     setSession(['operations:read'])
+     63|     const { container } = renderStage()
+     64|     expect(container.querySelectorAll('a[href^="/operations/new"]').le…
+       |                                                                             ^
+     65|   })
+     66|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  04:30:06
+   Duration  1.58s (transform 115ms, setup 51ms, import 367ms, tests 362ms, environment 660ms)
+
