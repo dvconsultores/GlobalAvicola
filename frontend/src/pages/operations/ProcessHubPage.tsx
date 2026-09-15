@@ -42,7 +42,8 @@ export default function ProcessHubPage() {
  </div>
  <div className="hidden sm:flex items-center gap-4 shrink-0 pt-1">
  <div className="text-right">
- <div className="text-xl font-bold text-slate-900 leading-none">6</div>
+ {/* `R-220` · B7 (F §2.b): contador dinámico — nº de procesos VISIBLES para la sesión. */}
+ <div className="text-xl font-bold text-slate-900 leading-none">{visibleStages.length}</div>
  <div className="text-xs text-slate-400 uppercase tracking-wide mt-0.5">{t('process.hub.processes', 'Procesos')}</div>
  </div>
  <div className="w-px h-8 bg-slate-200" />
