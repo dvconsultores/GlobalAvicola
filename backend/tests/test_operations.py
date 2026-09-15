@@ -16,7 +16,9 @@ async def test_list_event_types(auth_headers, client):
     resp = await client.get("/api/v1/operations/event-types", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 25  # egg_reception_classification, añadido en 939fd14
+    # egg_reception_classification (939fd14) · water_consumption (`R-220` A14 / B-24)
+    assert len(data) == 26
+    assert "water_consumption" in {et["type"] for et in data}
 
 
 @pytest.mark.asyncio
@@ -225,7 +227,9 @@ async def test_list_event_types(auth_headers, client):
     resp = await client.get("/api/v1/operations/event-types", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
-    assert len(data) == 25  # egg_reception_classification, añadido en 939fd14
+    # egg_reception_classification (939fd14) · water_consumption (`R-220` A14 / B-24)
+    assert len(data) == 26
+    assert "water_consumption" in {et["type"] for et in data}
 
 
 @pytest.mark.asyncio

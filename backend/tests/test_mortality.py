@@ -245,10 +245,13 @@ async def test_ac07b_las_transferencias_son_neutras(auth_headers, client, seeded
 
 @pytest.mark.asyncio
 async def test_ac09_ningun_tipo_de_evento_devuelve_500(auth_headers, http_client, seeded_ids):
-    """Ninguno de los 25 tipos puede responder 5xx con datos mínimos plausibles."""
+    """Ninguno de los 26 tipos puede responder 5xx con datos mínimos plausibles.
+
+    (25 → 26: `water_consumption` entró al catálogo informativo en `R-220` A14 / B-24.)
+    """
     tipos = (await http_client.get("/api/v1/operations/event-types",
                                    headers=auth_headers)).json()
-    assert len(tipos) == 25
+    assert len(tipos) == 26
 
     con_ubicacion = {
         "bird_reception", "bird_distribution", "bird_transfer", "bird_exit",

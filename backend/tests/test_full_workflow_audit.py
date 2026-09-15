@@ -1091,12 +1091,13 @@ async def test_f9_dashboard_data_integrity(admin_client):
 async def test_f10_all_event_types_registered(admin_client):
     """
     F10 — Todos los Tipos de Evento:
-    Validar que los 24 tipos de evento están registrados en el sistema.
+    Validar que los 26 tipos de evento están registrados en el sistema.
+    (25 → 26: `water_consumption` entró al catálogo en `R-220` A14 / B-24.)
     """
     resp = await admin_client.get("/api/v1/operations/event-types")
     assert resp.status_code == 200
     event_types = resp.json()
-    assert len(event_types) == 25, f"Expected 25 event types, got {len(event_types)}"
+    assert len(event_types) == 26, f"Expected 26 event types, got {len(event_types)}"
 
     # Lista esperada de tipos
     expected_types = {
@@ -1106,7 +1107,7 @@ async def test_f10_all_event_types_registered(admin_client):
         "hatchery_inspection", "egg_collection", "egg_classification",
         "egg_reception_classification", "egg_dispatch", "egg_reception_hatchery",
         "incubation_load", "ovoscopy", "transfer_to_hatcher", "birth_registration",
-        "chick_dispatch", "lot_closure", "grandparent_import",
+        "chick_dispatch", "lot_closure", "grandparent_import", "water_consumption",
     }
     # El catálogo expone `type`/`label` (`schemas.ALL_EVENT_TYPES`), no `value`.
     registered_types = {et["type"] for et in event_types}
