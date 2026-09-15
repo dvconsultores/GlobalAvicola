@@ -7,8 +7,16 @@ validada (CUT-RED-19), errores estructurados con `error_code`/`received_value`
 (AC46) y re-upload idempotente por checksum (AC50, sin duplicar filas).
 """
 import io
+import sys
+from pathlib import Path
 
 import pytest
+
+sys.path.insert(0, str(Path(__file__).parent))
+from time_reference import days_ago, iso_days_ago  # noqa: E402
+
+#: Corte por defecto del ciclo C2 (computado: las fechas literales caducan solas).
+CORTE_DEFECTO = days_ago(45).isoformat() + "T00:00:00+00:00"
 
 
 def _xlsx(filas: list[list], *, template_version: str = "v1", business_unit: str = "broiler") -> bytes:
@@ -31,13 +39,13 @@ def _xlsx(filas: list[list], *, template_version: str = "v1", business_unit: str
 
 
 FILAS = [
-    ["CUT-BR-001", "2026-08-15", 5000, 5000, 300, 200, None, ""],
-    ["CUT-BR-002", "2026-09-01", 2000, 2000, None, None, None, "mortalidad histórica desconocida"],
-    ["CUT-BR-003", "2026-09-05", 1000, 1000, 50, 40, "F-999", ""],
+    ["CUT-BR-001", iso_days_ago(60), 5000, 5000, 300, 200, None, ""],
+    ["CUT-BR-002", iso_days_ago(45), 2000, 2000, None, None, None, "mortalidad histórica desconocida"],
+    ["CUT-BR-003", iso_days_ago(44), 1000, 1000, 50, 40, "F-999", ""],
 ]
 
 
-async def _crear_batch(client, headers, cutover: str = "2026-10-01T00:00:00+00:00") -> int:
+async def _crear_batch(client, headers, cutover: str = CORTE_DEFECTO) -> int:
     r = await client.post("/api/v1/cutover-batches", headers=headers, json={
         "business_unit": "broiler",
         "cutover_datetime": cutover,
@@ -56,7 +64,7 @@ async def test_c2_crear_batch_draft(auth_headers, client, seeded_ids):
     """POST /cutover-batches nace en DRAFT con actor y empresa efectiva."""
     r = await client.post("/api/v1/cutover-batches", headers=auth_headers, json={
         "business_unit": "broiler",
-        "cutover_datetime": "2026-10-01T00:00:00+00:00",
+        "cutover_datetime": CORTE_DEFECTO,
     })
     assert r.status_code == 201, r.text
     cuerpo = r.json()
@@ -112,8 +120,12 @@ async def test_c2_template_version_no_soportada(auth_headers, http_client):
 
 @pytest.mark.asyncio
 async def test_c2_mismo_checksum_no_duplica(auth_headers, http_client):
-    """AC50/CUT-RED-08 (misma carga): re-subir el MISMO archivo no duplica filas."""
-    batch_id = await _crear_batch(http_client, auth_headers)
+    """AC50/CUT-RED-08 (misma carga): re-subir el MISMO archivo no duplica filas.
+
+    Corte propio: el pre-chequeo de duplicado es por (empresa, BU, checksum,
+    corte) — compartir corte con otro test haría que este viera un 409 ajeno.
+    """
+    batch_id = await _crear_batch(http_client, auth_headers, cutover=days_ago(43).isoformat() + "T00:00:00+00:00")
     contenido = _xlsx(FILAS)
     r1 = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                                 headers=auth_headers, files=_subir(contenido))

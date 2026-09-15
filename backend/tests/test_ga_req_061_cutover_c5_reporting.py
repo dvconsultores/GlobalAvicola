@@ -18,15 +18,17 @@ import app.database as database
 sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c2_lifecycle import _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c4_apply import _batch_aprobado, _fase  # noqa: E402
+from time_reference import days_ago, iso_days_ago  # noqa: E402
 
-# Corte fijado por `_batch_aprobado` (`CORTE` de C4): 2026-10-06.
-DIA_CORTE = "2026-10-06"
+# Corte fijado por `_batch_aprobado` (`CORTE` de C4): mismo día civil computado.
+DIA_CORTE = days_ago(40).isoformat()
+
 
 
 def _filas(etiqueta: str) -> list[list]:
     return [
-        [f"CUT-G5-{etiqueta}-1", "2026-08-15", 5000, 5000, 300, 200, None, "golden 10.000/500"],
-        [f"CUT-G5-{etiqueta}-2", "2026-09-01", 2000, 2000, None, None, None, "histórico desconocido"],
+        [f"CUT-G5-{etiqueta}-1", iso_days_ago(60), 5000, 5000, 300, 200, None, "golden 10.000/500"],
+        [f"CUT-G5-{etiqueta}-2", iso_days_ago(45), 2000, 2000, None, None, None, "histórico desconocido"],
     ]
 
 
@@ -55,11 +57,11 @@ async def _escenario(client, auth_headers, seeded_ids, etiqueta: str):
     items = (await client.get(f"/api/v1/cutover-batches/{batch_id}/items", headers=auth_headers)).json()["items"]
     por_ref = {it["legacy_lot_reference"]: it["lot_id"] for it in items}
 
-    # PRE-corte (no debe contar) y POST-corte (35 = 20+15) — corte 2026-10-06.
+    # PRE-corte (no debe contar) y POST-corte (35 = 20+15), ambos relativos al corte.
     await _evento_mortalidad(por_ref[f"CUT-G5-{etiqueta}-1"], seeded_ids["company_id"],
-                             seeded_ids["user_admin_id"], "2026-09-30", 999, 0)
+                             seeded_ids["user_admin_id"], iso_days_ago(45), 999, 0)
     await _evento_mortalidad(por_ref[f"CUT-G5-{etiqueta}-1"], seeded_ids["company_id"],
-                             seeded_ids["user_admin_id"], "2026-10-09", 20, 15)
+                             seeded_ids["user_admin_id"], iso_days_ago(7), 20, 15)
     return batch_id, por_ref[f"CUT-G5-{etiqueta}-1"]
 
 
@@ -75,7 +77,7 @@ async def test_c5_golden_saldo_y_lifetime(auth_headers, client, seeded_ids):
     assert fila["opening"]["live"] == 10000
     assert fila["opening"]["historical_mortality"] == 500
     assert fila["opening"]["mortality_status"] == "KNOWN"
-    assert fila["post"]["mortality"] == 35           # solo el evento 2026-10-09
+    assert fila["post"]["mortality"] == 35           # solo el evento posterior al corte
     assert fila["current_live"] == 9965              # 10.000 − 35
     assert fila["current_live"] != 9465              # prohibido: resta doble del histórico
     assert fila["lifetime"]["mortality"] == 535      # histórico + post

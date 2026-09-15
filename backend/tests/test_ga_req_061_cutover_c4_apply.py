@@ -20,21 +20,32 @@ import app.database as database
 sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
+from time_reference import days_ago, iso_days_ago  # noqa: E402
 
-CORTE = "2026-10-06T00:00:00+00:00"
+#: Corte del checkpoint (fecha civil, computada: sin literales que caduquen).
+CORTE = days_ago(40).isoformat() + "T00:00:00+00:00"
 
 FILAS = [
-    ["CUT-MG-001", "2026-08-15", 5000, 5000, 300, 200, None, "histórico conocido"],
-    ["CUT-MG-002", "2026-09-01", 2000, 2000, None, None, None, "histórico desconocido"],
+    ["CUT-MG-001", iso_days_ago(60), 5000, 5000, 300, 200, None, "histórico conocido"],
+    ["CUT-MG-002", iso_days_ago(45), 2000, 2000, None, None, None, "histórico desconocido"],
 ]
 
 
 async def _fase() -> int:
-    """Fase productiva para el opening (los tests crean las suyas, patrón del repo)."""
+    """Fase productiva para el opening.
+
+    Código propio (`CUTOVER`) y **única**: la siembra de la suite completa
+    (`sembrar_baseline`) localiza sus fases por `code` con `scalar_one_or_none`,
+    de modo que sembrar duplicados de `PROD` rompía esa siembra.
+    """
     from app.masters.models import ProductivePhase
 
     async with database.async_session() as session:
-        fase = ProductivePhase(name="Producción", code="PROD", is_initial=True, order=1)
+        existente = (await session.execute(
+            select(ProductivePhase).where(ProductivePhase.code == "CUTOVER"))).scalars().first()
+        if existente is not None:
+            return existente.id
+        fase = ProductivePhase(name="Cutover", code="CUTOVER", is_initial=True, order=1)
         session.add(fase)
         await session.commit()
         await session.refresh(fase)
@@ -109,10 +120,10 @@ async def test_c4_apply_solo_desde_approved_y_una_vez(auth_headers, client, seed
     await _otorgar(seeded_ids["role_approver_id"], ("cutover", "approve"))
     # Referencias propias de este test: los lotes persisten entre tests del módulo.
     filas_propias = [
-        ["CUT-MG-101", "2026-08-15", 5000, 5000, 300, 200, None, ""],
-        ["CUT-MG-102", "2026-09-01", 2000, 2000, None, None, None, ""],
+        ["CUT-MG-101", iso_days_ago(60), 5000, 5000, 300, 200, None, ""],
+        ["CUT-MG-102", iso_days_ago(45), 2000, 2000, None, None, None, ""],
     ]
-    batch_id = await _crear_batch(client, auth_headers, cutover="2026-10-07T00:00:00+00:00")
+    batch_id = await _crear_batch(client, auth_headers, cutover=days_ago(39).isoformat() + "T00:00:00+00:00")
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                           headers=auth_headers, files=_subir(_xlsx(filas_propias)))
     assert r.status_code == 200
@@ -135,8 +146,8 @@ async def test_c4_duplicado_en_lote_rollback_total(auth_headers, client, seeded_
     """Referencia repetida ⇒ LOT_DUPLICATE y **nada** aplicado (atomicidad AC27/28) + FAILED_APPLY."""
     await _fase()
     filas = [
-        ["CUT-DUP-1", "2026-08-15", 1000, 1000, None, None, None, ""],
-        ["CUT-DUP-1", "2026-08-16", 500, 500, None, None, None, ""],
+        ["CUT-DUP-1", iso_days_ago(60), 1000, 1000, None, None, None, ""],
+        ["CUT-DUP-1", iso_days_ago(59), 500, 500, None, None, None, ""],
     ]
     batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=filas)
 
@@ -180,7 +191,7 @@ async def test_c4_lote_existente_se_reusa_sin_duplicar(auth_headers, client, see
         await session.refresh(previo)
         previo_id = previo.id
 
-    filas = [["CUT-REUSE-1", "2026-08-15", 1200, 1300, 10, 20, None, ""]]
+    filas = [["CUT-REUSE-1", iso_days_ago(60), 1200, 1300, 10, 20, None, ""]]
     batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=filas)
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)
     assert r.status_code == 200, r.text

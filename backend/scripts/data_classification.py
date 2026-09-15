@@ -167,6 +167,14 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
             ("operational_alerts", "Alertas generadas por eventos ficticios."),
             ("correction_logs", "Correcciones sobre eventos ficticios."),
             ("approval_actions", "Aprobaciones de eventos ficticios."),
+            # `GA-REQ-061` · T14: el cutover operacional produce historia de negocio
+            # ficticia (batches, staging, items y correcciones de apertura). Va con la
+            # historia: `cutover_items`/`opening_balance_corrections` referencian a
+            # `lots`/`opening_balances` y el `TRUNCATE CASCADE` los arrastraría igual.
+            ("cutover_batches", "Batches del cutover operacional ficticio."),
+            ("cutover_items", "Filas del cutover ligadas a lotes demo."),
+            ("cutover_staging_rows", "Staging del Excel de corte ficticio."),
+            ("opening_balance_corrections", "Correcciones formales de aperturas demo."),
             ("review_batches", "Lotes de revisión de certificaciones antiguas."),
             ("reversals", "Reversos de eventos ficticios."),
             ("evidences", "Evidencias de prueba. Sus ficheros ya se pierden hoy por R-52."),

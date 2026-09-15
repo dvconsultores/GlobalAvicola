@@ -265,9 +265,10 @@ def test_t10_ac20_ac21_sin_migracion_y_sin_conector():
     raiz = pathlib.Path(__file__).resolve().parents[1]
     cabezas = ScriptDirectory.from_config(Config(str(raiz / "alembic.ini"))).get_heads()
     # GA-GOV-03 (T1) fijó `y5z6a7b8c9d0`; `GA-REM-003` · AC04 avanzó la cadena a
-    # `z6a7b8c9d0e1` (denylist `revoked_tokens` del logout). Se preserva la invariante
+    # `z6a7b8c9d0e1` (denylist `revoked_tokens` del logout) y `GA-REQ-061` · T14 a
+    # `c8d9e0f1a2b3` (acciones RBAC/auditoría del cutover). Se preserva la invariante
     # de cabeza única y se fija la cabeza vigente.
     assert len(cabezas) == 1, cabezas
-    assert cabezas == ["z6a7b8c9d0e1"], cabezas
+    assert cabezas == ["c8d9e0f1a2b3"], cabezas
     assert isinstance(Company.__table__.c.sap_config.type, String)
     assert settings.SAP_ADAPTER in ("manual", "mock")

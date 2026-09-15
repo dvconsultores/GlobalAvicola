@@ -18,9 +18,16 @@ import app.database as database
 # Helpers de construcción del Excel/batch del checkpoint C2 (mismo paquete de tests).
 sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
+from time_reference import days_ago, iso_days_ago  # noqa: E402
+
+#: Cortes propios por test (la unicidad company/BU/checksum/corte es del contrato).
+CORTE_C3_A = days_ago(48).isoformat() + "T00:00:00+00:00"
+CORTE_C3_B = days_ago(47).isoformat() + "T00:00:00+00:00"
+CORTE_C3_C = days_ago(46).isoformat() + "T00:00:00+00:00"
+CORTE_C3_D = days_ago(44).isoformat() + "T00:00:00+00:00"
 
 FILAS_VALIDAS = [
-    ["CUT-BR-010", "2026-08-20", 4000, 4000, 100, 80, None, ""],
+    ["CUT-BR-010", iso_days_ago(60), 4000, 4000, 100, 80, None, ""],
 ]
 
 
@@ -55,11 +62,11 @@ def _headers_aprobar(seeded_ids: dict) -> dict:
 async def test_c3_submit_solo_desde_validated(auth_headers, client):
     """`submit` exige VALIDATED; después el batch queda inmóvil a cargas (409 determinista)."""
     # Un borrador no puede enviarse.
-    borrador = await _crear_batch(client, auth_headers, cutover="2026-10-02T00:00:00+00:00")
+    borrador = await _crear_batch(client, auth_headers, cutover=CORTE_C3_A)
     r0 = await client.post(f"/api/v1/cutover-batches/{borrador}/submit", headers=auth_headers)
     assert r0.status_code == 409, r0.text
 
-    batch_id = await _batch_validado(client, auth_headers, "2026-10-02T00:00:00+00:00")
+    batch_id = await _batch_validado(client, auth_headers, CORTE_C3_A)
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/submit", headers=auth_headers)
     assert r.status_code == 200, r.text
     assert r.json()["status"] == "pending_approval"
@@ -75,7 +82,7 @@ async def test_c3_submit_solo_desde_validated(auth_headers, client):
 @pytest.mark.asyncio
 async def test_c3_creador_no_aprueba_su_batch(auth_headers, client):
     """Segregación (espejo de BR-14): quien creó el batch no lo aprueba, ni siendo super admin."""
-    batch_id = await _batch_validado(client, auth_headers, "2026-10-03T00:00:00+00:00")
+    batch_id = await _batch_validado(client, auth_headers, CORTE_C3_B)
     assert (await client.post(f"/api/v1/cutover-batches/{batch_id}/submit",
                               headers=auth_headers)).status_code == 200
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/approve", headers=auth_headers)
@@ -87,7 +94,7 @@ async def test_c3_creador_no_aprueba_su_batch(auth_headers, client):
 async def test_c3_aprobar_con_otro_actor(auth_headers, client, seeded_ids):
     """Un actor distinto con `cutover:approve` aprueba; queda auditoría SUBMIT/APPROVED."""
     await _otorgar(seeded_ids["role_approver_id"], ("cutover", "approve"), ("cutover", "read"))
-    batch_id = await _batch_validado(client, auth_headers, "2026-10-04T00:00:00+00:00")
+    batch_id = await _batch_validado(client, auth_headers, CORTE_C3_C)
     assert (await client.post(f"/api/v1/cutover-batches/{batch_id}/submit",
                               headers=auth_headers)).status_code == 200
 
@@ -111,7 +118,7 @@ async def test_c3_aprobar_con_otro_actor(auth_headers, client, seeded_ids):
 async def test_c3_rechazo_requiere_razon(auth_headers, client, seeded_ids):
     """`REJECTED` exige razón; sin ella ⇒ 422; con ella ⇒ terminal (re-submit ⇒ 409)."""
     await _otorgar(seeded_ids["role_approver_id"], ("cutover", "approve"))
-    batch_id = await _batch_validado(client, auth_headers, "2026-10-05T00:00:00+00:00")
+    batch_id = await _batch_validado(client, auth_headers, CORTE_C3_D)
     assert (await client.post(f"/api/v1/cutover-batches/{batch_id}/submit",
                               headers=auth_headers)).status_code == 200
 

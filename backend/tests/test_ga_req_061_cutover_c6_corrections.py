@@ -20,12 +20,13 @@ import app.database as database
 sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c4_apply import _batch_aprobado, _fase  # noqa: E402
 from test_ga_req_061_cutover_c5_reporting import _evento_mortalidad  # noqa: E402
+from time_reference import iso_days_ago  # noqa: E402
 
 
 def _filas(etiqueta: str) -> list[list]:
     return [
-        [f"CUT-G6-{etiqueta}-1", "2026-08-15", 5000, 5000, 300, 200, None, "golden correcciones"],
-        [f"CUT-G6-{etiqueta}-2", "2026-09-01", 2000, 2000, None, None, None, "histórico desconocido"],
+        [f"CUT-G6-{etiqueta}-1", iso_days_ago(60), 5000, 5000, 300, 200, None, "golden correcciones"],
+        [f"CUT-G6-{etiqueta}-2", iso_days_ago(45), 2000, 2000, None, None, None, "histórico desconocido"],
     ]
 
 
@@ -47,8 +48,8 @@ async def _escenario(client, auth_headers, seeded_ids, etiqueta: str):
     assert r.status_code == 200, r.text
     items = (await client.get(f"/api/v1/cutover-batches/{batch_id}/items", headers=auth_headers)).json()["items"]
     lote1 = next(it["lot_id"] for it in items if it["legacy_lot_reference"] == f"CUT-G6-{etiqueta}-1")
-    await _evento_mortalidad(lote1, seeded_ids["company_id"], seeded_ids["user_admin_id"], "2026-09-30", 999, 0)
-    await _evento_mortalidad(lote1, seeded_ids["company_id"], seeded_ids["user_admin_id"], "2026-10-09", 20, 15)
+    await _evento_mortalidad(lote1, seeded_ids["company_id"], seeded_ids["user_admin_id"], iso_days_ago(45), 999, 0)
+    await _evento_mortalidad(lote1, seeded_ids["company_id"], seeded_ids["user_admin_id"], iso_days_ago(7), 20, 15)
     return batch_id, lote1, await _opening_de(lote1)
 
 

@@ -3,7 +3,7 @@
 Controles que la suite conserva: el cutover no puede romper lo nativo. CTL-02/03/
 04 ejercen el **motor operacional por API** sobre un lote MIGRATED aplicado (los
 mismos endpoints del lote nativo, AC57/58). El corte de estos controles es
-**pasado** (`2026-08-01`) para que las fechas de evento puedan venir del reloj de
+**pasado** (computado) para que las fechas de evento puedan venir del reloj de
 la suite (`recent_event_date()`, BR-19) y sigan siendo post-cutover.
 """
 from __future__ import annotations
@@ -20,15 +20,15 @@ sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
 from test_ga_req_061_cutover_c4_apply import _fase  # noqa: E402
-from time_reference import recent_event_date  # noqa: E402
+from time_reference import days_ago, iso_days_ago, recent_event_date  # noqa: E402
 
-CORTE_PASADO = "2026-08-01T00:00:00+00:00"
+CORTE_PASADO = days_ago(50).isoformat() + "T00:00:00+00:00"
 
 
 def _filas(etiqueta: str, ref_extra: str | None = None) -> list[list]:
-    filas = [[f"CUT-G7C-{etiqueta}-1", "2026-07-01", 3000, 3000, 50, 50, None, "controles C7"]]
+    filas = [[f"CUT-G7C-{etiqueta}-1", iso_days_ago(60), 3000, 3000, 50, 50, None, "controles C7"]]
     if ref_extra:
-        filas.append([ref_extra, "2026-06-01", 100, 100, None, None, None, "lote nativo reusado"])
+        filas.append([ref_extra, iso_days_ago(55), 100, 100, None, None, None, "lote nativo reusado"])
     return filas
 
 
@@ -52,11 +52,24 @@ async def _aplicar_corte_pasado(client, auth_headers, seeded_ids, etiqueta: str,
 
 @pytest.mark.asyncio
 async def test_ctl01_lote_nativo_reusado_intacto(auth_headers, client, seeded_ids):
-    """CTL-01/AC20-21: el lote nativo reusado conserva origen y fecha; solo gana la referencia."""
-    from app.masters.models import Lot
+    """CTL-01/AC20-21: el lote nativo reusado conserva origen y fecha; solo gana la referencia.
+
+    El lote nativo es **propio del test** (no de las semillas): tocar un lote
+    sembrado dejaría un opening colgando y contaminaría a la suite completa
+    (los saldos de lotes sembrados los usan otros procesos).
+    """
+    from app.masters.models import BirdTypeEnum, Lot, LotStatus
 
     async with database.async_session() as session:
-        nativo = (await session.execute(select(Lot).order_by(Lot.id))).scalars().all()[1]
+        nativo = Lot(
+            company_id=seeded_ids["company_id"], lot_code="CUT-G7C-NATIVO-1",
+            origin="NATIVE", bird_type=BirdTypeEnum.BROILER,
+            status=LotStatus.ACTIVE, activation_type="normal",
+            start_date=days_ago(70),
+        )
+        session.add(nativo)
+        await session.commit()
+        await session.refresh(nativo)
         codigo, inicio, origen, lote_id = nativo.lot_code, nativo.start_date, nativo.origin, nativo.id
 
     _, por_ref = await _aplicar_corte_pasado(client, auth_headers, seeded_ids, "CTL1", codigo)

@@ -114,7 +114,11 @@ async def test_t_025_02_matriz_rbac_completa(sesion):
             )
         )
     ).scalar_one()
-    assert comodines == 9, f"el Super Administrador debe tener 9 comodines, tiene {comodines}"
+    # `GA-REQ-061` · T14 (C1): el enum de acciones creció con
+    # `VALIDATE`/`SUBMIT`/`APPLY` (acciones del cutover) → los comodines del
+    # Super Administrador pasan de 9 a 12. No es una fuga: es el espejo del
+    # catálogo (`PermissionAction`).
+    assert comodines == 12, f"el Super Administrador debe tener 12 comodines, tiene {comodines}"
 
 
 # ── AC04 / AC05 — Configuración y autenticación ───────────────────────────────
@@ -226,8 +230,18 @@ async def test_t_025_07_baseline_idempotente(sesion):
     segundo = await sembrar_baseline(sesion)
     assert primero == segundo, f"el baseline no es reproducible: {primero} vs {segundo}"
 
-    fases = (await sesion.execute(select(func.count(ProductivePhase.id)))).scalar_one()
-    assert fases == 4, f"las fases se duplicaron: {fases}"
+    # `GA-REQ-061` · T14: el invariante es que **las fases del baseline** no se
+    # dupliquen — no que la base no tenga ninguna otra fase (los procesos que
+    # crean fases propias, como el cutover, son legítimos y conviven).
+    from seeds.baseline_seeds import FASES
+
+    codigos = [f[1] for f in FASES]
+    fases = (
+        await sesion.execute(
+            select(func.count(ProductivePhase.id)).where(ProductivePhase.code.in_(codigos))
+        )
+    ).scalar_one()
+    assert fases == 4, f"las fases del baseline se duplicaron: {fases}"
 
 
 # ── AC15 — La guarda destructiva ──────────────────────────────────────────────

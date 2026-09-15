@@ -23,14 +23,15 @@ sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
 from test_ga_req_061_cutover_c4_apply import _batch_aprobado, _fase  # noqa: E402
+from time_reference import days_ago, iso_days_ago  # noqa: E402
 
-CORTE = "2026-10-06T00:00:00+00:00"
+CORTE = days_ago(40).isoformat() + "T00:00:00+00:00"
 
 
 def _filas(etiqueta: str) -> list[list]:
     return [
-        [f"CUT-G7-{etiqueta}-1", "2026-08-15", 4000, 4000, 100, 100, None, "matriz C7"],
-        [f"CUT-G7-{etiqueta}-2", "2026-09-01", 1500, 1500, 50, 50, None, "matriz C7"],
+        [f"CUT-G7-{etiqueta}-1", iso_days_ago(60), 4000, 4000, 100, 100, None, "matriz C7"],
+        [f"CUT-G7-{etiqueta}-2", iso_days_ago(45), 1500, 1500, 50, 50, None, "matriz C7"],
     ]
 
 
@@ -217,10 +218,10 @@ async def test_c7_red06_master_inactivo_referencia_nueva(auth_headers, http_clie
         await session.commit()
 
     filas = [
-        ["CUT-G7-NUEVO", "2026-08-15", 100, 100, None, None, "F-OFF7", "nueva en granja inactiva"],
-        ["CUT-G7-AC53", "2026-08-15", 100, 100, None, None, "F-OFF7", "histórica de granja inactiva"],
+        ["CUT-G7-NUEVO", iso_days_ago(55), 100, 100, None, None, "F-OFF7", "nueva en granja inactiva"],
+        ["CUT-G7-AC53", iso_days_ago(55), 100, 100, None, None, "F-OFF7", "histórica de granja inactiva"],
     ]
-    batch_id = await _crear_batch(http_client, auth_headers, cutover="2026-10-07T00:00:00+00:00")
+    batch_id = await _crear_batch(http_client, auth_headers, cutover=days_ago(39).isoformat() + "T00:00:00+00:00")
     r = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                                headers=auth_headers, files=_subir(_xlsx(filas)))
     assert r.status_code == 200, r.text
@@ -287,8 +288,8 @@ async def test_c7_red22_colision_legacy_code_en_batch(auth_headers, client, seed
 
     await _fase()
     filas = [
-        ["CUT-G7-COLL", "2026-08-15", 100, 100, None, None, None, "duplicada"],
-        ["CUT-G7-COLL", "2026-08-20", 200, 200, None, None, None, "duplicada ×2"],
+        ["CUT-G7-COLL", iso_days_ago(58), 100, 100, None, None, None, "duplicada"],
+        ["CUT-G7-COLL", iso_days_ago(57), 200, 200, None, None, None, "duplicada ×2"],
     ]
     batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=filas)
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)

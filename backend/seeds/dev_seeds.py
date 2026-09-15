@@ -123,6 +123,14 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 # no aprueba (sin `approvals:*`): solicitante ≠ aprobador (`BR-14`).
                 {"module": "reversals", "action": PermissionAction.CREATE},
                 {"module": "reversals", "action": PermissionAction.READ},
+                # `GA-REQ-061` · T14: el cutover operacional (Cargas Iniciales) es una
+                # operación dirigida por supervisión: prepara, valida, envía y aplica.
+                # La aprobación queda en el Aprobador (segregación `BR-14`).
+                {"module": "cutover", "action": PermissionAction.READ},
+                {"module": "cutover", "action": PermissionAction.CREATE},
+                {"module": "cutover", "action": PermissionAction.VALIDATE},
+                {"module": "cutover", "action": PermissionAction.SUBMIT},
+                {"module": "cutover", "action": PermissionAction.APPLY},
             ],
         },
         {
@@ -154,6 +162,10 @@ async def seed_roles(session: AsyncSession) -> dict[str, Role]:
                 {"module": "lots", "action": PermissionAction.READ},
                 {"module": "corrections", "action": PermissionAction.READ},
                 {"module": "corrections", "action": PermissionAction.CORRECT},
+                # `GA-REQ-061` · T14: aprueba/rechaza los batches del cutover (el
+                # supervisor los envía; el creador no se aprueba a sí mismo).
+                {"module": "cutover", "action": PermissionAction.READ},
+                {"module": "cutover", "action": PermissionAction.APPROVE},
                 {"module": "dashboard", "action": PermissionAction.READ},
             ],
         },
