@@ -31,6 +31,8 @@ import SapComparisonPage from './pages/reports/SapComparisonPage'
 import AuditPage from './pages/audit/AuditPage'
 import SapManagerPage from './pages/sap/SapManagerPage'
 import UsersPage from './pages/users/UsersPage'
+// `GA-REQ-061` · T14 · C8 — Cargas Iniciales (cutover operacional).
+import CargasInicialesPage from './pages/cutover/CargasInicialesPage'
 import UnitAccessPage from './pages/admin/UnitAccessPage'
 import LotListPage from './pages/lots/LotListPage'
 import LotDetailPage from './pages/lots/LotDetailPage'
@@ -274,6 +276,10 @@ export default function App() {
  <Route path="/approvals" element={<WebOnlyRoute><CapabilityRoute permission="approvals:approve"><ApprovalPanel /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/audit" element={<WebOnlyRoute><CapabilityRoute permission="audit:read"><AuditPage /></CapabilityRoute></WebOnlyRoute>} />
  <Route path="/sap" element={<WebOnlyRoute><CapabilityRoute permission="sap:read"><SapManagerPage /></CapabilityRoute></WebOnlyRoute>} />
+<Route
+  path="/cutover"
+  element={<WebOnlyRoute><CapabilityRoute permission="cutover:read"><CargasInicialesPage /></CapabilityRoute></WebOnlyRoute>}
+/>
  <Route path="/users" element={<WebOnlyRoute><CapabilityRoute permission="users:read"><UsersPage /></CapabilityRoute></WebOnlyRoute>} />
  {/* `GA-REM-034 AC04` / `R-92`. `docs/02 §3.1.3` exige administrar roles con permisos
  granulares y no había ninguna superficie: ni ruta ni componente. */}

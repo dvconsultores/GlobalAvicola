@@ -14,6 +14,7 @@ import {
   Send, AlertTriangle, BarChart3, UserCheck, FileText, UserCog,
   Sprout,
   Layers,
+  Upload,
   type LucideIcon,
 } from 'lucide-react'
 import type { NavCapability } from '../auth/navigation'
@@ -249,6 +250,17 @@ export const NAV_ITEMS: NavItem[] = [
   },
 
   // ===== ADMINISTRACIÓN =====
+  {
+    // `GA-REQ-061` · T14 · C8: Cargas Iniciales del cutover operacional.
+    key: 'cutover',
+    icon: Upload,
+    labelKey: 'nav.cutover',
+    fallback: 'Cargas Iniciales',
+    to: '/cutover',
+    section: 'administration',
+    capability: 'CONTROL_PLANE',
+    permission: 'cutover:read',
+  },
   {
     key: 'audit',
     icon: Shield,
