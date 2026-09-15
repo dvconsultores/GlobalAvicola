@@ -1,8 +1,8 @@
 
  RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
 
- ❯ src/__tests__/r220.loteB3.test.tsx (1 test | 1 failed) 871ms
-     × AC-R220-B·B9 · el botón eliminar máquina se ancla a su propia fila (relative) 866ms
+ ❯ src/__tests__/r220.loteB3.test.tsx (1 test | 1 failed) 265ms
+     × AC-R220-B·B9 · el botón eliminar máquina se ancla a su propia fila (relative) 263ms
 
 ⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
 
@@ -28,6 +28,6 @@ null
 
  Test Files  1 failed (1)
       Tests  1 failed (1)
-   Start at  04:25:07
-   Duration  5.52s (transform 561ms, setup 154ms, import 993ms, tests 871ms, environment 2.81s)
+   Start at  04:25:50
+   Duration  1.35s (transform 210ms, setup 48ms, import 412ms, tests 265ms, environment 518ms)
 
