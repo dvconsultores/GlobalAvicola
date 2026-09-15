@@ -1,0 +1,30 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB7.test.tsx (2 tests | 1 failed) 188ms
+     × muestra el número de procesos VISIBLES, no un 6 fijo 141ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB7.test.tsx > R-220 · B7 · contador de procesos dinámico en /poultry > muestra el número de procesos VISIBLES, no un 6 fijo
+AssertionError: expected '6' to be '1' // Object.is equality
+
+Expected: "1"
+Received: "6"
+
+ ❯ src/__tests__/r220.loteB7.test.tsx:54:58
+     52|     expect(screen.getAllByRole('link').length).toBe(1) // solo la etap…
+     53|     const etiqueta = screen.getByText('Procesos')
+     54|     expect(etiqueta.previousElementSibling?.textContent).toBe('1')
+       |                                                          ^
+     55|   })
+     56|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 1 passed (2)
+   Start at  04:31:17
+   Duration  1.34s (transform 99ms, setup 46ms, import 345ms, tests 188ms, environment 651ms)
+
