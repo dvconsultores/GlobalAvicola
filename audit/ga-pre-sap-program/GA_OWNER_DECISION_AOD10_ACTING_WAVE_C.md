@@ -32,9 +32,16 @@ explícito y recomendación de absorberlos en la fase de KPIs post-SAP.
    si el propietario prefiere «corregir completo» o «aceptar», el delta es
    aditivo o revertible por la cadena de commits.
 
-## Alcance de GA-REM-022 (micro-tranche)
+## Alcance de GA-REM-022 (micro-tranche) — ENMENDADO tras recon
 
-- **In**: R-131 · R-132. **Out**: R-133 · R-134 · R-141 (aceptados documentados).
+- **In**: **R-132** (denominador de `% mortalidad` = apertura + entradas) y
+  **R-131(b)** (edad de lotes cerrados con `end_date`, no `today()`).
+- **Diferido a decisión genuina del propietario** (**R-131(a)**, FCR): la
+  corrección real del FCR exige **definir la fórmula** (¿ganancia? ¿biomasa?) —
+  que ES el objeto original de AOD-10 — y recalibrar las **bandas OD-22 ya
+  certificadas** (`test_r187_ipe_od22_scale`): cambiarlas unilateralmente
+  invalidaría una decisión de escala del propietario. Queda
+  `ACEPTADO_DOCUMENTADO` con esta justificación, junto a R-133/R-134/R-141.
 - Criterio de salida: RED cause-exact (2 casos reales), IMPL, sensibilidad 1:1,
   P-15 E2E re-corrida, suites BE/FE/build verdes, ledger + status.
 
