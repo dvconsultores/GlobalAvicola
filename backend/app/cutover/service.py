@@ -158,6 +158,23 @@ class CutoverService:
                     })
                 else:
                     normalizado["farm_id"] = granja.id
+                    if not granja.is_active:
+                        # OD-21/AC52: un maestro inactivo no admite referencias NUEVAS.
+                        # AC53: la referencia histórica de un lote existente se conserva.
+                        referencia = normalizado.get("legacy_lot_code")
+                        existente = None
+                        if referencia:
+                            existente = (await self.db.execute(select(Lot).where(
+                                Lot.company_id == batch.company_id,
+                                (Lot.lot_code == referencia) | (Lot.legacy_lot_code == referencia),
+                            ))).scalars().first()
+                        if existente is None:
+                            errores.append({
+                                "row_number": fila["row_number"], "column": "farm_code", "field": "farm_code",
+                                "error_code": "MASTER_INACTIVE",
+                                "message": "La granja está inactiva: no admite referencias nuevas (OD-21).",
+                                "received_value": codigo_granja,
+                            })
 
             estado = CutoverItemStatus.VALID.value if not errores else CutoverItemStatus.INVALID.value
             validas += estado == CutoverItemStatus.VALID.value
@@ -368,8 +385,14 @@ class CutoverService:
             raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                 detail=f"BU_DISABLED: la unidad {batch.business_unit} no está habilitada para la empresa.")
         if not self.current_user.get("is_super_admin"):
-            alcance = set(self.current_user.get("effective_business_units") or []) | \
-                set(self.current_user.get("granted_business_units") or [])
+            # El alcance del actor se resuelve contra la base (patrón de `/me`):
+            # `current_user` de sesión no trae las listas de unidades.
+            from ..business_units.service import unidades_concedidas, unidades_efectivas_por_id
+
+            alcance = set(await unidades_efectivas_por_id(
+                self.db, user_id=int(self.current_user["id"]), company_id=empresa)) | \
+                set(await unidades_concedidas(
+                    self.db, user_id=int(self.current_user["id"]), company_id=empresa))
             if batch.business_unit not in alcance:
                 raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                                     detail=f"La unidad {batch.business_unit} no está concedida al actor.")
