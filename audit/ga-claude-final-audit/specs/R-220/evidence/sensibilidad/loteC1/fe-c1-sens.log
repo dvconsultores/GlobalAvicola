@@ -1,0 +1,196 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteC.test.tsx (8 tests | 1 failed) 146ms
+     × C1/C7 · lista de operaciones: estado traducido, enlace «Ver detalle», optgroup propio 53ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C1/C7 · lista de operaciones: estado traducido, enlace «Ver detalle», optgroup propio
+TestingLibraryElementError: Unable to find an element with the text: status.approved. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mnav.operations[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m [0m
+            [0mcommon.results[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/menu/poultry"[39m
+        [36m>[39m
+          [0m+ [0m
+          [0mcommon.create[0m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+          [33mplaceholder[39m=[32m"review.lot ID"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mcommon.allTypes[0m
+          [36m</option>[39m
+          [36m<optgroup[39m
+            [33mlabel[39m=[32m"operations.stagesGroup"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+            [36m>[39m
+              [0mprocess.stages.grandparent_rearing[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+            [36m>[39m
+              [0mprocess.stages.grandparent_production[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+            [36m>[39m
+              [0mprocess.stages.breeder_rearing[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_production"[39m
+            [36m>[39m
+              [0mprocess.stages.breeder_production[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__hatchery"[39m
+            [36m>[39m
+              [0mprocess.stages.hatchery[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__broiler"[39m
+            [36m>[39m
+              [0mprocess.stages.broiler[0m
+            [36m</option>[39m
+          [36m</optgroup>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-3"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 min-w-0"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mb-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list text-slate-400"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm font-medium text-slate-700"[39m
+              [36m>[39m
+                [0meventsShort.feed_registration[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800"[39m
+              [36m>[39m
+                [0mapproved[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-500"[39m
+            [36m>[39m
+              [0moperations.lotAutoPending[0m
+              [0m — [0m
+              [0m2026-09-10[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-blue-600 text-sm hover:underline ml-3"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/operations/1"[39m
+          [36m>[39m
+            [0mcommon.viewDetail[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/r220.loteC.test.tsx:74:19
+     72|     )
+     73|     await screen.findByText('eventsShort.feed_registration')
+     74|     expect(screen.getByText('status.approved'), 'el estado no puede pi…
+       |                   ^
+     75|     expect(screen.queryByText('approved')).toBeNull()
+     76|     expect(screen.getByText('common.viewDetail'), 'enlace a detalle ro…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 7 passed (8)
+   Start at  04:57:38
+   Duration  1.36s (transform 289ms, setup 72ms, import 512ms, tests 146ms, environment 519ms)
+

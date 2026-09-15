@@ -1,0 +1,3140 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C7 · paginación del panel de aprobaciones: «Anterior» no es `common.back`
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+stderr | src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C7 · paginación del panel de aprobaciones: «Anterior» no es `common.back`
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+stderr | src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C7 · paginación del panel de aprobaciones: «Anterior» no es `common.back`
+Maximum update depth exceeded. This can happen when a component calls setState inside useEffect, but useEffect either doesn't have a dependency array, or one of the dependencies changes on every render.
+
+ ❯ src/__tests__/r220.loteC.test.tsx (8 tests | 8 failed) 4143ms
+     × C1/C7 · lista de operaciones: estado traducido, enlace «Ver detalle», optgroup propio 61ms
+     × C1 · detalle de operación: tipo de evento, sexo y tipo de huevo traducidos 1016ms
+     × C1 · detalle de revisión: sexo y acción del historial traducidos 1015ms
+     × C1 · detalle de lote: los registros recientes muestran el evento traducido 1014ms
+     × C7 · paginación del panel de aprobaciones: «Anterior» no es `common.back` 1027ms
+     × `roles.actions` (9) y `roles.modules` (13) existen en ambos idiomas 3ms
+     × claves C7/C1 nuevas: common.prev, common.viewDetail, sex.*, dashboard.processes, operations.stagesGroup 1ms
+     × C7 · la cabecera de procesos del dashboard usa su propia clave (no `process.hub.title`) 3ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 8 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C1/C7 · lista de operaciones: estado traducido, enlace «Ver detalle», optgroup propio
+TestingLibraryElementError: Unable to find an element with the text: status.approved. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mnav.operations[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-500"[39m
+          [36m>[39m
+            [0m1[0m
+            [0m [0m
+            [0mcommon.results[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/menu/poultry"[39m
+        [36m>[39m
+          [0m+ [0m
+          [0mcommon.create[0m
+        [36m</a>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex gap-3 mb-4 flex-wrap"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm w-28"[39m
+          [33mplaceholder[39m=[32m"review.lot ID"[39m
+          [33mtype[39m=[32m"number"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+        [36m<select[39m
+          [33mclass[39m=[32m"h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]"[39m
+        [36m>[39m
+          [36m<option[39m
+            [33mvalue[39m=[32m""[39m
+          [36m>[39m
+            [0mcommon.allTypes[0m
+          [36m</option>[39m
+          [36m<optgroup[39m
+            [33mlabel[39m=[32m"process.hub.title"[39m
+          [36m>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_rearing"[39m
+            [36m>[39m
+              [0mprocess.stages.grandparent_rearing[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__grandparent_production"[39m
+            [36m>[39m
+              [0mprocess.stages.grandparent_production[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_rearing"[39m
+            [36m>[39m
+              [0mprocess.stages.breeder_rearing[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__breeder_production"[39m
+            [36m>[39m
+              [0mprocess.stages.breeder_production[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__hatchery"[39m
+            [36m>[39m
+              [0mprocess.stages.hatchery[0m
+            [36m</option>[39m
+            [36m<option[39m
+              [33mvalue[39m=[32m"__stage__broiler"[39m
+            [36m>[39m
+              [0mprocess.stages.broiler[0m
+            [36m</option>[39m
+          [36m</optgroup>[39m
+        [36m</select>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"space-y-3"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex-1 min-w-0"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-center gap-2 mb-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-clipboard-list text-slate-400"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"20"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"20"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"4"[39m
+                  [33mrx[39m=[32m"1"[39m
+                  [33mry[39m=[32m"1"[39m
+                  [33mwidth[39m=[32m"8"[39m
+                  [33mx[39m=[32m"8"[39m
+                  [33my[39m=[32m"2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 11h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 16h4"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 11h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 16h.01"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-sm font-medium text-slate-700"[39m
+              [36m>[39m
+                [0meventsShort.feed_registration[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-green-100 text-green-800"[39m
+              [36m>[39m
+                [0mapproved[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<p[39m
+              [33mclass[39m=[32m"text-xs text-slate-500"[39m
+            [36m>[39m
+              [0moperations.lotAutoPending[0m
+              [0m — [0m
+              [0m2026-09-10[0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"text-blue-600 text-sm hover:underline ml-3"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/operations/1"[39m
+          [36m>[39m
+            [0mcommon.edit[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/r220.loteC.test.tsx:74:19
+     72|     )
+     73|     await screen.findByText('eventsShort.feed_registration')
+     74|     expect(screen.getByText('status.approved'), 'el estado no puede pi…
+       |                   ^
+     75|     expect(screen.queryByText('approved')).toBeNull()
+     76|     expect(screen.getByText('common.viewDetail'), 'enlace a detalle ro…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C1 · detalle de operación: tipo de evento, sexo y tipo de huevo traducidos
+TestingLibraryElementError: Unable to find an element with the text: eventsShort.feed_registration. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 space-y-4"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"text-slate-400 hover flex items-center gap-1 text-sm"[39m
+        [33mdata-discover[39m=[32m"true"[39m
+        [33mhref[39m=[32m"/operations"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"16"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"16"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"m12 19-7-7 7-7"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M19 12H5"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+        [0m [0m
+        [0moperations.backToOperations[0m
+      [36m</a>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between mb-4"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0moperations.eventDetail[0m
+          [36m</h1>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800"[39m
+          [36m>[39m
+            [0mstatus.approved[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<dl[39m
+          [33mclass[39m=[32m"grid grid-cols-2 gap-4 text-sm"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.type[0m
+            [36m</dt>[39m
+            [36m<dd[39m
+              [33mclass[39m=[32m"font-medium"[39m
+            [36m>[39m
+              [0mfeed_registration[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.date[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m2026-09-10[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mlots.lot[0m
+            [36m</dt>[39m
+            [36m<dd[39m
+              [33mclass[39m=[32m"font-mono"[39m
+            [36m>[39m
+              [0m—[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.version[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0mv[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"col-span-2"[39m
+          [36m>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.observations[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m—[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+        [36m</dl>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2 flex items-center gap-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-activity"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mreview.birdMovements[0m
+          [36m</h3>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0m5[0m
+            [0m [0m
+            [0mreview.aves[0m
+            [0m [0m
+            [0mmale[0m
+            [0m [0m
+            [0m· 2400g[0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2"[39m
+          [36m>[39m
+            [0moperations.eggs[0m
+          [36m</h3>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0m10[0m
+            [0m · [0m
+            [0mfertile[0m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-2 mb-4"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-paperclip text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"text-base font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mevidence.title[0m
+          [36m</h2>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ml-auto text-xs text-slate-400"[39m
+          [36m>[39m
+            [0mevidence.allowedTypes[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-sm text-slate-400 mb-4 italic"[39m
+        [36m>[39m
+          [0mevidence.noFiles[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6 space-y-4"[39m
+    [36m>[39m
+      [36m<a[39m
+        [33mclass[39m=[32m"text-slate-400 hover flex items-center gap-1 text-sm"[39m
+        [33mdata-discover[39m=[32m"true"[39m
+        [33mhref[39m=[32m"/operations"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"16"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"16"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<path[39m
+            [33md[39m=[32m"m12 19-7-7 7-7"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M19 12H5"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+        [0m [0m
+        [0moperations.backToOperations[0m
+      [36m</a>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center justify-between mb-4"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+          [36m>[39m
+            [0moperations.eventDetail[0m
+          [36m</h1>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"px-3 py-1 rounded-full text-sm font-medium bg-emerald-100 text-emerald-800"[39m
+          [36m>[39m
+            [0mstatus.approved[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<dl[39m
+          [33mclass[39m=[32m"grid grid-cols-2 gap-4 text-sm"[39m
+        [36m>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.type[0m
+            [36m</dt>[39m
+            [36m<dd[39m
+              [33mclass[39m=[32m"font-medium"[39m
+            [36m>[39m
+              [0mfeed_registration[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.date[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m2026-09-10[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mlots.lot[0m
+            [36m</dt>[39m
+            [36m<dd[39m
+              [33mclass[39m=[32m"font-mono"[39m
+            [36m>[39m
+              [0m—[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.version[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0mv[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"col-span-2"[39m
+          [36m>[39m
+            [36m<dt[39m
+              [33mclass[39m=[32m"text-slate-500"[39m
+            [36m>[39m
+              [0mcommon.observations[0m
+            [36m</dt>[39m
+            [36m<dd>[39m
+              [0m—[0m
+            [36m</dd>[39m
+          [36m</div>[39m
+        [36m</dl>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2 flex items-center gap-1"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-activity"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"14"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"14"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mreview.birdMovements[0m
+          [36m</h3>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0m5[0m
+            [0m [0m
+            [0mreview.aves[0m
+            [0m [0m
+            [0mmale[0m
+            [0m [0m
+            [0m· 2400g[0m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mt-4 pt-4 border-t"[39m
+        [36m>[39m
+          [36m<h3[39m
+            [33mclass[39m=[32m"font-semibold text-sm text-slate-600 mb-2"[39m
+          [36m>[39m
+            [0moperations.eggs[0m
+          [36m</h3>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"text-xs text-slate-600"[39m
+          [36m>[39m
+            [0m10[0m
+            [0m · [0m
+            [0mfertile[0m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-2 mb-4"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-paperclip text-[#5a9bba]"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m16 6-8.414 8.586a2 2 0 0 0 2.829 2.829l8.414-8.586a4 4 0 1 0-5.657-5.657l-8.379 8.551a6 6 0 1 0 8.485 8.485l8.379-8.551"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"text-base font-bold text-slate-800"[39m
+          [36m>[39m
+            [0mevidence.title[0m
+          [36m</h2>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"ml-auto text-xs text-slate-400"[39m
+          [36m>[39m
+            [0mevidence.allowedTypes[0m
+          [36m</span>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"text-sm text-slate-400 mb-4 italic"[39m
+        [36m>[39m
+          [0mevidence.noFiles[0m
+        [36m</p>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteC.test.tsx:100:18
+     98|       </MemoryRouter>,
+     99|     )
+    100|     await screen.findByText('eventsShort.feed_registration')
+       |                  ^
+    101|     expect(screen.getByText(/sex\.male/), 'sexo crudo en movimientos')…
+    102|     expect(screen.getByText(/operations\.fertile/), 'tipo de huevo cru…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C1 · detalle de revisión: sexo y acción del historial traducidos
+TestingLibraryElementError: Unable to find an element with the text: /sex\.male/. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"[39m
+        [36m>[39m
+          [0mstatus.in_review[0m
+        [36m</span>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.mortality_recording[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m2026-09-10[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-4 pt-4 border-t border-slate-100"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase mb-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-bird inline-block mr-1 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 7h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m20 7 2 .5-2 .5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 18v3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 17.75V21"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M7 18a6 6 0 0 0 3.84-10.61"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.birdMovements[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-xs text-slate-600 flex gap-3"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mmale[0m
+              [36m</span>[39m
+              [36m<span>[39m
+                [0m5[0m
+                [0m [0m
+                [0mreview.aves[0m
+              [36m</span>[39m
+              [36m<span />[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-4 pt-4 border-t border-slate-100"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase mb-2 flex items-center gap-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 9H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 13H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17H8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.actionsHistory[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-xs text-slate-600 mb-1"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"font-medium"[39m
+              [36m>[39m
+                [0mapproved[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+              [36m>[39m
+                [0m11/9/2026, 10:00:00 a. m.[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition"[39m
+          [36m>[39m
+            [0m✓ [0m
+            [0mreview.completeReview[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+              [33mplaceholder[39m=[32m"review.observationsPlaceholder"[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-orange-700 transition"[39m
+            [36m>[39m
+              [0m↩ [0m
+              [0mreview.returnToOperator[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+              [33mplaceholder[39m=[32m"review.rejectionReason"[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/review"[39m
+        [36m>[39m
+          [0m← [0m
+          [0mcommon.back[0m
+        [36m</a>[39m
+        [36m<h1[39m
+          [33mclass[39m=[32m"text-xl font-bold text-[#1E3A5F]"[39m
+        [36m>[39m
+          [0mreview.detailTitle[0m
+        [36m</h1>[39m
+        [36m<span[39m
+          [33mclass[39m=[32m"px-2.5 py-0.5 rounded-full text-xs font-medium bg-indigo-100 text-indigo-800"[39m
+        [36m>[39m
+          [0mstatus.in_review[0m
+        [36m</span>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-2 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-clipboard-list inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<rect[39m
+                [33mheight[39m=[32m"4"[39m
+                [33mrx[39m=[32m"1"[39m
+                [33mry[39m=[32m"1"[39m
+                [33mwidth[39m=[32m"8"[39m
+                [33mx[39m=[32m"8"[39m
+                [33my[39m=[32m"2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 11h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 16h4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 11h.01"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16h.01"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.originalData[0m
+          [36m</h2>[39m
+          [36m<dl[39m
+            [33mclass[39m=[32m"space-y-2 text-sm"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.type[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0meventsShort.mortality_recording[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.date[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m2026-09-10[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.lot[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"font-mono"[39m
+              [36m>[39m
+                [0m#[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.farm[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mreview.house[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.observations[0m
+              [36m</dt>[39m
+              [36m<dd[39m
+                [33mclass[39m=[32m"max-w-[200px] truncate"[39m
+              [36m>[39m
+                [0m-[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex justify-between"[39m
+            [36m>[39m
+              [36m<dt[39m
+                [33mclass[39m=[32m"text-slate-500"[39m
+              [36m>[39m
+                [0mcommon.version[0m
+              [36m</dt>[39m
+              [36m<dd>[39m
+                [0mv[0m
+              [36m</dd>[39m
+            [36m</div>[39m
+          [36m</dl>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-4 pt-4 border-t border-slate-100"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase mb-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-bird inline-block mr-1 -mt-0.5"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 7h.01"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m20 7 2 .5-2 .5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 18v3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 17.75V21"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M7 18a6 6 0 0 0 3.84-10.61"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.birdMovements[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-xs text-slate-600 flex gap-3"[39m
+            [36m>[39m
+              [36m<span>[39m
+                [0mmale[0m
+              [36m</span>[39m
+              [36m<span>[39m
+                [0m5[0m
+                [0m [0m
+                [0mreview.aves[0m
+              [36m</span>[39m
+              [36m<span />[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-wheat inline-block mr-1 -mt-0.5"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"14"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"14"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M2 22 16 8"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.47 12.53 5 11l1.53 1.53a3.5 3.5 0 0 1 0 4.94L5 19l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7.47 8.53 9 7l1.53 1.53a3.5 3.5 0 0 1 0 4.94L9 15l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 4.53 13 3l1.53 1.53a3.5 3.5 0 0 1 0 4.94L13 11l-1.53-1.53a3.5 3.5 0 0 1 0-4.94Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M20 2h2v2a4 4 0 0 1-4 4h-2V6a4 4 0 0 1 4-4Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M11.47 17.47 13 19l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L5 19l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M15.47 13.47 17 15l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L9 15l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19.47 9.47 21 11l-1.53 1.53a3.5 3.5 0 0 1-4.94 0L13 11l1.53-1.53a3.5 3.5 0 0 1 4.94 0Z"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [0mreview.feedMovements[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+        [36m>[39m
+          [36m<h2[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 mb-4"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-refresh-cw inline-block mr-1.5 -mt-0.5"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 3v5h-5"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M8 16H3v5"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0mreview.sapReference[0m
+          [36m</h2>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-sm text-slate-400 italic"[39m
+          [36m>[39m
+            [0mreview.noSapRef[0m
+          [36m</p>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"mt-4 pt-4 border-t border-slate-100"[39m
+          [36m>[39m
+            [36m<h3[39m
+              [33mclass[39m=[32m"text-xs font-semibold text-slate-500 uppercase mb-2 flex items-center gap-1"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-file-text"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"14"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"14"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M6 22a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h8a2.4 2.4 0 0 1 1.704.706l3.588 3.588A2.4 2.4 0 0 1 20 8v12a2 2 0 0 1-2 2z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M14 2v5a1 1 0 0 0 1 1h5"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M10 9H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 13H8"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 17H8"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mreview.actionsHistory[0m
+            [36m</h3>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"text-xs text-slate-600 mb-1"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"font-medium"[39m
+              [36m>[39m
+                [0mapproved[0m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+              [36m>[39m
+                [0m11/9/2026, 10:00:00 a. m.[0m
+              [36m</span>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"mt-6 bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+      [36m>[39m
+        [36m<h2[39m
+          [33mclass[39m=[32m"font-semibold text-slate-700 mb-3"[39m
+        [36m>[39m
+          [0mcommon.actions[0m
+        [36m</h2>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex flex-wrap gap-3"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-teal-700 transition"[39m
+          [36m>[39m
+            [0m✓ [0m
+            [0mreview.completeReview[0m
+          [36m</button>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+              [33mplaceholder[39m=[32m"review.observationsPlaceholder"[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+            [36m<button[39m
+              [33mclass[39m=[32m"bg-orange-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-orange-700 transition"[39m
+            [36m>[39m
+              [0m↩ [0m
+              [0mreview.returnToOperator[0m
+            [36m</button>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex flex-wrap gap-2 items-center"[39m
+          [36m>[39m
+            [36m<input[39m
+              [33mclass[39m=[32m"border border-slate-300 rounded-lg px-3 py-2 text-sm w-48"[39m
+              [33mplaceholder[39m=[32m"review.rejectionReason"[39m
+              [33mtype[39m=[32m"text"[39m
+              [33mvalue[39m=[32m""[39m
+            [36m/>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [0m [0m
+        [0m [0m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteC.test.tsx:126:18
+    124|       </MemoryRouter>,
+    125|     )
+    126|     await screen.findByText(/sex\.male/)
+       |                  ^
+    127|     await waitFor(() => expect(screen.getByText('audit.actions.approve…
+    128|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C1 · detalle de lote: los registros recientes muestran el evento traducido
+TestingLibraryElementError: Unable to find an element with the text: eventsShort.feed_registration. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover transition-colors"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/lots"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m12 19-7-7 7-7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19 12H5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</a>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex-1 min-w-0"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F] truncate"[39m
+          [36m>[39m
+            [0mL-9[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2 mt-0.5 flex-wrap"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-sm text-slate-500"[39m
+            [36m>[39m
+              [0mbirdTypes.broiler[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-slate-300"[39m
+            [36m>[39m
+              [0m·[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+            [36m>[39m
+              [0mlotStatus.active[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"inline-block mt-1 text-sm font-medium text-[#5a9bba] hover:underline"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/lot/9"[39m
+          [36m>[39m
+            [0mreports.lotReport[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-3 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"lg:col-span-2 space-y-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-plus text-[#5a9bba]"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M5 12h14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 5v14"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mlots.registerOperation[0m
+            [36m</h2>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-activity"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mlots.lastRecords[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 max-h-80 overflow-y-auto"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center justify-between text-sm py-2 border-b border-slate-50 last:border-0"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"font-medium text-slate-700"[39m
+                  [36m>[39m
+                    [0mfeed_registration[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+                  [36m>[39m
+                    [0m2026-09-10[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700"[39m
+                [36m>[39m
+                  [0mapproved[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"space-y-4"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-calendar"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 2v3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 2v3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 9h18"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mlots.info[0m
+            [36m</h2>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"space-y-2 text-sm"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.start[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.plannedClose[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.type[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mbirdTypes.broiler[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.farm[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.house[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-trending-up"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 7h6v6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m22 7-8.5 8.5-5-5L2 17"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mlots.kpis[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-3"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-activity text-teal-600"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mtraceability.title[0m
+            [36m</h2>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-wrap items-center gap-3 mb-6"[39m
+      [36m>[39m
+        [36m<a[39m
+          [33mclass[39m=[32m"text-slate-400 hover transition-colors"[39m
+          [33mdata-discover[39m=[32m"true"[39m
+          [33mhref[39m=[32m"/lots"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m12 19-7-7 7-7"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M19 12H5"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</a>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex-1 min-w-0"[39m
+        [36m>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F] truncate"[39m
+          [36m>[39m
+            [0mL-9[0m
+          [36m</h1>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-2 mt-0.5 flex-wrap"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-sm text-slate-500"[39m
+            [36m>[39m
+              [0mbirdTypes.broiler[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"text-slate-300"[39m
+            [36m>[39m
+              [0m·[0m
+            [36m</span>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-800"[39m
+            [36m>[39m
+              [0mlotStatus.active[0m
+            [36m</span>[39m
+          [36m</div>[39m
+          [36m<a[39m
+            [33mclass[39m=[32m"inline-block mt-1 text-sm font-medium text-[#5a9bba] hover:underline"[39m
+            [33mdata-discover[39m=[32m"true"[39m
+            [33mhref[39m=[32m"/reports/lot/9"[39m
+          [36m>[39m
+            [0mreports.lotReport[0m
+          [36m</a>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-1 lg:grid-cols-3 gap-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"lg:col-span-2 space-y-6"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-plus text-[#5a9bba]"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M5 12h14"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12 5v14"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mlots.registerOperation[0m
+            [36m</h2>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-activity"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mlots.lastRecords[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-2 max-h-80 overflow-y-auto"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex items-center justify-between text-sm py-2 border-b border-slate-50 last:border-0"[39m
+              [36m>[39m
+                [36m<div>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"font-medium text-slate-700"[39m
+                  [36m>[39m
+                    [0mfeed_registration[0m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"text-slate-400 ml-2"[39m
+                  [36m>[39m
+                    [0m2026-09-10[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-100 text-emerald-700"[39m
+                [36m>[39m
+                  [0mapproved[0m
+                [36m</span>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"space-y-4"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-calendar"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M8 2v3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 2v3"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mheight[39m=[32m"18"[39m
+                  [33mrx[39m=[32m"2"[39m
+                  [33mwidth[39m=[32m"18"[39m
+                  [33mx[39m=[32m"3"[39m
+                  [33my[39m=[32m"3"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M3 9h18"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mlots.info[0m
+            [36m</h2>[39m
+            [36m<dl[39m
+              [33mclass[39m=[32m"space-y-2 text-sm"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.start[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.plannedClose[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.type[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0mbirdTypes.broiler[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.farm[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"flex justify-between"[39m
+              [36m>[39m
+                [36m<dt[39m
+                  [33mclass[39m=[32m"text-slate-500"[39m
+                [36m>[39m
+                  [0mlots.house[0m
+                [36m</dt>[39m
+                [36m<dd>[39m
+                  [0m—[0m
+                [36m</dd>[39m
+              [36m</div>[39m
+            [36m</dl>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-3 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-trending-up"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M16 7h6v6"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"m22 7-8.5 8.5-5-5L2 17"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0m [0m
+              [0mlots.kpis[0m
+            [36m</h2>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"space-y-3"[39m
+            [36m/>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"bg-white rounded-xl shadow-sm border border-slate-200 p-5"[39m
+          [36m>[39m
+            [36m<h2[39m
+              [33mclass[39m=[32m"font-semibold text-slate-700 mb-4 flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33maria-hidden[39m=[32m"true"[39m
+                [33mclass[39m=[32m"lucide lucide-activity text-teal-600"[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"18"[39m
+                [33mstroke[39m=[32m"currentColor"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"18"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M22 12h-2.48a2 2 0 0 0-1.93 1.46l-2.35 8.36a.25.25 0 0 1-.48 0L9.24 2.18a.25.25 0 0 0-.48 0l-2.35 8.36A2 2 0 0 1 4.49 12H2"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mtraceability.title[0m
+            [36m</h2>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteC.test.tsx:145:18
+    143|       </MemoryRouter>,
+    144|     )
+    145|     await screen.findByText('eventsShort.feed_registration')
+       |                  ^
+    146|   })
+    147|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C1 enumerados + C7 claves (pantallas) > C7 · paginación del panel de aprobaciones: «Anterior» no es `common.back`
+TestingLibraryElementError: Unable to find an element with the text: common.prev. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mreview.approvalPanel[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"[39m
+                [33mdata-discover[39m=[32m"true"[39m
+                [33mhref[39m=[32m"/review"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m12 19-7-7 7-7"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M19 12H5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mnav.review[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mreview.pendingApprovals[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m1[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 6v6l4 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-blue-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mcommon.results[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m30[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-blue-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-blue-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33...
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-5"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"mb-5"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"flex items-center gap-3"[39m
+          [36m>[39m
+            [36m<h1[39m
+              [33mclass[39m=[32m"text-xl lg:text-2xl font-extrabold text-slate-900 leading-tight"[39m
+            [36m>[39m
+              [0mreview.approvalPanel[0m
+            [36m</h1>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ml-auto flex items-center gap-2"[39m
+            [36m>[39m
+              [36m<a[39m
+                [33mclass[39m=[32m"inline-flex items-center gap-1.5 text-sm font-semibold text-slate-600 hover:text-blue-600 bg-slate-100 hover:bg-blue-50 px-4 py-2 rounded-lg transition-colors"[39m
+                [33mdata-discover[39m=[32m"true"[39m
+                [33mhref[39m=[32m"/review"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-arrow-left"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"m12 19-7-7 7-7"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M19 12H5"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [0m [0m
+                [0mnav.review[0m
+              [36m</a>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"grid grid-cols-2 gap-4 mb-6"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-amber-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mreview.pendingApprovals[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m1[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-clock text-amber-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"12"[39m
+                    [33mr[39m=[32m"10"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M12 6v6l4 2"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</div>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"bg-white rounded-xl border border-slate-200/80  "[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"p-4"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"flex items-start justify-between gap-3"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"min-w-0 flex-1"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mclass[39m=[32m"flex items-center gap-1.5 mb-2"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mclass[39m=[32m"w-1.5 h-1.5 rounded-full shrink-0 bg-blue-500"[39m
+                  [36m/>[39m
+                  [36m<p[39m
+                    [33mclass[39m=[32m"text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none"[39m
+                  [36m>[39m
+                    [0mcommon.results[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<p[39m
+                  [33mclass[39m=[32m"text-2xl font-semibold text-slate-900 stat-value"[39m
+                [36m>[39m
+                  [0m30[0m
+                [36m</p>[39m
+              [36m</div>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-blue-50"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33maria-hidden[39m=[32m"true"[39m
+                  [33mclass[39m=[32m"lucide lucide-search text-blue-600"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33...
+ ❯ waitForWrapper node_modules/@testing-library/dom/dist/wait-for.js:163:27
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:86:33
+ ❯ src/__tests__/r220.loteC.test.tsx:162:18
+    160|       </MemoryRouter>,
+    161|     )
+    162|     await screen.findByText('common.prev')
+       |                  ^
+    163|   })
+    164| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C2 namespaces `roles.*` y claves nuevas (ES/EN) > `roles.actions` (9) y `roles.modules` (13) existen en ambos idiomas
+AssertionError: roles.actions.read (es): expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteC.test.tsx:173:95
+    171|     for (const lang of ['es', 'en']) {
+    172|       const d = JSON.parse(readFileSync(resolve(here, '..', '..', 'pub…
+    173|       for (const a of ACCIONES) expect(d.roles?.actions?.[a], `roles.a…
+       |                                                                                               ^
+    174|       for (const m of MODULOS) expect(d.roles?.modules?.[m], `roles.mo…
+    175|     }
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[6/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C2 namespaces `roles.*` y claves nuevas (ES/EN) > claves C7/C1 nuevas: common.prev, common.viewDetail, sex.*, dashboard.processes, operations.stagesGroup
+AssertionError: common.prev (es): expected undefined to be truthy
+
+- Expected:
+true
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteC.test.tsx:181:55
+    179|     for (const lang of ['es', 'en']) {
+    180|       const d = JSON.parse(readFileSync(resolve(here, '..', '..', 'pub…
+    181|       expect(d.common?.prev, `common.prev (${lang})`).toBeTruthy()
+       |                                                       ^
+    182|       expect(d.common?.viewDetail, `common.viewDetail (${lang})`).toBe…
+    183|       for (const s of ['male', 'female', 'mixed']) expect(d.sex?.[s], …
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[7/8]⎯
+
+ FAIL  src/__tests__/r220.loteC.test.tsx > R-220 · Lote C · C2 namespaces `roles.*` y claves nuevas (ES/EN) > C7 · la cabecera de procesos del dashboard usa su propia clave (no `process.hub.title`)
+AssertionError: expected 'import { useState, useEffect } from \…' to contain 't(\'dashboard.processes\''
+
+- Expected
++ Received
+
+- t('dashboard.processes'
++ import { useState, useEffect } from 'react'
++ import { useTranslation } from 'react-i18next'
++ import { Link, useLocation } from 'react-router-dom'
++ import { useAuthStore } from '../../stores/auth.store'
++ import { useCompanyStore } from '../../stores/company.store'
++ import { Bird, FileText, Clock, CheckCircle, TrendingDown, Egg, Sparkles, AlertCircle, AlertTriangle, X, Sprout, Feather, ChevronRight, ChevronDown, Building2 } from 'lucide-react'
++ import {
++  LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
++ } from 'recharts'
++ import api from '../../services/api'
++ import { useCan } from '../../auth/actionAuthority'
++ import { useToast, getErrorMessage } from '../../components/Toast'
++ import { Card, CardHeader, CardBody, Badge, statusToVariant } from '../../components/ui'
++ import { PROCESS_STAGES, flowForStage, stagePathForKey } from '../../data/processCatalog'
++ import { stageVisibleForSession } from '../../auth/navigation'
++ import { normalizeLanguage } from '../../i18n'
++
++ // ── Alert severity styles ───────────────────────────────────────────────────
++ const ALERT_STYLE: Record<string, { bar: string; bg: string; text: string; badge: string }> = {
++  critical: { bar: 'bg-red-500', bg: 'bg-red-50', text: 'text-red-800', badge: 'bg-red-100 text-red-700 border-red-200' },
++  warning: { bar: 'bg-amber-400', bg: 'bg-amber-50', text: 'text-amber-800', badge: 'bg-amber-100 text-amber-700 border-amber-200' },
++  info: { bar: 'bg-blue-400', bg: 'bg-blue-50', text: 'text-blue-800', badge: 'bg-blue-100 text-blue-700 border-blue-200' },
++ }
++
++ function AlertsWidget({ alerts, onResolve }: {
++  alerts: any[]
++  onResolve: (id: number) => void
++ }) {
++  const { t } = useTranslation()
++  const can = useCan()
++  if (!alerts || alerts.length === 0) return null
++  return (
++  <Card>
++  <CardHeader
++  title={t('alerts.activeTitle', 'Alertas activas')}
++  subtitle={`${alerts.length} ${t('alerts.unresolved', 'sin resolver')}`}
++  action={<AlertTriangle size={18} className="text-amber-500" />}
++  />
++  <CardBody>
++  <div className="space-y-2">
++  {alerts.map((a: any) => {
++  const s = ALERT_STYLE[a.severity] ?? ALERT_STYLE.info
++  return (
++  <div key={a.id} className={`flex items-start gap-3 rounded-xl border p-3 ${s.bg}`}>
++  <div className={`w-1 self-stretch rounded-full shrink-0 ${s.bar}`} />
++  <div className="flex-1 min-w-0">
++  <div className="flex items-center gap-2 flex-wrap mb-0.5">
++  <span className={`text-xs font-bold uppercase px-1.5 py-0.5 rounded border ${s.badge}`}>
++  {String(t(`alerts.severity.${a.severity}`, a.severity))}
++  </span>
++  <span className="text-xs text-slate-500">
++  {String(t(`alerts.type.${a.alert_type}`, a.alert_type.replace(/_/g, ' ')))}
++  </span>
++  {a.lot_id && (
++  <Link to={`/lots/${a.lot_id}`} className="text-xs text-blue-600 hover:underline">
++  {t('lots.lot', 'Lote')} #{a.lot_id}
++  </Link>
++  )}
++  </div>
++  <p className={`text-xs leading-snug ${s.text}`}>{a.message}</p>
++  </div>
++  {can({ permission: 'operations:update' }) && <button
++  onClick={() => onResolve(a.id)}
++  className="shrink-0 text-slate-400 hover p-1 rounded"
++  title={t('alerts.resolve', 'Marcar como resuelta')}
++  >
++  <X size={14} />
++  </button>}
++  </div>
++  )
++  })}
++  </div>
++  </CardBody>
++  </Card>
++  )
++ }
++
++ export default function DashboardPage() {
++  const { t, i18n } = useTranslation()
++  const currentLang = normalizeLanguage(i18n.resolvedLanguage || i18n.language)
++  const location = useLocation()
++  const { user } = useAuthStore()
++  const { activeCompanyName } = useCompanyStore()
++  const isMobileUser = user?.view_type === 'mobile'
++  const isKpiRoute = location.pathname === '/kpi'
++  const [data, setData] = useState<any>(null)
++  const [loading, setLoading] = useState(true)
++  const [error, setError] = useState('')
++  const [activeAlerts, setActiveAlerts] = useState<any[]>([])
++  const [expandedBird, setExpandedBird] = useState<string | null>(null) // For mobile bird-type → phase expansion
++  const toast = useToast()
++
++  useEffect(() => {
++  const endpoint = isMobileUser && !isKpiRoute ? '/dashboard/mobile' : '/dashboard/admin'
++  api.get(endpoint)
++  .then(r => {
++  setData(r.data)
++  setActiveAlerts(r.data?.active_alerts ?? [])
++  })
++  .catch((e: any) => {
++  const msg = getErrorMessage(e, t('dashboard.errorLoading'))
++  setError(msg)
++  toast.error(msg)
++  })
++  .finally(() => setLoading(false))
++  }, [isMobileUser, isKpiRoute])
++
++  const handleResolveAlert = async (alertId: number) => {
++  try {
++  await api.patch(`/operations/alerts/${alertId}/resolve`)
++  setActiveAlerts(prev => prev.filter(a => a.id !== alertId))
++  toast.success(t('alerts.resolvedOk', 'Alerta resuelta'))
++  } catch (e: any) {
++  toast.error(getErrorMessage(e, t('alerts.resolveError', 'Error al resolver la alerta')))
++  }
++  }
++
++  if (loading) {
++  return (
++  <div className="py-4 sm:py-6">
++  <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
++  {[1,2,3,4].map(i => (
++  <div key={i} className="bg-white rounded-xl border border-slate-200 p-4 h-24 animate-pulse bg-slate-100" />
++  ))}
++  </div>
++  </div>
++  )
++  }
++
++  if (error) {
++  return (
++  <div className="py-4 sm:py-6">
++  <div className="bg-red-50 border border-red-200 rounded-xl p-6 text-center">
++  <p className="text-red-600 mb-3">{error}</p>
++  <button
++  onClick={() => window.location.reload()}
++  className="px-4 py-2 bg-red-600 text-white text-sm rounded-lg hover:bg-red-700"
++  >
++  {t('common.retry', 'Reintentar')}
++  </button>
++  </div>
++  </div>
++  )
++  }
++
++  const lotsByType: Record<string, number> = data?.lots_by_type ?? {}
++  const totalActiveLots = Object.values(lotsByType).reduce((a, b) => a + (b as number), 0)
++  const mortalityTrend: { week: string; mortality: number }[] = data?.mortality_trend ?? []
++
++  // ── MOBILE OPERATOR DASHBOARD — BIRD TYPE → PHASE → OPERATIONS ─────────────
++  if (isMobileUser) {
++  // Group stages by bird type for hierarchical navigation
++  const birdTypeGroups = [
++  { 
++  id: 'grandparent', labelKey: 'process.grandparent.title', fallback: 'Progenitoras',
++  icon: Sprout, color: 'from-indigo-500 to-indigo-700',
++  stages: PROCESS_STAGES.filter(s => s.key.startsWith('grandparent')),
++  },
++  { 
++  id: 'breeder', labelKey: 'process.breeder.title', fallback: 'Reproductoras',
++  icon: Feather, color: 'from-blue-500 to-blue-700',
++  stages: PROCESS_STAGES.filter(s => s.key.startsWith('breeder')),
++  },
++  { 
++  id: 'hatchery', labelKey: 'process.hatchery.title', fallback: 'Incubadora',
++  icon: Egg, color: 'from-teal-500 to-teal-700',
++  stages: PROCESS_STAGES.filter(s => s.key === 'hatchery'),
++  },
++  { 
++  id: 'broiler', labelKey: 'process.broiler.title', fallback: 'Pollo de Engorde',
++  icon: Bird, color: 'from-orange-500 to-orange-700',
++  stages: PROCESS_STAGES.filter(s => s.key === 'broiler'),
++  },
++  ]
++
++  // GA-FE-03 (§33): los atajos accionables del Dashboard obedecen la MISMA política que el menú.
++  const visibleGroups = birdTypeGroups.filter((group) =>
++  group.stages.some((s) => stageVisibleForSession(s.key, user)),
++  )
++
++  return (
++  <>
++  {/* Welcome header — slim, corporate */}
++  <div className="bg-gradient-to-r from-[#264c5f] to-[#3d748f] text-white px-4 py-4">
++  <div className="flex items-center gap-2">
++  <Sparkles size={16} className="text-blue-300" />
++  <div className="min-w-0 flex-1">
++  <h1 className="text-base font-bold leading-tight">{isKpiRoute ? t('nav.kpi', 'KPI') : t('nav.home', 'Inicio')}</h1>
++  <div className="flex items-center gap-2">
++  <p className="text-sm text-blue-200/80">
++  {isKpiRoute
++  ? t('dashboard.todayMetrics', 'Hoy')
++  : `${t('dashboard.welcome')}, ${user?.first_name || 'Operador'}`}
++  </p>
++  {(activeCompanyName || user?.company_name) && (
++  <span className="text-xs px-2 py-0.5 rounded-full flex items-center gap-1" style={{ background: 'rgba(255,255,255,0.15)', color: 'rgba(180,210,230,0.95)' }}>
++  <Building2 size={10} />
++  {activeCompanyName || user?.company_name}
++  </span>
++  )}
++  </div>
++  </div>
++  </div>
++  </div>
++
++  <div className="pt-6 pb-4 space-y-5">
++  {isKpiRoute ? (
++  <>
++  {/* KPI summary for poultry processes */}
++  <div className="space-y-2">
++  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
++  {t('dashboard.processKpi', 'KPIs de Procesos Avicolas')}
++  </h2>
++  <div className="grid grid-cols-2 gap-2.5">
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.totalEvents', 'Total eventos')}</p>
++  <p className="text-xl font-bold text-slate-800 mt-1">{data?.total_events ?? 0}</p>
++  </div>
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.last7Days', 'Ultimos 7 dias')}</p>
++  <p className="text-xl font-bold text-blue-700 mt-1">{data?.last_7_days ?? 0}</p>
++  </div>
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingReview', 'Pendientes de revision')}</p>
++  <p className="text-xl font-bold text-amber-600 mt-1">{data?.pending_review ?? 0}</p>
++  </div>
++  <div className="bg-white rounded-lg border border-slate-200/60 p-3">
++  <p className="text-xs text-slate-400 font-semibold uppercase tracking-wide">{t('dashboard.pendingApproval', 'Pendientes de aprobacion')}</p>
++  <p className="text-xl font-bold text-emerald-600 mt-1">{data?.pending_approval ?? 0}</p>
++  </div>
++  </div>
++  </div>
++
++  {/* Active lots by stage */}
++  <Card>
++  <CardHeader
++  title={t('dashboard.activeLotsByStage', 'Lotes activos por etapa')}
++  subtitle={`${totalActiveLots} ${t('dashboard.totalActive', 'lotes activos')}`}
++  action={<Bird size={16} />}
++  />
++  <CardBody>
++  {totalActiveLots === 0 ? (
++  <p className="text-sm text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
++  ) : (
++  <div className="grid grid-cols-2 gap-2">
++  {[
++  { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700', bg: 'bg-purple-50' },
++  { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50' },
++  { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50' },
++  { key: 'broiler', dot: 'bg-emerald-400', text: 'text-emerald-700', bg: 'bg-emerald-50' },
++  ].map(({ key, dot, text, bg }) => (
++  <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-2.5`}>
++  <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
++  <div className="min-w-0">
++  <p className={`text-lg font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
++  <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
++  </div>
++  </div>
++  ))}
++  </div>
++  )}
++  </CardBody>
++  </Card>
++
++  {/* Mortality trend */}
++  {mortalityTrend.length > 0 && (
++  <Card>
++  <CardHeader
++  title={t('dashboard.mortalityTrend', 'Tendencia de mortalidad')}
++  subtitle={t('dashboard.last8Weeks', 'Ultimas 8 semanas')}
++  />
++  <CardBody>
++  <ResponsiveContainer width="100%" height={190}>
++  <LineChart data={mortalityTrend} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
++  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
++  <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <Tooltip
++  contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}
++  labelStyle={{ fontWeight: 600 }}
++  />
++  <Line
++  type="monotone"
++  dataKey="mortality"
++  stroke="#DC2626"
++  strokeWidth={2}
++  dot={{ r: 3, fill: '#DC2626' }}
++  activeDot={{ r: 5 }}
++  />
++  </LineChart>
++  </ResponsiveContainer>
++  </CardBody>
++  </Card>
++  )}
++
++  {/* Events generated by process */}
++  {data?.top_event_types && Object.keys(data.top_event_types).length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.topEventTypes', 'Eventos generados por tipo')} />
++  <CardBody>
++  <div className="space-y-2">
++  {Object.entries(data.top_event_types).map(([etype, count]) => {
++  const max = Math.max(...Object.values(data.top_event_types) as number[])
++  const pct = Math.round(((count as number) / max) * 100)
++  return (
++  <div key={etype}>
++  <div className="flex justify-between text-xs mb-1">
++  <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
++  <span className="font-semibold text-slate-800">{count as number}</span>
++  </div>
++  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
++  <div className="h-full bg-[#5a9bba] rounded-full transition-all" style={{ width: `${pct}%` }} />
++  </div>
++  </div>
++  )
++  })}
++  </div>
++  </CardBody>
++  </Card>
++  )}
++  </>
++  ) : (
++  <>
++  {/* KPI Section */}
++  <div className="space-y-2">
++  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
++  {t('dashboard.todayMetrics', 'Hoy')}
++  </h2>
++  <div className="grid grid-cols-3 gap-2.5 max-[419px]:grid-cols-1">
++  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
++  <div className="text-xl font-bold text-slate-800">{data?.today_events ?? 0}</div>
++  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
++  {t('dashboard.todayEvents', 'Registros')}
++  </div>
++  </div>
++  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
++  <div className="text-xl font-bold text-amber-600">{data?.pending_corrections ?? 0}</div>
++  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
++  {t('dashboard.pendingCorrections', 'Pendientes')}
++  </div>
++  </div>
++  <div className="bg-white rounded-xl border border-slate-200/80 p-3 text-center">
++  <div className="text-xl font-bold text-emerald-600">{data?.approved_today ?? 0}</div>
++  <div className="text-xs text-slate-400 mt-0.5 font-semibold uppercase tracking-wide">
++  {t('dashboard.approvedToday', 'Aprobados')}
++  </div>
++  </div>
++  </div>
++  </div>
++
++  {/* Alerts */}
++  {data?.pending_corrections && data.pending_corrections > 0 && (
++  <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 flex items-start gap-2">
++  <AlertCircle size={16} className="text-amber-600 shrink-0 mt-0.5" />
++  <div>
++  <p className="text-xs font-semibold text-amber-900">{t('dashboard.hasPendingCorrections', 'Tienes correcciones pendientes')}</p>
++  <p className="text-sm text-amber-700 mt-0.5">{t('dashboard.checkAndReview', 'Revisa tus operaciones rechazadas')}</p>
++  </div>
++  </div>
++  )}
++
++  {visibleGroups.length > 0 && (
++  <div className="space-y-2">
++  <h2 className="text-sm font-bold uppercase text-slate-400 tracking-wider">
++  {t('process.hub.title', 'Procesos')}
++  </h2>
++  <div className="space-y-2.5">
++  {visibleGroups.map((group) => {
++  const hasSubPhases = group.stages.length > 1
++  return (
++  <div key={group.id} className="space-y-2">
++  {/* Bird type card */}
++  {hasSubPhases ? (
++  <button
++  onClick={() => setExpandedBird(expandedBird === group.id ? null : group.id)}
++  className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors text-left"
++  >
++  <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
++  <group.icon size={18} className="text-white" />
++  </span>
++  <div className="flex-1 min-w-0">
++  <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
++  <p className="text-sm text-slate-400 mt-0.5">
++  {group.stages.length} {t('process.hub.phases', 'fases')} · {group.stages.reduce((acc, s) => acc + flowForStage(s.key).length, 0)} {t('process.hub.operations', 'operaciones')}
++  </p>
++  </div>
++  {expandedBird === group.id ? <ChevronDown size={16} className="text-slate-400" /> : <ChevronRight size={16} className="text-slate-400" />}
++  </button>
++  ) : (
++  <Link
++  to={stagePathForKey(group.stages[0].key)}
++  className="w-full bg-white rounded-xl border border-slate-200/80 p-3.5 flex items-center gap-3 active:bg-slate-50 transition-colors"
++  >
++  <span className={`w-9 h-9 rounded-lg bg-gradient-to-br ${group.color} flex items-center justify-center shrink-0`}>
++  <group.icon size={18} className="text-white" />
++  </span>
++  <div className="flex-1 min-w-0">
++  <h3 className="text-sm font-bold text-slate-800">{t(group.labelKey, group.fallback)}</h3>
++  <p className="text-sm text-slate-400 mt-0.5">
++  {flowForStage(group.stages[0].key).length} {t('process.hub.operations', 'operaciones')}
++  </p>
++  </div>
++  <ChevronRight size={16} className="text-slate-400" />
++  </Link>
++  )}
++
++  {/* Sub-phase cards (Cría / Producción) */}
++  {hasSubPhases && expandedBird === group.id && (
++  <div className="pl-2 space-y-2 border-l-2 border-slate-200 ml-5">
++  {group.stages.map((stage) => {
++  const count = flowForStage(stage.key).length
++  const isRearing = stage.key.includes('rearing')
++  return (
++  <Link
++  key={stage.key}
++  to={stagePathForKey(stage.key)}
++  className="flex items-center gap-2.5 p-3 bg-white border border-slate-200/80 rounded-lg active:bg-slate-50 transition-colors"
++  >
++  <span className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 ${isRearing ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'}`}>
++  {isRearing ? <Sprout size={14} /> : <Egg size={14} />}
++  </span>
++  <div className="flex-1 min-w-0">
++  <span className="text-sm font-semibold text-slate-700">{t(stage.labelKey, stage.fallback)}</span>
++  <span className="text-xs text-slate-400 ml-2">{count} {t('process.hub.steps', 'pasos')}</span>
++  </div>
++  <ChevronRight size={14} className="text-slate-300" />
++  </Link>
++  )
++  })}
++  </div>
++  )}
++  </div>
++  )
++  })}
++  </div>
++  </div>
++  )}
++  </>
++  )}
++  </div>
++  </>
++  )
++  }
++
++  // ── ADMIN / WEB DASHBOARD ──────────────────────────────────
++
++  const summaryCards = [
++  { label: t('dashboard.totalEvents'), value: data?.total_events ?? 0, icon: <FileText size={16} /> },
++  { label: t('dashboard.pendingReview'), value: data?.pending_review ?? 0, icon: <Clock size={16} /> },
++  { label: t('dashboard.pendingApproval'),value: data?.pending_approval ?? 0, icon: <CheckCircle size={16} /> },
++  { label: t('dashboard.last7Days'), value: data?.last_7_days ?? 0, icon: <TrendingDown size={16} /> },
++  ]
++
++  const CARD_ACCENT_COLORS = [
++  { dot: 'bg-blue-500', icon: 'text-blue-600 bg-blue-50' },
++  { dot: 'bg-amber-500', icon: 'text-amber-600 bg-amber-50' },
++  { dot: 'bg-teal-500', icon: 'text-teal-600 bg-teal-50' },
++  { dot: 'bg-emerald-500', icon: 'text-emerald-600 bg-emerald-50' },
++  ]
++
++  return (
++  <div className="space-y-5">
++  {/* Page header */}
++  <div>
++  <h1 className="text-xl font-semibold text-slate-900">{t('nav.dashboard')}</h1>
++  <p className="text-sm text-slate-400 mt-0.5">
++  {t('dashboard.welcome')}{user?.first_name ? `, ${user.first_name}` : ''} · {new Date().toLocaleDateString(currentLang === 'es' ? 'es-VE' : 'en-US', { weekday: 'long', day: 'numeric', month: 'long' })}
++  </p>
++  </div>
++
++  {/* Summary KPI cards */}
++  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
++  {summaryCards.map((card, i) => {
++  const ac = CARD_ACCENT_COLORS[i]
++  return (
++  <div key={i} className="bg-white rounded-xl border border-slate-200/80 p-4">
++  <div className="flex items-center gap-1.5 mb-2">
++  <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ac.dot}`} />
++  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 leading-none truncate">{card.label}</p>
++  </div>
++  <div className="flex items-end justify-between gap-2">
++  <p className="text-2xl font-semibold text-slate-900 stat-value">{card.value}</p>
++  <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${ac.icon}`}>
++  {card.icon}
++  </div>
++  </div>
++  </div>
++  )
++  })}
++  </div>
++
++  {/* Active lots by stage */}
++  <Card>
++  <CardHeader
++  title={t('dashboard.activeLotsByStage', 'Lotes activos por etapa')}
++  subtitle={`${totalActiveLots} ${t('dashboard.totalActive', 'lotes activos')}`}
++  action={<Bird size={16} />}
++  />
++  <CardBody>
++  {totalActiveLots === 0 ? (
++  <p className="text-sm text-slate-400 text-center py-3">{t('lots.noLots', 'Sin lotes activos')}</p>
++  ) : (
++  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
++  {[
++  { key: 'grandparent', dot: 'bg-purple-400', text: 'text-purple-700', bg: 'bg-purple-50' },
++  { key: 'breeder', dot: 'bg-blue-400', text: 'text-blue-700', bg: 'bg-blue-50' },
++  { key: 'hatchery', dot: 'bg-amber-400', text: 'text-amber-700', bg: 'bg-amber-50' },
++  { key: 'broiler', dot: 'bg-emerald-400',text: 'text-emerald-700',bg: 'bg-emerald-50' },
++  ].map(({ key, dot, text, bg }) => (
++  <div key={key} className={`${bg} rounded-lg p-3 flex items-center gap-3`}>
++  <span className={`w-2 h-2 rounded-full shrink-0 ${dot}`} />
++  <div className="min-w-0">
++  <p className={`text-xl font-semibold stat-value ${text}`}>{lotsByType[key] ?? 0}</p>
++  <p className="text-xs font-medium text-slate-500 truncate">{t(`birdTypes.${key}`, key)}</p>
++  </div>
++  </div>
++  ))}
++  </div>
++  )}
++  </CardBody>
++  </Card>
++
++  {/* Mortality trend chart */}
++  {mortalityTrend.length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.mortalityTrend', 'Tendencia de mortalidad')} subtitle={t('dashboard.last8Weeks', 'Últimas 8 semanas')} />
++  <CardBody>
++  <ResponsiveContainer width="100%" height={200}>
++  <LineChart data={mortalityTrend} margin={{ top: 4, right: 8, bottom: 4, left: 0 }}>
++  <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
++  <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
++  <Tooltip
++  contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid #E2E8F0' }}
++  labelStyle={{ fontWeight: 600 }}
++  />
++  <Line
++  type="monotone"
++  dataKey="mortality"
++  stroke="#DC2626"
++  strokeWidth={2}
++  dot={{ r: 3, fill: '#DC2626' }}
++  activeDot={{ r: 5 }}
++  />
++  </LineChart>
++  </ResponsiveContainer>
++  </CardBody>
++  </Card>
++  )}
++
++  {/* Status distribution + top event types */}
++  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
++  {/* Status distribution */}
++  {data?.by_status && Object.keys(data.by_status).length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.statusDistribution')} />
++  <CardBody>
++  <div className="flex flex-wrap gap-2">
++  {Object.entries(data.by_status).map(([status, count]) => (
++  <div key={status} className="flex items-center gap-1.5">
++  <Badge variant={statusToVariant(status)} dot>
++  {t(`status.${status}`, status)}: {count as number}
++  </Badge>
++  </div>
++  ))}
++  </div>
++  </CardBody>
++  </Card>
++  )}
++
++  {/* Top event types */}
++  {data?.top_event_types && Object.keys(data.top_event_types).length > 0 && (
++  <Card>
++  <CardHeader title={t('dashboard.topEventTypes')} />
++  <CardBody>
++  <div className="space-y-2">
++  {Object.entries(data.top_event_types).map(([etype, count]) => {
++  const max = Math.max(...Object.values(data.top_event_types) as number[])
++  const pct = Math.round(((count as number) / max) * 100)
++  return (
++  <div key={etype}>
++  <div className="flex justify-between text-xs mb-1">
++  <span className="text-slate-600">{t(`events.${etype}`, etype)}</span>
++  <span className="font-semibold text-slate-800">{count as number}</span>
++  </div>
++  <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
++  <div
++  className="h-full bg-[#5a9bba] rounded-full transition-all"
++  style={{ width: `${pct}%` }}
++  />
++  </div>
++  </div>
++  )
++  })}
++  </div>
++  </CardBody>
++  </Card>
++  )}
++  </div>
++
++  {/* Active operational alerts */}
++  <AlertsWidget alerts={activeAlerts} onResolve={handleResolveAlert} />
++  </div>
++  )
++ }
++
+
+ ❯ src/__tests__/r220.loteC.test.tsx:191:15
+    189|   it('C7 · la cabecera de procesos del dashboard usa su propia clave (…
+    190|     const s = src('pages/dashboard/DashboardPage.tsx')
+    191|     expect(s).toContain("t('dashboard.processes'")
+       |               ^
+    192|   })
+    193| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[8/8]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  8 failed (8)
+   Start at  04:55:50
+   Duration  5.28s (transform 280ms, setup 51ms, import 461ms, tests 4.14s, environment 493ms)
+
