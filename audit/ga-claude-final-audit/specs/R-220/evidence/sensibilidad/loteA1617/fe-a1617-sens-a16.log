@@ -1,0 +1,53 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA1617.test.ts (7 tests | 2 failed) 18ms
+     × `mixed` con sexadas ⇒ mensaje de exclusividad (400 legítimo del servidor ya no es la 1ª defensa) 8ms
+     × sanos/débiles en blanco ⇒ mensaje de obligatoriedad 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A16 (B-35) · validación cliente de nacimiento (BR-21) > `mixed` con sexadas ⇒ mensaje de exclusividad (400 legítimo del servidor ya no es la 1ª defensa)
+AssertionError: expected null to be 'operations.mixedExclusive' // Object.is equality
+
+- Expected:
+"operations.mixedExclusive"
+
++ Received:
+null
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:56:9
+     54|       chicks_healthy: 40,
+     55|       chicks_weak: 5,
+     56|     })).toBe('operations.mixedExclusive')
+       |         ^
+     57|   })
+     58|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A16 (B-35) · validación cliente de nacimiento (BR-21) > sanos/débiles en blanco ⇒ mensaje de obligatoriedad
+AssertionError: expected null to be 'operations.chicksRequired' // Object.is equality
+
+- Expected:
+"operations.chicksRequired"
+
++ Received:
+null
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:64:9
+     62|       chicks_healthy: 40,
+     63|       chicks_weak: undefined,
+     64|     })).toBe('operations.chicksRequired')
+       |         ^
+     65|   })
+     66|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  04:47:53
+   Duration  821ms (transform 51ms, setup 69ms, import 45ms, tests 18ms, environment 556ms)
+

@@ -1,0 +1,63 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA1617.test.ts (7 tests | 2 failed) 10ms
+     × la semana declarada (fila machos) sobrevive al descarte de filas sin cantidad 7ms
+     × el peso promedio declarado (fila fértil) viaja anclado a la primera fila viva 1ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A17 (B-38) · «Semana» del evento con la fila 0 en 0 > la semana declarada (fila machos) sobrevive al descarte de filas sin cantidad
+AssertionError: expected [ { sex: 'female', quantity: 10 } ] to deeply equal [ { sex: 'female', …(2) } ]
+
+- Expected
++ Received
+
+  [
+    {
+      "quantity": 10,
+      "sex": "female",
+-     "week_number": 5,
+    },
+  ]
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:23:22
+     21|     const vivas = serializarMovimientosDeAves(crudas).filter((m: any) …
+     22|     const ancladas = anclarCampoEnPrimeraFila(vivas, 'week_number', (c…
+     23|     expect(ancladas).toEqual([{ sex: 'female', quantity: 10, week_numb…
+       |                      ^
+     24|   })
+     25|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A17 (B-39) · «Peso prom.» del huevo con fértiles en 0 > el peso promedio declarado (fila fértil) viaja anclado a la primera fila viva
+AssertionError: expected [ { egg_type: 'dirty', quantity: 30 } ] to deeply equal [ { egg_type: 'dirty', …(2) } ]
+
+- Expected
++ Received
+
+  [
+    {
+-     "avg_weight": 62.5,
+      "egg_type": "dirty",
+      "quantity": 30,
+    },
+  ]
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:46:22
+     44|     const vivas = crudas.filter((m: any) => (m.quantity ?? 0) > 0)
+     45|     const ancladas = anclarCampoEnPrimeraFila(vivas, 'avg_weight', (cr…
+     46|     expect(ancladas).toEqual([{ egg_type: 'dirty', quantity: 30, avg_w…
+       |                      ^
+     47|   })
+     48| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 5 passed (7)
+   Start at  04:47:52
+   Duration  819ms (transform 44ms, setup 45ms, import 37ms, tests 10ms, environment 589ms)
+

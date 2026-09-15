@@ -1,0 +1,70 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteA1617.test.ts (3 tests | 3 failed) 10ms
+     × la semana declarada (fila machos) debe sobrevivir al descarte de filas sin cantidad 6ms
+     × el peso promedio declarado (fila fértil) debe sobrevivir al descarte 1ms
+     × existe el validador canónico de reglas de nacimiento 2ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A17 (B-38) · «Semana» del evento con la fila 0 en 0 > la semana declarada (fila machos) debe sobrevivir al descarte de filas sin cantidad
+AssertionError: la semana declarada NO puede perderse (B-38): expected undefined to be 5 // Object.is equality
+
+- Expected:
+5
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:25:91
+     23|     const vivas = serializarMovimientosDeAves(crudas).filter((m: any) …
+     24|     expect(vivas, 'queda la fila de hembras').toHaveLength(1)
+     25|     expect((vivas[0] as any).week_number, 'la semana declarada NO pued…
+       |                                                                                           ^
+     26|   })
+     27| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/3]⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A17 (B-39) · «Peso prom.» del huevo con fértiles en 0 > el peso promedio declarado (fila fértil) debe sobrevivir al descarte
+AssertionError: el peso declarado NO puede perderse (B-39): expected undefined to be 62.5 // Object.is equality
+
+- Expected:
+62.5
+
++ Received:
+undefined
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:36:88
+     34|     ]
+     35|     const vivas = crudas.filter((m: any) => (m.quantity ?? 0) > 0)
+     36|     expect((vivas[0] as any).avg_weight, 'el peso declarado NO puede p…
+       |                                                                                        ^
+     37|   })
+     38| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/3]⎯
+
+ FAIL  src/__tests__/r220.loteA1617.test.ts > R-220 · A16 (B-35) · validación cliente de nacimiento (BR-21) > existe el validador canónico de reglas de nacimiento
+AssertionError: validador ausente: expected 'undefined' to be 'function' // Object.is equality
+
+Expected: "function"
+Received: "undefined"
+
+ ❯ src/__tests__/r220.loteA1617.test.ts:42:84
+     40| describe('R-220 · A16 (B-35) · validación cliente de nacimiento (BR-21…
+     41|   it('existe el validador canónico de reglas de nacimiento', () => {
+     42|     expect(typeof (payload as any).validarReglasDeNacimiento, 'validad…
+       |                                                                                    ^
+     43|   })
+     44| })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/3]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  3 failed (3)
+   Start at  04:46:13
+   Duration  1.00s (transform 32ms, setup 46ms, import 25ms, tests 10ms, environment 798ms)
+
