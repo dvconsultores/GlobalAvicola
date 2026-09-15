@@ -4,7 +4,7 @@ from __future__ import annotations
 from datetime import date, datetime
 from typing import Literal, Optional
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 BusinessUnit = Literal["grandparent", "breeder", "hatchery", "broiler"]
 
@@ -32,6 +32,11 @@ class CutoverBatchRead(BaseModel):
     total_rows: int
     valid_rows: int
     invalid_rows: int
+
+
+class CutoverRejectRequest(BaseModel):
+    #: El rechazo exige razón (AC62-style para batch): ≥5 caracteres.
+    reason: str = Field(min_length=5, max_length=500)
 
 
 class CutoverValidationError(BaseModel):

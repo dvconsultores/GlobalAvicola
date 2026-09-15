@@ -404,5 +404,6 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # y hay una ruta nueva de `GA-REM-003` · AC04 (`/api/v1/logout`), 211 → 212.
     # `R-197` · C2 añade `/api/v1/review/events/{event_id}/actions`, 212 → 213.
     # `R-218` · C2 añade `/api/v1/reports/lot/{lot_id}/weekly`, 213 → 214.
-    # `GA-REQ-061` · T14/C2 añade las 4 rutas del cutover, 214 → 218.
-    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 218
+    # `GA-REQ-061` · T14: C2 añade 4 rutas del cutover (214 → 218) y C3 tres más
+    # (`submit/approve/reject`), 218 → 221.
+    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 221

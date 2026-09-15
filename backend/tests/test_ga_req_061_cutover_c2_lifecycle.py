@@ -37,10 +37,10 @@ FILAS = [
 ]
 
 
-async def _crear_batch(client, headers) -> int:
+async def _crear_batch(client, headers, cutover: str = "2026-10-01T00:00:00+00:00") -> int:
     r = await client.post("/api/v1/cutover-batches", headers=headers, json={
         "business_unit": "broiler",
-        "cutover_datetime": "2026-10-01T00:00:00+00:00",
+        "cutover_datetime": cutover,
     })
     assert r.status_code == 201, r.text
     return r.json()["id"]

@@ -8,6 +8,7 @@ valida (AC45); el re-upload del mismo archivo no duplica filas (AC50); el
 from __future__ import annotations
 
 import hashlib
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -85,6 +86,20 @@ class CutoverService:
             )
 
         checksum = hashlib.sha256(content).hexdigest()
+        # Idempotencia de BD (constraint único company/BU/checksum/corte): un archivo
+        # idéntico ya cargado en OTRO batch del mismo corte ⇒ 409 determinista, no 500.
+        otro = (await self.db.execute(select(CutoverBatch).where(
+            CutoverBatch.company_id == batch.company_id,
+            CutoverBatch.business_unit == batch.business_unit,
+            CutoverBatch.cutover_datetime == batch.cutover_datetime,
+            CutoverBatch.source_checksum_sha256 == checksum,
+            CutoverBatch.id != batch.id,
+        ))).scalar_one_or_none()
+        if otro is not None:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"DUPLICATE_UPLOAD: el mismo archivo ya fue cargado en el batch {otro.id} (mismo corte).",
+            )
         try:
             parsed = parse_cutover_workbook(content)
         except CutoverParseError as exc:
@@ -173,6 +188,72 @@ class CutoverService:
             entity_type="cutover_batch", entity_id=str(batch.id), company_id=batch.company_id,
             new_values={"total": batch.total_rows, "valid": validas, "invalid": invalidas,
                         "business_unit": batch.business_unit},
+        )
+        await self.db.commit()
+        await self.db.refresh(batch)
+        return batch
+
+    async def enviar_a_aprobacion(self, batch_id: int) -> CutoverBatch:
+        """VALIDATED → PENDING_APPROVAL (un batch sin filas válidas no se envía)."""
+        batch = await self._batch_propio(batch_id, bloquear=True)
+        if batch.status != CutoverBatchStatus.VALIDATED.value:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail=f"El batch está en estado {batch.status}: solo uno VALIDATED se envía.")
+        if batch.valid_rows < 1 or batch.invalid_rows > 0:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="El batch no tiene filas válidas suficientes para enviarse.")
+        batch.status = CutoverBatchStatus.PENDING_APPROVAL.value
+        batch.submitted_by_id = int(self.current_user["id"])
+        batch.submitted_at = datetime.now(timezone.utc)
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.SUBMIT, modulo=AuditModule.CUTOVER,
+            entity_type="cutover_batch", entity_id=str(batch.id), company_id=batch.company_id,
+            new_values={"valid": batch.valid_rows, "business_unit": batch.business_unit},
+        )
+        await self.db.commit()
+        await self.db.refresh(batch)
+        return batch
+
+    def _exigir_segregacion(self, batch: CutoverBatch) -> None:
+        """Espejo de BR-14: quien creó el batch no lo aprueba ni lo rechaza (ni el super admin)."""
+        if batch.created_by_id == int(self.current_user["id"]):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Segregación de funciones: el creador no puede aprobar ni rechazar su propio batch.",
+            )
+
+    async def aprobar(self, batch_id: int) -> CutoverBatch:
+        batch = await self._batch_propio(batch_id, bloquear=True)
+        if batch.status != CutoverBatchStatus.PENDING_APPROVAL.value:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail=f"El batch está en estado {batch.status}: solo uno PENDING_APPROVAL se aprueba.")
+        self._exigir_segregacion(batch)
+        batch.status = CutoverBatchStatus.APPROVED.value
+        batch.approved_by_id = int(self.current_user["id"])
+        batch.approved_at = datetime.now(timezone.utc)
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.APPROVED, modulo=AuditModule.CUTOVER,
+            entity_type="cutover_batch", entity_id=str(batch.id), company_id=batch.company_id,
+            new_state=batch.status,
+        )
+        await self.db.commit()
+        await self.db.refresh(batch)
+        return batch
+
+    async def rechazar(self, batch_id: int, reason: str) -> CutoverBatch:
+        batch = await self._batch_propio(batch_id, bloquear=True)
+        if batch.status != CutoverBatchStatus.PENDING_APPROVAL.value:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail=f"El batch está en estado {batch.status}: solo uno PENDING_APPROVAL se rechaza.")
+        self._exigir_segregacion(batch)
+        batch.status = CutoverBatchStatus.REJECTED.value  # terminal
+        batch.rejected_by_id = int(self.current_user["id"])
+        batch.rejected_at = datetime.now(timezone.utc)
+        batch.rejection_reason = reason
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.REJECTED, modulo=AuditModule.CUTOVER,
+            entity_type="cutover_batch", entity_id=str(batch.id), company_id=batch.company_id,
+            new_state=batch.status, change_reason=reason,
         )
         await self.db.commit()
         await self.db.refresh(batch)
