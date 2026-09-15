@@ -1,0 +1,33 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteCb.test.ts (9 tests | 1 failed) 26ms
+     × C4 · las 23 claves ausentes existen en ambos idiomas 7ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteCb.test.ts > R-220 · Lote C tanda C-β > C4 · las 23 claves ausentes existen en ambos idiomas
+AssertionError: audit.action (es): expected false to be true // Object.is equality
+
+- Expected
++ Received
+
+- true
++ false
+
+ ❯ src/__tests__/r220.loteCb.test.ts:53:68
+     51|     for (const lang of ['es', 'en'] as const) {
+     52|       const d = locale(lang)
+     53|       for (const k of C4_KEYS) expect(has(d, k), `${k} (${lang})`).toB…
+       |                                                                    ^
+     54|     }
+     55|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 8 passed (9)
+   Start at  05:10:57
+   Duration  833ms (transform 33ms, setup 49ms, import 26ms, tests 26ms, environment 590ms)
+
