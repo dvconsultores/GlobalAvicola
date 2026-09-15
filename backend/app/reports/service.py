@@ -202,15 +202,27 @@ class ReportsService:
         return {"lot_id": lot_id, "weeks": semanas_ordenadas}
 
     async def get_kpi_mortality(self, lot_id: int) -> dict:
+        """`GA-REM-022` (R-132): la base es la **población inicial real del lote**.
+
+        Denominador = apertura (`OpeningBalance`) + entradas del motor
+        (`BIRD_RECEPTION`, `BIRTH_REGISTRATION`, aceptadas) — misma taxonomía que
+        el saldo `R-67`/`RR-08`. Antes solo contaba la apertura: todo lote
+        activado por recepción reportaba mortalidad 0 % sobre muertes reales.
+        """
         await self._exigir_lote(lot_id)
         total_deaths = await self._sum_bird_quantity(lot_id, [EventType.MORTALITY_RECORDING])
         ob = await self._get_opening_balance(lot_id)
-        initial_pop = (ob.initial_male_count + ob.initial_female_count) if ob else 0
+        opening_pop = (ob.initial_male_count + ob.initial_female_count) if ob else 0
+        receptions = await self._sum_bird_quantity(
+            lot_id, [EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION])
+        initial_pop = opening_pop + receptions
 
         rate = (total_deaths / initial_pop * 100) if initial_pop > 0 else 0
         return {
             "lot_id": lot_id,
             "initial_population": initial_pop,
+            "opening_population": opening_pop,
+            "receptions": round(receptions, 0),
             "total_deaths": round(total_deaths, 0),
             "mortality_rate_pct": round(rate, 2),
             "unit": "%",
@@ -681,7 +693,10 @@ class ReportsService:
         # `R-186` · `R-75` / `GA-REM-028`: misma normalización canónica que `get_kpi_ipe`
         # (R-184). `Lot.start_date` es `DateTime(timezone=True)`; sin normalizar,
         # `date − datetime` elevaba `TypeError` ⇒ HTTP 500 en todo lote con inicio.
-        age_days = (date.today() - _dia(lot.start_date)).days if lot and lot.start_date else 30
+        # `GA-REM-022` (R-131b): un lote cerrado no envejece — la edad se congela
+        # en `end_date`; usar `today()` inflaba la edad (y el IPE) tras el cierre.
+        hasta = _dia(lot.end_date) if (lot and lot.end_date) else date.today()
+        age_days = (hasta - _dia(lot.start_date)).days if lot and lot.start_date else 30
 
         # Get FCR
         fcr_kpi = await self.get_kpi_feed_conversion(lot_id)
@@ -736,7 +751,10 @@ class ReportsService:
         # y la edad del IPE es un día de calendario. Sin normalizar, `date − datetime`
         # elevaba `TypeError` ⇒ HTTP 500 en todo lote con inicio declarado (todo alta
         # fija). Se reutiliza la normalización canónica del día de negocio.
-        age_days = (date.today() - _dia(lot.start_date)).days if lot and lot.start_date else 30
+        # `GA-REM-022` (R-131b): un lote cerrado no envejece — la edad se congela
+        # en `end_date`; usar `today()` inflaba la edad (y el IPE) tras el cierre.
+        hasta = _dia(lot.end_date) if (lot and lot.end_date) else date.today()
+        age_days = (hasta - _dia(lot.start_date)).days if lot and lot.start_date else 30
         if age_days <= 0:
             age_days = 1
 
