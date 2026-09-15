@@ -42,6 +42,14 @@ class AuditAction(str, enum.Enum):
     #: `OD-11 §6`: situarse en otra empresa es un acto de administración con consecuencias
     #: sobre qué datos se tocan, y no dejaba constancia de haber ocurrido.
     CONTEXT_SWITCHED = "context_switched"
+    # `GA-REQ-061` · T14: trazabilidad completa del cutover (AC70-75).
+    CREATE_BATCH = "create_batch"
+    UPLOAD = "upload"
+    VALIDATE = "validate"
+    SUBMIT = "submit"
+    APPLY = "apply"
+    FAILED_APPLY = "failed_apply"
+    CORRECT = "correct"
     PERMISSION_CHANGE = "permission_change"
     CONFIG_CHANGE = "config_change"
     IMPORT = "import"

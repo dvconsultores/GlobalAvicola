@@ -143,6 +143,12 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     # ── Reverso interno · `GA-REM-041` · `OD-19` ─────────────────────────────
     "/api/v1/reversals": (Alcance.MULTI_UNIDAD, None, "reversa eventos de cualquier cadena; la contrapartida hereda la del original"),
     "/api/v1/reversals/event/{event_id}": (Alcance.MULTI_UNIDAD, None, "ídem"),
+    # ── Cutover operacional · `GA-REQ-061` · T14 ─────────────────────────────
+    # El batch declara su BU; el apply exige la BU habilitada + grant (OD-16).
+    "/api/v1/cutover-batches": (Alcance.MULTI_UNIDAD, None, "el batch declara su cadena"),
+    "/api/v1/cutover-batches/{batch_id}/upload": (Alcance.MULTI_UNIDAD, None, "plantilla de la cadena del batch"),
+    "/api/v1/cutover-batches/{batch_id}/validation": (Alcance.MULTI_UNIDAD, None, "staging del batch"),
+    "/api/v1/cutover-batches/{batch_id}/items": (Alcance.MULTI_UNIDAD, None, "filas del batch"),
     # ── Revisión y aprobación · `P-07`, flujo 6 ───────────────────────────────
     "/api/v1/review/pending": (Alcance.MULTI_UNIDAD, None, "cola de las cuatro"),
     # `R-197`/C-09: lectura de control del historial por evento; empresa +

@@ -157,6 +157,9 @@ app.include_router(steps_router, prefix="/api/v1", tags=["Approval Steps"])
 app.include_router(corrections_router, prefix="/api/v1", tags=["Corrections"])
 from .reversals.router import router as reversals_router  # noqa: E402
 app.include_router(reversals_router, prefix="/api/v1", tags=["Reversals"])
+from .cutover.router import router as cutover_router  # noqa: E402
+
+app.include_router(cutover_router, prefix="/api/v1", tags=["Cutover"])
 app.include_router(audit_router, prefix="/api/v1", tags=["Audit"])
 app.include_router(reports_router, prefix="/api/v1", tags=["Reports"])
 app.include_router(dashboard_router, prefix="/api/v1", tags=["Dashboard"])

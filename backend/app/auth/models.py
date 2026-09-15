@@ -57,6 +57,10 @@ class PermissionAction(str, enum.Enum):
     APPROVE = "approve"
     REJECT = "reject"
     SEND_SAP = "send_sap"
+    # `GA-REQ-061` · T14: acciones del cutover (la matriz de seguridad las nombra así).
+    VALIDATE = "validate"
+    SUBMIT = "submit"
+    APPLY = "apply"
 
 
 class Permission(Base):
