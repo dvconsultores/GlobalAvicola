@@ -1,0 +1,326 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/__tests__/r220.loteB1B2.test.tsx (3 tests | 1 failed) 373ms
+     × B1 · existe hamburguesa y monta el drawer al pulsarla 313ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/r220.loteB1B2.test.tsx > R-220 · B1/B2 · navegación <1024px y acciones de cabecera móvil > B1 · existe hamburguesa y monta el drawer al pulsarla
+TestingLibraryElementError: Unable to find an accessible element with the role "button" and name `/Men[uú]/`
+
+Here are the accessible roles:
+
+  banner:
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"hidden lg:flex h-12 bg-white backdrop-blur border-b border-slate-200/70 items-center justify-end px-5 gap-2.5 sticky top-0 z-20"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<header[39m
+    [33mclass[39m=[32m"lg:hidden text-white px-4 py-0 flex items-center justify-between sticky top-0 z-20"[39m
+    [33mstyle[39m=[32m"background: linear-gradient(135deg, rgb(38, 76, 95) 0%, rgb(61, 116, 143) 50%, rgb(78, 143, 173) 100%); height: 56px;"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  button:
+
+  Name "EN":
+  [36m<button[39m
+    [33mclass[39m=[32m"inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-xs font-semibold text-slate-400 hover:bg-slate-100:bg-dark-card hover:text-slate-600:text-slate-300 transition-colors"[39m
+    [33mtitle[39m=[32m"Switch to English"[39m
+  [36m/>[39m
+
+  Name "auth.logout":
+  [36m<button[39m
+    [33mclass[39m=[32m"h-7 px-2.5 text-xs font-medium text-slate-400 hover:text-red-600:text-red-400 hover:bg-red-50:bg-red-950/20 rounded-lg transition-all"[39m
+  [36m/>[39m
+
+  Name "Mi Perfil":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Mi Perfil"[39m
+    [33mclass[39m=[32m"w-8 h-8 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"[39m
+    [33mstyle[39m=[32m"background: rgba(90, 155, 186, 0.7);"[39m
+    [33mtitle[39m=[32m"Mi Perfil"[39m
+  [36m/>[39m
+
+  Name "auth.logout":
+  [36m<button[39m
+    [33maria-label[39m=[32m"auth.logout"[39m
+    [33mclass[39m=[32m"w-8 h-8 flex items-center justify-center rounded-lg transition-colors"[39m
+    [33mstyle[39m=[32m"background: rgba(255, 255, 255, 0.08);"[39m
+    [33mtitle[39m=[32m"auth.logout"[39m
+  [36m/>[39m
+
+  Name "EN":
+  [36m<button[39m
+    [33mclass[39m=[32m"text-xs font-semibold px-2.5 py-1.5 rounded-lg flex items-center gap-1 transition-all"[39m
+    [33mstyle[39m=[32m"background: rgba(255, 255, 255, 0.08); color: rgba(111, 171, 197, 0.9);"[39m
+    [33mtitle[39m=[32m"Switch to English"[39m
+  [36m/>[39m
+
+  Name "Cerrar":
+  [36m<button[39m
+    [33maria-label[39m=[32m"Cerrar"[39m
+    [33mclass[39m=[32m"w-8 h-8 flex items-center justify-center rounded-lg text-slate-900 hover:bg-slate-100:bg-slate-800"[39m
+  [36m/>[39m
+
+  Name "OPERATIVO1 opciones":
+  [36m<button[39m
+    [33mclass[39m=[32m"flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 border border-slate-100 active:bg-slate-100:bg-slate-700 transition-colors text-center"[39m
+  [36m/>[39m
+
+  Name "ADMINISTRACIÓN1 opciones":
+  [36m<button[39m
+    [33mclass[39m=[32m"flex flex-col items-center gap-2 p-4 rounded-xl bg-slate-50 border border-slate-100 active:bg-slate-100:bg-slate-700 transition-colors text-center"[39m
+  [36m/>[39m
+
+  Name "English":
+  [36m<button[39m
+    [33mclass[39m=[32m"w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-slate-900 hover:bg-slate-50:bg-slate-800 transition-colors"[39m
+  [36m/>[39m
+
+  Name "Cerrar sesión":
+  [36m<button[39m
+    [33mclass[39m=[32m"w-full flex items-center gap-2.5 px-3 py-2 rounded-lg text-xs font-medium text-red-500 hover:bg-red-50:bg-red-950/30 transition-colors"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  paragraph:
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"font-semibold text-slate-700 leading-none"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"text-slate-400 mt-0.5 leading-none"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"text-xs mt-0.5 leading-none truncate flex items-center gap-1"[39m
+    [33mstyle[39m=[32m"color: rgba(180, 210, 230, 0.9);"[39m
+  [36m/>[39m
+
+  Name "":
+  [36m<p[39m
+    [33mclass[39m=[32m"text-xs text-slate-900 px-3 text-center"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  heading:
+
+  Name "brand.name":
+  [36m<h1[39m
+    [33mclass[39m=[32m"text-sm font-bold leading-none truncate"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  navigation:
+
+  Name "":
+  [36m<nav[39m
+    [33mclass[39m=[32m"lg:hidden fixed top-0 left-0 h-full w-[88vw] max-w-[340px] z-50 flex flex-col bg-white transition-transform duration-200 ease-out -translate-x-full"[39m
+    [33mdata-state[39m=[32m"closed"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+  link:
+
+  Name "Inicio":
+  [36m<a[39m
+    [33mclass[39m=[32m"col-span-2 flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-100 active:bg-slate-100 transition-colors"[39m
+    [33mdata-discover[39m=[32m"true"[39m
+    [33mhref[39m=[32m"/"[39m
+  [36m/>[39m
+
+  --------------------------------------------------
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<header[39m
+      [33mclass[39m=[32m"hidden lg:flex h-12 bg-white backdrop-blur border-b border-slate-200/70 items-center justify-end px-5 gap-2.5 sticky top-0 z-20"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mdata-testid[39m=[32m"bell-stub"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"w-px h-4 bg-slate-200/80"[39m
+      [36m/>[39m
+      [36m<button[39m
+        [33mclass[39m=[32m"inline-flex items-center gap-1 h-7 px-2.5 rounded-md text-xs font-semibold text-slate-400 hover:bg-slate-100:bg-dark-card hover:text-slate-600:text-slate-300 transition-colors"[39m
+        [33mtitle[39m=[32m"Switch to English"[39m
+      [36m>[39m
+        [36m<svg[39m
+          [33maria-hidden[39m=[32m"true"[39m
+          [33mclass[39m=[32m"lucide lucide-globe"[39m
+          [33mfill[39m=[32m"none"[39m
+          [33mheight[39m=[32m"12"[39m
+          [33mstroke[39m=[32m"currentColor"[39m
+          [33mstroke-linecap[39m=[32m"round"[39m
+          [33mstroke-linejoin[39m=[32m"round"[39m
+          [33mstroke-width[39m=[32m"2"[39m
+          [33mviewBox[39m=[32m"0 0 24 24"[39m
+          [33mwidth[39m=[32m"12"[39m
+          [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+        [36m>[39m
+          [36m<circle[39m
+            [33mcx[39m=[32m"12"[39m
+            [33mcy[39m=[32m"12"[39m
+            [33mr[39m=[32m"10"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"[39m
+          [36m/>[39m
+          [36m<path[39m
+            [33md[39m=[32m"M2 12h20"[39m
+          [36m/>[39m
+        [36m</svg>[39m
+        [0mEN[0m
+      [36m</button>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"w-px h-4 bg-slate-200/80"[39m
+      [36m/>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"relative"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"flex items-center gap-1.5 h-7 px-2.5 rounded-md bg-slate-50 border border-slate-200/80"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-building-complex lucide-building-2 text-slate-400 shrink-0"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"11"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"11"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 12h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 8h4"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M14 21v-3a2 2 0 0 0-4 0v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M6 10H4a2 2 0 0 0-2 2v7a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-2"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M6 21V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v16"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"text-xs font-medium text-slate-600 max-w-[140px] truncate"[39m
+          [36m>[39m
+            [0mAvícola Test[0m
+          [36m</span>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-2"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-7 h-7 rounded-lg flex items-center justify-center text-xs font-bold text-white shrink-0"[39m
+          [33mstyle[39m=[32m"background: linear-gradient(135deg, rgb(38, 76, 95) 0%, rgb(61, 116, 143) 50%, rgb(78, 143, 173) 100%);"[39m
+        [36m>[39m
+          [0mTT[0m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"text-xs"[39m
+        [36m>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"font-semibold text-slate-700 leading-none"[39m
+          [36m>[39m
+            [0mT T[0m
+          [36m</p>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-slate-400 mt-0.5 leading-none"[39m
+          [36m>[39m
+            [0mtester[0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"h-7 px-2.5 text-xs font-medium text-slate-400 hover:text-red-600:text-red-400 hover:bg-red-50:bg-red-950/20 rounded-lg transition-all"[39m
+        [36m>[39m
+          [0mauth.logout[0m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</header>[39m
+    [36m<header[39m
+      [33mclass[39m=[32m"lg:hidden text-white px-4 py-0 flex items-center justify-between sticky top-0 z-20"[39m
+      [33mstyle[39m=[32m"background: linear-gradient(135deg, rgb(38, 76, 95) 0%, rgb(61, 116, 143) 50%, rgb(78, 143, 173) 100%); height: 56px;"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center gap-2 min-w-0 flex-1"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"w-7 h-7 rounded-lg flex items-center justify-center shrink-0"[39m
+          [33mstyle[39m=[32m"background: rgba(90, 155, 186, 0.7);"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33maria-hidden[39m=[32m"true"[39m
+            [33mclass[39m=[32m"lucide lucide-bird text-white"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"15"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"1.8"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"15"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M16 7h.01"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M3.4 18H12a8 8 0 0 0 8-8V7a4 4 0 0 0-7.28-2.3L2 20"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m20 7 2 .5-2 .5"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10 18v3"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M14 17.75V21"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M7 18a6 6 0 0 0 3.84-10.61"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mc...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/r220.loteB1B2.test.tsx:70:24
+     68|     setSession('web')
+     69|     renderHeader()
+     70|     const btn = screen.getByRole('button', { name: /Men[uú]/ })
+       |                        ^
+     71|     expect(btn.getAttribute('aria-expanded')).toBe('false')
+     72|     fireEvent.click(btn)
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+   Start at  04:44:06
+   Duration  1.82s (transform 149ms, setup 72ms, import 425ms, tests 373ms, environment 794ms)
+
