@@ -12,6 +12,15 @@ from ..masters.models import Lot
 from ..operations.models import BirdMovement, EggMovement, EventStatus, EventType, FeedMovement, OperationalEvent
 
 
+#: `GA-REM-022` (R-141, Owner 2026-09-16): el conjunto de estados del detalle
+#: certificado en `R-218` es el MISMO que alimenta los agregados:
+#: FILTERED DETAIL SET = AGGREGATE INPUT SET.
+_ESTADOS_ACEPTADOS = [
+    EventStatus.APPROVED, EventStatus.CONSOLIDATED,
+    EventStatus.SENT_TO_SAP, EventStatus.SAP_CONFIRMED,
+]
+
+
 class ReportsService:
     def __init__(self, db: AsyncSession, current_user: dict[str, Any]):
         self.db = db
@@ -228,15 +237,70 @@ class ReportsService:
             "unit": "%",
         }
 
+    async def _pesos_del_lote(self, lot_id: int) -> tuple[float | None, float | None]:
+        """Peso inicial y final (g) del lote desde pesajes aceptados + apertura.
+
+        Inicial: `OpeningBalance.current_avg_weight` (peso de la foto de apertura)
+        o el primer pesaje si hay ≥2; final: el último pesaje aceptado.
+        Sin datos suficientes, `None` — el FCR jamás se fabrica.
+        """
+        filas = (await self.db.execute(
+            select(BirdMovement.avg_weight)
+            .join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id)
+            .where(
+                OperationalEvent.company_id == self.company_id,
+                OperationalEvent.lot_id == lot_id,
+                OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
+                OperationalEvent.status.in_(_ESTADOS_ACEPTADOS),
+                BirdMovement.avg_weight != None,
+            )
+            .order_by(OperationalEvent.event_date, OperationalEvent.id)
+        )).scalars().all()
+        ob = await self._get_opening_balance(lot_id)
+        inicial = ob.current_avg_weight if (ob and ob.current_avg_weight is not None) else None
+        if inicial is None and len(filas) >= 2:
+            inicial = float(filas[0])
+        final = float(filas[-1]) if filas else None
+        return inicial, final
+
     async def get_kpi_feed_conversion(self, lot_id: int) -> dict:
+        """`GA-REM-022` · R-131 (Owner 2026-09-16): FCR canónico.
+
+        `FCR = masa total de alimento consumido / ganancia total de peso vivo`.
+        Numerador y denominador normalizados a **kg** (los pesos llegan en gramos:
+        única conversión `/1000` demostrada). Cualquier `/1000` fijo queda fuera de
+        la fórmula. Sin pesos suficientes ⇒ `feed_conversion_ratio = null`
+        (UNKNOWN), nunca un número fabricado. **OD-22 no cambia.**
+        """
         await self._exigir_lote(lot_id)
         total_feed_kg = await self._sum_feed_kg(lot_id)
+        inicial_g, final_g = await self._pesos_del_lote(lot_id)
+        ob = await self._get_opening_balance(lot_id)
+        apertura = (int(ob.initial_male_count or 0) + int(ob.initial_female_count or 0)) if ob else 0
+        entradas = await self._sum_bird_quantity(
+            lot_id, [EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION])
+        poblacion_base = apertura + entradas
+
+        ganancia_kg: float | None = None
+        if inicial_g is not None and final_g is not None and poblacion_base > 0:
+            delta_g = final_g - inicial_g
+            if delta_g > 0:
+                ganancia_kg = round(delta_g / 1000.0 * poblacion_base, 4)
+
+        fcr = (round(total_feed_kg / ganancia_kg, 2)
+               if (ganancia_kg and ganancia_kg > 0 and total_feed_kg > 0) else None)
         return {
             "lot_id": lot_id,
             "total_feed_kg": round(total_feed_kg, 2),
-            "feed_conversion_ratio": round(total_feed_kg / 1000, 2) if total_feed_kg > 0 else 0,
-            "unit": "kg feed / kg weight (estimado)",
-            "note": "Cálculo simplificado — requiere datos de pesaje para FCR real",
+            "feed_conversion_ratio": fcr,
+            "avg_weight_initial_g": inicial_g,
+            "avg_weight_final_g": final_g,
+            "population_basis": poblacion_base,
+            "weight_gain_kg": round(ganancia_kg, 2) if ganancia_kg is not None else None,
+            "unit": "kg feed / kg gain",
+            "status": "ok" if fcr is not None else "insufficient_data",
+            "note": ("FCR = alimento kg / ganancia de peso vivo kg; "
+                     "requiere peso inicial (apertura o primer pesaje) y final"),
         }
 
     async def get_kpi_egg_production(self, lot_id: int) -> dict:
@@ -680,6 +744,10 @@ class ReportsService:
         ).join(OperationalEvent, BirdMovement.event_id == OperationalEvent.id).where(
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.company_id == self.company_id,
+            # `GA-REM-022` (R-141): mismo conjunto filtrado que el detalle — pesajes
+            # cancelados/pendientes ni entran, ni de cualquier otro tipo de evento.
+            OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
+            OperationalEvent.status.in_(_ESTADOS_ACEPTADOS),
             BirdMovement.avg_weight != None,
         )
         result = await self.db.execute(q)
@@ -738,6 +806,8 @@ class ReportsService:
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.company_id == self.company_id,
             OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
+            # `GA-REM-022` (R-141): solo estados aceptados (detalle certificado).
+            OperationalEvent.status.in_(_ESTADOS_ACEPTADOS),
             BirdMovement.avg_weight != None,
         )
         result = await self.db.execute(q)
@@ -802,6 +872,8 @@ class ReportsService:
             OperationalEvent.lot_id == lot_id,
             OperationalEvent.company_id == self.company_id,
             OperationalEvent.event_type == EventType.WEIGHT_RECORDING,
+            # `GA-REM-022` (R-141): un pesaje cancelado no es una muestra.
+            OperationalEvent.status.in_(_ESTADOS_ACEPTADOS),
             BirdMovement.avg_weight != None,
             BirdMovement.avg_weight > 0,
         )

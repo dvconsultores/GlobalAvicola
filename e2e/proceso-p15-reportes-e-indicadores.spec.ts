@@ -89,7 +89,9 @@ test.describe('P-15 · indicadores y reportes', () => {
     const cab = await cabeceraAdmin(request)
     const esc = await crearEscenario(request, cab, `P15C${sufijo()}`, 'hatchery')
 
-    for (const ruta of ['vaccination-efficiency', 'transfer-efficiency']) {
+        // R-133 (vacunación) `DEFERRED_FUNCTIONAL_DEFINITION` (Owner 2026-09-16):
+    // retirada de las superficies certificadas — no se exige su exposición.
+    for (const ruta of ['transfer-efficiency']) {
       const r = await request.get(`${API}/reports/kpis/${ruta}?lot_id=${esc.lotId}`, { headers: cab })
       expect(r.status(), `${ruta}: ${await r.text()}`).toBe(200)
     }

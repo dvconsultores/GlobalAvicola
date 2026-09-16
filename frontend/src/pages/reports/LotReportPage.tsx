@@ -14,10 +14,8 @@ export default function LotReportPage() {
  const [report, setReport] = useState<any>(null)
  const [kpiIpe, setKpiIpe] = useState<any>(null)
  const [kpiUniformity, setKpiUniformity] = useState<any>(null)
- const [kpiAfcr, setKpiAfcr] = useState<any>(null)
  // `GA-REM-022 AC07`. «Eficiencia de Vacunación» y «Eficiencia de Traslado» son KPI que el
  // cliente exige: estaban calculados en el backend y no los consumía nadie.
- const [kpiVacunacion, setKpiVacunacion] = useState<any>(null)
  const [kpiTraslado, setKpiTraslado] = useState<any>(null)
  const [kpiIncubadora, setKpiIncubadora] = useState<any>(null)
  const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
@@ -33,15 +31,11 @@ export default function LotReportPage() {
  Promise.allSettled([
  api.get(`/reports/kpi/ipe/${id}`),
  api.get(`/reports/kpi/weight-uniformity/${id}`),
- api.get(`/reports/kpis/afcr?lot_id=${id}`),
- api.get(`/reports/kpis/vaccination-efficiency?lot_id=${id}`),
  api.get(`/reports/kpis/transfer-efficiency?lot_id=${id}`),
  api.get(`/reports/kpis/hatchery?lot_id=${id}`),
- ]).then(([ipeRes, uniformRes, afcrRes, vacRes, traRes, incRes]) => {
+ ]).then(([ipeRes, uniformRes, traRes, incRes]) => {
  if (ipeRes.status === 'fulfilled') setKpiIpe(ipeRes.value.data)
  if (uniformRes.status === 'fulfilled') setKpiUniformity(uniformRes.value.data)
- if (afcrRes.status === 'fulfilled') setKpiAfcr(afcrRes.value.data)
- if (vacRes.status === 'fulfilled') setKpiVacunacion(vacRes.value.data)
  if (traRes.status === 'fulfilled') setKpiTraslado(traRes.value.data)
  if (incRes.status === 'fulfilled') setKpiIncubadora(incRes.value.data)
  })
@@ -147,16 +141,7 @@ export default function LotReportPage() {
  </div>
  )}
 
- {/* Eficiencia de vacunación y de traslado — exigidos por el cliente (`AC07`) */}
- {kpiVacunacion && kpiVacunacion.vaccination_coverage_pct != null && (
- <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
- <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
- <Activity size={16} className="text-indigo-600" /> {t('kpi.vaccinationEfficiency', 'Eficiencia de Vacunación')}
- </h2>
- <p className="text-3xl font-black text-indigo-700">{kpiVacunacion.vaccination_coverage_pct}%</p>
- </div>
- )}
-
+  {/* Eficiencia de traslado — exigida por el cliente (`AC07`) */}
  {kpiTraslado && kpiTraslado.transfer_efficiency_pct != null && (
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
@@ -210,25 +195,6 @@ export default function LotReportPage() {
  </div>
  )}
 
- {/* AFCR KPI */}
- {kpiAfcr && kpiAfcr.afcr != null && (
- <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
- <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2">
- <TrendingUp size={16} className="text-violet-600" /> AFCR {t('kpi.afcr', 'FCR Ajustado')}
- </h2>
- <p className={`text-4xl font-black mb-1 ${
- kpiAfcr.afcr <= 1.6 ? 'text-emerald-700' : kpiAfcr.afcr <= 1.8 ? 'text-amber-700' : 'text-red-700'
- }`}>{kpiAfcr.afcr}</p>
- <p className="text-xs text-slate-500 mb-3">
- {kpiAfcr.afcr <= 1.6 ? '🟢 ' : kpiAfcr.afcr <= 1.8 ? '🟡 ' : '🔴 '}
- {kpiAfcr.afcr <= 1.6 ? t('kpi.excellent', 'Excelente') : kpiAfcr.afcr <= 1.8 ? t('kpi.good', 'Bueno') : t('kpi.average', 'Regular')}
- </p>
- <dl className="grid grid-cols-2 gap-x-4 gap-y-1 text-xs">
- <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.totalFeed', 'Alimento total')}</dt><dd className="font-medium">{kpiAfcr.total_feed_kg?.toFixed(1) ?? '—'} kg</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">{t('kpi.totalWeight', 'Peso total')}</dt><dd className="font-medium">{kpiAfcr.total_weight_kg?.toFixed(1) ?? '—'} kg</dd></div>
- </dl>
- </div>
- )}
  </div>
  </div>
  )

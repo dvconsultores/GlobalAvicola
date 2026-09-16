@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link } from 'react-router-dom'
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts'
-import { Droplets, Download, BarChart2, Wheat, Egg, Baby, Syringe, Truck, ClipboardList, RefreshCw } from 'lucide-react'
+import { Droplets, Download, BarChart2, Wheat, Egg, Baby, Truck, ClipboardList, RefreshCw } from 'lucide-react'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { exportToExcel, exportToPDF, kpisToRows } from '../../utils/export'
@@ -222,19 +222,14 @@ export default function ReportsPage() {
  </div>
  </div>
 
- {/* G-01, G-02, G-03: New KPI cards if available */}
- {(kpis?.animal_welfare || kpis?.vaccination_efficiency || kpis?.transfer_efficiency) && (
+ {/* G-01, G-03: tarjetas KPI. G-02 (vacunación) retirada de la superficie certificada:
+        R-133 `DEFERRED_FUNCTIONAL_DEFINITION` (Owner 2026-09-16). */}
+ {(kpis?.animal_welfare || kpis?.transfer_efficiency) && (
  <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
  {kpis?.animal_welfare && (
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
  <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2"><span className="w-4 h-4 rounded-full bg-green-500 inline-block" /> {t('reports.animalWelfare')}</h2>
  <p className="text-3xl font-bold text-green-600">{kpis.animal_welfare.welfare_score_pct}%</p>
- </div>
- )}
- {kpis?.vaccination_efficiency && (
- <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
- <h2 className="font-semibold text-slate-700 mb-3 flex items-center gap-2"><Syringe size={16} className="text-indigo-500" /> {t('reports.vaccinationEfficiency')}</h2>
- <p className="text-3xl font-bold text-indigo-600">{kpis.vaccination_efficiency.vaccination_coverage_pct}%</p>
  </div>
  )}
  {kpis?.transfer_efficiency && (

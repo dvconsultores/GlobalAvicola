@@ -145,6 +145,11 @@ async def g05(test_database_url, test_credentials):
             lot_id=l_ok.id, activation_date=days_ago(DIAS_EDAD),
             phase_at_activation_id=fase.id,
             initial_male_count=POBLACION // 2, initial_female_count=POBLACION // 2,
+            # `GA-REM-022` · R-131 (Owner 2026-09-16): peso inicial EXPLÍCITO de la
+            # foto de apertura. Δ=1.000 g/ave × 1.000 aves = 1.000 kg de ganancia
+            # ⇒ FCR canónico (alimento/ganancia) == alimento/1000 previo: las
+            # fronteras OD-22 (250/300) se conservan exactas.
+            current_avg_weight=PESO_MEDIO_G - 1000.0,
             is_manual_activation=True, activated_by_id=u_ok.id))
         ev_m = OperationalEvent(company_id=a.id, lot_id=l_ok.id,
                                 event_type=EventType.MORTALITY_RECORDING,

@@ -197,6 +197,12 @@ class DashboardService:
                 OperationalEvent.company_id == self.company_id,
                 *_ambito,
                 OperationalEvent.event_type == EventType.MORTALITY_RECORDING,
+                # `GA-REM-022` (R-141): mismo conjunto filtrado que el detalle
+                # certificado — cancelados fuera de la tendencia.
+                OperationalEvent.status.in_([
+                    EventStatus.APPROVED, EventStatus.CONSOLIDATED,
+                    EventStatus.SENT_TO_SAP, EventStatus.SAP_CONFIRMED,
+                ]),
                 OperationalEvent.event_date >= eight_weeks_ago,
             )
             .group_by("yr", "wk")

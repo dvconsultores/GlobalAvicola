@@ -1,11 +1,15 @@
-# EVIDENCIA TÉCNICA PROVISIONAL — GA-REM-022
+# EVIDENCIA TÉCNICA PROVISIONAL — SUPERSEDED
 
-Toda la evidencia de esta carpeta es **PROVISIONAL**: corresponde a la
-implementación local de `GA-REM-022` (commits `2385688`/`80b2cb9`), clasificada
-como **IMPLEMENTATION_PROVISIONAL_PENDING_OWNER_DECISION**.
+Esta carpeta contiene evidencia **provisional** de la implementación local de
+`GA-REM-022` (`2385688`/`80b2cb9`), clasificada en su momento como
+IMPLEMENTATION_PROVISIONAL_PENDING_OWNER_DECISION.
 
-- **NO certifica** ninguna decisión funcional Wave C (AOD-08/AOD-10).
-- Suite completa con el IMPL provisional: **1431 passed / 0F / 49 skipped**
-  (`green/be-full-PROVISIONAL-1431.log`).
-- La decisión vigente está pendiente del propietario:
-  `audit/ga-pre-sap-program/GA_OWNER_GATE_WAVE_C_MATRIX.md`.
+**Estado actual: SUPERSEDED.** El propietario formalizó la decisión Wave C en
+`audit/ga-pre-sap-program/GA_OWNER_DECISION_WAVE_C_FORMAL.md` (commit
+`b58136a`) y ordenó la implementación definitiva + evidencia final.
+
+- La suite provisional **1431/0/49** (`be-full-PROVISIONAL-1431.log`) **no
+  sustituye** la regresión final (mandato Owner explícito).
+- La certificación final referencia la evidencia definitiva de esta carpeta
+  (RED/GREEN/sensibilidad/post-mutación/E2E/backend-full finales).
+- Todas las decisiones vigentes: `GA_OWNER_DECISION_WAVE_C_FORMAL.md`.
