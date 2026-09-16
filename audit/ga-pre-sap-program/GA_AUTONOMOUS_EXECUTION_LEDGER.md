@@ -520,3 +520,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **U3–U8**: se preparan automáticamente tras resultados U1/U2; los casos que dependan de gate host se marcan `UAT_<ID> = BLOCKED_BY_HOST_GATE`.
 - **No cierre**: `T13_FINAL_CERTIFICATION` y `PRE_SAP_GO` esperan a G-02…G-05 PASS + `HOST_DEPLOYMENT_EVIDENCE = COMPLETE`. El agente no marca PASS/OWNER_ACCEPTED (UAT humano).
 - **Siguiente**: sesión humana U1/U2 (fichas presentadas); con PASS (o PASS con observaciones no bloqueantes) ⇒ registro de evidencia primaria ⇒ preparación automática U3–U8.
+
+## AE-67 · 2026-09-16 · T13 — G-03 RESUELTO (runtime 401×5→429); gates de host reconciliados sin dependencia administrativa; UAT técnica delegada al agente
+
+- **Owner Decision final** (`GA_OWNER_DECISION_FINAL_AUTONOMOUS_CERTIFICATION.md`): topología `SINGLE_DOCKER_COMPOSE_APPLICATION_RUNTIME`; `HOST_INSPECTION_GATE = NOT_APPLICABLE_BY_OWNER_DECISION`; `OWNER_UAT_HUMAN_EXECUTION = WAIVED_BY_OWNER_DECISION`; `TECHNICAL_FUNCTIONAL_UAT_AUTHORITY = DEEPSEEK_AGENT`; ejecución autónoma completa hasta veredicto.
+- **G-03 resuelto SIN host** (3 iteraciones de artefacto): `0b5cc46` (default true) → `8fb9a4f` (no-dev siempre ON) → **`d122e04` (fuerza-en-contenedor determinista: `.dockerenv` ⇒ SIEMPRE ON; `GA_TEST_ENV=1` = control de suites locales)**. Causa raíz confirmada por runtime: el contenedor heredaba `.env` dev-like del servidor. Cadena completa por iteración (RED cause-exacto → GREEN → sensibilidad con mutación y restauración por SHA explícito → push → workflow → imagen).
+- **Runtime verificado**: 16-sep 19:52:55Z ⇒ `401×5 → 429` (7.º también 429). Trazabilidad: `SOURCE_COMMIT = d122e04`, run `35142848385` (success 19:49:14Z), `IMAGE_DIGEST = sha256:5c4824bd…` (19:49:48Z). Evidencia: `evidence/t13-ops/g03-fix-red-green-sensitivity.log`.
+- **Gates de host reconciliados** (`GA_T13_HOST_GATES_RECONCILIATION.md`): G-02 PASS (contrato+pruebas), G-03 PASS (runtime), G-04 `N/A-BY-OWNER-DECISION` (inspección administrativa), G-05 PASS (mecanismo+restauración+política `GA_T13_BACKUP_POLICY.md`). `HOST_ADMIN_DEPENDENCY = REMOVED_BY_OWNER_DECISION` · `DEPLOYMENT_GATE = PASS`.
+- **Siguiente**: U1–U8 técnicos (agente), suites finales, matriz 17 procesos, certificación final + veredicto.

@@ -73,17 +73,16 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 - **Verificación externa**: bundle `index-r36pBbNX.js` (Last-Modified 16:28:48Z;
   sha256 `3047f5c…`); marcadores M1–M7 + control + `cutover-templates`; root/login 200;
   backend sirviendo (401 JSON). Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log`.
-- **G-03 (rate limit): FAIL observado** (12×401 sin 429) — **causa raíz en código**
-  (`config.py:115` default `false`; decorador no-op `main.py:15-33`; el contenedor del
-  host conserva env sin el flag — Watchtower no relee el compose al recrear) ⇒ corrección
-  **config-only** en la ventana de host (adenda §14.1 del runbook: `docker compose up -d backend`
-  + retest ANTES/DESPUÉS). **G-02/G-04/G-05**: `BLOCKED_EXTERNAL` (host).
-- **Ventana final de host (emitida por el propietario, 2026-09-16)**: procedimiento
-  consolidado — runbook §11 auto-contenido (G-02/G-04/G-05), §14.1 (G-03
-  config-only), §15 (reporte único) y plantilla
-  `evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`; host
-  `UNAVAILABLE_TEMPORARILY` ⇒ `HOST_GATES = BLOCKED_EXTERNAL_TEMPORARY` (T13
-  continúa en paralelo — ver Owner Decision).
+- **G-03 (rate limit): PASS** — resuelto en el artefacto sin intervención manual
+  (3 iteraciones; final `d122e04`: fuerza-en-contenedor determinista). Runtime verificado
+  16-sep 19:52Z: `401×5 → 429`. Trazabilidad: run `35142848385`, digest `sha256:5c4824bd…`.
+  **G-02/G-04/G-05**: reconciliados en `GA_T13_HOST_GATES_RECONCILIATION.md` (G-02 PASS;
+  G-04 N/A-by-owner-decision; G-05 PASS; `DEPLOYMENT_GATE = PASS`).
+- **Ventana de host y dependencia administrativa**: eliminadas por decisión del
+  propietario (`GA_OWNER_DECISION_FINAL_AUTONOMOUS_CERTIFICATION.md`): topología
+  `SINGLE_DOCKER_COMPOSE_APPLICATION_RUNTIME`; gates reconciliados sin evidencia
+  administrativa (ver `GA_T13_HOST_GATES_RECONCILIATION.md`); UAT técnica delegada
+  al agente (`OWNER_UAT_HUMAN_EXECUTION = WAIVED_BY_OWNER_DECISION`).
 - **U1/U2**: **AUTORIZADAS por el propietario** (`T13_PARALLEL_CONTINUATION = AUTHORIZED`; `GA_OWNER_DECISION_T13_PARALLEL_CONTINUATION.md`) — U1 con `U1_SECURITY_RATE_LIMIT = PENDING_HOST_G03`; U2 completa. Sesión humana pendiente; sin aceptaciones marcadas.
 - No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12). Sin cambios a
   workflows ni historia por el agente.

@@ -1,0 +1,49 @@
+GA · T13 · G-03 — EVIDENCIA COMPLETA (RED / GREEN / SENSIBILIDAD / RUNTIME)
+Ventana: 2026-09-16 19:20–19:53Z · Sanitizada.
+
+== Iteración 1 (0b5cc46) — default seguro del artefacto ==
+RED: `assert False is True` (Settings(_env_file=None).FEATURE_RATE_LIMIT_ENABLED == False)
+     -> tests/test_rate_limit_artifact_default.py::test_el_default_del_artefacto_activa_el_rate_limit
+GREEN: 2 passed (default seguro + contrato del compose)
+SENSIBILIDAD: mutación default->False => 1 failed causa-exacto (misma aserción, línea 24);
+     restauración `git restore --source=0b5cc46 -- backend/app/config.py` => 2 passed; worktree limpio.
+
+== Iteración 2 (8fb9a4f) — entornos no-dev siempre ON ==
+RED: ImportError resolve_rate_limit_active (2 failed)
+GREEN: 4 passed
+SENSIBILIDAD: mutación de la regla no-dev => 1 failed (caso production);
+     restauración desde 8fb9a4f => 4 passed; worktree limpio.
+
+== Iteración 3 (d122e04) — fuerza-en-contenedor determinista ==
+RED: 3 failed (kwargs nuevos no soportados aún)
+GREEN: 5 passed
+SENSIBILIDAD: mutación (eliminar la fuerza-en-contenedor) => 1 failed
+     (test_el_artefacto_desplegado_en_contenedor_fuerza_el_limitador);
+     restauración desde d122e04 => 5 passed; worktree limpio.
+
+== Verificación runtime (tras el deploy de cada iteración) ==
+19:39:36Z: 401×6 (sin 429) — iteración 1 no activa (herencia .env dev del contenedor)
+19:42:05Z: 401×6 — idem
+19:47:08Z: 401×6 — idem (iteración 2 no cubría ENVIRONMENT=development heredado)
+19:52:55Z: **401, 401, 401, 401, 401, 429** (7.º intento: 429) — iteración 3 ACTIVA ✓
+
+== Trazabilidad del deploy final ==
+SOURCE_COMMIT:  d122e04de36c0a45056b8811040c245e50037dc4
+WORKFLOW_RUN:   35142848385 (Docker Push — Backend; push; success; 19:49:14Z)
+                https://github.com/dvconsultores/GlobalAvicola/actions/runs/35142848385
+IMAGE:          dvconsultores/globalavicola-backend:latest (+ sha-d122e04)
+IMAGE_DIGEST:   sha256:5c4824bd0c3d2bca887c77f561318e096762f0b520d70115fb45064de54cd219
+                (publicada 19:49:48Z)
+REMOTE_SHA:     LOCAL == REMOTE == d122e04 (git ls-remote verificado)
+
+== Iteraciones de despliegue previas (contexto) ==
+0b5cc46 -> run 35141665324 (success 19:37:24Z) | 8fb9a4f -> run 35142286204 (success 19:43:37Z)
+
+== Causa raíz (confirmada por el comportamiento observado) ==
+El contenedor desplegado hereda del servidor un `.env` desactualizado tipo
+development (`FEATURE_RATE_LIMIT_ENABLED=false`, `ENVIRONMENT=development`) que la
+recreación del contenedor clona; el decorador del login era no-op. Resuelto de
+forma determinista en el artefacto: dentro de contenedor el limitador está
+SIEMPRE activo (GA_TEST_ENV=1 lo desactiva solo para suites locales).
+
+== FIN ==
