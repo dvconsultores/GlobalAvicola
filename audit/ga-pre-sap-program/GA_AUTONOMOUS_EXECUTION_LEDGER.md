@@ -512,3 +512,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Alineación**: `GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md` §11 ahora **auto-contenido** (G-02/G-04/G-05 con comandos exactos; G-03 → §14.1) + **§15** con el formato de reporte; plantilla `evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`; contrastes de digests en §14.2.
 - **Ejecución**: pertenece al host (agente: `BLOCKED_EXTERNAL`). Al volver el reporte: registro, validación del contrato (estados separados), cierre `DEPLOYMENT_GATE` si todo PASS ⇒ re-prevalidación U1/U2 ⇒ `READY_FOR_OWNER` ⇒ STOP OWNER UAT.
 - **U1/U2**: `PREPARED — EN HOLD` (sin cambios).
+
+## AE-66 · 2026-09-16 · T13 — `T13_PARALLEL_CONTINUATION = AUTHORIZED` (Owner): U1/U2 liberadas para sesión humana; host gates `BLOCKED_EXTERNAL_TEMPORARY`; T13 continúa sin cierre
+
+- **Decisión del propietario** (texto íntegro en el Anexo de `GA_OWNER_DECISION_T13_PARALLEL_CONTINUATION.md`): `HOST_ADMIN_AVAILABILITY = UNAVAILABLE_TEMPORARILY`; `HOST_GATES = BLOCKED_EXTERNAL_TEMPORARY`; continuar todo lo que no dependa del host. **Estados conservados**: G-02/G-04/G-05 = `BLOCKED_EXTERNAL`; G-03 = `FAIL_OBSERVED / HOST_FIX_PENDING`; `HOST_DEPLOYMENT_EVIDENCE = INCOMPLETE`; `DEPLOYMENT_GATE = PENDING`.
+- **U1**: autorizada con limitación explícita `U1_SECURITY_RATE_LIMIT = PENDING_HOST_G03` (si el cambio del host es solo config del flag, no se repite U1 completa). **U2**: autorizada completa (no depende de G-02/G-04/G-05).
+- **U3–U8**: se preparan automáticamente tras resultados U1/U2; los casos que dependan de gate host se marcan `UAT_<ID> = BLOCKED_BY_HOST_GATE`.
+- **No cierre**: `T13_FINAL_CERTIFICATION` y `PRE_SAP_GO` esperan a G-02…G-05 PASS + `HOST_DEPLOYMENT_EVIDENCE = COMPLETE`. El agente no marca PASS/OWNER_ACCEPTED (UAT humano).
+- **Siguiente**: sesión humana U1/U2 (fichas presentadas); con PASS (o PASS con observaciones no bloqueantes) ⇒ registro de evidencia primaria ⇒ preparación automática U3–U8.

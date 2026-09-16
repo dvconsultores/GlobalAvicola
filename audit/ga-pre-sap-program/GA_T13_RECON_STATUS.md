@@ -33,7 +33,7 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 |---|---|---|---|
 | **OPS G-02…G-05** | Volumen media · rate limit runtime · BD rol mínimo+SSL · respaldo+política | `QUEUED/ BLOCKED_EXTERNAL` (host) + **rehersals locales PASS** (G-03/04/05) | **SÍ** (Pista OPS exigida en el cierre T13) |
 | **GA-UAT-09** | Sesión del propietario (retry R-153/R-189, guía LISTA, retry de ingeniería 7/7 verde) | Sesión pendiente del propietario | **SÍ** (U2) |
-| **U1–U8** | Aceptación owner por lote (U1/U2 preparados; U3–U8 tras OK) | Pendiente del propietario | **SÍ** |
+| **U1–U8** | Aceptación owner por lote (U1/U2 **AUTORIZADAS** — U1 con `U1_SECURITY_RATE_LIMIT = PENDING_HOST_G03`; U3–U8 tras resultados) | Sesión humana pendiente del propietario | **SÍ** |
 | **AOD-13** | `farm_inspection` sin lote: unidad (opciones A/B/C) | `ACCIONABLE` — R-221 **PARTIAL** (AC-04) | Condicional — **registrar decisión antes del GO** |
 | **AOD-17 / R-142** | Semántica `CORRECTED` multinivel | `SCHEDULED` (diferida; no implementada) | NO (no exigida en Pre-SAP si queda registrada) |
 | **AOD-18** | Cancelación: motivo obligatorio + solo admin | `SCHEDULED` | NO (rider opcional) |
@@ -81,8 +81,10 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 - **Ventana final de host (emitida por el propietario, 2026-09-16)**: procedimiento
   consolidado — runbook §11 auto-contenido (G-02/G-04/G-05), §14.1 (G-03
   config-only), §15 (reporte único) y plantilla
-  `evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`; ejecución pendiente del host.
-- **U1/U2**: `PREPARED — EN HOLD` (no ejecutables finales; mandato §8).
+  `evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`; host
+  `UNAVAILABLE_TEMPORARILY` ⇒ `HOST_GATES = BLOCKED_EXTERNAL_TEMPORARY` (T13
+  continúa en paralelo — ver Owner Decision).
+- **U1/U2**: **AUTORIZADAS por el propietario** (`T13_PARALLEL_CONTINUATION = AUTHORIZED`; `GA_OWNER_DECISION_T13_PARALLEL_CONTINUATION.md`) — U1 con `U1_SECURITY_RATE_LIMIT = PENDING_HOST_G03`; U2 completa. Sesión humana pendiente; sin aceptaciones marcadas.
 - No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12). Sin cambios a
   workflows ni historia por el agente.
 

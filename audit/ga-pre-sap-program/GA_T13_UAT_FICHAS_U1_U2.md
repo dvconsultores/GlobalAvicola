@@ -5,17 +5,21 @@ conocimientos técnicos. Las instrucciones están en lenguaje llano; lo que no s
 vea en pantalla se marca como observación (la parte técnica la cubre la
 ingeniería y no se le pide).
 
-> ⏸ **EN HOLD (2026-09-16, tarde) — NO ejecutar todavía.** Los gates técnicos
-> (G-03 rate limit; G-02/G-04/G-05) y la reconciliación de gobernanza
-> (GitHub Actions/AOD-29) deben cerrarse primero; el runtime se corregirá antes
-> de la sesión. Estado actual: `U1 = PREPARED`, `U2 = PREPARED` (no ejecutables
-> finales). El propietario abrirá la sesión cuando corresponda.
+> ✅ **AUTORIZADAS (2026-09-16) — listas para su ejecución por el propietario.**
+> `T13_PARALLEL_CONTINUATION = AUTHORIZED`
+> (`GA_OWNER_DECISION_T13_PARALLEL_CONTINUATION.md`): U1 y U2 pueden ejecutarse
+> ahora contra el build certificado desplegado.
+> **Limitación de U1**: el control anti-brute-force/rate-limit no forma parte de
+> esta sesión — queda separado como `U1_SECURITY_RATE_LIMIT = PENDING_HOST_G03`
+> (se revalidará cuando el host esté disponible; si el cambio es solo de
+> configuración, **no** se repite U1 completo). **U2**: autorizada completa.
+> Los gates de host (G-02/G-04/G-05) permanecen `BLOCKED_EXTERNAL_TEMPORARY` y no
+> forman parte de estas fichas.
 
-> **Paso 0 (prerrequisito de entorno)**: dirección de UAT —
-> `https://avicola.globaldv.net`. Para que esta sesión valide el producto
-> certificado (`be5453f`), el entorno debe estar actualizado a ese build **o**
-> usted debe declararlo como entorno objetivo (ver `OWNER ACTION REQUIRED —
-> despliegue`). Si no está actualizado, Wave C (U7) no podría validarse.
+> **Paso 0 (satisfecho)**: dirección de UAT — `https://avicola.globaldv.net`.
+> El entorno sirve ya el producto certificado (despliegue verificado
+> 2026-09-16: bundle `index-r36pBbNX.js`): la sesión valida el producto
+> certificado.
 
 ---
 
