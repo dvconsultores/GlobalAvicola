@@ -78,6 +78,10 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
   host conserva env sin el flag — Watchtower no relee el compose al recrear) ⇒ corrección
   **config-only** en la ventana de host (adenda §14.1 del runbook: `docker compose up -d backend`
   + retest ANTES/DESPUÉS). **G-02/G-04/G-05**: `BLOCKED_EXTERNAL` (host).
+- **Ventana final de host (emitida por el propietario, 2026-09-16)**: procedimiento
+  consolidado — runbook §11 auto-contenido (G-02/G-04/G-05), §14.1 (G-03
+  config-only), §15 (reporte único) y plantilla
+  `evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`; ejecución pendiente del host.
 - **U1/U2**: `PREPARED — EN HOLD` (no ejecutables finales; mandato §8).
 - No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12). Sin cambios a
   workflows ni historia por el agente.

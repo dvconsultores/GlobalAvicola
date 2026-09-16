@@ -12,10 +12,10 @@ Fecha: 2026-09-16 (tarde) · Fuente: verificación externa del agente (EXTERNO)
 | Runs (Actions) | **EXTERNO** | `35122083759` (BE) · `35122083928` (FE) — `push`, `success`, 16:28:08Z; job BE 16:28:11→16:28:43Z |
 | BACKUP_STATUS / TIMESTAMP / REFERENCE / SIZE | PENDIENTE_HOST | — |
 | ALEMBIC_BEFORE / ALEMBIC_AFTER | PENDIENTE_HOST | ALEMBIC_AFTER esperado = `c8d9e0f1a2b3` (head) |
-| entrypoint migration evidence | PENDIENTE_HOST | `docker compose logs backend` ⇒ `[entrypoint] Migration completed` |
-| container status | PENDIENTE_HOST | `docker compose ps` + `docker inspect` (imágenes/RepoDigests de ambos contenedores) |
-| backend health | **EXTERNO (parcial)** | API responde 401 JSON (login); `/health` interno (`:8002`): PENDIENTE_HOST |
-| frontend status | **EXTERNO** | `/` = 200; `/login` = 200; bundle `index-r36pBbNX.js` |
+| ENTRYPOINT_MIGRATION_EVIDENCE | PENDIENTE_HOST | `docker compose logs backend` ⇒ `[entrypoint] Migration completed` |
+| CONTAINER_STATUS + RUNNING_IMAGE/DIGEST BACKEND y FRONTEND | PENDIENTE_HOST | `docker compose ps` + `docker inspect`/`RepoDigests` ⇒ contraste BE `sha256:6f0edbfa…` / FE `sha256:29cd2eff…` |
+| BACKEND_HEALTH | **EXTERNO (parcial)** | API responde 401 JSON (login); `/health` interno (`:8002`): PENDIENTE_HOST |
+| FRONTEND_STATUS | **EXTERNO** | `/` = 200; `/login` = 200; bundle `index-r36pBbNX.js` |
 | bundle before / after / sha256 | **EXTERNO** | antes `index-apu3WWcr.js` (14-sep) → después `index-r36pBbNX.js`; sha256 `3047f5cdeb9cd9abf9310fd498755109f82e2f7a0e225e6bab1caf99ca9ab6f7` |
 | Marcadores GA-FE-01 | **EXTERNO** | M1–M7 presentes (≥1) + control `switch-company` + `cutover-templates` |
 | G-02 | PENDIENTE_HOST | runbook §11 (volumen `avicola-media`: testigo + recreación) |
@@ -34,3 +34,6 @@ Fecha: 2026-09-16 (tarde) · Fuente: verificación externa del agente (EXTERNO)
 
 Al completarse: `HOST_DEPLOYMENT_EVIDENCE = COMPLETE` ⇒ cierre `DEPLOYMENT_GATE`
 ⇒ re-prevalidación U1/U2 ⇒ `U1/U2 = READY_FOR_OWNER` (STOP OWNER UAT).
+
+**Plantilla de entrega**: `HOST_WINDOW_FINAL_REPORT_TEMPLATE.md` (reporte único;
+formato §15 del runbook).

@@ -505,3 +505,10 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Evidencia**: `evidence/t13-ops/host-evidence-package.md` (campos externos completos; `PENDIENTE_HOST` marcados).
 - **U1/U2**: `PREPARED — EN HOLD` (se mantiene). No se abre UAT.
 - **Siguiente**: ventana de host (G-03 + G-02/G-04/G-05 + evidencia) ⇒ cierre `DEPLOYMENT_GATE` ⇒ re-prevalidación U1/U2 ⇒ `READY_FOR_OWNER` ⇒ STOP OWNER UAT.
+
+## AE-65 · 2026-09-16 · T13 — ventana final de host/OPS emitida por el propietario; runbook auto-contenido + plantilla de reporte único (entrega host pendiente)
+
+- **Mandato del propietario** (2026-09-16): ventana final host/OPS con reglas estrictas (sin redeploy completo, sin tocar frontend, sin BD/volúmenes, sin downgrade, sin secretos) y orden: G-03 (diagnóstico → corrección config-only → `docker compose up -d backend` → retest `401×5→429`; si persiste ⇒ DETENERSE y reportar, sin tocar código) → G-02 → G-04 → G-05 → evidencia de deployment; entrega = **reporte único** (secuencia HTTP 1–6, flag antes/después, ALEMBIC_AFTER, digests de contenedores, BACKUP_STATUS, observaciones + logs sanitizados).
+- **Alineación**: `GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md` §11 ahora **auto-contenido** (G-02/G-04/G-05 con comandos exactos; G-03 → §14.1) + **§15** con el formato de reporte; plantilla `evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`; contrastes de digests en §14.2.
+- **Ejecución**: pertenece al host (agente: `BLOCKED_EXTERNAL`). Al volver el reporte: registro, validación del contrato (estados separados), cierre `DEPLOYMENT_GATE` si todo PASS ⇒ re-prevalidación U1/U2 ⇒ `READY_FOR_OWNER` ⇒ STOP OWNER UAT.
+- **U1/U2**: `PREPARED — EN HOLD` (sin cambios).

@@ -246,10 +246,64 @@ for i in $(seq 1 6); do curl -s -o /dev/null -w "intento $i: %{http_code}\n" \
 # ⇒ 401 ×5 → 429 (con FEATURE_RATE_LIMIT_ENABLED=true efectivo en el contenedor)
 ```
 
-- **G-02** (volumen `avicola-media`): puede aprovechar la recreación de este
-  despliegue — secuencia del runbook OPS (testigo → recrear → verificar).
-- **G-04** (rol mínimo + SSL) y **G-05** (ciclo respaldo/restauración en base
-  scratch) según el runbook OPS.
+### G-02 · Volumen `avicola-media` (durabilidad de evidencias)
+
+```bash
+grep -n "avicola-media\|MEDIA_DIR" docker-compose.yml
+# archivo testigo ANTES de recrear:
+docker compose exec backend sh -lc 'echo testigo-$(date -u +%s) > /app/media/_persistence_check.txt && cat /app/media/_persistence_check.txt'
+docker compose up -d --force-recreate backend        # recrear SOLO backend
+docker inspect -f '{{json .Mounts}}' $(docker compose ps -q backend)
+docker compose exec backend sh -lc 'cat /app/media/_persistence_check.txt'   # el testigo sobrevive
+```
+
+**PASS**: el testigo conserva su contenido tras la recreación + el mount
+`avicola-media → /app/media` aparece en `docker inspect`. Limpiar el testigo al
+terminar.
+
+### G-03 · Rate limit runtime (401×5 → 429)
+
+Diagnóstico + corrección config-only + retest ANTES/DESPUÉS: **adenda §14.1**.
+Bucle canónico: el bloque anterior de esta sección.
+
+### G-04 · Rol BD de privilegios mínimos + SSL
+
+```sql
+-- Ejecutar en la BASE DE LA APP (no en la base por defecto)
+CREATE ROLE avicola_app LOGIN PASSWORD '<desde-gestor-de-secretos>';
+GRANT USAGE ON SCHEMA public TO avicola_app;
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO avicola_app;
+GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO avicola_app;
+ALTER DEFAULT PRIVILEGES IN SCHEMA public
+  GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO avicola_app;
+SELECT current_user, usesuper FROM pg_user WHERE usename = current_user;   -- ⇒ avicola_app / f
+```
+
+```bash
+# SSL obligatorio: añadir sslmode=require a la DSN del host y recrear backend; verificar SIN imprimir la DSN:
+docker compose exec backend python3 -c "import asyncio,asyncpg,os; print(asyncio.run((lambda: asyncpg.connect(os.environ['DATABASE_URL'].replace('postgresql+asyncpg','postgresql'), ssl='require'))().get_server_version()))"
+```
+
+**PASS**: rol efectivo `avicola_app` sin `usesuper`; conexión con `ssl=require`
+establecida. Nota (calibración local 2026-09-16): los `GRANT` corren **en la base
+de la app**.
+
+### G-05 · Respaldo comprobado + política
+
+```bash
+pg_dump -Fc -d "$DATABASE_URL_SAFE" -f /backups/avicola_$(date -u +%Y%m%d_%H%M).dump
+pg_restore --list /backups/avicola_*.dump | head
+createdb avicola_restore_check
+pg_restore -d avicola_restore_check /backups/<archivo>.dump
+psql -d avicola_restore_check -c "SELECT 'lots', count(*) FROM lots UNION ALL
+  SELECT 'operational_events', count(*) FROM operational_events UNION ALL
+  SELECT 'audit_logs', count(*) FROM audit_logs;"
+```
+
+**PASS**: restauración **demostrada** sin errores + conteos idénticos al original
+(no basta con que el dump exista). **Política**: frecuencia, retención, RPO/RTO,
+respaldo obligatorio antes de cada `alembic upgrade`, verificación periódica.
+Registrar `BACKUP_STATUS / TIMESTAMP / REFERENCE / SIZE` (sin DSN).
 - Registrar por gate: `GATE · COMMAND · RESULT · EXIT_CODE · EVIDENCE ·
   OBSERVATIONS`. No marcar PASS por inspección parcial.
 
@@ -322,15 +376,17 @@ docker inspect -f '{{.Config.Cmd}}' globalavicola-backend          # confirmar 1
   host; después **`docker compose up -d backend`** (solo backend; relee el compose;
   el entrypoint migra de forma idempotente; **NO tocar BD**; no hace falta redeploy del
   frontend), y repetir G-03 dos veces: desde el host (`curl localhost:8002`) y desde
-  fuera (6 intentos <1 min ⇒ esperado `401×5 → 429` en el 6.º).
+  fuera (6 intentos <1 min ⇒ esperado `401×5 → 429` en el 6.º). Nota: si G-02 se
+  ejecuta en la misma ventana, su recreación del backend puede servir como esta
+  recreación (siempre **después** de corregir el flag).
 - Evidencia exigida (causa-exacta): **ANTES** = `401×12 / sin 429`; **DESPUÉS** = patrón
   del AC (`401×5 → 429`); + configuración anterior/nueva, comando de recreación,
   timestamps y salidas reales.
 - Documentar la **clave del limiter** (GAP-11): `X-Forwarded-For` vs IP real y la
   configuración del proxy.
-- Si con `true` efectivo y 1 worker el límite sigue sin dispararse ⇒ **escalar como
-  hallazgo técnico** (SPEC→AC→RED→IMPL→GREEN→sensibilidad→regresión): no tocar producto
-  en esta ventana.
+- Si con `true` efectivo y 1 worker el límite sigue sin dispararse ⇒ **DETENERSE y
+  reportar** (no modificar código en la ventana; ingeniería abre el hallazgo por
+  SPEC→AC→RED→implementación→GREEN→sensibilidad→regresión).
 
 ### 14.2 · Evidencia cruda del deploy (§12) — valores de contraste
 
@@ -346,6 +402,47 @@ docker inspect -f '{{.Config.Cmd}}' globalavicola-backend          # confirmar 1
 
 ### 14.3 · G-02 / G-04 / G-05
 
-Ejecutar conforme al runbook (§11) en la misma ventana; registrar por gate:
+Ejecutar los procedimientos exactos de §11 en la misma ventana; registrar por gate:
 `GATE · COMMAND · TIMESTAMP · EXIT_CODE · RESULT · EVIDENCE · OBSERVATIONS`
-(estados: PASS / FAIL / BLOCKED_EXTERNAL).
+(estados: PASS / FAIL / BLOCKED_EXTERNAL). Al terminar, entregar el **reporte
+único** de §15.
+
+## 15 · Reporte final único de la ventana (formato exigido)
+
+Al terminar la ventana, entregar **un único reporte** (plantilla:
+`evidence/t13-ops/HOST_WINDOW_FINAL_REPORT_TEMPLATE.md`) con exactamente:
+
+```
+G-02 = PASS | FAIL
+
+G-03 = PASS | FAIL
+FEATURE_RATE_LIMIT_ENABLED antes: ...
+FEATURE_RATE_LIMIT_ENABLED después: ...
+Secuencia HTTP:
+1: ...
+2: ...
+3: ...
+4: ...
+5: ...
+6: ...
+
+G-04 = PASS | FAIL
+
+G-05 = PASS | FAIL
+
+HOST_DEPLOYMENT_EVIDENCE = COMPLETE | INCOMPLETE
+
+ALEMBIC_AFTER: ...
+
+BACKEND_IMAGE_DIGEST: ...
+
+FRONTEND_IMAGE_DIGEST: ...
+
+BACKUP_STATUS: ...
+
+OBSERVACIONES: ...
+```
+
++ los logs sanitizados correspondientes (sin passwords, tokens, private keys ni
+contenido completo de `.env`). **Si cualquier paso crítico falla: DETENERSE y
+reportar — no improvisar.**
