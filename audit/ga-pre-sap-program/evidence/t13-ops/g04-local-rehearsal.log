@@ -1,0 +1,57 @@
+== G-04 · LOCAL REHEARSAL — rol de privilegios minimos (pgserver user-space, sin docker) ==
+start=2026-09-16T02:13:03Z
+NOTICE:  role "avicola_app" does not exist, skipping
+rol avicola_app creado (via superusuario pgserver)
+--- privilegios efectivos (esperado: usesuper=f) ---
+ current_user | usesuper 
+--------------+----------
+ avicola_app  | f
+(1 row)
+
+--- operacion privilegiada (esperado: permission denied) ---
+ERROR:  permission denied to create role
+DETAIL:  Only roles with the CREATEROLE attribute may create roles.
+--- acceso de aplicacion (SELECT lots) ---
+ERROR:  permission denied for table lots
+--- SSL local (host-level; pgserver no ofrece TLS) ---
+psql: error: sslmode value "require" invalid when SSL support is not compiled in
+RESULTADO: SSL no disponible en pgserver local -> parte SSL = HOST-LEVEL (BLOCKED_EXTERNAL)
+end=2026-09-16T02:13:03Z
+
+───── CORRECCION (re-ejecucion de GRANTs en la base global_avicola_test) ─────
+start=2026-09-16T02:13:21Z
+--- privilegios efectivos (re-verificado) ---
+ current_user | usesuper 
+--------------+----------
+ avicola_app  | f
+(1 row)
+
+--- acceso de aplicacion (SELECT lots — ahora con grants en la base correcta) ---
+--- operacion privilegiada (sigue denegada) ---
+ERROR:  permission denied to create role
+DETAIL:  Only roles with the CREATEROLE attribute may create roles.
+end=2026-09-16T02:13:21Z
+
+───── CORRECCION 2 (GRANTs ejecutados como DUENO de las tablas + re-verificacion) ─────
+start=2026-09-16T02:13:47Z
+--- grants (rol dueno global_avicola_test_user) ---
+GRANT
+GRANT
+GRANT
+--- privilegios efectivos avicola_app ---
+ current_user | usesuper 
+--------------+----------
+ avicola_app  | f
+(1 row)
+
+--- SELECT lots (acceso de aplicacion) ---
+ lots 
+------
+   78
+(1 row)
+
+--- CREATE ROLE (sigue denegado) ---
+ERROR:  permission denied to create role
+DETAIL:  Only roles with the CREATEROLE attribute may create roles.
+--- resumen G-04: rol minimo verificado LOCAL; SSL = HOST-LEVEL (pgserver sin TLS) ---
+end=2026-09-16T02:13:47Z

@@ -1,0 +1,12 @@
+== G-03 · LOCAL REHEARSAL — rate limit 5/minute en POST /api/v1/login ==
+entorno=LOCAL (pgserver user-space) · flag FEATURE_RATE_LIMIT_ENABLED=true efectivo · sin docker
+calibracion: (a) ruta /api/v1/auth/login => 404 (ruta inexistente); (b) payload con password<6 => 422 sin contar (validacion precede al limiter).
+start=2026-09-16T02:12:11Z
+intento 1: 401
+intento 2: 401
+intento 3: 401
+intento 4: 401
+intento 5: 401
+intento 6: 429
+intento 7: 429
+end=2026-09-16T02:12:11Z

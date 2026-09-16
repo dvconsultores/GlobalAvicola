@@ -1,0 +1,23 @@
+== G-05 · LOCAL REHEARSAL — ciclo respaldo/restauracion (pgserver user-space, sin docker) ==
+start=2026-09-16T02:13:03Z
+pg_dump OK (328748 bytes)
+NOTICE:  database "restore_check_test" does not exist, skipping
+scratch DB restore_check_test creada (superusuario pgserver)
+pg_restore OK
+--- conteos ORIGINAL ---
+      ?column?      | count 
+--------------------+-------
+ lots               |    78
+ operational_events |   179
+ audit_logs         |  1269
+(3 rows)
+
+--- conteos RESTAURADA ---
+      ?column?      | count 
+--------------------+-------
+ lots               |    78
+ operational_events |   179
+ audit_logs         |  1269
+(3 rows)
+
+end=2026-09-16T02:13:05Z
