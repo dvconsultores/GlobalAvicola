@@ -1,0 +1,190 @@
+── 1/5 · Base de pruebas ──
+── 2/5 · Esquema y datos (por el entrypoint real) ──
+   [entrypoint] Starting database migrations
+   [entrypoint] target: local/global_avicola_test
+   INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+   INFO  [alembic.runtime.migration] Will assume transactional DDL.
+   INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+   INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+   INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+   INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+   INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+   INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+   INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+   INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+   INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+   INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+   INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+   INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+   INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+   INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+   INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+   INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+   INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+   INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+   INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+   INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+   INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+   INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+   INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+   INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+   INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+   INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+   INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+   INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+   INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+   INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+   INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+   INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+   INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+   INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+   INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+   INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+   INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+   INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+   INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+   INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+   [R-44] asociaciones rol-permiso añadidas: 0
+   [OD-19 Acl. A] asociaciones rol-permiso añadidas: 0
+   [F1] catálogo de unidades de negocio: creadas 4 ['breeder', 'broiler', 'grandparent', 'hatchery']
+   [entrypoint] Migration completed
+   [entrypoint] Starting application: true
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   semillas aplicadas
+── 3/5 · Backend ──
+── 4/5 · Frontend ──
+   backend en pie
+   frontend en pie
+
+── 5/5 · Certificación E2E ──
+
+Running 111 tests using 2 workers
+
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+  ✓    2 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:48:7 › Proceso 02 · Control de producción diario › HAPPY PATH · mortalidad con causa, y el saldo baja (980ms)
+  ✓    3 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:80:7 › Proceso 02 · Control de producción diario › REGLA · BR-01 rechaza mortalidad superior al saldo (539ms)
+  ✓    4 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:98:7 › Proceso 02 · Control de producción diario › REGLA · una mortalidad de cero no es un registro (298ms)
+  ✓    1 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:49:7 › Proceso 01 · Recepción de aves › AUTENTICACIÓN · sin sesión la aplicación no expone el proceso (2.0s)
+  ✓    5 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:110:7 › Proceso 02 · Control de producción diario › ALERTA · el umbral configurado dispara la alerta (514ms)
+  ✓    7 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:140:7 › Proceso 02 · Control de producción diario › ALIMENTO · el consumo se registra con su tipo (540ms)
+  ✓    8 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:161:7 › Proceso 02 · Control de producción diario › PESAJE · el peso promedio se conserva (505ms)
+  ✓    9 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:177:7 › Proceso 02 · Control de producción diario › AISLAMIENTO · no se registra mortalidad en un lote ajeno (720ms)
+  ✓   10 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:63:7 › Proceso 03 · Revisión → Corrección → Aprobación › HAPPY PATH · el ciclo completo cambia el dato y termina aprobado (1.8s)
+  ✓   11 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:105:7 › Proceso 03 · Revisión → Corrección → Aprobación › BR-14 · quien registra no aprueba su propia carga (1.8s)
+  ✓    6 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:54:7 › Proceso 01 · Recepción de aves › HAPPY PATH · la recepción se registra y queda persistida (6.4s)
+  ✓   13 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:96:7 › Proceso 01 · Recepción de aves › VALIDACIÓN · BR-08 exige granja y galpón (491ms)
+  ✓   14 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:113:7 › Proceso 01 · Recepción de aves › VALIDACIÓN · BR-19 rechaza una fecha en período cerrado (524ms)
+  ✓   12 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:119:7 › Proceso 03 · Revisión → Corrección → Aprobación › RECHAZO · exige motivo y deja el evento rechazado (1.8s)
+  ✓   15 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:133:7 › Proceso 01 · Recepción de aves › AUTORIZACIÓN · un rol sin permiso no registra (498ms)
+  ✓   17 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:149:7 › Proceso 01 · Recepción de aves › AUDITORÍA · la recepción deja rastro (547ms)
+  ✓   16 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:134:7 › Proceso 03 · Revisión → Corrección → Aprobación › LISTA BLANCA · una corrección no puede tocar el flujo (1.9s)
+  ✓   18 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:173:7 › Proceso 01 · Recepción de aves › AISLAMIENTO · no se registra contra un lote de otra empresa (831ms)
+  ✓   19 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:151:7 › Proceso 03 · Revisión → Corrección → Aprobación › R-32 · el estado no se fija con un PUT (1.1s)
+  ✓   21 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:166:7 › Proceso 03 · Revisión → Corrección → Aprobación › AUTORIZACIÓN · un operador no aprueba ni rechaza (266ms)
+  ✓   22 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:176:7 › Proceso 03 · Revisión → Corrección → Aprobación › AUDITORÍA · el ciclo deja rastro de cada transición (890ms)
+  ✓   23 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:26:7 › P-02 · Progenitoras — producción de huevo › HAPPY PATH · recolección, clasificación y despacho dentro del saldo (497ms)
+  ✓   20 [procesos] › e2e/proceso-p01-progenitoras-cria.spec.ts:35:7 › P-01 · cadena de cría de progenitoras › la cadena completa se recorre de la importación a la salida (3.0s)
+  ✓   25 [procesos] › e2e/proceso-p01-progenitoras-cria.spec.ts:77:7 › P-01 · cadena de cría de progenitoras › OD-04 · la orden de compra admite entregas parciales y frena el exceso (471ms)
+  ✓   26 [procesos] › e2e/proceso-p01-progenitoras-cria.spec.ts:102:7 › P-01 · cadena de cría de progenitoras › la referencia de la orden queda en el campo tipado (359ms)
+  ✓   24 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:67:7 › P-02 · Progenitoras — producción de huevo › CADENA COMPLETA · los diez pasos documentados del proceso se registran (1.6s)
+  ✓   28 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:105:7 › P-02 · Progenitoras — producción de huevo › NEGATIVE PATH · BR-02 rechaza despachar más de lo disponible (457ms)
+  ✓   29 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:129:7 › P-02 · Progenitoras — producción de huevo › VALIDATION · un despacho de cero huevos no crea un registro sin significado (386ms)
+  ✓   30 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:148:7 › P-02 · Progenitoras — producción de huevo › AUTHORIZATION · sin sesión el proceso no se alcanza (7ms)
+  ✓   31 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:159:7 › P-02 · Progenitoras — producción de huevo › RBAC · un rol sin permiso de registro no puede recolectar (772ms)
+  ✓   32 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:179:7 › P-02 · Progenitoras — producción de huevo › AISLAMIENTO · el mismo registro vale en la empresa propia y no en la ajena (1.4s)
+  ✓   33 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:216:7 › P-02 · Progenitoras — producción de huevo › FK OWNERSHIP · la granja y el galpón ajenos se rechazan, los propios no (1.1s)
+  ✓   34 [procesos] › e2e/proceso-p02-progenitoras-produccion-huevo.spec.ts:243:7 › P-02 · Progenitoras — producción de huevo › AUDIT · el registro queda con su autor y su empresa (401ms)
+  ✓   27 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:101:7 › P-03 · administración de curvas desde el producto › AC-FE01 · la línea genética ofrece administrar sus curvas (5.2s)
+  ✓   35 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:107:7 › P-03 · cadena de cría de reproductoras › la cadena completa se recorre de la inspección a la salida (1.2s)
+  ✓   37 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:147:7 › P-03 · cadena de cría de reproductoras › §4.5 · el peso fuera de la curva estándar levanta alerta (632ms)
+  ✓   38 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:177:7 › P-03 · cadena de cría de reproductoras › §4.5 · el borde superior está dentro de norma y el exceso no (1.0s)
+  ✓   39 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:203:7 › P-03 · cadena de cría de reproductoras › §4.5 · sin curva cargada no se inventa ningún umbral (781ms)
+  ✓   40 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:219:7 › P-03 · cadena de cría de reproductoras › el lote conserva la versión de curva con la que nació (547ms)
+  ✓   41 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:30:7 › P-04 · Reproductoras — producción de huevo fértil › HAPPY PATH · recolección, clasificación y despacho dentro del saldo (495ms)
+  ✓   36 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:120:7 › P-03 · administración de curvas desde el producto › AC-FE02 · se ven las versiones de esa línea, y solo de esa (5.4s)
+  ✓   42 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:71:7 › P-04 · Reproductoras — producción de huevo fértil › CADENA COMPLETA · los diez pasos documentados del proceso se registran (1.3s)
+  ✓   44 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:111:7 › P-04 · Reproductoras — producción de huevo fértil › NEGATIVE PATH · BR-02 rechaza despachar más de lo disponible (458ms)
+  ✓   45 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:135:7 › P-04 · Reproductoras — producción de huevo fértil › VALIDATION · un despacho de cero huevos no crea un registro sin significado (426ms)
+  ✓   46 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:154:7 › P-04 · Reproductoras — producción de huevo fértil › AUTHORIZATION · sin sesión el proceso no se alcanza (6ms)
+  ✓   47 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:165:7 › P-04 · Reproductoras — producción de huevo fértil › RBAC · un rol sin permiso de registro no puede recolectar (949ms)
+  ✓   48 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:185:7 › P-04 · Reproductoras — producción de huevo fértil › AISLAMIENTO · el mismo registro vale en la empresa propia y no en la ajena (1.1s)
+  ✓   49 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:222:7 › P-04 · Reproductoras — producción de huevo fértil › FK OWNERSHIP · la granja y el galpón ajenos se rechazan, los propios no (1.1s)
+  ✓   50 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:249:7 › P-04 · Reproductoras — producción de huevo fértil › AUDIT · el registro queda con su autor y su empresa (399ms)
+  ✓   43 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:138:7 › P-03 · administración de curvas desde el producto › AC-FE03/04/06 · el administrador carga una tabla y la ve aparecer (5.5s)
+  ✓   51 [procesos] › e2e/proceso-p05-incubacion.spec.ts:23:7 › P-05 · Incubación › HAPPY PATH · recepción de huevos y carga de incubadora dentro de lo recibido (777ms)
+  ✓   53 [procesos] › e2e/proceso-p05-incubacion.spec.ts:60:7 › P-05 · Incubación › CADENA COMPLETA · los pasos documentados de la incubadora se registran (1.0s)
+  ✓   54 [procesos] › e2e/proceso-p05-incubacion.spec.ts:90:7 › P-05 · Incubación › NEGATIVE PATH · BR-03 rechaza cargar más de lo recibido (472ms)
+  ✓   55 [procesos] › e2e/proceso-p05-incubacion.spec.ts:114:7 › P-05 · Incubación › VALIDATION · sin recepción previa no puede cargarse la incubadora (386ms)
+  ✓   56 [procesos] › e2e/proceso-p05-incubacion.spec.ts:127:7 › P-05 · Incubación › AUTHORIZATION · sin sesión el proceso no se alcanza (7ms)
+  ✓   57 [procesos] › e2e/proceso-p05-incubacion.spec.ts:134:7 › P-05 · Incubación › RBAC · un rol sin permiso de registro no puede recibir huevos (944ms)
+  ✓   58 [procesos] › e2e/proceso-p05-incubacion.spec.ts:152:7 › P-05 · Incubación › AISLAMIENTO · el mismo registro vale en la empresa propia y no en la ajena (1.2s)
+  ✓   59 [procesos] › e2e/proceso-p05-incubacion.spec.ts:186:7 › P-05 · Incubación › AUDIT · la carga de incubadora conserva sus parámetros y su autor (541ms)
+  ✓   52 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:168:7 › P-03 · administración de curvas desde el producto › AC-FE05 · un rechazo del backend se lee, no se vuelca en crudo (5.6s)
+  ✓   60 [procesos] › e2e/proceso-p06-pollo-de-engorde.spec.ts:89:7 › P-06 · cadena de engorde hasta el cierre › la cadena completa se recorre y el lote cierra con su resumen (2.1s)
+  ✓   62 [procesos] › e2e/proceso-p06-pollo-de-engorde.spec.ts:105:7 › P-06 · cadena de engorde hasta el cierre › el cierre se persiste con la fecha del día, no con la del día anterior (2.4s)
+  ✓   63 [procesos] › e2e/proceso-p06-pollo-de-engorde.spec.ts:120:7 › P-06 · cadena de engorde hasta el cierre › R7 · un registro sin aprobar impide cerrar el lote (914ms)
+  ✓   61 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:200:7 › P-03 · administración de curvas desde el producto › AC-FE07/08 · la activa se distingue por texto y la histórica sigue visible (4.9s)
+  ✓   64 [procesos] › e2e/proceso-p06-pollo-de-engorde.spec.ts:135:7 › P-06 · cadena de engorde hasta el cierre › BR-05 impide cerrar sin pesaje ni alimento (614ms)
+  ✓   66 [procesos] › e2e/proceso-p06-pollo-de-engorde.spec.ts:155:7 › P-06 · cadena de engorde hasta el cierre › un lote cerrado no se cierra otra vez (2.5s)
+  ✓   67 [procesos] › e2e/proceso-p06-pollo-de-engorde.spec.ts:170:7 › P-06 · cadena de engorde hasta el cierre › GA-TD-014 · la recepción lleva la OC al campo tipado y respeta su límite (510ms)
+  ✓   68 [procesos] › e2e/proceso-p09-auditoria-interna.spec.ts:26:7 › P-09 · cadena de auditoría interna › el acceso al sistema deja rastro, con actor y módulo (301ms)
+  ✓   69 [procesos] › e2e/proceso-p09-auditoria-interna.spec.ts:38:7 › P-09 · cadena de auditoría interna › el alta de un maestro deja rastro con su entidad (360ms)
+  ✓   70 [procesos] › e2e/proceso-p09-auditoria-interna.spec.ts:52:7 › P-09 · cadena de auditoría interna › el cambio de permisos deja rastro (354ms)
+  ✓   71 [procesos] › e2e/proceso-p09-auditoria-interna.spec.ts:67:7 › P-09 · cadena de auditoría interna › los filtros acotan de verdad y se pueden componer (460ms)
+  ✓   65 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:233:7 › P-03 · administración de curvas desde el producto › AC-FE09 · no se ofrece reasignar lotes a una curva nueva (5.2s)
+  ✓   72 [procesos] › e2e/proceso-p09-auditoria-interna.spec.ts:87:7 › P-09 · cadena de auditoría interna › el filtro de fecha responde en vez de romperse (522ms)
+  ✓   74 [procesos] › e2e/proceso-p09-auditoria-interna.spec.ts:97:7 › P-09 · cadena de auditoría interna › sin permiso de auditoría no se consulta (257ms)
+  ✓   75 [procesos] › e2e/proceso-p10-trazabilidad-generacional.spec.ts:75:7 › P-10 · cadena generacional completa › la cadena une tres generaciones y queda navegable en ambos sentidos (927ms)
+  ✓   76 [procesos] › e2e/proceso-p10-trazabilidad-generacional.spec.ts:147:7 › P-10 · cadena generacional completa › un despacho sin destino declarado no inventa el vínculo (520ms)
+  ✓   77 [procesos] › e2e/proceso-p10-trazabilidad-generacional.spec.ts:169:7 › P-10 · cadena generacional completa › ningún lote queda enlazado consigo mismo (914ms)
+  ✓   78 [procesos] › e2e/proceso-p10-trazabilidad-generacional.spec.ts:188:7 › P-10 · cadena generacional completa › el enlace manual sigue disponible cuando el automático no es posible (604ms)
+  ✓   79 [procesos] › e2e/proceso-p10-trazabilidad-generacional.spec.ts:205:7 › P-10 · cadena generacional completa › R-60 · un vínculo no puede unir lotes de compañías distintas (930ms)
+  ✓   73 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:251:7 › P-03 · administración de curvas desde el producto › AC-FE10 · el alta de lote dice qué versión de curva quedará asociada (5.5s)
+  ✓   80 [procesos] › e2e/proceso-p11-activacion-manual-de-lotes.spec.ts:96:7 › P-11 · Activación manual de lotes existentes › CADENA COMPLETA · las seis reglas del proceso (1.4s)
+  ✓   82 [procesos] › e2e/proceso-p11-activacion-manual-de-lotes.spec.ts:160:7 › P-11 · Activación manual de lotes existentes › NEGATIVE PATH · un lote que ya opera no puede activarse manualmente (470ms)
+  ✓   83 [procesos] › e2e/proceso-p11-activacion-manual-de-lotes.spec.ts:179:7 › P-11 · Activación manual de lotes existentes › NEGATIVE PATH · no se activa dos veces el mismo lote (385ms)
+  ✓   84 [procesos] › e2e/proceso-p11-activacion-manual-de-lotes.spec.ts:189:7 › P-11 · Activación manual de lotes existentes › AUTHORIZATION · sin sesión el proceso no se alcanza (10ms)
+  ✓   85 [procesos] › e2e/proceso-p11-activacion-manual-de-lotes.spec.ts:196:7 › P-11 · Activación manual de lotes existentes › RBAC · un rol sin permiso de alta no puede activar (992ms)
+  ✓   86 [procesos] › e2e/proceso-p11-activacion-manual-de-lotes.spec.ts:212:7 › P-11 · Activación manual de lotes existentes › AISLAMIENTO · no se activa el lote de otra empresa (1.6s)
+  ✓   81 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:267:7 › P-03 · administración de curvas desde el producto › AC-FE10 · una línea sin curva activa se declara, no se calla (5.2s)
+  ✓   88 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:287:7 › P-03 · administración de curvas desde el producto › AC-FE16 · sin permiso sobre maestros no se administra ninguna curva (9.7s)
+  ✓   87 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:27:7 › P-12 · gestión de datos maestros › los siete catálogos tienen ruta de gestión (15.8s)
+  ✓   89 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:319:7 › P-03 · administración de curvas desde el producto › AC-FE11/12 · un peso bajo norma se muestra con su rango esperado (5.8s)
+  ✓   90 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:40:7 › P-12 · gestión de datos maestros › el contador muestra el total y no el tamaño de la página (6.2s)
+  ✓   91 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:337:7 › P-03 · administración de curvas desde el producto › AC-FE12 · un peso dentro de norma también muestra su rango (6.0s)
+  ✓   92 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:61:7 › P-12 · gestión de datos maestros › un maestro nuevo se crea, se edita y se da de baja (942ms)
+  ✓   94 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:87:7 › P-12 · gestión de datos maestros › el maestro creado se puede usar en la operación que lo exige (440ms)
+  ✓   93 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:354:7 › P-03 · administración de curvas desde el producto › AC-FE13 · sin curva se dice «sin referencia», nunca «normal» (6.1s)
+  ✓   95 [procesos] › e2e/proceso-p13-roles-y-permisos.spec.ts:16:7 › P-13 · administración de roles y permisos › la superficie de administración existe y muestra el catálogo (6.2s)
+  ✓   97 [procesos] › e2e/proceso-p13-roles-y-permisos.spec.ts:31:7 › P-13 · administración de roles y permisos › un rol se crea desde la interfaz con los permisos marcados (7.1s)
+  ✓   98 [procesos] › e2e/proceso-p13-roles-y-permisos.spec.ts:56:7 › P-13 · administración de roles y permisos › editar los permisos sustituye el conjunto, no lo acumula (343ms)
+  ✓   96 [procesos] › e2e/proceso-p03-curvas-ui.spec.ts:374:7 › P-03 · administración de curvas desde el producto › cadena completa · cargar la curva, crear el lote y ver el veredicto del pesaje (11.8s)
+  ✓  100 [procesos] › e2e/proceso-p15-reportes-e-indicadores.spec.ts:29:7 › P-15 · indicadores y reportes › los indicadores de incubadora son números y distinguen sus denominadores (684ms)
+  ✓  101 [procesos] › e2e/proceso-p15-reportes-e-indicadores.spec.ts:55:7 › P-15 · indicadores y reportes › la fertilidad y el reporte de estados existen (365ms)
+  ✓  102 [procesos] › e2e/proceso-p15-reportes-e-indicadores.spec.ts:72:7 › P-15 · indicadores y reportes › ningún campo de porcentaje devuelve texto (675ms)
+  ✓   99 [procesos] › e2e/proceso-p14-notificaciones.spec.ts:84:7 › P-14 · notificaciones internas › AC16/AC17/AC18 · el operador ve el aviso, lo abre y queda leído (5.3s)
+  ✓  103 [procesos] › e2e/proceso-p15-reportes-e-indicadores.spec.ts:88:7 › P-15 · indicadores y reportes › los indicadores exigidos por el cliente están expuestos (551ms)
+
+  ✓  105 [procesos] › e2e/proceso-p16-cutover-cargas-iniciales.spec.ts:160:9 › P-16 · Cutover operacional — Cargas Iniciales (GA-REQ-061) › grandparent: ciclo batch→plantilla→apply→reconciliación (1.6s)
+
+  ✓  106 [procesos] › e2e/proceso-p16-cutover-cargas-iniciales.spec.ts:160:9 › P-16 · Cutover operacional — Cargas Iniciales (GA-REQ-061) › breeder: ciclo batch→plantilla→apply→reconciliación (1.4s)
+
+  ✓  104 [procesos] › e2e/proceso-p14-notificaciones.spec.ts:141:7 › P-14 · notificaciones internas › AC17 · el aviso lleva a la operación de la que informa (4.4s)
+  ✓  107 [procesos] › e2e/proceso-p16-cutover-cargas-iniciales.spec.ts:160:9 › P-16 · Cutover operacional — Cargas Iniciales (GA-REQ-061) › hatchery: ciclo batch→plantilla→apply→reconciliación (1.2s)
+
+  ✓  109 [procesos] › e2e/proceso-p16-cutover-cargas-iniciales.spec.ts:160:9 › P-16 · Cutover operacional — Cargas Iniciales (GA-REQ-061) › broiler: ciclo batch→plantilla→apply→reconciliación (1.9s)
+  ✓  108 [procesos] › e2e/proceso-p14-notificaciones.spec.ts:154:7 › P-14 · notificaciones internas › AC14 · la bandeja de otro no se ve (4.0s)
+  ✓  110 [procesos] › e2e/proceso-p14-notificaciones.spec.ts:170:7 › P-14 · notificaciones internas › AC19 · sin avisos se dice, y no se confunde con un fallo (2.5s)
+  ✓  111 [procesos] › e2e/proceso-p14-notificaciones.spec.ts:183:7 › P-14 · notificaciones internas › AC02 · no se introduce ningún canal externo (3.0s)
+
+  111 passed (1.9m)
