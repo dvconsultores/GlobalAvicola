@@ -41,7 +41,7 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 | **RES-07** | 19 filas VNC (8 requieren UAT) | Credo dentro de T13 (certificación de filas) | Condicional — resolver/difuminar en el cierre |
 | **G-06** | Credenciales runtime para sondas C3 (R-199/201/202/203/204) | `QUEUED` (límite declarado, no bloqueante documentado) | NO (C1/C2 certificadas; C3 documentada) |
 | **P-08 / SAP** | Integración real SAP | `BLOCKED_EXTERNAL` (fase posterior) | NO (fuera del alcance Pre-SAP por roadmap) |
-| **DEPLOYMENT** | Mecanismo de despliegue del SHA certificado al entorno de UAT (`avicola.globaldv.net`) | **`DECIDED=A`** (Owner, 2026-09-16) · ejecución `BLOCKED_EXTERNAL_ACCESS` (runbook del administrador entregado; ver §5) | **SÍ** (para que UAT pruebe el producto certificado; ejecución pendiente del host) |
+| **DEPLOYMENT** | Mecanismo de despliegue del SHA certificado al entorno de UAT (`avicola.globaldv.net`) | **`DECIDED=A`** + **ejecutado** (EX-01 reactivado por el propietario, `f38350a`) · verificación externa **PASS** · G-03 `FAIL` observado (diagnóstico host) — ver §5 | **SÍ** (UAT ya puede probar el build certificado; cierre OPS en ventana host) |
 
 ## 4 · Findings P0/P1/P2 (estado de cierre)
 
@@ -54,31 +54,31 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
   clasificación de bloqueo. La matriz final ID/SEVERITY/STATUS/BLOCKS/RATIONALE
   se emite en el cierre T13 con los resultados UAT/OPS.
 
-## 5 · Deployment (estado actualizado 2026-09-16, tras la decisión del propietario)
+## 5 · Deployment (estado actualizado 2026-09-16, tarde — desplegado y verificado)
 
-- **Decisión del propietario (2026-09-16, canal chat)**: **`DEPLOYMENT = A`** —
-  despliegue manual del build certificado en el entorno compartido, clasificado
-  `SHARED DEVELOPMENT/TEST/CERTIFICATION/UAT` (no producción). Registro:
-  `GA_T13_DEPLOYMENT_DECISION_A.md` (texto del propietario conservado como
-  evidencia; AOD-29 intacto; GitHub Actions no se reactiva).
-- `PRODUCT_SHA = be5453f` — producto congelado: `git diff be5453f..HEAD -- backend
-  frontend e2e` **vacío**; el único commit posterior (`93b4a91`) es documental.
-- **Ejecución**: `DEPLOYMENT_EXECUTION = BLOCKED_EXTERNAL_ACCESS` — la estación
-  del agente no es el host (Docker ausente; `avicola.globaldv.net` →
-  `84.247.161.106`) y no dispone de acceso SSH/checkout/permisos Docker
-  autorizados. No se buscaron credenciales (fuentes prohibidas intactas).
-- **Instrumento entregado**: `GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md` (comandos
-  exactos: preflight/captura, verificación de cabeza única, respaldo obligatorio,
-  build+push canónico EX-01 o fallback local, migración por **entrypoint**
-  [GA-REM-024], health A–G, marcadores GA-FE-01, rollback, G-02…G-05 con la
-  corrección calibrada de la ruta de login, y evidencia a devolver).
-- **Baseline pre-deploy externo** (2026-09-16T02:56Z, evidencia
-  `evidence/t13-ops/deploy-a-preflight-baseline.log`): bundle
-  `index-apu3WWcr.js` (Last-Modified 14-sep) — **anterior** al producto
-  certificado (Wave C); `/login` 200; `/health` externo es el fallback SPA (el
-  health real del backend es `:8002/health`).
-- No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12). Sin
-  reactivar GitHub Actions.
+- **Decisión del propietario**: **`DEPLOYMENT = A`** (2026-09-16; registro
+  `GA_T13_DEPLOYMENT_DECISION_A.md`; entorno
+  `SHARED DEVELOPMENT/TEST/CERTIFICATION/UAT`, no producción).
+- `PRODUCT_SHA = be5453f` — producto congelado (`git diff be5453f..HEAD -- backend
+  frontend e2e` vacío).
+- **Ejecución (por el propietario, mecanismo EX-01)**: el propietario restauró los
+  workflows `docker-push-backend/frontend` (`f38350a`; **idénticos** a los de
+  `workflows-retired/`) y ejecutó el despliegue del build certificado; el agente no
+  reactivó nada (certificación sigue local, AOD-29 intacto).
+- **Verificación externa (PASS)**: bundle servido `index-apu3WWcr.js` (14-sep) →
+  **`index-r36pBbNX.js`** (Last-Modified **16:28:48Z**; sha256 `3047f5c…`);
+  marcadores GA-FE-01 M1–M7 (+ control `switch-company`, + `cutover-templates`)
+  presentes; root/login 200; backend sirviendo (401 JSON) ⇒ según GA-REM-024 la
+  migración del entrypoint completó. ⇒ **`DEPLOYMENT_STATUS = PASS` (verificación
+  externa)**; evidencia cruda del host (digests, log `[entrypoint]`, `alembic
+  current`) pendiente como complemento (runbook §12).
+- **G-03 (rate limit) — FAIL observado en runtime**: 12 intentos consecutivos a
+  `POST /api/v1/login` ⇒ **401×12, sin 429** (esperado 401×5 → 429). Diagnóstico
+  host pendiente (flag efectivo en contenedor, umbral, clave del proxy GAP-11).
+  Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log`.
+- **Pendiente de host**: G-02 · G-04 · G-05 + diagnóstico/re-ejecución G-03 +
+  evidencia cruda del despliegue (`GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md`).
+- No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12).
 
 ## 6 · Deferred verificados (sin reabrir)
 

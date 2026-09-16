@@ -100,6 +100,24 @@ U1/U2 ⇒ **sesión del propietario**. Hasta entonces, U1/U2 permanecen
 - La sesión del propietario se abrirá solo tras: `DEPLOYMENT_STATUS = PASS` +
   OPS G-02…G-05 + prevalidación técnica en verde (mandato §13–§16, §18).
 
+## 8 · Addendum (2026-09-16, tarde) — ejecución y verificación
+
+- El propietario **restauró los workflows de despliegue**
+  `docker-push-backend/frontend` a `.github/workflows/` (`f38350a`; **idénticos**
+  a los de `workflows-retired/`) y ejecutó el despliegue (runbook A). La
+  certificación permanece local (AOD-29 intacto); GitHub Actions actúa solo como
+  mecanismo de build/push de imágenes (EX-01). El agente no reactivó nada.
+- **Verificación externa**: bundle `index-apu3WWcr.js` (14-sep) →
+  **`index-r36pBbNX.js`** (Last-Modified **16:28:48Z**; sha256 `3047f5c…`);
+  marcadores GA-FE-01 M1–M7 + control + `cutover-templates`; root/login 200;
+  backend sirviendo ⇒ **`DEPLOYMENT_STATUS = PASS` (externo)**. Evidencia cruda
+  del host (digests, log `[entrypoint]`, `alembic current`) pendiente como
+  complemento del runbook §12.
+- **G-03 (rate limit) runtime**: 12×401 **sin 429** ⇒ **FAIL observado**;
+  diagnóstico host pendiente (flag efectivo, umbral, clave del proxy). No se
+  marca PASS.
+- Evidencia cruda: `evidence/t13-ops/deploy-a-runtime-verification.log`.
+
 ---
 
 ## Anexo · Texto íntegro de la decisión del propietario (2026-09-16, canal chat)

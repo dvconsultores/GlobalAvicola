@@ -1,0 +1,69 @@
+GA · PRE-SAP — T13 · DEPLOYMENT A — RUNTIME VERIFICATION (externo, sanitizado)
+Ventana: 2026-09-16T16:29–16:31Z · desde la estación del agente (sin acceso al host).
+Sin credenciales usadas ni impresas.
+
+== HECHO: despliegue ejecutado por el propietario (runbook A / mecanismo EX-01) ==
+- Commit del propietario f38350a (autor dvconsultores <adominguez@dvconsultores.com>,
+  2026-09-16 12:28:26 -0400 = 16:28:26Z): restaura en .github/workflows/ los dos
+  workflows docker-push-backend.yml y docker-push-frontend.yml.
+- Verificación: diff -q contra los de workflows-retired/ => IDENTICOS (backend y frontend).
+  El agente no reactivó nada; la certificación sigue local (AOD-29 intacto).
+- Despliegue observado: bundle servido cambió de index-apu3WWcr.js
+  (Last-Modified 14-sep-2026 12:47:04Z) a index-r36pBbNX.js
+  (Last-Modified 16-sep-2026 16:28:48Z) => frontend recreado ~16:28:48Z. Estable en
+  los re-checks 16:29:27Z y 16:30:54Z (mismo bundle y fecha).
+
+== PRODUCTO DESPLEGADO (evidencia combinada) ==
+- Bundle nuevo: /assets/index-r36pBbNX.js
+  tamano 1.343.639 bytes · sha256 3047f5cdeb9cd9abf9310fd498755109f82e2f7a0e225e6bab1caf99ca9ab6f7
+- Marcadores GA-FE-01 (presencia en el bundle minificado; conteo por lineas):
+  permissions-catalog = 1 · masters/areas = 1 · notifications/unread-count = 1 ·
+  weight-curves = 2 · import_plan = 1 · dead_on_arrival = 1 · chicks_healthy = 1 ·
+  switch-company = 1 (control) · cutover-templates = 1 (T14)
+- root (/) = 200 · /login = 200
+- Backend sirviendo: POST /api/v1/login (credencial falsa) => 401 JSON (46 bytes;
+  cabeceras x-content-type-options nosniff, x-frame-options DENY, x-xss-protection,
+  referrer-policy, permissions-policy, cache-control no-store).
+- Según GA-REM-024: el backend sirviendo implica que el entrypoint completó
+  `alembic upgrade head` (migración antes de servir) => esquema en cabeza (implicado).
+- NOTA (subsanada): /openapi.json y /docs devuelven 200 pero sirven el fallback SPA
+  (index.html, 802 bytes) — NO exponen el backend; la versión del backend no es
+  distinguible externamente por esa vía.
+
+== G-03 · RATE LIMIT RUNTIME (ejecutado; resultado observado: FAIL) ==
+Bucle canónico (runbook corregido; ruta real /api/v1/login):
+  16:30:11Z bloque 1: intentos 1–6  => 401 401 401 401 401 401
+  16:30:54Z bloque 2: intentos 7–12 => 401 401 401 401 401 401
+  => 12 intentos consecutivos, SIN 429 (esperado 401×5 -> 429 en el 6.º, política 5/minute).
+RESULTADO: **G-03 = FAIL observado en runtime** (no se marca PASS por inspección parcial).
+Referencia local (mismo método, flag activa, uvicorn local): 401×5 -> 429 en el 6.º
+(g03-local-rehearsal.log).
+Candidatos a verificar en host (comandos del runbook):
+  - docker compose exec backend printenv FEATURE_RATE_LIMIT_ENABLED   # esperado: true
+  - grep -n FEATURE_RATE_LIMIT_ENABLED docker-compose.yml  (y .env del host, si aplica)
+    (el compose actualizado declara ${FEATURE_RATE_LIMIT_ENABLED:-true}; un compose
+     antiguo en el host puede no declararlo y el ajuste por defecto no activarlo)
+  - umbral efectivo de login (5/minute) y clave del limiter (GAP-11: X-Forwarded-For / IP real)
+  - repetir el bucle desde el host (curl a localhost:8002) para descartar efectos del proxy
+
+== CHECKS A–G DEL MANDATO (§9) — verificación externa ==
+A contenedores/servicios activos ......... PASS indirecto (frontend + backend sirviendo)
+B backend health ......................... PARCIAL (API responde 401 JSON; /health interno no
+                                           expuesto externamente)
+C frontend responde ...................... PASS (200)
+D sin errores críticos de startup ........ no verificable externamente (requiere host)
+E bundle cambió vs baseline .............. PASS (index-apu3WWcr.js -> index-r36pBbNX.js)
+F DB en alembic head ..................... IMPLÍCITO por GA-REM-024 (sirve => migró);
+                                           raw host (alembic current) pendiente
+G login page accesible ................... PASS (200)
+=> DEPLOYMENT_STATUS = PASS (verificación externa).
+   Complemento pendiente (host): digests de imagen, log [entrypoint], alembic current.
+
+== PENDIENTE DE HOST (ventana del administrador) ==
+- G-02 volumen avicola-media (testigo + recreación)
+- G-03 diagnóstico + re-ejecución (flag efectivo / umbral / clave del proxy)
+- G-04 rol DB mínimo + SSL
+- G-05 respaldo + restauración + política
+- Evidencia cruda del despliegue (§12 del GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md)
+
+== FIN DE LA EVIDENCIA ==
