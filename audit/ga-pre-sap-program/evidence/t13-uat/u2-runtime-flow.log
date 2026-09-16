@@ -1,0 +1,32 @@
+== U2 runtime · BASE=https://avicola.globaldv.net ==
+login operador: 200 · login aprobador: 200
+masters/farms: 200
+masters/suppliers: 200 · masters/transports: 200
+  OC vía /api/v1/sap/references?limit=100: 200 
+  OC vía /api/v1/sap/references: 200 
+  OC vía /api/v1/sap-references: 404 Not Found
+OC por fallback documentado: PO-C001-GPR-0001 (validación server-side)
+granja=1 · galpón=1 · proveedor=1 · transporte=1
+C1 import sin lote: 201 · lot_id=None
+C2 detalle pre-aprobación: 200 · lot_id=None · status=registered
+submit (operador): 200
+review/start (aprobador): 200
+review/complete: 200
+approve: 200 · status=approved
+C3 detalle post-aprobación: 200 · lot_id=67
+C3 lote: 200 · code=L-GP-2026-13 · bird_type=grandparent · sex=mixed · start_date=2026-09-16 · farm=1
+opening-balance lote: 404 · 
+mortalidad pre-recepción (100): 400 · Mortalidad (100) excede el saldo de aves disponibles (0)
+recepción 40+60: 201 · status=registered
+recepción · /api/v1/operations/131/submit: 200
+recepción · /api/v1/review/start/131: 200
+recepción · /api/v1/review/complete: 200
+recepción · /api/v1/approvals/approve: 200
+recepción status final: approved
+sonda saldo (mortalidad 101): 400 · Mortalidad (101) excede el saldo de aves disponibles (100)
+POST /lots (cuerpo vacío): 422 (esperado 422 ⇒ ruta manual viva)
+== FIN U2 ==
+detalle lote 67 (adicional): 200 · opening_balance=None · phases=0
+forma /sap/references: 200 tipo=dict claves=['references', 'total'] total=39 filas=0
+OC GPR encontradas: 0 · ejemplo=None
+references: total=39 filas_recibidas=39 · OC GPR: 1 · ejemplo=PO-C001-GPR-0001

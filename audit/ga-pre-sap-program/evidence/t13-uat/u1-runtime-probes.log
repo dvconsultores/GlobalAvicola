@@ -1,0 +1,22 @@
+== U1 runtime probes · BASE=https://avicola.globaldv.net · usuario=uat09-op-8e60c2 (sin secretos) ==
+1  login: 200
+2  /me: 200
+3  logout: 204
+4  reuso access tras logout: 200 (esperado 401)
+5  refresh tras logout: 401 (esperado 401)
+6  relogin: 200
+7  GET /users con rol operador: 403 (esperado 403)
+8  GET /roles/permissions-catalog: 403
+9  switch-company: 403
+10 /me con bearer inválido: 401 (esperado 401)
+== RESUMEN ==
+  login: 200
+  /me: 200
+  logout: 204
+  reuso-access-tras-logout: 200
+  refresh-tras-logout: 401
+  relogin: 200
+  rbac-users-denegado: 403
+  permissions-catalog: 403
+  switch-company: 403
+  bearer-invalido: 401

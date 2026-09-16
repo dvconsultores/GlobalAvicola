@@ -4,6 +4,17 @@ Fecha: 2026-09-16 · Base: `GA_PRE_SAP_OWNER_UAT_RECERTIFICATION_PLAN.md` §3/§
 (regla §32) + roadmap T13 · Estado: **preparación entregada** — las sesiones de
 decisión pertenecen al propietario.
 
+> **Reconciliación 2026-09-16 (mandato final autónomo).** El Owner declaró
+> `OWNER_UAT_HUMAN_EXECUTION = WAIVED_BY_OWNER_DECISION` y delegó la UAT
+> funcional **técnica** al agente (`TECHNICAL_FUNCTIONAL_UAT_AUTHORITY =
+> DEEPSEEK_AGENT`, `OWNER_DID_NOT_EXECUTE_UAT = TRUE`). Este kit se conserva
+> como **contrato de casos** (qué se prueba y con qué criterio); los resultados
+> técnicos constan en `GA_T13_UAT_RESULTS_U1_U2.md` y los siguientes, con
+> evidencia real (`AUTOMATED_TECHNICAL_UAT = TRUE`). Los subcasos admin-only
+> (reset en contexto, `audit_logs` de LOGIN/LOGOUT) quedan **N/A por decisión
+> del Owner** (G-04). Ninguna frase de este kit constituye ni implica
+> aceptación del propietario.
+
 ## 0 · Uso de este kit
 
 1. **Preparación común** (por sesión): entorno arriba, seeds y readiness en verde,
@@ -46,9 +57,12 @@ Credenciales UAT-09: `~/ga_uat09_credentials.txt` (canal seguro; no se publican)
 
 ### Detalle por lote
 
-**U1 · Plataforma y seguridad.** Usar un **usuario admin real**. Verificar:
-(1) login ok; (2) logout **revoca** (el access previo deja de servir; `LOGOUT`
-visible en `audit_logs`); (3) un rol acotado **no** obtiene wildcard (R-199);
+**U1 · Plataforma y seguridad.** Verificar:
+(1) login ok; (2) logout **revoca el refresh vigente** (AC04: `jti` a la
+*denylist*; el access emitido es stateless y caduca por TTL ≤30 min — su
+rechazo inmediato **no** forma parte de AC04; `LOGOUT` visible en
+`audit_logs` cuando aplique el subcaso admin — N/A por decisión del Owner);
+(3) un rol acotado **no** obtiene wildcard (R-199);
 (4) un refresh token **no** se acepta como access; (5) reset de contraseña en
 contexto de la empresa correcta; (6) operaciones batch respetan permisos;
 (7) switch de empresa/BU aísla datos (X-BU).
