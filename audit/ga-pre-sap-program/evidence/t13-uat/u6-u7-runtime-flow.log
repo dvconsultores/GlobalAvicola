@@ -1,0 +1,33 @@
+== U6/U7-lite runtime · BASE=https://avicola.globaldv.net ==
+login operador/aprobador: 200
+  operador: perms=['lots:create', 'lots:read', 'masters:read', 'operations:create', 'operations:read', 'operations:update', 'sap:read']
+  operador: BU efectiva=['grandparent']
+  aprobador: perms=['approvals:approve', 'approvals:reject', 'corrections:correct', 'corrections:read', 'lots:read', 'masters:read', 'operations:read', 'review:read', 'review:review']
+  aprobador: BU efectiva=['grandparent']
+
+══ U6 · Revisión y reverso (P-07) — lote GP 67 ══
+  peso de prueba: 201 id=132
+  submit (operador): 200 status=pending_review
+  review/start (aprobador): 200 status=in_review
+  bandeja in_review: 200 contiene el evento: True
+  reverso con observaciones: 200 status=returned
+  bandeja returned: 200 contiene el evento: True
+  historial de acciones: 200 (2 entradas: [None, None])
+  reenvío tras reverso: 200 status=pending_review
+  /api/v1/review/start/132: 200
+  /approvals/approve: 200
+  /approvals/approve: 200
+  status final del evento: approved (esperado approved)
+
+══ U7-lite · Notificaciones / trazabilidad / rol ══
+  notificaciones operador: unread=2 tipos=['mortality_over_threshold', 'record_rejected']
+  trazabilidad lote 67: 200 claves=['chick_batches_received', 'chick_batches_sent', 'egg_batches_received', 'egg_batches_sent', 'lot']
+  sonda rol /api/v1/reports/lot/67: 403 Permiso requerido: reports:read
+  sonda rol /api/v1/reports/kpi/ipe/67: 403 Permiso requerido: reports:read
+  sonda rol /api/v1/audit?limit=5: 403 Permiso requerido: audit:read
+
+══ BR-18 · sonda de cierre del lote GP 67 ══
+  cierre: 400 · No se puede cerrar el lote sin al menos un registro de consumo de alimento (requerido para calcular FCR)
+  lote tras sonda: status=active end_date=None
+
+== FIN U6/U7-lite ==

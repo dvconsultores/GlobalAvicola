@@ -1,0 +1,53 @@
+== U3–U8 runtime · BASE=https://avicola.globaldv.net ==
+login operador/aprobador: 200 · company=1
+
+══ U3 · Reproductoras (P-03) ══
+  granja: 403
+  fallback granja existente: 200
+  galpón: 403
+  fallback galpón existente: 200
+  línea genética: 403
+  lote: 403 id=None
+  DEGRADED: no se pudo crear el lote U3
+
+══ U6 · Revisión y reverso (P-07) ══
+  DEGRADED: sin lote U3
+
+══ U4 · Incubadora (P-04 + P-05) ══
+  granja: 403
+  fallback granja existente: 200
+  galpón: 403
+  fallback galpón existente: 200
+  lote: 403 id=None
+  DEGRADED: no se pudo crear el lote U4
+
+══ U5 · Engorde y cierre (P-06) ══
+  catálogos: {'causa': 1, 'descarte': 1, 'vacuna': 1, 'medicamento': 1, 'alimento': 1}
+  granja: 403
+  fallback granja existente: 200
+  galpón: 403
+  fallback galpón existente: 200
+  lote: 403 id=None
+  DEGRADED: no se pudo montar la cadena U5
+
+══ U7 · Reportes y trazabilidad (P-15/P-10/P-09) ══
+  auditoría (rol operador): 403 Permiso requerido: audit:read
+  notificaciones: 200 unread=2
+
+══ U8 · Maestros y usuarios (P-12/P-13/P-11/P-14) ══
+  alta feed-types: 403
+  alta vaccines: 403
+  alta medications: 403
+  alta mortality-causes: 403
+  alta cull-causes: 403
+  alta genetic-lines: 403
+  alta suppliers: 403
+  alta transports: 403
+  granja: 403
+  fallback granja existente: 200
+  galpón: 403
+  fallback galpón existente: 200
+  lote: 403 id=None
+  DEGRADED activación: lote=False fase=True
+
+== FIN U3–U8 ==

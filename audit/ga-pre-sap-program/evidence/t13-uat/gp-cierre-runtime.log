@@ -1,0 +1,12 @@
+== Cierre BR-18 · lote GP 67 · BASE=https://avicola.globaldv.net ==
+login operador/aprobador: 200
+lote 67: status=active
+tipo de alimento: 200 id=1
+alimento 380 kg: 201 id=133
+  submit: 200
+  start: 200
+  complete: 200
+  approve: 200
+cierre: 200 · {"lot_id": 67, "lot_code": "L-GP-2026-13", "age_days": 0, "total_mortality": 0, "total_feed_kg": 380.0, "total_eggs": 0, "total_events": 4, "approved_events": 4, "status": "closed", "end_date": "2026-09-16"}
+lote tras cierre: status=closed end_date=2026-09-16 (esperado closed/2026-09-16)
+== FIN cierre BR-18 ==

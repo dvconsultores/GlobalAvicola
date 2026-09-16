@@ -1,0 +1,19 @@
+/me: 200 claves=['area_id', 'company_business_units', 'company_id', 'company_name', 'created_at', 'effective_business_units', 'effective_company_id', 'email', 'first_name', 'granted_business_units', 'id', 'is_active', 'is_super_admin', 'last_login', 'last_name', 'permissions', 'phone', 'role_id', 'username', 'view_type']
+  permissions: ['lots:create', 'lots:read', 'masters:read', 'operations:create', 'operations:read', 'operations:update', 'sap:read']
+  company_id: 1
+/lots: 200
+  total=10 filas=10
+  lote 63 code=E2E-MAN-153-6cef89 bird=grandparent status=active sex=None
+  lote 7 code=L-GP-2026-01 bird=grandparent status=active sex=mixed
+  lote 6 code=L-GP-2026-06 bird=grandparent status=active sex=mixed
+  lote 60 code=L-GP-2026-07 bird=grandparent status=active sex=mixed
+  lote 61 code=L-GP-2026-08 bird=grandparent status=active sex=mixed
+  lote 62 code=L-GP-2026-09 bird=grandparent status=active sex=mixed
+  lote 64 code=L-GP-2026-10 bird=grandparent status=active sex=mixed
+  lote 65 code=L-GP-2026-11 bird=grandparent status=active sex=mixed
+  lote 66 code=L-GP-2026-12 bird=grandparent status=active sex=mixed
+  lote 67 code=L-GP-2026-13 bird=grandparent status=active sex=mixed
+BUs: company_business_units=['grandparent'] effective=['grandparent'] granted=['grandparent']
+permissions completos: ['lots:create', 'lots:read', 'masters:read', 'operations:create', 'operations:read', 'operations:update', 'sap:read']
+POST /lots bird_type=breeder: 403 · sin acceso operativo a la unidad de negocio 'breeder'
+POST /lots bird_type=broiler: 403 · sin acceso operativo a la unidad de negocio 'broiler'
