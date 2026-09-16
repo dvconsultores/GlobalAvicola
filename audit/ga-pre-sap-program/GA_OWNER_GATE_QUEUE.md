@@ -21,6 +21,9 @@ Regla (§47/§48): los gates se acumulan aquí y se presentan consolidados; no s
 
 ## Pista OPS (paralela, owner/ops — arrancable ya; bloquea T13, no a T2-T13)
 
+> **Instrumentos entregados (2026-09-16)**: `GA_T13_OPS_RUNBOOK.md` — comandos
+> exactos, criterios PASS y plantillas de evidencia para G-02…G-05.
+
 ### G-02 · OPS-01 · R-52/RES-05 — Volumen `avicola-media` (durabilidad de evidencias)
 
 | Campo | Valor |

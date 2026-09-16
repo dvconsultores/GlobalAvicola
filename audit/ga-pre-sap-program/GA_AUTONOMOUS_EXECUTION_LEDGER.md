@@ -26,7 +26,7 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 
 - **Documentos consultados** (9 canónicos + registros): `GA_PRE_SAP_REMEDIATION_MASTER_ROADMAP.md` · `GA_PRE_SAP_TRANCHE_GROUPING_PROPOSAL.md` · `GA_PRE_SAP_PROGRAM_STATUS.md` · `GA_PRE_SAP_BLOCKING_FINDING_MATRIX.md` · `GA_PRE_SAP_SPEC_DEPENDENCY_GRAPH.md` · `GA_PRE_SAP_PROCESS_DEPENDENCY_GRAPH.md` · `GA_PRE_SAP_SPEC_READINESS_MATRIX.md` · `GA_PRE_SAP_SECURITY_DEPENDENCY_MATRIX.md` · `GA_PRE_SAP_SHARED_TOUCHPOINT_MATRIX.md` · `specs/remediation/OD-13-ROLE-AND-PERMISSION-TENANCY.md` · `specs/remediation/GA-REM-004-CREDENTIALS-AND-TEST-ACCOUNTS.md` · `audit/remediation/GA-REM-004-CERTIFICATION-REPORT.md`.
 - **Dependencias (fuente autoritativa = roadmap maestro §1)**: T2 ← T1 · T3 ← T1 · T4 ← T2+T3 · T5…T13 en cadena; GA-GOV-03 es «el gate de arranque» (grafo de specs §1) y la fila T1 marca «**T2-T13 bloqueadas hasta AC-06 = PASS**» ⇒ **ninguna tranche T2-T13 es ejecutable hoy**. **T2 NO se inicia** (gate literal no satisfecho; §11).
-- **Pista OPS** (única línea con dependencia «—»; «arrancable ya»): sus ítems son acciones **owner/ops fuera del código**, no ejecutables sin acceso al host: R-52 volumen `avicola-media` · GA-REM-004 AC03 (rate limit runtime) · AC07 (rol BD mínimo + SSL) · P1-6 (respaldo). ⇒ **Encolada** en `GA_OWNER_GATE_QUEUE.md` (G-02…G-05); no ejecutada por el agente.
+- **Pista OPS** (única línea con dependencia «—»; «arrancable ya»): sus ítems son acciones **owner/ops fuera del código**, no ejecutables sin acceso al host: R-52 volumen `avicola-media` · GA-REM-004 AC03 (rate limit runtime) · AC07 (rol BD mínimo + SSL) · P1-6 (respaldo). ⇒ **Encolada** en `GA_OWNER_GATE_QUEUE.md` (G-02…G-05); instrumentos entregados 2026-09-16 (`GA_T13_OPS_RUNBOOK.md`); no ejecutada por el agente.
 - **OD-13.c (pre-check §15)**: **YA RESUELTA** en gobernanza canónica — `specs/remediation/OD-13-ROLE-AND-PERMISSION-TENANCY.md §3` (2026-09-08, VIGENTE): «se prohíbe fabricar autoridad global desde una superficie de empresa» · «ROL QUE CONFIERE AUTORIDAD GLOBAL (`module="*"` + `scope_type="all"`) → SOLO la autoridad global lo asigna». R-199 la implementa en T2. **No requiere decisión redundante del propietario** (§15; sin owner-gate falso, §7).
 - **Conclusión**: no existe tranche independiente ejecutable por el agente.
 
@@ -453,3 +453,11 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **Certificación**: `audit/ga-claude-final-audit/specs/GA-REM-022/GA_REM_022_CERTIFICATION.md` + `GA_T12_CERTIFICATION.md`; evidencia final `specs/GA-REM-022/evidence/{red,green,sensibilidad,e2e}`.
 - **Push**: pendiente de doc-fixup de cierre → `origin/main` (fast-forward, sin rewrite/reset/force); `REMOTE_SHA_MATCH = PASS`.
 - **Siguiente**: **T13** (UAT del propietario, 8 lotes U1–U8 + decisiones §25 + Pista OPS). R-142 permanece diferida (AOD-17).
+
+## AE-59 · 2026-09-16 · T13 EN CURSO — kit UAT (U1–U8) + runbook OPS (G-02…G-05) entregados
+
+- **Arranque automático** tras el cierre de T12 (mandato del propietario).
+- **Entregables**: `GA_T13_UAT_KIT.md` (8 lotes: casos núcleo, preparación, evidencia primaria admisible §32, plantilla de decisión por caso y reglas de cierre/limpieza) y `GA_T13_OPS_RUNBOOK.md` (G-02…G-05 con comandos exactos, criterios PASS y plantillas de evidencia; sanitización de secretos obligatoria).
+- **Verificaciones locales**: `~/ga_uat09_credentials.txt` presente (retry GA-UAT-09 ejecutable por el propietario); `backend/seeds/live_readiness_check.py` presente; `GUIA_PRUEBAS_EN_VIVO.md` vigente como flujo de referencia.
+- **Gates**: las sesiones UAT (U1–U8, prioridad U1/U2) y los ítems OPS son acciones del propietario/ops (G-02…G-05 `QUEUED` con instrumentos); decisiones §25 aplicables al cierre (GA-UAT-09 = registro de decisión del retry).
+- **Siguiente**: ejecución de lotes por el propietario y de los ítems OPS; a su retorno, certificación de cierre de T13 con veredicto GO/NO-GO.
