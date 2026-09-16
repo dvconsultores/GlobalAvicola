@@ -1,4 +1,4 @@
-"""GA-REM-022 · R-131 + R-141 — RED (decisión del Owner 2026-09-16).
+"""GA-REM-022 · R-131 + R-141 — RED (decisión del Owner, 16 de septiembre de 2026).
 
 Rojo en HEAD (`b58136a`):
 

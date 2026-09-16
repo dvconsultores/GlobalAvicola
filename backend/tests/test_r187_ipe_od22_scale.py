@@ -194,7 +194,7 @@ async def ipe_od22(test_database_url, test_credentials):
                 lot_id=lote.id, activation_date=days_ago(dias),
                 phase_at_activation_id=fase.id,
                 initial_male_count=500, initial_female_count=500,
-            # `GA-REM-022` · R-131 (Owner 2026-09-16): peso inicial EXPLÍCITO de la
+            # `GA-REM-022` · R-131 (Owner, 16 de septiembre de 2026): peso inicial EXPLÍCITO de la
             # foto de apertura. Δ=1.000 g/ave × 1.000 aves = 1.000 kg de ganancia
             # ⇒ FCR canónico (alimento/ganancia) == alimento/1000 previo: las
             # fronteras OD-22 (250/300) se conservan exactas.
