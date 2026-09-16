@@ -29,3 +29,41 @@ def test_el_compose_de_despliegue_inyecta_el_flag_con_default_true() -> None:
     compose = Path(__file__).resolve().parents[2] / "docker-compose.yml"
     texto = compose.read_text(encoding="utf-8")
     assert "FEATURE_RATE_LIMIT_ENABLED: ${FEATURE_RATE_LIMIT_ENABLED:-true}" in texto
+
+
+def test_el_limitador_no_puede_desactivarse_por_un_false_heredado_en_produccion() -> None:
+    """En entornos no-dev el limitador está SIEMPRE activo (G-03/T13): un `false`
+    heredado en el runtime del contenedor no puede desactivar la protección
+    anti fuerza bruta del login."""
+    from types import SimpleNamespace
+
+    from app.main import resolve_rate_limit_active
+
+    cfg = SimpleNamespace(ENVIRONMENT="production", FEATURE_RATE_LIMIT_ENABLED=False)
+    assert resolve_rate_limit_active(cfg) is True
+
+
+def test_el_limitador_sigue_desactivable_en_desarrollo_y_pruebas() -> None:
+    """`development`/`test` conservan el control explícito del flag (sin bloqueos locales)."""
+    from types import SimpleNamespace
+
+    from app.main import resolve_rate_limit_active
+
+    assert (
+        resolve_rate_limit_active(
+            SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=False)
+        )
+        is False
+    )
+    assert (
+        resolve_rate_limit_active(
+            SimpleNamespace(ENVIRONMENT="test", FEATURE_RATE_LIMIT_ENABLED=False)
+        )
+        is False
+    )
+    assert (
+        resolve_rate_limit_active(
+            SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=True)
+        )
+        is True
+    )

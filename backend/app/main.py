@@ -15,7 +15,24 @@ from .operations.validators import BusinessRuleViolation
 # S-05: Rate limiting — always instantiated, but limits are
 # effectively disabled when FEATURE_RATE_LIMIT_ENABLED=false
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.RATE_LIMIT_GLOBAL])
-_limiter_active = settings.FEATURE_RATE_LIMIT_ENABLED
+
+
+def resolve_rate_limit_active(cfg) -> bool:
+    """G-03/T13: el limitador es obligatorio fuera de development/test.
+
+    El contenedor desplegado puede heredar un `FEATURE_RATE_LIMIT_ENABLED=false`
+    (p. ej., de un `.env` de servidor desactualizado que la recreación del
+    contenedor clona). Una protección anti fuerza bruta no debe desactivarse por
+    una configuración accidental: en entornos no-dev el limitador queda SIEMPRE
+    activo. `development`/`test` conservan el control explícito del flag para no
+    bloquear las suites locales.
+    """
+    if cfg.ENVIRONMENT in ("development", "test"):
+        return bool(cfg.FEATURE_RATE_LIMIT_ENABLED)
+    return True
+
+
+_limiter_active = resolve_rate_limit_active(settings)
 
 
 def rate_limit(limit_value: str):
