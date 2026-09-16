@@ -1,0 +1,57 @@
+GA · PRE-SAP — T13 · DEPLOYMENT A — PREFLIGHT & BASELINE (evidencia cruda, sanitizada)
+Capturado: 2026-09-16T02:56Z desde la estación del agente (no es el host). Sin credenciales.
+
+== A. GIT STATE (checkout del agente, 2026-09-16) ==
+git rev-parse HEAD
+  93b4a91f6cfe60a004a552c7d71dc96e33212fee
+git status --short
+  (limpio)
+git ls-remote origin refs/heads/main
+  93b4a91f6cfe60a004a552c7d71dc96e33212fee	refs/heads/main
+  ⇒ REMOTE_SHA_MATCH = PASS
+git log -10 --oneline (extracto)
+  93b4a91 T13: recon status + rehersals locales OPS (G-03/04/05 PASS, G-02 BLOCKED_EXTERNAL) + prevalidacion U1/U2 82/82 + fichas U1/U2 (OWNER ACTION REQUIRED; deployment BLOCKED_OWNER_DECISION); ledger AE-60.
+  be5453f T13 EN CURSO: kit UAT del propietario (U1-U8, regla 32, plantillas) + runbook OPS G-02..G-05 (comandos exactos y evidencias); status T13 IN_PROGRESS; ledger AE-59.
+  47c77c0 GA-REM-022 CIERRE T12 doc-fixup: ancla de SHA ...
+  abfffeb GA-REM-022 CIERRE T12 (docs+evidencia) ...
+  af1f1e2 GA-REM-022 fixup (guard T-028-04) ...
+  9e76254 OWNER DECISION Wave C (b58136a) — IMPL R-131 FCR canónico ...
+  3398dc4 GA-REM-022 R-131/R-141 (RED, owner 2026-09-16) ...
+  b58136a OWNER DECISION WAVE C (formal 2026-09-16) ...
+  775448e GOBERNANZA (orden Owner) ...
+
+== B. PRODUCT FREEZE VERIFICATION (be5453f = producto certificado) ==
+git diff --stat be5453f..HEAD -- backend frontend e2e
+  (vacío ⇒ producto congelado; único commit posterior: 93b4a91, documental)
+alembic heads (backend @ HEAD)
+  c8d9e0f1a2b3 (head)   ⇒ cabeza ÚNICA
+
+== C. HOST ACCESS PRECHECK (mandato §3) ==
+command -v docker        → NOT_FOUND
+command -v docker-compose → NOT_FOUND
+command -v ssh           → /usr/bin/ssh (sin acceso autorizado establecido; no se intentó conexión)
+getent hosts avicola.globaldv.net → 84.247.161.106  (host EXTERNO)
+Acceso autorizado al host (SSH/checkout/permisos Docker/respaldo/config): NO DISPONIBLE para el agente.
+Búsqueda de credenciales: NO realizada (fuentes prohibidas intactas: HOME, historial, /proc, browser stores, filesystem general, gestores no autorizados).
+⇒ DEPLOYMENT_EXECUTION = BLOCKED_EXTERNAL_ACCESS
+
+== D. EXTERNAL PRE-DEPLOY BASELINE (2026-09-16T02:56:55Z) ==
+GET https://avicola.globaldv.net/
+  HTTP/1.1 200 OK
+  Server: openresty
+  Date: Wed, 16 Sep 2026 02:56:56 GMT
+  Last-Modified: Mon, 14 Sep 2026 12:47:04 GMT
+Bundle refs (index.html):
+  /assets/index-apu3WWcr.js
+  (modulepreload) /assets/rolldown-runtime-QTnfLwEv.js
+  (stylesheet)    /assets/index-8D_SvLbb.css
+Probes (sin credenciales):
+  /health          → 200 (devuelve el index del SPA: fallback del frontend; 802 bytes)
+  /api/health      → 404
+  /api/v1/health   → 404
+  /login           → 200
+Nota: el health real del backend es interno del host (:8002/health, healthcheck del compose).
+Nota: el build servido (Last-Modified 14-sep) es ANTERIOR al producto certificado (Wave C, 16-sep).
+      ⇒ La UAT no debe ejecutarse contra este build (mandato §20).
+
+== FIN DE LA EVIDENCIA ==

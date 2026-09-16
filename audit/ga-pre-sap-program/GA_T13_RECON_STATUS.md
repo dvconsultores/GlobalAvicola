@@ -5,11 +5,12 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 
 ## 1 · Estado de referencia (verificado hoy)
 
-- `git status --short`: limpio · rama `main` · `HEAD = be5453f`
-- `git ls-remote origin refs/heads/main` = `be5453f` ⇒ **REMOTE_SHA_MATCH = PASS**
+- `git status --short`: limpio · rama `main` · `HEAD = 93b4a91` (producto congelado en `be5453f`; commits posteriores solo documentación)
+- `git ls-remote origin refs/heads/main` = `93b4a91` ⇒ **REMOTE_SHA_MATCH = PASS**
 - Cadena reciente: `775448e` (gobernanza) → `b58136a` (decisión Wave C) →
   `3398dc4` (RED) → `9e76254` (IMPL) → `af1f1e2` (fixup guard) → `abfffeb`
-  (cierre T12) → `47c77c0` (doc-fixup) → `be5453f` (arranque T13).
+  (cierre T12) → `47c77c0` (doc-fixup) → `be5453f` (arranque T13) → `93b4a91`
+  (recon + rehersals OPS locales + prevalidación U1/U2).
 - Gates de cierre T12 vigentes: BE full **1436/0F/49S** · FE **524/524** · E2E
   **111/111** · OD-22 **intacto** (r187) · Wave C certificada
   (`GA_REM_022_CERTIFICATION.md`).
@@ -40,7 +41,7 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 | **RES-07** | 19 filas VNC (8 requieren UAT) | Credo dentro de T13 (certificación de filas) | Condicional — resolver/difuminar en el cierre |
 | **G-06** | Credenciales runtime para sondas C3 (R-199/201/202/203/204) | `QUEUED` (límite declarado, no bloqueante documentado) | NO (C1/C2 certificadas; C3 documentada) |
 | **P-08 / SAP** | Integración real SAP | `BLOCKED_EXTERNAL` (fase posterior) | NO (fuera del alcance Pre-SAP por roadmap) |
-| **DEPLOYMENT** | Mecanismo de despliegue del SHA certificado al entorno de UAT (`avicola.globaldv.net`) | **BLOCKED_OWNER_DECISION** (ver §5) | **SÍ** (para que UAT pruebe el producto certificado) |
+| **DEPLOYMENT** | Mecanismo de despliegue del SHA certificado al entorno de UAT (`avicola.globaldv.net`) | **`DECIDED=A`** (Owner, 2026-09-16) · ejecución `BLOCKED_EXTERNAL_ACCESS` (runbook del administrador entregado; ver §5) | **SÍ** (para que UAT pruebe el producto certificado; ejecución pendiente del host) |
 
 ## 4 · Findings P0/P1/P2 (estado de cierre)
 
@@ -53,19 +54,31 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
   clasificación de bloqueo. La matriz final ID/SEVERITY/STATUS/BLOCKS/RATIONALE
   se emite en el cierre T13 con los resultados UAT/OPS.
 
-## 5 · Deployment readiness (clasificación exacta)
+## 5 · Deployment (estado actualizado 2026-09-16, tras la decisión del propietario)
 
-- Los workflows de CI/CD están **retirados** (`.github/workflows-retired/`,
-  incl. `docker-build-push`/`docker-push-*`) y no existe auto-deploy autorizado.
-- Por tanto: **DEPLOYMENT_READINESS = BLOCKED_OWNER_DECISION**. Decisión
-  necesaria (una de):
-  - **(A)** Autorizar y ejecutar el despliegue **manual** del SHA certificado
-    `be5453f` en el host (`docker compose build && up -d` o equivalente) antes
-    de la UAT; o
-  - **(B)** Declarar el **entorno desplegado actual** como entorno de UAT,
-    registrando su SHA/limitación y las implicaciones (p. ej., U7 no podría
-    validar Wave C si el build desplegado es anterior).
-- No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12).
+- **Decisión del propietario (2026-09-16, canal chat)**: **`DEPLOYMENT = A`** —
+  despliegue manual del build certificado en el entorno compartido, clasificado
+  `SHARED DEVELOPMENT/TEST/CERTIFICATION/UAT` (no producción). Registro:
+  `GA_T13_DEPLOYMENT_DECISION_A.md` (texto del propietario conservado como
+  evidencia; AOD-29 intacto; GitHub Actions no se reactiva).
+- `PRODUCT_SHA = be5453f` — producto congelado: `git diff be5453f..HEAD -- backend
+  frontend e2e` **vacío**; el único commit posterior (`93b4a91`) es documental.
+- **Ejecución**: `DEPLOYMENT_EXECUTION = BLOCKED_EXTERNAL_ACCESS` — la estación
+  del agente no es el host (Docker ausente; `avicola.globaldv.net` →
+  `84.247.161.106`) y no dispone de acceso SSH/checkout/permisos Docker
+  autorizados. No se buscaron credenciales (fuentes prohibidas intactas).
+- **Instrumento entregado**: `GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md` (comandos
+  exactos: preflight/captura, verificación de cabeza única, respaldo obligatorio,
+  build+push canónico EX-01 o fallback local, migración por **entrypoint**
+  [GA-REM-024], health A–G, marcadores GA-FE-01, rollback, G-02…G-05 con la
+  corrección calibrada de la ruta de login, y evidencia a devolver).
+- **Baseline pre-deploy externo** (2026-09-16T02:56Z, evidencia
+  `evidence/t13-ops/deploy-a-preflight-baseline.log`): bundle
+  `index-apu3WWcr.js` (Last-Modified 14-sep) — **anterior** al producto
+  certificado (Wave C); `/login` 200; `/health` externo es el fallback SPA (el
+  health real del backend es `:8002/health`).
+- No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12). Sin
+  reactivar GitHub Actions.
 
 ## 6 · Deferred verificados (sin reabrir)
 
@@ -91,8 +104,10 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 
 ## 8 · Conclusión del recon
 
-U1/U2 están **técnicamente listos** para la sesión del propietario. El único
-gate que puede impedir una UAT válida es **DEPLOYMENT** (§5): sin el SHA
-certificado desplegado (o sin declaración explícita del entorno objetivo), la
-aceptación owner no representaría el producto certificado. Se presenta junto a
-las fichas U1/U2 como `OWNER ACTION REQUIRED`.
+U1/U2 están **técnicamente listos** para la sesión del propietario. El gate
+**DEPLOYMENT** quedó **decidido por el propietario el 2026-09-16
+(`DEPLOYMENT = A`)**: desplegar manualmente el build certificado `be5453f`; la
+ejecución está en manos del administrador del host con
+`GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md` (agente: `BLOCKED_EXTERNAL_ACCESS`).
+U1/U2 permanecen **READY_FOR_OWNER** en espera del despliegue PASS + prevalidación
+técnica; **no se ejecuta UAT contra el build anterior**.
