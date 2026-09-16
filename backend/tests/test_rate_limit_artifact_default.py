@@ -40,30 +40,38 @@ def test_el_limitador_no_puede_desactivarse_por_un_false_heredado_en_produccion(
     from app.main import resolve_rate_limit_active
 
     cfg = SimpleNamespace(ENVIRONMENT="production", FEATURE_RATE_LIMIT_ENABLED=False)
-    assert resolve_rate_limit_active(cfg) is True
+    assert resolve_rate_limit_active(cfg, en_contenedor=False, test_env=False) is True
 
 
-def test_el_limitador_sigue_desactivable_en_desarrollo_y_pruebas() -> None:
-    """`development`/`test` conservan el control explícito del flag (sin bloqueos locales)."""
+def test_el_artefacto_desplegado_en_contenedor_fuerza_el_limitador() -> None:
+    """Dentro de un contenedor desplegado el limitador está SIEMPRE activo, aunque
+    el contenedor herede `ENVIRONMENT=development` y `FEATURE_RATE_LIMIT_ENABLED=false`
+    del `.env` del servidor (herencia de la recreación)."""
     from types import SimpleNamespace
 
     from app.main import resolve_rate_limit_active
 
-    assert (
-        resolve_rate_limit_active(
-            SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=False)
-        )
-        is False
-    )
-    assert (
-        resolve_rate_limit_active(
-            SimpleNamespace(ENVIRONMENT="test", FEATURE_RATE_LIMIT_ENABLED=False)
-        )
-        is False
-    )
-    assert (
-        resolve_rate_limit_active(
-            SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=True)
-        )
-        is True
-    )
+    dev = SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=False)
+    assert resolve_rate_limit_active(dev, en_contenedor=True, test_env=False) is True
+
+    test = SimpleNamespace(ENVIRONMENT="test", FEATURE_RATE_LIMIT_ENABLED=False)
+    assert resolve_rate_limit_active(test, en_contenedor=True, test_env=False) is True
+
+
+def test_el_limitador_sigue_desactivable_en_desarrollo_y_pruebas() -> None:
+    """`development`/`test` fuera de contenedor conservan el control explícito del flag;
+    `GA_TEST_ENV=1` (guardas de suites locales) tiene precedencia incluso en contenedor."""
+    from types import SimpleNamespace
+
+    from app.main import resolve_rate_limit_active
+
+    dev_off = SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=False)
+    assert resolve_rate_limit_active(dev_off, en_contenedor=False, test_env=False) is False
+
+    test_off = SimpleNamespace(ENVIRONMENT="test", FEATURE_RATE_LIMIT_ENABLED=False)
+    assert resolve_rate_limit_active(test_off, en_contenedor=False, test_env=False) is False
+
+    dev_on = SimpleNamespace(ENVIRONMENT="development", FEATURE_RATE_LIMIT_ENABLED=True)
+    assert resolve_rate_limit_active(dev_on, en_contenedor=False, test_env=False) is True
+
+    assert resolve_rate_limit_active(dev_off, en_contenedor=True, test_env=True) is False

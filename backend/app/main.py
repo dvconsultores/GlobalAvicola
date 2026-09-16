@@ -17,16 +17,26 @@ from .operations.validators import BusinessRuleViolation
 limiter = Limiter(key_func=get_remote_address, default_limits=[settings.RATE_LIMIT_GLOBAL])
 
 
-def resolve_rate_limit_active(cfg) -> bool:
-    """G-03/T13: el limitador es obligatorio fuera de development/test.
+def resolve_rate_limit_active(cfg, *, en_contenedor=None, test_env=None) -> bool:
+    """G-03/T13: el limitador es obligatorio en el artefacto desplegado.
 
-    El contenedor desplegado puede heredar un `FEATURE_RATE_LIMIT_ENABLED=false`
-    (p. ej., de un `.env` de servidor desactualizado que la recreación del
-    contenedor clona). Una protección anti fuerza bruta no debe desactivarse por
-    una configuración accidental: en entornos no-dev el limitador queda SIEMPRE
-    activo. `development`/`test` conservan el control explícito del flag para no
-    bloquear las suites locales.
+    El contenedor desplegado puede heredar del servidor un `.env` desactualizado
+    (p. ej. `FEATURE_RATE_LIMIT_ENABLED=false` y `ENVIRONMENT=development`) que la
+    recreación del contenedor clona. Una protección anti fuerza bruta no debe
+    depender de esa herencia. Capas, de mayor a menor precedencia:
+
+    1. `GA_TEST_ENV=1` (guardas de suites locales): manda el flag explícito.
+    2. Proceso dentro de un contenedor (`/.dockerenv`): SIEMPRE activo.
+    3. Fuera de contenedor: `development`/`test` respetan el flag; el resto ON.
     """
+    if test_env is None:
+        test_env = os.environ.get("GA_TEST_ENV") == "1"
+    if en_contenedor is None:
+        en_contenedor = os.path.exists("/.dockerenv")
+    if test_env:
+        return bool(cfg.FEATURE_RATE_LIMIT_ENABLED)
+    if en_contenedor:
+        return True
     if cfg.ENVIRONMENT in ("development", "test"):
         return bool(cfg.FEATURE_RATE_LIMIT_ENABLED)
     return True
