@@ -487,3 +487,12 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **OPS**: G-02/G-04/G-05 siguen `BLOCKED_EXTERNAL` (requieren host). Nota: `/openapi.json` y `/docs` externos devuelven el fallback SPA (no exponen backend).
 - **U1/U2**: `READY_FOR_OWNER` (fichas entregadas; prevalidación local 82/82; probes runtime OK). **Sin aceptaciones marcadas.**
 - **Siguiente**: (1) host: G-02/G-04/G-05 + diagnóstico/re-ejecución G-03 + evidencia cruda del deploy; (2) sesión Owner U1/U2 contra el build desplegado; cierre T13 con veredicto GO/NO-GO.
+
+## AE-63 · 2026-09-16 · T13 — reconciliación AOD-29 vs workflows (`GOVERNANCE_DRIFT=TRUE`) + estados separados de deployment + HOLD de U1/U2 + paquete de ventana host
+
+- **Hechos verificados** (detalle en `GA_T13_GHA_AOD29_RECONCILIATION.md`): `.github/workflows/` = 2 ficheros (docker-push-backend/frontend; idénticos a los retirados; triggers push/dispatch/call; plataforma los reconoce `active`). Commit `f38350a` (autor `dvconsultores`; sello local 16:28:26Z) — **sin texto formal de decisión**. Runs **35122083759/35122083928** (`push`, `success`, 16:28:08Z) ⇒ **GitHub Actions reactivado de facto**; imágenes `sha-f38350a`/`latest` publicadas (BE `16:28:34Z` `sha256:6f0edbfa…`; FE `16:28:52Z` `sha256:29cd2eff…`) y desplegadas por Watchtower. Entre los runs del 2026-09-14T12:46Z (`571b4d5`) y hoy no hubo runs (retiro efectivo AOD-29 hasta `f38350a`).
+- **Clasificación**: **`GOVERNANCE_DRIFT = TRUE`** (contradice AOD-29 + Clar. 01: «los push no deben disparar Actions»; `ACTIVE_WORKFLOW_COUNT=0`; `AUTO_DEPLOY = NOT_AVAILABLE…`). El agente no tocó workflows ni historia. **Decisión A/B requerida del propietario** (presentada, no tomada).
+- **Estados de deployment separados (mandato §3)**: `RUNTIME_EXTERNAL_VERIFICATION = PASS` · `HOST_DEPLOYMENT_EVIDENCE = PENDING` · `DEPLOYMENT_GATE = PENDING` (rubric: KIT §3 + runbook §8/§12). No se usa `DEPLOYMENT_STATUS=PASS` plano.
+- **G-03**: FAIL observado (12×401 sin 429). Paquete de ventana host (diagnóstico/corrección config-only con evidencia causa-exacta ANTES/DESPUÉS, evidencia cruda del deploy con digests de contraste, G-02/04/05) en la **adenda §14** del runbook. Sin redeploy innecesario.
+- **U1/U2**: `PREPARED — EN HOLD` (mandato §8); no se piden sesiones al propietario todavía; fichas con banner de hold.
+- **Siguiente**: (1) decisión A/B de gobernanza; (2) ventana host (G-03 PASS + G-02/G-04/G-05 + evidencia cruda); (3) con todo cerrado ⇒ re-prevalidar U1/U2 y volver al gate owner.

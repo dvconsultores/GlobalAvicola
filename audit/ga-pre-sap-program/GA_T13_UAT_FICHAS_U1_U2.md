@@ -5,6 +5,12 @@ conocimientos técnicos. Las instrucciones están en lenguaje llano; lo que no s
 vea en pantalla se marca como observación (la parte técnica la cubre la
 ingeniería y no se le pide).
 
+> ⏸ **EN HOLD (2026-09-16, tarde) — NO ejecutar todavía.** Los gates técnicos
+> (G-03 rate limit; G-02/G-04/G-05) y la reconciliación de gobernanza
+> (GitHub Actions/AOD-29) deben cerrarse primero; el runtime se corregirá antes
+> de la sesión. Estado actual: `U1 = PREPARED`, `U2 = PREPARED` (no ejecutables
+> finales). El propietario abrirá la sesión cuando corresponda.
+
 > **Paso 0 (prerrequisito de entorno)**: dirección de UAT —
 > `https://avicola.globaldv.net`. Para que esta sesión valide el producto
 > certificado (`be5453f`), el entorno debe estar actualizado a ese build **o**

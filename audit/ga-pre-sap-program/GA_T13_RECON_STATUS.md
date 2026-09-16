@@ -41,7 +41,7 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 | **RES-07** | 19 filas VNC (8 requieren UAT) | Credo dentro de T13 (certificación de filas) | Condicional — resolver/difuminar en el cierre |
 | **G-06** | Credenciales runtime para sondas C3 (R-199/201/202/203/204) | `QUEUED` (límite declarado, no bloqueante documentado) | NO (C1/C2 certificadas; C3 documentada) |
 | **P-08 / SAP** | Integración real SAP | `BLOCKED_EXTERNAL` (fase posterior) | NO (fuera del alcance Pre-SAP por roadmap) |
-| **DEPLOYMENT** | Mecanismo de despliegue del SHA certificado al entorno de UAT (`avicola.globaldv.net`) | **`DECIDED=A`** + **ejecutado** (EX-01 reactivado por el propietario, `f38350a`) · verificación externa **PASS** · G-03 `FAIL` observado (diagnóstico host) — ver §5 | **SÍ** (UAT ya puede probar el build certificado; cierre OPS en ventana host) |
+| **DEPLOYMENT** | Mecanismo de despliegue del SHA certificado al entorno de UAT (`avicola.globaldv.net`) | Ejecutado (runs Actions `35122083759`/`35122083928`, imágenes `sha-f38350a`) · **`GOVERNANCE_DRIFT = TRUE` — decisión A/B pendiente** · `RUNTIME_EXTERNAL_VERIFICATION = PASS` · `HOST_DEPLOYMENT_EVIDENCE = PENDING` · `DEPLOYMENT_GATE = PENDING` (ver §5 y `GA_T13_GHA_AOD29_RECONCILIATION.md`) | **SÍ** (U1/U2 en HOLD hasta cerrar gates + reconciliación) |
 
 ## 4 · Findings P0/P1/P2 (estado de cierre)
 
@@ -54,31 +54,29 @@ Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
   clasificación de bloqueo. La matriz final ID/SEVERITY/STATUS/BLOCKS/RATIONALE
   se emite en el cierre T13 con los resultados UAT/OPS.
 
-## 5 · Deployment (estado actualizado 2026-09-16, tarde — desplegado y verificado)
+## 5 · Deployment (estado 2026-09-16 tarde — reconciliación en curso)
 
-- **Decisión del propietario**: **`DEPLOYMENT = A`** (2026-09-16; registro
-  `GA_T13_DEPLOYMENT_DECISION_A.md`; entorno
-  `SHARED DEVELOPMENT/TEST/CERTIFICATION/UAT`, no producción).
-- `PRODUCT_SHA = be5453f` — producto congelado (`git diff be5453f..HEAD -- backend
-  frontend e2e` vacío).
-- **Ejecución (por el propietario, mecanismo EX-01)**: el propietario restauró los
-  workflows `docker-push-backend/frontend` (`f38350a`; **idénticos** a los de
-  `workflows-retired/`) y ejecutó el despliegue del build certificado; el agente no
-  reactivó nada (certificación sigue local, AOD-29 intacto).
-- **Verificación externa (PASS)**: bundle servido `index-apu3WWcr.js` (14-sep) →
-  **`index-r36pBbNX.js`** (Last-Modified **16:28:48Z**; sha256 `3047f5c…`);
-  marcadores GA-FE-01 M1–M7 (+ control `switch-company`, + `cutover-templates`)
-  presentes; root/login 200; backend sirviendo (401 JSON) ⇒ según GA-REM-024 la
-  migración del entrypoint completó. ⇒ **`DEPLOYMENT_STATUS = PASS` (verificación
-  externa)**; evidencia cruda del host (digests, log `[entrypoint]`, `alembic
-  current`) pendiente como complemento (runbook §12).
-- **G-03 (rate limit) — FAIL observado en runtime**: 12 intentos consecutivos a
-  `POST /api/v1/login` ⇒ **401×12, sin 429** (esperado 401×5 → 429). Diagnóstico
-  host pendiente (flag efectivo en contenedor, umbral, clave del proxy GAP-11).
-  Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log`.
-- **Pendiente de host**: G-02 · G-04 · G-05 + diagnóstico/re-ejecución G-03 +
-  evidencia cruda del despliegue (`GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md`).
-- No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12).
+- **Decisión del propietario**: `DEPLOYMENT = A` (`GA_T13_DEPLOYMENT_DECISION_A.md`).
+- **Ejecución real**: `f38350a` (cuenta del propietario) restauró los 2 workflows de
+  despliegue → push disparó runs de GitHub Actions (`35122083759` BE /
+  `35122083928` FE, `success`) → imágenes `sha-f38350a`/`latest` en Docker Hub
+  (BE `16:28:34Z` `sha256:6f0edbfa…`; FE `16:28:52Z` `sha256:29cd2eff…`) → Watchtower
+  recreó contenedores.
+- **Reconciliación de gobernanza**: reactivación de Actions **sin decisión formal** ⇒
+  **`GOVERNANCE_DRIFT = TRUE`**; decisión A/B pendiente del propietario
+  (`GA_T13_GHA_AOD29_RECONCILIATION.md`). Los otros 5 workflows siguen retirados.
+- **Estados separados (mandato §3)**: `RUNTIME_EXTERNAL_VERIFICATION = PASS` ·
+  `HOST_DEPLOYMENT_EVIDENCE = PENDING` · `DEPLOYMENT_GATE = PENDING` (rubric: KIT §3 +
+  runbook §8/§12 — no se cierra sin evidencia de host y G-02…G-05).
+- **Verificación externa**: bundle `index-r36pBbNX.js` (Last-Modified 16:28:48Z;
+  sha256 `3047f5c…`); marcadores M1–M7 + control + `cutover-templates`; root/login 200;
+  backend sirviendo (401 JSON). Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log`.
+- **G-03 (rate limit): FAIL observado** (12×401 sin 429) — diagnóstico/corrección en la
+  ventana de host (adenda §14 del `GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md`).
+  **G-02/G-04/G-05**: `BLOCKED_EXTERNAL` (host).
+- **U1/U2**: `PREPARED — EN HOLD` (no ejecutables finales; mandato §8).
+- No se monta Jenkins/GHA/SSH/cron por iniciativa del agente (mandato §12). Sin cambios a
+  workflows ni historia por el agente.
 
 ## 6 · Deferred verificados (sin reabrir)
 

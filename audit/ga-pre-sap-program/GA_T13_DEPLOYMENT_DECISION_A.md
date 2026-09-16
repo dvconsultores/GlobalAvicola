@@ -100,23 +100,28 @@ U1/U2 ⇒ **sesión del propietario**. Hasta entonces, U1/U2 permanecen
 - La sesión del propietario se abrirá solo tras: `DEPLOYMENT_STATUS = PASS` +
   OPS G-02…G-05 + prevalidación técnica en verde (mandato §13–§16, §18).
 
-## 8 · Addendum (2026-09-16, tarde) — ejecución y verificación
+## 8 · Addendum (2026-09-16, tarde) — ejecución, evidencia y reconciliación de gobernanza
 
-- El propietario **restauró los workflows de despliegue**
-  `docker-push-backend/frontend` a `.github/workflows/` (`f38350a`; **idénticos**
-  a los de `workflows-retired/`) y ejecutó el despliegue (runbook A). La
-  certificación permanece local (AOD-29 intacto); GitHub Actions actúa solo como
-  mecanismo de build/push de imágenes (EX-01). El agente no reactivó nada.
-- **Verificación externa**: bundle `index-apu3WWcr.js` (14-sep) →
-  **`index-r36pBbNX.js`** (Last-Modified **16:28:48Z**; sha256 `3047f5c…`);
-  marcadores GA-FE-01 M1–M7 + control + `cutover-templates`; root/login 200;
-  backend sirviendo ⇒ **`DEPLOYMENT_STATUS = PASS` (externo)**. Evidencia cruda
-  del host (digests, log `[entrypoint]`, `alembic current`) pendiente como
-  complemento del runbook §12.
-- **G-03 (rate limit) runtime**: 12×401 **sin 429** ⇒ **FAIL observado**;
-  diagnóstico host pendiente (flag efectivo, umbral, clave del proxy). No se
-  marca PASS.
-- Evidencia cruda: `evidence/t13-ops/deploy-a-runtime-verification.log`.
+- **Ejecución**: el commit `f38350a` (cuenta del propietario) restauró los 2 workflows
+  de despliegue; el push disparó sus runs (**35122083759** BE / **35122083928** FE,
+  `push`, `success`, 16:28:08Z) y publicó las imágenes en Docker Hub (`sha-f38350a` +
+  `latest`; BE `16:28:34Z` digest `sha256:6f0edbfa…`; FE `16:28:52Z` digest
+  `sha256:29cd2eff…`), que Watchtower desplegó. **GitHub Actions SÍ quedó reactivado**
+  (2 workflows, estado `active`) — sin texto formal de decisión del propietario ⇒
+  **`GOVERNANCE_DRIFT = TRUE`** y decisión A/B requerida (ver
+  `GA_T13_GHA_AOD29_RECONCILIATION.md`). Los campos §2 `GITHUB_ACTIONS=RETIRED` /
+  `AUTO_DEPLOY=NOT_AVAILABLE` quedan contradichos por los hechos; su reconciliación es
+  la decisión pendiente. El agente no modificó workflows ni historia.
+- **Verificación externa**: bundle `index-apu3WWcr.js` (14-sep) → **`index-r36pBbNX.js`**
+  (Last-Modified 16:28:48Z; sha256 `3047f5c…`); marcadores M1–M7 + control +
+  `cutover-templates`; root/login 200; backend sirviendo.
+  Estados separados (mandato §3): `RUNTIME_EXTERNAL_VERIFICATION = PASS` ·
+  `HOST_DEPLOYMENT_EVIDENCE = PENDING` · `DEPLOYMENT_GATE = PENDING` (no se cierra sin
+  evidencia de host + G-02…G-05; rubric KIT §3 + runbook §8/§12).
+- **G-03 (rate limit) runtime**: 12×401 **sin 429** ⇒ **FAIL observado**; diagnóstico
+  host pendiente (flag efectivo, umbral, clave del proxy) — adenda §14 del runbook.
+- **U1/U2**: `PREPARED — EN HOLD` (no ejecutables aún; mandato §8). Sin aceptaciones.
+- Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log` + reconciliación.
 
 ---
 

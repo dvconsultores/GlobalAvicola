@@ -279,4 +279,56 @@ agente **no** marca aceptaciones.
 - `docker compose down -v` · borrar volúmenes · resetear/limpiar la BD · tocar datos.
 - Ejecutar `alembic upgrade`/`downgrade` a mano (dueño exclusivo: entrypoint).
 - Sustituir el SHA sin evidencia · imprimir o registrar secretos.
-- Reactivar GitHub Actions o inventar mecanismos de despliegue nuevos.
+- Reactivar GitHub Actions por iniciativa del agente (la situación actual se
+  reconcilia por decisión del propietario — ver `GA_T13_GHA_AOD29_RECONCILIATION.md`).
+
+## 14 · Adenda (2026-09-16, tarde) — ventana de host: diagnóstico G-03 + evidencia cruda
+
+**Regla**: el producto certificado **ya está desplegado** (verificado externamente).
+**NO redeployar** para producir evidencia; solo recrear el servicio necesario para una
+corrección real.
+
+### 14.1 · G-03 — diagnóstico y corrección (configuración)
+
+Observado (2026-09-16T16:30Z, 12 intentos externos a `POST /api/v1/login`): **401×12,
+sin 429** (esperado 401×5 → 429). Pasos en el host, en el directorio del compose:
+
+```bash
+docker compose exec backend printenv FEATURE_RATE_LIMIT_ENABLED   # esperado: true
+docker compose exec backend printenv RATE_LIMIT_LOGIN 2>/dev/null || true
+grep -n "FEATURE_RATE_LIMIT_ENABLED\|RATE_LIMIT" docker-compose.yml
+# (si existe .env del host) grep -n "FEATURE_RATE_LIMIT_ENABLED\|RATE_LIMIT" .env   # sin imprimir otros secretos
+docker inspect -f '{{.Config.Env}}' globalavicola-backend | tr ',' '\n' | grep -i "RATE_LIMIT" || echo "sin vars de rate limit en el contenedor"
+docker inspect -f '{{.Config.Cmd}}' globalavicola-backend          # confirmar 1 worker (sin --workers)
+```
+
+- Si `FEATURE_RATE_LIMIT_ENABLED` está ausente/false: **documentar el valor anterior**,
+  añadir/ajustar a `true` **solo en el mecanismo autorizado** (compose o `.env` del host),
+  `docker compose up -d --force-recreate backend` (solo backend; **NO tocar BD**), y
+  repetir G-03 dos veces: desde el host (`curl localhost:8002`) y desde fuera.
+- Evidencia exigida (causa-exacta): **ANTES** = `401×12 / sin 429`; **DESPUÉS** = patrón
+  del AC (`401×5 → 429`); + configuración anterior/nueva, comando de recreación,
+  timestamps y salidas reales.
+- Documentar la **clave del limiter** (GAP-11): `X-Forwarded-For` vs IP real y la
+  configuración del proxy.
+- Si con `true` efectivo y 1 worker el límite sigue sin dispararse ⇒ **escalar como
+  hallazgo técnico** (SPEC→AC→RED→IMPL→GREEN→sensibilidad→regresión): no tocar producto
+  en esta ventana.
+
+### 14.2 · Evidencia cruda del deploy (§12) — valores de contraste
+
+| Campo | Valor esperado/observado externamente |
+|---|---|
+| Runs (Actions) | `35122083759` BE / `35122083928` FE — `push`, `success`, 16:28:08Z |
+| Imagen BE `latest` (Docker Hub) | `sha256:6f0edbfa590b62f37e892509d35e6aa110519e99506800575cb37a1d81375817` (16:28:34Z) |
+| Imagen FE `latest` (Docker Hub) | `sha256:29cd2eff0d7d9c9772db432b44bc46efea06b37509eecbf7d6b07add77c2c6a2` (16:28:52Z) |
+| Contenedores (host) | `docker inspect -f '{{json .Image}}' globalavicola-backend globalavicola-frontend` + `RepoDigests` ⇒ deben corresponder a las imágenes `sha-f38350a` |
+| `ALEMBIC_AFTER` | `c8d9e0f1a2b3` (head) — `docker exec globalavicola-backend alembic current` |
+| Log entrypoint | `docker compose logs --since=15m backend` ⇒ `[entrypoint] Migration completed` |
+| Resto de campos | tabla §12 (BACKUP_*, DEPLOY_START/END, health, digests, bundle before/after, etc.) |
+
+### 14.3 · G-02 / G-04 / G-05
+
+Ejecutar conforme al runbook (§11) en la misma ventana; registrar por gate:
+`GATE · COMMAND · TIMESTAMP · EXIT_CODE · RESULT · EVIDENCE · OBSERVATIONS`
+(estados: PASS / FAIL / BLOCKED_EXTERNAL).
