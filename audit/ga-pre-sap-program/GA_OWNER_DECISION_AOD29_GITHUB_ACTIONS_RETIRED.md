@@ -23,6 +23,18 @@ activos fueron movidos a `.github/workflows-retired/` (`ACTIVE_WORKFLOW_COUNT =
 `GA_OWNER_DECISION_AOD29_CLARIFICATION_01_PUSH_PRESERVED.md` (incluye inventario
 de workflows e impacto de deploy `AOD29-DEPLOY-IMPACT`).
 
+### Addendum — Deployment Mechanism (2026-09-16)
+
+**AOD-29 · Addendum de despliegue** (decisión del propietario, 2026-09-16): se
+autoriza **únicamente** `docker-push-backend.yml` + `docker-push-frontend.yml`
+(`DEPLOYMENT_WORKFLOWS = AUTHORIZED`; `AUTO_DEPLOY_SHARED_UAT =
+AUTHORIZED_FOR_DEPLOYMENT_ONLY`). `GITHUB_ACTIONS_GENERAL_CI = RETIRED` — el resto
+de workflows permanece retirado y la certificación sigue **local**
+(`LOCAL_CERTIFICATION = MANDATORY`). Este addendum **sustituye prospectivamente
+solo** la cláusula «los push no deben disparar Actions»; el resto de AOD-29 y la
+Clar. 01 siguen vigentes. `GOVERNANCE_DRIFT = RESOLVED_BY_OWNER_DECISION`.
+Registro: `GA_OWNER_DECISION_AOD29_DEPLOYMENT_MECHANISM_ADDENDUM.md`.
+
 ## 1 · Decisión (texto del propietario, verbatim)
 
 > «A partir del 14-09-2026, GitHub Actions deja de formar parte del camino obligatorio de certificación de nuevas tranches PRE-SAP. La certificación técnica se ejecutará mediante gates locales reproducibles. Los requisitos históricos de GitHub Actions permanecen como evidencia histórica. Los AC futuros que dependan exclusivamente de GitHub Actions se clasifican `NOT_APPLICABLE_BY_OWNER_DECISION` y deben apuntar a esta Owner Decision.»

@@ -86,3 +86,14 @@ disparar Actions**». Cita (AOD-29 §B): «Build imagen backend/frontend …
 - Evidencia cruda de los hechos: ver §1 (consultas API reproducibles:
   workflows/runs/jobs de `dvconsultores/GlobalAvicola`; tags de Docker Hub
   `dvconsultores/globalavicola-*`).
+
+## 6 · Resolución (2026-09-16)
+
+- **`GOVERNANCE_DRIFT = RESOLVED_BY_OWNER_DECISION`**: el propietario formalizó
+  `DEPLOYMENT_MECHANISM = B` (`GA_OWNER_DECISION_AOD29_DEPLOYMENT_MECHANISM_ADDENDUM.md`):
+  autoriza **solo** `docker-push-backend/frontend`; el CI general sigue retirado; la
+  certificación sigue local; sin nuevos mecanismos.
+- `f38350a` queda registrado como **reactivación ejecutada antes de la
+  formalización** (evidencia preservada; no se borra ni reinterpreta).
+- Addendum añadido a `GA_OWNER_DECISION_AOD29_GITHUB_ACTIONS_RETIRED.md` (§0) sin
+  reescribir su texto original.

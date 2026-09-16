@@ -496,3 +496,12 @@ Cada entrada registra SHA de inicio/fin, documentos consultados, resultado, evid
 - **G-03**: FAIL observado (12×401 sin 429). Paquete de ventana host (diagnóstico/corrección config-only con evidencia causa-exacta ANTES/DESPUÉS, evidencia cruda del deploy con digests de contraste, G-02/04/05) en la **adenda §14** del runbook. Sin redeploy innecesario.
 - **U1/U2**: `PREPARED — EN HOLD` (mandato §8); no se piden sesiones al propietario todavía; fichas con banner de hold.
 - **Siguiente**: (1) decisión A/B de gobernanza; (2) ventana host (G-03 PASS + G-02/G-04/G-05 + evidencia cruda); (3) con todo cerrado ⇒ re-prevalidar U1/U2 y volver al gate owner.
+
+## AE-64 · 2026-09-16 · T13 — `DEPLOYMENT_MECHANISM = B` formalizado (AOD-29 Addendum); `GOVERNANCE_DRIFT` RESUELTO; G-03 con causa raíz en código + paquete config-only; cadena de host pendiente
+
+- **Decisión del propietario**: `DEPLOYMENT_MECHANISM = B` (texto íntegro en el Anexo de `GA_OWNER_DECISION_AOD29_DEPLOYMENT_MECHANISM_ADDENDUM.md`): autoriza SOLO `docker-push-backend/frontend` (build→Docker Hub→Watchtower); `GITHUB_ACTIONS_GENERAL_CI = RETIRED`; `LOCAL_CERTIFICATION = MANDATORY`; sin nuevos workflows/servicios; sin ampliar triggers; trazabilidad commit→run→tag/digest→runtime; entorno SHARED UAT (no producción).
+- **`GOVERNANCE_DRIFT = RESOLVED_BY_OWNER_DECISION`** (f38350a se preserva como reactivación previa a la formalización; sin reescribir historia; addendum de una línea en el doc AOD-29 original).
+- **G-03 (causa raíz en código)**: `config.py:115` default `false`; `main.py:15-33` decorador no-op cuando el flag no está activo; `@rate_limit("5/minute")` en `auth/router.py:30`. El contenedor del host conserva env sin el flag (Watchtower no relee compose al recrear). El compose actual inyecta `${FEATURE_RATE_LIMIT_ENABLED:-true}` (línea 29); `.env.example` trae `false` (posible override del host). Corrección **config-only** en ventana host: asegurar línea/.env + `docker compose up -d backend` + retest ANTES(401×12)/DESPUÉS(401×5→429) — paquete en la adenda §14.1 del runbook; si no se corrige con `true` efectivo ⇒ hallazgo técnico por cadena completa (sin tocar producto en la ventana).
+- **Evidencia**: `evidence/t13-ops/host-evidence-package.md` (campos externos completos; `PENDIENTE_HOST` marcados).
+- **U1/U2**: `PREPARED — EN HOLD` (se mantiene). No se abre UAT.
+- **Siguiente**: ventana de host (G-03 + G-02/G-04/G-05 + evidencia) ⇒ cierre `DEPLOYMENT_GATE` ⇒ re-prevalidación U1/U2 ⇒ `READY_FOR_OWNER` ⇒ STOP OWNER UAT.

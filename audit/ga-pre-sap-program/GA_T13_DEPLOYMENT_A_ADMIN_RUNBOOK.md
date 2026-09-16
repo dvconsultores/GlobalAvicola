@@ -291,7 +291,20 @@ corrección real.
 ### 14.1 · G-03 — diagnóstico y corrección (configuración)
 
 Observado (2026-09-16T16:30Z, 12 intentos externos a `POST /api/v1/login`): **401×12,
-sin 429** (esperado 401×5 → 429). Pasos en el host, en el directorio del compose:
+sin 429** (esperado 401×5 → 429).
+
+**Causa raíz identificada en código** (2026-09-16): `backend/app/config.py:115`
+(`FEATURE_RATE_LIMIT_ENABLED: bool = False`, default) y `backend/app/main.py:15-33`:
+el decorador `rate_limit()` del login es un **no-op passthrough** cuando el flag no
+está activo (`@rate_limit("5/minute")` en `backend/app/auth/router.py:30`). El
+contenedor del host conserva un **entorno sin el flag activo** — Watchtower, al
+recrear, **no relee el compose** (lección del gate G-02), por lo que la recreación
+posterior al despliegue tampoco lo corrigió. El compose actual
+(`docker-compose.yml:29`) lo inyecta por defecto: `FEATURE_RATE_LIMIT_ENABLED:
+${FEATURE_RATE_LIMIT_ENABLED:-true}`; un `.env` del host derivado de `.env.example`
+(línea 45: `false`) puede anularlo.
+
+Pasos en el host, en el directorio del compose:
 
 ```bash
 docker compose exec backend printenv FEATURE_RATE_LIMIT_ENABLED   # esperado: true
@@ -302,10 +315,14 @@ docker inspect -f '{{.Config.Env}}' globalavicola-backend | tr ',' '\n' | grep -
 docker inspect -f '{{.Config.Cmd}}' globalavicola-backend          # confirmar 1 worker (sin --workers)
 ```
 
-- Si `FEATURE_RATE_LIMIT_ENABLED` está ausente/false: **documentar el valor anterior**,
-  añadir/ajustar a `true` **solo en el mecanismo autorizado** (compose o `.env` del host),
-  `docker compose up -d --force-recreate backend` (solo backend; **NO tocar BD**), y
-  repetir G-03 dos veces: desde el host (`curl localhost:8002`) y desde fuera.
+- Si el flag está ausente/false en el contenedor: **documentar el valor anterior**;
+  asegurar la **línea del compose** en el host (`FEATURE_RATE_LIMIT_ENABLED:
+  ${FEATURE_RATE_LIMIT_ENABLED:-true}`; actualizar el fichero del host desde el repo
+  si está desactualizado) o fijar `FEATURE_RATE_LIMIT_ENABLED=true` en el `.env` del
+  host; después **`docker compose up -d backend`** (solo backend; relee el compose;
+  el entrypoint migra de forma idempotente; **NO tocar BD**; no hace falta redeploy del
+  frontend), y repetir G-03 dos veces: desde el host (`curl localhost:8002`) y desde
+  fuera (6 intentos <1 min ⇒ esperado `401×5 → 429` en el 6.º).
 - Evidencia exigida (causa-exacta): **ANTES** = `401×12 / sin 429`; **DESPUÉS** = patrón
   del AC (`401×5 → 429`); + configuración anterior/nueva, comando de recreación,
   timestamps y salidas reales.

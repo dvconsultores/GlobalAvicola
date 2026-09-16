@@ -121,7 +121,12 @@ U1/U2 ⇒ **sesión del propietario**. Hasta entonces, U1/U2 permanecen
 - **G-03 (rate limit) runtime**: 12×401 **sin 429** ⇒ **FAIL observado**; diagnóstico
   host pendiente (flag efectivo, umbral, clave del proxy) — adenda §14 del runbook.
 - **U1/U2**: `PREPARED — EN HOLD` (no ejecutables aún; mandato §8). Sin aceptaciones.
-- Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log` + reconciliación.
+- **Formalización (mismo día)**: `DEPLOYMENT_MECHANISM = B` —
+  `GA_OWNER_DECISION_AOD29_DEPLOYMENT_MECHANISM_ADDENDUM.md`;
+  `GOVERNANCE_DRIFT = RESOLVED_BY_OWNER_DECISION`; el mecanismo usado queda autorizado
+  (solo `docker-push-backend/frontend`).
+- Evidencia: `evidence/t13-ops/deploy-a-runtime-verification.log` + reconciliación +
+  `evidence/t13-ops/host-evidence-package.md`.
 
 ---
 
