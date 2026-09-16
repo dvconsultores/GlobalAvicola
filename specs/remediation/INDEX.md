@@ -70,7 +70,7 @@ se interpretan.
 | `OD-22` | Escala estándar del IPE (G-06) — retirado el `× 100` histórico | **VIGENTE** · implementado y aceptado (GA-UAT-07) | [OD-22](OD-22-IPE-STANDARD-SCALE.md) |
 | `OD-23` | Ciclo apagar/encender de una unidad de empresa (BU-D10, opción B) — apagar termina; re-encender no devuelve | **VIGENTE** · implementado y aceptado (GA-UAT-08) | [OD-23](OD-23-BU-DISABLE-ENABLE-CYCLE.md) |
 | `OD-24` | Empresas y granjas desde SAP — decisión registrada; convergencia antes de `P-08` | **RESUELTO** (sin producto hoy) | [OD-24](OD-24-COMPANIES-FARMS-FROM-SAP.md) |
-| `OD-25` | Lote de abuelas automático al aprobar la importación (opción B) — `R-153` | **VIGENTE** · implementado; UAT del propietario pendiente (`GA-UAT-09`) | [OD-25](OD-25-GRANDPARENT-LOT-ON-IMPORT-APPROVAL.md) |
+| `OD-25` | Lote de abuelas automático al aprobar la importación (opción B) — `R-153` | **VIGENTE** · implementado; **UAT técnica ejecutada 2026-09-16** (resultado U2 = PASS: import sin lote → lote `L-GP-2026-13` al aprobar → recepción 100 → cierre BR-18; `GA_T13_UAT_RESULTS_U1_U2.md` + `gp-cierre-runtime.log`) — la sesión humana quedó `WAIVED_BY_OWNER_DECISION` (mandato autónomo) | [OD-25](OD-25-GRANDPARENT-LOT-ON-IMPORT-APPROVAL.md) |
 
 ## Resumen
 ```

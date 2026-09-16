@@ -49,8 +49,12 @@ test.describe('Operaciones · hub de procesos', () => {
     }
 
     // Cada opción se presenta con algo más que su nombre: cuántas opciones tiene dentro,
-    // o la invitación a abrirla.
-    await expect(page.getByText(/opciones|abrir/i).first()).toBeVisible()
+    // o la invitación a abrirla. El menú móvil duplica el texto en el DOM pero oculto en
+    // escritorio: la aserción exige el elemento **visible** (el fallo histórico apuntaba
+    // al span oculto del MobileDrawer por usar `.first()` sin filtrar).
+    await expect(
+      page.getByText(/opciones|abrir/i).filter({ visible: true }).first(),
+    ).toBeVisible()
   })
 
   // Sustituye a «should show helpful hint at bottom».

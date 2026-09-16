@@ -3,6 +3,11 @@
 Fecha: 2026-09-16 · Mandato: ejecución autónoma de T13 hasta el siguiente
 `OWNER_GATE_REAL` · Este documento **no modifica producto**.
 
+> **Actualización (noche 2026-09-16).** El estado vigente está en **§9**: la UAT
+> técnica U1–U8 fue ejecutada por el agente bajo el mandato final autónomo
+> (`OWNER_UAT_HUMAN_EXECUTION = WAIVED_BY_OWNER_DECISION`). Las secciones 1–8 se
+> conservan como historia del recon previo (gates ya reconciliados/no vigentes).
+
 ## 1 · Estado de referencia (verificado hoy)
 
 - `git status --short`: limpio · rama `main` · `HEAD = 93b4a91` (producto congelado en `be5453f`; commits posteriores solo documentación)
@@ -118,3 +123,28 @@ ejecución está en manos del administrador del host con
 `GA_T13_DEPLOYMENT_A_ADMIN_RUNBOOK.md` (agente: `BLOCKED_EXTERNAL_ACCESS`).
 U1/U2 permanecen **READY_FOR_OWNER** en espera del despliegue PASS + prevalidación
 técnica; **no se ejecuta UAT contra el build anterior**.
+
+## 9 · Estado vigente (noche 2026-09-16 — mandato final autónomo)
+
+- **Árbol / remoto**: `HEAD = 90c6679` · `origin/main = 90c6679` ⇒
+  **REMOTE_SHA_MATCH = PASS** (commits de la fase: `b8a4b24`, `90c6679`; solo
+  `audit/`+guiones ⇒ sin deploy).
+- **Deployment**: `DEPLOYMENT_MECHANISM = B` (AOD-29 Addendum, vigente) ·
+  `DEPLOYMENT_GATE = PASS` (`GA_T13_HOST_GATES_RECONCILIATION.md`) ·
+  `HOST_ADMIN_DEPENDENCY = REMOVED_BY_OWNER_DECISION` ·
+  `RUNTIME_EXTERNAL_VERIFICATION = PASS` (G-03 runtime `401×5→429`,
+  `d122e04`/run `35142848385`/digest `5c4824bd…`).
+- **UAT técnica (agente)**: U1 = PASS_WITH_OBSERVATIONS · U2 = PASS (C1/C2/C3
+  runtime) — `GA_T13_UAT_RESULTS_U1_U2.md`. Ciclo GP completo en runtime
+  (import→lote 67→recepción→reverso→alimento→**cierre BR-18 200**) ·
+  U6 = PASS (runtime) · U7-lite = notificaciones+trazabilidad (reports/audit 403
+  por rol) · **alcance de la cuenta UAT-09 = BU `grandparent` únicamente**
+  (U3/U4/U5/U8-runtime `DEGRADED_BY_CERT_ACCOUNT_SCOPE`; evidencia funcional por
+  suites de pila completa). Detalles: `GA_T13_UAT_RESULTS_U3_U8.md` y AE-68.
+- **Suites finales**: en ejecución sobre el árbol final (backend completo →
+  frontend/tsc/build → E2E → KPI); contadores exactos en
+  `evidence/t13-final/` y en la certificación final.
+- **Pendiente**: resultados U3–U8 con suites; reconciliación P0/P1/P2 +
+  R-133/134/142, AOD-17/18, GA-REQ-061, R-67/131/132/141, OD-04/06/09/10/14/15/16/21/22/23/25,
+  Wave C y frontera SAP; matriz 17 procesos; `GLOBAL_AVICOLA_PRE_SAP_FINAL_CERTIFICATION.md`
+  (21 secciones) + veredicto; push final con REMOTE_SHA verificado.
