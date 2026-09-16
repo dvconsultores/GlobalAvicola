@@ -438,7 +438,7 @@ El sistema usa **feature flags** controlados por variables de entorno (`.env`) p
 | Flag | Tipo | Dev | Prod | Descripción |
 |------|------|-----|------|-------------|
 | `FEATURE_SAP_ENABLED` | `bool` | `false` | `true` | Habilita rutas y servicio de integración SAP. En dev, las rutas `/api/v1/sap/*` no se cargan. Los tests de SAP se skipean automáticamente. |
-| `FEATURE_RATE_LIMIT_ENABLED` | `bool` | `false` | `true` | Habilita rate limiting (slowapi). En dev, el decorador `@rate_limit()` es un no-op. En prod, aplica límites configurados (`RATE_LIMIT_LOGIN`, `RATE_LIMIT_GLOBAL`). |
+| `FEATURE_RATE_LIMIT_ENABLED` | `bool` | `false` | `true` | Habilita rate limiting (slowapi). El **default del código es `true`** (fail-safe para artefactos desplegados sin configuración explícita — G-03/T13, 16-sep-2026); `development` lo desactiva explícitamente en `.env` (`false`) y entonces el decorador `@rate_limit()` es un no-op. En prod/UAT aplica los límites configurados (`RATE_LIMIT_LOGIN`, `RATE_LIMIT_GLOBAL`). |
 | `FEATURE_AUDIT_ENABLED` | `bool` | `true` | `true` | Habilita registro de auditoría inmutable. Debe estar siempre activo. |
 | `FEATURE_REVIEW_ENABLED` | `bool` | `true` | `true` | Habilita workflow de revisión/aprobación. |
 | `ENVIRONMENT` | `str` | `development` | `production` | Controla headers HSTS, nivel de logging, CORS restrictivo. |

@@ -110,9 +110,12 @@ class Settings(BaseSettings):
     # true en producción cuando se configure la conexión real.
     FEATURE_SAP_ENABLED: bool = False
 
-    # Rate Limiting: false en desarrollo para no bloquear pruebas,
-    # true en producción para proteger la API.
-    FEATURE_RATE_LIMIT_ENABLED: bool = False
+    # Rate Limiting: default ON (fail-safe). El artefacto desplegado puede no
+    # recibir `.env` ni la variable de entorno —el contenedor hereda sólo la
+    # configuración de su creación—, y una feature crítica de seguridad no debe
+    # depender de una activación manual en el servidor (G-03/T13, sep-2026).
+    # `development` lo desactiva explícitamente en `.env` para no bloquear pruebas.
+    FEATURE_RATE_LIMIT_ENABLED: bool = True
 
     # Audit: true en todos los entornos (siempre auditar).
     FEATURE_AUDIT_ENABLED: bool = True
