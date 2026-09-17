@@ -14,6 +14,8 @@ Regla dura: **no se inventa información faltante** — lo que no exista se decl
 | **STAGING DATA** | Archivo subido al batch + filas normalizadas en `CutoverStagingRow` (sin efecto operacional) | Sistema (evidencia con checksum) |
 | **CERTIFIED OPENING DATA** | `OpeningBalance` aplicado tras apply atómico + reconciliado + firmado en acta | Sistema (fuente de verdad operacional) |
 
+> **Clasificación del entorno actual (reconciliación pre-SAP-0)**: el inventario del runtime compartido (1 empresa, 7 granjas, 34 galpones, 10 lotes, 39 referencias SAP, catálogos sembrados, usuarios/fixtures de UAT) es `TEST_UAT_CURRENT_RUNTIME_DATA` / `SYNTHETIC` — **no** es inventario productivo ni fuente de verdad del cutover. La determinación de las fuentes reales queda **`PENDING_SAP0_DISCOVERY`** (cadena `SAP-0 → GL-OD-06 → REAL DATA MIGRATION → CUTOVER G1/G2`).
+
 ## 2 · Dominios y datos requeridos (determinación exacta — mandato §4)
 
 | # | Dominio | Datos requeridos | ¿Existe hoy? | Acción |
@@ -73,4 +75,4 @@ Regla dura: **no se inventa información faltante** — lo que no exista se decl
 
 ## 7 · Criterio de completitud de esta fase de datos
 
-La migración se declara lista cuando: (a) D1–D18 tienen fuente y responsable; (b) rehearsal R2 pasa con el set sanitizado; (c) acta firmada del rehearsal; (d) `GL-OD-06/07` resueltas. **Hoy: pendiente de acceso a datos (DATA-01).**
+La migración se declara lista cuando: (a) D1–D18 tienen fuente y responsable; (b) rehearsal R2 pasa con el set sanitizado; (c) acta firmada del rehearsal; (d) `GL-OD-06/07` resueltas. **Hoy: `PENDING_SAP0_DISCOVERY`** — la fuente real (SAP y/o planillas) se determinará en **SAP-0**; `DATA-01` queda ligada a `GL-OD-06`.

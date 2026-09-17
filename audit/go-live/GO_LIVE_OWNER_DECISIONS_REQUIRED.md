@@ -1,6 +1,10 @@
 # GLOBAL AVÍCOLA — GO-LIVE · OWNER DECISIONS REQUIRED
 
-Fecha: 2026-09-17 · Baseline: `fef7289` · Estado: **LISTA PARA DECISIÓN — ninguna tomada por el agente**
+Fecha: 2026-09-17 · Baseline: `fef7289` · Estado: **PROPUESTA — ninguna decisión tomada por el agente**
+Reconciliación pre-SAP-0: `GL-OD-06 = PENDING_SAP0_DISCOVERY`; las demás `PENDING_OWNER_DECISION` (**no ejecutar aún**).
+
+> **Dependencia registrada**: `SAP-0 → GL-OD-06 → REAL DATA MIGRATION → CUTOVER G1/G2`.
+> SAP **no** se marca como fuente definitiva hasta verificar el landscape actual (SAP-0).
 Formato por decisión: contexto · opciones · recomendación técnica · impacto si se difiere.
 
 ---
@@ -35,10 +39,12 @@ Formato por decisión: contexto · opciones · recomendación técnica · impact
 - **Recomendación**: (B) + prueba mensual automatizable + evidencia en cada release.
 - **Si se difiere**: **BLOQ** para el gate (INF-05).
 
-### GL-OD-06 · Acceso a datos reales
-- **Contexto**: no hay acceso a fuentes reales (DATA-01). 
-- **Decisión**: designar responsable que entrega las fuentes por dominio (D1–D13) y formato (planillas del `REAL_DATA_MIGRATION_PLAN.md` §2), con autorización de uso.
-- **Si se difiere**: bloquea G1→G3 completos.
+### GL-OD-06 · Acceso a datos reales — `PENDING_SAP0_DISCOVERY`
+- **Estado**: **`PENDING_SAP0_DISCOVERY`** — no se resuelve todavía. Motivo: la identificación de las fuentes reales de datos depende de determinar **qué datos siguen disponibles en el SAP actual y mediante qué mecanismo** (fase SAP-0).
+- **Dependencia**: `SAP-0 → GL-OD-06 → REAL DATA MIGRATION → CUTOVER G1/G2`.
+- **Contexto**: no hay acceso a fuentes reales (DATA-01).
+- **Decisión (cuando SAP-0 concluya)**: designar responsable que entrega las fuentes por dominio (D1–D13), formato y mecanismo (SAP y/o planillas), con autorización de uso; el reparto SAP vs planillas se fijará con el informe de landscape.
+- **Si se difiere**: bloquea G1→G3 completos. SAP **no** es fuente definitiva hasta verificar el landscape actual.
 
 ### GL-OD-07 · Estrategia de limpieza y retención
 - **Contexto**: entorno actual = ficticio (inventario en `DATA_CLEANUP_PLAN.md`).
@@ -77,11 +83,13 @@ Formato por decisión: contexto · opciones · recomendación técnica · impact
 
 ---
 
-## Resumen de bloqueo
+## Resumen de estados (reconciliado pre-SAP-0)
 
-| Bloquean G1→G3 | Bloquean el gate (si no se deciden) | No bloqueantes de fase |
-|---|---|---|
-| GL-OD-06 (datos) | GL-OD-05, 09, 10, 11, 12 | GL-OD-13 (admin), GL-OD-04 (con opción B) |
-| GL-OD-01, 02, 07 | GL-OD-08 (clasificación) | GL-OD-03 (recomendado antes) |
+| Decisión | Estado |
+|---|---|
+| **GL-OD-06** (datos reales) | **`PENDING_SAP0_DISCOVERY`** |
+| GL-OD-01, 02, 03, 04, 05, 07, 09, 10, 11, 12, 13 | **`PENDING_OWNER_DECISION`** — no ejecutar aún |
+| GL-OD-08 (OD-19, funcional — independiente de SAP) | **`PENDING_OWNER_DECISION`** — no ejecutar aún |
+| Cadena de dependencia | `SAP-0 → GL-OD-06 → REAL DATA MIGRATION → CUTOVER G1/G2` |
 
-> Ninguna de estas decisiones fue tomada por el agente. Cuando se registren, cada una se anexa aquí con el **texto exacto** del Owner y se refleja en el roadmap (G1→G2).
+> Ninguna de estas decisiones fue tomada por el agente. SAP no se marca como fuente definitiva hasta verificar el landscape actual. Cuando se registren, cada una se anexa aquí con el **texto exacto** del Owner y se refleja en el roadmap (G1→G2).

@@ -20,6 +20,9 @@ El agente **no** declara el Go-Live: este documento define qué debe estar compl
 ### B · Decisiones del Owner (`GO_LIVE_OWNER_DECISIONS_REQUIRED.md`) — **pendiente**
 - [ ] GL-OD-01 topología · GL-OD-02 despliegue prod · GL-OD-03 observabilidad · GL-OD-04 correo · GL-OD-05 backups off-site · GL-OD-06 acceso a datos reales · GL-OD-07 limpieza/retención · GL-OD-08 OD-19 · GL-OD-09 secretos · GL-OD-10 dominio · GL-OD-11 usuarios/admin ▼ MFA · GL-OD-12 responsables · GL-OD-13 AOD-13.
 
+### B′ · SAP-0 (pre-G1) — **pendiente**
+- [ ] Informe de **landscape SAP actual + versión histórica (`SapHanaLP`)** + contrato de datos de entrada (descubrimiento, **sin integración**); insumo directo de `GL-OD-06` (`PENDING_SAP0_DISCOVERY`).
+
 ### C · Ingeniería G2 (extensiones del cutover) — **pendiente**
 - [ ] CUT-GL-01 acta de firma · CUT-GL-02 guarda de fecha · CUT-GL-03 secuencia multi-BU · CUT-06 auditoría fina incubadora · (según decisión) CUT-04/CUT-05.
 - [ ] Cada AC con su cadena completa (SPEC→AC→RED→IMPL→GREEN→regresión→sensibilidad→evidencia→push→REMOTE_SHA).

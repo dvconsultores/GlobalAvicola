@@ -18,7 +18,7 @@ Convención: `BLOQ` = debe resolverse antes de Go-Live · `POST` = puede resolve
 
 | ID | Gap | Severidad | Pre/Post | Resolución | Estado |
 |---|---|---|---|---|---|
-| DATA-01 | **Sin acceso a datos reales** del negocio (poblaciones, acumulados, pesos, genética, usuarios) | Alta | **BLOQ** | Owner entrega fuentes y formato (`REAL_DATA_MIGRATION_PLAN.md` §2) | Bloqueado por decisión/acceso (GL-OD-06) |
+| DATA-01 | **Sin acceso a datos reales** del negocio (poblaciones, acumulados, pesos, genética, usuarios) | Alta | **BLOQ** | Cadena `SAP-0 → GL-OD-06`: determinar qué datos siguen disponibles en el SAP actual y por qué mecanismo; luego fuentes/formato (`REAL_DATA_MIGRATION_PLAN.md` §2) | **`PENDING_SAP0_DISCOVERY`** |
 | DATA-02 | **Definición de "lote real" por empresa/BU** (nomenclatura `legacy_lot_code`) | Media | **BLOQ** | Taller funcional G1 con formato fijado | Pendiente |
 | DATA-03 | **Datos que NO deben migrarse** sin declarar formalmente (p. ej., histórico viejo sin valor operacional) | Media | **BLOQ** | Declaración en `REAL_DATA_MIGRATION_PLAN.md` §5 a completar con Owner | Borrador |
 | DATA-04 | **Calidad de datos reales** (pesos, fechas, unidades heterogéneas; identificación de UNKNOWN legítimo) | Alta | **BLOQ** | Rehearsal (set R2 sanitizado) + reglas de transformación §4 | Pendiente |
@@ -46,7 +46,7 @@ Convención: `BLOQ` = debe resolverse antes de Go-Live · `POST` = puede resolve
 
 | ID | Gap | Severidad | Pre/Post | Resolución | Estado |
 |---|---|---|---|---|---|
-| OPS-01 | **NBO-03 · OD-19** reverso huevos/incubación diferido — impacto operativo real al corregir cargas/nacimientos | Alta | DEC | GL-OD-08: aceptar limitación (con workaround documentado) o programar en G2 | Decisión Owner |
+| OPS-01 | **NBO-03 · OD-19** reverso huevos/incubación diferido — impacto operativo real al corregir cargas/nacimientos | Alta | DEC | `GL-OD-08` (`PENDING_OWNER_DECISION`; tratamiento propuesto no vinculante en este pack): aceptar limitación (con workaround documentado) o programar en G2 | Decisión Owner |
 | OPS-02 | **AOD-13** (unidad de `farm_inspection` sin lote) — registro de decisión pendiente del Pre-SAP | Baja | DEC | GL-OD-13 (registro administrativo) | Accionable |
 | OPS-03 | **NBO-02** R-133/R-134 definiciones KPIs | Baja | POST | Roadmap G4 | Registrado |
 | OPS-04 | **RES-07** (filas VNC con UAT) / **G-06** (sondas C3) — notas administrativas heredadas | Baja | POST | Cierre administrativo en G4 | Registrado |
@@ -56,4 +56,5 @@ Convención: `BLOQ` = debe resolverse antes de Go-Live · `POST` = puede resolve
 - **BLOQ (antes de Go-Live)**: CUT-01, CUT-02, CUT-03, CUT-06, DATA-01, DATA-02, DATA-03, DATA-04, DATA-05, INF-01, INF-02, INF-03, INF-05, INF-06, INF-07, INF-09, INF-10 → **17** (varios dependen de decisiones GL-OD).
 - **DEC (decisión Owner para clasificar)**: CUT-04, DATA-06, INF-04, INF-08, OPS-01, OPS-02 → **6**.
 - **POST (tras Go-Live)**: CUT-05, INF-11, INF-12, OPS-03, OPS-04 → **5**.
+- **Dependencia SAP-0 (reconciliación 2026-09-17)**: `DATA-01` (y con él todo el frente de datos) queda `PENDING_SAP0_DISCOVERY`; cadena `SAP-0 → GL-OD-06 → REAL DATA MIGRATION → CUTOVER G1/G2`. SAP no es fuente definitiva hasta verificar el landscape actual.
 - Ninguno de estos gaps es una regresión del baseline `fef7289`: son extensiones/operación de la nueva fase.

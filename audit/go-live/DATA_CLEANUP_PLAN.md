@@ -5,24 +5,26 @@ Evidencia de inventario: `evidence/runtime-data-inventory.log` (2026-09-16T23:56
 
 ---
 
-## 1 · Inventario real del entorno desplegado (hoy)
+## 1 · Inventario del runtime ACTUAL — clasificación (reconciliación pre-SAP-0)
 
-| Dominio | Contenido observado | Naturaleza |
+> **Alcance**: entorno **SHARED DEVELOPMENT / TEST / CERTIFICATION / UAT** — **NO es inventario productivo real**. Clases: `TEST_UAT_CURRENT_RUNTIME_DATA` (producido por UAT/certificación) · `SYNTHETIC` (modelo/fixture de seed). **No es fuente de verdad** para el cutover real: la fuente real queda `PENDING_SAP0_DISCOVERY` (cadena `SAP-0 → GL-OD-06 → REAL DATA MIGRATION → CUTOVER G1/G2`).
+
+| Dominio | Contenido observado | Clasificación |
 |---|---|---|
-| Empresas | 1 (`id=1` · `Avícola Global C.A.`) | Modelo (ficticia) |
-| Granjas | 7 — `GN-01/GS-01/GE-01` (demo) + `FARM-GP01/FARM-BR01/FARM-BO01/FARM-BO02` (fixtures) | Ficticias |
-| Galpones | 34 | Ficticios |
-| Lotes | 10 — `E2E-MAN-153-*` (fixture E2E), `L-GP-2026-01/06` (fixtures), `L-GP-2026-07…13` (UAT real del T13; **lote 67 cerrado con BR-18**) | Mixto: fixtures + **datos de UAT con valor de evidencia** |
-| Genética | 2 (`Ross 308`, `Cobb 500`) | Catálogo de modelo |
-| Proveedores | 5 (Cobb-Vantress, Aviagen, Hendrix, Lohmann, Proveedor Local 1) | Modelo |
-| Transportes | 4 (`ABC-123`…) | Ficticios |
-| Alimentos | 9 | Catálogo de modelo |
-| Causas mortalidad / descarte | 12 / 8 | Catálogo de modelo |
-| Vacunas / Medicamentos | 10 / 10 | Catálogo de modelo |
-| Fases productivas | 4 (Cría, Producción, Engorde, Incubación) | Modelo |
-| **Referencias SAP** | **39** — `PO-C001-GPR-0001`, `STO-48000-*`, `PO-450000-*`, etc. | **Sintéticas** (deben excluirse del runtime real; el SAP real es futuro) |
-| Usuarios/roles | No enumerables con la cuenta del canal (403 por rol); incluye usuarios de UAT/seed (`uat09-*`, `test_admin`, etc.) | Ficticios/técnicos |
-| Eventos operativos | Creados por UAT/E2E (p. ej. import 129/131, recepción, reverso 132, alimento 133 sobre lote 67) | **Evidencia de certificación** |
+| Empresas | 1 (`id=1` · `Avícola Global C.A.`) | `SYNTHETIC` |
+| Granjas | 7 — `GN-01/GS-01/GE-01` (demo) + `FARM-GP01/FARM-BR01/FARM-BO01/FARM-BO02` (fixtures) | `SYNTHETIC` |
+| Galpones | 34 | `SYNTHETIC` |
+| Lotes | 10 — `E2E-MAN-153-*`, `L-GP-2026-01/06` = `SYNTHETIC`; `L-GP-2026-07…13` (incl. **67 cerrado con BR-18**) = `TEST_UAT_CURRENT_RUNTIME_DATA` (evidencia de certificación) | Clasificado |
+| Genética | 2 (`Ross 308`, `Cobb 500`) | `SYNTHETIC` |
+| Proveedores | 5 (Cobb-Vantress, Aviagen, Hendrix, Lohmann, Proveedor Local 1) | `SYNTHETIC` |
+| Transportes | 4 (`ABC-123`…) | `SYNTHETIC` |
+| Alimentos | 9 | `SYNTHETIC` |
+| Causas mortalidad / descarte | 12 / 8 | `SYNTHETIC` |
+| Vacunas / Medicamentos | 10 / 10 | `SYNTHETIC` |
+| Fases productivas | 4 (Cría, Producción, Engorde, Incubación) | `SYNTHETIC` |
+| **Referencias SAP** | **39** — `PO-C001-GPR-0001`, `STO-48000-*`, `PO-450000-*`, etc. | `SYNTHETIC` (ficticias; **no** provienen del landscape real; el SAP real es futuro y su landscape se auditará en SAP-0) |
+| Usuarios/roles | No enumerables con la cuenta del canal (403 por rol); incluye usuarios de UAT/seed (`uat09-*`, `test_admin`, etc.) | `TEST_UAT_CURRENT_RUNTIME_DATA` + `SYNTHETIC` (seed) |
+| Eventos operativos | Creados por UAT/E2E (p. ej. import 129/131, recepción, reverso 132, alimento 133 sobre lote 67) | `TEST_UAT_CURRENT_RUNTIME_DATA` (evidencia de certificación) |
 
 ## 2 · Clasificación (mandato §5)
 
