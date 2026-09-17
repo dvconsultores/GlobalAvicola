@@ -1,0 +1,98 @@
+== Inventario runtime (SOLO LECTURA) · 2026-09-16T23:56:54Z ==
+companies: 200 · 1 filas
+   id=1 | name=Avícola Global C.A.
+farms: 200 · 7 filas
+   id=1 | code=GN-01 | name=Granja Norte | company_id=1
+   id=2 | code=GS-01 | name=Granja Sur | company_id=1
+   id=3 | code=GE-01 | name=Granja Engorde | company_id=1
+   id=19 | code=FARM-GP01 | name=Granja Progenitoras G1 | company_id=1
+   id=20 | code=FARM-BR01 | name=Granja Reproductoras R1 | company_id=1
+   id=21 | code=FARM-BO01 | name=Granja Engorde E1 | company_id=1
+   id=22 | code=FARM-BO02 | name=Granja Engorde E2 | company_id=1
+houses: 200 · 34 filas
+lots: 200 · 10 filas
+   id=63 | lot_code=E2E-MAN-153-6cef89 | bird_type=grandparent | status=active | farm_id=None
+   id=7 | lot_code=L-GP-2026-01 | bird_type=grandparent | status=active | farm_id=19
+   id=6 | lot_code=L-GP-2026-06 | bird_type=grandparent | status=active | farm_id=19
+   id=60 | lot_code=L-GP-2026-07 | bird_type=grandparent | status=active | farm_id=1
+   id=61 | lot_code=L-GP-2026-08 | bird_type=grandparent | status=active | farm_id=1
+   id=62 | lot_code=L-GP-2026-09 | bird_type=grandparent | status=active | farm_id=1
+   id=64 | lot_code=L-GP-2026-10 | bird_type=grandparent | status=active | farm_id=1
+   id=65 | lot_code=L-GP-2026-11 | bird_type=grandparent | status=active | farm_id=1
+   id=66 | lot_code=L-GP-2026-12 | bird_type=grandparent | status=active | farm_id=1
+   id=67 | lot_code=L-GP-2026-13 | bird_type=grandparent | status=closed | farm_id=1
+genetic-lines: 200 · 2 filas
+   id=7 | name=Ross 308
+   id=8 | name=Cobb 500
+suppliers: 200 · 5 filas
+   id=1 | name=Cobb-Vantress
+   id=2 | name=Aviagen (Ross)
+   id=3 | name=Hendrix Genetics
+   id=4 | name=Lohmann Tierzucht
+   id=5 | name=Proveedor Local 1
+transports: 200 · 4 filas
+   id=1 | name=Camión Avícola 1 | plate=ABC-123
+   id=2 | name=Camión Avícola 2 | plate=DEF-456
+   id=3 | name=Camión Huevos 1 | plate=GHI-789
+   id=4 | name=Camioneta Logística | plate=JKL-012
+feed-types: 200 · 9 filas
+   id=1 | name=Pre-iniciación
+   id=2 | name=Iniciación
+   id=3 | name=Crecimiento
+   id=4 | name=Desarrollo
+   id=5 | name=Prepostura
+   id=6 | name=Postura
+   id=7 | name=Engorde Fase 1
+   id=8 | name=Engorde Fase 2
+   id=9 | name=Finalizador
+mortality-causes: 200 · 12 filas
+   id=1 | name=Newcastle
+   id=2 | name=Gumboro (IBD)
+   id=3 | name=Bronquitis Infecciosa
+   id=4 | name=Marek
+   id=5 | name=Micoplasmosis
+   id=6 | name=Salmonelosis
+   id=7 | name=Cólera Aviar
+   id=8 | name=Ascitis (Síndrome Hídrico)
+   id=9 | name=Muerte Súbita
+   id=10 | name=Trauma / Aplaste
+   id=11 | name=Estrés Calórico
+   id=12 | name=Causa Indeterminada
+cull-causes: 200 · 8 filas
+   id=1 | name=Raquitismo
+   id=2 | name=Mal conformados
+   id=3 | name=Ceguera / Lesión ocular
+   id=4 | name=Lesión de pata
+   id=5 | name=Descarte por peso bajo
+   id=6 | name=Descarte fin de ciclo
+   id=7 | name=Prolapso
+   id=8 | name=Bajo rendimiento postura
+vaccines: 200 · 10 filas
+   id=1 | name=Newcastle (IB King)
+   id=2 | name=Gumboro (IBD)
+   id=3 | name=Bronquitis Infecciosa H120
+   id=4 | name=Marek HVT+SB1
+   id=5 | name=Viruela Aviar (FP)
+   id=6 | name=Laringotraqueitis (ILT)
+   id=7 | name=Encefalomielitis Aviar
+   id=8 | name=Salmonella (AviPro)
+   id=9 | name=Coriza Infecciosa
+   id=10 | name=Pasteurella (Cólera)
+medications: 200 · 10 filas
+   id=1 | name=Amoxicilina 50%
+   id=2 | name=Enrofloxacina 10%
+   id=3 | name=Tilosina 20%
+   id=4 | name=Sulfametoxazol+TMP
+   id=5 | name=Oxitetraciclina 20%
+   id=6 | name=Lincomicina+Espectino
+   id=7 | name=Vitaminas ADE
+   id=8 | name=Electrolitos+Glucosa
+   id=9 | name=Ácido Cítrico 50%
+   id=10 | name=Amprolium 20%
+productive-phases: 200 · 4 filas
+   id=13 | name=Cría | is_initial=True
+   id=14 | name=Producción | is_initial=False
+   id=15 | name=Engorde | is_initial=False
+   id=16 | name=Incubación | is_initial=False
+sap-references: 200 · total=39 · prefijos={'STO-C001-': 3, 'PO-C001-G': 2, 'PO-C001-B': 3, 'PO-C001-H': 1, 'STO-48000': 5, 'PO-450000': 13, 'SLOC-0002': 1, 'MAT-10000': 3, 'V-10001': 1, 'V-10002': 1, 'V-20001': 1, 'PLANT-100': 1, 'SLOC-0001': 1, 'MAT-001': 1, 'PO-001': 1, 'C001': 1}
+   ejemplos: ['STO-C001-BRP-HAT-01', 'STO-C001-HAT-BRO-01', 'PO-C001-GPR-0001', 'PO-C001-GPP-0001', 'PO-C001-BRR-0001', 'PO-C001-BRP-0001', 'PO-C001-HAT-0001', 'PO-C001-BRO-0001']
