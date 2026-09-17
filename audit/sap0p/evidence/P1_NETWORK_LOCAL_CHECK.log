@@ -1,0 +1,35 @@
+=== SAP-0P · EVIDENCE · P1_NETWORK_LOCAL_CHECK (sanitized) ===
+phase: P1 NETWORK / VPN (local availability only; NO connection to SAP performed)
+executed_at_utc: 2026-09-17T00:37:26Z (same batch as P0)
+
+-- CHECK A: legacy VPN tooling (read-only presence) --
+ipsec command ....................... ABSENT
+xl2tpd command ...................... ABSENT
+local vpn/ config dir ............... 0 files
+workspace-name matches (vpn|sap|hana in ~/Proyectos listing) ... 0
+
+-- CHECK B: tunnel interfaces (read-only) --
+interfaces ppp*|tun* ................ 0
+
+-- CHECK C: DNS resolution of legacy destination (resolution only) --
+getent hosts vhemsds4ci.sap.liderpollo.com ... 0 lines (no resolution)
+note: legacy hostname is LEGACY_CONFIRMED evidence only, not a current fact
+
+-- CHECK D: HANA reachability --
+tcp connect to SAP host/port ........ NOT ATTEMPTED
+reason:  (1) authorization channel absent; (2) connecting from an
+         unauthorized network path is FORBIDDEN (fail-closed, mandate §18);
+         (3) without a read-only account the result would not be verifiable.
+
+-- FINDINGS (per mandate §18 registry) --
+NETWORK_ROUTE ............. BLOCKED        (authorized channel not provisioned)
+VPN ....................... BLOCKED        (not provisioned in execution env; legacy 'L2TP-PSK/LP' = LEGACY_CONFIRMED)
+HANA_PORT_REACHABILITY .... NOT_ATTEMPTED (BLOCKED_EXTERNAL) [PASS|FAIL reserved for a real attempt]
+SAP_CONNECTION_ATTEMPTS ... 0
+UNAUTHORIZED_NETWORK_ATTEMPTS ... 0
+
+-- CONSEQUENCE (mandate §9) --
+SAP0P_STATUS = BLOCKED_EXTERNAL
+single action emitted: audit/sap0p/SAP_ADMIN_BASIS_ACTION_REQUIRED.md
+next execution: after action completed -> re-run from P0 on authorized channel
+=====================================================================

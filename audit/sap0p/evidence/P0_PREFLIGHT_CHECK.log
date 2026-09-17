@@ -1,0 +1,33 @@
+=== SAP-0P · EVIDENCE · P0_PREFLIGHT_CHECK (sanitized) ===
+phase: P0 PREFLIGHT/SAFETY (SAP-0P Read-Only Landscape Probe)
+executed_at_utc: 2026-09-17T00:37:20Z .. 2026-09-17T00:37:27Z
+execution_host: proyecto workspace host (no authorized SAP channel present)
+executor: automated agent under Owner mandate SAP-0P
+
+-- CHECK 1: repository state (read-only) --
+git status --porcelain .............. (EMPTY) -> clean tree
+HEAD ................................ 0904330e52bbd14768b549a401585387f9bbc429
+HEAD equals SAP0_CLOSURE_SHA ........ YES (0904330)
+
+-- CHECK 2: product files diff (read-only) --
+git diff --stat HEAD -- backend frontend e2e .github
+  (EMPTY) -> PRODUCT_FILES_CHANGED = 0 (pre-flight)
+
+-- CHECK 3: configuration presence (counts only; values never printed) --
+env vars matching ^(HANA_|SAP_) .... 0
+.env files present .................. 1
+.env keys HANA_HOST|HANA_USER|SAP_USER|SAP_PASSWORD ... 0 matches
+
+-- CHECK 4: local tooling (read-only import check) --
+hdbcli present ...................... NO   (must NOT be added in this phase)
+requests present .................... YES  (irrelevant without channel)
+
+-- SAFETY STATE --
+read_only_policy_confirmed .......... YES (mandate §6)
+sample_limits ....................... 1..10 rows (metadata exempt)
+timeouts ............................ connect <=10s / query <=30s (contract)
+stop_conditions ..................... armed (mandate §38)
+sensitive_values_printed ............ NONE
+
+RESULT: P0 = PASS (local preflight complete; no SAP access attempted)
+=====================================================================
