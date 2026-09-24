@@ -3,6 +3,27 @@
 **Fecha**: 2026-09-24 · **Clasificación**: `POST_CERTIFICATION_FRONTEND_REMEDIATION` · **SAP scope**: NONE
 **Spec**: `specs/004-frontend-navigation-ui-consistency-remediation/` · **SAP-SOAP-1 / backend / workflows**: intactos.
 
+**Estado**: `OWNER-CLOSED` (2026-09-24) — ver §0.
+
+---
+
+## 0 · CIERRE FORMAL DEL OWNER (2026-09-24)
+
+Declaración de cierre registrada (instrucción del Owner, 2026-09-24):
+
+| Campo | Valor confirmado |
+|---|---|
+| POST_CERTIFICATION_FRONTEND_REMEDIATION | **CLOSED** |
+| NAV-01 / UX-01 | **RESOLVED / RESOLVED** |
+| BACK_NAVIGATION | CANONICAL · LEGACY_POULTRY_ROUTE = RETIRED_WITH_REDIRECT |
+| LEGACY_UI_REAPPEARANCE / FILTER_CONTEXT_PRESERVATION / UNSAVED_CHANGES_GUARD / I18N_ES_EN | RESOLVED · PASS · PASS · PASS |
+| VITEST / TSC / VITE_BUILD / E2E_NAVIGATION | 531/531 · PASS · PASS · 8/8 |
+| MOBILE_360 / MOBILE_390 / DESKTOP | PASS · PASS · PASS |
+| REMOTE_SHA | `e8de29d` — REMOTE_SHA_MATCH = PASS · TREE = CLEAN (re-verificado por el agente 2026-09-24) |
+| PRE_SAP_CERTIFICATION | **NOT_REOPENED** |
+
+Alcance del cierre: este cierre **no autoriza implícitamente** trabajo adicional de navegación más allá de lo entregado. Las mejoras declaradas como límites/mejoras futuras en §4 (p. ej. interceptar la navegación por sidebar con cambios sin guardar) requieren nueva SPEC y acuerdo del Owner.
+
 ---
 
 ## 1 · Resultado antes/después
