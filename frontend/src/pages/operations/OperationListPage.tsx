@@ -23,8 +23,13 @@ export default function OperationListPage() {
  const [loading, setLoading] = useState(true)
  // `R-212` · AC-04: denegación ≠ vacío.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
- const [lotId, setLotId] = useState('')
- const [eventType, setEventType] = useState('')
+ const [lotId, setLotId] = useState(() => {
+ // `004` · AC10: filtros preservados al volver (mismo mecanismo sessionStorage del repo).
+ try { return sessionStorage.getItem('ga.filters.operations.lotId') ?? '' } catch { return '' }
+ })
+ const [eventType, setEventType] = useState(() => {
+ try { return sessionStorage.getItem('ga.filters.operations.eventType') ?? '' } catch { return '' }
+ })
 
  const fetchEvents = useCallback(async () => {
  setLoading(true)
@@ -67,6 +72,16 @@ export default function OperationListPage() {
  : brutos
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
+
+ // `004` · AC10: persistir filtros para el retorno lista→detalle→lista.
+ useEffect(() => {
+ try {
+ if (lotId) sessionStorage.setItem('ga.filters.operations.lotId', lotId)
+ else sessionStorage.removeItem('ga.filters.operations.lotId')
+ if (eventType) sessionStorage.setItem('ga.filters.operations.eventType', eventType)
+ else sessionStorage.removeItem('ga.filters.operations.eventType')
+ } catch { /* storage no disponible */ }
+ }, [lotId, eventType])
 
  if (estado !== 'ok') {
  return (

@@ -17,7 +17,6 @@ import RolesPage from './pages/users/RolesPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
-import PoultryHubPage from './pages/operations/PoultryHubPage'
 import PoultryStagePage from './pages/operations/PoultryStagePage'
 import MenuHubPage from './pages/operations/MenuHubPage'
 import MyPendingPage from './pages/operations/MyPendingPage'
@@ -127,11 +126,9 @@ function ProcessStageRedirect() {
  return <Navigate to="/menu/poultry" replace />
 }
 
-function PoultryHubLegacyRoute({ children }: { children: React.ReactNode }) {
- const { user } = useAuthStore()
- if (user?.view_type === 'mobile') return <Navigate to="/menu/poultry" replace />
- return <>{children}</>
-}
+// `004` · UX-01: `PoultryHubLegacyRoute` y la entrada `/poultry` al hub pre-menú se
+// retiraron de la superficie activa (redirect abajo). Los archivos `ProcessHubPage` /
+// `PoultryHubPage` permanecen en el repo como historia; ninguna ruta los monta ya.
 
 const masterEntities = [
  { entity: 'companies', title: 'masters.companies', cols: [{ key: 'name', labelKey: 'masters.companies' }, { key: 'tax_id', labelKey: 'common.edit' }, { key: 'country', labelKey: 'common.save' }] },
@@ -252,7 +249,9 @@ export default function App() {
  />
  ))}
  {/* Shared: Poultry (new) + Processes (legacy redirects) */}
- <Route path="/poultry" element={<PoultryHubLegacyRoute><CapabilityRoute permission="operations:read" requiresUnits><PoultryHubPage /></CapabilityRoute></PoultryHubLegacyRoute>} />
+ {/* `004` · UX-01: la entrada duplicada `/poultry` (hub pre-menú) ya no se monta;
+ redirect a la superficie estándar. Historial: `audit/frontend-nav/LEGACY_UI_INVENTORY.md`. */}
+ <Route path="/poultry" element={<Navigate to="/menu/poultry" replace />} />
  <Route path="/poultry/:birdType/:phase?" element={<PoultryStageRoute />} />
  {/* Legacy redirects — keep for backward compatibility */}
  <Route path="/processes" element={<Navigate to="/menu/poultry" replace />} />

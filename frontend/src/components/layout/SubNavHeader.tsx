@@ -1,7 +1,8 @@
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
 import { ArrowLeft } from 'lucide-react'
 import Breadcrumbs, { type BreadcrumbItem } from '../ui/Breadcrumbs'
+import { canGoBackInApp } from './BackNavigation'
 
 interface SubNavHeaderProps {
  /** Título de la página actual */
@@ -35,9 +36,15 @@ export default function SubNavHeader({
 }: SubNavHeaderProps) {
  const { t } = useTranslation()
  const navigate = useNavigate()
+ const location = useLocation()
  const displayTitle = titleKey ? t(titleKey, title) : title
 
- const handleBack = onBack || (() => navigate(-1))
+ // `004` · NAV-01: back route-aware — con historial interno vuelve atrás;
+ // en deep-link (entrada directa por URL) cae a la raíz canónica, nunca sale de la app.
+ const handleBack = onBack || (() => {
+ if (canGoBackInApp(location.key)) navigate(-1)
+ else navigate('/')
+ })
 
  return (
  <div className="mb-5">

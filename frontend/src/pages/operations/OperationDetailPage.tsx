@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Activity, Paperclip, Upload, Trash2, FileText, Image, Download, X, RotateCcw } from 'lucide-react'
+import { Activity, Paperclip, Upload, Trash2, FileText, Image, Download, X, RotateCcw } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import { operationsService } from '../../services/operations.service'
 import { reversalsService } from '../../services/reversals.service'
@@ -214,9 +215,7 @@ export default function OperationDetailPage() {
 
  return (
  <div className="py-4 sm:py-6 space-y-4">
- <Link to="/operations" className="text-slate-400 hover flex items-center gap-1 text-sm">
- <ArrowLeft size={16} /> {t('operations.backToOperations')}
- </Link>
+ <BackNavigation to="/operations" />
 
  {/* Event Card */}
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">

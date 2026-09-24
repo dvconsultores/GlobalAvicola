@@ -9,9 +9,10 @@
  * reutiliza sus primitivas. Un segundo sistema de administración habría sido el error.
  */
 import { useCallback, useEffect, useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useTranslation } from 'react-i18next'
-import { ArrowLeft, LineChart, Upload } from 'lucide-react'
+import { LineChart, Upload } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 
 import { Button, Modal, Input, EmptyState } from '../../components/ui'
 import {
@@ -36,7 +37,6 @@ function mensajeGeneral(err: any, porDefecto: string): string {
 export default function WeightCurvesPage() {
  const can = useCan()
   const { t } = useTranslation()
-  const navigate = useNavigate()
   const { id } = useParams<{ id: string }>()
   const geneticLineId = Number(id)
 
@@ -147,12 +147,7 @@ export default function WeightCurvesPage() {
     <div className="py-4 sm:py-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <button
-            onClick={() => navigate('/masters/genetic-lines')}
-            className="flex items-center gap-1 text-sm text-slate-500 hover:text-slate-700 mb-1"
-          >
-            <ArrowLeft size={14} /> {t('masters.geneticLines')}
-          </button>
+          <BackNavigation to="/masters/genetic-lines" className="mb-1" />
           <h1 className="text-2xl font-bold text-slate-800">{t('curves.title')}</h1>
           <p className="text-sm text-slate-500 mt-1">
             {t('masters.geneticLines')}: <strong>{linea?.name ?? '—'}</strong>

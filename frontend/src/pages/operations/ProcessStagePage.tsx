@@ -1,7 +1,8 @@
 import { useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useParams, useNavigate, Navigate, useLocation } from 'react-router-dom'
-import { ChevronLeft, ArrowRight, LayoutGrid, ListOrdered, Building2 } from 'lucide-react'
+import { ArrowRight, LayoutGrid, ListOrdered, Building2 } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCan } from '../../auth/actionAuthority'
 import { useCompanyStore } from '../../stores/company.store'
@@ -59,9 +60,7 @@ export default function ProcessStagePage() {
  <>
  {/* Page header — spacing from global app content shell */}
  <div className="pt-5 pb-4">
- <Link to="/menu/poultry" className="inline-flex items-center gap-1 text-xs text-slate-400 hover mb-3 transition-colors">
- <ChevronLeft size={14} /> {t('process.stage.back', 'Procesos')}
- </Link>
+ <BackNavigation to="/menu/poultry" className="mb-3" />
  <div className="flex items-center gap-3">
  <span className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600 shrink-0">
  <StageIcon size={18} strokeWidth={2} />

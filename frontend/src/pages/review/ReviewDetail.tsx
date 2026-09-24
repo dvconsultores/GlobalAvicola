@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { formatFechaHora } from '../../utils/dates'
 import { useParams, Link } from 'react-router-dom'
 import { ClipboardList, Bird, Wheat, Egg, RefreshCw, Pencil, FileText } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -104,7 +105,7 @@ export default function ReviewDetail() {
  <div className="py-4 sm:py-6">
  {/* Header */}
  <div className="flex items-center gap-3 mb-6">
- <Link to="/review" className="text-slate-400 hover">← {t('common.back')}</Link>
+ <BackNavigation to="/review" />
  <h1 className="text-xl font-bold text-[#1E3A5F]">
  {t('review.detailTitle', { id: event.id })}
  </h1>

@@ -10,7 +10,8 @@ import { useTranslation } from 'react-i18next'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { z } from 'zod'
-import { ArrowLeft, Bird } from 'lucide-react'
+import { Bird } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { Button, Input, Card, CardHeader, CardBody } from '../../components/ui'
@@ -54,7 +55,7 @@ export default function LotFormPage() {
  register,
  handleSubmit,
  watch,
- formState: { errors, isSubmitting },
+ formState: { errors, isSubmitting, isDirty },
  } = useForm<FormInput, unknown, FormValues>({ resolver: zodResolver(schema) })
 
  const selectedFarmId = watch('farm_id')
@@ -149,13 +150,7 @@ export default function LotFormPage() {
  <div className="py-4 sm:py-6">
  {/* Header */}
  <div className="flex items-center gap-3 mb-6">
- <button
- onClick={() => navigate('/lots')}
- className="w-9 h-9 flex items-center justify-center rounded-lg text-slate-500 hover hover:bg-slate-100 transition-colors"
- aria-label={t('common.back', 'Volver')}
- >
- <ArrowLeft size={18} />
- </button>
+ <BackNavigation to="/lots" dirty={isDirty} />
  <div className="flex items-center gap-2">
  <Bird size={22} className="text-[#1E3A5F]" />
  <h1 className="text-xl font-bold text-[#1E3A5F]">{t('lots.newLot', 'Nuevo Lote')}</h1>

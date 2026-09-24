@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Link } from 'react-router-dom'
-import { ArrowLeft } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -30,7 +29,7 @@ export default function SapComparisonPage() {
 
  return (
  <div className="py-4 sm:py-6">
- <Link to="/reports" className="text-slate-400 hover flex items-center gap-1 mb-4"><ArrowLeft size={16} /> {t('nav.reports')}</Link>
+ <BackNavigation to="/reports" className="mb-4" />
  <h1 className="text-2xl font-bold text-[#1E3A5F] mb-6">{t('reports.sapComparison')}</h1>
  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5 text-center">

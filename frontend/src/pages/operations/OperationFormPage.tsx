@@ -2020,8 +2020,10 @@ default: return (
  type="button"
  onClick={() => {
  if (prefillType && !stage) {
+ // `004` · UX-01: la entrada legacy `/poultry` ya no existe (redirect). Solo se aceptan
+ // destinos de etapa profundos y hubs del menú estándar; cualquier otra cosa cae al hub actual.
  const target = sessionStorage.getItem('operationBackTarget')
- if (target && (target.startsWith('/poultry') || target.startsWith('/menu/poultry'))) {
+ if (target && (target.startsWith('/poultry/') || target.startsWith('/menu/'))) {
  navigate(target)
  return
  }
@@ -2032,7 +2034,7 @@ default: return (
  }}
  className="inline-flex items-center gap-1 text-sm text-slate-900 hover:text-[#5a9bba] mb-3"
  >
- <ChevronLeft size={16} /> {t('common.back', 'Atrás')}
+ <ChevronLeft size={16} /> {t('common.back', 'Volver')}
  </button>
 
  {eventType && (

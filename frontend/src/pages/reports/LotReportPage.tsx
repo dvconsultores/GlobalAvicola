@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Download, TrendingUp, Activity } from 'lucide-react'
+import { useParams } from 'react-router-dom'
+import { Download, TrendingUp, Activity } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { useToast, getErrorMessage } from '../../components/Toast'
@@ -69,7 +70,7 @@ export default function LotReportPage() {
 
  return (
  <div className="py-4 sm:py-6">
- <Link to="/reports" className="text-slate-400 hover flex items-center gap-1 mb-4"><ArrowLeft size={16} /> {t('nav.reports')}</Link>
+ <BackNavigation to="/reports" className="mb-4" />
  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
  <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('reports.lotReport')}: {report.lot?.lot_code || `${t('lots.title')} #${report.lot?.id}`}</h1>
  <div className="flex gap-2">

@@ -110,15 +110,12 @@ describe('GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del men�
     expect(forbidden()).not.toBeNull()
   })
 
-  it('D: /poultry (hub web) → denegada; C con broiler → permitida', () => {
-    setSession(['dashboard:read'], [], ['broiler'])
-    const first = renderAt('/poultry')
-    expect(forbidden()).not.toBeNull()
-    first.unmount()
-
-    setSession(['operations:read', 'lots:read'], ['broiler'], ['broiler'])
-    renderAt('/poultry')
-    expect(forbidden()).toBeNull()
+it('004 · /poultry legacy → redirect al hub estándar /menu/poultry (C con broiler ve su unidad)', () => {
+ setSession(['operations:read', 'lots:read'], ['broiler'], ['broiler'])
+ renderAt('/poultry')
+ // Sin pantalla denegada y con la unidad concedida visible: la ruta legacy ya no monta el hub pre-menú.
+ expect(forbidden()).toBeNull()
+ expect(screen.getByText('Pollo de Engorde')).toBeTruthy()
   })
 
   it('C con concesión solo de broiler: /poultry/breeder denegada por unidad; /poultry/broiler permitida', () => {

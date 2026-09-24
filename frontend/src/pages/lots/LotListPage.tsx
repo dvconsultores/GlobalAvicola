@@ -25,7 +25,11 @@ export default function LotListPage() {
  const [total, setTotal] = useState(0)
  const [cargandoMas, setCargandoMas] = useState(false)
  const [loading, setLoading] = useState(true)
- const [birdType, setBirdType] = useState('')
+ const [birdType, setBirdType] = useState(() => {
+ // `004` · AC10: el filtro de listado sobrevive al ciclo lista→detalle→atrás
+ // (mecanismo existente del repo: sessionStorage; no se introduce uno nuevo).
+ try { return sessionStorage.getItem('ga.filters.lots.birdType') ?? '' } catch { return '' }
+ })
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
@@ -63,6 +67,14 @@ export default function LotListPage() {
 
  useEffect(() => { fetchLots() }, [fetchLots])
 
+ // `004` · AC10: persistir el filtro para el retorno lista→detalle→lista.
+ useEffect(() => {
+ try {
+ if (birdType) sessionStorage.setItem('ga.filters.lots.birdType', birdType)
+ else sessionStorage.removeItem('ga.filters.lots.birdType')
+ } catch { /* storage no disponible */ }
+ }, [birdType])
+
  const activeLots = lots.filter(l => l.status === 'active').length
  const closedLots = lots.filter(l => l.status === 'closed').length
 
@@ -92,12 +104,12 @@ export default function LotListPage() {
 
  {/* Stage quick filters */}
  <div className="flex flex-wrap gap-2 mb-4">
- <button onClick={() => setBirdType('')}
+ <button onClick={() => setBirdType('')} aria-pressed={!birdType} data-testid="lot-filter-all"
  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${!birdType ? 'bg-[#1E3A5F] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
  {t('common.all')}
  </button>
  {BIRD_TYPE_KEYS.map((key) => (
- <button key={key} onClick={() => setBirdType(birdType === key ? '' : key)}
+ <button key={key} onClick={() => setBirdType(birdType === key ? '' : key)} aria-pressed={birdType === key} data-testid={`lot-filter-${key}`}
  className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${birdType === key ? 'bg-[#1E3A5F] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
  {t(`birdTypes.${key}`)}
  </button>

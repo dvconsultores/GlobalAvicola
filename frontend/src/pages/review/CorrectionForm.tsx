@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { Pencil } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
@@ -26,6 +27,8 @@ export default function CorrectionForm() {
  const [correctedValue, setCorrectedValue] = useState('')
  const [correctionTypeId, setCorrectionTypeId] = useState<number | undefined>()
  const [reason, setReason] = useState('')
+ // `004` · NAV-01/AC14: cambios sin guardar (formulario de corrección).
+ const camposSucios = correctedValue !== originalValue || reason.trim().length > 0
 
  useEffect(() => {
  const fetch = async () => {
@@ -84,7 +87,7 @@ export default function CorrectionForm() {
  return (
  <div className="py-4 sm:py-6">
  <div className="flex items-center gap-3 mb-6">
- <Link to={`/review/${id}`} className="text-slate-400 hover">← {t('common.back')}</Link>
+ <BackNavigation to={`/review/${id}`} dirty={camposSucios} />
  <h1 className="text-xl font-bold text-[#1E3A5F] flex items-center gap-2">
  <Pencil size={20} aria-hidden="true" />
  {t('review.correctEvent', { id })}

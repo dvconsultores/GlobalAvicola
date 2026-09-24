@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useParams, Link } from 'react-router-dom'
-import { ArrowLeft, Plus, TrendingUp, Activity, Calendar, Lock, AlertTriangle, X } from 'lucide-react'
+import { Plus, TrendingUp, Activity, Calendar, Lock, AlertTriangle, X } from 'lucide-react'
+import BackNavigation from '../../components/layout/BackNavigation'
 import { EVENT_ICONS } from '../../components/Icon'
 import { Button, Modal, Input } from '../../components/ui'
 import { TraceabilityTree } from '../../components/TraceabilityTree'
@@ -179,9 +180,7 @@ export default function LotDetailPage() {
  <div className="py-4 sm:py-6">
  {/* ── Header ── */}
  <div className="flex flex-wrap items-center gap-3 mb-6">
- <Link to="/lots" className="text-slate-400 hover transition-colors">
- <ArrowLeft size={20} />
- </Link>
+ <BackNavigation to="/lots" />
  <div className="flex-1 min-w-0">
  <h1 className="text-2xl font-bold text-[#1E3A5F] truncate">
  {lot.lot_code || `${t('lots.title')} #${lot.id}`}

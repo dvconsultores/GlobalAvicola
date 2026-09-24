@@ -17,6 +17,7 @@ import { ShieldCheck } from 'lucide-react'
 import { useAuthStore } from '../../stores/auth.store'
 import { useCompanyStore } from '../../stores/company.store'
 import { hasPermission } from '../../auth/permissions'
+import BackNavigation from '../../components/layout/BackNavigation'
 import { businessUnitsService, type CompanyBusinessUnit, type GrantCandidate } from '../../services/businessUnits.service'
 import { businessUnitName } from '../../data/businessUnits'
 import { Button, Card, CardBody, ConfirmDialog, EmptyState } from '../../components/ui'
@@ -159,15 +160,20 @@ export default function UnitAccessPage() {
   }
 
   const header = (
-    <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
-      <h1 className="text-2xl font-bold text-[#1E3A5F] flex items-center gap-2">
-        <ShieldCheck size={24} /> {t('admin.units.heading')}
-      </h1>
-      {effectiveCompanyId != null && (
-        <span className="text-sm text-slate-600">
-          {t('admin.context.company')} <strong className="text-[#1E3A5F]">{companyName ?? `#${effectiveCompanyId}`}</strong>
-        </span>
-      )}
+    <div className="mb-5">
+      <div className="mb-2">
+        <BackNavigation to="/menu/settings" />
+      </div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-bold text-[#1E3A5F] flex items-center gap-2">
+          <ShieldCheck size={24} /> {t('admin.units.heading')}
+        </h1>
+        {effectiveCompanyId != null && (
+          <span className="text-sm text-slate-600">
+            {t('admin.context.company')} <strong className="text-[#1E3A5F]">{companyName ?? `#${effectiveCompanyId}`}</strong>
+          </span>
+        )}
+      </div>
     </div>
   )
 

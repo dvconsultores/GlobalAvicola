@@ -13,6 +13,7 @@
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor, within, act } from '@testing-library/react'
+import { MemoryRouter } from 'react-router-dom'
 
 const get = vi.fn()
 const patch = vi.fn()
@@ -98,7 +99,7 @@ function unitCard(name: string) {
 }
 
 async function renderReady() {
-  render(<UnitAccessPage />)
+  render(<MemoryRouter><UnitAccessPage /></MemoryRouter>)
   await screen.findByRole('list', { name: 'admin.units.heading' })
 }
 
@@ -120,7 +121,7 @@ describe('GA-FE-02 · Acceso por unidad — render', () => {
 
   it('sin empresa efectiva: fail-closed, sin ninguna llamada (AC-COMP-06, OD-14.d)', async () => {
     setSession(ALL_PERMS, null)
-    render(<UnitAccessPage />)
+    render(<MemoryRouter><UnitAccessPage /></MemoryRouter>)
     await screen.findByText('admin.context.none')
     expect(screen.getByText('admin.context.noneHint')).toBeTruthy()
     expect(get).not.toHaveBeenCalled()
