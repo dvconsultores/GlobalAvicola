@@ -6,6 +6,8 @@
 > **Target:** SAP S/4HANA
 >
 > **ADDENDUM 2026-09-22 (SAP-SOAP-1)**: el mecanismo **inbound** acordado con Lider Pollo y su proveedor SAP es **SOAP (pull)**; la recomendación previa de **OData** queda `SUPERSEDED_BY_OWNER_AND_PROVIDER_DECISION` para inbound (historia preservada, no se borra). El contrato vigente vive en `audit/sap-soap/**` y `specs/003-sap-soap-inbound-contract/`. Direct HANA queda `RETIRED_AS_TARGET_ARCHITECTURE`.
+>
+> **ADDENDUM 2026-10-06 (SPEC 005)**: por decisión del Sponsor/Owner, el mecanismo **inbound** vigente es **SAP HANA Cloud READ ONLY**; SOAP inbound queda `SUPERSEDED_BY_OWNER_SPONSOR_DECISION_2026_10_06` (historia preservada, no se borra). La implementación es `SAP_HANA_CLOUD_READ_ONLY_V2` (**no** el Direct HANA legacy, que no se reactiva). Fase 1 **sin escrituras a SAP** y con **outbound deshabilitado**. La spec vive en `specs/005-sap-hana-cloud-readonly-inbound/` y el paquete de auditoría en `audit/sap-hana-cloud/**`.
 
 ---
 

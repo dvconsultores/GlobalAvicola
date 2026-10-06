@@ -5,6 +5,8 @@
 **Contrapartes**: Lider Pollo (SAP/ABAP) · Global Avícola / Global DV
 **Base contractual**: `audit/sap-soap/01…15` + `specs/003-sap-soap-inbound-contract/` (este documento resume; **no introduce decisiones no cerradas como hechos**).
 
+> **SUPERSEDED 2026-10-06**: el inbound vigente es SAP HANA Cloud READ ONLY (`specs/005-sap-hana-cloud-readonly-inbound/`, `audit/sap-hana-cloud/01_ARCHITECTURE_DECISION.md`). Este documento se conserva como historia (`CLOSED_HISTORICAL_CONTRACT_NOT_IMPLEMENTED`).
+
 ---
 
 ## 1 · Objetivo

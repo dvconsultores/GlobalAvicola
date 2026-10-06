@@ -5,6 +5,8 @@
 **Input**: Mandato «SAP-SOAP-1 — SOAP INBOUND CONTRACT & IMPLEMENTATION READINESS» (Owner, 2026-09-22) + reunión técnica Lider Pollo / proveedor SAP / Global DV
 **Paquete de auditoría asociado**: `audit/sap-soap/01…15`
 
+> **SUPERSEDED 2026-10-06**: el inbound vigente es SAP HANA Cloud READ ONLY (`specs/005-sap-hana-cloud-readonly-inbound/`, `audit/sap-hana-cloud/01_ARCHITECTURE_DECISION.md`). Este documento se conserva como historia (`CLOSED_HISTORICAL_CONTRACT_NOT_IMPLEMENTED`).
+
 ---
 
 ## PURPOSE
