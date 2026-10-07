@@ -1,0 +1,21 @@
+IMPLEMENTATION_COMMIT = b07d3044766f8955c9a9c1a7cf92a3207d55b053
+IMPLEMENTATION_COMMIT ..... b07d3044766f8955c9a9c1a7cf92a3207d55b053
+HEAD ...................... b07d3044766f8955c9a9c1a7cf92a3207d55b053
+COINCIDEN ................. SÍ
+CÓDIGO PRODUCTIVO LIMPIO .. SÍ
+OBJETIVO DE RESTAURACIÓN .. VÁLIDO
+MUTACIÓN PERMITIDA ........ SÍ
+
+S1 · el guard permite UPDATE (se retiran los tokens UPDATE y SET)           → DETECTED (exit 1) · restaurado OK
+S2 · misma clave + mismo hash inserta en lugar de no-op                     → DETECTED (exit 1) · restaurado OK
+S3 · se acepta una sociedad sin mapping (promoción con empresa desconocida) → DETECTED (exit 1) · restaurado OK
+S4 · el watermark avanza antes de persistir el batch (fuera del savepoint)  → DETECTED (exit 1) · restaurado OK
+S5 · bypass: se ignora SAP_OUTBOUND_ENABLED=false                           → DETECTED (exit 1) · restaurado OK
+S6 · el filtro de sociedad se concatena al SQL en lugar de ir como bind     → DETECTED (exit 1) · restaurado OK
+S7 · validación de certificado desactivada                                  → DETECTED (exit 1) · restaurado OK
+S8 · delivers_to_sap = True en el adaptador manual                          → DETECTED (exit 1) · restaurado OK
+
+FINAL_RESTORE_SHA = b07d3044766f8955c9a9c1a7cf92a3207d55b053
+FINAL_DIFF = 0
+ÁRBOL PRODUCTIVO TRAS LA SENSIBILIDAD: LIMPIO
+MUTATION = PASS

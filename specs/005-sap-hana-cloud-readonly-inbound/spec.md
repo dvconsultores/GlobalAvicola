@@ -1,7 +1,7 @@
 # Feature Specification: SPEC 005 — SAP HANA Cloud READ ONLY Inbound Integration
 
 **Directorio**: `specs/005-sap-hana-cloud-readonly-inbound` · **Rama**: `main` (`DO_NOT_CREATE_BRANCH = TRUE`; sin rama de feature)
-**Created**: 2026-10-06 · **Baseline**: `cf991b4` · **Status**: `IMPLEMENTING`
+**Created**: 2026-10-06 · **Baseline**: `cf991b4` · **Status**: `CERTIFIED` (local, 2026-10-07; `READY_FOR_SAP_CREDENTIALS`) · SAP real: `BLOCKED_EXTERNAL` (credencial READ ONLY pendiente)
 **Tipo**: integración externa (inbound, solo lectura) · **Prioridad**: P1 · **Dependencias**: GA-REM-010, GA-REM-017, OD-12, OD-14, OD-24, R-201, BR-18
 **Input**: Mandato Owner/Sponsor «SPEC 005 — SAP HANA Cloud READ ONLY Inbound Integration» (2026-10-06)
 **Paquete de auditoría asociado**: `audit/sap-hana-cloud/01…13`
@@ -130,7 +130,7 @@ Formato: **Given** el contexto, **When** la acción, **Then** el resultado obser
 | AC-HANA-37 | Given las rutas nuevas, When arranca la app, Then cobertura de autorización PASS | arranque + test |
 | AC-HANA-38 | Given las rutas nuevas, When arranca la app, Then alcance de unidad declarado | `test_sap_inbound_routes_scope_declared` |
 | AC-HANA-39 | Given autoridad global sin contexto, When lee o sincroniza, Then ∅ / 4xx sin leer | tests R-201 inbound |
-| AC-HANA-40 | RED demostrado antes de implementar | `evidence/red/` |
+| AC-HANA-40 | RED demostrado antes de implementar | `evidence/red/` — PASS |
 | AC-HANA-41 | Verde dirigido | `evidence/green/` |
 | AC-HANA-42 | Regresión completa de backend, 0 fallos | `evidence/regression/` |
 | AC-HANA-43 | Regresión de frontend | ídem |
@@ -188,3 +188,10 @@ Todos los AC en PASS con evidencia · 0 secretos · 0 llamadas reales a SAP · 3
 ## ANALYZE
 
 Resultado en `audit/sap-hana-cloud/13_TRACEABILITY.md §3`: 20 categorías del mandato §59 = 0 defectos · `OPEN_TECHNICAL_CONTRADICTIONS = 0`.
+
+## REGISTRO DE CAMBIOS
+
+| Fecha | Cambio |
+|---|---|
+| 2026-10-06 | v1.0 — spec, clarifications Q1–Q12, /analyze |
+| 2026-10-07 | Estado `CERTIFIED` (local). Resultados en `audit/sap-hana-cloud/11_LOCAL_CERTIFICATION.md`; AC-HANA-01…55 en PASS salvo los que dependen del probe real (no aplican a esta fase). |

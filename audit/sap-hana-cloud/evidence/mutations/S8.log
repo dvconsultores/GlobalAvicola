@@ -1,0 +1,41 @@
+S8 · delivers_to_sap = True en el adaptador manual
+ARCHIVO   backend/app/integrations/sap/adapter.py
+PRUEBA    tests/test_sap_hana_routes.py::test_delivers_to_sap_false
+ESPERADO  la prueba FALLA
+IMPLEMENTATION_COMMIT b07d3044766f8955c9a9c1a7cf92a3207d55b053
+MUTACIÓN INSTALADA SÍ
+EXIT      1
+VEREDICTO DETECTED
+RESTAURACIÓN git restore --source=b07d304 -- backend/app/integrations/sap/adapter.py · git diff --exit-code b07d304 -- backend/app: 0 (vacío)
+
+── salida de la prueba (cola) ──
+
+http_client = <httpx.AsyncClient object at 0x7fcc9f499a50>
+esc = {'url': 'postgresql://[REDACTADO]@/global_avicola_test?host=/hom....AsyncEngine object at 0x7fcc9ee5d000>, autoflush=True, expire_on_commit=False), 'client': 'YZM', 'serie': '9939', ...}
+sin_credenciales = None
+
+    async def test_delivers_to_sap_false(http_client, esc, sin_credenciales):
+        from app.integrations.sap.adapter import ManualSapAdapter, MockSapAdapter
+        from app.integrations.sap.inbound.adapter import HanaCloudReadOnlyAdapter
+    
+>       assert ManualSapAdapter.delivers_to_sap is False and MockSapAdapter.delivers_to_sap is False
+E       AssertionError: assert (True is False)
+E        +  where True = <class 'app.integrations.sap.adapter.ManualSapAdapter'>.delivers_to_sap
+
+tests/test_sap_hana_routes.py:406: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_sap_hana_routes.py::test_delivers_to_sap_false - AssertionE...
+1 failed, 1 warning in 2.13s

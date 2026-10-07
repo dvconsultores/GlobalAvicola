@@ -1,0 +1,41 @@
+S4 · el watermark avanza antes de persistir el batch (fuera del savepoint)
+ARCHIVO   backend/app/integrations/sap/inbound/service.py
+PRUEBA    tests/test_sap_hana_sync.py::test_sync_failed_batch_does_not_advance_watermark
+ESPERADO  la prueba FALLA
+IMPLEMENTATION_COMMIT b07d3044766f8955c9a9c1a7cf92a3207d55b053
+MUTACIÓN INSTALADA SÍ
+EXIT      1
+VEREDICTO DETECTED
+RESTAURACIÓN git restore --source=b07d304 -- backend/app/integrations/sap/inbound/service.py · git diff --exit-code b07d304 -- backend/app: 0 (vacío)
+
+── salida de la prueba (cola) ──
+    
+        job = _uno(jobs, "plant")
+        assert job.status == "failed" and job.error_code == ErrorCode.SAP_QUERY_TIMEOUT.value
+        assert job.completed_at is not None
+>       assert await filas(esc, "SELECT watermark_value, last_success_at FROM sap_inbound_watermarks "
+                                "WHERE company_id = :c AND object_type = 'plant'", c=esc["a"]) == marca
+E       AssertionError: assert [{'watermark_...imezone.utc)}] == [{'watermark_...imezone.utc)}]
+E         
+E         At index 0 diff: {'watermark_value': '2026-10-07T00:07:16+00:00', 'last_success_at': datetime.datetime(2026, 10, 7, 0, 7, 16, 647707, tzinfo=datetime.timezone.utc)} != {'watermark_value': '2026-10-07T00:07:16+00:00', 'last_success_at': datetime.datetime(2026, 10, 7, 0, 7, 16, 635647, tzinfo=datetime.timezone.utc)}
+E         Use -v to get more diff
+
+tests/test_sap_hana_sync.py:325: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+------------------------------ Captured log call -------------------------------
+WARNING  ga.sap.inbound:client.py:163 SAP HANA SAP_QUERY_TIMEOUT: [613] statement timeout
+=============================== warnings summary ===============================
+tests/test_sap_hana_sync.py::test_sync_failed_batch_does_not_advance_watermark
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_sap_hana_sync.py::test_sync_failed_batch_does_not_advance_watermark
+1 failed, 1 warning in 1.74s

@@ -56,13 +56,13 @@
 | ID | Capa | Objetivo | AC | Depende | Evidencia | Estado |
 |---|---|---|---|---|---|---|
 | T050 | test | verde dirigido | 41 | T033 | `evidence/green/` | DONE |
-| T051 | test | regresión completa backend | 42 | T050 | `evidence/regression/` | PENDING |
+| T051 | test | regresión completa backend | 42 | T050 | `evidence/regression/` | DONE |
 | T052 | test | vitest completo, `tsc -b`, `vite build` | 43–45 | T042 | `evidence/build/` | DONE |
 | T053 | test | E2E fake HANA + navegación 8/8 | 46 | T043 | `evidence/e2e/` | DONE |
-| T054 | git | commit de implementación | 51 | T051–T053 | SHA | PENDING |
-| T055 | test | sensibilidad S1–S8 + restauración por SHA + post-mutación | 47, 48 | T054 | `10_MUTATION_EVIDENCE` | PENDING |
-| T056 | docs | `audit/sap-hana-cloud/03…08, 10…13`, GA-REM-017 | catálogo, seguridad, mapping, runbook, certificación | 07, 55 | T055 | docs | PENDING |
-| T057 | git | commit de certificación + push + SHA remoto | 49–54 | T056 | `REMOTE_SHA_MATCH` | PENDING |
+| T054 | git | commit de implementación | 51 | T051–T053 | SHA | DONE |
+| T055 | test | sensibilidad S1–S8 + restauración por SHA + post-mutación | 47, 48 | T054 | `10_MUTATION_EVIDENCE` | DONE |
+| T056 | docs | `audit/sap-hana-cloud/03…08, 10…13`, GA-REM-017 | catálogo, seguridad, mapping, runbook, certificación | 07, 55 | T055 | docs | DONE |
+| T057 | git | commit de certificación + push + SHA remoto | 49–54 | T056 | `REMOTE_SHA_MATCH` | DONE |
 
 ## Fase F — Posterior a la credencial (NO iniciar)
 

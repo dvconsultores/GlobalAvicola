@@ -1,0 +1,45 @@
+Auditoría estática · 2026-10-07 02:09:07 · HEAD=b07d304
+
+== 1. Objetos del registry ==
+query_id="company.v1"
+query_id="plant.v1"
+query_id="storage_location.v1"
+query_id="vendor.v1"
+query_id="material.v1"
+query_id="batch.v1"
+query_id="movement_type.v1"
+query_id="purchase_order.v1"
+query_id="purchase_order_item.v1"
+query_id="purchase_order_history.v1"
+query_id="production_order.v1"
+query_id="transfer_order.v1"
+query_id="outbound_order.v1"
+query_id="material_movement.v1"
+
+== 2. Llamadas execute( en el paquete inbound (quién ejecuta SQL contra HANA) ==
+backend/app/integrations/sap/inbound/client.py:130:                cursor.execute(sql, binds)
+backend/app/integrations/sap/inbound/fake_hana.py:44:    def execute(self, sql: str, params: Any = None) -> bool:
+
+== 3. Lecturas de SQL desde la petición (request.sql / body.sql / query libre) ==
+(ninguna)
+
+== 4. Tokens mutantes en los templates del registry ==
+company.v1                     inicia=SELECT tokens_mutantes=[]
+plant.v1                       inicia=SELECT tokens_mutantes=[]
+storage_location.v1            inicia=SELECT tokens_mutantes=[]
+vendor.v1                      inicia=SELECT tokens_mutantes=[]
+material.v1                    inicia=SELECT tokens_mutantes=[]
+batch.v1                       inicia=SELECT tokens_mutantes=[]
+movement_type.v1               inicia=SELECT tokens_mutantes=[]
+purchase_order.v1              inicia=SELECT tokens_mutantes=[]
+purchase_order_item.v1         inicia=SELECT tokens_mutantes=[]
+purchase_order_history.v1      inicia=SELECT tokens_mutantes=[]
+production_order.v1            inicia=SELECT tokens_mutantes=[]
+transfer_order.v1              inicia=SELECT tokens_mutantes=[]
+outbound_order.v1              inicia=SELECT tokens_mutantes=[]
+material_movement.v1           inicia=SELECT tokens_mutantes=[]
+SAP_HANA_MUTATING_SQL = 0
+
+== 5. Rutas /sap que acepten SQL/schema/tabla ==
+ARBITRARY_SQL_ENDPOINTS = 0
+rutas /sap: 19

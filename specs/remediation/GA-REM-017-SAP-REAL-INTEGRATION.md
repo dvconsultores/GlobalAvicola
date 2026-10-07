@@ -50,3 +50,23 @@ Implementar `RealSapAdapter` conforme al contrato acordado, con autenticación, 
 
 ## Acción inmediata mientras esté bloqueada
 Solicitar formalmente al cliente el contrato técnico de integración. Registrar la fecha de la solicitud. **`GA-REM-010` debe cerrarse igualmente**, porque el problema de la falsa semántica no depende de SAP.
+
+---
+
+## Enmienda 2026-10-07 — SPEC 005 (SAP HANA Cloud READ ONLY inbound)
+
+**Estado tras SPEC 005, por dirección:**
+
+| Dirección | Estado | Fuente |
+|---|---|---|
+| **Inbound** (SAP → Global Avícola) | `IMPLEMENTED_LOCALLY_PENDING_EXTERNAL_CREDENTIALS` | `specs/005-sap-hana-cloud-readonly-inbound/` · `audit/sap-hana-cloud/11_LOCAL_CERTIFICATION.md` |
+| **Outbound** (Global Avícola → SAP; AC01–AC06 de esta spec) | `BLOCKED_EXTERNAL` y además `DISABLED_PHASE_1` (`SAP_OUTBOUND_ENABLED=false`) | mandato SPEC 005 §38 |
+
+Qué cambió:
+
+- El mecanismo inbound **ya no es una incógnita**: es SAP HANA Cloud en solo lectura (decisión Owner/Sponsor 2026-10-06; `audit/sap-hana-cloud/01_ARCHITECTURE_DECISION.md`). La fila «Mecanismo de integración… no hay decisión» de la tabla superior queda resuelta **para inbound**; para outbound sigue abierta.
+- Existe un adaptador inbound real (`HanaCloudReadOnlyAdapter`, `backend/app/integrations/sap/inbound/`) certificado localmente con un doble de HANA. No se ha conectado a SAP: `SAP_HANA_REAL = PENDING_CREDENTIALS`.
+- `RealSapAdapter` (outbound) **sigue sin implementar**; `SAP_ADAPTER=real` responde 501 y `/sap/export` · `/sap/retry` responden 409 en esta fase. AC01–AC06 permanecen pendientes y fuera del alcance de SPEC 005.
+- La información externa que falta se reduce a: credencial técnica READ ONLY, endpoint/schema/mandante y ventana de red/CA (`audit/sap-hana-cloud/12_REAL_SAP_ACTIVATION_RUNBOOK.md §0`).
+
+El estado de cabecera (`BLOCKED_EXTERNAL`) se conserva porque describe la integración real completa; esta enmienda lo precisa sin reescribir la historia (constitución Art. 15).

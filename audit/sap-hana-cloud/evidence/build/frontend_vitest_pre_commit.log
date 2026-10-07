@@ -1,0 +1,15 @@
+INICIO 2026-10-07 01:36:23 · npx vitest run
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+ Test Files  90 passed (90)
+      Tests  539 passed (539)
+   Start at  01:36:24
+   Duration  71.67s (transform 3.44s, setup 6.20s, import 37.64s, tests 46.17s, environment 100.38s)
+
+exit=0

@@ -10,12 +10,12 @@ Fecha: 2026-10-06 · SPEC 005 · Matriz AC → prueba. Ninguna prueba llama a SA
 |---|---|---|---|
 | Guard + registry | `backend/tests/test_sap_hana_guard.py` | 16 funciones (parametrizadas por sentencia y por objeto) | no |
 | Cliente, configuración, adaptador | `backend/tests/test_sap_hana_client.py` | 23 | no |
-| Sync, idempotencia, watermark, mapping | `backend/tests/test_sap_hana_sync.py` | 39 | PostgreSQL de pruebas |
+| Sync, idempotencia, watermark, mapping | `backend/tests/test_sap_hana_sync.py` | 39 (sociedad desconocida reforzada con un proveedor, ver `10_…` S3) | PostgreSQL de pruebas |
 | Promoción, BR-18 | `backend/tests/test_sap_hana_promotion.py` | 16 | PostgreSQL de pruebas |
 | Rutas, RBAC, alcance, R-201, outbound | `backend/tests/test_sap_hana_routes.py` | 24 | PostgreSQL de pruebas |
 | Escenario compartido | `backend/tests/sap_hana_fixtures.py` | — | — |
-| Frontend | `frontend/src/pages/sap/__tests__/sapInbound.test.tsx` | ver `11_LOCAL_CERTIFICATION` | — |
-| E2E | `e2e/sap-hana-inbound.spec.ts` | ver `11_LOCAL_CERTIFICATION` | pila local |
+| Frontend | `frontend/src/pages/sap/__tests__/sapInbound.test.tsx` (8) + `gaFe04.sapGates.test.tsx` (ajustado) | suite 539/539 | — |
+| E2E | `e2e/sap-hana-inbound.spec.ts` | 6 (+ navegación 8) | pila local con `SAP_HANA_DRIVER=fake` |
 
 ## 2 · Pruebas exigidas por el mandato (§45) → ubicación
 
@@ -80,4 +80,6 @@ Fecha: 2026-10-06 · SPEC 005 · Matriz AC → prueba. Ninguna prueba llama a SA
 | S7 | validación de certificado desactivada | `test_hana_adapter_tls_required` |
 | S8 | `delivers_to_sap = true` | `test_delivers_to_sap_false` |
 
-Resultados en `10_MUTATION_EVIDENCE.md`.
+Resultados en `10_MUTATION_EVIDENCE.md`: 8/8 DETECTED.
+
+Total backend SPEC 005: 189 pruebas (ejecutadas dentro de la regresión completa: 1630 passed).

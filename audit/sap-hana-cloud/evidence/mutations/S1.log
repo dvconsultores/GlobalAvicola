@@ -1,0 +1,41 @@
+S1 · el guard permite UPDATE (se retiran los tokens UPDATE y SET)
+ARCHIVO   backend/app/integrations/sap/inbound/sql_guard.py
+PRUEBA    tests/test_sap_hana_guard.py::test_hana_guard_rejects_update
+ESPERADO  la prueba FALLA
+IMPLEMENTATION_COMMIT b07d3044766f8955c9a9c1a7cf92a3207d55b053
+MUTACIÓN INSTALADA SÍ
+EXIT      1
+VEREDICTO DETECTED
+RESTAURACIÓN git restore --source=b07d304 -- backend/app/integrations/sap/inbound/sql_guard.py · git diff --exit-code b07d304 -- backend/app: 0 (vacío)
+
+── salida de la prueba (cola) ──
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=64 (55 + alembic_version) · head en BD=d9e0f1a2b3c4 · head en código=d9e0f1a2b3c4
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+   seeds aplicados
+
+F                                                                        [100%]
+=================================== FAILURES ===================================
+________________________ test_hana_guard_rejects_update ________________________
+
+    def test_hana_guard_rejects_update():
+        _rechaza("UPDATE T001W SET NAME1 = 'x' WHERE MANDT = :mandt")
+>       _rechaza("WITH x AS (SELECT 1 FROM DUMMY) UPDATE T001W SET NAME1 = 'x'")
+
+tests/test_sap_hana_guard.py:53: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+sql = "WITH x AS (SELECT 1 FROM DUMMY) UPDATE T001W SET NAME1 = 'x'"
+
+    def _rechaza(sql: str) -> None:
+>       with pytest.raises(SapInboundError) as exc:
+E       Failed: DID NOT RAISE SapInboundError
+
+tests/test_sap_hana_guard.py:46: Failed
+=========================== short test summary info ============================
+FAILED tests/test_sap_hana_guard.py::test_hana_guard_rejects_update - Failed:...
+1 failed in 0.25s

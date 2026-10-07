@@ -1,0 +1,49 @@
+INICIO 2026-10-07 01:58:57 · bash scripts_e2e.sh e2e/sap-hana-inbound.spec.ts e2e/navigation-consistency.spec.ts --project=procesos
+── 1/5 · Base de pruebas ──
+── 2/5 · Esquema y datos (por el entrypoint real) ──
+   [entrypoint] Starting database migrations
+   [entrypoint] target: local/global_avicola_test
+   [R-44] asociaciones rol-permiso añadidas: 0
+   [OD-19 Acl. A] asociaciones rol-permiso añadidas: 0
+   [F1] catálogo de unidades de negocio: creadas 4 ['breeder', 'broiler', 'grandparent', 'hatchery']
+   [entrypoint] Migration completed
+   [entrypoint] Starting application: true
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   semillas aplicadas
+── 3/5 · Backend ──
+── 4/5 · Frontend ──
+   backend en pie
+   frontend en pie
+
+── 5/5 · Certificación E2E ──
+
+Running 14 tests using 2 workers
+
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+  ✓   2 [procesos] › e2e/sap-hana-inbound.spec.ts:72:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › readiness: el conector se declara simulado, de solo lectura y sin secretos (24ms)
+  ✓   1 [procesos] › e2e/navigation-consistency.spec.ts:59:7 › 004 · navegación y consistencia UI › UX-01 · /poultry redirige al hub estándar y no reaparece la UI legacy (2.4s)
+  ✓   4 [procesos] › e2e/navigation-consistency.spec.ts:66:7 › 004 · navegación y consistencia UI › AC02/AC19 · deep-link a etapa: back visible con fallback canónico al hub (2.6s)
+  ✓   3 [procesos] › e2e/sap-hana-inbound.spec.ts:84:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › Analista SAP: SAP Manager → estado → Sincronizar → job completado → registros (5.6s)
+  ✓   6 [procesos] › e2e/sap-hana-inbound.spec.ts:117:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › las referencias sincronizadas quedan disponibles con su cantidad (117ms)
+  ✓   5 [procesos] › e2e/navigation-consistency.spec.ts:77:7 › 004 · navegación y consistencia UI › AC05/AC06 · browser back/forward mantiene la UI estándar (sin legacy, sin pérdida de sesión) (5.1s)
+  ✓   7 [procesos] › e2e/sap-hana-inbound.spec.ts:139:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › recepción: el flujo ofrece la OC sincronizada; parcial, hasta el límite y BR-18 (5.0s)
+  ✓   9 [procesos] › e2e/sap-hana-inbound.spec.ts:169:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › traslados: la STO sincronizada queda disponible para el flujo que la consume (372ms)
+  ✓  10 [procesos] › e2e/sap-hana-inbound.spec.ts:191:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › fase READ ONLY: exportar y reintentar responden 409 y no existe SQL por HTTP (69ms)
+  ✓   8 [procesos] › e2e/navigation-consistency.spec.ts:93:7 › 004 · navegación y consistencia UI › AC10 · el filtro del listado de lotes se preserva al volver (5.3s)
+  ✓  11 [procesos] › e2e/navigation-consistency.spec.ts:112:7 › 004 · navegación y consistencia UI › AC13 · el RBAC no se evade: sin operations:read la etapa deniega y no hay back (1.6s)
+  ✓  12 [procesos] › e2e/navigation-consistency.spec.ts:119:7 › 004 · navegación y consistencia UI › AC16 · mobile 360px: back visible, sin overflow horizontal (1.6s)
+  ✓  13 [procesos] › e2e/navigation-consistency.spec.ts:133:7 › 004 · navegación y consistencia UI › AC17 · mobile 390px: back visible, sin overflow horizontal (1.6s)
+  ✓  14 [procesos] › e2e/navigation-consistency.spec.ts:142:7 › 004 · navegación y consistencia UI › AC18 · desktop: back visible en la etapa y hub estándar (3.1s)
+
+  14 passed (24.0s)
+exit=0

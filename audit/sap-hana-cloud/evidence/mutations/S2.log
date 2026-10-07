@@ -1,0 +1,41 @@
+S2 · misma clave + mismo hash inserta en lugar de no-op
+ARCHIVO   backend/app/integrations/sap/inbound/service.py
+PRUEBA    tests/test_sap_hana_sync.py::test_sync_duplicate_same_hash_noop
+ESPERADO  la prueba FALLA
+IMPLEMENTATION_COMMIT b07d3044766f8955c9a9c1a7cf92a3207d55b053
+MUTACIÓN INSTALADA SÍ
+EXIT      1
+VEREDICTO DETECTED
+RESTAURACIÓN git restore --source=b07d304 -- backend/app/integrations/sap/inbound/service.py · git diff --exit-code b07d304 -- backend/app: 0 (vacío)
+
+── salida de la prueba (cola) ──
+esc = {'url': 'postgresql://[REDACTADO]@/global_avicola_test?host=/hom....AsyncEngine object at 0x7f09f9bc0140>, autoflush=True, expire_on_commit=False), 'client': 'THW', 'serie': '5278', ...}
+
+    async def test_sync_duplicate_same_hash_noop(esc):
+        primero, _ = await _sync_ok(esc, HanaObject.PLANT)
+        antes = await registros(esc, "plant", solo_vigentes=False)
+        segundo, _ = await _sync_ok(esc, HanaObject.PLANT)
+        despues = await registros(esc, "plant", solo_vigentes=False)
+    
+        assert primero.rows_raw == 2 and primero.rows_noop == 0
+>       assert segundo.rows_raw == 0 and segundo.rows_noop == 2
+E       assert (2 == 0)
+E        +  where 2 = <SapInboundSyncJob plant completed>.rows_raw
+
+tests/test_sap_hana_sync.py:262: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+=============================== warnings summary ===============================
+tests/test_sap_hana_sync.py::test_sync_duplicate_same_hash_noop
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_sap_hana_sync.py::test_sync_duplicate_same_hash_noop - asse...
+1 failed, 1 warning in 1.75s

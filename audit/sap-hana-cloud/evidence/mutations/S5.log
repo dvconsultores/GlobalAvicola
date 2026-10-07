@@ -1,0 +1,41 @@
+S5 · bypass: se ignora SAP_OUTBOUND_ENABLED=false
+ARCHIVO   backend/app/integrations/sap/service.py
+PRUEBA    tests/test_sap_hana_routes.py::test_outbound_disabled
+ESPERADO  la prueba FALLA
+IMPLEMENTATION_COMMIT b07d3044766f8955c9a9c1a7cf92a3207d55b053
+MUTACIÓN INSTALADA SÍ
+EXIT      1
+VEREDICTO DETECTED
+RESTAURACIÓN git restore --source=b07d304 -- backend/app/integrations/sap/service.py · git diff --exit-code b07d304 -- backend/app: 0 (vacío)
+
+── salida de la prueba (cola) ──
+
+http_client = <httpx.AsyncClient object at 0x7fab34dc5910>
+esc = {'url': 'postgresql://[REDACTADO]@/global_avicola_test?host=/hom....AsyncEngine object at 0x7fab361b6380>, autoflush=True, expire_on_commit=False), 'client': 'MWH', 'serie': '3094', ...}
+
+    async def test_outbound_disabled(http_client, esc):
+        cab = _token(esc["ids"]["analista_a"])
+        for camino in ("export", "retry"):
+            r = await http_client.post(f"/api/v1/sap/{camino}", headers=cab, json={})
+>           assert r.status_code == 409, f"{camino}: {r.status_code} {r.text}"
+E           AssertionError: export: 400 {"detail":"No hay movimientos consolidados pendientes de exportación"}
+E           assert 400 == 409
+E            +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_sap_hana_routes.py:378: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+=============================== warnings summary ===============================
+.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_sap_hana_routes.py::test_outbound_disabled - AssertionError...
+1 failed, 1 warning in 2.41s

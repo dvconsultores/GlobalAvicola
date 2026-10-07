@@ -1,0 +1,27 @@
+INICIO 2026-10-07 03:41:53 · verificación de migración d9e0f1a2b3c4 sobre la base de pruebas (pgserver, espacio de usuario)
+head en código: d9e0f1a2b3c4 (head)
+-- 1. estado actual (fresh schema tras la suite) --
+d9e0f1a2b3c4 (head)
+   tablas: 64
+   tablas inbound: sap_entity_mappings, sap_inbound_records, sap_inbound_sync_jobs, sap_inbound_watermarks
+   índices: ix_sap_entity_mappings_company_id, ix_sap_inbound_records_company_id, ix_sap_inbound_records_error, ix_sap_inbound_records_mapping, ix_sap_inbound_records_promotion, ix_sap_inbound_records_sync_job_id, ix_sap_inbound_sync_jobs_company_id, ix_sap_inbound_sync_jobs_object_type, ix_sap_inbound_sync_jobs_status, ix_sap_inbound_sync_jobs_sync_request_id, ix_sap_inbound_watermarks_company_id, sap_entity_mappings_pkey, sap_inbound_records_pkey, sap_inbound_sync_jobs_pkey, sap_inbound_watermarks_pkey, uq_sap_entity_mappings_key, uq_sap_inbound_records_current, uq_sap_inbound_records_version, uq_sap_inbound_watermarks_scope
+   constraints únicos/FK: sap_entity_mappings_company_id_fkey, sap_entity_mappings_created_by_id_fkey, sap_entity_mappings_farm_id_fkey, sap_entity_mappings_house_id_fkey, sap_inbound_records_company_id_fkey, sap_inbound_records_sync_job_id_fkey, sap_inbound_watermarks_company_id_fkey, uq_sap_entity_mappings_key, uq_sap_inbound_records_version, uq_sap_inbound_watermarks_scope
+   enums nuevos (esperado 0): 3
+-- 2. downgrade -1 --
+INFO  [alembic.runtime.migration] Running downgrade d9e0f1a2b3c4 -> c8d9e0f1a2b3, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+c8d9e0f1a2b3
+   tablas tras downgrade: 60 · inbound restantes: 0 (esperado 0) · tablas existentes intactas: 7/7
+-- 3. upgrade head (existing schema upgrade) --
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+d9e0f1a2b3c4 (head)
+   tablas tras upgrade: 64 (esperado 64)
+-- 4. metadata ORM vs esquema (tablas inbound) --
+   sap_inbound_sync_jobs: columnas distintas ORM/BD = []
+   sap_inbound_records: columnas distintas ORM/BD = []
+   sap_inbound_watermarks: columnas distintas ORM/BD = []
+   sap_entity_mappings: columnas distintas ORM/BD = []
+FIN 2026-10-07 03:41:59
+-- 5. aclaración: el '3' de arriba son los tipos compuestos de fila que PostgreSQL crea por tabla (typtype c), no enums --
+   tipos con prefijo sap_inbound: sap_inbound_records:c, sap_inbound_sync_jobs:c, sap_inbound_watermarks:c
+   ENUMS nuevos (typtype='e'): 0 (esperado 0)
+MIGRATION = PASS (upgrade fresh · downgrade -1 · upgrade sobre esquema existente · 64 tablas · índices/constraints presentes · 0 enums · ORM == BD)

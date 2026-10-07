@@ -1,6 +1,6 @@
 # SAP-HANA-CLOUD · 13_TRACEABILITY
 
-Fecha: 2026-10-06 · SPEC 005 · Trazabilidad de spec development
+Fecha: 2026-10-06 (spec) · 2026-10-07 (cierre local) · SPEC 005 · Trazabilidad de spec development
 
 ---
 
@@ -19,8 +19,14 @@ DISCOVERY → /specify → /clarify → /plan → /tasks → /analyze → RED �
 | /plan | `plan.md`, `data-model.md`, `quickstart.md` | DONE |
 | /tasks | `tasks.md` (T001…T057, T101–T102) | DONE |
 | /analyze | §3 de este documento | DONE — `OPEN_TECHNICAL_CONTRADICTIONS = 0` |
-| RED | `evidence/red/` | DONE |
-| Resto | ver `11_LOCAL_CERTIFICATION.md` | — |
+| RED | `evidence/red/` | DONE — commit `44785d7` |
+| /implement → TARGETED GREEN | `evidence/green/targeted_after_fix.log` (263) | DONE |
+| FULL REGRESSION | 1630 / 0 / 49 (`evidence/regression/`) | DONE |
+| IMPLEMENTATION COMMIT | `b07d3044766f8955c9a9c1a7cf92a3207d55b053` | DONE |
+| SENSITIVITY S1–S8 + EXPLICIT SHA RESTORE | 8/8 DETECTED · `FINAL_DIFF = 0` (`10_…`) | DONE |
+| POST-MUTATION REGRESSION | backend 1630/0/49 · frontend 539 · tsc · build · E2E 14 · migración · arranque sin credenciales | DONE |
+| LOCAL CERTIFICATION | `11_LOCAL_CERTIFICATION.md` → `READY_FOR_SAP_CREDENTIALS` | DONE |
+| EVIDENCE COMMIT · PUSH · REMOTE SHA VERIFY | §5 | ver §5 |
 
 ## 2 · Mandato → spec
 
@@ -83,3 +89,22 @@ OPEN_TECHNICAL_CONTRADICTIONS = 0
 
 - Ninguna tabla SAP está verificada contra el landscape real (SAP-0P = 0/12). Las definiciones declaran `LEGACY_CONFIRMED` o `CANDIDATE`; su validación es el paso P5 del runbook.
 - La certificación local la emite el agente ejecutor; el cierre formal corresponde al Owner (constitución Art. 9).
+
+## 5 · Commits y verificación remota
+
+| Hito | SHA |
+|---|---|
+| Spec + RED | `44785d7` |
+| Implementación (`IMPLEMENTATION_SHA`, fuente de restauración de S1–S8) | `b07d3044766f8955c9a9c1a7cf92a3207d55b053` |
+| Certificación y evidencia (`CERTIFICATION_SHA`) | el commit que introduce `11_LOCAL_CERTIFICATION.md` y este §5 (`git log -1 -- audit/sap-hana-cloud/11_LOCAL_CERTIFICATION.md`) |
+
+Push a `origin/main` según AOD-29; `REMOTE_SHA_MATCH` se verifica con `git rev-parse HEAD` frente a `git ls-remote origin refs/heads/main` y queda registrado en la salida final de la ejecución. Rama: `main`; `NEW_BRANCH_CREATED = NO`.
+
+## 6 · Estado final
+
+```text
+LOCAL_IMPLEMENTATION = CERTIFIED
+SAP_HANA_REAL        = PENDING_CREDENTIALS
+READINESS            = READY_FOR_SAP_CREDENTIALS
+NEXT_STEP            = LOAD_SAP_HANA_READONLY_CREDENTIALS_AND_RUN_REAL_PROBE (12_REAL_SAP_ACTIVATION_RUNBOOK.md)
+```

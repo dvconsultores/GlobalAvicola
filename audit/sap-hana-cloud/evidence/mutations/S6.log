@@ -1,0 +1,41 @@
+S6 · el filtro de sociedad se concatena al SQL en lugar de ir como bind
+ARCHIVO   backend/app/integrations/sap/inbound/client.py
+PRUEBA    tests/test_sap_hana_client.py::test_hana_client_executes_registry_sql_with_bind_parameters
+ESPERADO  la prueba FALLA
+IMPLEMENTATION_COMMIT b07d3044766f8955c9a9c1a7cf92a3207d55b053
+MUTACIÓN INSTALADA SÍ
+EXIT      1
+VEREDICTO DETECTED
+RESTAURACIÓN git restore --source=b07d304 -- backend/app/integrations/sap/inbound/client.py · git diff --exit-code b07d304 -- backend/app: 0 (vacío)
+
+── salida de la prueba (cola) ──
+self = <SapHanaReadOnlyClient driver=hdbcli configured=True>
+opciones = {'address': 'hana.invalid', 'port': 443, 'user': 'GA_RO_TEST', 'password': 's3cr3t-P4ss!-no-debe-salir', ...}
+sql = 'SELECT W.MANDT, W.WERKS, W.NAME1, W.NAME2, W.ORT01, W.LAND1, K.BUKRS FROM "SAPFAKE".T001W W JOIN "SAPFAKE".T001K K ON...W.MANDT = :mandt AND K.BUKRS = \'1000\' OR \'1\'=\'1\' ORDER BY W.MANDT, W.WERKS LIMIT :page_limit OFFSET :page_offset'
+binds = {'mandt': '100', 'bukrs': "1000' OR '1'='1", 'page_limit': 5, 'page_offset': 0}
+limite = 5
+
+    def _ejecutar(self, opciones: dict[str, Any], sql: str, binds: dict[str, Any],
+                  limite: int) -> tuple[list[str], list[tuple]]:
+        conexion = cursor = None
+        with self._semaforo:
+            try:
+                conexion = self._fabrica()(**opciones)
+                cursor = conexion.cursor()
+                if hasattr(cursor, "setquerytimeout"):
+                    cursor.setquerytimeout(int(self._cfg.query_timeout))
+                cursor.execute(sql, binds)
+                columnas = [d[0] for d in (cursor.description or ())]
+                return columnas, list(cursor.fetchmany(limite))
+            except SapInboundError:
+                raise
+            except Exception as exc:  # noqa: BLE001 — todo fallo del driver se clasifica
+>               raise self._clasificar(exc) from None
+E               app.integrations.sap.inbound.errors.SapInboundError: SAP_QUERY_CONTRACT_ERROR: [257] sql syntax error: sentencia fuera del query registry
+
+app/integrations/sap/inbound/client.py:137: SapInboundError
+------------------------------ Captured log call -------------------------------
+WARNING  ga.sap.inbound:client.py:164 SAP HANA SAP_QUERY_CONTRACT_ERROR: [257] sql syntax error: sentencia fuera del query registry
+=========================== short test summary info ============================
+FAILED tests/test_sap_hana_client.py::test_hana_client_executes_registry_sql_with_bind_parameters
+1 failed in 0.27s

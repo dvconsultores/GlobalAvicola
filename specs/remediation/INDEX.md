@@ -25,7 +25,7 @@ Todas creadas el 2026-09-03 como `POST-AUDIT REMEDIATION SPEC`. Ninguna pretende
 | `GA-REM-015` | Certificación de tests de backend | QA | P1 | **`CERTIFIED`** | F | [GA-REM-015](GA-REM-015-BACKEND-TEST-CERTIFICATION.md) |
 | `GA-REM-016` | Certificación E2E y de procesos | QA + CERTIFICATION | P1 | `SPEC_DRAFT` — **en uso** por 15 informes de certificación; pasar a `SPEC_READY` en `WAVE F` (`R-149`). **`GA-GOV-03` (2026-09-13):** suite verde reproducible + CI en `push` + regla de evidencia publicada — la recertificación E2E de procesos queda **habilitada** (T12 del programa pre-SAP) | G | [GA-REM-016](GA-REM-016-E2E-AND-PROCESS-CERTIFICATION.md) |
 | `GA-REM-018` | Recuperación de trazabilidad Spec Development | METHODOLOGY | P1 | `SPEC_READY` | I | [GA-REM-018](GA-REM-018-SPEC-TRACEABILITY-RECOVERY.md) |
-| `GA-REM-017` | Integración SAP real | INTEGRATION | P1 | **`BLOCKED_EXTERNAL`** | H | [GA-REM-017](GA-REM-017-SAP-REAL-INTEGRATION.md) |
+| `GA-REM-017` | Integración SAP real | INTEGRATION | P1 | **`BLOCKED_EXTERNAL`** · inbound `IMPLEMENTED_LOCALLY_PENDING_EXTERNAL_CREDENTIALS` (SPEC 005, enmienda 2026-10-07) | H | [GA-REM-017](GA-REM-017-SAP-REAL-INTEGRATION.md) |
 | `GA-REM-019` | Reevaluación de deuda P2/P3 | TECHNICAL DEBT | P2 | `DEFERRED` | J | [GA-REM-019](GA-REM-019-P2-P3-DEBT-REASSESSMENT.md) |
 | `GA-REM-024` | Ejecución de migraciones antes de servir | INFRASTRUCTURE + RELEASE SAFETY | **P0** | **`CERTIFIED`** (arranque real; `R-58` sin rastro abierto en el backlog) | — | [GA-REM-024](GA-REM-024-MIGRATION-ON-DEPLOY.md) |
 | `GA-REM-025` | Baseline limpio del entorno compartido | ENVIRONMENT + TEST DATA STRATEGY | P1 | **`CERTIFIED`** | — | [GA-REM-025](GA-REM-025-CLEAN-DEVELOPMENT-BASELINE.md) |
