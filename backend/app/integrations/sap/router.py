@@ -1,7 +1,7 @@
 """SAP Integration REST API router."""
 from typing import Optional
 
-from fastapi import APIRouter, Depends, Query
+from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ...database import get_db
@@ -168,17 +168,38 @@ async def check_sap_connection(
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("sap", "read")),
 ):
-    """Estado real del adaptador SAP en uso.
+    """Estado real de la integración, por dirección. SPEC 005 `§33`…`§35`.
 
-    GA-REM-010: `delivers_to_sap` indica si el adaptador realiza una entrega
-    verificada. Un adaptador manual o simulado informa `false` y no afirma
-    conectividad con un sistema SAP real.
+    `inbound_hana` es el conector SAP HANA Cloud de solo lectura: `configured` no es
+    `connected`, y `connected` solo es verdadero tras una consulta de humo que respondió.
+    `outbound` es el envío a SAP, deshabilitado en la fase READ ONLY.
+
+    GA-REM-010: `delivers_to_sap` indica si hay una entrega verificada. Ningún adaptador de
+    esta fase la realiza. Las claves de primer nivel se conservan por compatibilidad:
+    `connected` solo es verdadero ante una conexión **real** (un simulador no cuenta).
     """
-    adapter = SapService(db, current_user).get_adapter()
-    is_connected = await adapter.check_connection()
+    from ...config import settings
+    from .inbound.service import SapInboundService
+
+    inbound = await SapInboundService(db, current_user).check_connection()
+
+    habilitado = bool(settings.SAP_OUTBOUND_ENABLED)
+    entrega = False
+    try:
+        adapter = SapService(db, current_user).get_adapter()
+        nombre = await adapter.get_adapter_name()
+        entrega = bool(adapter.delivers_to_sap)
+    except HTTPException as exc:
+        nombre = f"no disponible ({exc.status_code})"
+    heredado = "real" if entrega else "manual"
+
     return {
-        "connected": is_connected,
-        "adapter": await adapter.get_adapter_name(),
-        "delivers_to_sap": adapter.delivers_to_sap,
-        "mode": "manual" if not adapter.delivers_to_sap else "real",
+        "inbound_hana": inbound,
+        "outbound": {"enabled": habilitado, "delivers_to_sap": entrega, "adapter": nombre,
+                     "mode": heredado if habilitado else "disabled_read_only_phase"},
+        # ── Claves heredadas (GA-REM-010), con su significado de siempre ──
+        "connected": bool(inbound.get("connected")) and not inbound.get("simulated"),
+        "adapter": nombre,
+        "delivers_to_sap": entrega,
+        "mode": heredado,
     }

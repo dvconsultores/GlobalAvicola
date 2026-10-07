@@ -17,6 +17,7 @@ from fastapi import HTTPException
 from app.integrations.sap.inbound.errors import ErrorCode
 from app.integrations.sap.inbound.fake_hana import FakeHana, FakeHanaError
 from app.integrations.sap.inbound.registry import HanaObject
+from tests.time_reference import iso_days_ago
 from tests.sap_hana_fixtures import (  # noqa: F401  (`esc` es una fixture)
     SECRETO,
     cfg_de_prueba,
@@ -26,11 +27,15 @@ from tests.sap_hana_fixtures import (  # noqa: F401  (`esc` es una fixture)
     referencias,
     registros,
     sincronizar,
+    ventana_amplia,
 )
 
 pytestmark = pytest.mark.asyncio
 
-VENTANA = {"date_from": "2000-01-01", "date_to": "2099-12-31"}
+VENTANA = ventana_amplia()
+# Ventana cerrada de 30 días, relativa al reloj de la suite (sin literales que caducan, R-28).
+DESDE, HASTA = iso_days_ago(40), iso_days_ago(10)
+DESDE_SAP, HASTA_SAP = DESDE.replace("-", ""), HASTA.replace("-", "")
 
 
 def _uno(jobs, objeto):
@@ -202,18 +207,18 @@ async def test_sync_all_objects_in_one_request(esc):
 
 async def test_sync_window_is_bound_and_bounded(esc):
     _, fake = await sincronizar(esc, objetos=[HanaObject.MATERIAL_MOVEMENT],
-                                date_from="2026-09-01", date_to="2026-09-30")
+                                date_from=DESDE, date_to=HASTA)
     sql, params = next(e for e in fake.executed if "MATDOC" in e[0])
-    assert params["date_from"] == "20260901" and params["date_to"] == "20260930"
-    assert "20260901" not in sql
+    assert params["date_from"] == DESDE_SAP and params["date_to"] == HASTA_SAP
+    assert DESDE_SAP not in sql
 
     with pytest.raises(HTTPException) as exc:
         await sincronizar(esc, objetos=[HanaObject.MATERIAL_MOVEMENT],
-                          date_from="2020-01-01", date_to="2026-01-01")
+                          date_from=iso_days_ago(800), date_to=iso_days_ago(0))
     assert exc.value.status_code == 422, "una ventana de años es un scan encubierto"
     with pytest.raises(HTTPException):
         await sincronizar(esc, objetos=[HanaObject.MATERIAL_MOVEMENT],
-                          date_from="2026-09-30", date_to="2026-09-01")
+                          date_from=iso_days_ago(1), date_to=iso_days_ago(30))
 
 
 async def test_sync_default_window_uses_lookback(esc):
@@ -291,12 +296,11 @@ async def test_sync_changed_hash_versioned(esc):
 # ── Watermark (`AC-HANA-30`) ─────────────────────────────────────────────────
 
 async def test_sync_watermark_advances_after_success(esc):
-    job, _ = await _sync_ok(esc, HanaObject.MATERIAL_MOVEMENT,
-                            date_from="2026-09-01", date_to="2026-09-30")
+    job, _ = await _sync_ok(esc, HanaObject.MATERIAL_MOVEMENT, date_from=DESDE, date_to=HASTA)
     marcas = await filas(esc, "SELECT * FROM sap_inbound_watermarks WHERE company_id = :c "
                               "AND object_type = 'material_movement'", c=esc["a"])
     assert len(marcas) == 1
-    assert marcas[0]["watermark_value"] == "20260930" == job.watermark_to
+    assert marcas[0]["watermark_value"] == HASTA_SAP == job.watermark_to
     assert marcas[0]["scope_key"] == f"client:{esc['client']}|bukrs:1000"
     assert marcas[0]["last_record_count"] == job.rows_read and marcas[0]["last_success_at"]
 
@@ -352,6 +356,18 @@ async def test_unknown_company_pending_mapping(esc):
     assert r["9100"]["promoted_reference_id"] is None
     assert "9100" not in [x["sap_code"] for x in await referencias(esc, "PLANT")]
     assert job.rows_pending_mapping >= 1
+
+    # Y con un objeto que no depende de ningún centro: aquí la sociedad es la única barrera,
+    # de modo que si dejara de comprobarse la fila se promovería.
+    ajeno = {**datos["vendor"][0], "LIFNR": "0000999999", "BUKRS": "9000", "NAME1": "Proveedor Ajeno"}
+    fake = FakeHana(datos)
+    fake.inject["vendor.v1"] = [ajeno]
+    await _sync_ok(esc, HanaObject.VENDOR, fake=fake)
+    v = next(x for x in await registros(esc, "vendor") if x["payload_json"]["LIFNR"] == "0000999999")
+    assert v["mapping_status"] == "PENDING_MAPPING" and v["promotion_status"] == "PENDING"
+    assert v["error_code"] == ErrorCode.SAP_MAPPING_PENDING.value
+    assert v["promoted_reference_id"] is None
+    assert "0000999999" not in [x["sap_code"] for x in await referencias(esc, "VENDOR")]
 
 
 async def test_unknown_plant_pending_mapping(esc):
@@ -478,11 +494,10 @@ async def test_job_error_message_is_sanitized(esc):
 # ── Auditoría (`§42`) ────────────────────────────────────────────────────────
 
 async def test_sync_is_reconstructible(esc):
-    job, _ = await _sync_ok(esc, HanaObject.MATERIAL_MOVEMENT,
-                            date_from="2026-09-01", date_to="2026-09-30")
+    job, _ = await _sync_ok(esc, HanaObject.MATERIAL_MOVEMENT, date_from=DESDE, date_to=HASTA)
     assert job.company_id == esc["a"] and job.initiated_by_id == esc["ids"]["analista_a"]
     assert job.trigger == "manual" and job.source_system == "SAP_HANA_CLOUD"
-    assert job.filters["date_from"] == "20260901" and job.filters["company_codes"] == ["1000"]
+    assert job.filters["date_from"] == DESDE_SAP and job.filters["company_codes"] == ["1000"]
     assert SECRETO not in str(job.filters)
     assert job.started_at and job.completed_at and job.completed_at >= job.started_at
     for contador in ("rows_read", "rows_raw", "rows_noop", "rows_valid", "rows_invalid",

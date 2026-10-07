@@ -51,7 +51,17 @@ async def test_list_consolidated(auth_headers, client):
 
 
 @pytest.mark.asyncio
-async def test_export_to_sap(auth_headers, client):
+async def test_export_to_sap(auth_headers, client, monkeypatch):
+    """SPEC 005 `§38`: en la fase READ ONLY el envío a SAP está deshabilitado (409).
+
+    Con el opt-in explícito la ruta de artefacto manual sigue funcionando como antes: la
+    arquitectura de export no se borra, solo queda apagada por defecto.
+    """
+    resp = await client.post("/api/v1/sap/export", headers=auth_headers, json={})
+    assert resp.status_code == 409
+    assert resp.json()["detail"]["code"] == "SAP_OUTBOUND_DISABLED_READ_ONLY_PHASE"
+
+    monkeypatch.setattr(settings, "SAP_OUTBOUND_ENABLED", True)
     resp = await client.post("/api/v1/sap/export", headers=auth_headers, json={})
     # May return 200 or 400 if nothing to export
     assert resp.status_code in (200, 400)

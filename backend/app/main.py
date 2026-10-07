@@ -78,10 +78,22 @@ async def lifespan(app: FastAPI):
         vigilante = asyncio.create_task(vigilar_revisiones_pendientes(
             settings.NOTIFICATION_SLA_SCAN_SECONDS))
 
+    # SPEC 005 `§40`. Sincronización inbound programada: apagada por defecto, nunca en las
+    # pruebas, y aun encendida no llama a HANA si la configuración está incompleta.
+    vigilante_sap = None
+    if (settings.FEATURE_SAP_ENABLED and settings.SAP_HANA_SYNC_ENABLED
+            and os.environ.get("GA_TEST_ENV") != "1"):
+        from .integrations.sap.inbound.scheduler import vigilar_sap_inbound
+
+        vigilante_sap = asyncio.create_task(vigilar_sap_inbound(
+            settings.SAP_HANA_SYNC_INTERVAL_SECONDS))
+
     yield
 
     if vigilante is not None:
         vigilante.cancel()
+    if vigilante_sap is not None:
+        vigilante_sap.cancel()
 
 
 app = FastAPI(
@@ -172,6 +184,7 @@ from .business_units.router import router as business_units_router
 # SAP Integration: solo se carga si el feature flag está activo
 if settings.FEATURE_SAP_ENABLED:
     from .integrations.sap.router import router as sap_router
+    from .integrations.sap.inbound.router import router as sap_inbound_router
 
 app.include_router(auth_router, prefix="/api/v1", tags=["Auth & Users"])
 app.include_router(masters_router, prefix="/api/v1", tags=["Masters"])
@@ -200,6 +213,8 @@ app.include_router(business_units_router, prefix="/api/v1", tags=["Business Unit
 
 if settings.FEATURE_SAP_ENABLED:
     app.include_router(sap_router, prefix="/api/v1", tags=["SAP Integration"])
+    # SPEC 005: inbound SAP HANA Cloud, solo lectura. Arranca sin credenciales.
+    app.include_router(sap_inbound_router, prefix="/api/v1", tags=["SAP Inbound (READ ONLY)"])
 
 
 # GA-REM-002 AC08: ninguna ruta puede quedarse sin decisión de autorización. Se comprueba

@@ -50,6 +50,15 @@ def adaptador_de_prueba(fake: FakeHana, cfg: HanaSettings) -> HanaCloudReadOnlyA
         cfg, client=SapHanaReadOnlyClient(cfg, connect_factory=fake.connect))
 
 
+def ventana_amplia() -> dict:
+    """Ventana que cubre todo el dataset sin superar el máximo de 366 días del servicio."""
+    import datetime as dt
+
+    hoy = dt.date.today()
+    return {"date_from": (hoy - dt.timedelta(days=200)).isoformat(),
+            "date_to": (hoy + dt.timedelta(days=100)).isoformat()}
+
+
 def _mandante() -> str:
     return "".join(random.choice("ABCDEFGHJKLMNPQRSTUVWXYZ") for _ in range(3))
 

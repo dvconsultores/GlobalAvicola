@@ -27,38 +27,38 @@
 
 | ID | Capa | Archivo | Objetivo | AC | Depende | Test | Estado |
 |---|---|---|---|---|---|---|---|
-| T020 | config | `app/config.py`, `.env.example`, `pyproject.toml`, `requirements.txt` | variables `SAP_HANA_*`, `SAP_OUTBOUND_ENABLED`, `hdbcli` | 07, 34 | T010 | client | DONE |
-| T021 | backend | `inbound/errors.py`, `settings.py` | errores cerrados, faltantes, política TLS | 08, 09, 34 | T020 | client | PENDING |
+| T020 | config | `app/config.py`, `.env.example`, `docker-compose.yml`, `pyproject.toml`, `requirements.txt`, `uv.lock` | variables `SAP_HANA_*`, `SAP_OUTBOUND_ENABLED`, `hdbcli` | 07, 34 | T010 | client | DONE |
+| T021 | backend | `inbound/errors.py`, `settings.py` | errores cerrados, faltantes, política TLS | 08, 09, 34 | T020 | client | DONE |
 | T022 | backend | `inbound/sql_guard.py` | guard de solo lectura | 06, 11 | T010 | guard | DONE |
-| T023 | backend | `inbound/registry.py` | 14 definiciones | 03, 12–24 | T022 | registry | PENDING |
-| T024 | backend | `inbound/client.py`, `fake_hana.py`, `adapter.py` | cliente lazy fuera del event loop, fake, adaptador | 08–12, 35 | T023 | client | PENDING |
-| T025 | bd | `inbound/models.py`, `alembic/versions/a7b8c9d0e1f2_…` | 4 tablas, `downgrade` | 25, 30 | T011 | migración + sync | DONE |
-| T026 | backend | `inbound/staging.py`, `mapping.py` | validación, DTO, hash, mapping fail-closed | 26–29 | T025 | sync | PENDING |
-| T027 | backend | `inbound/promotion.py` | upsert de referencias, OC con BR-18 | 31–33 | T026 | promotion | PENDING |
-| T028 | backend | `inbound/service.py`, `schemas.py` | readiness, sync, watermark, auditoría, listados, mappings | 29, 30, 34, 35 | T027 | sync, routes | PENDING |
-| T029 | backend | `inbound/router.py`, `main.py`, `route_scope.py`, `sap_contract.py` | rutas con RBAC, alcance y transacción | 04, 10, 36–39 | T028 | routes | PENDING |
-| T030 | backend | `sap/router.py`, `sap/service.py` | outbound 409; `connection-check` inbound/outbound | 05, 35 | T029 | routes | PENDING |
-| T031 | backend | `inbound/scheduler.py`, `main.py` | scheduler sin solape, apagado en tests | — | T028 | sync | PENDING |
-| T032 | scripts | `scripts/run_tests.sh`, `scripts/data_classification.py` | 64 tablas; clasificación | 42 | T025 | suite | PENDING |
-| T033 | test | suites existentes con `/sap/export` y `/sap/retry` | opt-in explícito de outbound para seguir probando la arquitectura de export | 42 | T030 | suite | PENDING |
+| T023 | backend | `inbound/registry.py` | 14 definiciones | 03, 12–24 | T022 | registry | DONE |
+| T024 | backend | `inbound/client.py`, `fake_hana.py`, `adapter.py` | cliente lazy fuera del event loop, fake, adaptador | 08–12, 35 | T023 | client | DONE |
+| T025 | bd | `inbound/models.py`, `alembic/versions/d9e0f1a2b3c4_sap_hana_inbound.py` | 4 tablas, `downgrade` | 25, 30 | T011 | migración + sync | DONE |
+| T026 | backend | `inbound/staging.py`, `mapping.py` | validación, DTO, hash, mapping fail-closed | 26–29 | T025 | sync | DONE |
+| T027 | backend | `inbound/promotion.py` | upsert de referencias, OC con BR-18 | 31–33 | T026 | promotion | DONE |
+| T028 | backend | `inbound/service.py`, `schemas.py` | readiness, sync, watermark, auditoría, listados, mappings | 29, 30, 34, 35 | T027 | sync, routes | DONE |
+| T029 | backend | `inbound/router.py`, `main.py`, `route_scope.py`, `sap_contract.py` | rutas con RBAC, alcance y transacción | 04, 10, 36–39 | T028 | routes | DONE |
+| T030 | backend | `sap/router.py`, `sap/service.py` | outbound 409; `connection-check` inbound/outbound | 05, 35 | T029 | routes | DONE |
+| T031 | backend | `inbound/scheduler.py`, `main.py` | scheduler sin solape, apagado en tests | — | T028 | sync | DONE |
+| T032 | scripts | `scripts/run_tests.sh`, `scripts/data_classification.py` | 64 tablas; clasificación | 42 | T025 | suite | DONE |
+| T033 | test | suites existentes con `/sap/export` y `/sap/retry` | opt-in explícito de outbound para seguir probando la arquitectura de export | 42 | T030 | suite | DONE |
 
 ## Fase D — Frontend y E2E
 
 | ID | Capa | Archivo | Objetivo | AC | Depende | Test | Estado |
 |---|---|---|---|---|---|---|---|
-| T040 | frontend | `pages/sap/SapManagerPage.tsx`, `services/sap.service.ts` | panel inbound; export oculto | 05 | T030 | vitest | PENDING |
-| T041 | frontend | `public/locales/{es,en}/translation.json` | i18n ES/EN | 43 | T040 | paridad | PENDING |
-| T042 | test | `pages/sap/__tests__/sapInbound.test.tsx`, `gaFe04.sapGates.test.tsx` | gates y estado | 43 | T040 | vitest | PENDING |
-| T043 | e2e | `e2e/sap-hana-inbound.spec.ts`, `scripts_e2e.sh` | flujo con fake HANA | 46 | T042 | playwright | PENDING |
+| T040 | frontend | `pages/sap/SapManagerPage.tsx`, `pages/sap/SapInboundPanel.tsx`, `services/sap.service.ts` | panel inbound; export oculto | 05 | T030 | vitest | DONE |
+| T041 | frontend | `public/locales/{es,en}/translation.json` | i18n ES/EN | 43 | T040 | paridad | DONE |
+| T042 | test | `pages/sap/__tests__/sapInbound.test.tsx`, `gaFe04.sapGates.test.tsx` | gates y estado | 43 | T040 | vitest | DONE |
+| T043 | e2e | `e2e/sap-hana-inbound.spec.ts`, `scripts_e2e.sh` | flujo con fake HANA | 46 | T042 | playwright | DONE |
 
 ## Fase E — Verificación y cierre
 
 | ID | Capa | Objetivo | AC | Depende | Evidencia | Estado |
 |---|---|---|---|---|---|---|
-| T050 | test | verde dirigido | 41 | T033 | `evidence/green/` | PENDING |
+| T050 | test | verde dirigido | 41 | T033 | `evidence/green/` | DONE |
 | T051 | test | regresión completa backend | 42 | T050 | `evidence/regression/` | PENDING |
-| T052 | test | vitest completo, `tsc -b`, `vite build` | 43–45 | T042 | `evidence/build/` | PENDING |
-| T053 | test | E2E fake HANA + navegación 8/8 | 46 | T043 | `evidence/e2e/` | PENDING |
+| T052 | test | vitest completo, `tsc -b`, `vite build` | 43–45 | T042 | `evidence/build/` | DONE |
+| T053 | test | E2E fake HANA + navegación 8/8 | 46 | T043 | `evidence/e2e/` | DONE |
 | T054 | git | commit de implementación | 51 | T051–T053 | SHA | PENDING |
 | T055 | test | sensibilidad S1–S8 + restauración por SHA + post-mutación | 47, 48 | T054 | `10_MUTATION_EVIDENCE` | PENDING |
 | T056 | docs | `audit/sap-hana-cloud/03…08, 10…13`, GA-REM-017 | catálogo, seguridad, mapping, runbook, certificación | 07, 55 | T055 | docs | PENDING |

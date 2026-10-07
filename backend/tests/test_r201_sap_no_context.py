@@ -279,6 +279,10 @@ async def test_r201_04_retry_sin_contexto_no_reenvia(http_client, esc201,
     no el comportamiento del servidor que esta prueba mide.
     """
     monkeypatch.setenv("SAP_EXPORT_DIR", str(tmp_path))
+    # SPEC 005 `§38`: el outbound está deshabilitado por defecto (409). Este control mide la
+    # guarda de CONTEXTO de la arquitectura de export, así que la reabre explícitamente.
+    from app.config import settings
+    monkeypatch.setattr(settings, "SAP_OUTBOUND_ENABLED", True)
     r = await http_client.post("/api/v1/sap/retry",
                                headers=_token(esc201["u_global"]), json={})
     assert r.status_code in CUATROXX, r.text
@@ -293,6 +297,10 @@ async def test_r201_05_global_situada_opera_su_empresa(http_client, esc201,
                                                      monkeypatch, tmp_path):
     """`AC-R201-05` (control): situada en A ve y reintenta solo lo de A."""
     monkeypatch.setenv("SAP_EXPORT_DIR", str(tmp_path))
+    # SPEC 005 `§38`: el outbound está deshabilitado por defecto (409). Este control mide la
+    # guarda de CONTEXTO de la arquitectura de export, así que la reabre explícitamente.
+    from app.config import settings
+    monkeypatch.setattr(settings, "SAP_OUTBOUND_ENABLED", True)
     cab = _token(esc201["u_global"], company_id=esc201["a"])
     r = await http_client.get("/api/v1/sap/references", headers=cab)
     assert r.status_code == 200 and r.json()["total"] == 2, r.text
@@ -311,6 +319,10 @@ async def test_r201_06_actor_de_empresa_intacto(http_client, esc201,
                                               monkeypatch, tmp_path):
     """`AC-R201-06` (control): el actor de empresa A conserva su comportamiento."""
     monkeypatch.setenv("SAP_EXPORT_DIR", str(tmp_path))
+    # SPEC 005 `§38`: el outbound está deshabilitado por defecto (409). Este control mide la
+    # guarda de CONTEXTO de la arquitectura de export, así que la reabre explícitamente.
+    from app.config import settings
+    monkeypatch.setattr(settings, "SAP_OUTBOUND_ENABLED", True)
     cab = _token(esc201["u_a"])
     r = await http_client.get("/api/v1/sap/references", headers=cab)
     assert r.status_code == 200 and r.json()["total"] == 2, r.text

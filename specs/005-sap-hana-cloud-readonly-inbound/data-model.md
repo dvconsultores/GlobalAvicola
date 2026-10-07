@@ -1,6 +1,6 @@
 # Data Model — SPEC 005
 
-**Migración**: `a7b8c9d0e1f2_sap_hana_inbound` (revisa `z6a7b8c9d0e1`) · aditiva · `downgrade` funcional · sin enums PostgreSQL nuevos (estados `String`)
+**Migración**: `d9e0f1a2b3c4_sap_hana_inbound` (revisa `c8d9e0f1a2b3`) · aditiva · `downgrade` funcional · sin enums PostgreSQL nuevos (estados `String`)
 
 ---
 

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { formatFechaHora } from '../../utils/dates'
 import {
  RefreshCw, CheckCircle, XCircle, Package, Upload, Clock,
- Send, AlertTriangle, FileText, Building2,
+ Send, AlertTriangle, FileText, Building2, Database, ListChecks,
 } from 'lucide-react'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
@@ -13,15 +13,23 @@ import SubNavHeader from '../../components/layout/SubNavHeader'
 import { KpiCard, Badge } from '../../components/ui'
 import { useCompanyStore } from '../../stores/company.store'
 import { useAuthStore } from '../../stores/auth.store'
+import SapInboundPanel, {
+ SapInboundErrors, SapInboundObjects, SapInboundRecords,
+ inboundStatusLabel, inboundStatusTone, tr,
+} from './SapInboundPanel'
 
-type SapTab = 'overview' | 'pending' | 'sent' | 'errors' | 'log'
+type SapTab = 'inbound' | 'records' | 'inboundErrors' | 'overview' | 'pending' | 'sent' | 'errors' | 'log'
 
-const SAP_TABS = [
- { key: 'overview' as SapTab, labelKey: 'sap.overview', icon: RefreshCw },
- { key: 'pending' as SapTab, labelKey: 'sap.pending', icon: Clock },
- { key: 'sent' as SapTab, labelKey: 'sap.sent', icon: Send },
- { key: 'errors' as SapTab, labelKey: 'sap.errors', icon: AlertTriangle },
- { key: 'log' as SapTab, labelKey: 'sap.log', icon: FileText },
+// SPEC 005: la fase es READ ONLY, así que la pantalla abre por el inbound.
+const SAP_TABS: { key: SapTab; labelKey: string; fallback: string; icon: typeof RefreshCw }[] = [
+ { key: 'inbound', labelKey: 'sap.inbound.tabObjects', fallback: 'Objetos SAP', icon: Database },
+ { key: 'records', labelKey: 'sap.inbound.tabRecords', fallback: 'Registros', icon: ListChecks },
+ { key: 'inboundErrors', labelKey: 'sap.inbound.tabErrors', fallback: 'Errores de sincronización', icon: AlertTriangle },
+ { key: 'overview', labelKey: 'sap.overview', fallback: 'General', icon: RefreshCw },
+ { key: 'pending', labelKey: 'sap.pending', fallback: 'Pendientes', icon: Clock },
+ { key: 'sent', labelKey: 'sap.sent', fallback: 'Enviados', icon: Send },
+ { key: 'errors', labelKey: 'sap.errors', fallback: 'Errores', icon: AlertTriangle },
+ { key: 'log', labelKey: 'sap.log', fallback: 'Bitácora', icon: FileText },
 ]
 
 export default function SapManagerPage() {
@@ -30,7 +38,12 @@ export default function SapManagerPage() {
  const toast = useToast()
  const { user } = useAuthStore()
  const { activeCompanyName } = useCompanyStore()
- const [activeTab, setActiveTab] = useState<SapTab>('overview')
+ const [activeTab, setActiveTab] = useState<SapTab>('inbound')
+ const [inboundObjects, setInboundObjects] = useState<any[]>([])
+ const [inboundJobs, setInboundJobs] = useState<any[]>([])
+ const [inboundRecords, setInboundRecords] = useState<any[]>([])
+ const [inboundErrors, setInboundErrors] = useState<{ records: any[]; jobs: any[] }>({ records: [], jobs: [] })
+ const [syncing, setSyncing] = useState(false)
  const [refs, setRefs] = useState<any[]>([])
  const [jobs, setJobs] = useState<any[]>([])
  const [payloads, setPayloads] = useState<any[]>([])
@@ -49,11 +62,19 @@ export default function SapManagerPage() {
  api.get('/sap/sync/jobs?limit=5').catch((e: any) => propaga403(e) ?? { data: { jobs: [] } }),
  api.get('/sap/payloads?limit=5').catch((e: any) => propaga403(e) ?? { data: { payloads: [] } }),
  api.get('/sap/connection-check').catch((e: any) => propaga403(e) ?? { data: null }),
- ]).then(([refRes, jobsRes, payloadRes, connRes]) => {
+ api.get('/sap/inbound/objects').catch((e: any) => propaga403(e) ?? { data: { objects: [] } }),
+ api.get('/sap/inbound/jobs?limit=50').catch((e: any) => propaga403(e) ?? { data: { jobs: [] } }),
+ api.get('/sap/inbound/records?limit=50').catch((e: any) => propaga403(e) ?? { data: { records: [] } }),
+ api.get('/sap/inbound/errors?limit=50').catch((e: any) => propaga403(e) ?? { data: { records: [], jobs: [] } }),
+ ]).then(([refRes, jobsRes, payloadRes, connRes, objRes, inJobsRes, inRecRes, inErrRes]) => {
  setRefs(refRes.data.references || [])
  setJobs(jobsRes.data.jobs || [])
  setPayloads(payloadRes.data.payloads || [])
  setConn(connRes.data)
+ setInboundObjects(objRes.data?.objects || [])
+ setInboundJobs(inJobsRes.data?.jobs || [])
+ setInboundRecords(inRecRes.data?.records || [])
+ setInboundErrors({ records: inErrRes.data?.records || [], jobs: inErrRes.data?.jobs || [] })
  setEstado('ok')
  }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
  }, [refresco])
@@ -75,6 +96,32 @@ export default function SapManagerPage() {
  toast.error(getErrorMessage(err, t('sap.errorExport')))
  }
  }
+
+ // SPEC 005 · sincronización inbound (solo lectura). Un fallo de SAP llega como job `failed`,
+ // no como error HTTP: se informa sin fingir éxito.
+ const handleSync = async () => {
+ setSyncing(true)
+ try {
+ const r = await api.post('/sap/inbound/sync', {})
+ const hechos: any[] = r.data?.jobs || []
+ const fallidos = hechos.filter(j => j.status === 'failed').length
+ const resumen = t('sap.inbound.syncToast', {
+ defaultValue: 'Sincronización: {{ok}} objetos completados, {{failed}} con error',
+ ok: hechos.length - fallidos, failed: fallidos,
+ })
+ if (fallidos > 0) toast.warning(resumen)
+ else toast.success(resumen)
+ setRefresco(n => n + 1)
+ } catch (err: any) {
+ toast.error(getErrorMessage(err, t('sap.inbound.syncError', 'No se pudo sincronizar con SAP')))
+ } finally {
+ setSyncing(false)
+ }
+ }
+
+ const inbound = conn?.inbound_hana ?? null
+ // Mientras el outbound esté deshabilitado no se ofrece exportar: la fase es READ ONLY.
+ const outboundEnabled = conn?.outbound?.enabled === true
 
  // Calcular KPIs
  const pendingCount = payloads.filter(p => p.status === 'pending' || p.status === 'draft').length
@@ -106,11 +153,10 @@ export default function SapManagerPage() {
  </span>
  )}
  {conn && (
- <div className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${
- conn.connected ? 'bg-emerald-50 text-emerald-700' : 'bg-red-50 text-red-700'
- }`}>
+ // El modo manual no es una conexión: el indicador habla del inbound real.
+ <div className={`flex items-center gap-1.5 text-xs font-semibold px-3 py-1.5 rounded-full ${inboundStatusTone(inbound?.status)}`}>
  {conn.connected ? <CheckCircle size={14} /> : <XCircle size={14} />}
- {conn.adapter || (conn.connected ? t('sap.connected', 'Conectado') : t('sap.disconnected', 'Desconectado'))}
+ {inboundStatusLabel(t, inbound?.status)}
  </div>
  )}
  </div>
@@ -118,6 +164,15 @@ export default function SapManagerPage() {
  />
  </div>
  </div>
+
+ <SapInboundPanel
+ readiness={inbound}
+ jobs={inboundJobs}
+ outboundEnabled={outboundEnabled}
+ canSync={can({ permission: 'sap:send_sap' })}
+ syncing={syncing}
+ onSync={handleSync}
+ />
 
  {/* KPI Cards */}
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -154,7 +209,7 @@ export default function SapManagerPage() {
  className="bg-[#1E3A5F] text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-blue-800 transition inline-flex items-center gap-2 shadow-sm">
  <Package size={16} /> {t('sap.consolidate', 'Consolidar')}
  </button>}
- {can({ permission: 'sap:send_sap' }) && <button onClick={handleExport}
+ {outboundEnabled && can({ permission: 'sap:send_sap' }) && <button onClick={handleExport}
  className="bg-teal-600 text-white px-5 py-2.5 rounded-lg text-sm font-semibold hover:bg-teal-700 transition inline-flex items-center gap-2 shadow-sm">
  <Upload size={16} /> {t('sap.export', 'Exportar a SAP')}
  </button>}
@@ -178,7 +233,7 @@ export default function SapManagerPage() {
  `}
  >
  <Icon size={16} />
- {t(tab.labelKey)}
+ {tr(t, tab.labelKey, tab.fallback)}
  </button>
  )
  })}
@@ -186,6 +241,27 @@ export default function SapManagerPage() {
 
  {/* Tab Content */}
  <div className="bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm">
+ {activeTab === 'inbound' && (
+ <div className="p-5">
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.inbound.tabObjects', 'Objetos SAP')}</h3>
+ <SapInboundObjects objects={inboundObjects} jobs={inboundJobs} />
+ </div>
+ )}
+
+ {activeTab === 'records' && (
+ <div className="p-5">
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.inbound.tabRecords', 'Registros')}</h3>
+ <SapInboundRecords records={inboundRecords} />
+ </div>
+ )}
+
+ {activeTab === 'inboundErrors' && (
+ <div className="p-5">
+ <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.inbound.tabErrors', 'Errores de sincronización')}</h3>
+ <SapInboundErrors records={inboundErrors.records} jobs={inboundErrors.jobs} />
+ </div>
+ )}
+
  {activeTab === 'overview' && (
  <div className="p-5">
  <h3 className="text-sm font-bold text-slate-700 mb-4">{t('sap.recentActivity', 'Actividad reciente')}</h3>

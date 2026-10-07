@@ -27,6 +27,12 @@ export GA_TEST_APPROVER_PASSWORD="$($PY -c 'import secrets;print(secrets.token_u
 GA_MEDIA="$(mktemp -d -t ga-e2e-media-XXXXXX)"
 export MEDIA_DIR="$GA_MEDIA" SAP_EXPORT_DIR="$GA_MEDIA/sap_exports"
 mkdir -p "$SAP_EXPORT_DIR"
+# SPEC 005 · inbound SAP HANA con el doble local. `fake` solo se acepta con ENVIRONMENT de
+# pruebas o desarrollo, y la pantalla lo declara como simulador: aquí no hay SAP ni credenciales
+# reales. Los valores son marcadores, no secretos.
+export FEATURE_SAP_ENABLED=true
+export SAP_HANA_DRIVER=fake SAP_HANA_HOST=fake.invalid SAP_HANA_USER=fake SAP_HANA_PASSWORD=fake-local
+export SAP_HANA_SCHEMA=SAPFAKE SAP_HANA_CLIENT=100 SAP_HANA_SYNC_ENABLED=false SAP_OUTBOUND_ENABLED=false
 
 echo "── 2/5 · Esquema y datos (por el entrypoint real) ──"
 ( cd backend && PATH="$PWD/.venv/bin:$PATH" ./docker-entrypoint.sh true ) 2>&1 | sed 's/^/   /'

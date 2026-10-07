@@ -692,7 +692,70 @@
     "records": "registros",
     "document": "Documento",
     "error": "Error",
-    "lastSync": "Última sincronización"
+    "lastSync": "Última sincronización",
+    "inbound": {
+      "title": "SAP HANA Cloud · solo lectura",
+      "readOnly": "Solo lectura · sin escritura a SAP",
+      "outboundDisabled": "Envío a SAP deshabilitado en esta fase",
+      "missing": "Configuración incompleta. Faltan:",
+      "simulatedHint": "Datos de un simulador local. No hay conexión con SAP real.",
+      "lastSync": "Última sincronización",
+      "never": "Nunca",
+      "sync": "Sincronizar",
+      "syncing": "Sincronizando…",
+      "syncDisabledHint": "Disponible cuando la conexión esté configurada",
+      "syncToast": "Sincronización: {{ok}} objetos completados, {{failed}} con error",
+      "syncError": "No se pudo sincronizar con SAP",
+      "tabObjects": "Objetos SAP",
+      "tabRecords": "Registros",
+      "tabErrors": "Errores de sincronización",
+      "noObjects": "Sin objetos",
+      "noRecords": "Sin registros sincronizados",
+      "noErrors": "Sin errores de sincronización",
+      "notSynced": "Sin sincronizar",
+      "read": "leídos",
+      "promoted": "promovidos",
+      "pendingMapping": "sin mapping",
+      "status": {
+        "PENDING_CREDENTIALS": "Pendiente de credenciales",
+        "TLS_POLICY_VIOLATION": "Configuración TLS no válida",
+        "CONFIGURED_NOT_TESTED": "Configurado · sin probar",
+        "CONNECTED": "Conectado",
+        "SIMULATED_CONNECTED": "Simulador local (no es SAP)",
+        "CONNECTION_FAILED": "Sin conexión"
+      },
+      "job": {
+        "completed": "completado",
+        "failed": "con error",
+        "partial": "parcial",
+        "skipped": "omitido",
+        "in_progress": "en curso"
+      },
+      "promotion": {
+        "PENDING": "retenido",
+        "READY_FOR_PROMOTION": "listo",
+        "PROMOTED": "promovido",
+        "STAGED_ONLY": "en staging",
+        "BLOCKED": "bloqueado",
+        "SUPERSEDED": "reemplazado"
+      },
+      "objects": {
+        "company": "Sociedades",
+        "plant": "Centros",
+        "storage_location": "Almacenes",
+        "vendor": "Proveedores",
+        "material": "Materiales",
+        "batch": "Lotes SAP",
+        "movement_type": "Tipos de movimiento",
+        "purchase_order": "Órdenes de compra",
+        "purchase_order_item": "Posiciones de orden de compra",
+        "purchase_order_history": "Historial de órdenes de compra",
+        "production_order": "Órdenes de producción",
+        "transfer_order": "Órdenes de traslado",
+        "outbound_order": "Órdenes de salida",
+        "material_movement": "Movimientos de material"
+      }
+    }
   },
   "users": {
     "businessUnits": {

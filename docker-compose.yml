@@ -35,6 +35,31 @@ services:
       # reconstruir la imagen; los valores por defecto son los históricos.
       MORTALITY_ALERT_WARNING_PCT: ${MORTALITY_ALERT_WARNING_PCT:-3.0}
       MORTALITY_ALERT_CRITICAL_PCT: ${MORTALITY_ALERT_CRITICAL_PCT:-8.0}
+      # SPEC 005 · SAP HANA Cloud inbound READ ONLY. Sin valores el backend arranca igual y
+      # la integración queda en PENDING_CREDENTIALS. Los secretos viven solo en el `.env`
+      # del servidor. TLS y validación de certificado son obligatorios: ponerlos a `false`
+      # no los desactiva, hace que el conector rechace la configuración.
+      SAP_HANA_HOST: ${SAP_HANA_HOST:-}
+      SAP_HANA_PORT: ${SAP_HANA_PORT:-443}
+      SAP_HANA_USER: ${SAP_HANA_USER:-}
+      SAP_HANA_PASSWORD: ${SAP_HANA_PASSWORD:-}
+      SAP_HANA_SCHEMA: ${SAP_HANA_SCHEMA:-}
+      SAP_HANA_CLIENT: ${SAP_HANA_CLIENT:-}
+      SAP_HANA_ENCRYPT: ${SAP_HANA_ENCRYPT:-true}
+      SAP_HANA_SSL_VALIDATE_CERTIFICATE: ${SAP_HANA_SSL_VALIDATE_CERTIFICATE:-true}
+      SAP_HANA_SSL_TRUST_STORE: ${SAP_HANA_SSL_TRUST_STORE:-}
+      SAP_HANA_CONNECT_TIMEOUT_SECONDS: ${SAP_HANA_CONNECT_TIMEOUT_SECONDS:-10}
+      SAP_HANA_QUERY_TIMEOUT_SECONDS: ${SAP_HANA_QUERY_TIMEOUT_SECONDS:-60}
+      SAP_HANA_PAGE_SIZE: ${SAP_HANA_PAGE_SIZE:-500}
+      SAP_HANA_MAX_ROWS_PER_SYNC: ${SAP_HANA_MAX_ROWS_PER_SYNC:-20000}
+      SAP_HANA_DEFAULT_LOOKBACK_DAYS: ${SAP_HANA_DEFAULT_LOOKBACK_DAYS:-30}
+      SAP_HANA_SYNC_ENABLED: ${SAP_HANA_SYNC_ENABLED:-false}
+      SAP_HANA_SYNC_INTERVAL_SECONDS: ${SAP_HANA_SYNC_INTERVAL_SECONDS:-3600}
+      SAP_HANA_COMPANY_CODES: ${SAP_HANA_COMPANY_CODES:-}
+      SAP_HANA_PLANTS: ${SAP_HANA_PLANTS:-}
+      SAP_HANA_LANGUAGE: ${SAP_HANA_LANGUAGE:-S}
+      # Fase 1 = solo lectura: el envío a SAP permanece deshabilitado.
+      SAP_OUTBOUND_ENABLED: ${SAP_OUTBOUND_ENABLED:-false}
     ports:
       - "${BACKEND_PORT:-8002}:8000"
     # GA-REM-009: las evidencias y las exportaciones SAP deben sobrevivir

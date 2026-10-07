@@ -133,6 +133,59 @@ class Settings(BaseSettings):
     # Un adaptador sin entrega verificada nunca marca un evento como enviado a SAP.
     SAP_ADAPTER: str = "manual"
 
+    # ============================================================
+    # SAP HANA Cloud — inbound READ ONLY (SPEC 005)
+    # ============================================================
+    # Ninguna de estas variables tiene valor por defecto con credenciales: su ausencia NO
+    # impide el arranque. La conexión es lazy y el estado sin ellas es `PENDING_CREDENTIALS`.
+    #
+    # El usuario técnico debe ser READ ONLY en SAP. Aun así el conector solo ejecuta el
+    # query registry interno (`integrations/sap/inbound/registry.py`): no existe ninguna
+    # ruta que acepte SQL.
+    SAP_HANA_HOST: str = ""
+    SAP_HANA_PORT: int = 443
+    SAP_HANA_USER: str = ""
+    SAP_HANA_PASSWORD: str = ""
+    SAP_HANA_SCHEMA: str = ""
+    # Mandante (MANDT). Viaja como parámetro bind; nunca es un literal del SQL.
+    SAP_HANA_CLIENT: str = ""
+
+    # TLS: obligatorio para HANA Cloud. Poner cualquiera de las dos a `false` no desactiva
+    # nada: el conector rechaza la configuración antes de conectar (`SAP_TLS_ERROR`).
+    SAP_HANA_ENCRYPT: bool = True
+    SAP_HANA_SSL_VALIDATE_CERTIFICATE: bool = True
+    # CA propia del endpoint, si la exige. Añade confianza; no quita validación.
+    SAP_HANA_SSL_TRUST_STORE: str = ""
+
+    SAP_HANA_CONNECT_TIMEOUT_SECONDS: int = 10
+    SAP_HANA_QUERY_TIMEOUT_SECONDS: int = 60
+
+    # Volumen: toda lectura está paginada y acotada. No hay scans abiertos.
+    SAP_HANA_PAGE_SIZE: int = 500
+    SAP_HANA_MAX_ROWS_PER_SYNC: int = 20000
+    # Ventana por defecto de los objetos documentales y solape entre sincronizaciones.
+    SAP_HANA_DEFAULT_LOOKBACK_DAYS: int = 30
+    SAP_HANA_MAX_CONCURRENCY: int = 2
+
+    # Sincronización programada. Apagada por defecto; aun encendida no llama a HANA si la
+    # configuración está incompleta, y no corre en las pruebas (`GA_TEST_ENV=1`).
+    SAP_HANA_SYNC_ENABLED: bool = False
+    SAP_HANA_SYNC_INTERVAL_SECONDS: int = 3600
+
+    # Listas de admisión opcionales (separadas por comas). El alcance real lo fija el mapping
+    # `sap_entity_mappings`; estas listas solo pueden restringirlo.
+    SAP_HANA_COMPANY_CODES: str = ""
+    SAP_HANA_PLANTS: str = ""
+    # Idioma SAP (SPRAS) de los textos de material y de tipo de movimiento.
+    SAP_HANA_LANGUAGE: str = "S"
+    # "hdbcli": driver oficial. "fake": doble local, solo con ENVIRONMENT=development|test.
+    SAP_HANA_DRIVER: str = "hdbcli"
+
+    # Fase 1 = READ ONLY. Con `false`, `/sap/export` y `/sap/retry` responden
+    # `409 SAP_OUTBOUND_DISABLED_READ_ONLY_PHASE`. `true` solo reabre el artefacto
+    # manual/mock existente: `SAP_ADAPTER=real` sigue sin implementar.
+    SAP_OUTBOUND_ENABLED: bool = False
+
     # Telegram Bot
     TELEGRAM_API_KEY: str = ""
     TELEGRAM_MINI_APP_URL: str = ""

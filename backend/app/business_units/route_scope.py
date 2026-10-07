@@ -217,6 +217,20 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/sap/references": (Alcance.CONTROL, None, "configuración de la integración"),
     "/api/v1/sap/references/import": (Alcance.CONTROL, None, "ídem"),
     "/api/v1/sap/connection-check": (Alcance.CONTROL, None, "diagnóstico, sin datos de lote"),
+    # ── SAP inbound · SPEC 005 (HANA Cloud, solo lectura) ────────────────────
+    # Estado, catálogo y mapping configuran la integración: no tocan filas de producción.
+    "/api/v1/sap/inbound/readiness": (Alcance.CONTROL, None, "estado del conector, sin datos"),
+    "/api/v1/sap/inbound/objects": (Alcance.CONTROL, None, "catálogo estático del registry"),
+    "/api/v1/sap/inbound/mappings": (
+        Alcance.CONTROL, None, "MANDT→BUKRS→WERKS→empresa: configuración del inquilino"),
+    "/api/v1/sap/inbound/mappings/{mapping_id}": (Alcance.CONTROL, None, "ídem"),
+    # Sincronizar y leer lo sincronizado opera el contrato: los documentos SAP cruzan las
+    # cuatro cadenas por definición (`OD-12`, `BU-D04`).
+    "/api/v1/sap/inbound/sync": (Alcance.CONTRATO, None, "trae documentos de las cuatro"),
+    "/api/v1/sap/inbound/sync/{object_type}": (Alcance.CONTRATO, None, "ídem"),
+    "/api/v1/sap/inbound/jobs": (Alcance.CONTRATO, None, "ídem"),
+    "/api/v1/sap/inbound/records": (Alcance.CONTRATO, None, "ídem"),
+    "/api/v1/sap/inbound/errors": (Alcance.CONTRATO, None, "ídem"),
 }
 
 

@@ -504,6 +504,10 @@ async def test_t_038_26_el_error_de_sap_conserva_al_analista(
             return "falla"
 
     monkeypatch.setattr(SapService, "get_adapter", lambda self: Falla())
+    # SPEC 005 `§38`: outbound deshabilitado por defecto; esta prueba reabre la arquitectura
+    # de export para seguir cubriendo a quién se avisa cuando un envío falla.
+    from app.config import settings
+    monkeypatch.setattr(settings, "SAP_OUTBOUND_ENABLED", True)
     await client.post("/api/v1/sap/consolidate", headers=auth_headers, json={})
     salida = await client.post("/api/v1/sap/export", headers=auth_headers, json={})
     assert salida.status_code in (200, 201), salida.text

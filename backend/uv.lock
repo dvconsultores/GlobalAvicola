@@ -594,6 +594,15 @@ wheels = [
 ]
 
 [[package]]
+name = "et-xmlfile"
+version = "2.0.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/d3/38/af70d7ab1ae9d4da450eeec1fa3918940a5fafb9055e934af8d6eb0c2313/et_xmlfile-2.0.0.tar.gz", hash = "sha256:dab3f4764309081ce75662649be815c4c9081e88f0837825f90fd28317d4da54", size = 17234, upload-time = "2024-10-25T17:25:40.039Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c1/8b/5fe2cc11fee489817272089c4203e679c63b570a5aaeb18d852ae3cbba6a/et_xmlfile-2.0.0-py3-none-any.whl", hash = "sha256:7a91720bc756843502c3b7504c77b8fe44217c85c537d85037f0f536151b2caa", size = 18059, upload-time = "2024-10-25T17:25:39.051Z" },
+]
+
+[[package]]
 name = "fastapi"
 version = "0.138.0"
 source = { registry = "https://pypi.org/simple" }
@@ -725,7 +734,9 @@ dependencies = [
     { name = "bcrypt" },
     { name = "email-validator" },
     { name = "fastapi" },
+    { name = "hdbcli" },
     { name = "httpx" },
+    { name = "openpyxl" },
     { name = "passlib", extra = ["bcrypt"] },
     { name = "pydantic" },
     { name = "pydantic-settings" },
@@ -763,9 +774,11 @@ requires-dist = [
     { name = "bcrypt", specifier = ">=4.2.0,<5.0.0" },
     { name = "email-validator", specifier = ">=2.3.0" },
     { name = "fastapi", specifier = ">=0.110.0" },
+    { name = "hdbcli", specifier = ">=2.20.0" },
     { name = "httpx", specifier = ">=0.27.0" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.27.0" },
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.8.0" },
+    { name = "openpyxl", specifier = ">=3.1.0" },
     { name = "passlib", extras = ["bcrypt"], specifier = ">=1.7.4" },
     { name = "pydantic", specifier = ">=2.5.0" },
     { name = "pydantic-settings", specifier = ">=2.1.0" },
@@ -874,6 +887,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/01/ee/02a2c011bdab74c6fb3c75474d40b3052059d95df7e73351460c8588d963/h11-0.16.0.tar.gz", hash = "sha256:4e35b956cf45792e4caa5885e69fba00bdbc6ffafbfa020300e549b208ee5ff1", size = 101250, upload-time = "2025-04-24T03:35:25.427Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/04/4b/29cac41a4d98d144bf5f6d33995617b185d14b22401f75ca86f384e87ff1/h11-0.16.0-py3-none-any.whl", hash = "sha256:63cf8bbe7522de3bf65932fda1d9c2772064ffb3dae62d55932da54b31cb6c86", size = 37515, upload-time = "2025-04-24T03:35:24.344Z" },
+]
+
+[[package]]
+name = "hdbcli"
+version = "2.30.27"
+source = { registry = "https://pypi.org/simple" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/0c/ba/094197bc10e3b2f2bd22bf7069e1d8a5e9bf81f95fdd59f28a320361729f/hdbcli-2.30.27-cp310-abi3-macosx_13_0_arm64.whl", hash = "sha256:2a95a20cba24a67955531c85c755bdf22b0dbd56c2dca28072de4e6bc71c8ad8", size = 5261587, upload-time = "2026-09-18T15:23:22.018Z" },
+    { url = "https://files.pythonhosted.org/packages/f6/82/b36d27b354890542bc89be1885b43c61ee9bc342a686a4e6bca72a0339f6/hdbcli-2.30.27-cp310-abi3-macosx_13_0_x86_64.whl", hash = "sha256:c20d2cfb1c102dd204624e1edfb370245955b4d29794d4ec01625b8a820faa47", size = 5760723, upload-time = "2026-09-18T15:23:24.14Z" },
+    { url = "https://files.pythonhosted.org/packages/d0/9c/8087545a343ba3bd0f655dd8cbc0684b4371fd82650b5db966642852a737/hdbcli-2.30.27-cp310-abi3-manylinux2014_aarch64.whl", hash = "sha256:4e5c835269ea7563454e91586b593dbb60bf2e27c8ee75fd185b88e64760cf47", size = 5574802, upload-time = "2026-09-18T15:23:25.818Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/82/fd1b0c197d0cc01cb455b224cecd5f86e3a322adea45ff8d5e6f59c3f9da/hdbcli-2.30.27-cp310-abi3-manylinux2014_ppc64le.whl", hash = "sha256:62087ef27599c32ccf566ac96d225da263c53337b6a2dca6d207ca5e5f647b23", size = 6170763, upload-time = "2026-09-18T15:23:27.576Z" },
+    { url = "https://files.pythonhosted.org/packages/66/89/d9c10352b6fcef91f4c91981db3f419ba0c246d5962caca8f6305dd15896/hdbcli-2.30.27-cp310-abi3-manylinux2014_x86_64.whl", hash = "sha256:8dae4357c648b199e1a10bddd29c87a7d8a23d3b1899b1d9e70b0bd3274ceae9", size = 5905928, upload-time = "2026-09-18T15:23:29.17Z" },
+    { url = "https://files.pythonhosted.org/packages/b8/99/7c45f65d0b62782376428a8e0d6455b234c3e3d354bc044196215bb30949/hdbcli-2.30.27-cp310-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:a353f219359a9eef0126731e398a7a3ae8f46e7263dda37f49e6af272dc776af", size = 6008298, upload-time = "2026-09-18T15:23:31.152Z" },
+    { url = "https://files.pythonhosted.org/packages/82/b8/be0de1c838851750088affd9fbe50de9a503681996514292444058e3ebdb/hdbcli-2.30.27-cp310-abi3-win32.whl", hash = "sha256:eb4b0b5afc71ac9719f4b6ad3d1c72c9fd34e6594aafd89bd738d7f4ad1ea453", size = 3476562, upload-time = "2026-09-18T15:23:32.825Z" },
+    { url = "https://files.pythonhosted.org/packages/36/74/fc82ee9a6f03965e2d5a743d988844853ff7fae489e07a504f90aaf20d83/hdbcli-2.30.27-cp310-abi3-win_amd64.whl", hash = "sha256:99d30bf6ea7b43cc8acea76dd0bea0ae5344f7f49cddb8ca523ee2ae02db37e2", size = 3835399, upload-time = "2026-09-18T15:23:34.867Z" },
 ]
 
 [[package]]
@@ -1313,6 +1341,18 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/a2/6e/371856a3fb9d31ca8dac321cda606860fa4548858c0cc45d9d1d4ca2628b/mypy_extensions-1.1.0.tar.gz", hash = "sha256:52e68efc3284861e772bbcd66823fde5ae21fd2fdb51c62a211403730b916558", size = 6343, upload-time = "2025-04-22T14:54:24.164Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/79/7b/2c79738432f5c924bef5071f933bcc9efd0473bac3b4aa584a6f7c1c8df8/mypy_extensions-1.1.0-py3-none-any.whl", hash = "sha256:1be4cccdb0f2482337c4743e60421de3a356cd97508abadd57d47403e94f5505", size = 4963, upload-time = "2025-04-22T14:54:22.983Z" },
+]
+
+[[package]]
+name = "openpyxl"
+version = "3.1.5"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "et-xmlfile" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/3d/f9/88d94a75de065ea32619465d2f77b29a0469500e99012523b91cc4141cd1/openpyxl-3.1.5.tar.gz", hash = "sha256:cf0e3cf56142039133628b5acffe8ef0c12bc902d2aadd3e0fe5878dc08d1050", size = 186464, upload-time = "2024-06-28T14:03:44.161Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/c0/da/977ded879c29cbd04de313843e76868e6e13408a94ed6b987245dc7c8506/openpyxl-3.1.5-py2.py3-none-any.whl", hash = "sha256:5282c12b107bffeef825f4617dc029afaf41d0ea60823bbb665ef3079dc79de2", size = 250910, upload-time = "2024-06-28T14:03:41.161Z" },
 ]
 
 [[package]]

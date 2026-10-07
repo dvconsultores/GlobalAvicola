@@ -29,6 +29,9 @@ from app.corrections.models import CorrectionLog  # noqa: F401
 from app.integrations.sap.models import (  # noqa: F401
     SapReference, SapSyncJob, SapPayload, SapResponse, ConsolidatedMovement,
 )
+from app.integrations.sap.inbound.models import (  # noqa: F401
+    SapEntityMapping, SapInboundRecord, SapInboundSyncJob, SapInboundWatermark,
+)
 from app.audit.models import AuditLog  # noqa: F401
 from app.cutover.models import (  # noqa: F401
     CutoverBatch, CutoverItem, CutoverStagingRow, OpeningBalanceCorrection,

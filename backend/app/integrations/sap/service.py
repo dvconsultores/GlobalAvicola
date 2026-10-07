@@ -64,6 +64,27 @@ class SapService:
             self._adapter = adapter_cls()
         return self._adapter
 
+    @staticmethod
+    def _require_outbound_enabled() -> None:
+        """SPEC 005 `§38`. Fase 1 = READ ONLY: el outbound hacia SAP está deshabilitado.
+
+        Se comprueba **antes de leer nada**: ni job de exportación, ni payload, ni reintento.
+        `SAP_OUTBOUND_ENABLED=true` solo reabre la ruta de artefacto manual/mock que ya
+        existía; no hay adaptador real (`SAP_ADAPTER=real` sigue en 501) y `delivers_to_sap`
+        permanece en `false`.
+        """
+        from ...config import settings
+
+        if not settings.SAP_OUTBOUND_ENABLED:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail={
+                    "code": "SAP_OUTBOUND_DISABLED_READ_ONLY_PHASE",
+                    "message": "La integración SAP está en fase de solo lectura: el envío "
+                               "a SAP está deshabilitado.",
+                },
+            )
+
     def _require_company_id(self) -> int:
         """Return the company_id, raising an error if None (e.g. for write operations)."""
         if self.company_id is None:
@@ -246,6 +267,7 @@ class SapService:
     ) -> schemas.SapExportResponse:
         """Export consolidated movements to SAP via the active adapter."""
 
+        self._require_outbound_enabled()   # SPEC 005: fase READ ONLY
         # `R-201`: contexto primero; el export es acción externa y no debe ni leer sin él.
         self._require_company_id()
 
@@ -416,6 +438,7 @@ class SapService:
     async def retry_failed(self, payload_ids: Optional[list[int]] = None, max_retries: int = 3) -> dict:
         """Retry failed SAP payloads with exponential backoff."""
 
+        self._require_outbound_enabled()   # SPEC 005: fase READ ONLY
         # `R-201`: el reintento reenvía al exterior; sin contexto, cerrado y sin leer.
         self._require_company_id()
 

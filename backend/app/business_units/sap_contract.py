@@ -50,6 +50,13 @@ SUPERFICIES_TRANSVERSALES: frozenset[str] = frozenset({
     "/api/v1/sap/errors",
     "/api/v1/sap/retry",
     "/api/v1/sap/sync/jobs",
+    # SPEC 005 · inbound SAP HANA (solo lectura). Mismas capacidades (`OD-12 §7`, `REUSE`):
+    # `sap:send_sap` opera el conector, no escribe en SAP.
+    "/api/v1/sap/inbound/sync",
+    "/api/v1/sap/inbound/sync/{object_type}",
+    "/api/v1/sap/inbound/jobs",
+    "/api/v1/sap/inbound/records",
+    "/api/v1/sap/inbound/errors",
 })
 
 

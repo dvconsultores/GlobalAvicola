@@ -190,6 +190,22 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
         )
         for tabla in ("sap_payloads", "sap_responses", "sap_references", "sap_sync_jobs")
     },
+    # ── Espejo inbound SAP HANA · SPEC 005 ───────────────────────────────────
+    **{
+        tabla: (
+            Categoria.SIMULATED_SAP_DATA,
+            "Espejo inbound re-sincronizable (SPEC 005). Hasta el probe real solo contiene "
+            "datos del doble local; vaciarlo devuelve la integración a su estado inicial y no "
+            "pierde nada que SAP no vuelva a entregar.",
+        )
+        for tabla in ("sap_inbound_records", "sap_inbound_sync_jobs", "sap_inbound_watermarks")
+    },
+    "sap_entity_mappings": (
+        Categoria.CLIENT_MASTER_DATA,
+        "Mapping MANDT→BUKRS→WERKS→empresa que cada cliente configura (SPEC 005). Referencia "
+        "granjas y galpones, que son borrables: sin él todo queda en PENDING_MAPPING "
+        "(fail-closed) y se vuelve a crear por API.",
+    ),
 }
 
 

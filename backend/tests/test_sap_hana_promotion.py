@@ -36,12 +36,13 @@ from tests.sap_hana_fixtures import (  # noqa: F401  (`esc` es una fixture)
     referencias,
     registros,
     sincronizar,
+    ventana_amplia,
 )
 from tests.time_reference import iso_days_ago
 
 pytestmark = pytest.mark.asyncio
 
-VENTANA = {"date_from": "2000-01-01", "date_to": "2099-12-31"}
+VENTANA = ventana_amplia()
 OC = [HanaObject.PURCHASE_ORDER]
 
 

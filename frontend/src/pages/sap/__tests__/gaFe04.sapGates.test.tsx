@@ -45,10 +45,15 @@ describe('GA-FE-04 · SapManagerPage — autoridad de acción', () => {
   })
 
   it('control: con sap:send_sap ⇒ controles visibles', async () => {
+    // SPEC 005 §39: «Exportar a SAP» solo existe con el outbound habilitado; el gate de
+    // permiso se sigue midiendo sobre él reabriéndolo explícitamente.
+    get.mockImplementation((url: string) => Promise.resolve({
+      data: url === '/sap/connection-check' ? { outbound: { enabled: true } } : [],
+    }))
     setSession(['sap:read', 'sap:send_sap'])
     render(<MemoryRouter><SapManagerPage /></MemoryRouter>)
     await waitFor(() => expect(screen.getByText('Integración SAP')).toBeTruthy())
     expect(screen.getAllByRole('button', { name: /Consolidar/ }).length).toBeGreaterThan(0)
-    expect(screen.getAllByRole('button', { name: /Exportar/ }).length).toBeGreaterThan(0)
+    await waitFor(() => expect(screen.getAllByRole('button', { name: /Exportar/ }).length).toBeGreaterThan(0))
   })
 })

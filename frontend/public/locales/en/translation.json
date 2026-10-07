@@ -692,7 +692,70 @@
     "records": "records",
     "document": "Document",
     "error": "Error",
-    "lastSync": "Last synchronization"
+    "lastSync": "Last synchronization",
+    "inbound": {
+      "title": "SAP HANA Cloud · read only",
+      "readOnly": "Read only · no writes to SAP",
+      "outboundDisabled": "Sending to SAP is disabled in this phase",
+      "missing": "Incomplete configuration. Missing:",
+      "simulatedHint": "Data from a local simulator. There is no connection to real SAP.",
+      "lastSync": "Last synchronization",
+      "never": "Never",
+      "sync": "Synchronize",
+      "syncing": "Synchronizing…",
+      "syncDisabledHint": "Available once the connection is configured",
+      "syncToast": "Synchronization: {{ok}} objects completed, {{failed}} with errors",
+      "syncError": "Could not synchronize with SAP",
+      "tabObjects": "SAP objects",
+      "tabRecords": "Records",
+      "tabErrors": "Synchronization errors",
+      "noObjects": "No objects",
+      "noRecords": "No synchronized records",
+      "noErrors": "No synchronization errors",
+      "notSynced": "Not synchronized",
+      "read": "read",
+      "promoted": "promoted",
+      "pendingMapping": "without mapping",
+      "status": {
+        "PENDING_CREDENTIALS": "Pending credentials",
+        "TLS_POLICY_VIOLATION": "Invalid TLS configuration",
+        "CONFIGURED_NOT_TESTED": "Configured · not tested",
+        "CONNECTED": "Connected",
+        "SIMULATED_CONNECTED": "Local simulator (not SAP)",
+        "CONNECTION_FAILED": "No connection"
+      },
+      "job": {
+        "completed": "completed",
+        "failed": "failed",
+        "partial": "partial",
+        "skipped": "skipped",
+        "in_progress": "in progress"
+      },
+      "promotion": {
+        "PENDING": "held",
+        "READY_FOR_PROMOTION": "ready",
+        "PROMOTED": "promoted",
+        "STAGED_ONLY": "staged",
+        "BLOCKED": "blocked",
+        "SUPERSEDED": "superseded"
+      },
+      "objects": {
+        "company": "Company codes",
+        "plant": "Plants",
+        "storage_location": "Storage locations",
+        "vendor": "Vendors",
+        "material": "Materials",
+        "batch": "SAP batches",
+        "movement_type": "Movement types",
+        "purchase_order": "Purchase orders",
+        "purchase_order_item": "Purchase order items",
+        "purchase_order_history": "Purchase order history",
+        "production_order": "Production orders",
+        "transfer_order": "Transfer orders",
+        "outbound_order": "Outbound orders",
+        "material_movement": "Material movements"
+      }
+    }
   },
   "users": {
     "businessUnits": {

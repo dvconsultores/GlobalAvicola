@@ -434,6 +434,10 @@ async def _forzar_fallo_sap(client, auth_headers, seeded_ids, monkeypatch):
             return "falla"
 
     monkeypatch.setattr(SapService, "get_adapter", lambda self: AdaptadorQueFalla())
+    # SPEC 005 `§38`: el outbound está deshabilitado por defecto. Estas pruebas cubren el
+    # aviso de fallo de la arquitectura de export, así que la reabren explícitamente.
+    from app.config import settings
+    monkeypatch.setattr(settings, "SAP_OUTBOUND_ENABLED", True)
 
     await client.post("/api/v1/sap/consolidate", headers=auth_headers, json={})
     return await client.post("/api/v1/sap/export", headers=auth_headers, json={})

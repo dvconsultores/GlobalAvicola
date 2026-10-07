@@ -9,6 +9,7 @@ import pytest
 from sqlalchemy import text
 
 from app.auth.security import create_access_token
+from tests.time_reference import iso_days_ago
 from app.config import Settings, settings
 from app.integrations.sap.inbound.fake_hana import FakeHana, FakeHanaError
 from tests.sap_hana_fixtures import (  # noqa: F401  (`esc` es una fixture)
@@ -188,11 +189,11 @@ async def test_sync_endpoint_runs_and_reports(http_client, esc, hana):
 
 async def test_sync_all_endpoint(http_client, esc, hana):
     r = await http_client.post(f"{BASE}/sync", headers=_token(esc["ids"]["analista_a"]),
-                               json={"date_from": "2000-01-01", "date_to": "2000-12-31"})
+                               json={"date_from": iso_days_ago(365), "date_to": iso_days_ago(0)})
     assert r.status_code == 200, r.text
     assert len(r.json()["jobs"]) == 14
     r = await http_client.post(f"{BASE}/sync", headers=_token(esc["ids"]["analista_a"]),
-                               json={"date_from": "2000-01-01", "date_to": "2026-01-01"})
+                               json={"date_from": iso_days_ago(900), "date_to": iso_days_ago(0)})
     assert r.status_code == 422, "ventana de años: rechazada antes de tocar HANA"
 
 
@@ -333,6 +334,7 @@ async def test_connection_check_does_not_fake_a_connection(http_client, esc, sin
     assert d["outbound"] == {"enabled": False, "delivers_to_sap": False,
                              "mode": "disabled_read_only_phase", "adapter": d["outbound"]["adapter"]}
     assert d["connected"] is False and d["delivers_to_sap"] is False
+    assert d["adapter"] == d["outbound"]["adapter"], "las claves heredadas siguen describiendo el export"
 
 
 async def test_connection_check_with_fake_is_declared_simulated(http_client, esc, hana):
