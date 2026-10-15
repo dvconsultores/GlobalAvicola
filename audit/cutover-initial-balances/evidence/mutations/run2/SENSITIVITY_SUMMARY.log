@@ -1,0 +1,19 @@
+IMPLEMENTATION_COMMIT = 507d896ebed2ec163fe6e8b1e1b5bbf65c1a7a68
+
+S1   DETECTED      1 failed in 0.35s  · backend/app/cutover/parser.py · test_vacio_es_unknown_cero_es_known_na_es_not_applicable
+S2   DETECTED      1 failed in 0.34s  · backend/app/cutover/parser.py · test_vacio_es_unknown_cero_es_known_na_es_not_applicable
+S3   DETECTED      1 failed, 1 warning in 1.78s  · backend/app/cutover/validation.py · test_maestro_de_otra_empresa_no_resuelve
+S4   DETECTED      1 failed, 1 warning in 2.05s  · backend/app/cutover/service.py · test_multiempresa_bu_deshabilitada_y_sin_concesion
+S5   NOT_DETECTED  1 passed, 1 warning in 1.91s  · backend/app/cutover/service.py · test_idempotencia_doble_apply_y_segregacion
+S6   DETECTED      1 failed, 1 warning in 1.82s  · backend/app/cutover/validation.py · test_relaciones_padre_hijo
+S7   DETECTED      1 failed, 1 warning in 1.72s  · backend/app/cutover/contracts.py · test_campo_obligatorio_de_incubadora
+S8   DETECTED      1 failed, 1 warning in 1.90s  · backend/app/cutover/service.py · test_hatchery_siguiente_paso_de_incubacion
+S9   DETECTED      1 failed, 1 warning in 1.91s  · backend/app/operations/validators.py · test_cut_gl_02_rechaza_eventos_hasta_el_corte
+S10  DETECTED      1 failed, 1 warning in 1.86s  · backend/app/cutover/service.py · test_idempotencia_doble_apply_y_segregacion
+S11  DETECTED      1 failed in 0.38s  · backend/app/cutover/parser.py · test_plantilla_de_otra_bu_rechazada
+S12  DETECTED      1 failed in 0.38s  · backend/app/cutover/parser.py · test_cabeceras_duplicadas_desconocidas_y_faltantes
+
+DETECTED = 11/12
+FINAL_RESTORE_SHA = 507d896ebed2ec163fe6e8b1e1b5bbf65c1a7a68
+FINAL_DIFF = 0
+MUTATION = FAIL

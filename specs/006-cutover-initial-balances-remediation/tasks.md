@@ -43,8 +43,8 @@
 | ID | Capa | Objetivo | AC | Depende | Evidencia | Estado |
 |---|---|---|---|---|---|---|
 | T050 | test | verde dirigido + regresión completa backend/frontend/tsc/build/E2E | 46–55 | T041 | `evidence/` | DONE |
-| T051 | git | commit de implementación (`IMPLEMENTATION_SHA`) | — | T050 | SHA | PENDING |
-| T052 | test | S1–S12 + restauración explícita + post-mutación | 52, 53 | T051 | `13_MUTATION_EVIDENCE` | PENDING |
-| T053 | docs | `03…16`, addendum `CUTOVER_MASTER_SPEC` | — | T052 | docs | PENDING |
-| T054 | git | commit de certificación + push + `REMOTE_SHA_MATCH` | 57, 58 | T053 | git | PENDING |
+| T051 | git | commit de implementación (`IMPLEMENTATION_SHA`) | — | T050 | SHA | DONE |
+| T052 | test | S1–S12 + restauración explícita + post-mutación | 52, 53 | T051 | `13_MUTATION_EVIDENCE` | DONE |
+| T053 | docs | `03…16`, addendum `CUTOVER_MASTER_SPEC` | — | T052 | docs | DONE |
+| T054 | git | commit de certificación + push + `REMOTE_SHA_MATCH` | 57, 58 | T053 | git | DONE |
 | T055 | runtime | verificación en runtime compartido (4 BU) | 56 | T054 + credenciales UAT | `15_RUNTIME_VERIFICATION` | PENDING |

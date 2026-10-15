@@ -1,0 +1,18 @@
+INICIO 2026-10-15 18:57:52 · verificación de migración e0f1a2b3c4d5 sobre la base de pruebas (pgserver, espacio de usuario)
+head en código: e0f1a2b3c4d5 (head)
+-- 1. upgrade head sobre base vacía (fresh) --
+   INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+   head en BD: e0f1a2b3c4d5 · tablas: 65 · hatchery_openings presente: True · columnas v2 en opening_balances: 14/14
+   índices hatchery_openings: hatchery_openings_pkey, ix_hatchery_openings_hatchery_id, ix_hatchery_openings_lot_id, ix_hatchery_openings_opening_id, uq_hatchery_openings_lot, uq_hatchery_openings_opening · enums nuevos (esperado 0): 0
+-- 2. downgrade -1 --
+   INFO  [alembic.runtime.migration] Running downgrade e0f1a2b3c4d5 -> d9e0f1a2b3c4, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+   head en BD: d9e0f1a2b3c4 · tablas: 64 · hatchery_openings presente: False · columnas v2 en opening_balances: 0/14
+   índices hatchery_openings: - · enums nuevos (esperado 0): 0
+-- 3. upgrade head sobre esquema existente --
+   INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+   head en BD: e0f1a2b3c4d5 · tablas: 65 · hatchery_openings presente: True · columnas v2 en opening_balances: 14/14
+   índices hatchery_openings: hatchery_openings_pkey, ix_hatchery_openings_hatchery_id, ix_hatchery_openings_lot_id, ix_hatchery_openings_opening_id, uq_hatchery_openings_lot, uq_hatchery_openings_opening · enums nuevos (esperado 0): 0
+-- 4. metadata ORM vs esquema --
+   hatchery_openings: columnas distintas ORM/BD = []
+   opening_balances: columnas distintas ORM/BD = []
+FIN 2026-10-15 18:57:57
