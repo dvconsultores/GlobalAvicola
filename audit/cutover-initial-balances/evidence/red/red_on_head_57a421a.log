@@ -1,0 +1,306 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=64 (55 + alembic_version) · head en BD=d9e0f1a2b3c4 · head en código=d9e0f1a2b3c4
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 9 items
+
+tests/test_cutover_v2_red.py FFFFFFFFF                                   [100%]
+
+=================================== FAILURES ===================================
+_ test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido _
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c108a290>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido(
+            auth_headers, http_client, seeded_ids):
+        """Lo que vio el Owner: archivo vacío «validado», errores sin mensaje, batch que desaparece.
+    
+        Contrato v2: 0 filas ⇒ `NO_DATA_ROWS` (nunca VALIDATED); cada error trae `message`;
+        el informe de errores se descarga en CSV; el batch se lista y se consulta por id; la
+        plantilla pedida con `batch_id` de otra BU se rechaza (la BU la fija el batch).
+        """
+        await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        c = corte(41)
+        batch_id = await crear_batch(http_client, auth_headers, "breeder", c)
+    
+        # (a) plantilla sin filas: no puede quedar VALIDATED.
+        r = await subir(http_client, auth_headers, batch_id, xlsx_v2("breeder", [], company_id=empresa))
+        assert r.status_code == 422, r.text
+>       assert "NO_DATA_ROWS" in r.text
+E       assert 'NO_DATA_ROWS' in '{"detail":"TEMPLATE_VERSION_UNSUPPORTED: Versión de plantilla no soportada: \'v2\' (soportadas: [\'v1\'])"}'
+E        +  where '{"detail":"TEMPLATE_VERSION_UNSUPPORTED: Versión de plantilla no soportada: \'v2\' (soportadas: [\'v1\'])"}' = <Response [422 Unprocessable Entity]>.text
+
+tests/test_cutover_v2_red.py:62: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+___________________ test_red_02_plantilla_por_bu_no_generica ___________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c2ebb590>
+
+    @pytest.mark.asyncio
+    async def test_red_02_plantilla_por_bu_no_generica(auth_headers, http_client):
+        """Cuatro plantillas distintas, versión v2, con `Instrucciones`, `Meta`, `Datos`, `Catalogos`."""
+        cabeceras: dict[str, list[str]] = {}
+        for bu in ("grandparent", "breeder", "hatchery", "broiler"):
+            r = await http_client.get(f"/api/v1/cutover-templates/{bu}", headers=auth_headers)
+            assert r.status_code == 200, r.text
+>           assert f"cutover_template_{bu}_v2.xlsx" in r.headers.get("content-disposition", "")
+E           assert 'cutover_template_grandparent_v2.xlsx' in 'attachment; filename="cutover_template_grandparent_v1.xlsx"'
+E            +  where 'attachment; filename="cutover_template_grandparent_v1.xlsx"' = get('content-disposition', '')
+E            +    where get = Headers({'content-disposition': 'attachment; filename="cutover_template_grandparent_v1.xlsx"', 'content-length': '6591...rmissions-policy': 'camera=(), microphone=(), geolocation=()', 'cache-control': 'no-store, no-cache, must-revalidate'}).get
+E            +      where Headers({'content-disposition': 'attachment; filename="cutover_template_grandparent_v1.xlsx"', 'content-length': '6591...rmissions-policy': 'camera=(), microphone=(), geolocation=()', 'cache-control': 'no-store, no-cache, must-revalidate'}) = <Response [200 OK]>.headers
+
+tests/test_cutover_v2_red.py:102: AssertionError
+_______________ test_red_03_campos_especificos_por_bu_presentes ________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c045d790>
+
+    @pytest.mark.asyncio
+    async def test_red_03_campos_especificos_por_bu_presentes(auth_headers, http_client):
+        """Los campos que el dominio necesita por BU existen en su plantilla (no en `notes`)."""
+        esperados = {
+            "breeder": {"productive_phase_code", "house_name", "historical_culls_males", "accumulated_feed_kg",
+                        "current_avg_weight_g", "accumulated_egg_production", "accumulated_eggs_to_hatchery",
+                        "birds_placed_males", "genetic_line_code"},
+            "broiler": {"live_birds", "age_days", "accumulated_birds_received", "partial_outbound_birds",
+                        "historical_mortality", "historical_culls"},
+            "hatchery": {"hatchery_code", "incubator_name", "hatcher_name", "source_lot_code", "generation",
+                         "reception_date", "set_date", "eggs_received", "eggs_set", "eggs_transferred",
+                         "eggs_discarded", "chicks_hatched", "chicks_available"},
+        }
+        for bu, campos in esperados.items():
+            r = await http_client.get(f"/api/v1/cutover-templates/{bu}", headers=auth_headers)
+            assert r.status_code == 200, r.text
+            cabecera = set(_cabecera(_hojas(r.content)))
+>           assert campos <= cabecera, (bu, sorted(campos - cabecera))
+E           AssertionError: ('breeder', ['accumulated_egg_production', 'accumulated_eggs_to_hatchery', 'accumulated_feed_kg', 'birds_placed_males', 'current_avg_weight_g', 'genetic_line_code', ...])
+E           assert {'accumulated...ne_code', ...} <= {'farm_code',...e_males', ...}
+E             
+E             Extra items in the left set:
+E             'birds_placed_males'
+E             'genetic_line_code'
+E             'historical_culls_males'
+E             'accumulated_eggs_to_hatchery'
+E             'accumulated_egg_production'...
+E             
+E             ...Full output truncated (4 lines hidden), use '-vv' to show
+
+tests/test_cutover_v2_red.py:134: AssertionError
+_______________ test_red_04_csv_se_descarga_y_se_carga_como_xlsx _______________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c0853690>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_04_csv_se_descarga_y_se_carga_como_xlsx(auth_headers, http_client, seeded_ids):
+        """CSV v2: plantilla descargable y carga válida; misma normalización que XLSX."""
+        await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        plantilla = await http_client.get("/api/v1/cutover-templates/broiler?format=csv", headers=auth_headers)
+        assert plantilla.status_code == 200, plantilla.text
+>       assert plantilla.headers["content-type"].startswith("text/csv")
+E       AssertionError: assert False
+E        +  where False = <built-in method startswith of str object at 0x7fe5c094a6b0>('text/csv')
+E        +    where <built-in method startswith of str object at 0x7fe5c094a6b0> = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'.startswith
+
+tests/test_cutover_v2_red.py:151: AssertionError
+________________ test_red_05_incubadora_representada_y_aplicada ________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+client = <httpx.AsyncClient object at 0x7fe5c0535b90>
+http_client = <httpx.AsyncClient object at 0x7fe5c0ce4510>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_05_incubadora_representada_y_aplicada(auth_headers, client, http_client, seeded_ids):
+        """Una fila de incubadora produce `hatchery_openings` y saldos de huevo reales."""
+        ids = await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        c = corte(45)
+        batch_id = await crear_batch(http_client, auth_headers, "hatchery", c)
+        r = await subir(http_client, auth_headers, batch_id,
+                        xlsx_v2("hatchery", [fila_incubadora("CUT2-INC-1")], company_id=empresa))
+>       assert r.status_code == 200 and r.json()["status"] == "validated", r.text
+E       AssertionError: {"detail":"TEMPLATE_VERSION_UNSUPPORTED: Versión de plantilla no soportada: 'v2' (soportadas: ['v1'])"}
+E       assert (422 == 200)
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_cutover_v2_red.py:197: AssertionError
+_____________ test_red_06_plantilla_descargada_rellenada_y_cargada _____________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c08526d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_06_plantilla_descargada_rellenada_y_cargada(auth_headers, http_client, seeded_ids):
+        """Ida y vuelta real: descargar con `batch_id`, rellenar `Datos`, subir ⇒ 0 errores + preview por BU."""
+        from openpyxl import load_workbook
+    
+        await preparar(seeded_ids)
+        c = corte(46)
+        batch_id = await crear_batch(http_client, auth_headers, "breeder", c)
+        r = await http_client.get(f"/api/v1/cutover-templates/breeder?batch_id={batch_id}", headers=auth_headers)
+        assert r.status_code == 200, r.text
+        wb = load_workbook(io.BytesIO(r.content))
+        meta = _meta(wb)
+>       assert meta["template_version"] == "v2" and str(meta["cutover_datetime"]).startswith(days_ago(46).isoformat())
+E       AssertionError: assert ('v1' == 'v2'
+E         
+E         - v2
+E         + v1)
+
+tests/test_cutover_v2_red.py:238: AssertionError
+_________________ test_red_07_unknown_cero_y_na_se_distinguen __________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c0271750>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_07_unknown_cero_y_na_se_distinguen(auth_headers, http_client, seeded_ids):
+        """vacío ⇒ UNKNOWN · 0 ⇒ KNOWN 0 · N/A ⇒ NOT_APPLICABLE, en staging, opening y reconciliación.
+        N/A en un campo obligatorio ⇒ error, jamás 0."""
+        ids = await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        c = corte(47)
+        batch_id = await crear_batch(http_client, auth_headers, "breeder", c)
+        filas = [fila_reproductoras("breeder", "CUT2-SEM-1", fase="CRIA", real_start_date=iso_days_ago(70),
+                                    historical_mortality_males=None, historical_mortality_females=None,
+                                    historical_culls_males=0, historical_culls_females=0,
+                                    accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="N/A",
+                                    accumulated_feed_kg=None)]
+        r = await subir(http_client, auth_headers, batch_id, xlsx_v2("breeder", filas, company_id=empresa))
+>       assert r.status_code == 200 and r.json()["status"] == "validated", r.text
+E       AssertionError: {"detail":"TEMPLATE_VERSION_UNSUPPORTED: Versión de plantilla no soportada: 'v2' (soportadas: ['v1'])"}
+E       assert (422 == 200)
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_cutover_v2_red.py:278: AssertionError
+_____________ test_red_08_registry_cerrado_sin_campos_sin_destino ______________
+
+    def test_red_08_registry_cerrado_sin_campos_sin_destino():
+        """`UNMAPPED_TEMPLATE_FIELDS = 0` y `REQUIRED_DOMAIN_FIELDS_MISSING_FROM_TEMPLATE = 0`."""
+>       from app.cutover.contracts import CONTRACTS, campos_dominio_requeridos, lineage
+E       ModuleNotFoundError: No module named 'app.cutover.contracts'
+
+tests/test_cutover_v2_red.py:322: ModuleNotFoundError
+_________ test_red_09_primera_operacion_post_corte_consume_el_opening __________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fe5c0559ad0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_09_primera_operacion_post_corte_consume_el_opening(auth_headers, http_client, seeded_ids):
+        """Engorde: mortalidad sobre un opening mixto; incubadora: carga de incubación sobre el huevo
+        recibido; CUT-GL-02: evento con fecha ≤ corte rechazado, > corte aceptado."""
+        await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        c = corte(40)
+    
+        # Engorde ────────────────────────────────────────────────────────────────
+        b = await crear_batch(http_client, auth_headers, "broiler", c)
+        r = await subir(http_client, auth_headers, b, xlsx_v2("broiler", [fila_engorde("CUT2-ENG-1")], company_id=empresa))
+>       assert r.status_code == 200 and r.json()["status"] == "validated", r.text
+E       AssertionError: {"detail":"TEMPLATE_VERSION_UNSUPPORTED: Versión de plantilla no soportada: 'v2' (soportadas: ['v1'])"}
+E       assert (422 == 200)
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_cutover_v2_red.py:351: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+tests/test_cutover_v2_red.py::test_red_07_unknown_cero_y_na_se_distinguen
+tests/test_cutover_v2_red.py::test_red_09_primera_operacion_post_corte_consume_el_opening
+  /home/maria/Proyectos/GlobalAvicola/backend/app/cutover/router.py:39: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await CutoverService(db, current_user).subir_y_validar(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+FAILED tests/test_cutover_v2_red.py::test_red_02_plantilla_por_bu_no_generica
+FAILED tests/test_cutover_v2_red.py::test_red_03_campos_especificos_por_bu_presentes
+FAILED tests/test_cutover_v2_red.py::test_red_04_csv_se_descarga_y_se_carga_como_xlsx
+FAILED tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+FAILED tests/test_cutover_v2_red.py::test_red_06_plantilla_descargada_rellenada_y_cargada
+FAILED tests/test_cutover_v2_red.py::test_red_07_unknown_cero_y_na_se_distinguen
+FAILED tests/test_cutover_v2_red.py::test_red_08_registry_cerrado_sin_campos_sin_destino
+FAILED tests/test_cutover_v2_red.py::test_red_09_primera_operacion_post_corte_consume_el_opening
+======================== 9 failed, 5 warnings in 4.26s =========================

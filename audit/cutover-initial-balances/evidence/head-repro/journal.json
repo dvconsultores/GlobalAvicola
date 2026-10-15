@@ -1,0 +1,128 @@
+[
+  {
+    "k": "selector_por_defecto",
+    "v": "broiler"
+  },
+  {
+    "k": "crear_batch",
+    "v": {
+      "status": 201,
+      "body": "{\"id\":1,\"company_id\":1,\"business_unit\":\"breeder\",\"cutover_datetime\":\"2026-10-01T04:00:00Z\",\"source_type\":\"EXCEL\",\"source_filename\":null,\"source_checksum_sha256\":null,\"template_version\":null,\"status\":\"draft\",\"total_rows\":0,\"valid_rows\":0,\"invalid_rows\":0}"
+    }
+  },
+  {
+    "k": "descarga_plantilla",
+    "v": {
+      "url": "http://127.0.0.1:5199/api/v1/cutover-templates/breeder",
+      "status": 200,
+      "ct": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    }
+  },
+  {
+    "k": "A1_upload_plantilla_vacia",
+    "v": {
+      "status": 200,
+      "body": "{\"id\":1,\"company_id\":1,\"business_unit\":\"breeder\",\"cutover_datetime\":\"2026-10-01T04:00:00Z\",\"source_type\":\"EXCEL\",\"source_filename\":\"cutover_template_breeder_v1.xlsx\",\"source_checksum_sha256\":\"9399bc21e60bda7a0ae5fe4e1c3c3ef8731fb8b4479adefe1d20e6c8267c4391\",\"template_version\":\"v1\",\"status\":\"validate",
+      "toasts": []
+    }
+  },
+  {
+    "k": "A2_upload_como_usuario",
+    "v": {
+      "status": 200,
+      "body": "{\"id\":1,\"company_id\":1,\"business_unit\":\"breeder\",\"cutover_datetime\":\"2026-10-01T04:00:00Z\",\"source_type\":\"EXCEL\",\"source_filename\":\"carga_breeder.xlsx\",\"source_checksum_sha256\":\"b99c9d259f0d4321609318472564e211b764c0630a4ddd2fe8956bf232354ae6\",\"template_version\":\"v1\",\"status\":\"validating\",\"total_rows\":2,\"valid_rows\":1,\"invalid_rows\":1}",
+      "toasts": []
+    }
+  },
+  {
+    "k": "A2_validation",
+    "v": {
+      "batch_id": 1,
+      "status": "validating",
+      "total_rows": 2,
+      "valid_rows": 1,
+      "invalid_rows": 1,
+      "errors": [
+        {
+          "row_number": 2,
+          "column": "real_start_date",
+          "field": "real_start_date",
+          "error_code": "INVALID_DATE",
+          "message": "Fecha inválida (se espera ISO AAAA-MM-DD).",
+          "received_value": "01/08/2026"
+        },
+        {
+          "row_number": 2,
+          "column": "live_males",
+          "field": "live_males",
+          "error_code": "INVALID_NUMBER",
+          "message": "Número entero ≥ 0 esperado.",
+          "received_value": "1.200"
+        },
+        {
+          "row_number": 2,
+          "column": "farm_code",
+          "field": "farm_code",
+          "error_code": "MASTER_NOT_FOUND",
+          "message": "Granja no existe o no pertenece a la empresa.",
+          "received_value": "GRANJA-X"
+        }
+      ]
+    }
+  },
+  {
+    "k": "A3_reupload_mismo_archivo_toasts",
+    "v": []
+  },
+  {
+    "k": "B_descarga_tras_cambiar_selector",
+    "v": {
+      "url": "http://127.0.0.1:5199/api/v1/cutover-templates/hatchery",
+      "status": 200
+    }
+  },
+  {
+    "k": "B_upload_plantilla_otra_BU",
+    "v": {
+      "status": 422,
+      "body": "{\"detail\":\"BUSINESS_UNIT_MISMATCH: la plantilla es de hatchery y el batch es de breeder.\"}",
+      "toasts": []
+    }
+  },
+  {
+    "k": "C_upload_csv",
+    "v": {
+      "status": 422,
+      "body": "{\"detail\":\"INVALID_FILE: No se pudo leer el archivo: File is not a zip file\"}",
+      "toasts": [],
+      "accept": ".xlsx"
+    }
+  },
+  {
+    "k": "D_tras_recargar_texto_vacio",
+    "v": 1
+  },
+  {
+    "k": "E_upload_ok",
+    "v": {
+      "status": 200,
+      "body": "{\"id\":2,\"company_id\":1,\"business_unit\":\"breeder\",\"cutover_datetime\":\"2026-10-01T06:00:00Z\",\"source_type\":\"EXCEL\",\"source_filename\":\"ok.xlsx\",\"source_checksum_sha256\":\"07d6d6d22fa89ea040d7bea19edf7990fa1e02235f45265bc679c83410b40223\",\"template_version\":\"v1\",\"status\":\"validated\",\"total_rows\":1,\"valid_"
+    }
+  },
+  {
+    "k": "E_items",
+    "v": {
+      "items": [
+        {
+          "id": 5,
+          "source_row_number": 2,
+          "legacy_lot_reference": "LOTE-REP-OK",
+          "lot_id": null,
+          "real_start_date": "2026-08-01",
+          "validation_status": "valid",
+          "validation_errors": null
+        }
+      ]
+    }
+  }
+]
