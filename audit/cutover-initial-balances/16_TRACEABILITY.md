@@ -100,6 +100,6 @@ OPEN_TECHNICAL_CONTRADICTIONS = 0
 |---|---|
 | Spec + RED + reproducción | `8edb777d11ad9a89ed3a6c3790bb231bf801be14` |
 | Implementación (`IMPLEMENTATION_SHA`) | `507d896ebed2ec163fe6e8b1e1b5bbf65c1a7a68` |
-| Certificación (`CERTIFICATION_SHA`) | el commit que introduce `14_LOCAL_CERTIFICATION.md` |
+| Certificación (`CERTIFICATION_SHA`) | `d1770ead73c3785a25ad365196b91104828b205c` (`REMOTE_SHA_MATCH = PASS`) |
 
 Push a `origin/main` (AOD-29); `REMOTE_SHA_MATCH` y verificación del runtime en `15_RUNTIME_VERIFICATION.md`. Rama `main`; `NEW_BRANCH_CREATED = NO`; ningún workflow modificado.

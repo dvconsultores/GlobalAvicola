@@ -12,7 +12,7 @@ Fecha: 2026-10-15 · SPEC 006 — Remediación de Cargas Iniciales / saldos de a
 |---|---|
 | Spec + RED + reproducción (`SPEC-006 (SPEC+RED)`) | `8edb777d11ad9a89ed3a6c3790bb231bf801be14` |
 | Implementación (`IMPLEMENTATION_SHA`, fuente de restauración de S1–S12) | **`507d896ebed2ec163fe6e8b1e1b5bbf65c1a7a68`** |
-| Certificación y evidencia (`CERTIFICATION_SHA`) | el commit que introduce este documento (`git log -1 -- audit/cutover-initial-balances/14_LOCAL_CERTIFICATION.md`); ver `15_RUNTIME_VERIFICATION.md` |
+| Certificación y evidencia (`CERTIFICATION_SHA`) | **`d1770ead73c3785a25ad365196b91104828b205c`** (push a `origin/main`, `REMOTE_SHA_MATCH = PASS`; ver `15_RUNTIME_VERIFICATION.md`) |
 
 ## 1 · Veredicto
 

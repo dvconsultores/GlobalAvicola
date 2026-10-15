@@ -1,0 +1,11 @@
+sin sesión:
+  GET /api/v1/cutover-batches -> 401
+  GET /api/v1/cutover-batches/1/preview -> 401
+  GET /api/v1/cutover-batches/1/errors?format=csv -> 401
+  GET /api/v1/cutover-templates/breeder?format=csv -> 401
+bundle /assets/index-J7WerKPh.js: 'cutover-file-input'=True · 'Descargar plantilla CSV'=False · '_v2.'=True
+login operador UAT -> 200
+  GET /api/v1/cutover-batches (operador sin cutover:*) -> 403
+  GET /api/v1/cutover-templates/grandparent?format=csv (operador sin cutover:*) -> 403
+  GET /api/v1/cutover-batches/1/preview (operador sin cutover:*) -> 403
+  permisos cutover del operador: []
