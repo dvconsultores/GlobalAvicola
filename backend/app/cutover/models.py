@@ -150,3 +150,39 @@ class OpeningBalanceCorrection(Base):
     approved_by_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
     applied_at: Mapped[Optional[datetime]] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class HatcheryOpening(Base):
+    """SPEC 006 · apertura de un proceso de incubación en curso (1:1 con `opening_balances`).
+
+    `OpeningBalance` no puede describir huevos recibidos/cargados/transferidos/descartados ni
+    el equipo y las fechas del proceso (mandato §27): esta extensión lo hace sin esconder
+    nada en `notes`. Los pollitos nacidos y disponibles viven en el opening
+    (`accumulated_chicks_hatched`, `initial_mixed_count`).
+    """
+
+    __tablename__ = "hatchery_openings"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    opening_id: Mapped[int] = mapped_column(Integer, ForeignKey("opening_balances.id"), unique=True, index=True)
+    lot_id: Mapped[int] = mapped_column(Integer, ForeignKey("lots.id"), unique=True, index=True)
+    hatchery_id: Mapped[int] = mapped_column(Integer, ForeignKey("hatcheries.id"), index=True)
+    incubator_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("incubators.id"), nullable=True)
+    hatcher_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("hatchers.id"), nullable=True)
+    source_lot_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("lots.id"), nullable=True)
+    source_lot_reference: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    generation: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    reception_date: Mapped[date] = mapped_column(Date)
+    set_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    expected_hatch_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
+    eggs_received: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    eggs_set: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    eggs_transferred: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    eggs_discarded: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    eggs_received_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    eggs_set_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    eggs_transferred_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    eggs_discarded_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    set_date_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    expected_hatch_date_status: Mapped[str] = mapped_column(String(15), default="KNOWN")
+    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())

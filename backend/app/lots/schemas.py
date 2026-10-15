@@ -147,6 +147,15 @@ class OpeningBalanceBase(BaseModel):
     activation_reason: str = "Lote existente antes de la implantación del sistema"
     support_document_url: Optional[str] = None
 
+
+class OpeningBalanceCreate(OpeningBalanceBase):
+    """Activación manual (`docs/02 §3.9`): la regla «mortalidad ≤ población» aplica al alta.
+
+    SPEC 006 la saca de la lectura: un opening de cutover v2 con `live_males = 0` y
+    mortalidad histórica conocida es un estado real del negocio, no un error de captura, y
+    `GET /lots/{id}` no puede fallar por serializarlo.
+    """
+
     @model_validator(mode="after")
     def validate_positive(self):
         if self.initial_male_count < 0 or self.initial_female_count < 0:
@@ -158,15 +167,36 @@ class OpeningBalanceBase(BaseModel):
         return self
 
 
-class OpeningBalanceCreate(OpeningBalanceBase):
-    pass
-
-
 class OpeningBalanceRead(OpeningBalanceBase):
     id: int
     is_manual_activation: bool
     activated_by_id: int
     created_at: datetime
+    # SPEC 006 · Cutover v2: población mixta, alojadas, salidas, estados por métrica y procedencia.
+    initial_mixed_count: int = 0
+    accumulated_mortality_mixed: int = 0
+    accumulated_culls_mixed: int = 0
+    placed_male_count: Optional[int] = None
+    placed_female_count: Optional[int] = None
+    placed_mixed_count: Optional[int] = None
+    accumulated_outbound_birds: Optional[int] = None
+    mortality_status: str = "KNOWN"
+    culls_status: str = "KNOWN"
+    feed_status: str = "KNOWN"
+    egg_production_status: str = "KNOWN"
+    chicks_hatched_status: str = "KNOWN"
+    broiler_received_status: str = "KNOWN"
+    placed_status: str = "KNOWN"
+    weight_status: str = "KNOWN"
+    eggs_to_hatchery_status: str = "KNOWN"
+    outbound_status: str = "KNOWN"
+    age_status: str = "KNOWN"
+    initial_mixed_status: str = "KNOWN"
+    cutover_datetime: Optional[datetime] = None
+    template_version: Optional[str] = None
+    source_system: Optional[str] = None
+    source_reference: Optional[str] = None
+    legacy_lot_code: Optional[str] = None
     model_config = {"from_attributes": True}
 
 

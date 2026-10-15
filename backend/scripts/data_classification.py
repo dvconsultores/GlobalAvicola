@@ -175,6 +175,8 @@ CLASIFICACION: dict[str, tuple[Categoria, str]] = {
             ("cutover_items", "Filas del cutover ligadas a lotes demo."),
             ("cutover_staging_rows", "Staging del Excel de corte ficticio."),
             ("opening_balance_corrections", "Correcciones formales de aperturas demo."),
+            # SPEC 006: apertura de procesos de incubación en curso (1:1 con `opening_balances`).
+            ("hatchery_openings", "Aperturas de incubación del cutover ficticio."),
             ("review_batches", "Lotes de revisión de certificaciones antiguas."),
             ("reversals", "Reversos de eventos ficticios."),
             ("evidences", "Evidencias de prueba. Sus ficheros ya se pierden hoy por R-52."),

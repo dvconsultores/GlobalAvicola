@@ -130,6 +130,39 @@ class ReportsService:
         )
         return result.scalar() or 0
 
+    async def _lifetime_del_lote(self, lot_id: int, ob: Optional[OpeningBalance]) -> dict:
+        """SPEC 006: histórico (opening) + post-corte por métrica con el estado propagado.
+
+        `UNKNOWN + post = UNKNOWN`: el valor queda `null` y el estado dice por qué; el
+        componente post-corte se expone aparte para que nadie tenga que reconstruirlo.
+        """
+        post_mort = await self._sum_bird_quantity(lot_id, [EventType.MORTALITY_RECORDING])
+        post_culls = await self._sum_bird_quantity(lot_id, [EventType.CULL_RECORDING])
+        post_feed = await self._sum_feed_kg(lot_id)
+        post_eggs = await self._sum_egg_quantity(lot_id)
+
+        def combinar(valor, estado, post):
+            conocido = (estado == "KNOWN") and valor is not None
+            return {"opening": valor if conocido else None, "opening_status": estado or "UNKNOWN",
+                    "post": post, "lifetime": (valor + post) if conocido else None}
+
+        if ob is None:
+            return {
+                "mortality": combinar(None, "UNKNOWN", post_mort),
+                "culls": combinar(None, "UNKNOWN", post_culls),
+                "feed_kg": combinar(None, "UNKNOWN", post_feed),
+                "egg_production": combinar(None, "UNKNOWN", post_eggs),
+            }
+        hist_mort = int(ob.accumulated_mortality_male or 0) + int(ob.accumulated_mortality_female or 0) + int(ob.accumulated_mortality_mixed or 0)
+        hist_culls = int(ob.accumulated_culls_male or 0) + int(ob.accumulated_culls_female or 0) + int(ob.accumulated_culls_mixed or 0)
+        return {
+            "mortality": combinar(hist_mort, ob.mortality_status, int(post_mort)),
+            "culls": combinar(hist_culls, ob.culls_status, int(post_culls)),
+            "feed_kg": combinar(float(ob.accumulated_feed_kg) if ob.accumulated_feed_kg is not None else None,
+                                ob.feed_status, float(post_feed)),
+            "egg_production": combinar(ob.accumulated_egg_production, ob.egg_production_status, int(post_eggs)),
+        }
+
     async def _get_opening_balance(self, lot_id: int) -> Optional[OpeningBalance]:
         result = await self.db.execute(
             select(OpeningBalance)
@@ -221,7 +254,7 @@ class ReportsService:
         await self._exigir_lote(lot_id)
         total_deaths = await self._sum_bird_quantity(lot_id, [EventType.MORTALITY_RECORDING])
         ob = await self._get_opening_balance(lot_id)
-        opening_pop = (ob.initial_male_count + ob.initial_female_count) if ob else 0
+        opening_pop = (ob.initial_male_count + ob.initial_female_count + (ob.initial_mixed_count or 0)) if ob else 0
         receptions = await self._sum_bird_quantity(
             lot_id, [EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION])
         initial_pop = opening_pop + receptions
@@ -276,7 +309,7 @@ class ReportsService:
         total_feed_kg = await self._sum_feed_kg(lot_id)
         inicial_g, final_g = await self._pesos_del_lote(lot_id)
         ob = await self._get_opening_balance(lot_id)
-        apertura = (int(ob.initial_male_count or 0) + int(ob.initial_female_count or 0)) if ob else 0
+        apertura = (int(ob.initial_male_count or 0) + int(ob.initial_female_count or 0) + int(ob.initial_mixed_count or 0)) if ob else 0
         entradas = await self._sum_bird_quantity(
             lot_id, [EventType.BIRD_RECEPTION, EventType.BIRTH_REGISTRATION])
         poblacion_base = apertura + entradas
@@ -506,11 +539,17 @@ class ReportsService:
                 "start_date": str(lot.start_date) if hasattr(lot, 'start_date') else None,
             },
             "opening_balance": {
-                "total_birds": (ob.initial_male_count + ob.initial_female_count) if ob else 0,
+                "total_birds": (ob.initial_male_count + ob.initial_female_count + (ob.initial_mixed_count or 0)) if ob else 0,
                 "total_males": ob.initial_male_count if ob else 0,
                 "total_females": ob.initial_female_count if ob else 0,
-                "total_feed_kg": ob.accumulated_feed_kg if ob else 0,
+                "total_mixed": (ob.initial_mixed_count or 0) if ob else 0,
+                # SPEC 006: `null` + estado cuando el histórico es UNKNOWN / N/A (jamás un 0 fabricado).
+                "total_feed_kg": ob.accumulated_feed_kg if (ob and ob.feed_status == "KNOWN") else None,
+                "feed_status": ob.feed_status if ob else None,
+                "origin": lot.origin if hasattr(lot, "origin") else None,
+                "cutover_datetime": str(ob.cutover_datetime) if (ob and ob.cutover_datetime) else None,
             } if ob else None,
+            "lifetime": await self._lifetime_del_lote(lot_id, ob),
             "phases": [
                 {
                     "id": p.id,

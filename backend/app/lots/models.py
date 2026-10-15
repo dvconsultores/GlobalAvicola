@@ -69,6 +69,25 @@ class OpeningBalance(Base):
     # Broiler phase specific
     accumulated_broiler_received: Mapped[Optional[int]] = mapped_column(nullable=True)
 
+    # ── SPEC 006 · Cutover v2: población mixta, alojadas, salidas y estados que faltaban ──
+    #: Población viva sin sexo (engorde; pollitos disponibles en incubadora). Suma al saldo (R-67).
+    initial_mixed_count: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    accumulated_mortality_mixed: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    accumulated_culls_mixed: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
+    placed_male_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    placed_female_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    placed_mixed_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    accumulated_outbound_birds: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    placed_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    weight_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    eggs_to_hatchery_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    outbound_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    age_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    #: Estado de la población mixta de apertura (pollitos disponibles en incubadora pueden ser UNKNOWN).
+    initial_mixed_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    #: `v2` para openings cargados por SPEC 006; nulo en activaciones manuales y en v1.
+    template_version: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+
     # ── GA-REQ-061 · T14 (C1): extensiones del cutover sobre la pieza canónica R-67 ──
     #: Item de batch que originó este opening (`null` ⇒ activación manual clásica).
     cutover_item_id: Mapped[Optional[int]] = mapped_column(

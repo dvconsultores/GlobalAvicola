@@ -1,0 +1,227 @@
+{
+  "bu": "broiler",
+  "formato": "csv",
+  "inicio": "2026-10-15T16:03:32.716Z",
+  "maestros": {
+    "companyId": 1,
+    "farmId": 4,
+    "houseId": 4,
+    "farmCode": "P16-G-WTAY7ZU6",
+    "houseName": "P16-GALPON-WTAY7ZU6",
+    "hatcheryCode": "P16-INC-WTAY7ZU6",
+    "incubatorName": "P16-INCUBADORA-WTAY7ZU6",
+    "hatcherName": "P16-NACEDORA-WTAY7ZU6",
+    "lineCode": "P16-L-WTAY7ZU6",
+    "breedName": "P16-RAZA-WTAY7ZU6",
+    "prefijo": "WTAY7ZU6"
+  },
+  "ref": "E2E-BROILER-5QXVYGZC",
+  "batch": {
+    "id": 2,
+    "company_id": 1,
+    "business_unit": "broiler",
+    "cutover_datetime": "2026-09-14T22:00:00Z",
+    "source_type": "XLSX",
+    "source_filename": null,
+    "source_checksum_sha256": null,
+    "template_version": null,
+    "status": "draft",
+    "total_rows": 0,
+    "valid_rows": 0,
+    "invalid_rows": 0,
+    "source_system": null,
+    "source_reference": null,
+    "observations": null,
+    "created_by_id": 1,
+    "created_at": "2026-10-15T16:03:38.620075Z",
+    "validated_at": null,
+    "submitted_at": null,
+    "approved_by_id": null,
+    "approved_at": null,
+    "applied_by_id": null,
+    "applied_at": null,
+    "rejected_at": null,
+    "rejection_reason": null
+  },
+  "plantilla": {
+    "bytes": 342,
+    "contentType": "text/csv; charset=utf-8"
+  },
+  "upload": {
+    "status": 200,
+    "body": {
+      "id": 2,
+      "company_id": 1,
+      "business_unit": "broiler",
+      "cutover_datetime": "2026-09-14T22:00:00Z",
+      "source_type": "CSV",
+      "source_filename": "carga.csv",
+      "source_checksum_sha256": "9fa4bec6c2c0389c725f546f08395135b008ccf12dd2380e9f14c163565bae31",
+      "template_version": "v2",
+      "status": "validated",
+      "total_rows": 1,
+      "valid_rows": 1,
+      "invalid_rows": 0,
+      "source_system": null,
+      "source_reference": null,
+      "observations": null,
+      "created_by_id": 1,
+      "created_at": "2026-10-15T16:03:38.620075Z",
+      "validated_at": "2026-10-15T16:03:38.916298Z",
+      "submitted_at": null,
+      "approved_by_id": null,
+      "approved_at": null,
+      "applied_by_id": null,
+      "applied_at": null,
+      "rejected_at": null,
+      "rejection_reason": null
+    }
+  },
+  "preview": "Lotes: 1\nAves vivas: 10,000\nMortalidad histórica: 300\nAlimento (kg): 15,000\nPor fase: ENGORDE 1\nGranjas: P16-G-WTAY7ZU6\nMétricas UNKNOWN: 1\nFila origen\tCódigo legado\tGranja\tGalpón\tInicio real\tEdad (días)\tAves vivas\tMortalidad histórica\tDescartes históricos\tAlimento acum. (kg)\tPeso prom. (g)\tEstado\n2\tE2E-BROILER-5QXVYGZC\tP16-G-WTAY7ZU6\tP16-GALPON-WTAY7ZU6\t2026-08-16\t20\t10,000\t300\t200\t15,000\t900\tVálida",
+  "reconciliacion_antes": {
+    "batch_id": 2,
+    "company_id": 1,
+    "business_unit": "broiler",
+    "cutover_datetime": "2026-09-14T22:00:00Z",
+    "status": "applied",
+    "source": {
+      "type": "CSV",
+      "system": null,
+      "reference": null,
+      "filename": "carga.csv",
+      "checksum": "9fa4bec6c2c0389c725f546f08395135b008ccf12dd2380e9f14c163565bae31",
+      "template_version": "v2"
+    },
+    "items": 1,
+    "openings": 1,
+    "unknown_metrics": 0,
+    "applied_by_id": 1,
+    "applied_at": "2026-10-15T16:03:47.438521Z",
+    "lots": [
+      {
+        "lot_id": 4,
+        "lot_code": "E2E-BROILER-5QXVYGZC",
+        "legacy_lot_code": "E2E-BROILER-5QXVYGZC",
+        "origin": "MIGRATED",
+        "business_unit": "broiler",
+        "opening": {
+          "live": 10000,
+          "historical_mortality": 300,
+          "mortality_status": "KNOWN",
+          "feed_status": "KNOWN",
+          "live_males": 0,
+          "live_females": 0,
+          "live_mixed": 10000,
+          "live_mixed_status": "KNOWN",
+          "historical_culls": 200,
+          "culls_status": "KNOWN",
+          "feed_kg": 15000,
+          "avg_weight_g": 900,
+          "weight_status": "KNOWN",
+          "egg_production": null,
+          "egg_production_status": "NOT_APPLICABLE",
+          "eggs_to_hatchery": null,
+          "eggs_to_hatchery_status": "NOT_APPLICABLE",
+          "birds_received": 10500,
+          "broiler_received_status": "KNOWN",
+          "outbound_birds": 0,
+          "outbound_status": "KNOWN",
+          "chicks_hatched": null,
+          "chicks_hatched_status": "NOT_APPLICABLE",
+          "age_days": 20,
+          "age_status": "KNOWN",
+          "hatchery": null
+        },
+        "post": {
+          "mortality": 0,
+          "culls": 0,
+          "feed_kg": 0,
+          "salidas": 0,
+          "entradas": 0,
+          "feed_kg_registered": 0,
+          "eggs_collected": 0,
+          "eggs_dispatched": 0
+        },
+        "lifetime": {
+          "mortality": 300,
+          "culls": 200,
+          "feed_kg": 15000,
+          "egg_production": null,
+          "eggs_to_hatchery": null
+        },
+        "current_live": 10000,
+        "current": {
+          "live": 10000
+        }
+      }
+    ]
+  },
+  "primer_evento": {
+    "status": 201,
+    "body": "{\"lot_id\":4,\"farm_id\":null,\"house_id\":null,\"event_type\":\"mortality_recording\",\"event_date\":\"2026-10-08\",\"observations\":null,\"sap_document_ref\":null,\"supplier_id\":null,\"cause_id\":null,\"cull_cause_id\":null,\"vaccine_id\":null,\"vaccination_route\":null,\"vaccine_lot_number\":null,\"medication_id\":null,\"dosage_per_bird\":null,\"treatment_days\":null,\"destination_farm_id\":null,\"destination_plant_id\":null,\"trans"
+  },
+  "reconciliacion_despues": {
+    "lot_id": 4,
+    "lot_code": "E2E-BROILER-5QXVYGZC",
+    "legacy_lot_code": "E2E-BROILER-5QXVYGZC",
+    "origin": "MIGRATED",
+    "business_unit": "broiler",
+    "opening": {
+      "live": 10000,
+      "historical_mortality": 300,
+      "mortality_status": "KNOWN",
+      "feed_status": "KNOWN",
+      "live_males": 0,
+      "live_females": 0,
+      "live_mixed": 10000,
+      "live_mixed_status": "KNOWN",
+      "historical_culls": 200,
+      "culls_status": "KNOWN",
+      "feed_kg": 15000,
+      "avg_weight_g": 900,
+      "weight_status": "KNOWN",
+      "egg_production": null,
+      "egg_production_status": "NOT_APPLICABLE",
+      "eggs_to_hatchery": null,
+      "eggs_to_hatchery_status": "NOT_APPLICABLE",
+      "birds_received": 10500,
+      "broiler_received_status": "KNOWN",
+      "outbound_birds": 0,
+      "outbound_status": "KNOWN",
+      "chicks_hatched": null,
+      "chicks_hatched_status": "NOT_APPLICABLE",
+      "age_days": 20,
+      "age_status": "KNOWN",
+      "hatchery": null
+    },
+    "post": {
+      "mortality": 35,
+      "culls": 0,
+      "feed_kg": 0,
+      "salidas": 35,
+      "entradas": 0,
+      "feed_kg_registered": 0,
+      "eggs_collected": 0,
+      "eggs_dispatched": 0
+    },
+    "lifetime": {
+      "mortality": 335,
+      "culls": 200,
+      "feed_kg": 15000,
+      "egg_production": null,
+      "eggs_to_hatchery": null
+    },
+    "current_live": 9965,
+    "current": {
+      "live": 9965
+    }
+  },
+  "cut_gl_02": {
+    "status": 400,
+    "body": {
+      "detail": "Fecha del evento (2026-09-14) igual o anterior al corte operacional (2026-09-14): ese periodo ya está contenido en el saldo de apertura del lote migrado.",
+      "rule": "CUT-GL-02"
+    }
+  },
+  "fin": "2026-10-15T16:03:52.224Z"
+}

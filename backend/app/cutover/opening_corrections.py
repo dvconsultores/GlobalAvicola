@@ -37,6 +37,10 @@ CAMPOS_CORREGIBLES = (
     "accumulated_mortality_female",
     "accumulated_culls_male",
     "accumulated_culls_female",
+    # SPEC 006: población mixta (engorde / pollitos en planta).
+    "initial_mixed_count",
+    "accumulated_mortality_mixed",
+    "accumulated_culls_mixed",
 )
 
 

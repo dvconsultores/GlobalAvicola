@@ -1,5 +1,12 @@
 """GA-REQ-061 · T14 · C2 — ciclo crear→subir→validar (staging) (RED).
 
+SPEC 006 (cutover v2): la fixture `_xlsx` construye ahora la plantilla **v2 de reproductoras**
+(`CUTOVER_BREEDER_V2`) a partir de las mismas filas de 8 columnas del checkpoint
+(`legacy, inicio, machos, hembras, mort_m, mort_f, granja, notas`), de modo que los goldens
+certificados (10.000 → 9.965, lifetime 535, UNKNOWN visible) siguen vigentes sobre el
+contrato nuevo. La granja vacía se resuelve a la sembrada (en v2 es obligatoria) y la fase es
+`PROD`. Un noveno elemento opcional (dict) añade columnas v2 (p. ej. `existing_lot_code`).
+
 Rojo en HEAD (`cf03253`): no existen las rutas `/cutover-batches` (404). La
 Implementación añade: creación de batch (DRAFT), upload Excel→staging (jamás a
 tablas operacionales, AC43/44), parser `openpyxl` con `template_version`
@@ -19,35 +26,42 @@ from time_reference import days_ago, iso_days_ago  # noqa: E402
 CORTE_DEFECTO = days_ago(45).isoformat() + "T00:00:00+00:00"
 
 
-def _xlsx(filas: list[list], *, template_version: str = "v1", business_unit: str = "broiler") -> bytes:
-    from openpyxl import Workbook
+BU_FIXTURE = "breeder"
+GRANJA_SEMBRADA = "TEST-GRANJA-01"
 
-    wb = Workbook()
-    meta = wb.active
-    meta.title = "Meta"
-    meta.append(["key", "value"])
-    meta.append(["template_version", template_version])
-    meta.append(["business_unit", business_unit])
-    datos = wb.create_sheet("Datos")
-    datos.append(["legacy_lot_code", "real_start_date", "live_males", "live_females",
-                  "historical_mortality_males", "historical_mortality_females", "farm_code", "notes"])
+
+def _xlsx(filas: list[list], *, template_version: str = "v2", business_unit: str = BU_FIXTURE) -> bytes:
+    """Plantilla v2 de la BU con las filas del checkpoint (8 columnas + extras opcionales)."""
+    from cutover_v2_fixtures import fila as fila_v2, xlsx_v2
+
+    convertidas = []
     for f in filas:
-        datos.append(f)
-    buf = io.BytesIO()
-    wb.save(buf)
-    return buf.getvalue()
+        legacy, inicio, machos, hembras, mort_m, mort_f, granja, notas = f[:8]
+        extras = dict(f[8]) if len(f) > 8 and isinstance(f[8], dict) else {}
+        valores = dict(
+            legacy_lot_code=legacy, farm_code=granja or GRANJA_SEMBRADA,
+            productive_phase_code=extras.pop("productive_phase_code", "PROD"), real_start_date=inicio,
+            live_males=machos, live_females=hembras,
+            historical_mortality_males=mort_m, historical_mortality_females=mort_f,
+            source_system="EXCEL", notes=notas or None,
+        )
+        valores.update(extras)
+        convertidas.append(fila_v2(business_unit, **valores))
+    return xlsx_v2(business_unit, convertidas, company_id=1, template_version=template_version,
+                   business_unit=business_unit)
 
 
 FILAS = [
     ["CUT-BR-001", iso_days_ago(60), 5000, 5000, 300, 200, None, ""],
     ["CUT-BR-002", iso_days_ago(45), 2000, 2000, None, None, None, "mortalidad histórica desconocida"],
-    ["CUT-BR-003", iso_days_ago(44), 1000, 1000, 50, 40, "F-999", ""],
+    # SPEC 006: el inicio real debe ser ≤ corte (45 días); 50 días deja a la fila con su único error (granja).
+    ["CUT-BR-003", iso_days_ago(50), 1000, 1000, 50, 40, "F-999", ""],
 ]
 
 
-async def _crear_batch(client, headers, cutover: str = CORTE_DEFECTO) -> int:
+async def _crear_batch(client, headers, cutover: str = CORTE_DEFECTO, business_unit: str = BU_FIXTURE) -> int:
     r = await client.post("/api/v1/cutover-batches", headers=headers, json={
-        "business_unit": "broiler",
+        "business_unit": business_unit,
         "cutover_datetime": cutover,
     })
     assert r.status_code == 201, r.text
@@ -63,20 +77,28 @@ def _subir(files_ok: bytes):
 async def test_c2_crear_batch_draft(auth_headers, client, seeded_ids):
     """POST /cutover-batches nace en DRAFT con actor y empresa efectiva."""
     r = await client.post("/api/v1/cutover-batches", headers=auth_headers, json={
-        "business_unit": "broiler",
+        "business_unit": BU_FIXTURE,
         "cutover_datetime": CORTE_DEFECTO,
     })
     assert r.status_code == 201, r.text
     cuerpo = r.json()
     assert cuerpo["status"] == "draft"
-    assert cuerpo["business_unit"] == "broiler"
+    assert cuerpo["business_unit"] == BU_FIXTURE
     assert cuerpo["company_id"] == seeded_ids["company_id"]
     assert cuerpo["total_rows"] == 0
+
+
+async def _fases_v2() -> None:
+    """La validación v2 resuelve `productive_phase_code` contra el catálogo: las fases deben existir."""
+    from cutover_v2_fixtures import asegurar_fases
+
+    await asegurar_fases()
 
 
 @pytest.mark.asyncio
 async def test_c2_upload_validar_preview(auth_headers, http_client, seeded_ids):
     """Upload → staging + validación sin efectos: 3 leídas / 2 válidas / 1 con error estructurado."""
+    await _fases_v2()
     batch_id = await _crear_batch(http_client, auth_headers)
     r = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                                headers=auth_headers, files=_subir(_xlsx(FILAS)))
@@ -125,6 +147,7 @@ async def test_c2_mismo_checksum_no_duplica(auth_headers, http_client):
     Corte propio: el pre-chequeo de duplicado es por (empresa, BU, checksum,
     corte) — compartir corte con otro test haría que este viera un 409 ajeno.
     """
+    await _fases_v2()
     batch_id = await _crear_batch(http_client, auth_headers, cutover=days_ago(43).isoformat() + "T00:00:00+00:00")
     contenido = _xlsx(FILAS)
     r1 = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
@@ -140,7 +163,11 @@ async def test_c2_mismo_checksum_no_duplica(auth_headers, http_client):
 
 @pytest.mark.asyncio
 async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
-    """`GET /cutover-templates/{bu}`: plantilla versionada descargable; el propio archivo re-cargado vale."""
+    """`GET /cutover-templates/{bu}`: plantilla versionada descargable; el propio archivo re-cargado se valida.
+
+    SPEC 006 (Q6): la versión vigente es **v2** (v1 retirada) y la plantilla trae `Catalogos`.
+    Subir la plantilla vacía ya no deja un batch VALIDATED sin filas: `NO_DATA_ROWS` (RED-01).
+    """
     from openpyxl import load_workbook
 
     for bu in ("grandparent", "breeder", "hatchery", "broiler"):
@@ -148,19 +175,21 @@ async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
         assert r.status_code == 200, r.text
         assert "spreadsheetml" in r.headers["content-type"]
         wb = load_workbook(io.BytesIO(r.content))
-        assert {"Instrucciones", "Meta", "Datos"} <= set(wb.sheetnames)
+        assert {"Instrucciones", "Meta", "Datos", "Catalogos"} <= set(wb.sheetnames)
         meta = {fila[0].value: fila[1].value for fila in wb["Meta"].iter_rows(min_row=2)}
-        assert meta["template_version"] == "v1"
+        assert meta["template_version"] == "v2"
         assert meta["business_unit"] == bu
 
-    # La plantilla broiler descargada se puede subir tal cual (0 filas, sin efectos).
-    r = await http_client.get("/api/v1/cutover-templates/broiler", headers=auth_headers)
+    # La plantilla descargada sin filas no se acepta como carga válida (sin efectos).
+    r = await http_client.get(f"/api/v1/cutover-templates/{BU_FIXTURE}", headers=auth_headers)
     batch_id = await _crear_batch(http_client, auth_headers)
     subida = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                                     headers=auth_headers, files={"file": ("plantilla.xlsx", r.content,
                                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")})
-    assert subida.status_code == 200, subida.text
-    assert subida.json()["total_rows"] == 0
+    assert subida.status_code == 422, subida.text
+    assert "NO_DATA_ROWS" in subida.text
+    v = await http_client.get(f"/api/v1/cutover-batches/{batch_id}/validation", headers=auth_headers)
+    assert v.json()["total_rows"] == 0 and v.json()["status"] == "draft"
 
     # Unidad inexistente ⇒ 422 determinista.
     r = await http_client.get("/api/v1/cutover-templates/aves", headers=auth_headers)

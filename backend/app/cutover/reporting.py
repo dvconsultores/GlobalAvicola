@@ -1,9 +1,10 @@
-"""GA-REQ-061 · T14 · C5 — fotografía post-cutover por lote (motor operacional).
+"""GA-REQ-061 · T14 · C5 (+ SPEC 006) — fotografía post-cutover por lote (motor operacional).
 
 Solo cuentan los eventos con `event_date` **estrictamente posterior** a la fecha
 civil del corte. El histórico anterior vive en el Opening (`R-67`); restarlo otra
 vez sería el doble descuento que `docs/02 §3.9.2` prohíbe (golden: 9.965, nunca
-9.465).
+9.465). Con CUT-GL-02 (SPEC 006) ningún evento de un lote migrado puede llevar fecha
+≤ corte, de modo que «post» coincide con «todo lo registrado en el sistema».
 
 Semántica de contrapartidas idéntica a `_suma_neta` (`GA-REM-041 §3.4`): el
 original revertido sigue sumando en su signo; su contrapartida **efectiva**
@@ -19,9 +20,11 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..operations.models import (
     BirdMovement,
+    EggMovement,
     EventStatus,
     EventType,
     FeedMovement,
+    HatcheryParams,
     OperationalEvent,
     Reversal,
 )
@@ -43,6 +46,7 @@ async def suma_post_corte(
     columna_evento,
     tipos,
     corte: date,
+    filtro=None,
 ) -> float:
     """Σ neta post-cutover de los tipos dados (`event_date > corte`), con contrapartidas."""
     contrapartidas = select(Reversal.reversal_event_id).where(
@@ -56,6 +60,8 @@ async def suma_post_corte(
             OperationalEvent.event_date > corte,
         )
     )
+    if filtro is not None:
+        base = base.where(filtro)
     natural = (await db.execute(base.where(
         OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         OperationalEvent.id.not_in(contrapartidas),
@@ -68,17 +74,32 @@ async def suma_post_corte(
 
 
 async def post_corte_del_lote(db: AsyncSession, lot_id: int, corte: date) -> dict:
-    """Salidas post-cutover del lote: mortalidad, descarte, salidas, kg de alimento."""
+    """Movimientos post-cutover del lote: aves (mortalidad, descarte, salidas, entradas), alimento y huevos."""
+    aves = (BirdMovement.quantity, BirdMovement.event_id)
+    huevos = (EggMovement.quantity, EggMovement.event_id)
     return {
-        "mortality": int(await suma_post_corte(
-            db, lot_id, BirdMovement.quantity, BirdMovement.event_id,
-            (EventType.MORTALITY_RECORDING,), corte)),
-        "culls": int(await suma_post_corte(
-            db, lot_id, BirdMovement.quantity, BirdMovement.event_id,
-            (EventType.CULL_RECORDING,), corte)),
-        "salidas": int(await suma_post_corte(
-            db, lot_id, BirdMovement.quantity, BirdMovement.event_id, SALIDAS, corte)),
-        "feed_kg": float(await suma_post_corte(
-            db, lot_id, FeedMovement.quantity_kg, FeedMovement.event_id,
-            (EventType.FEED_REGISTRATION,), corte)),
+        "mortality": int(await suma_post_corte(db, lot_id, *aves, (EventType.MORTALITY_RECORDING,), corte)),
+        "culls": int(await suma_post_corte(db, lot_id, *aves, (EventType.CULL_RECORDING,), corte)),
+        "salidas": int(await suma_post_corte(db, lot_id, *aves, SALIDAS, corte)),
+        "entradas": int(await suma_post_corte(db, lot_id, *aves, ENTRADAS, corte)),
+        "feed_kg": float(await suma_post_corte(db, lot_id, FeedMovement.quantity_kg, FeedMovement.event_id,
+                                               (EventType.FEED_REGISTRATION,), corte)),
+        "eggs_collected": int(await suma_post_corte(db, lot_id, *huevos, (EventType.EGG_COLLECTION,), corte)),
+        "eggs_dispatched": int(await suma_post_corte(db, lot_id, *huevos, (EventType.EGG_DISPATCH,), corte)),
+    }
+
+
+async def post_corte_incubadora(db: AsyncSession, lot_id: int, corte: date) -> dict:
+    """Movimientos post-cutover del proceso de incubación: huevo recibido/cargado/transferido, nacidos, despachados."""
+    aves = (BirdMovement.quantity, BirdMovement.event_id)
+    return {
+        "eggs_received_hatchery": int(await suma_post_corte(
+            db, lot_id, EggMovement.quantity, EggMovement.event_id, (EventType.EGG_RECEPTION_HATCHERY,), corte,
+            filtro=EggMovement.egg_type == "fertile")),
+        "eggs_loaded": int(await suma_post_corte(
+            db, lot_id, HatcheryParams.quantity_loaded, HatcheryParams.event_id, (EventType.INCUBATION_LOAD,), corte)),
+        "eggs_transferred": int(await suma_post_corte(
+            db, lot_id, HatcheryParams.quantity_transferred, HatcheryParams.event_id, (EventType.TRANSFER_TO_HATCHER,), corte)),
+        "chicks_hatched": int(await suma_post_corte(db, lot_id, *aves, (EventType.BIRTH_REGISTRATION,), corte)),
+        "chicks_dispatched": int(await suma_post_corte(db, lot_id, *aves, (EventType.CHICK_DISPATCH,), corte)),
     }

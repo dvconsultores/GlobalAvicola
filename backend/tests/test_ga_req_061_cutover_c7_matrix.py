@@ -20,7 +20,7 @@ from sqlalchemy import select
 import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
-from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
+from test_ga_req_061_cutover_c2_lifecycle import BU_FIXTURE, _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
 from test_ga_req_061_cutover_c4_apply import _batch_aprobado, _fase  # noqa: E402
 from time_reference import days_ago, iso_days_ago  # noqa: E402
@@ -110,7 +110,7 @@ async def test_c7_red04_bu_off_apply_denegado(auth_headers, client, seeded_ids):
     batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=_filas("R4"))
     async with database.async_session() as session:
         unidad = (await session.execute(
-            select(UnidadDeNegocio).where(UnidadDeNegocio.code == "broiler"))).scalars().first()
+            select(UnidadDeNegocio).where(UnidadDeNegocio.code == BU_FIXTURE))).scalars().first()
         habilitacion = (await session.execute(
             select(CompanyBusinessUnit).where(
                 CompanyBusinessUnit.company_id == seeded_ids["company_id"],
@@ -148,7 +148,7 @@ async def test_c7_red05_sin_grant_bu_denegado(auth_headers, client, seeded_ids):
 
     async with database.async_session() as session:
         unidad = (await session.execute(
-            select(UnidadDeNegocio).where(UnidadDeNegocio.code == "broiler"))).scalars().first()
+            select(UnidadDeNegocio).where(UnidadDeNegocio.code == BU_FIXTURE))).scalars().first()
     async with database.async_session() as session:
         habilitacion = (await session.execute(
             _select(CompanyBusinessUnit).where(
@@ -211,7 +211,7 @@ async def test_c7_red06_master_inactivo_referencia_nueva(auth_headers, http_clie
         session.add(granja)
         await session.flush()
         lote_historico = Lot(company_id=seeded_ids["company_id"], lot_code="CUT-G7-AC53",
-                             origin="NATIVE", bird_type=BirdTypeEnum.BROILER,
+                             origin="NATIVE", bird_type=BirdTypeEnum(BU_FIXTURE),
                              status=LotStatus.ACTIVE, activation_type="normal",
                              farm_id=granja.id, legacy_lot_code="CUT-G7-AC53")
         session.add(lote_historico)
@@ -219,8 +219,11 @@ async def test_c7_red06_master_inactivo_referencia_nueva(auth_headers, http_clie
 
     filas = [
         ["CUT-G7-NUEVO", iso_days_ago(55), 100, 100, None, None, "F-OFF7", "nueva en granja inactiva"],
-        ["CUT-G7-AC53", iso_days_ago(55), 100, 100, None, None, "F-OFF7", "histórica de granja inactiva"],
+        # SPEC 006: la reutilización del lote existente es explícita (`existing_lot_code`).
+        ["CUT-G7-AC53", iso_days_ago(55), 100, 100, None, None, "F-OFF7", "histórica de granja inactiva",
+         {"existing_lot_code": "CUT-G7-AC53"}],
     ]
+    await _fase()
     batch_id = await _crear_batch(http_client, auth_headers, cutover=days_ago(39).isoformat() + "T00:00:00+00:00")
     r = await http_client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                                headers=auth_headers, files=_subir(_xlsx(filas)))
@@ -250,7 +253,7 @@ async def test_c7_red20_sap_no_fabrica_referencia(auth_headers, client, seeded_i
     await _fase()
     # (a) SAP sin referencia real: jamás se inventa una.
     r = await client.post("/api/v1/cutover-batches", headers=auth_headers, json={
-        "business_unit": "broiler", "cutover_datetime": CORTE,
+        "business_unit": BU_FIXTURE, "cutover_datetime": CORTE,
         "source_system": "SAP", "source_reference": None})
     assert r.status_code == 201, r.text
     batch_id = r.json()["id"]
@@ -269,7 +272,7 @@ async def test_c7_red20_sap_no_fabrica_referencia(auth_headers, client, seeded_i
 
     # (b) con referencia real declarada, se conserva (no se descarta ni se inventa otra).
     r = await client.post("/api/v1/cutover-batches", headers=auth_headers, json={
-        "business_unit": "broiler", "cutover_datetime": CORTE,
+        "business_unit": BU_FIXTURE, "cutover_datetime": CORTE,
         "source_system": "SAP", "source_reference": "SAP-DOC-77"})
     batch_id = r.json()["id"]
     await client.post(f"/api/v1/cutover-batches/{batch_id}/upload", headers=auth_headers,
@@ -283,7 +286,12 @@ async def test_c7_red20_sap_no_fabrica_referencia(auth_headers, client, seeded_i
 
 @pytest.mark.asyncio
 async def test_c7_red22_colision_legacy_code_en_batch(auth_headers, client, seeded_ids):
-    """CUT-RED-22: misma `legacy_lot_code` dos veces en un batch ⇒ apply 422 LOT_DUPLICATE, rollback total."""
+    """CUT-RED-22: misma `legacy_lot_code` dos veces en un batch ⇒ `LOT_DUPLICATE`, nada aplicado.
+
+    SPEC 006 adelanta la detección al staging: la segunda fila queda inválida con
+    `LOT_DUPLICATE`, el batch no puede enviarse (409) y ningún lote se crea. La guarda del
+    apply se conserva como defensa en profundidad.
+    """
     from app.masters.models import Lot
 
     await _fase()
@@ -291,13 +299,15 @@ async def test_c7_red22_colision_legacy_code_en_batch(auth_headers, client, seed
         ["CUT-G7-COLL", iso_days_ago(58), 100, 100, None, None, None, "duplicada"],
         ["CUT-G7-COLL", iso_days_ago(57), 200, 200, None, None, None, "duplicada ×2"],
     ]
-    batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=filas)
-    r = await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)
-    assert r.status_code == 422, r.text
-    assert "LOT_DUPLICATE" in r.text
-    # Rollback total: ni lote aplicado ni batch aplicado.
+    batch_id = await _crear_batch(client, auth_headers, cutover=CORTE)
+    r = await client.post(f"/api/v1/cutover-batches/{batch_id}/upload", headers=auth_headers, files=_subir(_xlsx(filas)))
+    assert r.status_code == 200, r.text
+    assert (r.json()["valid_rows"], r.json()["invalid_rows"]) == (1, 1), r.text
+    v = await client.get(f"/api/v1/cutover-batches/{batch_id}/validation", headers=auth_headers)
+    assert [(e["row_number"], e["error_code"]) for e in v.json()["errors"]] == [(3, "LOT_DUPLICATE")], v.text
+    assert (await client.post(f"/api/v1/cutover-batches/{batch_id}/submit", headers=auth_headers)).status_code == 409
+    # Nada aplicado: ni lote ni batch.
     async with database.async_session() as session:
         lotes = (await session.execute(select(Lot).where(Lot.lot_code == "CUT-G7-COLL"))).scalars().all()
     assert lotes == []
-    v = await client.get(f"/api/v1/cutover-batches/{batch_id}/validation", headers=auth_headers)
-    assert v.json()["status"] == "approved"
+    assert v.json()["status"] == "validating"

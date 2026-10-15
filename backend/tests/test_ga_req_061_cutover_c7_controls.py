@@ -17,7 +17,7 @@ from sqlalchemy import select
 import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
-from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
+from test_ga_req_061_cutover_c2_lifecycle import BU_FIXTURE, _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
 from test_ga_req_061_cutover_c4_apply import _fase  # noqa: E402
 from time_reference import days_ago, iso_days_ago, recent_event_date  # noqa: E402
@@ -28,7 +28,9 @@ CORTE_PASADO = days_ago(50).isoformat() + "T00:00:00+00:00"
 def _filas(etiqueta: str, ref_extra: str | None = None) -> list[list]:
     filas = [[f"CUT-G7C-{etiqueta}-1", iso_days_ago(60), 3000, 3000, 50, 50, None, "controles C7"]]
     if ref_extra:
-        filas.append([ref_extra, iso_days_ago(55), 100, 100, None, None, None, "lote nativo reusado"])
+        # SPEC 006: la reutilización del lote existente es explícita (`existing_lot_code`).
+        filas.append([ref_extra, iso_days_ago(55), 100, 100, None, None, None, "lote nativo reusado",
+                      {"existing_lot_code": ref_extra}])
     return filas
 
 
@@ -63,7 +65,7 @@ async def test_ctl01_lote_nativo_reusado_intacto(auth_headers, client, seeded_id
     async with database.async_session() as session:
         nativo = Lot(
             company_id=seeded_ids["company_id"], lot_code="CUT-G7C-NATIVO-1",
-            origin="NATIVE", bird_type=BirdTypeEnum.BROILER,
+            origin="NATIVE", bird_type=BirdTypeEnum(BU_FIXTURE),
             status=LotStatus.ACTIVE, activation_type="normal",
             start_date=days_ago(70),
         )

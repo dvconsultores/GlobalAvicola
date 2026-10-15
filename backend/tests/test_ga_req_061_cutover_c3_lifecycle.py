@@ -32,6 +32,9 @@ FILAS_VALIDAS = [
 
 
 async def _batch_validado(client, headers, cutover: str) -> int:
+    from cutover_v2_fixtures import asegurar_fases
+
+    await asegurar_fases()
     batch_id = await _crear_batch(client, headers, cutover=cutover)
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/upload",
                           headers=headers, files=_subir(_xlsx(FILAS_VALIDAS)))

@@ -97,8 +97,8 @@ async def main():
     print(f"   tablas={n} (55 + alembic_version) · head en BD={db_head} · head en código={heads[0]}")
     if db_head != heads[0]:
         sys.exit(f"   head desincronizado: BD={db_head} código={heads[0]}")
-    if n != 64:  # 63 + alembic_version — +4 del inbound SAP HANA (SPEC 005)
-        sys.exit(f"   recuento de tablas inesperado: {n} (esperado 64)")
+    if n != 65:  # 64 + alembic_version — +4 del inbound SAP HANA (SPEC 005) +1 hatchery_openings (SPEC 006)
+        sys.exit(f"   recuento de tablas inesperado: {n} (esperado 65)")
 asyncio.run(main())
 PY
 

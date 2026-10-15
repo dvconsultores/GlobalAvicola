@@ -151,6 +151,10 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     "/api/v1/cutover-batches/{batch_id}/items": (Alcance.MULTI_UNIDAD, None, "filas del batch"),
     "/api/v1/cutover-batches/{batch_id}/reconciliation": (Alcance.MULTI_UNIDAD, None, "reconciliación Opening/Post/Lifetime"),
     "/api/v1/cutover-templates/{business_unit}": (Alcance.MULTI_UNIDAD, None, "plantilla Excel versionada por BU"),
+    # SPEC 006 · Cutover v2: listado/detalle, preview por BU e informe de errores (misma cadena del batch).
+    "/api/v1/cutover-batches/{batch_id}": (Alcance.MULTI_UNIDAD, None, "detalle del batch"),
+    "/api/v1/cutover-batches/{batch_id}/preview": (Alcance.MULTI_UNIDAD, None, "preview funcional por BU"),
+    "/api/v1/cutover-batches/{batch_id}/errors": (Alcance.MULTI_UNIDAD, None, "informe de errores descargable"),
     "/api/v1/opening-balances/{opening_id}/corrections": (Alcance.MULTI_UNIDAD, None, "corrección formal del opening (AC59-65)"),
     "/api/v1/cutover-batches/{batch_id}/submit": (Alcance.MULTI_UNIDAD, None, "envía a aprobación el batch"),
     "/api/v1/cutover-batches/{batch_id}/approve": (Alcance.MULTI_UNIDAD, None, "aprueba el batch (segregación)"),

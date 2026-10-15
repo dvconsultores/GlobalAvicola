@@ -1,10 +1,16 @@
 /**
- * GA-REQ-061 · T14 · C8 — cliente del cutover (Cargas Iniciales).
+ * GA-REQ-061 · T14 · C8 + SPEC 006 — cliente del cutover (Cargas Iniciales v2).
  * Espejo exacto de las rutas del backend; los textos viven en i18n (AC84/85).
+ *
+ * SPEC 006: plantilla por BU en XLSX o CSV (la BU la fija el batch), listado y detalle de
+ * batches, preview funcional por BU, informe de errores descargable y reconciliación por
+ * métrica con `value + status` (UNKNOWN / N/A nunca se pintan como 0).
  */
 import api from './api'
 
 export type BusinessUnitCode = 'grandparent' | 'breeder' | 'hatchery' | 'broiler'
+export type TemplateFormat = 'xlsx' | 'csv'
+export type MetricStatus = 'KNOWN' | 'UNKNOWN' | 'NOT_APPLICABLE'
 
 export interface CutoverBatch {
   id: number
@@ -19,6 +25,16 @@ export interface CutoverBatch {
   total_rows: number
   valid_rows: number
   invalid_rows: number
+  source_system?: string | null
+  source_reference?: string | null
+  created_at?: string | null
+  applied_at?: string | null
+  rejection_reason?: string | null
+}
+
+export interface CutoverBatchList {
+  items: CutoverBatch[]
+  total: number
 }
 
 export interface CutoverValidationError {
@@ -49,20 +65,65 @@ export interface CutoverItem {
   validation_errors?: unknown[] | null
 }
 
+/** Celda normalizada del contrato v2: valor + estado (vacío = UNKNOWN · 0 = KNOWN · N/A = NOT_APPLICABLE). */
+export interface MetricCell {
+  value: number | string | null
+  status: MetricStatus
+}
+
+export interface CutoverPreviewRow {
+  row_number: number
+  legacy_lot_code?: string | null
+  lot_id?: number | null
+  status: string
+  errors: number
+  values: Record<string, MetricCell | undefined>
+  derived: Record<string, unknown>
+  unknown_metrics: number
+  not_applicable_metrics: number
+}
+
+export interface CutoverPreview {
+  batch_id: number
+  business_unit: BusinessUnitCode
+  status: string
+  template_version?: string | null
+  schema_id: string
+  columns: string[]
+  highlight: string[]
+  summary: Record<string, any>
+  rows: CutoverPreviewRow[]
+}
+
 export interface CutoverReconciliationLot {
   lot_id: number
+  lot_code?: string | null
   legacy_lot_code?: string | null
   origin?: string | null
+  business_unit?: string | null
   opening: {
     live: number
+    live_males?: number
+    live_females?: number
+    live_mixed?: number
     /** `null` = UNKNOWN: jamás se presenta como 0 (AC77). */
     historical_mortality: number | null
     mortality_status: string
+    historical_culls?: number | null
+    culls_status?: string
+    feed_kg?: number | null
     feed_status: string
+    egg_production?: number | null
+    egg_production_status?: string
+    chicks_hatched?: number | null
+    chicks_hatched_status?: string
+    hatchery?: Record<string, any> | null
+    [k: string]: any
   }
-  post: { mortality: number; culls: number; feed_kg: number | null }
-  lifetime: { mortality: number | null }
+  post: { mortality: number; culls: number; feed_kg: number | null; [k: string]: any }
+  lifetime: { mortality: number | null; [k: string]: any }
   current_live: number
+  current?: Record<string, number | null>
 }
 
 export interface CutoverReconciliation {
@@ -101,9 +162,15 @@ export interface OpeningCorrection {
   applied_at?: string | null
 }
 
+export const BUSINESS_UNITS: BusinessUnitCode[] = ['grandparent', 'breeder', 'hatchery', 'broiler']
+
 export const cutoverService = {
   create: (data: { business_unit: BusinessUnitCode; cutover_datetime: string }) =>
     api.post<CutoverBatch>('/cutover-batches', data),
+
+  list: (params?: { status?: string; business_unit?: BusinessUnitCode; limit?: number; offset?: number }) =>
+    api.get<CutoverBatchList>('/cutover-batches', { params }),
+  get: (batchId: number) => api.get<CutoverBatch>(`/cutover-batches/${batchId}`),
 
   upload: (batchId: number, file: File) => {
     const form = new FormData()
@@ -113,9 +180,12 @@ export const cutoverService = {
     })
   },
 
-  /** Plantilla Excel v1 de la BU (AC45: la versión viaja en la hoja Meta). */
-  template: (businessUnit: BusinessUnitCode) =>
-    api.get(`/cutover-templates/${businessUnit}`, { responseType: 'blob' }),
+  /** Plantilla v2 de la BU. Con `batchId` la BU la fija el batch (y `Meta.cutover_datetime` viaja rellena). */
+  template: (businessUnit: BusinessUnitCode, opts: { format?: TemplateFormat; batchId?: number } = {}) =>
+    api.get(`/cutover-templates/${businessUnit}`, {
+      responseType: 'blob',
+      params: { format: opts.format ?? 'xlsx', ...(opts.batchId ? { batch_id: opts.batchId } : {}) },
+    }),
 
   submit: (batchId: number) => api.post<CutoverBatch>(`/cutover-batches/${batchId}/submit`),
   approve: (batchId: number) => api.post<CutoverBatch>(`/cutover-batches/${batchId}/approve`),
@@ -125,6 +195,9 @@ export const cutoverService = {
 
   validation: (batchId: number) =>
     api.get<CutoverValidation>(`/cutover-batches/${batchId}/validation`),
+  errorsReport: (batchId: number, format: TemplateFormat) =>
+    api.get(`/cutover-batches/${batchId}/errors`, { responseType: 'blob', params: { format } }),
+  preview: (batchId: number) => api.get<CutoverPreview>(`/cutover-batches/${batchId}/preview`),
   items: (batchId: number) =>
     api.get<{ items: CutoverItem[] }>(`/cutover-batches/${batchId}/items`),
   reconciliation: (batchId: number) =>
@@ -134,6 +207,16 @@ export const cutoverService = {
     api.get<{ items: OpeningCorrection[] }>(`/opening-balances/${openingId}/corrections`),
   correctOpening: (openingId: number, data: { field: string; new_value: number; reason: string }) =>
     api.post<OpeningCorrection>(`/opening-balances/${openingId}/corrections`, data),
+}
+
+/** Descarga un blob con el nombre indicado (sin dejar el object URL colgando). */
+export function descargarBlob(contenido: Blob, nombre: string): void {
+  const url = URL.createObjectURL(contenido)
+  const enlace = document.createElement('a')
+  enlace.href = url
+  enlace.download = nombre
+  enlace.click()
+  URL.revokeObjectURL(url)
 }
 
 export default cutoverService

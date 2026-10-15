@@ -1,0 +1,295 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=e0f1a2b3c4d5 · head en código=e0f1a2b3c4d5
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+============================= test session starts ==============================
+platform linux -- Python 3.11.2, pytest-9.1.1, pluggy-1.6.0
+rootdir: /home/maria/Proyectos/GlobalAvicola/backend
+configfile: pyproject.toml
+plugins: asyncio-1.4.0, anyio-4.14.0
+asyncio: mode=Mode.AUTO, debug=False, asyncio_default_fixture_loop_scope=function, asyncio_default_test_loop_scope=function
+collected 76 items
+
+tests/test_cutover_v2_red.py .........                                   [ 11%]
+tests/test_cutover_v2_contracts.py ..................................... [ 60%]
+....                                                                     [ 65%]
+tests/test_cutover_v2_validation.py ...........                          [ 80%]
+tests/test_cutover_v2_apply.py FF....F..                                 [ 92%]
+tests/test_cutover_v2_continuity.py FFF...                               [100%]
+
+=================================== FAILURES ===================================
+___________________ test_apply_grandparent_destino_por_campo ___________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fc1e4d50c90>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_apply_grandparent_destino_por_campo(auth_headers, http_client, seeded_ids):
+        ids = await preparar(seeded_ids)
+        filas = [fila_reproductoras("grandparent", "GP-APP-1", fase="PROD", genetic_line_code=LINEA, breed_name=None,
+                                    birds_placed_males=1050, birds_placed_females=9450, area_code="CUT2-AREA", sex="mixed",
+                                    phase_start_date=iso_days_ago(100))]
+        _, por_ref = await _aplicado(http_client, auth_headers, seeded_ids, "grandparent", filas, 80)
+        lote, ob, fases = await _lote_opening_fase(por_ref["GP-APP-1"])
+        assert (lote.bird_type.value, lote.origin, lote.legacy_lot_code, lote.lot_code) == ("grandparent", "MIGRATED", "GP-APP-1", "GP-APP-1")
+        assert (lote.farm_id, lote.house_id, lote.area_id, lote.genetic_line_id) == (ids["farm_id"], ids["house_id"], ids["area_id"], ids["genetic_line_id"])
+        assert lote.sex.value == "mixed" and lote.source_system == "LEGACY" and lote.source_reference == "REF-GP-APP-1"
+        assert lote.start_date.date() == days_ago(200) and lote.activation_type == "normal" and lote.status.value == "active"
+        assert (ob.initial_male_count, ob.initial_female_count, ob.initial_mixed_count) == (1000, 9000, 0)
+        assert (ob.placed_male_count, ob.placed_female_count, ob.placed_status) == (1050, 9450, "KNOWN")
+        assert (ob.accumulated_mortality_male, ob.accumulated_mortality_female, ob.mortality_status) == (50, 450, "KNOWN")
+        assert (ob.accumulated_culls_male, ob.accumulated_culls_female, ob.culls_status) == (0, 0, "KNOWN")
+        assert (ob.accumulated_feed_kg, ob.feed_status) == (120000.5, "KNOWN")
+        assert (ob.current_avg_weight, ob.weight_status) == (3200, "KNOWN")
+        assert (ob.accumulated_egg_production, ob.egg_production_status) == (180000, "KNOWN")
+        assert (ob.accumulated_eggs_to_hatchery, ob.eggs_to_hatchery_status) == (150000, "KNOWN")
+        assert ob.chicks_hatched_status == ob.broiler_received_status == ob.outbound_status == "NOT_APPLICABLE"
+>       assert (ob.age_days, ob.age_status) == (200, "KNOWN")
+E       AssertionError: assert (120, 'KNOWN') == (200, 'KNOWN')
+E         
+E         At index 0 diff: 120 != 200
+E         Use -v to get more diff
+
+tests/test_cutover_v2_apply.py:67: AssertionError
+_____________________ test_apply_breeder_cria_y_produccion _____________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fc1e4c1d8d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_apply_breeder_cria_y_produccion(auth_headers, http_client, seeded_ids):
+        ids = await preparar(seeded_ids)
+        filas = [
+            fila_reproductoras("breeder", "BR-CRIA", fase="CRIA", real_start_date=iso_days_ago(70), phase_start_date=None,
+                               accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="N/A",
+                               genetic_line_code=LINEA, breed_name=RAZA, historical_culls_males=None, historical_culls_females=None),
+            fila_reproductoras("breeder", "BR-PROD", fase="PROD", genetic_line_code=LINEA, breed_name=RAZA),
+        ]
+>       _, por_ref = await _aplicado(http_client, auth_headers, seeded_ids, "breeder", filas, 81)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_cutover_v2_apply.py:85: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+client = <httpx.AsyncClient object at 0x7fc1e4c1d8d0>
+headers = {'Authorization': 'Bearer [REDACTADO]'}
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+bu = 'breeder'
+filas = [['BR-CRIA', '', 'TEST-GRANJA-01', 'TEST-GALPON-01', '', 'CRIA', ...], ['BR-PROD', '', 'TEST-GRANJA-01', 'TEST-GALPON-01', '', 'PROD', ...]]
+dias = 81
+
+    async def _aplicado(client, headers, seeded_ids, bu: str, filas: list, dias: int) -> tuple[int, dict[str, int]]:
+        batch_id = await crear_batch(client, headers, bu, corte(dias))
+        r = await subir(client, headers, batch_id, xlsx_v2(bu, filas, company_id=seeded_ids["company_id"]))
+>       assert r.status_code == 200 and r.json()["status"] == "validated", r.text
+E       AssertionError: {"id":29,"company_id":1,"business_unit":"breeder","cutover_datetime":"2026-07-26T00:00:00Z","source_type":"XLSX","source_filename":"corte.xlsx","source_checksum_sha256":"6425f54015cf138cbf702e10ccb53b60f1c19589ea7d3bc3dfbc6df4d407501f","template_version":"v2","status":"validating","total_rows":2,"valid_rows":1,"invalid_rows":1,"source_system":null,"source_reference":null,"observations":null,"created_by_id":1,"created_at":"2026-10-15T15:56:30.227423Z","validated_at":null,"submitted_at":null,"approved_by_id":null,"approved_at":null,"applied_by_id":null,"applied_at":null,"rejected_at":null,"rejection_reason":null}
+E       assert (200 == 200 and 'validating' == 'validated'
+E        +  where 200 = <Response [200 OK]>.status_code
+E         
+E         - validated
+E         + validating)
+
+tests/test_cutover_v2_apply.py:28: AssertionError
+______________ test_multiempresa_bu_deshabilitada_y_sin_concesion ______________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fc1e4c2a4d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_multiempresa_bu_deshabilitada_y_sin_concesion(auth_headers, http_client, seeded_ids):
+        """S3/S4: la empresa B no ve ni aplica lo de A; BU apagada ⇒ 403 aun para actor global; sin grant ⇒ 403."""
+        from datetime import datetime, timezone
+    
+        from app.auth.security import create_access_token
+        from app.business_units.models import BusinessUnit as UnidadDeNegocio
+        from app.business_units.models import CompanyBusinessUnit, UserBusinessUnit
+        from test_ga_req_061_cutover_c3_lifecycle import _otorgar
+        from test_ga_req_061_cutover_c7_matrix import _headers_ajenos, _rol_de
+    
+        await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        b = await crear_batch(http_client, auth_headers, "hatchery", corte(86))
+        assert (await subir(http_client, auth_headers, b, xlsx_v2("hatchery", [fila_incubadora("INC-MULTI")], company_id=empresa))).status_code == 200
+        await aprobar(http_client, auth_headers, headers_aprobador(seeded_ids), b)
+    
+        ajenos = await _headers_ajenos(seeded_ids)
+        for ruta in ("", "/preview", "/errors", "/items", "/reconciliation"):
+            assert (await http_client.get(f"/api/v1/cutover-batches/{b}{ruta}", headers=ajenos)).status_code == 404, ruta
+        assert (await http_client.post(f"/api/v1/cutover-batches/{b}/apply", headers=ajenos)).status_code == 404
+>       assert (await http_client.get(f"/api/v1/cutover-templates/hatchery?batch_id={b}", headers=ajenos)).status_code == 404
+E       assert 403 == 404
+E        +  where 403 = <Response [403 Forbidden]>.status_code
+
+tests/test_cutover_v2_apply.py:229: AssertionError
+__________________ test_grandparent_primer_evento_de_su_fase ___________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fc1e4cfa1d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_grandparent_primer_evento_de_su_fase(auth_headers, http_client, seeded_ids):
+        """GP en PRODUCCIÓN: mortalidad por sexo y recolección de huevo funcionan desde el opening; lifetime propagado."""
+        await preparar(seeded_ids)
+        b, por_ref = await _lote_aplicado(http_client, auth_headers, seeded_ids, "grandparent",
+                                          [fila_reproductoras("grandparent", "GP-CONT-1", fase="PROD")])
+        lote = por_ref["GP-CONT-1"]
+        r = await _evento(http_client, auth_headers, lot_id=lote, event_type="mortality_recording", event_date=recent_event_date(),
+                          bird_movements=[{"sex": "female", "quantity": 20, "avg_weight": 3200.0}, {"sex": "male", "quantity": 15, "avg_weight": 3600.0}])
+        assert r.status_code == 201, r.text
+        r = await _evento(http_client, auth_headers, lot_id=lote, event_type="egg_collection", event_date=recent_event_date(),
+                          egg_movements=[{"egg_type": "fertile", "quantity": 7000}])
+>       assert r.status_code == 201, r.text
+E       AssertionError: {"detail":"El evento 'egg_collection' requiere una granja asignada","rule":"BR-08"}
+E       assert 400 == 201
+E        +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_cutover_v2_continuity.py:57: AssertionError
+________________________ test_breeder_cria_y_produccion ________________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fc1e4dfe7d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_breeder_cria_y_produccion(auth_headers, http_client, seeded_ids):
+        """Reproductoras en cría: mortalidad; en producción: recolección y despacho de huevo fértil sobre lo recolectado."""
+        await preparar(seeded_ids)
+        b, por_ref = await _lote_aplicado(http_client, auth_headers, seeded_ids, "breeder", [
+            fila_reproductoras("breeder", "BR-CONT-CRIA", fase="CRIA", real_start_date=iso_days_ago(70), live_males=0, live_females=4500,
+                               historical_mortality_males=50, historical_mortality_females=200,
+                               accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="N/A"),
+            fila_reproductoras("breeder", "BR-CONT-PROD", fase="PROD"),
+        ])
+        cria, prod = por_ref["BR-CONT-CRIA"], por_ref["BR-CONT-PROD"]
+        r = await _evento(http_client, auth_headers, lot_id=cria, event_type="mortality_recording", event_date=recent_event_date(),
+                          bird_movements=[{"sex": "female", "quantity": 10, "avg_weight": 900.0}])
+        assert r.status_code == 201, r.text
+        # Lote con 0 machos vivos y mortalidad histórica de machos: estado real, se sirve sin 500 (validador movido al alta).
+        assert (await http_client.get(f"/api/v1/lots/{cria}", headers=auth_headers)).status_code == 200
+        f = await _fila(http_client, auth_headers, b, cria)
+        assert (f["opening"]["live"], f["current_live"], f["lifetime"]["mortality"]) == (4500, 4490, 260)
+        assert f["opening"]["egg_production_status"] == "NOT_APPLICABLE" and f["lifetime"]["egg_production"] is None
+        r = await _evento(http_client, auth_headers, lot_id=prod, event_type="egg_collection", event_date=recent_event_date(),
+                          egg_movements=[{"egg_type": "fertile", "quantity": 8000}])
+>       assert r.status_code == 201, r.text
+E       AssertionError: {"detail":"El evento 'egg_collection' requiere una granja asignada","rule":"BR-08"}
+E       assert 400 == 201
+E        +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_cutover_v2_continuity.py:92: AssertionError
+__________________ test_hatchery_siguiente_paso_de_incubacion __________________
+
+auth_headers = {'Authorization': 'Bearer [REDACTADO]'}
+http_client = <httpx.AsyncClient object at 0x7fc1e4c71650>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_hatchery_siguiente_paso_de_incubacion(auth_headers, http_client, seeded_ids):
+        """Incubadora: carga del huevo recibido no cargado (BR-03) y despacho de pollitos disponibles (BR-04) desde el opening."""
+        await preparar(seeded_ids)
+        b, por_ref = await _lote_aplicado(http_client, auth_headers, seeded_ids, "hatchery", [
+            fila_incubadora("INC-CONT-1"),
+            fila_incubadora("INC-CONT-2", eggs_transferred=8900, chicks_hatched=8000, chicks_available=500),
+        ])
+        l1, l2 = por_ref["INC-CONT-1"], por_ref["INC-CONT-2"]
+        r = await _evento(http_client, auth_headers, lot_id=l1, event_type="incubation_load", event_date=recent_event_date(),
+                          hatchery_params=[{"quantity_loaded": 1000}])
+        assert r.status_code == 201, r.text
+        r = await _evento(http_client, auth_headers, lot_id=l1, event_type="incubation_load", event_date=recent_event_date(),
+                          hatchery_params=[{"quantity_loaded": 1}])
+        assert r.status_code == 400 and r.json().get("rule") == "BR-03", r.text
+        f = await _fila(http_client, auth_headers, b, l1)
+        assert f["opening"]["hatchery"]["eggs_received"] == 10000 and f["post"]["eggs_loaded"] == 1000
+        assert f["current"]["eggs_available_hatchery"] == 0 and f["current"]["eggs_in_process"] == 9900
+        # Pollitos ya nacidos y disponibles al corte se despachan (viables = 500 + nacimientos − salidas).
+        r = await _evento(http_client, auth_headers, lot_id=l2, event_type="chick_dispatch", event_date=recent_event_date(),
+                          bird_movements=[{"sex": "mixed", "quantity": 300, "avg_weight": 40.0}])
+>       assert r.status_code == 201, r.text
+E       AssertionError: {"detail":"El evento 'chick_dispatch' requiere una granja asignada","rule":"BR-08"}
+E       assert 400 == 201
+E        +  where 400 = <Response [400 Bad Request]>.status_code
+
+tests/test_cutover_v2_continuity.py:122: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+tests/test_cutover_v2_red.py::test_red_04_csv_se_descarga_y_se_carga_como_xlsx
+tests/test_cutover_v2_validation.py::test_plantilla_de_otra_empresa_otra_bu_y_otra_version
+  /home/maria/Proyectos/GlobalAvicola/backend/app/cutover/router.py:69: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await CutoverService(db, current_user).subir_y_validar(
+
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/fastapi/routing.py:344: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_v2_apply.py::test_apply_grandparent_destino_por_campo
+FAILED tests/test_cutover_v2_apply.py::test_apply_breeder_cria_y_produccion
+FAILED tests/test_cutover_v2_apply.py::test_multiempresa_bu_deshabilitada_y_sin_concesion
+FAILED tests/test_cutover_v2_continuity.py::test_grandparent_primer_evento_de_su_fase
+FAILED tests/test_cutover_v2_continuity.py::test_breeder_cria_y_produccion - ...
+FAILED tests/test_cutover_v2_continuity.py::test_hatchery_siguiente_paso_de_incubacion
+================== 6 failed, 70 passed, 5 warnings in 20.96s ===================

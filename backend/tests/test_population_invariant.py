@@ -400,8 +400,9 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     assert len(cabezas) == 1, cabezas
     # `GA-REQ-061` · T14 la avanza: C1 `b7c8d9e0f1a2` (fundación del cutover) y C2
     # `c8d9e0f1a2b3` (acciones RBAC/auditoría del cutover). SPEC 005 la avanza a
-    # `d9e0f1a2b3c4` (tablas inbound SAP HANA, solo lectura).
-    assert cabezas == ["d9e0f1a2b3c4"], cabezas
+    # `d9e0f1a2b3c4` (tablas inbound SAP HANA, solo lectura). SPEC 006 la avanza a
+    # `e0f1a2b3c4d5` (apertura por BU: columnas de `opening_balances` + `hatchery_openings`).
+    assert cabezas == ["e0f1a2b3c4d5"], cabezas
     # y hay una ruta nueva de `GA-REM-003` · AC04 (`/api/v1/logout`), 211 → 212.
     # `R-197` · C2 añade `/api/v1/review/events/{event_id}/actions`, 212 → 213.
     # `R-218` · C2 añade `/api/v1/reports/lot/{lot_id}/weekly`, 213 → 214.
@@ -410,5 +411,6 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # C6 las correcciones del opening (POST/GET), 222 → 225; C9 la plantilla
     # descargable por BU, 225 → 226. SPEC 005 añade las 10 rutas del inbound SAP HANA
     # (`/api/v1/sap/inbound/*`: readiness, objects, sync, sync/{object_type}, jobs, records,
-    # errors, mappings GET/PUT y mappings/{mapping_id}), 226 → 236.
-    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 236
+    # errors, mappings GET/PUT y mappings/{mapping_id}), 226 → 236. SPEC 006 (cutover v2) añade
+    # el listado y el detalle de batches, el preview por BU y el informe de errores, 236 → 240.
+    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 240

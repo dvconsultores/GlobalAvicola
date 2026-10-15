@@ -2,6 +2,7 @@
 Business rules validators for operational events.
 BR-01 through BR-19 from the spec.
 """
+from datetime import date
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -81,10 +82,12 @@ async def get_current_bird_balance(db: AsyncSession, lot_id: int) -> int:
     salidas = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id, out_types)
     from ..lots.models import OpeningBalance
 
+    # SPEC 006: la población mixta de apertura (engorde; pollitos en incubadora) también es saldo.
     apertura = await db.execute(
         select(
             func.coalesce(OpeningBalance.initial_male_count, 0)
             + func.coalesce(OpeningBalance.initial_female_count, 0)
+            + func.coalesce(OpeningBalance.initial_mixed_count, 0)
         ).where(OpeningBalance.lot_id == lot_id)
     )
 
@@ -207,7 +210,16 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
-    return (res_in.scalar() or 0) - (res_out.scalar() or 0)
+    # SPEC 006: un proceso de incubación migrado abre con huevo recibido y aún no cargado
+    # (`hatchery_openings.eggs_received − eggs_set`); sin esto el lote nacía con saldo 0 y
+    # `BR-03` rechazaba la primera carga posterior al corte.
+    from ..cutover.models import HatcheryOpening
+
+    apertura = (await db.execute(
+        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0))
+        .where(HatcheryOpening.lot_id == lot_id)
+    )).scalar() or 0
+    return int(apertura) + (res_in.scalar() or 0) - (res_out.scalar() or 0)
 
 
 async def get_viable_chick_balance(db: AsyncSession, lot_id: int) -> int:
@@ -224,7 +236,17 @@ async def get_viable_chick_balance(db: AsyncSession, lot_id: int) -> int:
     nacidos = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id, [EventType.BIRTH_REGISTRATION])
     salidas = await _suma_neta(db, lot_id, BirdMovement.quantity, BirdMovement.event_id,
                                [EventType.CHICK_DISPATCH, EventType.MORTALITY_RECORDING, EventType.CULL_RECORDING])
-    return nacidos - salidas
+    # SPEC 006: pollitos ya nacidos y aún en planta al corte (`opening_balances.initial_mixed_count`
+    # de un lote con apertura de incubadora) son viables para despachar.
+    from ..cutover.models import HatcheryOpening
+    from ..lots.models import OpeningBalance
+
+    apertura = (await db.execute(
+        select(func.coalesce(OpeningBalance.initial_mixed_count, 0))
+        .join(HatcheryOpening, HatcheryOpening.opening_id == OpeningBalance.id)
+        .where(OpeningBalance.lot_id == lot_id)
+    )).scalar() or 0
+    return int(apertura) + nacidos - salidas
 
 
 # ─── Business rule validators ─────────────────────────────────────────────────
@@ -549,7 +571,7 @@ async def validate_sap_document_unique(
 
 
 async def validate_event_date(db: AsyncSession, lot_id: int, event_date) -> None:
-    """BR-06: Event date cannot be before lot activation date."""
+    """BR-06: Event date cannot be before lot activation date. CUT-GL-02: no event on/before the cutover date."""
     from ..masters.models import Lot
     result = await db.execute(select(Lot).where(Lot.id == lot_id))
     lot = result.scalar_one_or_none()
@@ -559,6 +581,33 @@ async def validate_event_date(db: AsyncSession, lot_id: int, event_date) -> None
                 f"Fecha del evento ({event_date}) anterior a la activación del lote ({lot.start_date})",
                 "BR-06",
             )
+    await validate_cutover_date(db, lot_id, event_date)
+
+
+async def validate_cutover_date(db: AsyncSession, lot_id: int, event_date) -> None:
+    """`CUT-GL-02` (SPEC 006): los datos de la plantilla representan el estado HASTA el corte.
+
+    Un lote con saldo de apertura por cutover (`opening_balances.cutover_datetime`) no admite
+    eventos con fecha **igual o anterior** a la fecha civil del corte: ese periodo ya está
+    resumido en el opening y volver a registrarlo sería el doble conteo que `docs/02 §3.9.2`
+    prohíbe. Rechazo determinista, con la regla citada; la activación manual (sin corte) no
+    se ve afectada.
+    """
+    from ..lots.models import OpeningBalance
+
+    corte = (await db.execute(
+        select(OpeningBalance.cutover_datetime).where(OpeningBalance.lot_id == lot_id)
+    )).scalar_one_or_none()
+    if corte is None:
+        return
+    fecha_corte = corte.date() if hasattr(corte, "date") else corte
+    fecha_evento = event_date.date() if hasattr(event_date, "date") and not isinstance(event_date, date) else event_date
+    if fecha_evento <= fecha_corte:
+        raise BusinessRuleViolation(
+            f"Fecha del evento ({fecha_evento}) igual o anterior al corte operacional ({fecha_corte}): "
+            "ese periodo ya está contenido en el saldo de apertura del lote migrado.",
+            "CUT-GL-02",
+        )
 
 
 async def validate_lot_active(db: AsyncSession, lot_id: int, company_id: int | None = None) -> None:

@@ -18,7 +18,7 @@ from sqlalchemy import select
 import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
-from test_ga_req_061_cutover_c2_lifecycle import _crear_batch, _subir, _xlsx  # noqa: E402
+from test_ga_req_061_cutover_c2_lifecycle import BU_FIXTURE, _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
 from time_reference import days_ago, iso_days_ago  # noqa: E402
 
@@ -32,24 +32,15 @@ FILAS = [
 
 
 async def _fase() -> int:
-    """Fase productiva para el opening.
+    """Fase productiva del opening.
 
-    Código propio (`CUTOVER`) y **única**: la siembra de la suite completa
-    (`sembrar_baseline`) localiza sus fases por `code` con `scalar_one_or_none`,
-    de modo que sembrar duplicados de `PROD` rompía esa siembra.
+    SPEC 006: el contrato v2 declara la fase por código (`PROD` para la fixture de
+    reproductoras), así que aquí se garantiza el catálogo `CRIA/PROD/INCUB/ENGORDE` (una fila
+    por código: la siembra de la suite completa los localiza con `scalar_one_or_none`).
     """
-    from app.masters.models import ProductivePhase
+    from cutover_v2_fixtures import asegurar_fases
 
-    async with database.async_session() as session:
-        existente = (await session.execute(
-            select(ProductivePhase).where(ProductivePhase.code == "CUTOVER"))).scalars().first()
-        if existente is not None:
-            return existente.id
-        fase = ProductivePhase(name="Cutover", code="CUTOVER", is_initial=True, order=1)
-        session.add(fase)
-        await session.commit()
-        await session.refresh(fase)
-        return fase.id
+    return (await asegurar_fases())["PROD"]
 
 
 async def _batch_aprobado(client, auth_headers, seeded_ids, filas=FILAS) -> int:
@@ -143,55 +134,54 @@ async def test_c4_apply_solo_desde_approved_y_una_vez(auth_headers, client, seed
 
 @pytest.mark.asyncio
 async def test_c4_duplicado_en_lote_rollback_total(auth_headers, client, seeded_ids):
-    """Referencia repetida ⇒ LOT_DUPLICATE y **nada** aplicado (atomicidad AC27/28) + FAILED_APPLY."""
+    """Referencia repetida ⇒ `LOT_DUPLICATE` y **nada** aplicado (atomicidad AC27/28).
+
+    SPEC 006 adelanta la detección al staging: la fila repetida queda inválida, el batch no
+    llega a APPROVED y ningún lote se crea. La guarda del apply (`LOT_DUPLICATE` → rollback +
+    `FAILED_APPLY`) se conserva como defensa en profundidad y se ejercita en
+    `test_cutover_v2_apply.py`.
+    """
     await _fase()
     filas = [
         ["CUT-DUP-1", iso_days_ago(60), 1000, 1000, None, None, None, ""],
         ["CUT-DUP-1", iso_days_ago(59), 500, 500, None, None, None, ""],
     ]
-    batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=filas)
+    batch_id = await _crear_batch(client, auth_headers, cutover=CORTE)
+    r = await client.post(f"/api/v1/cutover-batches/{batch_id}/upload", headers=auth_headers, files=_subir(_xlsx(filas)))
+    assert r.status_code == 200, r.text
+    assert (r.json()["status"], r.json()["valid_rows"], r.json()["invalid_rows"]) == ("validating", 1, 1), r.text
+    v = await client.get(f"/api/v1/cutover-batches/{batch_id}/validation", headers=auth_headers)
+    assert [(e["row_number"], e["error_code"]) for e in v.json()["errors"]] == [(3, "LOT_DUPLICATE")], v.text
+    assert (await client.post(f"/api/v1/cutover-batches/{batch_id}/submit", headers=auth_headers)).status_code == 409
+    assert (await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)).status_code == 409
 
-    r = await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)
-    assert r.status_code == 422, r.text
-    assert "LOT_DUPLICATE" in r.text
-
-    from app.audit.models import AuditLog
-    from app.lots.models import OpeningBalance
     from app.masters.models import Lot
 
     async with database.async_session() as session:
         lotes = (await session.execute(
             select(Lot).where(Lot.legacy_lot_code == "CUT-DUP-1"))).scalars().all()
-        assert lotes == []  # rollback total: ni un lote a medias
-
-        items = (await client.get(f"/api/v1/cutover-batches/{batch_id}/items",
-                                  headers=auth_headers)).json()["items"]
-        assert all(it["lot_id"] is None for it in items)
-
-        # El batch sigue aprobado (no APPLIED) y con rastro FAILED_APPLY.
-        acciones = (await session.execute(
-            select(AuditLog.action).where(AuditLog.entity_id == str(batch_id),
-                                          AuditLog.entity_type == "cutover_batch"))).scalars().all()
-        nombres = {getattr(a, "name", str(a)) for a in acciones}
-        assert "FAILED_APPLY" in nombres, nombres
+        assert lotes == []  # nada aplicado: ni un lote a medias
+    items = (await client.get(f"/api/v1/cutover-batches/{batch_id}/items", headers=auth_headers)).json()["items"]
+    assert all(it["lot_id"] is None for it in items)
 
 
 @pytest.mark.asyncio
 async def test_c4_lote_existente_se_reusa_sin_duplicar(auth_headers, client, seeded_ids):
     """AC20: un lote existente se relaciona (no se duplica); su origen NATIVE se conserva."""
     await _fase()
-    from app.masters.models import Lot
+    from app.masters.models import BirdTypeEnum, Lot
 
     empresa = seeded_ids["company_id"]
     async with database.async_session() as session:
+        # SPEC 006: el lote a reutilizar es de la misma BU y se declara con `existing_lot_code`.
         previo = Lot(company_id=empresa, lot_code="CUT-REUSE-1", origin="NATIVE",
-                     bird_type=None, activation_type="normal")
+                     bird_type=BirdTypeEnum(BU_FIXTURE), activation_type="normal")
         session.add(previo)
         await session.commit()
         await session.refresh(previo)
         previo_id = previo.id
 
-    filas = [["CUT-REUSE-1", iso_days_ago(60), 1200, 1300, 10, 20, None, ""]]
+    filas = [["CUT-REUSE-1", iso_days_ago(60), 1200, 1300, 10, 20, None, "", {"existing_lot_code": "CUT-REUSE-1"}]]
     batch_id = await _batch_aprobado(client, auth_headers, seeded_ids, filas=filas)
     r = await client.post(f"/api/v1/cutover-batches/{batch_id}/apply", headers=auth_headers)
     assert r.status_code == 200, r.text

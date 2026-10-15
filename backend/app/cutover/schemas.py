@@ -1,8 +1,8 @@
-"""GA-REQ-061 · Cutover — esquemas de API (C2: ciclo crear→subir→validar)."""
+"""GA-REQ-061 · Cutover — esquemas de API (C2…C6) + SPEC 006 (listado, preview, errores, reconciliación por métrica)."""
 from __future__ import annotations
 
 from datetime import date, datetime
-from typing import Literal, Optional
+from typing import Any, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -32,6 +32,25 @@ class CutoverBatchRead(BaseModel):
     total_rows: int
     valid_rows: int
     invalid_rows: int
+    # SPEC 006: trazabilidad visible del ciclo (listado/detalle).
+    source_system: Optional[str] = None
+    source_reference: Optional[str] = None
+    observations: Optional[str] = None
+    created_by_id: Optional[int] = None
+    created_at: Optional[datetime] = None
+    validated_at: Optional[datetime] = None
+    submitted_at: Optional[datetime] = None
+    approved_by_id: Optional[int] = None
+    approved_at: Optional[datetime] = None
+    applied_by_id: Optional[int] = None
+    applied_at: Optional[datetime] = None
+    rejected_at: Optional[datetime] = None
+    rejection_reason: Optional[str] = None
+
+
+class CutoverBatchList(BaseModel):
+    items: list[CutoverBatchRead]
+    total: int
 
 
 class CutoverRejectRequest(BaseModel):
@@ -73,7 +92,35 @@ class CutoverItemsResponse(BaseModel):
     items: list[CutoverItemRead]
 
 
-# ── C5: reconciliación Opening / Post / Lifetime (goldens de la spec) ──────────
+# ── SPEC 006: preview por BU ──────────────────────────────────────────────────
+
+
+class CutoverPreviewRow(BaseModel):
+    row_number: int
+    legacy_lot_code: Optional[str] = None
+    lot_id: Optional[int] = None
+    status: str
+    errors: int
+    #: `{campo: {"value", "status"}}` — UNKNOWN y N/A viajan como estado, nunca como 0.
+    values: dict[str, Any]
+    derived: dict[str, Any] = {}
+    unknown_metrics: int = 0
+    not_applicable_metrics: int = 0
+
+
+class CutoverPreviewRead(BaseModel):
+    batch_id: int
+    business_unit: str
+    status: str
+    template_version: Optional[str] = None
+    schema_id: str
+    columns: list[str]
+    highlight: list[str]
+    summary: dict[str, Any]
+    rows: list[CutoverPreviewRow]
+
+
+# ── C5 + SPEC 006: reconciliación Opening / Post / Lifetime / Current ─────────
 
 
 class CutoverReconciliationSource(BaseModel):
@@ -86,6 +133,8 @@ class CutoverReconciliationSource(BaseModel):
 
 
 class CutoverOpeningRead(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     live: int
     historical_mortality: Optional[int] = None
     mortality_status: str
@@ -93,24 +142,31 @@ class CutoverOpeningRead(BaseModel):
 
 
 class CutoverPostRead(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     mortality: int
     culls: int
     feed_kg: Optional[float] = None
 
 
 class CutoverLifetimeRead(BaseModel):
+    model_config = ConfigDict(extra="allow")
+
     #: `null` cuando alguna pieza es UNKNOWN (jamás un número fabricado).
     mortality: Optional[int] = None
 
 
 class CutoverReconciliationLot(BaseModel):
     lot_id: int
+    lot_code: Optional[str] = None
     legacy_lot_code: Optional[str] = None
     origin: Optional[str] = None
+    business_unit: Optional[str] = None
     opening: CutoverOpeningRead
     post: CutoverPostRead
     lifetime: CutoverLifetimeRead
     current_live: int
+    current: dict[str, Any] = {}
 
 
 class CutoverReconciliationRead(BaseModel):

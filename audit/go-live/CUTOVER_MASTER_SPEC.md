@@ -73,3 +73,21 @@ El acta (`CUT-GL-01`) es el documento de firma del cutover. Contendrá hashes qu
 - No define SAP real (RFC/OData/IDoc/BAPI/HANA/documentos ficticios prohibidos).
 - No fija tolerancias numéricas (prohibidas sin decisión de negocio → `OWNER_GATE_REAL`).
 - No altera secuencias de códigos ni la autogeneración R-153.
+
+---
+
+## Addendum SPEC 006 (2026-10-15) — contrato de plantillas **v2** por unidad de negocio
+
+El Owner reportó en uso real que la carga de cargas iniciales no funcionaba; la reproducción en HEAD (`57a421a`) demostró que la plantilla **v1 genérica** (8 columnas de aves por sexo para las cuatro BU) no podía representar incubadora ni engorde, perdía la distinción N/A/UNKNOWN y dejaba a la pantalla sin guía (`audit/cutover-initial-balances/01_LIVE_FAILURE_ROOT_CAUSE.md`). La remediación es **posterior a la certificación GA-REQ-061**, que se conserva íntegra; esta sección registra la evolución:
+
+| Elemento | v1 (GA-REQ-061, histórico) | v2 (SPEC 006, vigente) |
+|---|---|---|
+| Plantillas | `cutover_template_{bu}_v1.xlsx`, mismas 8 columnas | `CUTOVER_{GRANDPARENT,BREEDER,HATCHERY,BROILER}_V2` (`audit/cutover-initial-balances/03…06`) con `Catalogos` e `Instrucciones` por campo; XLSX y CSV al mismo DTO |
+| Versión | `v1` | `v2`; `v1 = RETIRED_WITH_CLEAR_ERROR` (nunca se reinterpreta) |
+| Semántica | N/A y vacío colapsaban a `None` | `{value, status}` por métrica: vacío = UNKNOWN · 0 = KNOWN · N/A = NOT_APPLICABLE |
+| Apply | fase = primera activa (CRIA), sin `LotPhase`, sin ubicación/genética | fase declarada por BU, `LotPhase`, galpón/área/línea/raza/sexo, `OpeningBalance` extendido (mixto, alojadas, salidas, estados), `hatchery_openings` |
+| Motor | sin guarda de corte; saldos de huevo/pollito sin apertura | `CUT-GL-02`; saldos BR-01/BR-03/BR-04 leen la apertura |
+| API | sin listado ni informe de errores | `GET /cutover-batches`, `GET …/{id}`, `GET …/preview`, `GET …/errors?format=csv|xlsx`, `GET /cutover-templates/{bu}?format=&batch_id=` |
+| E2E | API-only, continuidad solo engorde | UI por BU (4 specs) con primer evento post-corte y CUT-GL-02 |
+
+Las filas de la §2 que citan `cutover_template_{bu}_v1.xlsx` describen el estado anterior; la referencia vigente es `specs/006-cutover-initial-balances-remediation/` y `audit/cutover-initial-balances/`.
