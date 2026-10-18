@@ -18,11 +18,16 @@ Presupuesto de turnos: al 75 % del presupuesto se inyecta un aviso para que el m
 último turno se fuerza respuesta textual (`tool_choice="none"`); si aun así no hay informe final, se conserva el
 último texto del asistente en `last_assistant_content`.
 
+Entrega de informes: el informe completo se persiste siempre (también en INCOMPLETE/DONE_UNSTRUCTURED) en
+`~/.cache/deepseek_executor/runs/<timestamp>-<hash>.json` y su ruta se devuelve en `report_path`, de modo que un
+JSON mal formado o recortado en la respuesta nunca suponga perder la evidencia detallada.
+
 Uso manual:  .venv/bin/python server.py            (stdio MCP)
              .venv/bin/python server.py --selftest  (comprueba clave y modelo sin ejecutar nada)
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import os
 import re
@@ -30,6 +35,7 @@ import shlex
 import subprocess
 import sys
 import time
+from datetime import datetime
 from pathlib import Path
 from typing import Any, Optional
 
@@ -203,6 +209,18 @@ def t_run_command(command: str, cwd: str = ".", timeout: int = CMD_TIMEOUT) -> s
     return f"[rc={out.returncode} · {time.time()-t0:.1f}s]\n{texto}"
 
 
+def _error_herramienta(nombre: str, e: Exception) -> str:
+    """Traduce la excepción del despacho a un texto accionable. Un `TypeError` con «missing … required positional
+    argument» significa que la llamada llegó sin argumentos (típico cuando el contenido excede lo que el modelo puede
+    emitir en una sola llamada): se le indica cómo trocear el archivo en lugar de dejar que reintente igual."""
+    mensaje = str(e)
+    if isinstance(e, TypeError) and "missing" in mensaje and "required positional argument" in mensaje:
+        return (f"ERROR: la llamada a {nombre} llegó sin argumentos (suele ocurrir cuando el contenido supera el tamaño "
+                "que el modelo puede emitir en una sola llamada). Divide el contenido: crea el archivo con write_file y un "
+                "marcador <!--CHUNK--> y añade fragmentos de ≤1800 caracteres con edit_file reemplazando el marcador.")
+    return f"ERROR: {type(e).__name__}: {mensaje}"
+
+
 HERRAMIENTAS = {
     "read_file": (t_read_file, {"type": "object", "properties": {"path": {"type": "string"}, "offset": {"type": "integer"}, "limit": {"type": "integer"}}, "required": ["path"]},
                   "Lee un archivo del repositorio (líneas numeradas)."),
@@ -232,6 +250,42 @@ def _llamar(mensajes: list[dict], *, key: str, timeout: float = 300.0, tool_choi
                 raise RuntimeError(f"DeepSeek API {r.status_code}: {redactar(r.text[:500])}")
             return r.json()
     raise RuntimeError("DeepSeek API: sin respuesta tras reintentos")
+
+
+def _parsear_informe(final: str) -> dict[str, Any]:
+    """Extrae el informe JSON del texto final del modelo aunque venga con fences ```json, texto alrededor o
+    saltos de línea sin escapar dentro de las cadenas. Devuelve {} si no hay JSON recuperable."""
+    texto = re.sub(r"^```[a-zA-Z]*\s*", "", final.strip())  # fence de apertura
+    texto = re.sub(r"\s*```\s*$", "", texto)                # fence de cierre
+    bloque = re.search(r"\{.*\}", texto, flags=re.S)
+    if not bloque:
+        return {}
+    candidato = bloque.group(0)
+    try:
+        return json.loads(candidato, strict=False)  # strict=False tolera caracteres de control dentro de cadenas
+    except json.JSONDecodeError:
+        pass
+    # Segundo intento: escapar los saltos de línea literales que el modelo dejó dentro del JSON.
+    try:
+        return json.loads(re.sub(r"(?<!\\)\n", r"\\n", candidato), strict=False)
+    except json.JSONDecodeError:
+        return {}
+
+
+def _persistir_informe(informe: dict[str, Any], task: str, final_raw: str) -> dict[str, Any]:
+    """Guarda el informe íntegro (sin recortes) en ~/.cache/deepseek_executor/runs/ y anota su ruta en `report_path`.
+    La persistencia nunca debe tumbar la ejecución: ante cualquier error se informa en `report_error`."""
+    try:
+        carpeta = Path.home() / ".cache" / "deepseek_executor" / "runs"
+        carpeta.mkdir(parents=True, exist_ok=True)
+        ruta = carpeta / f"{datetime.now():%Y%m%dT%H%M%S}-{hashlib.sha1(task.encode('utf-8')).hexdigest()[:8]}.json"
+        volcado = {**informe, "task": redactar(task)[:2000], "final_raw": redactar(final_raw)}
+        ruta.write_text(json.dumps(volcado, ensure_ascii=False, indent=1), encoding="utf-8")
+        informe["report_path"] = str(ruta)
+    except Exception as e:  # noqa: BLE001
+        informe["report_path"] = None
+        informe["report_error"] = redactar(f"{type(e).__name__}: {e}")
+    return informe
 
 
 def ejecutar(task: str, *, max_turns: int, contexto: str = "") -> dict[str, Any]:
@@ -272,7 +326,7 @@ def ejecutar(task: str, *, max_turns: int, contexto: str = "") -> dict[str, Any]
             try:
                 resultado = fn(**args) if fn else f"ERROR: herramienta desconocida {nombre}"
             except Exception as e:  # noqa: BLE001
-                resultado = f"ERROR: {type(e).__name__}: {e}"
+                resultado = _error_herramienta(nombre, e)
             if nombre in ("write_file", "edit_file") and str(resultado).startswith("OK"):
                 tocados.add(args.get("path", "?"))
             acciones.append({"turn": turno + 1, "tool": nombre, "args": {k: (v if len(str(v)) < 300 else str(v)[:300] + "…") for k, v in args.items()},
@@ -283,20 +337,17 @@ def ejecutar(task: str, *, max_turns: int, contexto: str = "") -> dict[str, Any]
         informe["status"] = "INCOMPLETE"; informe["summary"] = f"se alcanzó el máximo de turnos ({max_turns}) sin informe final"
         if ultimo_contenido:
             informe["last_assistant_content"] = redactar(ultimo_contenido)[:4000]
-        return informe
-    try:
-        bloque = re.search(r"\{.*\}", final, flags=re.S)
-        parsed = json.loads(bloque.group(0)) if bloque else {}
-    except json.JSONDecodeError:
-        parsed = {}
+        return _persistir_informe(informe, task, ultimo_contenido)
+    parsed = _parsear_informe(final)
     informe["status"] = parsed.get("status", "DONE_UNSTRUCTURED")
-    informe["summary"] = parsed.get("summary", redactar(final)[:4000])
+    # Si el informe no es JSON recuperable se conserva el texto completo (hasta 60000 caracteres), nunca un recorte corto.
+    informe["summary"] = parsed.get("summary", redactar(final)[:60000])
     for k in ("tests", "evidence", "open_issues"):
         if k in parsed:
             informe[k] = parsed[k]
     if "files_changed" in parsed:
         informe["files_changed_reported"] = parsed["files_changed"]
-    return informe
+    return _persistir_informe(informe, task, final)
 
 
 # ── herramientas MCP (lo que ve Claude) ──────────────────────────────────────
@@ -307,7 +358,14 @@ def deepseek_execute(task: str, context: str = "", max_turns: int = MAX_TURNS_DE
     salida esperada) con herramientas reales sobre el repositorio y devuelve un informe JSON con acciones, archivos
     tocados, pruebas ejecutadas y resumen. El orquestador debe verificar el resultado con las suites reales."""
     try:
-        return json.dumps(ejecutar(task, max_turns=max(1, min(max_turns, 120)), contexto=context), ensure_ascii=False, indent=1)
+        informe = ejecutar(task, max_turns=max(1, min(max_turns, 120)), contexto=context)
+        salida = json.dumps(informe, ensure_ascii=False, indent=1)
+        if len(salida) > 45000:
+            # El informe completo queda en `report_path`: se recortan solo las acciones para no desbordar el contexto.
+            informe["actions"] = informe.get("actions", [])[:10]
+            informe["actions_truncated"] = True
+            salida = json.dumps(informe, ensure_ascii=False, indent=1)
+        return salida
     except Exception as e:  # noqa: BLE001
         return json.dumps({"status": "ERROR", "error": redactar(f"{type(e).__name__}: {e}")}, ensure_ascii=False)
 

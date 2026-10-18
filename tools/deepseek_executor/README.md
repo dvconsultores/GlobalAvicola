@@ -50,6 +50,14 @@ salida se redacta antes de devolverla. Sin red más allá de la API de DeepSeek.
 
 `status` (`DONE` | `FAIL` | `BLOCKED` | `INCOMPLETE` | `ERROR`; `INCOMPLETE` si se agotan los turnos sin informe final, `ERROR` si falla la clave o la API, `DONE_UNSTRUCTURED` si el agente no devuelve JSON), `summary`, `model`, `turns` / `tool_calls`, `files_touched` (archivos escritos/editados con éxito), `files_changed_reported` (lo que declara el agente), `usage` (`prompt_tokens`, `completion_tokens`), `actions` (`turn`, `tool`, `args`, `result_head`, `seconds`), `tests`, `evidence` y `open_issues`.
 
+## Limitaciones conocidas
+
+- **Contenido demasiado largo en `write_file`**: si el modelo no puede emitir todo el contenido en una sola llamada,
+  la herramienta puede llegar sin argumentos y el agente recibe un error explicativo (`la llamada a write_file llegó
+  sin argumentos…`) en lugar del `TypeError` crudo. La forma de trabajo indicada es crear el archivo con `write_file`
+  y un marcador `<!--CHUNK-->` y añadir fragmentos de ≤1800 caracteres con `edit_file` reemplazando el marcador.
+- El informe es evidencia declarada, no certificación: la verificación con las suites reales corresponde al orquestador.
+
 ## Regla de verificación
 
 El informe es **evidencia declarada, no certificación**: el orquestador verifica siempre con las suites reales (`backend/scripts/run_tests.sh <ruta>`, `npx vitest run`, `npx tsc -b`) y no acepta un `DONE` sin salida real de pruebas. Si el ejecutor no responde, Claude informa del bloqueo una vez.
