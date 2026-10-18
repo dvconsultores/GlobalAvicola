@@ -1,7 +1,7 @@
 # Feature Specification: SPEC 007 — QA Integral Synthetic Dataset and User Acceptance Pack
 
 **Directorio**: `specs/007-qa-integral-demo-dataset` · **Rama**: `main` (sin rama nueva)
-**Created**: 2026-10-18 · **Baseline**: `3e146ac` · **Status**: `IMPLEMENTING`
+**Created**: 2026-10-18 · **Baseline**: `3e146ac` · **Status**: `LOCALLY_CERTIFIED · RUNTIME_PENDING_EXTERNAL`
 **Tipo**: `QA_ENVIRONMENT_PREPARATION_SYNTHETIC_DATA_AND_UAT_GUIDE` (no modifica reglas de negocio ni arquitectura; no reabre SPEC 005/006) · **Prioridad**: P0 · **Dependencias**: SPEC 005 (inbound SAP sintetizable), SPEC 006 (Cargas Iniciales v2), GA-REM-040 (acceso por unidad), OD-16, OD-19, BR-14, BR-18, AOD-29
 **Input**: Mandato Owner «PREPARACIÓN INTEGRAL DEL AMBIENTE QA CON DATA SINTÉTICA + GUÍA DE PRUEBA FUNCIONAL PARA QA — MODO AUTÓNOMO» (2026-10-18)
 **Paquete de auditoría asociado**: `audit/qa-integral-dataset/01…12`

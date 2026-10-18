@@ -16,9 +16,9 @@
 | T12 | Ensayo aislado CREATE→VERIFY→APPLY(0)→CLEAN→RECREATE→VERIFY | DONE | `06`, `07` |
 | T13 | Regresión completa backend + frontend | DONE (1722/0/49 · 542/542 · tsc+build) | `10_REGRESSION.md` |
 | T14 | Commit de implementación (SPEC + seed + tests + evidencia) | DONE | `12_TRACEABILITY.md` |
-| T15 | Push AOD-29 + REMOTE_SHA_MATCH | PENDING | `12_TRACEABILITY.md` |
+| T15 | Push AOD-29 + REMOTE_SHA_MATCH | DONE (`b7942c7`, PASS) | `12_TRACEABILITY.md` |
 | T16 | Ejecución en runtime compartido (`--inventory`, `--apply`, `--verify`) | BLOCKED_EXTERNAL (base no alcanzable desde la estación; runbook entregado) | `09_RUNTIME_VERIFICATION.md` |
 | T17 | Verificación funcional en runtime por API (login 12 usuarios, menú por BU, lotes, revisión, SAP, reportes, cutover) | BLOCKED_EXTERNAL (checklist entregada) | `09` |
 | T18 | Manual QA MD + DOCX + plantilla de resultados DOCX + matriz de cobertura | DONE | `docs/`, `QA_DATA_COVERAGE_MATRIX.md`, `11_QA_MANUAL_DELIVERY.md` |
 | T19 | Manifest MD + JSON | DONE (aislado; runtime pendiente) | `QA_DATA_MANIFEST.*` |
-| T20 | Commit de certificación + push + verificación remota | PENDING | `12` |
+| T20 | Commit de certificación + push + verificación remota | DONE (IMPL `9a5d11a` · CERT `b7942c7` · REMOTE_SHA_MATCH PASS) | `12` |

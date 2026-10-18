@@ -6,8 +6,9 @@
 |---|---|---|
 | Baseline | `3e146ac` | SPEC-006 RUNTIME |
 | IMPLEMENTATION (SPEC+IMPL) | `9a5d11a6ce8636e4ac05f0b458de6aa7a87f3274` | SPEC 007, seed canónico, tests, evidencia 01–11, manifest, matriz, fixtures, guía QA MD+DOCX, plantilla, manuales |
-| CERTIFICATION | *(se registra en el commit de cierre)* | sensibilidad, regresión post-mutación, este documento |
-| REMOTE | *(se registra en el commit de cierre)* | `origin/main` tras push SSH (AOD-29) |
+| CERTIFICATION | `b7942c7ca27d4908967cf30005ee6ea9d988a2af` | sensibilidad, regresión post-mutación, este documento |
+| REMOTE | `b7942c7ca27d4908967cf30005ee6ea9d988a2af` | `git push git@github.com:dvconsultores/GlobalAvicola.git main:main` (3e146ac..b7942c7) · `REMOTE_SHA_MATCH=PASS` |
+| CLOSE | *(este commit; registra los SHAs anteriores)* | actualización de 12 y tasks |
 
 ## Sensibilidad / mutación (tras el commit de implementación; log `evidence/12_sensitivity.log`)
 
@@ -41,6 +42,18 @@ COVERAGE                 = 26/26 entradas de navigationConfig.ts · 4/4 BU · 12
 BRANCH                   = main (sin rama nueva)
 ```
 
-## Cierre
+## Cierre (2026-10-18)
 
-Se completa en el commit de certificación con: resultado de la regresión post-mutación, `CERT_SHA`, `LOCAL_SHA`, `REMOTE_SHA`, `REMOTE_SHA_MATCH`, `TREE`.
+```
+IMPL_SHA          = 9a5d11a6ce8636e4ac05f0b458de6aa7a87f3274
+CERT_SHA          = b7942c7ca27d4908967cf30005ee6ea9d988a2af
+LOCAL_SHA         = b7942c7ca27d4908967cf30005ee6ea9d988a2af
+REMOTE_SHA        = b7942c7ca27d4908967cf30005ee6ea9d988a2af   (origin/main, SSH)
+REMOTE_SHA_MATCH  = PASS
+TREE              = limpio (solo un archivo local de credenciales del arnés, no versionable y no versionado)
+POST_MUTATION     = 1722/0/49 (idéntica a pre-mutación)
+```
+
+Nota: el remoto `origin` está configurado por HTTPS sin credenciales en esta estación; el push se hace, como en SPEC 005/006, por la URL SSH explícita (AOD-29).
+
+Pendiente externo: ejecutar el runbook de `09_RUNTIME_VERIFICATION.md` en el host del backend (base del runtime no alcanzable desde la estación). Al hacerlo, `QA_DATA_READY` pasa a `YES`.
