@@ -14,8 +14,8 @@
 | GOV | `13cabff9474b53399310e007507b11dbe13e941a` | Gobierno: spec, plan, tasks y documentos de auditoría |
 | IMPL | `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` | Implementación: BR-23, etiquetas, estado/Desactivar, bucle de revisión, fechas, listados y filtro Granja |
 | IMPL-2 | `9390afcad3ca57dcea17d8065054978abe1a0720` | Refuerzo guardián QA-013 (20 maestros) + identidad estable de `useCan` |
-| CERT | `{{CERT_SHA}}` | Commit de certificación (documentación de cierre) |
-| REMOTE | `{{REMOTE_SHA}}` | SHA en remoto; coincidencia con local: `{{REMOTE_SHA_MATCH}}` · árbol: `{{TREE}}` |
+| CERT | `68d78fcb8ac65c206d46f1ef0e87198301cdbc94` | Commit de certificación (documentación de cierre) |
+| REMOTE | `68d78fcb8ac65c206d46f1ef0e87198301cdbc94` | SHA en remoto; coincidencia con local: `PASS` · árbol: `limpio (solo archivo local de credenciales del arnés sin versionar)` |
 
 Todos los commits se hicieron **en `main`, sin rama nueva y sin push** hasta la autorización del Owner.
 
@@ -102,10 +102,10 @@ QA_RESPONSE_DOC=docs/RESPUESTA_REVISION_GENERAL_QA_YOLINEL_2026_10_17.docx
 QA_PLAN_DOC=docs/PLAN_QA_REPRODUCTORAS_INCUBADORA.docx
 STATE_FLOW_DOC=docs/FLUJO_DE_ESTADOS_GLOBAL_AVICOLA.docx
 IMPLEMENTATION_SHA=dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124 (+ IMPL-2 9390afcad3ca57dcea17d8065054978abe1a0720)
-CERTIFICATION_SHA={{CERT_SHA}}
-REMOTE_SHA={{REMOTE_SHA}}
-REMOTE_SHA_MATCH={{REMOTE_SHA_MATCH}}
-TREE={{TREE}}
+CERTIFICATION_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
+REMOTE_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
+REMOTE_SHA_MATCH=PASS
+TREE=limpio (solo archivo local de credenciales del arnés sin versionar)
 FINAL_STATUS=LOCALLY_CERTIFIED_PENDING_RUNTIME_AND_OWNER_DECISIONS
 ```
 
@@ -139,4 +139,17 @@ nuevas props de `DataTable` (`rowClassName`, `RowAction.visible`) son **aditivos
 existente se renombró ni se eliminó. La UI se verificó con **jsdom** (`npx vitest run`: 576/576) y con `tsc -b` y
 `vite build` en verde, por lo que el recorrido E2E no se re-ejecutó (`E2E=NOT_RUN`): el cierre funcional extremo a
 extremo queda cubierto por la verificación UAT con el checklist de `08_RUNTIME_VERIFICATION.md`.
+
+## 7. Cierre
+
+```
+CERT_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
+PUSH_SSH=git push git@github.com:dvconsultores/GlobalAvicola.git main:main (83c9cd8..68d78fc)
+LOCAL_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
+REMOTE_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
+REMOTE_SHA_MATCH=PASS
+TREE=limpio (solo archivo local de credenciales del arnés sin versionar)
+```
+
+Nota: el commit CLOSE registra estos SHAs; su propio SHA se publica en el push de cierre.
 

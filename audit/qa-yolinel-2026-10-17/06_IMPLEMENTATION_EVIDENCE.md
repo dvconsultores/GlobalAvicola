@@ -109,7 +109,7 @@ Ninguna de estas omisiones es un olvido: son límites declarados.
 |---|---|
 | SHA de implementación | `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) |
 | Refuerzo de pruebas guardianas | `9390afcad3ca57dcea17d8065054978abe1a0720` (IMPL-2 — guardián QA-013 a los 20 maestros + identidad estable de `useCan`; `qaYolinel.red.test.tsx` 4 → 23 casos, +19) |
-| SHA de certificación | `{{CERT_SHA}}` |
+| SHA de certificación | `68d78fcb8ac65c206d46f1ef0e87198301cdbc94` |
 | Regresión backend completa | **1739 passed · 0 failed · 49 skipped (22 min 26 s)** (ver `07_TEST_EVIDENCE.md`) |
 | Regresión frontend completa | **96 archivos · 557 pruebas PASS · tsc rc 0 · build rc 0** pre-mutación; post-mutación con IMPL-2: **96 archivos · 576 pruebas PASS · tsc rc 0 · build rc 0** (ver `07_TEST_EVIDENCE.md`) |
 | Sensibilidad S1/S5/S6/S7/S8 | **5/5 DETECTED** (S7 y S8 tras el refuerzo IMPL-2) — detalle en `07_TEST_EVIDENCE.md` §3 |

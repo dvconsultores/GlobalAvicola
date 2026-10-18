@@ -1,12 +1,12 @@
 # Tasks: SPEC 008 — QA Yolinel Findings Remediation
 
 **Directorio**: `specs/008-qa-yolinel-findings-remediation` · **Rama**: `main` (sin rama nueva) · **Baseline**: `83c9cd8`
-**Created**: 2026-10-18 · **Status**: `LOCALLY_CERTIFYING` · **Prioridad**: P1
+**Created**: 2026-10-18 · **Status**: `LOCALLY_CERTIFIED` · **Prioridad**: P1
 **Referencias**: `spec.md` (FR-01…FR-08, AC-xx), `plan.md` (§3 FASE R, §11 sensibilidad), `audit/qa-yolinel-2026-10-17/01…09`
 
 Estados: `DONE` · `EN CURSO` · `PENDING` · `BLOCKED (Owner)` · `BLOCKED (externo)`.
 
-SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · refuerzo guardián: `9390afcad3ca57dcea17d8065054978abe1a0720` (IMPL-2) · GOBIERNO: `13cabff9474b53399310e007507b11dbe13e941a` (GOV) · SHA de certificación: `{{CERT_SHA}}` · Regresión: **1739 passed · 0 failed · 49 skipped** / **557 pruebas PASS (pre) → 576 pruebas PASS (post, IMPL-2: 4 → 23 casos)**
+SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · refuerzo guardián: `9390afcad3ca57dcea17d8065054978abe1a0720` (IMPL-2) · GOBIERNO: `13cabff9474b53399310e007507b11dbe13e941a` (GOV) · SHA de certificación: `68d78fcb8ac65c206d46f1ef0e87198301cdbc94` · Regresión: **1739 passed · 0 failed · 49 skipped** / **557 pruebas PASS (pre) → 576 pruebas PASS (post, IMPL-2: 4 → 23 casos)**
 
 ---
 
@@ -83,7 +83,7 @@ SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · ref
 
 | ID | Tarea | Salida | Estado |
 |---|---|---|---|
-| T20 | `OPERATION_STATE_MACHINE.md`, «Cómo Global Avícola recibe información de SAP», `lots.origin`, segregación, `PROCESS_PREDECESSOR_MATRIX` propuesta, matriz de autocompletado, inventario de fechas → DOCX; certificado `LOCALLY_CERTIFIED`; push autorizado | docs + certificado | **EN CURSO** (`{{CERT_SHA}}`) — `.md` entregados (`OPERATION_STATE_MACHINE.md`, `SAP_PARA_QA.md`, `LOT_ORIGIN_AND_MASTERS_FOR_QA.md`, `PROCESS_PREDECESSOR_MATRIX.md`) y DOCX en `docs/`; falta el commit de certificación y el push SSH. Runtime `NOT_VERIFIED_FROM_WORKSTATION` (`08_RUNTIME_VERIFICATION.md`); dataset QA-DEMO-V1 `BLOCKED_EXTERNAL` |
+| T20 | `OPERATION_STATE_MACHINE.md`, «Cómo Global Avícola recibe información de SAP», `lots.origin`, segregación, `PROCESS_PREDECESSOR_MATRIX` propuesta, matriz de autocompletado, inventario de fechas → DOCX; certificado `LOCALLY_CERTIFIED`; push autorizado | docs + certificado | **DONE** (CERT `68d78fc` · push SSH `83c9cd8..68d78fc` · REMOTE_SHA_MATCH `PASS`) — `.md` entregados (`OPERATION_STATE_MACHINE.md`, `SAP_PARA_QA.md`, `LOT_ORIGIN_AND_MASTERS_FOR_QA.md`, `PROCESS_PREDECESSOR_MATRIX.md`) y DOCX en `docs/`; commit de certificación `68d78fcb8ac65c206d46f1ef0e87198301cdbc94` y push SSH `83c9cd8..68d78fc` con `REMOTE_SHA_MATCH` `PASS`. Runtime `NOT_VERIFIED_FROM_WORKSTATION` (`08_RUNTIME_VERIFICATION.md`); dataset QA-DEMO-V1 `BLOCKED_EXTERNAL` |
 
 ---
 
@@ -109,13 +109,9 @@ SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · ref
 | FASE 4 | 1 | 1 | 0 | 0 |
 | FASE 5 | 2 | 2 | 0 | 0 |
 | FASE 6 | 1 | 1 | 0 | 0 |
-| FASE 7–10 | 3 | 2 | 1 | 0 |
-| **Total** | **20** | **19** | **1** | **0** |
+| FASE 7–10 | 3 | 3 | 0 | 0 |
+| **Total** | **20** | **20** | **0** | **0** |
 
 ### Qué falta para cerrar
 
-1. **Commit CERT** — `{{CERT_SHA}}`: commit de certificación con la documentación de cierre (`10_FINAL_STATUS.md`).
-2. **Push SSH autorizado** — subir `main` al remoto (sin rama nueva).
-3. **REMOTE_SHA_MATCH** — verificar que el SHA remoto coincide con el local (`{{REMOTE_SHA_MATCH}}`, árbol `{{TREE}}`).
-4. **Cierre** — `FINAL_STATUS=LOCALLY_CERTIFIED_PENDING_RUNTIME_AND_OWNER_DECISIONS`; el runtime sigue
-   `NOT_VERIFIED_FROM_WORKSTATION` y QA-DEMO-V1 `BLOCKED_EXTERNAL`.
+Nada en el repo. Pendientes externos: decisiones Owner OD-QA2-01..05, PDF original para contraste, runbook QA-DEMO-V1 en el host del backend (`audit/qa-integral-dataset/09_RUNTIME_VERIFICATION.md`), verificación UAT con `audit/qa-yolinel-2026-10-17/08_RUNTIME_VERIFICATION.md`.
