@@ -182,6 +182,64 @@ en SPEC 007 ⇒ ejecutar el runbook en el host del backend), los usuarios `qa.*`
 2026-10-20. `BR14_RUNTIME=PASS` se sostiene en el **bloqueo por permiso del rol** (el operador recibe 403
 `approvals:approve`); la variante estricta registrador≠aprobador sigue cubierta por `test_segregation_r143`.
 
+### 8.1 Segundo intento (cierre runtime autorizado por el Owner)
+
+Intento del **2026-10-18 (tarde)** contra `https://avicola.globaldv.net`: backend y frontend en Docker Compose con
+imágenes de Docker Hub, contenedor `globalavicola-backend`, plantilla `docker-compose.yml` con
+`ENVIRONMENT=${ENVIRONMENT:-production}`.
+
+```
+UAT_ACCESS=PASS (HTTP)
+EXECUTION_METHOD=NOT_AVAILABLE_TO_AGENT (ssh denegado por el clasificador de seguridad; sin docker/railway locales)
+QA_DATA_RUNTIME_INVENTORY=BLOCKED_HUMAN_ACTION
+QA_DATA_APPLY=BLOCKED_HUMAN_ACTION
+QA_DATA_VERIFY=BLOCKED_HUMAN_ACTION
+QA_DATA_IDEMPOTENCY=BLOCKED_HUMAN_ACTION
+QA_USERS_ONLINE=NOT_AVAILABLE (sin qa.*)
+BREEDER_RUNTIME_SMOKE=BLOCKED_HUMAN_ACTION
+HATCHERY_RUNTIME_SMOKE=BLOCKED_HUMAN_ACTION
+BREEDER_TO_HATCHERY_RUNTIME=BLOCKED_HUMAN_ACTION
+BR23_RUNTIME=UI PASS / API NOT_TESTABLE sin dataset
+REVIEW_RUNTIME=PASS
+APPROVAL_RUNTIME=PASS (UAT-09)
+BR14_RUNTIME=PASS (por permiso)
+MASTER_DEACTIVATE_REACTIVATE=NOT_TESTABLE sin admin
+DASHBOARD_QA_DATA=NOT_TESTABLE
+QA_DATA_PERSISTED=N/A
+REAL_SAP_CALLS=0
+REAL_SAP_WRITES=0
+FINAL_STATUS=LOCALLY_CERTIFIED_RUNTIME_BLOCKED_EXTERNAL (bloqueo humano demostrado: ver 09 del dataset)
+```
+
+Causa del bloqueo: **no es la conectividad PostgreSQL**, es la **ausencia de una vía de ejecución en el runtime
+permitida a las herramientas del agente** (no hay `docker` ni `railway` en la estación; el acceso `ssh` al host y el
+script con `docker exec` que sobreescribía `ENVIRONMENT` fueron denegados por el clasificador de seguridad de la
+sesión, y Claude no rodea esas denegaciones — gobernanza `CLAUDE.md` §5), **más** la decisión de entorno: la guarda
+de `backend/seeds/qa_integral_dataset.py` solo acepta `ENVIRONMENT` ∈ {`development`, `dev`, `test`, `qa`, `uat`,
+`local`} y veta `prod`/`pre`/`stag`/`live`, por lo que dentro del contenedor UAT configurado como `production` el
+seed **se negará a escribir** (control de seguridad, no defecto).
+
+**Acción exacta del Owner / operador** (≈10 min, en el host del backend; detalle en
+`audit/qa-integral-dataset/09_RUNTIME_VERIFICATION.md`):
+
+1. `ssh <usuario>@avicola.globaldv.net` y `cd` al directorio del docker compose.
+2. Confirmar que el entorno del servicio backend para UAT es un entorno de pruebas (`ENVIRONMENT=uat` en el `.env`
+   del compose) y, si se cambia, `docker compose up -d backend` (reinicio controlado; las migraciones son
+   idempotentes).
+3. `docker exec globalavicola-backend python -m seeds.qa_integral_dataset --inventory`.
+4. `docker exec -e GA_QA_SEED_PASSWORD='<contraseña temporal fuerte>' globalavicola-backend python -m
+   seeds.qa_integral_dataset --apply --confirm-target <nombre_de_la_base> --run-id
+   QA-DEMO-V1-RUNTIME-$(date +%Y%m%d) --fixtures-dir /tmp/qa_fixtures --manifest
+   /tmp/QA_DATA_MANIFEST_runtime.json`.
+5. `docker exec globalavicola-backend python -m seeds.qa_integral_dataset --verify`.
+6. Repetir el apply (`CREATED=0` esperado).
+7. `docker cp globalavicola-backend:/tmp/QA_DATA_MANIFEST_runtime.json .` y entregar al orquestador el log saneado,
+   el manifest y la contraseña temporal **por canal seguro**.
+
+Alternativa: autorizar en la sesión de Claude Code la regla de permiso para `ssh` (el clasificador lo indica) y
+repetir la misión. Con los datos cargados, `evidence/uat_runtime_probe.mjs` y la spec E2E cierran en minutos los
+smokes de Reproductoras/Incubadora, BR-23 en línea y Desactivar/Reactivar con `qa.admin`.
+
 ## 9. Cierre
 
 ```

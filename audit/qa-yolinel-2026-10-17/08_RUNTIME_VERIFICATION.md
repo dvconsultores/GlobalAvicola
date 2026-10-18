@@ -245,6 +245,7 @@ desde esta estación porque la base no es alcanzable. Mientras no se cargue:
 | Bloques verificados | **3.1–3.5 PASS** por sonda · **3.6 PASS (UI)** / BR-23 por API `NOT_TESTABLE_IN_UAT` · **3.7 PASS_READONLY** · **3.8 PASS** · **3.9 PASS (por permiso)** · **3.10 PASS** |
 | Resultado | **`PARTIAL_VERIFIED`** — `UAT_RUNTIME_FOUND=YES`, 8 PASS / 0 FAIL en la sonda |
 | Incidencias abiertas | **Ninguna de SPEC 008** (0 FAIL). Pendientes externos: carga del dataset QA-DEMO-V1 (bloquea 3.6 API/BR-23, 3.9 variante estricta, smokes de Reproductoras/Incubadora y el flujo Reproductoras→Incubadora), usuario administrador (acciones Desactivar/Reactivar de 3.7 y fechas de cutover de 3.8) y la prueba real de SAP (`SAP_REAL_TEST=PENDING_2026_10_20`; 0 llamadas reales) |
+| **Segundo intento 2026-10-18 (tarde)** | **`BLOCKED_HUMAN_ACTION`**: sin vía de ejecución en el runtime para el agente (no hay `docker`/`railway` en la estación y el `ssh` al host fue denegado por el clasificador de seguridad); ver `audit/qa-integral-dataset/09` |
 
 ---
 
