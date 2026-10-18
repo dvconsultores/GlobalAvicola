@@ -12,7 +12,11 @@ Regla invariable: **CLAUDE ORQUESTA. DEEPSEEK EJECUTA.** Claude no se convierte 
 
 Cada delegación a DeepSeek debe ser **autosuficiente**: objetivo, archivos, contexto, restricciones, AC, pruebas y salida esperada. DeepSeek no conoce esta conversación, las decisiones Owner, este archivo ni la historia anterior.
 
-Estado del MCP (2026-10-15): el servidor `deepseek` registrado en el ámbito local (`@arikusi/deepseek-mcp-server`) expone solo `deepseek_chat` / `deepseek_fim` / `deepseek_sessions`; no es un ejecutor con acceso a archivos ni a comandos. Mientras no exista un MCP ejecutor, Claude informa del bloqueo una vez y, si el Owner reitera la misión, actúa como ejecutor **verificando cada paso con las suites reales**, nunca por afirmación propia. Esta excepción no modifica la regla: la delegación vuelve a ser obligatoria en cuanto el ejecutor esté disponible.
+Estado del MCP (2026-10-18): el ejecutor `deepseek-executor` está disponible y registrado como servidor MCP de proyecto en `.mcp.json` (código en `tools/deepseek_executor/server.py`, lanzador `tools/deepseek_executor/run.sh`); expone `deepseek_execute(task, context, max_turns)` y `deepseek_executor_status()`, y trabaja con DeepSeek (`deepseek-v4-flash` por defecto, configurable con `DEEPSEEK_MODEL`) usando herramientas reales acotadas a la raíz del repo: read_file, write_file, edit_file, list_dir, search y run_command.
+Guardas internas: prohíbe git push, ramas nuevas (`checkout -b` / `switch -c`), `reset --hard`, `git clean`, rebase, `git add .` / `-A`, `rm -rf` fuera de temporales, DROP/TRUNCATE, sudo, leer `.env`, tocar `.github/workflows` y llamadas a SAP/HANA; la clave `DEEPSEEK_API_KEY` se lee de `<repo>/.env` o del entorno y nunca se escribe en configuración, logs ni respuestas.
+Por tanto la delegación vuelve a ser **OBLIGATORIA**: Claude orquesta, DeepSeek ejecuta; Claude solo verifica con las suites reales y conserva el push a `origin/main` por AOD-29.
+El servidor `deepseek` antiguo (`deepseek_chat` / `deepseek_fim` / `deepseek_sessions`) sigue disponible solo como consultor, nunca como ejecutor.
+Si el ejecutor no responde, Claude informa del bloqueo una vez y solo actúa como ejecutor si el Owner reitera la misión, verificando cada paso con las suites reales, nunca por afirmación propia.
 
 ## 2 · Modo Autónomo
 

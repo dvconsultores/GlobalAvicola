@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "deepseek-executor": {
+      "type": "stdio",
+      "command": "bash",
+      "args": [
+        "tools/deepseek_executor/run.sh"
+      ],
+      "env": {}
+    }
+  }
+}
