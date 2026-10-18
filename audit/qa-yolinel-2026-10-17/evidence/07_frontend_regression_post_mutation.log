@@ -1,0 +1,11 @@
+== HEAD 9390afcad3ca57dcea17d8065054978abe1a0720
+== vitest
+ Test Files  96 passed (96)
+      Tests  576 passed (576)
+== tsc
+tsc_rc=0
+== build
+
+✓ built in 1.40s
+build_rc=0
+v24.13.0

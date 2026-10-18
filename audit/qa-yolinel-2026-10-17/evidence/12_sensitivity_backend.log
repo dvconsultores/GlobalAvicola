@@ -1,0 +1,10 @@
+=== S1: BR-23 desactivada (validate_oc_business_unit retorna siempre; OC de otra cadena ya no bloquea) ===
+FAILED tests/test_br23_sap_reference_business_unit.py::test_br23_oc_de_engorde_rechazada_en_lote_reproductoras
+1 failed, 4 passed, 1 warning in 3.41s
+=== S1 RESTORED diff=<0 líneas> (git restore --source=dbd6122a... ; git diff --stat backend/app/operations/validators.py vacío, linea original 1081 confirmada) ===
+=== S5: BR-14 desactivada (_segregacion_configurada retorna siempre False; segregacion de funciones ya no se exige) ===
+FAILED tests/test_segregation_r143.py::test_g02_quien_corrige_no_aprueba_el_mismo_registro
+FAILED tests/test_segregation_r143.py::test_g04_quien_rechazo_no_aprueba_el_reenvio
+FAILED tests/test_segregation_r143.py::test_g06_completar_la_revision_con_un_nivel_tampoco_lo_aprueba_quien_corrigio
+3 failed, 3 passed, 1 warning in 6.20s
+=== S5 RESTORED diff=<> (vacio = restaurado) ===

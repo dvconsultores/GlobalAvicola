@@ -1,7 +1,7 @@
 # 06 · Evidencia de implementación — Revisión QA 2026-10-17
 
 **Documento**: qué se tocó para cada hallazgo, archivo por archivo, y qué prueba lo cubre
-**Fecha**: 2026-10-18 · **Baseline de referencia**: `83c9cd8` · **SHA de implementación**: `{{IMPL_SHA}}`
+**Fecha**: 2026-10-18 · **Baseline de referencia**: `83c9cd8` · **SHA de implementación**: `dbd6122` (IMPL) · `9390afc` (IMPL-2)
 **Spec asociada**: `specs/008-qa-yolinel-findings-remediation/spec.md` · **Rama**: `main` (sin rama nueva)
 **Carácter**: evidencia de cambio en código; no sustituye la verificación en runtime (ver `08_RUNTIME_VERIFICATION.md`) ni la certificación QA
 
@@ -107,10 +107,11 @@ Ninguna de estas omisiones es un olvido: son límites declarados.
 
 | Dato | Valor |
 |---|---|
-| SHA de implementación | `{{IMPL_SHA}}` |
+| SHA de implementación | `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) |
+| Refuerzo de pruebas guardianas | `9390afcad3ca57dcea17d8065054978abe1a0720` (IMPL-2 — guardián QA-013 a los 20 maestros + identidad estable de `useCan`; `qaYolinel.red.test.tsx` 4 → 23 casos, +19) |
 | SHA de certificación | `{{CERT_SHA}}` |
 | Regresión backend completa | **1739 passed · 0 failed · 49 skipped (22 min 26 s)** (ver `07_TEST_EVIDENCE.md`) |
-| Regresión frontend completa | **96 archivos · 557 pruebas PASS · tsc rc 0 · build rc 0** (ver `07_TEST_EVIDENCE.md`) |
-| Sensibilidad S1/S5/S6/S7/S8 | `{{SENSITIVITY}}` |
+| Regresión frontend completa | **96 archivos · 557 pruebas PASS · tsc rc 0 · build rc 0** pre-mutación; post-mutación con IMPL-2: **96 archivos · 576 pruebas PASS · tsc rc 0 · build rc 0** (ver `07_TEST_EVIDENCE.md`) |
+| Sensibilidad S1/S5/S6/S7/S8 | **5/5 DETECTED** (S7 y S8 tras el refuerzo IMPL-2) — detalle en `07_TEST_EVIDENCE.md` §3 |
 | Runtime | `NOT_VERIFIED_FROM_WORKSTATION` (`08_RUNTIME_VERIFICATION.md`) |
 | Llamadas SAP reales | **0** |

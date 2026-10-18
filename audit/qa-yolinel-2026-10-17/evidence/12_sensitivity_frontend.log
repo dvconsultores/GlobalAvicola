@@ -1,0 +1,28 @@
+=== S6: ocultar filtro de granja en LotListPage (data-testid=lot-filter-farm eliminado) ===
+     × QA-014 · lotes: muestra la granja y filtra por granja en el servidor 1067ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  1 failed | 2 passed (3)
+=== S6 RESTORED ===
+=== S7: useCan sin useCallback (identidad inestable -> bucle de revision) ===
+ Test Files  5 passed (5)
+      Tests  18 passed (18)
+=== S7 RESTORED ===
+=== S8: etiqueta de columna tax_id de maestros con clave de accion (common.edit) ===
+ Test Files  4 passed (4)
+      Tests  18 passed (18)
+=== S8 RESTORED ===
+=== S8 (re-run tras IMPL-2 9390afcad3ca57dcea17d8065054978abe1a0720): etiqueta tax_id de companies con common.edit ===
+     × /masters/companies: ningún th dice «Editar» ni «Guardar» 190ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 passed (23)
+=== S8 RESTORED ===
+=== S7 (re-run tras IMPL-2 9390afcad3ca57dcea17d8065054978abe1a0720): useCan sin useCallback ===
+     × useCan devuelve la misma identidad de función entre renders con el mismo usuario 7ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed (1)
+      Tests  1 failed | 22 passed (23)
+=== S7 RESTORED ===
+ Test Files  1 passed (1)
+      Tests  23 passed (23)

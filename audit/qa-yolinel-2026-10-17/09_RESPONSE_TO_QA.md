@@ -4,7 +4,7 @@
 **De**: Equipo de producto y desarrollo — Global Avícola
 **Fecha**: 2026-10-18
 **Asunto**: Respuesta a los 18 hallazgos de la revisión del 17-10-2026
-**Referencia interna**: SPEC 008 · `{{IMPL_SHA}}` · estado `IMPLEMENTED_PENDING_CERTIFICATION`
+**Referencia interna**: SPEC 008 · `dbd6122` (IMPL) + `9390afc` (IMPL-2) · estado `LOCALLY_CERTIFYING`
 
 ---
 

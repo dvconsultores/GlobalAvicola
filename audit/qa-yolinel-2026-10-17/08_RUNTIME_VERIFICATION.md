@@ -1,7 +1,7 @@
 # 08 · Verificación en runtime — Revisión QA 2026-10-17
 
 **Documento**: estado de verificación en entorno y checklist manual para UAT
-**Fecha**: 2026-10-18 · **SHA de implementación**: `{{IMPL_SHA}}`
+**Fecha**: 2026-10-18 · **SHA de implementación**: `dbd6122` (IMPL) + `9390afc` (IMPL-2)
 **Estado global**: **`NOT_VERIFIED_FROM_WORKSTATION`**
 **Carácter**: declara explícitamente lo que **no** se comprobó en ejecución real y entrega el procedimiento para hacerlo
 
@@ -25,7 +25,7 @@ es el paso que falta para pasar de `IMPLEMENTED_PENDING_CERTIFICATION` a certifi
 
 ## 2. Requisitos previos de la sesión
 
-1. Backend desplegado con el árbol de trabajo de la ronda (`{{IMPL_SHA}}`) y frontend construido.
+1. Backend desplegado con el árbol de trabajo de la ronda (`dbd6122` + `9390afc`) y frontend construido.
 2. Dataset **QA-DEMO-V1** cargado (runbook: `audit/qa-integral-dataset/09_RUNTIME_VERIFICATION.md`). Si no se carga,
    las pantallas de Lotes/Historial aparecerán vacías y el checklist no probará nada.
 3. Al menos una **OC de compra con desglose de centros mapeados a `business_unit_code`** (para QA-007) y una
@@ -165,7 +165,7 @@ desde esta estación porque la base no es alcanzable. Mientras no se cargue:
 |---|---|
 | Fecha de la sesión | `PENDING` |
 | Entorno | `PENDING` (UAT) |
-| SHA desplegado | `PENDING` (`{{IMPL_SHA}}` esperado) |
+| SHA desplegado | `PENDING` (`dbd6122` + `9390afc` esperado) |
 | Dataset cargado | `PENDING` (QA-DEMO-V1) |
 | Bloques verificados | `PENDING` (3.1 … 3.10) |
 | Resultado | `PENDING` |

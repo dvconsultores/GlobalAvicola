@@ -1,12 +1,12 @@
 # Tasks: SPEC 008 — QA Yolinel Findings Remediation
 
 **Directorio**: `specs/008-qa-yolinel-findings-remediation` · **Rama**: `main` (sin rama nueva) · **Baseline**: `83c9cd8`
-**Created**: 2026-10-18 · **Status**: `IMPLEMENTED_PENDING_CERTIFICATION` · **Prioridad**: P1
+**Created**: 2026-10-18 · **Status**: `LOCALLY_CERTIFYING` · **Prioridad**: P1
 **Referencias**: `spec.md` (FR-01…FR-08, AC-xx), `plan.md` (§3 FASE R, §11 sensibilidad), `audit/qa-yolinel-2026-10-17/01…09`
 
 Estados: `DONE` · `EN CURSO` · `PENDING` · `BLOCKED (Owner)` · `BLOCKED (externo)`.
 
-SHA de implementación: `{{IMPL_SHA}}` · SHA de certificación: `{{CERT_SHA}}` · Regresión: **1739 passed · 0 failed · 49 skipped** / **96 archivos · 557 pruebas PASS**
+SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · refuerzo guardián: `9390afcad3ca57dcea17d8065054978abe1a0720` (IMPL-2) · GOBIERNO: `13cabff9474b53399310e007507b11dbe13e941a` (GOV) · SHA de certificación: `{{CERT_SHA}}` · Regresión: **1739 passed · 0 failed · 49 skipped** / **557 pruebas PASS (pre) → 576 pruebas PASS (post, IMPL-2: 4 → 23 casos)**
 
 ---
 
@@ -71,19 +71,19 @@ SHA de implementación: `{{IMPL_SHA}}` · SHA de certificación: `{{CERT_SHA}}` 
 
 | ID | Tarea | Resultado | Estado |
 |---|---|---|---|
-| T18 | Commit en `main` con referencia QA-ID/FR (sin push, sin rama) | mensaje `SPEC-008: ...` | PENDING |
+| T18 | Commit en `main` con referencia QA-ID/FR (sin push, sin rama) | mensaje `SPEC-008: ...` — GOV `13cabff` · IMPL `dbd6122` · IMPL-2 `9390afc` (tres commits en `main`, **sin push**, sin rama nueva) | **DONE** |
 
 ## FASE 8–9 — Sensibilidad y restore
 
 | ID | Tarea | Mutaciones | Estado |
 |---|---|---|---|
-| T19 | Mutaciones S1 (permitir OC cross-BU), S5 (desactivar BR-14 — ya cubierta por `test_segregation_r143`), S6 (ocultar filtro empresa), S7 (bucle de revisión), S8 (etiqueta de maestro); restaurar y re-verificar | plan.md §11 | PENDING (`{{SENSITIVITY}}`) |
+| T19 | Mutaciones S1 (permitir OC cross-BU), S5 (desactivar BR-14 — ya cubierta por `test_segregation_r143`), S6 (ocultar filtro empresa), S7 (bucle de revisión), S8 (etiqueta de maestro); restaurar y re-verificar | plan.md §11 | **DONE** — **5/5 DETECTED**: S1 (BR-23, 1 failed/4 passed), S5 (BR-14, 3 failed/3 passed), S6 (filtro granja, 1 failed/2 passed), S7 y S8 **NOT_DETECTED en la primera corrida** ⇒ reforzadas en IMPL-2 ⇒ 1 failed/22 passed cada una. Restauración con `git restore --source=<SHA>` y `FINAL_DIFF=0`. Ver `10_FINAL_STATUS.md` §3 |
 
 ## FASE 10 — Documentación DOCX, certificación y push
 
 | ID | Tarea | Salida | Estado |
 |---|---|---|---|
-| T20 | `OPERATION_STATE_MACHINE.md`, «Cómo Global Avícola recibe información de SAP», `lots.origin`, segregación, `PROCESS_PREDECESSOR_MATRIX` propuesta, matriz de autocompletado, inventario de fechas → DOCX; certificado `LOCALLY_CERTIFIED`; push autorizado | docs + certificado | PENDING — los `.md` están entregados (`OPERATION_STATE_MACHINE.md`, `SAP_PARA_QA.md`, `LOT_ORIGIN_AND_MASTERS_FOR_QA.md`, `PROCESS_PREDECESSOR_MATRIX.md`); faltan DOCX, certificado y verificación en runtime (`08_RUNTIME_VERIFICATION.md` = `NOT_VERIFIED_FROM_WORKSTATION`) |
+| T20 | `OPERATION_STATE_MACHINE.md`, «Cómo Global Avícola recibe información de SAP», `lots.origin`, segregación, `PROCESS_PREDECESSOR_MATRIX` propuesta, matriz de autocompletado, inventario de fechas → DOCX; certificado `LOCALLY_CERTIFIED`; push autorizado | docs + certificado | **EN CURSO** (`{{CERT_SHA}}`) — `.md` entregados (`OPERATION_STATE_MACHINE.md`, `SAP_PARA_QA.md`, `LOT_ORIGIN_AND_MASTERS_FOR_QA.md`, `PROCESS_PREDECESSOR_MATRIX.md`) y DOCX en `docs/`; falta el commit de certificación y el push SSH. Runtime `NOT_VERIFIED_FROM_WORKSTATION` (`08_RUNTIME_VERIFICATION.md`); dataset QA-DEMO-V1 `BLOCKED_EXTERNAL` |
 
 ---
 
@@ -109,17 +109,13 @@ SHA de implementación: `{{IMPL_SHA}}` · SHA de certificación: `{{CERT_SHA}}` 
 | FASE 4 | 1 | 1 | 0 | 0 |
 | FASE 5 | 2 | 2 | 0 | 0 |
 | FASE 6 | 1 | 1 | 0 | 0 |
-| FASE 7–10 | 3 | 0 | 0 | 3 |
-| **Total** | **20** | **17** | **0** | **3** |
+| FASE 7–10 | 3 | 2 | 1 | 0 |
+| **Total** | **20** | **19** | **1** | **0** |
 
 ### Qué falta para cerrar
 
-1. **T17** — CERRADA: regresión backend completa **1739 passed · 0 failed · 49 skipped** (22 min 26 s) y frontend
-   **96 archivos · 557 pruebas PASS** con `tsc_rc=0` y `build_rc=0`. Suite acotada: **118 passed** (1 min 42 s), con el
-   log `evidence/07_backend_targeted.log` regenerado tras corregir la lista de archivos.
-2. **T18** — commit en `main` con `{{IMPL_SHA}}` y referencia a los QA-ID.
-3. **T19** — sensibilidad S1/S5/S6/S7/S8 con restauración verificada (`FINAL_DIFF=0`).
-4. **T20** — DOCX, certificado `LOCALLY_CERTIFIED` y verificación en UAT (`08_RUNTIME_VERIFICATION.md`;
-   dataset QA-DEMO-V1 sigue `BLOCKED_EXTERNAL`).
-5. **Contraste con el PDF original de QA**: no disponible en la estación; los 18 hallazgos se trabajaron desde el
-   mandato del Owner y quedan «pendiente de contraste con el PDF».
+1. **Commit CERT** — `{{CERT_SHA}}`: commit de certificación con la documentación de cierre (`10_FINAL_STATUS.md`).
+2. **Push SSH autorizado** — subir `main` al remoto (sin rama nueva).
+3. **REMOTE_SHA_MATCH** — verificar que el SHA remoto coincide con el local (`{{REMOTE_SHA_MATCH}}`, árbol `{{TREE}}`).
+4. **Cierre** — `FINAL_STATUS=LOCALLY_CERTIFIED_PENDING_RUNTIME_AND_OWNER_DECISIONS`; el runtime sigue
+   `NOT_VERIFIED_FROM_WORKSTATION` y QA-DEMO-V1 `BLOCKED_EXTERNAL`.
