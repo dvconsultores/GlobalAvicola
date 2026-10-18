@@ -44,3 +44,9 @@ GA_QA_SEED_PASSWORD='<tmp>' .venv/bin/python -m seeds.qa_integral_dataset --appl
 - Contadores `CREATED/EXISTING/UPDATED/SKIPPED` por entidad.
 - `--manifest`: JSON con versión, marcador, run_id, SHA, inventario, contadores, lotes y referencias SAP.
 - Fixtures XLSX de cutover por BU en `--fixtures-dir` (por defecto `audit/qa-integral-dataset/fixtures/`).
+
+## Ciclo de certificación aislada
+
+```bash
+cd backend && bash scripts/qa_dataset_isolated_cycle.sh > ../audit/qa-integral-dataset/evidence/06_isolated_cycle.log 2>&1
+```

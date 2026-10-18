@@ -50,7 +50,7 @@ RUTAS_PROHIBIDAS = (".env", ".git/config", ".github/workflows")
 #: Comandos que la gobernanza reserva al Owner/orquestador.
 PATRONES_PROHIBIDOS = [
     r"\bgit\s+(checkout|switch)\s+(-b|-c)\b", r"\bgit\s+branch\s+(?!--show-current|-a\b|-r\b|--list|-v)\S",
-    r"\bgit\s+push\b", r"\bgit\s+reset\s+--hard\b", r"\bgit\s+clean\b", r"\bgit\s+rebase\b", r"\bgit\s+(add\s+(\.|-A|--all))\b",
+    r"\bgit\s+push\b", r"\bgit\s+reset\s+--hard\b", r"\bgit\s+clean\b", r"\bgit\s+rebase\b", r"\bgit\s+add\s+(\.|-A|--all)(\s|$)",
     r"\brm\s+-[a-zA-Z]*r[a-zA-Z]*f?\s+(/|~|\$HOME|\.\.|\*)", r"\brm\s+-[a-zA-Z]*r[a-zA-Z]*\s+(?!/tmp/|\./?(node_modules|dist|\.pytest_cache|__pycache__))\S*\s*$",
     r"\bDROP\s+(DATABASE|SCHEMA|TABLE)\b", r"\bTRUNCATE\b", r"\bsudo\b", r"\bchmod\s+[0-7]*7[0-7]*\s+/", r"\bcurl\b.*\b(sap|hana)\b",
     r"\bcat\s+\S*\.env\b", r"\.github/workflows", r"\bmkfs\b", r"\bdd\s+if=", r":\(\)\s*\{",

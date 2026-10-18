@@ -16,8 +16,8 @@ documentado en la SPEC; nunca salta validadores de alta.
 """
 from __future__ import annotations
 
+import hashlib
 import io
-import logging
 from dataclasses import dataclass, field
 from datetime import date, datetime, time, timedelta, timezone
 from typing import Any, Optional
@@ -52,10 +52,8 @@ from app.masters.models import (Area, BirdTypeEnum, Breed, Company, CorrectionTy
                                 Vaccine)
 from app.notifications.models import Notification
 from app.operations import schemas as op_schemas
-from app.operations.models import EventStatus, EventType, OperationalEvent
+from app.operations.models import EventStatus, OperationalEvent
 from app.review import models as review_models
-
-log = logging.getLogger("qa_seed")
 
 VERSION = "QA-DEMO-V1"
 MARKER = "QA_DEMO_V1"
@@ -104,6 +102,17 @@ def DT(n: int) -> datetime:
     return datetime.combine(D(n), time.min, tzinfo=timezone.utc)
 
 
+def sync_request_id(run_id: str, objeto: HanaObject) -> str:
+    """Identificador de job SAP único por `(run, objeto)` y ≤ 36 caracteres.
+
+    El formato anterior (`qa-{run_id}-{objeto}`) truncaba a 36 y `purchase_order` /
+    `purchase_order_item` colapsaban en el mismo valor: dos jobs con la misma clave. El hash
+    corto va delante del nombre, así que el truncado nunca puede volver a confundirlos.
+    """
+    hash8 = hashlib.sha1(f"{run_id}:{objeto.value}".encode()).hexdigest()[:8]
+    return f"qa-{hash8}-{objeto.value}"[:36]
+
+
 @dataclass
 class Contadores:
     created: int = 0
@@ -125,6 +134,7 @@ class Contexto:
     companies: dict[str, Company] = field(default_factory=dict)
     users: dict[str, User] = field(default_factory=dict)
     roles: dict[str, Role] = field(default_factory=dict)
+    roles_by_id: dict[int, Role] = field(default_factory=dict)
     fases: dict[str, int] = field(default_factory=dict)
     farms: dict[str, Farm] = field(default_factory=dict)
     houses: dict[str, House] = field(default_factory=dict)
@@ -139,7 +149,6 @@ class Contexto:
     sap_refs: dict[str, SapReference] = field(default_factory=dict)
     eventos: dict[str, OperationalEvent] = field(default_factory=dict)
     contadores: Contadores = field(default_factory=Contadores)
-    notas: list[str] = field(default_factory=list)
 
 
 class QaBuilder:
@@ -218,6 +227,14 @@ class QaBuilder:
                     u.role_id = self.ctx.roles[rol].id; cambios = True
                 if u.company_id != empresa.id:
                     u.company_id = empresa.id; cambios = True
+                if u.email != f"{username}@{EMAIL_DOMAIN}":
+                    u.email = f"{username}@{EMAIL_DOMAIN}"; cambios = True
+                if u.first_name != nombre:
+                    u.first_name = nombre; cambios = True
+                if u.last_name != apellido:
+                    u.last_name = apellido; cambios = True
+                if u.view_type != view:
+                    u.view_type = view; cambios = True
                 if not u.is_active:
                     u.is_active = True; cambios = True
                 if self.ctx.reset_passwords:
@@ -257,6 +274,17 @@ class QaBuilder:
                     self.c.marcar("user_business_units", "created")
                 else:
                     self.c.marcar("user_business_units", "existing")
+        # `R1`: una concesión viva que ya no corresponde (usuario movido de empresa o de unidad) se **revoca**,
+        # no se deja activa — una concesión de más es acceso de más.
+        esperadas = {username: {cbus[(emp, code)].id for code in units} for username, _, emp, units, *_ in USUARIOS}
+        for username, cbus_esperados in esperadas.items():
+            vivas = (await self.db.execute(select(UserBusinessUnit).where(
+                UserBusinessUnit.user_id == self.ctx.users[username].id,
+                UserBusinessUnit.revoked_at.is_(None)))).scalars().all()
+            for fila in vivas:
+                if fila.company_business_unit_id not in cbus_esperados:
+                    fila.revoked_at = datetime.now(timezone.utc)
+                    self.c.marcar("user_business_units", "updated")
         await self.db.flush()
 
     async def pasos_de_aprobacion(self) -> None:
@@ -560,7 +588,7 @@ class QaBuilder:
                 SapInboundSyncJob.company_id == m.id, SapInboundSyncJob.source_system == SAP_SOURCE,
                 SapInboundSyncJob.object_type == objeto.value))
             if job is None:
-                job = SapInboundSyncJob(sync_request_id=f"qa-{self.ctx.run_id}-{objeto.value}"[:36], company_id=m.id, source_system=SAP_SOURCE,
+                job = SapInboundSyncJob(sync_request_id=sync_request_id(self.ctx.run_id, objeto), company_id=m.id, source_system=SAP_SOURCE,
                                         object_type=objeto.value, query_id=definicion.query_id, trigger="manual", status=JOB_COMPLETED,
                                         filters={"marker": MARKER, "note": "dataset QA sintético: ningún acceso a SAP HANA"},
                                         initiated_by_id=actor_sap.id, started_at=datetime.now(timezone.utc), completed_at=datetime.now(timezone.utc))
@@ -877,15 +905,33 @@ class QaBuilder:
 
         if evento.status != EventStatus.APPROVED:
             return
-        if await self._uno(select(Reversal).where(Reversal.original_event_id == evento.id)) is not None:
-            return
         emp = await self._uno(select(Company).where(Company.id == evento.company_id))
+        existente = await self._uno(select(Reversal).where(Reversal.original_event_id == evento.id))
+        if existente is not None:
+            # `R1`: reanudar por estado de la contrapartida en vez de abandonar — un `--apply` interrumpido
+            # a mitad del flujo de reverso se completa, y uno ya terminado no se reintenta.
+            await self._reanudar_reverso(existente, emp, aprobar_con, solicitante)
+            return
         reverso = await ReversalService(self.db, self.actor(solicitante, emp)).solicitar(ReversalCreate(event_id=evento.id, reason=motivo))
-        if aprobar_con:
-            rev = ReviewService(self.db, self.actor("qa.supervisor", emp))
-            await rev.start_review(reverso.reversal_event_id)
-            await rev.complete_review(reverso.reversal_event_id, f"{MARKER}: revisión de contrapartida")
-            await ApprovalService(self.db, self.actor(aprobar_con, emp)).approve(reverso.reversal_event_id, f"{MARKER}: reverso aprobado")
+        self.c.marcar("reversals", "created")
+        await self._reanudar_reverso(reverso, emp, aprobar_con, solicitante)
+
+    async def _reanudar_reverso(self, reverso, emp, aprobar_con: str, solicitante: str) -> None:
+        """Completa los pasos que falten del reverso según el estado de la contrapartida (idempotente)."""
+        from app.review.service import ApprovalService, ReviewService
+
+        contrapartida = await self._uno(select(OperationalEvent).where(OperationalEvent.id == reverso.reversal_event_id))
+        if contrapartida is None or contrapartida.status in (EventStatus.APPROVED, EventStatus.REVERSED):
+            return  # ya efectivo (el reverso terminado deja ambos eventos en `reversed`)
+        if not aprobar_con:
+            return
+        if contrapartida.status == EventStatus.PENDING_REVIEW:
+            await ReviewService(self.db, self.actor("qa.supervisor", emp)).start_review(contrapartida.id)
+        if contrapartida.status == EventStatus.IN_REVIEW:
+            await ReviewService(self.db, self.actor("qa.supervisor", emp)).complete_review(
+                contrapartida.id, f"{MARKER}: revisión de contrapartida")
+        if contrapartida.status in (EventStatus.CORRECTED, EventStatus.REGISTERED):
+            await ApprovalService(self.db, self.actor(aprobar_con, emp)).approve(contrapartida.id, f"{MARKER}: reverso aprobado")
 
     async def notificar(self, *, empresa: str, destinatario: str, tipo: str, payload: dict, ocurrencia: str, leida: bool,
                         entidad: Optional[str] = None, entidad_id: Optional[int] = None) -> None:
@@ -909,28 +955,39 @@ class QaBuilder:
     # ── cutover (SPEC 006) ──────────────────────────────────────────────────
 
     async def cutover_aplicado(self, bu: str, filas: list[dict], *, dias_corte: int = 10) -> None:
-        from app.cutover.models import CutoverBatch
+        from app.cutover.models import CutoverBatch, CutoverBatchStatus
         from app.cutover.schemas import CutoverBatchCreate
         from app.cutover.service import CutoverService
 
         m = self.ctx.companies["MAIN"]
         referencia = f"QA-CUT-{bu.upper()}"
         batch = await self._uno(select(CutoverBatch).where(CutoverBatch.company_id == m.id, CutoverBatch.source_reference == referencia))
-        if batch is not None and batch.status == "applied":
+        if batch is not None and batch.status == CutoverBatchStatus.APPLIED.value:
             self.c.marcar("cutover_batches", "existing"); return
         sup = CutoverService(self.db, self.actor("qa.supervisor", m))
-        if batch is None:
+        creado = batch is None
+        if creado:
             batch = await sup.crear_batch(CutoverBatchCreate(business_unit=bu, cutover_datetime=DT(dias_corte), source_system=MARKER,
                                                              source_reference=referencia, observations=f"{MARKER} carga de ejemplo aplicada"))
             self.c.marcar("cutover_batches", "created")
-        contenido = self.xlsx_cutover(bu, filas, company_id=m.id, cutover=DT(dias_corte))
-        batch = await sup.subir_y_validar(batch.id, f"QA_cutover_{bu}_demo.xlsx", contenido)
-        if batch.status != "validated":
-            errores = await sup.validacion(batch.id)
-            raise RuntimeError(f"cutover demo {bu} con errores: {errores['errors'][:3]}")
-        await sup.enviar_a_aprobacion(batch.id)
-        await CutoverService(self.db, self.actor("qa.approver", m)).aprobar(batch.id)
-        await CutoverService(self.db, self.actor("qa.supervisor", m)).aplicar(batch.id)
+        if batch.status == CutoverBatchStatus.REJECTED.value:
+            # `rejected` es terminal en el servicio: no hay reanudación posible sin un batch nuevo.
+            self.c.marcar("cutover_batches", "skipped"); return
+        # `R1`: reanudar por estado del batch en lugar de re-subir a ciegas (el apply es terminal).
+        if batch.status in (CutoverBatchStatus.DRAFT.value, CutoverBatchStatus.VALIDATING.value, CutoverBatchStatus.VALIDATED.value):
+            contenido = self.xlsx_cutover(bu, filas, company_id=m.id, cutover=DT(dias_corte))
+            batch = await sup.subir_y_validar(batch.id, f"QA_cutover_{bu}_demo.xlsx", contenido)
+            if batch.status != CutoverBatchStatus.VALIDATED.value:
+                errores = await sup.validacion(batch.id)
+                raise RuntimeError(f"cutover demo {bu} con errores: {errores['errors'][:3]}")
+        if batch.status == CutoverBatchStatus.VALIDATED.value:
+            await sup.enviar_a_aprobacion(batch.id)
+        if batch.status == CutoverBatchStatus.PENDING_APPROVAL.value:
+            await CutoverService(self.db, self.actor("qa.approver", m)).aprobar(batch.id)
+        if batch.status == CutoverBatchStatus.APPROVED.value:
+            await CutoverService(self.db, self.actor("qa.supervisor", m)).aplicar(batch.id)
+        if not creado:
+            self.c.marcar("cutover_batches", "updated")
 
     @staticmethod
     def xlsx_cutover(bu: str, filas: list[dict], *, company_id: Optional[int], cutover: Optional[datetime]) -> bytes:

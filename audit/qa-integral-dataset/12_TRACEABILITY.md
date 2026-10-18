@@ -57,3 +57,7 @@ POST_MUTATION     = 1722/0/49 (idéntica a pre-mutación)
 Nota: el remoto `origin` está configurado por HTTPS sin credenciales en esta estación; el push se hace, como en SPEC 005/006, por la URL SSH explícita (AOD-29).
 
 Pendiente externo: ejecutar el runbook de `09_RUNTIME_VERIFICATION.md` en el host del backend (base del runtime no alcanzable desde la estación). Al hacerlo, `QA_DATA_READY` pasa a `YES`.
+
+## R1 (2026-10-18) — pendiente de cierre
+
+Revisión independiente + remediación R1: ver `13_INDEPENDENT_REVIEW_AND_REMEDIATION.md` y `specs/…/remediation-r1.md`. Commits de R1, sensibilidad S7–S9 y regresión post-mutación: se registran al cerrar la ronda.

@@ -22,3 +22,7 @@
 | T18 | Manual QA MD + DOCX + plantilla de resultados DOCX + matriz de cobertura | DONE | `docs/`, `QA_DATA_COVERAGE_MATRIX.md`, `11_QA_MANUAL_DELIVERY.md` |
 | T19 | Manifest MD + JSON | DONE (aislado; runtime pendiente) | `QA_DATA_MANIFEST.*` |
 | T20 | Commit de certificación + push + verificación remota | DONE (IMPL `9a5d11a` · CERT `b7942c7` · REMOTE_SHA_MATCH PASS) | `12` |
+| T21 | Revisión independiente del entregable (ejecutor DeepSeek, solo lectura, 2 partes) | DONE | 13_INDEPENDENT_REVIEW_AND_REMEDIATION.md |
+| T22 | Remediación R1 (seed, tests, manual, script de ciclo aislado) | DONE | remediation-r1.md · 13 |
+| T23 | Regresión completa backend post-R1 | PENDING | 10_REGRESSION.md |
+| T24 | Commit R1 + sensibilidad + push + verificación remota | PENDING | 12_TRACEABILITY.md |

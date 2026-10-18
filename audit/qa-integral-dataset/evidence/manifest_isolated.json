@@ -2,8 +2,8 @@
   "dataset_version": "QA-DEMO-V1",
   "marker": "QA_DEMO_V1",
   "run_id": "QA-DEMO-V1-ISOLATED-20261018",
-  "created_at": "2026-10-18T01:14:30.472238+00:00",
-  "sha": "3e146ac891ae06c3321361dbf5463c9a7410c481",
+  "created_at": "2026-10-18T03:03:14.142990+00:00",
+  "sha": "01ea51a9430f257bf443f78dcabbd31fd4c36a85",
   "prefixes": {
     "codes": "QA-",
     "users": "qa.",
@@ -48,7 +48,7 @@
     "qa_cutover_batches": 4
   },
   "counters": {
-    "created": 719,
+    "created": 720,
     "existing": 4,
     "updated": 0,
     "detail": {
@@ -258,6 +258,12 @@
       },
       "lots_closed": {
         "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "reversals": {
+        "created": 1,
         "existing": 0,
         "updated": 0,
         "skipped": 0

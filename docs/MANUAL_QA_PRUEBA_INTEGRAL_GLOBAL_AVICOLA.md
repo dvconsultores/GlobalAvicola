@@ -77,13 +77,15 @@ Borrador → Registrado → Pendiente de revisión → En revisión → (Devuelt
 | Usuarios y Roles / Acceso por unidad | Sí | No | No | No | No | No |
 | Mi Perfil | Sí | Sí | Sí | Sí | Sí | Sí |
 
+**Nota**: Usuarios y Roles, Roles, Mi Perfil y Acceso por unidad se agrupan en el menú bajo **Configuración**.
+
 Si una celda dice «Sí» y la opción no aparece —o dice «No» y sí aparece— es un hallazgo.
 
 ---
 
 ## 3 · Dashboard (Inicio)
 
-**Qué hay cargado**: 25 lotes (23 activos y 3 cerrados en la empresa principal, 2 en la de aislamiento), más de 360 registros operativos de las últimas 8 semanas, pendientes de revisión y notificaciones.
+**Qué hay cargado**: 25 lotes en total: 23 en la empresa principal (de ellos 3 cerrados) y 2 en la de aislamiento, más de 360 registros operativos de las últimas 8 semanas, pendientes de revisión y notificaciones.
 
 **Qué hacer**: entre con `qa.supervisor` y revise los indicadores y accesos rápidos. Repita con `qa.operator.broiler` y con `qa.isolation`.
 
@@ -126,7 +128,7 @@ Si una celda dice «Sí» y la opción no aparece —o dice «No» y sí aparece
 **Qué hacer**
 1. Con `qa.supervisor`, abra **Lotes**, filtre por cadena y abra el detalle de QA-BR-PROD-001.
 2. Revise población viva, fase, saldo de apertura, indicadores (mortalidad, conversión, peso), últimos eventos y alertas.
-3. Abra **Trazabilidad** en QA-HAT-GPGEN-001 y en QA-HAT-CHICK-001.
+3. Abra **Trazabilidad Generacional** en QA-HAT-GPGEN-001 y en QA-HAT-CHICK-001.
 4. Abra QA-CUT-GP-001 y observe los datos desconocidos.
 5. Con `qa.operator.gp` intente abrir un lote de engorde (por ejemplo escribiendo su URL).
 
@@ -157,9 +159,9 @@ Para cada cadena, entre con su operador, abra el lote indicado y use **Registrar
 #### Progenitoras — `qa.operator.gp`
 | Prueba | Lote | Datos | Resultado esperado |
 |---|---|---|---|
-| Alimento | QA-GP-CRIA-001 | 3 800 kg, 95 sacos, alimento «QA Inicio» | queda Registrado; se puede enviar a revisión |
+| Alimento | QA-GP-CRIA-001 | 3 800 kg, 95 sacos, alimento «QA Iniciador» | queda Registrado; se puede enviar a revisión |
 | Pesaje | QA-GP-CRIA-001 | 30 aves, 760 g | registrado; si el peso se aleja de la curva genética aparece alerta |
-| Mortalidad | QA-GP-CRIA-001 | 6 hembras, causa «QA Asfixia» | registrado; la población viva baja al aprobarse |
+| Mortalidad | QA-GP-CRIA-001 | 6 hembras, causa «QA Mortalidad súbita» | registrado; la población viva baja al aprobarse |
 | Mortalidad excesiva | QA-GP-CRIA-001 | 5 000 hembras | **rechazado**: no puede morir más de lo vivo |
 | Recolección de huevo | QA-GP-PROD-001 | 37 000 fértiles, 900 sucios | registrado |
 | Despacho de huevo | QA-GP-PROD-001 | 20 000 fértiles a QA-INC-F1 | registrado; el saldo de huevo disponible baja |
@@ -170,10 +172,10 @@ Para cada cadena, entre con su operador, abra el lote indicado y use **Registrar
 | Prueba | Lote | Datos | Resultado esperado |
 |---|---|---|---|
 | Agua | QA-BR-CRIA-001 | 7 000 L | registrado |
-| Vacunación | QA-BR-CRIA-001 | vacuna «QA Newcastle», vía agua, lote vacuna QA-VL-099 | registrado |
+| Vacunación | QA-BR-CRIA-001 | vacuna «QA Vacuna Newcastle», vía agua, lote vacuna QA-VL-099 | registrado |
 | Recolección diaria | QA-BR-PROD-001 | 6 200 fértiles, 150 sucios, 60 rotos | registrado; el reporte de producción incorpora el día |
 | Clasificación | QA-BR-PROD-001 | 6 000 fértiles clasificados | registrado |
-| Descarte | QA-BR-PROD-002 | 10 hembras, causa «QA Baja postura» | registrado |
+| Descarte | QA-BR-PROD-002 | 10 hembras, causa «QA Bajo peso» | registrado |
 | Transición de fase | QA-BR-CRIA-001 | ver 4.2 | fase Producción activa |
 
 #### Incubadora — `qa.operator.hatchery`
@@ -181,17 +183,18 @@ Siga el proceso **en el orden real**, cada paso en el lote que está justo en es
 | Paso | Lote | Datos | Resultado esperado |
 |---|---|---|---|
 | Clasificación de huevos recibidos | QA-HAT-REC-001 | 29 600 aptos, 400 descartados | registrado |
-| Carga a incubadora | QA-HAT-REC-001 | 29 600 en «QA Incubadora A4», 37,6 °C, 55 % | registrado; la máquina muestra ocupación |
+| Carga a incubadora | QA-HAT-REC-001 | 29 600 en «QA Incubadora A1», 37,6 °C, 55 % | registrado; la máquina muestra ocupación |
 | Ovoscopia | QA-HAT-OVO-001 | 1 300 infértiles | registrado; el saldo de huevo en incubación baja |
 | Transferencia a nacedora | QA-HAT-INC-001 | 27 000 a «QA Nacedora N1» | registrado |
 | Nacimiento | QA-HAT-NAC-001 | 24 500 sanos, 500 débiles | registrado; aparecen pollitos disponibles |
 | Despacho de pollitos | QA-HAT-BIRTH-001 | 10 000 a granja QA-EN-01 | registrado; al aprobarse, QA-EN-01 puede recibirlos |
 | Nacimiento excesivo | QA-HAT-NAC-001 | 50 000 sanos | **rechazado**: más pollitos que huevos transferidos |
+| Incubadora inactiva | QA-HAT-REC-001 | intentar cargar en «QA Incubadora A4 (inactiva)» | no es seleccionable / rechazado |
 
 #### Pollo de Engorde — `qa.operator.broiler`
 | Prueba | Lote | Datos | Resultado esperado |
 |---|---|---|---|
-| Recepción dentro de la OC | QA-BRO-001 | 500 aves, OC `QA-OC-BRO-AVES-003` | registrado (la OC tiene 10 000 y lleva 10 000 recibidas: **este caso debe rechazarse por exceder la OC**) |
+| Recepción con OC agotada | QA-BRO-001 | 500 aves, OC `QA-OC-BRO-AVES-003` | **rechazado**: la orden ya está completa (10 000 de 10 000 recibidas) |
 | Recepción con OC de prueba BR-18 | lote nuevo en QA-EN-01-G3 | 1 200 aves, OC `QA-OC-BR18-TEST` (límite 1 000) | **rechazado**: excede la orden de compra |
 | Recepción válida | mismo lote nuevo | 900 aves, OC `QA-OC-BR18-TEST` | registrado |
 | Alimento, agua, mortalidad | QA-BRO-002 | 4 500 kg · 15 000 L · 12 aves | registrados |
@@ -249,7 +252,7 @@ Con `qa.operator.broiler`, en QA-BRO-001 registre un consumo de agua y **cancél
 
 **Qué hacer**: recorra **Documentos Pendientes**, **Envíos a SAP**, **Errores SAP** y **Bitácora SAP**.
 
-**Resultado esperado**: los listados muestran registros sintéticos con su origen `QA_SYNTHETIC`; el pendiente de mapeo y el inválido aparecen donde corresponde; **no hay envíos** y el envío saliente está deshabilitado; en ningún lugar se indica «SAP conectado». Las órdenes de compra visibles coinciden con las usadas en recepciones (QA-OC-GP-AVES-001 5 000; QA-OC-BR-AVES-002 10 000; QA-OC-BRO-AVES-003 10 000; QA-OC-BRO-AVES-004 12 500; QA-OC-BR18-TEST 1 000).
+**Resultado esperado**: los listados muestran registros sintéticos con su origen `QA_SYNTHETIC`; el pendiente de mapeo y el inválido aparecen donde corresponde; **no hay envíos** y el envío saliente está deshabilitado; en ningún lugar se indica «SAP conectado». Sobre las órdenes de compra: hay **11 órdenes de compra** sintéticas; las cinco usadas en recepciones son QA-OC-GP-AVES-001 (5 000), QA-OC-BR-AVES-002 (10 000), QA-OC-BRO-AVES-003 (10 000), QA-OC-BRO-AVES-004 (12 500) y QA-OC-BR18-TEST (1 000); las otras seis (alimento, vacunas, medicamentos, insumos de incubadora, importación) son solo de consulta.
 
 ---
 

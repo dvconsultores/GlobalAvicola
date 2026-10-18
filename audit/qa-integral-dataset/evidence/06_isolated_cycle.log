@@ -1,4 +1,4 @@
-== 2026-10-18T01:14:12Z alembic upgrade head ==
+== 2026-10-18T03:02:57Z alembic upgrade head ==
 [F1] catálogo de unidades de negocio: creadas 4 ['breeder', 'broiler', 'grandparent', 'hatchery']
 == baseline ==
   ✅ Usuario administrador: admin
@@ -17,7 +17,7 @@ BASELINE {'roles': 7, 'permisos': 64, 'permisos_operativos': 52, 'empresas': 2}
   "qa_inbound_records": 0,
   "qa_cutover_batches": 0
 }
-== 2 apply #1 2026-10-18T01:14:16Z ==
+== 2 apply #1 2026-10-18T03:03:00Z ==
               ^^^^^^^^^^^^^^^^^
 [qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
 [qa-seed] fase empresas: ok
@@ -30,9 +30,9 @@ BASELINE {'roles': 7, 'permisos': 64, 'permisos_operativos': 52, 'empresas': 2}
 [qa-seed] fase pasos_de_aprobacion: ok
 [qa-seed] fase sap_sintetico: ok
 [qa-seed] fase escenarios: ok
-[qa-seed] fixtures de cargas iniciales: 4 archivos en ../audit/qa-integral-dataset/evidence/../fixtures
+[qa-seed] fixtures de cargas iniciales: 4 archivos en /home/maria/Proyectos/GlobalAvicola/audit/qa-integral-dataset/evidence/../fixtures
 
-CREATED = 719
+CREATED = 720
 EXISTING = 4
 UPDATED = 0
 SKIPPED = 0
@@ -64,6 +64,7 @@ SKIPPED = 0
   processing_plants            created=3    existing=0    updated=0   skipped=0
   productive_phases            created=0    existing=4    updated=0   skipped=0
   rejection_reasons            created=3    existing=0    updated=0   skipped=0
+  reversals                    created=1    existing=0    updated=0   skipped=0
   sap_entity_mappings          created=13   existing=0    updated=0   skipped=0
   sap_inbound_records          created=85   existing=0    updated=0   skipped=0
   sap_inbound_sync_jobs        created=14   existing=0    updated=0   skipped=0
@@ -73,7 +74,7 @@ SKIPPED = 0
   user_business_units          created=29   existing=0    updated=0   skipped=0
   users                        created=12   existing=0    updated=0   skipped=0
   vaccines                     created=5    existing=0    updated=0   skipped=0
-[qa-seed] manifest: ../audit/qa-integral-dataset/evidence/manifest_isolated.json
+[qa-seed] manifest: /home/maria/Proyectos/GlobalAvicola/audit/qa-integral-dataset/evidence/manifest_isolated.json
 APPLY1_SECONDS=14
 == 3 verify #1 ==
 [qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
@@ -122,7 +123,7 @@ SKIPPED = 0
 == 5 verify #2 ==
 QA_DATA_VERIFY = PASS
 == 6 cleanup sin confirm-target (debe abortar) ==
-[qa-seed] ABORTADO: la escritura exige --confirm-target 'global_avicola_test' (o GA_QA_SEED_CONFIRM_TARGET). No hay override silencioso.
+[qa-seed] ABORTADO: la escritura exige --confirm-target 'global_avicola_test' en la línea de comandos. No hay variable de entorno ni override silencioso.
 [qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
 == 7 cleanup --dry-run ==
 [qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
@@ -134,6 +135,8 @@ QA_DATA_VERIFY = PASS
   "deleted": {
     "opening_balance_corrections": 0,
     "hatchery_openings": 1,
+    "hatchery_openings(planta)": 1,
+    "hatchery_openings(opening)": 1,
     "chick_batches": 2,
     "chick_batches(destino)": 2,
     "reversals": 1,
@@ -197,7 +200,7 @@ QA_DATA_VERIFY = PASS
   },
   "ambiguous": [],
   "status": "DRY_RUN",
-  "total": 2447
+  "total": 2449
 }
 == 8 inventory tras dry-run (sin cambios) ==
 [qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
@@ -231,6 +234,8 @@ QA_DATA_VERIFY = PASS
   "deleted": {
     "opening_balance_corrections": 0,
     "hatchery_openings": 1,
+    "hatchery_openings(planta)": 0,
+    "hatchery_openings(opening)": 0,
     "chick_batches": 2,
     "chick_batches(destino)": 0,
     "reversals": 1,
@@ -332,7 +337,7 @@ select count(*) from permissions                                       -> 64
 [qa-seed] fase pasos_de_aprobacion: ok
 [qa-seed] fase sap_sintetico: ok
 [qa-seed] fase escenarios: ok
-CREATED = 719
+CREATED = 720
 EXISTING = 4
 UPDATED = 0
 SKIPPED = 0
@@ -364,4 +369,4 @@ SKIPPED = 0
 QA_DATA_VERIFY = PASS
 == 14 entorno prohibido (ENVIRONMENT=production) ==
 [qa-seed] ABORTADO: ENVIRONMENT='production' no es un entorno autorizado para datos sintéticos.
-== 2026-10-18T01:15:01Z FIN ==
+== 2026-10-18T03:03:42Z FIN ==

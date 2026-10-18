@@ -7,6 +7,7 @@
 | Seed canónico | `backend/seeds/qa_integral_dataset.py` (+ `qa_integral_builders.py`) |
 | Última corrida certificada | aislado, `run_id=QA-DEMO-V1-ISOLATED-20261018`, SHA de código `3e146ac` (pre-commit; ver `12_TRACEABILITY.md`) · JSON: `QA_DATA_MANIFEST.json` |
 | Corrida en runtime compartido | **PENDIENTE** (`09_RUNTIME_VERIFICATION.md`): al ejecutarse, adjuntar su manifest como `QA_DATA_MANIFEST_runtime.json` |
+| Entidades creadas por `--apply` | **720 creadas** · 4 existentes (catálogos globales) en el ciclo aislado de R1 (`evidence/06_isolated_cycle.log`); el inventario de abajo no cambia |
 | Cleanup | `READY_NOT_EXECUTED` |
 | SAP real | 0 llamadas · `SAP_REAL_TEST=PENDING_2026_10_20` |
 

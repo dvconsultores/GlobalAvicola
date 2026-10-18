@@ -5,7 +5,7 @@
         .venv/bin/python -m seeds.qa_integral_dataset --apply   --confirm-target <nombre_bd> [--fixtures-dir DIR]
         .venv/bin/python -m seeds.qa_integral_dataset --verify
         .venv/bin/python -m seeds.qa_integral_dataset --cleanup --dry-run
-        .venv/bin/python -m seeds.qa_integral_dataset --cleanup --confirm-target <nombre_bd> [--force-unmarked]
+        .venv/bin/python -m seeds.qa_integral_dataset --cleanup --confirm-target <nombre_bd> [--force-unmarked <tax_id>]
 
 Reglas: sintético, trazable (`QA-`/`qa.`/`QA_DEMO_V1`/`QA_SYNTHETIC`), idempotente (dos `--apply` no duplican),
 removible (`--cleanup` solo borra lo marcado, fail-closed ante ambigüedad), aislado (dos empresas QA propias).
@@ -19,14 +19,14 @@ import asyncio
 import json
 import os
 import secrets
-import stat
 import subprocess
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Optional
 
-from sqlalchemy import delete, func, select, text
+from sqlalchemy import delete, func, or_, select
+from sqlalchemy.engine import make_url
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
@@ -35,6 +35,10 @@ from seeds.qa_integral_builders import (ALL_BU, COMPANY_ISO, COMPANY_MAIN, EMAIL
                                         TAX_ISO, TAX_MAIN, USER_PREFIX, USUARIOS, VERSION, Contexto, D, QaBuilder)
 
 FORBIDDEN_ENVIRONMENTS = {"production", "prod", "staging", "pre", "preprod"}
+#: `R1`: lista blanca — lo que no esté aquí no admite datos sintéticos, en vez de enumerar lo prohibido.
+ENTORNOS_PERMITIDOS = {"development", "dev", "test", "qa", "uat", "local"}
+#: Substrings que descartan el entorno aunque alguien añada un alias nuevo a la lista blanca.
+ENTORNOS_VETADOS = ("prod", "pre", "stag", "live")
 CREDENCIALES_POR_DEFECTO = Path("/tmp/global_avicola_qa_credentials.txt")
 FIXTURES_POR_DEFECTO = Path(__file__).resolve().parents[2] / "audit" / "qa-integral-dataset" / "fixtures"
 
@@ -47,25 +51,24 @@ def es_codigo_qa(codigo: str) -> bool:
 
 
 def destino_configurado() -> tuple[str, str]:
-    """(host, base) del `DATABASE_URL` efectivo, sin credenciales."""
-    url = settings.database_url
-    resto = url.split("@", 1)[-1]
-    host = resto.split("/", 1)[0]
-    base = resto.split("/", 1)[1].split("?", 1)[0] if "/" in resto else ""
-    return host or "(socket)", base
+    """(host, base) del `DATABASE_URL` efectivo, sin credenciales: `make_url` nunca devuelve usuario ni clave."""
+    url = make_url(settings.database_url)
+    return url.host or "(socket)", url.database or ""
 
 
 def exigir_entorno_seguro(*, escribe: bool, confirm_target: Optional[str]) -> None:
     entorno = (settings.ENVIRONMENT or "").strip().lower()
-    if entorno in FORBIDDEN_ENVIRONMENTS:
+    if entorno in FORBIDDEN_ENVIRONMENTS or any(veto in entorno for veto in ENTORNOS_VETADOS):
         sys.exit(f"[qa-seed] ABORTADO: ENVIRONMENT='{entorno}' no es un entorno autorizado para datos sintéticos.")
+    if entorno not in ENTORNOS_PERMITIDOS:
+        sys.exit(f"[qa-seed] ABORTADO: ENVIRONMENT='{entorno or '(vacío)'}' no está en la allowlist "
+                 f"{sorted(ENTORNOS_PERMITIDOS)}; los datos sintéticos solo viven en desarrollo y pruebas.")
     host, base = destino_configurado()
-    print(f"[qa-seed] entorno={entorno or 'development'} · destino host={host} · base={base}")
+    print(f"[qa-seed] entorno={entorno} · destino host={host} · base={base}")
     if escribe:
-        esperado = confirm_target or os.environ.get("GA_QA_SEED_CONFIRM_TARGET")
-        if not esperado or esperado != base:
-            sys.exit(f"[qa-seed] ABORTADO: la escritura exige --confirm-target {base!r} (o GA_QA_SEED_CONFIRM_TARGET). "
-                     "No hay override silencioso.")
+        if not confirm_target or confirm_target != base:
+            sys.exit(f"[qa-seed] ABORTADO: la escritura exige --confirm-target {base!r} en la línea de comandos. "
+                     "No hay variable de entorno ni override silencioso.")
 
 
 def credenciales(ruta: Path, *, usuarios: tuple[str, ...]) -> dict[str, str]:
@@ -73,21 +76,29 @@ def credenciales(ruta: Path, *, usuarios: tuple[str, ...]) -> dict[str, str]:
     desde_env = os.environ.get("GA_QA_SEED_PASSWORD")
     if desde_env:
         return {u: desde_env for u in usuarios}
+    ruta.parent.mkdir(parents=True, exist_ok=True)
+    datos: dict[str, str] = {}
     if ruta.exists():
-        datos = json.loads(ruta.read_text())
-        if all(u in datos for u in usuarios):
-            return {u: datos[u] for u in usuarios}
+        if ruta.stat().st_uid != os.getuid():
+            sys.exit(f"[qa-seed] ABORTADO: {ruta} existe y no pertenece al usuario actual; no se sobrescribe.")
+        leido = json.loads(ruta.read_text(encoding="utf-8"))
+        if not isinstance(leido, dict) or not leido or not all(
+                isinstance(k, str) and isinstance(v, str) for k, v in leido.items()):
+            sys.exit(f"[qa-seed] ABORTADO: {ruta} no contiene un objeto JSON no vacío de cadenas (str→str); "
+                     "bórralo o corrígelo a mano.")
+        datos = leido
         # usuarios nuevos en el dataset: se completan sin tocar los existentes
         clave_comun = next(iter(datos.values()))
         datos.update({u: clave_comun for u in usuarios if u not in datos})
     else:
         clave_comun = secrets.token_urlsafe(14)
         datos = {u: clave_comun for u in usuarios}
-    ruta.parent.mkdir(parents=True, exist_ok=True)
-    ruta.write_text(json.dumps(datos, indent=2))
-    os.chmod(ruta, stat.S_IRUSR | stat.S_IWUSR)
+    # `O_NOFOLLOW` + 0600 desde `os.open`: nadie puede sustituir la ruta por un enlace antes de escribir.
+    descriptor = os.open(ruta, os.O_WRONLY | os.O_CREAT | os.O_TRUNC | os.O_NOFOLLOW, 0o600)
+    with os.fdopen(descriptor, "w", encoding="utf-8") as manejador:
+        json.dump(datos, manejador, indent=2)
     print(f"[qa-seed] credenciales QA en {ruta} (0600; entregar al Owner por canal separado; no se versionan)")
-    return datos
+    return {u: datos[u] for u in usuarios}
 
 
 def sha_actual() -> Optional[str]:
@@ -261,7 +272,7 @@ async def escenarios(b: QaBuilder) -> None:
     await b.cerrar_lote(br_closed, 66)
 
     # ── INCUBADORA (procesos en distintas etapas, alimentados por QA-BR-PROD-001) ──
-    async def proceso(code, *, desp, recep, cargar=None, inc_n=1, ovo=None, transf=None, nac=None, pollitos=None, desp_pollitos=None, mort=None):
+    async def proceso(code, *, desp, recep, cargar=None, inc_n=1, ovo=None, transf=None, nac=None, pollitos=None, desp_pollitos=None, mortalidad=None):
         lote = await b.lote(code, empresa="MAIN", bu="hatchery", farm="QA-INC-F1", house="QA-INC-F1-G1", line=None, start_days=recep[0], area="QA-AREA-INC", hatchery_purpose="breeder")
         await b.fase_de_lote(lote, "INCUB", recep[0], 0, 0)
         await b.evento("qa.operator.breeder", br_prod1, "egg_dispatch", desp[0], f"{code}-desp-origen", destination_farm_id=farm_inc.id, transport_id=tr(2), egg_movements=[{"egg_type": "fertile", "quantity": desp[1]}])
@@ -275,8 +286,9 @@ async def escenarios(b: QaBuilder) -> None:
             await b.evento("qa.operator.hatchery", lote, "transfer_to_hatcher", transf[0], f"{code}-transf", hatchery_params=[{"hatchery_id": inc.id, "hatcher_id": nacedora(1 if inc_n != 3 else 2), "quantity_transferred": transf[1], "temperature": 36.9, "humidity": 65.0}])
         if nac:
             await b.evento("qa.operator.hatchery", lote, "birth_registration", nac[0], f"{code}-nac", chicks_healthy=nac[2], chicks_weak=nac[1] - nac[2], bird_movements=[aves("mixed", nac[1], 40.0)])
-        if mort:
-            await b.evento("qa.operator.hatchery", lote, "mortality_recording", mort[0], f"{code}-mort", cause_id=mort[2], bird_movements=[aves("mixed", mort[1], 40.0)])
+        if mortalidad:
+            await b.evento("qa.operator.hatchery", lote, "mortality_recording", mortalidad[0], f"{code}-mort", cause_id=mortalidad[2],
+                           bird_movements=[aves("mixed", mortalidad[1], 40.0)])
         if desp_pollitos:
             await b.evento("qa.operator.hatchery", lote, "chick_dispatch", desp_pollitos[0], f"{code}-desp-pollitos", destination_farm_id=desp_pollitos[2], transport_id=tr(1), bird_movements=[aves("mixed", desp_pollitos[1], 41.0)])
         return lote
@@ -286,8 +298,8 @@ async def escenarios(b: QaBuilder) -> None:
     await proceso("QA-HAT-OVO-001", desp=(11, 30000), recep=(10, 30000), cargar=(9, 29000), inc_n=2)
     await proceso("QA-HAT-NAC-001", desp=(22, 30000), recep=(21, 30000), cargar=(20, 28500), inc_n=3, ovo=(13, 1200), transf=(2, 27000))
     await proceso("QA-HAT-BIRTH-001", desp=(26, 30000), recep=(25, 30000), cargar=(24, 29000), inc_n=1, ovo=(17, 1300), transf=(6, 27500), nac=(3, 24000, 23500))
-    hat_chick = await proceso("QA-HAT-CHICK-001", desp=(30, 30000), recep=(29, 30000), cargar=(28, 30000), inc_n=2, ovo=(21, 1400), transf=(10, 28400),
-                              nac=(7, 25000, 24400), mort=(5, 50, mort(1)), desp_pollitos=(6, 10000, farm_en1.id))
+    await proceso("QA-HAT-CHICK-001", desp=(30, 30000), recep=(29, 30000), cargar=(28, 30000), inc_n=2, ovo=(21, 1400), transf=(10, 28400),
+                  nac=(7, 25000, 24400), mortalidad=(5, 50, mort(1)), desp_pollitos=(6, 10000, farm_en1.id))
     await b.evento("qa.operator.hatchery", None, "hatchery_inspection", 15, "hat-insp-1", empresa="MAIN", farm_id=None, house_id=None,
                    inspection_details=[{"parameter": "temperatura sala incubación", "value": "25 °C"}, {"parameter": "higiene nacedoras", "value": "conforme"}])
 
@@ -598,7 +610,7 @@ async def verificar(db: AsyncSession) -> list[tuple[str, bool, str]]:
     r.append(("reports have source data", aprobados >= 100, f"aprobados_para_reportes={aprobados}"))
     openings = (await db.execute(select(OpeningBalance).where(OpeningBalance.lot_id.in_(ids_lotes)))).scalars().all()
     r.append(("UNKNOWN scenario present", any(o.feed_status == "UNKNOWN" for o in openings), f"openings={len(openings)}"))
-    marcados = all((e.extra_data or {}).get("qa_marker") == MARKER or (e.observations or "").startswith(f"Reverso de") or (e.observations or "").find(MARKER) >= 0 for e in eventos)
+    marcados = all((e.extra_data or {}).get("qa_marker") == MARKER or (e.observations or "").startswith("Reverso de") or (e.observations or "").find(MARKER) >= 0 for e in eventos)
     r.append(("QA markers present", marcados and all(l.lot_code.startswith(PREFIX) for l in lotes) and all(u.email.endswith(EMAIL_DOMAIN) for u in usuarios.values()), ""))
     cut = (await db.execute(select(CutoverBatch).where(CutoverBatch.company_id == main.id, CutoverBatch.status == "applied"))).scalars().all()
     r.append(("cutover applied per BU", {c.business_unit for c in cut} >= set(ALL_BU), f"aplicadas={[c.business_unit for c in cut]}"))
@@ -608,8 +620,11 @@ async def verificar(db: AsyncSession) -> list[tuple[str, bool, str]]:
     return r
 
 
-async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: bool) -> dict[str, Any]:
-    """Elimina exclusivamente `QA-DEMO-V1` en orden FK seguro. Fail-closed ante entidades sin marcador."""
+async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: Optional[str]) -> dict[str, Any]:
+    """Elimina exclusivamente `QA-DEMO-V1` en orden FK seguro. Fail-closed ante entidades sin marcador.
+
+    Catálogos globales que nunca se borran: roles, permissions, productive_phases, business_units.
+    """
     from app.audit.models import AuditLog
     from app.auth.models import RevokedToken, User
     from app.business_units.models import CompanyBusinessUnit, UserBusinessUnit
@@ -636,6 +651,8 @@ async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: bool) -> d
     usuarios = (await db.execute(select(User).where(User.company_id.in_(ids)))).scalars().all()
     lotes = (await db.execute(select(Lot).where(Lot.company_id.in_(ids)))).scalars().all()
     refs = (await db.execute(select(SapReference).where(SapReference.company_id.in_(ids)))).scalars().all()
+    granjas = (await db.execute(select(Farm).where(Farm.company_id.in_(ids)))).scalars().all()
+    batches = (await db.execute(select(CutoverBatch).where(CutoverBatch.company_id.in_(ids)))).scalars().all()
     for u in usuarios:
         if not u.username.startswith(USER_PREFIX):
             informe["ambiguous"].append(f"user:{u.username}")
@@ -645,7 +662,14 @@ async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: bool) -> d
     for r_ in refs:
         if not es_codigo_qa(r_.sap_code):
             informe["ambiguous"].append(f"sap_reference:{r_.sap_code}")
-    if informe["ambiguous"] and not force_unmarked:
+    for g in granjas:
+        if not (g.code.startswith(PREFIX) or g.name.startswith(PREFIX)):
+            informe["ambiguous"].append(f"farm:{g.code}")
+    for c in batches:
+        if c.source_system != MARKER:
+            informe["ambiguous"].append(f"cutover_batch:{c.id}")
+    # `R1`: el override exige el `tax_id` exacto de una empresa QA — `--force-unmarked` ya no es un booleano.
+    if informe["ambiguous"] and force_unmarked not in {e.tax_id for e in empresas}:
         informe["status"] = "AMBIGUOUS_QA_DATA"
         return informe
 
@@ -655,17 +679,27 @@ async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: bool) -> d
     ids_openings = list((await db.execute(select(OpeningBalance.id).where(OpeningBalance.lot_id.in_(ids_lotes)))).scalars().all()) if ids_lotes else []
     ids_lineas = list((await db.execute(select(GeneticLine.id).where(GeneticLine.company_id.in_(ids)))).scalars().all())
     ids_curvas = list((await db.execute(select(GeneticWeightCurve.id).where(GeneticWeightCurve.genetic_line_id.in_(ids_lineas)))).scalars().all()) if ids_lineas else []
-    ids_granjas = list((await db.execute(select(Farm.id).where(Farm.company_id.in_(ids)))).scalars().all())
+    ids_granjas = [g.id for g in granjas]
     ids_plantas = list((await db.execute(select(Hatchery.id).where(Hatchery.company_id.in_(ids)))).scalars().all())
-    ids_batches = list((await db.execute(select(CutoverBatch.id).where(CutoverBatch.company_id.in_(ids)))).scalars().all())
+    ids_cbu = list((await db.execute(select(CompanyBusinessUnit.id).where(CompanyBusinessUnit.company_id.in_(ids)))).scalars().all())
+    ids_batches = [c.id for c in batches]
     ids_payloads = list((await db.execute(select(SapPayload.id).where(SapPayload.company_id.in_(ids)))).scalars().all())
 
     def cond(col, valores):
         return col.in_(valores) if valores else None
 
+    def cond_o(*pares):
+        """OR de `col IN valores` omitiendo listas vacías (`cond` solo admite una columna)."""
+        partes = [col.in_(valores) for col, valores in pares if valores]
+        return or_(*partes) if partes else None
+
+    cond_ubu = cond_o((UserBusinessUnit.user_id, ids_usuarios), (UserBusinessUnit.company_business_unit_id, ids_cbu))
+
     pasos = [
         ("opening_balance_corrections", OpeningBalanceCorrection, cond(OpeningBalanceCorrection.opening_id, ids_openings)),
         ("hatchery_openings", HatcheryOpening, cond(HatcheryOpening.lot_id, ids_lotes)),
+        ("hatchery_openings(planta)", HatcheryOpening, cond(HatcheryOpening.hatchery_id, ids_plantas)),
+        ("hatchery_openings(opening)", HatcheryOpening, cond(HatcheryOpening.opening_id, ids_openings)),
         ("chick_batches", ChickBatch, cond(ChickBatch.hatchery_lot_id, ids_lotes)),
         ("chick_batches(destino)", ChickBatch, cond(ChickBatch.destination_lot_id, ids_lotes)),
         ("egg_batches", EggBatch, cond(EggBatch.hatchery_lot_id, ids_lotes)),
@@ -685,7 +719,7 @@ async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: bool) -> d
         ("notifications", Notification, Notification.company_id.in_(ids)),
         ("sap_responses", SapResponse, cond(SapResponse.payload_id, ids_payloads)),
         ("sap_payloads", SapPayload, SapPayload.company_id.in_(ids)),
-        ("audit_logs", AuditLog, AuditLog.company_id.in_(ids)),
+        ("audit_logs", AuditLog, cond_o((AuditLog.company_id, ids), (AuditLog.user_id, ids_usuarios))),
         ("operational_events", OperationalEvent, OperationalEvent.company_id.in_(ids)),
         ("cutover_items", CutoverItem, CutoverItem.company_id.in_(ids)),
         ("cutover_staging_rows", CutoverStagingRow, cond(CutoverStagingRow.batch_id, ids_batches)),
@@ -715,7 +749,7 @@ async def limpiar(db: AsyncSession, *, dry_run: bool, force_unmarked: bool) -> d
         ("mortality_causes", MortalityCause, MortalityCause.company_id.in_(ids)), ("cull_causes", CullCause, CullCause.company_id.in_(ids)),
         ("transports", Transport, Transport.company_id.in_(ids)), ("processing_plants", ProcessingPlant, ProcessingPlant.company_id.in_(ids)),
         ("rejection_reasons", RejectionReason, RejectionReason.company_id.in_(ids)), ("correction_types", CorrectionType, CorrectionType.company_id.in_(ids)),
-        ("user_business_units", UserBusinessUnit, cond(UserBusinessUnit.user_id, ids_usuarios)),
+        ("user_business_units", UserBusinessUnit, cond_ubu),
         ("company_business_units", CompanyBusinessUnit, CompanyBusinessUnit.company_id.in_(ids)),
         ("revoked_tokens", RevokedToken, cond(RevokedToken.user_id, ids_usuarios)),
         ("users", User, User.company_id.in_(ids)),
@@ -797,11 +831,13 @@ async def main_async(args) -> int:
                 print("[qa-seed] --apply --dry-run: sin escrituras; inventario actual:")
                 print(json.dumps(await inventario(db), indent=2, ensure_ascii=False))
             return 0
-        creds = credenciales(Path(args.credentials_file), usuarios=tuple(u[0] for u in USUARIOS))
+        ruta_credenciales = Path(args.credentials_file) if args.credentials_file else CREDENCIALES_POR_DEFECTO
+        creds = credenciales(ruta_credenciales, usuarios=tuple(u[0] for u in USUARIOS))
         run_id = args.run_id or f"{VERSION}-{datetime.now(timezone.utc).strftime('%Y%m%d')}"
+        directorio_fixtures = Path(args.fixtures_dir) if args.fixtures_dir else FIXTURES_POR_DEFECTO
         async with async_session() as db:
             ctx = await aplicar(db, run_id=run_id, creds=creds, reset_passwords=args.reset_passwords,
-                                fixtures_dir=Path(args.fixtures_dir) if args.fixtures_dir else None)
+                                fixtures_dir=directorio_fixtures)
         imprimir_contadores(ctx)
         if args.manifest:
             async with async_session() as db:
@@ -824,10 +860,22 @@ def main() -> None:
     g.add_argument("--inventory", action="store_true"); g.add_argument("--apply", action="store_true")
     g.add_argument("--verify", action="store_true"); g.add_argument("--cleanup", action="store_true")
     p.add_argument("--dry-run", action="store_true"); p.add_argument("--run-id"); p.add_argument("--confirm-target")
-    p.add_argument("--fixtures-dir", default=str(FIXTURES_POR_DEFECTO)); p.add_argument("--credentials-file", default=str(CREDENCIALES_POR_DEFECTO))
-    p.add_argument("--reset-passwords", action="store_true"); p.add_argument("--force-unmarked", action="store_true")
+    p.add_argument("--fixtures-dir", default=None, help=f"directorio de fixtures (por defecto {FIXTURES_POR_DEFECTO})")
+    p.add_argument("--credentials-file", default=None, help=f"archivo 0600 de contraseñas (por defecto {CREDENCIALES_POR_DEFECTO})")
+    p.add_argument("--reset-passwords", action="store_true")
+    p.add_argument("--force-unmarked", metavar="TAX_ID",
+                   help="cleanup: permite borrar pese a entidades sin marcador; exige el tax_id exacto de una empresa QA")
     p.add_argument("--manifest", help="ruta del manifest JSON a escribir tras --apply")
     args = p.parse_args()
+    if args.force_unmarked is not None and not args.cleanup:
+        p.error("--force-unmarked solo aplica con --cleanup")
+    solo_apply = {"--reset-passwords": args.reset_passwords, "--fixtures-dir": args.fixtures_dir is not None,
+                  "--manifest": args.manifest is not None, "--run-id": args.run_id is not None,
+                  "--credentials-file": args.credentials_file is not None}
+    if not args.apply:
+        for bandera, usado in solo_apply.items():
+            if usado:
+                p.error(f"{bandera} solo aplica con --apply")
     sys.exit(asyncio.run(main_async(args)))
 
 

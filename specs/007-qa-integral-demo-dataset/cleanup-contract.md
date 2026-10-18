@@ -4,20 +4,20 @@
 
 ## 1 · Alcance
 
-`--cleanup` elimina **exclusivamente** entidades que pertenecen a las dos empresas QA (`tax_id ∈ {QA-DEMO-V1-INTEGRAL, QA-DEMO-V1-AISLAMIENTO}`) o que cuelgan de ellas (usuarios, concesiones, lotes, eventos, movimientos, aprobaciones, correcciones, reversos, alertas, notificaciones, auditoría de esas empresas, cutover, inbound SAP, referencias SAP, maestros, curvas, áreas) y finalmente las empresas. No toca: roles, permisos, `business_units`, `productive_phases`, el usuario `admin`, las empresas de certificación ni ningún dato ajeno.
+`--cleanup` elimina **exclusivamente** entidades que pertenecen a las dos empresas QA (`tax_id ∈ {QA-DEMO-V1-INTEGRAL, QA-DEMO-V1-AISLAMIENTO}`) o que cuelgan de ellas (usuarios, concesiones, lotes, eventos, movimientos, aprobaciones, correcciones, reversos, alertas, notificaciones, auditoría de esas empresas, cutover, inbound SAP, referencias SAP, maestros, curvas, áreas) y finalmente las empresas. No toca: roles, permisos, `business_units`, `productive_phases`, el usuario `admin`, las empresas de certificación ni ningún dato ajeno. Catálogos globales que nunca se borran: roles, permissions, productive_phases, business_units.
 
 ## 2 · Fail-closed
 
-Antes de borrar, audita que dentro de las empresas QA todo usuario empiece por `qa.`, todo lote por `QA-` y toda referencia SAP por `QA-`/`QAP`. Si algo no cumple ⇒ `status=AMBIGUOUS_QA_DATA`, lista `ambiguous`, **0 borrados** (también en modo real). `--force-unmarked` es la única vía para proceder y exige decisión explícita.
+Antes de borrar, audita que dentro de las empresas QA todo usuario empiece por `qa.`, todo lote por `QA-`, toda referencia SAP por `QA-`/`QAP`, toda granja tenga código/nombre `QA` y todo batch de cutover lleve `source_system = QA_DEMO_V1`. Si algo no cumple ⇒ `status=AMBIGUOUS_QA_DATA`, lista `ambiguous`, **0 borrados** (también en modo real). `--force-unmarked <tax_id>` es la única vía para proceder y exige el `tax_id` exacto de una empresa QA (si no coincide ⇒ `AMBIGUOUS_QA_DATA`, 0 borrados).
 
 ## 3 · Orden
 
-Derivado de `Base.metadata.sorted_tables` invertido (dependientes primero). El test `test_cleanup_cubre_toda_tabla_que_referencia_a_las_que_borra` exige que toda tabla con FK hacia el plan esté en el plan. Un solo `DELETE … WHERE … IN (…)` por tabla, en una transacción; cualquier error ⇒ rollback total.
+Derivado de `Base.metadata.sorted_tables` invertido (dependientes primero). El test `test_cleanup_cubre_toda_tabla_que_referencia_a_las_que_borra` exige que toda tabla con FK hacia el plan esté en el plan. Predicados ampliados: `audit_logs` por `company_id` **o** `user_id`; `user_business_units` por `user_id` **o** `company_business_unit_id`; `hatchery_openings` por lote, por planta (`hatchery_id`) y por `opening_id`. Un solo `DELETE … WHERE … IN (…)` por tabla, en una transacción; cualquier error ⇒ rollback total.
 
 ## 4 · Guardas
 
-- `ENVIRONMENT ∈ {production, prod, staging, pre, preprod}` ⇒ abort.
-- Modo real exige `--confirm-target <nombre_bd>` igual al de `DATABASE_URL` (o `GA_QA_SEED_CONFIRM_TARGET`).
+- `ENVIRONMENT ∈ {development, dev, test, qa, uat, local}` (allowlist); vetos por substring `prod`/`pre`/`stag`/`live` ⇒ abort.
+- Modo real exige `--confirm-target <nombre_bd>` igual al de `DATABASE_URL`, solo por línea de comandos (sin variable de entorno).
 - `--dry-run` solo cuenta e imprime el plan.
 
 ## 5 · Evidencia requerida antes de ejecutar en runtime
