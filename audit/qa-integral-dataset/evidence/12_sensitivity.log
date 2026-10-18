@@ -1,0 +1,43 @@
+== S1 · guarda de entorno eliminada ==
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+FAILED tests/test_qa_integral_dataset.py::test_entorno_prohibido_aborta_antes_de_conectar[pre]
+FAILED tests/test_qa_integral_dataset.py::test_entorno_prohibido_aborta_antes_de_conectar[preprod]
+FAILED tests/test_qa_integral_dataset.py::test_entorno_prohibido_aborta_antes_de_conectar[prod]
+FAILED tests/test_qa_integral_dataset.py::test_entorno_prohibido_aborta_antes_de_conectar[production]
+FAILED tests/test_qa_integral_dataset.py::test_entorno_prohibido_aborta_antes_de_conectar[staging]
+5 failed, 11 passed, 1 warning in 1.02s
+S1 DETECTED
+restore diff=0
+== S2 · confirm-target ya no obligatorio ==
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+FAILED tests/test_qa_integral_dataset.py::test_escritura_sin_confirm_target_aborta
+1 failed, 15 passed, 1 warning in 1.03s
+S2 DETECTED
+restore diff=0
+== S3 · tabla sap_responses fuera del plan de limpieza ==
+ 1 file changed, 1 deletion(-)
+FAILED tests/test_qa_integral_dataset.py::test_cleanup_cubre_toda_tabla_que_referencia_a_las_que_borra
+1 failed, 15 passed, 1 warning in 1.01s
+S3 DETECTED
+restore diff=0
+== S4 · fail-closed desactivado (ambiguos ignorados) ==
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+FAILED tests/test_qa_integral_dataset.py::test_cleanup_fail_closed_ante_datos_no_marcados
+1 failed, 15 passed, 1 warning in 1.03s
+S4 DETECTED
+restore diff=0
+== S5 · es_codigo_qa acepta cualquier codigo ==
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+FAILED tests/test_qa_integral_dataset.py::test_es_codigo_qa - AssertionError:...
+1 failed, 15 passed, 1 warning in 1.00s
+S5 DETECTED
+restore diff=0
+== S6 · contraseña literal introducida en builders ==
+ 1 file changed, 2 insertions(+)
+FAILED tests/test_qa_integral_dataset.py::test_sin_contrasenas_literales_en_el_seed
+1 failed, 15 passed, 1 warning in 1.02s
+S6 DETECTED
+restore diff=0
+== POST-MUTATION ==
+FINAL_DIFF=0
+16 passed, 1 warning in 0.99s
