@@ -1,0 +1,18 @@
+node=v24.13.0
+== vitest ==
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+ Test Files  91 passed (91)
+      Tests  542 passed (542)
+   Start at  03:07:58
+   Duration  93.54s (transform 4.68s, setup 8.54s, import 48.31s, tests 60.09s, environment 131.36s)
+
+== tsc -b ==
+TSC_RC=0
+== vite build ==
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/stores/company.store.ts is dynamically imported by src/stores/auth.store.ts but also statically imported by src/components/layout/Header.tsx, src/pages/admin/UnitAccessPage.tsx, src/pages/dashboard/DashboardPage.tsx, src/pages/operations/ProcessStagePage.tsx, src/pages/sap/SapManagerPage.tsx, ..., dynamic import will not move module into another chunk.
+
+✓ built in 1.35s
+BUILD_RC=0

@@ -1,0 +1,351 @@
+{
+  "dataset_version": "QA-DEMO-V1",
+  "marker": "QA_DEMO_V1",
+  "run_id": "QA-DEMO-V1-ISOLATED-20261018",
+  "created_at": "2026-10-18T01:14:30.472238+00:00",
+  "sha": "3e146ac891ae06c3321361dbf5463c9a7410c481",
+  "prefixes": {
+    "codes": "QA-",
+    "users": "qa.",
+    "sap_source": "QA_SYNTHETIC"
+  },
+  "companies": [
+    "QA Avícola Integral C.A.",
+    "QA Avícola Aislamiento C.A."
+  ],
+  "users": [
+    "qa.admin",
+    "qa.supervisor",
+    "qa.approver",
+    "qa.operator.gp",
+    "qa.operator.breeder",
+    "qa.operator.hatchery",
+    "qa.operator.broiler",
+    "qa.sap",
+    "qa.auditor",
+    "qa.mobile",
+    "qa.isolation",
+    "qa.isolation.operator"
+  ],
+  "inventory": {
+    "dataset_version": "QA-DEMO-V1",
+    "qa_companies": [
+      {
+        "id": 3,
+        "name": "QA Avícola Integral C.A."
+      },
+      {
+        "id": 4,
+        "name": "QA Avícola Aislamiento C.A."
+      }
+    ],
+    "qa_users": 12,
+    "qa_farms": 6,
+    "qa_lots": 25,
+    "qa_operations": 364,
+    "qa_sap_references": 47,
+    "qa_inbound_records": 85,
+    "qa_cutover_batches": 4
+  },
+  "counters": {
+    "created": 719,
+    "existing": 4,
+    "updated": 0,
+    "detail": {
+      "companies": {
+        "created": 2,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "users": {
+        "created": 12,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "company_business_units": {
+        "created": 8,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "user_business_units": {
+        "created": 29,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "productive_phases": {
+        "created": 0,
+        "existing": 4,
+        "updated": 0,
+        "skipped": 0
+      },
+      "areas": {
+        "created": 5,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "farms": {
+        "created": 6,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "houses": {
+        "created": 17,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "genetic_lines": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "breeds": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "genetic_weight_curves": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "hatcheries": {
+        "created": 1,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "incubators": {
+        "created": 4,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "hatchers": {
+        "created": 2,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "suppliers": {
+        "created": 7,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "transports": {
+        "created": 4,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "processing_plants": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "feed_types": {
+        "created": 5,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "vaccines": {
+        "created": 5,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "medications": {
+        "created": 4,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "mortality_causes": {
+        "created": 5,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "cull_causes": {
+        "created": 4,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "rejection_reasons": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "correction_types": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "approval_steps": {
+        "created": 2,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "sap_entity_mappings": {
+        "created": 13,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "sap_inbound_sync_jobs": {
+        "created": 14,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "sap_inbound_records": {
+        "created": 85,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "sap_references": {
+        "created": 46,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "lots": {
+        "created": 21,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "lot_phases": {
+        "created": 19,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "operational_events": {
+        "created": 363,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "opening_balances": {
+        "created": 7,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "notifications": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "lots_closed": {
+        "created": 3,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "consolidated_movements": {
+        "created": 1,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      },
+      "cutover_batches": {
+        "created": 4,
+        "existing": 0,
+        "updated": 0,
+        "skipped": 0
+      }
+    }
+  },
+  "lots": [
+    "QA-BR-CLOSED-001",
+    "QA-BR-CRIA-001",
+    "QA-BR-PROD-001",
+    "QA-BR-PROD-002",
+    "QA-BRO-001",
+    "QA-BRO-002",
+    "QA-BRO-003",
+    "QA-BRO-CLOSED-001",
+    "QA-GP-CLOSE-001",
+    "QA-GP-CLOSED-001",
+    "QA-GP-CRIA-001",
+    "QA-GP-PROD-001",
+    "QA-HAT-BIRTH-001",
+    "QA-HAT-CHICK-001",
+    "QA-HAT-GPGEN-001",
+    "QA-HAT-INC-001",
+    "QA-HAT-NAC-001",
+    "QA-HAT-OVO-001",
+    "QA-HAT-REC-001",
+    "QA-ISO-BR-001",
+    "QA-ISO-BRO-001"
+  ],
+  "sap_refs": [
+    "QA-ISO-OC-001",
+    "QA-MAT-BR-AVES",
+    "QA-MAT-BR-AVES/QAP1/QA-LOTE-002",
+    "QA-MAT-FEED-CRE",
+    "QA-MAT-FEED-INI",
+    "QA-MAT-GP-AVES",
+    "QA-MAT-GP-AVES/QAP1/QA-LOTE-001",
+    "QA-MAT-HUEVO-FERTIL",
+    "QA-MAT-HUEVO-FERTIL/QAP3/QA-LOTE-004",
+    "QA-MAT-INS-INC",
+    "QA-MAT-MED-AMP",
+    "QA-MAT-POLLITO",
+    "QA-MAT-POLLITO/QAP3/QA-LOTE-003",
+    "QA-MAT-VAC-NEW",
+    "QA-OC-BR-AVES-002",
+    "QA-OC-BR18-TEST",
+    "QA-OC-BRO-AVES-003",
+    "QA-OC-BRO-AVES-004",
+    "QA-OC-FEED-006",
+    "QA-OC-FEED-BRO-010",
+    "QA-OC-GP-AVES-001",
+    "QA-OC-GP-IMPORT-005",
+    "QA-OC-INC-009",
+    "QA-OC-MED-008",
+    "QA-OC-VAC-007",
+    "QA-STO-BR-HAT-001",
+    "QA-STO-FEED-001",
+    "QA-STO-GP-HAT-001",
+    "QA-STO-HAT-BRO-001",
+    "QA-STO-MED-001",
+    "QA-STO-VAC-001",
+    "QA-VEND-P01",
+    "QA-VEND-P02",
+    "QA-VEND-P03",
+    "QA-VEND-P04",
+    "QA-VEND-P05",
+    "QAP1",
+    "QAP1-0001",
+    "QAP2",
+    "QAP2-0001",
+    "QAP3",
+    "QAP3-0001",
+    "QAP4",
+    "QAP4-0001",
+    "QAP5",
+    "QAP5-0001",
+    "QAP9"
+  ]
+}

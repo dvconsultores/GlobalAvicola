@@ -1,0 +1,367 @@
+== 2026-10-18T01:14:12Z alembic upgrade head ==
+[F1] catálogo de unidades de negocio: creadas 4 ['breeder', 'broiler', 'grandparent', 'hatchery']
+== baseline ==
+  ✅ Usuario administrador: admin
+── Baseline listo: 7 roles · 64 permisos (52 operativos) · 2 empresas ──
+BASELINE {'roles': 7, 'permisos': 64, 'permisos_operativos': 52, 'empresas': 2}
+== 1 inventory (vacío) ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+{
+  "dataset_version": "QA-DEMO-V1",
+  "qa_companies": [],
+  "qa_users": 0,
+  "qa_farms": 0,
+  "qa_lots": 0,
+  "qa_operations": 0,
+  "qa_sap_references": 0,
+  "qa_inbound_records": 0,
+  "qa_cutover_batches": 0
+}
+== 2 apply #1 2026-10-18T01:14:16Z ==
+              ^^^^^^^^^^^^^^^^^
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+[qa-seed] fase empresas: ok
+[qa-seed] fase roles: ok
+[qa-seed] fase usuarios: ok
+[qa-seed] fase unidades: ok
+[qa-seed] fase fases: ok
+[qa-seed] fase maestros_principal: ok
+[qa-seed] fase maestros_aislamiento: ok
+[qa-seed] fase pasos_de_aprobacion: ok
+[qa-seed] fase sap_sintetico: ok
+[qa-seed] fase escenarios: ok
+[qa-seed] fixtures de cargas iniciales: 4 archivos en ../audit/qa-integral-dataset/evidence/../fixtures
+
+CREATED = 719
+EXISTING = 4
+UPDATED = 0
+SKIPPED = 0
+  approval_steps               created=2    existing=0    updated=0   skipped=0
+  areas                        created=5    existing=0    updated=0   skipped=0
+  breeds                       created=3    existing=0    updated=0   skipped=0
+  companies                    created=2    existing=0    updated=0   skipped=0
+  company_business_units       created=8    existing=0    updated=0   skipped=0
+  consolidated_movements       created=1    existing=0    updated=0   skipped=0
+  correction_types             created=3    existing=0    updated=0   skipped=0
+  cull_causes                  created=4    existing=0    updated=0   skipped=0
+  cutover_batches              created=4    existing=0    updated=0   skipped=0
+  farms                        created=6    existing=0    updated=0   skipped=0
+  feed_types                   created=5    existing=0    updated=0   skipped=0
+  genetic_lines                created=3    existing=0    updated=0   skipped=0
+  genetic_weight_curves        created=3    existing=0    updated=0   skipped=0
+  hatcheries                   created=1    existing=0    updated=0   skipped=0
+  hatchers                     created=2    existing=0    updated=0   skipped=0
+  houses                       created=17   existing=0    updated=0   skipped=0
+  incubators                   created=4    existing=0    updated=0   skipped=0
+  lot_phases                   created=19   existing=0    updated=0   skipped=0
+  lots                         created=21   existing=0    updated=0   skipped=0
+  lots_closed                  created=3    existing=0    updated=0   skipped=0
+  medications                  created=4    existing=0    updated=0   skipped=0
+  mortality_causes             created=5    existing=0    updated=0   skipped=0
+  notifications                created=3    existing=0    updated=0   skipped=0
+  opening_balances             created=7    existing=0    updated=0   skipped=0
+  operational_events           created=363  existing=0    updated=0   skipped=0
+  processing_plants            created=3    existing=0    updated=0   skipped=0
+  productive_phases            created=0    existing=4    updated=0   skipped=0
+  rejection_reasons            created=3    existing=0    updated=0   skipped=0
+  sap_entity_mappings          created=13   existing=0    updated=0   skipped=0
+  sap_inbound_records          created=85   existing=0    updated=0   skipped=0
+  sap_inbound_sync_jobs        created=14   existing=0    updated=0   skipped=0
+  sap_references               created=46   existing=0    updated=0   skipped=0
+  suppliers                    created=7    existing=0    updated=0   skipped=0
+  transports                   created=4    existing=0    updated=0   skipped=0
+  user_business_units          created=29   existing=0    updated=0   skipped=0
+  users                        created=12   existing=0    updated=0   skipped=0
+  vaccines                     created=5    existing=0    updated=0   skipped=0
+[qa-seed] manifest: ../audit/qa-integral-dataset/evidence/manifest_isolated.json
+APPLY1_SECONDS=14
+== 3 verify #1 ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+  [PASS] 2 QA companies  QA Avícola Aislamiento C.A., QA Avícola Integral C.A.
+  [PASS] 4 BU primary enabled  {'grandparent': True, 'breeder': True, 'hatchery': True, 'broiler': True}
+  [PASS] isolation BU on/off  {'grandparent': False, 'breeder': True, 'hatchery': False, 'broiler': True}
+  [PASS] users and roles correct  faltan=[]; roles_ok=True
+  [PASS] BU grants correct  ok
+  [PASS] qa.mobile view_type mobile  
+  [PASS] farms/houses valid  granjas=5 galpones=15 inactivos=1
+  [PASS] hatchery equipment valid  plantas=1 incubadoras=4 nacedoras=2
+  [PASS] lots have company/BU  lotes=25
+  [PASS] lots per BU (GP≥4, BR≥4, HAT≥6, BRO≥4)  {'grandparent': 5, 'breeder': 5, 'hatchery': 8, 'broiler': 5}
+  [PASS] event details exist  eventos=364 sin_detalle=0
+  [PASS] workflow states valid  {'approved': 333, 'reversed': 2, 'registered': 4, 'returned': 3, 'pending_review': 3, 'draft': 3, 'in_review': 2, 'corrected': 7, 'rejected': 1, 'cancelled': 1, 'consolidated': 5}
+  [PASS] event types coverage  faltan=[]
+  [PASS] SAP refs company-scoped & synthetic  refs=47 no_sinteticas=[]
+  [PASS] PO quantities coherent (BR-18 set)  QA-OC-GP-AVES-001=5000, QA-OC-BR-AVES-002=10000, QA-OC-BRO-AVES-003=10000, QA-OC-BRO-AVES-004=12500, QA-OC-BR18-TEST=1000
+  [PASS] inbound 14 objects staged, QA_SYNTHETIC  objetos=14 registros=85
+  [PASS] EggBatch/ChickBatch coherent  egg_batches=7 chick_batches=2
+  [PASS] reports have source data  aprobados_para_reportes=202
+  [PASS] UNKNOWN scenario present  openings=11
+  [PASS] QA markers present  
+  [PASS] cutover applied per BU  aplicadas=['grandparent', 'breeder', 'hatchery', 'broiler']
+  [PASS] real SAP calls = 0  registros no sintéticos en empresas QA=0
+
+QA_DATA_VERIFY = PASS
+== 4 apply #2 (idempotencia) ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+[qa-seed] fase empresas: ok
+[qa-seed] fase roles: ok
+[qa-seed] fase usuarios: ok
+[qa-seed] fase unidades: ok
+[qa-seed] fase fases: ok
+[qa-seed] fase maestros_principal: ok
+[qa-seed] fase maestros_aislamiento: ok
+[qa-seed] fase pasos_de_aprobacion: ok
+[qa-seed] fase sap_sintetico: ok
+[qa-seed] fase escenarios: ok
+[qa-seed] fixtures de cargas iniciales: 4 archivos en /home/maria/Proyectos/GlobalAvicola/audit/qa-integral-dataset/fixtures
+
+CREATED = 0
+EXISTING = 693
+UPDATED = 0
+SKIPPED = 0
+== 5 verify #2 ==
+QA_DATA_VERIFY = PASS
+== 6 cleanup sin confirm-target (debe abortar) ==
+[qa-seed] ABORTADO: la escritura exige --confirm-target 'global_avicola_test' (o GA_QA_SEED_CONFIRM_TARGET). No hay override silencioso.
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+== 7 cleanup --dry-run ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+{
+  "companies": [
+    "QA Avícola Integral C.A.",
+    "QA Avícola Aislamiento C.A."
+  ],
+  "deleted": {
+    "opening_balance_corrections": 0,
+    "hatchery_openings": 1,
+    "chick_batches": 2,
+    "chick_batches(destino)": 2,
+    "reversals": 1,
+    "operational_alerts": 18,
+    "opening_balances": 11,
+    "inspection_details": 12,
+    "hatchery_params": 10,
+    "feed_movements": 68,
+    "evidences": 0,
+    "egg_storage": 0,
+    "egg_movements": 171,
+    "egg_batches": 7,
+    "egg_batches(origen)": 7,
+    "correction_logs": 2,
+    "bird_movements": 171,
+    "approval_actions": 365,
+    "sap_inbound_records": 85,
+    "operational_events": 364,
+    "lot_phases": 23,
+    "cutover_staging_rows": 4,
+    "cutover_items": 4,
+    "consolidated_movements": 1,
+    "audit_logs": 791,
+    "user_business_units": 29,
+    "sap_sync_jobs": 0,
+    "sap_references": 47,
+    "sap_inbound_sync_jobs": 14,
+    "sap_entity_mappings": 13,
+    "revoked_tokens": 0,
+    "review_batches": 0,
+    "notifications": 41,
+    "lots": 25,
+    "genetic_weight_curve_points": 42,
+    "cutover_batches": 4,
+    "users": 12,
+    "sap_responses": 0,
+    "incubators": 4,
+    "houses": 17,
+    "hatchers": 2,
+    "genetic_weight_curves": 3,
+    "breeds": 3,
+    "vaccines": 5,
+    "transports": 4,
+    "suppliers": 7,
+    "sap_payloads": 0,
+    "sap_inbound_watermarks": 0,
+    "rejection_reasons": 3,
+    "processing_plants": 3,
+    "mortality_causes": 5,
+    "medications": 4,
+    "hatcheries": 1,
+    "genetic_lines": 3,
+    "feed_types": 5,
+    "farms": 6,
+    "cull_causes": 4,
+    "correction_types": 3,
+    "company_business_units": 8,
+    "areas": 5,
+    "approval_steps": 3,
+    "companies": 2
+  },
+  "ambiguous": [],
+  "status": "DRY_RUN",
+  "total": 2447
+}
+== 8 inventory tras dry-run (sin cambios) ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+{
+  "dataset_version": "QA-DEMO-V1",
+  "qa_companies": [
+    {
+      "id": 3,
+      "name": "QA Avícola Integral C.A."
+    },
+    {
+      "id": 4,
+      "name": "QA Avícola Aislamiento C.A."
+    }
+  ],
+  "qa_users": 12,
+  "qa_farms": 6,
+  "qa_lots": 25,
+  "qa_operations": 364,
+  "qa_sap_references": 47,
+  "qa_inbound_records": 85,
+  "qa_cutover_batches": 4
+}
+== 9 cleanup real ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+{
+  "companies": [
+    "QA Avícola Integral C.A.",
+    "QA Avícola Aislamiento C.A."
+  ],
+  "deleted": {
+    "opening_balance_corrections": 0,
+    "hatchery_openings": 1,
+    "chick_batches": 2,
+    "chick_batches(destino)": 0,
+    "reversals": 1,
+    "operational_alerts": 18,
+    "opening_balances": 11,
+    "inspection_details": 12,
+    "hatchery_params": 10,
+    "feed_movements": 68,
+    "evidences": 0,
+    "egg_storage": 0,
+    "egg_movements": 171,
+    "egg_batches": 7,
+    "egg_batches(origen)": 0,
+    "correction_logs": 2,
+    "bird_movements": 171,
+    "approval_actions": 365,
+    "sap_inbound_records": 85,
+    "operational_events": 364,
+    "lot_phases": 23,
+    "cutover_staging_rows": 4,
+    "cutover_items": 4,
+    "consolidated_movements": 1,
+    "audit_logs": 791,
+    "user_business_units": 29,
+    "sap_sync_jobs": 0,
+    "sap_references": 47,
+    "sap_inbound_sync_jobs": 14,
+    "sap_entity_mappings": 13,
+    "revoked_tokens": 0,
+    "review_batches": 0,
+    "notifications": 41,
+    "lots": 25,
+    "genetic_weight_curve_points": 42,
+    "cutover_batches": 4,
+    "users": 12,
+    "sap_responses": 0,
+    "incubators": 4,
+    "houses": 17,
+    "hatchers": 2,
+    "genetic_weight_curves": 3,
+    "breeds": 3,
+    "vaccines": 5,
+    "transports": 4,
+    "suppliers": 7,
+    "sap_payloads": 0,
+    "sap_inbound_watermarks": 0,
+    "rejection_reasons": 3,
+    "processing_plants": 3,
+    "mortality_causes": 5,
+    "medications": 4,
+    "hatcheries": 1,
+    "genetic_lines": 3,
+    "feed_types": 5,
+    "farms": 6,
+    "cull_causes": 4,
+    "correction_types": 3,
+    "company_business_units": 8,
+    "areas": 5,
+    "approval_steps": 3,
+    "companies": 2
+  },
+  "ambiguous": [],
+  "status": "CLEANED",
+  "total": 2438
+}
+== 10 inventory tras cleanup ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+{
+  "dataset_version": "QA-DEMO-V1",
+  "qa_companies": [],
+  "qa_users": 0,
+  "qa_farms": 0,
+  "qa_lots": 0,
+  "qa_operations": 0,
+  "qa_sap_references": 0,
+  "qa_inbound_records": 0,
+  "qa_cutover_batches": 0
+}
+== 11 baseline intacto ==
+select count(*) from users where username like 'qa.%'                  -> 0
+select count(*) from lots where lot_code like 'QA-%'                   -> 0
+select count(*) from companies where tax_id like 'QA-DEMO-V1%'         -> 0
+select count(*) from sap_references where sap_code like 'QA%'          -> 0
+select count(*) from operational_events                                -> 0
+select count(*) from companies                                         -> 2
+select count(*) from roles                                             -> 7
+select count(*) from users where username='admin'                      -> 1
+select count(*) from productive_phases                                 -> 4
+select count(*) from business_units                                    -> 4
+select count(*) from permissions                                       -> 64
+== 12 apply #3 (recreación) ==
+[qa-seed] fase empresas: ok
+[qa-seed] fase roles: ok
+[qa-seed] fase usuarios: ok
+[qa-seed] fase unidades: ok
+[qa-seed] fase fases: ok
+[qa-seed] fase maestros_principal: ok
+[qa-seed] fase maestros_aislamiento: ok
+[qa-seed] fase pasos_de_aprobacion: ok
+[qa-seed] fase sap_sintetico: ok
+[qa-seed] fase escenarios: ok
+CREATED = 719
+EXISTING = 4
+UPDATED = 0
+SKIPPED = 0
+== 13 verify #3 ==
+[qa-seed] entorno=test · destino host=(socket) · base=global_avicola_test
+  [PASS] 2 QA companies  QA Avícola Aislamiento C.A., QA Avícola Integral C.A.
+  [PASS] 4 BU primary enabled  {'grandparent': True, 'breeder': True, 'hatchery': True, 'broiler': True}
+  [PASS] isolation BU on/off  {'grandparent': False, 'breeder': True, 'hatchery': False, 'broiler': True}
+  [PASS] users and roles correct  faltan=[]; roles_ok=True
+  [PASS] BU grants correct  ok
+  [PASS] qa.mobile view_type mobile  
+  [PASS] farms/houses valid  granjas=5 galpones=15 inactivos=1
+  [PASS] hatchery equipment valid  plantas=1 incubadoras=4 nacedoras=2
+  [PASS] lots have company/BU  lotes=25
+  [PASS] lots per BU (GP≥4, BR≥4, HAT≥6, BRO≥4)  {'grandparent': 5, 'breeder': 5, 'hatchery': 8, 'broiler': 5}
+  [PASS] event details exist  eventos=364 sin_detalle=0
+  [PASS] workflow states valid  {'approved': 333, 'reversed': 2, 'registered': 4, 'returned': 3, 'pending_review': 3, 'draft': 3, 'in_review': 2, 'corrected': 7, 'rejected': 1, 'cancelled': 1, 'consolidated': 5}
+  [PASS] event types coverage  faltan=[]
+  [PASS] SAP refs company-scoped & synthetic  refs=47 no_sinteticas=[]
+  [PASS] PO quantities coherent (BR-18 set)  QA-OC-GP-AVES-001=5000, QA-OC-BR-AVES-002=10000, QA-OC-BRO-AVES-003=10000, QA-OC-BRO-AVES-004=12500, QA-OC-BR18-TEST=1000
+  [PASS] inbound 14 objects staged, QA_SYNTHETIC  objetos=14 registros=85
+  [PASS] EggBatch/ChickBatch coherent  egg_batches=7 chick_batches=2
+  [PASS] reports have source data  aprobados_para_reportes=202
+  [PASS] UNKNOWN scenario present  openings=11
+  [PASS] QA markers present  
+  [PASS] cutover applied per BU  aplicadas=['grandparent', 'breeder', 'hatchery', 'broiler']
+  [PASS] real SAP calls = 0  registros no sintéticos en empresas QA=0
+
+QA_DATA_VERIFY = PASS
+== 14 entorno prohibido (ENVIRONMENT=production) ==
+[qa-seed] ABORTADO: ENVIRONMENT='production' no es un entorno autorizado para datos sintéticos.
+== 2026-10-18T01:15:01Z FIN ==
