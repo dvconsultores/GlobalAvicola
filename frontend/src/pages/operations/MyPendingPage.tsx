@@ -17,6 +17,10 @@ interface Operation {
  event_date: string
  status: string
  lot?: { name: string }
+ // `QA-014`: el contrato de `GET /operations` ya trae código de lote y granja.
+ lot_id?: number | null
+ lot_code?: string | null
+ farm_name?: string | null
  notes?: string
 }
 
@@ -99,9 +103,14 @@ export default function MyPendingPage() {
  </Badge>
  </div>
  <div className="flex items-center gap-3 text-xs text-slate-500">
- {op.lot && <span>{op.lot.name}</span>}
+ {/* `QA-014`: código de lote con degradado explícito. */}
+ <span>{op.lot_code ?? op.lot?.name ?? (op.lot_id ? `#${op.lot_id}` : '—')}</span>
  <span>{formatFecha(op.event_date)}</span>
  </div>
+ {/* `QA-014`: granja del evento (puede venir nula). */}
+ <p className="text-xs text-slate-500 mt-1">
+ {t('common.farm', 'Granja')}: {op.farm_name ?? '—'}
+ </p>
  </button>
  ))}
  </div>

@@ -7,8 +7,13 @@ import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { KpiCard, ConfirmDialog, Badge, FilterPanel, FilterGroup } from '../../components/ui'
+import { formatFecha, formatFechaHora } from '../../utils/dates'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
+
+// `QA-015`: código de lote legible, con `#id` como respaldo y «—» si no hay lote.
+const lotLabel = (event: any): string =>
+ (event.lot_code ?? (event.lot_id ? `#${event.lot_id}` : '—')) as string
 
 const STATUS_VARIANT: Record<string, string> = {
  corrected: 'corrected', in_review: 'in_review',
@@ -24,6 +29,8 @@ export default function ApprovalPanel() {
  const [loading, setLoading] = useState(true)
  const [total, setTotal] = useState(0)
  const [lotId, setLotId] = useState('')
+ const [farmId, setFarmId] = useState('')
+ const [farms, setFarms] = useState<any[]>([])
  const [page, setPage] = useState(0)
  const [rejectReason, setRejectReason] = useState('')
  const [showRejectModal, setShowRejectModal] = useState(false)
@@ -40,6 +47,7 @@ export default function ApprovalPanel() {
  try {
  const params = new URLSearchParams({ limit: String(limit), offset: String(page * limit) })
  if (lotId) params.set('lot_id', lotId)
+ if (farmId) params.set('farm_id', farmId)
  const { data } = await api.get(`/approvals/pending?${params}`)
  setEvents(data.events || [])
  setTotal(data.total || 0)
@@ -48,9 +56,16 @@ export default function ApprovalPanel() {
  } finally {
  setLoading(false)
  }
- }, [lotId, page, t, toast])
+ }, [lotId, farmId, page, t, toast])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
+
+ // `QA-015`: catálogo de granjas para el filtro (efecto propio, sin dependencias).
+ useEffect(() => {
+ api.get('/masters/farms?limit=100')
+ .then(r => setFarms(Array.isArray(r.data) ? r.data : (r.data?.items ?? [])))
+ .catch(() => {})
+ }, [])
 
  const handleApprove = async (eventId: number) => {
  // `R-220` · A9 (C#35): un gesto, una mutación — el doble clic no duplica POSTs.
@@ -205,6 +220,22 @@ export default function ApprovalPanel() {
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
  </FilterGroup>
+
+ {/* `QA-015`: filtro por granja — viaja como `farm_id` a /approvals/pending. */}
+ <FilterGroup label={t('common.farm', 'Granja')}>
+ <select
+ data-testid="approval-filter-farm"
+ aria-label={t('common.farm', 'Granja')}
+ value={farmId}
+ onChange={e => { setFarmId(e.target.value); setPage(0) }}
+ className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+ >
+ <option value="">{t('common.allFarms', 'Todas las granjas')}</option>
+ {farms.map((f: any) => (
+ <option key={f.id} value={f.id}>{f.name}</option>
+ ))}
+ </select>
+ </FilterGroup>
  </FilterPanel>
 
  {/* Mobile Cards */}
@@ -239,7 +270,11 @@ export default function ApprovalPanel() {
  </Badge>
  </div>
  <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
- <p className="text-xs text-slate-400 mt-0.5">{String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}</p>
+ <p className="text-xs text-slate-400 mt-0.5">{String(t('review.lotPrefix', 'Lote'))} {lotLabel(event)} · {formatFecha(event.event_date)}</p>
+ {/* `QA-015`: granja, autor del registro y su fecha, también en móvil. */}
+ <p className="text-xs text-slate-400 mt-0.5">
+ {t('common.farm', 'Granja')}: {event.farm_name ?? '—'} · {t('common.registeredBy', 'Registrado por')}: {event.registered_by_name ?? '—'} · {formatFechaHora(event.created_at)}
+ </p>
  </div>
  </div>
  <div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">
@@ -273,7 +308,10 @@ export default function ApprovalPanel() {
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.id')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.farm', 'Granja')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.registeredBy', 'Registrado por')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.eventDate', 'Fecha del evento')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.registeredAt', 'Fecha de registro')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
  </tr>
@@ -281,7 +319,7 @@ export default function ApprovalPanel() {
  <tbody className="divide-y divide-slate-100">
  {loading && (
  <tr>
- <td colSpan={7} className="px-4 py-12 text-center">
+ <td colSpan={10} className="px-4 py-12 text-center">
  <div className="flex items-center justify-center gap-2 text-slate-400">
  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
  <span className="text-sm">{t('common.loading', 'Cargando...')}</span>
@@ -291,7 +329,7 @@ export default function ApprovalPanel() {
  )}
  {!loading && events.length === 0 && (
  <tr>
- <td colSpan={7} className="px-4 py-12 text-center">
+ <td colSpan={10} className="px-4 py-12 text-center">
  <CheckCircle size={28} className="mx-auto mb-2 text-emerald-300" />
  <p className="text-sm text-slate-500">{t('review.noPendingApprovals', 'Sin aprobaciones pendientes')}</p>
  </td>
@@ -306,9 +344,12 @@ export default function ApprovalPanel() {
  <td className="px-4 py-3 font-mono text-xs text-slate-500">#{event.id}</td>
  <td className="px-4 py-3 text-slate-700">{getEventLabel(t, event.event_type)}</td>
  <td className="px-4 py-3">
- <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded">#{event.lot_id}</span>
+ <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded">{lotLabel(event)}</span>
  </td>
- <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
+ <td className="px-4 py-3 text-slate-600 text-sm">{event.farm_name ?? '—'}</td>
+ <td className="px-4 py-3 text-slate-600 text-sm">{event.registered_by_name ?? '—'}</td>
+ <td className="px-4 py-3 text-slate-500 text-sm">{formatFecha(event.event_date)}</td>
+ <td className="px-4 py-3 text-slate-500 text-sm">{formatFechaHora(event.created_at)}</td>
  <td className="px-4 py-3">
  <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
  {String(t(`status.${event.status}`, event.status))}

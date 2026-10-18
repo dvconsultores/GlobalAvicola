@@ -1,0 +1,11 @@
+== vitest
+ Test Files  96 passed (96)
+      Tests  557 passed (557)
+== tsc
+tsc_rc=0
+== build
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/stores/company.store.ts is dynamically imported by src/stores/auth.store.ts but also statically imported by src/components/layout/Header.tsx, src/pages/admin/UnitAccessPage.tsx, src/pages/dashboard/DashboardPage.tsx, src/pages/operations/ProcessStagePage.tsx, src/pages/sap/SapManagerPage.tsx, ..., dynamic import will not move module into another chunk.
+
+✓ built in 1.16s
+build_rc=0
+v24.13.0

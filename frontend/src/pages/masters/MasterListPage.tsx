@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Search, Trash2 } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
@@ -8,7 +8,7 @@ import DataTable, { type RowAction } from '../../components/data-table/DataTable
 import { Button, Modal, Input } from '../../components/ui'
 import SearchSelect from '../../components/ui/SearchSelect'
 import ConfirmDialog from '../../components/ui/ConfirmDialog'
-import { getErrorMessage } from '../../components/Toast'
+import { getErrorMessage, useToast } from '../../components/Toast'
 
 interface MasterListPageProps {
  entity: string
@@ -26,10 +26,42 @@ interface MasterListPageProps {
  * `R-196`. Configuración por entidad: padre obligatorio (selector) y campos
  * numéricos que, vacíos, viajan como `null` — nunca como `''` (422 del int).
  */
-const PADRE_DE: Record<string, { key: string; entidad: string; labelKey: string; fallback: string }> = {
- houses: { key: 'farm_id', entidad: 'farms', labelKey: 'masters.selectFarm', fallback: 'Seleccionar granja' },
- incubators: { key: 'hatchery_id', entidad: 'hatcheries', labelKey: 'masters.selectPlant', fallback: 'Seleccionar planta' },
- hatchers: { key: 'hatchery_id', entidad: 'hatcheries', labelKey: 'masters.selectPlant', fallback: 'Seleccionar planta' },
+const PADRE_DE: Record<string, {
+ key: string
+ entidad: string
+ labelKey: string
+ fallback: string
+ /** `QA-012`. Rótulo de la columna que muestra el padre en la tabla. */
+ colLabelKey: string
+ colFallback: string
+}> = {
+ houses: {
+ key: 'farm_id', entidad: 'farms', labelKey: 'masters.selectFarm', fallback: 'Seleccionar granja',
+ colLabelKey: 'masters.fields.farm', colFallback: 'Granja',
+ },
+ incubators: {
+ key: 'hatchery_id', entidad: 'hatcheries', labelKey: 'masters.selectPlant', fallback: 'Seleccionar planta',
+ colLabelKey: 'masters.fields.hatchery', colFallback: 'Planta de incubación',
+ },
+ hatchers: {
+ key: 'hatchery_id', entidad: 'hatcheries', labelKey: 'masters.selectPlant', fallback: 'Seleccionar planta',
+ colLabelKey: 'masters.fields.hatchery', colFallback: 'Planta de incubación',
+ },
+}
+
+/**
+ * `QA-002`. `useToast` lanza si no hay `ToastProvider` — y hay superficies de maestros que
+ * se montan sin él (pruebas de autoridad, de error estructurado, de 403). El aviso es un
+ * extra de esta pantalla, no un requisito para pintarla: sin provider, el toast es no-op.
+ */
+type ToastOpcional = { success: (m: string) => void; error: (m: string) => void; warning: (m: string) => void; info: (m: string) => void }
+const TOAST_MUDO: ToastOpcional = { success: () => {}, error: () => {}, warning: () => {}, info: () => {} }
+function useToastOpcional(): ToastOpcional {
+ try {
+  return useToast()
+ } catch {
+  return TOAST_MUDO
+ }
 }
 
 const NUMERICOS_DE: Record<string, string[]> = {
@@ -48,6 +80,7 @@ export default function MasterListPage({
 }: MasterListPageProps) {
  const { t } = useTranslation()
  const can = useCan()
+ const toast = useToastOpcional()
  const padre = PADRE_DE[entity]
  const [items, setItems] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
@@ -65,7 +98,11 @@ export default function MasterListPage({
  const [deleteTarget, setDeleteTarget] = useState<any | null>(null)
  const [deleting, setDeleting] = useState(false)
  const [padreOpciones, setPadreOpciones] = useState<any[]>([])
+ /** `QA-012`. Mapa id→nombre del padre para la columna de la tabla. */
+ const [padreNombres, setPadreNombres] = useState<Record<string, string>>({})
  const [activarConfirm, setActivarConfirm] = useState(false)
+ /** `QA-002`. Reactivación disparada desde la fila (no desde el modal). */
+ const [reactivarTarget, setReactivarTarget] = useState<any | null>(null)
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
@@ -94,13 +131,21 @@ export default function MasterListPage({
  useEffect(() => { fetchItems() }, [fetchItems])
 
  // `R-196`. Opciones del padre (granja/planta) para el selector del formulario.
+ // `QA-012`. La lista completa alimenta el mapa id→nombre de la columna (una fila puede
+ // apuntar a un padre ya inactivo y aun así debe mostrar su nombre); el selector del modal
+ // sigue ofreciendo solo los activos.
  useEffect(() => {
  const p = PADRE_DE[entity]
- if (!p) { setPadreOpciones([]); return }
+ if (!p) { setPadreOpciones([]); setPadreNombres({}); return }
  let vivo = true
  api.get(`/masters/${p.entidad}`, { params: { limit: 100 } })
- .then((res) => { if (vivo) setPadreOpciones((res.data ?? []).filter((x: any) => x.is_active !== false)) })
- .catch(() => { if (vivo) setPadreOpciones([]) })
+ .then((res) => {
+  if (!vivo) return
+  const todos: any[] = res.data ?? []
+  setPadreNombres(Object.fromEntries(todos.map((x: any) => [String(x.id), x.name])))
+  setPadreOpciones(todos.filter((x: any) => x.is_active !== false))
+ })
+ .catch(() => { if (vivo) { setPadreOpciones([]); setPadreNombres({}) } })
  return () => { vivo = false }
  }, [entity])
 
@@ -134,18 +179,23 @@ export default function MasterListPage({
  return payload
  }
 
- // ── Reactivar (`R-196`) ──
- const reactivar = async () => {
- if (!editItem) return
+ // ── Reactivar (`R-196`, `QA-002`) ──
+ // Sirve al botón del modal y a la acción de la fila: recibe el registro a reactivar.
+ const reactivar = async (objetivo?: any) => {
+ const item = objetivo ?? editItem
+ if (!item) return
  setSaving(true)
  setFormError('')
  try {
- await api.put(`/masters/${entity}/${editItem.id}`, { is_active: true })
+ await api.put(`/masters/${entity}/${item.id}`, { is_active: true })
  setActivarConfirm(false)
+ setReactivarTarget(null)
  setModalOpen(false)
  fetchItems()
  } catch (err: any) {
- setFormError(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
+ const mensaje = getErrorMessage(err, t('errors.saveFailed', 'Error al guardar'))
+ setFormError(mensaje)
+ toast.error(mensaje)
  } finally {
  setSaving(false)
  }
@@ -171,7 +221,8 @@ export default function MasterListPage({
  }
  }
 
- // ── Delete ──
+ // ── Desactivar (el DELETE del backend es baja lógica: `is_active=false`) ──
+ // `QA-002`. Un fallo debe avisarse: antes solo iba a la consola y el usuario no sabía nada.
  const handleDelete = async () => {
  if (!deleteTarget) return
  setDeleting(true)
@@ -181,15 +232,58 @@ export default function MasterListPage({
  fetchItems()
  } catch (err: any) {
  console.error('Error deleting:', err)
+ toast.error(getErrorMessage(err, t('errors.saveFailed', 'Error al guardar')))
  } finally {
  setDeleting(false)
  }
  }
 
- const tableColumns = columns.map(col => ({
+ /** `QA-012`. Nombre del padre; nunca el id crudo. */
+ const nombrePadre = (item: any): string => {
+ if (!padre) return '—'
+ const id = item?.[padre.key]
+ if (id === null || id === undefined || id === '') return '—'
+ return padreNombres[String(id)] ?? '—'
+ }
+
+ const tableColumns = [
+ ...columns.map(col => ({
  key: col.key,
  label: t(col.labelKey),
- }))
+ })),
+ ...(padre ? [{
+ key: padre.key,
+ label: t(padre.colLabelKey, padre.colFallback),
+ render: (item: any) => nombrePadre(item),
+ }] : []),
+ // `QA-002`. Estado explícito: la baja es lógica, así que «desaparecer» no es una opción.
+ {
+ key: 'is_active',
+ label: t('masters.fields.status', 'Estado'),
+ render: (item: any) => (item.is_active === false
+ ? t('common.inactive', 'Inactivo')
+ : t('common.active', 'Activo')),
+ },
+ ]
+
+ // `QA-002`. Desactivar y reactivar son la misma acción sobre estados opuestos: cada una
+ // se ofrece solo en la fila donde tiene sentido.
+ const accionesEstado: RowAction<any>[] = []
+ if (can({ permission: 'masters:delete' })) {
+ accionesEstado.push({
+ label: t('common.deactivate', 'Desactivar'),
+ onClick: (item: any) => setDeleteTarget(item),
+ visible: (item: any) => item.is_active !== false,
+ })
+ }
+ if (can({ permission: 'masters:update' })) {
+ accionesEstado.push({
+ label: t('common.reactivate', 'Reactivar'),
+ onClick: (item: any) => setReactivarTarget(item),
+ visible: (item: any) => item.is_active === false,
+ })
+ }
+ const todasLasAcciones = [...(rowActions ?? []), ...accionesEstado]
 
  if (estado !== 'ok') {
  return (
@@ -232,8 +326,8 @@ export default function MasterListPage({
  data={items}
  loading={loading}
  onEdit={can({ permission: 'masters:update' }) ? openEdit : undefined}
- onDelete={can({ permission: 'masters:delete' }) ? (item: any) => setDeleteTarget(item) : undefined}
- rowActions={rowActions}
+ rowActions={todasLasAcciones}
+ rowClassName={(item: any) => (item.is_active === false ? 'opacity-60' : undefined)}
  />
  </div>
 
@@ -306,35 +400,36 @@ export default function MasterListPage({
  <ConfirmDialog
  open={activarConfirm}
  onClose={() => setActivarConfirm(false)}
- onConfirm={reactivar}
+ onConfirm={() => reactivar()}
  title={t('masters.activate', 'Activar')}
  message={t('masters.activateConfirm', '¿Confirmás reactivar este registro?')}
  confirmLabel={t('masters.activate', 'Activar')}
  loading={saving}
  />
 
- {/* ── Delete Confirmation Modal ── */}
- <Modal
+ {/* `QA-002`. Reactivar desde la fila: mismo PUT, misma confirmación. */}
+ <ConfirmDialog
+ open={!!reactivarTarget}
+ onClose={() => setReactivarTarget(null)}
+ onConfirm={() => reactivar(reactivarTarget)}
+ title={t('common.reactivate', 'Reactivar')}
+ message={t('masters.activateConfirm', '¿Confirmás reactivar este registro?')}
+ confirmLabel={t('common.reactivate', 'Reactivar')}
+ loading={saving}
+ />
+
+ {/* `QA-002`. Baja lógica: se confirma como desactivación, no como borrado. */}
+ <ConfirmDialog
  open={!!deleteTarget}
  onClose={() => setDeleteTarget(null)}
- title={t('common.confirmDelete', '¿Eliminar registro?')}
- size="sm"
- footer={
- <>
- <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
- {t('common.cancel', 'Cancelar')}
- </Button>
- <Button variant="danger" onClick={handleDelete} loading={deleting} leftIcon={<Trash2 size={14} />}>
- {t('common.delete', 'Eliminar')}
- </Button>
- </>
- }
- >
- <p className="text-sm text-slate-600">
- {t('common.deleteWarning', 'Esta acción no se puede deshacer.')}{' '}
- {deleteTarget?.name && <strong>"{deleteTarget.name}"</strong>}
- </p>
- </Modal>
+ onConfirm={handleDelete}
+ title={t('common.confirmDeactivate', '¿Desactivar registro?')}
+ message={`${t('common.deactivateWarning', 'Dejará de poder seleccionarse; podrá reactivarlo después.')}${deleteTarget?.name ? ` "${deleteTarget.name}"` : ''}`}
+ confirmLabel={t('common.deactivate', 'Desactivar')}
+ variant="danger"
+ loading={deleting}
+ showWarning
+ />
  </div>
  )
 }

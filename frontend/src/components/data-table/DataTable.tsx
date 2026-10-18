@@ -11,6 +11,11 @@ export interface RowAction<T> {
  /** Etiqueta ya traducida: la tabla no decide el idioma de nadie. */
  label: string
  onClick: (item: T) => void
+ /**
+  * `QA-002`. La misma acción puede no aplicar a todas las filas: desactivar solo tiene
+  * sentido en un registro activo y reactivar en uno inactivo.
+  */
+ visible?: (item: T) => boolean
 }
 
 interface DataTableProps<T> {
@@ -25,6 +30,11 @@ interface DataTableProps<T> {
   * de duplicar la tabla para un caso.
   */
  rowActions?: RowAction<T>[]
+ /**
+  * `QA-002`. Clase extra por fila: un registro dado de baja (`is_active === false`) se
+  * atenúa para que no se confunda con uno vigente.
+  */
+ rowClassName?: (item: T) => string | undefined
 }
 
 export default function DataTable<T extends { id: number }>({
@@ -34,6 +44,7 @@ export default function DataTable<T extends { id: number }>({
  onEdit,
  onDelete,
  rowActions = [],
+ rowClassName,
 }: DataTableProps<T>) {
  const { t } = useTranslation()
 
@@ -66,20 +77,23 @@ export default function DataTable<T extends { id: number }>({
  </tr>
  </thead>
  <tbody>
- {data.map((item) => (
+ {data.map((item) => {
+ const extra = rowClassName?.(item)
+ const accionesVisibles = rowActions.filter((a) => a.visible ? a.visible(item) : true)
+ return (
  <tr
  key={item.id}
- className="border-b border-slate-100 hover:bg-blue-50:bg-slate-800 transition-colors"
+ className={`border-b border-slate-100 hover:bg-blue-50:bg-slate-800 transition-colors${extra ? ` ${extra}` : ''}`}
  >
  {columns.map((col) => (
  <td key={col.key} className="px-4 py-3 text-slate-600 whitespace-nowrap">
  {col.render ? col.render(item) : String((item as any)[col.key] ?? '')}
  </td>
  ))}
- {(onEdit || onDelete || rowActions.length > 0) && (
+ {(onEdit || onDelete || accionesVisibles.length > 0) && (
  <td className="px-4 py-3 text-right">
  <div className="flex justify-end gap-2">
- {rowActions.map((accion) => (
+ {accionesVisibles.map((accion) => (
  <button
  key={accion.label}
  onClick={() => accion.onClick(item)}
@@ -108,7 +122,8 @@ export default function DataTable<T extends { id: number }>({
  </td>
  )}
  </tr>
- ))}
+ )
+ })}
  </tbody>
  </table>
  </div>

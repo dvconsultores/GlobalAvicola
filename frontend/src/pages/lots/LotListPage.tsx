@@ -30,16 +30,22 @@ export default function LotListPage() {
  // (mecanismo existente del repo: sessionStorage; no se introduce uno nuevo).
  try { return sessionStorage.getItem('ga.filters.lots.birdType') ?? '' } catch { return '' }
  })
+ // `QA-014`/`QA-018`: filtro por granja (servidor) y catálogo de granjas.
+ const [farmId, setFarmId] = useState('')
+ const [farms, setFarms] = useState<any[]>([])
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
  // `R-220` · A8 (C#33): el filtro por tipo es de cliente; la paginación no.
  const lots = birdType ? brutos.filter((l: any) => l.bird_type === birdType) : brutos
 
+ // `QA-018`: el filtro de granja viaja al servidor (`GET /lots?farm_id=`).
+ const queryFiltros = farmId ? `&farm_id=${farmId}` : ''
+
  const fetchLots = useCallback(async () => {
  setLoading(true)
  try {
- const r = await api.get('/lots?limit=100&skip=0')
+ const r = await api.get(`/lots?limit=100&skip=0${queryFiltros}`)
  const data = r.data || []
  setBrutos(data)
  setTotal(Number(r.headers?.['x-total-count'] ?? data.length))
@@ -49,13 +55,18 @@ export default function LotListPage() {
  } finally {
  setLoading(false)
  }
+ }, [queryFiltros])
+
+ // `QA-018`: catálogo de granjas para el filtro.
+ useEffect(() => {
+ api.get('/masters/farms?limit=100').then(r => setFarms(r.data || [])).catch(() => {})
  }, [])
 
  // `R-220` · A8: trae la página siguiente y la acumula (total del backend).
  const cargarMas = async () => {
  setCargandoMas(true)
  try {
- const r = await api.get(`/lots?limit=100&skip=${brutos.length}`)
+ const r = await api.get(`/lots?limit=100&skip=${brutos.length}${queryFiltros}`)
  setBrutos(prev => [...prev, ...(r.data || [])])
  setTotal(Number(r.headers?.['x-total-count'] ?? total))
  } catch (err: any) {
@@ -116,6 +127,24 @@ export default function LotListPage() {
  ))}
  </div>
 
+ {/* `QA-018`: filtro por granja (servidor). */}
+ <div className="flex flex-wrap gap-3 mb-4">
+ <label className="flex items-center gap-2 text-sm text-slate-600">
+ <span>{t('common.farm', 'Granja')}</span>
+ <select
+ value={farmId}
+ onChange={e => setFarmId(e.target.value)}
+ data-testid="lot-filter-farm"
+ className="h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[220px]"
+ >
+ <option value="">{t('common.allFarms', 'Todas las granjas')}</option>
+ {farms.map((f: any) => (
+ <option key={f.id} value={f.id}>{f.name}</option>
+ ))}
+ </select>
+ </label>
+ </div>
+
  {/* Mobile Cards */}
  <div className="lg:hidden space-y-3">
  {loading && <p className="text-slate-500 text-center py-8">{t('common.loading')}</p>}
@@ -129,6 +158,7 @@ export default function LotListPage() {
  {t(`lotStatus.${lot.status}`, String(lot.status))}
  </span>
  </div>
+ <p className="text-sm text-slate-600">{t('common.farm', 'Granja')}: {lot.farm_name ?? '—'}</p>
  <p className="text-sm text-slate-600">{t(`birdTypes.${lot.bird_type}`, String(lot.bird_type || t('lots.noType')))}</p>
  <p className="text-xs text-slate-400 mt-1">{t('lots.startPrefix')}{formatFecha(lot.start_date)}</p>
  </Link>
@@ -141,6 +171,7 @@ export default function LotListPage() {
  <thead className="bg-slate-50 border-b border-slate-200">
  <tr>
  <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('lots.code')}</th>
+ <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.farm', 'Granja')}</th>
  <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('lots.type')}</th>
  <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('lots.status')}</th>
  <th className="px-4 py-3 text-left font-semibold text-slate-600">{t('lots.start')}</th>
@@ -148,11 +179,12 @@ export default function LotListPage() {
  </tr>
  </thead>
  <tbody className="divide-y divide-slate-100">
- {loading && <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-500">{t('common.loading')}</td></tr>}
- {!loading && lots.length === 0 && <tr><td colSpan={5} className="px-4 py-8 text-center text-slate-500">{t('lots.noLots')}</td></tr>}
+ {loading && <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">{t('common.loading')}</td></tr>}
+ {!loading && lots.length === 0 && <tr><td colSpan={6} className="px-4 py-8 text-center text-slate-500">{t('lots.noLots')}</td></tr>}
  {lots.map((lot: any) => (
  <tr key={lot.id} className="hover:bg-slate-50 transition">
  <td className="px-4 py-3 font-mono font-medium text-[#1E3A5F]">{lot.lot_code || `L-${lot.id}`}</td>
+ <td className="px-4 py-3 text-slate-600">{lot.farm_name ?? '—'}</td>
  <td className="px-4 py-3">{t(`birdTypes.${lot.bird_type}`, String(lot.bird_type || '—'))}</td>
  <td className="px-4 py-3">
  <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_COLORS[lot.status] || 'bg-slate-100'}`}>

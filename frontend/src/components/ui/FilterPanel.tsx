@@ -28,13 +28,14 @@ export default function FilterPanel({
 
  return (
  <div className="bg-white rounded-xl border border-slate-200 mb-4 overflow-hidden">
- {/* Header clickeable */}
+ {/* Header: el disparador y «Limpiar» son HERMANOS. Un `<button>` dentro de otro
+     `<button>` es HTML inválido (React: «<button> cannot be a descendant of <button>»). */}
+ <div className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 transition-colors">
  <button
  onClick={() => setOpen(!open)}
- className="w-full flex items-center justify-between px-4 py-3 text-sm font-semibold text-slate-700 hover:bg-slate-50:bg-slate-800 transition-colors"
+ className="flex items-center gap-2 hover:text-slate-900 transition-colors"
  aria-expanded={open}
  >
- <div className="flex items-center gap-2">
  <ChevronDown
  size={16}
  className={`text-slate-400 transition-transform duration-200 ${
@@ -42,7 +43,7 @@ export default function FilterPanel({
  }`}
  />
  {t('ui.filterPanel.title', 'Filtros')}
- </div>
+ </button>
  <div className="flex items-center gap-3">
  {totalResults !== undefined && (
  <span className="text-xs text-slate-400 font-normal">
@@ -51,7 +52,7 @@ export default function FilterPanel({
  )}
  {onClear && (
  <button
- onClick={(e) => { e.stopPropagation(); onClear() }}
+ onClick={onClear}
  className="text-xs text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1 transition-colors"
  >
  <RotateCcw size={12} />
@@ -59,7 +60,7 @@ export default function FilterPanel({
  </button>
  )}
  </div>
- </button>
+ </div>
 
  {/* Contenido colapsable */}
  <div

@@ -42,6 +42,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..masters.models import BirdTypeEnum, Lot, LotStatus, SexEnum
 from ..tenancy import verificar_pertenencia
+from ..operations.enrichment import anotar_nombres_de_lotes
 from ..operations.validators import (
     BusinessRuleViolation,
     validate_lot_closure,
@@ -259,12 +260,15 @@ class LotService:
             filters["farm_id"] = farm_id
         if status:
             filters["status"] = status
-        return await master_service.get_all(
+        lotes, total = await master_service.get_all(
             skip=skip, limit=limit, search=search,
             search_fields=["lot_code"],
             filters=filters,
             order_by="lot_code",
         )
+        # Aditivo: `farm_name`/`house_name` para la tabla del listado.
+        await anotar_nombres_de_lotes(self.db, lotes)
+        return lotes, total
 
     async def get_lot(self, lot_id: int) -> Lot:
         """Get single lot with phases and opening balance eager loaded."""

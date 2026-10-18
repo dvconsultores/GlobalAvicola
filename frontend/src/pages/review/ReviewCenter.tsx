@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useMemo } from 'react'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useSearchParams } from 'react-router-dom'
 import {
@@ -11,6 +11,12 @@ import { useToast, getErrorMessage } from '../../components/Toast'
 import { EVENT_ICON_MAP } from '../../data/processCatalog'
 import { Badge, FilterPanel, FilterGroup } from '../../components/ui'
 import SubNavHeader from '../../components/layout/SubNavHeader'
+import { formatFecha, formatFechaHora } from '../../utils/dates'
+
+// `QA-014`: el lote se identifica por su código legible; `#id` queda como respaldo
+// y «—» cuando el evento no trae lote.
+const lotLabel = (event: any): string =>
+ (event.lot_code ?? (event.lot_id ? `#${event.lot_id}` : '—')) as string
 
 const EVT_KEYS = Object.keys(EVENT_ICON_MAP)
 
@@ -50,6 +56,14 @@ export default function ReviewCenter() {
  const { t } = useTranslation()
  const toast = useToast()
  const [searchParams, setSearchParams] = useSearchParams()
+
+ // `QA-017`: ni `t` ni `toast` intervienen en la consulta; se leen por referencia
+ // estable para que `fetchEvents` no cambie de identidad en cada render (eso
+ // realimentaba el `useEffect` y provocaba el bucle de `GET /review/pending`).
+ const tRef = useRef(t)
+ tRef.current = t
+ const toastRef = useRef(toast)
+ toastRef.current = toast
 
  // Estado activo desde URL (default: pending_review)
  const activeTab = (searchParams.get('status') as StatusTab) || 'pending_review'
@@ -91,6 +105,10 @@ export default function ReviewCenter() {
  }
  }, [activeTab])
 
+ // `QA-017`: valor booleano estable (no la función) para que la consulta dependa de
+ // permisos, no de la identidad de `can`.
+ const canReadUsers = can({ permission: 'users:read' })
+
  const fetchEvents = useCallback(async () => {
  setLoading(true)
  try {
@@ -104,7 +122,7 @@ export default function ReviewCenter() {
  if (dateFrom) params.set('date_from', dateFrom)
  if (dateTo) params.set('date_to', dateTo)
  if (farmId) params.set('farm_id', farmId)
- if (operatorId && can({ permission: 'users:read' })) params.set('registered_by_id', operatorId)
+ if (operatorId && canReadUsers) params.set('registered_by_id', operatorId)
  const { data } = await api.get(`/review/pending?${params}`)
  setEvents(data.events || [])
  setTotal(data.total || 0)
@@ -115,12 +133,12 @@ export default function ReviewCenter() {
  setEstado('prohibido')
  } else {
  setEstado('error')
- toast.error(getErrorMessage(err, t('review.errorLoading')))
+ toastRef.current.error(getErrorMessage(err, tRef.current('review.errorLoading')))
  }
  } finally {
  setLoading(false)
  }
- }, [lotId, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, t, toast, can])
+ }, [lotId, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, canReadUsers])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
  useEffect(() => {
@@ -383,7 +401,11 @@ export default function ReviewCenter() {
  </div>
  <p className="text-sm font-medium text-slate-700">{getEventLabel(t, event.event_type)}</p>
  <p className="text-xs text-slate-400 mt-0.5">
- {String(t('review.lotPrefix', 'Lote'))} #{event.lot_id} · {event.event_date}
+ {String(t('review.lotPrefix', 'Lote'))} {lotLabel(event)} · {formatFecha(event.event_date)}
+ </p>
+ {/* `QA-014`: granja y quién registró el hecho, visibles también en móvil. */}
+ <p className="text-xs text-slate-400 mt-0.5">
+ {t('common.farm', 'Granja')}: {event.farm_name ?? '—'} · {t('common.registeredBy', 'Registrado por')}: {event.registered_by_name ?? '—'}
  </p>
  </div>
  </div>
@@ -430,7 +452,10 @@ export default function ReviewCenter() {
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.id', 'ID')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.type', 'Tipo')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('review.lot', 'Lote')}</th>
- <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.date', 'Fecha')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.farm', 'Granja')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.registeredBy', 'Registrado por')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.eventDate', 'Fecha del evento')}</th>
+ <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.registeredAt', 'Fecha de registro')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.status', 'Estado')}</th>
  <th className="px-4 py-3.5 text-left font-semibold text-slate-600 text-xs uppercase tracking-wider">{t('common.actions', 'Acciones')}</th>
  </tr>
@@ -438,7 +463,7 @@ export default function ReviewCenter() {
  <tbody className="divide-y divide-slate-100">
  {loading && (
  <tr>
- <td colSpan={7} className="px-4 py-12 text-center">
+ <td colSpan={10} className="px-4 py-12 text-center">
  <div className="flex items-center justify-center gap-2 text-slate-400">
  <div className="w-4 h-4 border-2 border-blue-600 border-t-transparent rounded-full animate-spin" />
  <span className="text-sm">{t('common.loading', 'Cargando...')}</span>
@@ -448,7 +473,7 @@ export default function ReviewCenter() {
  )}
  {!loading && events.length === 0 && (
  <tr>
- <td colSpan={7} className="px-4 py-12 text-center">
+ <td colSpan={10} className="px-4 py-12 text-center">
  <Search size={24} className="mx-auto text-slate-300 mb-2" />
  <p className="text-sm text-slate-500">{t('common.noResults', 'Sin resultados')}</p>
  </td>
@@ -475,10 +500,13 @@ export default function ReviewCenter() {
  </td>
  <td className="px-4 py-3">
  <span className="font-mono text-xs font-medium text-slate-600 bg-slate-50 px-2 py-1 rounded">
- #{event.lot_id}
+ {lotLabel(event)}
  </span>
  </td>
- <td className="px-4 py-3 text-slate-500 text-sm">{event.event_date}</td>
+ <td className="px-4 py-3 text-slate-600 text-sm">{event.farm_name ?? '—'}</td>
+ <td className="px-4 py-3 text-slate-600 text-sm">{event.registered_by_name ?? '—'}</td>
+ <td className="px-4 py-3 text-slate-500 text-sm">{formatFecha(event.event_date)}</td>
+ <td className="px-4 py-3 text-slate-500 text-sm">{formatFechaHora(event.created_at)}</td>
  <td className="px-4 py-3">
  <Badge variant={STATUS_VARIANT[event.status] as any || 'neutral'} size="sm">
  {String(t(`status.${event.status}`, event.status))}

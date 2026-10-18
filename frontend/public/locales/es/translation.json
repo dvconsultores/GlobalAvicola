@@ -215,6 +215,10 @@
     "new": "Nuevo",
     "confirmDelete": "¿Eliminar registro?",
     "deleteWarning": "Esta acción no se puede deshacer.",
+    "deactivate": "Desactivar",
+    "reactivate": "Reactivar",
+    "confirmDeactivate": "¿Desactivar registro?",
+    "deactivateWarning": "Dejará de poder seleccionarse; podrá reactivarlo después.",
     "retry": "Reintentar",
     "refresh": "Actualizar",
     "viewAll": "Ver todos",
@@ -237,7 +241,13 @@
     "loadError": "No se pudieron cargar los datos",
     "loadMore": "Cargar más",
     "previous": "Anterior",
-    "required": "Requerido"
+    "required": "Requerido",
+    "farm": "Granja",
+    "allFarms": "Todas las granjas",
+    "lotCode": "Lote",
+    "registeredBy": "Registrado por",
+    "registeredAt": "Fecha de registro",
+    "eventDate": "Fecha del evento"
   },
   "ui": {
     "filterPanel": {
@@ -534,7 +544,28 @@
     "processingPlants": "Plantas de Beneficio",
     "rejectionReasons": "Motivos de Rechazo",
     "correctionTypes": "Tipos de Corrección",
-    "areas": "Áreas Funcionales"
+    "areas": "Áreas Funcionales",
+    "fields": {
+      "name": "Nombre",
+      "code": "Código",
+      "tax_id": "RIF/ID fiscal",
+      "country": "País",
+      "location": "Ubicación",
+      "capacity": "Capacidad",
+      "plate": "Placa",
+      "laboratory": "Laboratorio",
+      "category": "Categoría",
+      "order": "Orden",
+      "description": "Descripción",
+      "sap_code": "Código SAP",
+      "house_type": "Tipo de galpón",
+      "vaccine_type": "Tipo de vacuna",
+      "application_route": "Vía de aplicación",
+      "active_ingredient": "Principio activo",
+      "farm": "Granja",
+      "hatchery": "Planta de incubación",
+      "status": "Estado"
+    }
   },
   "review": {
     "noPermissionQueue": "Sin permiso para ver la bandeja de revisión",
@@ -1111,6 +1142,8 @@
     "birdExitHint": "Registra la salida de aves para traslado o cierre de ciclo de cria. Si las aves no se mueven fisicamente, deja los campos de destino y transporte vacios para el cierre de ciclo.",
     "selectFarm": "Seleccionar granja...",
     "selectSapOrder": "Seleccionar documento SAP...",
+    "selectLotFirst": "Seleccione el lote primero",
+    "sapOrderNoChain": "sin cadena",
     "transportInspection": "Inspeccion del transporte",
     "sameHouseTransition": "Sin transporte ni destino = cierre de ciclo de cria e inicio de produccion en el mismo galpon. Las aves saldran y reingresaran al mismo lote para marcar la transicion.",
     "eggDispatchHint": "Registra el despacho de huevos fertiles hacia la incubadora o clasificacion.",

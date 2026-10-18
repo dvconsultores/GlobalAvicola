@@ -30,14 +30,19 @@ async def import_sap_references(
 @router.get("/references")
 async def list_sap_references(
     ref_type: Optional[str] = Query(None, description="Filter by reference type"),
+    business_unit: Optional[str] = Query(
+        None,
+        description="Filter purchase orders by derived productive chain (BR-23): keeps the "
+                    "orders of that chain and those whose chain is unknown",
+    ),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("sap", "read")),
 ):
-    """List SAP references."""
+    """List SAP references (optionally filtered by the derived chain of the order, `BR-23`)."""
     refs, total = await SapService(db, current_user).list_references(
-        ref_type=ref_type, limit=limit, offset=offset
+        ref_type=ref_type, limit=limit, offset=offset, business_unit=business_unit
     )
     return {"references": refs, "total": total}
 

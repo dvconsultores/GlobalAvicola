@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom'
 import { ClipboardList } from 'lucide-react'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
+import { formatFecha, formatFechaHora } from '../../utils/dates'
 import { PROCESS_STAGES, flowForStage, type StageKey } from '../../data/processCatalog'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
@@ -30,12 +31,18 @@ export default function OperationListPage() {
  const [eventType, setEventType] = useState(() => {
  try { return sessionStorage.getItem('ga.filters.operations.eventType') ?? '' } catch { return '' }
  })
+ // `QA-015`/`QA-014`: filtro por granja (servidor) y catálogo de granjas.
+ const [farmId, setFarmId] = useState(() => {
+ try { return sessionStorage.getItem('ga.filters.operations.farmId') ?? '' } catch { return '' }
+ })
+ const [farms, setFarms] = useState<any[]>([])
 
  const fetchEvents = useCallback(async () => {
  setLoading(true)
  try {
  const params: any = { limit: 100, skip: 0 }
  if (lotId) params.lot_id = lotId
+ if (farmId) params.farm_id = farmId
  // For stage-based filter: fetch all and filter client-side
  // (backend doesn't support multi event_type yet)
  if (eventType && !eventType.startsWith('__stage__')) {
@@ -49,7 +56,12 @@ export default function OperationListPage() {
  setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
  }
  finally { setLoading(false) }
- }, [lotId, eventType])
+ }, [lotId, eventType, farmId])
+
+ // `QA-015`: catálogo de granjas para el filtro (mismo patrón que Lotes).
+ useEffect(() => {
+ api.get('/masters/farms?limit=100').then(r => setFarms(r.data || [])).catch(() => {})
+ }, [])
 
  // `R-220` · A8 (C#33): página siguiente acumulada (skip por lo ya cargado).
  const cargarMas = async () => {
@@ -57,6 +69,7 @@ export default function OperationListPage() {
  try {
  const params: any = { limit: 100, skip: brutos.length }
  if (lotId) params.lot_id = lotId
+ if (farmId) params.farm_id = farmId
  if (eventType && !eventType.startsWith('__stage__')) params.event_type = eventType
  const r = await api.get('/operations', { params })
  setBrutos(prev => [...prev, ...(r.data ?? [])])
@@ -80,8 +93,10 @@ export default function OperationListPage() {
  else sessionStorage.removeItem('ga.filters.operations.lotId')
  if (eventType) sessionStorage.setItem('ga.filters.operations.eventType', eventType)
  else sessionStorage.removeItem('ga.filters.operations.eventType')
+ if (farmId) sessionStorage.setItem('ga.filters.operations.farmId', farmId)
+ else sessionStorage.removeItem('ga.filters.operations.farmId')
  } catch { /* storage no disponible */ }
- }, [lotId, eventType])
+ }, [lotId, eventType, farmId])
 
  if (estado !== 'ok') {
  return (
@@ -116,23 +131,43 @@ export default function OperationListPage() {
  ))}
  </optgroup>
  </select>
+ <select value={farmId} onChange={e => setFarmId(e.target.value)} data-testid="operation-filter-farm" aria-label={t('common.farm', 'Granja')} className="h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[220px]">
+ <option value="">{t('common.allFarms', 'Todas las granjas')}</option>
+ {farms.map((f: any) => (
+ <option key={f.id} value={f.id}>{f.name}</option>
+ ))}
+ </select>
  </div>
 
- {/* Event list (mobile cards) */}
+ {/* Event list (mobile: tarjetas · desktop: columnas) */}
  {loading ? <p className="text-slate-500 text-sm py-8 text-center">{t('common.loading')}</p>
  : events.length === 0 ? <p className="text-slate-400 text-sm py-8 text-center">{t('common.noResults')}</p>
- : <div className="space-y-3">
+ : <div className="bg-white rounded-xl shadow-sm border border-slate-200 divide-y divide-slate-100">
+ {/* `QA-014`/`QA-018`: encabezado de columnas (solo desktop). */}
+ <div className="hidden lg:grid lg:grid-cols-7 lg:gap-3 px-4 py-2 bg-slate-50 text-xs font-semibold text-slate-600">
+ <span>{t('common.lotCode', 'Lote')}</span>
+ <span>{t('common.farm', 'Granja')}</span>
+ <span>{t('operations.recordType', 'Tipo de registro')}</span>
+ <span>{t('common.eventDate', 'Fecha del evento')}</span>
+ <span>{t('common.registeredBy', 'Registrado por')}</span>
+ <span>{t('common.registeredAt', 'Fecha de registro')}</span>
+ <span>{t('common.status', 'Estado')}</span>
+ </div>
  {events.map((ev: any) => (
- <div key={ev.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4 flex items-center justify-between">
- <div className="flex-1 min-w-0">
- <div className="flex items-center gap-2 mb-1">
- <ClipboardList size={20} className="text-slate-400" aria-hidden="true" />
- <span className="text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
+ <div key={ev.id} data-testid={`operation-row-${ev.id}`} className="px-4 py-3 lg:grid lg:grid-cols-7 lg:gap-3 lg:items-center">
+ <div className="flex items-center gap-2 mb-1 lg:mb-0">
+ <ClipboardList size={20} className="text-slate-400 shrink-0" aria-hidden="true" />
+ <span className="text-sm font-mono font-medium text-slate-700">{ev.lot_code ?? (ev.lot_id ? `#${ev.lot_id}` : t('operations.lotAutoPending', 'Se creará al aprobar'))}</span>
+ </div>
+ <span className="block text-sm text-slate-600">{ev.farm_name ?? '—'}</span>
+ <span className="block text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>
+ <span className="block text-xs text-slate-500">{formatFecha(ev.event_date)}</span>
+ <span className="block text-sm text-slate-600">{ev.registered_by_name ?? '—'}</span>
+ <span className="block text-xs text-slate-500">{formatFechaHora(ev.created_at)}</span>
+ <div className="flex items-center justify-between gap-2 mt-2 lg:mt-0">
  <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${STATUS_COLORS[ev.status] || 'bg-slate-100 text-slate-600'}`}>{t(`status.${ev.status}`)}</span>
+ <Link to={`/operations/${ev.id}`} className="text-blue-600 text-sm hover:underline">{t('common.viewDetail', 'Ver detalle')}</Link>
  </div>
- <p className="text-xs text-slate-500">{ev.lot_id ? `${t('review.lot')} #${ev.lot_id}` : t('operations.lotAutoPending', 'Se creará al aprobar')} — {ev.event_date}</p>
- </div>
- <Link to={`/operations/${ev.id}`} className="text-blue-600 text-sm hover:underline ml-3">{t('common.viewDetail', 'Ver detalle')}</Link>
  </div>
  ))}
  </div>

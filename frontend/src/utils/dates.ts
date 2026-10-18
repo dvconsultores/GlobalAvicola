@@ -25,6 +25,21 @@ export function formatFecha(value?: string | null, locale?: string): string {
 }
 
 /**
+ * `QA-016` (R-30) — «hoy» como fecha civil `YYYY-MM-DD` en la zona horaria **local** del
+ * operador, para usarla como tope (`max`) de los `<input type="date">` que registran hechos
+ * ya ocurridos. `toISOString()` mide en UTC: en husos al este de Greenwich devuelve el día
+ * anterior durante la madrugada y, al oeste, el día siguiente por la noche, de modo que el
+ * calendario dejaría (o negaría) un día que el operador sí (o no) está viviendo. Se compone
+ * por partes con `padStart`, sin pasar por UTC.
+ */
+export function hoyISO(base: Date = new Date()): string {
+  const y = String(base.getFullYear())
+  const m = String(base.getMonth() + 1).padStart(2, '0')
+  const d = String(base.getDate()).padStart(2, '0')
+  return `${y}-${m}-${d}`
+}
+
+/**
  * `R-220` · C6 (F G-13): fecha-HORA (marca de tiempo) con el locale de la app — nunca el
  * del navegador. Complementa `formatFecha` (fechas civiles) para `created_at`/`updated_at`.
  */

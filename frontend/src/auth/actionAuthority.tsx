@@ -14,6 +14,7 @@
  * habilitada ∩ activa) para el actor de empresa; unidad habilitada + empresa efectiva para
  * el actor global; sin sesión no hay acción. La autoridad final sigue en el backend.
  */
+import { useCallback } from 'react'
 import type { ReactNode } from 'react'
 import { canAccessCapability } from './navigation'
 import type { CapabilitySpec, NavSession } from './navigation'
@@ -36,7 +37,10 @@ export function canPerformAction(
 /** Hook: devuelve un evaluador ligado a la sesión viva del store (reactivo a logout/logout). */
 export function useCan(): (spec: ActionSpec) => boolean {
   const user = useAuthStore(s => s.user)
-  return (spec: ActionSpec) => canPerformAction(spec, user)
+  // `QA-017`: identidad ESTABLE mientras no cambie la sesión. Una flecha nueva en cada
+  // render convertía en inestable cualquier `useCallback`/`useEffect` que dependiera de
+  // `can` (el Centro de Revisión se re-consultaba a sí mismo en bucle).
+  return useCallback((spec: ActionSpec) => canPerformAction(spec, user), [user])
 }
 
 interface ActionGateProps {

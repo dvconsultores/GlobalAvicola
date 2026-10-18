@@ -276,6 +276,12 @@ class OperationalEventRead(OperationalEventBase):
     approved_by_id: Optional[int] = None
     created_at: datetime
     updated_at: datetime
+    #: Aditivos: se anotan sobre la instancia ORM en el listado/bandeja
+    #: (`operations.enrichment.anotar_nombres`). `created_at` es la fecha de registro;
+    #: `event_date` la del hecho.
+    lot_code: Optional[str] = None
+    farm_name: Optional[str] = None
+    registered_by_name: Optional[str] = None
     model_config = {"from_attributes": True}
 
 

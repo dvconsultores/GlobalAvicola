@@ -948,6 +948,145 @@ async def validate_oc_limit(
         )
 
 
+def _es_orden_de_compra(ref) -> bool:
+    """`True` si la referencia es una orden de compra, con el tipo como enum o como texto."""
+    from ..integrations.sap.models import SapReferenceType
+
+    tipo = getattr(ref, "ref_type", None)
+    return getattr(tipo, "value", tipo) == SapReferenceType.PURCHASE_ORDER.value
+
+
+def _plantas_del_desglose(extra_data) -> list[str]:
+    """Las claves de centro (`WERKS`) declaradas en `extra_data["items"]`, sin repetir."""
+    items = extra_data.get("items") if isinstance(extra_data, dict) else None
+    if not items:
+        return []
+    plantas: list[str] = []
+    for item in items:
+        planta = item.get("plant") if isinstance(item, dict) else None
+        if planta and planta not in plantas:
+            plantas.append(planta)
+    return plantas
+
+
+def _cadena_unica_del_desglose(extra_data, cadena_por_planta: dict[str, str | None]) -> str | None:
+    """La cadena productiva **única** de la orden, o `None` si no es derivable.
+
+    `BR-23`: la cadena de una OC es conocida solo cuando el desglose existe, **todos** sus
+    centros tienen mapping con `business_unit_code` no nulo y todas las filas apuntan a la
+    misma cadena. Un desglose vacío, un centro sin mapping, uno sin cadena declarada o dos
+    cadenas distintas dejan el atributo desconocido —y entonces la regla no aplica.
+    """
+    items = extra_data.get("items") if isinstance(extra_data, dict) else None
+    if not items:
+        return None
+    unidades: list[str] = []
+    for item in items:
+        planta = item.get("plant") if isinstance(item, dict) else None
+        cadena = cadena_por_planta.get(planta) if planta else None
+        if not cadena:
+            return None
+        unidades.append(cadena)
+    return unidades[0] if len(set(unidades)) == 1 else None
+
+
+async def _cadenas_por_planta(db: AsyncSession, plantas: list[str],
+                              company_id: int | None) -> dict[str, str | None]:
+    """`business_unit_code` de cada centro declarado, según su mapping `PLANT` vigente."""
+    if not plantas:
+        return {}
+    from ..integrations.sap.inbound.models import SapEntityMapping
+
+    consulta = select(SapEntityMapping.sap_key, SapEntityMapping.business_unit_code).where(
+        SapEntityMapping.entity_type == "PLANT",
+        SapEntityMapping.is_active.is_(True),
+        SapEntityMapping.sap_key.in_(plantas),
+    )
+    if company_id is not None:
+        consulta = consulta.where(SapEntityMapping.company_id == company_id)
+    return {clave: cadena for clave, cadena in (await db.execute(consulta)).all()}
+
+
+async def derive_oc_business_unit(db: AsyncSession, sap_document_ref: str | None,
+                                  company_id: int | None = None) -> str | None:
+    """`BR-23`. La cadena productiva (**informativa**) de la orden de compra, si se conoce.
+
+    Se deriva del `business_unit_code` del mapping `PLANT` de **todos** los `items` de la
+    `SapReference` (`PURCHASE_ORDER`, misma empresa). Devuelve el código solo cuando el
+    conjunto de unidades tiene tamaño uno; en cualquier otro caso —OC inexistente, sin
+    desglose, centro sin mapping o desglose mixto— devuelve `None` (cadena desconocida).
+
+    El `business_unit_code` es **informativo** para el control de acceso (`OD-16.c`): no
+    habilita unidades ni concede ni deniega permisos. Aquí se usa únicamente como atributo
+    de la orden —coherencia de datos entre la cadena de la OC y la del lote—, nunca como
+    credencial.
+    """
+    if not sap_document_ref:
+        return None
+    from ..integrations.sap.models import SapReference, SapReferenceType
+
+    consulta = select(SapReference).where(
+        SapReference.sap_code == sap_document_ref,
+        SapReference.ref_type == SapReferenceType.PURCHASE_ORDER,
+    )
+    # Igual que `BR-18`: la orden se busca dentro de la empresa del actor; una referencia
+    # ajena se comporta como inexistente.
+    if company_id is not None:
+        consulta = consulta.where(SapReference.company_id == company_id)
+    oc = (await db.execute(consulta)).scalar_one_or_none()
+    if oc is None:
+        return None
+    cadena_por_planta = await _cadenas_por_planta(db, _plantas_del_desglose(oc.extra_data),
+                                                  company_id)
+    return _cadena_unica_del_desglose(oc.extra_data, cadena_por_planta)
+
+
+async def derive_oc_business_units(db: AsyncSession, references, company_id: int | None = None
+                                   ) -> dict[int, str | None]:
+    """La misma derivación de `BR-23` para un lote de referencias, con **una** consulta.
+
+    Pensada para el listado de referencias: calcula en memoria la cadena de la página en
+    lugar de abrir un join por fila. Devuelve `{id: código | None}`; las referencias que no
+    son órdenes de compra quedan en `None` (no tienen cadena derivable).
+    """
+    ordenes = [ref for ref in references if _es_orden_de_compra(ref)]
+    plantas = sorted({planta for ref in ordenes for planta in _plantas_del_desglose(ref.extra_data)})
+    cadena_por_planta = await _cadenas_por_planta(db, plantas, company_id)
+    return {
+        ref.id: _cadena_unica_del_desglose(ref.extra_data, cadena_por_planta)
+        for ref in references
+    }
+
+
+async def validate_oc_business_unit(
+    db: AsyncSession,
+    sap_document_ref: str | None,
+    lot_bird_type,
+    lot_code: str | None = None,
+    company_id: int | None = None,
+) -> None:
+    """`BR-23`. Una OC de otra cadena productiva no puede recibirse en el lote.
+
+    El contrato es deliberadamente estrecho: la regla **solo** bloquea cuando la cadena de la
+    orden es conocida (`derive_oc_business_unit`) y difiere de la del lote. Todo lo demás
+    —sin desglose, sin mapping, desglose mixto, lote sin cadena u orden inexistente— pasa.
+
+    `business_unit_code` es informativo para el control de acceso (`OD-16.c`): se usa como
+    atributo de la orden para la coherencia de los datos, no para conceder ni denegar acceso.
+    """
+    cadena_oc = await derive_oc_business_unit(db, sap_document_ref, company_id)
+    if cadena_oc is None:
+        return
+    cadena_lote = getattr(lot_bird_type, "value", lot_bird_type)
+    if cadena_lote is None or cadena_lote == cadena_oc:
+        return
+    raise BusinessRuleViolation(
+        f"La orden de compra {sap_document_ref} pertenece a la cadena {cadena_oc}; "
+        f"el lote {lot_code} es de {cadena_lote}",
+        "BR-23",
+    )
+
+
 async def validate_period_open(db: AsyncSession, event_date) -> None:
     """G-R12 / BR-19: Cannot register events in closed SAP periods (>90 days)."""
     from datetime import date

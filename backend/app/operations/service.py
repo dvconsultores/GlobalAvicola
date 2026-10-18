@@ -26,6 +26,7 @@ logger = logging.getLogger(__name__)
 MORTALITY_WARNING_PCT = settings.MORTALITY_ALERT_WARNING_PCT
 MORTALITY_CRITICAL_PCT = settings.MORTALITY_ALERT_CRITICAL_PCT
 from . import models, schemas
+from .enrichment import anotar_nombres
 from .validators import (
     ENTRADAS_DE_SALDO,
     BusinessRuleViolation,
@@ -50,6 +51,7 @@ from .validators import (
     validate_mortality,
     validate_bird_decrement,
     validate_oc_limit,
+    validate_oc_business_unit,
     validate_period_open,
     validate_sap_document_unique,
     validate_sap_edit_lock,
@@ -156,6 +158,21 @@ class OperationsService:
 
         consulta = self._acotar_a_empresa(select(Lot.bird_type).where(Lot.id == lot_id), Lot.company_id)
         return (await self.db.execute(consulta)).scalar_one_or_none()
+
+    async def _cadena_y_codigo_del_lote(self, lot_id: int | None):
+        """`Lot.bird_type` y `Lot.lot_code` del lote de la empresa efectiva (`BR-23`).
+
+        El mensaje de la regla nombra el lote, y su cadena es la del **lote**, no la del cuerpo
+        del evento (`GA-REM-021-A`). Sin lote devuelve `(None, None)`: no hay cadena que oponer.
+        """
+        if lot_id is None:
+            return None, None
+        from ..masters.models import Lot
+
+        consulta = self._acotar_a_empresa(
+            select(Lot.bird_type, Lot.lot_code).where(Lot.id == lot_id), Lot.company_id)
+        fila = (await self.db.execute(consulta)).one_or_none()
+        return (fila[0], fila[1]) if fila is not None else (None, None)
 
     async def _unidad_clasificada(self, company_business_unit_id: int) -> str | None:
         """El código de la habilitación que el plano de control fijó en el evento (fase 6)."""
@@ -957,6 +974,15 @@ class OperationsService:
             await validate_oc_limit(
                 self.db, data.sap_document_ref, total_qty, company_id=self.company_id,
             )
+            # `BR-23`: la cadena de la OC —derivada del `business_unit_code` de sus centros— debe
+            # coincidir con la del lote que recibe las aves. Solo la recepción de aves: es la
+            # entrega física la que debe cuadrar con la cadena productiva del lote.
+            if event_type == models.EventType.BIRD_RECEPTION and data.sap_document_ref:
+                tipo_del_lote, codigo_del_lote = await self._cadena_y_codigo_del_lote(data.lot_id)
+                await validate_oc_business_unit(
+                    self.db, data.sap_document_ref, tipo_del_lote, codigo_del_lote,
+                    company_id=self.company_id,
+                )
 
         # Reglas por tipo de evento. No hay `try/except` local: el manejador tipado de
         # `BusinessRuleViolation` registrado en `app/main.py` da un único contrato de
@@ -1157,7 +1183,10 @@ class OperationsService:
         query = query.order_by(models.OperationalEvent.event_date.desc(), models.OperationalEvent.id.desc())
         query = query.offset(skip).limit(limit)
         result = await self.db.execute(query)
-        return list(result.scalars().all()), total
+        eventos = list(result.scalars().all())
+        # Aditivo: `lot_code`/`farm_name`/`registered_by_name` para el listado.
+        await anotar_nombres(self.db, eventos)
+        return eventos, total
 
     async def get_event(self, event_id: int) -> models.OperationalEvent:
         query = select(models.OperationalEvent).where(
@@ -1281,6 +1310,15 @@ class OperationsService:
                 await validate_house_capacity(self.db, cand["house_id"], n)
             if "sap_document_ref" in cambios:
                 await validate_oc_limit(self.db, cand["sap_document_ref"], n, company_id=self.company_id, exclude_event_id=event.id)
+            # `BR-23`: paridad en la edición. Solo cuando cambia la orden o el lote —los dos
+            # campos de los que depende la comparación de cadenas—, sobre el estado candidato.
+            if (tipo == models.EventType.BIRD_RECEPTION and cand["sap_document_ref"]
+                    and ("sap_document_ref" in cambios or "lot_id" in cambios)):
+                tipo_del_lote, codigo_del_lote = await self._cadena_y_codigo_del_lote(lote_destino)
+                await validate_oc_business_unit(
+                    self.db, cand["sap_document_ref"], tipo_del_lote, codigo_del_lote,
+                    company_id=self.company_id,
+                )
 
     async def _exigir_sin_vinculo_efectivo(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
         """`GA-REM-031-A` · `R-178`: un evento casado en un vínculo de trazabilidad no se reasigna.

@@ -8,6 +8,7 @@ import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
 import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios, anclarCampoEnPrimeraFila, validarReglasDeNacimiento } from './operationPayload'
+import { hoyISO } from '../../utils/dates'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
 import {
@@ -268,7 +269,7 @@ export default function OperationFormPage() {
  const { register, handleSubmit, watch, setValue, control, formState: { errors } } = useForm<OperationFormData>({
  resolver: zodResolver(operationSchema),
  defaultValues: {
- event_date: new Date().toISOString().split('T')[0],
+ event_date: hoyISO(),
  lot_id: prefillLotId ? Number(prefillLotId) : undefined,
  event_type: prefillType || '',
  bird_movements: [{ sex: 'male' }, { sex: 'female' }],
@@ -285,6 +286,28 @@ export default function OperationFormPage() {
  const lotId = watch('lot_id')
  // `R-190`: el lote seleccionado a nivel de componente — la derivación del JSX y de la guarda lo consulta.
  const selectedLot = useMemo(() => lots.find((l: any) => l.id === lotId) ?? null, [lots, lotId])
+
+ // `QA-007` · `BR-23`: la OC de una recepción de aves debe ser de la cadena productiva del lote.
+ // Sin lote no se puede filtrar (ni elegir): el selector se bloquea hasta conocer la cadena.
+ const cadenaDelLote = eventType === 'bird_reception' ? (selectedLot?.bird_type ?? null) : null
+ const esperandoLoteParaOc = eventType === 'bird_reception' && !cadenaDelLote
+ const recepcionPorTransferencia = watch('extra_data.reception_source' as any) === 'transfer'
+ // Las órdenes de traslado no llevan cadena derivada: el filtro/etiqueta es sólo de compra.
+ const usaOrdenesDeTraslado = eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery' ||
+ (eventType === 'bird_reception' && recepcionPorTransferencia)
+ const urlOrdenesDeCompra = `/sap/references?ref_type=purchase_order&limit=50${
+ cadenaDelLote ? `&business_unit=${cadenaDelLote}` : ''
+ }`
+
+ // `QA-007`: la cadena derivada de la OC y su ausencia se rotulan en el selector.
+ const etiquetaCadenaSap = (o: any) => {
+ const cadena = o?.business_unit_code ?? null
+ return cadena ? t(`birdTypes.${cadena}`, cadena) : t('operations.sapOrderNoChain', 'sin cadena')
+ }
+ const etiquetaOrdenSap = (o: any, conCadena: boolean) =>
+ `${o.doc_number || o.ref_id || o.sap_code || o.id}${
+ o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''
+ }${o.description ? ` · ${o.description}` : ''}${conCadena ? ` · ${etiquetaCadenaSap(o)}` : ''}`
 
  // Hatchery event types (for determining whether to show Farm or Hatchery selector)
  const HATCHERY_EVENTS = new Set([
@@ -376,7 +399,6 @@ export default function OperationFormPage() {
  setLotsLoadError(true)
  })
  api.get('/sap/references?ref_type=transfer_order&limit=50').then(r => setSapOrders(r.data?.references || [])).catch(() => {})
- api.get('/sap/references?ref_type=purchase_order&limit=50').then(r => setSapPurchaseOrders(r.data?.references || [])).catch(() => {})
  Promise.allSettled([
  api.get('/masters/vaccines?limit=100'),
  api.get('/masters/medications?limit=100'),
@@ -403,6 +425,27 @@ export default function OperationFormPage() {
  setHatchers(get(results[12])); setHatcheries(get(results[13]))
  })
  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
+ // `QA-007` · `BR-23`: las OC de compra se cargan con la cadena del lote seleccionado (el backend
+ // devuelve las de esa cadena y las de cadena desconocida). Al cambiar de lote, una OC que ya no
+ // está en la lista se limpia: el backend la rechazaría con 400. Sin lote, lista sin filtro.
+ useEffect(() => {
+ let vigente = true
+ api.get(urlOrdenesDeCompra)
+ .then(r => {
+ if (!vigente) return
+ const referencias = r.data?.references || []
+ setSapPurchaseOrders(referencias)
+ const elegida = watch('extra_data.sap_order_ref' as any) ?? watch('sap_document_ref' as any)
+ if (!elegida) return
+ if (!referencias.some((o: any) => identificadorDeOrdenSap(o) === elegida)) {
+ setValue('extra_data.sap_order_ref' as any, undefined as any)
+ setValue('sap_document_ref' as any, undefined as any)
+ }
+ })
+ .catch(() => { if (vigente) setSapPurchaseOrders([]) })
+ return () => { vigente = false }
+ }, [urlOrdenesDeCompra]) // eslint-disable-line react-hooks/exhaustive-deps
 
  const onSubmit = async (data: OperationFormData) => {
  setSubmitting(true); setResult(null)
@@ -1884,11 +1927,11 @@ export default function OperationFormPage() {
        </div>
        <div>
          <label className={lc}>{t('operations.importDepartureDate', 'Fecha de salida (origen)')}</label>
-         <input type="date" {...register('extra_data.import_plan.departure_date' as any)} className={ic} />
+         <input type="date" {...register('extra_data.import_plan.departure_date' as any)} max={hoyISO()} className={ic} />
        </div>
        <div>
          <label className={lc}>{t('operations.importArrivalDate', 'Fecha de llegada (destino)')}</label>
-         <input type="date" {...register('extra_data.import_plan.arrival_date' as any)} className={ic} />
+         <input type="date" {...register('extra_data.import_plan.arrival_date' as any)} max={hoyISO()} className={ic} />
        </div>
        <div>
          <label className={lc}>{t('operations.importReceptionCondition', 'Condición de recepción')}</label>
@@ -2115,10 +2158,13 @@ default: return (
  if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
  }
  }}
- items={watch('extra_data.reception_source' as any) === 'transfer' ? sapOrders : sapPurchaseOrders}
- placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder={watch('extra_data.reception_source' as any) === 'transfer' ? t('operations.searchTransfer', 'Buscar transferencia...') : t('operations.searchPurchaseOrder', 'Buscar orden de compra...')}
- renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
+ items={recepcionPorTransferencia ? sapOrders : sapPurchaseOrders}
+ disabled={!recepcionPorTransferencia && esperandoLoteParaOc}
+ placeholder={!recepcionPorTransferencia && esperandoLoteParaOc
+ ? t('operations.selectLotFirst', 'Seleccione el lote primero')
+ : t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
+ searchPlaceholder={recepcionPorTransferencia ? t('operations.searchTransfer', 'Buscar transferencia...') : t('operations.searchPurchaseOrder', 'Buscar orden de compra...')}
+ renderLabel={(o: any) => etiquetaOrdenSap(o, !recepcionPorTransferencia)}
  />
  </>
  ) : (
@@ -2151,10 +2197,13 @@ default: return (
  if (order.extra_data?.avg_weight_female) setValue('extra_data.declared_avg_weight_f' as any, order.extra_data.avg_weight_female)
  }
  }}
- items={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? sapOrders : sapPurchaseOrders}
- placeholder={t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
- searchPlaceholder={(eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery') ? t('operations.searchTransferOrder', 'Buscar orden de traslado...') : t('operations.searchPurchaseOrder', 'Buscar orden de compra...')}
- renderLabel={(o: any) => `${o.doc_number || o.ref_id || o.sap_code || o.id}${o.extra_data?.vendor_name ? ` — ${o.extra_data.vendor_name}` : ''}${o.description ? ` · ${o.description}` : ''}`}
+ items={usaOrdenesDeTraslado ? sapOrders : sapPurchaseOrders}
+ disabled={!usaOrdenesDeTraslado && esperandoLoteParaOc}
+ placeholder={!usaOrdenesDeTraslado && esperandoLoteParaOc
+ ? t('operations.selectLotFirst', 'Seleccione el lote primero')
+ : t('operations.selectSapOrder', 'Seleccionar orden SAP...')}
+ searchPlaceholder={usaOrdenesDeTraslado ? t('operations.searchTransferOrder', 'Buscar orden de traslado...') : t('operations.searchPurchaseOrder', 'Buscar orden de compra...')}
+ renderLabel={(o: any) => etiquetaOrdenSap(o, !usaOrdenesDeTraslado)}
  />
  </>
  )}
@@ -2233,7 +2282,7 @@ default: return (
 
  <div>
  <label className="block text-sm font-semibold text-slate-700 mb-1">{t('operations.date')}</label>
- <input type="date" {...register('event_date')}
+ <input type="date" {...register('event_date')} max={hoyISO()}
  className="w-full h-11 px-3 border border-slate-300 rounded-lg text-sm text-slate-900 bg-white focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none" />
  </div>
 

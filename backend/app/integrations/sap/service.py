@@ -151,8 +151,19 @@ class SapService:
         return refs
 
     async def list_references(
-        self, ref_type: Optional[str] = None, limit: int = 50, offset: int = 0
+        self, ref_type: Optional[str] = None, limit: int = 50, offset: int = 0,
+        business_unit: Optional[str] = None,
     ) -> tuple[list[models.SapReference], int]:
+        """Referencias activas de la empresa, más el total de filas.
+
+        `BR-23`: `business_unit` es un filtro **opcional** del selector de órdenes de compra.
+        La cadena de cada OC se deriva en memoria —`derive_oc_business_units`— del
+        `business_unit_code` del mapping `PLANT` de sus centros, y solo para la página ya
+        leída: no se añaden joins ni se altera la consulta con el parámetro. Se conservan las
+        órdenes de la cadena pedida **y** las de cadena desconocida (sin desglose, sin mapping
+        o con desglose mixto), porque para esas la regla no aplica y ocultarlas rompería la
+        recepción existente. Sin el parámetro el comportamiento es el de siempre.
+        """
         base = select(models.SapReference).where(
             self._company_filter(models.SapReference.company_id),
             models.SapReference.is_active == True,
@@ -170,7 +181,29 @@ class SapService:
         refs = list(result.scalars().all())
         cr = await self.db.execute(cq)
         total = cr.scalar() or 0
+
+        await self._anotar_cadena_de_las_ordenes(refs)
+        if business_unit:
+            refs = [ref for ref in refs
+                    if getattr(ref, "business_unit_code", None) in (business_unit, None)]
+            # El filtro se aplica tras paginar (no hay join en la consulta), así que el total
+            # informa de lo que devuelve esta página filtrada y no del universo de la empresa.
+            total = len(refs)
         return refs, total
+
+    async def _anotar_cadena_de_las_ordenes(self, refs: list[models.SapReference]) -> None:
+        """`BR-23`. Expone en cada OC su cadena derivada como `business_unit_code` de lectura.
+
+        Es un atributo **no mapeado**: no se persiste ni altera la fila, solo viaja en la
+        respuesta junto al resto de campos. Las referencias que no son órdenes de compra
+        quedan con `None` (no tienen cadena derivable). `business_unit_code` es informativo
+        (`OD-16.c`): no concede ni deniega acceso a ninguna unidad.
+        """
+        from ...operations.validators import derive_oc_business_units
+
+        cadenas = await derive_oc_business_units(self.db, refs, self.company_id)
+        for ref in refs:
+            ref.business_unit_code = cadenas.get(ref.id)
 
     # ============================================================
     # Consolidation

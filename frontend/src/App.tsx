@@ -130,22 +130,26 @@ function ProcessStageRedirect() {
 // retiraron de la superficie activa (redirect abajo). Los archivos `ProcessHubPage` /
 // `PoultryHubPage` permanecen en el repo como historia; ninguna ruta los monta ya.
 
+// `QA-013`. Cada columna se rotula con el NOMBRE DEL CAMPO (`masters.fields.*`), nunca con
+// una clave de acción (`common.edit`/`common.save`): la cabecera de la tabla decía «Editar»
+// encima de `tax_id`, `code`, `capacity`… Se conserva el título de la entidad para
+// `title` (encabezado de la página), no para la primera columna.
 const masterEntities = [
- { entity: 'companies', title: 'masters.companies', cols: [{ key: 'name', labelKey: 'masters.companies' }, { key: 'tax_id', labelKey: 'common.edit' }, { key: 'country', labelKey: 'common.save' }] },
- { entity: 'farms', title: 'masters.farms', cols: [{ key: 'name', labelKey: 'masters.farms' }, { key: 'code', labelKey: 'common.edit' }, { key: 'location', labelKey: 'common.save' }] },
- { entity: 'houses', title: 'masters.houses', cols: [{ key: 'name', labelKey: 'masters.houses' }, { key: 'capacity', labelKey: 'common.edit' }] },
- { entity: 'hatcheries', title: 'masters.hatcheries', cols: [{ key: 'name', labelKey: 'masters.hatcheries' }, { key: 'code', labelKey: 'common.edit' }] },
- { entity: 'suppliers', title: 'masters.suppliers', cols: [{ key: 'name', labelKey: 'masters.suppliers' }, { key: 'sap_code', labelKey: 'common.edit' }] },
+ { entity: 'companies', title: 'masters.companies', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'tax_id', labelKey: 'masters.fields.tax_id' }, { key: 'country', labelKey: 'masters.fields.country' }] },
+ { entity: 'farms', title: 'masters.farms', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'code', labelKey: 'masters.fields.code' }, { key: 'location', labelKey: 'masters.fields.location' }] },
+ { entity: 'houses', title: 'masters.houses', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'capacity', labelKey: 'masters.fields.capacity' }] },
+ { entity: 'hatcheries', title: 'masters.hatcheries', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'code', labelKey: 'masters.fields.code' }] },
+ { entity: 'suppliers', title: 'masters.suppliers', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'sap_code', labelKey: 'masters.fields.sap_code' }] },
  // `GA-REM-039` / `OD-08`. El área es dato maestro configurable: se administra con la misma
  // pantalla parametrizada que los otros veintiuno, no con un módulo nuevo.
- { entity: 'areas', title: 'masters.areas', cols: [{ key: 'name', labelKey: 'masters.areas' }, { key: 'code', labelKey: 'common.edit' }] },
- { entity: 'genetic-lines', title: 'masters.geneticLines', cols: [{ key: 'name', labelKey: 'masters.geneticLines' }, { key: 'code', labelKey: 'common.edit' }] },
- { entity: 'breeds', title: 'masters.breeds', cols: [{ key: 'name', labelKey: 'masters.breeds' }] },
- { entity: 'feed-types', title: 'masters.feedTypes', cols: [{ key: 'name', labelKey: 'masters.feedTypes' }, { key: 'code', labelKey: 'common.edit' }] },
- { entity: 'vaccines', title: 'masters.vaccines', cols: [{ key: 'name', labelKey: 'masters.vaccines' }, { key: 'laboratory', labelKey: 'common.edit' }] },
- { entity: 'mortality-causes', title: 'masters.mortalityCauses', cols: [{ key: 'name', labelKey: 'masters.mortalityCauses' }, { key: 'category', labelKey: 'common.edit' }] },
- { entity: 'transports', title: 'masters.transports', cols: [{ key: 'name', labelKey: 'masters.transports' }, { key: 'plate', labelKey: 'common.edit' }] },
- { entity: 'processing-plants', title: 'masters.processingPlants', cols: [{ key: 'name', labelKey: 'masters.processingPlants' }, { key: 'location', labelKey: 'common.save' }] },
+ { entity: 'areas', title: 'masters.areas', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'code', labelKey: 'masters.fields.code' }] },
+ { entity: 'genetic-lines', title: 'masters.geneticLines', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'code', labelKey: 'masters.fields.code' }] },
+ { entity: 'breeds', title: 'masters.breeds', cols: [{ key: 'name', labelKey: 'masters.fields.name' }] },
+ { entity: 'feed-types', title: 'masters.feedTypes', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'code', labelKey: 'masters.fields.code' }] },
+ { entity: 'vaccines', title: 'masters.vaccines', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'laboratory', labelKey: 'masters.fields.laboratory' }] },
+ { entity: 'mortality-causes', title: 'masters.mortalityCauses', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'category', labelKey: 'masters.fields.category' }] },
+ { entity: 'transports', title: 'masters.transports', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'plate', labelKey: 'masters.fields.plate' }] },
+ { entity: 'processing-plants', title: 'masters.processingPlants', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'location', labelKey: 'masters.fields.location' }] },
  // `GA-REM-033 AC04` / `R-90`. Siete maestros que `docs/02 §3.2` exige no tenían ninguna
  // forma de gestionarse: no estaban en esta lista, que es la única fuente de rutas de
  // maestros, así que solo podían poblarse por API o por SQL. `productive-phases` gobierna la
@@ -154,13 +158,13 @@ const masterEntities = [
  //
  // Se añaden como entradas, no como pantallas: la administración está parametrizada sobre
  // `MasterListPage` y sus claves i18n ya existían para los diecinueve.
- { entity: 'incubators', title: 'masters.incubators', cols: [{ key: 'name', labelKey: 'masters.incubators' }, { key: 'capacity', labelKey: 'common.edit' }] },
- { entity: 'hatchers', title: 'masters.hatchers', cols: [{ key: 'name', labelKey: 'masters.hatchers' }, { key: 'capacity', labelKey: 'common.edit' }] },
- { entity: 'productive-phases', title: 'masters.productivePhases', cols: [{ key: 'name', labelKey: 'masters.productivePhases' }, { key: 'code', labelKey: 'common.edit' }, { key: 'order', labelKey: 'common.save' }] },
- { entity: 'medications', title: 'masters.medications', cols: [{ key: 'name', labelKey: 'masters.medications' }, { key: 'laboratory', labelKey: 'common.edit' }] },
- { entity: 'cull-causes', title: 'masters.cullCauses', cols: [{ key: 'name', labelKey: 'masters.cullCauses' }, { key: 'category', labelKey: 'common.edit' }] },
- { entity: 'rejection-reasons', title: 'masters.rejectionReasons', cols: [{ key: 'name', labelKey: 'masters.rejectionReasons' }, { key: 'category', labelKey: 'common.edit' }] },
- { entity: 'correction-types', title: 'masters.correctionTypes', cols: [{ key: 'name', labelKey: 'masters.correctionTypes' }, { key: 'description', labelKey: 'common.edit' }] },
+ { entity: 'incubators', title: 'masters.incubators', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'capacity', labelKey: 'masters.fields.capacity' }] },
+ { entity: 'hatchers', title: 'masters.hatchers', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'capacity', labelKey: 'masters.fields.capacity' }] },
+ { entity: 'productive-phases', title: 'masters.productivePhases', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'code', labelKey: 'masters.fields.code' }, { key: 'order', labelKey: 'masters.fields.order' }] },
+ { entity: 'medications', title: 'masters.medications', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'laboratory', labelKey: 'masters.fields.laboratory' }] },
+ { entity: 'cull-causes', title: 'masters.cullCauses', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'category', labelKey: 'masters.fields.category' }] },
+ { entity: 'rejection-reasons', title: 'masters.rejectionReasons', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'category', labelKey: 'masters.fields.category' }] },
+ { entity: 'correction-types', title: 'masters.correctionTypes', cols: [{ key: 'name', labelKey: 'masters.fields.name' }, { key: 'description', labelKey: 'masters.fields.description' }] },
 ]
 
 export default function App() {

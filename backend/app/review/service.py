@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from ..audit.helpers import audit_accion, audit_approval_action, audit_state_transition
 from ..audit.models import AuditAction, AuditModule
 from ..operations.models import EventStatus, OperationalEvent
+from ..operations.enrichment import anotar_nombres
 from . import models, schemas
 
 # `R-197`/C-03. Catálogo cerrado de estados de BANDEJA (no todos los del ciclo de
@@ -217,6 +218,9 @@ class ReviewService(SegregacionMixin):
 
         count_result = await self.db.execute(count_q)
         total = count_result.scalar() or 0
+
+        # Aditivo: los nombres viajan en el JSON de la bandeja (no hay `response_model`).
+        await anotar_nombres(self.db, events)
 
         return events, total
 
@@ -553,6 +557,8 @@ class ApprovalService(SegregacionMixin):
         events = list(result.scalars().all())
         count_r = await self.db.execute(cq)
         total = count_r.scalar() or 0
+        # Aditivo: mismos nombres que en el listado (la bandeja no tiene `response_model`).
+        await anotar_nombres(self.db, events)
         return events, total
 
     # ============================================================

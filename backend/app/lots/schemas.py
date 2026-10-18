@@ -83,6 +83,9 @@ class LotRead(LotBase):
     end_date: Optional[datetime] = None
     created_at: datetime
     updated_at: datetime
+    #: Aditivos: se anotan sobre la instancia ORM en el listado (`operations.enrichment`).
+    farm_name: Optional[str] = None
+    house_name: Optional[str] = None
     model_config = {"from_attributes": True}
 
 

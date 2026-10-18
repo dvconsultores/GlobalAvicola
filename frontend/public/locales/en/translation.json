@@ -215,6 +215,10 @@
     "new": "New",
     "confirmDelete": "Delete record?",
     "deleteWarning": "This action cannot be undone.",
+    "deactivate": "Deactivate",
+    "reactivate": "Reactivate",
+    "confirmDeactivate": "Deactivate record?",
+    "deactivateWarning": "It will no longer be selectable; you can reactivate it later.",
     "retry": "Retry",
     "refresh": "Refresh",
     "viewAll": "View all",
@@ -237,7 +241,13 @@
     "loadError": "Could not load the data",
     "loadMore": "Load more",
     "previous": "Previous",
-    "required": "Required"
+    "required": "Required",
+    "farm": "Farm",
+    "allFarms": "All farms",
+    "lotCode": "Lot",
+    "registeredBy": "Registered by",
+    "registeredAt": "Registration date",
+    "eventDate": "Event date"
   },
   "ui": {
     "filterPanel": {
@@ -534,7 +544,28 @@
     "processingPlants": "Processing Plants",
     "rejectionReasons": "Rejection Reasons",
     "correctionTypes": "Correction Types",
-    "areas": "Functional Areas"
+    "areas": "Functional Areas",
+    "fields": {
+      "name": "Name",
+      "code": "Code",
+      "tax_id": "Tax ID",
+      "country": "Country",
+      "location": "Location",
+      "capacity": "Capacity",
+      "plate": "Plate",
+      "laboratory": "Laboratory",
+      "category": "Category",
+      "order": "Order",
+      "description": "Description",
+      "sap_code": "SAP code",
+      "house_type": "House type",
+      "vaccine_type": "Vaccine type",
+      "application_route": "Application route",
+      "active_ingredient": "Active ingredient",
+      "farm": "Farm",
+      "hatchery": "Hatchery",
+      "status": "Status"
+    }
   },
   "review": {
     "noPermissionQueue": "No permission to view the review queue",
@@ -1111,6 +1142,8 @@
     "birdExitHint": "Register bird exit for transfer or rearing cycle closure. If birds are not physically moved, leave destination and transport fields empty to close the cycle.",
     "selectFarm": "Select farm...",
     "selectSapOrder": "Select SAP document...",
+    "selectLotFirst": "Select the lot first",
+    "sapOrderNoChain": "no chain",
     "transportInspection": "Transport inspection",
     "sameHouseTransition": "No transport and no destination = rearing cycle closure and production start in the same house. Birds will exit and re-enter the same lot to mark the transition.",
     "eggDispatchHint": "Register fertile egg dispatch to hatchery or classification.",

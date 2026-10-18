@@ -54,7 +54,10 @@ describe('GA-FE-04 · MasterListPage — autoridad de acción', () => {
     await waitFor(() => expect(screen.getByText('Granja Uno')).toBeTruthy())
     expect(screen.queryByText('Nuevo')).toBeNull()
     expect(screen.queryByText('common.edit')).toBeNull()
-    expect(screen.queryByText('common.delete')).toBeNull()
+    // `QA-002`: el borrado es una baja lógica y se rotula «Desactivar» (el mock de
+    // `useTranslation` devuelve el fallback en español de la clave).
+    expect(screen.queryByText('Desactivar')).toBeNull()
+    expect(screen.queryByText('Reactivar')).toBeNull()
   })
 
   it('control: con masters:* los controles aparecen', async () => {
@@ -67,6 +70,6 @@ describe('GA-FE-04 · MasterListPage — autoridad de acción', () => {
     await waitFor(() => expect(screen.getByText('Granja Uno')).toBeTruthy())
     expect(screen.getAllByText('Nuevo').length).toBeGreaterThan(0)
     expect(screen.getAllByText('common.edit').length).toBeGreaterThan(0)
-    expect(screen.getAllByText('common.delete').length).toBeGreaterThan(0)
+    expect(screen.getAllByText('Desactivar').length).toBeGreaterThan(0)
   })
 })

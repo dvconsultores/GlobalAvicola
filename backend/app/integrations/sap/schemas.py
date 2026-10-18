@@ -38,6 +38,10 @@ class SapReferenceRead(BaseModel):
     is_active: bool
     imported_by_id: Optional[int] = None
     created_at: datetime
+    #: `BR-23`. Cadena productiva derivada de la orden de compra —`business_unit_code` del
+    #: mapping `PLANT` de sus centros—; `None` en el resto de tipos y cuando no es derivable.
+    #: Informativo (`OD-16.c`): describe la OC, no habilita unidades ni concede acceso.
+    business_unit_code: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
