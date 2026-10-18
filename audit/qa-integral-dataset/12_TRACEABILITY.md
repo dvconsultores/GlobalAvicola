@@ -68,8 +68,8 @@ Revisión independiente + remediación R1: ver `13_INDEPENDENT_REVIEW_AND_REMEDI
 |---|---|---|
 | GOV | `01ea51a` | gobernanza previa (ejecutor MCP) |
 | R1-IMPL | `fda91a891d646f86286d62d2936f18393d11cd26` | remediación R1: seed, tests, manual, script de ciclo aislado, docs |
-| R1-CERT | *(este commit)* | 10_REGRESSION y 12_TRACEABILITY con la ronda R1, evidencia de sensibilidad y regresión post-mutación |
-| REMOTE | *se registra tras el push* | `git push git@github.com:dvconsultores/GlobalAvicola.git main:main` (AOD-29) · `origin/main` estaba en `2510653` |
+| R1-CERT | `7e44a668199f3a31510f527dc4f78495498c06bf` | 10_REGRESSION y 12_TRACEABILITY con la ronda R1, evidencia de sensibilidad y regresión post-mutación |
+| REMOTE | `7e44a668199f3a31510f527dc4f78495498c06bf` · push SSH 2510653..7e44a66 · REMOTE_SHA_MATCH=PASS | `git push git@github.com:dvconsultores/GlobalAvicola.git main:main` (AOD-29) · `origin/main` estaba en `2510653` |
 
 ### Sensibilidad S7–S9 (log `evidence/12_sensitivity_r1.log`)
 
@@ -102,4 +102,15 @@ REAL_SAP_CALLS           = 0
 SAP_REAL_TEST            = PENDING_2026_10_20
 TESTS                    = 27 seed · regresión backend 1731/0/49 · sensibilidad 6/6 (R0) + 3/3 (R1)
 BRANCH                   = main (sin rama nueva)
+```
+
+### Cierre de la ronda R1 (SHAs publicados)
+
+```
+R1_IMPL_SHA        = fda91a891d646f86286d62d2936f18393d11cd26
+R1_CERT_SHA        = 7e44a668199f3a31510f527dc4f78495498c06bf
+LOCAL_SHA          = 7e44a668199f3a31510f527dc4f78495498c06bf
+REMOTE_SHA         = 7e44a668199f3a31510f527dc4f78495498c06bf
+REMOTE_SHA_MATCH   = PASS
+TREE               = limpio (solo archivo local de credenciales del arnés sin versionar)
 ```
