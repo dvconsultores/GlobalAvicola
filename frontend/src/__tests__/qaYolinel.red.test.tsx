@@ -15,7 +15,7 @@
  * Rojos esperados en HEAD, todos por la ASERCIÓN funcional (no por montaje).
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
-import { render, screen, waitFor } from '@testing-library/react'
+import { render, renderHook, screen, waitFor, act } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
 
 // ── API mockeada (patrón de src/pages/review/__tests__/r197.reviewQueue.test.tsx) ──
@@ -51,6 +51,7 @@ import OperationFormPage from '../pages/operations/OperationFormPage'
 import App from '../App'
 import { ToastProvider } from '../components/Toast'
 import { useAuthStore } from '../stores/auth.store'
+import { useCan } from '../auth/actionAuthority'
 import { hoyISO } from '../utils/dates'
 
 // jsdom: polyfills que ya necesitan estas pantallas (ver r210.weightUnit.test.tsx).
@@ -86,11 +87,19 @@ beforeEach(() => {
   get.mockImplementation((url: string) => {
     const u = String(url)
     if (u.startsWith('/review/pending')) return Promise.resolve({ data: { events: [], total: 0 } })
-    if (u.startsWith('/masters/farms')) {
-      return Promise.resolve({ data: [{ id: 1, name: 'Granja Norte', code: 'GN', location: 'Cali' }], headers: {} })
-    }
-    if (u.startsWith('/masters/houses')) {
-      return Promise.resolve({ data: [{ id: 2, name: 'Galpón 1', capacity: 5000, farm_id: 1 }], headers: {} })
+    // QA-013 · cualquier maestro devuelve una fila: sin datos no hay `<table>` y el rojo
+    // sería de montaje, no de rótulos.
+    const maestro = u.match(/^\/masters\/([a-z-]+)/)
+    if (maestro) {
+      return Promise.resolve({
+        data: [{
+          id: 1, name: 'Registro 1', code: 'R1', tax_id: '900123456', country: 'CO',
+          location: 'Cali', capacity: 5000, farm_id: 1, hatchery_id: 1, sap_code: 'SAP1',
+          laboratory: 'Lab', category: 'cat', plate: 'ABC123', order: 1,
+          description: 'desc', is_active: true,
+        }],
+        headers: {},
+      })
     }
     return Promise.resolve({ data: [], headers: {} })
   })
@@ -121,6 +130,28 @@ describe('QA-017 · Centro de Revisión sin bucle de peticiones', () => {
     expect(urlsDistintas, `URLs distintas: ${urlsDistintas}`).toBeLessThanOrEqual(1)
     expect(total, `GET /review/pending ejecutados: ${total}`).toBeLessThanOrEqual(1)
   })
+
+  // Causa raíz del bucle: `useCan` devolvía una flecha nueva por render, así que cualquier
+  // `useCallback`/`useEffect` con `can` en dependencias se re-disparaba. Se fija el contrato
+  // en el hook mismo: misma identidad mientras no cambie la sesión.
+  it('useCan devuelve la misma identidad de función entre renders con el mismo usuario', () => {
+    setSession(['review:read', 'review:review'])
+
+    const { result, rerender } = renderHook(() => useCan())
+    const primera = result.current
+
+    rerender()
+    expect(result.current).toBe(primera)
+
+    // y sigue siendo el evaluador correcto (identidad estable, no una constante tonta)
+    expect(primera({ permission: 'review:read' })).toBe(true)
+    expect(primera({ permission: 'operations:create' })).toBe(false)
+
+    // cambia la sesión ⇒ evaluador nuevo (reactivo al login/logout)
+    act(() => { setSession(['operations:create']) })
+    expect(result.current).not.toBe(primera)
+    expect(result.current({ permission: 'operations:create' })).toBe(true)
+  })
 })
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -136,7 +167,17 @@ describe('QA-013 · etiquetas de columnas de maestros', () => {
   const cabeceras = () =>
     Array.from(document.querySelectorAll('table thead th')).map((th) => (th.textContent ?? '').trim())
 
-  it.each(['farms', 'houses'])('/masters/%s: ningún th dice «Editar» ni «Guardar»', async (entity) => {
+  // Todos los slugs de `masterEntities` (src/App.tsx): una etiqueta de acción en CUALQUIERA
+  // de ellos es el mismo defecto. `companies` (tax_id) era el que se colaba fuera de la
+  // guardia cuando solo se enumeraban `farms` y `houses`.
+  const ENTIDADES = [
+    'companies', 'farms', 'houses', 'hatcheries', 'suppliers', 'areas', 'genetic-lines',
+    'breeds', 'feed-types', 'vaccines', 'mortality-causes', 'transports',
+    'processing-plants', 'incubators', 'hatchers', 'productive-phases', 'medications',
+    'cull-causes', 'rejection-reasons', 'correction-types',
+  ]
+
+  it.each(ENTIDADES)('/masters/%s: ningún th dice «Editar» ni «Guardar»', async (entity) => {
     setSession(['masters:read', 'masters:create', 'masters:update', 'masters:delete', 'dashboard:read'])
     montarMaestro(entity)
 
