@@ -27,3 +27,21 @@ Código de la aplicación **sin cambios** (el seed es aditivo); la regresión se
 ## Sin reducción de tests
 
 Ningún test existente fue modificado, marcado como skip ni eliminado. Las guardas del arnés (Alembic, rutas, tablas) no se avanzaron porque no hubo cambios de esquema ni de API.
+
+## R1 (2026-10-18)
+
+Ronda de remediación R1 (`13_INDEPENDENT_REVIEW_AND_REMEDIATION.md`, `specs/…/remediation-r1.md`). La regresión se ejecuta dos veces: antes y después de las mutaciones S7–S9, para descartar deriva del árbol restaurado.
+
+| Etapa | Comando | Resultado | Log |
+|---|---|---|---|
+| Pre-mutación | `backend/scripts/run_tests.sh` | **1731 passed · 0 failed · 49 skipped** (22 min 20 s) | `evidence/10_backend_regression_r1.log` |
+| Post-mutación | `backend/scripts/run_tests.sh` | **1731 passed · 0 failed · 49 skipped** (22 min 14 s) | `evidence/10_backend_regression_r1_post_mutation.log` |
+
+| Métrica | Valor |
+|---|---|
+| Delta vs. certificación anterior (SPEC 007 R0) | 1722 → 1731 (**+9**: 7 casos parametrizados de allowlist de entornos + `--force-unmarked` + `sync_request_id`) |
+| Pre vs. post-mutación | Idénticas (1731/0/49); la restauración desde `fda91a8` deja `FINAL_DIFF=0` |
+| Frontend | Sin cambios en R1 (no se repite: se mantiene 542/542, `tsc -b` + `vite build` PASS) |
+| Sin reducción de tests | Ningún test existente fue modificado, marcado como skip ni eliminado |
+
+Lección registrada: una primera corrida se invalidó por lanzar el arnés en paralelo (la base de `pgserver` es compartida y las suites se contaminan entre sí); se repitió limpia — una sola instancia del arnés a la vez.

@@ -58,6 +58,48 @@ Nota: el remoto `origin` está configurado por HTTPS sin credenciales en esta es
 
 Pendiente externo: ejecutar el runbook de `09_RUNTIME_VERIFICATION.md` en el host del backend (base del runtime no alcanzable desde la estación). Al hacerlo, `QA_DATA_READY` pasa a `YES`.
 
-## R1 (2026-10-18) — pendiente de cierre
+## R1 (2026-10-18)
 
-Revisión independiente + remediación R1: ver `13_INDEPENDENT_REVIEW_AND_REMEDIATION.md` y `specs/…/remediation-r1.md`. Commits de R1, sensibilidad S7–S9 y regresión post-mutación: se registran al cerrar la ronda.
+Revisión independiente + remediación R1: ver `13_INDEPENDENT_REVIEW_AND_REMEDIATION.md` y `specs/…/remediation-r1.md`.
+
+### Commits de la ronda
+
+| Etapa | SHA | Contenido |
+|---|---|---|
+| GOV | `01ea51a` | gobernanza previa (ejecutor MCP) |
+| R1-IMPL | `fda91a891d646f86286d62d2936f18393d11cd26` | remediación R1: seed, tests, manual, script de ciclo aislado, docs |
+| R1-CERT | *(este commit)* | 10_REGRESSION y 12_TRACEABILITY con la ronda R1, evidencia de sensibilidad y regresión post-mutación |
+| REMOTE | *se registra tras el push* | `git push git@github.com:dvconsultores/GlobalAvicola.git main:main` (AOD-29) · `origin/main` estaba en `2510653` |
+
+### Sensibilidad S7–S9 (log `evidence/12_sensitivity_r1.log`)
+
+Cada mutación se aplica sobre el seed y se restaura con `git restore --source=fda91a8 -- <archivo>`; **`FINAL_DIFF=0`**.
+
+| Mut. | Mutación | Test que la detecta | Resultado |
+|---|---|---|---|
+| S7 | allowlist de entornos desactivada | `test_entorno_fuera_de_allowlist_aborta[prd]`, `[stg]`, `[desconocido]` (los otros 4 casos siguen vetados por substring) | **DETECTED** (3 failed) |
+| S8 | `--force-unmarked` laxo (no exige tax_id QA exacto) | `test_force_unmarked_exige_tax_id_exacto` | **DETECTED** (1 failed) |
+| S9 | `sync_request_id` colisiona (mismo id para varios objetos) | `test_sync_request_id_unico_por_objeto` (12 ids ≠ 14 objetos) | **DETECTED** (1 failed) |
+
+**3/3 DETECTED · FINAL_DIFF=0 · post-mutación targeted 27 passed.**
+
+### Regresión
+
+| Etapa | Resultado | Log |
+|---|---|---|
+| Pre-mutación | **1731 passed · 0 failed · 49 skipped** (22 min 20 s) | `evidence/10_backend_regression_r1.log` |
+| Post-mutación | **1731 passed · 0 failed · 49 skipped** (22 min 14 s) | `evidence/10_backend_regression_r1_post_mutation.log` |
+
+Delta vs. certificación anterior: 1722 → 1731 (+9). Frontend sin cambios en R1 (sigue 542/542, `tsc -b` + `vite build` PASS).
+
+### Estado R1
+
+```
+QA_DATA_LOCAL_ISOLATED   = CERTIFIED (R1)
+QA_DATA_RUNTIME          = BLOCKED_EXTERNAL (runbook en 09 pendiente en el host del backend)
+CLEANUP                  = READY_NOT_EXECUTED
+REAL_SAP_CALLS           = 0
+SAP_REAL_TEST            = PENDING_2026_10_20
+TESTS                    = 27 seed · regresión backend 1731/0/49 · sensibilidad 6/6 (R0) + 3/3 (R1)
+BRANCH                   = main (sin rama nueva)
+```

@@ -24,5 +24,5 @@
 | T20 | Commit de certificación + push + verificación remota | DONE (IMPL `9a5d11a` · CERT `b7942c7` · REMOTE_SHA_MATCH PASS) | `12` |
 | T21 | Revisión independiente del entregable (ejecutor DeepSeek, solo lectura, 2 partes) | DONE | 13_INDEPENDENT_REVIEW_AND_REMEDIATION.md |
 | T22 | Remediación R1 (seed, tests, manual, script de ciclo aislado) | DONE | remediation-r1.md · 13 |
-| T23 | Regresión completa backend post-R1 | PENDING | 10_REGRESSION.md |
-| T24 | Commit R1 + sensibilidad + push + verificación remota | PENDING | 12_TRACEABILITY.md |
+| T23 | Regresión completa backend post-R1 | DONE (1731/0/49 pre y post-mutación) | 10_REGRESSION.md |
+| T24 | Commit R1 + sensibilidad + push + verificación remota | DONE commit R1 `fda91a8` · sensibilidad S7–S9 3/3 · CERT en este commit · push pendiente del orquestador | 12_TRACEABILITY.md |
