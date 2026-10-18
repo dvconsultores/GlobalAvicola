@@ -2,6 +2,9 @@
 
 **Estado al cierre de esta misión (2026-10-18): QA_DATA_RUNTIME = NOT_LOADED · motivo: la base del runtime no es alcanzable desde la estación del orquestador.**
 
+> **Reintento 2026-10-18 13:2x UTC**: mismo `ConnectionResetError` en SSL desde la estación; `QA_DATA_RUNTIME` sigue
+> **`NOT_LOADED` (`BLOCKED_EXTERNAL`)**. El runbook sigue vigente y debe ejecutarse **en el host del backend**.
+
 ## Lo intentado (sin escrituras)
 
 | Intento | Resultado |

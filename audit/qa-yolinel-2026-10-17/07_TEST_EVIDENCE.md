@@ -119,3 +119,14 @@ cumplido en las cinco (S1, S5, S6 restauradas desde `dbd6122`; S7 y S8 desde `93
 | Carga del dataset QA-DEMO-V1 | Sigue sin cargarse en runtime (`BLOCKED_EXTERNAL`) | runbook `audit/qa-integral-dataset/09_RUNTIME_VERIFICATION.md` |
 | Integración SAP real | 0 llamadas SAP por mandato | `SAP_PARA_QA.md` (cadena documentada; SAP real `PENDING 2026-10-20`) |
 | Filtro por planta de incubación | Brecha funcional: no existe `hatchery_id` en endpoints | `05_FIX_PLAN.md` §3 · `09_RESPONSE_TO_QA.md` |
+
+---
+
+## 5. E2E (2026-10-18)
+
+| Suite | Resultado | Log |
+|---|---|---|
+| Specs E2E afectados por SPEC 008 (10 archivos) | 64 passed | `evidence/13_e2e_affected_raw.log` |
+| Spec E2E nueva SPEC 008 (A lots · B operations · C review sin bucle · D approvals · E maestros Desactivar/Reactivar · F padre de galpón · G BR-23 por API · H selector OC espera lote) | 8 passed | `evidence/13_e2e_spec008_raw.log` |
+
+Nota: la spec C mide el bucle en reposo (producción 1 petición; Vite+StrictMode 2).

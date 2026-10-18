@@ -1,0 +1,142 @@
+── 1/5 · Base de pruebas ──
+── 2/5 · Esquema y datos (por el entrypoint real) ──
+   [entrypoint] Starting database migrations
+   [entrypoint] target: local/global_avicola_test
+   INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+   INFO  [alembic.runtime.migration] Will assume transactional DDL.
+   INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+   INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+   INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+   INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+   INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+   INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+   INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+   INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+   INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+   INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+   INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+   INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+   INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+   INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+   INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+   INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+   INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+   INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+   INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+   INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+   INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+   INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+   INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+   INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+   INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+   INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+   INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+   INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+   INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+   INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+   INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+   INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+   INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+   INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+   INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+   INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+   INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+   INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+   INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+   INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+   INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+   INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+   [R-44] asociaciones rol-permiso añadidas: 0
+   [OD-19 Acl. A] asociaciones rol-permiso añadidas: 0
+   [F1] catálogo de unidades de negocio: creadas 4 ['breeder', 'broiler', 'grandparent', 'hatchery']
+   [entrypoint] Migration completed
+   [entrypoint] Starting application: true
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   semillas aplicadas
+── 3/5 · Backend ──
+── 4/5 · Frontend ──
+   backend en pie
+   frontend en pie
+
+── 5/5 · Certificación E2E ──
+
+Running 64 tests using 2 workers
+
+  ✓   1 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:49:7 › Proceso 01 · Recepción de aves › AUTENTICACIÓN · sin sesión la aplicación no expone el proceso (2.3s)
+  ✓   2 [procesos] › e2e/navigation-consistency.spec.ts:59:7 › 004 · navegación y consistencia UI › UX-01 · /poultry redirige al hub estándar y no reaparece la UI legacy (2.8s)
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+  ✓   4 [procesos] › e2e/navigation-consistency.spec.ts:66:7 › 004 · navegación y consistencia UI › AC02/AC19 · deep-link a etapa: back visible con fallback canónico al hub (2.6s)
+  ✓   3 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:54:7 › Proceso 01 · Recepción de aves › HAPPY PATH · la recepción se registra y queda persistida (7.5s)
+  ✓   5 [procesos] › e2e/navigation-consistency.spec.ts:77:7 › 004 · navegación y consistencia UI › AC05/AC06 · browser back/forward mantiene la UI estándar (sin legacy, sin pérdida de sesión) (4.5s)
+  ✓   6 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:96:7 › Proceso 01 · Recepción de aves › VALIDACIÓN · BR-08 exige granja y galpón (336ms)
+  ✓   8 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:113:7 › Proceso 01 · Recepción de aves › VALIDACIÓN · BR-19 rechaza una fecha en período cerrado (351ms)
+  ✓   9 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:133:7 › Proceso 01 · Recepción de aves › AUTORIZACIÓN · un rol sin permiso no registra (280ms)
+  ✓  10 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:149:7 › Proceso 01 · Recepción de aves › AUDITORÍA · la recepción deja rastro (350ms)
+  ✓  11 [procesos] › e2e/proceso-01-recepcion-de-aves.spec.ts:173:7 › Proceso 01 · Recepción de aves › AISLAMIENTO · no se registra contra un lote de otra empresa (667ms)
+  ✓  12 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:48:7 › Proceso 02 · Control de producción diario › HAPPY PATH · mortalidad con causa, y el saldo baja (581ms)
+  ✓  13 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:80:7 › Proceso 02 · Control de producción diario › REGLA · BR-01 rechaza mortalidad superior al saldo (460ms)
+  ✓  14 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:98:7 › Proceso 02 · Control de producción diario › REGLA · una mortalidad de cero no es un registro (273ms)
+  ✓  15 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:110:7 › Proceso 02 · Control de producción diario › ALERTA · el umbral configurado dispara la alerta (488ms)
+  ✓  16 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:140:7 › Proceso 02 · Control de producción diario › ALIMENTO · el consumo se registra con su tipo (344ms)
+  ✓  17 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:161:7 › Proceso 02 · Control de producción diario › PESAJE · el peso promedio se conserva (356ms)
+  ✓  18 [procesos] › e2e/proceso-02-control-produccion-diario.spec.ts:177:7 › Proceso 02 · Control de producción diario › AISLAMIENTO · no se registra mortalidad en un lote ajeno (596ms)
+  ✓   7 [procesos] › e2e/navigation-consistency.spec.ts:93:7 › 004 · navegación y consistencia UI › AC10 · el filtro del listado de lotes se preserva al volver (5.3s)
+  ✓  19 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:63:7 › Proceso 03 · Revisión → Corrección → Aprobación › HAPPY PATH · el ciclo completo cambia el dato y termina aprobado (1.3s)
+  ✓  20 [procesos] › e2e/navigation-consistency.spec.ts:112:7 › 004 · navegación y consistencia UI › AC13 · el RBAC no se evade: sin operations:read la etapa deniega y no hay back (1.8s)
+  ✓  21 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:105:7 › Proceso 03 · Revisión → Corrección → Aprobación › BR-14 · quien registra no aprueba su propia carga (1.2s)
+  ✓  23 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:119:7 › Proceso 03 · Revisión → Corrección → Aprobación › RECHAZO · exige motivo y deja el evento rechazado (1.2s)
+  ✓  22 [procesos] › e2e/navigation-consistency.spec.ts:119:7 › 004 · navegación y consistencia UI › AC16 · mobile 360px: back visible, sin overflow horizontal (1.8s)
+  ✓  24 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:134:7 › Proceso 03 · Revisión → Corrección → Aprobación › LISTA BLANCA · una corrección no puede tocar el flujo (989ms)
+  ✓  26 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:151:7 › Proceso 03 · Revisión → Corrección → Aprobación › R-32 · el estado no se fija con un PUT (870ms)
+  ✓  25 [procesos] › e2e/navigation-consistency.spec.ts:133:7 › 004 · navegación y consistencia UI › AC17 · mobile 390px: back visible, sin overflow horizontal (1.9s)
+  ✓  27 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:166:7 › Proceso 03 · Revisión → Corrección → Aprobación › AUTORIZACIÓN · un operador no aprueba ni rechaza (319ms)
+  ✓  29 [procesos] › e2e/proceso-03-revision-correccion-aprobacion.spec.ts:176:7 › Proceso 03 · Revisión → Corrección → Aprobación › AUDITORÍA · el ciclo deja rastro de cada transición (1.1s)
+  ✓  30 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:107:7 › P-03 · cadena de cría de reproductoras › la cadena completa se recorre de la inspección a la salida (1.1s)
+  ✓  31 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:147:7 › P-03 · cadena de cría de reproductoras › §4.5 · el peso fuera de la curva estándar levanta alerta (594ms)
+  ✓  32 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:177:7 › P-03 · cadena de cría de reproductoras › §4.5 · el borde superior está dentro de norma y el exceso no (412ms)
+  ✓  33 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:203:7 › P-03 · cadena de cría de reproductoras › §4.5 · sin curva cargada no se inventa ningún umbral (351ms)
+  ✓  28 [procesos] › e2e/navigation-consistency.spec.ts:142:7 › 004 · navegación y consistencia UI › AC18 · desktop: back visible en la etapa y hub estándar (4.1s)
+  ✓  34 [procesos] › e2e/proceso-p03-reproductoras-cria.spec.ts:219:7 › P-03 · cadena de cría de reproductoras › el lote conserva la versión de curva con la que nació (687ms)
+  ✓  35 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:30:7 › P-04 · Reproductoras — producción de huevo fértil › HAPPY PATH · recolección, clasificación y despacho dentro del saldo (815ms)
+  ✓  36 [procesos] › e2e/proceso-p05-incubacion.spec.ts:23:7 › P-05 · Incubación › HAPPY PATH · recepción de huevos y carga de incubadora dentro de lo recibido (815ms)
+  ✓  37 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:71:7 › P-04 · Reproductoras — producción de huevo fértil › CADENA COMPLETA · los diez pasos documentados del proceso se registran (1.1s)
+  ✓  38 [procesos] › e2e/proceso-p05-incubacion.spec.ts:60:7 › P-05 · Incubación › CADENA COMPLETA · los pasos documentados de la incubadora se registran (1.0s)
+  ✓  39 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:111:7 › P-04 · Reproductoras — producción de huevo fértil › NEGATIVE PATH · BR-02 rechaza despachar más de lo disponible (622ms)
+  ✓  40 [procesos] › e2e/proceso-p05-incubacion.spec.ts:90:7 › P-05 · Incubación › NEGATIVE PATH · BR-03 rechaza cargar más de lo recibido (612ms)
+  ✓  41 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:135:7 › P-04 · Reproductoras — producción de huevo fértil › VALIDATION · un despacho de cero huevos no crea un registro sin significado (605ms)
+  ✓  43 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:154:7 › P-04 · Reproductoras — producción de huevo fértil › AUTHORIZATION · sin sesión el proceso no se alcanza (7ms)
+  ✓  42 [procesos] › e2e/proceso-p05-incubacion.spec.ts:114:7 › P-05 · Incubación › VALIDATION · sin recepción previa no puede cargarse la incubadora (544ms)
+  ✓  45 [procesos] › e2e/proceso-p05-incubacion.spec.ts:127:7 › P-05 · Incubación › AUTHORIZATION · sin sesión el proceso no se alcanza (8ms)
+  ✓  44 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:165:7 › P-04 · Reproductoras — producción de huevo fértil › RBAC · un rol sin permiso de registro no puede recolectar (802ms)
+  ✓  46 [procesos] › e2e/proceso-p05-incubacion.spec.ts:134:7 › P-05 · Incubación › RBAC · un rol sin permiso de registro no puede recibir huevos (1.0s)
+  ✓  47 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:185:7 › P-04 · Reproductoras — producción de huevo fértil › AISLAMIENTO · el mismo registro vale en la empresa propia y no en la ajena (1.9s)
+  ✓  48 [procesos] › e2e/proceso-p05-incubacion.spec.ts:152:7 › P-05 · Incubación › AISLAMIENTO · el mismo registro vale en la empresa propia y no en la ajena (1.7s)
+  ✓  50 [procesos] › e2e/proceso-p05-incubacion.spec.ts:186:7 › P-05 · Incubación › AUDIT · la carga de incubadora conserva sus parámetros y su autor (830ms)
+  ✓  49 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:222:7 › P-04 · Reproductoras — producción de huevo fértil › FK OWNERSHIP · la granja y el galpón ajenos se rechazan, los propios no (1.2s)
+  ✓  52 [procesos] › e2e/proceso-p04-reproductoras-huevo-fertil.spec.ts:249:7 › P-04 · Reproductoras — producción de huevo fértil › AUDIT · el registro queda con su autor y su empresa (439ms)
+  ✓  53 [procesos] › e2e/proceso-p13-roles-y-permisos.spec.ts:16:7 › P-13 · administración de roles y permisos › la superficie de administración existe y muestra el catálogo (5.2s)
+  ✓  54 [procesos] › e2e/proceso-p13-roles-y-permisos.spec.ts:31:7 › P-13 · administración de roles y permisos › un rol se crea desde la interfaz con los permisos marcados (5.8s)
+  ✓  55 [procesos] › e2e/proceso-p13-roles-y-permisos.spec.ts:56:7 › P-13 · administración de roles y permisos › editar los permisos sustituye el conjunto, no lo acumula (382ms)
+  ✓  56 [procesos] › e2e/sap-hana-inbound.spec.ts:72:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › readiness: el conector se declara simulado, de solo lectura y sin secretos (13ms)
+  ✓  51 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:27:7 › P-12 · gestión de datos maestros › los siete catálogos tienen ruta de gestión (14.8s)
+  ✓  57 [procesos] › e2e/sap-hana-inbound.spec.ts:84:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › Analista SAP: SAP Manager → estado → Sincronizar → job completado → registros (6.3s)
+  ✓  59 [procesos] › e2e/sap-hana-inbound.spec.ts:117:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › las referencias sincronizadas quedan disponibles con su cantidad (93ms)
+  ✓  58 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:40:7 › P-12 · gestión de datos maestros › el contador muestra el total y no el tamaño de la página (6.3s)
+  ✓  61 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:61:7 › P-12 · gestión de datos maestros › un maestro nuevo se crea, se edita y se da de baja (924ms)
+  ✓  62 [procesos] › e2e/proceso-p12-datos-maestros.spec.ts:87:7 › P-12 · gestión de datos maestros › el maestro creado se puede usar en la operación que lo exige (448ms)
+  ✓  60 [procesos] › e2e/sap-hana-inbound.spec.ts:139:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › recepción: el flujo ofrece la OC sincronizada; parcial, hasta el límite y BR-18 (4.6s)
+  ✓  63 [procesos] › e2e/sap-hana-inbound.spec.ts:169:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › traslados: la STO sincronizada queda disponible para el flujo que la consume (297ms)
+  ✓  64 [procesos] › e2e/sap-hana-inbound.spec.ts:191:7 › SPEC 005 · SAP HANA inbound (solo lectura, doble local) › fase READ ONLY: exportar y reintentar responden 409 y no existe SQL por HTTP (30ms)
+
+  64 passed (57.5s)
+EXIT=0

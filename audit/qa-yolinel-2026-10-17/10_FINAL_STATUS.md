@@ -95,7 +95,7 @@ BACKEND_FULL_POST_MUTATION=1739 passed · 0 failed · 49 skipped (23 min 17 s; i
 FRONTEND=557/557 (pre) · 576/576 (post, IMPL-2)
 TSC=PASS
 BUILD=PASS
-E2E=NOT_RUN (cambios aditivos de contrato; ver nota)
+E2E=64/64 afectados (10 specs) + spec SPEC 008 8/8 passed (A–H, 35 s)
 MUTATION=5/5 DETECTED (S7/S8 tras IMPL-2)
 RUNTIME=NOT_VERIFIED_FROM_WORKSTATION
 QA_RESPONSE_DOC=docs/RESPUESTA_REVISION_GENERAL_QA_YOLINEL_2026_10_17.docx
@@ -106,7 +106,7 @@ CERTIFICATION_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
 REMOTE_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94
 REMOTE_SHA_MATCH=PASS
 TREE=limpio (solo archivo local de credenciales del arnés sin versionar)
-FINAL_STATUS=LOCALLY_CERTIFIED_PENDING_RUNTIME_AND_OWNER_DECISIONS
+FINAL_STATUS=LOCALLY_CERTIFIED_RUNTIME_BLOCKED_EXTERNAL
 ```
 
 Los veredictos de `QA-001`…`QA-018` provienen de `05_FIX_PLAN.md` §1. `P1_FIXED` cuenta los defectos de prioridad 1;
@@ -140,7 +140,49 @@ existente se renombró ni se eliminó. La UI se verificó con **jsdom** (`npx vi
 `vite build` en verde, por lo que el recorrido E2E no se re-ejecutó (`E2E=NOT_RUN`): el cierre funcional extremo a
 extremo queda cubierto por la verificación UAT con el checklist de `08_RUNTIME_VERIFICATION.md`.
 
-## 7. Cierre
+## 8. Verificación runtime UAT (2026-10-18)
+
+Sonda Playwright headless y comprobaciones por API contra `https://avicola.globaldv.net` con las credenciales
+efímeras de **GA-UAT-09** (operador y aprobador de Progenitoras). Evidencia: `evidence/14_uat_runtime_probe.log`,
+`evidence/15_uat_br14_state_machine.log`, `evidence/uat_screens/*.png`, `evidence/13_e2e_affected_raw.log`,
+`evidence/13_e2e_spec008_raw.log`.
+
+```
+UAT_RUNTIME_FOUND=YES
+UAT_SHA=68d78fc (código) / c436811 (docs)
+UAT_SHA_MATCH=PASS
+QA_DATA_PRESENT_BEFORE=NO
+QA_DATA_DRY_RUN=BLOCKED_EXTERNAL
+QA_DATA_APPLY=BLOCKED_EXTERNAL
+QA_DATA_VERIFY=BLOCKED_EXTERNAL
+QA_DATA_IDEMPOTENCY=BLOCKED_EXTERNAL
+QA_CLEANUP=READY_NOT_EXECUTED
+QA_USERS_RUNTIME=PARTIAL (solo UAT-09 progenitoras; sin qa.*)
+RUNTIME_3_1..3_5=PASS
+RUNTIME_3_6=PASS (UI) / BR-23 API NOT_TESTABLE_IN_UAT
+RUNTIME_3_7=PASS_READONLY
+RUNTIME_3_8=PASS
+BR14_RUNTIME=PASS (por permiso)
+STATE_MACHINE_RUNTIME=PASS
+REVIEW_REQUEST_LOOP=NOT_PRESENT
+E2E_SPEC008=8/8 passed (A–H, 35 s)
+E2E_AFFECTED=64/64
+BREEDER_RUNTIME_SMOKE=BLOCKED_EXTERNAL
+HATCHERY_RUNTIME_SMOKE=BLOCKED_EXTERNAL
+BREEDER_TO_HATCHERY_RUNTIME=BLOCKED_EXTERNAL
+UNKNOWN_CHAIN_OC=ALLOWED_CURRENTLY_OWNER_DECISION_PENDING
+REAL_SAP_CALLS=0
+REAL_SAP_WRITES=0
+FINAL_STATUS=LOCALLY_CERTIFIED_RUNTIME_BLOCKED_EXTERNAL
+```
+
+Lectura: el **código** de la ronda SPEC 008 está desplegado y verificado en UAT (8 PASS, 0 FAIL); lo que queda fuera
+es **externo al repositorio**: la carga del dataset QA-DEMO-V1 (misma `ConnectionResetError` en el handshake SSL que
+en SPEC 007 ⇒ ejecutar el runbook en el host del backend), los usuarios `qa.*` y la prueba real de SAP del
+2026-10-20. `BR14_RUNTIME=PASS` se sostiene en el **bloqueo por permiso del rol** (el operador recibe 403
+`approvals:approve`); la variante estricta registrador≠aprobador sigue cubierta por `test_segregation_r143`.
+
+## 9. Cierre
 
 ```
 CERT_SHA=68d78fcb8ac65c206d46f1ef0e87198301cdbc94

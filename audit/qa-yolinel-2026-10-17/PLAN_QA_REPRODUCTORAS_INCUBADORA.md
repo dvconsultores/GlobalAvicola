@@ -6,6 +6,32 @@ Referencias: `docs/MANUAL_QA_PRUEBA_INTEGRAL_GLOBAL_AVICOLA.md` (usuarios y guí
 
 ---
 
+## 0 · Estado del ambiente para esta ronda
+
+```
+AMBIENTE=UAT https://avicola.globaldv.net (código SPEC 008 verificado 2026-10-18)
+DATASET=QA-DEMO-V1 PENDIENTE DE CARGA (ver §2.4: si no está cargado, crear datos manualmente)
+SHA=68d78fc (c436811)
+USUARIOS=qa.* pendientes de la carga del dataset (hoy solo existen usuarios de Progenitoras)
+SAP REAL=PENDIENTE
+FECHA SAP REAL=20-10-2026
+DECISIONES OWNER ABIERTAS=OD-QA2-01..05 + política de OC sin cadena
+```
+
+**Qué puede probar** (con el código desplegado y los usuarios disponibles): Configuración, Usuarios, Roles,
+Acceso por Unidad, Reproductoras cría/producción, Incubadora, Historial, Mis pendientes, Revisión, Aprobaciones,
+Maestros, Cargas iniciales, Reportes y SAP UI con datos sintéticos.
+
+**Qué NO debe reportar como defecto por estar sujeto a decisión del Owner**: unicidad de vacunas/medicamentos/causas
+(OD-QA2-01); zona en plantas (OD-QA2-02); autocompletado desde la OC (OD-QA2-03); orden de procesos no bloqueado por
+backend (OD-QA2-04); fechas futuras distintas de la del evento (OD-QA2-05); OC sin cadena permitida en recepción
+(`UNKNOWN_CHAIN_OC=ALLOWED_CURRENTLY_OWNER_DECISION_PENDING`).
+
+> Los registros SAP visibles durante esta ronda son datos sintéticos de prueba. La conexión real con SAP HANA Cloud
+> mediante usuario técnico READ ONLY será validada en una sesión independiente.
+
+---
+
 ## 1 · Objetivo y alcance
 
 Este plan profundiza las dos cadenas que la guía integral trata de forma resumida: **Reproductoras** (cría y producción) e **Incubadora** (recepción de huevo, incubación, nacimiento y despacho de pollito), más un bloque transversal de interfaz y ciclo de vida del registro.

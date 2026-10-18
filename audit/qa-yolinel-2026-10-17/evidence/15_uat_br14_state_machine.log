@@ -1,0 +1,11 @@
+causa_id=1 lot=7 farm=19 fecha=2026-10-18
+1 OP crea mortalidad lote 7 -> 201 id=136 
+2 OP submit -> 200 status=pending_review
+3 OP (registrador) intenta aprobar -> 403 {"detail":"Permiso requerido: approvals:approve"}
+3b OP intenta iniciar revision -> 403 {"detail":"Permiso requerido: review:review"}
+4 AP inicia revision -> 200 status=in_review
+5 AP completa revision -> 200 status=corrected 
+6 AP aprueba -> 200 status=approved 
+7 OP cancela evento APROBADO -> 400 "detail":"No se puede cancelar un evento aprobado, consolidado, enviado o confirmado por SAP, con error de SAP o ya anulado"
+8 OP crea (201 id=137) + submit (200) + cancela pending_review -> 200 status=cancelled
+9 estado final evento 136 -> 200 status=approved

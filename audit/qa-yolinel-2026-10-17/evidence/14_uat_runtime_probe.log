@@ -1,0 +1,9 @@
+RESULT 3.1 PASS thGranja=true filtro=true options=8 | sel=https://avicola.globaldv.net/api/v1/lots?limit=100&skip=0&farm_id=1 | limpiar=https://avicola.globaldv.net/api/v1/lots?limit=100&skip=0 sinFarmId=true
+RESULT 3.2 PASS faltan=[] filtro=true options=8 | sel=https://avicola.globaldv.net/api/v1/operations?limit=100&skip=0&farm_id=1
+RESULT 3.3 PASS textoError=false tarjetas=0 mencionesGranja=1
+RESULT 3.7 PASS_READONLY ths=["Nombre","Código","Ubicación","Estado"] editables=[] estado=true botones=0 housesGranja=true — acciones Desactivar/Reactivar no visibles: usuario sin permiso de edición de maestros; cabeceras y Estado verificados
+RESULT 3.8 PASS inputsDate=1 max="2026-10-18" hoy=2026-10-18
+RESULT 3.6 PASS boton=true disabled=true
+RESULT 3.4 PASS requestsIniciales60s=1 | tab=Pendientes nuevas=0 | faltanCabeceras=[]
+RESULT 3.5 PASS filtro=true options=8 | sel=https://avicola.globaldv.net/api/v1/approvals/pending?limit=20&offset=0&farm_id=1
+SUMMARY 8 PASS 0 FAIL 0 SKIP

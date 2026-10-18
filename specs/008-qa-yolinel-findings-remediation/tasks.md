@@ -84,6 +84,7 @@ SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · ref
 | ID | Tarea | Salida | Estado |
 |---|---|---|---|
 | T20 | `OPERATION_STATE_MACHINE.md`, «Cómo Global Avícola recibe información de SAP», `lots.origin`, segregación, `PROCESS_PREDECESSOR_MATRIX` propuesta, matriz de autocompletado, inventario de fechas → DOCX; certificado `LOCALLY_CERTIFIED`; push autorizado | docs + certificado | **DONE** (CERT `68d78fc` · push SSH `83c9cd8..68d78fc` · REMOTE_SHA_MATCH `PASS`) — `.md` entregados (`OPERATION_STATE_MACHINE.md`, `SAP_PARA_QA.md`, `LOT_ORIGIN_AND_MASTERS_FOR_QA.md`, `PROCESS_PREDECESSOR_MATRIX.md`) y DOCX en `docs/`; commit de certificación `68d78fcb8ac65c206d46f1ef0e87198301cdbc94` y push SSH `83c9cd8..68d78fc` con `REMOTE_SHA_MATCH` `PASS`. Runtime `NOT_VERIFIED_FROM_WORKSTATION` (`08_RUNTIME_VERIFICATION.md`); dataset QA-DEMO-V1 `BLOCKED_EXTERNAL` |
+| T21 | Verificación runtime UAT + E2E afectados + spec E2E SPEC 008 | runtime + E2E | **DONE** (PARTIAL_VERIFIED: código en UAT verificado, 3.1–3.8 PASS por sonda, 3.9/3.10 PASS por API, dataset QA-DEMO-V1 `BLOCKED_EXTERNAL`; E2E 64/64 + 8/8) |
 
 ---
 
@@ -109,8 +110,8 @@ SHA de implementación: `dbd6122a3b32512cf8bf2ae6b4f7b91cf43a9124` (IMPL) · ref
 | FASE 4 | 1 | 1 | 0 | 0 |
 | FASE 5 | 2 | 2 | 0 | 0 |
 | FASE 6 | 1 | 1 | 0 | 0 |
-| FASE 7–10 | 3 | 3 | 0 | 0 |
-| **Total** | **20** | **20** | **0** | **0** |
+| FASE 7–10 | 4 | 4 | 0 | 0 |
+| **Total** | **21** | **21** | **0** | **0** |
 
 ### Qué falta para cerrar
 
