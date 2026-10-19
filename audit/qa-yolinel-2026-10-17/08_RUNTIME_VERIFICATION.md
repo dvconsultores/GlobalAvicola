@@ -1,5 +1,7 @@
 # 08 · Verificación en runtime — Revisión QA 2026-10-17
 
+> **Actualización 2026-10-19 — QA-DEMO-V1 CARGADO Y SMOKES EN LÍNEA PASS.** El dataset QA-DEMO-V1 se cargó y verificó en la base del runtime (`avicolav2`) tras la autorización del Owner (alineación de la variable de conexión + «confirmado es ambiente de pruebas»). Login **12/12 `qa.*` = 200**; Reproductoras (breeder) 5 lotes/50 ops, Incubadora (hatchery) 8 lotes/37 ops, Grandparent 5, Broiler 5; Centro de Revisión 6 (3 `pending_review`); Aprobaciones 7; Maestros `qa.admin` empresas=4/usuarios=10/superadmin. Esto **levanta los `BLOCKED_EXTERNAL`/`BLOCKED_HUMAN_ACTION`** de las secciones siguientes, que quedan como histórico. Detalle y conteos en `audit/qa-integral-dataset/09_RUNTIME_VERIFICATION.md`, sección «Carga y verificación en runtime — 2026-10-19». 0 llamadas SAP; contraseñas `qa.*` entregadas a la Owner por canal privado, nunca en Git.
+
 **Documento**: estado de verificación en entorno y checklist manual para UAT
 **Fecha**: 2026-10-18 · **SHA de implementación**: `dbd6122` (IMPL) + `9390afc` (IMPL-2)
 **Estado global**: **`PARTIAL_VERIFIED`** (código desplegado verificado en UAT el 2026-10-18; dataset y smokes `BLOCKED_EXTERNAL`)

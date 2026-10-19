@@ -4,6 +4,8 @@
 **Fecha**: 2026-10-18 · **Baseline de referencia**: `83c9cd8` · **Spec**: `specs/008-qa-yolinel-findings-remediation/spec.md`
 **Carácter**: estado local. **No** sustituye la verificación en runtime (`08_RUNTIME_VERIFICATION.md`) ni el contraste con el PDF original de QA.
 
+> **Actualización 2026-10-19 — RUNTIME CARGADO Y CERTIFICADO.** `QA_DATASET` pasa de `BLOCKED_EXTERNAL` a **`LOADED_IN_RUNTIME`** y `RUNTIME` de `NOT_VERIFIED_FROM_WORKSTATION` a **`SMOKES_PASS`**. Autorización del Owner: alineación de la variable de conexión a la base alcanzable + «confirmado es ambiente de pruebas». `--verify=PASS`, idempotencia `CREATED=0`, login 12/12 `qa.*`, datos de Reproductoras/Incubadora/Revisión/Aprobaciones presentes. Bloque de estado nuevo en la sección «§10. Actualización 2026-10-19» al final del documento. 0 llamadas SAP; contraseñas `qa.*` entregadas por canal privado.
+
 ---
 
 ## 1. Commits
@@ -252,4 +254,31 @@ TREE=limpio (solo archivo local de credenciales del arnés sin versionar)
 ```
 
 Nota: el commit CLOSE registra estos SHAs; su propio SHA se publica en el push de cierre.
+
+## 10. Actualización 2026-10-19 — carga y smokes en runtime (`CERTIFIED`)
+
+Tras la autorización del Owner (alineación de la variable de conexión a la base alcanzable del runtime y «confirmado es ambiente de pruebas»), QA-DEMO-V1 se cargó y verificó en la base del runtime (`avicolav2`). Sin rama nueva, sin force push, 0 llamadas SAP. Las contraseñas `qa.*` se entregaron a la Owner por canal privado (nunca en Git/evidencia/logs).
+
+```
+QA_DATA_RUNTIME=LOADED
+QA_DATA_VERIFY=PASS
+QA_DATA_IDEMPOTENCY=PASS (CREATED=0, conteos sin cambios)
+QA_DATA_RESET_PASSWORDS=RECONCILED (archivo 0600 consistente)
+QA_USERS_ONLINE=12/12 login 200 (espaciados por rate-limit GA-REM-004)
+BREEDER_RUNTIME_SMOKE=PASS (/lots=5, /operations=50; codigos QA-BR-*)
+HATCHERY_RUNTIME_SMOKE=PASS (/lots=8, /operations=37)
+GRANDPARENT_SMOKE=PASS (/lots=5)
+BROILER_SMOKE=PASS (/lots=5)
+REVIEW_RUNTIME=PASS (/review/pending=6, 3 pending_review)
+APPROVAL_RUNTIME=PASS (/approvals/pending=7)
+MASTERS_ADMIN=PASS (companies=4, users=10, superadmin)
+BU_ISOLATION=PASS (QA Integral=empresa 4; QA Aislamiento=empresa 5)
+VERIFY_COUNTS=2 empresas · 12 usuarios · 25 lotes (GP5/BR5/HAT8/BRO5) · 364 eventos · 28 tipos · 333 aprobados · EggBatch=7 · ChickBatch=2 · cutover 4 BU · 202 aprobados-reportes · 47 refs SAP sinteticas · 14 inbound
+REAL_SAP_CALLS=0
+REAL_SAP_WRITES=0
+QA_CLEANUP=READY_NOT_EXECUTED
+FINAL_STATUS=RUNTIME_LOADED_AND_CERTIFIED
+```
+
+Pendientes externos sin cambio: decisiones Owner OD-QA2-01..05, PDF original de QA y la prueba real de SAP (`SAP_REAL_TEST=PENDING_2026_10_20`).
 
