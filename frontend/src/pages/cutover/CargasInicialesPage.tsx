@@ -153,6 +153,7 @@ export default function CargasInicialesPage() {
   const [rejectReason, setRejectReason] = useState('')
   const [todasLasColumnas, setTodasLasColumnas] = useState(false)
   const [inputKey, setInputKey] = useState(0)
+  const [verInstrucciones, setVerInstrucciones] = useState(false)
   const busyRef = useRef(false)
 
   const aplicable =
@@ -265,6 +266,17 @@ export default function CargasInicialesPage() {
     }
   }
 
+  const handleDownloadTemplateEarly = async (format: TemplateFormat) => {
+    if (!cutoverDatetime) return
+    try {
+      const res = await cutoverService.template(businessUnit, { format })
+      descargarBlob(res.data as Blob, `cutover_template_${businessUnit}.${format}`)
+      toast.success(t('cutover.downloadSuccess'))
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, t('cutover.downloadError')))
+    }
+  }
+
   const handleDownloadErrors = async (format: TemplateFormat) => {
     if (!batch) return
     try {
@@ -355,6 +367,52 @@ export default function CargasInicialesPage() {
               <Button onClick={handleCreate}>{t('cutover.createBatch', 'Crear carga')}</Button>
             )}
           </div>
+
+          {canCreate && (
+            <div className="mt-4 space-y-3 border-t border-slate-100 pt-4">
+              <p className="text-sm text-slate-600">{t('cutover.downloadIntro')}</p>
+              <div className="flex flex-wrap items-center gap-3">
+                <Button onClick={() => handleDownloadTemplateEarly('xlsx')} disabled={!cutoverDatetime}>
+                  <FileSpreadsheet className="w-4 h-4 mr-1" aria-hidden />
+                  {t('cutover.downloadTemplatePrimary')}
+                </Button>
+                <Button variant="outline" onClick={() => handleDownloadTemplateEarly('csv')} disabled={!cutoverDatetime}>
+                  <FileText className="w-4 h-4 mr-1" aria-hidden />
+                  {t('cutover.downloadTemplatePrimaryCsv')}
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setVerInstrucciones(v => !v)} aria-expanded={verInstrucciones}>
+                  {verInstrucciones ? t('cutover.hideInstructions') : t('cutover.viewInstructions')}
+                </Button>
+              </div>
+              {!cutoverDatetime && (
+                <p className="text-xs text-slate-500">{t('cutover.downloadDisabledHint')}</p>
+              )}
+              <div className="rounded-md bg-slate-50 border border-slate-200 p-3 text-sm text-slate-600">
+                <p className="font-medium text-slate-700">{t('cutover.downloadHelpTitle')}</p>
+                <p>{t('cutover.downloadHelpBody')}</p>
+                <ol className="mt-2 list-decimal list-inside space-y-0.5">
+                  <li>{t('cutover.howTo1')}</li>
+                  <li>{t('cutover.howTo2')}</li>
+                  <li>{t('cutover.howTo3')}</li>
+                </ol>
+              </div>
+              {verInstrucciones && (
+                <div className="rounded-md border border-slate-200 p-3 text-sm" data-testid="cutover-instructions">
+                  <p className="font-semibold text-slate-800 mb-1">{t('cutover.instructionsTitle')}</p>
+                  <ol className="list-decimal list-inside space-y-0.5 text-slate-600">
+                    <li>{t('cutover.ins1')}</li>
+                    <li>{t('cutover.ins2')}</li>
+                    <li>{t('cutover.ins3')}</li>
+                    <li>{t('cutover.ins4')}</li>
+                    <li>{t('cutover.ins5')}</li>
+                    <li>{t('cutover.ins6')}</li>
+                    <li>{t('cutover.ins7')}</li>
+                    <li>{t('cutover.ins8')}</li>
+                  </ol>
+                </div>
+              )}
+            </div>
+          )}
         </CardBody>
       </Card>
 

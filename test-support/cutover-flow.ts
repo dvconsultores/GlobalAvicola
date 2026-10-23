@@ -64,6 +64,12 @@ export async function flujoPorBu(page: Page, browser: Browser, request: APIReque
   // ── 2 · BU + corte + crear carga ──
   await page.getByLabel(/Unidad de negocio|Business unit/).selectOption(bu)
   await page.getByLabel(/Fecha y hora de corte|Cutover date/).fill(corteParaInput(DIAS_CORTE))
+
+  // 2.a · SPEC 010: la plantilla es descubrible y descargable ANTES de crear la carga.
+  const plantillaTemprana = await descargar(page, /^Descargar plantilla$|^Download template$/)
+  expect(plantillaTemprana.length, 'la plantilla temprana debe descargarse').toBeGreaterThan(0)
+  pasos.plantilla_temprana = { bytes: plantillaTemprana.length }
+
   const creado = page.waitForResponse(r => r.url().includes('/cutover-batches') && r.request().method() === 'POST')
   await page.getByRole('button', { name: /Crear carga|Create load/ }).click()
   const batch = await (await creado).json()

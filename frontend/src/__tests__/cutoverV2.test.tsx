@@ -118,6 +118,26 @@ describe('SPEC 006 · Cargas Iniciales v2 (jsdom)', () => {
     expect(cabecera.textContent).toContain('v2')
   })
 
+  it('RC-010: descarga temprana de plantilla sin crear carga (CTA visible con unidad+corte)', async () => {
+    setSession(TODOS, ['hatchery'])
+    get.mockImplementation((url: string, config?: any) => {
+      const u = String(url)
+      if (u === '/cutover-batches') return Promise.resolve({ data: { items: [], total: 0 } })
+      if (u.startsWith('/cutover-templates/')) return Promise.resolve({ data: new Blob(['x']), config })
+      return Promise.resolve({ data: {} })
+    })
+    render(<MemoryRouter><CargasInicialesPage /></MemoryRouter>)
+    const btn = screen.getByRole('button', { name: 'Descargar plantilla' }) as HTMLButtonElement
+    expect(btn.disabled).toBe(true)
+    fireEvent.change(screen.getByLabelText('Fecha y hora de corte'), { target: { value: '2026-10-06T08:00' } })
+    expect(btn.disabled).toBe(false)
+    fireEvent.click(btn)
+    await waitFor(() => expect(get.mock.calls.some(c =>
+      String(c[0]) === '/cutover-templates/hatchery' &&
+      c[1]?.params?.format === 'xlsx' &&
+      c[1]?.params?.batch_id === undefined)).toBe(true))
+  })
+
   it('RC-2/RC-6: el selector por defecto es una unidad del usuario, el input acepta CSV y la plantilla sigue a la carga', async () => {
     setSession(TODOS, ['hatchery'])
     const borrador = { ...BATCH_HATCHERY, id: 8, status: 'draft', total_rows: 0, valid_rows: 0, source_filename: null, template_version: null }
