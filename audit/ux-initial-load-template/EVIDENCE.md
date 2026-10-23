@@ -22,6 +22,7 @@ Mejora UX de «Cargas Iniciales»: hacer descubrible la descarga de plantilla. *
 
 - **Frontend:** `vitest` **577/577** (incluye nuevo `RC-010` de descarga temprana) — `evidence/01_frontend_vitest.log`. `tsc -b` rc=0 — `02_frontend_tsc.log`. `vite build` rc=0 — `03_frontend_build.log`.
 - **E2E (Playwright, `--workers=1`):** breeder + hatchery, con paso de descarga **temprana** antes de crear la carga + flujo completo — `evidence/04_e2e_cutover.log`. Resultado: **2 passed** (descarga temprana + crear→subir→validar→preview→aprobar→aplicar→reconciliar).
+- **QA en runtime UAT (`https://avicola.globaldv.net`, Playwright, usuario `qa.admin`):** `/cutover` **PASS** — «Descargar plantilla» visible y **deshabilitado sin corte**, **habilitado con corte**; intro y ayuda «¿No sabes cómo empezar?» visibles; «Ver instrucciones» despliega el panel (`cutover-instructions`). Bundle desplegado `index-hd1Y5Bm5.js` con los marcadores SPEC 010; `/locales/*/translation.json` sirve las claves nuevas. Capturas: `evidence/uat_cutover_inicial.png`, `evidence/uat_cutover_corte_instrucciones.png`.
 
 ## 5. Acceptance Criteria
 
@@ -31,5 +32,6 @@ AC-01..AC-17: cubiertos (CTA temprano visible/habilitado/deshabilitado con hint;
 REAL_SAP_CALLS=0 · REAL_SAP_WRITES=0 · BACKEND_CHANGES=0 · DB_CHANGES=0
 FRONTEND_VITEST=577/577 · TSC=PASS · BUILD=PASS
 E2E=breeder+hatchery 2/2 (incl. descarga temprana)
+UAT_RUNTIME=PASS (qa.admin, smoke /cutover)
 FINAL_STATUS=CERTIFIED_GA_UX_INITIAL_LOAD_TEMPLATE
 ```
