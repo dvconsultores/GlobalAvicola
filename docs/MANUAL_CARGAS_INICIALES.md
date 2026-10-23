@@ -1,262 +1,176 @@
 # Manual de las plantillas de Cargas Iniciales (saldos de apertura)
 
-Guía para llenar correctamente las plantillas de carga inicial, campo por campo, por unidad de negocio. Pensada para quien prepara los datos del arranque («corte»).
+Este manual explica las **cuatro plantillas Excel de carga inicial** (cutover) de Global Avícola y cómo rellenarlas, con los ajustes acordados con los KeyUser (SPEC 009, 2026-10-22).
 
-Existe **una plantilla por unidad de negocio**, descargable desde la pantalla *Cargas Iniciales* en Excel (`.xlsx`) o CSV (`.csv`):
+Las cuatro plantillas, tal como las genera el sistema hoy, están en **`docs/plantillas_carga_inicial/`**:
 
-| Unidad de negocio | Nombre de la plantilla | Qué representa cada fila |
+| Unidad de negocio | Archivo | Versión |
 |---|---|---|
-| Progenitoras (abuelas) | `cutover_template_grandparent_v2` | Un lote de abuelas en cría o producción |
-| Reproductoras | `cutover_template_breeder_v2` | Un lote de reproductoras en cría o producción |
-| Pollo de engorde | `cutover_template_broiler_v2` | Un lote de engorde |
-| Incubadora | `cutover_template_hatchery_v2` | Un proceso de incubación en curso |
+| Progenitoras (grandparent) | `cutover_template_grandparent_v2.xlsx` | v2 |
+| Reproductoras (breeder) | `cutover_template_breeder_v2.xlsx` | v2 |
+| Incubadora (hatchery) | `cutover_template_hatchery_v3.xlsx` | **v3** |
+| Engorde (broiler) | `cutover_template_broiler_v2.xlsx` | v2 |
 
-> La plantilla que descargue queda **ligada a la carga** que creó (a su unidad y su fecha de corte). Descárguela siempre desde la carga, no cambie el selector después. No modifique la fila de cabecera de la hoja `Datos` ni la hoja `Meta`.
+> Cada carga descarga **su propia** plantilla desde el sistema (la unidad y la fecha de corte las fija la carga). Las de esta carpeta son copias de referencia para conocer el formato vigente. **La plantilla de Incubadora es ahora v3**: una plantilla v2 antigua de Incubadora será rechazada con el mensaje «descargue la plantilla v3»; las demás unidades siguen en v2.
 
 ---
 
 ## 1 · Cómo funciona cualquier plantilla
 
-### 1.1 · Hojas del archivo Excel
+### 1.1 · Hojas del Excel
 
-- **Instrucciones**: explica cada campo (es la versión corta de este manual, generada por el sistema).
-- **Meta**: identifica la plantilla (versión `v2`, unidad, empresa, fecha de corte). No se toca.
-- **Datos**: aquí se escriben las filas. Una fila = un lote (o un proceso de incubadora).
-- **Catalogos**: los códigos válidos de **su empresa** para esa unidad (granjas, galpones, fases, líneas, razas, plantas, incubadoras, nacedoras…). Úselos para no equivocar un código.
+Cada plantilla trae cuatro hojas:
 
-En CSV solo existe la fila de cabecera y los datos; la información de unidad y versión la aporta la propia carga.
+- **Instrucciones** — una fila por campo con su significado, si es obligatorio, tipo, unidad, formato, ejemplo, valores permitidos, si admite vacío (UNKNOWN) y si admite `N/A`, y a dónde va el dato tras aplicar.
+- **Meta** — identifica la plantilla: `template_version`, `schema_id`, `company`, `business_unit`, fecha de generación y fecha/hora de corte. **No modificar.**
+- **Datos** — donde se cargan las filas (un lote, o un proceso de incubación, por fila). **No cambiar la cabecera.**
+- **Catalogos** — los valores válidos de los maestros (códigos y nombres) de su empresa, para copiarlos tal cual en `Datos`. Columnas: `catalog, code, description, status, parent_code, source` (ver 1.4).
 
-### 1.2 · La regla más importante: vacío, 0 y N/A **no** son lo mismo
+### 1.2 · Vacío / 0 / N/A (semántica de cada celda)
 
-Cada celda de una métrica se interpreta así:
+El dato nunca se inventa. En cada celda de métrica:
 
-| Lo que escribe | Significado | Ejemplo de uso |
+- **Celda vacía = UNKNOWN**: no se conoce el dato en el sistema anterior.
+- **`0` = cero CONOCIDO**: realmente es cero.
+- **`N/A` = NO APLICA**: la métrica no corresponde a ese lote/fase.
+
+Poner `N/A` en un campo **obligatorio** es un error (indique el valor; si es cero real, escriba `0`).
+
+### 1.3 · Tipos y formatos
+
+- Fechas en **AAAA-MM-DD**. La fecha/hora de corte la fija la carga.
+- Enteros sin separador de miles; decimales con punto. **Pesos en gramos; alimento en kilogramos.**
+- No use fórmulas ni macros: el importador lee valores y rechaza fórmulas.
+
+### 1.4 · Procedencia de los maestros en `Catalogos` (SAP vs Global Avícola)
+
+La hoja `Catalogos` indica, en la columna **`source`**, quién gobierna cada maestro:
+
+- **`SAP`** — **granjas (`farm`) y galpones (`house`)**: su codificación proviene del ERP (SAP), a través de la sincronización autorizada de **solo lectura**. La plantilla muestra únicamente los valores ya recibidos y promovidos al sistema local; **nunca se inventan códigos SAP**.
+- **`GLOBAL_AVICOLA`** — el resto (línea genética, raza, fase productiva, área, planta de incubación, incubadora, nacedora, lotes): son **maestros internos de Global Avícola**.
+
+Use siempre un valor que aparezca en `Catalogos` (activo y de su empresa). Si un maestro no está, no lo invente: pídalo por el canal correspondiente.
+
+---
+
+## 2 · Campos comunes de identificación del lote (aves)
+
+Presentes en Progenitoras, Reproductoras y Engorde:
+
+| Campo | Obligatorio | Qué es |
 |---|---|---|
-| **(celda vacía)** | **DESCONOCIDO** (UNKNOWN): no se sabe el dato | No se tiene la mortalidad histórica de ese lote |
-| **`0`** | **CERO REAL** (conocido): el valor es realmente cero | Ese lote no tuvo descartes: cero |
-| **`N/A`** | **NO APLICA**: la métrica no corresponde a ese lote/fase | Huevos producidos en un lote que todavía está en cría |
+| `legacy_lot_code` | **sí** | Código del lote en el sistema anterior. Único en la carga y en la empresa. |
+| `existing_lot_code` | no | Código de un lote YA existente en Global Avícola para reutilizarlo (misma empresa, activo, sin eventos). Si se deja vacío, se crea un lote migrado. |
+| `farm_code` | **sí** | Granja (hoja `Catalogos` → `farm`, origen **SAP**). |
+| `house_name` | no | Galpón dentro de la granja (`Catalogos` → `house`, `parent_code` = granja, origen **SAP**). |
+| `area_code` | no | Área funcional (`Catalogos` → `area`). |
+| `productive_phase_code` | **sí** | Fase real al corte. Progenitoras/Reproductoras: `CRIA` o `PROD`. Engorde: `ENGORDE`. |
+| `real_start_date` | **sí** | Fecha real de inicio (alojamiento). ≤ fecha de corte. |
+| `phase_start_date` | no | Inicio de la fase declarada. Vacío = se toma la fecha real de inicio. |
+| `genetic_line_code` | no | **Línea genética — maestro INTERNO de Global Avícola, no SAP** (`Catalogos` → `genetic_line`). |
+| `breed_name` | no | **Raza — maestro INTERNO de Global Avícola, no SAP** (`Catalogos` → `breed`, debe pertenecer a la línea indicada). |
+| `sex` | no | `male` / `female` / `mixed`. |
 
-El sistema conserva esta diferencia en todo el recorrido. **Nunca** convierte un desconocido en cero. Por eso dejar una celda vacía no es lo mismo que poner `0`.
+> **Línea genética y raza son de Global Avícola, no de SAP.** Si el código/nombre no existe, está fuera de la empresa o la raza no pertenece a la línea, la fila se marca inválida con un mensaje claro (`La línea genética no existe…`, `La raza no existe…`, `La raza no pertenece a la línea…`). El sistema **no** las crea solo: elija un valor de `Catalogos`.
 
-### 1.3 · Tipos de variable que encontrará
+Campos de **procedencia** (comunes a las cuatro plantillas): `source_system` (p. ej. LEGACY/EXCEL), `source_reference` (documento/planilla de origen), `notes` (notas libres; nunca sustituyen a un campo).
 
-| Tipo | Qué acepta | Qué NO acepta | Ejemplo correcto |
+---
+
+## 3 · Plantilla de Progenitoras y Reproductoras (aves por sexo)
+
+Mismas columnas para ambas (contrato de reproductoras). Métricas al corte:
+
+| Campo | Obligatorio | Unidad | Notas |
 |---|---|---|---|
-| **Texto** | Letras, números y signos como texto | — | `GR-01`, `Lote Norte 3` |
-| **Código de catálogo** | Un texto que **debe existir** en la hoja `Catalogos` de su empresa | Un código inventado o de otra empresa | `GR-01` (granja) |
-| **Entero** | Número **entero** ≥ 0, sin decimales y **sin separador de miles** | `1.200`, `1,200`, `12.5`, texto | `1200` |
-| **Decimal** | Número ≥ 0 con **punto** decimal | Coma decimal (`120000,5`), separador de miles | `120000.5` |
-| **Fecha** | Formato **AAAA-MM-DD** | `01/08/2026`, `1-ago-2026` | `2026-08-01` |
-| **Lista** | Uno de los valores permitidos exactos | Cualquier otro texto | `mixed`, `breeder` |
+| `live_males` | **sí** | aves | Machos vivos al corte (saldo vivo; no se resta lo histórico). |
+| `live_females` | **sí** | aves | Hembras vivas al corte. |
+| `birds_placed_males` / `birds_placed_females` | no | aves | Alojadas originalmente (histórico). |
+| `historical_mortality_males` | **ver abajo** | aves | Mortalidad acumulada de machos antes del corte. |
+| `historical_mortality_females` | **ver abajo** | aves | Mortalidad acumulada de hembras antes del corte. |
+| `historical_culls_males` / `historical_culls_females` | no | aves | Descartes acumulados. |
+| `accumulated_feed_kg` | no | kg | Alimento acumulado. |
+| `current_avg_weight_g` | no | g | Peso promedio actual del ave. |
+| `accumulated_egg_production` | no | huevos | Producción acumulada. **`N/A` en fase `CRIA`.** |
+| `accumulated_eggs_to_hatchery` | no | huevos | Huevos enviados a incubadora. **`N/A` en fase `CRIA`.** |
 
-Reglas de números:
-- **Los enteros son enteros**: escriba `1200`, no `1.200` ni `1,200` (el punto o la coma se interpretan como error). Si por formato de Excel aparece `1200.0`, el sistema lo acepta como `1200`.
-- **Los decimales llevan punto**: `120000.5`. La coma no es decimal.
-- **Pesos en gramos**, **alimento en kilogramos**. El peso promedio del ave debe ser **mayor que cero** (no admite 0).
-- Ningún número puede ser negativo.
+### Mortalidad histórica — diferencia entre Reproductoras y Progenitoras (SPEC 009)
 
-### 1.4 · Formatos de archivo, límites y validación
+- **Reproductoras (breeder): `historical_mortality_males` y `historical_mortality_females` son OBLIGATORIAS.** Si no la conoce con certeza, consulte el dato real; **no** puede dejarse vacía. **`0` es un valor válido** (cero real). Dejarla en blanco da el error «Campo obligatorio sin valor».
+- **Progenitoras (grandparent): siguen siendo opcionales** (vacío = desconocido/UNKNOWN).
 
-- Acepta `.xlsx` y `.csv`. No acepta libros con macros (`.xlsm`) ni fórmulas dentro de las celdas (escriba valores, no fórmulas).
-- Máximo **5 MB**, **5000 filas** de datos y **60 columnas**.
-- Al subir, el sistema valida cada fila y muestra los errores con **fila, campo, código, mensaje y valor recibido**; puede **descargar el reporte de errores** para corregir en bloque y volver a subir.
-- Una plantilla **sin filas** no se da por válida.
-
-### 1.5 · Obligatorio, vacío y N/A por campo
-
-En las tablas de abajo, cada campo indica:
-- **Obligatorio**: debe tener un valor; no admite vacío ni `N/A`.
-- **Admite vacío (UNKNOWN)**: puede dejarlo en blanco si no conoce el dato.
-- **Admite N/A**: puede marcar que no aplica.
+Consistencia (solo si todas las piezas son conocidas): `alojadas − mortalidad − descartes = vivas`, por sexo; y `huevos a incubadora ≤ huevos producidos`.
 
 ---
 
-## 2 · Campos comunes de identificación del lote
+## 4 · Plantilla de Engorde (población mixta)
 
-Estos campos encabezan las plantillas de **Progenitoras, Reproductoras y Pollo de Engorde** (la de Incubadora tiene los suyos, ver §5).
+Fase `ENGORDE`. Métricas al corte:
 
-| Campo | Qué carga | Tipo | ¿Decimales? | Obligatorio | Vacío | N/A | Ejemplo | Reglas |
-|---|---|---|---|---|---|---|---|---|
-| `legacy_lot_code` | Código del lote en el sistema anterior | Texto (≤60) | — | **Sí** | No | No | `GP-2025-014` | Único en el archivo y en la empresa |
-| `existing_lot_code` | Código de un lote que **ya existe** en Global Avícola, para reutilizarlo en vez de crear uno nuevo | Código de catálogo | — | No | — | — | `LOTE-2026-01` | El lote debe ser de la misma empresa, de la misma unidad, activo y sin eventos |
-| `farm_code` | Granja donde está el lote | Código de catálogo (granja) | — | **Sí** | No | No | `GR-01` | Debe existir y estar activa en su empresa |
-| `house_name` | Galpón dentro de la granja | Código de catálogo (galpón) | — | No | Sí | No | `G-03` | Debe pertenecer a la granja indicada |
-| `area_code` | Área funcional | Código de catálogo (área) | — | No | Sí | No | `AREA-1` | Debe existir en su empresa |
-| `productive_phase_code` | Fase real del lote al corte | Lista | — | **Sí** | No | No | `PROD` | Progenitoras/Reproductoras: `CRIA` o `PROD`. Engorde: `ENGORDE` |
-| `real_start_date` | Fecha real de inicio del lote (alojamiento) | Fecha | — | **Sí** | No | No | `2025-11-03` | Debe ser anterior o igual al corte |
-| `phase_start_date` | Fecha de inicio de la fase declarada | Fecha | — | No | Sí | No | `2026-04-20` | Entre la fecha de inicio del lote y el corte. Si se deja vacía, se toma `real_start_date` |
-| `genetic_line_code` | Línea genética | Código de catálogo (línea) | — | No | Sí | No | `ROSS-308` | Debe existir |
-| `breed_name` | Raza dentro de la línea | Código de catálogo (raza) | — | No | Sí | No | `Ross 308 AP` | Debe pertenecer a la línea y a la unidad |
-| `sex` | Sexo del lote | Lista | — | No | Sí | No | `mixed` | Valores: `male`, `female`, `mixed` |
+| Campo | Obligatorio | Unidad | Notas |
+|---|---|---|---|
+| `live_birds` | **sí** | aves | Aves vivas (mixtas) al corte. |
+| `age_days` | no | días | Edad al corte; vacío = se deriva de la fecha de inicio. |
+| `accumulated_birds_received` | no | aves | Recibidas acumuladas (alojadas). |
+| `historical_mortality` | no | aves | Mortalidad acumulada. |
+| `historical_culls` | no | aves | Descartes acumulados. |
+| `partial_outbound_birds` | no | aves | Salidas parciales a planta. `N/A` si no hubo. |
+| `accumulated_feed_kg` | no | kg | Alimento acumulado. |
+| `current_avg_weight_g` | no | g | Peso promedio actual. |
 
----
-
-## 3 · Plantilla de Progenitoras y Reproductoras
-
-Progenitoras (`grandparent`) y Reproductoras (`breeder`) usan **el mismo conjunto de campos**. La única diferencia la marca `productive_phase_code`: un lote en **cría** (`CRIA`) todavía no produce huevo, y un lote en **producción** (`PROD`) sí.
-
-A los campos comunes de identificación (§2) se suman estas métricas:
-
-| Campo | Qué carga | Tipo | ¿Decimales? | Obligatorio | Vacío | N/A | Ejemplo | Reglas |
-|---|---|---|---|---|---|---|---|---|
-| `live_males` | Machos **vivos** al momento del corte | Entero | No | **Sí** | No | No | `1000` | Es el saldo vivo; el histórico no se resta |
-| `live_females` | Hembras **vivas** al corte | Entero | No | **Sí** | No | No | `9000` | Igual |
-| `birds_placed_males` | Machos **alojados** originalmente (histórico) | Entero | No | No | Sí | No | `1100` | Sirve para cuadrar: alojadas − mortalidad − descartes = vivas |
-| `birds_placed_females` | Hembras alojadas originalmente | Entero | No | No | Sí | No | `9600` | Igual |
-| `historical_mortality_males` | Mortalidad acumulada de machos **antes** del corte | Entero | No | No | Sí | No | `50` | Histórico; no se vuelve a descontar |
-| `historical_mortality_females` | Mortalidad acumulada de hembras antes del corte | Entero | No | No | Sí | No | `450` | Igual |
-| `historical_culls_males` | Descartes acumulados de machos antes del corte | Entero | No | No | Sí | No | `0` | `0` = cero real |
-| `historical_culls_females` | Descartes acumulados de hembras antes del corte | Entero | No | No | Sí | No | `0` | Igual |
-| `accumulated_feed_kg` | Alimento acumulado consumido antes del corte | Decimal | **Sí** (kg) | No | Sí | No | `120000.5` | En kilogramos |
-| `current_avg_weight_g` | Peso promedio actual del ave al corte | Decimal | **Sí** (g) | No | Sí | No | `3200` | En gramos, **mayor que 0** |
-| `accumulated_egg_production` | Huevos producidos acumulados antes del corte | Entero | No | No | Sí | **Sí** | `180000` | En **cría** debe ir vacío o `N/A` (no aplica) |
-| `accumulated_eggs_to_hatchery` | Huevos enviados a incubadora acumulados antes del corte | Entero | No | No | Sí | **Sí** | `150000` | No puede superar los huevos producidos; en cría, `N/A` |
-
-**Cómo tratar el sexo en estas métricas**: cada métrica tiene su versión de machos y de hembras. Se considera *conocida* solo si ambos sexos son conocidos; si deja uno vacío, la pareja queda como desconocida (el sistema no inventa el sexo que falta).
-
-**Ejemplo de una fila (reproductoras en producción, histórico de mortalidad desconocido):**
-
-```text
-legacy_lot_code=REP-2026-07 · farm_code=GR-01 · house_name=G-03 · productive_phase_code=PROD
-real_start_date=2025-08-01 · live_males=1000 · live_females=9000
-historical_mortality_males=(vacío) · historical_mortality_females=(vacío)
-historical_culls_males=0 · historical_culls_females=0
-accumulated_feed_kg=120000.5 · current_avg_weight_g=3200
-accumulated_egg_production=180000 · accumulated_eggs_to_hatchery=150000 · source_system=LEGACY
-```
-
-**Ejemplo de una fila en cría (las métricas de huevo no aplican):**
-
-```text
-legacy_lot_code=REP-CRIA-02 · farm_code=GR-01 · productive_phase_code=CRIA
-real_start_date=2026-06-01 · live_males=500 · live_females=4500
-accumulated_egg_production=N/A · accumulated_eggs_to_hatchery=N/A
-```
+Consistencia: `recibidas − mortalidad − descartes − salidas = vivas` (solo si todo es conocido).
 
 ---
 
-## 4 · Plantilla de Pollo de Engorde
+## 5 · Plantilla de Incubadora (proceso de incubación) — v3
 
-El engorde maneja la población como **mixta** (sin separar sexo). A los campos comunes de identificación (§2) —con `productive_phase_code` siempre `ENGORDE`— se suman:
+Describe un proceso de incubación en curso al corte. **Versión v3** por la nueva columna `egg_origin`.
 
-| Campo | Qué carga | Tipo | ¿Decimales? | Obligatorio | Vacío | N/A | Ejemplo | Reglas |
-|---|---|---|---|---|---|---|---|---|
-| `live_birds` | Aves **vivas** (mixtas) al corte | Entero | No | **Sí** | No | No | `10000` | Saldo vivo |
-| `age_days` | Edad del lote en días al corte | Entero | No | No | Sí | No | `20` | Si se deja vacío, se calcula desde `real_start_date` |
-| `accumulated_birds_received` | Aves recibidas (alojadas) acumuladas antes del corte | Entero | No | No | Sí | No | `10500` | Sirve para cuadrar con las vivas |
-| `historical_mortality` | Mortalidad acumulada antes del corte | Entero | No | No | Sí | No | `300` | Histórico |
-| `historical_culls` | Descartes acumulados antes del corte | Entero | No | No | Sí | No | `200` | Histórico |
-| `partial_outbound_birds` | Aves salidas parcialmente a planta antes del corte | Entero | No | No | Sí | **Sí** | `0` | `N/A` si no hubo salidas parciales |
-| `accumulated_feed_kg` | Alimento acumulado antes del corte | Decimal | **Sí** (kg) | No | Sí | No | `15000` | En kilogramos |
-| `current_avg_weight_g` | Peso promedio actual del ave al corte | Decimal | **Sí** (g) | No | Sí | No | `900` | En gramos, mayor que 0 |
-
-**Cuadre (solo si están todos los datos conocidos):** `recibidas − mortalidad − descartes − salidas parciales = vivas`. Si alguno va vacío o `N/A`, el sistema no exige el cuadre (no inventa certeza).
-
-**Ejemplo:**
-
-```text
-legacy_lot_code=ENG-2026-33 · farm_code=GR-01 · house_name=G-07 · productive_phase_code=ENGORDE
-real_start_date=2026-09-20 · live_birds=10000 · age_days=20
-accumulated_birds_received=10500 · historical_mortality=300 · historical_culls=200
-partial_outbound_birds=0 · accumulated_feed_kg=15000 · current_avg_weight_g=900
-```
-
----
-
-## 5 · Plantilla de Incubadora
-
-Representa un **proceso de incubación en curso** el día del corte. Tiene sus propios campos de identificación (no usa granja/galpón ni fase: la fase es Incubación de forma implícita).
-
-| Campo | Qué carga | Tipo | ¿Decimales? | Obligatorio | Vacío | N/A | Ejemplo | Reglas |
-|---|---|---|---|---|---|---|---|---|
-| `legacy_lot_code` | Código del proceso/lote en el sistema anterior | Texto (≤60) | — | **Sí** | No | No | `INC-2026-07` | Único en el archivo y la empresa |
-| `existing_lot_code` | Lote de incubadora ya existente para reutilizar | Código de catálogo | — | No | — | — | `INC-2026-01` | Misma empresa, activo, sin eventos |
-| `hatchery_code` | Planta de incubación | Código de catálogo (planta) | — | **Sí** | No | No | `INC-01` | Debe existir y estar activa en su empresa |
-| `incubator_name` | Incubadora dentro de la planta | Código de catálogo (incubadora) | — | No | Sí | No | `INC-A1` | Debe pertenecer a la planta |
-| `hatcher_name` | Nacedora dentro de la planta | Código de catálogo (nacedora) | — | No | Sí | No | `NAC-1` | Debe pertenecer a la planta |
-| `source_lot_code` | Lote de abuelas/reproductoras que originó los huevos | Código de catálogo (lote origen) | — | No | Sí | No | `REP-2026-07` | Debe ser un lote grandparent o breeder de su empresa, coherente con `generation` |
-| `generation` | Generación del huevo incubado | Lista | — | No | Sí | No | `breeder` | `grandparent` (→ pollito reproductor) o `breeder` (→ pollito de engorde) |
-| `reception_date` | Fecha de recepción del huevo en la planta | Fecha | — | **Sí** | No | No | `2026-09-20` | Anterior o igual al corte |
-| `set_date` | Fecha de carga en incubadora | Fecha | — | No | Sí | **Sí** | `2026-09-22` | Entre la recepción y el corte. `N/A` si aún no se cargó |
-| `expected_hatch_date` | Fecha prevista de nacimiento | Fecha | — | No | Sí | **Sí** | `2026-10-13` | Posterior o igual a la carga |
-| `eggs_received` | Huevos fértiles recibidos en la planta | Entero | No | **Sí** | No | No | `10000` | Saldo de huevo en planta = recibidos − cargados |
-| `eggs_set` | Huevos ya cargados en incubadora | Entero | No | **Sí** | No | No | `9000` | No puede superar los recibidos |
-| `eggs_transferred` | Huevos ya transferidos a nacedora | Entero | No | No | Sí | **Sí** | `0` | No puede superar los cargados |
-| `eggs_discarded` | Huevos descartados del proceso (ovoscopia, rotos) | Entero | No | No | Sí | **Sí** | `100` | No puede superar los cargados |
-| `chicks_hatched` | Pollitos ya nacidos del proceso antes del corte | Entero | No | No | Sí | **Sí** | `0` | No puede superar los transferidos (o los cargados) |
-| `chicks_available` | Pollitos nacidos que siguen en planta sin despachar al corte | Entero | No | No | Sí | **Sí** | `0` | No puede superar los nacidos |
-
-**Invariantes que el sistema verifica** (solo cuando los datos son conocidos): `eggs_set ≤ eggs_received`; `eggs_transferred ≤ eggs_set`; `eggs_discarded ≤ eggs_set`; `transferidos + descartados ≤ cargados`; `chicks_hatched ≤ eggs_transferred`; `chicks_available ≤ chicks_hatched`. Las fechas deben ir en orden: recepción ≤ carga ≤ corte, y nacimiento previsto ≥ carga.
-
-**Ejemplo (proceso cargado, aún sin nacimientos):**
-
-```text
-legacy_lot_code=INC-2026-07 · hatchery_code=INC-01 · incubator_name=INC-A1
-generation=breeder · reception_date=2026-09-20 · set_date=2026-09-22 · expected_hatch_date=2026-10-13
-eggs_received=10000 · eggs_set=9000 · eggs_transferred=0 · eggs_discarded=100
-chicks_hatched=0 · chicks_available=0 · source_system=LEGACY
-```
-
----
-
-## 6 · Campos de procedencia (comunes a todas las plantillas)
-
-Van al final de cada plantilla y sirven para la trazabilidad; ninguno es obligatorio.
-
-| Campo | Qué carga | Tipo | Obligatorio | Ejemplo |
-|---|---|---|---|---|
-| `source_system` | Sistema de origen del dato | Texto (≤40) | No | `LEGACY` |
-| `source_reference` | Referencia en el sistema de origen (documento, planilla) | Texto (≤200) | No | `PLANILLA-2026-10` |
-| `notes` | Notas libres | Texto | No | `Lote recibido de granja externa` |
-
-> `notes` es solo una nota: **nunca** reemplaza a un campo del contrato. Si un dato tiene su propio campo, va en ese campo, no en las notas.
-
----
-
-## 7 · Errores más frecuentes y cómo evitarlos
-
-| Síntoma | Causa | Solución |
+| Campo | Obligatorio | Qué es |
 |---|---|---|
-| «Número entero ≥ 0 esperado» | Escribió `1.200` o `1,200` | Quite el separador de miles: `1200` |
-| «Número decimal ≥ 0 esperado» | Usó coma decimal (`120000,5`) | Use punto: `120000.5` |
-| «Fecha inválida» | Formato `01/08/2026` | Use `2026-08-01` |
-| «N/A no es válido en un campo obligatorio» | Puso `N/A` en vivas, huevos recibidos, etc. | Indique el valor real; si es cero, escriba `0` |
-| «Métrica de producción con valor en fase CRIA» | Cargó huevos en un lote en cría | Deje esas celdas vacías o en `N/A` |
-| «La granja no existe / está inactiva» | Código que no está en `Catalogos` o maestro inactivo | Use un código de la hoja `Catalogos` de su empresa |
-| «El galpón no pertenece a la granja» | Galpón de otra granja | Verifique en `Catalogos` el galpón que corresponde a esa granja |
-| «La plantilla es de otra unidad» | Subió a una carga la plantilla de otra unidad | Descargue la plantilla desde la carga correcta |
-| «La plantilla no trae filas de datos» | Subió el archivo vacío | Complete la hoja `Datos` antes de subir |
+| `legacy_lot_code` | **sí** | Código del proceso/lote de incubación en el sistema anterior. |
+| `existing_lot_code` | no | Lote de incubadora ya existente para reutilizar (sin eventos). |
+| `hatchery_code` | **sí** | Planta de incubación (`Catalogos` → `hatchery`). |
+| `incubator_name` | no | Incubadora dentro de la planta (`Catalogos` → `incubator`). |
+| `hatcher_name` | no | Nacedora dentro de la planta (`Catalogos` → `hatcher`). |
+| `source_lot_code` | no | Lote de reproductoras/progenitoras que originó los huevos (ver `egg_origin`). |
+| `generation` | no | **Generación biológica del huevo**: `grandparent` (de progenitoras → pollito reproductor) o `breeder` (de reproductoras → pollito de engorde). Solo esos dos valores. |
+| `egg_origin` | **sí** | **Origen comercial del huevo (NUEVO)**: `internal` (propio/interno de Global Avícola) o `purchased` (comprado a un tercero). |
+| `reception_date` | **sí** | Fecha de recepción del huevo en la planta. ≤ corte. |
+| `set_date` | no | Fecha de carga en incubadora. |
+| `expected_hatch_date` | no | Fecha prevista de nacimiento. |
+| `eggs_received` | **sí** | Huevos fértiles recibidos. |
+| `eggs_set` | **sí** | Huevos ya cargados (≤ recibidos). |
+| `eggs_transferred` | no | Huevos transferidos a nacedora (≤ cargados). |
+| `eggs_discarded` | no | Huevos descartados (≤ cargados). |
+| `chicks_hatched` | no | Pollitos ya nacidos antes del corte. |
+| `chicks_available` | no | Pollitos nacidos que siguen en planta sin despachar. |
+
+### «Generación» vs «Origen del huevo» (SPEC 009)
+
+Son dos cosas distintas y **ambas** se registran:
+
+- **`generation`** = naturaleza biológica del huevo (`grandparent` / `breeder`). **No** admite `purchased`.
+- **`egg_origin`** = origen comercial del huevo, **obligatorio**:
+  - **`internal`** (propio): si indica `source_lot_code`, se valida contra un lote interno compatible, como hasta ahora.
+  - **`purchased`** (comprado): **no** hace falta un lote interno; basta con registrar la procedencia externa en `source_system`/`source_reference`. No se exige ni se inventa una orden de compra.
 
 ---
 
-## 8 · Después de cargar
+## 6 · Errores más frecuentes
 
-Una vez subida sin errores, la carga pasa por **vista previa → envío → aprobación (por otro usuario) → aplicar**. Al aplicar, cada dato queda en su lugar (el lote con su fase, su granja, su genética y su saldo de apertura) y la operación continúa con normalidad. El primer evento operativo que registre sobre esos lotes debe tener **fecha posterior al día del corte**: así el histórico cargado no se cuenta dos veces.
+| Mensaje | Causa | Solución |
+|---|---|---|
+| «Campo obligatorio sin valor» | Un obligatorio vacío (p. ej. mortalidad en Reproductoras, `egg_origin` en Incubadora, vivas, huevos recibidos/cargados) | Indique el valor real; si es cero, escriba `0`. |
+| «N/A no es válido en un campo obligatorio» | `N/A` en un obligatorio | Ponga el valor; `0` si es cero real. |
+| «La línea genética no existe…» / «La raza no existe…» / «La raza no pertenece a la línea…» | Línea/raza fuera de `Catalogos` o raza de otra línea | Use valores de `Catalogos` (maestro interno de Global Avícola). |
+| «La granja/planta no existe o está inactiva» | Código fuera de `Catalogos` o inactivo | Use un código activo de su empresa. |
+| «Valor fuera de la lista permitida» | `generation` o `egg_origin` con un valor no admitido | `generation` ∈ {grandparent, breeder}; `egg_origin` ∈ {internal, purchased}. |
+| «La plantilla … descargue la plantilla v3 de hatchery» | Subió una plantilla de Incubadora v2 antigua | Descargue la plantilla **v3** de Incubadora. |
+| «La plantilla no trae filas de datos» | Archivo sin filas en `Datos` | Complete la hoja `Datos`. |
 
 ---
 
-## 9 · Novedades de la sesión con los KeyUser (2026-10-22)
+## 7 · Después de cargar
 
-Estos ajustes nacieron de la revisión de las plantillas con los KeyUser del área avícola.
-
-### 9.1 · De dónde vienen los datos maestros (SAP vs Global Avícola)
-
-La hoja `Catalogos` añade una columna **`source`** que indica quién gobierna cada maestro:
-
-- **`SAP`** · granjas (`farm`) y galpones (`house`): su codificación proviene del ERP (SAP), a través de la sincronización autorizada de solo lectura. La plantilla muestra únicamente los valores ya recibidos y promovidos al sistema local; **nunca se inventan códigos SAP**.
-- **`GLOBAL_AVICOLA`** · el resto (línea genética, raza, fases, áreas, plantas de incubación, incubadoras, nacedoras, lotes): son maestros internos de Global Avícola.
-
-En particular, **la línea genética (`genetic_line_code`) y la raza (`breed_name`) son maestros internos de Global Avícola, no de SAP**. Si el código o el nombre no existe (o la raza no pertenece a la línea indicada), la fila se marca inválida con un mensaje claro (`La línea genética no existe…`, `La raza no existe…`, `La raza no pertenece a la línea…`). El sistema **no crea** la línea ni la raza automáticamente: elija un valor de la hoja `Catalogos`.
-
-### 9.2 · Reproductoras: mortalidad histórica obligatoria
-
-En la plantilla de **Reproductoras**, la **mortalidad acumulada de machos y de hembras** (`historical_mortality_males`, `historical_mortality_females`) pasa a ser **obligatoria**. Si no la conoce con certeza, consulte el dato real: **no** se puede dejar vacía. **`0` es un valor válido** (cero real); dejarla en blanco da el error «Campo obligatorio sin valor». En **Progenitoras** estos campos siguen siendo opcionales (vacío = desconocido).
-
-### 9.3 · Incubadora: «Generación» y «Origen del huevo» son cosas distintas
-
-- **Generación (`generation`)** describe la *naturaleza biológica* del huevo: `grandparent` (huevo de progenitoras, del que nace pollito reproductor) o `breeder` (huevo de reproductoras, del que nace pollito de engorde). **No** admite otros valores.
-- **Origen del huevo (`egg_origin`)**, campo **nuevo y obligatorio**, describe el *origen comercial*: **`internal`** (propio / interno de Global Avícola) o **`purchased`** (comprado a un tercero).
-  - Con `internal`, el `source_lot_code` (lote de reproductoras/progenitoras que originó los huevos) se valida como hasta ahora contra un lote interno compatible.
-  - Con `purchased`, **no** hace falta un lote interno: basta con registrar la procedencia externa (`source_system`, `source_reference`). No se exige ni se inventa una orden de compra.
-
-La plantilla de Incubadora cambia de versión a **v3** por esta columna nueva. Si intenta subir una plantilla de incubadora anterior (v2), el sistema se lo indicará y le pedirá descargar la vigente; las plantillas de las demás unidades siguen en v2 sin cambios.
+Subida sin errores → **vista previa → envío → aprobación (por otro usuario) → aplicar**. Al aplicar, cada dato queda en su lugar (el lote con su fase, granja, genética, origen del huevo y saldo de apertura) y la operación sigue con normalidad. El **primer evento operativo** sobre esos lotes debe tener **fecha posterior al día del corte**, para no contar dos veces el histórico cargado.
