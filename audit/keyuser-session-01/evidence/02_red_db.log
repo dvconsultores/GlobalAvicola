@@ -1,0 +1,225 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=e0f1a2b3c4d5 · head en código=e0f1a2b3c4d5
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+..FFFF..FFF                                                              [100%]
+=================================== FAILURES ===================================
+_____________________ test_r8_raza_fuera_de_linea_rechaza ______________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzYsInR5cGUiOiJhY2Nlc3MifQ.vpwqF9So6itvs1pq9_0_Orb4nN_eg89lSAkciTaRM6U'}
+http_client = <httpx.AsyncClient object at 0x7f63d34d5790>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_r8_raza_fuera_de_linea_rechaza(auth_headers, http_client, seeded_ids):
+        """Una raza que existe pero pertenece a OTRA línea genética no es válida: código propio."""
+        await preparar(seeded_ids)
+        from app.masters.models import BirdTypeEnum, Breed, GeneticLine
+    
+        async with database.async_session() as s:
+            linea2 = (await s.execute(select(GeneticLine).where(GeneticLine.code == LINEA2))).scalars().first()
+            if linea2 is None:
+                linea2 = GeneticLine(company_id=seeded_ids["company_id"], name="CUT9 Línea 2", code=LINEA2,
+                                     is_active=True)
+                s.add(linea2)
+                await s.flush()
+            raza2 = (await s.execute(select(Breed).where(Breed.genetic_line_id == linea2.id,
+                                                         Breed.name == RAZA2))).scalars().first()
+            if raza2 is None:
+                s.add(Breed(genetic_line_id=linea2.id, name=RAZA2, bird_type=BirdTypeEnum.BREEDER, is_active=True))
+            await s.commit()
+        _, _, errores = await _errores(
+            http_client, auth_headers, "breeder",
+            xlsx_v2("breeder", [fila_reproductoras("breeder", "R8", genetic_line_code=LINEA, breed_name=RAZA2)],
+                    company_id=seeded_ids["company_id"]), 62)
+        assert errores is not None
+>       assert (2, "breed_name", "BREED_NOT_IN_GENETIC_LINE") in [(r, f, c) for (r, f, c) in errores]
+E       AssertionError: assert (2, 'breed_name', 'BREED_NOT_IN_GENETIC_LINE') in [(2, 'breed_name', 'PARENT_MISMATCH')]
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:94: AssertionError
+_________________ test_genetic_line_inexistente_codigo_propio __________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzYsInR5cGUiOiJhY2Nlc3MifQ.vpwqF9So6itvs1pq9_0_Orb4nN_eg89lSAkciTaRM6U'}
+http_client = <httpx.AsyncClient object at 0x7f63d2619ed0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_genetic_line_inexistente_codigo_propio(auth_headers, http_client, seeded_ids):
+        """Una línea genética inexistente reporta `GENETIC_LINE_NOT_FOUND` (no el código genérico)."""
+        await preparar(seeded_ids)
+        _, _, errores = await _errores(
+            http_client, auth_headers, "breeder",
+            xlsx_v2("breeder", [fila_reproductoras("breeder", "R-LN", genetic_line_code="NO-EXISTE-LINE")],
+                    company_id=seeded_ids["company_id"]), 63)
+        assert errores is not None
+>       assert (2, "genetic_line_code", "GENETIC_LINE_NOT_FOUND") in errores
+E       AssertionError: assert (2, 'genetic_line_code', 'GENETIC_LINE_NOT_FOUND') in [(2, 'genetic_line_code', 'MASTER_NOT_FOUND')]
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:106: AssertionError
+_____________________ test_breed_inexistente_codigo_propio _____________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzcsInR5cGUiOiJhY2Nlc3MifQ.bhFCAQeBMry7TPsuamFcXhv2riOwvYQRjGaMul8A4I4'}
+http_client = <httpx.AsyncClient object at 0x7f63d3a70e90>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_breed_inexistente_codigo_propio(auth_headers, http_client, seeded_ids):
+        """Una raza inexistente reporta `BREED_NOT_FOUND` (no el código genérico)."""
+        await preparar(seeded_ids)
+        _, _, errores = await _errores(
+            http_client, auth_headers, "breeder",
+            xlsx_v2("breeder", [fila_reproductoras("breeder", "R-BR", genetic_line_code=LINEA,
+                                                   breed_name="NO-EXISTE-RAZA")],
+                    company_id=seeded_ids["company_id"]), 64)
+        assert errores is not None
+>       assert (2, "breed_name", "BREED_NOT_FOUND") in errores
+E       AssertionError: assert (2, 'breed_name', 'BREED_NOT_FOUND') in [(2, 'breed_name', 'MASTER_NOT_FOUND')]
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:119: AssertionError
+____________________ test_r9_catalogos_source_clasificacion ____________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzcsInR5cGUiOiJhY2Nlc3MifQ.bhFCAQeBMry7TPsuamFcXhv2riOwvYQRjGaMul8A4I4'}
+http_client = <httpx.AsyncClient object at 0x7f63d990a810>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_r9_catalogos_source_clasificacion(auth_headers, http_client, seeded_ids):
+        """La hoja Catalogos declara el origen de cada código: `farm`/`house` vienen de SAP."""
+        await preparar(seeded_ids)
+        from app.cutover.contracts import contrato
+        from app.cutover.templates import catalogos
+    
+        async with database.async_session() as s:
+            filas = await catalogos(s, seeded_ids["company_id"], contrato("breeder"))
+>       assert filas and all(len(f) == 6 for f in filas)
+E       AssertionError: assert ([['productive_phase', 'CRIA', 'Cría', 'active', ''], ['productive_phase', 'PROD', 'Producción', 'active', ''], ['farm'...d 10000', 'active', 'TEST-GRANJA-01'], ['house', 'TEST-GALPON-01', 'capacidad 10000', 'active', 'TEST-GRANJA-01'], ...] and False)
+E        +  where False = all(<generator object test_r9_catalogos_source_clasificacion.<locals>.<genexpr> at 0x7f63d3519b60>)
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:133: AssertionError
+___________________ test_r17_purchased_no_exige_lote_interno ___________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzgsInR5cGUiOiJhY2Nlc3MifQ.jgChYjI6RxWc-aDnCqKTY5RR0vztAcg14diYgqJqJ_w'}
+http_client = <httpx.AsyncClient object at 0x7f63d262bed0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_r17_purchased_no_exige_lote_interno(auth_headers, http_client, seeded_ids):
+        """Huevo comprado (`purchased`): `source_lot_code` apunta fuera y NO se valida contra lotes."""
+        await preparar(seeded_ids)
+        contenido = _xlsx_inc_v3([_row_inc_v3("R17", egg_origin="purchased", source_lot_code="NO-EXISTE-INT")])
+        _, _, errores = await _errores(http_client, auth_headers, "hatchery", contenido, 65)
+>       assert errores is not None
+E       assert None is not None
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:184: AssertionError
+_______________ test_r18_internal_mantiene_validacion_source_lot _______________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzksInR5cGUiOiJhY2Nlc3MifQ.RY4OOTVOaIrpr2ThDFKBEp2Nk-cGPSyk1CoFVH9unN0'}
+http_client = <httpx.AsyncClient object at 0x7f63d2635e10>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_r18_internal_mantiene_validacion_source_lot(auth_headers, http_client, seeded_ids):
+        """Huevo propio (`internal`): el lote fuente SÍ se valida y su ausencia es `MASTER_NOT_FOUND`."""
+        await preparar(seeded_ids)
+        contenido = _xlsx_inc_v3([_row_inc_v3("R18", egg_origin="internal", source_lot_code="NO-EXISTE-INT")])
+        _, _, errores = await _errores(http_client, auth_headers, "hatchery", contenido, 66)
+>       assert errores is not None
+E       assert None is not None
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:194: AssertionError
+______________________ test_r19_apply_persiste_egg_origin ______________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDQ4MzksInR5cGUiOiJhY2Nlc3MifQ.RY4OOTVOaIrpr2ThDFKBEp2Nk-cGPSyk1CoFVH9unN0'}
+http_client = <httpx.AsyncClient object at 0x7f63d266ee10>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_r19_apply_persiste_egg_origin(auth_headers, http_client, seeded_ids):
+        """Al aplicar, el `egg_origin` de la fila queda persistido en la apertura de incubación."""
+        await preparar(seeded_ids)
+        contenido = _xlsx_inc_v3([_row_inc_v3("R19", egg_origin="purchased", source_lot_code=None)])
+        batch_id = await crear_batch(http_client, auth_headers, "hatchery", corte(67))
+        r = await subir(http_client, auth_headers, batch_id, contenido)
+>       assert r.status_code == 200, r.text
+E       AssertionError: {"detail":"TEMPLATE_VERSION_UNSUPPORTED: Versión de plantilla no soportada: 'v3' (soportadas: ['v2'])."}
+E       assert 422 == 200
+E        +  where 422 = <Response [422 Unprocessable Entity]>.status_code
+
+tests/test_cutover_v2_keyuser_s01_red_db.py:205: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_v2_keyuser_s01_red_db.py::test_r6_genetic_line_interna_valida_resuelve
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+tests/test_cutover_v2_keyuser_s01_red_db.py::test_r17_purchased_no_exige_lote_interno
+tests/test_cutover_v2_keyuser_s01_red_db.py::test_r18_internal_mantiene_validacion_source_lot
+tests/test_cutover_v2_keyuser_s01_red_db.py::test_r19_apply_persiste_egg_origin
+  /home/maria/Proyectos/GlobalAvicola/backend/app/cutover/router.py:69: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await CutoverService(db, current_user).subir_y_validar(
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_r8_raza_fuera_de_linea_rechaza
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_genetic_line_inexistente_codigo_propio
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_breed_inexistente_codigo_propio
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_r9_catalogos_source_clasificacion
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_r17_purchased_no_exige_lote_interno
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_r18_internal_mantiene_validacion_source_lot
+FAILED tests/test_cutover_v2_keyuser_s01_red_db.py::test_r19_apply_persiste_egg_origin
+7 failed, 4 passed, 4 warnings in 5.68s

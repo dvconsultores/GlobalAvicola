@@ -1,0 +1,418 @@
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=f1a2b3c4d5e6 · head en código=f1a2b3c4d5e6
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+F.F...F...F...F...F......................F...F......................F... [ 94%]
+.FF.                                                                     [100%]
+=================================== FAILURES ===================================
+__________________ test_registry_cerrado_cuatro_contratos_v2 ___________________
+
+    def test_registry_cerrado_cuatro_contratos_v2():
+        assert set(CONTRACTS) == {"grandparent", "breeder", "hatchery", "broiler"}
+        for bu, c in CONTRACTS.items():
+>           assert c.version == "v2" and c.schema_id == SCHEMA_IDS[bu]
+E           AssertionError: assert ('v3' == 'v2'
+E             
+E             - v2
+E             + v3)
+
+tests/test_cutover_v2_contracts.py:51: AssertionError
+_______________________ test_campos_obligatorios_por_bu ________________________
+
+    def test_campos_obligatorios_por_bu():
+>       assert set(CONTRACTS["breeder"].required_fields) == {"legacy_lot_code", "farm_code", "productive_phase_code",
+                                                             "real_start_date", "live_males", "live_females"}
+E       AssertionError: assert {'farm_code',...e_males', ...} == {'farm_code',...l_start_date'}
+E         
+E         Extra items in the left set:
+E         'historical_mortality_males'
+E         'historical_mortality_females'
+E         Use -v to get more diff
+
+tests/test_cutover_v2_contracts.py:71: AssertionError
+_____________________ test_xlsx_positivo_por_bu[hatchery] ______________________
+
+bu = 'hatchery'
+
+    @pytest.mark.parametrize("bu", ["grandparent", "breeder", "hatchery", "broiler"])
+    def test_xlsx_positivo_por_bu(bu):
+        r = _parse(bu, xlsx_v2(bu, FILAS[bu], company_id=EMPRESA))
+>       assert (r["source_type"], r["template_version"], r["business_unit"], r["company"]) == ("XLSX", "v2", bu, EMPRESA)
+E       AssertionError: assert ('XLSX', 'v3', 'hatchery', 1) == ('XLSX', 'v2', 'hatchery', 1)
+E         
+E         At index 1 diff: 'v3' != 'v2'
+E         Use -v to get more diff
+
+tests/test_cutover_v2_contracts.py:94: AssertionError
+______________________ test_csv_positivo_por_bu[hatchery] ______________________
+
+bu = 'hatchery'
+
+    @pytest.mark.parametrize("bu", ["grandparent", "breeder", "hatchery", "broiler"])
+    def test_csv_positivo_por_bu(bu):
+>       r = _parse(bu, csv_v2(bu, FILAS[bu]), "corte.csv")
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_cutover_v2_contracts.py:103: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_cutover_v2_contracts.py:37: in _parse
+    return parse_cutover_file(contenido, nombre, contrato=contrato(bu), **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+content = b'\xef\xbb\xbflegacy_lot_code;existing_lot_code;hatchery_code;incubator_name;hatcher_name;source_lot_code;generation;e...C;CUT2-INCUBADORA-1;CUT2-NACEDORA-1;;breeder;internal;2026-06-24;2026-06-26;2026-07-17;10000;9000;0;100;0;0;LEGACY;;\n'
+filename = 'corte.csv'
+contrato = TemplateContract(business_unit='hatchery', schema_id='CUTOVER_HATCHERY_V3', fields=(FieldSpec(name='legacy_lot_code', ...ggs_received', 'generation', 'eggs_transferred', 'hatcher_name', 'hatchery_code', 'chicks_hatched', 'incubator_name'}))
+template_version = None
+
+    def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContract,
+                           template_version: Optional[str] = None) -> dict:
+        """Parsea XLSX o CSV contra el contrato de la BU del batch.
+    
+        `template_version` solo se usa para CSV (sin hoja Meta): la fija el endpoint (`?template_version=`, por
+        defecto `v2`). Para XLSX la versión viaja en `Meta`.
+        """
+        if not content:
+            raise CutoverParseError("INVALID_FILE", "El archivo está vacío.")
+        if len(content) > LIMITE_BYTES:
+            raise CutoverParseError("FILE_TOO_LARGE", f"El archivo supera el máximo de {LIMITE_BYTES // (1024 * 1024)} MB.")
+        ext = _extension(filename)
+        if ext == "xlsm":
+            raise CutoverParseError("MACRO_NOT_ALLOWED", "Los libros con macros (.xlsm) no se aceptan; use .xlsx o .csv.")
+        if ext not in ("xlsx", "csv"):
+            raise CutoverParseError("UNSUPPORTED_EXTENSION", f"Extensión '.{ext}' no soportada: use .xlsx o .csv.")
+    
+        if ext == "xlsx":
+            meta, cabecera, filas = _leer_xlsx(content)
+            version = _texto(meta.get("template_version"))
+            business_unit = _texto(meta.get("business_unit"))
+            schema_id = _texto(meta.get("schema_id"))
+            company = meta.get("company")
+            source_type = "XLSX"
+        else:
+            if content.startswith(b"PK"):
+                raise CutoverParseError("MIME_MISMATCH", "El archivo tiene extensión .csv pero su contenido es un libro XLSX.")
+            cabecera, filas = _leer_csv(content)
+            version = template_version or TEMPLATE_VERSION
+            business_unit = contrato.business_unit
+            schema_id = contrato.schema_id
+            company = None
+            source_type = "CSV"
+    
+        if version in RETIRED_TEMPLATE_VERSIONS:
+            raise CutoverParseError(
+                "TEMPLATE_VERSION_UNSUPPORTED",
+                f"La plantilla {version} está retirada: descargue la plantilla {TEMPLATE_VERSION} de {contrato.business_unit} y vuelva a cargar.")
+        if version not in SUPPORTED_TEMPLATE_VERSIONS:
+            raise CutoverParseError("TEMPLATE_VERSION_UNSUPPORTED",
+                                    f"Versión de plantilla no soportada: {version!r} (soportadas: {sorted(SUPPORTED_TEMPLATE_VERSIONS)}).")
+        if business_unit == contrato.business_unit and version != contrato.version:
+>           raise CutoverParseError(
+                "TEMPLATE_VERSION_UNSUPPORTED",
+                f"La plantilla de {contrato.business_unit} vigente es {contrato.version}: descargue la plantilla "
+                f"{contrato.version} de {contrato.business_unit} y vuelva a cargar.")
+E           app.cutover.parser.CutoverParseError: TEMPLATE_VERSION_UNSUPPORTED: La plantilla de hatchery vigente es v3: descargue la plantilla v3 de hatchery y vuelva a cargar.
+
+app/cutover/parser.py:329: CutoverParseError
+_______________________ test_paridad_xlsx_csv[hatchery] ________________________
+
+bu = 'hatchery'
+
+    @pytest.mark.parametrize("bu", ["grandparent", "breeder", "hatchery", "broiler"])
+    def test_paridad_xlsx_csv(bu):
+        x = _parse(bu, xlsx_v2(bu, FILAS[bu], company_id=EMPRESA))["rows"]
+>       c = _parse(bu, csv_v2(bu, FILAS[bu]), "corte.csv")["rows"]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/test_cutover_v2_contracts.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/test_cutover_v2_contracts.py:37: in _parse
+    return parse_cutover_file(contenido, nombre, contrato=contrato(bu), **kw)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+content = b'\xef\xbb\xbflegacy_lot_code;existing_lot_code;hatchery_code;incubator_name;hatcher_name;source_lot_code;generation;e...C;CUT2-INCUBADORA-1;CUT2-NACEDORA-1;;breeder;internal;2026-06-24;2026-06-26;2026-07-17;10000;9000;0;100;0;0;LEGACY;;\n'
+filename = 'corte.csv'
+contrato = TemplateContract(business_unit='hatchery', schema_id='CUTOVER_HATCHERY_V3', fields=(FieldSpec(name='legacy_lot_code', ...ggs_received', 'generation', 'eggs_transferred', 'hatcher_name', 'hatchery_code', 'chicks_hatched', 'incubator_name'}))
+template_version = None
+
+    def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContract,
+                           template_version: Optional[str] = None) -> dict:
+        """Parsea XLSX o CSV contra el contrato de la BU del batch.
+    
+        `template_version` solo se usa para CSV (sin hoja Meta): la fija el endpoint (`?template_version=`, por
+        defecto `v2`). Para XLSX la versión viaja en `Meta`.
+        """
+        if not content:
+            raise CutoverParseError("INVALID_FILE", "El archivo está vacío.")
+        if len(content) > LIMITE_BYTES:
+            raise CutoverParseError("FILE_TOO_LARGE", f"El archivo supera el máximo de {LIMITE_BYTES // (1024 * 1024)} MB.")
+        ext = _extension(filename)
+        if ext == "xlsm":
+            raise CutoverParseError("MACRO_NOT_ALLOWED", "Los libros con macros (.xlsm) no se aceptan; use .xlsx o .csv.")
+        if ext not in ("xlsx", "csv"):
+            raise CutoverParseError("UNSUPPORTED_EXTENSION", f"Extensión '.{ext}' no soportada: use .xlsx o .csv.")
+    
+        if ext == "xlsx":
+            meta, cabecera, filas = _leer_xlsx(content)
+            version = _texto(meta.get("template_version"))
+            business_unit = _texto(meta.get("business_unit"))
+            schema_id = _texto(meta.get("schema_id"))
+            company = meta.get("company")
+            source_type = "XLSX"
+        else:
+            if content.startswith(b"PK"):
+                raise CutoverParseError("MIME_MISMATCH", "El archivo tiene extensión .csv pero su contenido es un libro XLSX.")
+            cabecera, filas = _leer_csv(content)
+            version = template_version or TEMPLATE_VERSION
+            business_unit = contrato.business_unit
+            schema_id = contrato.schema_id
+            company = None
+            source_type = "CSV"
+    
+        if version in RETIRED_TEMPLATE_VERSIONS:
+            raise CutoverParseError(
+                "TEMPLATE_VERSION_UNSUPPORTED",
+                f"La plantilla {version} está retirada: descargue la plantilla {TEMPLATE_VERSION} de {contrato.business_unit} y vuelva a cargar.")
+        if version not in SUPPORTED_TEMPLATE_VERSIONS:
+            raise CutoverParseError("TEMPLATE_VERSION_UNSUPPORTED",
+                                    f"Versión de plantilla no soportada: {version!r} (soportadas: {sorted(SUPPORTED_TEMPLATE_VERSIONS)}).")
+        if business_unit == contrato.business_unit and version != contrato.version:
+>           raise CutoverParseError(
+                "TEMPLATE_VERSION_UNSUPPORTED",
+                f"La plantilla de {contrato.business_unit} vigente es {contrato.version}: descargue la plantilla "
+                f"{contrato.version} de {contrato.business_unit} y vuelva a cargar.")
+E           app.cutover.parser.CutoverParseError: TEMPLATE_VERSION_UNSUPPORTED: La plantilla de hatchery vigente es v3: descargue la plantilla v3 de hatchery y vuelva a cargar.
+
+app/cutover/parser.py:329: CutoverParseError
+___________ test_vacio_es_unknown_cero_es_known_na_es_not_applicable ___________
+
+    def test_vacio_es_unknown_cero_es_known_na_es_not_applicable():
+        filas = [fila_reproductoras("breeder", "SEM", fase="CRIA", real_start_date=iso_days_ago(70),
+                                    historical_mortality_males=None, historical_culls_males=0,
+                                    accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="n/a",
+                                    accumulated_feed_kg=None)]
+        n = _parse("breeder", xlsx_v2("breeder", filas, company_id=EMPRESA))["rows"][0]["normalized"]
+>       assert n["historical_mortality_males"] == {"value": None, "status": "UNKNOWN"}
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       KeyError: 'historical_mortality_males'
+
+tests/test_cutover_v2_contracts.py:136: KeyError
+____________________ test_maestros_inexistentes_e_inactivos ____________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDU1NjEsInR5cGUiOiJhY2Nlc3MifQ.hD7FB0fY7unK6zljw5A9dgg2e7FVkWmQZscOdxfGHv4'}
+http_client = <httpx.AsyncClient object at 0x7ff23ab7aed0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_maestros_inexistentes_e_inactivos(auth_headers, http_client, seeded_ids):
+        await preparar(seeded_ids)
+        from app.masters.models import Farm
+    
+        async with database.async_session() as s:
+            if (await s.execute(select(Farm).where(Farm.code == "CUT2-OFF"))).scalars().first() is None:
+                s.add(Farm(company_id=seeded_ids["company_id"], code="CUT2-OFF", name="Inactiva", is_active=False))
+                await s.commit()
+        filas = [
+            fila_reproductoras("breeder", "V-1", farm_code="NO-EXISTE"),
+            fila_reproductoras("breeder", "V-2", farm_code="CUT2-OFF"),
+            fila_reproductoras("breeder", "V-3", house_name="GALPON-FANTASMA"),
+            fila_reproductoras("breeder", "V-4", productive_phase_code="FASE-X"),
+            fila_reproductoras("breeder", "V-5", genetic_line_code="LINEA-X", breed_name="RAZA-X"),
+        ]
+        cuerpo, errores = await _errores(http_client, auth_headers, "breeder", filas, seeded_ids["company_id"], 60)
+        assert cuerpo["invalid_rows"] == 5
+>       assert errores == [
+            (2, "farm_code", "MASTER_NOT_FOUND"), (3, "farm_code", "MASTER_INACTIVE"), (4, "house_name", "MASTER_NOT_FOUND"),
+            (5, "productive_phase_code", "MASTER_NOT_FOUND"), (6, "breed_name", "MASTER_NOT_FOUND"),
+            (6, "genetic_line_code", "MASTER_NOT_FOUND"),
+        ]
+E       AssertionError: assert [(2, 'farm_co...E_NOT_FOUND')] == [(2, 'farm_co...R_NOT_FOUND')]
+E         
+E         At index 4 diff: (6, 'breed_name', 'BREED_NOT_FOUND') != (6, 'breed_name', 'MASTER_NOT_FOUND')
+E         Use -v to get more diff
+
+tests/test_cutover_v2_validation.py:51: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+______________________ test_consistencia_sin_tolerancias _______________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDU1NjMsInR5cGUiOiJhY2Nlc3MifQ.dSFK9qiD-s_J1jMY3p5lH_KXiXz48cwZSqHwsFC6h9g'}
+http_client = <httpx.AsyncClient object at 0x7ff23a4c0510>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_ids):
+        await preparar(seeded_ids)
+        filas = [
+            # alojadas − mortalidad − descartes ≠ vivas (machos): 1100 − 50 − 0 = 1050 ≠ 1000
+            fila_reproductoras("breeder", "V-C1", birds_placed_males=1100, birds_placed_females=9450),
+            # con una pieza UNKNOWN la ecuación no se evalúa (no se inventa certeza)
+            fila_reproductoras("breeder", "V-C2", birds_placed_males=1100, birds_placed_females=None,
+                               historical_mortality_males=None),
+            # huevos a incubadora > producidos
+            fila_reproductoras("breeder", "V-C3", accumulated_egg_production=1000, accumulated_eggs_to_hatchery=1001),
+        ]
+        _, errores = await _errores(http_client, auth_headers, "breeder", filas, seeded_ids["company_id"], 64)
+>       assert errores == [(2, "live_males", "CONSISTENCY_MISMATCH"), (4, "accumulated_eggs_to_hatchery", "CONSISTENCY_MISMATCH")]
+E       AssertionError: assert [(2, 'live_ma...CY_MISMATCH')] == [(2, 'live_ma...CY_MISMATCH')]
+E         
+E         At index 1 diff: (3, 'historical_mortality_males', 'REQUIRED_FIELD_MISSING') != (4, 'accumulated_eggs_to_hatchery', 'CONSISTENCY_MISMATCH')
+E         Left contains one more item: (4, 'accumulated_eggs_to_hatchery', 'CONSISTENCY_MISMATCH')
+E         Use -v to get more diff
+
+tests/test_cutover_v2_validation.py:131: AssertionError
+___________________ test_red_02_plantilla_por_bu_no_generica ___________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDU1NzYsInR5cGUiOiJhY2Nlc3MifQ.MtZxRccBF2csLOGV7UHi_L8yLfABqLlQ7RMxPB_gHVI'}
+http_client = <httpx.AsyncClient object at 0x7ff239e49a90>
+
+    @pytest.mark.asyncio
+    async def test_red_02_plantilla_por_bu_no_generica(auth_headers, http_client):
+        """Cuatro plantillas distintas, versión v2, con `Instrucciones`, `Meta`, `Datos`, `Catalogos`."""
+        cabeceras: dict[str, list[str]] = {}
+        for bu in ("grandparent", "breeder", "hatchery", "broiler"):
+            r = await http_client.get(f"/api/v1/cutover-templates/{bu}", headers=auth_headers)
+            assert r.status_code == 200, r.text
+>           assert f"cutover_template_{bu}_v2.xlsx" in r.headers.get("content-disposition", "")
+E           assert 'cutover_template_hatchery_v2.xlsx' in 'attachment; filename="cutover_template_hatchery_v3.xlsx"'
+E            +  where 'attachment; filename="cutover_template_hatchery_v3.xlsx"' = get('content-disposition', '')
+E            +    where get = Headers({'content-disposition': 'attachment; filename="cutover_template_hatchery_v3.xlsx"', 'content-length': '10553',...rmissions-policy': 'camera=(), microphone=(), geolocation=()', 'cache-control': 'no-store, no-cache, must-revalidate'}).get
+E            +      where Headers({'content-disposition': 'attachment; filename="cutover_template_hatchery_v3.xlsx"', 'content-length': '10553',...rmissions-policy': 'camera=(), microphone=(), geolocation=()', 'cache-control': 'no-store, no-cache, must-revalidate'}) = <Response [200 OK]>.headers
+
+tests/test_cutover_v2_red.py:102: AssertionError
+_________________ test_red_07_unknown_cero_y_na_se_distinguen __________________
+
+auth_headers = {'Authorization': 'Bearer <REDACTED_TEST_JWT>..joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTI3MDU1NzksInR5cGUiOiJhY2Nlc3MifQ.iiOLqujZmSqvtTosNzb8nsg2RCHCSRJMTL2HrVe_Lzc'}
+http_client = <httpx.AsyncClient object at 0x7ff23a0005d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_red_07_unknown_cero_y_na_se_distinguen(auth_headers, http_client, seeded_ids):
+        """vacío ⇒ UNKNOWN · 0 ⇒ KNOWN 0 · N/A ⇒ NOT_APPLICABLE, en staging, opening y reconciliación.
+        N/A en un campo obligatorio ⇒ error, jamás 0."""
+        ids = await preparar(seeded_ids)
+        empresa = seeded_ids["company_id"]
+        c = corte(47)
+        batch_id = await crear_batch(http_client, auth_headers, "breeder", c)
+        filas = [fila_reproductoras("breeder", "CUT2-SEM-1", fase="CRIA", real_start_date=iso_days_ago(70),
+                                    historical_mortality_males=None, historical_mortality_females=None,
+                                    historical_culls_males=0, historical_culls_females=0,
+                                    accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="N/A",
+                                    accumulated_feed_kg=None)]
+        r = await subir(http_client, auth_headers, batch_id, xlsx_v2("breeder", filas, company_id=empresa))
+>       assert r.status_code == 200 and r.json()["status"] == "validated", r.text
+E       AssertionError: {"id":37,"company_id":1,"business_unit":"breeder","cutover_datetime":"2026-09-05T00:00:00Z","source_type":"XLSX","source_filename":"corte.xlsx","source_checksum_sha256":"bf21a79fe7b6a3a1aa2a2f1f31aa2dedc141070a61e6023cf2b73c274659a7dd","template_version":"v2","status":"validating","total_rows":1,"valid_rows":0,"invalid_rows":1,"source_system":null,"source_reference":null,"observations":null,"created_by_id":1,"created_at":"2026-10-22T21:16:19.274412Z","validated_at":null,"submitted_at":null,"approved_by_id":null,"approved_at":null,"applied_by_id":null,"applied_at":null,"rejected_at":null,"rejection_reason":null}
+E       assert (200 == 200 and 'validating' == 'validated'
+E        +  where 200 = <Response [200 OK]>.status_code
+E         
+E         - validated
+E         + validating)
+
+tests/test_cutover_v2_red.py:278: AssertionError
+_____________ test_red_08_registry_cerrado_sin_campos_sin_destino ______________
+
+    def test_red_08_registry_cerrado_sin_campos_sin_destino():
+        """`UNMAPPED_TEMPLATE_FIELDS = 0` y `REQUIRED_DOMAIN_FIELDS_MISSING_FROM_TEMPLATE = 0`."""
+        from app.cutover.contracts import CONTRACTS, campos_dominio_requeridos, lineage
+    
+        assert set(CONTRACTS) == {"grandparent", "breeder", "hatchery", "broiler"}
+        for bu, contrato in CONTRACTS.items():
+            assert contrato.schema_id == SCHEMA_IDS[bu]
+>           assert contrato.version == "v2"
+E           AssertionError: assert 'v3' == 'v2'
+E             
+E             - v2
+E             + v3
+
+tests/test_cutover_v2_red.py:327: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_v2_validation.py::test_maestros_inexistentes_e_inactivos
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+tests/test_cutover_v2_validation.py::test_plantilla_de_otra_empresa_otra_bu_y_otra_version
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+tests/test_cutover_v2_red.py::test_red_04_csv_se_descarga_y_se_carga_como_xlsx
+  /home/maria/Proyectos/GlobalAvicola/backend/app/cutover/router.py:69: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await CutoverService(db, current_user).subir_y_validar(
+
+tests/test_cutover_v2_red.py::test_red_01_fallo_en_vivo_plantilla_vacia_errores_invisibles_y_batch_perdido
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/fastapi/routing.py:344: StarletteDeprecationWarning: 'HTTP_422_UNPROCESSABLE_ENTITY' is deprecated. Use 'HTTP_422_UNPROCESSABLE_CONTENT' instead.
+    return await dependant.call(**values)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_v2_contracts.py::test_registry_cerrado_cuatro_contratos_v2
+FAILED tests/test_cutover_v2_contracts.py::test_campos_obligatorios_por_bu - ...
+FAILED tests/test_cutover_v2_contracts.py::test_xlsx_positivo_por_bu[hatchery]
+FAILED tests/test_cutover_v2_contracts.py::test_csv_positivo_por_bu[hatchery]
+FAILED tests/test_cutover_v2_contracts.py::test_paridad_xlsx_csv[hatchery] - ...
+FAILED tests/test_cutover_v2_contracts.py::test_vacio_es_unknown_cero_es_known_na_es_not_applicable
+FAILED tests/test_cutover_v2_validation.py::test_maestros_inexistentes_e_inactivos
+FAILED tests/test_cutover_v2_validation.py::test_consistencia_sin_tolerancias
+FAILED tests/test_cutover_v2_red.py::test_red_02_plantilla_por_bu_no_generica
+FAILED tests/test_cutover_v2_red.py::test_red_07_unknown_cero_y_na_se_distinguen
+FAILED tests/test_cutover_v2_red.py::test_red_08_registry_cerrado_sin_campos_sin_destino
+11 failed, 65 passed, 5 warnings in 20.70s
