@@ -26,9 +26,12 @@ TEMPLATE_VERSION = "v2"
 SCHEMA_IDS = {
     "grandparent": "CUTOVER_GRANDPARENT_V2",
     "breeder": "CUTOVER_BREEDER_V2",
-    "hatchery": "CUTOVER_HATCHERY_V2",
+    "hatchery": "CUTOVER_HATCHERY_V3",
     "broiler": "CUTOVER_BROILER_V2",
 }
+
+#: SPEC 009: la plantilla de incubadora es v3; el resto sigue en v2.
+TEMPLATE_VERSIONS = {"grandparent": "v2", "breeder": "v2", "hatchery": "v3", "broiler": "v2"}
 
 _IDENTIFICACION_AVES = (
     "legacy_lot_code", "existing_lot_code", "farm_code", "house_name", "area_code",
@@ -52,7 +55,7 @@ COLUMNAS_ENGORDE = _IDENTIFICACION_AVES + (
 
 COLUMNAS_INCUBADORA = (
     "legacy_lot_code", "existing_lot_code", "hatchery_code", "incubator_name", "hatcher_name",
-    "source_lot_code", "generation", "reception_date", "set_date", "expected_hatch_date",
+    "source_lot_code", "generation", "egg_origin", "reception_date", "set_date", "expected_hatch_date",
     "eggs_received", "eggs_set", "eggs_transferred", "eggs_discarded",
     "chicks_hatched", "chicks_available",
 ) + _PROCEDENCIA
@@ -95,9 +98,10 @@ def fila(bu: str, **valores: Any) -> list:
     return [_celda(valores.get(c)) for c in COLUMNAS[bu]]
 
 
-def xlsx_v2(bu: str, filas: Iterable[list], *, company_id: int, template_version: str = TEMPLATE_VERSION,
+def xlsx_v2(bu: str, filas: Iterable[list], *, company_id: int, template_version: Optional[str] = None,
             cutover_datetime: Optional[str] = None, columnas: Optional[tuple] = None,
-            business_unit: Optional[str] = None, con_catalogos: bool = True) -> bytes:
+            business_unit: Optional[str] = None, con_catalogos: bool = True,
+            schema_id: Optional[str] = None) -> bytes:
     from openpyxl import Workbook
 
     wb = Workbook()
@@ -106,8 +110,9 @@ def xlsx_v2(bu: str, filas: Iterable[list], *, company_id: int, template_version
     instrucciones.append(["Plantilla de prueba SPEC 006"])
     meta = wb.create_sheet("Meta")
     meta.append(["key", "value"])
-    meta.append(["template_version", template_version])
-    meta.append(["schema_id", SCHEMA_IDS.get(bu, "")])
+    version_efectiva = template_version or TEMPLATE_VERSIONS.get(bu, TEMPLATE_VERSION)
+    meta.append(["template_version", version_efectiva])
+    meta.append(["schema_id", schema_id if schema_id is not None else SCHEMA_IDS.get(bu, "")])
     meta.append(["company", company_id])
     meta.append(["business_unit", business_unit or bu])
     meta.append(["cutover_datetime", cutover_datetime or ""])
@@ -286,7 +291,7 @@ def fila_engorde(ref: str, **extra: Any) -> list:
 
 def fila_incubadora(ref: str, **extra: Any) -> list:
     base = dict(legacy_lot_code=ref, hatchery_code=PLANTA, incubator_name=INCUBADORA, hatcher_name=NACEDORA,
-                generation="breeder", reception_date=iso_days_ago(120), set_date=iso_days_ago(118),
+                generation="breeder", egg_origin="internal", reception_date=iso_days_ago(120), set_date=iso_days_ago(118),
                 expected_hatch_date=iso_days_ago(97), eggs_received=10000, eggs_set=9000,
                 eggs_transferred=0, eggs_discarded=100, chicks_hatched=0, chicks_available=0,
                 source_system="LEGACY")

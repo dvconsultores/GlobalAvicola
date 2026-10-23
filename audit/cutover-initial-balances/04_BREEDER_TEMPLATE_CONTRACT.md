@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 04_BREEDER_TEMPLATE_CONTRACT
 
-Fecha: 2026-10-15 · SPEC 006 · `schema_id = CUTOVER_BREEDER_V2` · versión `v2` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-10-22 · SPEC 006 · `schema_id = CUTOVER_BREEDER_V2` · versión `v2` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|
@@ -8,7 +8,7 @@ Fecha: 2026-10-15 · SPEC 006 · `schema_id = CUTOVER_BREEDER_V2` · versión `v
 | Fases compatibles | `CRIA`, `PROD` |
 | Fecha que fija `lots.start_date` | `real_start_date` |
 | Columnas (`Datos`) | 26 |
-| Obligatorias | `legacy_lot_code`, `farm_code`, `productive_phase_code`, `real_start_date`, `live_males`, `live_females` |
+| Obligatorias | `legacy_lot_code`, `farm_code`, `productive_phase_code`, `real_start_date`, `live_males`, `live_females`, `historical_mortality_males`, `historical_mortality_females` |
 | Archivo | `cutover_template_breeder_v2.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_breeder_v2.csv` (solo cabecera, `;`) |
 | Preview destacado | `legacy_lot_code`, `productive_phase_code`, `farm_code`, `house_name`, `live_males`, `live_females`, `historical_mortality_males`, `historical_mortality_females`, `accumulated_feed_kg`, `current_avg_weight_g`, `accumulated_egg_production` |
 
@@ -33,8 +33,8 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 | `live_females` | int | aves | sí | no | no |  |  | Hembras vivas al momento del corte. | `opening_balances.initial_female_count` |
 | `birds_placed_males` | int | aves | no | sí | no |  |  | Machos alojados originalmente (histórico). | `opening_balances.placed_male_count` |
 | `birds_placed_females` | int | aves | no | sí | no |  |  | Hembras alojadas originalmente (histórico). | `opening_balances.placed_female_count` |
-| `historical_mortality_males` | int | aves | no | sí | no |  |  | Mortalidad acumulada de machos ANTES del corte. | `opening_balances.accumulated_mortality_male` |
-| `historical_mortality_females` | int | aves | no | sí | no |  |  | Mortalidad acumulada de hembras ANTES del corte. | `opening_balances.accumulated_mortality_female` |
+| `historical_mortality_males` | int | aves | sí | no | no |  |  | Mortalidad acumulada de machos ANTES del corte. | `opening_balances.accumulated_mortality_male` |
+| `historical_mortality_females` | int | aves | sí | no | no |  |  | Mortalidad acumulada de hembras ANTES del corte. | `opening_balances.accumulated_mortality_female` |
 | `historical_culls_males` | int | aves | no | sí | no |  |  | Descartes acumulados de machos antes del corte. | `opening_balances.accumulated_culls_male` |
 | `historical_culls_females` | int | aves | no | sí | no |  |  | Descartes acumulados de hembras antes del corte. | `opening_balances.accumulated_culls_female` |
 | `accumulated_feed_kg` | decimal | kg | no | sí | no |  |  | Alimento acumulado consumido antes del corte. | `opening_balances.accumulated_feed_kg` |

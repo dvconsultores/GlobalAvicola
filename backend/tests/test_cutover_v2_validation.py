@@ -50,8 +50,8 @@ async def test_maestros_inexistentes_e_inactivos(auth_headers, http_client, seed
     assert cuerpo["invalid_rows"] == 5
     assert errores == [
         (2, "farm_code", "MASTER_NOT_FOUND"), (3, "farm_code", "MASTER_INACTIVE"), (4, "house_name", "MASTER_NOT_FOUND"),
-        (5, "productive_phase_code", "MASTER_NOT_FOUND"), (6, "breed_name", "MASTER_NOT_FOUND"),
-        (6, "genetic_line_code", "MASTER_NOT_FOUND"),
+        (5, "productive_phase_code", "MASTER_NOT_FOUND"), (6, "breed_name", "BREED_NOT_FOUND"),
+        (6, "genetic_line_code", "GENETIC_LINE_NOT_FOUND"),
     ]
 
 
@@ -123,7 +123,7 @@ async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_id
         fila_reproductoras("breeder", "V-C1", birds_placed_males=1100, birds_placed_females=9450),
         # con una pieza UNKNOWN la ecuación no se evalúa (no se inventa certeza)
         fila_reproductoras("breeder", "V-C2", birds_placed_males=1100, birds_placed_females=None,
-                           historical_mortality_males=None),
+                           historical_culls_males=None),
         # huevos a incubadora > producidos
         fila_reproductoras("breeder", "V-C3", accumulated_egg_production=1000, accumulated_eggs_to_hatchery=1001),
     ]

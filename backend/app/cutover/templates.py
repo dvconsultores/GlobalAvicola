@@ -7,7 +7,7 @@ al batch, nunca a un selector), y `Meta.cutover_datetime` queda rellenado.
 XLSX: hojas `Instrucciones` (una fila por campo: significado, obligatorio, tipo, unidad,
 formato, ejemplo, valores, UNKNOWN, N/A, destino), `Meta` (`template_version`, `schema_id`,
 `company`, `business_unit`, `generated_at`, `cutover_datetime`), `Datos` (cabecera exacta del
-contrato) y `Catalogos` (`catalog, code, description, status, parent_code`) construida para la
+contrato) y `Catalogos` (`catalog, code, description, status, parent_code, source`) construida para la
 empresa efectiva y la BU, solo con maestros activos. CSV: solo la cabecera de `Datos`.
 
 Gate: `cutover:create` (el mismo que crear el batch).
@@ -29,7 +29,7 @@ from ..lots.models import OpeningBalance
 from ..masters.models import (Area, Breed, Farm, GeneticLine, Hatcher, Hatchery, House, Incubator, Lot,
                               LotStatus, ProductivePhase)
 from ..transaction import RutaTransaccional
-from .contracts import CONTRACTS, UNIDADES, TemplateContract, contrato
+from .contracts import CONTRACTS, UNIDADES, TemplateContract, catalog_source, contrato
 from .models import CutoverBatch
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/cutover-templates", tags=["Cutover"])
@@ -127,7 +127,8 @@ async def catalogos(db: AsyncSession, company_id: int, c: TemplateContract) -> l
         Lot.id.not_in(con_opening)).order_by(Lot.lot_code))).scalars().all()
     for lote in candidatos:
         filas.append(["lot", lote.lot_code, f"lote existente sin apertura · legado {lote.legacy_lot_code or '-'}", activo, ""])
-    return filas
+    # SPEC 009: 6.ª columna `source` (gobernanza del maestro: SAP vs Global Avícola) por categoría.
+    return [row + [catalog_source(row[0])] for row in filas]
 
 
 def construir_plantilla_xlsx(c: TemplateContract, *, company_id: int, catalogo: list[list],
@@ -160,7 +161,7 @@ def construir_plantilla_xlsx(c: TemplateContract, *, company_id: int, catalogo: 
         datos.column_dimensions[datos.cell(row=1, column=i).column_letter].width = max(14, min(32, len(f.name) + 2))
 
     cat = wb.create_sheet("Catalogos")
-    cat.append(["catalog", "code", "description", "status", "parent_code"])
+    cat.append(["catalog", "code", "description", "status", "parent_code", "source"])
     for fila in catalogo:
         cat.append(fila)
 
@@ -175,12 +176,13 @@ def construir_plantilla_csv(c: TemplateContract) -> bytes:
     return ("﻿" + buf.getvalue()).encode("utf-8")
 
 
-# Compatibilidad con llamadores previos (C9): plantilla v2 sin catálogos ni corte.
-def construir_plantilla(business_unit: str, company_id: int, template_version: str = "v2") -> bytes:
-    if template_version != "v2":
+# Compatibilidad con llamadores previos (C9): plantilla de la versión vigente del contrato, sin catálogos ni corte.
+def construir_plantilla(business_unit: str, company_id: int, template_version: Optional[str] = None) -> bytes:
+    c = contrato(business_unit)
+    if template_version is not None and template_version != c.version:
         raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                             detail=f"TEMPLATE_VERSION_UNSUPPORTED: {template_version}")
-    return construir_plantilla_xlsx(contrato(business_unit), company_id=company_id, catalogo=[])
+    return construir_plantilla_xlsx(c, company_id=company_id, catalogo=[])
 
 
 @router.get("/{business_unit}")

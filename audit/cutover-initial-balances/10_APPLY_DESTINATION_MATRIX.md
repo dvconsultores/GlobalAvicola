@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 10_APPLY_DESTINATION_MATRIX
 
-Fecha: 2026-10-15 · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; el apply vive en `CutoverService.aplicar` (`service.py`) con un builder por BU (`_opening_reproductoras`, `_opening_engorde`, `_opening_incubadora` + `_hatchery_opening`, `_lote`, `_lot_phase`).
+Fecha: 2026-10-22 · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; el apply vive en `CutoverService.aplicar` (`service.py`) con un builder por BU (`_opening_reproductoras`, `_opening_engorde`, `_opening_incubadora` + `_hatchery_opening`, `_lote`, `_lot_phase`).
 
 ## Constantes del apply (todas las BU)
 
@@ -45,13 +45,13 @@ Fecha: 2026-10-15 · SPEC 006 · generado desde `backend/app/cutover/contracts.p
 | `lot_phases` | `phase_id` ← `productive_phase_code`<br>`start_date` ← `phase_start_date` |
 | `cutover_items` | `opening_state.notes` ← `notes` |
 
-### `hatchery` · `CUTOVER_HATCHERY_V2`
+### `hatchery` · `CUTOVER_HATCHERY_V3`
 
 | Entidad | Columnas ← campo de plantilla |
 |---|---|
 | `lots` | `legacy_lot_code` ← `legacy_lot_code`<br>`lot_code` ← `legacy_lot_code`<br>`id` ← `existing_lot_code`<br>`hatchery_purpose` ← `generation`<br>`start_date` ← `reception_date`<br>`source_system` ← `source_system`<br>`source_reference` ← `source_reference` |
 | `opening_balances` | `legacy_lot_code` ← `legacy_lot_code`<br>`activation_date` ← `reception_date`<br>`accumulated_chicks_hatched` ← `chicks_hatched` (+`chicks_hatched_status`)<br>`initial_mixed_count` ← `chicks_available`<br>`source_system` ← `source_system`<br>`source_reference` ← `source_reference` |
-| `hatchery_openings` | `hatchery_id` ← `hatchery_code`<br>`incubator_id` ← `incubator_name`<br>`hatcher_id` ← `hatcher_name`<br>`source_lot_id` ← `source_lot_code`<br>`source_lot_reference` ← `source_lot_code`<br>`generation` ← `generation`<br>`reception_date` ← `reception_date`<br>`set_date` ← `set_date` (+`set_date_status`)<br>`expected_hatch_date` ← `expected_hatch_date` (+`expected_hatch_date_status`)<br>`eggs_received` ← `eggs_received` (+`eggs_received_status`)<br>`eggs_set` ← `eggs_set` (+`eggs_set_status`)<br>`eggs_transferred` ← `eggs_transferred` (+`eggs_transferred_status`)<br>`eggs_discarded` ← `eggs_discarded` (+`eggs_discarded_status`) |
+| `hatchery_openings` | `hatchery_id` ← `hatchery_code`<br>`incubator_id` ← `incubator_name`<br>`hatcher_id` ← `hatcher_name`<br>`source_lot_id` ← `source_lot_code`<br>`source_lot_reference` ← `source_lot_code`<br>`generation` ← `generation`<br>`egg_origin` ← `egg_origin`<br>`reception_date` ← `reception_date`<br>`set_date` ← `set_date` (+`set_date_status`)<br>`expected_hatch_date` ← `expected_hatch_date` (+`expected_hatch_date_status`)<br>`eggs_received` ← `eggs_received` (+`eggs_received_status`)<br>`eggs_set` ← `eggs_set` (+`eggs_set_status`)<br>`eggs_transferred` ← `eggs_transferred` (+`eggs_transferred_status`)<br>`eggs_discarded` ← `eggs_discarded` (+`eggs_discarded_status`) |
 | `cutover_items` | `opening_state.notes` ← `notes` |
 
 ## Garantías

@@ -16,9 +16,23 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 TEMPLATE_VERSION = "v2"
+HATCHERY_TEMPLATE_VERSION = "v3"  # SPEC 009: incubadora versionada por la columna nueva egg_origin.
 #: Versiones aceptadas por el parser. `v1` está **retirada** (Q6): no se reinterpreta.
-SUPPORTED_TEMPLATE_VERSIONS = frozenset({TEMPLATE_VERSION})
+SUPPORTED_TEMPLATE_VERSIONS = frozenset({TEMPLATE_VERSION, HATCHERY_TEMPLATE_VERSION})
 RETIRED_TEMPLATE_VERSIONS = frozenset({"v1"})
+
+#: SPEC 009 · procedencia (gobernanza) de cada categoría de la hoja `Catalogos`.
+SOURCE_SAP = "SAP"
+SOURCE_GLOBAL_AVICOLA = "GLOBAL_AVICOLA"
+#: farm/house están gobernadas por SAP vía el mapping canónico `sap_entity_mappings`
+#: (ENTITY_PLANT->farm_id, ENTITY_STORAGE_LOCATION->house_id). El resto es maestro interno GA.
+CATALOG_SOURCE = {"farm": SOURCE_SAP, "house": SOURCE_SAP}
+
+
+def catalog_source(catalog_key: str) -> str:
+    """Procedencia declarada de una categoría de `Catalogos` (SAP vs Global Avícola)."""
+    return CATALOG_SOURCE.get(catalog_key, SOURCE_GLOBAL_AVICOLA)
+
 
 UNIDADES = ("grandparent", "breeder", "hatchery", "broiler")
 
@@ -148,7 +162,9 @@ _PROCEDENCIA = (
               example="", targets=("cutover_items.opening_state.notes",), promotion="texto", consumer="—"),
 )
 
-_METRICAS_REPRODUCTORAS = (
+def _metricas_reproductoras(bu: str) -> tuple[FieldSpec, ...]:
+    _req = bu == "breeder"  # SPEC 009: mortalidad obligatoria solo en Reproductoras (breeder).
+    return (
     FieldSpec("live_males", "int", "Machos vivos al momento del corte.", required=True, metric=True, unit="aves", example="1000",
               targets=("opening_balances.initial_male_count",), promotion="saldo vivo (no se resta lo histórico, RC-08)",
               consumer="BR-01 mortalidad/descarte/salida, saldo de aves"),
@@ -159,10 +175,10 @@ _METRICAS_REPRODUCTORAS = (
               promotion="consistencia: alojadas − mortalidad − descartes = vivas (solo si todo KNOWN)", consumer="informe de lote"),
     FieldSpec("birds_placed_females", "int", "Hembras alojadas originalmente (histórico).", metric=True, unit="aves", example="9600",
               targets=("opening_balances.placed_female_count",), status_column="placed_status", promotion="ídem", consumer="informe de lote"),
-    FieldSpec("historical_mortality_males", "int", "Mortalidad acumulada de machos ANTES del corte.", metric=True, unit="aves", example="50",
+    FieldSpec("historical_mortality_males", "int", "Mortalidad acumulada de machos ANTES del corte.", required=_req, metric=True, unit="aves", example="50",
               targets=("opening_balances.accumulated_mortality_male",), status_column="mortality_status",
               promotion="histórico; no se resta al saldo", consumer="lifetime mortalidad, KPI"),
-    FieldSpec("historical_mortality_females", "int", "Mortalidad acumulada de hembras ANTES del corte.", metric=True, unit="aves", example="450",
+    FieldSpec("historical_mortality_females", "int", "Mortalidad acumulada de hembras ANTES del corte.", required=_req, metric=True, unit="aves", example="450",
               targets=("opening_balances.accumulated_mortality_female",), status_column="mortality_status", promotion="ídem", consumer="lifetime mortalidad"),
     FieldSpec("historical_culls_males", "int", "Descartes acumulados de machos antes del corte.", metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_culls_male",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
@@ -220,6 +236,9 @@ _INCUBADORA = (
     FieldSpec("generation", "enum", "Generación del huevo incubado: grandparent (huevo de progenitoras → pollito reproductor) o breeder (→ pollito de engorde).",
               values=("grandparent", "breeder"), example="breeder", targets=("lots.hatchery_purpose", "hatchery_openings.generation"),
               promotion="enum", consumer="despacho de pollitos (destino)"),
+    FieldSpec("egg_origin", "enum", "Origen comercial del huevo: internal (propio de Global Avícola) o purchased (comprado a un tercero). No es la generación biológica.",
+              required=True, values=("internal", "purchased"), example="internal", targets=("hatchery_openings.egg_origin",),
+              promotion="enum", consumer="trazabilidad y origen del huevo"),
     FieldSpec("reception_date", "date", "Fecha de recepción del huevo en la planta. ≤ corte.", required=True, example="2026-09-20",
               targets=("lots.start_date", "hatchery_openings.reception_date", "opening_balances.activation_date"), promotion="start_date = medianoche UTC",
               consumer="BR-06"),
@@ -257,7 +276,7 @@ _DOMINIO_ENGORDE = frozenset({
     "accumulated_birds_received", "partial_outbound_birds", "source_system", "source_reference",
 })
 _DOMINIO_INCUBADORA = frozenset({
-    "legacy_lot_code", "hatchery_code", "incubator_name", "hatcher_name", "source_lot_code", "generation", "reception_date",
+    "legacy_lot_code", "hatchery_code", "incubator_name", "hatcher_name", "source_lot_code", "generation", "egg_origin", "reception_date",
     "set_date", "expected_hatch_date", "eggs_received", "eggs_set", "eggs_transferred", "eggs_discarded", "chicks_hatched",
     "chicks_available", "source_system", "source_reference",
 })
@@ -266,7 +285,7 @@ _DOMINIO_INCUBADORA = frozenset({
 def _contrato_aves(bu: str, schema_id: str) -> TemplateContract:
     return TemplateContract(
         business_unit=bu, schema_id=schema_id, bird_type=bu, lot_date_field="real_start_date",
-        phases=FASES_POR_BU[bu], fields=_identificacion_aves(bu) + _METRICAS_REPRODUCTORAS + _PROCEDENCIA,
+        phases=FASES_POR_BU[bu], fields=_identificacion_aves(bu) + _metricas_reproductoras(bu) + _PROCEDENCIA,
         required_domain_fields=_DOMINIO_AVES,
     )
 
@@ -280,8 +299,8 @@ CONTRACTS: dict[str, TemplateContract] = {
         required_domain_fields=_DOMINIO_ENGORDE,
     ),
     "hatchery": TemplateContract(
-        business_unit="hatchery", schema_id="CUTOVER_HATCHERY_V2", bird_type="hatchery", lot_date_field="reception_date",
-        phases=FASES_POR_BU["hatchery"], implicit_phase="INCUB", fields=_INCUBADORA,
+        business_unit="hatchery", schema_id="CUTOVER_HATCHERY_V3", version=HATCHERY_TEMPLATE_VERSION, bird_type="hatchery",
+        lot_date_field="reception_date", phases=FASES_POR_BU["hatchery"], implicit_phase="INCUB", fields=_INCUBADORA,
         required_domain_fields=_DOMINIO_INCUBADORA,
     ),
 }

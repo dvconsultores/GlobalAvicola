@@ -15,7 +15,7 @@ import pytest
 
 sys.path.insert(0, str(Path(__file__).parent))
 from cutover_v2_fixtures import (  # noqa: E402
-    COLUMNAS, SCHEMA_IDS, csv_v2, fila, fila_engorde, fila_incubadora, fila_reproductoras, xlsx_v2,
+    COLUMNAS, SCHEMA_IDS, TEMPLATE_VERSIONS, csv_v2, fila, fila_engorde, fila_incubadora, fila_reproductoras, xlsx_v2,
 )
 from time_reference import iso_days_ago  # noqa: E402
 
@@ -48,7 +48,7 @@ def _codigo(bu: str, contenido: bytes, nombre: str = "corte.xlsx") -> str:
 def test_registry_cerrado_cuatro_contratos_v2():
     assert set(CONTRACTS) == {"grandparent", "breeder", "hatchery", "broiler"}
     for bu, c in CONTRACTS.items():
-        assert c.version == "v2" and c.schema_id == SCHEMA_IDS[bu]
+        assert c.version == TEMPLATE_VERSIONS[bu] and c.schema_id == SCHEMA_IDS[bu]
         assert c.columns == COLUMNAS[bu], bu
         assert len(set(c.columns)) == len(c.columns), "columnas únicas"
     assert CONTRACTS["grandparent"].columns == CONTRACTS["breeder"].columns
@@ -69,11 +69,12 @@ def test_lineage_sin_campos_sin_destino_ni_dominio_faltante():
 
 def test_campos_obligatorios_por_bu():
     assert set(CONTRACTS["breeder"].required_fields) == {"legacy_lot_code", "farm_code", "productive_phase_code",
-                                                         "real_start_date", "live_males", "live_females"}
+                                                         "real_start_date", "live_males", "live_females",
+                                                         "historical_mortality_males", "historical_mortality_females"}
     assert set(CONTRACTS["broiler"].required_fields) == {"legacy_lot_code", "farm_code", "productive_phase_code",
                                                          "real_start_date", "live_birds"}
     assert set(CONTRACTS["hatchery"].required_fields) == {"legacy_lot_code", "hatchery_code", "reception_date",
-                                                          "eggs_received", "eggs_set"}
+                                                          "eggs_received", "eggs_set", "egg_origin"}
 
 
 def test_metricas_que_admiten_na():
@@ -91,7 +92,7 @@ def test_metricas_que_admiten_na():
 @pytest.mark.parametrize("bu", ["grandparent", "breeder", "hatchery", "broiler"])
 def test_xlsx_positivo_por_bu(bu):
     r = _parse(bu, xlsx_v2(bu, FILAS[bu], company_id=EMPRESA))
-    assert (r["source_type"], r["template_version"], r["business_unit"], r["company"]) == ("XLSX", "v2", bu, EMPRESA)
+    assert (r["source_type"], r["template_version"], r["business_unit"], r["company"]) == ("XLSX", TEMPLATE_VERSIONS[bu], bu, EMPRESA)
     assert r["schema_id"] == SCHEMA_IDS[bu]
     assert len(r["rows"]) == 1 and r["rows"][0]["errors"] == []
     assert set(r["rows"][0]["normalized"]) == set(COLUMNAS[bu])
@@ -100,8 +101,8 @@ def test_xlsx_positivo_por_bu(bu):
 
 @pytest.mark.parametrize("bu", ["grandparent", "breeder", "hatchery", "broiler"])
 def test_csv_positivo_por_bu(bu):
-    r = _parse(bu, csv_v2(bu, FILAS[bu]), "corte.csv")
-    assert (r["source_type"], r["template_version"], r["business_unit"]) == ("CSV", "v2", bu)
+    r = _parse(bu, csv_v2(bu, FILAS[bu]), "corte.csv", template_version=TEMPLATE_VERSIONS[bu])
+    assert (r["source_type"], r["template_version"], r["business_unit"]) == ("CSV", TEMPLATE_VERSIONS[bu], bu)
     assert r["company"] is None  # la empresa la fija el batch
     assert len(r["rows"]) == 1 and r["rows"][0]["errors"] == []
 
@@ -109,7 +110,7 @@ def test_csv_positivo_por_bu(bu):
 @pytest.mark.parametrize("bu", ["grandparent", "breeder", "hatchery", "broiler"])
 def test_paridad_xlsx_csv(bu):
     x = _parse(bu, xlsx_v2(bu, FILAS[bu], company_id=EMPRESA))["rows"]
-    c = _parse(bu, csv_v2(bu, FILAS[bu]), "corte.csv")["rows"]
+    c = _parse(bu, csv_v2(bu, FILAS[bu]), "corte.csv", template_version=TEMPLATE_VERSIONS[bu])["rows"]
     assert [f["normalized"] for f in x] == [f["normalized"] for f in c]
     assert [f["errors"] for f in x] == [f["errors"] for f in c]
 
@@ -128,11 +129,11 @@ def test_csv_version_la_fija_el_endpoint():
 # ── Semántica vacío / 0 / N/A ────────────────────────────────────────────────
 
 def test_vacio_es_unknown_cero_es_known_na_es_not_applicable():
-    filas = [fila_reproductoras("breeder", "SEM", fase="CRIA", real_start_date=iso_days_ago(70),
+    filas = [fila_reproductoras("grandparent", "SEM", fase="CRIA", real_start_date=iso_days_ago(70),
                                 historical_mortality_males=None, historical_culls_males=0,
                                 accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="n/a",
                                 accumulated_feed_kg=None)]
-    n = _parse("breeder", xlsx_v2("breeder", filas, company_id=EMPRESA))["rows"][0]["normalized"]
+    n = _parse("grandparent", xlsx_v2("grandparent", filas, company_id=EMPRESA))["rows"][0]["normalized"]
     assert n["historical_mortality_males"] == {"value": None, "status": "UNKNOWN"}
     assert n["historical_culls_males"] == {"value": 0, "status": "KNOWN"}
     assert n["accumulated_egg_production"] == {"value": None, "status": "NOT_APPLICABLE"}

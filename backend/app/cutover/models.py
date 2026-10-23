@@ -172,6 +172,7 @@ class HatcheryOpening(Base):
     source_lot_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("lots.id"), nullable=True)
     source_lot_reference: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     generation: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    egg_origin: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)  # SPEC 009: internal | purchased
     reception_date: Mapped[date] = mapped_column(Date)
     set_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     expected_hatch_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)

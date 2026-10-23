@@ -19,7 +19,8 @@ import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
 from cutover_v2_fixtures import (  # noqa: E402
-    COLUMNAS, GALPON, GRANJA, SCHEMA_IDS, aplicar, aprobar, asegurar_fases, corte, crear_batch, csv_v2,
+    COLUMNAS, GALPON, GRANJA, SCHEMA_IDS, TEMPLATE_VERSIONS, aplicar, aprobar, asegurar_fases, corte, crear_batch,
+    csv_v2,
     fila, fila_engorde, fila_incubadora, fila_reproductoras, headers_aprobador, items_por_referencia,
     preparar, subir, xlsx_v2,
 )
@@ -99,11 +100,11 @@ async def test_red_02_plantilla_por_bu_no_generica(auth_headers, http_client):
     for bu in ("grandparent", "breeder", "hatchery", "broiler"):
         r = await http_client.get(f"/api/v1/cutover-templates/{bu}", headers=auth_headers)
         assert r.status_code == 200, r.text
-        assert f"cutover_template_{bu}_v2.xlsx" in r.headers.get("content-disposition", "")
+        assert f"cutover_template_{bu}_{TEMPLATE_VERSIONS[bu]}.xlsx" in r.headers.get("content-disposition", "")
         wb = _hojas(r.content)
         assert {"Instrucciones", "Meta", "Datos", "Catalogos"} <= set(wb.sheetnames), wb.sheetnames
         meta = _meta(wb)
-        assert meta["template_version"] == "v2"
+        assert meta["template_version"] == TEMPLATE_VERSIONS[bu]
         assert meta["schema_id"] == SCHEMA_IDS[bu]
         assert meta["business_unit"] == bu
         cabeceras[bu] = _cabecera(wb)
@@ -268,13 +269,13 @@ async def test_red_07_unknown_cero_y_na_se_distinguen(auth_headers, http_client,
     ids = await preparar(seeded_ids)
     empresa = seeded_ids["company_id"]
     c = corte(47)
-    batch_id = await crear_batch(http_client, auth_headers, "breeder", c)
-    filas = [fila_reproductoras("breeder", "CUT2-SEM-1", fase="CRIA", real_start_date=iso_days_ago(70),
+    batch_id = await crear_batch(http_client, auth_headers, "grandparent", c)
+    filas = [fila_reproductoras("grandparent", "CUT2-SEM-1", fase="CRIA", real_start_date=iso_days_ago(70),
                                 historical_mortality_males=None, historical_mortality_females=None,
                                 historical_culls_males=0, historical_culls_females=0,
                                 accumulated_egg_production="N/A", accumulated_eggs_to_hatchery="N/A",
                                 accumulated_feed_kg=None)]
-    r = await subir(http_client, auth_headers, batch_id, xlsx_v2("breeder", filas, company_id=empresa))
+    r = await subir(http_client, auth_headers, batch_id, xlsx_v2("grandparent", filas, company_id=empresa))
     assert r.status_code == 200 and r.json()["status"] == "validated", r.text
 
     from app.cutover.models import CutoverStagingRow
@@ -324,7 +325,7 @@ def test_red_08_registry_cerrado_sin_campos_sin_destino():
     assert set(CONTRACTS) == {"grandparent", "breeder", "hatchery", "broiler"}
     for bu, contrato in CONTRACTS.items():
         assert contrato.schema_id == SCHEMA_IDS[bu]
-        assert contrato.version == "v2"
+        assert contrato.version == TEMPLATE_VERSIONS[bu]
         assert tuple(f.name for f in contrato.fields) == COLUMNAS[bu], bu
         sin_destino = [f.name for f in contrato.fields if not f.targets]
         assert sin_destino == [], (bu, sin_destino)

@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 09_VALIDATION_CATALOG
 
-Fecha: 2026-10-15 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
+Fecha: 2026-10-22 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
 
 Todo error de fila viaja como `{row_number, column, field, error_code, message, received_value}` (AC46) y se descarga en CSV/XLSX. Los errores de archivo/batch viajan como `detail = "CODE: mensaje"` con el HTTP indicado.
 
@@ -35,6 +35,9 @@ Todo error de fila viaja como `{row_number, column, field, error_code, message, 
 | `MASTER_INACTIVE` | fila | Maestro inactivo para una referencia nueva (OD-21); la referencia histórica de un lote reutilizado se conserva. |
 | `MASTER_AMBIGUOUS` | fila | Más de un maestro con ese código/nombre. |
 | `PARENT_MISMATCH` | fila | Galpón de otra granja, incubadora/nacedora de otra planta, raza de otra línea o de otra BU, lote existente/fuente de otra BU o generación. |
+| `GENETIC_LINE_NOT_FOUND` | fila | Línea genética inexistente, de otra empresa o inactiva (maestro interno de Global Avícola, no SAP). |
+| `BREED_NOT_FOUND` | fila | Raza inexistente en la empresa (maestro interno de Global Avícola, no SAP). |
+| `BREED_NOT_IN_GENETIC_LINE` | fila | La raza existe pero no pertenece a la línea genética indicada. |
 | `PHASE_INCOMPATIBLE` | fila | Fase fuera de las permitidas por BU: {'grandparent': ('CRIA', 'PROD'), 'breeder': ('CRIA', 'PROD'), 'broiler': ('ENGORDE',), 'hatchery': ('INCUB',)}. |
 | `METRIC_NOT_APPLICABLE_IN_PHASE` | fila | Métrica de producción con valor KNOWN en fase CRIA (use N/A o vacío). |
 | `LOT_DUPLICATE` | fila | Código de lote repetido en el batch o ya usado por otra empresa. |

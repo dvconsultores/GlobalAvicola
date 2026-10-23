@@ -270,6 +270,7 @@ def test_t10_ac20_ac21_sin_migracion_y_sin_conector():
     # (tablas inbound SAP HANA, solo lectura) y SPEC 006 a `e0f1a2b3c4d5` (apertura por BU del
     # cutover v2). Se preserva la invariante de cabeza única y se fija la cabeza vigente.
     assert len(cabezas) == 1, cabezas
-    assert cabezas == ["e0f1a2b3c4d5"], cabezas
+    # SPEC 009 avanza la cabeza a `f1a2b3c4d5e6` (egg_origin en hatchery_openings).
+    assert cabezas == ["f1a2b3c4d5e6"], cabezas
     assert isinstance(Company.__table__.c.sap_config.type, String)
     assert settings.SAP_ADAPTER in ("manual", "mock")

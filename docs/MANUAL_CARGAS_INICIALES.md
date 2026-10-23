@@ -232,3 +232,31 @@ Van al final de cada plantilla y sirven para la trazabilidad; ninguno es obligat
 ## 8 · Después de cargar
 
 Una vez subida sin errores, la carga pasa por **vista previa → envío → aprobación (por otro usuario) → aplicar**. Al aplicar, cada dato queda en su lugar (el lote con su fase, su granja, su genética y su saldo de apertura) y la operación continúa con normalidad. El primer evento operativo que registre sobre esos lotes debe tener **fecha posterior al día del corte**: así el histórico cargado no se cuenta dos veces.
+
+---
+
+## 9 · Novedades de la sesión con los KeyUser (2026-10-22)
+
+Estos ajustes nacieron de la revisión de las plantillas con los KeyUser del área avícola.
+
+### 9.1 · De dónde vienen los datos maestros (SAP vs Global Avícola)
+
+La hoja `Catalogos` añade una columna **`source`** que indica quién gobierna cada maestro:
+
+- **`SAP`** · granjas (`farm`) y galpones (`house`): su codificación proviene del ERP (SAP), a través de la sincronización autorizada de solo lectura. La plantilla muestra únicamente los valores ya recibidos y promovidos al sistema local; **nunca se inventan códigos SAP**.
+- **`GLOBAL_AVICOLA`** · el resto (línea genética, raza, fases, áreas, plantas de incubación, incubadoras, nacedoras, lotes): son maestros internos de Global Avícola.
+
+En particular, **la línea genética (`genetic_line_code`) y la raza (`breed_name`) son maestros internos de Global Avícola, no de SAP**. Si el código o el nombre no existe (o la raza no pertenece a la línea indicada), la fila se marca inválida con un mensaje claro (`La línea genética no existe…`, `La raza no existe…`, `La raza no pertenece a la línea…`). El sistema **no crea** la línea ni la raza automáticamente: elija un valor de la hoja `Catalogos`.
+
+### 9.2 · Reproductoras: mortalidad histórica obligatoria
+
+En la plantilla de **Reproductoras**, la **mortalidad acumulada de machos y de hembras** (`historical_mortality_males`, `historical_mortality_females`) pasa a ser **obligatoria**. Si no la conoce con certeza, consulte el dato real: **no** se puede dejar vacía. **`0` es un valor válido** (cero real); dejarla en blanco da el error «Campo obligatorio sin valor». En **Progenitoras** estos campos siguen siendo opcionales (vacío = desconocido).
+
+### 9.3 · Incubadora: «Generación» y «Origen del huevo» son cosas distintas
+
+- **Generación (`generation`)** describe la *naturaleza biológica* del huevo: `grandparent` (huevo de progenitoras, del que nace pollito reproductor) o `breeder` (huevo de reproductoras, del que nace pollito de engorde). **No** admite otros valores.
+- **Origen del huevo (`egg_origin`)**, campo **nuevo y obligatorio**, describe el *origen comercial*: **`internal`** (propio / interno de Global Avícola) o **`purchased`** (comprado a un tercero).
+  - Con `internal`, el `source_lot_code` (lote de reproductoras/progenitoras que originó los huevos) se valida como hasta ahora contra un lote interno compatible.
+  - Con `purchased`, **no** hace falta un lote interno: basta con registrar la procedencia externa (`source_system`, `source_reference`). No se exige ni se inventa una orden de compra.
+
+La plantilla de Incubadora cambia de versión a **v3** por esta columna nueva. Si intenta subir una plantilla de incubadora anterior (v2), el sistema se lo indicará y le pedirá descargar la vigente; las plantillas de las demás unidades siguen en v2 sin cambios.

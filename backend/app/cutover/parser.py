@@ -325,6 +325,11 @@ def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContr
     if version not in SUPPORTED_TEMPLATE_VERSIONS:
         raise CutoverParseError("TEMPLATE_VERSION_UNSUPPORTED",
                                 f"Versión de plantilla no soportada: {version!r} (soportadas: {sorted(SUPPORTED_TEMPLATE_VERSIONS)}).")
+    if business_unit == contrato.business_unit and version != contrato.version:
+        raise CutoverParseError(
+            "TEMPLATE_VERSION_UNSUPPORTED",
+            f"La plantilla de {contrato.business_unit} vigente es {contrato.version}: descargue la plantilla "
+            f"{contrato.version} de {contrato.business_unit} y vuelva a cargar.")
     if not business_unit:
         raise CutoverParseError("BUSINESS_UNIT_MISMATCH", "La hoja 'Meta' no declara 'business_unit'.")
     if business_unit != contrato.business_unit or (schema_id and schema_id != contrato.schema_id):

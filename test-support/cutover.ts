@@ -170,7 +170,7 @@ export function filasPorBu(bu: Bu, m: MaestrosCutover, ref: string): Record<stri
   if (bu === 'hatchery') {
     return [{
       legacy_lot_code: ref, hatchery_code: m.hatcheryCode, incubator_name: m.incubatorName, hatcher_name: m.hatcherName,
-      generation: 'breeder', reception_date: haceDias(50), set_date: haceDias(48), expected_hatch_date: haceDias(27),
+      generation: 'breeder', egg_origin: 'internal', reception_date: haceDias(50), set_date: haceDias(48), expected_hatch_date: haceDias(27),
       eggs_received: 10000, eggs_set: 9000, eggs_transferred: 0, eggs_discarded: 100, chicks_hatched: 0, chicks_available: 0,
       source_system: 'LEGACY', source_reference: `E2E-${ref}`,
     }]

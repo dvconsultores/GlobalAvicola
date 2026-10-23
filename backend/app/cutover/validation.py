@@ -33,6 +33,9 @@ _MENSAJES = {
     "OPENING_ALREADY_EXISTS": "El lote ya tiene un saldo de apertura: no se carga dos veces.",
     "CONSISTENCY_MISMATCH": "La ecuación de consistencia no cuadra: {detalle}.",
     "DATE_ORDER_INVALID": "Orden de fechas inválido: {detalle}.",
+    "GENETIC_LINE_NOT_FOUND": "La línea genética no existe, está fuera de la empresa o está inactiva.",
+    "BREED_NOT_FOUND": "La raza no existe en la empresa.",
+    "BREED_NOT_IN_GENETIC_LINE": "La raza existe pero no pertenece a la línea genética indicada.",
 }
 
 
@@ -74,7 +77,9 @@ class ValidadorDeDominio:
         return self._cache[clave]
 
     async def _resolver(self, fila: dict, campo: str, entidad: str, consulta, *, clave: tuple,
-                        padre: Optional[str] = None, consulta_en_empresa=None) -> Optional[Any]:
+                        padre: Optional[str] = None, consulta_en_empresa=None,
+                        not_found_code: str = "MASTER_NOT_FOUND",
+                        parent_mismatch_code: str = "PARENT_MISMATCH") -> Optional[Any]:
         """Devuelve el maestro resuelto o registra el error; `None` si no hay valor."""
         if not _known(fila, campo):
             return None
@@ -83,9 +88,9 @@ class ValidadorDeDominio:
             if padre and consulta_en_empresa is not None:
                 en_empresa = await self._uno(clave + ("empresa",), consulta_en_empresa)
                 if en_empresa:
-                    self._error(fila, campo, "PARENT_MISMATCH", entidad=entidad, padre=padre)
+                    self._error(fila, campo, parent_mismatch_code, entidad=entidad, padre=padre)
                     return None
-            self._error(fila, campo, "MASTER_NOT_FOUND", entidad=entidad)
+            self._error(fila, campo, not_found_code, entidad=entidad)
             return None
         if len(filas) > 1:
             self._error(fila, campo, "MASTER_AMBIGUOUS", entidad=entidad)
@@ -186,7 +191,7 @@ class ValidadorDeDominio:
                 fila, "genetic_line_code", "La línea genética", select(GeneticLine).where(
                     (GeneticLine.company_id == self.company_id) | (GeneticLine.company_id.is_(None)),
                     GeneticLine.code == _val(fila, "genetic_line_code")),
-                clave=("line", _val(fila, "genetic_line_code")))
+                clave=("line", _val(fila, "genetic_line_code")), not_found_code="GENETIC_LINE_NOT_FOUND")
             if linea is not None:
                 refs["genetic_line_id"] = linea.id
         if _known(fila, "breed_name"):
@@ -195,9 +200,11 @@ class ValidadorDeDominio:
             if linea is not None:
                 raza = await self._resolver(
                     fila, "breed_name", "La raza", base.where(Breed.genetic_line_id == linea.id),
-                    clave=("breed", linea.id, nombre), padre=f"la línea {linea.code}", consulta_en_empresa=base)
+                    clave=("breed", linea.id, nombre), padre=f"la línea {linea.code}", consulta_en_empresa=base,
+                    not_found_code="BREED_NOT_FOUND", parent_mismatch_code="BREED_NOT_IN_GENETIC_LINE")
             else:
-                raza = await self._resolver(fila, "breed_name", "La raza", base, clave=("breed", None, nombre))
+                raza = await self._resolver(fila, "breed_name", "La raza", base, clave=("breed", None, nombre),
+                                            not_found_code="BREED_NOT_FOUND")
             if raza is not None:
                 if raza.bird_type is not None and raza.bird_type.value != self.contrato.bird_type:
                     self._error(fila, "breed_name", "PARENT_MISMATCH", entidad="La raza", padre=f"la unidad {self.contrato.business_unit}")
@@ -225,18 +232,21 @@ class ValidadorDeDominio:
             if equipo is not None:
                 refs[clave] = equipo.id
         if _known(fila, "source_lot_code"):
+            comprado = _val(fila, "egg_origin") == "purchased"  # SPEC 009: huevo comprado no exige lote interno.
             codigo = _val(fila, "source_lot_code")
             lotes = await self._uno(("source", codigo), select(Lot).where(
                 Lot.company_id == self.company_id, (Lot.lot_code == codigo) | (Lot.legacy_lot_code == codigo)))
             if not lotes:
-                self._error(fila, "source_lot_code", "MASTER_NOT_FOUND", entidad="El lote fuente")
+                if not comprado:
+                    self._error(fila, "source_lot_code", "MASTER_NOT_FOUND", entidad="El lote fuente")
             else:
                 fuente = lotes[0]
                 tipo = fuente.bird_type.value if fuente.bird_type else None
                 generacion = _val(fila, "generation")
                 if tipo not in ("grandparent", "breeder") or (generacion and tipo != generacion):
-                    self._error(fila, "source_lot_code", "PARENT_MISMATCH", entidad="El lote fuente",
-                                padre=f"la generación {generacion or 'grandparent|breeder'}")
+                    if not comprado:
+                        self._error(fila, "source_lot_code", "PARENT_MISMATCH", entidad="El lote fuente",
+                                    padre=f"la generación {generacion or 'grandparent|breeder'}")
                 else:
                     refs["source_lot_id"] = fuente.id
 

@@ -1,15 +1,15 @@
 # CUTOVER-INITIAL-BALANCES · 05_HATCHERY_TEMPLATE_CONTRACT
 
-Fecha: 2026-10-15 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V2` · versión `v2` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-10-22 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|
 | Unidad de negocio | `hatchery` (`lots.bird_type = hatchery`) |
 | Fases compatibles | `INCUB` (implícita, no se declara en la plantilla) |
 | Fecha que fija `lots.start_date` | `reception_date` |
-| Columnas (`Datos`) | 19 |
-| Obligatorias | `legacy_lot_code`, `hatchery_code`, `reception_date`, `eggs_received`, `eggs_set` |
-| Archivo | `cutover_template_hatchery_v2.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_hatchery_v2.csv` (solo cabecera, `;`) |
+| Columnas (`Datos`) | 20 |
+| Obligatorias | `legacy_lot_code`, `hatchery_code`, `egg_origin`, `reception_date`, `eggs_received`, `eggs_set` |
+| Archivo | `cutover_template_hatchery_v3.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_hatchery_v3.csv` (solo cabecera, `;`) |
 | Preview destacado | `legacy_lot_code`, `hatchery_code`, `incubator_name`, `set_date`, `eggs_received`, `eggs_set`, `eggs_transferred`, `eggs_discarded`, `chicks_hatched`, `chicks_available`, `expected_hatch_date` |
 
 Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLICABLE**. Fechas `AAAA-MM-DD`; pesos en gramos; alimento en kg.
@@ -25,6 +25,7 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 | `hatcher_name` | text |  | no | no | no | hatcher |  | Nombre de la nacedora dentro de la planta (Catalogos → hatcher). | `hatchery_openings.hatcher_id` |
 | `source_lot_code` | text |  | no | no | no | source_lot |  | Código (actual o legado) del lote de reproductoras/progenitoras que originó los huevos. | `hatchery_openings.source_lot_id`<br>`hatchery_openings.source_lot_reference` |
 | `generation` | enum |  | no | no | no |  | grandparent, breeder | Generación del huevo incubado: grandparent (huevo de progenitoras → pollito reproductor) o breeder (→ pollito de engorde). | `lots.hatchery_purpose`<br>`hatchery_openings.generation` |
+| `egg_origin` | enum |  | sí | no | no |  | internal, purchased | Origen comercial del huevo: internal (propio de Global Avícola) o purchased (comprado a un tercero). No es la generación biológica. | `hatchery_openings.egg_origin` |
 | `reception_date` | date |  | sí | no | no |  |  | Fecha de recepción del huevo en la planta. ≤ corte. | `lots.start_date`<br>`hatchery_openings.reception_date`<br>`opening_balances.activation_date` |
 | `set_date` | date |  | no | sí | sí |  |  | Fecha de carga en incubadora. Vacío = desconocida; N/A = aún no cargado. | `hatchery_openings.set_date` |
 | `expected_hatch_date` | date |  | no | sí | sí |  |  | Fecha prevista de nacimiento. ≥ fecha de carga. | `hatchery_openings.expected_hatch_date` |

@@ -402,7 +402,8 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # `c8d9e0f1a2b3` (acciones RBAC/auditoría del cutover). SPEC 005 la avanza a
     # `d9e0f1a2b3c4` (tablas inbound SAP HANA, solo lectura). SPEC 006 la avanza a
     # `e0f1a2b3c4d5` (apertura por BU: columnas de `opening_balances` + `hatchery_openings`).
-    assert cabezas == ["e0f1a2b3c4d5"], cabezas
+    # SPEC 009 avanza la cabeza a `f1a2b3c4d5e6` (egg_origin en hatchery_openings).
+    assert cabezas == ["f1a2b3c4d5e6"], cabezas
     # y hay una ruta nueva de `GA-REM-003` · AC04 (`/api/v1/logout`), 211 → 212.
     # `R-197` · C2 añade `/api/v1/review/events/{event_id}/actions`, 212 → 213.
     # `R-218` · C2 añade `/api/v1/reports/lot/{lot_id}/weekly`, 213 → 214.

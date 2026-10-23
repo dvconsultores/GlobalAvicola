@@ -26,7 +26,10 @@ from time_reference import days_ago, iso_days_ago  # noqa: E402
 CORTE_DEFECTO = days_ago(45).isoformat() + "T00:00:00+00:00"
 
 
-BU_FIXTURE = "breeder"
+# SPEC 009: breeder pasa a exigir mortalidad histórica; esta suite legada (filas con mortalidad
+# vacía deliberada) se ejerce sobre grandparent, de contrato idéntico y con mortalidad opcional.
+# El cutover de breeder queda cubierto por tests/test_cutover_v2_keyuser_s01_*.
+BU_FIXTURE = "grandparent"
 GRANJA_SEMBRADA = "TEST-GRANJA-01"
 
 
@@ -177,7 +180,7 @@ async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
         wb = load_workbook(io.BytesIO(r.content))
         assert {"Instrucciones", "Meta", "Datos", "Catalogos"} <= set(wb.sheetnames)
         meta = {fila[0].value: fila[1].value for fila in wb["Meta"].iter_rows(min_row=2)}
-        assert meta["template_version"] == "v2"
+        assert meta["template_version"] == ("v3" if bu == "hatchery" else "v2")
         assert meta["business_unit"] == bu
 
     # La plantilla descargada sin filas no se acepta como carga válida (sin efectos).
