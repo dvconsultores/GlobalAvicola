@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 04_BREEDER_TEMPLATE_CONTRACT
 
-Fecha: 2026-10-22 · SPEC 006 · `schema_id = CUTOVER_BREEDER_V2` · versión `v2` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-10-27 · SPEC 006 · `schema_id = CUTOVER_BREEDER_V2` · versión `v2` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|

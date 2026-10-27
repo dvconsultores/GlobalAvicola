@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 09_VALIDATION_CATALOG
 
-Fecha: 2026-10-22 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
+Fecha: 2026-10-27 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
 
 Todo error de fila viaja como `{row_number, column, field, error_code, message, received_value}` (AC46) y se descarga en CSV/XLSX. Los errores de archivo/batch viajan como `detail = "CODE: mensaje"` con el HTTP indicado.
 

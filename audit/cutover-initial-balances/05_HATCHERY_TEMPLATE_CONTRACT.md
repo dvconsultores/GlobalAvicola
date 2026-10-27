@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 05_HATCHERY_TEMPLATE_CONTRACT
 
-Fecha: 2026-10-22 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-10-27 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|
@@ -23,7 +23,7 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 | `hatchery_code` | text |  | sí | no | no | hatchery |  | Código de la planta de incubación (Catalogos → hatchery). | `hatchery_openings.hatchery_id` |
 | `incubator_name` | text |  | no | no | no | incubator |  | Nombre de la incubadora dentro de la planta (Catalogos → incubator, parent_code = planta). | `hatchery_openings.incubator_id` |
 | `hatcher_name` | text |  | no | no | no | hatcher |  | Nombre de la nacedora dentro de la planta (Catalogos → hatcher). | `hatchery_openings.hatcher_id` |
-| `source_lot_code` | text |  | no | no | no | source_lot |  | Código (actual o legado) del lote de reproductoras/progenitoras que originó los huevos. | `hatchery_openings.source_lot_id`<br>`hatchery_openings.source_lot_reference` |
+| `source_lot_code` | text |  | no | no | no | source_lot |  | Código (actual o legado) del lote interno de reproductoras/progenitoras que originó los huevos. Con egg_origin=internal, si se indica debe existir y ser compatible (misma empresa y generación); con egg_origin=purchased NO se exige lote interno (la procedencia externa va en source_system/source_reference). | `hatchery_openings.source_lot_id`<br>`hatchery_openings.source_lot_reference` |
 | `generation` | enum |  | no | no | no |  | grandparent, breeder | Generación del huevo incubado: grandparent (huevo de progenitoras → pollito reproductor) o breeder (→ pollito de engorde). | `lots.hatchery_purpose`<br>`hatchery_openings.generation` |
 | `egg_origin` | enum |  | sí | no | no |  | internal, purchased | Origen comercial del huevo: internal (propio de Global Avícola) o purchased (comprado a un tercero). No es la generación biológica. | `hatchery_openings.egg_origin` |
 | `reception_date` | date |  | sí | no | no |  |  | Fecha de recepción del huevo en la planta. ≤ corte. | `lots.start_date`<br>`hatchery_openings.reception_date`<br>`opening_balances.activation_date` |

@@ -190,6 +190,7 @@ async def descargar_plantilla(
     business_unit: str,
     format: str = Query("xlsx", pattern="^(xlsx|csv)$"),
     batch_id: Optional[int] = Query(None),
+    cutover_datetime: Optional[str] = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("cutover", "create")),
 ):
@@ -212,6 +213,11 @@ async def descargar_plantilla(
                                 detail=(f"BUSINESS_UNIT_MISMATCH: el batch {batch.id} es de {batch.business_unit}; "
                                         f"descargue la plantilla de esa unidad."))
         corte = batch.cutover_datetime
+    if corte is None and cutover_datetime:
+        try:
+            corte = datetime.fromisoformat(cutover_datetime)  # SPEC 011: solo refleja el corte en Meta; la autoridad es el batch, nunca Meta
+        except ValueError:
+            corte = None
     if format == "csv":
         return Response(content=construir_plantilla_csv(c), media_type="text/csv; charset=utf-8",
                         headers={"Content-Disposition": f'attachment; filename="{c.filename_stem}.csv"'})

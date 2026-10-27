@@ -124,6 +124,13 @@ function Stepper({ actual }: { actual: number }) {
   )
 }
 
+/** SPEC 011 · el nombre del archivo viene del servidor (Content-Disposition), con la versión real del template. */
+export function nombreDescarga(res: { headers?: Record<string, unknown> }, fallback: string): string {
+  const cd = String(res.headers?.['content-disposition'] ?? '')
+  const m = /filename\*?=(?:UTF-8'')?"?([^";]+)"?/i.exec(cd)
+  return m ? decodeURIComponent(m[1]) : fallback
+}
+
 export default function CargasInicialesPage() {
   const { t } = useTranslation()
   const toast = useToast()
@@ -260,7 +267,7 @@ export default function CargasInicialesPage() {
     if (!batch) return
     try {
       const res = await cutoverService.template(batch.business_unit, { format, batchId: batch.id })
-      descargarBlob(res.data as Blob, `cutover_template_${batch.business_unit}_v2.${format}`)
+      descargarBlob(res.data as Blob, nombreDescarga(res, `cutover_template_${batch.business_unit}_${batch.template_version ?? 'v2'}.${format}`))
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t('common.error')))
     }
@@ -269,8 +276,8 @@ export default function CargasInicialesPage() {
   const handleDownloadTemplateEarly = async (format: TemplateFormat) => {
     if (!cutoverDatetime) return
     try {
-      const res = await cutoverService.template(businessUnit, { format })
-      descargarBlob(res.data as Blob, `cutover_template_${businessUnit}.${format}`)
+      const res = await cutoverService.template(businessUnit, { format, cutoverDatetime: cutoverDatetime ? new Date(cutoverDatetime).toISOString() : undefined })
+      descargarBlob(res.data as Blob, nombreDescarga(res, `cutover_template_${businessUnit}.${format}`))
       toast.success(t('cutover.downloadSuccess'))
     } catch (err: unknown) {
       toast.error(getErrorMessage(err, t('cutover.downloadError')))

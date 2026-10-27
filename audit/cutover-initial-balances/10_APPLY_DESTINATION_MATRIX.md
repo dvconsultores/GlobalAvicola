@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 10_APPLY_DESTINATION_MATRIX
 
-Fecha: 2026-10-22 · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; el apply vive en `CutoverService.aplicar` (`service.py`) con un builder por BU (`_opening_reproductoras`, `_opening_engorde`, `_opening_incubadora` + `_hatchery_opening`, `_lote`, `_lot_phase`).
+Fecha: 2026-10-27 · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; el apply vive en `CutoverService.aplicar` (`service.py`) con un builder por BU (`_opening_reproductoras`, `_opening_engorde`, `_opening_incubadora` + `_hatchery_opening`, `_lote`, `_lot_phase`).
 
 ## Constantes del apply (todas las BU)
 

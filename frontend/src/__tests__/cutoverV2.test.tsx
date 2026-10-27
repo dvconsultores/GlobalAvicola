@@ -34,7 +34,7 @@ vi.mock('../components/Toast', () => ({
   getErrorMessage: (_e: any, f: string) => f,
 }))
 
-import CargasInicialesPage from '../pages/cutover/CargasInicialesPage'
+import CargasInicialesPage, { nombreDescarga } from '../pages/cutover/CargasInicialesPage'
 import { useAuthStore } from '../stores/auth.store'
 
 const TODOS = ['cutover:read', 'cutover:create', 'cutover:validate', 'cutover:submit', 'cutover:approve', 'cutover:apply']
@@ -136,6 +136,8 @@ describe('SPEC 006 · Cargas Iniciales v2 (jsdom)', () => {
       String(c[0]) === '/cutover-templates/hatchery' &&
       c[1]?.params?.format === 'xlsx' &&
       c[1]?.params?.batch_id === undefined)).toBe(true))
+    // CUTOVER-DATA-01: la descarga temprana envía el corte elegido (solo display en Meta; la autoridad es el batch).
+    expect(get.mock.calls.some((c: any) => String(c[0]) === '/cutover-templates/hatchery' && !!c[1]?.params?.cutover_datetime)).toBe(true)
   })
 
   it('RC-2/RC-6: el selector por defecto es una unidad del usuario, el input acepta CSV y la plantilla sigue a la carga', async () => {
@@ -182,5 +184,13 @@ describe('SPEC 006 · Cargas Iniciales v2 (jsdom)', () => {
     expect(rec.textContent).toMatch(/9[.,]000/)
     expect(screen.getByTestId('cutover-applied').textContent).toContain('CUT-GL-02')
     expect(screen.getByRole('button', { name: /Continuar al módulo operativo/ })).toBeTruthy()
+  })
+})
+
+describe('SPEC 011 · cutover UAT hardening', () => {
+  it('CUTOVER-UX-02: nombreDescarga toma el filename del Content-Disposition (versión real), con fallback', () => {
+    const r = { headers: { 'content-disposition': 'attachment; filename="cutover_template_hatchery_v3.xlsx"' } }
+    expect(nombreDescarga(r, 'fallback.xlsx')).toBe('cutover_template_hatchery_v3.xlsx')
+    expect(nombreDescarga({}, 'cutover_template_breeder_v2.xlsx')).toBe('cutover_template_breeder_v2.xlsx')
   })
 })

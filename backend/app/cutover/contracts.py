@@ -230,7 +230,7 @@ _INCUBADORA = (
               consumer="carga de incubación"),
     FieldSpec("hatcher_name", "text", "Nombre de la nacedora dentro de la planta (Catalogos → hatcher).", example="NAC-1", master="hatcher",
               targets=("hatchery_openings.hatcher_id",), promotion="resuelto por nombre dentro de la planta", consumer="transferencia a nacedora"),
-    FieldSpec("source_lot_code", "text", "Código (actual o legado) del lote de reproductoras/progenitoras que originó los huevos.",
+    FieldSpec("source_lot_code", "text", "Código (actual o legado) del lote interno de reproductoras/progenitoras que originó los huevos. Con egg_origin=internal, si se indica debe existir y ser compatible (misma empresa y generación); con egg_origin=purchased NO se exige lote interno (la procedencia externa va en source_system/source_reference).",
               example="", master="source_lot", targets=("hatchery_openings.source_lot_id", "hatchery_openings.source_lot_reference"),
               promotion="resuelto si existe; la referencia escrita se conserva siempre", consumer="trazabilidad generacional"),
     FieldSpec("generation", "enum", "Generación del huevo incubado: grandparent (huevo de progenitoras → pollito reproductor) o breeder (→ pollito de engorde).",

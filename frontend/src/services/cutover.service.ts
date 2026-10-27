@@ -181,10 +181,14 @@ export const cutoverService = {
   },
 
   /** Plantilla v2 de la BU. Con `batchId` la BU la fija el batch (y `Meta.cutover_datetime` viaja rellena). */
-  template: (businessUnit: BusinessUnitCode, opts: { format?: TemplateFormat; batchId?: number } = {}) =>
+  template: (businessUnit: BusinessUnitCode, opts: { format?: TemplateFormat; batchId?: number; cutoverDatetime?: string } = {}) =>
     api.get(`/cutover-templates/${businessUnit}`, {
       responseType: 'blob',
-      params: { format: opts.format ?? 'xlsx', ...(opts.batchId ? { batch_id: opts.batchId } : {}) },
+      params: {
+        format: opts.format ?? 'xlsx',
+        ...(opts.batchId ? { batch_id: opts.batchId } : {}),
+        ...(opts.cutoverDatetime ? { cutover_datetime: opts.cutoverDatetime } : {}),
+      },
     }),
 
   submit: (batchId: number) => api.post<CutoverBatch>(`/cutover-batches/${batchId}/submit`),
