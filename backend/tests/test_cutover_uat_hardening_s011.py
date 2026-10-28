@@ -35,7 +35,7 @@ async def test_data01_meta_refleja_corte_sin_batch(auth_headers, http_client, se
                               headers=auth_headers)
     assert r.status_code == 200, r.text
     meta = _meta(r.content)
-    assert str(meta.get("cutover_datetime", "")).startswith("2026-10-01T08:00:00")  # Meta refleja el corte (display)
+    assert str(meta.get("cutover_datetime", "")).startswith("2026-10-01T04:00:00-04:00")  # Meta refleja el corte en hora de negocio (UTC-4), mismo instante
 
 
 def test_data01_parser_ignora_cutover_de_meta():

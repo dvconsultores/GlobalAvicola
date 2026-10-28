@@ -35,6 +35,28 @@ async function descargar(page: Page, boton: RegExp): Promise<Buffer> {
   return readFileSync(ruta as string)
 }
 
+/**
+ * GA-CUTOVER-S3-01 · regresión visual: un botón `primary` debe pintar fondo de marca.
+ *
+ * Si falta el bloque `@theme` con `--color-brand-500` en `index.css`, Tailwind v4 no genera
+ * `bg-brand-500` y el botón queda transparente con texto blanco (invisible). Se verifica el
+ * estilo COMPUTADO (no la clase): ni transparente ni blanco, y con el teal de marca (#5a9bba).
+ */
+async function verificarFondoPrimary(page: Page, boton: RegExp, paso: string) {
+  const el = page.getByRole('button', { name: boton }).first()
+  await expect(el, `${paso}: el botón primary debe estar visible`).toBeVisible()
+  const bg = await el.evaluate(n => getComputedStyle(n).backgroundColor)
+  expect(bg, `${paso}: el fondo del botón primary no puede ser transparente`).not.toBe('rgba(0, 0, 0, 0)')
+  expect(bg, `${paso}: el fondo del botón primary no puede ser transparente`).not.toBe('transparent')
+  const canales = bg.match(/rgba?\((\d+),\s*(\d+),\s*(\d+)/)
+  if (!canales) throw new Error(`${paso}: background-color computado inesperado (${bg})`)
+  const [r, g, b] = [Number(canales[1]), Number(canales[2]), Number(canales[3])]
+  expect(r + g + b, `${paso}: el fondo del botón primary no puede ser blanco (${bg})`).toBeLessThan(700)
+  // Teal de marca #5a9bba = rgb(90, 155, 186): componente azul dominante sobre rojo y verde.
+  expect(r, `${paso}: fondo no es el teal de marca (${bg})`).toBeLessThan(g)
+  expect(g, `${paso}: fondo no es el teal de marca (${bg})`).toBeLessThan(b)
+}
+
 export interface OpcionesFlujo {
   bu: Bu
   formato: 'xlsx' | 'csv'
@@ -64,6 +86,10 @@ export async function flujoPorBu(page: Page, browser: Browser, request: APIReque
   // ── 2 · BU + corte + crear carga ──
   await page.getByLabel(/Unidad de negocio|Business unit/).selectOption(bu)
   await page.getByLabel(/Fecha y hora de corte|Cutover date/).fill(corteParaInput(DIAS_CORTE))
+
+  // 2.0 · GA-CUTOVER-S3-01: el CTA primary de la pantalla pinta fondo de marca (regresión visual).
+  await verificarFondoPrimary(page, /^Descargar plantilla$|^Download template$/, 'descarga temprana')
+  pasos.fondo_primary = 'ok'
 
   // 2.a · SPEC 010: la plantilla es descubrible y descargable ANTES de crear la carga.
   const plantillaTemprana = await descargar(page, /^Descargar plantilla$|^Download template$/)
@@ -139,6 +165,8 @@ export async function flujoPorBu(page: Page, browser: Browser, request: APIReque
   // ── 8 · aplicar (la carga sobrevive a la recarga: ?batch=) ──
   await page.goto(`/cutover?batch=${batch.id}`)
   await expect(cabecera).toContainText(/Aprobado|Approved/)
+  // GA-CUTOVER-S3-01: el CTA «Aplicar» (primary) también pinta fondo de marca.
+  await verificarFondoPrimary(page, /^Aplicar$|^Apply$/, 'aplicar')
   const aplicacion = page.waitForResponse(r => r.url().includes('/apply'))
   await page.getByRole('button', { name: /^Aplicar$|^Apply$/ }).click()
   const respApply = await aplicacion

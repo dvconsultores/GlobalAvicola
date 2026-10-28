@@ -18,6 +18,7 @@ import csv
 import io
 from datetime import datetime, timezone
 from typing import Optional
+from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException, Query, Response, status
 from sqlalchemy import select
@@ -37,6 +38,8 @@ router = APIRouter(route_class=RutaTransaccional, prefix="/cutover-templates", t
 XLSX_MIME = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 CSV_DELIMITER = ";"
 
+ZONA_NEGOCIO = ZoneInfo("America/Caracas")  # GA-CUTOVER-S3-02: zona de negocio (UTC-4, offset fijo) para representar el corte en Meta; la persistencia sigue en UTC
+
 CABECERA_INSTRUCCIONES = ("campo", "significado", "obligatorio", "tipo", "unidad", "formato", "ejemplo",
                           "valores_permitidos", "admite_UNKNOWN_(vacío)", "admite_N/A", "destino_tras_apply")
 
@@ -48,7 +51,8 @@ SEMANTICA = (
     "  · celda VACÍA = UNKNOWN (no se conoce el dato en el sistema de origen)",
     "  · 0 = cero CONOCIDO (realmente cero)",
     "  · N/A = NOT_APPLICABLE (la métrica no aplica a este lote/fase)",
-    "Fechas en formato AAAA-MM-DD. Fecha y hora del corte: AAAA-MM-DDTHH:MM:SS+00:00 (la fija el batch).",
+    "Fechas en formato AAAA-MM-DD. Fecha y hora del corte: AAAA-MM-DDTHH:MM:SS-04:00 en hora de Venezuela"
+    " (UTC-4; el instante lo fija el batch).",
     "Números enteros sin separador de miles; decimales con punto. Pesos en GRAMOS; alimento en KILOGRAMOS.",
     "Los códigos y nombres de maestros se toman de la hoja Catalogos (solo registros activos de su empresa).",
     "No use fórmulas, macros ni formatos como dato: el importador lee valores y rechaza fórmulas.",
@@ -151,7 +155,12 @@ def construir_plantilla_xlsx(c: TemplateContract, *, company_id: int, catalogo: 
     meta.append(["company", company_id])
     meta.append(["business_unit", c.business_unit])
     meta.append(["generated_at", datetime.now(timezone.utc).isoformat()])
-    meta.append(["cutover_datetime", cutover_datetime.isoformat() if cutover_datetime else ""])
+    if cutover_datetime is not None:
+        _aware = cutover_datetime if cutover_datetime.tzinfo else cutover_datetime.replace(tzinfo=timezone.utc)
+        _corte_meta = _aware.astimezone(ZONA_NEGOCIO).isoformat()
+    else:
+        _corte_meta = ""
+    meta.append(["cutover_datetime", _corte_meta])
 
     datos = wb.create_sheet("Datos")
     datos.append(list(c.columns))

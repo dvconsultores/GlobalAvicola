@@ -11,6 +11,24 @@
 
 @import 'tailwindcss';
 
+/* ── Brand palette as Tailwind v4 theme tokens ──────────── */
+/* Tailwind v4 does not read tailwind.config.ts without @config,
+   so the brand palette must be declared here to generate
+   bg-brand-*, text-brand-*, ring-brand-*, border-brand-*. */
+@theme {
+  --color-brand-50: #f0f7fa;
+  --color-brand-100: #daeaf3;
+  --color-brand-200: #b3d5e8;
+  --color-brand-300: #7fbad8;
+  --color-brand-400: #6fabc5;
+  --color-brand-500: #5a9bba;
+  --color-brand-600: #4e8fad;
+  --color-brand-700: #3d748f;
+  --color-brand-800: #305e75;
+  --color-brand-900: #264c5f;
+  --color-brand-950: #162e3a;
+}
+
 /* ── Atenea Brand Gradients ─────────────────────────────── */
 .gradient-brand {
   background: linear-gradient(145deg, #4e8fad 0%, #6fabc5 50%, #8fb5d2 100%);

@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import io
 import sys
+from datetime import datetime
 from pathlib import Path
 
 import pytest
@@ -24,7 +25,7 @@ from cutover_v2_fixtures import (  # noqa: E402
     fila, fila_engorde, fila_incubadora, fila_reproductoras, headers_aprobador, items_por_referencia,
     preparar, subir, xlsx_v2,
 )
-from time_reference import days_ago, iso_days_ago, recent_event_date  # noqa: E402
+from time_reference import iso_days_ago, recent_event_date  # noqa: E402
 
 
 def _hojas(contenido: bytes):
@@ -236,7 +237,10 @@ async def test_red_06_plantilla_descargada_rellenada_y_cargada(auth_headers, htt
     assert r.status_code == 200, r.text
     wb = load_workbook(io.BytesIO(r.content))
     meta = _meta(wb)
-    assert meta["template_version"] == "v2" and str(meta["cutover_datetime"]).startswith(days_ago(46).isoformat())
+    # GA-CUTOVER-S3-02: Meta representa el corte en la zona de negocio (UTC-4, `-04:00`); el
+    # instante sigue siendo el del batch, así que se comparan instantes y no la hora de pared.
+    assert meta["template_version"] == "v2"
+    assert datetime.fromisoformat(str(meta["cutover_datetime"])) == datetime.fromisoformat(corte(46))
     catalogos = list(wb["Catalogos"].iter_rows(values_only=True))
     assert any(f[0] == "farm" and f[1] == GRANJA for f in catalogos[1:]), "catálogo de granjas de la empresa"
     assert any(f[0] == "house" and f[1] == GALPON and f[4] == GRANJA for f in catalogos[1:]), "galpón con su granja"

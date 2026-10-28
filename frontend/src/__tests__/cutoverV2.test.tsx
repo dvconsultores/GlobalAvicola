@@ -8,6 +8,8 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, fireEvent, waitFor } from '@testing-library/react'
 import { MemoryRouter } from 'react-router-dom'
+import { readFileSync } from 'node:fs'
+import { resolve } from 'node:path'
 
 const get = vi.fn()
 const post = vi.fn()
@@ -35,6 +37,7 @@ vi.mock('../components/Toast', () => ({
 }))
 
 import CargasInicialesPage, { nombreDescarga } from '../pages/cutover/CargasInicialesPage'
+import { Button } from '../components/ui/Button'
 import { useAuthStore } from '../stores/auth.store'
 
 const TODOS = ['cutover:read', 'cutover:create', 'cutover:validate', 'cutover:submit', 'cutover:approve', 'cutover:apply']
@@ -192,5 +195,30 @@ describe('SPEC 011 · cutover UAT hardening', () => {
     const r = { headers: { 'content-disposition': 'attachment; filename="cutover_template_hatchery_v3.xlsx"' } }
     expect(nombreDescarga(r, 'fallback.xlsx')).toBe('cutover_template_hatchery_v3.xlsx')
     expect(nombreDescarga({}, 'cutover_template_breeder_v2.xlsx')).toBe('cutover_template_breeder_v2.xlsx')
+  })
+})
+
+/**
+ * GA-CUTOVER-S3-01 · regresión visual de botones «primary».
+ *
+ * El defecto: `Button` variante `primary` usaba `bg-brand-500 text-white`, pero Tailwind v4 no
+ * generaba `bg-brand-*` porque faltaba el token de marca ⇒ el botón quedaba transparente y el
+ * texto blanco, invisible. El fix añadió el bloque `@theme` con `--color-brand-50..950` en
+ * `index.css`. Estas aserciones fallan si se quita el token o se rompe la variante primary.
+ */
+describe('GA-CUTOVER-S3-01 · botones primary visibles', () => {
+  it('a) la variante primary (por defecto) pinta fondo de marca y texto blanco', () => {
+    render(<Button>Aplicar</Button>)
+    const btn = screen.getByRole('button', { name: 'Aplicar' })
+    // Fondo de marca + texto blanco: si faltara el fondo, el texto blanco sería invisible.
+    expect(btn.className).toContain('bg-brand-500')
+    expect(btn.className).toContain('text-white')
+  })
+
+  it('b) index.css declara @theme con el token --color-brand-500 (cableado Tailwind v4)', () => {
+    // process.cwd() en vitest es la carpeta `frontend/`.
+    const css = readFileSync(resolve(process.cwd(), 'src', 'index.css'), 'utf8')
+    expect(css).toContain('@theme')
+    expect(css).toContain('--color-brand-500')
   })
 })
