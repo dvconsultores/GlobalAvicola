@@ -26,6 +26,12 @@ Traza temporal S3-02 (§4.3): `datetime-local` 18:00 (civil local) → `new Date
 - **Mutación/sensibilidad S3-02** (`templates.py`, tras IMPL SHA `fc949f1`): **2/2 DETECTADAS** — S1 (revertir a UTC) → 8 failed; S2 (zona `America/New_York`) → 1 failed (vector fin de año −05:00); restaurado 0 diff; suite 9/9 — `evidence/08_sensibilidad_s3-02.md`.
 - **Regresión backend completa (post-mutación, árbol = IMPL SHA, 0 diff):** **1774 passed · 0 failed · 49 skipped** (head `f1a2b3c4d5e6`) — `evidence/07_backend_full_post_mutation.log`.
 
+## 3bis. QA en runtime UAT (`https://avicola.globaldv.net`, usuario `qa.admin`) — 2026-10-28
+Bundle desplegado (Watchtower, AOD-29): CSS `index-BfIe8XWn.css` contiene `.bg-brand-500{background-color:var(--color-brand-500)}` (el fix S3-01 está en vivo).
+- **S3-01 (Playwright):** CTA `primary` «Descargar plantilla» → `visible=true`, `texto="Descargar plantilla"`, **`background-color: rgb(90,155,186)`** (= brand-500 `#5a9bba`), texto blanco. **PASS.** Captura: `evidence/uat_s3-01_cutover_botones.png`.
+- **S3-02 (API):** login `qa.admin` 200; `GET /cutover-templates/{bu}?cutover_datetime=` → `Meta.cutover_datetime` en hora de negocio, mismo instante: hatchery `2026-10-28T22:00:00Z → 2026-10-28T18:00:00-04:00`; grandparent (fin de mes) `2026-11-01T00:00:00Z → 2026-10-31T20:00:00-04:00`. **PASS.**
+- Credencial QA compartida re-reseteada en UAT (`--apply --reset-passwords --confirm-target avicolav2`); fichero `/tmp/global_avicola_qa_credentials.txt` (0600), a entregar al Owner por canal privado, **nunca en repo**.
+
 ## 4. Seguridad / integridad (§9)
 La autoridad del corte sigue en el batch; el parser **ignora** `Meta.cutover_datetime` (SPEC 011, `test_data01_parser_ignora_cutover_de_meta` verde). Editar Meta (empresa/BU/corte) no altera el corte autorizado ni el batch efectivo. Persistencia UTC sin cambio.
 
@@ -40,6 +46,7 @@ REAL_SAP_WRITES=0 · DB_CHANGES=0 · MIGRATION=none · PERSISTENCIA=UTC(intacta)
 S3-01 FIXED (P1) PASS · S3-02 FIXED (P1, representación) PASS
 GATES: frontend 580/580 · cutover 150/150 · pre-mut 1774/0/49 · E2E 4 BU 4/4 (visual) ·
        sensibilidad S3-02 2/2 DETECTADAS · post-mut 1774/0/49 · P0/P1 abiertos=0 · árbol limpio
+UAT_RUNTIME (avicola.globaldv.net, qa.admin): S3-01 PASS (bg rgb(90,155,186)) · S3-02 PASS (Meta -04:00)
 OBSERVACIONES NO BLOQUEANTES (P3, preexistentes, ajenas): Button.secondary clase malformada ·
        toLocaleString del navegador en listado cutover · tailwind.config.ts legacy ignorado por v4
 FINAL_STATUS=CERTIFIED_WITH_NON_BLOCKING_OBSERVATIONS
