@@ -1,0 +1,173 @@
+[
+  {
+    "id": "S1.crear_A",
+    "accion": "POST /users A",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S1.crear_B",
+    "accion": "POST /users B",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S1.EXC",
+    "accion": "'MultipleResultsFound'",
+    "status": null,
+    "detalle": null,
+    "exc": "Multiple rows were found when one or none was required"
+  },
+  {
+    "id": "S2.username_mayus",
+    "accion": "POST username=A.upper()",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S2.email_mayus",
+    "accion": "POST email=A.upper()",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S2.username_espacios",
+    "accion": "POST username con espacios",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S2.username_guardado",
+    "accion": "GET usuario con espacios",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ],
+    "username_repr": "'  esp_ab4384  '"
+  },
+  {
+    "id": "S3.EXC",
+    "accion": "'IntegrityError'",
+    "status": null,
+    "detalle": null,
+    "exc": "(sqlalchemy.dialects.postgresql.asyncpg.IntegrityError) <class 'asyncpg.exceptions.UniqueViolationError'>: duplicate key value violates unique constraint \"ix_users_email\"\nDETAIL:  Key (email)=(pa_ab43"
+  },
+  {
+    "id": "S6.rol1",
+    "accion": "POST /roles nombre N",
+    "status": 201,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S6.rol2",
+    "accion": "POST /roles nombre N (repetido)",
+    "status": 201,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S6.rol3",
+    "accion": "POST /roles N.upper()",
+    "status": 201,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  }
+]

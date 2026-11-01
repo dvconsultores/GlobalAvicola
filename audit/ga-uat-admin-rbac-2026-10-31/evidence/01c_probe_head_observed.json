@@ -1,0 +1,702 @@
+[
+  {
+    "id": "S12.allow_inicial",
+    "accion": "GET /audit",
+    "status": 200,
+    "detalle": [
+      "logs",
+      "total"
+    ]
+  },
+  {
+    "id": "S12.retirar",
+    "accion": "PUT /roles permissions=[]",
+    "status": 200,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S12.deny_mismo_token",
+    "accion": "GET /audit MISMO token",
+    "status": 403,
+    "detalle": "Permiso requerido: audit:read"
+  },
+  {
+    "id": "S12.me_tras_retirar",
+    "accion": "GET /me MISMO token",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": []
+  },
+  {
+    "id": "S12.restaurar",
+    "accion": "PUT /roles permissions=[audit:read]",
+    "status": 200,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S12.allow_restaurado",
+    "accion": "GET /audit MISMO token",
+    "status": 200,
+    "detalle": [
+      "logs",
+      "total"
+    ]
+  },
+  {
+    "id": "S12.me_tras_restaurar",
+    "accion": "GET /me MISMO token",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": [
+      "audit:read"
+    ]
+  },
+  {
+    "id": "S13.audit_antes",
+    "accion": "GET /audit (rol A)",
+    "status": 200,
+    "detalle": [
+      "logs",
+      "total"
+    ]
+  },
+  {
+    "id": "S13.lots_antes",
+    "accion": "GET /lots (rol A)",
+    "status": 403,
+    "detalle": "Permiso requerido: lots:read"
+  },
+  {
+    "id": "S13.cambiar_rol",
+    "accion": "PUT /users role_id=B",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S13.audit_despues",
+    "accion": "GET /audit MISMO token (rol B)",
+    "status": 403,
+    "detalle": "Permiso requerido: audit:read"
+  },
+  {
+    "id": "S13.lots_despues",
+    "accion": "GET /lots MISMO token (rol B)",
+    "status": 200,
+    "detalle": "lista[0]"
+  },
+  {
+    "id": "S13.me_despues",
+    "accion": "GET /me MISMO token",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": [
+      "lots:read"
+    ]
+  },
+  {
+    "id": "S14.me_activo",
+    "accion": "GET /me",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ]
+  },
+  {
+    "id": "S14.desactivar",
+    "accion": "DELETE /users/{U4}",
+    "status": 204,
+    "detalle": ""
+  },
+  {
+    "id": "S14.me_mismo_token",
+    "accion": "GET /me MISMO token tras desactivar",
+    "status": 401,
+    "detalle": "Usuario no encontrado o inactivo"
+  },
+  {
+    "id": "S14.audit_mismo_token",
+    "accion": "GET /audit MISMO token tras desactivar",
+    "status": 401,
+    "detalle": "Usuario no encontrado o inactivo"
+  },
+  {
+    "id": "S14.refresh",
+    "accion": "POST /refresh con refresh previo",
+    "status": 401,
+    "detalle": "Usuario no encontrado"
+  },
+  {
+    "id": "S14.login_inactivo",
+    "accion": "POST /login usuario inactivo",
+    "status": 403,
+    "detalle": "Cuenta desactivada. Contacte al administrador."
+  },
+  {
+    "id": "S14.reactivar",
+    "accion": "PUT /users is_active=true",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S14.login_reactivado",
+    "accion": "POST /login tras reactivar",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S14.me_token_viejo",
+    "accion": "GET /me token anterior tras reactivar",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ]
+  },
+  {
+    "id": "S9.cambiar_clave",
+    "accion": "POST /users/{id}/password (propio)",
+    "status": 204,
+    "detalle": ""
+  },
+  {
+    "id": "S9.me_access_previo",
+    "accion": "GET /me con access previo",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ]
+  },
+  {
+    "id": "S9.refresh_previo",
+    "accion": "POST /refresh con refresh previo",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S9.login_clave_vieja",
+    "accion": "POST /login clave vieja",
+    "status": 401,
+    "detalle": "Usuario o contraseña incorrectos"
+  },
+  {
+    "id": "S9.login_clave_nueva",
+    "accion": "POST /login clave nueva",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S9.nueva_igual_actual",
+    "accion": "nueva == actual",
+    "status": 204,
+    "detalle": ""
+  },
+  {
+    "id": "S9.nueva_corta",
+    "accion": "nueva < 8 caracteres",
+    "status": 422,
+    "detalle": "[{\"type\": \"string_too_short\", \"loc\": [\"body\", \"new_password\"], \"msg\": \"String should have at least 8 characters\", \"input\": \"corta\", \"ctx\": {\"min_length\": 8}}]"
+  },
+  {
+    "id": "S10.unidades",
+    "accion": "GET /business-units",
+    "status": 200,
+    "detalle": "lista[4]",
+    "habilitadas": [
+      "breeder",
+      "broiler",
+      "grandparent",
+      "hatchery"
+    ]
+  },
+  {
+    "id": "S10.conceder1",
+    "accion": "POST conceder",
+    "status": 201,
+    "detalle": [
+      "code",
+      "company_id",
+      "granted_at",
+      "is_effective",
+      "revoked_at",
+      "user_id"
+    ],
+    "code": "breeder"
+  },
+  {
+    "id": "S10.revocar",
+    "accion": "DELETE revocar",
+    "status": 200,
+    "detalle": [
+      "code",
+      "company_id",
+      "granted_at",
+      "is_effective",
+      "revoked_at",
+      "user_id"
+    ]
+  },
+  {
+    "id": "S10.conceder2",
+    "accion": "POST conceder (re-concesión)",
+    "status": 201,
+    "detalle": [
+      "code",
+      "company_id",
+      "granted_at",
+      "is_effective",
+      "revoked_at",
+      "user_id"
+    ]
+  },
+  {
+    "id": "S10.lista",
+    "accion": "GET /users/{Q}/business-units tras re-conceder",
+    "status": 200,
+    "detalle": "lista[2]",
+    "filas": [
+      {
+        "code": "breeder",
+        "revocada": true,
+        "efectiva": false
+      },
+      {
+        "code": "breeder",
+        "revocada": false,
+        "efectiva": true
+      }
+    ]
+  },
+  {
+    "id": "S10.me",
+    "accion": "GET /me de Q",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "granted": [
+      "breeder"
+    ],
+    "effective": [
+      "breeder"
+    ]
+  },
+  {
+    "id": "S15.auditoria",
+    "accion": "GET /audit?limit=100 filas de la sonda",
+    "status": 200,
+    "detalle": [
+      "logs",
+      "total"
+    ],
+    "filas": [
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "user_business_unit",
+        "prev_keys": null,
+        "new_keys": [
+          "business_unit",
+          "target_user_id"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "user_business_unit",
+        "prev_keys": null,
+        "new_keys": [
+          "business_unit",
+          "target_user_id"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "user_business_unit",
+        "prev_keys": null,
+        "new_keys": [
+          "business_unit",
+          "target_user_id"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "created",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": [
+          "company_id",
+          "role_id",
+          "username",
+          "view_type"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre",
+          "permisos"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "updated",
+        "entity_type": "user_password",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": "Cambio de contraseña propia"
+      },
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "login_failed",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": "Credenciales incorrectas"
+      },
+      {
+        "action": "updated",
+        "entity_type": "user_password",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": "Cambio de contraseña propia"
+      },
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "created",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": [
+          "company_id",
+          "role_id",
+          "username",
+          "view_type"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre",
+          "permisos"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "updated",
+        "entity_type": "user",
+        "prev_keys": [
+          "is_active"
+        ],
+        "new_keys": [
+          "is_active"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "deleted",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": [
+          "is_active"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "created",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": [
+          "company_id",
+          "role_id",
+          "username",
+          "view_type"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre",
+          "permisos"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "updated",
+        "entity_type": "user",
+        "prev_keys": [
+          "role_id"
+        ],
+        "new_keys": [
+          "role_id"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "created",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": [
+          "company_id",
+          "role_id",
+          "username",
+          "view_type"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre",
+          "permisos"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre",
+          "permisos"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "login",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": null,
+        "comments": ""
+      },
+      {
+        "action": "created",
+        "entity_type": "user",
+        "prev_keys": null,
+        "new_keys": [
+          "company_id",
+          "role_id",
+          "username",
+          "view_type"
+        ],
+        "comments": ""
+      },
+      {
+        "action": "permission_change",
+        "entity_type": "role",
+        "prev_keys": null,
+        "new_keys": [
+          "nombre",
+          "permisos"
+        ],
+        "comments": ""
+      }
+    ]
+  }
+]

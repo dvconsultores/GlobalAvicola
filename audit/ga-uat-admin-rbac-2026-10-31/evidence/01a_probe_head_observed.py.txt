@@ -1,0 +1,76 @@
+"""Sonda observacional LOTE A — solo registra lo observado en HEAD."""
+from __future__ import annotations
+import json, uuid
+from pathlib import Path
+import pytest
+
+PW = "ClaveSonda2026!"
+EVID = Path(__file__).resolve().parents[2] / "audit" / "ga-uat-admin-rbac-2026-10-31" / "evidence"
+OBS: list[dict] = []
+
+def _detalle(r):
+    try:
+        j = r.json()
+    except Exception:
+        return (r.text or "")[:160]
+    if isinstance(j, dict):
+        d = j.get("detail")
+        return (d if isinstance(d, str) else json.dumps(d, ensure_ascii=False))[:200] if d is not None else sorted(j.keys())[:12]
+    return f"lista[{len(j)}]"
+
+def obs(id_, accion, r=None, **extra):
+    OBS.append({"id": id_, "accion": accion, "status": getattr(r, "status_code", None),
+                "detalle": _detalle(r) if r is not None else None, **extra})
+
+async def mk_user(client, h, username, email, company_id, role_id):
+    return await client.post("/api/v1/users", headers=h, json={
+        "first_name": "Sonda", "last_name": "A", "email": email, "username": username,
+        "password": PW, "role_id": role_id, "company_id": company_id})
+
+async def mk_role(client, h, perms, name=None):
+    return await client.post("/api/v1/roles", headers=h, json={
+        "name": name or f"SONDA-{uuid.uuid4().hex[:8]}", "description": "sonda", "permissions": perms})
+
+@pytest.mark.asyncio
+async def test_probe(client, auth_headers, seeded_ids):
+    cid = seeded_ids["company_id"]
+    h = auth_headers
+    rr = await mk_role(client, h, [{"module": "lots", "action": "read", "scope_type": "all"}])
+    role_id = rr.json()["id"]
+    tag = uuid.uuid4().hex[:6]
+    uA, eA, uB, eB = f"pa_{tag}", f"pa_{tag}@example.com", f"pb_{tag}", f"pb_{tag}@example.com"
+    # --- S1 duplicado cruzado
+    try:
+        a = await mk_user(client, h, uA, eA, cid, role_id); obs("S1.crear_A", "POST /users A", a)
+        b = await mk_user(client, h, uB, eB, cid, role_id); obs("S1.crear_B", "POST /users B", b)
+        r = await mk_user(client, h, uA, eB, cid, role_id); obs("S1.cruzado", "POST /users username=A email=B", r)
+    except Exception as e:
+        obs("S1.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # --- S2 capitalización / espacios
+    try:
+        r = await mk_user(client, h, uA.upper(), f"nuevo_{tag}@example.com", cid, role_id); obs("S2.username_mayus", "POST username=A.upper()", r)
+        r = await mk_user(client, h, f"nu_{tag}", eA.upper(), cid, role_id); obs("S2.email_mayus", "POST email=A.upper()", r)
+        r = await mk_user(client, h, f"  esp_{tag}  ", f"esp_{tag}@example.com", cid, role_id); obs("S2.username_espacios", "POST username con espacios", r)
+        if r.status_code == 201:
+            g = await client.get(f"/api/v1/users/{r.json()['id']}", headers=h)
+            obs("S2.username_guardado", "GET usuario con espacios", g, username_repr=repr(g.json().get("username")))
+    except Exception as e:
+        obs("S2.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # --- S3 edición con email ajeno
+    try:
+        idb = b.json()["id"]
+        r = await client.put(f"/api/v1/users/{idb}", headers=h, json={"email": eA}); obs("S3.put_email_ajeno", "PUT /users/{B} email=A", r)
+        r = await client.put(f"/api/v1/users/{idb}", headers=h, json={"email": eA.upper()}); obs("S3.put_email_ajeno_mayus", "PUT /users/{B} email=A.upper()", r)
+    except Exception as e:
+        obs("S3.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # --- S6 nombre de rol duplicado
+    try:
+        nombre = f"SONDA-DUP-{tag}"
+        r1 = await mk_role(client, h, [{"module": "lots", "action": "read", "scope_type": "all"}], nombre); obs("S6.rol1", "POST /roles nombre N", r1)
+        r2 = await mk_role(client, h, [{"module": "lots", "action": "read", "scope_type": "all"}], nombre); obs("S6.rol2", "POST /roles nombre N (repetido)", r2)
+        r3 = await mk_role(client, h, [{"module": "lots", "action": "read", "scope_type": "all"}], nombre.upper()); obs("S6.rol3", "POST /roles N.upper()", r3)
+    except Exception as e:
+        obs("S6.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    EVID.mkdir(parents=True, exist_ok=True)
+    (EVID / "01a_probe_head_observed.json").write_text(json.dumps(OBS, indent=2, ensure_ascii=False), encoding="utf-8")
+    assert True

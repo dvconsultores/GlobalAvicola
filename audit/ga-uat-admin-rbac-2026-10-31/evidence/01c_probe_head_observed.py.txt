@@ -1,0 +1,153 @@
+"""Sonda observacional LOTE C — solo registra lo observado en HEAD."""
+from __future__ import annotations
+import json, uuid
+from pathlib import Path
+import pytest
+
+PW = "ClaveSonda2026!"
+PW2 = "OtraClaveSonda2027!"
+EVID = Path(__file__).resolve().parents[2] / "audit" / "ga-uat-admin-rbac-2026-10-31" / "evidence"
+OBS: list[dict] = []
+AUDIT_R = {"module": "audit", "action": "read", "scope_type": "all"}
+LOTS_R = {"module": "lots", "action": "read", "scope_type": "all"}
+
+def _detalle(r):
+    try:
+        j = r.json()
+    except Exception:
+        return (r.text or "")[:160]
+    if isinstance(j, dict):
+        d = j.get("detail")
+        return (d if isinstance(d, str) else json.dumps(d, ensure_ascii=False))[:200] if d is not None else sorted(j.keys())[:12]
+    return f"lista[{len(j)}]"
+
+def obs(id_, accion, r=None, **extra):
+    OBS.append({"id": id_, "accion": accion, "status": getattr(r, "status_code", None),
+                "detalle": _detalle(r) if r is not None else None, **extra})
+
+async def mk_user(client, h, tag, role_id, company_id):
+    u = f"pc_{tag}"
+    r = await client.post("/api/v1/users", headers=h, json={
+        "first_name": "Sonda", "last_name": "C", "email": f"{u}@example.com", "username": u,
+        "password": PW, "role_id": role_id, "company_id": company_id})
+    return r, u
+
+async def mk_role(client, h, perms, name=None):
+    return await client.post("/api/v1/roles", headers=h, json={
+        "name": name or f"SONDA-{uuid.uuid4().hex[:8]}", "description": "sonda", "permissions": perms})
+
+async def login(client, u, pw=PW):
+    return await client.post("/api/v1/login", json={"username": u, "password": pw})
+
+def cab(r):
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+async def me_perms(client, hdr):
+    r = await client.get("/api/v1/me", headers=hdr)
+    perms = r.json().get("permissions") if r.status_code == 200 else None
+    return r, perms
+
+@pytest.mark.asyncio
+async def test_probe(client, auth_headers, seeded_ids):
+    cid = seeded_ids["company_id"]
+    h = auth_headers
+    tag = uuid.uuid4().hex[:6]
+    seen_users: list[int] = []
+    seen_roles: list[int] = []
+    # ---- S12 cambio dinámico de permiso con el MISMO token
+    try:
+        R2 = (await mk_role(client, h, [AUDIT_R])).json(); seen_roles.append(R2["id"])
+        ru, u2 = await mk_user(client, h, f"s12{tag}", R2["id"], cid); seen_users.append(ru.json()["id"])
+        h2 = cab(await login(client, u2))
+        obs("S12.allow_inicial", "GET /audit", await client.get("/api/v1/audit", headers=h2))
+        r = await client.put(f"/api/v1/roles/{R2['id']}", headers=h, json={"permissions": []}); obs("S12.retirar", "PUT /roles permissions=[]", r)
+        obs("S12.deny_mismo_token", "GET /audit MISMO token", await client.get("/api/v1/audit", headers=h2))
+        m, p = await me_perms(client, h2); obs("S12.me_tras_retirar", "GET /me MISMO token", m, permisos=p)
+        r = await client.put(f"/api/v1/roles/{R2['id']}", headers=h, json={"permissions": [AUDIT_R]}); obs("S12.restaurar", "PUT /roles permissions=[audit:read]", r)
+        obs("S12.allow_restaurado", "GET /audit MISMO token", await client.get("/api/v1/audit", headers=h2))
+        m, p = await me_perms(client, h2); obs("S12.me_tras_restaurar", "GET /me MISMO token", m, permisos=p)
+    except Exception as e:
+        obs("S12.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S13 cambio de rol de un usuario con el MISMO token
+    try:
+        RA = (await mk_role(client, h, [AUDIT_R])).json(); RB = (await mk_role(client, h, [LOTS_R])).json(); seen_roles += [RA["id"], RB["id"]]
+        ru, u3 = await mk_user(client, h, f"s13{tag}", RA["id"], cid); U3 = ru.json(); seen_users.append(U3["id"])
+        h3 = cab(await login(client, u3))
+        obs("S13.audit_antes", "GET /audit (rol A)", await client.get("/api/v1/audit", headers=h3))
+        obs("S13.lots_antes", "GET /lots (rol A)", await client.get("/api/v1/lots", headers=h3))
+        r = await client.put(f"/api/v1/users/{U3['id']}", headers=h, json={"role_id": RB["id"]}); obs("S13.cambiar_rol", "PUT /users role_id=B", r)
+        obs("S13.audit_despues", "GET /audit MISMO token (rol B)", await client.get("/api/v1/audit", headers=h3))
+        obs("S13.lots_despues", "GET /lots MISMO token (rol B)", await client.get("/api/v1/lots", headers=h3))
+        m, p = await me_perms(client, h3); obs("S13.me_despues", "GET /me MISMO token", m, permisos=p)
+    except Exception as e:
+        obs("S13.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S14 usuario desactivado con tokens vivos y reactivación
+    try:
+        R4 = (await mk_role(client, h, [AUDIT_R])).json(); seen_roles.append(R4["id"])
+        ru, u4 = await mk_user(client, h, f"s14{tag}", R4["id"], cid); U4 = ru.json(); seen_users.append(U4["id"])
+        l4 = await login(client, u4); h4 = cab(l4); refresh4 = l4.json()["refresh_token"]
+        obs("S14.me_activo", "GET /me", await client.get("/api/v1/me", headers=h4))
+        d = await client.delete(f"/api/v1/users/{U4['id']}", headers=h); obs("S14.desactivar", "DELETE /users/{U4}", d)
+        obs("S14.me_mismo_token", "GET /me MISMO token tras desactivar", await client.get("/api/v1/me", headers=h4))
+        obs("S14.audit_mismo_token", "GET /audit MISMO token tras desactivar", await client.get("/api/v1/audit", headers=h4))
+        obs("S14.refresh", "POST /refresh con refresh previo", await client.post("/api/v1/refresh", json={"refresh_token": refresh4}))
+        obs("S14.login_inactivo", "POST /login usuario inactivo", await login(client, u4))
+        r = await client.put(f"/api/v1/users/{U4['id']}", headers=h, json={"is_active": True}); obs("S14.reactivar", "PUT /users is_active=true", r)
+        obs("S14.login_reactivado", "POST /login tras reactivar", await login(client, u4))
+        obs("S14.me_token_viejo", "GET /me token anterior tras reactivar", await client.get("/api/v1/me", headers=h4))
+    except Exception as e:
+        obs("S14.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S9 contraseña y sesiones previas
+    try:
+        R9 = (await mk_role(client, h, [LOTS_R])).json(); seen_roles.append(R9["id"])
+        ru, u9 = await mk_user(client, h, f"s9{tag}", R9["id"], cid); U9 = ru.json(); seen_users.append(U9["id"])
+        l9 = await login(client, u9); h9 = cab(l9); refresh9 = l9.json()["refresh_token"]
+        r = await client.post(f"/api/v1/users/{U9['id']}/password", headers=h9, json={"current_password": PW, "new_password": PW2}); obs("S9.cambiar_clave", "POST /users/{id}/password (propio)", r)
+        obs("S9.me_access_previo", "GET /me con access previo", await client.get("/api/v1/me", headers=h9))
+        obs("S9.refresh_previo", "POST /refresh con refresh previo", await client.post("/api/v1/refresh", json={"refresh_token": refresh9}))
+        obs("S9.login_clave_vieja", "POST /login clave vieja", await login(client, u9, PW))
+        obs("S9.login_clave_nueva", "POST /login clave nueva", await login(client, u9, PW2))
+        r = await client.post(f"/api/v1/users/{U9['id']}/password", headers=h9, json={"current_password": PW2, "new_password": PW2}); obs("S9.nueva_igual_actual", "nueva == actual", r)
+        r = await client.post(f"/api/v1/users/{U9['id']}/password", headers=h9, json={"current_password": PW2, "new_password": "corta"}); obs("S9.nueva_corta", "nueva < 8 caracteres", r)
+    except Exception as e:
+        obs("S9.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S10 re-concesión y listado de concesiones
+    try:
+        bu = await client.get("/api/v1/business-units", headers=h)
+        habil = [x["code"] for x in bu.json() if x.get("is_enabled")] if bu.status_code == 200 else None
+        obs("S10.unidades", "GET /business-units", bu, habilitadas=habil)
+        code = habil[0] if habil else None
+        if code is None and bu.status_code == 200:
+            en = await client.patch("/api/v1/business-units/breeder/enable", headers=h); obs("S10.habilitar_breeder", "PATCH enable breeder", en); code = "breeder"
+        R10 = (await mk_role(client, h, [LOTS_R])).json(); seen_roles.append(R10["id"])
+        ru, u10 = await mk_user(client, h, f"s10{tag}", R10["id"], cid); Q = ru.json(); seen_users.append(Q["id"])
+        obs("S10.conceder1", "POST conceder", await client.post(f"/api/v1/users/{Q['id']}/business-units", headers=h, json={"code": code}), code=code)
+        obs("S10.revocar", "DELETE revocar", await client.delete(f"/api/v1/users/{Q['id']}/business-units/{code}", headers=h))
+        obs("S10.conceder2", "POST conceder (re-concesión)", await client.post(f"/api/v1/users/{Q['id']}/business-units", headers=h, json={"code": code}))
+        lst = await client.get(f"/api/v1/users/{Q['id']}/business-units", headers=h)
+        filas = [{"code": x["code"], "revocada": x.get("revoked_at") is not None, "efectiva": x.get("is_effective")} for x in lst.json()] if lst.status_code == 200 else None
+        obs("S10.lista", "GET /users/{Q}/business-units tras re-conceder", lst, filas=filas)
+        hq = cab(await login(client, f"pc_s10{tag}"))
+        mq = await client.get("/api/v1/me", headers=hq)
+        obs("S10.me", "GET /me de Q", mq, granted=mq.json().get("granted_business_units"), effective=mq.json().get("effective_business_units"))
+    except Exception as e:
+        obs("S10.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S15 contenido de auditoría de las mutaciones administrativas
+    try:
+        a = await client.get("/api/v1/audit?limit=100", headers=h)
+        logs = a.json().get("logs", []) if a.status_code == 200 else []
+        ids_u = {str(i) for i in seen_users}; ids_r = {str(i) for i in seen_roles}
+        filas = []
+        for lg in logs:
+            et, eid = lg.get("entity_type"), str(lg.get("entity_id"))
+            if (et == "user" and eid in ids_u) or (et == "role" and eid in ids_r) or et in ("user_business_unit", "user_password"):
+                filas.append({"action": lg.get("action"), "entity_type": et,
+                              "prev_keys": sorted((lg.get("previous_values") or {}).keys()) if isinstance(lg.get("previous_values"), dict) else lg.get("previous_values"),
+                              "new_keys": sorted((lg.get("new_values") or {}).keys()) if isinstance(lg.get("new_values"), dict) else lg.get("new_values"),
+                              "comments": (lg.get("comments") or "")[:80]})
+        obs("S15.auditoria", "GET /audit?limit=100 filas de la sonda", a, filas=filas[:40])
+    except Exception as e:
+        obs("S15.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    EVID.mkdir(parents=True, exist_ok=True)
+    (EVID / "01c_probe_head_observed.json").write_text(json.dumps(OBS, indent=2, ensure_ascii=False), encoding="utf-8")
+    assert True

@@ -1,0 +1,122 @@
+[
+  {
+    "cuenta": "admin",
+    "ruta": "/audit",
+    "endpoint": "/api/v1/audit?limit=1",
+    "uiPermite": true,
+    "status": 200,
+    "huboRespuesta2xx": true
+  },
+  {
+    "cuenta": "admin",
+    "ruta": "/users",
+    "endpoint": "/api/v1/users?limit=1",
+    "uiPermite": true,
+    "status": 200,
+    "huboRespuesta2xx": true
+  },
+  {
+    "cuenta": "admin",
+    "ruta": "/roles",
+    "endpoint": "/api/v1/roles",
+    "uiPermite": true,
+    "status": 200,
+    "huboRespuesta2xx": true
+  },
+  {
+    "cuenta": "admin",
+    "ruta": "/lots",
+    "endpoint": "/api/v1/lots?limit=1",
+    "uiPermite": true,
+    "status": 200,
+    "huboRespuesta2xx": true
+  },
+  {
+    "cuenta": "admin",
+    "ruta": "/cutover",
+    "endpoint": "/api/v1/cutover-batches",
+    "uiPermite": true,
+    "status": 200,
+    "huboRespuesta2xx": true
+  },
+  {
+    "cuenta": "operator",
+    "ruta": "/audit",
+    "endpoint": "/api/v1/audit?limit=1",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "operator",
+    "ruta": "/users",
+    "endpoint": "/api/v1/users?limit=1",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "operator",
+    "ruta": "/roles",
+    "endpoint": "/api/v1/roles",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "operator",
+    "ruta": "/lots",
+    "endpoint": "/api/v1/lots?limit=1",
+    "uiPermite": true,
+    "status": 200,
+    "huboRespuesta2xx": true
+  },
+  {
+    "cuenta": "operator",
+    "ruta": "/cutover",
+    "endpoint": "/api/v1/cutover-batches",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "approver",
+    "ruta": "/audit",
+    "endpoint": "/api/v1/audit?limit=1",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "approver",
+    "ruta": "/users",
+    "endpoint": "/api/v1/users?limit=1",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "approver",
+    "ruta": "/roles",
+    "endpoint": "/api/v1/roles",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "approver",
+    "ruta": "/lots",
+    "endpoint": "/api/v1/lots?limit=1",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  },
+  {
+    "cuenta": "approver",
+    "ruta": "/cutover",
+    "endpoint": "/api/v1/cutover-batches",
+    "uiPermite": false,
+    "status": 403,
+    "huboRespuesta2xx": false
+  }
+]

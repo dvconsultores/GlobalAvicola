@@ -1,0 +1,434 @@
+[
+  {
+    "id": "S4.login_previo",
+    "accion": "login U (rol activo)",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S4.me_activo",
+    "accion": "GET /me",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": [
+      "audit:read",
+      "lots:read"
+    ]
+  },
+  {
+    "id": "S4.lots_activo",
+    "accion": "GET /lots",
+    "status": 200,
+    "detalle": "lista[0]"
+  },
+  {
+    "id": "S4.audit_activo",
+    "accion": "GET /audit",
+    "status": 200,
+    "detalle": [
+      "logs",
+      "total"
+    ]
+  },
+  {
+    "id": "S4.desactivar_rol",
+    "accion": "PUT /roles is_active=false (rol con usuario asignado)",
+    "status": 200,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S4.me_tras",
+    "accion": "GET /me MISMO token",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": [
+      "audit:read",
+      "lots:read"
+    ]
+  },
+  {
+    "id": "S4.lots_tras",
+    "accion": "GET /lots MISMO token",
+    "status": 200,
+    "detalle": "lista[0]"
+  },
+  {
+    "id": "S4.audit_tras",
+    "accion": "GET /audit MISMO token",
+    "status": 200,
+    "detalle": [
+      "logs",
+      "total"
+    ]
+  },
+  {
+    "id": "S4.login_tras",
+    "accion": "POST /login U tras desactivar rol",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S4.refresh_tras",
+    "accion": "POST /refresh con refresh previo",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S4.roles_lista",
+    "accion": "GET /roles",
+    "status": 200,
+    "detalle": "lista[8]",
+    "rol_listado": false
+  },
+  {
+    "id": "S4.alta_con_rol_inactivo",
+    "accion": "POST /users con role_id inactivo",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S4.reasignar_inactivo",
+    "accion": "PUT /users/{U} role_id=inactivo",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S4.reactivar",
+    "accion": "PUT /roles is_active=true",
+    "status": 200,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S4.roles_lista_tras_reactivar",
+    "accion": "GET /roles tras reactivar",
+    "status": 200,
+    "detalle": "lista[9]",
+    "rol_listado": true
+  },
+  {
+    "id": "S5.crear_rol_vacio",
+    "accion": "POST /roles permissions=[]",
+    "status": 201,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S5.alta_usuario",
+    "accion": "POST /users con rol vacío",
+    "status": 201,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S5.login",
+    "accion": "login usuario con rol vacío",
+    "status": 200,
+    "detalle": [
+      "access_token",
+      "expires_in",
+      "refresh_token",
+      "token_type"
+    ]
+  },
+  {
+    "id": "S5.me",
+    "accion": "GET /me",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": []
+  },
+  {
+    "id": "S5.GET/api/v1/users",
+    "accion": "GET /api/v1/users",
+    "status": 403,
+    "detalle": "Permiso requerido: users:read"
+  },
+  {
+    "id": "S5.GET/api/v1/lots",
+    "accion": "GET /api/v1/lots",
+    "status": 403,
+    "detalle": "Permiso requerido: lots:read"
+  },
+  {
+    "id": "S5.GET/api/v1/roles",
+    "accion": "GET /api/v1/roles",
+    "status": 403,
+    "detalle": "Permiso requerido: users:read"
+  },
+  {
+    "id": "S7.roles_visibles",
+    "accion": "GET /roles como V",
+    "status": 200,
+    "detalle": "lista[11]"
+  },
+  {
+    "id": "S7.auto_cambio_rol",
+    "accion": "PUT /users/{V} role_id=plantilla con mas permisos",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ],
+    "rol_destino": "TEST Operador",
+    "permisos_destino": 6
+  },
+  {
+    "id": "S7.me_tras_auto_cambio",
+    "accion": "GET /me tras auto-cambio",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": [
+      "dashboard:read",
+      "lots:read",
+      "masters:read",
+      "operations:create",
+      "operations:read",
+      "operations:update"
+    ]
+  },
+  {
+    "id": "S7.auto_desactivar_PUT",
+    "accion": "PUT propio is_active=false",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S7.me_tras_auto_desactivar",
+    "accion": "GET /me MISMO token",
+    "status": 401,
+    "detalle": "Usuario no encontrado o inactivo"
+  },
+  {
+    "id": "S8.PUT_is_active_false",
+    "accion": "W (solo users:update) PUT /users/{T} is_active=false",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_id",
+      "company_name",
+      "created_at",
+      "email",
+      "first_name",
+      "id",
+      "is_active",
+      "is_super_admin",
+      "last_login",
+      "last_name",
+      "phone"
+    ]
+  },
+  {
+    "id": "S8.DELETE_sin_users_delete",
+    "accion": "W (sin users:delete) DELETE /users/{T2}",
+    "status": 403,
+    "detalle": "Permiso requerido: users:delete"
+  },
+  {
+    "id": "S11.comodin_delete_company",
+    "accion": "POST /roles (*,delete,company)",
+    "status": 201,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S11.comodin_read_farm",
+    "accion": "POST /roles (*,read,farm,1)",
+    "status": 201,
+    "detalle": [
+      "company_id",
+      "created_at",
+      "description",
+      "id",
+      "is_active",
+      "name",
+      "permissions"
+    ]
+  },
+  {
+    "id": "S11.me",
+    "accion": "GET /me usuario con (*,delete,company)",
+    "status": 200,
+    "detalle": [
+      "area_id",
+      "company_business_units",
+      "company_id",
+      "company_name",
+      "created_at",
+      "effective_business_units",
+      "effective_company_id",
+      "email",
+      "first_name",
+      "granted_business_units",
+      "id",
+      "is_active"
+    ],
+    "permisos": [
+      "*:delete"
+    ],
+    "is_super_admin": false
+  },
+  {
+    "id": "S11.delete_inexistente",
+    "accion": "DELETE /users/999999 (¿403 permiso o 404?)",
+    "status": 404,
+    "detalle": "Usuario no encontrado"
+  }
+]

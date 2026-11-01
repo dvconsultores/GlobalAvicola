@@ -1,0 +1,129 @@
+"""Sonda observacional LOTE B — solo registra lo observado en HEAD."""
+from __future__ import annotations
+import json, uuid
+from pathlib import Path
+import pytest
+
+PW = "ClaveSonda2026!"
+EVID = Path(__file__).resolve().parents[2] / "audit" / "ga-uat-admin-rbac-2026-10-31" / "evidence"
+OBS: list[dict] = []
+LOTS_AUDIT = [{"module": "lots", "action": "read", "scope_type": "all"},
+              {"module": "audit", "action": "read", "scope_type": "all"}]
+
+def _detalle(r):
+    try:
+        j = r.json()
+    except Exception:
+        return (r.text or "")[:160]
+    if isinstance(j, dict):
+        d = j.get("detail")
+        return (d if isinstance(d, str) else json.dumps(d, ensure_ascii=False))[:200] if d is not None else sorted(j.keys())[:12]
+    return f"lista[{len(j)}]"
+
+def obs(id_, accion, r=None, **extra):
+    OBS.append({"id": id_, "accion": accion, "status": getattr(r, "status_code", None),
+                "detalle": _detalle(r) if r is not None else None, **extra})
+
+async def mk_user(client, h, tag, role_id, company_id):
+    u = f"pb_{tag}"
+    r = await client.post("/api/v1/users", headers=h, json={
+        "first_name": "Sonda", "last_name": "B", "email": f"{u}@example.com", "username": u,
+        "password": PW, "role_id": role_id, "company_id": company_id})
+    return r, u
+
+async def mk_role(client, h, perms, name=None):
+    return await client.post("/api/v1/roles", headers=h, json={
+        "name": name or f"SONDA-{uuid.uuid4().hex[:8]}", "description": "sonda", "permissions": perms})
+
+async def login(client, u):
+    return await client.post("/api/v1/login", json={"username": u, "password": PW})
+
+def cab(r):
+    return {"Authorization": f"Bearer {r.json()['access_token']}"}
+
+async def me_perms(client, hdr):
+    r = await client.get("/api/v1/me", headers=hdr)
+    perms = r.json().get("permissions") if r.status_code == 200 else None
+    sa = r.json().get("is_super_admin") if r.status_code == 200 else None
+    return r, perms, sa
+
+@pytest.mark.asyncio
+async def test_probe(client, auth_headers, seeded_ids):
+    cid = seeded_ids["company_id"]
+    h = auth_headers
+    tag = uuid.uuid4().hex[:6]
+    # ---- S4 rol inactivo (autoridad fantasma)
+    try:
+        R = (await mk_role(client, h, LOTS_AUDIT)).json()
+        ru, uU = await mk_user(client, h, f"s4{tag}", R["id"], cid); U = ru.json()
+        l1 = await login(client, uU); obs("S4.login_previo", "login U (rol activo)", l1)
+        hu = cab(l1); refresh1 = l1.json()["refresh_token"]
+        m, p, sa = await me_perms(client, hu); obs("S4.me_activo", "GET /me", m, permisos=p)
+        obs("S4.lots_activo", "GET /lots", await client.get("/api/v1/lots", headers=hu))
+        obs("S4.audit_activo", "GET /audit", await client.get("/api/v1/audit", headers=hu))
+        d = await client.put(f"/api/v1/roles/{R['id']}", headers=h, json={"is_active": False}); obs("S4.desactivar_rol", "PUT /roles is_active=false (rol con usuario asignado)", d)
+        m, p, sa = await me_perms(client, hu); obs("S4.me_tras", "GET /me MISMO token", m, permisos=p)
+        obs("S4.lots_tras", "GET /lots MISMO token", await client.get("/api/v1/lots", headers=hu))
+        obs("S4.audit_tras", "GET /audit MISMO token", await client.get("/api/v1/audit", headers=hu))
+        obs("S4.login_tras", "POST /login U tras desactivar rol", await login(client, uU))
+        obs("S4.refresh_tras", "POST /refresh con refresh previo", await client.post("/api/v1/refresh", json={"refresh_token": refresh1}))
+        lst = await client.get("/api/v1/roles", headers=h); obs("S4.roles_lista", "GET /roles", lst, rol_listado=any(x["id"] == R["id"] for x in lst.json()))
+        rr2, _ = await mk_user(client, h, f"s4b{tag}", R["id"], cid); obs("S4.alta_con_rol_inactivo", "POST /users con role_id inactivo", rr2)
+        obs("S4.reasignar_inactivo", "PUT /users/{U} role_id=inactivo", await client.put(f"/api/v1/users/{U['id']}", headers=h, json={"role_id": R["id"]}))
+        ra = await client.put(f"/api/v1/roles/{R['id']}", headers=h, json={"is_active": True}); obs("S4.reactivar", "PUT /roles is_active=true", ra)
+        lst = await client.get("/api/v1/roles", headers=h); obs("S4.roles_lista_tras_reactivar", "GET /roles tras reactivar", lst, rol_listado=any(x["id"] == R["id"] for x in lst.json()))
+    except Exception as e:
+        obs("S4.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S5 rol sin permisos
+    try:
+        Rz = await mk_role(client, h, []); obs("S5.crear_rol_vacio", "POST /roles permissions=[]", Rz)
+        ru, uZ = await mk_user(client, h, f"s5{tag}", Rz.json()["id"], cid); obs("S5.alta_usuario", "POST /users con rol vacío", ru)
+        lz = await login(client, uZ); obs("S5.login", "login usuario con rol vacío", lz)
+        hz = cab(lz); m, p, sa = await me_perms(client, hz); obs("S5.me", "GET /me", m, permisos=p)
+        for ruta in ("/api/v1/users", "/api/v1/lots", "/api/v1/roles"):
+            obs("S5.GET" + ruta, "GET " + ruta, await client.get(ruta, headers=hz))
+    except Exception as e:
+        obs("S5.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S7 auto-acciones
+    try:
+        RV = (await mk_role(client, h, [{"module": "users", "action": a, "scope_type": "all"} for a in ("read", "update", "delete")])).json()
+        ru, uV = await mk_user(client, h, f"s7a{tag}", RV["id"], cid); V = ru.json()
+        hv = cab(await login(client, uV))
+        roles = await client.get("/api/v1/roles", headers=hv); obs("S7.roles_visibles", "GET /roles como V", roles)
+        cands = [x for x in roles.json() if x["company_id"] is None and not any(pp["module"] == "*" for pp in x["permissions"]) and len(x["permissions"]) > 0]
+        mayor = max(cands, key=lambda x: len(x["permissions"])) if cands else None
+        if mayor:
+            r = await client.put(f"/api/v1/users/{V['id']}", headers=hv, json={"role_id": mayor["id"]})
+            obs("S7.auto_cambio_rol", "PUT /users/{V} role_id=plantilla con mas permisos", r, rol_destino=mayor["name"], permisos_destino=len(mayor["permissions"]))
+            m, p, sa = await me_perms(client, hv); obs("S7.me_tras_auto_cambio", "GET /me tras auto-cambio", m, permisos=p)
+        ru, uV2 = await mk_user(client, h, f"s7b{tag}", RV["id"], cid); V2 = ru.json()
+        hv2 = cab(await login(client, uV2))
+        r = await client.put(f"/api/v1/users/{V2['id']}", headers=hv2, json={"is_active": False}); obs("S7.auto_desactivar_PUT", "PUT propio is_active=false", r)
+        obs("S7.me_tras_auto_desactivar", "GET /me MISMO token", await client.get("/api/v1/me", headers=hv2))
+    except Exception as e:
+        obs("S7.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S8 doble ruta de baja
+    try:
+        RW = (await mk_role(client, h, [{"module": "users", "action": a, "scope_type": "all"} for a in ("read", "update")])).json()
+        ru, uW = await mk_user(client, h, f"s8w{tag}", RW["id"], cid)
+        hw = cab(await login(client, uW))
+        rt, _ = await mk_user(client, h, f"s8t{tag}", RW["id"], cid); T = rt.json()
+        rt2, _ = await mk_user(client, h, f"s8u{tag}", RW["id"], cid); T2 = rt2.json()
+        obs("S8.PUT_is_active_false", "W (solo users:update) PUT /users/{T} is_active=false", await client.put(f"/api/v1/users/{T['id']}", headers=hw, json={"is_active": False}))
+        obs("S8.DELETE_sin_users_delete", "W (sin users:delete) DELETE /users/{T2}", await client.delete(f"/api/v1/users/{T2['id']}", headers=hw))
+    except Exception as e:
+        obs("S8.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    # ---- S11 comodín de módulo con alcance en rol de inquilino
+    try:
+        Rw1 = await mk_role(client, h, [{"module": "*", "action": "delete", "scope_type": "company"}]); obs("S11.comodin_delete_company", "POST /roles (*,delete,company)", Rw1)
+        Rw2 = await mk_role(client, h, [{"module": "*", "action": "read", "scope_type": "farm", "scope_id": 1}]); obs("S11.comodin_read_farm", "POST /roles (*,read,farm,1)", Rw2)
+        if Rw1.status_code == 201:
+            ru, uX = await mk_user(client, h, f"s11{tag}", Rw1.json()["id"], cid)
+            hx = cab(await login(client, uX))
+            m, p, sa = await me_perms(client, hx); obs("S11.me", "GET /me usuario con (*,delete,company)", m, permisos=p, is_super_admin=sa)
+            obs("S11.delete_inexistente", "DELETE /users/999999 (¿403 permiso o 404?)", await client.delete("/api/v1/users/999999", headers=hx))
+    except Exception as e:
+        obs("S11.EXC", repr(type(e).__name__), None, exc=str(e)[:200])
+    EVID.mkdir(parents=True, exist_ok=True)
+    (EVID / "01b_probe_head_observed.json").write_text(json.dumps(OBS, indent=2, ensure_ascii=False), encoding="utf-8")
+    assert True
