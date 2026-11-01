@@ -1,0 +1,251 @@
+/**
+ * P-17e · SONDA `GA-UAT-USERS-S2-01` — BEFORE del defecto `R-S2-01`.
+ *
+ * El caso reproduce lo que hace una persona: abre la ficha de un usuario, le cambia el rol y
+ * pulsa Guardar. Antes del arreglo, el navegador repone la contraseña guardada en el campo, de
+ * modo que la interfaz manda `password` con el valor **actual** y el cambio de rol choca con
+ * la validación «La nueva contraseña debe ser distinta de la actual».
+ *
+ * Esta sonda NO certifica el defecto: mide y deja evidencia. Registra qué peticiones salen
+ * hacia `/api/v1/users` con qué cuerpo (siempre redactado), qué responde el backend, qué
+ * toasts lee la persona, con qué rol queda la cuenta y si su clave anterior sigue abriendo
+ * sesión. Ese JSON es la línea base que el AFTER tendrá que mover.
+ */
+import { test, expect, type Page } from '@playwright/test'
+import * as fs from 'node:fs'
+import { API, cabeceraAdmin, sufijo } from '../test-support/e2e-api'
+import { credenciales, entrar } from '../test-support/auth'
+import { apiConToken, crearRol, crearUsuario, entrarComo, tokenDe } from '../test-support/admin-rbac'
+
+/** Carpeta de evidencia de la sonda BEFORE. */
+const DIR = 'audit/ga-uat-users-s2-01-2026-11-01/evidence'
+
+/**
+ * Cuerpo de una petición con las claves sustituidas por su longitud.
+ *
+ * El JSON de evidencia se archiva y se revisa a mano: ni contraseñas ni hashes tienen sitio
+ * en él. La longitud basta para dejar constancia de que el campo viajó.
+ */
+function sanitizar(postData: string | null): any {
+  if (!postData) return null
+  let cuerpo: any
+  try {
+    cuerpo = JSON.parse(postData)
+  } catch {
+    return '(cuerpo no JSON)'
+  }
+  if (cuerpo && typeof cuerpo === 'object') {
+    for (const campo of ['new_password', 'password', 'current_password']) {
+      if (campo in cuerpo) cuerpo[campo] = `<redactado len=${String(cuerpo[campo] ?? '').length}>`
+    }
+  }
+  return cuerpo
+}
+
+/**
+ * Abre `/users`, busca el username y devuelve la fila.
+ *
+ * La búsqueda se aplica al pulsar Enter y es imprescindible: el listado pide `limit=100` y el
+ * usuario de la prueba es uno entre muchos, así que darlo por visible sería confiar en el
+ * orden de una página que no controlamos.
+ */
+async function buscarUsuario(page: Page, username: string) {
+  await page.goto('/users')
+  const caja = page.locator('input[type="search"]').first()
+  await expect(caja, 'la pantalla de Usuarios debe ofrecer la búsqueda').toBeVisible({
+    timeout: 20_000,
+  })
+  await caja.fill(username)
+  await caja.press('Enter')
+
+  const fila = page.getByRole('row').filter({ hasText: username })
+  await expect(fila, `la búsqueda por Enter debe dejar la fila de ${username}`).toBeVisible({
+    timeout: 20_000,
+  })
+  return fila
+}
+
+test('GA-UAT-USERS-S2-01 · BEFORE', async ({ browser, request }) => {
+  test.setTimeout(120_000)
+
+  // ── (1) Escenario por API: dos roles que se excluyen y un usuario con el rol A ──────────
+  const s = sufijo()
+  const nombreA = `S2A-${s}`
+  const nombreB = `S2B-${s}`
+  const username = `p17e-s2-${s}`
+  const clave = `S2-${s}-Aa1!`
+
+  const cab = await cabeceraAdmin(request)
+  const rolA = await crearRol(request, cab, nombreA, [{ module: 'lots', action: 'read' }])
+  const rolB = await crearRol(request, cab, nombreB, [{ module: 'audit', action: 'read' }])
+  const usuarioId = await crearUsuario(request, cab, { username, clave, role_id: rolA })
+
+  // La credencial de U abre sesión antes de tocar nada: es la línea base del «después».
+  const loginInicial = await request.post(`${API}/login`, { data: { username, password: clave } })
+  expect(loginInicial.status(), 'la clave inicial de U debe abrir sesión').toBe(200)
+
+  // ── (2) Sesión de administración en un contexto propio, como en `P-17b` ─────────────────
+  const { usuario: usuarioAdmin, clave: claveAdmin } = credenciales('admin')
+  const ctx = await browser.newContext()
+  const pageAdmin = await ctx.newPage()
+
+  try {
+    await entrarComo(pageAdmin, usuarioAdmin, claveAdmin).catch(async () => {
+      // Si el formulario no responde al primer intento, se reintenta con el helper de la casa.
+      await entrar(pageAdmin, 'admin')
+    })
+    const tokenAdmin = await tokenDe(pageAdmin)
+
+    const fila = await buscarUsuario(pageAdmin, username)
+
+    // El botón de editar es un icono: se prueban las etiquetas habituales antes de caer al
+    // último botón de la fila, para no depender de un `title` concreto.
+    const candidatos = [
+      fila.locator(
+        'button[title*="ditar" i], button[aria-label*="ditar" i],' +
+          'button[title*="edit" i], button[aria-label*="edit" i]',
+      ),
+      fila.getByRole('button', { name: /editar|edit/i }),
+      fila.locator('button:has(svg.lucide-pencil), button:has(svg[class*="pencil" i])'),
+    ]
+    let botonEditar = fila.locator('button').last()
+    for (const candidato of candidatos) {
+      if ((await candidato.count()) > 0) {
+        botonEditar = candidato.first()
+        break
+      }
+    }
+    await botonEditar.click()
+
+    // ── (3) El modal de edición, con el autocompletado del navegador simulado ──────────────
+    const campoClave = pageAdmin.locator('input[type="password"]').first()
+    await expect(
+      campoClave,
+      'el modal de edición debe ofrecer el campo de contraseña',
+    ).toBeVisible({ timeout: 20_000 })
+
+    // Lo que hace el navegador: repone la clave guardada en el campo al abrir la ficha.
+    await campoClave.fill(clave)
+
+    // Y la persona cambia el rol a B, que es el cambio que se quiere guardar.
+    await expect(
+      pageAdmin.locator('option', { hasText: nombreB }),
+      'el selector de rol debe listar el rol B recién creado',
+    ).toHaveCount(1, { timeout: 20_000 })
+    const selectRol = pageAdmin
+      .locator('select')
+      .filter({ has: pageAdmin.locator('option', { hasText: nombreB }) })
+      .first()
+    const valorB = await pageAdmin.locator('option', { hasText: nombreB }).first().getAttribute('value')
+    if (valorB) await selectRol.selectOption(valorB)
+    else await selectRol.selectOption({ label: nombreB })
+
+    // ── (4) La red se registra ANTES de Guardar: la sonda mide lo que el portal manda ─────
+    const peticiones: any[] = []
+    const respuestas: any[] = []
+
+    pageAdmin.on('request', req => {
+      const url = new URL(req.url())
+      if (!url.pathname.includes('/api/v1/users')) return
+      peticiones.push({
+        metodo: req.method(),
+        ruta: url.pathname,
+        cuerpo: sanitizar(req.postData()),
+      })
+    })
+
+    pageAdmin.on('response', async res => {
+      const url = new URL(res.url())
+      if (!url.pathname.includes('/api/v1/users')) return
+      const entrada: any = {
+        metodo: res.request().method(),
+        ruta: url.pathname,
+        status: res.status(),
+        detail: null,
+      }
+      if (res.status() >= 400) {
+        try {
+          const cuerpo = await res.json()
+          entrada.detail = cuerpo?.detail ?? cuerpo
+        } catch {
+          entrada.detail = '(cuerpo no JSON)'
+        }
+      }
+      respuestas.push(entrada)
+    })
+
+    await pageAdmin.getByRole('button', { name: /guardar|save/i }).first().click()
+    await pageAdmin.waitForTimeout(2500)
+
+    const toasts = await pageAdmin.locator('[role="alert"], [role="status"]').allInnerTexts()
+
+    // El portal pinta sus avisos en el contenedor fijo de `Toast.tsx`, que **no** lleva rol
+    // ARIA: sin esta segunda lectura, un error perfectamente visible quedaría sin registrar.
+    const avisos = await pageAdmin.locator('.fixed.top-4.right-4 > div').allInnerTexts()
+    for (const aviso of avisos) {
+      const texto = aviso.replace(/\s+/g, ' ').trim()
+      if (texto && !toasts.includes(texto)) toasts.push(texto)
+    }
+
+    // Petición y respuesta se emparejan por orden: el listener de `response` llega detrás.
+    const requests = peticiones.map((peticion, i) => ({
+      ...peticion,
+      status: respuestas[i]?.status ?? null,
+      detail: respuestas[i]?.detail ?? null,
+    }))
+    const hubo_POST_password = requests.some(
+      r => r.metodo === 'POST' && /\/users\/\d+\/password$/.test(String(r.ruta)),
+    )
+
+    // ── (5) Estado final por API: con qué rol quedó U y qué abre su clave ─────────────────
+    let detalle: any = null
+    const viaSesion = await apiConToken(pageAdmin, `/users/${usuarioId}`, tokenAdmin)
+    if (viaSesion.status === 200 && viaSesion.body && typeof viaSesion.body === 'object') {
+      detalle = viaSesion.body
+    }
+    if (!detalle) {
+      const r = await request.get(`${API}/users/${usuarioId}`, { headers: cab })
+      if (r.status() === 200) detalle = await r.json()
+    }
+    if (!detalle) {
+      const r = await request.get(`${API}/users?limit=100&search=${username}`, { headers: cab })
+      const lista = r.status() === 200 ? await r.json() : []
+      const items = Array.isArray(lista) ? lista : (lista.items ?? [])
+      detalle = items.find((u: any) => u.username === username) ?? null
+    }
+
+    // El rol puede venir plano (`role_id`) o anidado (`role`): se acepta lo que haya.
+    const rol_final: { id: number | null; nombre: string | null } = detalle
+      ? {
+          id: detalle.role_id ?? detalle.role?.id ?? null,
+          nombre: detalle.role?.name ?? detalle.role_name ?? null,
+        }
+      : { id: null, nombre: null }
+    if (!rol_final.nombre && rol_final.id !== null) {
+      if (rol_final.id === rolB) rol_final.nombre = nombreB
+      else if (rol_final.id === rolA) rol_final.nombre = nombreA
+    }
+
+    // La clave que tenía antes de pulsar Guardar: ¿sigue abriendo sesión?
+    const loginFinal = await request.post(`${API}/login`, { data: { username, password: clave } })
+
+    // ── (6) Evidencia: `JSON` saneado, nunca contraseñas, hashes ni tokens ────────────────
+    const evidencia = {
+      rol_inicial: { id: rolA, nombre: nombreA },
+      rol_final,
+      requests,
+      toasts,
+      login_con_clave_anterior_status: loginFinal.status(),
+      hubo_POST_password,
+    }
+
+    fs.mkdirSync(DIR, { recursive: true })
+    fs.writeFileSync(`${DIR}/01_before_repro.json`, JSON.stringify(evidencia, null, 2))
+    console.log(`[GA-UAT-USERS-S2-01 BEFORE]\n${JSON.stringify(evidencia, null, 2)}`)
+
+    // Sonda informativa: describe el estado, no certifica el defecto.
+    expect(true).toBe(true)
+  } finally {
+    await ctx.close()
+  }
+})

@@ -1,0 +1,42 @@
+{
+  "rol_inicial": {
+    "id": 9,
+    "nombre": "S2A-n6b1am4t"
+  },
+  "rol_final": {
+    "id": 10,
+    "nombre": "S2B-n6b1am4t"
+  },
+  "requests": [
+    {
+      "metodo": "PUT",
+      "ruta": "/api/v1/users/5",
+      "cuerpo": {
+        "first_name": "Prueba",
+        "last_name": "SPEC013 x6xbpcvi",
+        "email": "p17e-s2-n6b1am4t@example.com",
+        "phone": "",
+        "role_id": 10,
+        "area_id": null,
+        "view_type": "web",
+        "is_active": true
+      },
+      "status": 200,
+      "detail": null
+    },
+    {
+      "metodo": "POST",
+      "ruta": "/api/v1/users/5/password",
+      "cuerpo": {
+        "new_password": "<redactado len=16>"
+      },
+      "status": 422,
+      "detail": "La nueva contraseña debe ser distinta de la actual"
+    }
+  ],
+  "toasts": [
+    "La nueva contraseña debe ser distinta de la actual"
+  ],
+  "login_con_clave_anterior_status": 200,
+  "hubo_POST_password": true
+}

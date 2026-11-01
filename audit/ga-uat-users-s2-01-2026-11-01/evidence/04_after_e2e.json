@@ -1,0 +1,99 @@
+{
+  "rol_inicial": {
+    "id": 15,
+    "nombre": "S2A-e1mgnq06"
+  },
+  "rol_tras_ida": {
+    "id": 16,
+    "nombre": "S2B-e1mgnq06"
+  },
+  "rol_tras_vuelta": {
+    "id": 15,
+    "nombre": "S2A-e1mgnq06"
+  },
+  "ediciones": [
+    {
+      "paso": "ida A→B",
+      "requests": [
+        {
+          "metodo": "PUT",
+          "ruta": "/api/v1/users/11",
+          "cuerpo": {
+            "first_name": "Prueba",
+            "last_name": "SPEC013 12wehnjp",
+            "email": "p17e-s2-e1mgnq06@example.com",
+            "phone": "",
+            "role_id": 16,
+            "area_id": null,
+            "view_type": "web",
+            "is_active": true
+          },
+          "status": 200,
+          "detail": null
+        },
+        {
+          "metodo": "GET",
+          "ruta": "/api/v1/users",
+          "cuerpo": null,
+          "status": 200,
+          "detail": null
+        }
+      ]
+    },
+    {
+      "paso": "vuelta B→A",
+      "requests": [
+        {
+          "metodo": "PUT",
+          "ruta": "/api/v1/users/11",
+          "cuerpo": {
+            "first_name": "Prueba",
+            "last_name": "SPEC013 12wehnjp",
+            "email": "p17e-s2-e1mgnq06@example.com",
+            "phone": "",
+            "role_id": 15,
+            "area_id": null,
+            "view_type": "web",
+            "is_active": true
+          },
+          "status": 200,
+          "detail": null
+        },
+        {
+          "metodo": "GET",
+          "ruta": "/api/v1/users",
+          "cuerpo": null,
+          "status": 200,
+          "detail": null
+        }
+      ]
+    }
+  ],
+  "toasts": [],
+  "login_status": {
+    "inicial": 200,
+    "tras_ida": 200,
+    "tras_vuelta": 200
+  },
+  "permisos_me": {
+    "inicial": [
+      "lots:read"
+    ],
+    "tras_ida": [
+      "audit:read"
+    ],
+    "tras_vuelta": [
+      "lots:read"
+    ]
+  },
+  "auditoria": {
+    "tras_ida": {
+      "user_password": 0,
+      "user": 4
+    },
+    "tras_vuelta": {
+      "user_password": 0,
+      "user": 6
+    }
+  }
+}
