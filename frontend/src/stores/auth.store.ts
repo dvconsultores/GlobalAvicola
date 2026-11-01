@@ -116,7 +116,19 @@ export const useAuthStore = create<AuthState>((set, get) => ({
       company_id: claims?.company_id != null ? Number(claims.company_id) : null,
       company_name: null,
     }
-    set({ token: access, refreshToken: refresh, isAuthenticated: true, user: immediateUser })
+    // AC-SS-01 (SPEC 013 · AR-19): el refresh automático rota el token del MISMO sujeto, y el
+    // token sólo aporta `role_id`/`view_type`. Reemplazar el usuario por los claims borraba
+    // `permissions`, las tres listas de unidades, `is_super_admin` y los datos de contacto que
+    // hidrató `/me`: tras ~30 min `hasPermission(user, 'review:approve')` pasaba de `true` a
+    // `false` y la UI ocultaba acciones/menús hasta recargar. Con el mismo sujeto se conserva lo
+    // hidratado y sólo se refrescan los dos campos que el token sí trae; si no hay usuario
+    // previo (o es otro sujeto: login nuevo) se parte del usuario derivado de los claims.
+    const previousUser = get().user
+    const user: User =
+      previousUser && previousUser.id === immediateUser.id
+        ? { ...previousUser, role_id: immediateUser.role_id, view_type: immediateUser.view_type }
+        : immediateUser
+    set({ token: access, refreshToken: refresh, isAuthenticated: true, user })
   },
 
   getAccessToken: () => accessToken,

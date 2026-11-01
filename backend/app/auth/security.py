@@ -126,7 +126,12 @@ async def get_current_user(
 
     if user.role:
         role_name = user.role.name
-        if user.role.permissions:
+        # AC-RL-02 (AR-01) · un rol **inactivo** no confiere nada: ni permisos, ni autoridad
+        # global. Su gente seguía entrando con todas las capacidades del rol mientras la
+        # interfaz lo mostraba desactivado, de modo que «desactivar» no desactivaba. El
+        # nombre del rol se conserva —es un dato de la fila, no una capacidad— y el bucle
+        # simplemente no se ejecuta: `permisos` queda vacío e `is_super_admin` en `False`.
+        if user.role.is_active and user.role.permissions:
             for perm in user.role.permissions:
                 accion = perm.action.value if hasattr(perm.action, "value") else str(perm.action)
                 permisos.add((perm.module, accion))

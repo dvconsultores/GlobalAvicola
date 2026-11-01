@@ -1,7 +1,8 @@
 from typing import Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import delete as sa_delete, select
+from sqlalchemy import delete as sa_delete, func, or_, select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import Permission, PermissionAction, Role, User
@@ -144,6 +145,106 @@ class AuthService:
         # comodín repartiría la escalada en vez de fabricarla, y también se deniega.
         return rol.company_id == empresa and not await self._es_autoridad_global(role_id)
 
+    async def _exigir_rol_activo(self, role_id: int | None) -> None:
+        """`AC-RL-03` · `DR-1`: un rol **inactivo** no se asigna.
+
+        Asignarlo reintroduciría por la puerta de atrás el usuario sin capacidades que
+        `AC-RL-01` acaba de evitar al impedir la baja del rol en uso: la persona entraría al
+        sistema sin poder hacer nada y sin saber por qué.
+
+        Es una comprobación **distinta** de `_rol_asignable` —aquella decide de quién es el
+        rol y qué autoridad reparte— y por eso se llama después y por separado. La de aquí
+        solo mira `is_active`.
+        """
+        if role_id is None:
+            return
+        rol = (await self.db.execute(
+            select(Role).where(Role.id == role_id))).scalar_one_or_none()
+        if rol is not None and not rol.is_active:
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="El rol está inactivo y no puede asignarse")
+
+    # ── Regla de subconjunto — `DR-3` (`AC-ES-01` · `AC-ES-02`) ──
+    #
+    # «Nadie asigna un rol ni concede permisos que él mismo no posea», con la autoridad
+    # global exenta. Sin esto, `users:create` basta para fabricarse cualquier capacidad:
+    # basta crear un rol con `("*", …)` —o con el permiso que se quiera— y asignárselo a
+    # un cómplice o a uno mismo. Administrar el acceso dejaba de ser administrar y pasaba
+    # a ser elevarse.
+
+    def _no_cubiertos(self, actor: dict | None, pares) -> list[str]:
+        """Qué `"modulo:accion"` de `pares` **no** están en poder del actor.
+
+        La comprobación es `tiene_permiso`, la **misma** función que decide cada ruta del
+        producto. Una segunda implementación de la misma regla acabaría concediendo lo que
+        la primera deniega, y el comodín se comporta aquí como allí: `("*", "read")` en
+        poder del actor cubre `lots:read`, y un rol que **reparte** `("*", "read")` exige
+        tener el comodín (`AC-ES-01`, «el comodín exige comodín»).
+
+        `actor` nulo significa que no hay nadie a quien exigirle nada —el camino de las
+        semillas y de los servicios invocados sin petición—, y la autoridad global está
+        exenta por `DR-3`.
+        """
+        if actor is None or actor.get("is_super_admin"):
+            return []
+        faltan = {f"{modulo}:{accion}" for modulo, accion in pares
+                  if not tiene_permiso(actor, modulo, accion)}
+        return sorted(faltan)
+
+    @staticmethod
+    def _mensaje_de_escalada(prefijo: str, faltan: list[str]) -> str:
+        """El detalle del `403`: qué se denegó, con nombres, y recortado.
+
+        Con muchos permisos fuera del subconjunto el mensaje se haría ilegible; cinco y unos
+        puntos suspensivos dicen lo mismo. El resto queda en el asiento de auditoría.
+        """
+        return f"{prefijo}: " + ", ".join(faltan[:5]) + ("…" if len(faltan) > 5 else "")
+
+    async def _exigir_subconjunto_de_rol(self, role_id: int | None,
+                                         actor: dict | None) -> None:
+        """`AC-ES-01` · el rol **destino** no puede repartir lo que el actor no tiene.
+
+        Se comprueban los pares `(módulo, acción)` del rol, no su nombre ni su empresa: lo
+        que se reparte es la capacidad. `role_id` nulo —un usuario sin rol— no reparte nada
+        y no hay nada que comprobar.
+        """
+        if role_id is None:
+            return
+        filas = (await self.db.execute(
+            select(Permission.module, Permission.action)
+            .where(Permission.role_id == role_id))).all()
+        pares = [(modulo, getattr(accion, "value", accion)) for modulo, accion in filas]
+        faltan = self._no_cubiertos(actor, pares)
+        if not faltan:
+            return
+        await self._registrar_rechazo_de_autoridad(
+            actor=actor, role_id=role_id,
+            motivo="rechazado: escalada de permisos (asignación de rol)")
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=self._mensaje_de_escalada(
+                "No puede asignar un rol con permisos que usted no posee", faltan))
+
+    async def _exigir_permisos_cubiertos(self, nuevos, actor, *, role_id: int | None,
+                                         motivo: str) -> None:
+        """`AC-ES-02` · conceder exige poseer. Retirar no se comprueba nunca.
+
+        `nuevos` son solo los pares que se **añaden** al rol: quitar un permiso reduce lo
+        que el rol reparte y no puede ser una escalada, de modo que prohibirlo dejaría roles
+        heredados imposibles de sanear. Reenviar el mismo conjunto —lo que la interfaz hace
+        al guardar— tampoco añade nada y no exige nada.
+        """
+        faltan = self._no_cubiertos(actor, nuevos)
+        if not faltan:
+            return
+        await self._registrar_rechazo_de_autoridad(actor=actor, role_id=role_id,
+                                                   motivo=motivo)
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail=self._mensaje_de_escalada(
+                "No puede conceder permisos que usted no posee", faltan))
+
     async def _rol_administrable(self, role_id: int, actor: dict | None):
         """El rol, **si el actor puede administrarlo**. `AC-R03` · `AC-R04`.
 
@@ -237,6 +338,10 @@ class AuthService:
                 # `R-199` · `OD-13.c`: la capacidad exige el permiso **en un rol de
                 # sistema**; un rol de inquilino con el comodín no la confiere.
                 Role.company_id.is_(None),
+                # `UAT-ADMIN-RBAC` · `AC-RL-02` · `DR-1`: un rol inactivo **no** confiere
+                # autoridad global. Es la misma señal que `get_current_user` ya ignora
+                # estando el rol apagado; aquí se cierra la otra mitad de la regla.
+                Role.is_active.is_(True),
                 Permission.module == "*",
                 Permission.scope_type == "all",
             )
@@ -429,9 +534,36 @@ class AuthService:
         usuarios en B. Para un actor acotado la reclamación del cliente se ignora; solo la
         autoridad global sin contexto puede declarar en qué empresa nace el usuario.
         """
-        existing = await self.db.execute(select(User).where((User.username == data.username) | (User.email == data.email)))
-        if existing.scalar_one_or_none():
-            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="Usuario o email ya existe")
+        # `UAT-ADMIN-RBAC` · `AC-ID-01` · `AC-ID-03`. La identidad se normaliza **antes** de
+        # compararla y de persistirla, y cada unicidad se comprueba por separado.
+        #
+        # Antes había una sola consulta con `OR` y `scalar_one_or_none`: cuando el `username`
+        # era de un usuario y el `email` de otro, llegaban dos filas y la petición moría con
+        # `MultipleResultsFound` (`500`). El administrador no sabía qué estaba ocupado y el
+        # `OR` obligaba a adivinar qué campo corregir.
+        #
+        # `lower()` porque el login se escribe a mano: `PA_X` y `pa_x` no pueden ser dos
+        # identidades distintas (`AC-ID-03`). Los índices únicos de la base siguen siendo
+        # sensibles a mayúsculas — **sin migración**, como fija el §4.3 de la spec.
+        username = data.username.strip()
+        email = str(data.email).strip()
+        if len(username) < 3:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="El nombre de usuario debe tener al menos 3 caracteres")
+
+        ocupado = (await self.db.execute(
+            select(User.id).where(func.lower(User.username) == username.lower()).limit(1)
+        )).first()
+        if ocupado is not None:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="El nombre de usuario ya está en uso")
+        ocupado = (await self.db.execute(
+            select(User.id).where(func.lower(User.email) == email.lower()).limit(1)
+        )).first()
+        if ocupado is not None:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="El correo electrónico ya está en uso")
 
         empresa, global_ = self._contexto(actor)
         if actor is None:
@@ -452,11 +584,22 @@ class AuthService:
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Ese rol no es asignable desde la administración de esta empresa")
 
+        # `UAT-ADMIN-RBAC` · `AC-RL-03` · `DR-1`: además de asignable, el rol tiene que
+        # estar vivo. Va detrás de lo anterior y antes del `db.add`, de modo que un rechazo
+        # no deja fila.
+        await self._exigir_rol_activo(data.role_id)
+
+        # `UAT-ADMIN-RBAC` · `AC-ES-01` · `DR-3`: además de asignable y de estar vivo, el
+        # rol no puede repartir capacidades que el actor no posea. Es la puerta del alta: sin
+        # esta comprobación, `users:create` bastaba para crear a alguien con el rol que
+        # concedía lo que el actor no tenía — o para crearse a uno mismo la cuenta cómplice.
+        await self._exigir_subconjunto_de_rol(data.role_id, actor)
+
         user = User(
             first_name=data.first_name,
             last_name=data.last_name,
-            email=data.email,
-            username=data.username,
+            email=email,
+            username=username,
             phone=data.phone,
             hashed_password=hash_password(data.password),
             role_id=data.role_id,
@@ -464,7 +607,13 @@ class AuthService:
             view_type=data.view_type or "web",
         )
         self.db.add(user)
-        await self.db.flush()
+        try:
+            await self.db.flush()
+        except IntegrityError:
+            # Red de seguridad, no la regla: entre la comprobación de arriba y este `flush`
+            # cabe otra alta simultánea. Sin capturarlo, la carrera terminaba en `500`.
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="El usuario o el correo ya existen") from None
         await self.db.refresh(user)
 
         # `P1-12-REOPEN` (`E-13` · T-05): el alta escribe su fila — sin secretos.
@@ -502,6 +651,27 @@ class AuthService:
 
         update_data = data.model_dump(exclude_unset=True)
 
+        # `UAT-ADMIN-RBAC` · `AC-ES-03` · `DR-3`. Administrar el acceso **no** autoriza a
+        # modificar el propio: quien puede `users:update` podría, si no, darse el rol que le
+        # faltaba, y quien puede darse de baja podría dejar la superficie sin administrador.
+        # La autoridad global **no** queda exenta —tampoco ella cambia su rol ni se
+        # desactiva sola—, que es la mitad de `DR-3` que no admite excepción.
+        #
+        # Reenviar el **mismo** `role_id` no es un cambio y sigue permitido: la interfaz lo
+        # envía siempre al guardar, y bloquearlo dejaría la fila propia sin poder editarse.
+        if actor is not None and actor.get("id") == user.id:
+            if "role_id" in update_data and update_data["role_id"] != user.role_id:
+                await self._registrar_rechazo_de_autoridad(
+                    actor=actor, role_id=update_data["role_id"],
+                    motivo="rechazado: auto-cambio de rol")
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Administrar el acceso no autoriza a modificar el propio rol")
+            if update_data.get("is_active") is False:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="No puede desactivarse a sí mismo")
+
         # `AC15`. Se comprueba **antes** de tocar la fila: una denegación no puede dejar
         # medio usuario escrito.
         if ("role_id" in update_data
@@ -509,12 +679,81 @@ class AuthService:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
                 detail="Ese rol no es asignable desde la administración de esta empresa")
+
+        # `UAT-ADMIN-RBAC` · `AC-RL-03` · `DR-1`: el rol nuevo tiene que estar vivo — pero
+        # **solo si cambia**. Re-guardar el rol inactivo que ya está asignado no se
+        # re-valida: si no, la fila quedaría imposible de editar (un usuario heredado no
+        # podría ni cambiar su nombre).
+        if "role_id" in update_data and update_data["role_id"] != user.role_id:
+            await self._exigir_rol_activo(update_data["role_id"])
+            # `AC-ES-01` · `DR-3`: el cambio de rol también **reparte** permisos, y no
+            # puede repartir los que el actor no tiene. Reenviar el rol ya asignado no
+            # reparte nada nuevo y no se comprueba (la UI lo manda siempre).
+            await self._exigir_subconjunto_de_rol(update_data["role_id"], actor)
+
+        # `UAT-ADMIN-RBAC` · `AC-ID-02` · `AC-ID-02b`. Dos defectos que acababan en `500` en
+        # el mismo sitio, y las dos comprobaciones van aquí por la misma razón que la del
+        # rol: una petición rechazada no deja medio usuario escrito.
+        #
+        # * un `null` viajaba hasta la base y moría en el `NOT NULL` — es un `422`, no un
+        #   fallo del servidor;
+        # * un correo ya usado por otro llegaba también a la base, y el `IntegrityError` de
+        #   `ix_users_email` se propagaba sin capturar.
+        if "email" in update_data:
+            if update_data["email"] is None:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                    detail="El correo electrónico no puede ser nulo")
+            email = str(update_data["email"]).strip()
+            # La comprobación de duplicado solo tiene sentido si el correo **cambia**. Con
+            # datos antiguos pueden existir dos correos que solo difieren en mayúsculas (el
+            # índice de la base distingue mayúsculas, el producto no): reenviar el propio
+            # correo sin tocarlo no puede chocar contra el otro, o el administrador no
+            # podría guardar ningún otro campo de esa fila.
+            if email.lower() != (user.email or "").strip().lower():
+                # `lower()` y `strip()`: la unicidad es del producto, no del índice.
+                de_otro = (await self.db.execute(
+                    select(User.id).where(
+                        User.id != user.id,
+                        func.lower(User.email) == email.lower(),
+                    ).limit(1)
+                )).first()
+                if de_otro is not None:
+                    raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                        detail="El correo electrónico ya está en uso")
+            update_data["email"] = email
+
+        # `role_id` y `area_id` **sí** admiten nulo —desasignar rol o área es una operación
+        # legítima—; estos cinco no, porque la fila no los admite y el cliente no debe poder
+        # provocar un `500` con un `null`.
+        for campo in ("first_name", "last_name", "view_type", "is_active"):
+            if campo in update_data and update_data[campo] is None:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                    detail=f"{campo} no puede ser nulo")
+
+        # `UAT-ADMIN-RBAC` · `AC-ID-05` · `AR-07`. Desactivar es la mitad destructiva de la
+        # administración de usuarios y ya tenía su propio permiso en `DELETE /users/{id}`.
+        # Admitirla por `PUT` con `users:update` era la misma capacidad por otra puerta —
+        # `users:update` es también lo que autoriza a renombrar. Reactivar no destruye nada
+        # y sigue exigiendo solo `users:update`, que el router ya comprueba.
+        #
+        # Va antes de mutar: una denegación no deja medio usuario escrito.
+        if (update_data.get("is_active") is False and actor is not None
+                and not tiene_permiso(actor, "users", "delete")):
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Desactivar un usuario exige el permiso users:delete")
+
         cambios = {clave: {"old": getattr(user, clave, None), "new": valor}
                    for clave, valor in update_data.items()}
         for key, value in update_data.items():
             setattr(user, key, value)
 
-        await self.db.flush()
+        try:
+            await self.db.flush()
+        except IntegrityError:
+            # Carrera entre la comprobación y el `flush`: mismo contrato (`409`), nunca `500`.
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="El correo electrónico ya está en uso") from None
         await self.db.refresh(user)
 
         # `P1-12-REOPEN` (`E-13` · T-05): la edición deja fila con el diff — sin secretos.
@@ -580,6 +819,15 @@ class AuthService:
                     detail="La contraseña actual no es correcta",
                 )
 
+        # `UAT-ADMIN-RBAC` · `AC-ID-06` · `AR-10`: aceptar como «nueva» la contraseña vigente
+        # deja creer al usuario que cambió algo que no cambió — el mismo silencio de `P0-13`
+        # por otra puerta, y además hace parecer que un restablecimiento surtió efecto. Vale
+        # para los dos caminos: el titular y el restablecimiento por un administrador.
+        if verify_password(data.new_password, user.hashed_password):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="La nueva contraseña debe ser distinta de la actual")
+
         user.hashed_password = hash_password(data.new_password)
         await self.db.flush()
 
@@ -615,6 +863,14 @@ class AuthService:
             user = await self._usuario_alcanzable(user_id, actor)
         if not user:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Usuario no encontrado")
+        # `UAT-ADMIN-RBAC` · `AC-ES-03` · `DR-3`. Darse de baja uno mismo deja la superficie
+        # sin el administrador que la estaba usando, y `users:delete` —el permiso de la baja—
+        # no convierte ese permiso en derecho a retirarse del sistema. La regla es la misma
+        # que en `update_user` y no exime a la autoridad global.
+        if actor is not None and actor.get("id") == user.id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="No puede desactivarse a sí mismo")
         user.is_active = False
         await self.db.flush()
 
@@ -708,13 +964,21 @@ class AuthService:
                     detail="La autoridad global no se concede desde la administración de una empresa")
 
     async def _registrar_rechazo_de_autoridad(self, *, actor: dict | None,
-                                              role_id: int | None) -> None:
-        """`C-05`: el intento denegado de fabricar autoridad global deja asiento.
+                                              role_id: int | None,
+                                              motivo: str = ("rechazado: autoridad global "
+                                                             "desde una superficie de empresa")
+                                              ) -> None:
+        """`C-05`: el intento denegado de fabricar autoridad deja asiento.
 
         Mismo patrón que `LOGIN_FAILED`: el `403` provoca el rollback de la petición y el
         registro debe sobrevivir al rechazo — se confirma aquí, solo aquí, y solo cuando no
         hay otra escritura pendiente (la validación corre antes de tocar la base). Sin
         empresa efectiva no hay asiento posible (`audit_logs.company_id` es `NOT NULL`).
+
+        `motivo` dice **qué** se intentó: la autoridad global desde una empresa (`R-199`),
+        la escalada de permisos por asignación o por concesión, o el auto-cambio de rol
+        (`DR-3`). Un mismo `403` por cuatro reglas distintas que dejara el mismo texto no
+        serviría para reconstruir un incidente.
         """
         empresa, _ = self._contexto(actor)
         if actor is None or empresa is None:
@@ -723,7 +987,7 @@ class AuthService:
             self.db, usuario=actor, accion=AuditAction.PERMISSION_CHANGE,
             modulo=AuditModule.USERS, entity_type="role", entity_id=role_id,
             company_id=empresa,
-            comments="rechazado: autoridad global desde una superficie de empresa",
+            comments=motivo,
         )
         await self.db.commit()
 
@@ -734,7 +998,8 @@ class AuthService:
             "actions": [a.value for a in PermissionAction],
         }
 
-    async def get_roles(self, actor: dict | None = None) -> list[RoleRead]:
+    async def get_roles(self, actor: dict | None = None,
+                        include_inactive: bool = False) -> list[RoleRead]:
         """Los roles de la empresa efectiva **más** las plantillas de sistema. `AC-R01`.
 
         `OD-13.b`: `company_id NULL` es una plantilla de producto, compartida por todos los
@@ -743,8 +1008,16 @@ class AuthService:
 
         Verlas no es poder asignarlas ni editarlas — de eso se ocupan `_rol_asignable` y
         `_rol_administrable`.
+
+        `AC-RL-04` · `DR-1`: los inactivos solo aparecen **bajo petición** (`include_inactive`).
+        Un rol apagado desaparecía de la única lista que existe y quedaba irrecuperable: no
+        había forma de volver a encontrarlo para reactivarlo. El flag abre esa puerta y
+        **nada más**: el filtro de empresa y plantillas de abajo no depende de él, porque
+        usarlo para «quitar el filtro» mezclaría inquilinos.
         """
-        consulta = select(Role).where(Role.is_active == True)
+        consulta = select(Role)
+        if not include_inactive:
+            consulta = consulta.where(Role.is_active == True)
         empresa, _ = self._contexto(actor)
         if actor is not None:
             # `OD-14.c`: las plantillas de sistema son control global y se ven siempre; los
@@ -757,6 +1030,35 @@ class AuthService:
         roles = (await self.db.execute(consulta)).scalars().all()
         return [RoleRead.model_validate(r) for r in roles]
 
+    async def _nombre_de_rol_ocupado(self, nombre: str, *, empresa: int | None,
+                                     excluir_id: int | None = None) -> bool:
+        """¿Ese nombre de rol ya está tomado en el ámbito del actor? `AC-ID-04` · `AR-06`.
+
+        ```
+        `empresa` NULL   plantilla de producto   solo choca con otras plantillas
+        `empresa` = X    rol de inquilino        choca con las plantillas y con los de X
+        ```
+
+        La segunda línea es la que impide que un rol de empresa repita el nombre de una
+        plantilla que **ve** —el listado ofrecería dos entradas indistinguibles— sin
+        prohibirle nombrar los suyos como quiera. Los inactivos cuentan: la ambigüedad no
+        depende de que el rol esté vivo.
+
+        La comparación es `lower(trim(...))`, que es lo que hace que «con espacios» y «con
+        otra capitalización» sean el mismo nombre. Vive en el servicio y no en un índice
+        único porque esta spec **no lleva migración** (`§4.3`).
+        """
+        objetivo = nombre.strip().lower()
+        consulta = select(Role.id).where(func.lower(func.trim(Role.name)) == objetivo)
+        if empresa is None:
+            consulta = consulta.where(Role.company_id.is_(None))
+        else:
+            consulta = consulta.where(
+                or_(Role.company_id.is_(None), Role.company_id == empresa))
+        if excluir_id is not None:
+            consulta = consulta.where(Role.id != excluir_id)
+        return (await self.db.execute(consulta.limit(1))).first() is not None
+
     async def create_role(self, data: RoleCreate, current_user: dict | None = None) -> RoleRead:
         """Crea un rol **en la empresa efectiva del actor**. `AC-R02` · `OD-13.e`.
 
@@ -765,6 +1067,24 @@ class AuthService:
         es lo que las semillas del producto han hecho siempre.
         """
         empresa, global_ = self._contexto(current_user)
+        # `AC-ID-04` · `AR-06`. El nombre se valida **antes** de `db.add`, igual que los
+        # permisos: una denegación no deja fila. La autoridad global crea plantillas de
+        # sistema, de modo que su ámbito de nombres es el de las plantillas.
+        nombre = data.name.strip()
+        if not nombre:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail="El nombre del rol es obligatorio")
+        # `UAT-ADMIN-RBAC` · `AC-RL-05` · `DR-2`: un rol sin permisos no es un rol, es una
+        # entrada de catálogo que solo sirve para dejar a alguien dentro del sistema sin
+        # poder hacer nada. Se comprueba **antes** del duplicado y antes del `db.add`: el
+        # rechazo no deja fila.
+        if not data.permissions:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail="El rol debe tener al menos un permiso")
+        if await self._nombre_de_rol_ocupado(
+                nombre, empresa=None if (current_user is None or global_) else empresa):
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                detail="Ya existe un rol con ese nombre")
         # `R-199` · `T-02`: validar **antes** de `db.add` — una denegación no deja fila.
         try:
             self._validar_permisos(data.permissions or [],
@@ -773,7 +1093,19 @@ class AuthService:
             if exc.status_code == status.HTTP_403_FORBIDDEN:
                 await self._registrar_rechazo_de_autoridad(actor=current_user, role_id=None)
             raise
-        role = Role(name=data.name, description=data.description,
+        # `UAT-ADMIN-RBAC` · `AC-ES-02` · `DR-3`: crear un rol **es** conceder sus permisos.
+        # Sin esta comprobación, un administrador de empresa se fabricaba aquí el rol que
+        # necesitaba y se lo asignaba después; el catálogo cerrado de `_validar_permisos`
+        # impide inventar módulos, no repartir los que ya existen. La autoridad global queda
+        # exenta: las plantillas de sistema son suyas por definición.
+        if current_user is not None and not global_:
+            await self._exigir_permisos_cubiertos(
+                [(p.module, getattr(p.action, "value", p.action))
+                 for p in (data.permissions or [])],
+                current_user, role_id=None,
+                motivo="rechazado: escalada de permisos (alta de rol)")
+
+        role = Role(name=nombre, description=data.description,
                     company_id=None if (current_user is None or global_) else empresa)
         self.db.add(role)
         await self.db.flush()
@@ -812,6 +1144,13 @@ class AuthService:
         if not role:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Rol no encontrado")
 
+        # `AC-RL-05` · `DR-2`. Un rol sin permisos no es un rol. Va **antes** de `sa_delete`:
+        # una edición rechazada deja los permisos como estaban (`AC02`), y no se reescribe
+        # el conjunto para luego descubrir que estaba prohibido vaciarlo.
+        if data.permissions is not None and len(data.permissions) == 0:
+            raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                detail="El rol debe tener al menos un permiso")
+
         # `R-199` · `T-02`: validar el conjunto **antes** de `sa_delete` — una denegación
         # deja los permisos intactos (`AC02`).
         if data.permissions is not None:
@@ -824,9 +1163,72 @@ class AuthService:
                                                                role_id=role.id)
                 raise
 
+        # `UAT-ADMIN-RBAC` · `AC-ES-02` · `DR-3`: aquí solo se exige poseer lo que se
+        # **añade** (nuevo conjunto − conjunto actual). Retirar reduce lo que el rol reparte
+        # y nunca puede ser una escalada — prohibirlo dejaría los roles heredados sin poder
+        # sanearse—, y reenviar el mismo conjunto no añade nada: es lo que la interfaz hace
+        # al guardar, y la regla no puede convertir el botón de guardar en un bloqueo.
+        #
+        # Va antes de `sa_delete`: una denegación deja los permisos como estaban (`AC02`).
+        if data.permissions is not None and current_user is not None \
+                and not current_user.get("is_super_admin"):
+            actuales = {(p.module, getattr(p.action, "value", p.action))
+                        for p in role.permissions}
+            anadidos = [(p.module, getattr(p.action, "value", p.action))
+                        for p in data.permissions
+                        if (p.module, getattr(p.action, "value", p.action)) not in actuales]
+            await self._exigir_permisos_cubiertos(
+                anadidos, current_user, role_id=role.id,
+                motivo="rechazado: escalada de permisos (edición de rol)")
+
         # `permissions` se excluye del asignador genérico: es una relación y se sustituye
         # abajo. Asignarle una lista de diccionarios revienta el mapeador.
         update_data = data.model_dump(exclude_unset=True, exclude={"permissions"})
+
+        # `AC-ID-04` · `AR-06`. El renombrado pasa por la misma comprobación que el alta, y
+        # **excluye el propio rol**: renombrar `PA_X` a `pa_X` no es chocar consigo mismo.
+        if "name" in update_data and update_data["name"] is not None:
+            nombre = update_data["name"].strip()
+            if not nombre:
+                raise HTTPException(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                                    detail="El nombre del rol es obligatorio")
+            if nombre.lower() != (role.name or "").strip().lower():
+                if await self._nombre_de_rol_ocupado(nombre, empresa=role.company_id,
+                                                     excluir_id=role.id):
+                    raise HTTPException(status_code=status.HTTP_409_CONFLICT,
+                                        detail="Ya existe un rol con ese nombre")
+            update_data["name"] = nombre
+
+        # `AC-RL-01` · `DR-1`. Un rol que alguien está usando no se da de baja: sus usuarios
+        # seguirían entrando con un rol muerto —sin ninguna capacidad y sin saber por qué—,
+        # y el administrador tendría que adivinar a quién reasignar. Se cuentan **solo los
+        # usuarios activos**: con los dados de baja el rol ya no lo usa nadie, y bloquear
+        # también por ellos dejaría roles imposibles de retirar.
+        #
+        # Va antes de mutar: una negativa no deja medio rol escrito.
+        if data.is_active is False and role.is_active:
+            n = (await self.db.execute(
+                select(func.count(User.id)).where(
+                    User.role_id == role.id, User.is_active.is_(True))
+            )).scalar_one()
+            if n > 0:
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=(f"El rol tiene {n} usuario(s) activo(s) asignado(s); "
+                            f"reasígnelos antes de desactivarlo"))
+
+        # `AC-RL-06` · `AR-09`. El «antes» se captura **antes de mutar**: después, la fila ya
+        # no recuerda qué se concedió ni qué se retiró, que es lo único que un auditor puede
+        # revisar. Solo cadenas y booleanos — ningún secreto tiene cabida aquí.
+        antes = {
+            "nombre": role.name,
+            "descripcion": role.description,
+            "activo": role.is_active,
+            "permisos": sorted(
+                f"{p.module}:{getattr(p.action, 'value', p.action)}:{p.scope_type}"
+                for p in role.permissions),
+        }
+
         for key, value in update_data.items():
             setattr(role, key, value)
 
@@ -845,9 +1247,24 @@ class AuthService:
 
         await self.db.flush()
         await self.db.refresh(role, ["permissions"])
+        # `AC-RL-06` · el diff, con las mismas claves que el «antes», y los permisos que
+        # entran y salen en claro: eso es lo que se audita de un cambio de permisos.
+        despues = {
+            "nombre": role.name,
+            "descripcion": role.description,
+            "activo": role.is_active,
+            "permisos": sorted(
+                f"{p.module}:{getattr(p.action, 'value', p.action)}:{p.scope_type}"
+                for p in role.permissions),
+        }
         await audit_accion(                                   # `GA-REM-032 AC03`
             self.db, usuario=current_user, accion=AuditAction.PERMISSION_CHANGE,
             modulo=AuditModule.USERS, entity_type="role", entity_id=role.id,
-            new_values={"nombre": role.name},
+            previous_values=antes,
+            new_values={
+                **despues,
+                "permisos_agregados": sorted(set(despues["permisos"]) - set(antes["permisos"])),
+                "permisos_retirados": sorted(set(antes["permisos"]) - set(despues["permisos"])),
+            },
         )
         return RoleRead.model_validate(role)

@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { X, AlertTriangle } from 'lucide-react'
 
@@ -26,6 +27,10 @@ const VARIANT_STYLES = {
  * ConfirmDialog — Modal de confirmación estandarizado.
  *
  * Uso: antes de aprobar, rechazar, eliminar o enviar a SAP.
+ *
+ * Se monta en un PORTAL sobre `document.body` con `z-[60]`: por encima de `Modal` (z-50).
+ * Sin portal quedaba anidado dentro del `Modal` que lo abría y, con el mismo `z-50`,
+ * la confirmación aparecía DEBAJO — el botón confirmaba «en el vacío» (`SPEC 013` · AC-UI-01).
  */
 export default function ConfirmDialog({
  open,
@@ -60,8 +65,8 @@ export default function ConfirmDialog({
 
  if (!open) return null
 
- return (
- <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+ return createPortal(
+ <div className="fixed inset-0 z-[60] flex items-center justify-center p-4">
  {/* Overlay */}
  <div
  className="absolute inset-0 bg-black/40 backdrop-blur-sm"
@@ -130,6 +135,7 @@ export default function ConfirmDialog({
  </button>
  </div>
  </div>
- </div>
+ </div>,
+ document.body,
  )
 }

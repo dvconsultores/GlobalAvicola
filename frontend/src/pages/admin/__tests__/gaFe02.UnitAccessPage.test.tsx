@@ -37,7 +37,13 @@ vi.mock('../../../components/Toast', () => ({
 }))
 
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k: string, f?: string) => f ?? k }),
+  // SPEC 013 AC-UI-04: la confirmación de revocar interpola variables ({{user}}/{{unit}}); con
+  // un objeto como 2.º argumento el mock devuelve la clave (antes devolvía el objeto y React
+  // fallaba al renderizarlo). Los fallbacks string siguen intactos.
+  useTranslation: () => ({
+    t: (k: string, opts?: string | Record<string, unknown>) =>
+      opts && typeof opts === 'object' ? k : (opts ?? k),
+  }),
 }))
 
 import UnitAccessPage from '../UnitAccessPage'

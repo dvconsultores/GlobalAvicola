@@ -161,6 +161,25 @@ async def _rol_de_usuario(esc199, user_id: int) -> int | None:
         await motor.dispose()
 
 
+async def _conceder_al_actor(esc199, module: str, action: str = "read",
+                             scope_type: str = "company") -> None:
+    """Amplía el rol del **actor** (`rol_admin_a`) con un permiso, solo para una prueba.
+
+    `DR-3` exige que quien reparte posea. Se concede dentro del test —y no en `esc199`— para
+    no cambiar la autoridad del escenario compartido por el resto de pruebas del archivo.
+    """
+    from app.auth.models import Permission, PermissionAction
+
+    motor = create_async_engine(esc199["url"])
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            s.add(Permission(role_id=esc199["rol_admin_a"], module=module,
+                             action=PermissionAction(action), scope_type=scope_type))
+            await s.commit()
+    finally:
+        await motor.dispose()
+
+
 async def _recuentos(esc199) -> tuple[int, int]:
     """`AC13`: recuento global de `roles` y `permissions` — nada parcial."""
     motor = create_async_engine(esc199["url"])
@@ -342,6 +361,11 @@ async def test_r199_07_la_autoridad_global_sigue_creando_plantillas_con_comodin(
 
 async def test_r199_08_el_rol_de_inquilino_ordinario_se_crea_asigna_y_no_es_global(http_client, esc199):
     """`AC10` — el actor de empresa no pierde nada (lo que envía `RolesPage`)."""
+    # UAT-ADMIN-RBAC DR-3: el actor debe poseer lo que reparte (subconjunto); se le concede
+    # en el escenario, la intención del test no cambia. El rol ordinario de esta prueba
+    # reparte `lots:read` y `operations:create`, y el actor tiene que poseerlos.
+    await _conceder_al_actor(esc199, "lots")
+    await _conceder_al_actor(esc199, "operations", "create")
     marca = f"{PREFIJO}Ord-{uuid.uuid4().hex[:6]}"
     r = await http_client.post("/api/v1/roles", headers=_token(esc199["admin_a"]),
                                json={"name": marca,
@@ -364,6 +388,13 @@ async def test_r199_08_el_rol_de_inquilino_ordinario_se_crea_asigna_y_no_es_glob
 
 async def test_r199_09_el_comodin_de_modulo_con_alcance_de_empresa_sigue_admitido(http_client, esc199):
     """`AC11` · `C-03` — `("*", read, company)` es atajo de catálogo, no autoridad global."""
+    # UAT-ADMIN-RBAC DR-3: el actor debe poseer lo que reparte (subconjunto); se le concede
+    # en el escenario, la intención del test no cambia. Repartir el comodín de módulo exige
+    # poseerlo (`AC-ES-01`, «el comodín exige comodín»): se le concede `("*", read, company)`,
+    # que **no** confiere autoridad global porque su rol es de inquilino y el alcance no es
+    # `all`. Lo que se mide sigue siendo que el rol creado no es global y que `GET /lots`
+    # responde 200.
+    await _conceder_al_actor(esc199, "*", "read", "company")
     marca = f"{PREFIJO}Comodin-{uuid.uuid4().hex[:6]}"
     r = await http_client.post("/api/v1/roles", headers=_token(esc199["admin_a"]),
                                json={"name": marca,

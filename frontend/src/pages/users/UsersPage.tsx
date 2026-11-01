@@ -24,6 +24,12 @@ export default function UsersPage() {
  // (`R-118`); el selector de empresa solo aplica a autoridad global.
  const mostrarEmpresa = !usuarioActual?.company_id
  const [deleteTarget, setDeleteTarget] = useState<any | null>(null)
+ // `SPEC 013` · `AC-UI-05`: la baja es LÓGICA y reversible. Sobre la PROPIA fila se oculta la
+ // papelera y el chip de estado no es interactivo — cortesía de UI; el backend es la autoridad
+ // (rechaza la auto-desactivación con `403`). `AC-ID-05`: el chip es un botón solo si la ACCIÓN
+ // que dispara está permitida — desactivar exige `users:delete`, reactivar exige `users:update`
+ // — para no ofrecer un control que el servidor rechazaría con `403`.
+ const esPropio = (u: any) => u.id === usuarioActual?.id
  const [users, setUsers] = useState<any[]>([])
  const [roles, setRoles] = useState<any[]>([])
  // `GA-REM-039`. Desde el maestro real: nunca una lista fija de nombres de área.
@@ -36,6 +42,14 @@ export default function UsersPage() {
  const [editingId, setEditingId] = useState<number | null>(null)
  const [form, setForm] = useState<UserForm>(emptyForm)
  const [saving, setSaving] = useState(false)
+ // `AR-22`: `GET /users` pagina y trae 20 por defecto, así que la pantalla truncaba en
+ // silencio a los usuarios nuevos de una empresa con más de 20. Se pide el máximo que admite
+ // el contrato (100) y, por encima de eso, se busca — el `search` del servidor filtra por
+ // usuario/nombre/correo ANTES de paginar. `busqueda` es el borrador del campo y
+ // `busquedaAplicada` lo que viaja al servidor (se aplica con Enter o con el botón, no en
+ // cada pulsación, que dispararía una petición por tecla).
+ const [busqueda, setBusqueda] = useState('')
+ const [busquedaAplicada, setBusquedaAplicada] = useState('')
 
  // `GA-REM-002` enmienda B · `AC16`. Los cuatro recursos **no** son iguales y por eso ya no
  // viajan juntos en un `Promise.all`: `/users` **es** la página, mientras que roles, empresas
@@ -46,7 +60,10 @@ export default function UsersPage() {
  const fetchData = useCallback(async () => {
    setLoading(true); setEstado('cargando'); setCatalogosParciales(false)
    try {
-     const ur = await api.get('/users')
+     // `AR-22`: `limit=100` (máximo del contrato) para no truncar en 20; `search` solo si hay
+     // texto, y codificado, porque lleva espacios y acentos.
+     const query = busquedaAplicada ? `?limit=100&search=${encodeURIComponent(busquedaAplicada)}` : '?limit=100'
+     const ur = await api.get(`/users${query}`)
      setUsers(ur.data || [])
      setEstado('ok')
    } catch (e: any) {
@@ -69,11 +86,14 @@ export default function UsersPage() {
    setAreas(ar.status === 'fulfilled' ? ar.value.data || [] : [])
    if (aux.some(r => r.status === 'rejected')) setCatalogosParciales(true)
    setLoading(false)
- }, [])
+ }, [busquedaAplicada])
  // eslint-disable-next-line react-hooks/set-state-in-effect
  useEffect(() => { fetchData() }, [fetchData])
 
  const openCreate = () => { setEditingId(null); setForm(emptyForm); setShowModal(true) }
+ // `AR-22`: la búsqueda se aplica al pulsar Enter o el botón «Buscar», nunca por pulsación.
+ const aplicarBusqueda = () => { setBusquedaAplicada(busqueda.trim()) }
+ const limpiarBusqueda = () => { setBusqueda(''); setBusquedaAplicada('') }
  const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, area_id: user.area_id ?? null, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setShowModal(true) }
 
  const handleSave = async () => {
@@ -134,16 +154,24 @@ export default function UsersPage() {
 
  {!loading && estado === 'error' && <div role="alert" className="bg-red-50 border border-red-200 rounded-xl p-8 text-center"><p className="text-sm font-medium text-red-800 mb-3">{t('users.loadError')}</p><button onClick={fetchData} className="bg-white border border-red-300 text-red-700 px-4 py-2 rounded-lg text-sm font-medium hover:bg-red-100 transition">{t('common.retry')}</button></div>}
 
- {!loading && estado === 'ok' && users.length === 0 && <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-sm text-slate-500">{t('users.noUsers')}</div>}
+ {!loading && estado === 'ok' && <div className="flex flex-col sm:flex-row gap-2 mb-3">
+ <input type="search" value={busqueda} onChange={e => setBusqueda(e.target.value)} onKeyDown={e => { if (e.key === 'Enter') { e.preventDefault(); aplicarBusqueda() } }} aria-label={t('users.search')} placeholder={t('users.search')} className="flex-1 border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ <button onClick={aplicarBusqueda} className="bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition">{t('users.searchAction')}</button>
+ {busquedaAplicada && <button onClick={limpiarBusqueda} className="bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('users.clearSearch')}</button>}
+ </div>}
+
+ {!loading && estado === 'ok' && users.length >= 100 && <div role="status" className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-3 text-xs text-amber-800">{t('users.truncated')}</div>}
+
+ {!loading && estado === 'ok' && users.length === 0 && <div className="bg-white rounded-xl border border-slate-200 p-8 text-center text-sm text-slate-500">{busquedaAplicada ? t('users.noResults') : t('users.noUsers')}</div>}
 
  {!loading && estado === 'ok' && catalogosParciales && <div role="alert" className="bg-amber-50 border border-amber-200 rounded-lg px-4 py-2.5 mb-3 text-xs text-amber-800">{t('users.partialCatalogs')}</div>}
 
  {!loading && estado === 'ok' && users.length > 0 && <>
- <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><table className="w-full text-sm"><thead className="bg-slate-50 border-b border-slate-200"><tr><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.username')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.firstName')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.email')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.role')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.view')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.status')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.actions')}</th></tr></thead><tbody className="divide-y divide-slate-100">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <tr key={u.id} className="hover:bg-slate-50 transition"><td className="px-4 py-3 font-medium text-[#1E3A5F]">{u.username}</td><td className="px-4 py-3">{u.first_name} {u.last_name}</td><td className="px-4 py-3 text-slate-500">{u.email}</td><td className="px-4 py-3 text-slate-500">{role?.name || '—'}</td><td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${u.view_type === 'mobile' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>{u.view_type === 'mobile' ? <Smartphone size={12} /> : <Monitor size={12} />} {u.view_type === 'mobile' ? t('users.mobile') : t('users.web')}</span></td><td className="px-4 py-3">{can({ permission: 'users:update' }) ? <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button> : <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</span>}</td><td className="px-4 py-3"><div className="flex gap-1.5">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><Pencil size={14} /></button>}{can({ permission: 'users:delete' }) && <button onClick={() => setDeleteTarget(u)} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"><Trash2 size={14} /></button>}<UserBusinessUnitsButton user={u} /></div></td></tr> })}</tbody></table></div>
+ <div className="hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"><table className="w-full text-sm"><thead className="bg-slate-50 border-b border-slate-200"><tr><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.username')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.firstName')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.email')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.role')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.view')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('users.status')}</th><th className="px-4 py-3 text-left font-semibold text-slate-600">{t('common.actions')}</th></tr></thead><tbody className="divide-y divide-slate-100">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <tr key={u.id} className="hover:bg-slate-50 transition"><td className="px-4 py-3 font-medium text-[#1E3A5F]">{u.username}</td><td className="px-4 py-3">{u.first_name} {u.last_name}</td><td className="px-4 py-3 text-slate-500">{u.email}</td><td className="px-4 py-3 text-slate-500">{role?.name || '—'}</td><td className="px-4 py-3"><span className={`px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit ${u.view_type === 'mobile' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>{u.view_type === 'mobile' ? <Smartphone size={12} /> : <Monitor size={12} />} {u.view_type === 'mobile' ? t('users.mobile') : t('users.web')}</span></td><td className="px-4 py-3">{!esPropio(u) && (u.is_active ? can({ permission: 'users:delete' }) : can({ permission: 'users:update' })) ? <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button> : <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</span>}</td><td className="px-4 py-3"><div className="flex gap-1.5">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="p-1.5 rounded-lg text-slate-500 hover:bg-slate-100"><Pencil size={14} /></button>}{can({ permission: 'users:delete' }) && !esPropio(u) && <button onClick={() => setDeleteTarget(u)} aria-label={t('users.deleteUserTitle')} title={t('users.deleteUserTitle')} className="p-1.5 rounded-lg text-red-500 hover:bg-red-50"><Trash2 size={14} /></button>}<UserBusinessUnitsButton user={u} /></div></td></tr> })}</tbody></table></div>
 
- <div className="lg:hidden space-y-3">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <div key={u.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4"><div className="flex items-center justify-between mb-2"><span className="font-semibold text-[#1E3A5F]">{u.username}</span>{can({ permission: 'users:update' }) && <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button>}</div><p className="text-sm text-slate-600">{u.first_name} {u.last_name}</p><p className="text-xs text-slate-400">{u.email} · {role?.name || t('users.noRole')} · {u.view_type === 'mobile'
+ <div className="lg:hidden space-y-3">{users.map((u: any) => { const role = roles.find((r: any) => r.id === u.role_id); return <div key={u.id} className="bg-white rounded-xl shadow-sm border border-slate-200 p-4"><div className="flex items-center justify-between mb-2"><span className="font-semibold text-[#1E3A5F]">{u.username}</span>{!esPropio(u) && (u.is_active ? can({ permission: 'users:delete' }) : can({ permission: 'users:update' })) ? <button onClick={() => handleToggleActive(u)} className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</button> : <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${u.is_active ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}`}>{u.is_active ? t('users.active') : t('users.inactive')}</span>}</div><p className="text-sm text-slate-600">{u.first_name} {u.last_name}</p><p className="text-xs text-slate-400">{u.email} · {role?.name || t('users.noRole')} · {u.view_type === 'mobile'
  ? <><Smartphone size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.mobile')}</>
- : <><Monitor size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.web')}</>}</p><div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition flex items-center justify-center gap-1"><Pencil size={12} /> {t('users.editUser')}</button>}{can({ permission: 'users:delete' }) && <button onClick={() => setDeleteTarget(u)} className="flex-1 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-100 transition flex items-center justify-center gap-1"><Trash2 size={12} /> {t('users.deleteUser')}</button>}</div></div> })}</div>
+ : <><Monitor size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.web')}</>}</p><div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition flex items-center justify-center gap-1"><Pencil size={12} /> {t('users.editUser')}</button>}{can({ permission: 'users:delete' }) && !esPropio(u) && <button onClick={() => setDeleteTarget(u)} className="flex-1 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-100 transition flex items-center justify-center gap-1"><Trash2 size={12} /> {t('users.deleteUser')}</button>}</div></div> })}</div>
  </>}
 
  {showModal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowModal(false)}><div className="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-4"><h2 className="text-lg font-bold text-[#1E3A5F]">{editingId ? t('users.editUserTitle') : t('users.createUser')}</h2><button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-slate-100"><X size={20} /></button></div><div className="space-y-3">
@@ -161,15 +189,16 @@ export default function UsersPage() {
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.viewType')}</label><div className="flex gap-3"><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'mobile' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="mobile" checked={form.view_type === 'mobile'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Smartphone size={20} className={form.view_type === 'mobile' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.mobile')}</span></label><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'web' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="web" checked={form.view_type === 'web'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Monitor size={20} className={form.view_type === 'web' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.web')}</span></label></div></div>
  </div><div className="flex gap-3 mt-5"><button onClick={handleSave} disabled={saving} className="flex-1 bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">{saving ? t('common.saving') : t('common.save')}</button><button onClick={() => setShowModal(false)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel')}</button></div></div></div>}
 
- {/* `R-195`: baja con ConfirmDialog (sin `confirm` nativo). */}
+ {/* `R-195`: baja con ConfirmDialog (sin `confirm` nativo). `SPEC 013` · `AC-UI-05`: la acción
+     se rotula «Desactivar» porque es una baja LÓGICA reversible (se reactiva desde el estado). */}
  {deleteTarget && (
  <ConfirmDialog
  open={!!deleteTarget}
  onClose={() => setDeleteTarget(null)}
  onConfirm={() => handleDelete(deleteTarget.id)}
- title={t('users.deleteUserTitle', 'Dar de baja usuario')}
- message={`${t('users.deleteConfirm', '¿Dar de baja a este usuario?')} ${deleteTarget.username}`}
- confirmLabel={t('common.delete', 'Eliminar')}
+ title={t('users.deleteUserTitle')}
+ message={`${t('users.deleteConfirm')} (${deleteTarget.username})`}
+ confirmLabel={t('users.deactivate')}
  variant="danger"
  />
  )}

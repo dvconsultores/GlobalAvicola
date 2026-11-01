@@ -48,14 +48,17 @@ const HomeRoute = ((AppModule as any).HomeRoute ?? (() => null)) as any
 const PROHIBIDO = /Permiso requerido para ver esta sección/
 const ERROR_TXT = /No se pudieron cargar los datos/
 
-function setSession(permissions: string[]) {
+// `AR-23`: `units` (unidades productivas efectivas) es opcional y por defecto vacío — misma
+// firma que `uatAdminRbac.homeNoLoop.test.tsx`. El resto de casos sigue con sesión sin unidades,
+// exactamente como antes.
+function setSession(permissions: string[], units: string[] = []) {
   useAuthStore.setState({
     isAuthenticated: true, isLoading: false, token: null,
     user: {
       id: 7, username: 'r212', first_name: 'R', last_name: 'C', email: 'r@x.com',
       role_id: 35, view_type: 'web', is_super_admin: false, company_id: 1,
       effective_company_id: 1, permissions,
-      company_business_units: [], granted_business_units: [], effective_business_units: [],
+      company_business_units: [], granted_business_units: units, effective_business_units: units,
     } as any,
   })
 }
@@ -110,7 +113,10 @@ describe('R-212 · superficies conscientes del permiso (RED)', () => {
         </Routes>
       </MemoryRouter>,
     )
-    setSession(['operations:read'])
+    // AR-23: el hub `poultry` existe solo con unidad productiva efectiva (`requiresUnits`);
+    // sin unidad el hub no es alcanzable y `HomeRoute` muestra aviso neutro (cubierto en
+    // uatAdminRbac.homeNoLoop). Antes este test montaba el hub como stub y ocultaba el bucle / ⇄ /menu/poultry.
+    setSession(['operations:read'], ['broiler'])
     await waitFor(() => expect(screen.getByText('HUB-POULTRY')).toBeTruthy())
     expect(screen.queryByText('DASHBOARD-MOCK')).toBeNull()
     vista.unmount()

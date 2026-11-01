@@ -163,7 +163,10 @@ describe('R-195 · edición de usuario (RED)', () => {
     await screen.findAllByText('jperez')
     fireEvent.click(document.querySelectorAll('.lucide-trash-2')[0])
 
-    const confirmaciones = screen.queryAllByRole('button', { name: /^(Eliminar|Confirmar|Sí)/ })
+    // `SPEC 013 · AC-UI-05`: el botón de confirmar pasó de «Eliminar» a «Desactivar»
+    // (`users.deactivate`); con este mock `t` devuelve la clave. La aserción de conducta
+    // (toast con el `detail`, sin `confirm` nativo) queda intacta.
+    const confirmaciones = screen.queryAllByRole('button', { name: /^(users\.deactivate|Eliminar|Confirmar|Sí)/ })
     if (confirmaciones.length > 0) fireEvent.click(confirmaciones[0])
 
     await waitFor(() => expect(toastError).toHaveBeenCalled())

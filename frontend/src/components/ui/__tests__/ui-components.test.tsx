@@ -189,6 +189,26 @@ describe('ConfirmDialog', () => {
  )
  expect(container.innerHTML).toBe('')
  })
+
+ // SPEC 013 · AC-UI-01 (`AR-13`): vive en un portal sobre `document.body` y con `z` superior
+ // al de `Modal` (z-50); si se anida dentro del Modal, la confirmación queda debajo e inerte.
+ it('mounts in a portal over document.body with z-[60] (AC-UI-01)', () => {
+ const { container } = render(
+ <ConfirmDialog
+ open={true}
+ onClose={() => {}}
+ onConfirm={() => {}}
+ title="Revocar unidad"
+ message="¿Desea continuar?"
+ />
+ )
+ const dialog = screen.getByRole('dialog')
+ expect(container.contains(dialog)).toBe(false)
+ let root: HTMLElement = dialog
+ while (root.parentElement && root.parentElement !== document.body) root = root.parentElement
+ expect(root.parentElement).toBe(document.body)
+ expect(root.className).toContain('z-[60]')
+ })
 })
 
 // ============================================================

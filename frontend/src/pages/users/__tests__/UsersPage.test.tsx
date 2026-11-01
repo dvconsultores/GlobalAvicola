@@ -50,7 +50,8 @@ beforeEach(() => {
 describe('UsersPage · estados de carga', () => {
   it('un 403 se muestra como permiso insuficiente, nunca como tabla vacía', async () => {
     get.mockImplementation((url: string) =>
-      url === '/users' ? Promise.reject(fallo(403)) : Promise.resolve(CATALOGOS_OK))
+      // AR-22: la pantalla pide `?limit=100` (y `search` cuando se busca).
+      url.startsWith('/users?') ? Promise.reject(fallo(403)) : Promise.resolve(CATALOGOS_OK))
 
     render(<ToastProvider><UsersPage /></ToastProvider>)
 
@@ -62,7 +63,8 @@ describe('UsersPage · estados de carga', () => {
 
   it('un 500 ofrece reintentar, y tampoco es una lista vacía', async () => {
     get.mockImplementation((url: string) =>
-      url === '/users' ? Promise.reject(fallo(500)) : Promise.resolve(CATALOGOS_OK))
+      // AR-22: la pantalla pide `?limit=100` (y `search` cuando se busca).
+      url.startsWith('/users?') ? Promise.reject(fallo(500)) : Promise.resolve(CATALOGOS_OK))
 
     render(<ToastProvider><UsersPage /></ToastProvider>)
 
@@ -83,7 +85,8 @@ describe('UsersPage · estados de carga', () => {
 
   it('con datos se pintan las filas y ningún estado de excepción', async () => {
     get.mockImplementation((url: string) =>
-      url === '/users'
+      // AR-22: la pantalla pide `?limit=100` (y `search` cuando se busca).
+      url.startsWith('/users?')
         ? Promise.resolve({ data: [usuario(), usuario({ id: 2, username: 'mlopez' })] })
         : Promise.resolve(CATALOGOS_OK))
 
@@ -99,7 +102,8 @@ describe('UsersPage · estados de carga', () => {
     // `/users` **es** la página; roles, empresas y áreas solo rellenan el formulario. Antes
     // cualquiera de las tres vaciaba la tabla entera por venir en el mismo `Promise.all`.
     get.mockImplementation((url: string) =>
-      url === '/users' ? Promise.resolve({ data: [usuario()] })
+      // AR-22: la pantalla pide `?limit=100` (y `search` cuando se busca).
+      url.startsWith('/users?') ? Promise.resolve({ data: [usuario()] })
         : url.startsWith('/masters/areas') ? Promise.reject(fallo(403))
         : Promise.resolve(CATALOGOS_OK))
 

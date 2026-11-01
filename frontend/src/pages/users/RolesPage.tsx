@@ -10,9 +10,11 @@
  */
 import { useState, useEffect, useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Plus, Pencil, Trash2, X, ShieldCheck } from 'lucide-react'
+import { Plus, Pencil, Trash2, RotateCcw, X, ShieldCheck } from 'lucide-react'
 import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
+import ConfirmDialog from '../../components/ui/ConfirmDialog'
+import { useToast, getErrorMessage } from '../../components/Toast'
 import { useCan } from '../../auth/actionAuthority'
 
 interface Permiso { module: string; action: string; scope_type?: string }
@@ -23,6 +25,7 @@ const formVacio: RolForm = { name: '', description: '', permissions: [] }
 export default function RolesPage() {
  const can = useCan()
   const { t } = useTranslation()
+  const toast = useToast()
   const [roles, setRoles] = useState<any[]>([])
   const [catalogo, setCatalogo] = useState<{ modules: string[]; actions: string[] }>({ modules: [], actions: [] })
   const [loading, setLoading] = useState(true)
@@ -32,12 +35,17 @@ export default function RolesPage() {
   const [saving, setSaving] = useState(false)
   // `R-212` · AC-04.
   const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
+  // `SPEC 013` · `AC-RL-04`: los inactivos solo se listan si se piden.
+  const [incluirInactivos, setIncluirInactivos] = useState(false)
+  // `SPEC 013` · `AC-UI-06`: la baja se confirma en `ConfirmDialog`, nunca con `confirm()` nativo.
+  const [rolADesactivar, setRolADesactivar] = useState<any | null>(null)
 
   const fetchData = useCallback(async () => {
     setLoading(true)
     try {
       const [rr, cr] = await Promise.all([
-        api.get('/roles'),
+        // `AC-RL-04`: el backend devuelve también los inactivos (`is_active:false`) al pedirlo.
+        api.get(incluirInactivos ? '/roles?include_inactive=true' : '/roles'),
         api.get('/roles/permissions-catalog'),
       ])
       setRoles(rr.data || [])
@@ -49,7 +57,7 @@ export default function RolesPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [incluirInactivos])
 
   useEffect(() => { fetchData() }, [fetchData])
 
@@ -88,26 +96,47 @@ export default function RolesPage() {
 
   const guardar = async () => {
     if (!form.name.trim()) return
+    // `SPEC 013` · `AC-RL-05` (AR-18/DR-2): el backend responde 422 «El rol debe tener al menos
+    // un permiso». La UI lo impide antes de emitir y lo explica bajo la tabla de permisos.
+    if (form.permissions.length === 0) return
     setSaving(true)
     try {
       if (editingId) await api.put(`/roles/${editingId}`, form)
       else await api.post('/roles', form)
       setShowModal(false)
       await fetchData()
-    } catch {
-      alert(t('common.error', 'Error'))
+    } catch (err: any) {
+      // `SPEC 013` · `AC-UI-06`: fuera `alert()` nativo; el `detail` del servidor se ve legible.
+      toast.error(getErrorMessage(err, t('common.error', 'Error')))
     } finally {
       setSaving(false)
     }
   }
 
-  const desactivar = async (rol: any) => {
-    if (!confirm(t('roles.deactivateConfirm', '¿Desactivar este rol?'))) return
+  // `SPEC 013` · `AC-UI-06`: `confirm()` nativo sustituido por `ConfirmDialog` + toast. El
+  // `409` por usuarios activos asignados se muestra con el texto del servidor.
+  const desactivar = async () => {
+    const rol = rolADesactivar
+    if (!rol) return
     try {
       await api.put(`/roles/${rol.id}`, { is_active: false })
+      setRolADesactivar(null)
+      toast.success(t('roles.deactivated'))
       await fetchData()
-    } catch {
-      alert(t('common.error', 'Error'))
+    } catch (err: any) {
+      setRolADesactivar(null)
+      toast.error(getErrorMessage(err, t('common.error', 'Error')))
+    }
+  }
+
+  // `SPEC 013` · `AC-RL-04`: reactivar es `PUT {is_active:true}` y refresca el listado.
+  const reactivar = async (rol: any) => {
+    try {
+      await api.put(`/roles/${rol.id}`, { is_active: true })
+      toast.success(t('roles.reactivated'))
+      await fetchData()
+    } catch (err: any) {
+      toast.error(getErrorMessage(err, t('common.error', 'Error')))
     }
   }
 
@@ -117,12 +146,24 @@ export default function RolesPage() {
         <h1 className="text-xl font-bold text-slate-800 flex items-center gap-2">
           <ShieldCheck size={20} className="text-blue-600" /> {t('roles.title', 'Roles y permisos')}
         </h1>
-        {can({ permission: 'users:create' }) && <button
-          onClick={abrirNuevo}
-          className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2"
-        >
-          <Plus size={16} /> {t('roles.createRole', 'Nuevo rol')}
-        </button>}
+        <div className="flex items-center gap-3">
+          {/* `SPEC 013` · `AC-RL-04` (AR-20): los inactivos se piden explícitamente. */}
+          <label className="flex items-center gap-2 text-sm text-slate-600">
+            <input
+              type="checkbox"
+              checked={incluirInactivos}
+              onChange={e => setIncluirInactivos(e.target.checked)}
+              className="rounded border-slate-300"
+            />
+            {t('roles.showInactive')}
+          </label>
+          {can({ permission: 'users:create' }) && <button
+            onClick={abrirNuevo}
+            className="inline-flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg px-4 py-2"
+          >
+            <Plus size={16} /> {t('roles.createRole', 'Nuevo rol')}
+          </button>}
+        </div>
       </div>
 
       {loading ? (
@@ -143,7 +184,14 @@ export default function RolesPage() {
             <tbody>
               {roles.map(rol => (
                 <tr key={rol.id} className="border-t border-slate-100">
-                  <td className="px-4 py-3 font-medium text-slate-800">{rol.name}</td>
+                  <td className="px-4 py-3 font-medium text-slate-800">
+                    {rol.name}
+                    {rol.is_active === false && (
+                      <span className="ml-2 px-2 py-0.5 rounded-full text-xs font-medium bg-slate-200 text-slate-600">
+                        {t('roles.inactive')}
+                      </span>
+                    )}
+                  </td>
                   <td className="px-4 py-3 text-slate-500">{rol.description}</td>
                   <td className="px-4 py-3 text-slate-500">{(rol.permissions ?? []).length}</td>
                   <td className="px-4 py-3 text-right whitespace-nowrap">
@@ -154,13 +202,23 @@ export default function RolesPage() {
                     >
                       <Pencil size={16} />
                     </button>}
-                    {can({ permission: 'users:delete' }) && <button
-                      onClick={() => desactivar(rol)}
-                      aria-label={t('roles.deactivate', 'Desactivar rol')}
+                    {/* `AC-UI-06`: el backend exige `users:update` para `PUT /roles/{id}`, no
+                        `users:delete`; la UI coincide con él. Un inactivo no se desactiva: se reactiva. */}
+                    {can({ permission: 'users:update' }) && (rol.is_active === false ? <button
+                      onClick={() => reactivar(rol)}
+                      aria-label={t('roles.reactivate')}
+                      title={t('roles.reactivate')}
+                      className="text-slate-400 hover:text-emerald-600 p-1 ml-1"
+                    >
+                      <RotateCcw size={16} />
+                    </button> : <button
+                      onClick={() => setRolADesactivar(rol)}
+                      aria-label={t('roles.deactivate')}
+                      title={t('roles.deactivate')}
                       className="text-slate-400 hover:text-red-600 p-1 ml-1"
                     >
                       <Trash2 size={16} />
-                    </button>}
+                    </button>)}
                   </td>
                 </tr>
               ))}
@@ -240,6 +298,12 @@ export default function RolesPage() {
                     </tbody>
                   </table>
                 </div>
+                {/* `AC-RL-05`: sin permisos no se guarda, y se explica por qué justo debajo. */}
+                {form.permissions.length === 0 && (
+                  <p role="alert" className="mt-2 text-xs text-red-600">
+                    {t('roles.permissionsRequired')}
+                  </p>
+                )}
               </div>
             </div>
 
@@ -252,7 +316,7 @@ export default function RolesPage() {
               </button>
               <button
                 onClick={guardar}
-                disabled={saving || !form.name.trim()}
+                disabled={saving || !form.name.trim() || form.permissions.length === 0}
                 className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 text-white rounded-lg font-medium"
               >
                 {t('common.save', 'Guardar')}
@@ -260,6 +324,19 @@ export default function RolesPage() {
             </div>
           </div>
         </div>
+      )}
+
+      {/* `AC-UI-06`: baja confirmada en diálogo (portal z-[60]), nunca con `confirm()` nativo. */}
+      {rolADesactivar && (
+        <ConfirmDialog
+          open={!!rolADesactivar}
+          onClose={() => setRolADesactivar(null)}
+          onConfirm={desactivar}
+          title={t('roles.deactivateTitle')}
+          message={`${t('roles.deactivateConfirm')} (${rolADesactivar.name})`}
+          confirmLabel={t('roles.deactivate')}
+          variant="danger"
+        />
       )}
     </div>
   )

@@ -147,6 +147,24 @@ async def _rol_de_usuario(esc, user_id: int) -> int | None:
         await motor.dispose()
 
 
+async def _conceder_al_actor(esc, module: str, action: str = "read") -> None:
+    """Amplía el rol del **actor** (`rol_admin_a`) con un permiso, solo para una prueba.
+
+    `DR-3` exige que quien reparte posea. Se concede dentro del test —y no en `esc`— para no
+    cambiar la autoridad del escenario compartido por el resto de pruebas del archivo.
+    """
+    from app.auth.models import Permission, PermissionAction
+
+    motor = create_async_engine(esc["url"])
+    try:
+        async with async_sessionmaker(motor, expire_on_commit=False)() as s:
+            s.add(Permission(role_id=esc["rol_admin_a"], module=module,
+                             action=PermissionAction(action), scope_type="company"))
+            await s.commit()
+    finally:
+        await motor.dispose()
+
+
 # ── `AC-R01` · listar ─────────────────────────────────────────────────────────
 
 async def test_r01_el_listado_no_muestra_roles_de_otra_empresa(http_client, esc):
@@ -168,9 +186,16 @@ async def test_r01_las_plantillas_de_sistema_si_se_ven(http_client, esc):
 # ── `AC-R02` · crear ──────────────────────────────────────────────────────────
 
 async def test_r02_el_rol_nace_en_la_empresa_del_actor(http_client, esc):
+    # UAT-ADMIN-RBAC DR-3: el actor debe poseer lo que reparte (subconjunto); se le concede
+    # en el escenario, la intención del test no cambia. Lo que se mide es DÓNDE nace el rol,
+    # no la escalada: el rol de la prueba lleva `lots:read` y el actor tiene que poseerlo.
+    await _conceder_al_actor(esc, "lots")
     marca = f"{PREFIJO}NUEVO-{uuid.uuid4().hex[:6]}"
     r = await http_client.post("/api/v1/roles", headers=_token(esc["admin_a"]),
-                               json={"name": marca, "description": "d", "permissions": []})
+                               # UAT-ADMIN-RBAC AC-RL-05 (DR-2): el rol exige >= 1 permiso;
+                               # lo que esta prueba mide es DÓNDE nace, no que pueda nacer vacío.
+                               json={"name": marca, "description": "d",
+                                     "permissions": [{"module": "lots", "action": "read"}]})
     assert r.status_code in (200, 201), r.text
     assert (await _rol_en_base(esc, r.json()["id"]))["company_id"] == esc["a"], (
         "el rol no quedó en la empresa del actor")
@@ -179,7 +204,10 @@ async def test_r02_el_rol_nace_en_la_empresa_del_actor(http_client, esc):
 async def test_r02_la_autoridad_global_crea_plantillas_de_sistema(http_client, esc):
     marca = f"{PREFIJO}PLANTILLA-{uuid.uuid4().hex[:6]}"
     r = await http_client.post("/api/v1/roles", headers=_token(esc["super"]),
-                               json={"name": marca, "description": "d", "permissions": []})
+                               # UAT-ADMIN-RBAC AC-RL-05 (DR-2): >= 1 permiso también para las
+                               # plantillas; la prueba mide la empresa (`company_id` NULL).
+                               json={"name": marca, "description": "d",
+                                     "permissions": [{"module": "lots", "action": "read"}]})
     assert r.status_code in (200, 201), r.text
     assert (await _rol_en_base(esc, r.json()["id"]))["company_id"] is None
 
@@ -234,6 +262,10 @@ async def test_r05_no_se_asigna_un_rol_de_otra_empresa(http_client, esc):
 
 async def test_r05_la_plantilla_de_sistema_ordinaria_si_se_asigna(http_client, esc):
     """`OD-13.c`. Sin esta, «no se asigna la global» sería compatible con «no se asigna nada»."""
+    # UAT-ADMIN-RBAC DR-3: el actor debe poseer lo que reparte (subconjunto); se le concede
+    # en el escenario, la intención del test no cambia. La plantilla ordinaria reparte
+    # `operations:read`, así que el actor lo recibe para poder asignarla.
+    await _conceder_al_actor(esc, "operations")
     r = await http_client.put(f"/api/v1/users/{esc['user_a']}",
                               headers=_token(esc["admin_a"]),
                               json={"role_id": esc["rol_sistema"]})

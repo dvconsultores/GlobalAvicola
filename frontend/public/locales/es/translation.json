@@ -914,8 +914,10 @@
     "businessUnits": {
       "open": "Unidades de negocio",
       "title": "Unidades de negocio",
-      "companyState": "Empresa",
-      "userState": "Usuario",
+      "companyState": "Estado en la empresa",
+      "userState": "Estado del usuario",
+      "companyLabel": "Empresa",
+      "userLabel": "Usuario",
       "loadError": "No se pudieron cargar las concesiones del usuario.",
       "selfNote": "No puede concederse unidades a sí mismo.",
       "revokedHistoric": "Revocada (histórica)"
@@ -936,11 +938,12 @@
     "web": "Web",
     "noRole": "Sin rol",
     "editUser": "Editar",
-    "deleteUser": "Eliminar",
+    "deleteUser": "Desactivar",
+    "deactivate": "Desactivar",
     "newPasswordHint": "Nueva contraseña (vacío = no cambiar)",
     "passwordRequired": "Contraseña requerida",
     "fieldsRequired": "Campos requeridos",
-    "deleteConfirm": "¿Eliminar usuario?",
+    "deleteConfirm": "¿Desactivar a este usuario? Podrá reactivarse desde su estado.",
     "deleteError": "Error al eliminar",
     "viewType": "Tipo de Vista",
     "createUser": "Crear Usuario",
@@ -957,7 +960,12 @@
     "forbidden": "No tienes permiso para ver la administración de usuarios",
     "loadError": "No se pudo cargar la lista de usuarios",
     "partialCatalogs": "Algunos catálogos no se pudieron cargar; los desplegables pueden estar incompletos",
-    "deleteUserTitle": "Dar de baja usuario"
+    "deleteUserTitle": "Desactivar usuario",
+    "search": "Buscar por usuario, nombre o correo",
+    "searchAction": "Buscar",
+    "clearSearch": "Limpiar",
+    "noResults": "Ningún usuario coincide con la búsqueda.",
+    "truncated": "Se muestran los primeros 100 usuarios; use la búsqueda para encontrar otros."
   },
   "profile": {
     "title": "Perfil",
@@ -1393,7 +1401,7 @@
       "grant": "Conceder",
       "revoke": "Revocar",
       "revokeConfirmTitle": "Revocar unidad",
-      "revokeConfirmMessage": "El usuario perderá el acceso efectivo a esta unidad. La concesión queda registrada como revocada. ¿Desea continuar?",
+      "revokeConfirmMessage": "{{user}} perderá el acceso efectivo a la unidad {{unit}}. La concesión queda registrada como revocada. ¿Desea continuar?",
       "grantedSuccess": "Unidad concedida",
       "revokedSuccess": "Unidad revocada",
       "saveError": "No se pudo completar la operación. Se recargó el estado real."
@@ -1494,7 +1502,14 @@
     "module": "Módulo",
     "noRoles": "Sin roles",
     "deactivate": "Desactivar rol",
-    "deactivateConfirm": "¿Desactivar este rol?",
+    "deactivateTitle": "Desactivar rol",
+    "deactivateConfirm": "¿Desactivar este rol? Los usuarios que lo tengan asignado dejarán de tener sus permisos.",
+    "deactivated": "Rol desactivado correctamente",
+    "reactivate": "Reactivar",
+    "reactivated": "Rol reactivado correctamente",
+    "inactive": "Inactivo",
+    "showInactive": "Mostrar inactivos",
+    "permissionsRequired": "Seleccione al menos un permiso para el rol.",
     "actions": {
       "read": "Ver",
       "create": "Crear",
@@ -1594,5 +1609,8 @@
     "male": "Macho",
     "female": "Hembra",
     "mixed": "Mixto"
+  },
+  "home": {
+    "noLanding": "No hay un módulo de inicio disponible para tu perfil. Usa el menú lateral para acceder a las secciones habilitadas."
   }
 }

@@ -190,10 +190,17 @@ async def get_permissions_catalog(
 
 @router.get("/roles", response_model=list[RoleRead], tags=["Roles"])
 async def list_roles(
+    include_inactive: bool = Query(False),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("users", "read")),
 ):
-    return await AuthService(db).get_roles(actor=current_user)
+    """`AC-RL-04` · `DR-1`. Los inactivos solo con `?include_inactive=true`.
+
+    Fuera de esa petición, el listado es el de siempre: un rol apagado no se ofrece para
+    asignarlo por error. El flag **no** toca el alcance de empresa, que se resuelve en el
+    servicio a partir del actor (`AC-R04`).
+    """
+    return await AuthService(db).get_roles(actor=current_user, include_inactive=include_inactive)
 
 
 @router.post("/roles", response_model=RoleRead, status_code=201, tags=["Roles"])

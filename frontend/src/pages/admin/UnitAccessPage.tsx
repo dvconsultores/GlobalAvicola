@@ -159,6 +159,33 @@ export default function UnitAccessPage() {
     }
   }
 
+  /** `SPEC 013` · AC-UI-04: nombre visible de la unidad, resuelto desde el estado `units`. */
+  const unitLabelFor = (code: string): string => {
+    const unit = units.find(u => u.code === code)
+    return businessUnitName(code, unit?.name_key, t)
+  }
+
+  /** `SPEC 013` · AC-UI-04: identidad del candidato cuya concesión se va a revocar. */
+  const userNameFor = (userId: number): string => {
+    const c = candidates.find(x => x.user_id === userId)
+    if (!c) return `#${userId}`
+    return c.display_name || c.username
+  }
+
+  /**
+   * `SPEC 013` · AC-UI-04 (`AR-16`/Y-3.1): la confirmación de revocar nombra al usuario y a la
+   * unidad concretos. El resto de confirmaciones (activar/desactivar unidad) mantienen su texto.
+   */
+  const confirmMessage = (): string => {
+    if (confirm?.type === 'revoke') {
+      return t('admin.grants.revokeConfirmMessage', {
+        user: userNameFor(confirm.userId),
+        unit: unitLabelFor(confirm.code),
+      })
+    }
+    return t(confirm?.type === 'disable' ? 'admin.units.disableConfirmMessage' : 'admin.units.enableConfirmMessage')
+  }
+
   const header = (
     <div className="mb-5">
       <div className="mb-2">
@@ -342,13 +369,7 @@ export default function UnitAccessPage() {
               ? 'admin.grants.revokeConfirmTitle'
               : 'admin.units.enableConfirmTitle',
         )}
-        message={t(
-          confirm?.type === 'disable'
-            ? 'admin.units.disableConfirmMessage'
-            : confirm?.type === 'revoke'
-              ? 'admin.grants.revokeConfirmMessage'
-              : 'admin.units.enableConfirmMessage',
-        )}
+        message={confirmMessage()}
         confirmLabel={t(
           confirm?.type === 'disable'
             ? 'admin.units.disable'

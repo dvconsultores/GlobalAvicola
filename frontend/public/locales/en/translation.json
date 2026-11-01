@@ -914,8 +914,10 @@
     "businessUnits": {
       "open": "Business units",
       "title": "Business units",
-      "companyState": "Company",
-      "userState": "User",
+      "companyState": "State in the company",
+      "userState": "User state",
+      "companyLabel": "Company",
+      "userLabel": "User",
       "loadError": "The user's grants could not be loaded.",
       "selfNote": "You cannot grant units to yourself.",
       "revokedHistoric": "Revoked (historic)"
@@ -936,11 +938,12 @@
     "web": "Web",
     "noRole": "No role",
     "editUser": "Edit",
-    "deleteUser": "Delete",
+    "deleteUser": "Deactivate",
+    "deactivate": "Deactivate",
     "newPasswordHint": "New password (leave blank to keep)",
     "passwordRequired": "Password required",
     "fieldsRequired": "Required fields",
-    "deleteConfirm": "Delete user?",
+    "deleteConfirm": "Deactivate this user? It can be reactivated from its status.",
     "deleteError": "Error deleting",
     "viewType": "View Type",
     "createUser": "Create User",
@@ -957,7 +960,12 @@
     "forbidden": "You do not have permission to view user administration",
     "loadError": "The user list could not be loaded",
     "partialCatalogs": "Some catalogs could not be loaded; dropdowns may be incomplete",
-    "deleteUserTitle": "Deactivate user"
+    "deleteUserTitle": "Deactivate user",
+    "search": "Search by username, name or email",
+    "searchAction": "Search",
+    "clearSearch": "Clear",
+    "noResults": "No user matches the search.",
+    "truncated": "Showing the first 100 users; use search to find others."
   },
   "profile": {
     "title": "Profile",
@@ -1393,7 +1401,7 @@
       "grant": "Grant",
       "revoke": "Revoke",
       "revokeConfirmTitle": "Revoke unit",
-      "revokeConfirmMessage": "The user will lose effective access to this unit. The grant is recorded as revoked. Continue?",
+      "revokeConfirmMessage": "{{user}} will lose effective access to the {{unit}} unit. The grant is kept on record as revoked. Continue?",
       "grantedSuccess": "Unit granted",
       "revokedSuccess": "Unit revoked",
       "saveError": "The operation could not be completed. The real state was reloaded."
@@ -1494,7 +1502,14 @@
     "module": "Module",
     "noRoles": "No roles",
     "deactivate": "Deactivate role",
-    "deactivateConfirm": "Deactivate this role?",
+    "deactivateTitle": "Deactivate role",
+    "deactivateConfirm": "Deactivate this role? Users assigned to it will lose its permissions.",
+    "deactivated": "Role deactivated successfully",
+    "reactivate": "Reactivate",
+    "reactivated": "Role reactivated successfully",
+    "inactive": "Inactive",
+    "showInactive": "Show inactive",
+    "permissionsRequired": "Select at least one permission for the role.",
     "actions": {
       "read": "View",
       "create": "Create",
@@ -1594,5 +1609,8 @@
     "male": "Male",
     "female": "Female",
     "mixed": "Mixed"
+  },
+  "home": {
+    "noLanding": "No home module is available for your profile. Use the side menu to reach the sections you are allowed to use."
   }
 }

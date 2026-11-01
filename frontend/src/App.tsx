@@ -3,7 +3,8 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAuthStore } from './stores/auth.store'
 import { hasPermission } from './auth/permissions'
-import { canAccessCapability, PRODUCTIVE_UNITS } from './auth/navigation'
+import { canAccessCapability, filterNavItemsBySession, PRODUCTIVE_UNITS } from './auth/navigation'
+import { NAV_ITEMS } from './data/navigationConfig'
 import { useTelegram, useTelegramBackHandler } from './hooks/useTelegram'
 import { normalizeLanguage } from './i18n'
 import { ToastProvider } from './components/Toast'
@@ -106,10 +107,18 @@ function PoultryStageRoute() {
 }
 
 export function HomeRoute() {
+ const { t } = useTranslation()
  const { user } = useAuthStore()
  if (user?.view_type === 'mobile') return <Navigate to="/menu/poultry" replace />
  // `R-212` · AC-02: sin `dashboard:read` el home lleva a un hub útil, no a un error.
- if (user && !hasPermission(user, 'dashboard:read')) return <Navigate to="/menu/poultry" replace />
+ // `AR-23`: solo si ese hub EXISTE para la sesión. `MenuHubPage` filtra con esta misma
+ // política y, sin raíz `poultry`, devuelve a `/` (fail-closed): redirigir a ciegas producía
+ // un bucle infinito `/` ⇄ `/menu/poultry`. Sin hub se muestra un aviso neutro, sin redirect.
+ if (user && !hasPermission(user, 'dashboard:read')) {
+ const hub = filterNavItemsBySession(NAV_ITEMS, user).some((item) => item.key === 'poultry')
+ if (hub) return <Navigate to="/menu/poultry" replace />
+ return <div role="status" className="py-8 text-center text-sm font-medium text-slate-600">{t('home.noLanding')}</div>
+ }
  return <DashboardPage />
 }
 

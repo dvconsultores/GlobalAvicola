@@ -220,7 +220,11 @@ async def test_t_092_06_sin_permiso_no_se_administran_roles(
     operador = {"Authorization": "Bearer " + create_access_token(
         data={"sub": str(seeded_ids["user_operator_id"])})}
     r = await http_client.post("/api/v1/roles", headers=operador, json={
-        "name": f"{PREFIJO}sin-permiso", "permissions": []})
+        "name": f"{PREFIJO}sin-permiso",
+        # UAT-ADMIN-RBAC AC-RL-05 (DR-2): el alta exige >= 1 permiso, así que se envía uno
+        # mínimo que NO sea `users:create`. Lo que esta prueba mide es la autorización del
+        # actor (403 por falta de `users:create`), no la forma del cuerpo.
+        "permissions": [{"module": "lots", "action": "read"}]})
     assert r.status_code == 403, r.text
 
 
