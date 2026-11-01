@@ -69,3 +69,26 @@ Backend: RED (los tests nuevos fallan en HEAD) → implementación → targeted 
 ## 6. Constitution Gate
 SPEC suficiente PASS · alcance acotado PASS · reglas de negocio (DR-1…DR-4 del Owner) PASS · API impact (códigos 409/422/403 nuevos; `GET /roles?include_inactive`) PASS · DB impact (ninguno) PASS · seguridad (backend decide, sin 2.ª fuente de autoridad, anti-enumeración 404 intacta) PASS · multiempresa PASS (suites reutilizadas) · regresión identificada PASS · AC verificables PASS · plan de pruebas PASS.
 **AUTHORIZATION GATE: PASS** (decisiones materiales resueltas por el Owner el 2026-10-31).
+
+---
+
+## 7. Amendment S2-01 — `GA-UAT-USERS-S2-01` (2026-11-01, UAT SESIÓN 2)
+
+**Entrada:** UAT SESIÓN 2 de Yolinel: `SESSION_1_UAT = PASS` (no se reabre). Hallazgo único: al editar un usuario y cambiar solo el **Rol**, «Guardar» muestra *«La nueva contraseña debe ser distinta de la actual»* sin que se haya tocado la clave.
+
+**Clasificación:** *Caso B* (gap no cubierto, no regresión): `GA-REM-012` separó el cambio de clave en `POST /users/{id}/password` pero el modal de edición conservó un campo `type=password` siempre presente (R-195) y `handleSave` lo trataba como «clave nueva» si traía valor. **Severidad: P2 funcional/administración** (no se modifica credencial: la clave anterior sigue abriendo sesión; no se expone hash ni password; sin evasión de autorización).
+
+**Reproducción BEFORE** (`evidence/01_before_repro.json`, sanitizado): `PUT /users/{id}` 200 (rol cambiado; el cuerpo NO lleva password) + `POST /users/{id}/password` 422 con la clave autocompletada = clave actual. Causa raíz: el navegador autocompleta el campo (captura del PDF: fondo azul de autofill, 9 puntos), `form.password` queda poblado, y el submit de «edición» dispara el flujo de cambio de clave. **Capa: frontend.** Backend correcto: `UserUpdate` es `extra=forbid` (sin password), el cambio de clave es endpoint dedicado, la regla «nueva ≠ actual» (AR-10) pertenece solo a ese endpoint.
+
+**Contrato (único, sin valores mágicos):** edición administrativa y cambio de clave son operaciones distintas. En edición, la clave solo viaja si la persona activa **explícitamente** «Cambiar contraseña» (campos nueva + confirmación, `autocomplete="new-password"`); sin esa activación el submit no lee, valida ni envía clave y el formulario no contiene ningún campo de contraseña que el navegador pueda rellenar. Las reglas de clave (≥8, confirmación, ≠ actual, hash, auditoría `user_password`) no se debilitan.
+
+| AC | Capa | Enunciado |
+|---|---|---|
+| **AC-S2-01** | frontend | Editar rol/nombre/apellido/email/estado/vista sin activar «Cambiar contraseña» ⇒ solo `PUT /users/{id}`; **ninguna** petición a `/password`; el cuerpo del PUT no contiene password. |
+| **AC-S2-02** | frontend | En edición no existe `input[type=password]` hasta activar «Cambiar contraseña»; al desactivarla (o cerrar/reabrir) se descarta lo escrito. Los campos de clave llevan `autocomplete="new-password"` (también el alta). |
+| **AC-S2-03** | frontend | Flujo explícito: nueva < 8 o confirmación distinta ⇒ error visible **antes** de cualquier petición (no se aplica un PUT a medias); válido ⇒ `PUT` y luego `POST /password {new_password}`; si el POST falla (p. ej. igual a la actual) el aviso indica que los datos se guardaron y la clave no cambió, con el detalle del servidor. |
+| **AC-S2-04** | backend (pin) | `PUT /users/{id}` sin password conserva el hash; con clave `password` en el cuerpo ⇒ 422 (`extra=forbid`); cambiar solo el rol no toca hash, el rol nuevo es efectivo y la clave anterior autentica; el cambio explícito cambia el hash; nueva = actual ⇒ 422; sin `users:update` ⇒ 403; otra empresa ⇒ 404; la auditoría distingue `entity_type=user` (edición) de `user_password` (cambio de clave) y no registra password/hash. |
+| **AC-S2-05** | E2E | Escenario de Yolinel: Rol A→B sin tocar clave (con el campo autocompletado simulado donde exista) ⇒ sin error de clave, rol B, clave anterior válida, `/me` del usuario con permisos de B, auditoría de edición y ninguna `user_password`; luego B→A (reversible). |
+
+Fuera de alcance: política de clave, ciclo de vida de tokens (OD-01/DR-4), RBAC, SESIÓN 1.
+**Constitution Gate:** spec suficiente PASS · alcance acotado PASS · sin decisión material nueva PASS · sin cambio de API/DB PASS · seguridad PASS (backend sin cambios, anti-IDOR intacto) · AC verificables PASS. **AUTHORIZATION GATE: PASS.**

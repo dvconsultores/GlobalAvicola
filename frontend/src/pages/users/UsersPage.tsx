@@ -42,6 +42,13 @@ export default function UsersPage() {
  const [editingId, setEditingId] = useState<number | null>(null)
  const [form, setForm] = useState<UserForm>(emptyForm)
  const [saving, setSaving] = useState(false)
+ // `SPEC 013` · `GA-UAT-USERS-S2-01` (`AC-S2-02`). Editar y cambiar clave son
+ // operaciones distintas: en edición NO hay campo de contraseña hasta que se
+ // activa este conmutador. Antes el campo estaba siempre presente, el navegador
+ // lo autocompletaba y `handleSave` lo enviaba como «clave nueva» (igual a la
+ // actual ⇒ 422 visible al cambiar solo el rol).
+ const [cambiarClave, setCambiarClave] = useState(false)
+ const [passwordConfirm, setPasswordConfirm] = useState('')
  // `AR-22`: `GET /users` pagina y trae 20 por defecto, así que la pantalla truncaba en
  // silencio a los usuarios nuevos de una empresa con más de 20. Se pide el máximo que admite
  // el contrato (100) y, por encima de eso, se busca — el `search` del servidor filtra por
@@ -90,11 +97,19 @@ export default function UsersPage() {
  // eslint-disable-next-line react-hooks/set-state-in-effect
  useEffect(() => { fetchData() }, [fetchData])
 
- const openCreate = () => { setEditingId(null); setForm(emptyForm); setShowModal(true) }
+ const openCreate = () => { setEditingId(null); setForm(emptyForm); setCambiarClave(false); setPasswordConfirm(''); setShowModal(true) }
  // `AR-22`: la búsqueda se aplica al pulsar Enter o el botón «Buscar», nunca por pulsación.
  const aplicarBusqueda = () => { setBusquedaAplicada(busqueda.trim()) }
  const limpiarBusqueda = () => { setBusqueda(''); setBusquedaAplicada('') }
- const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, area_id: user.area_id ?? null, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setShowModal(true) }
+ const openEdit = (user: any) => { setEditingId(user.id); setForm({ username: user.username, first_name: user.first_name || '', last_name: user.last_name || '', email: user.email || '', phone: user.phone || '', password: '', role_id: user.role_id, area_id: user.area_id ?? null, company_id: user.company_id, view_type: user.view_type || 'web', is_active: user.is_active }); setCambiarClave(false); setPasswordConfirm(''); setShowModal(true) }
+ // `AC-S2-02`: cerrar el modal descarta lo escrito en los campos de clave; el
+ // formulario queda sin contraseña residual para el siguiente que se abra.
+ const cerrarModal = () => { setShowModal(false); setCambiarClave(false); setPasswordConfirm(''); setForm((f) => ({ ...f, password: '' })) }
+ // `AC-S2-02`: desactivar el conmutador descarta lo escrito; reactivarlo abre dos campos vacíos.
+ const alternarClave = () => {
+ if (cambiarClave) { setForm((f) => ({ ...f, password: '' })); setPasswordConfirm('') }
+ setCambiarClave(!cambiarClave)
+ }
 
  const handleSave = async () => {
  // `R-195`/B-28: `last_name` también es obligatorio en cliente; sin diálogos
@@ -103,13 +118,21 @@ export default function UsersPage() {
  toast.error(t('users.fieldsRequired'))
  return
  }
+ // `AC-S2-03`: la clave se valida ANTES de cualquier petición — así nunca queda
+ // un PUT aplicado con el cambio de clave fallido. Sin `cambiarClave` ni se lee.
+ let claveNueva: string | null = null
+ if (editingId && cambiarClave) {
+ const nueva = form.password
+ if (nueva.length < 8) { toast.error(t('users.passwordTooShort')); return }
+ if (nueva !== passwordConfirm) { toast.error(t('users.passwordMismatch')); return }
+ claveNueva = nueva
+ }
  setSaving(true)
  try {
  // `R-195`/`R-118`. El contrato de edición (`UserUpdate`, `extra=forbid`)
  // admite SOLO este subconjunto: `username` es inmutable y la empresa la
  // resuelve el servidor por contexto. Enviar el formulario completo
  // (`username`/`company_id` incluidos) producía 422 «Extra inputs».
- const { password } = form
  const comunes = {
  first_name: form.first_name, last_name: form.last_name, email: form.email,
  phone: form.phone, role_id: form.role_id || null, area_id: form.area_id || null,
@@ -117,15 +140,26 @@ export default function UsersPage() {
  }
  if (editingId) {
  await api.put(`/users/${editingId}`, comunes)
- if (password) await api.post(`/users/${editingId}/password`, { new_password: password })
+ // `AC-S2-01`: sin conmutador activo no hay POST a `/password`.
+ if (claveNueva) {
+ try { await api.post(`/users/${editingId}/password`, { new_password: claveNueva }) }
+ catch (err: any) {
+ // `AC-S2-03`: el PUT ya se aplicó, así que la lista se refresca y el aviso
+ // dice qué sí se guardó y qué detalle dio el servidor (`AR-10`: nueva ≠ actual).
+ fetchData()
+ toast.error(t('users.passwordNotChanged', { detail: getErrorMessage(err, '') }))
+ return
+ }
+ }
  } else {
+ const password = form.password
  if (!password) { toast.error(t('users.passwordRequired')); return }
  await api.post('/users', {
  ...comunes, username: form.username, password,
  ...(mostrarEmpresa ? { company_id: form.company_id || null } : {}),
  })
  }
- setShowModal(false); fetchData() } catch (err: any) {
+ cerrarModal(); fetchData() } catch (err: any) {
       // `R-215`. Antes: `alert(detail)` con la lista cruda ⇒ «[object Object]».
       toast.error(getErrorMessage(err, t('common.error')))
     } finally { setSaving(false) }
@@ -174,12 +208,19 @@ export default function UsersPage() {
  : <><Monitor size={12} className="inline-block mr-0.5 -mt-0.5" aria-hidden="true" />{t('users.web')}</>}</p><div className="flex gap-2 mt-3 border-t border-slate-100 pt-3">{can({ permission: 'users:update' }) && <button onClick={() => openEdit(u)} className="flex-1 bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-slate-200 transition flex items-center justify-center gap-1"><Pencil size={12} /> {t('users.editUser')}</button>}{can({ permission: 'users:delete' }) && !esPropio(u) && <button onClick={() => setDeleteTarget(u)} className="flex-1 bg-red-50 text-red-600 px-3 py-1.5 rounded-lg text-xs font-medium hover:bg-red-100 transition flex items-center justify-center gap-1"><Trash2 size={12} /> {t('users.deleteUser')}</button>}</div></div> })}</div>
  </>}
 
- {showModal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={() => setShowModal(false)}><div className="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-4"><h2 className="text-lg font-bold text-[#1E3A5F]">{editingId ? t('users.editUserTitle') : t('users.createUser')}</h2><button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-slate-100"><X size={20} /></button></div><div className="space-y-3">
+ {showModal && <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40" onClick={cerrarModal}><div className="bg-white rounded-2xl shadow-xl p-6 max-w-lg w-full mx-4 max-h-[90vh] overflow-y-auto" onClick={e => e.stopPropagation()}><div className="flex items-center justify-between mb-4"><h2 className="text-lg font-bold text-[#1E3A5F]">{editingId ? t('users.editUserTitle') : t('users.createUser')}</h2><button onClick={cerrarModal} className="p-1 rounded-lg hover:bg-slate-100"><X size={20} /></button></div><div className="space-y-3">
  <input placeholder={t('users.usernamePlaceholder')} value={form.username} readOnly={!!editingId} disabled={!!editingId} onChange={e => setForm({ ...form, username: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm disabled:bg-slate-50 disabled:text-slate-500" />
  <div className="grid grid-cols-2 gap-3"><input placeholder={t('users.firstNamePlaceholder')} value={form.first_name} onChange={e => setForm({ ...form, first_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /><input placeholder={t('users.lastNamePlaceholder')} value={form.last_name} onChange={e => setForm({ ...form, last_name: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" /></div>
  <input placeholder={t('users.emailPlaceholder')} type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
  <input placeholder={t('users.phonePlaceholder')} value={form.phone} onChange={e => setForm({ ...form, phone: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
- <input placeholder={editingId ? t('users.newPasswordHint') : t('users.passwordPlaceholder')} type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ {!editingId && <input placeholder={t('users.passwordPlaceholder')} type="password" autoComplete="new-password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />}
+ {editingId && (<>
+ <button type="button" aria-pressed={cambiarClave} onClick={alternarClave} className="w-full text-left bg-slate-100 text-slate-700 px-3 py-2 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('users.changePasswordToggle')}</button>
+ {cambiarClave && <div className="grid grid-cols-2 gap-3">
+ <input placeholder={t('users.newPassword')} type="password" autoComplete="new-password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ <input placeholder={t('users.confirmPassword')} type="password" autoComplete="new-password" value={passwordConfirm} onChange={e => setPasswordConfirm(e.target.value)} className="border border-slate-300 rounded-lg px-3 py-2.5 text-sm" />
+ </div>}
+ </>)}
  <select value={form.role_id || ''} onChange={e => setForm({ ...form, role_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noRole')}</option>{roles.map((r: any) => <option key={r.id} value={r.id}>{r.name}</option>)}</select></div>
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.area')}</label><select value={form.area_id || ''} onChange={e => setForm({ ...form, area_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('users.noArea')}</option>{areas.map((a: any) => <option key={a.id} value={a.id}>{a.name}</option>)}</select>
  {mostrarEmpresa && <div>
@@ -187,7 +228,7 @@ export default function UsersPage() {
  <select value={form.company_id || ''} onChange={e => setForm({ ...form, company_id: e.target.value ? Number(e.target.value) : null })} className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm"><option value="">{t('company.noCompany')}</option>{companies.filter((c: any) => c.is_active !== false).map((c: any) => <option key={c.id} value={c.id}>{c.name}</option>)}</select>
  </div>}
  <div><label className="block text-sm font-medium text-slate-700 mb-1.5">{t('users.viewType')}</label><div className="flex gap-3"><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'mobile' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="mobile" checked={form.view_type === 'mobile'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Smartphone size={20} className={form.view_type === 'mobile' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.mobile')}</span></label><label className={`flex-1 flex items-center justify-center gap-2 p-3 rounded-lg border-2 cursor-pointer transition ${form.view_type === 'web' ? 'border-[#5a9bba] bg-blue-50' : 'border-slate-200'}`}><input type="radio" name="view_type" value="web" checked={form.view_type === 'web'} onChange={e => setForm({ ...form, view_type: e.target.value })} className="sr-only" /><Monitor size={20} className={form.view_type === 'web' ? 'text-[#5a9bba]' : 'text-slate-400'} /><span className="text-sm font-medium">{t('users.web')}</span></label></div></div>
- </div><div className="flex gap-3 mt-5"><button onClick={handleSave} disabled={saving} className="flex-1 bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">{saving ? t('common.saving') : t('common.save')}</button><button onClick={() => setShowModal(false)} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel')}</button></div></div></div>}
+ </div><div className="flex gap-3 mt-5"><button onClick={handleSave} disabled={saving} className="flex-1 bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition disabled:opacity-50">{saving ? t('common.saving') : t('common.save')}</button><button onClick={cerrarModal} className="flex-1 bg-slate-100 text-slate-700 px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-slate-200 transition">{t('common.cancel')}</button></div></div></div>}
 
  {/* `R-195`: baja con ConfirmDialog (sin `confirm` nativo). `SPEC 013` · `AC-UI-05`: la acción
      se rotula «Desactivar» porque es una baja LÓGICA reversible (se reactiva desde el estado). */}
