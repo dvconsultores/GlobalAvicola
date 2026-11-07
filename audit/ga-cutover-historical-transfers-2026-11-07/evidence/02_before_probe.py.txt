@@ -1,0 +1,70 @@
+"""SONDA BEFORE (temporal, no entregable) — CUTOVER-HISTORICAL-TRANSFERS contra HEAD.
+
+HEAD sirve el contrato `breeder` **v2** (sin `historical_transfers_*`): los dos lotes reales
+deben rechazarse con `CONSISTENCY_MISMATCH` en `live_males`.
+"""
+from __future__ import annotations
+
+import json
+import sys
+from pathlib import Path
+
+import pytest
+
+sys.path.insert(0, str(Path(__file__).parent))
+from cutover_v2_fixtures import (  # noqa: E402
+    COLUMNAS, GALPON, GRANJA, corte, crear_batch, preparar, subir, xlsx_v2,
+)
+from time_reference import iso_days_ago  # noqa: E402
+
+#: Contrato efectivo en HEAD: cabecera v3 de las fixtures menos los 4 campos nuevos.
+columnas_v2 = tuple(c for c in COLUMNAS["breeder"] if not c.startswith("historical_transfers_"))
+
+SALIDA = (Path(__file__).resolve().parents[2] / "audit" / "ga-cutover-historical-transfers-2026-11-07"
+          / "evidence" / "02_before_real_case.json")
+
+LOTES = (
+    ("HT-V2-ORIGEN", 60, dict(birds_placed_males=1300, historical_mortality_males=165, historical_culls_males=0,
+                              live_males=835, birds_placed_females=9500, historical_mortality_females=450,
+                              historical_culls_females=50, live_females=9000)),
+    ("HT-V2-RECEPTOR", 61, dict(birds_placed_males=1000, historical_mortality_males=100, historical_culls_males=20,
+                                live_males=1180, birds_placed_females=9000, historical_mortality_females=450,
+                                historical_culls_females=0, live_females=8550)),
+)
+
+
+def _fila_v2(ref: str, **valores) -> list:
+    """Fila `Datos` en el orden de `columnas_v2` (vacío si falta), como `fila()`."""
+    base = dict(legacy_lot_code=ref, farm_code=GRANJA, house_name=GALPON, productive_phase_code="PROD",
+                real_start_date=iso_days_ago(200), accumulated_feed_kg=120000.5, current_avg_weight_g=3200,
+                accumulated_egg_production=180000, accumulated_eggs_to_hatchery=150000,
+                source_system="LEGACY", source_reference=f"REF-{ref}")
+    base.update(valores)
+    return ["" if base.get(c) is None else base[c] for c in columnas_v2]
+
+
+@pytest.mark.asyncio
+async def test_sonda_before_lotes_reales_v2(auth_headers, http_client, seeded_ids):
+    await preparar(seeded_ids)
+    empresa = seeded_ids["company_id"]
+    resultado = []
+    for ref, dias, valores in LOTES:
+        contenido = xlsx_v2("breeder", [_fila_v2(ref, **valores)], company_id=empresa,
+                            template_version="v2", columnas=columnas_v2, schema_id="CUTOVER_BREEDER_V2")
+        batch_id = await crear_batch(http_client, auth_headers, "breeder", corte(dias))
+        r = await subir(http_client, auth_headers, batch_id, contenido)
+        assert r.status_code == 200, r.text
+        v = (await http_client.get(f"/api/v1/cutover-batches/{batch_id}/validation",
+                                   headers=auth_headers)).json()
+        errores = sorted(({"row_number": e["row_number"], "field": e["field"],
+                           "error_code": e["error_code"], "message": e["message"]} for e in v["errors"]),
+                         key=lambda e: (e["row_number"], e["field"] or "", e["error_code"]))
+        resultado.append({"lote": ref, "cargado_http_status": r.status_code, "errores": errores,
+                          "valido": v["invalid_rows"] == 0})
+    SALIDA.parent.mkdir(parents=True, exist_ok=True)
+    SALIDA.write_text(json.dumps({"contrato_head": "breeder v2", "schema_id": "CUTOVER_BREEDER_V2",
+                                  "lotes": resultado}, ensure_ascii=False, indent=2) + "\n",
+                      encoding="utf-8")
+    for item in resultado:
+        assert any(e["field"] == "live_males" and e["error_code"] == "CONSISTENCY_MISMATCH"
+                   for e in item["errores"]), item

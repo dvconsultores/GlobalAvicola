@@ -1,0 +1,32 @@
+{
+  "contrato_head": "breeder v2",
+  "schema_id": "CUTOVER_BREEDER_V2",
+  "lotes": [
+    {
+      "lote": "HT-V2-ORIGEN",
+      "cargado_http_status": 200,
+      "errores": [
+        {
+          "row_number": 2,
+          "field": "live_males",
+          "error_code": "CONSISTENCY_MISMATCH",
+          "message": "La ecuación de consistencia no cuadra: machos: alojadas − mortalidad − descartes = 1135 ≠ vivas 835."
+        }
+      ],
+      "valido": false
+    },
+    {
+      "lote": "HT-V2-RECEPTOR",
+      "cargado_http_status": 200,
+      "errores": [
+        {
+          "row_number": 2,
+          "field": "live_males",
+          "error_code": "CONSISTENCY_MISMATCH",
+          "message": "La ecuación de consistencia no cuadra: machos: alojadas − mortalidad − descartes = 880 ≠ vivas 1180."
+        }
+      ],
+      "valido": false
+    }
+  ]
+}

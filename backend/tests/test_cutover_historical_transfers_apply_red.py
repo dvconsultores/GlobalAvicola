@@ -17,7 +17,7 @@ import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
 from cutover_v2_fixtures import (  # noqa: E402
-    aplicar, aprobar, corte, crear_batch, fila_reproductoras, headers_aprobador,
+    aplicar, aprobar, corte, crear_batch, fila_engorde, fila_reproductoras, headers_aprobador,
     items_por_referencia, preparar, subir, xlsx_v2,
 )
 from time_reference import recent_event_date  # noqa: E402
@@ -175,3 +175,23 @@ async def test_ht_migracion_columnas():
             assert default is None, nombre
         else:
             assert "UNKNOWN" in str(default), nombre
+
+
+@pytest.mark.asyncio
+async def test_ht_engorde_no_aplica_transferencias(auth_headers, http_client, seeded_ids):
+    """M9: en Engorde no hay transferencias ⇒ NOT_APPLICABLE (nunca UNKNOWN) y sin importe."""
+    await preparar(seeded_ids)
+    ref = _ref("HT-BRO")
+    b = await crear_batch(http_client, auth_headers, "broiler", corte(DIAS_CORTE))
+    r = await subir(http_client, auth_headers, b,
+                    xlsx_v2("broiler", [fila_engorde(ref)], company_id=seeded_ids["company_id"]))
+    assert r.status_code == 200 and r.json()["status"] == "validated", r.text
+    await aprobar(http_client, auth_headers, headers_aprobador(seeded_ids), b)
+    assert (await aplicar(http_client, auth_headers, b)).status_code == 200
+    lote = (await items_por_referencia(http_client, auth_headers, b))[ref]
+    opening = (await _fila(http_client, auth_headers, b, lote))["opening"]
+    assert opening["transfers_in_status"] == "NOT_APPLICABLE"
+    assert opening["transfers_out_status"] == "NOT_APPLICABLE"
+    assert opening["historical_transfers_in"] is None
+    assert opening["historical_transfers_out"] is None
+    assert (await _opening(lote)).accumulated_transfers_in_male is None
