@@ -119,9 +119,14 @@ async def test_fase_incompatible_y_metrica_no_aplicable_en_cria(auth_headers, ht
 async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_ids):
     await preparar(seeded_ids)
     filas = [
-        # alojadas − mortalidad − descartes ≠ vivas (machos): 1100 − 50 − 0 = 1050 ≠ 1000
-        fila_reproductoras("breeder", "V-C1", birds_placed_males=1100, birds_placed_females=9450),
-        # con una pieza UNKNOWN la ecuación no se evalúa (no se inventa certeza)
+        # SPEC 014: la ecuación por sexo incluye las transferencias históricas
+        # (alojadas + entradas − mortalidad − descartes − salidas). Se declaran 0 (KNOWN) para
+        # conservar la intención «sin tolerancias»: 1100 + 0 − 50 − 0 − 0 = 1050 ≠ 1000 (machos).
+        fila_reproductoras("breeder", "V-C1", birds_placed_males=1100, birds_placed_females=9450,
+                           historical_transfers_in_males=0, historical_transfers_in_females=0,
+                           historical_transfers_out_males=0, historical_transfers_out_females=0),
+        # SPEC 014: con una pieza UNKNOWN la ecuación no se evalúa (NOT_FULLY_VERIFIABLE); ahora la
+        # ecuación incluye también las transferencias, que quedan vacías (UNKNOWN) en esta fila.
         fila_reproductoras("breeder", "V-C2", birds_placed_males=1100, birds_placed_females=None,
                            historical_culls_males=None),
         # huevos a incubadora > producidos

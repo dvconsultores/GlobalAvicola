@@ -38,6 +38,11 @@ _MENSAJES = {
     "BREED_NOT_IN_GENETIC_LINE": "La raza existe pero no pertenece a la línea genética indicada.",
 }
 
+#: Veredicto de la ecuación de balance por sexo (SPEC 014): sin ceros inventados.
+BALANCE_CONSISTENT = "CONSISTENT"
+BALANCE_INCONSISTENT = "INCONSISTENT"
+BALANCE_NOT_FULLY_VERIFIABLE = "NOT_FULLY_VERIFIABLE"
+
 
 def _val(fila: dict, campo: str) -> Any:
     celda = fila["normalized"].get(campo)
@@ -282,14 +287,23 @@ class ValidadorDeDominio:
             for campo in ("accumulated_egg_production", "accumulated_eggs_to_hatchery"):
                 if _st(fila, campo) == KNOWN:
                     self._error(fila, campo, "METRIC_NOT_APPLICABLE_IN_PHASE")
-        for sexo, vivas, alojadas, mort, desc in (
-                ("machos", "live_males", "birds_placed_males", "historical_mortality_males", "historical_culls_males"),
-                ("hembras", "live_females", "birds_placed_females", "historical_mortality_females", "historical_culls_females")):
-            if _known(fila, vivas, alojadas, mort, desc):
-                esperado = _val(fila, alojadas) - _val(fila, mort) - _val(fila, desc)
+        for clave, sexo, vivas, alojadas, mort, desc, entradas, salidas in (
+                ("males", "machos", "live_males", "birds_placed_males", "historical_mortality_males",
+                 "historical_culls_males", "historical_transfers_in_males", "historical_transfers_out_males"),
+                ("females", "hembras", "live_females", "birds_placed_females", "historical_mortality_females",
+                 "historical_culls_females", "historical_transfers_in_females", "historical_transfers_out_females")):
+            veredicto = BALANCE_NOT_FULLY_VERIFIABLE
+            if _known(fila, vivas, alojadas, entradas, mort, desc, salidas):
+                esperado = (_val(fila, alojadas) + _val(fila, entradas) - _val(fila, mort)
+                            - _val(fila, desc) - _val(fila, salidas))
                 if esperado != _val(fila, vivas):
+                    veredicto = BALANCE_INCONSISTENT
                     self._error(fila, vivas, "CONSISTENCY_MISMATCH",
-                                detalle=f"{sexo}: alojadas − mortalidad − descartes = {esperado} ≠ vivas {_val(fila, vivas)}")
+                                detalle=f"{sexo}: alojadas + transferencias de entrada − mortalidad − descartes "
+                                        f"− transferencias de salida = {esperado} ≠ vivas {_val(fila, vivas)}")
+                else:
+                    veredicto = BALANCE_CONSISTENT
+            fila.setdefault("_derived", {}).setdefault("balance_check", {})[clave] = veredicto
         if _known(fila, "accumulated_egg_production", "accumulated_eggs_to_hatchery") and \
                 _val(fila, "accumulated_eggs_to_hatchery") > _val(fila, "accumulated_egg_production"):
             self._error(fila, "accumulated_eggs_to_hatchery", "CONSISTENCY_MISMATCH",

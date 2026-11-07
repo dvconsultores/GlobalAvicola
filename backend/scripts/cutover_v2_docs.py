@@ -1,10 +1,11 @@
-"""SPEC 006 · genera la documentación del contrato v2 desde el registry (`app/cutover/contracts.py`).
+"""SPEC 006 · genera la documentación del contrato desde el registry (`app/cutover/contracts.py`).
 
     uso:  .venv/bin/python scripts/cutover_v2_docs.py [directorio_de_salida]
 
-Escribe `03…06_<BU>_TEMPLATE_CONTRACT.md`, `07_DATA_LINEAGE_MATRIX.md`, `08_XLSX_CSV_CONTRACT.md`,
-`09_VALIDATION_CATALOG.md` y `10_APPLY_DESTINATION_MATRIX.md`. La fuente de verdad es el código:
-estos documentos no se editan a mano.
+Versiones vigentes por BU (ver `CONTRACTS`): grandparent/breeder/hatchery `v3`, broiler `v2`. Escribe
+`03…06_<BU>_TEMPLATE_CONTRACT.md`, `07_DATA_LINEAGE_MATRIX.md`,
+`08_XLSX_CSV_CONTRACT.md`, `09_VALIDATION_CATALOG.md` y `10_APPLY_DESTINATION_MATRIX.md`. La fuente de
+verdad es el código: estos documentos no se editan a mano.
 """
 from __future__ import annotations
 
@@ -20,6 +21,9 @@ from app.cutover.service import PREVIEW_DESTACADAS  # noqa: E402
 
 HOY = date.today().isoformat()
 ORDEN = (("grandparent", "03"), ("breeder", "04"), ("hatchery", "05"), ("broiler", "06"))
+#: Versión vigente de cada BU y lista de las que ya descendieron de `v2` (SPEC 009 incubadora, SPEC 014 aves).
+VERSIONES = ", ".join(f"{b} `{c.version}`" for b, c in CONTRACTS.items())
+V3 = ", ".join(b for b, c in CONTRACTS.items() if c.version == "v3")
 
 CATALOGO_ERRORES = [
     ("INVALID_FILE", "archivo", "Archivo vacío, corrupto o ilegible (XLSX que no abre, CSV con codificación no UTF-8 o bytes nulos)."),
@@ -31,7 +35,9 @@ CATALOGO_ERRORES = [
     ("MACRO_NOT_ALLOWED", "archivo", ".xlsm o libro con `vbaProject.bin`: la plantilla es solo datos."),
     ("FORMULA_NOT_ALLOWED", "archivo", "Celda con fórmula en `Datos` (fila y columna en el mensaje); no se evalúa."),
     ("SHEET_MISSING", "archivo", "Falta la hoja `Meta` o `Datos`."),
-    ("TEMPLATE_VERSION_UNSUPPORTED", "archivo", "Versión ≠ v2. `v1` está retirada: el mensaje indica descargar la plantilla v2."),
+    ("TEMPLATE_VERSION_UNSUPPORTED", "archivo", "Versión distinta de la del contrato de la BU ("
+     + ", ".join(f"{b} {c.version}" for b, c in CONTRACTS.items())
+     + "). `v1` está retirada: el mensaje indica descargar la plantilla de la versión vigente (p. ej. «descargue la plantilla v3»)."),
     ("BUSINESS_UNIT_MISMATCH", "archivo", "La plantilla (Meta.business_unit / schema_id) no es la de la BU del batch; también al pedir una plantilla con `batch_id` de otra BU."),
     ("COMPANY_MISMATCH", "archivo", "`Meta.company` no es la empresa efectiva (el Excel nunca cambia el tenant)."),
     ("HEADER_MISSING", "archivo", "Faltan columnas del contrato (o no hay fila de cabecera)."),
@@ -59,7 +65,7 @@ CATALOGO_ERRORES = [
     ("LOT_DUPLICATE", "fila", "Código de lote repetido en el batch o ya usado por otra empresa."),
     ("LOT_EXISTS_REUSE_REJECTED", "fila", "El código ya existe en la empresa y la fila no declara `existing_lot_code`; o el lote existente ya tiene eventos."),
     ("OPENING_ALREADY_EXISTS", "fila / apply", "El lote ya tiene saldo de apertura."),
-    ("CONSISTENCY_MISMATCH", "fila", "Ecuación de consistencia que no cuadra, evaluada solo con todas las piezas KNOWN (sin tolerancias)."),
+    ("CONSISTENCY_MISMATCH", "fila", "Ecuación de consistencia que no cuadra, evaluada solo con todas las piezas KNOWN (sin tolerancias). Progenitoras/Reproductoras (SPEC 014): `vivas = alojadas + entradas − mortalidad − descartes − salidas` por sexo."),
     ("DATE_ORDER_INVALID", "fila", "Inicio > corte; fase antes del lote o después del corte; carga antes de la recepción o después del corte; nacimiento previsto antes de la carga."),
     ("DUPLICATE_UPLOAD", "batch (409)", "Mismo checksum ya cargado en otro batch del mismo corte."),
     ("BATCH_STATE_INVALID", "batch (409)", "Transición fuera de la máquina de estados (recargar tras enviar, aplicar sin aprobar, doble apply…)."),
@@ -112,7 +118,7 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 
 REGLAS = {
     "grandparent": """- `real_start_date ≤ corte`; `real_start_date ≤ phase_start_date ≤ corte`.
-- Por sexo, solo si alojadas, mortalidad, descartes y vivas son KNOWN: `alojadas − mortalidad − descartes = vivas`.
+- Por sexo, solo si alojadas, transferencias de entrada, mortalidad, descartes, transferencias de salida y vivas son las seis KNOWN: `vivas = alojadas + entradas − mortalidad − descartes − salidas` (SPEC 014). Si algún componente es UNKNOWN no se evalúa (sin ceros inventados): veredicto `NOT_FULLY_VERIFIABLE`, expuesto en `derived.balance_check.{males,females}` del preview y contado en `summary.balance_not_fully_verifiable_rows`. Los 6 KNOWN que no cuadran dan `INCONSISTENT` ⇒ `CONSISTENCY_MISMATCH`.
 - `accumulated_eggs_to_hatchery ≤ accumulated_egg_production` si ambas KNOWN.
 - En `CRIA`, `accumulated_egg_production` y `accumulated_eggs_to_hatchery` deben ser N/A o vacío (`METRIC_NOT_APPLICABLE_IN_PHASE`).
 - Estado de una métrica con dos sexos: KNOWN solo si ambos lo son; N/A si ambos; si no, UNKNOWN.""",
@@ -165,28 +171,28 @@ Fecha: {HOY} · SPEC 006 · parser: `backend/app/cutover/parser.py` · plantilla
 
 `GET /api/v1/cutover-templates/{{bu}}?format=xlsx|csv&batch_id=` (permiso `cutover:create`). Con `batch_id`, el batch debe ser de la empresa efectiva **y de esa BU** (`BUSINESS_UNIT_MISMATCH` en caso contrario): la plantilla sigue al batch, nunca a un selector. `Meta.cutover_datetime` viaja rellena.
 
-## 2 · XLSX (`cutover_template_{{bu}}_v2.xlsx`)
+## 2 · XLSX (`cutover_template_{{bu}}_{{versión}}.xlsx`: {VERSIONES})
 
 | Hoja | Contenido |
 |---|---|
 | `Instrucciones` | semántica vacío/0/N/A, formatos, unidades y una fila por campo: campo, significado, obligatorio, tipo, unidad, formato, ejemplo, valores permitidos, admite UNKNOWN, admite N/A, destino tras apply |
-| `Meta` | `template_version = v2`, `schema_id`, `company` (empresa efectiva), `business_unit`, `generated_at`, `cutover_datetime` |
+| `Meta` | `template_version` = versión del contrato de la BU ({VERSIONES}), `schema_id`, `company` (empresa efectiva), `business_unit`, `generated_at`, `cutover_datetime` |
 | `Datos` | cabecera exacta del contrato (orden libre al subir; nombres exactos) |
 | `Catalogos` | `catalog, code, description, status, parent_code` — solo maestros **activos** de la empresa efectiva y de la BU (granjas/galpones(parent=granja)/áreas/fases/líneas/razas(parent=línea) · plantas/incubadoras/nacedoras(parent=planta)/lotes fuente · lotes existentes sin apertura) |
 
 Lectura: `openpyxl` con `data_only=False` para detectar fórmulas (`FORMULA_NOT_ALLOWED`), rechazo de `vbaProject.bin` (`MACRO_NOT_ALLOWED`), firma `PK` obligatoria (`MIME_MISMATCH`).
 
-## 3 · CSV (`cutover_template_{{bu}}_v2.csv`)
+## 3 · CSV (`cutover_template_{{bu}}_{{versión}}.csv`)
 
 - Codificación UTF-8; BOM tolerado y emitido en la descarga.
 - Delimitador detectado en la cabecera: `;` (preferido) o `,` (o tabulador). Decimales siempre con punto.
-- Sin hojas: `business_unit`/`schema_id` vienen del batch y la versión del parámetro `?template_version=` del upload (por defecto `v2`); `Meta.company` no aplica.
+- Sin hojas: `business_unit`/`schema_id` vienen del batch y la versión, si no se envía `?template_version=`, es la **del contrato de la BU** ({VERSIONES}); `Meta.company` no aplica.
 - Fechas `AAAA-MM-DD`; `N/A`/`NA` literal para no aplica; celda vacía para desconocido.
 
 ## 4 · Un solo DTO
 
 ```text
-{{"source_type": "XLSX"|"CSV", "template_version": "v2", "business_unit", "schema_id", "company",
+{{"source_type": "XLSX"|"CSV", "template_version": "v3"|"v2" (la del contrato de la BU), "business_unit", "schema_id", "company",
  "rows": [{{"row_number", "raw": {{col: str|null}}, "normalized": {{campo: {{"value", "status"}}}}, "errors": [...]}}]}}
 ```
 
@@ -203,7 +209,7 @@ Lectura: `openpyxl` con `data_only=False` para detectar fórmulas (`FORMULA_NOT_
 
 ## 6 · Versionado
 
-`v2` vigente · `v1 = RETIRED_WITH_CLEAR_ERROR` (Q6): un archivo v1 recibe `TEMPLATE_VERSION_UNSUPPORTED` con la indicación de descargar la plantilla v2; nunca se reinterpreta.
+Vigentes por BU: {VERSIONES} · `v1 = RETIRED_WITH_CLEAR_ERROR` (Q6): un archivo v1 recibe `TEMPLATE_VERSION_UNSUPPORTED` con la indicación de descargar la plantilla vigente; nunca se reinterpreta. Misma regla para una versión anterior de la propia BU (SPEC 009 incubadora `v2`→`v3`; SPEC 014 grandparent/breeder `v2`→`v3`): un archivo `v2` de {V3} se rechaza con «descargue la plantilla v3».
 
 ## 7 · Informe de errores
 
@@ -256,7 +262,7 @@ Fecha: {HOY} · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; e
 | `lots` | `status` / `activation_type` | `active` / `normal` (BR-06 sigue aplicando) |
 | `lots` | `source_system` | fila → batch.source_system → tipo de archivo (`XLSX`/`CSV`) |
 | `opening_balances` | `activation_date` | fecha civil del corte |
-| `opening_balances` | `cutover_datetime` / `cutover_item_id` / `template_version` | corte del batch / fila de staging / `v2` |
+| `opening_balances` | `cutover_datetime` / `cutover_item_id` / `template_version` | corte del batch / fila de staging / versión del contrato de la BU ({VERSIONES}) |
 | `opening_balances` | `is_manual_activation` / `activation_reason` | `false` / «Cutover operacional v2 (SPEC 006)» |
 | `opening_balances` | estados no cubiertos por la BU | `NOT_APPLICABLE` (p. ej. huevos en engorde, mortalidad en incubadora) |
 | `lot_phases` | `phase_id` / `start_date` / `start_population_*` / `start_weight_avg` / `is_active` | fase declarada (INCUB implícita) / `phase_start_date` → fecha del lote / vivas por sexo (0 en mixto) / peso de apertura / `true` |

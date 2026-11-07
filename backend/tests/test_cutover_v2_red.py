@@ -239,7 +239,8 @@ async def test_red_06_plantilla_descargada_rellenada_y_cargada(auth_headers, htt
     meta = _meta(wb)
     # GA-CUTOVER-S3-02: Meta representa el corte en la zona de negocio (UTC-4, `-04:00`); el
     # instante sigue siendo el del batch, así que se comparan instantes y no la hora de pared.
-    assert meta["template_version"] == "v2"
+    # SPEC 014: breeder (progenitoras) pasa a contrato v3 por las transferencias históricas.
+    assert meta["template_version"] == "v3"
     assert datetime.fromisoformat(str(meta["cutover_datetime"])) == datetime.fromisoformat(corte(46))
     catalogos = list(wb["Catalogos"].iter_rows(values_only=True))
     assert any(f[0] == "farm" and f[1] == GRANJA for f in catalogos[1:]), "catálogo de granjas de la empresa"

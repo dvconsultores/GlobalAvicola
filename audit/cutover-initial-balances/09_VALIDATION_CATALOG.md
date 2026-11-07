@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 09_VALIDATION_CATALOG
 
-Fecha: 2026-10-27 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
+Fecha: 2026-11-07 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
 
 Todo error de fila viaja como `{row_number, column, field, error_code, message, received_value}` (AC46) y se descarga en CSV/XLSX. Los errores de archivo/batch viajan como `detail = "CODE: mensaje"` con el HTTP indicado.
 
@@ -15,7 +15,7 @@ Todo error de fila viaja como `{row_number, column, field, error_code, message, 
 | `MACRO_NOT_ALLOWED` | archivo | .xlsm o libro con `vbaProject.bin`: la plantilla es solo datos. |
 | `FORMULA_NOT_ALLOWED` | archivo | Celda con fórmula en `Datos` (fila y columna en el mensaje); no se evalúa. |
 | `SHEET_MISSING` | archivo | Falta la hoja `Meta` o `Datos`. |
-| `TEMPLATE_VERSION_UNSUPPORTED` | archivo | Versión ≠ v2. `v1` está retirada: el mensaje indica descargar la plantilla v2. |
+| `TEMPLATE_VERSION_UNSUPPORTED` | archivo | Versión distinta de la del contrato de la BU (grandparent v3, breeder v3, broiler v2, hatchery v3). `v1` está retirada: el mensaje indica descargar la plantilla de la versión vigente (p. ej. «descargue la plantilla v3»). |
 | `BUSINESS_UNIT_MISMATCH` | archivo | La plantilla (Meta.business_unit / schema_id) no es la de la BU del batch; también al pedir una plantilla con `batch_id` de otra BU. |
 | `COMPANY_MISMATCH` | archivo | `Meta.company` no es la empresa efectiva (el Excel nunca cambia el tenant). |
 | `HEADER_MISSING` | archivo | Faltan columnas del contrato (o no hay fila de cabecera). |
@@ -43,7 +43,7 @@ Todo error de fila viaja como `{row_number, column, field, error_code, message, 
 | `LOT_DUPLICATE` | fila | Código de lote repetido en el batch o ya usado por otra empresa. |
 | `LOT_EXISTS_REUSE_REJECTED` | fila | El código ya existe en la empresa y la fila no declara `existing_lot_code`; o el lote existente ya tiene eventos. |
 | `OPENING_ALREADY_EXISTS` | fila / apply | El lote ya tiene saldo de apertura. |
-| `CONSISTENCY_MISMATCH` | fila | Ecuación de consistencia que no cuadra, evaluada solo con todas las piezas KNOWN (sin tolerancias). |
+| `CONSISTENCY_MISMATCH` | fila | Ecuación de consistencia que no cuadra, evaluada solo con todas las piezas KNOWN (sin tolerancias). Progenitoras/Reproductoras (SPEC 014): `vivas = alojadas + entradas − mortalidad − descartes − salidas` por sexo. |
 | `DATE_ORDER_INVALID` | fila | Inicio > corte; fase antes del lote o después del corte; carga antes de la recepción o después del corte; nacimiento previsto antes de la carga. |
 | `DUPLICATE_UPLOAD` | batch (409) | Mismo checksum ya cargado en otro batch del mismo corte. |
 | `BATCH_STATE_INVALID` | batch (409) | Transición fuera de la máquina de estados (recargar tras enviar, aplicar sin aprobar, doble apply…). |

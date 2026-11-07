@@ -64,7 +64,8 @@ async def test_grandparent_primer_evento_de_su_fase(auth_headers, http_client, s
     detalle = await http_client.get(f"/api/v1/lots/{lote}", headers=auth_headers)
     assert detalle.status_code == 200, detalle.text
     ob = detalle.json()["opening_balance"]
-    assert (ob["initial_male_count"], ob["initial_female_count"], ob["mortality_status"], ob["template_version"]) == (1000, 9000, "KNOWN", "v2")
+    # SPEC 014: el contrato de grandparent pasa a v3 (transferencias históricas), la apertura se marca v3.
+    assert (ob["initial_male_count"], ob["initial_female_count"], ob["mortality_status"], ob["template_version"]) == (1000, 9000, "KNOWN", "v3")
     assert detalle.json()["origin"] == "MIGRATED" if "origin" in detalle.json() else True
 
 

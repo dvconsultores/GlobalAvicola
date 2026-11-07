@@ -1,15 +1,15 @@
 # CUTOVER-INITIAL-BALANCES · 03_GRANDPARENT_TEMPLATE_CONTRACT
 
-Fecha: 2026-10-27 · SPEC 006 · `schema_id = CUTOVER_GRANDPARENT_V2` · versión `v2` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-11-07 · SPEC 006 · `schema_id = CUTOVER_GRANDPARENT_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|
 | Unidad de negocio | `grandparent` (`lots.bird_type = grandparent`) |
 | Fases compatibles | `CRIA`, `PROD` |
 | Fecha que fija `lots.start_date` | `real_start_date` |
-| Columnas (`Datos`) | 26 |
+| Columnas (`Datos`) | 30 |
 | Obligatorias | `legacy_lot_code`, `farm_code`, `productive_phase_code`, `real_start_date`, `live_males`, `live_females` |
-| Archivo | `cutover_template_grandparent_v2.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_grandparent_v2.csv` (solo cabecera, `;`) |
+| Archivo | `cutover_template_grandparent_v3.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_grandparent_v3.csv` (solo cabecera, `;`) |
 | Preview destacado | `legacy_lot_code`, `productive_phase_code`, `farm_code`, `house_name`, `live_males`, `live_females`, `historical_mortality_males`, `historical_mortality_females`, `accumulated_feed_kg`, `current_avg_weight_g`, `accumulated_egg_production` |
 
 Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLICABLE**. Fechas `AAAA-MM-DD`; pesos en gramos; alimento en kg.
@@ -37,6 +37,10 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 | `historical_mortality_females` | int | aves | no | sí | no |  |  | Mortalidad acumulada de hembras ANTES del corte. | `opening_balances.accumulated_mortality_female` |
 | `historical_culls_males` | int | aves | no | sí | no |  |  | Descartes acumulados de machos antes del corte. | `opening_balances.accumulated_culls_male` |
 | `historical_culls_females` | int | aves | no | sí | no |  |  | Descartes acumulados de hembras antes del corte. | `opening_balances.accumulated_culls_female` |
+| `historical_transfers_in_males` | int | aves | no | sí | no |  |  | Machos recibidos desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte. | `opening_balances.accumulated_transfers_in_male` |
+| `historical_transfers_in_females` | int | aves | no | sí | no |  |  | Hembras recibidas desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte. | `opening_balances.accumulated_transfers_in_female` |
+| `historical_transfers_out_males` | int | aves | no | sí | no |  |  | Machos enviados a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte. | `opening_balances.accumulated_transfers_out_male` |
+| `historical_transfers_out_females` | int | aves | no | sí | no |  |  | Hembras enviadas a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte. | `opening_balances.accumulated_transfers_out_female` |
 | `accumulated_feed_kg` | decimal | kg | no | sí | no |  |  | Alimento acumulado consumido antes del corte. | `opening_balances.accumulated_feed_kg` |
 | `current_avg_weight_g` | decimal | g | no | sí | no |  |  | Peso promedio actual del ave al corte. | `opening_balances.current_avg_weight` |
 | `accumulated_egg_production` | int | huevos | no | sí | sí |  |  | Huevos producidos acumulados antes del corte. N/A en cría. | `opening_balances.accumulated_egg_production` |
@@ -48,7 +52,7 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 ## Reglas de consistencia y fechas
 
 - `real_start_date ≤ corte`; `real_start_date ≤ phase_start_date ≤ corte`.
-- Por sexo, solo si alojadas, mortalidad, descartes y vivas son KNOWN: `alojadas − mortalidad − descartes = vivas`.
+- Por sexo, solo si alojadas, transferencias de entrada, mortalidad, descartes, transferencias de salida y vivas son las seis KNOWN: `vivas = alojadas + entradas − mortalidad − descartes − salidas` (SPEC 014). Si algún componente es UNKNOWN no se evalúa (sin ceros inventados): veredicto `NOT_FULLY_VERIFIABLE`, expuesto en `derived.balance_check.{males,females}` del preview y contado en `summary.balance_not_fully_verifiable_rows`. Los 6 KNOWN que no cuadran dan `INCONSISTENT` ⇒ `CONSISTENCY_MISMATCH`.
 - `accumulated_eggs_to_hatchery ≤ accumulated_egg_production` si ambas KNOWN.
 - En `CRIA`, `accumulated_egg_production` y `accumulated_eggs_to_hatchery` deben ser N/A o vacío (`METRIC_NOT_APPLICABLE_IN_PHASE`).
 - Estado de una métrica con dos sexos: KNOWN solo si ambos lo son; N/A si ambos; si no, UNKNOWN.

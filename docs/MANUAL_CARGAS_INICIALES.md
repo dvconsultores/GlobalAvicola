@@ -6,12 +6,12 @@ Las cuatro plantillas, tal como las genera el sistema hoy, están en **`docs/pla
 
 | Unidad de negocio | Archivo | Versión |
 |---|---|---|
-| Progenitoras (grandparent) | `cutover_template_grandparent_v2.xlsx` | v2 |
-| Reproductoras (breeder) | `cutover_template_breeder_v2.xlsx` | v2 |
+| Progenitoras (grandparent) | `cutover_template_grandparent_v3.xlsx` | **v3** |
+| Reproductoras (breeder) | `cutover_template_breeder_v3.xlsx` | **v3** |
 | Incubadora (hatchery) | `cutover_template_hatchery_v3.xlsx` | **v3** |
 | Engorde (broiler) | `cutover_template_broiler_v2.xlsx` | v2 |
 
-> Cada carga descarga **su propia** plantilla desde el sistema (la unidad y la fecha de corte las fija la carga). Las de esta carpeta son copias de referencia para conocer el formato vigente. **La plantilla de Incubadora es ahora v3**: una plantilla v2 antigua de Incubadora será rechazada con el mensaje «descargue la plantilla v3»; las demás unidades siguen en v2.
+> Cada carga descarga **su propia** plantilla desde el sistema (la unidad y la fecha de corte las fija la carga). Las de esta carpeta son copias de referencia para conocer el formato vigente. **Incubadora, Progenitoras y Reproductoras son ahora v3**: una plantilla v2 antigua de esas unidades será rechazada con el mensaje «descargue la plantilla v3»; **Engorde sigue en v2**.
 
 ---
 
@@ -89,6 +89,8 @@ Mismas columnas para ambas (contrato de reproductoras). Métricas al corte:
 | `historical_mortality_males` | **ver abajo** | aves | Mortalidad acumulada de machos antes del corte. |
 | `historical_mortality_females` | **ver abajo** | aves | Mortalidad acumulada de hembras antes del corte. |
 | `historical_culls_males` / `historical_culls_females` | no | aves | Descartes acumulados. |
+| `historical_transfers_in_males` / `historical_transfers_in_females` | no | aves | Aves **recibidas** de otros lotes antes del corte (ver sección siguiente). |
+| `historical_transfers_out_males` / `historical_transfers_out_females` | no | aves | Aves **enviadas** a otros lotes antes del corte (ver sección siguiente). |
 | `accumulated_feed_kg` | no | kg | Alimento acumulado. |
 | `current_avg_weight_g` | no | g | Peso promedio actual del ave. |
 | `accumulated_egg_production` | no | huevos | Producción acumulada. **`N/A` en fase `CRIA`.** |
@@ -99,7 +101,32 @@ Mismas columnas para ambas (contrato de reproductoras). Métricas al corte:
 - **Reproductoras (breeder): `historical_mortality_males` y `historical_mortality_females` son OBLIGATORIAS.** Si no la conoce con certeza, consulte el dato real; **no** puede dejarse vacía. **`0` es un valor válido** (cero real). Dejarla en blanco da el error «Campo obligatorio sin valor».
 - **Progenitoras (grandparent): siguen siendo opcionales** (vacío = desconocido/UNKNOWN).
 
-Consistencia (solo si todas las piezas son conocidas): `alojadas − mortalidad − descartes = vivas`, por sexo; y `huevos a incubadora ≤ huevos producidos`.
+Consistencia (solo si todas las piezas son conocidas): `vivas = alojadas + entradas − mortalidad − descartes − salidas`, por sexo; y `huevos a incubadora ≤ huevos producidos`.
+
+---
+
+## Transferencias históricas entre lotes (plantilla v3 de Progenitoras y Reproductoras)
+
+Algunos lotes **recibieron** aves de otros lotes o **enviaron** aves a otros lotes **antes de la fecha de corte**. Ese histórico se declara en cuatro campos nuevos (unidad **aves**, siempre **acumulado hasta el corte**):
+
+| Campo | Qué registrar |
+|---|---|
+| `historical_transfers_in_males` | Machos recibidos desde otros lotes antes del corte. |
+| `historical_transfers_in_females` | Hembras recibidas desde otros lotes antes del corte. |
+| `historical_transfers_out_males` | Machos enviados a otros lotes antes del corte. |
+| `historical_transfers_out_females` | Hembras enviadas a otros lotes antes del corte. |
+
+- **No registre aquí movimientos posteriores al corte**: esos se registran con la operación normal del sistema.
+- Por cada sexo el sistema verifica: `vivas = alojadas + entradas − mortalidad − descartes − salidas`.
+- `alojadas` (`birds_placed_males` / `birds_placed_females`) sigue siendo **lo originalmente alojado**: no se le suman las transferencias.
+
+**Ejemplo — lote que entrega** (machos): alojados 1.300, mortalidad 165, descartes 0, entradas 0, salidas 300 ⇒ vivas = 1.300 + 0 − 165 − 0 − 300 = **835**.
+
+**Ejemplo — lote que recibe** (hembras): alojadas 1.000, entradas 300, mortalidad 100, descartes 20, salidas 0 ⇒ vivas = 1.000 + 300 − 100 − 20 − 0 = **1.180**.
+
+`0` solo cuando **se sabe** que no hubo transferencias. Celda **vacía = desconocido**: en ese caso el sistema **no** verifica la ecuación de ese sexo y la vista previa lo marca «no totalmente verificable» (nunca se inventa un cero). No se aceptan negativos ni decimales: son aves enteras.
+
+La plantilla **v2** de Progenitoras y Reproductoras **ya no se acepta**: descargue la **v3**.
 
 ---
 

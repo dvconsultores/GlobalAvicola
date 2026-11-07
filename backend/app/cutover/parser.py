@@ -21,7 +21,7 @@ from datetime import date, datetime
 from typing import Any, Optional
 
 from .contracts import (KNOWN, NOT_APPLICABLE, RETIRED_TEMPLATE_VERSIONS, SUPPORTED_TEMPLATE_VERSIONS,
-                        TEMPLATE_VERSION, UNKNOWN, FieldSpec, TemplateContract)
+                        UNKNOWN, FieldSpec, TemplateContract)
 
 #: Límites de archivo (mandato §W).
 LIMITE_BYTES = 5 * 1024 * 1024
@@ -69,7 +69,7 @@ def _extension(filename: str) -> str:
     return nombre.rsplit(".", 1)[-1] if "." in nombre else ""
 
 
-def _leer_xlsx(content: bytes) -> tuple[dict, list[str], list[tuple[int, list]]]:
+def _leer_xlsx(content: bytes, contrato: TemplateContract) -> tuple[dict, list[str], list[tuple[int, list]]]:
     """Devuelve (meta, cabecera, filas[(n, celdas)]). Rechaza macros y fórmulas sin evaluarlas."""
     if not content.startswith(b"PK"):
         raise CutoverParseError("MIME_MISMATCH", "El archivo no es un libro XLSX válido (la extensión no coincide con el contenido).")
@@ -89,7 +89,7 @@ def _leer_xlsx(content: bytes) -> tuple[dict, list[str], list[tuple[int, list]]]
 
     for hoja in ("Meta", "Datos"):
         if hoja not in libro.sheetnames:
-            raise CutoverParseError("SHEET_MISSING", f"El archivo no trae la hoja '{hoja}'. Descargue la plantilla v2 de la unidad.")
+            raise CutoverParseError("SHEET_MISSING", f"El archivo no trae la hoja '{hoja}'. Descargue la plantilla {contrato.version} de la unidad.")
 
     meta: dict[str, Any] = {}
     for fila in libro["Meta"].iter_rows(values_only=True):
@@ -165,7 +165,7 @@ def _validar_cabecera(cabecera: list[str], contrato: TemplateContract) -> dict[s
     faltantes = [c for c in contrato.columns if c not in vistas]
     if faltantes:
         raise CutoverParseError("HEADER_MISSING",
-                                f"Faltan columnas del contrato {contrato.schema_id}: {', '.join(faltantes)}. Descargue la plantilla v2.")
+                                f"Faltan columnas del contrato {contrato.schema_id}: {', '.join(faltantes)}. Descargue la plantilla {contrato.version}.")
     return vistas
 
 
@@ -274,7 +274,9 @@ def normalizar_fila(contrato: TemplateContract, numero: int, columnas: dict[str,
         valor, codigo = _normalizar_valor(spec, v)
         if codigo:
             mensaje = _MENSAJES.get(codigo, codigo)
-            if codigo == "INVALID_ENUM":
+            if codigo == "NEGATIVE_VALUE" and spec.negative_message:
+                mensaje = spec.negative_message
+            elif codigo == "INVALID_ENUM":
                 mensaje = f"Valor fuera de la lista permitida ({', '.join(spec.values)})."
             errores.append(error_de_fila(numero, spec.name, spec.name, codigo, mensaje, v))
             continue
@@ -289,7 +291,7 @@ def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContr
     """Parsea XLSX o CSV contra el contrato de la BU del batch.
 
     `template_version` solo se usa para CSV (sin hoja Meta): la fija el endpoint (`?template_version=`, por
-    defecto `v2`). Para XLSX la versión viaja en `Meta`.
+    defecto la versión del contrato de la BU). Para XLSX la versión viaja en `Meta`.
     """
     if not content:
         raise CutoverParseError("INVALID_FILE", "El archivo está vacío.")
@@ -302,7 +304,7 @@ def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContr
         raise CutoverParseError("UNSUPPORTED_EXTENSION", f"Extensión '.{ext}' no soportada: use .xlsx o .csv.")
 
     if ext == "xlsx":
-        meta, cabecera, filas = _leer_xlsx(content)
+        meta, cabecera, filas = _leer_xlsx(content, contrato)
         version = _texto(meta.get("template_version"))
         business_unit = _texto(meta.get("business_unit"))
         schema_id = _texto(meta.get("schema_id"))
@@ -312,7 +314,7 @@ def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContr
         if content.startswith(b"PK"):
             raise CutoverParseError("MIME_MISMATCH", "El archivo tiene extensión .csv pero su contenido es un libro XLSX.")
         cabecera, filas = _leer_csv(content)
-        version = template_version or TEMPLATE_VERSION
+        version = template_version or contrato.version
         business_unit = contrato.business_unit
         schema_id = contrato.schema_id
         company = None
@@ -321,7 +323,7 @@ def parse_cutover_file(content: bytes, filename: str, *, contrato: TemplateContr
     if version in RETIRED_TEMPLATE_VERSIONS:
         raise CutoverParseError(
             "TEMPLATE_VERSION_UNSUPPORTED",
-            f"La plantilla {version} está retirada: descargue la plantilla {TEMPLATE_VERSION} de {contrato.business_unit} y vuelva a cargar.")
+            f"La plantilla {version} está retirada: descargue la plantilla {contrato.version} de {contrato.business_unit} y vuelva a cargar.")
     if version not in SUPPORTED_TEMPLATE_VERSIONS:
         raise CutoverParseError("TEMPLATE_VERSION_UNSUPPORTED",
                                 f"Versión de plantilla no soportada: {version!r} (soportadas: {sorted(SUPPORTED_TEMPLATE_VERSIONS)}).")

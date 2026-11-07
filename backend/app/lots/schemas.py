@@ -183,6 +183,13 @@ class OpeningBalanceRead(OpeningBalanceBase):
     placed_female_count: Optional[int] = None
     placed_mixed_count: Optional[int] = None
     accumulated_outbound_birds: Optional[int] = None
+    # SPEC 014 · transferencias históricas entre lotes (NULL = UNKNOWN, nunca «0 conocido»).
+    accumulated_transfers_in_male: Optional[int] = None
+    accumulated_transfers_in_female: Optional[int] = None
+    accumulated_transfers_out_male: Optional[int] = None
+    accumulated_transfers_out_female: Optional[int] = None
+    transfers_in_status: str = "UNKNOWN"
+    transfers_out_status: str = "UNKNOWN"
     mortality_status: str = "KNOWN"
     culls_status: str = "KNOWN"
     feed_status: str = "KNOWN"

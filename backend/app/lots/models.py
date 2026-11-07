@@ -78,10 +78,19 @@ class OpeningBalance(Base):
     placed_female_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     placed_mixed_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     accumulated_outbound_birds: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    #: SPEC 014 · transferencias históricas entre lotes acumuladas antes del corte (NULL = UNKNOWN;
+    #: las aperturas previas quedan UNKNOWN, nunca «0 conocido»).
+    accumulated_transfers_in_male: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    accumulated_transfers_in_female: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    accumulated_transfers_out_male: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    accumulated_transfers_out_female: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     placed_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
     weight_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
     eggs_to_hatchery_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
     outbound_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
+    #: SPEC 014 · estado de los acumulados de transferencias históricas (entrada/salida, por sexo).
+    transfers_in_status: Mapped[str] = mapped_column(String(15), default="UNKNOWN", server_default="UNKNOWN")
+    transfers_out_status: Mapped[str] = mapped_column(String(15), default="UNKNOWN", server_default="UNKNOWN")
     age_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")
     #: Estado de la población mixta de apertura (pollitos disponibles en incubadora pueden ser UNKNOWN).
     initial_mixed_status: Mapped[str] = mapped_column(String(15), default="KNOWN", server_default="KNOWN")

@@ -66,7 +66,8 @@ async def test_apply_grandparent_destino_por_campo(auth_headers, http_client, se
     assert ob.chicks_hatched_status == ob.broiler_received_status == ob.outbound_status == "NOT_APPLICABLE"
     assert (ob.age_days, ob.age_status) == (200 - 80, "KNOWN")
     assert ob.phase_at_activation_id == ids["PROD"] and ob.activation_date == days_ago(80)
-    assert ob.template_version == "v2" and ob.cutover_datetime is not None and ob.is_manual_activation is False
+    # SPEC 014: grandparent pasa a contrato v3 (transferencias históricas) ⇒ la apertura se marca v3.
+    assert ob.template_version == "v3" and ob.cutover_datetime is not None and ob.is_manual_activation is False
     assert (ob.source_system, ob.source_reference, ob.legacy_lot_code) == ("LEGACY", "REF-GP-APP-1", "GP-APP-1")
     assert len(fases) == 1 and fases[0].phase_id == ids["PROD"] and fases[0].start_date == days_ago(100)
     assert (fases[0].start_population_male, fases[0].start_population_female, fases[0].start_weight_avg) == (1000, 9000, 3200)

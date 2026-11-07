@@ -24,14 +24,14 @@ from time_reference import days_ago, iso_days_ago  # noqa: E402
 TEMPLATE_VERSION = "v2"
 
 SCHEMA_IDS = {
-    "grandparent": "CUTOVER_GRANDPARENT_V2",
-    "breeder": "CUTOVER_BREEDER_V2",
+    "grandparent": "CUTOVER_GRANDPARENT_V3",
+    "breeder": "CUTOVER_BREEDER_V3",
     "hatchery": "CUTOVER_HATCHERY_V3",
     "broiler": "CUTOVER_BROILER_V2",
 }
 
-#: SPEC 009: la plantilla de incubadora es v3; el resto sigue en v2.
-TEMPLATE_VERSIONS = {"grandparent": "v2", "breeder": "v2", "hatchery": "v3", "broiler": "v2"}
+#: SPEC 009: incubadora v3 · SPEC 014: progenitoras y reproductoras v3 (transferencias históricas).
+TEMPLATE_VERSIONS = {"grandparent": "v3", "breeder": "v3", "hatchery": "v3", "broiler": "v2"}
 
 _IDENTIFICACION_AVES = (
     "legacy_lot_code", "existing_lot_code", "farm_code", "house_name", "area_code",
@@ -44,6 +44,8 @@ COLUMNAS_REPRODUCTORAS = _IDENTIFICACION_AVES + (
     "live_males", "live_females", "birds_placed_males", "birds_placed_females",
     "historical_mortality_males", "historical_mortality_females",
     "historical_culls_males", "historical_culls_females",
+    "historical_transfers_in_males", "historical_transfers_in_females",
+    "historical_transfers_out_males", "historical_transfers_out_females",
     "accumulated_feed_kg", "current_avg_weight_g",
     "accumulated_egg_production", "accumulated_eggs_to_hatchery",
 ) + _PROCEDENCIA

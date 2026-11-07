@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 05_HATCHERY_TEMPLATE_CONTRACT
 
-Fecha: 2026-10-27 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-11-07 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|

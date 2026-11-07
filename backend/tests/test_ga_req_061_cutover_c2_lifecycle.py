@@ -33,8 +33,9 @@ BU_FIXTURE = "grandparent"
 GRANJA_SEMBRADA = "TEST-GRANJA-01"
 
 
-def _xlsx(filas: list[list], *, template_version: str = "v2", business_unit: str = BU_FIXTURE) -> bytes:
-    """Plantilla v2 de la BU con las filas del checkpoint (8 columnas + extras opcionales)."""
+# SPEC 014: grandparent pasa a v3 (transferencias históricas) ⇒ la plantilla del ciclo es v3.
+def _xlsx(filas: list[list], *, template_version: str = "v3", business_unit: str = BU_FIXTURE) -> bytes:
+    """Plantilla v3 de la BU con las filas del checkpoint (8 columnas + extras opcionales)."""
     from cutover_v2_fixtures import fila as fila_v2, xlsx_v2
 
     convertidas = []
@@ -168,7 +169,8 @@ async def test_c2_mismo_checksum_no_duplica(auth_headers, http_client):
 async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
     """`GET /cutover-templates/{bu}`: plantilla versionada descargable; el propio archivo re-cargado se valida.
 
-    SPEC 006 (Q6): la versión vigente es **v2** (v1 retirada) y la plantilla trae `Catalogos`.
+    SPEC 006 (Q6): la versión vigente ya no es única (v1 retirada) y la plantilla trae `Catalogos`.
+    SPEC 014: grandparent/breeder v3 · SPEC 009: hatchery v3 · broiler v2.
     Subir la plantilla vacía ya no deja un batch VALIDATED sin filas: `NO_DATA_ROWS` (RED-01).
     """
     from openpyxl import load_workbook
@@ -180,7 +182,10 @@ async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
         wb = load_workbook(io.BytesIO(r.content))
         assert {"Instrucciones", "Meta", "Datos", "Catalogos"} <= set(wb.sheetnames)
         meta = {fila[0].value: fila[1].value for fila in wb["Meta"].iter_rows(min_row=2)}
-        assert meta["template_version"] == ("v3" if bu == "hatchery" else "v2")
+        # SPEC 014: grandparent y breeder suben a v3 (transferencias históricas); hatchery v3 (SPEC 009);
+        # broiler sigue en v2.
+        version_vigente = {"grandparent": "v3", "breeder": "v3", "hatchery": "v3", "broiler": "v2"}
+        assert meta["template_version"] == version_vigente[bu]
         assert meta["business_unit"] == bu
 
     # La plantilla descargada sin filas no se acepta como carga válida (sin efectos).

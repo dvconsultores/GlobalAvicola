@@ -33,7 +33,7 @@ from .models import (CutoverBatch, CutoverBatchStatus, CutoverItem, CutoverItemS
                      HatcheryOpening)
 from .parser import CutoverParseError, parse_cutover_file
 from .schemas import CutoverBatchCreate
-from .validation import ValidadorDeDominio
+from .validation import BALANCE_NOT_FULLY_VERIFIABLE, ValidadorDeDominio
 
 #: Estados por métrica del opening (`UNKNOWN` nunca se muestra como `0`).
 _METRICAS_DE_OPENING = (
@@ -42,6 +42,7 @@ _METRICAS_DE_OPENING = (
 )
 _ESTADOS_V2 = _METRICAS_DE_OPENING + (
     "placed_status", "weight_status", "eggs_to_hatchery_status", "outbound_status", "age_status", "initial_mixed_status",
+    "transfers_in_status", "transfers_out_status",
 )
 
 _ESTADOS_CARGABLES = {
@@ -317,6 +318,7 @@ class CutoverService:
             "lots": 0, "valid_rows": 0, "invalid_rows": 0, "unknown_metrics": 0, "not_applicable_metrics": 0,
             "live_birds": 0, "live_males": 0, "live_females": 0, "by_phase": {}, "farms": [], "hatcheries": [],
             "historical_mortality": 0, "historical_mortality_unknown_rows": 0, "accumulated_feed_kg": 0.0,
+            "balance_not_fully_verifiable_rows": 0,
             "eggs_received": 0, "eggs_set": 0, "eggs_in_process": 0, "chicks_available": 0,
         }
         granjas: set[str] = set()
@@ -339,6 +341,8 @@ class CutoverService:
             resumen["not_applicable_metrics"] += no_aplica
             if not valida:
                 continue
+            if BALANCE_NOT_FULLY_VERIFIABLE in (derivados.get("balance_check") or {}).values():
+                resumen["balance_not_fully_verifiable_rows"] += 1
             if c.business_unit == "hatchery":
                 resumen["eggs_received"] += _entero(estado, "eggs_received")
                 resumen["eggs_set"] += _entero(estado, "eggs_set")
@@ -529,6 +533,12 @@ class CutoverService:
             accumulated_culls_male=_entero(estado, "historical_culls_males"),
             accumulated_culls_female=_entero(estado, "historical_culls_females"),
             culls_status=_combinado(estado, "historical_culls_males", "historical_culls_females"),
+            accumulated_transfers_in_male=_opcional(estado, "historical_transfers_in_males"),
+            accumulated_transfers_in_female=_opcional(estado, "historical_transfers_in_females"),
+            accumulated_transfers_out_male=_opcional(estado, "historical_transfers_out_males"),
+            accumulated_transfers_out_female=_opcional(estado, "historical_transfers_out_females"),
+            transfers_in_status=_combinado(estado, "historical_transfers_in_males", "historical_transfers_in_females"),
+            transfers_out_status=_combinado(estado, "historical_transfers_out_males", "historical_transfers_out_females"),
             accumulated_egg_production=_opcional(estado, "accumulated_egg_production"),
             egg_production_status=_s(estado, "accumulated_egg_production"),
             accumulated_eggs_to_hatchery=_opcional(estado, "accumulated_eggs_to_hatchery"),
@@ -549,6 +559,7 @@ class CutoverService:
             accumulated_culls_mixed=_entero(estado, "historical_culls"), culls_status=_s(estado, "historical_culls"),
             accumulated_outbound_birds=_opcional(estado, "partial_outbound_birds"), outbound_status=_s(estado, "partial_outbound_birds"),
             egg_production_status=NOT_APPLICABLE, eggs_to_hatchery_status=NOT_APPLICABLE, chicks_hatched_status=NOT_APPLICABLE,
+            transfers_in_status=NOT_APPLICABLE, transfers_out_status=NOT_APPLICABLE,
         )
 
     def _opening_incubadora(self, batch, item, lote, fase_id, estado, derivados) -> OpeningBalance:
@@ -562,6 +573,7 @@ class CutoverService:
             mortality_status=NOT_APPLICABLE, culls_status=NOT_APPLICABLE, placed_status=NOT_APPLICABLE,
             egg_production_status=NOT_APPLICABLE, eggs_to_hatchery_status=NOT_APPLICABLE,
             broiler_received_status=NOT_APPLICABLE, outbound_status=NOT_APPLICABLE,
+            transfers_in_status=NOT_APPLICABLE, transfers_out_status=NOT_APPLICABLE,
         )
 
     def _hatchery_opening(self, opening: OpeningBalance, lote: Lot, estado: dict, refs: dict) -> HatcheryOpening:
@@ -723,6 +735,10 @@ class CutoverService:
                                + int(opening.accumulated_mortality_mixed or 0)) if opening.mortality_status == KNOWN else None)
             historico_culls = ((int(opening.accumulated_culls_male or 0) + int(opening.accumulated_culls_female or 0)
                                 + int(opening.accumulated_culls_mixed or 0)) if opening.culls_status == KNOWN else None)
+            transf_in = ((int(opening.accumulated_transfers_in_male or 0)
+                          + int(opening.accumulated_transfers_in_female or 0)) if opening.transfers_in_status == KNOWN else None)
+            transf_out = ((int(opening.accumulated_transfers_out_male or 0)
+                           + int(opening.accumulated_transfers_out_female or 0)) if opening.transfers_out_status == KNOWN else None)
             feed_opening = float(opening.accumulated_feed_kg) if (opening.feed_status == KNOWN and opening.accumulated_feed_kg is not None) else None
 
             fila: dict[str, Any] = {
@@ -735,6 +751,8 @@ class CutoverService:
                     "live_mixed_status": opening.initial_mixed_status,
                     "historical_mortality": historico_mort, "mortality_status": opening.mortality_status,
                     "historical_culls": historico_culls, "culls_status": opening.culls_status,
+                    "historical_transfers_in": transf_in, "transfers_in_status": opening.transfers_in_status,
+                    "historical_transfers_out": transf_out, "transfers_out_status": opening.transfers_out_status,
                     "feed_kg": feed_opening, "feed_status": opening.feed_status,
                     "avg_weight_g": opening.current_avg_weight if opening.weight_status == KNOWN else None,
                     "weight_status": opening.weight_status,

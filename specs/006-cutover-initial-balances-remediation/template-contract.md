@@ -42,6 +42,8 @@ Columnas comunes a los lotes de aves (grandparent · breeder · broiler):
 
 Estado de una métrica con dos sexos: KNOWN solo si ambos son KNOWN; N/A si ambos N/A; en otro caso UNKNOWN (sin inventar el sexo que falta).
 
+**SPEC 014 (v3):** se añaden `historical_transfers_in_males|females` y `historical_transfers_out_males|females` (int ≥ 0, opcionales, sin N/A; destino `opening_balances.accumulated_transfers_*`). Ecuación por sexo: `vivas = alojadas + entradas − mortalidad − descartes − salidas`, evaluada solo con los seis componentes KNOWN; con alguno UNKNOWN el balance queda NOT_FULLY_VERIFIABLE (sin error). Progenitoras y reproductoras pasan a `v3` (`CUTOVER_*_V3`); la `v2` se rechaza.
+
 ## CUTOVER_BROILER_V2 (fase `ENGORDE`; `sex` por defecto `mixed`)
 
 | Campo | Tipo | Req. | UNKNOWN | N/A | Regla | Destino |

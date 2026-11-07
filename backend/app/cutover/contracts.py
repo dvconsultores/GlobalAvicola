@@ -17,6 +17,7 @@ from typing import Optional
 
 TEMPLATE_VERSION = "v2"
 HATCHERY_TEMPLATE_VERSION = "v3"  # SPEC 009: incubadora versionada por la columna nueva egg_origin.
+AVES_TEMPLATE_VERSION = "v3"  # SPEC 014: progenitoras y reproductoras v3 (transferencias históricas).
 #: Versiones aceptadas por el parser. `v1` está **retirada** (Q6): no se reinterpreta.
 SUPPORTED_TEMPLATE_VERSIONS = frozenset({TEMPLATE_VERSION, HATCHERY_TEMPLATE_VERSION})
 RETIRED_TEMPLATE_VERSIONS = frozenset({"v1"})
@@ -71,6 +72,7 @@ class FieldSpec:
     max_len: Optional[int] = None
     positive: bool = False         # decimal > 0 (pesos)
     normalized_name: Optional[str] = None  # si el nombre normalizado difiere
+    negative_message: Optional[str] = None  # mensaje específico de valor negativo
 
     @property
     def allow_unknown(self) -> bool:
@@ -172,7 +174,7 @@ def _metricas_reproductoras(bu: str) -> tuple[FieldSpec, ...]:
               targets=("opening_balances.initial_female_count",), promotion="saldo vivo", consumer="BR-01, postura (hen-day)"),
     FieldSpec("birds_placed_males", "int", "Machos alojados originalmente (histórico).", metric=True, unit="aves", example="1100",
               targets=("opening_balances.placed_male_count",), status_column="placed_status",
-              promotion="consistencia: alojadas − mortalidad − descartes = vivas (solo si todo KNOWN)", consumer="informe de lote"),
+              promotion="consistencia: alojadas + transferencias de entrada − mortalidad − descartes − transferencias de salida = vivas (solo si todo KNOWN)", consumer="informe de lote"),
     FieldSpec("birds_placed_females", "int", "Hembras alojadas originalmente (histórico).", metric=True, unit="aves", example="9600",
               targets=("opening_balances.placed_female_count",), status_column="placed_status", promotion="ídem", consumer="informe de lote"),
     FieldSpec("historical_mortality_males", "int", "Mortalidad acumulada de machos ANTES del corte.", required=_req, metric=True, unit="aves", example="50",
@@ -184,6 +186,22 @@ def _metricas_reproductoras(bu: str) -> tuple[FieldSpec, ...]:
               targets=("opening_balances.accumulated_culls_male",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
     FieldSpec("historical_culls_females", "int", "Descartes acumulados de hembras antes del corte.", metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_culls_female",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
+    FieldSpec("historical_transfers_in_males", "int", "Machos recibidos desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+              targets=("opening_balances.accumulated_transfers_in_male",), status_column="transfers_in_status",
+              negative_message="La cantidad de transferencias históricas no puede ser negativa.",
+              promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
+    FieldSpec("historical_transfers_in_females", "int", "Hembras recibidas desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+              targets=("opening_balances.accumulated_transfers_in_female",), status_column="transfers_in_status",
+              negative_message="La cantidad de transferencias históricas no puede ser negativa.",
+              promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
+    FieldSpec("historical_transfers_out_males", "int", "Machos enviados a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+              targets=("opening_balances.accumulated_transfers_out_male",), status_column="transfers_out_status",
+              negative_message="La cantidad de transferencias históricas no puede ser negativa.",
+              promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
+    FieldSpec("historical_transfers_out_females", "int", "Hembras enviadas a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+              targets=("opening_balances.accumulated_transfers_out_female",), status_column="transfers_out_status",
+              negative_message="La cantidad de transferencias históricas no puede ser negativa.",
+              promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
     FieldSpec("accumulated_feed_kg", "decimal", "Alimento acumulado consumido antes del corte.", metric=True, unit="kg", example="120000.5",
               targets=("opening_balances.accumulated_feed_kg",), status_column="feed_status", promotion="histórico", consumer="FCR/AFCR lifetime"),
     FieldSpec("current_avg_weight_g", "decimal", "Peso promedio actual del ave al corte.", metric=True, unit="g", example="3200", positive=True,
@@ -269,6 +287,8 @@ _DOMINIO_AVES = frozenset({
     "breed_name", "sex", "live_males", "live_females", "historical_mortality_males", "historical_mortality_females",
     "historical_culls_males", "historical_culls_females", "accumulated_feed_kg", "current_avg_weight_g",
     "accumulated_egg_production", "accumulated_eggs_to_hatchery", "source_system", "source_reference",
+    "historical_transfers_in_males", "historical_transfers_in_females",
+    "historical_transfers_out_males", "historical_transfers_out_females",
 })
 _DOMINIO_ENGORDE = frozenset({
     "legacy_lot_code", "farm_code", "house_name", "productive_phase_code", "real_start_date", "age_days", "genetic_line_code",
@@ -284,15 +304,15 @@ _DOMINIO_INCUBADORA = frozenset({
 
 def _contrato_aves(bu: str, schema_id: str) -> TemplateContract:
     return TemplateContract(
-        business_unit=bu, schema_id=schema_id, bird_type=bu, lot_date_field="real_start_date",
+        business_unit=bu, schema_id=schema_id, version=AVES_TEMPLATE_VERSION, bird_type=bu, lot_date_field="real_start_date",
         phases=FASES_POR_BU[bu], fields=_identificacion_aves(bu) + _metricas_reproductoras(bu) + _PROCEDENCIA,
         required_domain_fields=_DOMINIO_AVES,
     )
 
 
 CONTRACTS: dict[str, TemplateContract] = {
-    "grandparent": _contrato_aves("grandparent", "CUTOVER_GRANDPARENT_V2"),
-    "breeder": _contrato_aves("breeder", "CUTOVER_BREEDER_V2"),
+    "grandparent": _contrato_aves("grandparent", "CUTOVER_GRANDPARENT_V3"),
+    "breeder": _contrato_aves("breeder", "CUTOVER_BREEDER_V3"),
     "broiler": TemplateContract(
         business_unit="broiler", schema_id="CUTOVER_BROILER_V2", bird_type="broiler", lot_date_field="real_start_date",
         phases=FASES_POR_BU["broiler"], fields=_identificacion_aves("broiler") + _METRICAS_ENGORDE + _PROCEDENCIA,
