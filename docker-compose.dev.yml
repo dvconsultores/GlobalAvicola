@@ -15,6 +15,13 @@
 #
 # Frontend dev:  http://localhost:5173
 # Backend  API:  http://localhost:8002  (proxyeado por Vite en /api)
+#
+# Imágenes :dev publicadas por CI (rama `develop`, ver
+# .github/workflows/docker-push-*-dev.yml):
+#   ${DOCKER_USERNAME}/globalavicola-backend:dev
+#   ${DOCKER_USERNAME}/globalavicola-frontend:dev
+# Aquí NO se descargan: el backend se construye localmente y se fija con
+# `pull_policy: never`. La rama `main` conserva `:latest` para producción.
 # ============================================================
 
 services:
