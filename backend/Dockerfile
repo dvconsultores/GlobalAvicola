@@ -34,6 +34,7 @@ COPY alembic.ini .
 COPY alembic/ alembic/
 COPY app/ app/
 COPY seeds/ seeds/
+COPY scripts/ scripts/
 
 # Set environment
 ENV PATH="/app/.venv/bin:$PATH"
