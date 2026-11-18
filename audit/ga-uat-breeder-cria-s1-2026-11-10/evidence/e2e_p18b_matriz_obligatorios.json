@@ -1,20 +1,20 @@
 {
   "spec": "015-breeder-cria-uat-s1",
-  "generado": "2026-11-18T05:24:06.564Z",
+  "generado": "2026-11-18T14:15:17.743Z",
   "contrato": "POST /api/v1/operations · matriz de obligatorios del §4",
   "escenario": {
-    "lote_id": 97,
-    "codigo": "S1P18B-LOTE-yyqdeszd",
-    "granja_id": 94,
-    "galpon_id": 93,
+    "lote_id": 3,
+    "codigo": "S1P18B-LOTE-3k4egi5l",
+    "granja_id": 3,
+    "galpon_id": 3,
     "maestros": {
-      "causaMortalidadId": 12,
-      "causaDescarteId": 14,
-      "vacunaId": 12,
-      "medicamentoId": 38,
-      "alimentoId": 12,
-      "proveedorId": 12,
-      "transporteId": 12
+      "causaMortalidadId": 2,
+      "causaDescarteId": 2,
+      "vacunaId": 2,
+      "medicamentoId": 2,
+      "alimentoId": 2,
+      "proveedorId": 2,
+      "transporteId": 2
     }
   },
   "operaciones": {
@@ -39,7 +39,7 @@
         "filas que no cuadran": 400
       },
       "parte2": {
-        "id": 187,
+        "id": 1,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -95,7 +95,7 @@
         "sin granja": 400
       },
       "parte2": {
-        "id": 189,
+        "id": 3,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -106,13 +106,13 @@
         ],
         "ecos": {
           "farm_id": {
-            "obtenido": 94,
-            "esperado": 94,
+            "obtenido": 3,
+            "esperado": 3,
             "ok": true
           },
           "house_id": {
-            "obtenido": 93,
-            "esperado": 93,
+            "obtenido": 3,
+            "esperado": 3,
             "ok": true
           }
         },
@@ -139,7 +139,7 @@
         "sin granja": 400
       },
       "parte2": {
-        "id": 191,
+        "id": 5,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -150,13 +150,13 @@
         ],
         "ecos": {
           "farm_id": {
-            "obtenido": 94,
-            "esperado": 94,
+            "obtenido": 3,
+            "esperado": 3,
             "ok": true
           },
           "house_id": {
-            "obtenido": 93,
-            "esperado": 93,
+            "obtenido": 3,
+            "esperado": 3,
             "ok": true
           }
         },
@@ -179,7 +179,7 @@
         "con kg 0": 422
       },
       "parte2": {
-        "id": 192,
+        "id": 6,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -218,7 +218,7 @@
         "con 0 litros": 400
       },
       "parte2": {
-        "id": 193,
+        "id": 7,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -253,7 +253,7 @@
         "con avg_weight 0": 400
       },
       "parte2": {
-        "id": 194,
+        "id": 8,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -293,7 +293,7 @@
         "sin vacuna (omitida)": 400
       },
       "parte2": {
-        "id": 195,
+        "id": 9,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -304,8 +304,8 @@
         ],
         "ecos": {
           "vaccine_id": {
-            "obtenido": 12,
-            "esperado": 12,
+            "obtenido": 2,
+            "esperado": 2,
             "ok": true
           }
         },
@@ -328,7 +328,7 @@
         "sin medicamento (omitido)": 400
       },
       "parte2": {
-        "id": 196,
+        "id": 10,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -339,8 +339,8 @@
         ],
         "ecos": {
           "medication_id": {
-            "obtenido": 38,
-            "esperado": 38,
+            "obtenido": 2,
+            "esperado": 2,
             "ok": true
           }
         },
@@ -365,7 +365,7 @@
         "cantidad > saldo": 400
       },
       "parte2": {
-        "id": 197,
+        "id": 11,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -402,7 +402,7 @@
         "cantidad > saldo": 400
       },
       "parte2": {
-        "id": 198,
+        "id": 12,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -442,7 +442,7 @@
         "sin galpón": 400
       },
       "parte2": {
-        "id": 199,
+        "id": 13,
         "detalle": 200,
         "envio": 200,
         "estado": "pending_review",
@@ -510,13 +510,11 @@
     "vacunacion": {
       "vacio": "mensaje inline, 0 POST",
       "guardado": 201,
-      "vacuna": "S1P18B-vaccines-9na36xgw"
+      "vacuna": "S1P18B-vaccines-9q5spohn"
     },
     "capturas": [
       "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18b_mortalidad_vacio.png",
-      "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18b_mortalidad_guardada.png",
-      "screenshots/p18b_mortalidad_vacio.png",
-      "screenshots/p18b_mortalidad_guardada.png"
+      "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18b_mortalidad_guardada.png"
     ]
   },
   "observaciones": [

@@ -5,22 +5,22 @@
     "farmId": 95,
     "houseId": 94,
     "lotId": 98,
-    "codigo": "S1P18C-LOTE-bdoyzv5r"
+    "codigo": "S1P18C-LOTE-zh1i3j7j"
   },
   "broiler": {
     "companyId": 1,
     "farmId": 96,
     "houseId": 95,
     "lotId": 99,
-    "codigo": "S1P18C-LOTE-fyvewb08"
+    "codigo": "S1P18C-LOTE-v5yq7kx4"
   },
   "eventoBreeder": "204",
   "eventoBroiler": "206",
   "rolId": 21,
-  "usuarioBreeder": "s1p18c-breeder-mjqwaz1x",
-  "usuarioSinBu": "s1p18c-sinbu-mjqwaz1x",
-  "granjaNombre": "S1P18C-granja-bdoyzv5r",
-  "galponNombre": "S1P18C-galpon-bdoyzv5r",
+  "usuarioBreeder": "s1p18c-breeder-fj3cqzhy",
+  "usuarioSinBu": "s1p18c-sinbu-fj3cqzhy",
+  "granjaNombre": "S1P18C-granja-zh1i3j7j",
+  "galponNombre": "S1P18C-galpon-zh1i3j7j",
   "unidadesHabilitadasAntes": {
     "breeder": true,
     "broiler": true
@@ -31,14 +31,14 @@
       "farmId": 95,
       "houseId": 94,
       "lotId": 98,
-      "codigo": "S1P18C-LOTE-bdoyzv5r"
+      "codigo": "S1P18C-LOTE-zh1i3j7j"
     },
     "escenario.broiler": {
       "companyId": 1,
       "farmId": 96,
       "houseId": 95,
       "lotId": 99,
-      "codigo": "S1P18C-LOTE-fyvewb08"
+      "codigo": "S1P18C-LOTE-v5yq7kx4"
     },
     "POST /operations recepcion breeder": 201,
     "POST /operations mortalidad breeder": 201,

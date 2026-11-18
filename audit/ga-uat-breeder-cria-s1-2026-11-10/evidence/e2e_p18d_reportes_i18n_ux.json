@@ -1,11 +1,11 @@
 {
   "proceso": "P18D UAT S1 — reportes / i18n / UX",
-  "fecha": "2026-11-18T05:25:30.573Z",
+  "fecha": "2026-11-18T14:01:46.021Z",
   "escenario": {
     "prefijo": "S1P18D",
     "lotId": 100,
-    "codigo": "S1P18D-LOTE-n1ewvg82",
-    "sufijo": "ltcl12fk"
+    "codigo": "S1P18D-LOTE-a7ixobu9",
+    "sufijo": "hkdxziv9"
   },
   "eventoCorregidoId": 211,
   "eventoEnRevisionId": 212,
@@ -31,7 +31,7 @@
     },
     "P4e": {
       "ok": true,
-      "detalle": "GlobalAvicola_Lote_S1P18D-LOTE-n1ewvg82_2026-11-18.xlsx (16629 bytes) | GlobalAvicola_Lote_S1P18D-LOTE-n1ewvg82_2026-11-18.pdf (8584 bytes)"
+      "detalle": "GlobalAvicola_Lote_S1P18D-LOTE-a7ixobu9_2026-11-18.xlsx (16629 bytes) | GlobalAvicola_Lote_S1P18D-LOTE-a7ixobu9_2026-11-18.pdf (8574 bytes)"
     },
     "P5a": {
       "ok": true,

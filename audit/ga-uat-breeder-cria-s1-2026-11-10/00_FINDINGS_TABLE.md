@@ -40,13 +40,13 @@
 
 - **O-1** — El detalle de evento no publica `id` por fila de submovimiento: las correcciones usan `row_id` de `correctable-fields`, sin cambio de contrato.
 - **O-2** — Los `422` de validación estructural de pydantic llegan en inglés desde la API: la interfaz los traduce a español (límite documentado).
-- **O-3** — La clasificación de pendientes solo está disponible por API (`POST /operations/{id}/classify`); la UI expone la bandeja en solo lectura y el selector de unidad queda pendiente de decisión del Owner.
+- **O-3** — **FUNCTIONAL GAP**: la clasificación no es utilizable ni por UI ni por API (el `company_business_unit_id` no se expone); decisión Owner pendiente (ver `POSTMERGE_CERTIFICATION.md` §6). *actualizado en el ciclo post-merge*
 - **O-4** — Las correcciones de campos de catálogo (`cause_id`, `vaccine_id`, …) se hacen por código numérico: funcional pero poco ergonómico.
 - **O-5** — El usuario sembrado `test_approver` no tiene `review:read`: dato de pruebas, no de producto; se ajusta en el seed si se automatiza el UAT.
 - **O-6** — `POST /operations` sobre un lote de otra unidad responde 400 «Lote no encontrado»: anti-enumeración, comportamiento previo que se mantiene.
-- **O-7** — AC-S1-WATER sin evidencia suficiente en el UAT original (`UAT_EVIDENCE_INSUFFICIENT`): el servidor ya exigía litros > 0 y ahora la interfaz también.
-- **O-8** — **P-17-G · operator** da una falsa inconsistencia (`/cutover`: UI permite=false con API=200) cuando corre tras `P-16 cutover-breeder` en la misma base, reproducido en el baseline `7ff5451` con el mismo par de specs: preexistente, no es regresión de esta spec y queda fuera de alcance.
-- **O-9** — La suite E2E completa con 2 workers (por defecto) muestra flakiness por carga/concurrencia en specs ajenos (`tests/operations.spec.ts`, timeout de P-17-A), mientras que aislados y en serie pasan: ejecutar la suite con `--workers=1`.
+- **O-7** — **CERRADA:** `WATER_UAT=PASS` en el ciclo post-merge (agua bloqueada con valor vacío y con 0, 120.5 → 201 y visible en Historial). *actualizado en el ciclo post-merge*
+- **O-8** — **P-17-G · operator**: defecto del TEST (el fixture P-16 concede `cutover:*` a todos los roles y el operador es perfil móvil con `WebOnlyRoute`), CORREGIDO en `proceso-p17d…`; no afecta saldo ni operación. *actualizado en el ciclo post-merge*
+- **O-9** — Ejecutar la suite E2E con `--workers=1`; el CI oficial solo construye imágenes (no ejecuta E2E). *actualizado en el ciclo post-merge*
 
 ## Hallazgos adicionales descubiertos por E2E y corregidos
 

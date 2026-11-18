@@ -21,8 +21,6 @@ import { entrar } from '../test-support/auth'
 const PREFIJO = 'S1P18B'
 const DIR = 'audit/ga-uat-breeder-cria-s1-2026-11-10/evidence'
 const CAPTURAS = `${DIR}/screenshots`
-// La captura se pide con esta ruta relativa; se escribe también en el directorio auditado.
-const CAPTURAS_RAIZ = 'screenshots'
 
 test.describe.configure({ mode: 'serial' })
 
@@ -679,14 +677,12 @@ test.describe('P18B · obligatorios por operación y circuito Reproductoras/Crí
       }
     })
     fs.mkdirSync(CAPTURAS, { recursive: true })
-    fs.mkdirSync(CAPTURAS_RAIZ, { recursive: true })
     const guardar = () => page.locator('#operation-form button[type="submit"]')
     const esperarPost = () =>
       page.waitForResponse(r =>
         r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/v1/operations')
     const captura = async (nombre: string) => {
       await page.screenshot({ path: `${CAPTURAS}/${nombre}`, fullPage: true })
-      fs.copyFileSync(`${CAPTURAS}/${nombre}`, `${CAPTURAS_RAIZ}/${nombre}`)
     }
 
     // MORTALIDAD · la cantidad total es obligatoria (`BR-01`, D2).
@@ -758,8 +754,6 @@ test.describe('P18B · obligatorios por operación y circuito Reproductoras/Crí
     evidencia.ui.capturas = [
       `${CAPTURAS}/p18b_mortalidad_vacio.png`,
       `${CAPTURAS}/p18b_mortalidad_guardada.png`,
-      `${CAPTURAS_RAIZ}/p18b_mortalidad_vacio.png`,
-      `${CAPTURAS_RAIZ}/p18b_mortalidad_guardada.png`,
     ]
   })
   test('Cierre · el contrato de la matriz (§4) se cumple en todas las operaciones', async () => {

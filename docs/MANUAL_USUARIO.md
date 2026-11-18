@@ -219,7 +219,7 @@ El campo «Semana» **no se rellena solo**: es opcional y el «Ej.: 12» que apa
 
 ### 9.3 · Inspección de granja sin lote
 
-Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja tiene lotes de varias cadenas, el registro queda en **«Pendientes de clasificar»** (se llega desde **Historial** con el botón correspondiente) hasta que un administrador lo clasifique.
+Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja no tiene una cadena productiva inequívoca, el registro queda en **Pendientes de clasificar** (botón en Historial), donde se ve con su granja y galpón. La clasificación desde la pantalla todavía no está disponible: la gestiona el equipo de soporte.
 
 ### 9.4 · Reportes
 

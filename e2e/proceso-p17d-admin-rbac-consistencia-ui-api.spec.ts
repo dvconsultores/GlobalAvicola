@@ -13,13 +13,17 @@ import { API } from '../test-support/e2e-api'
 import { credenciales, type Rol } from '../test-support/auth'
 import { entrarComo, tokenDe } from '../test-support/admin-rbac'
 
+/** `soloWeb`: la ruta vive bajo `WebOnlyRoute` y no se ofrece a un perfil móvil. */
+type Par = { ruta: string; endpoint: string; soloWeb?: boolean }
+
 /** Ruta de la interfaz y endpoint que la respalda (`API` ya termina en `/api/v1`). */
-const PARES = [
+const PARES: Par[] = [
   { ruta: '/audit', endpoint: '/api/v1/audit?limit=1' },
   { ruta: '/users', endpoint: '/api/v1/users?limit=1' },
   { ruta: '/roles', endpoint: '/api/v1/roles' },
   { ruta: '/lots', endpoint: '/api/v1/lots?limit=1' },
-  { ruta: '/cutover', endpoint: '/api/v1/cutover-batches' },
+  // `/cutover` vive bajo `WebOnlyRoute`: un perfil móvil es redirigido a «/» por diseño.
+  { ruta: '/cutover', endpoint: '/api/v1/cutover-batches', soloWeb: true },
 ]
 
 const CUENTAS: Rol[] = ['admin', 'operator', 'approver']
@@ -27,6 +31,7 @@ const CUENTAS: Rol[] = ['admin', 'operator', 'approver']
 type Fila = {
   cuenta: string; ruta: string; endpoint: string
   uiPermite: boolean; status: number; huboRespuesta2xx: boolean
+  view_type: 'web' | 'mobile'
 }
 
 /** Filas de las tres cuentas: se escriben juntas una sola vez, en `afterAll`. */
@@ -81,15 +86,26 @@ for (const cuenta of CUENTAS) {
       const token = await tokenDe(page) // nunca se imprime ni se registra
       const headers = { Authorization: `Bearer ${token}` }
 
-      for (const { ruta, endpoint } of PARES) {
+      // El perfil (web/móvil) decide qué pantallas se ofrecen, además del permiso.
+      const me = await request.get(`${API}/me`, { headers })
+      const esMovil = me.status() === 200 && (await me.json()).view_type === 'mobile'
+
+      for (const par of PARES) {
+        const { ruta, endpoint } = par
         const statusApi = (await request.get(urlApi(endpoint), { headers })).status()
         const { uiPermite, huboRespuesta2xx } = await medir(page, ruta, endpoint)
-        filas.push({ cuenta, ruta, endpoint, uiPermite, status: statusApi, huboRespuesta2xx })
+        // O-8: la API autoriza por permiso; la UI además aplica el perfil (web/móvil): una
+        // pantalla solo-web no se ofrece a un perfil móvil. No es una inconsistencia de autoridad.
+        const esperado = statusApi === 200 && !(par.soloWeb && esMovil)
+        filas.push({
+          cuenta, ruta, endpoint, uiPermite, status: statusApi, huboRespuesta2xx,
+          view_type: esMovil ? 'mobile' : 'web',
+        })
 
         // La interfaz y la API tienen que contar la misma historia.
         expect
-          .soft(uiPermite, `${cuenta} ${ruta}: la UI permite=${uiPermite} y la API=${statusApi}`)
-          .toBe(statusApi === 200)
+          .soft(uiPermite, `${cuenta} ${ruta}: la UI permite=${uiPermite} y se esperaba=${esperado} (API=${statusApi})`)
+          .toBe(esperado)
 
         // Una ruta cerrada por autoridad es un 403, ni un 401 ni un 500.
         if (statusApi !== 200) {
@@ -103,7 +119,7 @@ for (const cuenta of CUENTAS) {
             .toBe(false)
         }
 
-        if (uiPermite !== (statusApi === 200)) {
+        if (uiPermite !== esperado) {
           inconsistencias.push({ cuenta, ruta, uiPermite, statusApi })
         }
       }
