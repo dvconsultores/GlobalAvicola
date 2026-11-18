@@ -11,35 +11,71 @@ import { Button } from '../../components/ui'
 export default function ReportsPage() {
  const { t, i18n } = useTranslation()
  const [kpis, setKpis] = useState<any>(null)
- const [lotId, setLotId] = useState(2)
+ // `UAT S1` · AC-S1-R01: sin lote fijo. Se selecciona el primero visible y, si el usuario
+ // no ve ninguno, la pantalla lo dice («Sin lotes disponibles») en lugar de pedir los KPIs
+ // de un lote inalcanzable y acabar en «No se pudieron cargar los datos».
+ const [lotId, setLotId] = useState<number | null>(null)
  // `R-220` · A2 (C#18): selector real de lote — el listado de lotes alimenta la lista.
  const [lotes, setLotes] = useState<any[]>([])
+ const [cargandoLotes, setCargandoLotes] = useState(true)
+ const [sinLotes, setSinLotes] = useState(false)
  const [chartData, setChartData] = useState<any[]>([])
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
  const [refresco, setRefresco] = useState(0)
+ // Lote realmente elegido (código legible para enlaces y exportes).
+ const loteSel = lotes.find((l: any) => l.id === lotId) ?? null
 
  useEffect(() => {
- // `R-220` · A2: opciones del selector (si la sesión no puede listar, se conserva
- // el lote actual como única opción — la pantalla nunca queda sin contexto).
- api.get('/lots?limit=100').then(r => setLotes(r.data || [])).catch(() => setLotes([]))
- api.get(`/reports/kpis?lot_id=${lotId}`).then(r => { setKpis(r.data); setEstado('ok') }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
+ // `UAT S1` · AC-S1-R01: el listado de lotes manda. Se conserva la selección si sigue
+ // siendo válida y, si el listado viene vacío, no se pide ningún KPI.
+ let vivo = true
+ setCargandoLotes(true)
+ api.get('/lots?limit=100')
+ .then(r => {
+ if (!vivo) return
+ const lista: any[] = r.data || []
+ setLotes(lista)
+ setSinLotes(lista.length === 0)
+ setLotId(prev => (prev !== null && lista.some((l: any) => l.id === prev) ? prev : (lista[0]?.id ?? null)))
+ setEstado('ok')
+ })
+ .catch((err: any) => {
+ if (!vivo) return
+ setLotes([])
+ setSinLotes(false)
+ setLotId(null)
+ setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
+ })
+ .finally(() => { if (vivo) setCargandoLotes(false) })
+ return () => { vivo = false }
+ }, [refresco])
+
+ useEffect(() => {
+ // Sin lote seleccionado no hay reporte que pedir (estado vacío, no error).
+ if (lotId === null) return
+ let vivo = true
+ api.get(`/reports/kpis?lot_id=${lotId}`).then(r => { if (vivo) { setKpis(r.data); setEstado('ok') } }).catch((err: any) => { if (vivo) setEstado(err?.response?.status === 403 ? 'prohibido' : 'error') })
  // G-12: Fetch events for chart visualization
  // `R-218` · C-01=A: las series salen del agregado semanal del lote — la LISTA de
  // `/operations` no expone sublistas (C#4) y los gráficos quedaban planos.
  api.get(`/reports/lot/${lotId}/weekly`).then(r => {
+ if (!vivo) return
  const semanas = r.data?.weeks || []
  setChartData(semanas.map((s: any) => ({
  date: `S${s.week}`, mortality: s.mortality || 0, feed_kg: s.feed_kg || 0,
  water_l: s.water_l || 0, weight_g: s.weight_g || 0,
  })))
- }).catch((err: any) => setEstado(err?.response?.status === 403 ? 'prohibido' : 'error'))
+ }).catch((err: any) => { if (vivo) setEstado(err?.response?.status === 403 ? 'prohibido' : 'error') })
+ return () => { vivo = false }
  }, [lotId, refresco])
 
  // T-081: Real client-side export
  const [exporting, setExporting] = useState<'excel'|'pdf'|null>(null)
 
  const handleExport = async (format: 'excel' | 'pdf') => {
+ // `UAT S1` · AC-S1-R01: sin lote seleccionado no hay dataset que exportar.
+ if (lotId === null) return
  setExporting(format)
  try {
  // `R-220` · C6 (F G-14): cabeceras de exportación por clave i18n, no ES fijo.
@@ -55,11 +91,13 @@ export default function ReportsPage() {
  hatchability_pct: t('reports.exportHeaders.hatchability_pct', '% Nacimiento'),
  }
  const rows = kpisToRows(kpis, lotId)
- const filename = `GlobalAvicola_KPI_Lote${lotId}_${new Date().toISOString().slice(0,10)}`
+ const lotCodigo = loteSel?.lot_code ?? String(lotId)
+ const filename = `GlobalAvicola_KPI_Lote${lotCodigo}_${new Date().toISOString().slice(0,10)}`
  if (format === 'excel') {
  await exportToExcel(rows, headers, filename)
  } else {
- await exportToPDF(rows, headers, `KPIs — Lote ${lotId}`, filename, i18n.language)
+ // `UAT S1` · AC-S1-R01/AC-S1-R02: título del PDF por i18n, con el código del lote elegido.
+ await exportToPDF(rows, headers, String(t('reports.kpiExportTitle', { lot: lotCodigo, defaultValue: 'KPIs — Lote {{lot}}' })), filename, i18n.language)
  }
  } catch {
  console.error('Export failed')
@@ -76,6 +114,24 @@ export default function ReportsPage() {
  )
  }
 
+ // El listado de lotes aún no ha llegado: no se puede decidir lote ni mostrar «sin lotes».
+ if (cargandoLotes) {
+ return <div className="py-4 sm:py-6 text-slate-500">{t('common.loading')}</div>
+ }
+
+ // `UAT S1` · AC-S1-R01: sin lotes visibles no es un error — es un estado vacío explicado.
+ if (sinLotes || lotId === null) {
+ return (
+ <div className="py-4 sm:py-6">
+ <h1 className="text-2xl font-bold text-[#1E3A5F] mb-6">{t('nav.reports')}</h1>
+ <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
+ <p className="text-sm font-medium text-slate-700">{t('reports.noLotsTitle', 'Sin lotes disponibles')}</p>
+ <p className="text-xs text-slate-500 mt-1">{t('reports.noLotsHint', 'No hay lotes visibles para su usuario. Los reportes se generan por lote.')}</p>
+ </div>
+ </div>
+ )
+ }
+
  return (
  <div className="py-4 sm:py-6">
  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
@@ -88,7 +144,7 @@ export default function ReportsPage() {
  onChange={e => setLotId(Number(e.target.value))}
  className="h-9 px-2 border border-slate-300 rounded text-sm bg-white"
  >
- {(lotes.length ? lotes : [{ id: lotId, lot_code: `#${lotId}` }]).map((l: any) => (
+ {lotes.map((l: any) => (
  <option key={l.id} value={l.id}>{l.lot_code || `#${l.id}`}</option>
  ))}
  </select>
@@ -213,7 +269,7 @@ export default function ReportsPage() {
  <div className="flex flex-wrap gap-3">
  <Link to={`/reports/lot/${lotId}`} className="bg-[#1E3A5F] text-white px-4 py-2 rounded-lg text-sm hover:bg-blue-800 transition">
  <ClipboardList size={16} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />
- {t('reports.lotReportLink', { id: 2 })}
+ {t('reports.lotReportLink', { code: loteSel?.lot_code ?? lotId })}
  </Link>
  <Link to="/reports/sap" className="bg-teal-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-teal-700 transition">
  <RefreshCw size={16} className="inline-block mr-1.5 -mt-0.5" aria-hidden="true" />

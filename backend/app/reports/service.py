@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..lots.models import LotPhase, OpeningBalance
 from ..lots.service import _dia
-from ..masters.models import Lot
+from ..masters.models import Farm, House, Lot
 from ..operations.models import BirdMovement, EggMovement, EventStatus, EventType, FeedMovement, OperationalEvent
 
 
@@ -531,12 +531,25 @@ class ReportsService:
         )
         status_dist = {row.status.value: row.cnt for row in status_result.fetchall()}
 
+        farm_name = None
+        if getattr(lot, "farm_id", None):
+            farm_name = (await self.db.execute(select(Farm.name).where(Farm.id == lot.farm_id))).scalar_one_or_none()
+        house_name = None
+        if getattr(lot, "house_id", None):
+            house_name = (await self.db.execute(select(House.name).where(House.id == lot.house_id))).scalar_one_or_none()
+        tipo_de_ave = getattr(lot, "bird_type", None)
+        tipo_de_ave = getattr(tipo_de_ave, "value", tipo_de_ave)
+
         return {
             "lot": {
                 "id": lot.id,
                 "lot_code": lot.lot_code if hasattr(lot, 'lot_code') else f"L-{lot.id}",
                 "status": lot.status.value if hasattr(lot, 'status') else "unknown",
                 "start_date": str(lot.start_date) if hasattr(lot, 'start_date') else None,
+                "bird_type": tipo_de_ave,
+                "end_date": str(lot.end_date) if getattr(lot, "end_date", None) else None,
+                "farm_name": farm_name,
+                "house_name": house_name,
             },
             "opening_balance": {
                 "total_birds": (ob.initial_male_count + ob.initial_female_count + (ob.initial_mixed_count or 0)) if ob else 0,

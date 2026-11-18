@@ -1,0 +1,50 @@
+{
+  "business_units": [
+    {
+      "code": "breeder",
+      "is_enabled": true
+    },
+    {
+      "code": "broiler",
+      "is_enabled": true
+    },
+    {
+      "code": "grandparent",
+      "is_enabled": true
+    },
+    {
+      "code": "hatchery",
+      "is_enabled": true
+    }
+  ],
+  "me": {
+    "test_admin": {
+      "is_super_admin": true
+    },
+    "test_operator": {
+      "is_super_admin": false
+    },
+    "test_approver": {
+      "is_super_admin": false
+    },
+    "s1p19c-rwciqumg": {
+      "is_super_admin": false
+    }
+  },
+  "roles_operador_status": 403,
+  "openapi": 200,
+  "escenario": {
+    "companyId": 1,
+    "lotId": 104,
+    "codigo": "S1P19C-LOTE-knjbpxw8"
+  },
+  "granjaNombre": "S1P19C-g-m36dpuok",
+  "pendiente_id": 224,
+  "texto": "Volver\nPendientes de clasificar\n\nEstos registros no tienen una cadena productiva inequívoca (por ejemplo, una inspección de una granja con lotes de varias cadenas). Se muestran aquí hasta que un administrador los clasifique; no aparecen en el historial normal.\n\nTipo de registro\nFecha del evento\nGranja\nGalpón\nRegistrado por\nEstado\nInspección Granja\n11/18/2026\nS1P19C-g-m36dpuok\nS1P19C-h-m36dpuok\nTes",
+  "acciones_clasificar": 0,
+  "claves_habilitacion": [
+    "code",
+    "name_key",
+    "is_enabled"
+  ]
+}

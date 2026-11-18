@@ -99,7 +99,7 @@ describe('R-215 · render seguro de errores (RED)', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Guardar' }))
 
     await waitFor(() => expect(
-      screen.getByText(/name: String should have at least 1 character/),
+      screen.getByText(/Falta el dato obligatorio «name»/),
     ).toBeTruthy())
   })
 
@@ -125,7 +125,7 @@ describe('R-215 · render seguro de errores (RED)', () => {
     await waitFor(() => expect(toastError).toHaveBeenCalledTimes(1))
     const mensaje = toastError.mock.calls[0][0]
     expect(typeof mensaje).toBe('string')
-    expect(String(mensaje)).toMatch(/name: String should have at least 1 character/)
+    expect(String(mensaje)).toMatch(/Falta el dato obligatorio «name»/)
   })
 
   it('03 · trazabilidad: 422 lista al vincular ⇒ texto en línea, sin React #31', async () => {
@@ -154,7 +154,7 @@ describe('R-215 · render seguro de errores (RED)', () => {
 
     await waitFor(() => expect(post).toHaveBeenCalled())
     await waitFor(() => expect(
-      screen.getByText(/name: String should have at least 1 character/),
+      screen.getByText(/Falta el dato obligatorio «name»/),
     ).toBeTruthy())
   })
 
@@ -175,7 +175,7 @@ describe('R-215 · render seguro de errores (RED)', () => {
 
     await waitFor(() => expect(post).toHaveBeenCalled())
     await waitFor(() => expect(
-      screen.getByText(/name: String should have at least 1 character/),
+      screen.getByText(/Falta el dato obligatorio «name»/),
     ).toBeTruthy())
   })
 
@@ -214,7 +214,7 @@ describe('R-215 · render seguro de errores (RED)', () => {
     })
     await waitFor(() => expect(toastError).toHaveBeenCalled())
     expect(typeof toastError.mock.calls[0][0]).toBe('string')
-    expect(toastError.mock.calls[0][0]).toMatch(/name: String should have at least 1 character/)
+    expect(toastError.mock.calls[0][0]).toMatch(/Falta el dato obligatorio «name»/)
     alertSpy.mockRestore()
   })
 

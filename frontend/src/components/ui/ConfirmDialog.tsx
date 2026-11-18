@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import type { ReactNode } from 'react'
 import { createPortal } from 'react-dom'
 import { useTranslation } from 'react-i18next'
 import { X, AlertTriangle } from 'lucide-react'
@@ -15,6 +16,9 @@ interface ConfirmDialogProps {
  loading?: boolean
  /** Mostrar icono de advertencia */
  showWarning?: boolean
+ /** `F8`: contenido extra bajo el mensaje (p. ej. el campo de motivo de un rechazo).
+  *  Sin esto el motivo solo podía escribirse en un diálogo que no lo ofrecía. */
+ children?: ReactNode
 }
 
 const VARIANT_STYLES = {
@@ -43,6 +47,7 @@ export default function ConfirmDialog({
  variant = 'primary',
  loading = false,
  showWarning = false,
+ children,
 }: ConfirmDialogProps) {
  const { t } = useTranslation()
  const confirmRef = useRef<HTMLButtonElement>(null)
@@ -105,6 +110,11 @@ export default function ConfirmDialog({
  <p className="text-sm text-slate-600 text-center mb-6">
  {message}
  </p>
+
+ {/* `F8`: contenido propio del formulario (campo de motivo) dentro del panel */}
+ {children && (
+ <div className="mb-6 text-left">{children}</div>
+ )}
 
  {/* Actions */}
  <div className="flex gap-3">

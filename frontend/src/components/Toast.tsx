@@ -1,5 +1,6 @@
-import { useState, useCallback, createContext, useContext } from 'react'
+import { useState, useCallback, createContext, useContext, useRef } from 'react'
 import type { ReactNode } from 'react'
+import { createPortal } from 'react-dom'
 import { CheckCircle, XCircle, AlertTriangle, Info, X } from 'lucide-react'
 
 type ToastType = 'success' | 'error' | 'warning' | 'info'
@@ -36,15 +37,44 @@ function normalizarMensaje(mensaje: unknown): string {
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [toasts, setToasts] = useState<Toast[]>([])
+  // `F4`: espejo síncrono de los toasts visibles — dos avisos idénticos en el
+  // mismo tick no deben apilarse aunque el estado aún no se haya re-renderizado.
+  const visiblesRef = useRef<Toast[]>([])
+  const temporizadoresRef = useRef(new Map<number, ReturnType<typeof setTimeout>>())
+
+  const programarBorrado = useCallback((id: number) => {
+    const previo = temporizadoresRef.current.get(id)
+    if (previo) clearTimeout(previo)
+    temporizadoresRef.current.set(id, setTimeout(() => {
+      temporizadoresRef.current.delete(id)
+      visiblesRef.current = visiblesRef.current.filter(t => t.id !== id)
+      setToasts(prev => prev.filter(t => t.id !== id))
+    }, 4000))
+  }, [])
+
+  const quitar = useCallback((id: number) => {
+    const temporizador = temporizadoresRef.current.get(id)
+    if (temporizador) {
+      clearTimeout(temporizador)
+      temporizadoresRef.current.delete(id)
+    }
+    visiblesRef.current = visiblesRef.current.filter(t => t.id !== id)
+    setToasts(prev => prev.filter(t => t.id !== id))
+  }, [])
 
   const addToast = useCallback((type: ToastType, mensaje: unknown) => {
     const message = normalizarMensaje(mensaje)
- const id = ++toastId
- setToasts(prev => [...prev.slice(-4), { id, type, message }])
- setTimeout(() => {
- setToasts(prev => prev.filter(t => t.id !== id))
- }, 4000)
- }, [])
+    // Mismo `type` y mismo texto ⇒ no se apila: sólo se reinicia su temporizador.
+    const repetido = visiblesRef.current.find(t => t.type === type && t.message === message)
+    if (repetido) {
+      programarBorrado(repetido.id)
+      return
+    }
+    const id = ++toastId
+    visiblesRef.current = [...visiblesRef.current.slice(-4), { id, type, message }]
+    setToasts(visiblesRef.current)
+    programarBorrado(id)
+  }, [programarBorrado])
 
  const ctx: ToastContextType = {
  success: (msg: string) => addToast('success', msg),
@@ -77,8 +107,16 @@ export function ToastProvider({ children }: { children: ReactNode }) {
  return (
  <ToastContext.Provider value={ctx}>
  {children}
- {/* Toast container */}
- <div className="fixed top-4 right-4 z-50 flex flex-col gap-2 max-w-[calc(100vw-2rem)] sm:max-w-sm">
+ {/* Toast container — `F8`: PORTAL sobre `document.body`. Dentro del árbol de la app el
+ contenedor quedaba atrapado en un contexto de apilamiento inferior y el overlay del
+ `ConfirmDialog` (z-[60], también en portal) lo tapaba: el aviso existía y no se veía. */}
+ {typeof document !== 'undefined' && createPortal(
+ <div
+ data-testid="toast-container"
+ role="status"
+ aria-live="polite"
+ className="fixed top-4 right-4 z-[70] flex flex-col gap-2 max-w-[calc(100vw-2rem)] sm:max-w-sm"
+ >
  {toasts.map(t => (
  <div
  key={t.id}
@@ -86,12 +124,14 @@ export function ToastProvider({ children }: { children: ReactNode }) {
  >
  {icons[t.type]}
  <span className="flex-1">{t.message}</span>
- <button onClick={() => setToasts(prev => prev.filter(x => x.id !== t.id))} className="opacity-60 hover:opacity-100">
+ <button onClick={() => quitar(t.id)} className="opacity-60 hover:opacity-100">
  <X size={14} />
  </button>
  </div>
  ))}
- </div>
+ </div>,
+ document.body,
+ )}
  </ToastContext.Provider>
  )
 }
@@ -108,39 +148,62 @@ export function useToast(): ToastContextType {
  */
 // `R-189 (F-01)`: el `detail` de FastAPI puede ser una lista de objetos de validación (o un objeto);
 // devolverlo crudo rompía el render (React #31). Se normaliza SIEMPRE a texto renderizable.
+// `F4` (AC-S1-F01/AC-S1-I02): los mensajes de validación de pydantic llegan en inglés
+// («Input should be a valid integer…»); se sustituyen por un aviso en español por campo,
+// sin repetir duplicados dentro del mismo detalle.
+const CAMPO_EN_ES: Record<string, string> = {
+  lot_id: 'lote',
+  farm_id: 'granja',
+  house_id: 'galpón',
+  event_date: 'fecha',
+  date_from: 'fecha',
+  date_to: 'fecha',
+}
+
+/** Último segmento de `loc`, traducido cuando el campo es conocido. */
+function etiquetaDeCampo(loc: unknown[]): string {
+  const segmentos = loc.filter((p) => typeof p === 'string' || typeof p === 'number')
+  if (segmentos.length === 0) return ''
+  const ultimo = String(segmentos[segmentos.length - 1])
+  if (!ultimo) return ''
+  return CAMPO_EN_ES[ultimo] ?? ultimo
+}
+
+/** Un item de `detail` ⇒ texto en español (o el texto humano ya redactado). */
+function textoDeItem(item: unknown): string | null {
+  if (typeof item === 'string') return item.trim() ? item : null
+  if (!item || typeof item !== 'object') return null
+  const registro = item as { loc?: unknown; msg?: unknown; type?: unknown; message?: unknown }
+  const mensajeHumano = typeof registro.message === 'string' ? registro.message.trim() : ''
+  const tieneTipo = typeof registro.type === 'string' && registro.type !== ''
+  // Un detalle ya redactado en español (mensaje propio, sin `type` de pydantic) se respeta.
+  if (mensajeHumano && !tieneTipo) return mensajeHumano
+  const campo = etiquetaDeCampo(Array.isArray(registro.loc) ? registro.loc : [])
+  // `F6` §4: `missing` de pydantic = dato obligatorio que no llegó ⇒ se nombra como tal
+  // (no es un «valor no válido»: no hay valor), con el mismo mapeo de nombres de campo.
+  if (registro.type === 'missing') {
+    return campo ? `Falta el dato obligatorio «${campo}»` : 'Falta un dato obligatorio'
+  }
+  if (tieneTipo || campo) {
+    return campo ? `Valor no válido en «${campo}»` : 'Valor no válido'
+  }
+  if (typeof registro.msg === 'string' && registro.msg.trim()) return registro.msg
+  return null
+}
+
 function textoDeDetalle(detail: unknown): string | null {
   if (detail === null || detail === undefined) return null
   if (typeof detail === 'string') return detail.trim() ? detail : null
   if (Array.isArray(detail)) {
-    const partes = detail
-      .map((item) => {
-        if (typeof item === 'string') return item
-        if (item && typeof item === 'object') {
-          const registro = item as { loc?: unknown; msg?: unknown; type?: unknown; message?: unknown }
-          const msg = typeof registro.msg === 'string'
-            ? registro.msg
-            : (typeof registro.message === 'string' ? registro.message : '')
-          const loc = Array.isArray(registro.loc)
-            ? registro.loc
-              .filter((p) => typeof p === 'string' || typeof p === 'number')
-              .slice(1) // se descarta el origen (`body`/`path`/`query`): el usuario necesita el campo
-              .join('.')
-            : ''
-          if (loc && msg) return `${loc}: ${msg}`
-          if (msg) return msg
-          if (typeof registro.type === 'string') return registro.type
-          return null
-        }
-        return null
-      })
-      .filter((p): p is string => Boolean(p))
-    return partes.length ? partes.join(' · ') : null
+    const partes = new Set<string>()
+    for (const item of detail) {
+      const texto = textoDeItem(item)
+      if (texto) partes.add(texto)
+    }
+    return partes.size ? Array.from(partes).join(' · ') : null
   }
   if (typeof detail === 'object') {
-    const registro = detail as { msg?: unknown; message?: unknown }
-    if (typeof registro.msg === 'string' && registro.msg) return registro.msg
-    if (typeof registro.message === 'string' && registro.message) return registro.message
-    return null
+    return textoDeItem(detail)
   }
   return null
 }

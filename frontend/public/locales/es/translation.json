@@ -266,6 +266,7 @@
     "previous": "Anterior",
     "required": "Requerido",
     "farm": "Granja",
+    "house": "Galpón",
     "allFarms": "Todas las granjas",
     "lotCode": "Lote",
     "registeredBy": "Registrado por",
@@ -643,6 +644,8 @@
     "detail": "Detalle",
     "id": "ID",
     "lot": "Lote",
+    "lotFilterPlaceholder": "ID del lote",
+    "lotFilterNumeric": "Escriba el ID numérico del lote (solo dígitos)",
     "farm": "Granja",
     "house": "Galpón",
     "birdMovements": "Movimientos de Aves",
@@ -654,6 +657,11 @@
     "batchNamePrompt": "Nombre del lote de revisión:",
     "obsPrompt": "Observaciones (obligatorio):",
     "actionCompleted": "Acción \"{{action}}\" completada",
+    "actionDone": {
+      "start": "Revisión iniciada",
+      "complete": "Revisión completada",
+      "return": "Registro devuelto"
+    },
     "batchCreated": "Lote \"{{name}}\" creado con {{count}} eventos",
     "errorLoading": "Error al cargar eventos",
     "errorAction": "Error en la acción",
@@ -738,7 +746,7 @@
     "waterConsumption": "Consumo de Agua",
     "waterL": "Agua (L)",
     "weightG": "Peso (g)",
-    "lotReportLink": "Reporte Lote #{{id}}",
+    "lotReportLink": "Reporte Lote {{code}}",
     "sapComparisonLink": "Comparación SAP",
     "animalWelfare": "Bienestar Animal",
     "vaccinationEfficiency": "Eficiencia Vacunación",
@@ -750,6 +758,9 @@
     "onlyApproved": "Los indicadores se calculan solo con datos aprobados",
     "onlyApprovedDetail": "Este lote todavía no tiene registros aprobados suficientes, por lo que sus indicadores aparecen sin valor en lugar de en cero.",
     "selectLot": "Seleccionar lote",
+    "noLotsTitle": "Sin lotes disponibles",
+    "noLotsHint": "No hay lotes visibles para su usuario. Los reportes se generan por lote.",
+    "kpiExportTitle": "KPIs — Lote {{lot}}",
     "exportHeaders": {
       "lot_id": "Lote ID",
       "mortality_rate": "Mortalidad %",
@@ -759,7 +770,9 @@
       "total_eggs": "Huevos",
       "hen_day_pct": "% Postura",
       "chicks_born": "Pollitos nacidos",
-      "hatchability_pct": "% Nacimiento"
+      "hatchability_pct": "% Nacimiento",
+      "farm_name": "Granja",
+      "house_name": "Galpón"
     }
   },
   "audit": {
@@ -780,6 +793,7 @@
       "updated": "Actualizado",
       "corrected": "Corregido",
       "review_started": "Revisión iniciada",
+      "started_review": "Revisión iniciada",
       "review_completed": "Revisión completada",
       "returned": "Devuelto",
       "approved": "Aprobado",
@@ -994,6 +1008,7 @@
     "title": "Operaciones",
     "subtitle": "Registro operativo",
     "lot": "Lote",
+    "lotCodeFilter": "Código de lote",
     "selectLot": "Seleccionar lote...",
     "recordType": "Tipo de Registro",
     "selectType": "Seleccionar tipo...",
@@ -1013,6 +1028,14 @@
     "eventHouseRequired": "Este evento requiere un galpón (el lote no lo declara)",
     "cuadreRequired": "Completa el cuadre de la recepción (recibidas, mortalidad al arribo y rechazo)",
     "farmRequired": "Este evento requiere una granja",
+    "quantityRequired": "Registre una cantidad mayor a cero.",
+    "waterLitersRequired": "Registre los litros de agua (mayor a cero).",
+    "weightRequired": "Registre el peso promedio de al menos un sexo (mayor a cero).",
+    "vaccineRequired": "Seleccione la vacuna aplicada.",
+    "medicationRequired": "Seleccione el medicamento aplicado.",
+    "feedRequired": "Registre la cantidad de alimento (kg) mayor a cero.",
+    "weekPlaceholder": "Ej.: 12",
+    "requiredLegend": "* Campo obligatorio",
     "mixedExclusive": "No mezcles pollitos sin sexar con machos o hembras en el mismo registro",
     "chicksRequired": "Completa los pollitos sanos y débiles (obligatorios en la cadena de incubadora)",
     "receivedTotal": "Cantidad recibida (aves)",
@@ -1117,6 +1140,20 @@
     "importCountryPlaceholder": "Ej. Francia",
     "importLotAutoNote": "Si no selecciona un lote, se creará automáticamente al aprobar la importación.",
     "lotAutoPending": "Se creará al aprobar",
+    "pendingClassification": {
+      "title": "Pendientes de clasificar",
+      "link": "Pendientes de clasificar",
+      "intro": "Estos registros no tienen una cadena productiva inequívoca (por ejemplo, una inspección de una granja con lotes de varias cadenas). Se muestran aquí hasta que un administrador los clasifique; no aparecen en el historial normal.",
+      "empty": "No hay registros pendientes de clasificar.",
+      "columns": {
+        "type": "Tipo de registro",
+        "date": "Fecha del evento",
+        "farm": "Granja",
+        "house": "Galpón",
+        "registeredBy": "Registrado por",
+        "status": "Estado"
+      }
+    },
     "sanitaryCert": "Certificado sanitario",
     "sanitaryCertPlaceholder": "No. de certificado",
     "quarantineDays": "Días de cuarentena",
@@ -1261,6 +1298,8 @@
     "title": "Lotes",
     "newLot": "Nuevo Lote",
     "noLots": "Sin lotes",
+    "noUnitsTitle": "Sin unidades de negocio asignadas",
+    "noUnitsHint": "Su usuario no tiene unidades de negocio habilitadas. Solicite acceso al administrador.",
     "activeCount": "activos",
     "closedCount": "cerrados",
     "viewDetail": "Ver Detalle",
@@ -1584,7 +1623,15 @@
     "within": "Dentro de la curva estándar",
     "above": "Sobre la curva estándar",
     "noReference": "Sin referencia de curva",
-    "noReferenceHelp": "No hay curva estándar aplicable a esta edad."
+    "noReferenceHelp": "No hay curva estándar aplicable a esta edad.",
+    "reasons": {
+      "no_curve_assigned": "El lote no tiene curva de peso asignada",
+      "lot_without_start_date": "El lote no tiene fecha de inicio",
+      "lot_without_genetic_line": "El lote no tiene línea genética",
+      "curve_without_points": "La curva no tiene puntos de referencia",
+      "event_before_lot_start": "El evento es anterior al inicio del lote",
+      "age_outside_curve_table": "La edad del lote está fuera de la tabla de la curva"
+    }
   },
   "notifications": {
     "title": "Notificaciones",
@@ -1618,5 +1665,46 @@
   },
   "home": {
     "noLanding": "No hay un módulo de inicio disponible para tu perfil. Usa el menú lateral para acceder a las secciones habilitadas."
+  },
+  "corrections": {
+    "row": "fila {{id}}",
+    "noFields": "Este evento no admite correcciones en su estado actual.",
+    "correctedRequired": "Indique el valor corregido.",
+    "valueNumeric": "El valor debe ser un número.",
+    "reasonMin": "El motivo debe tener al menos 5 caracteres.",
+    "sex": {
+      "male": "Macho",
+      "female": "Hembra",
+      "mixed": "Mixto"
+    },
+    "fields": {
+      "observations": "Observaciones",
+      "event_date": "Fecha del evento",
+      "sap_document_ref": "Documento SAP",
+      "vaccination_route": "Vía de aplicación",
+      "vaccine_lot_number": "Lote de vacuna",
+      "dosage_per_bird": "Dosis por ave",
+      "treatment_days": "Días de tratamiento",
+      "sample_size": "Tamaño de muestra",
+      "water_liters": "Litros de agua",
+      "chicks_healthy": "Pollitos sanos",
+      "chicks_weak": "Pollitos débiles",
+      "supplier_id": "Proveedor (código)",
+      "cause_id": "Causa (código)",
+      "cull_cause_id": "Causa de descarte (código)",
+      "vaccine_id": "Vacuna (código)",
+      "medication_id": "Medicamento (código)",
+      "transport_id": "Transporte (código)",
+      "destination_farm_id": "Granja destino (código)",
+      "destination_plant_id": "Planta destino (código)",
+      "bird_movements": {
+        "avg_weight": "Peso promedio",
+        "quantity": "Cantidad",
+        "week_number": "Semana"
+      },
+      "feed_movements": {
+        "quantity_kg": "Cantidad de alimento (kg)"
+      }
+    }
   }
 }

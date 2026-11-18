@@ -1,0 +1,525 @@
+{
+  "spec": "015-breeder-cria-uat-s1",
+  "generado": "2026-11-18T14:15:17.743Z",
+  "contrato": "POST /api/v1/operations · matriz de obligatorios del §4",
+  "escenario": {
+    "lote_id": 3,
+    "codigo": "S1P18B-LOTE-3k4egi5l",
+    "granja_id": 3,
+    "galpon_id": 3,
+    "maestros": {
+      "causaMortalidadId": 2,
+      "causaDescarteId": 2,
+      "vacunaId": 2,
+      "medicamentoId": 2,
+      "alimentoId": 2,
+      "proveedorId": 2,
+      "transporteId": 2
+    }
+  },
+  "operaciones": {
+    "bird_reception": {
+      "operacion": "Recepción de aves (breeder)",
+      "contrato": [
+        "granja + galpón (BR-08)",
+        "received_total",
+        "dead_on_arrival",
+        "rejected_on_arrival",
+        "received_total = Σ filas + muertas + rechazadas (BR-20)"
+      ],
+      "ubicacion_obligatoria": true,
+      "vacios": {
+        "sin cuadre": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "sin received_total": 400,
+        "sin dead_on_arrival": 400,
+        "sin rejected_on_arrival": 400,
+        "filas que no cuadran": 400
+      },
+      "parte2": {
+        "id": 1,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "received_total": {
+            "obtenido": 1000,
+            "esperado": 1000,
+            "ok": true
+          },
+          "dead_on_arrival": {
+            "obtenido": 15,
+            "esperado": 15,
+            "ok": true
+          },
+          "rejected_on_arrival": {
+            "obtenido": 5,
+            "esperado": 5,
+            "ok": true
+          },
+          "Σ filas alojadas": {
+            "obtenido": 980,
+            "esperado": 980,
+            "ok": true
+          },
+          "avg_weight hembras": {
+            "obtenido": 1.8,
+            "esperado": 1.8,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "bird_distribution": {
+      "operacion": "Distribución de aves",
+      "contrato": [
+        "granja + galpón (BR-08) — su único obligatorio: el vacío CON ubicación es un 201"
+      ],
+      "ubicacion_obligatoria": true,
+      "vacios": {
+        "solo ubicación (contrato: solo ubicación)": 201
+      },
+      "minimo": 201,
+      "omisiones": {
+        "sin galpón": 400,
+        "sin granja": 400
+      },
+      "parte2": {
+        "id": 3,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "farm_id": {
+            "obtenido": 3,
+            "esperado": 3,
+            "ok": true
+          },
+          "house_id": {
+            "obtenido": 3,
+            "esperado": 3,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "farm_inspection": {
+      "operacion": "Inspección de granja",
+      "contrato": [
+        "granja (BR-08)",
+        "galpón (BR-08)",
+        "paridad cliente-servidor (§4.2)"
+      ],
+      "ubicacion_obligatoria": true,
+      "vacios": {
+        "sin granja ni galpón": 400,
+        "con granja y galpón (contrato: solo ubicación)": 201
+      },
+      "minimo": 201,
+      "omisiones": {
+        "sin galpón": 400,
+        "sin granja": 400
+      },
+      "parte2": {
+        "id": 5,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "farm_id": {
+            "obtenido": 3,
+            "esperado": 3,
+            "ok": true
+          },
+          "house_id": {
+            "obtenido": 3,
+            "esperado": 3,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "feed_registration": {
+      "operacion": "Registro de alimento",
+      "contrato": [
+        "≥1 fila de feed_movements con quantity_kg > 0 (RR-23)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin filas de alimento": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "con kg 0": 422
+      },
+      "parte2": {
+        "id": 6,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "feed_movements[0].quantity_kg": {
+            "obtenido": 12.5,
+            "esperado": 12.5,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "OBSERVACIÓN",
+      "observaciones": [
+        "feed_registration · con kg 0: 422 de pydantic en inglés — body.feed_movements.0.quantity_kg: Input should be greater than 0"
+      ]
+    },
+    "water_consumption": {
+      "operacion": "Consumo de agua",
+      "contrato": [
+        "water_liters presente (B05)",
+        "water_liters > 0 (RR-11)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin litros": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "sin litros (omitido)": 400,
+        "con 0 litros": 400
+      },
+      "parte2": {
+        "id": 7,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "water_liters": {
+            "obtenido": 120.5,
+            "esperado": 120.5,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "weight_recording": {
+      "operacion": "Pesaje",
+      "contrato": [
+        "≥1 fila de bird_movements con avg_weight > 0 (RR-20)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin peso": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "con avg_weight 0": 400
+      },
+      "parte2": {
+        "id": 8,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "bird_movements[0].avg_weight": {
+            "obtenido": 2.1,
+            "esperado": 2.1,
+            "ok": true
+          },
+          "cantidad no inventada": {
+            "obtenido": 0,
+            "esperado": 0,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "vaccination": {
+      "operacion": "Vacunación",
+      "contrato": [
+        "vaccine_id presente (RR-21)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin vacuna": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "sin vacuna (omitida)": 400
+      },
+      "parte2": {
+        "id": 9,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "vaccine_id": {
+            "obtenido": 2,
+            "esperado": 2,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "medication": {
+      "operacion": "Medicación",
+      "contrato": [
+        "medication_id presente (RR-22)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin medicamento": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "sin medicamento (omitido)": 400
+      },
+      "parte2": {
+        "id": 10,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "medication_id": {
+            "obtenido": 2,
+            "esperado": 2,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "mortality_recording": {
+      "operacion": "Mortalidad",
+      "contrato": [
+        "Σ bird_movements.quantity > 0 (BR-01)",
+        "total ≤ saldo de aves (BR-01, D4)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin cantidad": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "cantidad 0": 400,
+        "cantidad > saldo": 400
+      },
+      "parte2": {
+        "id": 11,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "Σ bird_movements.quantity": {
+            "obtenido": 3,
+            "esperado": 3,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "cull_recording": {
+      "operacion": "Descarte",
+      "contrato": [
+        "Σ bird_movements.quantity > 0 (BR-01)",
+        "total ≤ saldo de aves (BR-01, D4)"
+      ],
+      "ubicacion_obligatoria": false,
+      "vacios": {
+        "sin cantidad": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "cantidad 0": 400,
+        "cantidad > saldo": 400
+      },
+      "parte2": {
+        "id": 12,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "Σ bird_movements.quantity": {
+            "obtenido": 2,
+            "esperado": 2,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    },
+    "bird_exit": {
+      "operacion": "Salida de aves",
+      "contrato": [
+        "granja + galpón (BR-08)",
+        "Σ bird_movements.quantity > 0 (BR-01)",
+        "total ≤ saldo de aves (BR-01, D4)",
+        "transporte y destino OPCIONALES (D3)"
+      ],
+      "ubicacion_obligatoria": true,
+      "vacios": {
+        "sin cantidad (con granja y galpón)": 400
+      },
+      "minimo": 201,
+      "omisiones": {
+        "cantidad 0": 400,
+        "cantidad > saldo": 400,
+        "sin galpón": 400
+      },
+      "parte2": {
+        "id": 13,
+        "detalle": 200,
+        "envio": 200,
+        "estado": "pending_review",
+        "en_cola": true,
+        "auditoria": [
+          "updated",
+          "created"
+        ],
+        "ecos": {
+          "Σ bird_movements.quantity": {
+            "obtenido": 5,
+            "esperado": 5,
+            "ok": true
+          },
+          "transport_id (D3: opcional)": {
+            "obtenido": null,
+            "esperado": null,
+            "ok": true
+          },
+          "destination_farm_id (D3: opcional)": {
+            "obtenido": null,
+            "esperado": null,
+            "ok": true
+          },
+          "destination_plant_id (D3: opcional)": {
+            "obtenido": null,
+            "esperado": null,
+            "ok": true
+          }
+        },
+        "en_historial": true
+      },
+      "resultado": "PASS",
+      "observaciones": []
+    }
+  },
+  "saldo": {
+    "abierto": 970,
+    "esperado": 970,
+    "excedido": {
+      "enviado": 971,
+      "status": 400,
+      "detalle": "Mortalidad (971) excede el saldo de aves disponibles (970)",
+      "regla": "BR-01"
+    },
+    "d4": {
+      "status": 201,
+      "filas": {
+        "male": 300,
+        "female": 200
+      },
+      "total": 500
+    },
+    "final": 470
+  },
+  "ui": {
+    "mortalidad": {
+      "vacio": "mensaje inline, 0 POST",
+      "guardado": 201
+    },
+    "agua": {
+      "vacio": "mensaje inline, 0 POST",
+      "guardado": 201
+    },
+    "vacunacion": {
+      "vacio": "mensaje inline, 0 POST",
+      "guardado": 201,
+      "vacuna": "S1P18B-vaccines-9q5spohn"
+    },
+    "capturas": [
+      "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18b_mortalidad_vacio.png",
+      "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18b_mortalidad_guardada.png"
+    ]
+  },
+  "observaciones": [
+    "feed_registration · con kg 0: 422 de pydantic en inglés — body.feed_movements.0.quantity_kg: Input should be greater than 0",
+    "El aprobador de pruebas no lee la bandeja de revisión (/review/pending → 403): su rol siembra approvals:approve sin review:read. La cola se verifica con el administrador, que sí tiene el permiso."
+  ],
+  "fallos": []
+}

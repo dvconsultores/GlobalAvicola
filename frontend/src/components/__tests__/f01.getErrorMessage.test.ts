@@ -7,7 +7,7 @@ import { describe, it, expect } from 'vitest'
 import { getErrorMessage } from '../Toast'
 
 describe('R-189 · normalizador de errores (F-01)', () => {
-  it('detail estructurado (lista FastAPI) ⇒ string legible con ubicación y mensaje', () => {
+  it('detail estructurado (lista FastAPI) ⇒ string legible con la ubicación en español', () => {
     const error = {
       response: {
         data: {
@@ -17,9 +17,22 @@ describe('R-189 · normalizador de errores (F-01)', () => {
     }
     const salida = getErrorMessage(error, 'Error al guardar')
     expect(typeof salida).toBe('string')
-    expect(salida).toContain('Field required')
-    expect(salida).toContain('arrival_date')
+    // `F4` (AC-S1-F01): el mensaje de pydantic (inglés) se sustituye por uno en español.
+    // `F6` §4: `type: 'missing'` no es un «valor no válido» — es un dato obligatorio que falta.
+    expect(salida).toBe('Falta el dato obligatorio «arrival_date»')
+    expect(salida).not.toContain('Field required')
     expect(salida).not.toContain('[object Object]')
+  })
+
+  it('item no `missing` ⇒ sigue siendo «Valor no válido en «campo»»', () => {
+    const error = {
+      response: {
+        data: {
+          detail: [{ type: 'int_parsing', loc: ['body', 'house_id'], msg: 'Input should be a valid integer' }],
+        },
+      },
+    }
+    expect(getErrorMessage(error, 'x')).toBe('Valor no válido en «galpón»')
   })
 
   it('detail string ⇒ se conserva', () => {

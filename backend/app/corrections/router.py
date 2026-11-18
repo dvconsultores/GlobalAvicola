@@ -23,6 +23,16 @@ async def create_correction(
     return await CorrectionService(db, current_user).create_correction(data)
 
 
+@router.get("/events/{event_id}/correctable-fields", response_model=list[schemas.CorrectableFieldRead])
+async def get_correctable_fields(
+    event_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("corrections", "read")),
+):
+    """Campos realmente corregibles de ese evento (`S1-CORR-01` · `spec 015 §3`)."""
+    return await CorrectionService(db, current_user).campos_corregibles_de_evento(event_id)
+
+
 @router.get("/event/{event_id}", response_model=list[schemas.CorrectionRead])
 async def get_event_corrections(
     event_id: int,

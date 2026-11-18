@@ -76,6 +76,9 @@ describe('WeightEvaluation', () => {
 
     expect(await screen.findByText('curves.noReference')).toBeInTheDocument()
     expect(screen.getByText('curves.noReferenceHelp')).toBeInTheDocument()
+    // El motivo lo emite el motor como código: se nombra traducido, no en crudo.
+    expect(screen.getByText('curves.reasons.no_curve_assigned')).toBeInTheDocument()
+    expect(screen.queryByText('no_curve_assigned')).not.toBeInTheDocument()
     expect(screen.queryByText('curves.within')).not.toBeInTheDocument()
     // Ni un cero disfrazado de rango: cero engañaría igual que callar.
     expect(screen.queryByText(/0–0/)).not.toBeInTheDocument()

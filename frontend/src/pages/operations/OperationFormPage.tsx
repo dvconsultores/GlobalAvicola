@@ -7,7 +7,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { ChevronLeft, Plus, Trash2 } from 'lucide-react'
 import api from '../../services/api'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios, anclarCampoEnPrimeraFila, validarReglasDeNacimiento } from './operationPayload'
+import { serializarAlmacenamientoDeHuevos, serializarMovimientosDeAves, serializarMovimientosDeAlimento, serializarParamsDeIncubadora, identificadorDeOrdenSap, resolverUbicacionDelEvento, resolverStageDelAsistente, limpiarVacios, anclarCampoEnPrimeraFila, validarReglasDeNacimiento, validarObligatoriosDeOperacion } from './operationPayload'
 import { hoyISO } from '../../utils/dates'
 import SearchSelect from '../../components/ui/SearchSelect'
 import { EVENT_ICONS } from '../../components/Icon'
@@ -505,6 +505,18 @@ export default function OperationFormPage() {
             return
           }
         }
+        // `F6` · §4 (matriz + `RR-20`..`RR-23`): paridad cliente-servidor de obligatorios —
+        // galpón de la inspección (`BR-08`), cantidad (`BR-01`), agua, peso, vacuna,
+        // medicamento y alimento se exigen EN CLIENTE, sin autorrellenar ceros.
+        const faltaObligatorio = validarObligatoriosDeOperacion(data as any, {
+          derivedFarmId,
+          derivedHouseId,
+        })
+        if (faltaObligatorio) {
+          setUbicacionError(faltaObligatorio)
+          setSubmitting(false)
+          return
+        }
         setUbicacionError(null)
         void firstInspectedHouseId
  // Convert per-house inspection rows into inspection_details records with house_id
@@ -550,7 +562,10 @@ export default function OperationFormPage() {
  // primera fila superviviente para que no muera con el descarte de filas sin cantidad.
  const semanaDelEvento = (data.bird_movements?.[0] as any)?.week_number
  const movimientosAves = anclarCampoEnPrimeraFila(
- normalizedBirdMovements.filter((m) => (m.quantity ?? 0) > 0),
+ // `F6` · §4 / `RR-20`: en el pesaje, una fila con peso y sin cantidad NO se descarta en
+ // silencio (el `avg_weight` declarado sería un dato perdido); el resto de tipos sí exige cantidad.
+ normalizedBirdMovements.filter((m) => (m.quantity ?? 0) > 0
+ || (data.event_type === 'weight_recording' && Number(m.avg_weight) > 0)),
  'week_number',
  semanaDelEvento,
  )
@@ -616,12 +631,13 @@ export default function OperationFormPage() {
  }
 
  // ── M+F rows helper ──────────────────────────────────────────────
- const renderMFRows = (showWeight = true) => (
+ // `F6`: la marca de obligatorio del encabezado sigue a la regla de la operación (no a todas).
+ const renderMFRows = (showWeight = true, quantityRequired = false, avgWeightRequired = false) => (
  <div>
  <div className={`grid ${showWeight ? 'grid-cols-1 sm:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2'} px-1 py-2 border-b border-slate-200`}>
  <span className="text-sm font-semibold text-slate-500">{t('operations.sex', 'Sexo')}</span>
- <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}</span>
- {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (g)')}</span>}
+ <span className="text-sm font-semibold text-slate-500">{t('operations.quantity', 'Cantidad')}{quantityRequired && <span aria-hidden="true" className="text-red-500"> *</span>}</span>
+ {showWeight && <span className="text-sm font-semibold text-slate-500">{t('operations.avgWeight', 'Peso prom. (g)')}{avgWeightRequired && <span aria-hidden="true" className="text-red-500"> *</span>}</span>}
  </div>
  {[
  { idx: 0, defaultSex: 'male', label: t('operations.males', 'Machos'), color: 'text-blue-700' },
@@ -671,10 +687,10 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
  </div>
  </div>
- {renderMFRows(false)}
+ {renderMFRows(false, true)}
  </div>
  )
 
@@ -694,10 +710,10 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
  </div>
  </div>
- {renderMFRows(false)}
+ {renderMFRows(false, true)}
  </div>
  )
 
@@ -705,7 +721,7 @@ export default function OperationFormPage() {
  <div className="space-y-4">
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
- <label className={lc}>{t('operations.vaccine', 'Vacuna')}</label>
+ <label className={lc}>{t('operations.vaccine', 'Vacuna')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <SearchSelect
  value={watch('vaccine_id' as any) ?? ''}
  onChange={(v) => setValue('vaccine_id' as any, v ? Number(v) : undefined)}
@@ -743,7 +759,7 @@ export default function OperationFormPage() {
  <div className="space-y-4">
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
- <label className={lc}>{t('operations.medication', 'Medicamento')}</label>
+ <label className={lc}>{t('operations.medication', 'Medicamento')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <SearchSelect
  value={watch('medication_id' as any) ?? ''}
  onChange={(v) => setValue('medication_id' as any, v ? Number(v) : undefined)}
@@ -771,14 +787,14 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3">
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
  </div>
  <div>
  <label className={lc}>{t('operations.sampleSize', 'Aves pesadas')}</label>
  <input type="number" inputMode="decimal" min="1" {...register('sample_size', { valueAsNumber: true })} className={ic} placeholder="50" />
  </div>
  </div>
- {renderMFRows(true)}
+ {renderMFRows(true, false, true)}
  </div>
  )
 
@@ -1149,7 +1165,7 @@ export default function OperationFormPage() {
  case 'water_consumption': return (
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
- <label className={lc}>{t('operations.waterLiters', 'Consumo de agua (L)')}</label>
+ <label className={lc}>{t('operations.waterLiters', 'Consumo de agua (L)')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <input type="number" inputMode="decimal" step="0.1" min="0.1" {...register('water_liters', { valueAsNumber: true })} className={ic} />
  </div>
  </div>
@@ -1174,12 +1190,12 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder="1" />
+ <input type="number" inputMode="decimal" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
  </div>
  </div>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">
  <div>
- <label className={lc}>{t('operations.quantityKg', 'Cantidad (kg)')}</label>
+ <label className={lc}>{t('operations.quantityKg', 'Cantidad (kg)')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <input type="number" inputMode="decimal" step="0.1" min="0" {...register('feed_movements.0.quantity_kg', { valueAsNumber: true })} className={ic} />
  </div>
  <div>
@@ -1422,7 +1438,7 @@ export default function OperationFormPage() {
  </div>
  {/* House selector — SearchSelect for large farm lists */}
  <div>
- <label className={lc}>{t('operations.selectHouse', 'Galpón')}</label>
+ <label className={lc}>{t('operations.selectHouse', 'Galpón')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <SearchSelect
  value={watch(`house_inspections.${i}.house_id` as any) ?? ''}
  onChange={(v) => setValue(`house_inspections.${i}.house_id` as any, v ? Number(v) : undefined as any)}
@@ -1851,7 +1867,7 @@ export default function OperationFormPage() {
  <input {...register('extra_data.sanitary_cert' as any)} className={ic} placeholder={t('operations.sanitaryCertPlaceholder')} />
  </div>
  </div>
- {renderMFRows(false)}
+ {renderMFRows(false, true)}
  </div>
  )
 
@@ -2099,6 +2115,8 @@ default: return (
  )}
 
  <form id="operation-form" onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+ {/* `F6` · §4: leyenda única del asterisco — sólo lo llevan los campos que el servidor exige. */}
+ <p className="text-xs text-slate-500">{t('operations.requiredLegend')}</p>
  {/* ── SAP Order selector (grandparent_import, bird_reception, bird_exit, egg_dispatch, egg_reception_hatchery & chick_dispatch: must be first) ── */}
  {(eventType === 'grandparent_import' || eventType === 'bird_reception' || eventType === 'bird_exit' || eventType === 'egg_dispatch' || eventType === 'egg_reception_hatchery' || eventType === 'chick_dispatch') && (
  <div>
@@ -2254,7 +2272,7 @@ default: return (
  items={filteredLots}
  placeholder={t('operations.selectLot', 'Seleccionar lote...')}
 
- renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${l.status}` : ''}`}
+ renderLabel={(l: any) => `${l.lot_code}${l.status && l.status !== 'active' ? ` · ${t(`lotStatus.${l.status}`, l.status)}` : ''}`}
  error={!!errors.lot_id}
  />
  {lotsLoadError && <p className="text-xs text-red-600 mt-1">{t('operations.errorLoadingLots', 'Error al cargar lotes')}</p>}

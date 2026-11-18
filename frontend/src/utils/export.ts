@@ -71,19 +71,33 @@ export async function exportToPDF(
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/** Convert a lot report API response to flat rows suitable for export */
-export function lotReportToRows(report: any): Record<string, unknown>[] {
+/** Traductor mínimo compatible con `t()` de react-i18next (clave + fallback). */
+export type ExportTranslator = (key: string, defaultValue?: string) => string
+
+/**
+ * Convert a lot report API response to flat rows suitable for export.
+ *
+ * `UAT S1` · AC-S1-R02: el backend ya entrega `bird_type`, `end_date`, `farm_name`,
+ * `house_name` y el `status` canónico. Con traductor las dos columnas enumeradas salen
+ * en el idioma del usuario (`birdTypes.*`, `lotStatus.*`) y nunca como código crudo.
+ */
+export function lotReportToRows(report: any, t?: ExportTranslator): Record<string, unknown>[] {
   if (!report) return []
   const lot = report.lot ?? {}
   const ob  = report.opening_balance ?? {}
   const es  = report.event_summary ?? {}
 
+  const birdType = lot.bird_type ?? ''
+  const status   = lot.status ?? ''
+
   const summary: Record<string, unknown> = {
     lot_code:    lot.lot_code ?? '',
-    bird_type:   lot.bird_type ?? '',
-    status:      lot.status ?? '',
+    bird_type:   birdType ? (t ? t(`birdTypes.${birdType}`, birdType) : birdType) : '',
+    status:      status ? (t ? t(`lotStatus.${status}`, status) : status) : '',
     start_date:  lot.start_date ?? '',
     end_date:    lot.end_date ?? '',
+    farm_name:   lot.farm_name ?? '',
+    house_name:  lot.house_name ?? '',
     total_birds: ob.total_birds ?? '',
     males:       ob.total_males ?? '',
     females:     ob.total_females ?? '',

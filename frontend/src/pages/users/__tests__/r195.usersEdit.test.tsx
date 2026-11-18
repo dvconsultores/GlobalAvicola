@@ -130,7 +130,7 @@ describe('R-195 · edición de usuario (RED)', () => {
 
     await waitFor(() => expect(toastError).toHaveBeenCalled())
     expect(typeof toastError.mock.calls[0][0]).toBe('string')
-    expect(toastError.mock.calls[0][0]).toMatch(/email: value is not a valid email address/)
+    expect(toastError.mock.calls[0][0]).toMatch(/Valor no válido en «email»/)
     expect(alertSpy.mock.calls.filter((c) => typeof c[0] !== 'string').length).toBe(0)
     alertSpy.mockRestore()
   })

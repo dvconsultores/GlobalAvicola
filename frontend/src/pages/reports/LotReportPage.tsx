@@ -53,8 +53,11 @@ export default function LotReportPage() {
  end_date: t('lots.end', 'Cierre'), total_birds: t('reports.birds', 'Aves'),
  males: t('reports.males', 'Machos'), females: t('reports.females', 'Hembras'),
  total_events: t('dashboard.totalEvents', 'Total eventos'),
+ // `UAT S1` · AC-S1-R02: ubicación del lote en el exporte.
+ farm_name: t('reports.exportHeaders.farm_name', 'Granja'),
+ house_name: t('reports.exportHeaders.house_name', 'Galpón'),
  }
- const rows = lotReportToRows(report)
+ const rows = lotReportToRows(report, (k, d) => String(t(k, d ?? k)))
  const lotCode = report?.lot?.lot_code ?? id
  const filename = `GlobalAvicola_Lote_${lotCode}_${new Date().toISOString().slice(0,10)}`
  if (format === 'excel') await exportToExcel(rows, headers, filename)
@@ -70,7 +73,9 @@ export default function LotReportPage() {
 
  return (
  <div className="py-4 sm:py-6">
- <BackNavigation to="/reports" className="mb-4" />
+ {/* `UAT S1` · AC-S1-R01: «Volver» regresa a la pantalla de origen (el detalle del lote
+     si se llegó desde él); en enlace directo, el fallback es el propio lote. */}
+ <BackNavigation fallbackTo={`/lots/${id}`} className="mb-4" />
  <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
  <h1 className="text-2xl font-bold text-[#1E3A5F]">{t('reports.lotReport')}: {report.lot?.lot_code || `${t('lots.title')} #${report.lot?.id}`}</h1>
  <div className="flex gap-2">
@@ -87,8 +92,21 @@ export default function LotReportPage() {
  <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
  <h2 className="font-semibold text-slate-700 mb-3">{t('reports.lotInfo')}</h2>
  <dl className="space-y-2 text-sm">
- <div className="flex justify-between"><dt className="text-slate-500">{t('common.status')}</dt><dd>{report.lot?.status}</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('common.status')}</dt><dd>{t(`lotStatus.${report.lot?.status}`, String(report.lot?.status ?? '—'))}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('common.start')}</dt><dd>{report.lot?.start_date || '—'}</dd></div>
+ {/* `UAT S1` · AC-S1-R02: tipo, granja, galpón y cierre cuando la API los entrega. */}
+ {report.lot?.bird_type && (
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type', 'Tipo')}</dt><dd>{t(`birdTypes.${String(report.lot.bird_type)}`, String(report.lot.bird_type))}</dd></div>
+ )}
+ {report.lot?.farm_name && (
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm', 'Granja')}</dt><dd>{report.lot.farm_name}</dd></div>
+ )}
+ {report.lot?.house_name && (
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house', 'Galpón')}</dt><dd>{report.lot.house_name}</dd></div>
+ )}
+ {report.lot?.end_date && (
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.end', 'Cierre')}</dt><dd>{report.lot.end_date}</dd></div>
+ )}
  </dl>
  </div>
  {report.opening_balance && (
@@ -107,7 +125,7 @@ export default function LotReportPage() {
  {report.event_summary?.by_type && (
  <div className="flex flex-wrap gap-2">
  {Object.entries(report.event_summary.by_type).map(([k, v]) => (
- <span key={k} className="px-2 py-1 bg-slate-100 rounded-lg text-xs">{k}: {v as number}</span>
+ <span key={k} className="px-2 py-1 bg-slate-100 rounded-lg text-xs">{t(`eventsShort.${k}`, k)}: {v as number}</span>
  ))}
  </div>
  )}

@@ -111,6 +111,8 @@ describe('R-190 · galpón del evento en location_events (sin recepción)', () =
     await abrirEvento(/Progenitoras — Cría/, /bird_exit/)
     await elegirEnSelector(/Seleccionar lote/, /L-GP-2099-01/)
     await elegirEnSelector(/Galpón del evento/, /Galpón 1/)
+    // `F6` §4: la salida exige cantidad > 0 en cliente (BR-01); sin ella no habría POST que mirar.
+    cambio('bird_movements.0.quantity', '12')
     const payload = await guardar()
     expect(payload.house_id).toBe(11)
   })

@@ -48,13 +48,19 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus
+    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus, Vaccine
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
         a = Company(name=f"{PREFIJO}A-{uuid.uuid4().hex[:6]}", is_active=True)
         b = Company(name=f"{PREFIJO}B-{uuid.uuid4().hex[:6]}", is_active=True)
         s.add_all([a, b])
+        await s.flush()
+        # `RR-21`: la vacunación exige una vacuna del catálogo **de la empresa** del evento (`BR-07`); el maestro
+        # sembrado pertenece a otra empresa, así que el escenario siembra la suya.
+        vacuna = Vaccine(company_id=a.id, name=f"{PREFIJO}VAC-{uuid.uuid4().hex[:6]}", is_active=True)
+        vacuna_b = Vaccine(company_id=b.id, name=f"{PREFIJO}VACB-{uuid.uuid4().hex[:6]}", is_active=True)
+        s.add_all([vacuna, vacuna_b])
         await s.flush()
         unidades = {u.code: u for u in (await s.execute(select(BusinessUnit))).scalars()}
         hab = {}
@@ -118,7 +124,8 @@ async def esc(test_database_url):
         await s.flush()
         await s.commit()
         d = {"url": test_database_url, "a": a.id, "b": b.id, "granja": granja.id, "galpon": galpon.id,
-             "granja_b": granja_b.id, "galpon_b": galpon_b.id, "lote": lote.id, "lote_h": lote_h.id, "lote_b": lote_b.id}
+             "granja_b": granja_b.id, "galpon_b": galpon_b.id, "lote": lote.id, "lote_h": lote_h.id, "lote_b": lote_b.id,
+             "vacuna": vacuna.id, "vacuna_b": vacuna_b.id}
         d.update({k: v.id for k, v in u.items()})
     yield d
     async with motor.begin() as c:
@@ -141,6 +148,7 @@ async def esc(test_database_url):
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p", "DELETE FROM roles WHERE name LIKE :p",
+            "DELETE FROM vaccines WHERE name LIKE :p",
             "DELETE FROM companies WHERE name LIKE :p",
         ):
             await c.execute(text(sql), p)
@@ -183,6 +191,9 @@ async def _evento_en(http_client, esc, estado: str, *, lote="lote", tipo="vaccin
     cuerpo = {"lot_id": esc[lote], "event_type": tipo, "event_date": recent_event_date(),
               "farm_id": esc["granja_b" if lote == "lote_b" else "granja"],
               "house_id": esc["galpon_b" if lote == "lote_b" else "galpon"]}
+    if tipo == "vaccination":
+        # `RR-21` (SPEC 015 §4.1): la vacunación exige la vacuna aplicada, del catálogo de la empresa del evento.
+        cuerpo["vaccine_id"] = esc["vacuna_b"] if lote == "lote_b" else esc["vacuna"]
     actor = "rev_b" if lote == "lote_b" else "op"
     r = await http_client.post("/api/v1/operations", headers=_token(esc[actor]), json=cuerpo)
     assert r.status_code == 201, r.text

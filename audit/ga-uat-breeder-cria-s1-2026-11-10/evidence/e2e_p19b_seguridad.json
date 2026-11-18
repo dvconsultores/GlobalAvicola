@@ -1,0 +1,9 @@
+{
+  "3a_sin_auth": 401,
+  "3a_usuario_sin_corrections": 403,
+  "3a_autorizado": 200,
+  "3a_evento_fuera_de_alcance": 404,
+  "3a_evento_inexistente": 404,
+  "3b_admin_otra_empresa": 404,
+  "3b_admin_misma_empresa": 200
+}

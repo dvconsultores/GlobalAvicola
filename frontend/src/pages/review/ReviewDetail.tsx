@@ -7,8 +7,12 @@ import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
+import { describirCampoCorregido } from '../../utils/correctionFields'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
+
+/** `015` · AC-S1-C05: estados en los que el backend admite correcciones. */
+const CORREGIBLES = ['registered', 'pending_review', 'in_review', 'returned', 'rejected']
 
 const STATUS_COLORS: Record<string, string> = {
  registered: 'bg-sky-100 text-sky-800', pending_review: 'bg-amber-100 text-amber-800',
@@ -141,9 +145,9 @@ export default function ReviewDetail() {
  <dl className="space-y-2 text-sm">
  <div className="flex justify-between"><dt className="text-slate-500">{t('common.type')}</dt><dd>{getEventLabel(t, event.event_type)}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('common.date')}</dt><dd>{event.event_date}</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">{t('review.lot')}</dt><dd className="font-mono">#{event.lot_id}</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">{t('review.farm')}</dt><dd>{event.farm_id || '-'}</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">{t('review.house')}</dt><dd>{event.house_id || '-'}</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('review.lot')}</dt><dd className="font-mono">{event.lot_code ?? `#${event.lot_id}`}</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('review.farm')}</dt><dd>{event.farm_name ?? event.farm_id ?? '-'}</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('review.house')}</dt><dd>{event.house_name ?? event.house_id ?? '-'}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('common.observations')}</dt><dd className="max-w-[200px] truncate">{event.observations || '-'}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('common.version')}</dt><dd>v{event.version}</dd></div>
  </dl>
@@ -214,8 +218,9 @@ export default function ReviewDetail() {
  </h3>
  {corrections.map((c: any) => (
  <div key={c.id} className="text-xs text-slate-600 mb-2 p-2 bg-amber-50 rounded-lg">
- <p><strong>{c.field_name}:</strong> "{c.original_value}" → "{c.corrected_value}"</p>
- <p className="text-slate-400 mt-0.5">{c.reason} — {formatFechaHora(c.created_at, i18n.language)}</p>
+ <p><strong>{describirCampoCorregido(t, c.field_name)}:</strong> "{c.original_value}" → "{c.corrected_value}"</p>
+ <p className="text-slate-400 mt-0.5">{c.reason} — {formatFechaHora(c.created_at, i18n.language)}
+ {c.corrected_by_name ? ` · ${c.corrected_by_name}` : ''}</p>
  </div>
  ))}
  </div>
@@ -287,7 +292,7 @@ export default function ReviewDetail() {
  </div>
  </>
  )}
- {can({ permission: 'corrections:correct' }) && <Link to={`/review/${id}/correct`}
+ {can({ permission: 'corrections:correct' }) && CORREGIBLES.includes(event.status) && <Link to={`/review/${id}/correct`}
  className="bg-amber-100 text-amber-700 px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-amber-200 transition inline-flex items-center gap-1">
  <Pencil size={14} aria-hidden="true" />
  {t('review.correct')}

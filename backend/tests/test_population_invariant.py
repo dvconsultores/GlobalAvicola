@@ -414,4 +414,5 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # (`/api/v1/sap/inbound/*`: readiness, objects, sync, sync/{object_type}, jobs, records,
     # errors, mappings GET/PUT y mappings/{mapping_id}), 226 → 236. SPEC 006 (cutover v2) añade
     # el listado y el detalle de batches, el preview por BU y el informe de errores, 236 → 240.
-    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 240
+    # 241: +1 `GET /corrections/events/{id}/correctable-fields` (SPEC 015 §3, S1-CORR-01).
+    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 241

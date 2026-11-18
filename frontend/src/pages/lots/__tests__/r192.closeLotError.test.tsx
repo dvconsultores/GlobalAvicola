@@ -127,7 +127,7 @@ describe('R-192 · el cierre de lote no falla en silencio', () => {
     })
     montar()
     await abrirYConfirmarCierre()
-    await waitFor(() => expect(toastError).toHaveBeenCalledWith(expect.stringContaining('Field required')))
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(expect.stringContaining('Falta el dato obligatorio «lote»')))
     // La página sigue viva: el botón de cierre continúa disponible.
     expect(screen.getByRole('button', { name: /Cerrar Lote/ })).toBeInTheDocument()
   })

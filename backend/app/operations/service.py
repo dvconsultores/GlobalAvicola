@@ -58,6 +58,8 @@ from .validators import (
     validate_segregation,
     validate_birth_registration,
     validate_reception_reconciliation,
+    # `GA-UAT-BREEDER-CRIA-S1-2026-11-10` · `spec 015 §4.1`: el «no vacío» por operación (`RR-20`..`RR-23`).
+    validate_contenido_minimo,
     validate_water_consumption,
 )
 
@@ -201,6 +203,34 @@ class OperationsService:
                    BusinessUnit.code == code)
         )).scalar_one_or_none()
 
+    async def _unidad_de_la_granja(self, farm_id: int) -> str | None:
+        """`GA-UAT-BREEDER-CRIA-S1` · `spec 015 §5` · `D1`: la cadena **inequívoca** de la granja.
+
+        «Inequívoca» es un hecho del dato, no una inferencia: **todos** los lotes vivos (no
+        cancelados) de esa granja con cadena declarada pertenecen a **una sola** cadena, y esa
+        unidad está **efectiva** para quien opera. Se lee de `Lot.bird_type` —la misma fuente
+        que `_unidad_del_lote`— y nunca del nombre de la granja ni del rol del actor
+        (`GA-REM-040 §11.4`).
+
+        Sin lote único —granja sin lotes, lotes de dos cadenas o unidad no efectiva— devuelve
+        `None`: el evento **nace pendiente de clasificar** (`GA-REM-040 §11`), sin inventar una
+        unidad falsa (`AC-S1-T04`). `Lot.status != CANCELLED` porque un lote cancelado no
+        compone la cadena operativa de la granja.
+        """
+        from ..masters.models import Lot, LotStatus
+
+        consulta = select(Lot.bird_type).where(
+            Lot.company_id == self.company_id,
+            Lot.farm_id == farm_id,
+            Lot.status != LotStatus.CANCELLED,
+            Lot.bird_type.is_not(None),
+        ).distinct()
+        tipos = (await self.db.execute(consulta)).scalars().all()
+        if len(tipos) != 1:
+            return None
+        unidad = tipos[0].value
+        return unidad if unidad in await self._unidades() else None
+
     async def exigir_unidad_operativa(self, *, lot_id: int | None = None, event=None,
                                       unidad_directa: str | None = None) -> None:
         """La guarda de escritura. `GA-REM-040-G §G.3` · `AC-C05` · `AC-W02…W05, W13, W14`.
@@ -290,9 +320,22 @@ class OperationsService:
         # estricta: con `hatchery` apagada la autoridad global deniega (`OD-16.e`) y sin
         # concesión el actor de empresa también (`OD-09`). `farm_inspection` no está en la
         # lista: su regla espera la decisión del propietario (`C-02`/`AOD-13`).
+        #
+        # `GA-UAT-BREEDER-CRIA-S1` · `spec 015 §5` · `D1` (`C-02`/`GL-OD-13`, opción A):
+        # `farm_inspection` sin lote deriva su unidad de la **granja**, y solo cuando es
+        # inequívoca (`_unidad_de_la_granja`: una sola cadena viva y efectiva para el actor).
+        # Sin cadena inequívoca la derivación es `None` y el evento **nace pendiente de
+        # clasificar** (`GA-REM-040 §11`), sin unidad falsa (`AC-S1-T04`).
+        unidad_derivada = (
+            await self._unidad_de_la_granja(data.farm_id)
+            if (data.lot_id is None
+                and event_type == models.EventType.FARM_INSPECTION
+                and data.farm_id)
+            else None
+        )
         await self.exigir_unidad_operativa(
             lot_id=data.lot_id,
-            unidad_directa=(UNIDAD_POR_TIPO_INEQUIVOCO.get(event_type)
+            unidad_directa=((UNIDAD_POR_TIPO_INEQUIVOCO.get(event_type) or unidad_derivada)
                             if data.lot_id is None else None),
         )
 
@@ -300,9 +343,13 @@ class OperationsService:
         # de incubadora se persiste **en su unidad** (la importación conserva su derivación de
         # lectura: su lote nace al aprobarla). Sin fila de habilitación no hay nada que
         # persistir y el evento queda pendiente como cualquier dato sin cadena.
+        # `GA-UAT-BREEDER-CRIA-S1` · `spec 015 §5` · `D1`: la inspección de granja de una sola
+        # cadena sigue el mismo patrón, con la unidad derivada de sus lotes.
         unidad_al_nacer = None
         if data.lot_id is None and event_type == models.EventType.HATCHERY_INSPECTION:
             unidad_al_nacer = await self._habilitacion_de_unidad("hatchery")
+        elif unidad_derivada is not None:
+            unidad_al_nacer = await self._habilitacion_de_unidad(unidad_derivada)
 
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
@@ -992,6 +1039,11 @@ class OperationsService:
         # exige; la cadena se deriva del lote (empresa efectiva), nunca del cuerpo.
         cadena_del_lote = await self._tipo_de_lote(data.lot_id)
         validate_water_consumption(event_type, data.water_liters, cadena_del_lote)
+        # `GA-UAT-BREEDER-CRIA-S1-2026-11-10` · `spec 015 §4.1`: el dato sin el cual la operación
+        # no dice nada (`RR-20`..`RR-23`) se exige en el alta, con las filas que este mismo
+        # servicio persiste y no con totales del cliente.
+        validate_contenido_minimo(event_type, data.vaccine_id, data.medication_id,
+                                  data.bird_movements, data.feed_movements)
         # `GA-REM-021-B` · `B01`: el cuadre de la recepción de reproductoras (`BR-20`); las alojadas
         # son las filas que este mismo servicio persiste, nunca un total enviado por el cliente.
         validate_reception_reconciliation(event_type, cadena_del_lote, data.received_total, data.dead_on_arrival,
@@ -1108,6 +1160,7 @@ class OperationsService:
         skip: int = 0,
         limit: int = 20,
         lot_id: Optional[int] = None,
+        lot_code: Optional[str] = None,
         farm_id: Optional[int] = None,
         event_type: Optional[str] = None,
         status: Optional[str] = None,
@@ -1141,6 +1194,14 @@ class OperationsService:
 
         if lot_id:
             query = query.where(models.OperationalEvent.lot_id == lot_id)
+        if lot_code and lot_code.strip():
+            # `AC-S1-I02`: el operador conoce el código del lote, no su id interno.
+            from ..masters.models import Lot as _Lot
+
+            patron = lot_code.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            query = query.where(models.OperationalEvent.lot_id.in_(
+                select(_Lot.id).where(_Lot.company_id == self.company_id,
+                                      _Lot.lot_code.ilike(f"%{patron}%", escape="\\"))))
         if farm_id:
             query = query.where(models.OperationalEvent.farm_id == farm_id)
         if event_type:
@@ -1232,6 +1293,15 @@ class OperationsService:
         lote_destino = await self.verificar_destino_de_edicion(event, cambios)
         if "water_liters" in cambios:  # `GA-REM-021-A`: la edición respeta `RR-11` y el tipo
             validate_water_consumption(event.event_type, cambios["water_liters"], await self._tipo_de_lote(lote_destino))
+        if "vaccine_id" in cambios or "medication_id" in cambios:
+            # `GA-UAT-BREEDER-CRIA-S1-2026-11-10` · `spec 015 §4.1`: la edición respeta `RR-21`/`RR-22`
+            # —vaciar la referencia deja la vacunación o la medicación sin su dato—. RR-20 y RR-23
+            # se revalidan en la corrección de filas, que es donde se puede tocar el contenido.
+            validate_contenido_minimo(
+                event.event_type,
+                cambios.get("vaccine_id", event.vaccine_id),
+                cambios.get("medication_id", event.medication_id),
+                event.bird_movements, event.feed_movements)
         if any(k in cambios for k in ("chicks_healthy", "chicks_weak")):  # `GA-REM-021-C`: la edición revalida `BR-21`
             validate_birth_registration(
                 event.event_type, await self._tipo_de_lote(lote_destino),

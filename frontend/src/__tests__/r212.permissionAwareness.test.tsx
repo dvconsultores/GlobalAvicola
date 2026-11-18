@@ -149,7 +149,7 @@ describe('R-212 · superficies conscientes del permiso (RED)', () => {
     ['corrección', '/review/9/correct', () => <CorrectionForm />, 403, PROHIBIDO],
     ['operaciones · 500', '/operations', () => <OperationListPage />, 500, ERROR_TXT],
   ] as any[])('AC-R212-04 · %s: 403/500 ⇒ estado distinguido (no «vacío»)', async (_n, path, Cmp, status, texto) => {
-    setSession(['reports:read', 'lots:read', 'users:read', 'audit:read', 'sap:read', 'reviews:read', 'reports:write'])
+    setSession(['reports:read', 'lots:read', 'users:read', 'audit:read', 'sap:read', 'reviews:read', 'reports:write'], ['broiler'])
     get.mockImplementation(() => Promise.reject({ response: { status } }))
     renderAt(path, Cmp())
     await waitFor(() => {

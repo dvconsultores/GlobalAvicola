@@ -1,0 +1,118 @@
+{
+  "spec": "015-breeder-cria-uat-s1",
+  "generado": "2026-11-18T14:01:46.031Z",
+  "ui": {
+    "pesaje": {
+      "vacio": "inline, 0 POST",
+      "guardado": 201
+    },
+    "vacunacion": {
+      "vacio": "mensaje inline, 0 POST",
+      "guardado": 201,
+      "vacuna": "S1P19A-vaccines-vdkzfj45"
+    },
+    "medicacion": {
+      "vacio": "mensaje inline, 0 POST",
+      "guardado": 201,
+      "medicamento": "S1P19A-medications-vdkzfj45"
+    },
+    "alimento": {
+      "vacio": "mensaje inline, 0 POST",
+      "guardado": 201
+    },
+    "agua": {
+      "vacio": "mensaje inline, 0 POST",
+      "cero": "bloqueado, 0 POST",
+      "litros": 120.5,
+      "guardado": 201,
+      "id": 219,
+      "capturas": [
+        "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p19_agua_vacio.png",
+        "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p19_agua_detalle.png"
+      ]
+    }
+  },
+  "agua": {
+    "id": 219,
+    "detalle": {
+      "lot_id": 101,
+      "farm_id": 98,
+      "house_id": 97,
+      "event_type": "water_consumption",
+      "event_date": "2026-11-18",
+      "observations": "",
+      "sap_document_ref": null,
+      "supplier_id": null,
+      "cause_id": null,
+      "cull_cause_id": null,
+      "vaccine_id": null,
+      "vaccination_route": null,
+      "vaccine_lot_number": null,
+      "medication_id": null,
+      "dosage_per_bird": null,
+      "treatment_days": null,
+      "destination_farm_id": null,
+      "destination_plant_id": null,
+      "transport_id": null,
+      "sample_size": null,
+      "extra_data": null,
+      "water_liters": 120.5,
+      "received_total": null,
+      "dead_on_arrival": null,
+      "rejected_on_arrival": null,
+      "chicks_healthy": null,
+      "chicks_weak": null,
+      "idempotency_key": null,
+      "id": 219,
+      "company_id": 1,
+      "status": "registered",
+      "version": 1,
+      "registered_by_id": 1,
+      "reviewed_by_id": null,
+      "approved_by_id": null,
+      "created_at": "2026-11-18T14:02:15.672353Z",
+      "updated_at": "2026-11-18T14:02:15.672353Z",
+      "lot_code": "S1P19A-LOTE-ixlnzp4g",
+      "farm_name": "S1P19A-granja-ixlnzp4g",
+      "house_name": "S1P19A-galpon-ixlnzp4g",
+      "registered_by_name": "Test test_admin",
+      "bird_movements": [],
+      "egg_movements": [],
+      "feed_movements": [],
+      "hatchery_params": [],
+      "inspection_details": [],
+      "egg_storage_records": [],
+      "evidences": []
+    }
+  },
+  "api": {
+    "salidaSinTransporte": {
+      "id": 218,
+      "status": 201
+    }
+  },
+  "escenario": {
+    "companyId": 1,
+    "farmId": 98,
+    "houseId": 97,
+    "lotId": 101,
+    "codigo": "S1P19A-LOTE-ixlnzp4g"
+  },
+  "breeder": {
+    "antes": true,
+    "habilitadoPorElTest": false
+  },
+  "catalogos": {
+    "vacuna": "S1P19A-vaccines-vdkzfj45",
+    "medicamento": "S1P19A-medications-vdkzfj45",
+    "maestros": {
+      "causaMortalidadId": 14,
+      "causaDescarteId": 16,
+      "vacunaId": 14,
+      "medicamentoId": 40,
+      "alimentoId": 14,
+      "proveedorId": 14,
+      "transporteId": 14
+    }
+  }
+}

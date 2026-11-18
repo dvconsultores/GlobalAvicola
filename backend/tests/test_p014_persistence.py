@@ -42,6 +42,8 @@ def _payload(**extra) -> dict:
         "lot_id": 2,
         "event_type": "vaccination",
         "event_date": recent_event_date(),
+        # `spec 015 §4.1` (`RR-21`): una vacunación sin vacuna ya no se registra.
+        "vaccine_id": 1,
         "bird_movements": [{"sex": "mixed", "quantity": 10}],
     }
     base.update(extra)

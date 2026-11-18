@@ -266,6 +266,7 @@
     "previous": "Previous",
     "required": "Required",
     "farm": "Farm",
+    "house": "House",
     "allFarms": "All farms",
     "lotCode": "Lot",
     "registeredBy": "Registered by",
@@ -643,6 +644,8 @@
     "detail": "Detail",
     "id": "ID",
     "lot": "Lot",
+    "lotFilterPlaceholder": "Lot ID",
+    "lotFilterNumeric": "Enter the numeric lot ID (digits only)",
     "farm": "Farm",
     "house": "House",
     "birdMovements": "Bird Movements",
@@ -654,6 +657,11 @@
     "batchNamePrompt": "Review batch name:",
     "obsPrompt": "Observations (required):",
     "actionCompleted": "Action \"{{action}}\" completed",
+    "actionDone": {
+      "start": "Review started",
+      "complete": "Review completed",
+      "return": "Record returned"
+    },
     "batchCreated": "Batch \"{{name}}\" created with {{count}} events",
     "errorLoading": "Error loading events",
     "errorAction": "Error in action",
@@ -738,7 +746,7 @@
     "waterConsumption": "Water Consumption",
     "waterL": "Water (L)",
     "weightG": "Weight (g)",
-    "lotReportLink": "Lot #{{id}} Report",
+    "lotReportLink": "Lot {{code}} Report",
     "sapComparisonLink": "SAP Comparison",
     "animalWelfare": "Animal Welfare",
     "vaccinationEfficiency": "Vaccination Efficiency",
@@ -750,6 +758,9 @@
     "onlyApproved": "Indicators are computed only from approved data",
     "onlyApprovedDetail": "This lot does not yet have enough approved records, so its indicators show no value instead of zero.",
     "selectLot": "Select lot",
+    "noLotsTitle": "No lots available",
+    "noLotsHint": "There are no lots visible to your user. Reports are generated per lot.",
+    "kpiExportTitle": "KPIs — Lot {{lot}}",
     "exportHeaders": {
       "lot_id": "Lot ID",
       "mortality_rate": "Mortality %",
@@ -759,7 +770,9 @@
       "total_eggs": "Eggs",
       "hen_day_pct": "% Laying",
       "chicks_born": "Chicks born",
-      "hatchability_pct": "% Hatchability"
+      "hatchability_pct": "% Hatchability",
+      "farm_name": "Farm",
+      "house_name": "House"
     }
   },
   "audit": {
@@ -780,6 +793,7 @@
       "updated": "Updated",
       "corrected": "Corrected",
       "review_started": "Review started",
+      "started_review": "Review started",
       "review_completed": "Review completed",
       "returned": "Returned",
       "approved": "Approved",
@@ -994,6 +1008,7 @@
     "title": "Operations",
     "subtitle": "Operational record",
     "lot": "Lot",
+    "lotCodeFilter": "Lot code",
     "selectLot": "Select lot...",
     "recordType": "Record Type",
     "selectType": "Select type...",
@@ -1013,6 +1028,14 @@
     "eventHouseRequired": "This event requires a house (the lot does not declare one)",
     "cuadreRequired": "Complete the reception reconciliation (received, dead on arrival and rejected)",
     "farmRequired": "This event requires a farm",
+    "quantityRequired": "Enter a quantity greater than zero.",
+    "waterLitersRequired": "Enter the liters of water (greater than zero).",
+    "weightRequired": "Enter the average weight of at least one sex (greater than zero).",
+    "vaccineRequired": "Select the vaccine applied.",
+    "medicationRequired": "Select the medication applied.",
+    "feedRequired": "Enter the amount of feed (kg) greater than zero.",
+    "weekPlaceholder": "e.g. 12",
+    "requiredLegend": "* Required field",
     "mixedExclusive": "Do not mix unsexed chicks with males or females in the same record",
     "chicksRequired": "Complete healthy and weak chicks (required in the hatchery chain)",
     "receivedTotal": "Received quantity (birds)",
@@ -1117,6 +1140,20 @@
     "importCountryPlaceholder": "e.g. France",
     "importLotAutoNote": "If you don't select a lot, one will be created automatically when the import is approved.",
     "lotAutoPending": "Created on approval",
+    "pendingClassification": {
+      "title": "Pending classification",
+      "link": "Pending classification",
+      "intro": "These records have no unambiguous productive chain (for example, an inspection of a farm whose lots belong to several chains). They are shown here until an administrator classifies them; they do not appear in the normal history.",
+      "empty": "There are no records pending classification.",
+      "columns": {
+        "type": "Record type",
+        "date": "Event date",
+        "farm": "Farm",
+        "house": "House",
+        "registeredBy": "Registered by",
+        "status": "Status"
+      }
+    },
     "sanitaryCert": "Sanitary certificate",
     "sanitaryCertPlaceholder": "Certificate no.",
     "quarantineDays": "Quarantine days",
@@ -1261,6 +1298,8 @@
     "title": "Lots",
     "newLot": "New Lot",
     "noLots": "No lots",
+    "noUnitsTitle": "No business units assigned",
+    "noUnitsHint": "Your user has no enabled business units. Please request access from the administrator.",
     "activeCount": "active",
     "closedCount": "closed",
     "viewDetail": "View Detail",
@@ -1584,7 +1623,15 @@
     "within": "Within standard curve",
     "above": "Above standard curve",
     "noReference": "No curve reference",
-    "noReferenceHelp": "No standard curve applies at this age."
+    "noReferenceHelp": "No standard curve applies at this age.",
+    "reasons": {
+      "no_curve_assigned": "The lot has no weight curve assigned",
+      "lot_without_start_date": "The lot has no start date",
+      "lot_without_genetic_line": "The lot has no genetic line",
+      "curve_without_points": "The curve has no reference points",
+      "event_before_lot_start": "The event is before the lot start",
+      "age_outside_curve_table": "The lot age is outside the curve table"
+    }
   },
   "notifications": {
     "title": "Notifications",
@@ -1618,5 +1665,46 @@
   },
   "home": {
     "noLanding": "No home module is available for your profile. Use the side menu to reach the sections you are allowed to use."
+  },
+  "corrections": {
+    "row": "row {{id}}",
+    "noFields": "This event cannot be corrected in its current state.",
+    "correctedRequired": "Enter the corrected value.",
+    "valueNumeric": "The value must be a number.",
+    "reasonMin": "The reason must be at least 5 characters long.",
+    "sex": {
+      "male": "Male",
+      "female": "Female",
+      "mixed": "Mixed"
+    },
+    "fields": {
+      "observations": "Observations",
+      "event_date": "Event date",
+      "sap_document_ref": "SAP document",
+      "vaccination_route": "Administration route",
+      "vaccine_lot_number": "Vaccine lot",
+      "dosage_per_bird": "Dosage per bird",
+      "treatment_days": "Treatment days",
+      "sample_size": "Sample size",
+      "water_liters": "Water liters",
+      "chicks_healthy": "Healthy chicks",
+      "chicks_weak": "Weak chicks",
+      "supplier_id": "Supplier (code)",
+      "cause_id": "Cause (code)",
+      "cull_cause_id": "Cull cause (code)",
+      "vaccine_id": "Vaccine (code)",
+      "medication_id": "Medication (code)",
+      "transport_id": "Transport (code)",
+      "destination_farm_id": "Destination farm (code)",
+      "destination_plant_id": "Destination plant (code)",
+      "bird_movements": {
+        "avg_weight": "Average weight",
+        "quantity": "Quantity",
+        "week_number": "Week"
+      },
+      "feed_movements": {
+        "quantity_kg": "Feed quantity (kg)"
+      }
+    }
   }
 }

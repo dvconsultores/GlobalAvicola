@@ -7,6 +7,7 @@ from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
 from ..tenancy import verificar_vinculo_generacional
+from ..operations.enrichment import anotar_nombres_de_lotes
 from .service import LotService
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/lots", tags=["Lots"])
@@ -28,11 +29,14 @@ async def list_lots(
     search: str = Query(""),
     farm_id: int | None = Query(None),
     status: str | None = Query(None),
+    #: `AC-S1-B01`: tipo de ave **opcional**; solo estrecha el alcance de unidad, nunca lo amplía.
+    bird_type: str | None = Query(None),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("lots", "read")),
 ):
     items, total = await _service(db, current_user).get_lots(
         skip=skip, limit=limit, search=search, farm_id=farm_id, status=status,
+        bird_type=bird_type,
     )
     # `R-220` · A8 (C#33): el total ya se calculaba y se descartaba — paginación real.
     response.headers["X-Total-Count"] = str(total)
@@ -58,6 +62,9 @@ async def get_lot(
 ):
     service = _service(db, current_user)
     lot = await service.get_lot(lot_id)
+    # `AC-S1-I01`: el detalle declaraba `farm_name`/`house_name` y los devolvía nulos porque
+    # nadie los anotaba — la pantalla caía a los identificadores numéricos.
+    await anotar_nombres_de_lotes(db, [lot])
     result = schemas.LotDetailRead.model_validate(lot)
     # Eager load phases and opening balance
     result.phases = [

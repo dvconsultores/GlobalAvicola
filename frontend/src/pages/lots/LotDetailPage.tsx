@@ -346,7 +346,7 @@ export default function LotDetailPage() {
  ev.status === 'approved' ? 'bg-emerald-100 text-emerald-700' :
  ev.status === 'registered' ? 'bg-blue-100 text-blue-700' :
  'bg-slate-100 text-slate-600'
- }`}>{ev.status}</span>
+ }`}>{String(t(`status.${ev.status}`, ev.status))}</span>
  </div>
  ))}
  </div>
@@ -366,8 +366,9 @@ export default function LotDetailPage() {
  {/* `R-182`: día natural tal como se capturó (corte del ISO en UTC, sin salto de zona). */}
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.plannedClose')}</dt><dd>{lot.planned_close_date ? String(lot.planned_close_date).slice(0, 10) : '—'}</dd></div>
  <div className="flex justify-between"><dt className="text-slate-500">{t('lots.type')}</dt><dd>{stageLabel}</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_id || '—'}</dd></div>
- <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house')}</dt><dd>{lot.house_id || '—'}</dd></div>
+ {/* `F3` · AC-S1-I01: nombres del contrato (`farm_name`/`house_name`), no ids. */}
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.farm')}</dt><dd>{lot.farm_name ?? lot.farm_id ?? '—'}</dd></div>
+ <div className="flex justify-between"><dt className="text-slate-500">{t('lots.house')}</dt><dd>{lot.house_name ?? lot.house_id ?? '—'}</dd></div>
  </dl>
  </div>
 

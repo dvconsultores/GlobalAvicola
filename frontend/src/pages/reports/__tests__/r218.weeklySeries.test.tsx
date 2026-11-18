@@ -76,6 +76,8 @@ describe('R-218 · serie semanal del lote (RED)', () => {
     setSession(['reports:read'])
     get.mockImplementation((url: string) => {
       const u = String(url)
+      // `UAT S1` · AC-S1-R01: la pantalla ya no fija el lote 2 — el lote sale de `/lots`.
+      if (u.startsWith('/lots')) return Promise.resolve({ data: [{ id: 2, lot_code: 'L-02', status: 'active' }], headers: {} })
       if (u.includes('/reports/lot/2/weekly')) return Promise.resolve({ data: { ...SERIE, lot_id: 2 } })
       if (u.includes('/reports/kpis?lot_id=2')) return Promise.resolve({ data: {} })
       return Promise.resolve({ data: [], headers: {} })
