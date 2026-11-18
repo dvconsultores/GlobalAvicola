@@ -133,3 +133,13 @@ Respuestas verificadas (P19-5a / P19C):
 - `OWNER_UAT_READY = NO` hasta actualizar el servidor
 - `OWNER_ACCEPTED = NO`
 
+## 10. Adenda — despliegue ejecutado tras la decisión de la Owner
+
+Decisión Owner (2026-11-18): avanzar `develop` a `main`. `develop` (7610ece, commit de Andres «fix» que cambia solo `backend/scripts/bootstrap_first_superuser.py` y `create-pr.sh`) no era ancestro de `main`, así que no era posible un fast-forward: se hizo un merge no-ff de `main` (043324b) sobre el tip de `develop` y se pusheó a `develop` (7610ece..ebc4350); el árbol resultante solo difiere de `main` en esos dos scripts (código de aplicación idéntico). Los workflows `Docker Push — Backend (dev)` y `Frontend (dev)` para ebc4350 terminaron con éxito (2026-11-18 14:20Z).
+
+Verificación del runtime tras el despliegue (sin credenciales; solo lecturas públicas): el index de https://avicola.globaldv.net pasó de `assets/index-D-PzEPNO.js` (Last-Modified 2026-11-17 23:02Z) a `assets/index-BT7-4mmE.js` (Last-Modified 2026-11-18 05:47:20Z, coincidente con la imagen construida desde `main` 23d6e39 entre 05:46Z y 05:48Z); el bundle nuevo CONTIENE los marcadores de esta entrega (`lots-no-units`, `toast-container`, `pending-classification`, `reject-reason`, `lot-filter-hint`, `operation-filter-lot-code`, `correctable-fields`, «Valor no válido en»); en la API, `GET /api/v1/corrections/events/1/correctable-fields` y `GET /api/v1/operations/pending-classification` responden 401 (la ruta existe) frente al 404 de una ruta inexistente. El código de aplicación es idéntico en 23d6e39, 043324b y ebc4350 (`git diff --stat 23d6e39 043324b -- backend/app frontend/src` vacío).
+
+Resultado: `DEPLOYMENT_PARITY = PARTIAL` — la presencia funcional de la entrega en frontend y backend está demostrada por marcadores, pero el SHA exacto desplegado NO es demostrable porque la aplicación no expone un marcador de versión (recomendación: endpoint/etiqueta de build con el SHA). Por el criterio estricto, `FINAL_HEAD_TECHNICALLY_CERTIFIED = NO` hasta demostrar el SHA; `OWNER_UAT_READY = YES` condicionado (el runtime contiene todos los entregables); `OWNER_ACCEPTED = NO`.
+
+Observación nueva **O-10** (ajena a esta spec): en el árbol de `develop` el test `backend/tests/test_first_superuser_bootstrap.py::test_t_043_02_second_run_is_idempotent_and_does_not_rotate_password` falla («El correo reservado del bootstrap ya pertenece a otro usuario; se rehúsa sobrescribirlo»): el commit 7610ece cambió el script sin actualizar su test; ya fallaba en `develop` antes de este merge; el CI oficial no ejecuta tests; se informa a su autor. Decisión Owner O-3 (2026-11-18): resolver desde la UI por código de unidad (spec delta + implementación en un ciclo propio, aún NO implementado).
+

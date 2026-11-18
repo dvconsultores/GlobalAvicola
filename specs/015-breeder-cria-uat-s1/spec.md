@@ -122,11 +122,12 @@ Saldo por sexo (**D4**), transporte obligatorio (**D3**), SAP real, **migracione
 |---|---|---|
 | **O-1** | El detalle de evento no publica `id` por fila de submovimiento. | Las correcciones usan `row_id` de `correctable-fields`; no requiere cambio de contrato. |
 | **O-2** | Los `422` de validación estructural de pydantic llegan en inglés desde la API. | La UI los traduce a español; límite documentado. |
-| **O-3** | **FUNCTIONAL GAP** — la clasificación no es utilizable ni por UI ni por API (el `company_business_unit_id` no se expone). | Decisión Owner pendiente; ver `POSTMERGE_CERTIFICATION.md` §6. |
+| **O-3** | **FUNCTIONAL GAP** — la clasificación no es utilizable ni por UI ni por API (el `company_business_unit_id` no se expone). | Decisión Owner pendiente; ver `POSTMERGE_CERTIFICATION.md` §6. Decisión Owner 2026-11-18: resolver desde la UI por código de unidad; pendiente de implementar. |
 | **O-4** | Las correcciones de campos de catálogo (`cause_id`, `vaccine_id`, …) se hacen por código numérico. | Sin selector en el formulario; funcional pero poco ergonómico. |
 | **O-5** | El usuario sembrado `test_approver` no tiene `review:read`. | Dato de pruebas, no de producto; se ajusta en el seed si se automatiza el UAT. |
 | **O-6** | `POST /operations` sobre un lote de otra unidad responde 400 «Lote no encontrado». | Anti-enumeración, comportamiento previo; se mantiene. |
 | **O-7** | AC-S1-WATER: sin evidencia suficiente en el UAT original (`UAT_EVIDENCE_INSUFFICIENT`). | **CERRADA:** `WATER_UAT=PASS` en el ciclo post-merge. |
 | **O-8** | **P-17-G · operator** da una falsa inconsistencia (`/cutover`: UI permite=false con API=200) cuando corre tras `P-16 cutover-breeder` en la misma base; reproducido en el baseline `7ff5451` con el mismo par de specs. | Defecto del TEST (fixture P-16 concede `cutover:*` a todos los roles + perfil móvil del operador con `WebOnlyRoute`); CORREGIDO en `proceso-p17d…`; no afecta saldo ni operación. |
 | **O-9** | La suite E2E completa con 2 workers (por defecto) muestra flakiness por carga/concurrencia en specs ajenos (`tests/operations.spec.ts`, timeout de P-17-A); aislados y en serie pasan. | Ejecutar la suite con `--workers=1`. El CI oficial solo construye imágenes (no ejecuta E2E). |
+| **O-10** | En `develop` el test `test_t_043_02…` del bootstrap del superusuario falla tras el commit 7610ece (script cambiado sin actualizar su test). | Ajeno a la spec 015; informado a su autor; el CI oficial no ejecuta tests. |
 
