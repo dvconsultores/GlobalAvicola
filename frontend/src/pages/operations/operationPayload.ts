@@ -120,6 +120,66 @@ export function validarReglasDeNacimiento(datos: {
 }
 
 // ============================================================
+// `F6` · obligatorios por operación — paridad cliente-servidor (§4 · `RR-20`..`RR-23`)
+// ============================================================
+
+/** Número declarado: vacío/`NaN`/no numérico ⇒ `0` (vacío es ausencia, nunca un cero inventado). */
+const numeroDeclarado = (v: unknown): number => {
+  if (v === undefined || v === null || v === '') return 0
+  const n = Number(v)
+  return Number.isFinite(n) ? n : 0
+}
+
+/** Id de catálogo declarado: los ids arrancan en 1, así que «presente» es finito y > 0. */
+const idDeclarado = (v: unknown): boolean => numeroDeclarado(v) > 0
+
+/** Operaciones cuya cantidad total de aves (`Σ bird_movements[].quantity`) es obligatoria (`BR-01`). */
+const EVENTOS_CON_CANTIDAD_OBLIGATORIA = new Set(['mortality_recording', 'cull_recording', 'bird_exit'])
+
+export interface ContextoObligatorios {
+  derivedFarmId?: number | null
+  /** Galpón derivado del evento (`R-190`): la inspección de granja lo exige (`BR-08`). */
+  derivedHouseId?: number | null
+}
+
+/**
+ * `F6` · espejo en cliente de los obligatorios del servidor: inspección de granja con galpón
+ * (`BR-08`), cantidad > 0 en mortalidad/descarte/salida (`BR-01`), litros de agua, peso del
+ * pesaje (`RR-20`), vacuna (`RR-21`), medicamento (`RR-22`) y alimento (`RR-23`).
+ *
+ * Devuelve la clave i18n del primer dato que falta, o `null` si el envío puede viajar.
+ * La granja de la inspección se comprueba antes (`operations.farmRequired`). Sin autorrellenar
+ * ceros y sin sustituir la autoridad final del backend.
+ */
+export function validarObligatoriosDeOperacion(
+  datos: any,
+  contexto: ContextoObligatorios = {},
+): string | null {
+  const tipo = datos?.event_type
+  if (!tipo) return null
+  if (tipo === 'farm_inspection' && !contexto.derivedHouseId) return 'operations.eventHouseRequired'
+  if (EVENTOS_CON_CANTIDAD_OBLIGATORIA.has(tipo)) {
+    const total = (datos?.bird_movements || [])
+      .reduce((suma: number, fila: any) => suma + numeroDeclarado(fila?.quantity), 0)
+    if (total <= 0) return 'operations.quantityRequired'
+  }
+  if (tipo === 'water_consumption' && numeroDeclarado(datos?.water_liters) <= 0) {
+    return 'operations.waterLitersRequired'
+  }
+  if (tipo === 'weight_recording'
+    && !(datos?.bird_movements || []).some((fila: any) => numeroDeclarado(fila?.avg_weight) > 0)) {
+    return 'operations.weightRequired'
+  }
+  if (tipo === 'vaccination' && !idDeclarado(datos?.vaccine_id)) return 'operations.vaccineRequired'
+  if (tipo === 'medication' && !idDeclarado(datos?.medication_id)) return 'operations.medicationRequired'
+  if (tipo === 'feed_registration'
+    && !(datos?.feed_movements || []).some((fila: any) => numeroDeclarado(fila?.quantity_kg) > 0)) {
+    return 'operations.feedRequired'
+  }
+  return null
+}
+
+// ============================================================
 // `R-206` · vacíos del asistente — «cadena vacía de un opcional» ⇒ ausencia
 // ============================================================
 

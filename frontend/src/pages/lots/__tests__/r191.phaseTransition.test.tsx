@@ -108,7 +108,8 @@ describe('R-191 · transición de fase por UI', () => {
     })
     montar()
     await abrirYConfirmar()
-    await waitFor(() => expect(toastError).toHaveBeenCalledWith(expect.stringContaining('lot_id')))
+    await waitFor(() => expect(toastError).toHaveBeenCalledWith(expect.stringContaining('Falta el dato obligatorio «lote»')))
+    expect(toastError.mock.calls[0][0]).toContain('phase_id')
   })
 
   it('AC-R191-01 · tras 201 la fase activa se muestra y el botón desaparece', async () => {

@@ -251,6 +251,7 @@ class LotService:
     async def get_lots(
         self, skip: int = 0, limit: int = 20, search: str = "",
         farm_id: Optional[int] = None, status: Optional[str] = None,
+        bird_type: Optional[str] = None,
     ) -> tuple[list[Lot], int]:
         """List lots with filters and company isolation."""
         master_service = MasterService(self.db, Lot, self.current_user,
@@ -260,6 +261,22 @@ class LotService:
             filters["farm_id"] = farm_id
         if status:
             filters["status"] = status
+        # `AC-S1-B01`. El tipo es un filtro **estrecho**: se suma al predicado de unidad que
+        # aplica `MasterService`, de modo que pedir una cadena que no se tiene no la concede.
+        # Un valor fuera del catálogo es un `400` y no una lista vacía: el silencio haría
+        # pasar por «no hay lotes» lo que es una petición mal formada.
+        if bird_type:
+            validos = {e.value for e in BirdTypeEnum}
+            if bird_type not in validos:
+                # `status` en este ámbito es el parámetro de filtro homónimo, no el módulo de
+                # FastAPI: se importa con alias para no responder `500` por el nombre.
+                from fastapi import status as _http
+
+                raise HTTPException(
+                    status_code=_http.HTTP_400_BAD_REQUEST,
+                    detail="Tipo de ave no válido",
+                )
+            filters["bird_type"] = bird_type
         lotes, total = await master_service.get_all(
             skip=skip, limit=limit, search=search,
             search_fields=["lot_code"],

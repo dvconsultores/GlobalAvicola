@@ -83,6 +83,12 @@ const abrirEvento = async (evento: RegExp) => {
   fireEvent.click(await screen.findByRole('button', { name: evento }))
 }
 
+const cambio = (nombre: string, valor: string) => {
+  const el = document.querySelector(`[name="${nombre}"]`) as HTMLElement | null
+  expect(el, `campo ${nombre}`).toBeTruthy()
+  fireEvent.change(el!, { target: { value: valor } })
+}
+
 const guardar = async () => {
   fireEvent.click(await screen.findByRole('button', { name: /common\.save/ }))
   await waitFor(() => expect(post).toHaveBeenCalled())
@@ -97,6 +103,8 @@ describe('R-209 · selectores SAP guardan el código canónico', () => {
     await abrirEvento(/bird_exit/)
     await elegirEnSelector(/Seleccionar lote/, /L-BR-209-01/)
     await elegirEnSelector(/Seleccionar orden SAP/, /4500001234/)
+    // `F6` §4: la salida exige cantidad > 0 en cliente (BR-01).
+    cambio('bird_movements.0.quantity', '12')
     const payload = await guardar()
     expect(payload.sap_document_ref).toBe('4500001234')
   })
@@ -118,6 +126,8 @@ describe('R-209 · selectores SAP guardan el código canónico', () => {
     await abrirEvento(/bird_exit/)
     await elegirEnSelector(/Seleccionar lote/, /L-BR-209-01/)
     await elegirEnSelector(/Seleccionar orden SAP/, /REFERENCIA-VACIA/)
+    // `F6` §4: la salida exige cantidad > 0 en cliente (BR-01).
+    cambio('bird_movements.0.quantity', '12')
     const payload = await guardar()
     expect(payload.sap_document_ref ?? null).toBeNull()
   })

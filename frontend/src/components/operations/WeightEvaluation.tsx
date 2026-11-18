@@ -74,7 +74,7 @@ export default function WeightEvaluation({ eventId }: { eventId: number }) {
       {/* `R-220` · A5 (C#28): lo que el motor declara (p. ej. por qué no hay
  referencia) se muestra; callarlo obligaría a adivinar el motivo. */}
       {datos.reason && (
-        <p className="text-xs text-slate-500 mb-2">{datos.reason}</p>
+        <p className="text-xs text-slate-500 mb-2">{t(`curves.reasons.${datos.reason}`, datos.reason)}</p>
       )}
 
       <div className="space-y-2">

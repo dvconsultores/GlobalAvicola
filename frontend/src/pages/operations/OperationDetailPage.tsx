@@ -264,7 +264,7 @@ export default function OperationDetailPage() {
  <dt className="text-slate-500">{t('lots.lot')}</dt>
  <dd className="font-mono">
  {event.lot_id ? (
- <Link to={`/lots/${event.lot_id}`} className="text-[#5a9bba] hover:underline">#{event.lot_id}</Link>
+ <Link to={`/lots/${event.lot_id}`} className="text-[#5a9bba] hover:underline">{event.lot_code ?? `#${event.lot_id}`}</Link>
  ) : event.event_type === 'grandparent_import' ? (
  <span className="text-slate-500">{t('operations.lotAutoPending', 'Se creará al aprobar')}</span>
  ) : (
@@ -272,6 +272,13 @@ export default function OperationDetailPage() {
  )}
  </dd>
  </div>
+ {/* `F3` · AC-S1-I01: granja y galpón por nombre cuando el contrato los trae. */}
+ {event.farm_name && (
+ <div><dt className="text-slate-500">{t('common.farm', 'Granja')}</dt><dd>{event.farm_name}</dd></div>
+ )}
+ {event.house_name && (
+ <div><dt className="text-slate-500">{t('common.house', 'Galpón')}</dt><dd>{event.house_name}</dd></div>
+ )}
  <div><dt className="text-slate-500">{t('common.version')}</dt><dd>v{event.version}</dd></div>
  <div className="col-span-2"><dt className="text-slate-500">{t('common.observations')}</dt><dd>{event.observations || '—'}</dd></div>
  {event.sap_document_ref && <div className="col-span-2"><dt className="text-slate-500">{t('operations.sapRef')}</dt><dd className="font-mono">{event.sap_document_ref}</dd></div>}

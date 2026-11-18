@@ -569,3 +569,11 @@ KPI incubadora · genética · `test_clean_baseline` · `test_time_determinism` 
 
 `AC-R171-01…06` verdes · rojo válido (`AC-R171-01/02/03` rojas en `4f70273`; backend verde antes y después) · `vitest` completo · `R-170`/`B13` verdes ·
 `R-171` CERRADO (técnico).
+
+## Enmienda S1 (SPEC 015, 2026-11-18)
+
+Se añaden las reglas de servidor `RR-20..RR-23` de **«no vacío»** (peso `avg_weight>0`, `vaccine_id`,
+`medication_id`, `quantity_kg>0`) con mensajes orientados al campo, y la **paridad cliente-servidor** de
+obligatorios por operación (galpón, litros>0, cantidad total>0; vacío = ausente, `0` = cero conocido; Orden SAP
+sigue opcional) (SPEC 015 §4). El **transporte en salida de aves permanece opcional** (D3) y el saldo de
+mortalidad/descarte/salida se mantiene por **total de aves vivas**, no por sexo (D4).

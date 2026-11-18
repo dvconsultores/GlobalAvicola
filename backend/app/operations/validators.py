@@ -790,15 +790,51 @@ def validate_water_consumption(event_type, water_liters, bird_type) -> None:
     tipo = getattr(event_type, "value", event_type)
     if tipo == EventType.WATER_CONSUMPTION.value:
         if water_liters is None:
-            raise BusinessRuleViolation("El consumo de agua requiere `water_liters` (litros)", "B05")
+            raise BusinessRuleViolation("Registre los litros de agua consumidos", "B05")
         if water_liters <= 0:
-            raise BusinessRuleViolation("El consumo de agua debe ser mayor que cero (RR-11)", "RR-11")
+            raise BusinessRuleViolation("Los litros de agua deben ser mayores que cero", "RR-11")
         cadena = getattr(bird_type, "value", bird_type)
         if cadena not in UNIDADES_CON_CONSUMO_DE_AGUA:
             raise BusinessRuleViolation(
-                "El consumo de agua solo se registra en Reproductoras y Engorde (Bases p.2/4/12)", "B05")
+                "El consumo de agua solo se registra en lotes de Reproductoras y Engorde", "B05")
     elif water_liters is not None:
-        raise BusinessRuleViolation("`water_liters` solo se registra en un evento de consumo de agua", "B05")
+        raise BusinessRuleViolation("Los litros de agua solo se registran en un evento de consumo de agua", "B05")
+
+
+def validate_contenido_minimo(event_type, vaccine_id=None, medication_id=None,
+                              bird_movements=None, feed_movements=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S1-2026-11-10` · `SPEC 015 §4.1` — `RR-20`..`RR-23`.
+
+    El «no vacío» del registro: cada operación tiene un dato sin el cual el evento no dice
+    nada y que hasta ahora se aceptaba ausente con un `201`.
+
+    * `RR-20` · pesaje: al menos una fila de `bird_movements` con `avg_weight > 0`.
+    * `RR-21` · vacunación: `vaccine_id` presente.
+    * `RR-22` · medicación: `medication_id` presente.
+    * `RR-23` · alimento: al menos una fila de `feed_movements` con `quantity_kg > 0`.
+
+    Los mensajes son en español, orientados al campo y sin código interno: el identificador
+    de la regla viaja solo en el segundo argumento de `BusinessRuleViolation`, que el
+    manejador expone aparte. Las filas son iterables de objetos con atributo (nunca se
+    reenvía un total del cliente). Se aplica en el alta, la edición y la corrección.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo == EventType.WEIGHT_RECORDING.value:
+        pesos = [getattr(fila, "avg_weight", None) for fila in (bird_movements or [])]
+        if not any((peso or 0) > 0 for peso in pesos):
+            raise BusinessRuleViolation(
+                "Registre el peso promedio de al menos un sexo (mayor a cero)", "RR-20")
+    elif tipo == EventType.VACCINATION.value:
+        if vaccine_id is None:
+            raise BusinessRuleViolation("Seleccione la vacuna aplicada", "RR-21")
+    elif tipo == EventType.MEDICATION.value:
+        if medication_id is None:
+            raise BusinessRuleViolation("Seleccione el medicamento aplicado", "RR-22")
+    elif tipo == EventType.FEED_REGISTRATION.value:
+        kilos = [getattr(fila, "quantity_kg", None) for fila in (feed_movements or [])]
+        if not any((cantidad or 0) > 0 for cantidad in kilos):
+            raise BusinessRuleViolation(
+                "Registre la cantidad de alimento (kg) mayor a cero", "RR-23")
 
 
 def validate_segregation(registered_by_id: int, action_user_id: int, action: str = "aprobar") -> None:

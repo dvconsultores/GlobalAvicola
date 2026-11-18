@@ -23,14 +23,14 @@ import LotListPage from '../pages/lots/LotListPage'
 import OperationListPage from '../pages/operations/OperationListPage'
 import { useAuthStore } from '../stores/auth.store'
 
-function setSession(permissions: string[]) {
+function setSession(permissions: string[], units: string[] = []) {
   useAuthStore.setState({
     isAuthenticated: true, isLoading: false, token: null,
     user: {
       id: 9, username: 'r220f', first_name: 'R', last_name: 'C', email: 'r@x.com',
       role_id: 35, view_type: 'web', is_super_admin: false, company_id: 1,
       effective_company_id: 1, permissions,
-      company_business_units: [], granted_business_units: [], effective_business_units: [],
+      company_business_units: [], granted_business_units: units, effective_business_units: units,
     } as any,
   })
 }
@@ -43,7 +43,7 @@ beforeEach(() => {
 
 describe('R-220 · Lote A sexta tanda (RED)', () => {
   it('AC-R220-A·A8 · lotes: «Cargar más» usa X-Total-Count y trae la página siguiente', async () => {
-    setSession(['lots:read'])
+    setSession(['lots:read'], ['broiler'])
     get.mockImplementation((url: string) => {
       const u = String(url)
       if (u.startsWith('/lots?limit=100&skip=0')) {

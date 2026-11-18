@@ -6,9 +6,11 @@ import api from '../../services/api'
 import { formatFecha } from '../../utils/dates'
 import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
+import { hasAnyUnits, hasUnit } from '../../auth/navigation'
 import { useAuthStore } from '../../stores/auth.store'
 
-const BIRD_TYPE_KEYS = ['grandparent', 'breeder', 'broiler'] as const
+/** `F3` · AC-S1-B01: las cuatro unidades productivas canónicas (`OD-16.a`). */
+const BIRD_TYPE_KEYS = ['grandparent', 'breeder', 'broiler', 'hatchery'] as const
 
 const STATUS_COLORS: Record<string, string> = {
  active: 'bg-emerald-100 text-emerald-800',
@@ -36,13 +38,32 @@ export default function LotListPage() {
  // `R-212` · AC-04.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
 
- // `R-220` · A8 (C#33): el filtro por tipo es de cliente; la paginación no.
- const lots = birdType ? brutos.filter((l: any) => l.bird_type === birdType) : brutos
+ // `F3` · AC-S1-B01: sólo se ofrecen las unidades de negocio disponibles en la sesión
+ // (misma política que la navegación: `auth/navigation`).
+ const unidadesDisponibles = BIRD_TYPE_KEYS.filter((key) => hasUnit(user, key))
+ const hayUnidades = hasAnyUnits(user)
+ const unidadesKey = unidadesDisponibles.join('|')
+ // Un tipo persistido que ya no está disponible se ignora (y se limpia en el efecto de abajo).
+ const tipoActivo = birdType && unidadesDisponibles.includes(birdType as any) ? birdType : ''
 
- // `QA-018`: el filtro de granja viaja al servidor (`GET /lots?farm_id=`).
- const queryFiltros = farmId ? `&farm_id=${farmId}` : ''
+ // `F3` · AC-S1-I01: el tipo viaja al servidor, de modo que `X-Total-Count` y
+ // «Cargar más» son coherentes con el filtro. Como defensa en profundidad se
+ // vuelve a filtrar en cliente: si el backend devolviera lotes de otro tipo, la
+ // lista pintada nunca contradice la pestaña activa (`AC10`).
+ const lots = tipoActivo ? brutos.filter((l: any) => l.bird_type === tipoActivo) : brutos
+
+ // `QA-018`/`F3`: los filtros viajan al servidor (`GET /lots?farm_id=&bird_type=`).
+ const queryFiltros = `${farmId ? `&farm_id=${farmId}` : ''}${tipoActivo ? `&bird_type=${tipoActivo}` : ''}`
 
  const fetchLots = useCallback(async () => {
+ // Sin unidades de negocio no hay alcance productivo: no se pide nada al servidor.
+ if (!hayUnidades) {
+ setBrutos([])
+ setTotal(0)
+ setEstado('ok')
+ setLoading(false)
+ return
+ }
  setLoading(true)
  try {
  const r = await api.get(`/lots?limit=100&skip=0${queryFiltros}`)
@@ -55,7 +76,7 @@ export default function LotListPage() {
  } finally {
  setLoading(false)
  }
- }, [queryFiltros])
+ }, [queryFiltros, hayUnidades])
 
  // `QA-018`: catálogo de granjas para el filtro.
  useEffect(() => {
@@ -77,6 +98,11 @@ export default function LotListPage() {
  }
 
  useEffect(() => { fetchLots() }, [fetchLots])
+
+ // `F3` · AC-S1-B01: un tipo guardado que ya no está disponible se resetea a «Todos».
+ useEffect(() => {
+ if (birdType && !unidadesKey.split('|').includes(birdType)) setBirdType('')
+ }, [birdType, unidadesKey])
 
  // `004` · AC10: persistir el filtro para el retorno lista→detalle→lista.
  useEffect(() => {
@@ -113,21 +139,25 @@ export default function LotListPage() {
  )}
  </div>
 
- {/* Stage quick filters */}
+ {/* Stage quick filters — sólo unidades disponibles (`F3` · AC-S1-B01). El botón
+     «Todos» requiere al menos una unidad. */}
+ {hayUnidades && (
  <div className="flex flex-wrap gap-2 mb-4">
- <button onClick={() => setBirdType('')} aria-pressed={!birdType} data-testid="lot-filter-all"
- className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${!birdType ? 'bg-[#1E3A5F] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+ <button onClick={() => setBirdType('')} aria-pressed={!tipoActivo} data-testid="lot-filter-all"
+ className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${!tipoActivo ? 'bg-[#1E3A5F] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
  {t('common.all')}
  </button>
- {BIRD_TYPE_KEYS.map((key) => (
- <button key={key} onClick={() => setBirdType(birdType === key ? '' : key)} aria-pressed={birdType === key} data-testid={`lot-filter-${key}`}
- className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${birdType === key ? 'bg-[#1E3A5F] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
+ {unidadesDisponibles.map((key) => (
+ <button key={key} onClick={() => setBirdType(tipoActivo === key ? '' : key)} aria-pressed={tipoActivo === key} data-testid={`lot-filter-${key}`}
+ className={`px-3 py-1.5 rounded-lg text-sm font-medium transition ${tipoActivo === key ? 'bg-[#1E3A5F] text-white' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'}`}>
  {t(`birdTypes.${key}`)}
  </button>
  ))}
  </div>
+ )}
 
  {/* `QA-018`: filtro por granja (servidor). */}
+ {hayUnidades && (
  <div className="flex flex-wrap gap-3 mb-4">
  <label className="flex items-center gap-2 text-sm text-slate-600">
  <span>{t('common.farm', 'Granja')}</span>
@@ -144,7 +174,18 @@ export default function LotListPage() {
  </select>
  </label>
  </div>
+ )}
 
+ {/* `F3` · AC-S1-B01: sin unidades de negocio no hay alcance productivo. */}
+ {!hayUnidades && (
+ <div data-testid="lots-no-units" className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center">
+ <h2 className="text-lg font-semibold text-[#1E3A5F]">{t('lots.noUnitsTitle')}</h2>
+ <p className="text-sm text-slate-500 mt-2">{t('lots.noUnitsHint')}</p>
+ </div>
+ )}
+
+ {hayUnidades && (
+ <>
  {/* Mobile Cards */}
  <div className="lg:hidden space-y-3">
  {loading && <p className="text-slate-500 text-center py-8">{t('common.loading')}</p>}
@@ -216,6 +257,8 @@ export default function LotListPage() {
  {cargandoMas ? t('common.loading') : t('common.loadMore', 'Cargar más')}
  </button>
  </div>
+ )}
+ </>
  )}
  </div>
  )

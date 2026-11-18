@@ -13,6 +13,7 @@ from ..database import get_db
 from ..transaction import RutaTransaccional
 from ..dependencies import get_current_user, require_permission
 from . import schemas
+from .enrichment import anotar_nombres
 from .service import OperationsService
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/operations", tags=["Operations"])
@@ -45,6 +46,7 @@ async def list_events(
     skip: int = Query(0, ge=0),
     limit: int = Query(20, ge=1, le=100),
     lot_id: Optional[int] = Query(None),
+    lot_code: Optional[str] = Query(None, max_length=50, description="Código de lote (coincidencia parcial, sin distinguir mayúsculas)"),
     farm_id: Optional[int] = Query(None),
     event_type: Optional[str] = Query(None, description="Filter by event type"),
     status: Optional[str] = Query(
@@ -60,7 +62,7 @@ async def list_events(
     current_user: dict = Depends(require_permission("operations", "read")),
 ):
     items, total = await _service(db, current_user).get_events(
-        skip=skip, limit=limit, lot_id=lot_id, farm_id=farm_id,
+        skip=skip, limit=limit, lot_id=lot_id, lot_code=lot_code, farm_id=farm_id,
         event_type=event_type, status=status,
         registered_by_me=registered_by_me,
         date_from=date_from, date_to=date_to,
@@ -145,6 +147,9 @@ async def pending_classification(
                 .order_by(OperationalEvent.event_date.desc(), OperationalEvent.id.desc())
                 .offset(skip).limit(limit))
     filas = (await db.execute(consulta)).scalars().all()
+    # Nombres legibles: sin esto la bandeja solo mostraría ids y el autor no reconocería
+    # la granja ni el galpón del registro que debe clasificar.
+    await anotar_nombres(db, list(filas))
     return [schemas.OperationalEventRead.model_validate(e) for e in filas]
 
 
@@ -277,6 +282,10 @@ async def get_event(
     current_user: dict = Depends(require_permission("operations", "read")),
 ):
     event = await _service(db, current_user).get_event(event_id)
+    # `AC-S1-I01`. El detalle devolvía ids: se anotan los mismos nombres aditivos que el
+    # listado, sobre la instancia (no se persiste nada). Caen en `__dict__`, así que
+    # `event_dict` los arrastra sin tocar el resto del contrato.
+    await anotar_nombres(db, [event])
     # Convert ORM object to dict excluding relationships to avoid Pydantic validation errors
     event_dict = {
         k: v for k, v in event.__dict__.items()

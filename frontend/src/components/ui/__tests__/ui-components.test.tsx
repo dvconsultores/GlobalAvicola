@@ -209,6 +209,19 @@ describe('ConfirmDialog', () => {
  expect(root.parentElement).toBe(document.body)
  expect(root.className).toContain('z-[60]')
  })
+
+ // `F8`: el diálogo admite contenido propio (el motivo de un rechazo) DENTRO del panel;
+ // fuera de él el campo quedaba tapado por el overlay y la acción nunca se completaba.
+ it('renders children inside the dialog panel', () => {
+ render(
+ <ConfirmDialog open={true} onClose={() => {}} onConfirm={() => {}} title="Rechazar" message="Motivo">
+ <textarea data-testid="motivo" defaultValue="x" />
+ </ConfirmDialog>
+ )
+ const dialog = screen.getByRole('dialog')
+ const campo = screen.getByTestId('motivo')
+ expect(dialog.contains(campo)).toBe(true)
+ })
 })
 
 // ============================================================

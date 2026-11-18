@@ -24,14 +24,14 @@ import OperationListPage from '../pages/operations/OperationListPage'
 import MyPendingPage from '../pages/operations/MyPendingPage'
 import { useAuthStore } from '../stores/auth.store'
 
-function setSession(permissions: string[], viewType: 'web' | 'mobile' = 'web') {
+function setSession(permissions: string[], viewType: 'web' | 'mobile' = 'web', units: string[] = []) {
   useAuthStore.setState({
     isAuthenticated: true, isLoading: false, token: null,
     user: {
       id: 9, username: 'qayf', first_name: 'Q', last_name: 'Y', email: 'q@x.com',
       role_id: 35, view_type: viewType, is_super_admin: false, company_id: 1,
       effective_company_id: 1, permissions,
-      company_business_units: [], granted_business_units: [], effective_business_units: [],
+      company_business_units: [], granted_business_units: units, effective_business_units: units,
     } as any,
   })
 }
@@ -45,7 +45,7 @@ beforeEach(() => {
 
 describe('QA-014 · columnas de listados', () => {
   it('QA-014 · lotes: muestra la granja y filtra por granja en el servidor', async () => {
-    setSession(['lots:read'])
+    setSession(['lots:read'], 'web', ['breeder'])
     get.mockImplementation((url: string) => {
       const u = String(url)
       if (u.startsWith('/lots')) {

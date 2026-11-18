@@ -190,3 +190,45 @@ Cada rol se arma con permisos sobre estos módulos: panel, lotes, operaciones, r
 ### 8.3 · Móvil
 
 En teléfono, el menú se concentra en **Gestión Avícola** y sus cadenas, para el registro de campo. El resto de la administración se realiza desde la vista de escritorio.
+
+## 9 · Novedades de la sesión de revisión de Reproductoras/Cría (noviembre 2026)
+
+Esta sección resume los cambios que notarás al registrar y revisar operaciones de **Reproductoras** y **Cría** tras la sesión de revisión de noviembre de 2026.
+
+### 9.1 · Correcciones
+
+Al corregir un registro, el formulario ofrece **solo los campos realmente corregibles** de ese evento (por ejemplo «Peso promedio · fila 1 (Macho)»). El **valor original es de solo lectura**, se exige un **motivo de al menos 5 caracteres** y el historial del evento muestra el cambio como **original → corregido**, con usuario y fecha. La cantidad recibida de un lote de reproductoras **no se corrige de forma aislada**: es la identidad del lote y se ajusta con la operación que corresponda.
+
+### 9.2 · Datos obligatorios por operación
+
+Los campos obligatorios llevan un «*» en el formulario. El detalle por operación es:
+
+| Operación | Qué debes completar |
+|---|---|
+| Inspección de granja | Granja y galpón |
+| Recepción de reproductoras | Aves recibidas, muertas al arribo y rechazadas, cuadradas con las aves alojadas |
+| Distribución | Granja y galpón |
+| Alimento | Kilogramos mayores que 0 |
+| Agua | Litros mayores que 0 |
+| Pesaje | Peso promedio mayor que 0 |
+| Vacunación | Vacuna |
+| Medicación | Medicamento |
+| Mortalidad / Descarte / Salida | Cantidad mayor que 0 y no mayor al saldo de aves vivas; el transporte de la salida es opcional |
+
+El campo «Semana» **no se rellena solo**: es opcional y el «Ej.: 12» que aparece dentro del campo es solo una ayuda.
+
+### 9.3 · Inspección de granja sin lote
+
+Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja tiene lotes de varias cadenas, el registro queda en **«Pendientes de clasificar»** (se llega desde **Historial** con el botón correspondiente) hasta que un administrador lo clasifique.
+
+### 9.4 · Reportes
+
+La pantalla de reportes **ya no arranca con un lote fijo**: selecciona el primero visible o muestra un estado vacío. El botón «Volver» del reporte de lote regresa a la **pantalla de origen**. Los exportes **PDF/Excel** incluyen tipo, estado, granja y galpón.
+
+### 9.5 · Lotes
+
+Solo se muestran las pestañas de las **unidades de negocio asignadas** a tu usuario. Si no tienes ninguna, un aviso te explica que debes pedir acceso al administrador.
+
+### 9.6 · Filtros y avisos
+
+El filtro por lote espera un instante antes de consultar y muestra **un solo aviso** si el código no es válido. Los **avisos (toasts)** quedan siempre visibles por encima de los cuadros de diálogo, y el **rechazo de un registro exige escribir el motivo dentro del cuadro** (al menos 10 caracteres).

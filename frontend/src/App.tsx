@@ -18,6 +18,8 @@ import RolesPage from './pages/users/RolesPage'
 import OperationListPage from './pages/operations/OperationListPage'
 import OperationFormPage from './pages/operations/OperationFormPage'
 import OperationDetailPage from './pages/operations/OperationDetailPage'
+// `spec 015 §5` · `AC-S1-T02`: bandeja de pendientes de clasificar (solo lectura).
+import PendingClassificationPage from './pages/operations/PendingClassificationPage'
 import PoultryStagePage from './pages/operations/PoultryStagePage'
 import MenuHubPage from './pages/operations/MenuHubPage'
 import MyPendingPage from './pages/operations/MyPendingPage'
@@ -272,6 +274,8 @@ export default function App() {
  {/* Operations, Lots, Reports — accessible by both web and mobile */}
  <Route path="/operations" element={<CapabilityRoute permission="operations:read"><OperationListPage /></CapabilityRoute>} />
  <Route path="/operations/new" element={<CapabilityRoute permission="operations:create"><OperationFormPage /></CapabilityRoute>} />
+ {/* `AC-S1-T02`: la literal va ANTES de `/operations/:id` para que gane la bandeja. */}
+ <Route path="/operations/pending-classification" element={<CapabilityRoute permission="operations:read"><PendingClassificationPage /></CapabilityRoute>} />
  <Route path="/operations/:id" element={<CapabilityRoute permission="operations:read"><OperationDetailPage /></CapabilityRoute>} />
  <Route path="/my-pending" element={<MyPendingPage />} />
  <Route path="/lots" element={<CapabilityRoute permission="lots:read"><LotListPage /></CapabilityRoute>} />

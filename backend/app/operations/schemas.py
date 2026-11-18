@@ -281,6 +281,8 @@ class OperationalEventRead(OperationalEventBase):
     #: `event_date` la del hecho.
     lot_code: Optional[str] = None
     farm_name: Optional[str] = None
+    #: `AC-S1-I01`: la nave del evento, para que el detalle no muestre un id numérico.
+    house_name: Optional[str] = None
     registered_by_name: Optional[str] = None
     model_config = {"from_attributes": True}
 

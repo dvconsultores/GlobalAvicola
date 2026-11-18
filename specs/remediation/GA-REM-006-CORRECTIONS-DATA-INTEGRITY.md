@@ -323,3 +323,12 @@ frontend · migración · sistema de versiones nuevo.
 `AC-S01…S12`, `AC-R01…R07`, `AC-D01…D06`, `AC-U01…U05` verdes · rojo válido · `S1–S8` válidas, `S9` `N/A` ·
 `R-130` 21/21 · `R-160/R-159` 40/40 · `R-163/R-162` 28/28 · `R-139` 35/35 · `GA-REM-006` 9/9 · flujo completo
 23/23 · regresión completa · sin migración · sin rutas · sin frontend · `R-135` cerrado; `R-140` y `R-154` **PARTIAL**.
+
+## Enmienda S1 (SPEC 015, 2026-11-18)
+
+El alcance 2 «mapa campo→destino» se completa con **submovimientos**: `field_name` acepta
+`bird_movements[<id>].<campo>` y `feed_movements[<id>].<campo>` (id = fila destino), con
+`avg_weight`, `quantity`, `week_number` y `quantity_kg` corregibles (SPEC 015 §3); la cantidad de
+`bird_reception` en lotes breeder sigue fuera por identidad `BR-20`. El formulario de corrección deja de
+usar `observations` fijo y consume los **campos corregibles reales** del evento
+(`GET /corrections/events/{event_id}/correctable-fields`). Sin migración; `AC-S1-C01…C05`.

@@ -25,14 +25,14 @@ import LotListPage from '../pages/lots/LotListPage'
 import ReportsPage from '../pages/reports/ReportsPage'
 import { useAuthStore } from '../stores/auth.store'
 
-function setSession(permissions: string[]) {
+function setSession(permissions: string[], units: string[] = []) {
   useAuthStore.setState({
     isAuthenticated: true, isLoading: false, token: null,
     user: {
       id: 9, username: 'r220c', first_name: 'R', last_name: 'C', email: 'r@x.com',
       role_id: 35, view_type: 'web', is_super_admin: false, company_id: 1,
       effective_company_id: 1, permissions,
-      company_business_units: [], granted_business_units: [], effective_business_units: [],
+      company_business_units: [], granted_business_units: units, effective_business_units: units,
     } as any,
   })
 }
@@ -50,7 +50,7 @@ beforeEach(() => {
 
 describe('R-220 · Lote A tercera tanda (RED)', () => {
   it('AC-R220-A·A1 · las fechas se muestran formateadas (nunca el ISO crudo)', async () => {
-    setSession(['lots:read'])
+    setSession(['lots:read'], ['broiler', 'breeder'])
     get.mockImplementation((url: string) => {
       const u = String(url)
       if (u.startsWith('/lots')) return Promise.resolve({ data: LOTES, headers: {} })

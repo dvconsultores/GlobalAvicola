@@ -1693,3 +1693,12 @@ Sin lógica por nombre de rol; `is_super_admin` es la capacidad comodín resuelt
 `R-160/R-159` 40/40 · `R-139` 35/35 · `R-130` 21/21 · fase 3 (`test_lot_row_scope`) · fase 7/8 · `OD-15` ·
 regresión completa · sin migración · sin rutas · sin frontend · `R-163` y `R-162` cerrados en su frontera
 técnica, **cada uno con su propia evidencia y estado**; certificación de proceso `BLOCKED_RUNTIME`.
+
+## Enmienda S1 (SPEC 015, 2026-11-18)
+
+§11 — `farm_inspection` **sin lote** deriva la BU de la granja cuando es inequívoca (todos los lotes no
+cancelados en una única cadena y unidad efectiva para el actor; **no** por nombre de granja ni por rol) y se
+persiste en `operational_events.business_unit_id`; si no lo es, nace **pendiente de clasificar** y la UI expone la
+bandeja (`GET /operations/pending-classification`, `POST .../classify`), donde el autor ve sus propios pendientes
+(SPEC 015 §5). `AC-H06`/`AC-H07` quedan cubiertos en las **pestañas de lotes**, que muestran solo unidades
+efectivas (SPEC 015 §6, `AC-S1-B01`).

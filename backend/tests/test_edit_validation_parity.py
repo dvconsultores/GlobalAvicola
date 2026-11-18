@@ -48,13 +48,19 @@ async def esc(test_database_url):
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
     from app.integrations.sap.models import SapReference, SapReferenceType
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus
+    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus, Vaccine
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
         a = Company(name=f"{PREFIJO}A-{uuid.uuid4().hex[:6]}", is_active=True)
         b = Company(name=f"{PREFIJO}B-{uuid.uuid4().hex[:6]}", is_active=True)
         s.add_all([a, b])
+        await s.flush()
+        # `RR-21`: la vacunación exige una vacuna del catálogo **de la empresa** del evento (`BR-07`); el maestro
+        # sembrado pertenece a otra empresa, así que el escenario siembra la suya.
+        vacuna = Vaccine(company_id=a.id, name=f"{PREFIJO}VAC-{uuid.uuid4().hex[:6]}", is_active=True)
+        vacuna_b = Vaccine(company_id=b.id, name=f"{PREFIJO}VACB-{uuid.uuid4().hex[:6]}", is_active=True)
+        s.add_all([vacuna, vacuna_b])
         await s.flush()
         unidades = {u.code: u for u in (await s.execute(select(BusinessUnit))).scalars()}
         hab = {}
@@ -122,7 +128,8 @@ async def esc(test_database_url):
         await s.flush()
         await s.commit()
         d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpon_a.id, "galpon_chico": galpon_chico.id, "galpon_a2": galpon_a2.id,
-             "planta_a": planta_a.id, "galpon_p": galpon_p.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id, "url": test_database_url}
+             "planta_a": planta_a.id, "galpon_p": galpon_p.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id, "url": test_database_url,
+             "vacuna": vacuna.id, "vacuna_b": vacuna_b.id}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -151,6 +158,7 @@ async def esc(test_database_url):
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p",
             "DELETE FROM roles WHERE name LIKE :p",
+            "DELETE FROM vaccines WHERE name LIKE :p",
             "DELETE FROM companies WHERE name LIKE :p",
         ):
             await c.execute(text(sql), p)
@@ -216,6 +224,9 @@ def _cuerpo(esc, lote, tipo, n=None, *, galpon=None, **extra):
         cuerpo["destination_farm_id"] = esc["planta_a"]
     elif tipo == "egg_collection":
         cuerpo["egg_movements"] = [{"egg_type": "fertile", "quantity": n}]
+    elif tipo == "vaccination":
+        # `RR-21` (SPEC 015 §4.1): la vacunación exige la vacuna aplicada, del catálogo de la empresa del lote.
+        cuerpo["vaccine_id"] = esc["vacuna_b"] if lote == "lb" else esc["vacuna"]
     cuerpo.update(extra)
     return cuerpo
 

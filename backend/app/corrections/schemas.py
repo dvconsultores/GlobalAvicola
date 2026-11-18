@@ -40,3 +40,19 @@ class CorrectionRead(BaseModel):
 class CorrectionListResponse(BaseModel):
     corrections: list[CorrectionRead]
     total: int
+
+
+class CorrectableFieldRead(BaseModel):
+    """`S1-CORR-01` · `spec 015 §3`: campo realmente corregible de un evento concreto.
+
+    El formulario consume esta lista en lugar de ofrecer «Observaciones» fijo. Para un
+    submovimiento, `field_name` lleva el id de la fila (`bird_movements[<id>].avg_weight`)
+    y `row_id`/`row_label` permiten mostrarla.
+    """
+
+    field_name: str
+    label_key: str
+    current_value: Optional[str] = None
+    row_id: Optional[int] = None
+    row_label: Optional[str] = None
+    value_type: str

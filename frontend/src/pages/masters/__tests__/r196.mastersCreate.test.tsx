@@ -304,7 +304,7 @@ describe('R-196 · creación de maestros por entidad (RED)', () => {
     await guardar()
 
     await waitFor(() =>
-      expect(screen.getByText(/name: String should have at least 1 character/)).toBeTruthy())
+      expect(screen.getByText(/Falta el dato obligatorio «name»/)).toBeTruthy())
   })
 
   it('AC-07 · /masters ofrece selector con todas las entidades', async () => {

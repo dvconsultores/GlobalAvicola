@@ -55,13 +55,14 @@ interface TraceabilityNode {
 interface Props { lotId: number | string; birdType?: string }
 
 function LotChip({ lot }: { lot: LotRef }) {
+ const { t } = useTranslation()
  return (
  <Link
  to={`/lots/${lot.id}`}
  className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-[#1E3A5F]/5 border border-[#1E3A5F]/20 text-[#1E3A5F] text-xs font-mono font-semibold hover:bg-[#1E3A5F]/10 transition-colors"
  >
  {lot.lot_code}
- <Badge variant={statusToVariant(lot.status)} size="sm">{lot.status}</Badge>
+ <Badge variant={statusToVariant(lot.status)} size="sm">{t(`lotStatus.${lot.status}`, lot.status)}</Badge>
  </Link>
  )
 }

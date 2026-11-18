@@ -12,6 +12,7 @@ import { EVENT_ICON_MAP } from '../../data/processCatalog'
 import { Badge, FilterPanel, FilterGroup } from '../../components/ui'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { formatFecha, formatFechaHora } from '../../utils/dates'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 
 // `QA-014`: el lote se identifica por su código legible; `#id` queda como respaldo
 // y «—» cuando el evento no trae lote.
@@ -86,6 +87,11 @@ export default function ReviewCenter() {
  const [returnError, setReturnError] = useState('')
  const limit = 20
 
+ // `F4` (AC-S1-F01): el filtro de lote espera 400 ms desde la última tecla (sin
+ // una petición por carácter) y sólo viaja al servidor si es un id numérico.
+ const lotIdDebounced = useDebouncedValue(lotId.trim(), 400)
+ const lotIdInvalido = lotIdDebounced !== '' && !/^\d+$/.test(lotIdDebounced)
+
  const setActiveTab = (tab: StatusTab) => {
  setSearchParams({ status: tab })
  setPage(0)
@@ -117,7 +123,7 @@ export default function ReviewCenter() {
  offset: String(page * limit),
  status: statusFilter,
  })
- if (lotId) params.set('lot_id', lotId)
+ if (lotIdDebounced && !lotIdInvalido) params.set('lot_id', lotIdDebounced)
  if (eventType) params.set('event_type', eventType)
  if (dateFrom) params.set('date_from', dateFrom)
  if (dateTo) params.set('date_to', dateTo)
@@ -138,7 +144,7 @@ export default function ReviewCenter() {
  } finally {
  setLoading(false)
  }
- }, [lotId, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, canReadUsers])
+ }, [lotIdDebounced, lotIdInvalido, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, canReadUsers])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
  useEffect(() => {
@@ -173,7 +179,7 @@ export default function ReviewCenter() {
  try {
  if (action === 'start') await api.post(`/review/start/${eventId}`)
  else if (action === 'complete') await api.post('/review/complete', { event_id: eventId })
- toast.success(t('review.actionCompleted', { action }))
+ toast.success(t(`review.actionDone.${action}`))
  fetchEvents()
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('review.errorAction')))
@@ -189,7 +195,7 @@ export default function ReviewCenter() {
  try {
  await api.post('/review/return', { event_id: returnTarget, observations: returnObs })
  setReturnTarget(null)
- toast.success(t('review.actionCompleted', { action: 'return' }))
+ toast.success(t('review.actionDone.return'))
  fetchEvents()
  } catch (err: any) {
  toast.error(getErrorMessage(err, t('review.errorAction')))
@@ -271,11 +277,20 @@ export default function ReviewCenter() {
  <FilterGroup label={t('review.lot', 'Lote')}>
  <input
  type="text"
- placeholder={t('common.id', 'ID')}
+ inputMode="numeric"
+ placeholder={t('review.lotFilterPlaceholder', 'ID del lote')}
  value={lotId}
  onChange={e => { setLotId(e.target.value); setPage(0) }}
+ aria-label={t('review.lotFilterPlaceholder', 'ID del lote')}
+ aria-invalid={lotIdInvalido}
+ data-testid="review-filter-lot"
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
+ {lotIdInvalido && (
+ <span role="alert" data-testid="lot-filter-hint" className="text-xs text-amber-700">
+ {t('review.lotFilterNumeric', 'Escriba el ID numérico del lote (solo dígitos)')}
+ </span>
+ )}
  </FilterGroup>
 
  <FilterGroup label={t('review.farm', 'Granja')}>

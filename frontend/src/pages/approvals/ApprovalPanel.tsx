@@ -8,6 +8,7 @@ import { useToast, getErrorMessage } from '../../components/Toast'
 import SubNavHeader from '../../components/layout/SubNavHeader'
 import { KpiCard, ConfirmDialog, Badge, FilterPanel, FilterGroup } from '../../components/ui'
 import { formatFecha, formatFechaHora } from '../../utils/dates'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
@@ -42,11 +43,15 @@ export default function ApprovalPanel() {
  const [singleRejectId, setSingleRejectId] = useState<number | null>(null)
  const limit = 20
 
+ // `F4` (AC-S1-F01): 400 ms de espera y validación de formato antes de pedir.
+ const lotIdDebounced = useDebouncedValue(lotId.trim(), 400)
+ const lotIdInvalido = lotIdDebounced !== '' && !/^\d+$/.test(lotIdDebounced)
+
  const fetchEvents = useCallback(async () => {
  setLoading(true)
  try {
  const params = new URLSearchParams({ limit: String(limit), offset: String(page * limit) })
- if (lotId) params.set('lot_id', lotId)
+ if (lotIdDebounced && !lotIdInvalido) params.set('lot_id', lotIdDebounced)
  if (farmId) params.set('farm_id', farmId)
  const { data } = await api.get(`/approvals/pending?${params}`)
  setEvents(data.events || [])
@@ -56,7 +61,7 @@ export default function ApprovalPanel() {
  } finally {
  setLoading(false)
  }
- }, [lotId, farmId, page, t, toast])
+ }, [lotIdDebounced, lotIdInvalido, farmId, page, t, toast])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
 
@@ -214,11 +219,20 @@ export default function ApprovalPanel() {
  <FilterGroup label={t('review.lot', 'Lote')}>
  <input
  type="text"
- placeholder={t('common.id', 'ID')}
+ inputMode="numeric"
+ placeholder={t('review.lotFilterPlaceholder', 'ID del lote')}
  value={lotId}
  onChange={e => { setLotId(e.target.value); setPage(0) }}
+ aria-label={t('review.lotFilterPlaceholder', 'ID del lote')}
+ aria-invalid={lotIdInvalido}
+ data-testid="approval-filter-lot"
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
+ {lotIdInvalido && (
+ <span role="alert" data-testid="lot-filter-hint" className="text-xs text-amber-700">
+ {t('review.lotFilterNumeric', 'Escriba el ID numérico del lote (solo dígitos)')}
+ </span>
+ )}
  </FilterGroup>
 
  {/* `QA-015`: filtro por granja — viaja como `farm_id` a /approvals/pending. */}
@@ -412,17 +426,35 @@ export default function ApprovalPanel() {
  showWarning={false}
  />
 
- {/* Reject Dialog */}
+ {/* Reject Dialog — `F8`: el motivo se escribe AQUÍ dentro. Sin este campo
+ `handleRejectSingle`/`handleBatchReject` caían siempre en el aviso de
+ «al menos 10 caracteres» y el rechazo era imposible de completar. */}
  <ConfirmDialog
  open={showRejectModal}
- onClose={() => setShowRejectModal(false)}
+ onClose={() => { setShowRejectModal(false); setRejectReason('') }}
  onConfirm={rejectTarget === 'batch' ? handleBatchReject : handleRejectSingle}
  title={t('review.confirmReject', '¿Rechazar registro?')}
  message={t('review.confirmRejectMsg', 'El registro será devuelto al operador con las observaciones. Esta acción no se puede deshacer.')}
  confirmLabel={t('review.reject', 'Rechazar')}
  variant="danger"
  showWarning
+ >
+ <textarea
+ data-testid="reject-reason"
+ value={rejectReason}
+ onChange={e => setRejectReason(e.target.value)}
+ rows={3}
+ aria-label={t('review.rejectionReason')}
+ placeholder={t('review.rejectionReason')}
+ className="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-red-500 focus:ring-1 focus:ring-red-500 outline-none resize-y"
  />
+ <p className="mt-1 text-xs text-slate-500">{t('review.reasonMinLength')}</p>
+ {rejectReason.trim().length > 0 && rejectReason.trim().length < 10 && (
+ <p role="alert" data-testid="reject-reason-error" className="mt-1 text-xs font-medium text-red-600">
+ {t('review.reasonMinLength')}
+ </p>
+ )}
+ </ConfirmDialog>
  </div>
  )
 }

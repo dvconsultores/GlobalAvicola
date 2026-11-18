@@ -6,6 +6,7 @@ import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { formatFecha, formatFechaHora } from '../../utils/dates'
 import { PROCESS_STAGES, flowForStage, type StageKey } from '../../data/processCatalog'
+import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
@@ -24,10 +25,13 @@ export default function OperationListPage() {
  const [loading, setLoading] = useState(true)
  // `R-212` · AC-04: denegación ≠ vacío.
  const [estado, setEstado] = useState<'ok' | 'prohibido' | 'error'>('ok')
- const [lotId, setLotId] = useState(() => {
+ // `F4` (AC-S1-F01): el filtro de lote es por CÓDIGO legible (`lot_code`, el backend
+ // ya lo acepta con coincidencia parcial) y espera 400 ms antes de pedir.
+ const [lotCode, setLotCode] = useState(() => {
  // `004` · AC10: filtros preservados al volver (mismo mecanismo sessionStorage del repo).
- try { return sessionStorage.getItem('ga.filters.operations.lotId') ?? '' } catch { return '' }
+ try { return sessionStorage.getItem('ga.filters.operations.lotCode') ?? '' } catch { return '' }
  })
+ const lotCodeDebounced = useDebouncedValue(lotCode.trim(), 400)
  const [eventType, setEventType] = useState(() => {
  try { return sessionStorage.getItem('ga.filters.operations.eventType') ?? '' } catch { return '' }
  })
@@ -41,7 +45,7 @@ export default function OperationListPage() {
  setLoading(true)
  try {
  const params: any = { limit: 100, skip: 0 }
- if (lotId) params.lot_id = lotId
+ if (lotCodeDebounced) params.lot_code = lotCodeDebounced
  if (farmId) params.farm_id = farmId
  // For stage-based filter: fetch all and filter client-side
  // (backend doesn't support multi event_type yet)
@@ -56,7 +60,7 @@ export default function OperationListPage() {
  setEstado(err?.response?.status === 403 ? 'prohibido' : 'error')
  }
  finally { setLoading(false) }
- }, [lotId, eventType, farmId])
+ }, [lotCodeDebounced, eventType, farmId])
 
  // `QA-015`: catálogo de granjas para el filtro (mismo patrón que Lotes).
  useEffect(() => {
@@ -68,7 +72,7 @@ export default function OperationListPage() {
  setCargandoMas(true)
  try {
  const params: any = { limit: 100, skip: brutos.length }
- if (lotId) params.lot_id = lotId
+ if (lotCodeDebounced) params.lot_code = lotCodeDebounced
  if (farmId) params.farm_id = farmId
  if (eventType && !eventType.startsWith('__stage__')) params.event_type = eventType
  const r = await api.get('/operations', { params })
@@ -89,14 +93,14 @@ export default function OperationListPage() {
  // `004` · AC10: persistir filtros para el retorno lista→detalle→lista.
  useEffect(() => {
  try {
- if (lotId) sessionStorage.setItem('ga.filters.operations.lotId', lotId)
- else sessionStorage.removeItem('ga.filters.operations.lotId')
+ if (lotCode) sessionStorage.setItem('ga.filters.operations.lotCode', lotCode)
+ else sessionStorage.removeItem('ga.filters.operations.lotCode')
  if (eventType) sessionStorage.setItem('ga.filters.operations.eventType', eventType)
  else sessionStorage.removeItem('ga.filters.operations.eventType')
  if (farmId) sessionStorage.setItem('ga.filters.operations.farmId', farmId)
  else sessionStorage.removeItem('ga.filters.operations.farmId')
  } catch { /* storage no disponible */ }
- }, [lotId, eventType, farmId])
+ }, [lotCode, eventType, farmId])
 
  if (estado !== 'ok') {
  return (
@@ -113,14 +117,20 @@ export default function OperationListPage() {
  <h1 className="text-2xl font-bold text-slate-800">{t('nav.operations')}</h1>
  <p className="text-sm text-slate-500">{events.length} {t('common.results')}</p>
  </div>
+ <div className="flex items-center gap-3">
+ {/* `spec 015 §5` · `AC-S1-T02`: acceso a la bandeja de pendientes de clasificar. */}
+ <Link to="/operations/pending-classification" data-testid="pending-classification-link" className="inline-flex items-center h-10 px-4 border border-slate-300 text-slate-600 hover:bg-slate-50 text-sm font-medium rounded-lg transition">
+ {t('operations.pendingClassification.link', 'Pendientes de clasificar')}
+ </Link>
  <Link to="/menu/poultry" className="inline-flex items-center h-10 px-4 bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium rounded-lg transition">
  + {t('common.create')}
  </Link>
  </div>
+ </div>
 
  {/* Filters — stage-based instead of old 24-event flat dropdown */}
  <div className="flex gap-3 mb-4 flex-wrap">
- <input type="number" placeholder={t('review.lot') + ' ID'} value={lotId} onChange={e => setLotId(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm w-28" />
+ <input type="text" maxLength={50} data-testid="operation-filter-lot-code" aria-label={t('operations.lotCodeFilter', 'Código de lote')} placeholder={t('operations.lotCodeFilter', 'Código de lote')} value={lotCode} onChange={e => setLotCode(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm w-40" />
  <select value={eventType} onChange={e => setEventType(e.target.value)} className="h-10 px-3 border border-slate-300 rounded-lg text-sm max-w-[200px]">
  <option value="">{t('common.allTypes')}</option>
  <optgroup label={t('operations.stagesGroup', 'Etapas de producción')}>

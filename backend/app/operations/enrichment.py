@@ -8,8 +8,8 @@ instancia atributos **no mapeados** —el mismo patrón que
 declaran como campos opcionales. No se persiste nada ni se altera la fila: el atributo
 solo viaja en la respuesta.
 
-El coste es acotado: tres consultas por página (lotes, granjas, usuarios) y dos para los
-lotes (granjas, naves), con `.in_(ids)` sobre los ids ya filtrados por empresa, de modo
+El coste es acotado: cuatro consultas por página (lotes, granjas, naves, usuarios) y dos para
+los lotes (granjas, naves), con `.in_(ids)` sobre los ids ya filtrados por empresa, de modo
 que aquí no se repite ningún filtro de alcance.
 """
 from sqlalchemy import select
@@ -25,7 +25,7 @@ def _ids(valores) -> list[int]:
 
 
 async def anotar_nombres(db, eventos: list) -> None:
-    """Anota `lot_code`, `farm_name` y `registered_by_name` en cada evento.
+    """Anota `lot_code`, `farm_name`, `house_name` y `registered_by_name` en cada evento.
 
     `registered_by_name` es "nombre apellidos" y cae al usuario cuando no hay nombre
     declarado (hay cuentas técnicas que no lo tienen).
@@ -35,6 +35,7 @@ async def anotar_nombres(db, eventos: list) -> None:
 
     lot_ids = _ids(getattr(ev, "lot_id", None) for ev in eventos)
     farm_ids = _ids(getattr(ev, "farm_id", None) for ev in eventos)
+    house_ids = _ids(getattr(ev, "house_id", None) for ev in eventos)
     user_ids = _ids(getattr(ev, "registered_by_id", None) for ev in eventos)
 
     codigos: dict[int, str] = {}
@@ -51,6 +52,13 @@ async def anotar_nombres(db, eventos: list) -> None:
         )
         granjas = dict(filas.all())
 
+    naves: dict[int, str] = {}
+    if house_ids:
+        filas = await db.execute(
+            select(House.id, House.name).where(House.id.in_(house_ids))
+        )
+        naves = dict(filas.all())
+
     usuarios: dict[int, str] = {}
     if user_ids:
         filas = await db.execute(
@@ -66,6 +74,7 @@ async def anotar_nombres(db, eventos: list) -> None:
     for ev in eventos:
         ev.lot_code = codigos.get(getattr(ev, "lot_id", None))
         ev.farm_name = granjas.get(getattr(ev, "farm_id", None))
+        ev.house_name = naves.get(getattr(ev, "house_id", None))
         ev.registered_by_name = usuarios.get(getattr(ev, "registered_by_id", None))
 
 
