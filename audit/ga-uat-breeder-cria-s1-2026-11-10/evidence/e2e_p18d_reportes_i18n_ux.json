@@ -1,0 +1,58 @@
+{
+  "proceso": "P18D UAT S1 — reportes / i18n / UX",
+  "fecha": "2026-11-18T05:25:30.573Z",
+  "escenario": {
+    "prefijo": "S1P18D",
+    "lotId": 100,
+    "codigo": "S1P18D-LOTE-n1ewvg82",
+    "sufijo": "ltcl12fk"
+  },
+  "eventoCorregidoId": 211,
+  "eventoEnRevisionId": 212,
+  "unidadesHabilitadasAntes": {
+    "breeder": true
+  },
+  "resultados": {
+    "P4a": {
+      "ok": true,
+      "detalle": "kpis=true weekly=true lot_id=2=false opciones=1"
+    },
+    "P4b": {
+      "ok": true,
+      "detalle": "Producción->/reports error=0 | Mortalidad->/reports error=0"
+    },
+    "P4c": {
+      "ok": true,
+      "detalle": "enlace -> /reports/lot/100 y «Volver» -> /lots/100"
+    },
+    "P4d": {
+      "ok": true,
+      "detalle": "tipos=[bird_reception,mortality_recording,vaccination] faltan=[] crudas=[]"
+    },
+    "P4e": {
+      "ok": true,
+      "detalle": "GlobalAvicola_Lote_S1P18D-LOTE-n1ewvg82_2026-11-18.xlsx (16629 bytes) | GlobalAvicola_Lote_S1P18D-LOTE-n1ewvg82_2026-11-18.pdf (8584 bytes)"
+    },
+    "P5a": {
+      "ok": true,
+      "detalle": "iniciada=true started_review=false in_review=false"
+    },
+    "P5b": {
+      "ok": true,
+      "detalle": "pistas=1 llamadaAbc=false errorVisible=false"
+    },
+    "P5b.12": {
+      "ok": true,
+      "detalle": "peticiones con lot_id=12: true"
+    },
+    "P5c": {
+      "ok": true,
+      "detalle": "zIndex=70 sobreOverlay=true toast=El motivo debe tener al menos 10 caracteres hit=SPAN.flex-1 punto=1076,39 de 1280x720"
+    },
+    "P5c.rechazo": {
+      "ok": true,
+      "detalle": "evento #211 rechazado con motivo válido"
+    }
+  },
+  "incidencias": []
+}

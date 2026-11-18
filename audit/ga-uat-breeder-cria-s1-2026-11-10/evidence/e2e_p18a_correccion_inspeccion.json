@@ -1,0 +1,89 @@
+{
+  "spec": "015-breeder-cria-uat-s1",
+  "generado": "2026-11-18T05:23:48.883Z",
+  "escenarioA": {
+    "lote_id": 93,
+    "granja_id": 91,
+    "galpon_id": 89,
+    "evento_id": 184,
+    "fila_macho_id": 91,
+    "campo_corregido": "bird_movements[91].avg_weight",
+    "correccion": {
+      "original": "2.0",
+      "corregido": "2.5",
+      "motivo": "Báscula mal calibrada en recepción",
+      "corrected_by_id": 1
+    },
+    "estado_tras_corregir": "corrected",
+    "estado_final": "approved",
+    "valores_finales": [
+      {
+        "sexo": "female",
+        "cantidad": 880,
+        "peso_promedio": 1.8
+      },
+      {
+        "sexo": "male",
+        "cantidad": 100,
+        "peso_promedio": 2.5
+      }
+    ],
+    "http": {
+      "recepcion": 201,
+      "cantidad_breeder": 400,
+      "motivo_corto_ui": "validación de cliente: 0 POST /corrections",
+      "correccion_tras_aprobar": 400
+    },
+    "auditoria_acciones": [
+      "corrected",
+      "review_started",
+      "updated",
+      "created"
+    ],
+    "capturas": [
+      "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18a_correccion_before.png",
+      "audit/ga-uat-breeder-cria-s1-2026-11-10/evidence/screenshots/p18a_correccion_after.png"
+    ]
+  },
+  "escenarioB": {
+    "derivada": {
+      "granja_id": 92,
+      "galpon_id": 90,
+      "evento_id": 185,
+      "farm_name": "S1P18A-granja-csalmued",
+      "house_name": "S1P18A-galpon-csalmued",
+      "en_historial": true,
+      "en_pendientes": false,
+      "en_cola_revision": true,
+      "auditoria_acciones": [
+        "updated",
+        "created"
+      ],
+      "http": {
+        "alta": 201,
+        "detalle": 200,
+        "envio_revision": 200
+      }
+    },
+    "pendiente": {
+      "granja_id": 93,
+      "granja_nombre": "S1P18A-mixta-qavutoag",
+      "galpon_id": 91,
+      "galpon_nombre": "S1P18A-mixta-galpon-qavutoag",
+      "lote_breeder_id": 95,
+      "lote_broiler_id": 96,
+      "evento_id": 186,
+      "en_historial": false,
+      "en_pendientes": true,
+      "detalle_otro_usuario": 404,
+      "sin_galpon": {
+        "http": 400,
+        "detail": "La inspección de granja requiere al menos un galpón",
+        "rule": "BR-08"
+      },
+      "http": {
+        "alta": 201
+      }
+    }
+  }
+}

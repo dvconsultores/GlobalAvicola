@@ -1,0 +1,76 @@
+{
+  "escenario": "S1 P18C BU identidad",
+  "breeder": {
+    "companyId": 1,
+    "farmId": 95,
+    "houseId": 94,
+    "lotId": 98,
+    "codigo": "S1P18C-LOTE-bdoyzv5r"
+  },
+  "broiler": {
+    "companyId": 1,
+    "farmId": 96,
+    "houseId": 95,
+    "lotId": 99,
+    "codigo": "S1P18C-LOTE-fyvewb08"
+  },
+  "eventoBreeder": "204",
+  "eventoBroiler": "206",
+  "rolId": 21,
+  "usuarioBreeder": "s1p18c-breeder-mjqwaz1x",
+  "usuarioSinBu": "s1p18c-sinbu-mjqwaz1x",
+  "granjaNombre": "S1P18C-granja-bdoyzv5r",
+  "galponNombre": "S1P18C-galpon-bdoyzv5r",
+  "unidadesHabilitadasAntes": {
+    "breeder": true,
+    "broiler": true
+  },
+  "http": {
+    "escenario.breeder": {
+      "companyId": 1,
+      "farmId": 95,
+      "houseId": 94,
+      "lotId": 98,
+      "codigo": "S1P18C-LOTE-bdoyzv5r"
+    },
+    "escenario.broiler": {
+      "companyId": 1,
+      "farmId": 96,
+      "houseId": 95,
+      "lotId": 99,
+      "codigo": "S1P18C-LOTE-fyvewb08"
+    },
+    "POST /operations recepcion breeder": 201,
+    "POST /operations mortalidad breeder": 201,
+    "POST /operations recepcion broiler": 201,
+    "POST /operations mortalidad broiler": 201,
+    "rolId": 21,
+    "userIdBreeder": 13,
+    "userIdSinBu": 14,
+    "POST /users/{id}/business-units breeder": 201,
+    "POST /login breeder": 200,
+    "POST /login sinbu": 200,
+    "GET /lots (token breeder)": 200,
+    "GET /lots?bird_type=zzz": 400,
+    "GET /lots/{broiler}": 404,
+    "GET /operations/{eventoBroiler}": 404,
+    "GET /operations?lot_code=<broiler>": 200,
+    "GET /reports/lot/{broiler}": 404,
+    "GET /reports/kpis?lot_id=<broiler>": 404,
+    "POST /operations mortality lote broiler": {
+      "status": 400,
+      "body": "{\"detail\":\"Lote no encontrado\",\"rule\":\"BR-07\"}"
+    },
+    "GET /lots (token sin BU)": 200,
+    "GET /lots (token admin)": 200,
+    "UI /reports/lot/{broiler} sin codigo": "ok",
+    "UI /lots sin unidades": {
+      "aviso": true,
+      "peticiones": 0
+    },
+    "UI /operations filtro lot_code": {
+      "conLotCode": 1,
+      "conLotId": 0
+    }
+  }
+}
