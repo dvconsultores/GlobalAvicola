@@ -25,11 +25,34 @@ let tokenSinBu = '';
 let granjaNombre = '';
 let galponNombre = '';
 const http: Record<string, unknown> = {};
+// Estado compartido del entorno: este spec habilita unidades de negocio de la empresa de
+// pruebas y debe devolverlas a como las encontró, o contamina los specs que corren después
+// en la suite completa (E2E-4, `P-17-G` / `BR-23`).
+const habilitadasAntes: Record<string, boolean> = {};
+const habilitadasPorElTest: string[] = [];
+
+const UNIDADES = ['breeder', 'broiler'];
 
 test.beforeAll(async ({ request }) => {
   admin = await cabeceraAdmin(request);
-  await request.patch(`${API}/business-units/breeder/enable`, { headers: admin });
-  await request.patch(`${API}/business-units/broiler/enable`, { headers: admin });
+
+  const rUnidades = await request.get(`${API}/business-units`, { headers: admin, failOnStatusCode: false });
+  if (rUnidades.ok()) {
+    const unidades = (await rUnidades.json()) as Array<{ code: string; is_enabled: boolean }>;
+    for (const code of UNIDADES) {
+      habilitadasAntes[code] = Boolean(unidades.find((u) => u.code === code)?.is_enabled);
+    }
+  } else {
+    console.warn(`GET /business-units respondio ${rUnidades.status()}: se habilitan ${UNIDADES.join(', ')} sin estado previo conocido`);
+    for (const code of UNIDADES) habilitadasAntes[code] = false;
+  }
+
+  for (const code of UNIDADES) {
+    if (!habilitadasAntes[code]) {
+      await request.patch(`${API}/business-units/${code}/enable`, { headers: admin });
+      habilitadasPorElTest.push(code);
+    }
+  }
 
   breeder = await crearEscenario(request, admin, 'S1P18C', 'breeder');
   broiler = await crearEscenario(request, admin, 'S1P18C', 'broiler');
@@ -306,7 +329,21 @@ test('P3 UI admin: ficha de lote, evento y filtro por codigo de lote', async ({ 
 
 // <!--CHUNK-->
 
-test.afterAll(async () => {
+test.afterAll(async ({ request }) => {
+  // Deja la habilitación de unidades como estaba: deshabilitar no borra concesiones,
+  // usuarios ni datos del escenario; solo revierte el `enable` de este spec.
+  const cabAdmin = admin ?? (await cabeceraAdmin(request));
+  for (const code of habilitadasPorElTest) {
+    const r = await request.patch(`${API}/business-units/${code}/disable`, {
+      headers: cabAdmin,
+      failOnStatusCode: false,
+    });
+    if (!r.ok()) {
+      console.warn(`no se pudo restaurar la unidad ${code} (${r.status()}): ${await r.text()}`);
+    }
+  }
+  habilitadasPorElTest.length = 0;
+
   fs.mkdirSync(EVIDENCIA, { recursive: true });
   const payload = {
     escenario: 'S1 P18C BU identidad',
@@ -319,6 +356,7 @@ test.afterAll(async () => {
     usuarioSinBu,
     granjaNombre,
     galponNombre,
+    unidadesHabilitadasAntes: habilitadasAntes,
     http,
   };
   fs.writeFileSync(`${EVIDENCIA}/e2e_p18c_bu_identidad.json`, JSON.stringify(payload, null, 2));

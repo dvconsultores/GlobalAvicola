@@ -10,10 +10,11 @@ revalida por el **delta** contra el saldo del lote (`BR-01`).
 from __future__ import annotations
 
 import os
+import uuid
 
 import pytest
 
-from tests.time_reference import recent_event_date
+from tests.time_reference import lot_start_date, recent_event_date
 
 
 async def _pesaje(client, headers, lot_id: int = 2, avg_weight=2.0, quantity: int = 10):
@@ -233,3 +234,54 @@ async def test_t8_sin_permiso_de_correccion_es_403(client):
         "corrected_value": "x", "reason": "prueba de permiso",
     })
     assert r.status_code == 403, r.text
+
+
+# ── `BR-20` · cuadre de la recepción de reproductoras ───────────────────────
+
+@pytest.mark.asyncio
+async def test_t9_cantidad_de_recepcion_breeder_no_se_corrige_aislada(
+    auth_headers, client, seeded_ids
+):
+    """La cantidad recibida de un lote reproductor es identidad del cuadre (`BR-20`).
+
+    `recibido = alojadas + mortalidad al arribo + rechazo`: corregir una sola fila por su
+    `quantity` rompería el cuadre que `BR-20` exige, así que el selector no la ofrece y un
+    `POST` directo con ese `field_name` responde `400` en español.
+    """
+    alta = await client.post("/api/v1/lots", headers=auth_headers, json={
+        "company_id": seeded_ids["company_id"], "farm_id": seeded_ids["farm_id"],
+        "house_id": seeded_ids["house_id"],
+        "lot_code": f"CORR-BR-{uuid.uuid4().hex[:8].upper()}",
+        "bird_type": "breeder", "sex": "mixed",
+        "start_date": lot_start_date().isoformat(),
+    })
+    assert alta.status_code == 201, alta.text
+    lot_id = alta.json()["id"]
+
+    r = await client.post("/api/v1/operations", headers=auth_headers, json={
+        "lot_id": lot_id, "farm_id": seeded_ids["farm_id"], "house_id": seeded_ids["house_id"],
+        "event_type": "bird_reception", "event_date": recent_event_date(),
+        "received_total": 100, "dead_on_arrival": 0, "rejected_on_arrival": 0,
+        "bird_movements": [{"sex": "mixed", "quantity": 100}],
+    })
+    assert r.status_code == 201, r.text
+    evento = r.json()
+
+    campos = await _campos(client, auth_headers, evento["id"])
+    nombres = [c["field_name"] for c in campos]
+    assert nombres, "la recepción corregible ofrece otros campos (observaciones)"
+    assert not any(nombre.endswith(".quantity") for nombre in nombres), (
+        "el selector no debe ofrecer la cantidad de la recepción de reproductoras: "
+        + ", ".join(nombres))
+
+    # La fila es la misma del selector; se toma su id del otro campo de la fila.
+    fila_id = next(c["row_id"] for c in campos if c["field_name"].endswith(".week_number"))
+
+    r = await _corregir(client, auth_headers, evento["id"],
+                        f"bird_movements[{fila_id}].quantity", "101")
+    assert r.status_code == 400, r.text
+    detalle = r.json()["detail"]
+    assert "reproductoras" in detalle and "cuadre de recepción" in detalle, detalle
+
+    detalle_final = await _detalle(client, auth_headers, evento["id"])
+    assert detalle_final["bird_movements"][0]["quantity"] == 100, "nada cambia"

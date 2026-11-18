@@ -18,6 +18,10 @@ let eventoCorregidoId: number;
 let eventoEnRevisionId: number;
 let loteInfo: any = {}, reporteLote: any = {};
 let traducciones: any = {};
+// Estado compartido del entorno: este spec habilita `breeder` y debe devolverlo a como lo
+// encontró, o contamina los specs que corren después en la suite completa (E2E-4).
+const habilitadasAntes: Record<string, boolean> = {};
+const habilitadasPorElTest: string[] = [];
 
 function anotar(clave: string, ok: boolean, detalle: string) {
   resultados[clave] = { ok, detalle };
@@ -29,7 +33,20 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
 
   test.beforeAll(async ({ request }) => {
     const admin = await cabeceraAdmin(request);
-    await request.patch(`${API}/business-units/breeder/enable`, { headers: admin, failOnStatusCode: false });
+
+    const rUnidades = await request.get(`${API}/business-units`, { headers: admin, failOnStatusCode: false });
+    if (rUnidades.ok()) {
+      const unidades = (await rUnidades.json()) as Array<{ code: string; is_enabled: boolean }>;
+      habilitadasAntes.breeder = Boolean(unidades.find((u) => u.code === 'breeder')?.is_enabled);
+    } else {
+      console.warn(`GET /business-units respondio ${rUnidades.status()}: se habilita breeder sin estado previo conocido`);
+      habilitadasAntes.breeder = false;
+    }
+    if (!habilitadasAntes.breeder) {
+      await request.patch(`${API}/business-units/breeder/enable`, { headers: admin, failOnStatusCode: false });
+      habilitadasPorElTest.push('breeder');
+    }
+
     esc = (await crearEscenario(request, admin, PREFIJO, 'breeder')) as Escenario;
     fs.mkdirSync(SHOTS, { recursive: true });
 
@@ -112,7 +129,20 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     }
   });
 
-  test.afterAll(async () => {
+  test.afterAll(async ({ request }) => {
+    // Devuelve la habilitación de `breeder` al estado en que este spec la encontró.
+    const cabAdmin = await cabeceraAdmin(request);
+    for (const code of habilitadasPorElTest) {
+      const r = await request.patch(`${API}/business-units/${code}/disable`, {
+        headers: cabAdmin,
+        failOnStatusCode: false,
+      });
+      if (!r.ok()) {
+        console.warn(`no se pudo restaurar la unidad ${code} (${r.status()}): ${await r.text()}`);
+      }
+    }
+    habilitadasPorElTest.length = 0;
+
     fs.mkdirSync(SHOTS, { recursive: true });
     fs.writeFileSync(
       `${OUT}/e2e_p18d_reportes_i18n_ux.json`,
@@ -123,6 +153,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
           escenario: { prefijo: PREFIJO, lotId: esc?.lotId, codigo: esc?.codigo, sufijo: sufijo() },
           eventoCorregidoId,
           eventoEnRevisionId,
+          unidadesHabilitadasAntes: habilitadasAntes,
           resultados,
           incidencias,
         },

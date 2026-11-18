@@ -112,10 +112,10 @@ Saldo por sexo (**D4**), transporte obligatorio (**D3**), SAP real, **migracione
 ## 8. Pruebas y certificación
 | Ámbito | Suites / casos esperados | Estado |
 |---|---|---|
-| Backend | Correcciones por submovimiento + `correctable-fields` · `RR-20..RR-23` de obligatorios · trazabilidad de `farm_inspection` (derivación y pendiente) · `GET /lots/{id}`, `GET /operations` (`lot_code`), `GET /reports/lot/{id}` · aislamiento por BU **fail-closed** (S1-BU-02) · D4 saldo por total con test | *a rellenar en la certificación* |
-| Frontend (`vitest`) | i18n de estados/acciones y códigos de curva · formulario de corrección dinámico · filtro con *debounce* y mensaje único · *toast* sobre modal · reportes sin lote fijo y «Volver» al origen · pestañas de unidades efectivas | *a rellenar en la certificación* |
-| E2E | Circuito **reproductoras 18 pasos** · corrección con **peso promedio** · **inspección** (derivada y pendiente + bandeja) · **obligatorios por operación** | *a rellenar en la certificación* |
-| Cierre | Regresión completa sin rojos y sin tests relajados | *a rellenar en la certificación* |
+| Backend | Correcciones por submovimiento + `correctable-fields` · `RR-20..RR-23` de obligatorios · trazabilidad de `farm_inspection` (derivación y pendiente) · `GET /lots/{id}`, `GET /operations` (`lot_code`), `GET /reports/lot/{id}` · aislamiento por BU **fail-closed** (S1-BU-02) · D4 saldo por total con test | **PASS:** 1879 passed · 0 failed · 49 skipped (suite completa) + `test_uat_s1_*` (corrections 9, required_data 12, identity 7, inspection_trace 5) |
+| Frontend (`vitest`) | i18n de estados/acciones y códigos de curva · formulario de corrección dinámico · filtro con *debounce* y mensaje único · *toast* sobre modal · reportes sin lote fijo y «Volver» al origen · pestañas de unidades efectivas | **PASS:** 121 archivos · 703 tests; `tsc -b` y `vite build` OK |
+| E2E | Circuito **reproductoras 18 pasos** · corrección con **peso promedio** · **inspección** (derivada y pendiente + bandeja) · **obligatorios por operación** | **PASS:** P18A–P18D (20 tests); suite completa en serie 184 passed · 1 failed · 1 did not run (P-17-G *operator* y su dependiente, **preexistente**, ver O-8) |
+| Cierre | Regresión completa sin rojos y sin tests relajados | **PASS:** regresión completa sin tests relajados; sensibilidad 19/19 detectadas (backend 9/9, frontend 10/10); diff de producción vs IMPL = 0 |
 
 ## 9. Observaciones no bloqueantes
 | ID | Observación | Tratamiento |
@@ -127,4 +127,6 @@ Saldo por sexo (**D4**), transporte obligatorio (**D3**), SAP real, **migracione
 | **O-5** | El usuario sembrado `test_approver` no tiene `review:read`. | Dato de pruebas, no de producto; se ajusta en el seed si se automatiza el UAT. |
 | **O-6** | `POST /operations` sobre un lote de otra unidad responde 400 «Lote no encontrado». | Anti-enumeración, comportamiento previo; se mantiene. |
 | **O-7** | AC-S1-WATER: sin evidencia suficiente en el UAT original (`UAT_EVIDENCE_INSUFFICIENT`). | El servidor ya exigía litros > 0 y ahora la interfaz también. |
+| **O-8** | **P-17-G · operator** da una falsa inconsistencia (`/cutover`: UI permite=false con API=200) cuando corre tras `P-16 cutover-breeder` en la misma base; reproducido en el baseline `7ff5451` con el mismo par de specs. | Preexistente; no es regresión de esta spec; fuera de alcance. |
+| **O-9** | La suite E2E completa con 2 workers (por defecto) muestra flakiness por carga/concurrencia en specs ajenos (`tests/operations.spec.ts`, timeout de P-17-A); aislados y en serie pasan. | Ejecutar la suite con `--workers=1`. |
 
