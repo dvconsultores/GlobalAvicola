@@ -1,0 +1,24 @@
+# ============================================================
+# Global Avícola — Docker Compose (servidor de desarrollo)
+# ============================================================
+# Este override mantiene intacto docker-compose.yml (:latest para main) y
+# selecciona las imágenes publicadas por la rama develop en Docker Hub.
+#
+# Uso en el servidor de desarrollo:
+#   docker compose -f docker-compose.yml -f docker-compose.develop.yml pull
+#   docker compose -f docker-compose.yml -f docker-compose.develop.yml up -d
+#
+# No confundir con docker-compose.dev.yml, destinado al desarrollo local con
+# build local, bind mounts, autoreload y Vite HMR.
+# ============================================================
+
+services:
+  backend:
+    image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-backend:develop
+
+  frontend:
+    image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-frontend:develop
+
+  # El bot comparte exactamente la misma imagen del backend.
+  telegram-bot:
+    image: ${DOCKER_USERNAME:-dvconsultores}/globalavicola-backend:develop
