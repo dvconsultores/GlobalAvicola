@@ -180,6 +180,7 @@ from .audit.router import router as audit_router
 from .reports.router import router as reports_router
 from .dashboard.router import router as dashboard_router
 from .business_units.router import router as business_units_router
+from .version import router as version_router
 
 # SAP Integration: solo se carga si el feature flag está activo
 if settings.FEATURE_SAP_ENABLED:
@@ -210,6 +211,9 @@ app.include_router(dashboard_router, prefix="/api/v1", tags=["Dashboard"])
 # `GA-REM-040` fase 7. El plano de control de las unidades de negocio: administrar el
 # acceso, que no es acceder (`OD-09.b`).
 app.include_router(business_units_router, prefix="/api/v1", tags=["Business Units"])
+# `SPEC 016 §B`. Procedencia del build: pública, de solo lectura y sin dependencias. `/health`
+# no cambia — sigue siendo la sonda de disponibilidad, y esto es otra pregunta.
+app.include_router(version_router, prefix="/api/v1")
 
 if settings.FEATURE_SAP_ENABLED:
     app.include_router(sap_router, prefix="/api/v1", tags=["SAP Integration"])

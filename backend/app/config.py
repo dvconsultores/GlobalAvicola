@@ -13,6 +13,13 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Global Avícola"
     DEBUG: bool = True
 
+    # Procedencia del build (`SPEC 016 §B`). Los inyecta el `Dockerfile` como `build-arg` y
+    # quedan congelados en el entorno del contenedor: la imagen no lleva `.git`, de modo que
+    # preguntar al repositorio en tiempo de petición no diría la verdad de lo construido.
+    # Ejecutando desde el repositorio no existen, y `unknown` es exactamente eso.
+    GA_GIT_SHA: str = "unknown"
+    GA_BUILD_TIME: str = "unknown"
+
     # Backend
     BACKEND_HOST: str = "0.0.0.0"
     BACKEND_PORT: int = 8000

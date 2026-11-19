@@ -22,6 +22,10 @@ RUTAS_PUBLICAS: dict[str, str] = {
     "/health": "sonda de disponibilidad, sin datos",
     "/api/v1/login": "es cómo se obtiene la sesión",
     "/api/v1/refresh": "renueva la sesión; se valida el token de refresco",
+    # `SPEC 016 §B`. Tres cadenas de metadata de build —`SHA`, fecha y entorno—, que no son
+    # dato de negocio y son justamente lo que se necesita saber sin sesión cuando se sospecha
+    # del despliegue. Solo lectura y sin acceso a la base.
+    "/api/v1/version": "metadata de build no sensible; SPEC 016",
     "/openapi.json": "documentación",
     "/docs": "documentación",
     "/docs/oauth2-redirect": "documentación",

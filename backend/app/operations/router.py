@@ -166,13 +166,19 @@ async def classify_event(
     Exige el permiso de administración de datos maestros y no el de operar: decidir a qué
     cadena pertenece un registro es configuración, no producción. **Ver un pendiente no
     basta para clasificarlo** — quien lo registró lo ve y no puede decidirlo.
+
+    `SPEC 016` · `O-3`: la unidad llega por su código (`business_unit_code`) o por el
+    identificador de la habilitación. El código se resuelve **contra la empresa del evento**
+    —`evento.company_id`, nunca una que venga en el cuerpo—, de modo que un código de otra
+    empresa no resuelve y la petición se rechaza sin decir cuál de las dos cosas falló.
     """
     from sqlalchemy import select
 
     from fastapi import status as _st
 
     from ..business_units.classification import (
-        ClasificacionInvalida, clasificar, predicado_de_pendientes,
+        ClasificacionInvalida, clasificar, habilitacion_por_codigo,
+        predicado_de_pendientes,
     )
     from ..business_units.models import CompanyBusinessUnit
     from .models import OperationalEvent
@@ -186,13 +192,21 @@ async def classify_event(
         raise HTTPException(status_code=_st.HTTP_404_NOT_FOUND,
                             detail="Registro pendiente no encontrado")
 
-    habilitacion = (await db.execute(
-        select(CompanyBusinessUnit).where(
-            CompanyBusinessUnit.id == data.company_business_unit_id)
-    )).scalar_one_or_none()
+    if data.business_unit_code:
+        habilitacion = await habilitacion_por_codigo(
+            db, company_id=evento.company_id, code=data.business_unit_code)
+        if habilitacion is None:
+            raise HTTPException(
+                status_code=_st.HTTP_400_BAD_REQUEST,
+                detail="la unidad no existe o no esta habilitada para la empresa")
+    else:
+        habilitacion = (await db.execute(
+            select(CompanyBusinessUnit).where(
+                CompanyBusinessUnit.id == data.company_business_unit_id)
+        )).scalar_one_or_none()
     try:
         await clasificar(db, evento=evento, company_business_unit=habilitacion,
-                         actor=current_user)
+                         motivo=data.reason, actor=current_user)
     except ClasificacionInvalida as exc:
         raise HTTPException(status_code=_st.HTTP_400_BAD_REQUEST, detail=str(exc))
     # Tras el `flush`, serializar la instancia dispara una carga perezosa fuera del contexto
@@ -200,6 +214,45 @@ async def classify_event(
     # es más honesto que declarar la respuesta a medias.
     await db.refresh(evento)
     return schemas.OperationalEventRead.model_validate(evento)
+
+
+@router.get("/{event_id}/classification-candidates",
+            response_model=list[schemas.ClassificationCandidateRead], tags=["Operations"])
+async def classification_candidates(
+    event_id: int,
+    db: AsyncSession = Depends(get_db),
+    current_user: dict = Depends(require_permission("masters", "update")),
+):
+    """Las cadenas a las que se puede clasificar **este** pendiente. `SPEC 016` · `O-3`.
+
+    Mismo predicado que la clasificación —y mismo `404`— para que la pantalla no pueda
+    ofrecer destinos sobre un registro que después se rechazaría: lo que no se puede
+    clasificar tampoco se lista como clasificable.
+
+    Las candidatas son las de la **empresa del evento**, habilitadas y activas. No las del
+    actor: clasificar no es operar, y quien decide la cadena puede no tener ninguna.
+    """
+    from sqlalchemy import select
+
+    from fastapi import status as _st
+
+    from ..business_units.classification import (
+        candidatos_de_clasificacion, predicado_de_pendientes,
+    )
+    from .models import OperationalEvent
+
+    evento = (await db.execute(
+        select(OperationalEvent).where(
+            OperationalEvent.id == event_id,
+            *predicado_de_pendientes(current_user))
+    )).scalar_one_or_none()
+    if evento is None:
+        raise HTTPException(status_code=_st.HTTP_404_NOT_FOUND,
+                            detail="Registro pendiente no encontrado")
+
+    filas = await candidatos_de_clasificacion(db, company_id=evento.company_id)
+    return [schemas.ClassificationCandidateRead(code=code, name_key=name_key)
+            for code, name_key in filas]
 
 
 @router.post("/{event_id}/reclassify",

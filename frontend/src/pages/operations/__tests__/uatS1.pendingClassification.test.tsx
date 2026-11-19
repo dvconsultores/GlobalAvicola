@@ -1,7 +1,11 @@
 /**
- * `spec 015 §5` · `AC-S1-T02` (F7) — bandeja de **pendientes de clasificar**: solo lectura,
- * con NOMBRES (granja/galpón/registrado por) en lugar de ids, vacío distinguible de la
- * denegación (`R-212`) y acceso desde el Historial.
+ * `spec 015 §5` · `AC-S1-T02` (F7) — bandeja de **pendientes de clasificar**, con NOMBRES
+ * (granja/galpón/registrado por) en lugar de ids, vacío distinguible de la denegación
+ * (`R-212`) y acceso desde el Historial.
+ *
+ * `SPEC 016 §A` · `O-3`: la pantalla ya puede clasificar, pero SOLO con `masters:update`.
+ * Sin ese permiso el autor ve su lista y ninguna acción — el resto de este fichero se
+ * conserva intacto para que esa garantía siga cubierta.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor } from '@testing-library/react'
@@ -73,7 +77,8 @@ describe('F7 · bandeja de pendientes de clasificar', () => {
     const [url, cfg] = llamadaBandeja()!
     expect(url).toBe('/operations/pending-classification')
     expect(cfg?.params).toMatchObject({ limit: 100 })
-    // Decisión de seguridad `GA-REM-040`: esta pantalla NO clasifica.
+    // `SPEC 016 §A` · `O-3`: sin `masters:update` no hay acción de clasificar ni petición.
+    expect(screen.queryAllByTestId('classify-btn')).toHaveLength(0)
     expect(get.mock.calls.some((c) => String(c[0]).includes('/classify'))).toBe(false)
   })
 

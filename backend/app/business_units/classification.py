@@ -23,10 +23,13 @@ cadena, deja de verlo.
 """
 from __future__ import annotations
 
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
 from sqlalchemy import and_, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
+
+if TYPE_CHECKING:  # pragma: no cover - solo para anotaciones
+    from .models import CompanyBusinessUnit
 
 #: Quién puede clasificar. Es un acto de **configuración** —decide a qué cadena pertenece un
 #: registro— y por eso vive en el permiso de administración de datos maestros, no en el de
@@ -151,7 +154,59 @@ class ClasificacionInvalida(ValueError):
     """La habilitación elegida no sirve para clasificar este registro."""
 
 
-async def clasificar(db: AsyncSession, *, evento, company_business_unit, actor: dict):
+async def habilitacion_por_codigo(
+    db: AsyncSession, *, company_id: int, code: str
+) -> Optional[CompanyBusinessUnit]:
+    """La habilitación de **esta** empresa para ese código de unidad, o `None`. `SPEC 016`.
+
+    Tres filtros y ninguno sobra: la empresa del **evento** —nunca una que venga del
+    cliente—, la unidad **activa** en el catálogo y la habilitación **encendida**. Si falta
+    cualquiera, `None`: la ausencia de configuración no se lee como permiso, y una unidad
+    retirada del producto no vuelve por la puerta de atrás de un código.
+
+    La empresa va como parámetro obligatorio a propósito: quien llama no puede «olvidarla»
+    sin que el resolutor deje de compilar, que es como se evita la fila cruzada.
+    """
+    from .models import BusinessUnit, CompanyBusinessUnit
+
+    return (await db.execute(
+        select(CompanyBusinessUnit)
+        .join(BusinessUnit, BusinessUnit.id == CompanyBusinessUnit.business_unit_id)
+        .where(CompanyBusinessUnit.company_id == company_id,
+               CompanyBusinessUnit.is_enabled.is_(True),
+               BusinessUnit.is_active.is_(True),
+               BusinessUnit.code == code)
+    )).scalar_one_or_none()
+
+
+async def candidatos_de_clasificacion(
+    db: AsyncSession, *, company_id: int
+) -> list[tuple[str, str]]:
+    """Las cadenas a las que **esta** empresa puede clasificar un pendiente. `SPEC 016`.
+
+    Pares `(code, name_key)` de las unidades habilitadas y activas, ordenados por código.
+    Solo las habilitadas: ofrecer en la bandeja una que la empresa apagó sería ofrecer un
+    destino que la propia clasificación rechazaría, y la pantalla mentiría.
+
+    `name_key` es clave de traducción, no traducción — el producto habla dos lenguas y la
+    decide el cliente (`BusinessUnit.name_key`).
+    """
+    from .models import BusinessUnit, CompanyBusinessUnit
+
+    filas = (await db.execute(
+        select(BusinessUnit.code, BusinessUnit.name_key)
+        .join(CompanyBusinessUnit,
+              CompanyBusinessUnit.business_unit_id == BusinessUnit.id)
+        .where(CompanyBusinessUnit.company_id == company_id,
+               CompanyBusinessUnit.is_enabled.is_(True),
+               BusinessUnit.is_active.is_(True))
+        .order_by(BusinessUnit.code)
+    )).all()
+    return [(code, name_key) for code, name_key in filas]
+
+
+async def clasificar(db: AsyncSession, *, evento, company_business_unit, motivo: str,
+                     actor: dict):
     """Fija la cadena de un registro que no podía derivarla. `T-040-17`.
 
     Comprueba lo que hay que comprobar, y **no hace nada más**:
@@ -159,6 +214,10 @@ async def clasificar(db: AsyncSession, *, evento, company_business_unit, actor: 
         la habilitación es de la MISMA empresa que el registro
         la habilitación está activa
         el registro no tenía ya cadena derivable
+
+    `SPEC 016` · `O-3`: el `motivo` viaja al rastro de `P-09` como `change_reason`. Sin él
+    quedaría constancia de que la cadena cambió y ninguna de por qué, que es justo lo que
+    hará falta el día que se revise la atribución.
 
     Y sobre todo, lo que **no** hace, porque sería la forma más silenciosa de abrir el
     sistema:
@@ -204,6 +263,7 @@ async def clasificar(db: AsyncSession, *, evento, company_business_unit, actor: 
         entity_type="operational_event", entity_id=str(evento.id),
         company_id=evento.company_id,
         previous_state=anterior, new_state=str(codigo),
+        change_reason=motivo,
     )
     return evento
 

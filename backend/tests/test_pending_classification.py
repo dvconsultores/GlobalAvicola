@@ -263,7 +263,8 @@ async def test_el_creador_no_puede_clasificar_por_haberlo_creado(http_client, pe
     r = await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["creador"]),
-        json={"company_business_unit_id": pend["hab_breeder"]})
+        json={"company_business_unit_id": pend["hab_breeder"],
+              "reason": "Clasificacion manual de prueba"})
     assert r.status_code == 403, r.text
 
 
@@ -271,7 +272,8 @@ async def test_el_control_autorizado_clasifica(http_client, pend, client):
     r = await client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_hatchery"]})
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "Clasificacion manual de prueba"})
     assert r.status_code == 200, r.text
 
 
@@ -279,7 +281,8 @@ async def test_no_se_clasifica_con_la_habilitacion_de_otra_empresa(http_client, 
     r = await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_b_breeder"]})
+        json={"company_business_unit_id": pend["hab_b_breeder"],
+              "reason": "Clasificacion manual de prueba"})
     assert r.status_code in (400, 404), r.text
 
 
@@ -287,7 +290,8 @@ async def test_el_control_de_otra_empresa_no_clasifica(http_client, pend):
     r = await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif_b"]),
-        json={"company_business_unit_id": pend["hab_breeder"]})
+        json={"company_business_unit_id": pend["hab_breeder"],
+              "reason": "Clasificacion manual de prueba"})
     assert r.status_code in (400, 403, 404), r.text
 
 
@@ -309,7 +313,8 @@ async def test_clasificar_no_concede_la_cadena_a_nadie(http_client, pend, test_d
         r = await http_client.post(
             f"/api/v1/operations/{pend['sin_lote']}/classify",
             headers=_token(pend["clasif"]),
-            json={"company_business_unit_id": pend["hab_hatchery"]})
+            json={"company_business_unit_id": pend["hab_hatchery"],
+                  "reason": "Clasificacion manual de prueba"})
         assert r.status_code == 200, r.text
         despues = {uid: await _efectivas(uid) for uid in (pend["creador"], pend["clasif"])}
     finally:
@@ -328,7 +333,8 @@ async def test_clasificar_no_habilita_ninguna_unidad(http_client, pend, test_dat
         await http_client.post(
             f"/api/v1/operations/{pend['sin_lote']}/classify",
             headers=_token(pend["clasif"]),
-            json={"company_business_unit_id": pend["hab_hatchery"]})
+            json={"company_business_unit_id": pend["hab_hatchery"],
+                  "reason": "Clasificacion manual de prueba"})
         async with async_sessionmaker(motor)() as s:
             despues = await unidades_habilitadas(s, pend["empresa_a"])
     finally:
@@ -343,7 +349,8 @@ async def test_clasificar_deja_rastro_en_p09(http_client, pend, test_database_ur
     await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_hatchery"]})
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "Clasificacion manual de prueba"})
 
     motor = create_async_engine(test_database_url)
     try:
@@ -372,7 +379,8 @@ async def test_tras_clasificar_el_creador_pierde_su_excepcion(http_client, pend)
     r = await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_hatchery"]})
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "Clasificacion manual de prueba"})
     assert r.status_code == 200, r.text
 
     assert pend["sin_lote"] not in await _pendientes(http_client, pend["creador"])
@@ -386,7 +394,8 @@ async def test_tras_clasificar_lo_ve_quien_tiene_esa_cadena(http_client, pend):
     await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_hatchery"]})
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "Clasificacion manual de prueba"})
     r = await http_client.get(f"/api/v1/operations/{pend['sin_lote']}",
                               headers=_token(pend["incub"]))
     assert r.status_code == 200, r.text
@@ -396,7 +405,8 @@ async def test_tras_clasificar_sigue_denegado_a_otra_cadena(http_client, pend):
     await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_hatchery"]})
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "Clasificacion manual de prueba"})
     r = await http_client.get(f"/api/v1/operations/{pend['sin_lote']}",
                               headers=_token(pend["ajeno"]))
     assert r.status_code == 404, r.text
@@ -406,7 +416,8 @@ async def test_ya_no_esta_pendiente_para_el_control(http_client, pend):
     await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": pend["hab_hatchery"]})
+        json={"company_business_unit_id": pend["hab_hatchery"],
+              "reason": "Clasificacion manual de prueba"})
     assert pend["sin_lote"] not in await _pendientes(http_client, pend["clasif"])
 
 
@@ -548,7 +559,8 @@ async def test_clasificar_contra_una_unidad_apagada_se_rechaza_y_no_la_enciende(
         r = await http_client.post(
             f"/api/v1/operations/{pend['sin_lote']}/classify",
             headers=_token(pend["clasif"]),
-            json={"company_business_unit_id": pend["hab_hatchery"]})
+            json={"company_business_unit_id": pend["hab_hatchery"],
+                  "reason": "Clasificacion manual de prueba"})
         assert r.status_code == 400, r.text
 
         async with async_sessionmaker(motor)() as s:
@@ -567,7 +579,8 @@ async def _clasificar(http_client, pend, habilitacion=None):
     r = await http_client.post(
         f"/api/v1/operations/{pend['sin_lote']}/classify",
         headers=_token(pend["clasif"]),
-        json={"company_business_unit_id": habilitacion or pend["hab_breeder"]})
+        json={"company_business_unit_id": habilitacion or pend["hab_breeder"],
+              "reason": "Clasificacion manual de prueba"})
     assert r.status_code == 200, r.text
     return r
 

@@ -1145,13 +1145,29 @@
       "link": "Pending classification",
       "intro": "These records have no unambiguous productive chain (for example, an inspection of a farm whose lots belong to several chains). They are shown here until an administrator classifies them; they do not appear in the normal history.",
       "empty": "There are no records pending classification.",
+      "classify": "Classify",
       "columns": {
         "type": "Record type",
         "date": "Event date",
         "farm": "Farm",
         "house": "House",
         "registeredBy": "Registered by",
-        "status": "Status"
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "dialog": {
+        "title": "Classify record",
+        "description": "Choose the productive unit this record belongs to. The decision is audited with the reason.",
+        "unit": "Productive unit",
+        "unitPlaceholder": "Select a unit",
+        "reason": "Reason",
+        "reasonTooShort": "The reason must be at least 3 characters long",
+        "candidatesLoading": "Loading available units...",
+        "candidatesError": "The available units could not be loaded",
+        "noCandidates": "The company has no enabled units",
+        "gone": "The record is no longer pending classification",
+        "classifyError": "The record could not be classified",
+        "success": "Record classified under {{unit}}"
       }
     },
     "sanitaryCert": "Sanitary certificate",

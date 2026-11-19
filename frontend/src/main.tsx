@@ -11,6 +11,12 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 // Telegram Mini App: initialize SDK early to set header color and expand
 initTelegramEarly()
 
+// SPEC 016 §B (AC-VP-03): el SHA del build viaja en el bundle; se publica como atributo
+// del documento (nunca se muestra en pantalla). `typeof` protege entornos sin `define`.
+if (typeof __GA_BUILD_SHA__ !== 'undefined') {
+  document.documentElement.setAttribute('data-build-sha', __GA_BUILD_SHA__)
+}
+
 // S-01/02: Wire in-memory token accessors so api.ts can read/refresh tokens
 // without touching localStorage. Must happen before any API call.
 // SPEC 013 · AC-SS-01/02: `wireSession()` además rehidrata `/me` tras cada refresh y

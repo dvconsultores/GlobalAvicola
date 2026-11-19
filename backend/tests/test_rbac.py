@@ -49,6 +49,12 @@ def test_ac08b_la_cobertura_es_amplia_y_las_excepciones_pocas():
     `/me` figuraba como «pública» cuando exige token, y las de titularidad gastaban el cupo
     de superficie anónima. Con la separación, el límite de lo verdaderamente público baja de
     seis a dos: la guarda quedó **más** estricta, no menos.
+
+    `SPEC 016 §B` añade la tercera y última excepción: `GET /api/v1/version` publica la
+    procedencia del build —`SHA`, fecha y entorno—. Se incluye aquí porque el cupo es un
+    número **cerrado** y cada entrada nueva tiene que venir a justificarse en este mismo
+    sitio, no porque la guarda se haya relajado: sigue sin haber ninguna ruta anónima que
+    devuelva datos de negocio.
     """
     from app.authorization_coverage import (
         RUTAS_DE_TITULAR,
@@ -63,8 +69,9 @@ def test_ac08b_la_cobertura_es_amplia_y_las_excepciones_pocas():
     assert len(con_permiso) > 150, "La inmensa mayoría de las rutas debe exigir permiso"
 
     publicas_api = [c for c, _, _ in rutas if c in RUTAS_PUBLICAS and c.startswith("/api/")]
-    assert len(publicas_api) <= 2, (
-        f"Solo el inicio y la renovación de sesión pueden ser anónimos: {publicas_api}"
+    assert len(publicas_api) <= 3, (
+        "Solo el inicio y la renovación de sesión, más la procedencia del build "
+        f"(`SPEC 016`), pueden ser anónimos: {publicas_api}"
     )
 
     titular_api = [c for c, _, _ in rutas if c in RUTAS_DE_TITULAR and c.startswith("/api/")]

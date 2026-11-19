@@ -415,4 +415,6 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # errors, mappings GET/PUT y mappings/{mapping_id}), 226 → 236. SPEC 006 (cutover v2) añade
     # el listado y el detalle de batches, el preview por BU y el informe de errores, 236 → 240.
     # 241: +1 `GET /corrections/events/{id}/correctable-fields` (SPEC 015 §3, S1-CORR-01).
-    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 241
+    # 242: +1 `GET /operations/{id}/classification-candidates` (SPEC 016)
+    # 243: +1 `GET /version` (SPEC 016, procedencia del build)
+    assert sum(1 for p, _, _ in enumerar_rutas(app) if p.startswith("/api/")) == 243
