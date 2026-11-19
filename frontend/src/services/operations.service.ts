@@ -18,6 +18,19 @@ export interface OperationEvent {
   inspection_details?: Record<string, unknown>[]
 }
 
+/** `SPEC 016` · `O-3`: destino posible de un pendiente — `code` canónico + `name_key` i18n.
+ *  Nunca viaja el id interno de la habilitación (decisión de seguridad `GA-REM-040`). */
+export interface ClassificationCandidate {
+  code: string
+  name_key?: string | null
+}
+
+/** `SPEC 016` · `O-3`: cuerpo de `POST /operations/{id}/classify`. */
+export interface ClassifyEventPayload {
+  business_unit_code: string
+  reason: string
+}
+
 export const operationsService = {
   list: (params?: {
     lot_id?: number
@@ -48,4 +61,14 @@ export const operationsService = {
 
   getEventTypes: () =>
     api.get<string[]>('/operations/event-types'),
+
+  /** `SPEC 016` · `O-3`: cadenas a las que se puede clasificar ESTE pendiente (403/404 del
+   *  backend se propagan: no se ofrecen destinos sobre un registro que luego se rechazaría). */
+  getClassificationCandidates: (eventId: number) =>
+    api.get<ClassificationCandidate[]>(`/operations/${eventId}/classification-candidates`),
+
+  /** `SPEC 016` · `O-3`: fija la cadena productiva del pendiente. La unidad se envía por su
+   *  CÓDIGO; el backend la resuelve contra la empresa del evento. */
+  classifyEvent: (eventId: number, data: ClassifyEventPayload) =>
+    api.post<OperationEvent>(`/operations/${eventId}/classify`, data),
 }

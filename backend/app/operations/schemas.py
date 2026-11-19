@@ -396,11 +396,56 @@ class ClassificationRequest(BaseModel):
 
     No por el catálogo global: así el destino queda atado a una empresa concreta y la
     combinación entre empresas no se puede ni escribir — el mismo criterio de `OD-09.d`.
+
+    `SPEC 016` · `O-3`: la unidad se puede nombrar **por su código** (`business_unit_code`)
+    además de por el identificador de la habilitación. El código es lo que la pantalla de la
+    bandeja conoce —sale de `classification-candidates`—, y la empresa con la que se resuelve
+    es siempre la **del evento**, nunca una que venga en el cuerpo: aceptar un `company_id`
+    del cliente sería la forma más directa de clasificar el registro del vecino. Exactamente
+    uno de los dos campos, para que no haya dos respuestas a la misma pregunta.
+
+    Y el **motivo es obligatorio**, igual que en la corrección: dejar constancia de que
+    alguien decidió la cadena sin decir por qué convierte la trazabilidad en un sello.
     """
 
     model_config = {"extra": "forbid"}
 
-    company_business_unit_id: int
+    #: La habilitación por su fila. `None` cuando se nombra por código.
+    company_business_unit_id: Optional[int] = None
+    #: El código de la unidad (`hatchery`, `breeder`…). `None` cuando se usa el id.
+    business_unit_code: Optional[str] = None
+    #: Por qué se atribuye a esa cadena. Obligatorio: sin él no hay trazabilidad.
+    reason: str
+
+    @field_validator("reason")
+    @classmethod
+    def _motivo_declarado(cls, v: str) -> str:
+        texto = v.strip()
+        if len(texto) < 3:
+            raise ValueError("el motivo debe tener al menos 3 caracteres")
+        if len(texto) > 500:
+            raise ValueError("el motivo no puede superar los 500 caracteres")
+        return texto
+
+    @model_validator(mode="after")
+    def _exactamente_una_unidad(self) -> "ClassificationRequest":
+        por_id = self.company_business_unit_id is not None
+        por_codigo = bool(self.business_unit_code)
+        if por_id == por_codigo:
+            raise ValueError("indique la unidad por su codigo (business_unit_code)")
+        return self
+
+
+class ClassificationCandidateRead(BaseModel):
+    """Una cadena a la que se puede clasificar un pendiente — `SPEC 016` · `O-3`.
+
+    Solo `code` y `name_key`: lo mínimo para pintar el desplegable. **Sin el `id` de la
+    habilitación** — el mismo criterio de `HabilitacionRead` (`AC-F03`): exponerlo invita a
+    aceptarlo como entrada, que es por donde se cuela una habilitación de otro inquilino.
+    """
+
+    code: str
+    name_key: str
 
 
 class ReclassificationRequest(BaseModel):

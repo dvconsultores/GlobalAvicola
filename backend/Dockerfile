@@ -41,6 +41,17 @@ ENV PATH="/app/.venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
 
+# SPEC 016 §B: procedencia del build. El SHA y la fecha llegan por `build-arg` porque la
+# imagen no contiene `.git`: preguntarle al repositorio en tiempo de ejecución no diría qué
+# se construyó. Van después de los COPY y de los ENV de dependencias para no invalidar la
+# caché de capas cuando solo cambia el commit. `GET /api/v1/version` los publica.
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+ENV GA_GIT_SHA=$GIT_SHA
+ENV GA_BUILD_TIME=$BUILD_TIME
+LABEL org.opencontainers.image.revision=$GIT_SHA
+LABEL org.opencontainers.image.created=$BUILD_TIME
+
 # Expose port
 EXPOSE 8000
 

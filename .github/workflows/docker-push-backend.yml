@@ -44,6 +44,17 @@ jobs:
             type=sha,format=short
             type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
 
+      # SPEC 016 §B (D-B4): procedencia exacta del build. El SHA y la fecha viajan como
+      # build-args hasta el artefacto (`GA_GIT_SHA` / `version.json` / etiqueta OCI): la
+      # imagen no contiene `.git` y el despliegue debe poder declarar qué commit lo construyó.
+      - name: Guard - build SHA must be present
+        run: |
+          test -n "${{ github.sha }}" || { echo "github.sha vacio: el build no puede certificarse"; exit 1; }
+
+      - name: Compute build provenance
+        id: prov
+        run: echo "build_time=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
       - name: Build and push
         uses: docker/build-push-action@v6
         with:
@@ -52,6 +63,9 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            GIT_SHA=${{ github.sha }}
+            BUILD_TIME=${{ steps.prov.outputs.build_time }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
 

@@ -18,6 +18,16 @@ RUN npm install --legacy-peer-deps
 # Copy source code
 COPY . .
 
+# SPEC 016 §B (D-B3): procedencia del build. La imagen no contiene `.git`: preguntarle al
+# repositorio en tiempo de ejecución no diría qué se construyó, así que el SHA y la fecha
+# los inyecta el CI como build-args. Van aquí, después del `COPY . .` y justo antes del
+# `npm run build`, para que el bundle y `dist/version.json` los lleven sin invalidar la
+# caché de dependencias cuando solo cambia el commit.
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+ENV GIT_SHA=$GIT_SHA
+ENV BUILD_TIME=$BUILD_TIME
+
 # Build for production
 RUN npm run build
 
@@ -29,6 +39,14 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 # Copy built assets from builder
 COPY --from=builder /app/dist /usr/share/nginx/html
+
+# SPEC 016 §B (D-B1/D-B6): etiquetas OCI de procedencia. Tras los `COPY` para preservar
+# la caché: cambian con cada commit y no deben invalidar capas de contenido. No hay `.git`
+# en la imagen; el SHA viene del build-arg.
+ARG GIT_SHA=unknown
+ARG BUILD_TIME=unknown
+LABEL org.opencontainers.image.revision=$GIT_SHA
+LABEL org.opencontainers.image.created=$BUILD_TIME
 
 # Create non-root user for nginx
 RUN chown -R nginx:nginx /usr/share/nginx/html && \

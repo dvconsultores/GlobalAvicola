@@ -70,6 +70,9 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
     # ── Sin sesión ────────────────────────────────────────────────────────────
     "/api/v1/login": (Alcance.PUBLICA, None, "es cómo se obtiene la sesión"),
     "/api/v1/refresh": (Alcance.PUBLICA, None, "renueva la sesión"),
+    # `SPEC 016` · `§B`. Procedencia del build: no hay sesión ni empresa a la que acotar la
+    # respuesta, porque lo que devuelve no es dato de negocio.
+    "/api/v1/version": (Alcance.PUBLICA, None, "metadata de build no sensible; SPEC 016"),
     # ── Identidad y contexto ──────────────────────────────────────────────────
     "/api/v1/me": (Alcance.CORE, None, "la identidad del titular"),
     # `GA-REM-003` · AC04: termina la sesión del propio titular; no toca producción.
@@ -135,6 +138,10 @@ RUTAS: dict[str, tuple[Alcance, str | None, str]] = {
         Alcance.CONTROL, None, "bandeja de clasificación pendiente (`OD-10.c`)"),
     "/api/v1/operations/{event_id}/classify": (
         Alcance.CONTROL, None, "acto de configuración, no de operación"),
+    # `SPEC 016` · `O-3`: la lista de destinos del mismo acto. Es control por la misma razón
+    # —no opera sobre ninguna cadena y la consulta quien decide la atribución—.
+    "/api/v1/operations/{event_id}/classification-candidates": (
+        Alcance.CONTROL, None, "candidatos de la clasificación pendiente (`SPEC 016`)"),
     "/api/v1/operations/{event_id}/reclassify": (
         Alcance.CONTROL, None, "corrección de alto control (`OD-10.d`)"),
     "/api/v1/operations/alerts/{alert_id}/resolve": (Alcance.MULTI_UNIDAD, None, "ídem"),

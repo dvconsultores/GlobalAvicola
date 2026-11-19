@@ -1145,13 +1145,29 @@
       "link": "Pendientes de clasificar",
       "intro": "Estos registros no tienen una cadena productiva inequívoca (por ejemplo, una inspección de una granja con lotes de varias cadenas). Se muestran aquí hasta que un administrador los clasifique; no aparecen en el historial normal.",
       "empty": "No hay registros pendientes de clasificar.",
+      "classify": "Clasificar",
       "columns": {
         "type": "Tipo de registro",
         "date": "Fecha del evento",
         "farm": "Granja",
         "house": "Galpón",
         "registeredBy": "Registrado por",
-        "status": "Estado"
+        "status": "Estado",
+        "actions": "Acciones"
+      },
+      "dialog": {
+        "title": "Clasificar registro",
+        "description": "Indica a qué unidad productiva pertenece este registro. La decisión queda auditada con el motivo.",
+        "unit": "Unidad productiva",
+        "unitPlaceholder": "Seleccione una unidad",
+        "reason": "Motivo",
+        "reasonTooShort": "El motivo debe tener al menos 3 caracteres",
+        "candidatesLoading": "Cargando unidades disponibles...",
+        "candidatesError": "No se pudieron cargar las unidades disponibles",
+        "noCandidates": "La empresa no tiene unidades habilitadas",
+        "gone": "El registro ya no está pendiente de clasificar",
+        "classifyError": "No se pudo clasificar el registro",
+        "success": "Registro clasificado en {{unit}}"
       }
     },
     "sanitaryCert": "Certificado sanitario",
