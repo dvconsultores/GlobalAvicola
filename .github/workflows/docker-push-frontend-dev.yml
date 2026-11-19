@@ -1,18 +1,17 @@
 # ============================================================
 # Global Avícola — Build & Push Frontend DEV image to Docker Hub
-# Triggered on push to develop when frontend/ changes
+# Triggered on every push to develop (sin filtro de rutas, SPEC 017 D-C3)
 # Publishes <DOCKER_USERNAME>/globalavicola-frontend:dev (+ sha)
 # Never publishes :latest — production stays owned by main.
 # ============================================================
 
 name: Docker Push — Frontend (dev)
 
+# SPEC 017 (D-C3): sin filtro `paths`. Cada push a la rama construye la imagen con el SHA de ESE commit,
+# para que SHA(rama) == SHA(runtime) tambien tras commits de documentacion.
 on:
   push:
     branches: [develop]
-    paths:
-      - 'frontend/**'
-      - '.github/workflows/docker-push-frontend-dev.yml'
   workflow_dispatch:
 
 env:

@@ -1,0 +1,31 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > backend/Dockerfile recibe el SHA por build-arg y lo publica como etiqueta OCI 1ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > frontend/Dockerfile inyecta el SHA antes de `npm run build` y etiqueta la imagen 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > nginx.conf sirve /version.json sin caché y repite el header de tipo de contenido 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > workflow docker-push-backend.yml > pasa GIT_SHA y BUILD_TIME como build-args y guarda github.sha 1ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > workflow docker-push-backend-dev.yml > pasa GIT_SHA y BUILD_TIME como build-args y guarda github.sha 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > workflow docker-push-frontend.yml > pasa GIT_SHA y BUILD_TIME como build-args y guarda github.sha 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-05 · procedencia declarada en las imágenes > workflow docker-push-frontend-dev.yml > pasa GIT_SHA y BUILD_TIME como build-args y guarda github.sha 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-03 · el build real emite la procedencia > vite build con GIT_SHA/BUILD_TIME deja version.json y el SHA en el bundle 1333ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-07 · guardia de paridad scripts/verify_runtime_sha.sh > SHA igual al esperado ⇒ exit 0 y PASS 104ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-07 · guardia de paridad scripts/verify_runtime_sha.sh > runtime `unknown` ⇒ exit 2 y FAIL (no se puede certificar) 76ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-07 · guardia de paridad scripts/verify_runtime_sha.sh > SHA distinto y árboles distintos (commits inexistentes) ⇒ exit 1 y FAIL 79ms
+ ↓ src/__tests__/spec016.buildProvenance.test.ts > AC-VP-07 · guardia de paridad scripts/verify_runtime_sha.sh > runtime en un commit anterior con árboles iguales ⇒ exit 0 y PASS (tree-equal)
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-01 · workflow docker-push-backend.yml > construye en cada push (sin filtro de rutas) y conserva la procedencia 1ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-01 · workflow docker-push-backend-dev.yml > construye en cada push (sin filtro de rutas) y conserva la procedencia 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-01 · workflow docker-push-frontend.yml > construye en cada push (sin filtro de rutas) y conserva la procedencia 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-01 · workflow docker-push-frontend-dev.yml > construye en cada push (sin filtro de rutas) y conserva la procedencia 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-02 · workflow docker-push-backend-dev.yml > publica `dev` + sha y nunca `latest` ni `develop` 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-02 · workflow docker-push-frontend-dev.yml > publica `dev` + sha y nunca `latest` ni `develop` 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-02 · workflow docker-push-backend.yml > publica `latest` + sha y nunca `dev` ni `develop` 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-02 · workflow docker-push-frontend.yml > publica `latest` + sha y nunca `dev` ni `develop` 0ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-03 · docker-compose.develop.yml pide `:dev` en las tres imágenes 1ms
+ ✓ src/__tests__/spec016.buildProvenance.test.ts > SPEC 017 · contrato de imagenes y convergencia > AC-C-04 · docs/DEPLOYMENT_CONTRACT.md declara el contrato completo 0ms
+
+ Test Files  1 passed (1)
+      Tests  21 passed | 1 skipped (22)
+   Start at  14:38:08
+   Duration  2.28s (transform 39ms, setup 45ms, import 43ms, tests 1.60s, environment 487ms)
+

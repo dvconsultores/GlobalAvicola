@@ -264,3 +264,117 @@ describe('AC-VP-07 · guardia de paridad scripts/verify_runtime_sha.sh', () => {
     },
   )
 })
+
+/**
+ * SPEC 017 — contrato de imágenes y convergencia main/develop.
+ *
+ * Trabaja sobre los archivos como TEXTO (sin dependencia YAML nueva): lo que se
+ * certifica es que el repositorio declara un único contrato de tags —`main` →
+ * `latest` + `sha-<7>`, `develop` → `dev` + `sha-<7>`— y que el compose de UAT
+ * pide exactamente ese tag (`develop` no existe como tag en el registro).
+ */
+describe('SPEC 017 · contrato de imagenes y convergencia', () => {
+  const DEV_WORKFLOWS = ['docker-push-backend-dev.yml', 'docker-push-frontend-dev.yml']
+  const MAIN_WORKFLOWS = ['docker-push-backend.yml', 'docker-push-frontend.yml']
+
+  function readWorkflow(workflowName: string): string {
+    return readFileSync(path.join(WORKFLOWS_DIR, workflowName), 'utf8')
+  }
+
+  /** Disparadores declarados: el bloque `on:` completo, hasta la siguiente clave de primer nivel. */
+  function triggerBlock(text: string): string {
+    const lines = text.split('\n')
+    const start = lines.findIndex((line) => /^on\s*:/.test(line))
+    if (start === -1) return ''
+
+    const inline = lines[start].replace(/^on\s*:/, '').trim()
+    // `on: [push, workflow_dispatch]` — todo el bloque cabe en la propia línea.
+    if (inline !== '') return inline
+
+    const block: string[] = []
+    for (const line of lines.slice(start + 1)) {
+      if (line.trim() === '') {
+        block.push(line)
+        continue
+      }
+      if (line.search(/\S/) === 0) break // siguiente clave de primer nivel (`env:`, `jobs:`…)
+      block.push(line)
+    }
+    return block.join('\n')
+  }
+
+  function imageLines(): string[] {
+    return readRepoFile('docker-compose.develop.yml')
+      .split('\n')
+      .filter((line) => /^\s*image:/.test(line))
+  }
+
+  describe.each(WORKFLOWS)('AC-C-01 · workflow %s', (workflowName) => {
+    it('construye en cada push (sin filtro de rutas) y conserva la procedencia', () => {
+      const workflow = readWorkflow(workflowName)
+      const onBlock = triggerBlock(workflow)
+
+      // El disparador debe existir y no puede filtrar por rutas: un push sin build deja el
+      // SHA de la rama distinto del SHA del runtime.
+      expect(onBlock).not.toBe('')
+      expect(onBlock).not.toMatch(/^\s*paths(-ignore)?\s*:/m)
+
+      // Manual sigue disponible, pero no sustituye al build por push.
+      expect(onBlock).toMatch(/workflow_dispatch/)
+
+      const buildArgs = yamlBlock(workflow, /^\s*build-args:/)
+      expect(buildArgs).not.toBe('')
+      expect(buildArgs).toContain('GIT_SHA=${{ github.sha }}')
+
+      expect(workflow).toContain('Guard - build SHA must be present')
+    })
+  })
+
+  describe.each(DEV_WORKFLOWS)('AC-C-02 · workflow %s', (workflowName) => {
+    it('publica `dev` + sha y nunca `latest` ni `develop`', () => {
+      const workflow = readWorkflow(workflowName)
+
+      expect(workflow).toContain(
+        "type=raw,value=dev,enable=${{ github.ref == 'refs/heads/develop' }}",
+      )
+      expect(workflow).not.toContain('value=latest')
+      expect(workflow).not.toContain('value=develop')
+    })
+  })
+
+  describe.each(MAIN_WORKFLOWS)('AC-C-02 · workflow %s', (workflowName) => {
+    it('publica `latest` + sha y nunca `dev` ni `develop`', () => {
+      const workflow = readWorkflow(workflowName)
+
+      expect(workflow).toContain('value=latest')
+      expect(workflow).not.toContain('value=dev,')
+      expect(workflow).not.toContain('value=develop')
+    })
+  })
+
+  it('AC-C-03 · docker-compose.develop.yml pide `:dev` en las tres imágenes', () => {
+    const images = imageLines()
+
+    expect(images).toHaveLength(3)
+
+    // 2 backend (api + telegram-bot que comparte imagen) y 1 frontend.
+    const backendImages = images.filter((line) => line.includes('globalavicola-backend:dev'))
+    const frontendImages = images.filter((line) => line.includes('globalavicola-frontend:dev'))
+    expect(backendImages).toHaveLength(2)
+    expect(frontendImages).toHaveLength(1)
+
+    // `develop` no es un tag del registro: pedirlo produce `manifest unknown`.
+    for (const line of images) {
+      expect(line).not.toContain(':develop')
+    }
+  })
+
+  it('AC-C-04 · docs/DEPLOYMENT_CONTRACT.md declara el contrato completo', () => {
+    const doc = readRepoFile('docs', 'DEPLOYMENT_CONTRACT.md')
+
+    expect(doc).toContain('latest')
+    expect(doc).toContain('dev')
+    expect(doc).toContain('sha-')
+    expect(doc).toContain('verify_runtime_sha.sh')
+  })
+})

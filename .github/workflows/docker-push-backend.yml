@@ -1,16 +1,15 @@
 # ============================================================
 # Global Avícola — Build & Push Backend Docker Image to Docker Hub
-# Triggered on push to main when backend/ changes
+# Triggered on every push to main (sin filtro de rutas, SPEC 017 D-C3)
 # ============================================================
 
 name: Docker Push — Backend
 
+# SPEC 017 (D-C3): sin filtro `paths`. Cada push a la rama construye la imagen con el SHA de ESE commit,
+# para que SHA(rama) == SHA(runtime) tambien tras commits de documentacion.
 on:
   push:
     branches: [main]
-    paths:
-      - 'backend/**'
-      - '.github/workflows/docker-push-backend.yml'
   workflow_dispatch:
   workflow_call:
 
