@@ -1,0 +1,21 @@
+## W1: reponer paths en backend-dev
+       × construye en cada push (sin filtro de rutas) y conserva la procedencia 4ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 20 passed | 1 skipped (22)
+restaurado(diff lines)=0
+## W2: main-frontend publica dev
+       × publica `latest` + sha y nunca `dev` ni `develop` 6ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 20 passed | 1 skipped (22)
+restaurado(diff lines)=0
+## W3: dev-backend publica latest
+       × publica `dev` + sha y nunca `latest` ni `develop` 16ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  1 failed | 20 passed | 1 skipped (22)
+restaurado(diff lines)=0
+## W4: frontend-dev sin build-args GIT_SHA
+       × pasa GIT_SHA y BUILD_TIME como build-args y guarda github.sha 6ms
+       × construye en cada push (sin filtro de rutas) y conserva la procedencia 1ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+      Tests  2 failed | 19 passed | 1 skipped (22)
+restaurado(diff lines)=0

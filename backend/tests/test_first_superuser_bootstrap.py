@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import inspect
+import uuid
 from pathlib import Path
 
 import pytest
@@ -429,3 +430,57 @@ async def test_t_043_12_never_degrades_an_inactive_canonical_admin(pristine_supe
     assert existing.is_active is False
     assert existing.id == first.user_id
     assert role.name == "Super Administrador" and role.company_id is None
+
+
+async def test_t_043_13_refuses_admin_bound_to_a_company(pristine_superadmin):
+    """Un `admin` canónico atado a una empresa no es autoridad global: se rechaza."""
+    isolated_session = pristine_superadmin
+    first = await bootstrap_first_superuser(
+        isolated_session, password=STRONG_PASSWORD, commit=False
+    )
+    company = Company(name=f"Empresa Bootstrap {uuid.uuid4().hex[:8]}", is_active=True)
+    isolated_session.add(company)
+    await isolated_session.flush()
+    admin = (
+        await isolated_session.execute(select(User).where(User.username == ADMIN_USERNAME))
+    ).scalar_one()
+    admin.company_id = company.id
+    await isolated_session.flush()
+    snapshot = (
+        admin.role_id,
+        admin.is_active,
+        admin.hashed_password,
+        admin.email,
+        admin.company_id,
+    )
+    users_before = (
+        await isolated_session.execute(select(func.count(User.id)))
+    ).scalar_one()
+
+    with pytest.raises(BootstrapError, match="configuración incompatible"):
+        await bootstrap_first_superuser(
+            isolated_session, password="Different8!Temporary", commit=False
+        )
+
+    await isolated_session.refresh(admin)
+    admin_rows = (
+        await isolated_session.execute(
+            select(func.count(User.id)).where(User.username == ADMIN_USERNAME)
+        )
+    ).scalar_one()
+    users_after = (
+        await isolated_session.execute(select(func.count(User.id)))
+    ).scalar_one()
+
+    assert admin.company_id == company.id
+    assert (
+        admin.role_id,
+        admin.is_active,
+        admin.hashed_password,
+        admin.email,
+        admin.company_id,
+    ) == snapshot
+    assert admin.id == first.user_id
+    assert admin_rows == 1
+    assert users_after == users_before
+    assert not verify_password("Different8!Temporary", admin.hashed_password)
