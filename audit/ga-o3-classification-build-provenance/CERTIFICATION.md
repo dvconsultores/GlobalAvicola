@@ -101,7 +101,7 @@ HEAD toca `frontend/`, es lo previsto).
 
 ## 7. Despliegue y paridad
 
-Se completa en `POSTDEPLOY.md` tras el push y la verificación del runtime con `scripts/verify_runtime_sha.sh`.
+Ver `POSTDEPLOY.md`: el runtime de UAT declara el SHA exacto `424dda0` (merge de `main` en `develop`); paridad exacta con el commit construido = PASS; frente al `main` certificado `39d8238` = FAIL estricto por un único archivo ajeno (script de Andres, O-10).
 
 ## 8. Delegación a DeepSeek (qué escribió)
 

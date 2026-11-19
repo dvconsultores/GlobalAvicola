@@ -116,5 +116,5 @@ Recuento de rutas `/api/` 241 → 243 (+`classification-candidates`, +`version`)
 Ver `audit/ga-o3-classification-build-provenance/CERTIFICATION.md` (local) y `POSTDEPLOY.md` (runtime).
 
 - IMPL `92d8db0`. Backend 1906/0/52 · frontend 725 · tsc/build PASS · E2E serie 207/0/0 (8 nuevas O3-E2E) · mutación 19/19.
-- O-3: cerrada en local. Paridad de despliegue: pendiente de demostrar con `scripts/verify_runtime_sha.sh` (ver POSTDEPLOY).
+- O-3: cerrada en local. Procedencia: CERRADA (UAT declara SHA exacto `424dda0`). Paridad contra `main` certificado: FAIL estricto por 1 archivo ajeno (ver POSTDEPLOY).
 - Observaciones nuevas: O-11 (filtros de granja capados a 100, P3 preexistente). O-10 intacta.

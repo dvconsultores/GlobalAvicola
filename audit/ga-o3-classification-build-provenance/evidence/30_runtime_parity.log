@@ -1,0 +1,28 @@
+### A) contra el SHA que se construyó (develop merge 424dda0)
+SOURCE_SHA=424dda01054c1e45c464e90d2ce49bd9a727dbd9
+BACKEND_RUNTIME_SHA=424dda01054c1e45c464e90d2ce49bd9a727dbd9
+FRONTEND_RUNTIME_SHA=424dda01054c1e45c464e90d2ce49bd9a727dbd9
+BACKEND_BUILD_TIME=2026-11-19T01:40:43Z
+FRONTEND_BUILD_TIME=2026-11-19T01:40:47Z
+DEPLOYMENT_PARITY=PASS
+exit=0
+
+### B) contra main certificado (39d8238)
+SOURCE_SHA=39d82384a769fa21b1040e65db819b01eeec861b
+BACKEND_RUNTIME_SHA=424dda01054c1e45c464e90d2ce49bd9a727dbd9
+FRONTEND_RUNTIME_SHA=424dda01054c1e45c464e90d2ce49bd9a727dbd9
+BACKEND_BUILD_TIME=2026-11-19T01:40:43Z
+FRONTEND_BUILD_TIME=2026-11-19T01:40:47Z
+  backend: 424dda01054c1e45c464e90d2ce49bd9a727dbd9 no es 39d82384a769fa21b1040e65db819b01eeec861b y su árbol backend/ difiere
+DEPLOYMENT_PARITY=FAIL
+exit=1
+
+### C) delta de codigo de aplicacion main(39d8238) -> runtime(424dda0)
+ backend/scripts/bootstrap_first_superuser.py | 63 +++++++++++++++-------------
+ 1 file changed, 34 insertions(+), 29 deletions(-)
+
+### D) ancestros: 39d8238 es ancestro de 424dda0?
+SI
+
+### E) tag/health
+version http=200
