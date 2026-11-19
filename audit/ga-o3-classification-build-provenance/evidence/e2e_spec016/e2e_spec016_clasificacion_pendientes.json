@@ -1,0 +1,233 @@
+{
+  "business_units_inicial": [
+    {
+      "code": "breeder",
+      "is_enabled": true
+    },
+    {
+      "code": "broiler",
+      "is_enabled": true
+    },
+    {
+      "code": "grandparent",
+      "is_enabled": true
+    },
+    {
+      "code": "hatchery",
+      "is_enabled": true
+    }
+  ],
+  "01": {
+    "eventId": 227,
+    "granja": "P20A01-g-58r98q87",
+    "granjaId": 109,
+    "lote": [
+      "P20A01-BRE-58r98q87"
+    ],
+    "enBandeja": false,
+    "enHistorial": true,
+    "unidad_en_respuesta": null,
+    "claves_respuesta": [
+      "approved_by_id",
+      "cause_id",
+      "chicks_healthy",
+      "chicks_weak",
+      "company_id",
+      "created_at",
+      "cull_cause_id",
+      "dead_on_arrival",
+      "destination_farm_id",
+      "destination_plant_id",
+      "dosage_per_bird",
+      "event_date",
+      "event_type",
+      "extra_data",
+      "farm_id",
+      "farm_name",
+      "house_id",
+      "house_name",
+      "id",
+      "idempotency_key",
+      "lot_code",
+      "lot_id",
+      "medication_id",
+      "observations",
+      "received_total",
+      "registered_by_id",
+      "registered_by_name",
+      "rejected_on_arrival",
+      "reviewed_by_id",
+      "sample_size",
+      "sap_document_ref",
+      "status",
+      "supplier_id",
+      "transport_id",
+      "treatment_days",
+      "updated_at",
+      "vaccination_route",
+      "vaccine_id",
+      "vaccine_lot_number",
+      "version",
+      "water_liters"
+    ],
+    "historial_ui": true,
+    "bandeja_ui_sin_derivada": true
+  },
+  "02": {
+    "eventId": 228,
+    "granja": "P20A02-g-1vetx2xr",
+    "granjaId": 110,
+    "galpon": "P20A02-h-1vetx2xr",
+    "motivo": "Clasificación E2E O3-02 yxxrbqo0",
+    "candidatos": [
+      "breeder",
+      "broiler",
+      "grandparent",
+      "hatchery"
+    ],
+    "unidad_detalle": null,
+    "claves_detalle": [
+      "approved_by_id",
+      "bird_movements",
+      "cause_id",
+      "chicks_healthy",
+      "chicks_weak",
+      "company_id",
+      "created_at",
+      "cull_cause_id",
+      "dead_on_arrival",
+      "destination_farm_id",
+      "destination_plant_id",
+      "dosage_per_bird",
+      "egg_movements",
+      "egg_storage_records",
+      "event_date",
+      "event_type",
+      "evidences",
+      "extra_data",
+      "farm_id",
+      "farm_name",
+      "feed_movements",
+      "hatchery_params",
+      "house_id",
+      "house_name",
+      "id",
+      "idempotency_key",
+      "inspection_details",
+      "lot_code",
+      "lot_id",
+      "medication_id",
+      "observations",
+      "received_total",
+      "registered_by_id",
+      "registered_by_name",
+      "rejected_on_arrival",
+      "reviewed_by_id",
+      "sample_size",
+      "sap_document_ref",
+      "status",
+      "supplier_id",
+      "transport_id",
+      "treatment_days",
+      "updated_at",
+      "vaccination_route",
+      "vaccine_id",
+      "vaccine_lot_number",
+      "version",
+      "water_liters"
+    ],
+    "auditoria": 1,
+    "persiste_tras_recarga_y_login": true
+  },
+  "03": {
+    "eventId": 229,
+    "granja": "P20A03-g-c7fxvgso",
+    "motivo": "Granja sin lotes O3-03 5bmkm5sf",
+    "auditoria": 1
+  },
+  "04": {
+    "eventId": 230,
+    "granja": "P20A04-g-n172f866",
+    "operator_ve": true,
+    "classify_btn": 0,
+    "post_status": 403,
+    "candidates_status": 403
+  },
+  "05": {
+    "eventId": 231,
+    "granja": "P20A05-g-x8cmikji",
+    "candidatos_antes": [
+      "breeder",
+      "broiler",
+      "grandparent",
+      "hatchery"
+    ],
+    "candidatos_con_broiler_apagado": [
+      "breeder",
+      "grandparent",
+      "hatchery"
+    ],
+    "habilitadas_empresa": [
+      "breeder",
+      "grandparent",
+      "hatchery"
+    ],
+    "opciones_dialogo": [
+      "breeder",
+      "grandparent",
+      "hatchery"
+    ],
+    "status_broiler": 400,
+    "status_zzz": 400,
+    "effective_business_units": [
+      "breeder",
+      "grandparent",
+      "hatchery"
+    ]
+  },
+  "06": {
+    "eventId": 232,
+    "granja": "P20A06-g-tdifv82q",
+    "candidates_status": 404,
+    "classify_status": 404,
+    "auditoria": 0
+  },
+  "07": {
+    "eventId": 233,
+    "granja": "P20A07-g-zr3as6gu",
+    "estados_boton": {
+      "vacio": false,
+      "dos_caracteres": false,
+      "solo_espacios": false
+    },
+    "intentos_ui": 0,
+    "api": [
+      {
+        "reason": "",
+        "status": 422
+      },
+      {
+        "reason": "   ",
+        "status": 422
+      },
+      {
+        "reason": null,
+        "status": 422
+      },
+      {
+        "reason": "ab",
+        "status": 422
+      }
+    ]
+  },
+  "08": {
+    "eventId": 234,
+    "granja": "P20A08-g-oi5ck30m",
+    "motivo": "Clasificación única O3-08 r49oybqx",
+    "primera": 200,
+    "segunda_misma_unidad": 404,
+    "segunda_otra_unidad": 404,
+    "auditoria": 1,
+    "unidad_detalle": null
+  }
+}

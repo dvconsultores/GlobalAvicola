@@ -113,4 +113,8 @@ Recuento de rutas `/api/` 241 → 243 (+`classification-candidates`, +`version`)
 
 ## C. Estado de certificación
 
-Ver `audit/ga-o3-classification-build-provenance/` (se completa al cierre).
+Ver `audit/ga-o3-classification-build-provenance/CERTIFICATION.md` (local) y `POSTDEPLOY.md` (runtime).
+
+- IMPL `92d8db0`. Backend 1906/0/52 · frontend 725 · tsc/build PASS · E2E serie 207/0/0 (8 nuevas O3-E2E) · mutación 19/19.
+- O-3: cerrada en local. Paridad de despliegue: pendiente de demostrar con `scripts/verify_runtime_sha.sh` (ver POSTDEPLOY).
+- Observaciones nuevas: O-11 (filtros de granja capados a 100, P3 preexistente). O-10 intacta.
