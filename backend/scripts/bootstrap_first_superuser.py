@@ -99,7 +99,11 @@ async def bootstrap_first_superuser(
                 "El usuario 'admin' ya existe con una configuración incompatible; "
                 "se rehúsa sobrescribirlo"
             )
-    if existing_email is not None:
+    # El correo reservado solo bloquea si pertenece a OTRA cuenta: cuando `existing_email`
+    # es el propio `admin` canónico, la repetición es idempotente (AC04).
+    if existing_email is not None and (
+        existing_username is None or existing_email.id != existing_username.id
+    ):
         raise BootstrapError(
             "El correo reservado del bootstrap ya pertenece a otro usuario; "
             "se rehúsa sobrescribirlo"

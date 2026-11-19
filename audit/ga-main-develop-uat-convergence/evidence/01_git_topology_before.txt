@@ -1,0 +1,9 @@
+BEFORE (2026-11-19)
+origin/main    = 0363200 (docs O-3 post-deploy)
+origin/develop = 424dda0 (merge no-ff de main 39d8238 sobre ebc4350)
+merge-base     = 39d8238
+main-only:    0363200
+develop-only: 424dda0, ebc4350, 7610ece(Andres "fix": bootstrap_first_superuser.py + create-pr.sh)
+main NO es ancestro de develop y develop NO es ancestro de main => ni main->develop ni develop->main son fast-forward.
+Camino sin reescribir historia: merge develop -> main (nuevo commit en main), luego FF de develop al SHA certificado de main.
+Delta de contenido develop vs merge-base: backend/scripts/bootstrap_first_superuser.py, create-pr.sh (ambos Andres)
