@@ -75,8 +75,6 @@ async def bootstrap_first_superuser(
 
     ``commit=False`` existe solo para pruebas aisladas; el CLI productivo siempre confirma.
     """
-    password = validate_password(password)
-
     existing_username = (
         await session.execute(select(User).where(User.username == ADMIN_USERNAME))
     ).scalar_one_or_none()
@@ -88,7 +86,7 @@ async def bootstrap_first_superuser(
         existing_role = (
             await session.execute(select(Role).where(Role.id == existing_username.role_id))
         ).scalar_one_or_none()
-        if (
+        if not (
             existing_username.email == ADMIN_EMAIL
             and existing_username.company_id is None
             and existing_username.is_active
@@ -97,16 +95,10 @@ async def bootstrap_first_superuser(
             and existing_role.company_id is None
             and existing_role.is_active
         ):
-            return BootstrapResult(
-                created=False,
-                role_id=existing_role.id,
-                user_id=existing_username.id,
-                permissions_created=0,
+            raise BootstrapError(
+                "El usuario 'admin' ya existe con una configuración incompatible; "
+                "se rehúsa sobrescribirlo"
             )
-        raise BootstrapError(
-            "El usuario 'admin' ya existe con una configuración incompatible; "
-            "se rehúsa sobrescribirlo"
-        )
     if existing_email is not None:
         raise BootstrapError(
             "El correo reservado del bootstrap ya pertenece a otro usuario; "
@@ -137,14 +129,21 @@ async def bootstrap_first_superuser(
         )
 
     existing_permissions = {
-        (permission.module, permission.action, permission.scope_type, permission.scope_id)
+        (
+            permission.module,
+            permission.action.value
+            if isinstance(permission.action, PermissionAction)
+            else str(permission.action),
+            permission.scope_type,
+            permission.scope_id,
+        )
         for permission in (
             await session.execute(select(Permission).where(Permission.role_id == role.id))
         ).scalars()
     }
     permissions_created = 0
     for action in PermissionAction:
-        expected = ("*", action, "all", None)
+        expected = ("*", action.value, "all", None)
         if expected in existing_permissions:
             continue
         session.add(
@@ -158,24 +157,30 @@ async def bootstrap_first_superuser(
         )
         permissions_created += 1
 
-    user = User(
-        company_id=None,
-        first_name="Administrador",
-        last_name="del Sistema",
-        email=ADMIN_EMAIL,
-        username=ADMIN_USERNAME,
-        hashed_password=hash_password(password),
-        role_id=role.id,
-        view_type="web",
-        is_active=True,
-    )
-    session.add(user)
-    await session.flush()
+    if existing_username is None:
+        password = validate_password(password)
+        user = User(
+            company_id=None,
+            first_name="Administrador",
+            last_name="del Sistema",
+            email=ADMIN_EMAIL,
+            username=ADMIN_USERNAME,
+            hashed_password=hash_password(password),
+            role_id=role.id,
+            view_type="web",
+            is_active=True,
+        )
+        session.add(user)
+        await session.flush()
+        created = True
+    else:
+        user = existing_username
+        created = False
     if commit:
         await session.commit()
 
     return BootstrapResult(
-        created=True,
+        created=created,
         role_id=role.id,
         user_id=user.id,
         permissions_created=permissions_created,
@@ -184,7 +189,7 @@ async def bootstrap_first_superuser(
 
 async def _main() -> int:
     try:
-        password = validate_password(os.environ.get(PASSWORD_ENV))
+        password = os.environ.get(PASSWORD_ENV)
         async with async_session() as session:
             try:
                 result = await bootstrap_first_superuser(session, password=password)
