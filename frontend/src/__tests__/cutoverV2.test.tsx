@@ -192,8 +192,9 @@ describe('SPEC 006 · Cargas Iniciales v2 (jsdom)', () => {
 
 describe('SPEC 011 · cutover UAT hardening', () => {
   it('CUTOVER-UX-02: nombreDescarga toma el filename del Content-Disposition (versión real), con fallback', () => {
-    const r = { headers: { 'content-disposition': 'attachment; filename="cutover_template_hatchery_v3.xlsx"' } }
-    expect(nombreDescarga(r, 'fallback.xlsx')).toBe('cutover_template_hatchery_v3.xlsx')
+    // SPEC 018 (D-1): la plantilla vigente de incubadora es v4; el nombre lo fija el servidor.
+    const r = { headers: { 'content-disposition': 'attachment; filename="cutover_template_hatchery_v4.xlsx"' } }
+    expect(nombreDescarga(r, 'fallback.xlsx')).toBe('cutover_template_hatchery_v4.xlsx')
     expect(nombreDescarga({}, 'cutover_template_breeder_v2.xlsx')).toBe('cutover_template_breeder_v2.xlsx')
   })
 })

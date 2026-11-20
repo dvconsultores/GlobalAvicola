@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 10_APPLY_DESTINATION_MATRIX
 
-Fecha: 2026-11-07 · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; el apply vive en `CutoverService.aplicar` (`service.py`) con un builder por BU (`_opening_reproductoras`, `_opening_engorde`, `_opening_incubadora` + `_hatchery_opening`, `_lote`, `_lot_phase`).
+Fecha: 2026-11-20 · SPEC 006 · generado desde `backend/app/cutover/contracts.py`; el apply vive en `CutoverService.aplicar` (`service.py`) con un builder por BU (`_opening_reproductoras`, `_opening_engorde`, `_opening_incubadora` + `_hatchery_opening`, `_lote`, `_lot_phase`).
 
 ## Constantes del apply (todas las BU)
 
@@ -11,7 +11,7 @@ Fecha: 2026-11-07 · SPEC 006 · generado desde `backend/app/cutover/contracts.p
 | `lots` | `status` / `activation_type` | `active` / `normal` (BR-06 sigue aplicando) |
 | `lots` | `source_system` | fila → batch.source_system → tipo de archivo (`XLSX`/`CSV`) |
 | `opening_balances` | `activation_date` | fecha civil del corte |
-| `opening_balances` | `cutover_datetime` / `cutover_item_id` / `template_version` | corte del batch / fila de staging / versión del contrato de la BU (grandparent `v3`, breeder `v3`, broiler `v2`, hatchery `v3`) |
+| `opening_balances` | `cutover_datetime` / `cutover_item_id` / `template_version` | corte del batch / fila de staging / versión del contrato de la BU (grandparent `v3`, breeder `v3`, broiler `v2`, hatchery `v4`) |
 | `opening_balances` | `is_manual_activation` / `activation_reason` | `false` / «Cutover operacional v2 (SPEC 006)» |
 | `opening_balances` | estados no cubiertos por la BU | `NOT_APPLICABLE` (p. ej. huevos en engorde, mortalidad en incubadora) |
 | `lot_phases` | `phase_id` / `start_date` / `start_population_*` / `start_weight_avg` / `is_active` | fase declarada (INCUB implícita) / `phase_start_date` → fecha del lote / vivas por sexo (0 en mixto) / peso de apertura / `true` |
@@ -45,13 +45,13 @@ Fecha: 2026-11-07 · SPEC 006 · generado desde `backend/app/cutover/contracts.p
 | `lot_phases` | `phase_id` ← `productive_phase_code`<br>`start_date` ← `phase_start_date` |
 | `cutover_items` | `opening_state.notes` ← `notes` |
 
-### `hatchery` · `CUTOVER_HATCHERY_V3`
+### `hatchery` · `CUTOVER_HATCHERY_V4`
 
 | Entidad | Columnas ← campo de plantilla |
 |---|---|
 | `lots` | `legacy_lot_code` ← `legacy_lot_code`<br>`lot_code` ← `legacy_lot_code`<br>`id` ← `existing_lot_code`<br>`hatchery_purpose` ← `generation`<br>`start_date` ← `reception_date`<br>`source_system` ← `source_system`<br>`source_reference` ← `source_reference` |
 | `opening_balances` | `legacy_lot_code` ← `legacy_lot_code`<br>`activation_date` ← `reception_date`<br>`accumulated_chicks_hatched` ← `chicks_hatched` (+`chicks_hatched_status`)<br>`initial_mixed_count` ← `chicks_available`<br>`source_system` ← `source_system`<br>`source_reference` ← `source_reference` |
-| `hatchery_openings` | `hatchery_id` ← `hatchery_code`<br>`incubator_id` ← `incubator_name`<br>`hatcher_id` ← `hatcher_name`<br>`source_lot_id` ← `source_lot_code`<br>`source_lot_reference` ← `source_lot_code`<br>`generation` ← `generation`<br>`egg_origin` ← `egg_origin`<br>`reception_date` ← `reception_date`<br>`set_date` ← `set_date` (+`set_date_status`)<br>`expected_hatch_date` ← `expected_hatch_date` (+`expected_hatch_date_status`)<br>`eggs_received` ← `eggs_received` (+`eggs_received_status`)<br>`eggs_set` ← `eggs_set` (+`eggs_set_status`)<br>`eggs_transferred` ← `eggs_transferred` (+`eggs_transferred_status`)<br>`eggs_discarded` ← `eggs_discarded` (+`eggs_discarded_status`) |
+| `hatchery_openings` | `hatchery_id` ← `hatchery_code`<br>`incubator_id` ← `incubator_name`<br>`hatcher_id` ← `hatcher_name`<br>`source_lot_id` ← `source_lot_code`<br>`source_lot_reference` ← `source_lot_code`<br>`generation` ← `generation`<br>`egg_origin` ← `egg_origin`<br>`reception_date` ← `reception_date`<br>`set_date` ← `set_date` (+`set_date_status`)<br>`expected_hatch_date` ← `expected_hatch_date` (+`expected_hatch_date_status`)<br>`eggs_received` ← `eggs_received` (+`eggs_received_status`)<br>`eggs_set` ← `eggs_set` (+`eggs_set_status`)<br>`eggs_non_incubable_oversized` ← `eggs_non_incubable_oversized` (+`eggs_non_incubable_oversized_status`)<br>`eggs_non_incubable_dirty` ← `eggs_non_incubable_dirty` (+`eggs_non_incubable_dirty_status`)<br>`eggs_non_incubable_broken` ← `eggs_non_incubable_broken` (+`eggs_non_incubable_broken_status`)<br>`eggs_transferred` ← `eggs_transferred` (+`eggs_transferred_status`)<br>`fertile_eggs_to_pit` ← `fertile_eggs_to_pit` (+`fertile_eggs_to_pit_status`) |
 | `cutover_items` | `opening_state.notes` ← `notes` |
 
 ## Garantías

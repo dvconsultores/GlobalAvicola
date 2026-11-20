@@ -1,0 +1,35 @@
+=== vitest run cutoverV2 + cutoverHatcheryV4 ===
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  2 passed (2)
+      Tests  13 passed (13)
+   Start at  14:14:23
+   Duration  1.86s (transform 383ms, setup 109ms, import 927ms, tests 1.08s, environment 1.23s)
+
+=== npx tsc -b ===
+rc=0
+=== vitest run r061.cutoverFlow (paridad i18n cutover.fields) ===
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  4 passed (4)
+   Start at  14:14:36
+   Duration  1.41s (transform 201ms, setup 44ms, import 395ms, tests 390ms, environment 479ms)
+
+=== vitest run uatS1.i18nToast + r220.loteCb + r220.loteC + r220.loteA5 (guardas i18n) ===
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+
+ Test Files  4 passed (4)
+      Tests  24 passed (24)
+   Start at  14:14:41
+   Duration  2.33s (transform 483ms, setup 280ms, import 1.23s, tests 457ms, environment 3.20s)
+

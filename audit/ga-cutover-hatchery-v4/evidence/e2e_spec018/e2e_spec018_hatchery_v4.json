@@ -1,0 +1,301 @@
+{
+  "inicio": "2026-11-20T19:29:40.071Z",
+  "maestros": {
+    "companyId": 1,
+    "farmId": 4,
+    "houseId": 4,
+    "farmCode": "P16-G-S3H87TRZ",
+    "houseName": "P16-GALPON-S3H87TRZ",
+    "hatcheryCode": "P16-INC-S3H87TRZ",
+    "incubatorName": "P16-INCUBADORA-S3H87TRZ",
+    "hatcherName": "P16-NACEDORA-S3H87TRZ",
+    "lineCode": "P16-L-S3H87TRZ",
+    "breedName": "P16-RAZA-S3H87TRZ",
+    "prefijo": "S3H87TRZ"
+  },
+  "01": {
+    "batch": 2,
+    "archivo": "attachment; filename=\"cutover_template_hatchery_v4.xlsx\"",
+    "meta": {
+      "key": "value",
+      "template_version": "v4",
+      "schema_id": "CUTOVER_HATCHERY_V4",
+      "company": "1",
+      "business_unit": "hatchery",
+      "generated_at": "2026-11-20T19:29:40.122451+00:00",
+      "cutover_datetime": "2026-10-23T20:00:00-04:00"
+    },
+    "columnas": 23,
+    "instruidos": [
+      "eggs_non_incubable_oversized",
+      "eggs_non_incubable_dirty",
+      "eggs_non_incubable_broken",
+      "fertile_eggs_to_pit"
+    ],
+    "cabecera_csv": "legacy_lot_code;existing_lot_code;hatchery_code;incubator_name;hatcher_name;source_lot_code;generation;egg_origin;reception_date;set_date;expected_hatch_date;eggs_received;eggs_set;eggs_non_incubable_oversized;eggs_non_incubable_dirty;eggs_non_incubable_broken;eggs_transferred;fertile_eggs_to_pit;chicks_hatched;chicks_available;source_system;source_reference;notes"
+  },
+  "02": {
+    "batch": 3,
+    "lote": 4,
+    "ref": "E2E-V4-AYBCZBFB-XLSX",
+    "archivo": "cutover_template_hatchery_v4.xlsx",
+    "preview": {
+      "total": 1000,
+      "en_proceso": null
+    },
+    "opening_hatchery": {
+      "hatchery_id": 2,
+      "incubator_id": 2,
+      "hatcher_id": 2,
+      "source_lot_id": null,
+      "source_lot_reference": null,
+      "generation": "breeder",
+      "reception_date": "2026-10-01",
+      "set_date": "2026-10-03",
+      "set_date_status": "KNOWN",
+      "expected_hatch_date": "2026-10-24",
+      "expected_hatch_date_status": "KNOWN",
+      "eggs_received": 10000,
+      "eggs_received_status": "KNOWN",
+      "eggs_set": 9000,
+      "eggs_set_status": "KNOWN",
+      "eggs_transferred": 0,
+      "eggs_transferred_status": "KNOWN",
+      "eggs_non_incubable_oversized": 500,
+      "eggs_non_incubable_oversized_status": "KNOWN",
+      "eggs_non_incubable_dirty": 300,
+      "eggs_non_incubable_dirty_status": "KNOWN",
+      "eggs_non_incubable_broken": 200,
+      "eggs_non_incubable_broken_status": "KNOWN",
+      "eggs_non_incubable_total": 1000,
+      "eggs_non_incubable_total_status": "KNOWN",
+      "fertile_eggs_to_pit": 25,
+      "fertile_eggs_to_pit_status": "KNOWN",
+      "eggs_discarded": null,
+      "eggs_discarded_status": "NOT_APPLICABLE",
+      "eggs_in_process": null,
+      "chicks_available": 0,
+      "chicks_available_status": "KNOWN"
+    },
+    "current": {
+      "live": 0,
+      "eggs_available_hatchery": 0,
+      "eggs_in_process": null,
+      "chicks_available": 0
+    },
+    "persistencia": {
+      "recarga": true,
+      "relogin_disponible": 0
+    }
+  },
+  "03": {
+    "batch": 4,
+    "unk": {
+      "lote": 5,
+      "opening": {
+        "hatchery_id": 2,
+        "incubator_id": 2,
+        "hatcher_id": 2,
+        "source_lot_id": null,
+        "source_lot_reference": null,
+        "generation": "breeder",
+        "reception_date": "2026-10-01",
+        "set_date": "2026-10-03",
+        "set_date_status": "KNOWN",
+        "expected_hatch_date": "2026-10-24",
+        "expected_hatch_date_status": "KNOWN",
+        "eggs_received": 10000,
+        "eggs_received_status": "KNOWN",
+        "eggs_set": 9000,
+        "eggs_set_status": "KNOWN",
+        "eggs_transferred": 0,
+        "eggs_transferred_status": "KNOWN",
+        "eggs_non_incubable_oversized": 100,
+        "eggs_non_incubable_oversized_status": "KNOWN",
+        "eggs_non_incubable_dirty": 80,
+        "eggs_non_incubable_dirty_status": "KNOWN",
+        "eggs_non_incubable_broken": null,
+        "eggs_non_incubable_broken_status": "UNKNOWN",
+        "eggs_non_incubable_total": null,
+        "eggs_non_incubable_total_status": "UNKNOWN",
+        "fertile_eggs_to_pit": 0,
+        "fertile_eggs_to_pit_status": "KNOWN",
+        "eggs_discarded": null,
+        "eggs_discarded_status": "NOT_APPLICABLE",
+        "eggs_in_process": 9000,
+        "chicks_available": 0,
+        "chicks_available_status": "KNOWN"
+      }
+    },
+    "cero": {
+      "lote": 6,
+      "opening": {
+        "hatchery_id": 2,
+        "incubator_id": 2,
+        "hatcher_id": 2,
+        "source_lot_id": null,
+        "source_lot_reference": null,
+        "generation": "breeder",
+        "reception_date": "2026-10-01",
+        "set_date": "2026-10-03",
+        "set_date_status": "KNOWN",
+        "expected_hatch_date": "2026-10-24",
+        "expected_hatch_date_status": "KNOWN",
+        "eggs_received": 10000,
+        "eggs_received_status": "KNOWN",
+        "eggs_set": 9000,
+        "eggs_set_status": "KNOWN",
+        "eggs_transferred": 0,
+        "eggs_transferred_status": "KNOWN",
+        "eggs_non_incubable_oversized": 0,
+        "eggs_non_incubable_oversized_status": "KNOWN",
+        "eggs_non_incubable_dirty": 0,
+        "eggs_non_incubable_dirty_status": "KNOWN",
+        "eggs_non_incubable_broken": 0,
+        "eggs_non_incubable_broken_status": "KNOWN",
+        "eggs_non_incubable_total": 0,
+        "eggs_non_incubable_total_status": "KNOWN",
+        "fertile_eggs_to_pit": 0,
+        "fertile_eggs_to_pit_status": "KNOWN",
+        "eggs_discarded": null,
+        "eggs_discarded_status": "NOT_APPLICABLE",
+        "eggs_in_process": 9000,
+        "chicks_available": 0,
+        "chicks_available_status": "KNOWN"
+      }
+    },
+    "columnas_csv": 23
+  },
+  "04": {
+    "batch": 5,
+    "invalidas": 5,
+    "errores": [
+      {
+        "fila": 2,
+        "campo": "eggs_non_incubable_dirty",
+        "codigo": "NEGATIVE_VALUE",
+        "mensaje": "El valor no puede ser negativo.",
+        "recibido": "-5"
+      },
+      {
+        "fila": 3,
+        "campo": "eggs_non_incubable_dirty",
+        "codigo": "INVALID_INTEGER",
+        "mensaje": "Número entero ≥ 0 esperado (sin separador de miles ni decimales).",
+        "recibido": "1.5"
+      },
+      {
+        "fila": 4,
+        "campo": "eggs_non_incubable_dirty",
+        "codigo": "INVALID_INTEGER",
+        "mensaje": "Número entero ≥ 0 esperado (sin separador de miles ni decimales).",
+        "recibido": "abc"
+      },
+      {
+        "fila": 5,
+        "campo": "eggs_non_incubable_dirty",
+        "codigo": "NOT_APPLICABLE_NOT_ALLOWED",
+        "mensaje": "N/A no es válido para este campo.",
+        "recibido": "N/A"
+      },
+      {
+        "fila": 6,
+        "campo": "fertile_eggs_to_pit",
+        "codigo": "CONSISTENCY_MISMATCH",
+        "mensaje": "La ecuación de consistencia no cuadra: huevos fértiles a fosa > huevos recibidos.",
+        "recibido": "20000"
+      }
+    ],
+    "bloqueo": {
+      "submit": 409,
+      "approve": 409,
+      "apply": 409
+    }
+  },
+  "05": {
+    "columna_ajena": {
+      "batch": 6,
+      "status": 422,
+      "mensaje": "{\"detail\":\"HEADER_UNKNOWN: Columnas que no pertenecen al contrato CUTOVER_HATCHERY_V4: eggs_discarded.\"}"
+    },
+    "historica_v3": {
+      "batch": 7,
+      "status": 422,
+      "mensaje": "{\"detail\":\"TEMPLATE_VERSION_UNSUPPORTED: La plantilla de hatchery vigente es v4: descargue la plantilla v4 de hatchery y vuelva a cargar.\"}"
+    },
+    "cabecera_v3": [
+      "legacy_lot_code",
+      "existing_lot_code",
+      "hatchery_code",
+      "incubator_name",
+      "hatcher_name",
+      "source_lot_code",
+      "generation",
+      "egg_origin",
+      "reception_date",
+      "set_date",
+      "expected_hatch_date",
+      "eggs_received",
+      "eggs_set",
+      "eggs_transferred",
+      "chicks_hatched",
+      "chicks_available",
+      "source_system",
+      "source_reference",
+      "notes",
+      "eggs_discarded"
+    ]
+  },
+  "06": {
+    "batch": 8,
+    "lote": 7,
+    "ref": "E2E-V4-AYBCZBFB-BR03",
+    "br03": {
+      "setecientos_uno": 400,
+      "setecientos": 201,
+      "uno_mas": 400,
+      "mensaje": "Carga de incubadora (701) excede los huevos disponibles en incubadora (700). Registre primero la recepción de huevos."
+    },
+    "current": {
+      "live": 0,
+      "eggs_available_hatchery": 0,
+      "eggs_in_process": 9700,
+      "chicks_available": 0
+    },
+    "opening": {
+      "hatchery_id": 2,
+      "incubator_id": 2,
+      "hatcher_id": 2,
+      "source_lot_id": null,
+      "source_lot_reference": null,
+      "generation": "breeder",
+      "reception_date": "2026-10-01",
+      "set_date": "2026-10-03",
+      "set_date_status": "KNOWN",
+      "expected_hatch_date": "2026-10-24",
+      "expected_hatch_date_status": "KNOWN",
+      "eggs_received": 10000,
+      "eggs_received_status": "KNOWN",
+      "eggs_set": 9000,
+      "eggs_set_status": "KNOWN",
+      "eggs_transferred": 0,
+      "eggs_transferred_status": "KNOWN",
+      "eggs_non_incubable_oversized": 300,
+      "eggs_non_incubable_oversized_status": "KNOWN",
+      "eggs_non_incubable_dirty": 0,
+      "eggs_non_incubable_dirty_status": "KNOWN",
+      "eggs_non_incubable_broken": 0,
+      "eggs_non_incubable_broken_status": "KNOWN",
+      "eggs_non_incubable_total": 300,
+      "eggs_non_incubable_total_status": "KNOWN",
+      "fertile_eggs_to_pit": 0,
+      "fertile_eggs_to_pit_status": "KNOWN",
+      "eggs_discarded": null,
+      "eggs_discarded_status": "NOT_APPLICABLE",
+      "eggs_in_process": 9000,
+      "chicks_available": 0,
+      "chicks_available_status": "KNOWN"
+    }
+  },
+  "fin": "2026-11-20T19:30:06.435Z"
+}

@@ -62,6 +62,12 @@ export interface OpcionesFlujo {
   formato: 'xlsx' | 'csv'
   /** Anchos de pantalla a certificar sin desborde horizontal (mandato §36). */
   anchos?: number[]
+  /**
+   * Ajuste de las filas canónicas de la BU antes de rellenar la plantilla (p. ej. SPEC 018: el spec
+   * de incubadora fija el desglose y la fosa que ejercita). La fila canónica de `filasPorBu` es el
+   * punto de partida, no una copia: el ajuste nunca fabrica columnas ajenas al contrato.
+   */
+  ajustarFilas?: (filas: Record<string, unknown>[]) => Record<string, unknown>[]
 }
 
 export async function flujoPorBu(page: Page, browser: Browser, request: APIRequestContext, opciones: OpcionesFlujo) {
@@ -113,7 +119,7 @@ export async function flujoPorBu(page: Page, browser: Browser, request: APIReque
   pasos.plantilla = { bytes: plantilla.length, contentType: respPlantilla.headers()['content-type'] }
 
   // ── 4 · rellenar y subir ──
-  const filas = filasPorBu(bu, maestros, ref)
+  const filas = opciones.ajustarFilas ? opciones.ajustarFilas(filasPorBu(bu, maestros, ref)) : filasPorBu(bu, maestros, ref)
   const archivo = formato === 'csv'
     ? { name: 'carga.csv', mimeType: 'text/csv', buffer: construirCsv(plantilla.toString('utf8'), filas) }
     : { name: `cutover_template_${bu}_v2.xlsx`, mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', buffer: rellenarPlantilla(plantilla, filas) }
@@ -200,9 +206,13 @@ export async function flujoPorBu(page: Page, browser: Browser, request: APIReque
   const fila = rec.lots.find((l: any) => l.lot_id === lotId)
   pasos.reconciliacion_despues = fila
   if (bu === 'hatchery') {
+    // SPEC 018 · contrato V4: el saldo post-corte no doble-cuenta los no incubables
+    // (`received − set − Σ no incubables conocidos`) y `eggs_in_process` = `set − transferred`
+    // porque la fosa es un cero conocido en este escenario.
     expect(fila.post.eggs_loaded).toBe(1000)
+    expect(fila.opening.hatchery.eggs_in_process).toBe(9000)
     expect(fila.current.eggs_available_hatchery).toBe(0)
-    expect(fila.current.eggs_in_process).toBe(9900)
+    expect(fila.current.eggs_in_process).toBe(10000)
   } else if (bu === 'breeder') {
     expect(fila.post.eggs_collected).toBe(7000)
     expect(fila.lifetime.egg_production).toBe(187000)

@@ -1,16 +1,16 @@
 # CUTOVER-INITIAL-BALANCES · 05_HATCHERY_TEMPLATE_CONTRACT
 
-Fecha: 2026-11-07 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V3` · versión `v3` · generado desde `backend/app/cutover/contracts.py`
+Fecha: 2026-11-20 · SPEC 006 · `schema_id = CUTOVER_HATCHERY_V4` · versión `v4` · generado desde `backend/app/cutover/contracts.py`
 
 | Dato | Valor |
 |---|---|
 | Unidad de negocio | `hatchery` (`lots.bird_type = hatchery`) |
 | Fases compatibles | `INCUB` (implícita, no se declara en la plantilla) |
 | Fecha que fija `lots.start_date` | `reception_date` |
-| Columnas (`Datos`) | 20 |
+| Columnas (`Datos`) | 23 |
 | Obligatorias | `legacy_lot_code`, `hatchery_code`, `egg_origin`, `reception_date`, `eggs_received`, `eggs_set` |
-| Archivo | `cutover_template_hatchery_v3.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_hatchery_v3.csv` (solo cabecera, `;`) |
-| Preview destacado | `legacy_lot_code`, `hatchery_code`, `incubator_name`, `set_date`, `eggs_received`, `eggs_set`, `eggs_transferred`, `eggs_discarded`, `chicks_hatched`, `chicks_available`, `expected_hatch_date` |
+| Archivo | `cutover_template_hatchery_v4.xlsx` (Instrucciones · Meta · Datos · Catalogos) · `cutover_template_hatchery_v4.csv` (solo cabecera, `;`) |
+| Preview destacado | `legacy_lot_code`, `hatchery_code`, `incubator_name`, `set_date`, `eggs_received`, `eggs_set`, `eggs_non_incubable_oversized`, `eggs_non_incubable_dirty`, `eggs_non_incubable_broken`, `eggs_transferred`, `fertile_eggs_to_pit`, `chicks_hatched`, `chicks_available`, `expected_hatch_date` |
 
 Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLICABLE**. Fechas `AAAA-MM-DD`; pesos en gramos; alimento en kg.
 
@@ -31,8 +31,11 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 | `expected_hatch_date` | date |  | no | sí | sí |  |  | Fecha prevista de nacimiento. ≥ fecha de carga. | `hatchery_openings.expected_hatch_date` |
 | `eggs_received` | int | huevos | sí | no | no |  |  | Huevos fértiles recibidos en la planta. | `hatchery_openings.eggs_received` |
 | `eggs_set` | int | huevos | sí | no | no |  |  | Huevos ya cargados en incubadora. ≤ recibidos. | `hatchery_openings.eggs_set` |
+| `eggs_non_incubable_oversized` | int | huevos | no | sí | no |  |  | Cantidad acumulada de huevos recibidos clasificados como no incubables por tamaño excesivo (extra grande), hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido. | `hatchery_openings.eggs_non_incubable_oversized` |
+| `eggs_non_incubable_dirty` | int | huevos | no | sí | no |  |  | Cantidad acumulada de huevos recibidos clasificados como no incubables por suciedad, hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido. | `hatchery_openings.eggs_non_incubable_dirty` |
+| `eggs_non_incubable_broken` | int | huevos | no | sí | no |  |  | Cantidad acumulada de huevos recibidos clasificados como no incubables por rotura, hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido. | `hatchery_openings.eggs_non_incubable_broken` |
 | `eggs_transferred` | int | huevos | no | sí | sí |  |  | Huevos ya transferidos a nacedora. ≤ cargados. | `hatchery_openings.eggs_transferred` |
-| `eggs_discarded` | int | huevos | no | sí | sí |  |  | Huevos descartados (ovoscopia, rotos) del proceso. ≤ cargados. | `hatchery_openings.eggs_discarded` |
+| `fertile_eggs_to_pit` | int | huevos | no | sí | no |  |  | Cantidad acumulada de huevos fértiles enviados a fosa antes de la fecha de corte. Concepto separado de los no incubables. Vacío = desconocido; 0 = cero conocido. | `hatchery_openings.fertile_eggs_to_pit` |
 | `chicks_hatched` | int | pollitos | no | sí | sí |  |  | Pollitos ya nacidos del proceso antes del corte. | `opening_balances.accumulated_chicks_hatched` |
 | `chicks_available` | int | pollitos | no | sí | sí |  |  | Pollitos nacidos que siguen en planta sin despachar al corte. | `opening_balances.initial_mixed_count` |
 | `source_system` | text |  | no | no | no |  |  | Sistema de origen del dato (p. ej. LEGACY, SAP, EXCEL). Vacío = el del batch. | `lots.source_system`<br>`opening_balances.source_system` |
@@ -42,8 +45,10 @@ Semántica de celda: **vacío = UNKNOWN · `0` = KNOWN cero · `N/A` = NOT_APPLI
 ## Reglas de consistencia y fechas
 
 - `reception_date ≤ corte`; `reception_date ≤ set_date ≤ corte`; `expected_hatch_date ≥ set_date`.
-- `eggs_set ≤ eggs_received`; `eggs_transferred ≤ eggs_set`; `eggs_discarded ≤ eggs_set`; `eggs_transferred + eggs_discarded ≤ eggs_set`.
+- `eggs_set ≤ eggs_received`; `eggs_transferred ≤ eggs_set`.
+- No incubables (SPEC 018, V4): cada componente KNOWN (`eggs_non_incubable_oversized`, `eggs_non_incubable_dirty`, `eggs_non_incubable_broken`) `≤ eggs_received`, y `eggs_set + Σ(no incubables KNOWN) ≤ eggs_received`. **Sin igualdad**: la suma conocida es cota inferior porque `eggs_received` puede incluir huevo aún no cargado.
+- `fertile_eggs_to_pit ≤ eggs_received`. Su relación con `eggs_set`/`eggs_transferred` (resta en `eggs_in_process`, ecuación `transferred + fosa ≤ set`) queda pendiente de decisión de dominio: `OWNER_DOMAIN_DECISION_REQUIRED` · `OD-HATCH-V4-01`.
 - `chicks_hatched ≤ eggs_transferred` (o `≤ eggs_set` si transferidos no es KNOWN); `chicks_available ≤ chicks_hatched`.
-- Derivados: `eggs_in_process = eggs_set − eggs_transferred − eggs_discarded` (solo KNOWN), `incubation_day = corte − set_date`.
+- Derivados: `eggs_non_incubable_total = oversized + dirty + broken` solo si los tres son KNOWN (si falta alguno, UNKNOWN: nunca suma parcial); `eggs_in_process = eggs_set − eggs_transferred` solo si `eggs_set` y `eggs_transferred` son KNOWN y `fertile_eggs_to_pit` es KNOWN `= 0` (en otro caso, desconocido); `incubation_day = corte − set_date`.
 - `source_lot_code` debe ser un lote grandparent/breeder de la empresa (código actual o legado) compatible con `generation`.
-- Saldos tras el apply: huevo disponible en planta = `eggs_received − eggs_set` (+ recepciones − cargas post-corte); pollitos viables = `chicks_available` + nacimientos − salidas.
+- Saldos tras el apply: huevo por cargar = `eggs_received − eggs_set − Σ(no incubables KNOWN)` (un UNKNOWN no se resta: el saldo es entonces cota superior); huevo disponible en planta = ese saldo (+ recepciones − cargas post-corte); pollitos viables = `chicks_available` + nacimientos − salidas.

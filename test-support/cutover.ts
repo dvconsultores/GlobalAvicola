@@ -150,7 +150,44 @@ print(";".join(cabecera))
   return readFileSync(salida)
 }
 
-/** CSV v2 (`;`, UTF-8 con BOM) a partir de la cabecera descargada del servidor. */
+/** Lo que un spec necesita de una plantilla **descargada**: hoja `Meta`, cabecera de `Datos` e `Instrucciones`. */
+export interface LibroPlantilla {
+  meta: Record<string, string | null>
+  cabecera: string[]
+  /** Una entrada por campo del contrato: `{significado, obligatorio, tipo, unidad, …, destino_tras_apply}`. */
+  instrucciones: Record<string, Record<string, string | null>>
+}
+
+const LEER_PLANTILLA = `
+import json, sys
+from openpyxl import load_workbook
+wb = load_workbook(sys.argv[1])
+meta = {str(f[0]).strip(): (None if f[1] is None else str(f[1]))
+        for f in wb["Meta"].iter_rows(values_only=True) if f and f[0]}
+cabecera = [c.value for c in wb["Datos"][1] if c.value is not None]
+instrucciones, columnas = {}, None
+if "Instrucciones" in wb.sheetnames:
+    for fila in wb["Instrucciones"].iter_rows(values_only=True):
+        celdas = ["" if c is None else str(c).strip() for c in fila]
+        if columnas is None:
+            if celdas and celdas[0].lower() == "campo":
+                columnas = celdas
+            continue
+        if celdas and celdas[0]:
+            instrucciones[celdas[0]] = {columnas[i]: (celdas[i] or None)
+                                       for i in range(min(len(columnas), len(celdas)))}
+print(json.dumps({"meta": meta, "cabecera": cabecera, "instrucciones": instrucciones}, default=str))
+`
+
+/** Lee la plantilla descargada con openpyxl (la misma librería con la que `rellenarPlantilla` escribe). */
+export function leerPlantilla(plantilla: Buffer): LibroPlantilla {
+  const dir = mkdtempSync(join(tmpdir(), 'ga-cut2-'))
+  const entrada = join(dir, 'plantilla.xlsx')
+  writeFileSync(entrada, plantilla)
+  return JSON.parse(execFileSync(resolve('backend/.venv/bin/python'), ['-c', LEER_PLANTILLA, entrada], { encoding: 'utf8' }))
+}
+
+/** CSV (`;`, UTF-8 con BOM) a partir de la cabecera descargada del servidor (misma cabecera que el XLSX). */
 export function construirCsv(cabeceraCsv: string, filas: Record<string, unknown>[]): Buffer {
   const texto = cabeceraCsv.replace(/^﻿/, '').trim()
   const delimitador = texto.includes(';') ? ';' : ','
@@ -168,10 +205,15 @@ export function construirCsv(cabeceraCsv: string, filas: Record<string, unknown>
 /** Filas canónicas por BU para el escenario (valores KNOWN/UNKNOWN/N/A deliberados). */
 export function filasPorBu(bu: Bu, m: MaestrosCutover, ref: string): Record<string, unknown>[] {
   if (bu === 'hatchery') {
+    // SPEC 018 · contrato V4 (23 columnas): `eggs_discarded` **ya no pertenece** a incubadora y se
+    // sustituye por el desglose de no incubables + los huevos fértiles enviados a fosa. Los tres
+    // componentes son KNOWN (500 + 300 + 200 = 1000 derivados) y la fosa es 25 ≠ 0: por
+    // OD-HATCH-V4-01 el `eggs_in_process` derivado queda UNKNOWN hasta que el dueño decida si resta.
     return [{
       legacy_lot_code: ref, hatchery_code: m.hatcheryCode, incubator_name: m.incubatorName, hatcher_name: m.hatcherName,
       generation: 'breeder', egg_origin: 'internal', reception_date: haceDias(50), set_date: haceDias(48), expected_hatch_date: haceDias(27),
-      eggs_received: 10000, eggs_set: 9000, eggs_transferred: 0, eggs_discarded: 100, chicks_hatched: 0, chicks_available: 0,
+      eggs_received: 10000, eggs_set: 9000, eggs_non_incubable_oversized: 500, eggs_non_incubable_dirty: 300,
+      eggs_non_incubable_broken: 200, eggs_transferred: 0, fertile_eggs_to_pit: 25, chicks_hatched: 0, chicks_available: 0,
       source_system: 'LEGACY', source_reference: `E2E-${ref}`,
     }]
   }

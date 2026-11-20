@@ -95,6 +95,37 @@ export interface CutoverPreview {
   rows: CutoverPreviewRow[]
 }
 
+/**
+ * SPEC 018 · D-3/D-10 — apertura de incubadora de la reconciliación (valor + estado).
+ * `eggs_non_incubable_total` se deriva al leer: `null` (y estado UNKNOWN) si falta algún
+ * componente — nunca una suma parcial. `eggs_discarded` solo existe en batches V3 históricos
+ * (en V4 llega `null` + `NOT_APPLICABLE` y la UI no lo muestra).
+ */
+export interface CutoverHatcheryOpening {
+  eggs_received?: number | null
+  eggs_received_status?: MetricStatus | string
+  eggs_set?: number | null
+  eggs_set_status?: MetricStatus | string
+  eggs_transferred?: number | null
+  eggs_transferred_status?: MetricStatus | string
+  eggs_non_incubable_oversized?: number | null
+  eggs_non_incubable_oversized_status?: MetricStatus | string
+  eggs_non_incubable_dirty?: number | null
+  eggs_non_incubable_dirty_status?: MetricStatus | string
+  eggs_non_incubable_broken?: number | null
+  eggs_non_incubable_broken_status?: MetricStatus | string
+  eggs_non_incubable_total?: number | null
+  eggs_non_incubable_total_status?: MetricStatus | string
+  fertile_eggs_to_pit?: number | null
+  fertile_eggs_to_pit_status?: MetricStatus | string
+  eggs_discarded?: number | null
+  eggs_discarded_status?: MetricStatus | string
+  eggs_in_process?: number | null
+  chicks_available?: number | null
+  chicks_available_status?: MetricStatus | string
+  [k: string]: any
+}
+
 export interface CutoverReconciliationLot {
   lot_id: number
   lot_code?: string | null
@@ -117,7 +148,7 @@ export interface CutoverReconciliationLot {
     egg_production_status?: string
     chicks_hatched?: number | null
     chicks_hatched_status?: string
-    hatchery?: Record<string, any> | null
+    hatchery?: CutoverHatcheryOpening | null
     [k: string]: any
   }
   post: { mortality: number; culls: number; feed_kg: number | null; [k: string]: any }

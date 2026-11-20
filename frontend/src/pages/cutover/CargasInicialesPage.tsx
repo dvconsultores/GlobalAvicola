@@ -32,7 +32,9 @@ import {
   descargarBlob,
   type BusinessUnitCode,
   type CutoverBatch,
+  type CutoverHatcheryOpening,
   type CutoverPreview,
+  type CutoverPreviewRow,
   type CutoverReconciliation,
   type CutoverReconciliationLot,
   type CutoverValidation,
@@ -86,6 +88,46 @@ function Metric({ value, status }: { value: number | string | null | undefined; 
 function Cell({ cell }: { cell?: MetricCell }) {
   if (!cell) return <span className="text-slate-300">—</span>
   return <Metric value={cell.value} status={cell.status} />
+}
+
+/**
+ * SPEC 018 · D-3/D-10 — «Total no incubables» **derivado** (nunca editable): el backend solo lo
+ * entrega si los tres componentes son KNOWN; si falta alguno llega `null` + UNKNOWN y aquí se
+ * pinta UNKNOWN (jamás una suma parcial ni un 0 inventado). El desglose va compacto en la celda.
+ */
+function TotalNoIncubables({ hatchery }: { hatchery?: CutoverHatcheryOpening | null }) {
+  const { t } = useTranslation()
+  const componentes = [
+    { campo: 'eggs_non_incubable_oversized', valor: hatchery?.eggs_non_incubable_oversized, estado: hatchery?.eggs_non_incubable_oversized_status },
+    { campo: 'eggs_non_incubable_dirty', valor: hatchery?.eggs_non_incubable_dirty, estado: hatchery?.eggs_non_incubable_dirty_status },
+    { campo: 'eggs_non_incubable_broken', valor: hatchery?.eggs_non_incubable_broken, estado: hatchery?.eggs_non_incubable_broken_status },
+  ]
+  return (
+    <div
+      className="leading-tight"
+      title={`${t('cutover.derivedHint', 'Calculado por el sistema: no editable')} (${t('cutover.derivedLabel', 'derivado')})`}
+    >
+      <Metric value={hatchery?.eggs_non_incubable_total ?? null} status={hatchery?.eggs_non_incubable_total_status} />
+      <ul
+        className="mt-0.5 space-y-0 text-[11px] text-slate-500"
+        aria-label={t('cutover.nonIncubableBreakdown', 'Desglose de no incubables')}
+        data-testid="cutover-non-incubable-breakdown"
+      >
+        {componentes.map(c => (
+          <li key={c.campo} data-testid={`cutover-non-incubable-${c.campo}`}>
+            <span>{t(`cutover.fields.${c.campo}`, c.campo)}: </span>
+            <Metric value={c.valor ?? null} status={c.estado} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
+/** SPEC 018 · D-3: total derivado de una fila del preview (la cifra la calcula el backend). */
+function totalDerivado(fila: CutoverPreviewRow): { value: number | null; status: string } {
+  const bruto = fila.derived?.eggs_non_incubable_total
+  return typeof bruto === 'number' ? { value: bruto, status: 'KNOWN' } : { value: null, status: 'UNKNOWN' }
 }
 
 function StatusBadge({ status }: { status: string }) {
@@ -306,6 +348,14 @@ export default function CargasInicialesPage() {
   const columnasPreview = preview ? (todasLasColumnas ? preview.columns : preview.highlight) : []
   const resumen = preview?.summary
   const esIncubadora = batch?.business_unit === 'hatchery'
+  /** SPEC 018 · D-3: el total no incubable es derivado (no es columna del contrato). */
+  const muestraTotalDerivadoPreview = esIncubadora && (
+    String(preview?.template_version ?? '') === 'v4' ||
+    (preview?.rows ?? []).some(fila => !!fila.derived && 'eggs_non_incubable_total' in fila.derived)
+  )
+  /** SPEC 018 · D-10: «Huevos descartados (histórico V3)» solo si el batch trae algún descartado KNOWN. */
+  const muestraDescartadosHistoricos = esIncubadora &&
+    (reconciliation?.lots ?? []).some(lote => lote.opening?.hatchery?.eggs_discarded_status === 'KNOWN')
 
   return (
     <div className="p-4 lg:p-6 space-y-6 max-w-6xl mx-auto">
@@ -663,6 +713,14 @@ export default function CargasInicialesPage() {
                           {columnasPreview.map(col => (
                             <th key={col} className="py-1 pr-3 whitespace-nowrap">{t(`cutover.fields.${col}`, col)}</th>
                           ))}
+                          {muestraTotalDerivadoPreview && (
+                            <th className="py-1 pr-3 whitespace-nowrap">
+                              {t('cutover.eggsNonIncubableTotal', 'Total no incubables')}{' '}
+                              <span className="text-[11px] lowercase text-slate-400">
+                                ({t('cutover.derivedLabel', 'derivado')})
+                              </span>
+                            </th>
+                          )}
                           <th className="py-1 pr-3">{t('common.status')}</th>
                         </tr>
                       </thead>
@@ -673,6 +731,11 @@ export default function CargasInicialesPage() {
                             {columnasPreview.map(col => (
                               <td key={col} className="py-1 pr-3 whitespace-nowrap"><Cell cell={fila.values[col]} /></td>
                             ))}
+                            {muestraTotalDerivadoPreview && (
+                              <td className="py-1 pr-3 whitespace-nowrap" data-testid={`cutover-preview-total-${fila.row_number}`}>
+                                <Metric {...totalDerivado(fila)} />
+                              </td>
+                            )}
                             <td className="py-1 pr-3">
                               <Badge variant={fila.status === 'valid' || fila.status === 'applied' ? 'approved' : 'rejected'}>
                                 {t(`cutover.itemStatus.${fila.status}`, fila.status)}
@@ -699,6 +762,15 @@ export default function CargasInicialesPage() {
                             <Cell cell={fila.values[col]} />
                           </div>
                         ))}
+                        {muestraTotalDerivadoPreview && (
+                          <div className="flex justify-between gap-2">
+                            <span className="text-slate-500">
+                              {t('cutover.eggsNonIncubableTotal', 'Total no incubables')}{' '}
+                              <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
+                            </span>
+                            <Metric {...totalDerivado(fila)} />
+                          </div>
+                        )}
                       </li>
                     ))}
                   </ul>
@@ -725,7 +797,7 @@ export default function CargasInicialesPage() {
                   </span>
                 </div>
                 <div className="overflow-x-auto" data-testid="cutover-reconciliation">
-                  <table className="w-full text-sm min-w-[720px]">
+                  <table className={`w-full text-sm ${esIncubadora ? 'min-w-[960px]' : 'min-w-[720px]'}`}>
                     <thead>
                       <tr className="text-slate-500 text-left border-b">
                         <th className="py-1 pr-3">{t('cutover.legacyCode')}</th>
@@ -735,6 +807,18 @@ export default function CargasInicialesPage() {
                             <th className="py-1 pr-3">{t('cutover.eggsSet')}</th>
                             <th className="py-1 pr-3">{t('cutover.eggsInProcess')}</th>
                             <th className="py-1 pr-3">{t('cutover.eggsAvailable')}</th>
+                            <th className="py-1 pr-3 whitespace-nowrap" data-testid="cutover-th-non-incubable-total">
+                              {t('cutover.eggsNonIncubableTotal', 'Total no incubables')}{' '}
+                              <span className="text-[11px] lowercase text-slate-400">
+                                ({t('cutover.derivedLabel', 'derivado')})
+                              </span>
+                            </th>
+                            <th className="py-1 pr-3 whitespace-nowrap">{t('cutover.fertileEggsToPit', 'Huevos fértiles a fosa')}</th>
+                            {muestraDescartadosHistoricos && (
+                              <th className="py-1 pr-3 whitespace-nowrap" data-testid="cutover-th-eggs-discarded">
+                                {t('cutover.eggsDiscardedHistorical', 'Huevos descartados (histórico V3)')}
+                              </th>
+                            )}
                             <th className="py-1 pr-3">{t('cutover.chicksHatched')}</th>
                             <th className="py-1 pr-3">{t('cutover.chicksAvailable')}</th>
                           </>
@@ -765,6 +849,23 @@ export default function CargasInicialesPage() {
                               <td className="py-1 pr-3"><Metric value={lote.opening.hatchery?.eggs_set} status={lote.opening.hatchery?.eggs_set_status} /></td>
                               <td className="py-1 pr-3"><Metric value={lote.current?.eggs_in_process ?? null} /></td>
                               <td className="py-1 pr-3 font-semibold"><Metric value={lote.current?.eggs_available_hatchery ?? null} /></td>
+                              <td className="py-1 pr-3" data-testid={`cutover-non-incubable-total-${lote.lot_id}`}>
+                                <TotalNoIncubables hatchery={lote.opening.hatchery} />
+                              </td>
+                              <td className="py-1 pr-3" data-testid={`cutover-fertile-pit-${lote.lot_id}`}>
+                                <Metric
+                                  value={lote.opening.hatchery?.fertile_eggs_to_pit ?? null}
+                                  status={lote.opening.hatchery?.fertile_eggs_to_pit_status}
+                                />
+                              </td>
+                              {muestraDescartadosHistoricos && (
+                                <td className="py-1 pr-3" data-testid={`cutover-eggs-discarded-${lote.lot_id}`}>
+                                  <Metric
+                                    value={lote.opening.hatchery?.eggs_discarded ?? null}
+                                    status={lote.opening.hatchery?.eggs_discarded_status}
+                                  />
+                                </td>
+                              )}
                               <td className="py-1 pr-3"><Metric value={lote.opening.chicks_hatched ?? null} status={lote.opening.chicks_hatched_status} /></td>
                               <td className="py-1 pr-3"><Metric value={lote.current?.chicks_available ?? null} /></td>
                             </>

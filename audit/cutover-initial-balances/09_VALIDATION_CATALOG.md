@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 09_VALIDATION_CATALOG
 
-Fecha: 2026-11-07 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
+Fecha: 2026-11-20 · SPEC 006 · catálogo cerrado de errores (`parser.py`, `validation.py`, `service.py`, `operations/validators.py`)
 
 Todo error de fila viaja como `{row_number, column, field, error_code, message, received_value}` (AC46) y se descarga en CSV/XLSX. Los errores de archivo/batch viajan como `detail = "CODE: mensaje"` con el HTTP indicado.
 
@@ -15,7 +15,7 @@ Todo error de fila viaja como `{row_number, column, field, error_code, message, 
 | `MACRO_NOT_ALLOWED` | archivo | .xlsm o libro con `vbaProject.bin`: la plantilla es solo datos. |
 | `FORMULA_NOT_ALLOWED` | archivo | Celda con fórmula en `Datos` (fila y columna en el mensaje); no se evalúa. |
 | `SHEET_MISSING` | archivo | Falta la hoja `Meta` o `Datos`. |
-| `TEMPLATE_VERSION_UNSUPPORTED` | archivo | Versión distinta de la del contrato de la BU (grandparent v3, breeder v3, broiler v2, hatchery v3). `v1` está retirada: el mensaje indica descargar la plantilla de la versión vigente (p. ej. «descargue la plantilla v3»). |
+| `TEMPLATE_VERSION_UNSUPPORTED` | archivo | Versión distinta de la del contrato de la BU (grandparent v3, breeder v3, broiler v2, hatchery v4). `v1` está retirada: el mensaje indica descargar la plantilla de la versión vigente (p. ej. «descargue la plantilla v3»). |
 | `BUSINESS_UNIT_MISMATCH` | archivo | La plantilla (Meta.business_unit / schema_id) no es la de la BU del batch; también al pedir una plantilla con `batch_id` de otra BU. |
 | `COMPANY_MISMATCH` | archivo | `Meta.company` no es la empresa efectiva (el Excel nunca cambia el tenant). |
 | `HEADER_MISSING` | archivo | Faltan columnas del contrato (o no hay fila de cabecera). |

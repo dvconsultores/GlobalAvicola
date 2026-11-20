@@ -8,10 +8,10 @@ Las cuatro plantillas, tal como las genera el sistema hoy, están en **`docs/pla
 |---|---|---|
 | Progenitoras (grandparent) | `cutover_template_grandparent_v3.xlsx` | **v3** |
 | Reproductoras (breeder) | `cutover_template_breeder_v3.xlsx` | **v3** |
-| Incubadora (hatchery) | `cutover_template_hatchery_v3.xlsx` | **v3** |
+| Incubadora (hatchery) | `cutover_template_hatchery_v4.xlsx` | **v4** |
 | Engorde (broiler) | `cutover_template_broiler_v2.xlsx` | v2 |
 
-> Cada carga descarga **su propia** plantilla desde el sistema (la unidad y la fecha de corte las fija la carga). Las de esta carpeta son copias de referencia para conocer el formato vigente. **Incubadora, Progenitoras y Reproductoras son ahora v3**: una plantilla v2 antigua de esas unidades será rechazada con el mensaje «descargue la plantilla v3»; **Engorde sigue en v2**.
+> Cada carga descarga **su propia** plantilla desde el sistema (la unidad y la fecha de corte las fija la carga). Las de esta carpeta son copias de referencia para conocer el formato vigente. **Incubadora es ahora v4** y **Progenitoras y Reproductoras v3**: una plantilla v3 de Incubadora o una v2 de Progenitoras/Reproductoras será rechazada con el mensaje «descargue la plantilla vigente» (v4 en Incubadora, v3 en aves); **Engorde sigue en v2**.
 
 ---
 
@@ -149,9 +149,9 @@ Consistencia: `recibidas − mortalidad − descartes − salidas = vivas` (solo
 
 ---
 
-## 5 · Plantilla de Incubadora (proceso de incubación) — v3
+## 5 · Plantilla de Incubadora (proceso de incubación) — v4
 
-Describe un proceso de incubación en curso al corte. **Versión v3** por la nueva columna `egg_origin`.
+Describe un proceso de incubación en curso al corte. **Versión v4** (SPEC 018): retira `eggs_discarded` y añade el desglose de huevos **no incubables** (extra grande, sucio, roto) y los **huevos fértiles a fosa**. `egg_origin` sigue siendo obligatorio.
 
 | Campo | Obligatorio | Qué es |
 |---|---|---|
@@ -168,10 +168,22 @@ Describe un proceso de incubación en curso al corte. **Versión v3** por la nue
 | `expected_hatch_date` | no | Fecha prevista de nacimiento. |
 | `eggs_received` | **sí** | Huevos fértiles recibidos. |
 | `eggs_set` | **sí** | Huevos ya cargados (≤ recibidos). |
+| `eggs_non_incubable_oversized` | no | Huevos **recibidos** clasificados como no incubables por **extra grande** (acumulado al corte). Vacío = no se conoce; `0` = cero conocido. |
+| `eggs_non_incubable_dirty` | no | Huevos **recibidos** clasificados como no incubables por **sucio** (acumulado al corte). Vacío = no se conoce; `0` = cero conocido. |
+| `eggs_non_incubable_broken` | no | Huevos **recibidos** clasificados como no incubables por **roto** (acumulado al corte). Vacío = no se conoce; `0` = cero conocido. |
 | `eggs_transferred` | no | Huevos transferidos a nacedora (≤ cargados). |
-| `eggs_discarded` | no | Huevos descartados (≤ cargados). |
+| `fertile_eggs_to_pit` | no | Huevos **fértiles enviados a fosa** antes del corte (acumulado). Vacío = no se conoce; `0` = cero conocido. |
 | `chicks_hatched` | no | Pollitos ya nacidos antes del corte. |
 | `chicks_available` | no | Pollitos nacidos que siguen en planta sin despachar. |
+
+### Huevos no incubables y huevos fértiles a fosa (SPEC 018 · v4)
+
+- **No incubables** (`eggs_non_incubable_oversized`, `_dirty`, `_broken`): son huevos **recibidos** en la planta que al corte se clasificaron como **no incubables** (extra grande, sucio, roto). Siempre **acumulado hasta el corte**. Celda **vacía = no se conoce** el dato; `0` = cero conocido; `N/A` no se admite.
+- El **total de no incubables lo calcula el sistema** (`extra grande + sucios + rotos`) y **no se digita**: solo se obtiene cuando **los tres** son conocidos; si falta alguno, el total queda como desconocido (nunca se suma a medias).
+- **Balance**: `recibidos = cargados + no incubables + huevo aún por cargar` (más el huevo que quede sin clasificar). Los no incubables se restan **una sola vez**, del saldo recibido → cargado, **nunca** de lo cargado. Por eso `cargados + no incubables` **no puede superar** a los recibidos (si los supera, la fila se rechaza), y **la diferencia que queda es huevo recibido que aún no se ha cargado**: no es un error y no se fuerza a cero.
+- **Huevos fértiles a fosa** (`fertile_eggs_to_pit`): son un **concepto aparte** de los no incubables; no se suman al total de no incubables ni se restan dos veces. Solo se valida que no superen los huevos recibidos.
+- **Histórico**: las cargas de Incubadora **ya aplicadas con la plantilla v3 conservan su dato histórico de Huevos descartados**; no se desglosan.
+- **Decisión de dominio pendiente `OD-HATCH-V4-01`**: la posición de «Huevos fértiles a fosa» dentro del balance de incubación está por decidir; hoy solo se valida `≤ recibidos` y «huevos en proceso» se muestra solo cuando fosa = `0` conocido.
 
 ### «Generación» vs «Origen del huevo» (SPEC 009)
 
@@ -193,7 +205,7 @@ Son dos cosas distintas y **ambas** se registran:
 | «La línea genética no existe…» / «La raza no existe…» / «La raza no pertenece a la línea…» | Línea/raza fuera de `Catalogos` o raza de otra línea | Use valores de `Catalogos` (maestro interno de Global Avícola). |
 | «La granja/planta no existe o está inactiva» | Código fuera de `Catalogos` o inactivo | Use un código activo de su empresa. |
 | «Valor fuera de la lista permitida» | `generation` o `egg_origin` con un valor no admitido | `generation` ∈ {grandparent, breeder}; `egg_origin` ∈ {internal, purchased}. |
-| «La plantilla … descargue la plantilla v3 de hatchery» | Subió una plantilla de Incubadora v2 antigua | Descargue la plantilla **v3** de Incubadora. |
+| «La plantilla … descargue la plantilla v4 de hatchery» | Subió una plantilla de Incubadora v3 (ya no vigente) | Descargue la plantilla **v4** de Incubadora. |
 | «La plantilla no trae filas de datos» | Archivo sin filas en `Datos` | Complete la hoja `Datos`. |
 
 ---

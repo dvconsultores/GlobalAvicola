@@ -1,0 +1,107 @@
+INSPECCION PLANTILLA DE INCUBADORA V4 (SPEC 018)
+comando: cd backend && .venv/bin/python - (script inline de inspeccion, openpyxl)
+archivo: docs/plantillas_carga_inicial/cutover_template_hatchery_v4.xlsx (10285 bytes)
+hojas  : Instrucciones, Meta, Datos, Catalogos
+
+[Meta]
+  template_version  = 'v4'
+  schema_id         = 'CUTOVER_HATCHERY_V4'
+  company           = 0
+  business_unit     = 'hatchery'
+  generated_at      = '2026-11-20T19:16:09.941925+00:00'
+  cutover_datetime  = None
+CHECK Meta template_version == v4                                    OK · 'v4'
+CHECK Meta schema_id == CUTOVER_HATCHERY_V4                          OK · 'CUTOVER_HATCHERY_V4'
+CHECK Meta business_unit == hatchery                                 OK · 'hatchery'
+
+[Datos]
+  columnas (23):
+    01 legacy_lot_code
+    02 existing_lot_code
+    03 hatchery_code
+    04 incubator_name
+    05 hatcher_name
+    06 source_lot_code
+    07 generation
+    08 egg_origin
+    09 reception_date
+    10 set_date
+    11 expected_hatch_date
+    12 eggs_received
+    13 eggs_set
+    14 eggs_non_incubable_oversized
+    15 eggs_non_incubable_dirty
+    16 eggs_non_incubable_broken
+    17 eggs_transferred
+    18 fertile_eggs_to_pit
+    19 chicks_hatched
+    20 chicks_available
+    21 source_system
+    22 source_reference
+    23 notes
+CHECK Datos con 23 columnas                                          OK · 23
+CHECK Datos SIN eggs_discarded                                       OK
+CHECK Datos con los 4 campos nuevos                                  OK · 4/4
+
+[Instrucciones] una fila por campo nuevo
+  cabecera (fila 14): campo | significado | obligatorio | tipo | unidad | formato | ejemplo | valores_permitidos | admite_UNKNOWN_(vacío) | admite_N/A | destino_tras_apply
+  filas de campo en Instrucciones: 23
+  eggs_non_incubable_oversized:
+    campo                      = 'eggs_non_incubable_oversized'
+    significado                = 'Cantidad acumulada de huevos recibidos clasificados como no incubables por tamaño excesivo (extra grande), hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido.'
+    obligatorio                = 'no'
+    tipo                       = 'int'
+    unidad                     = 'huevos'
+    formato                    = 'entero ≥ 0'
+    ejemplo                    = '200'
+    valores_permitidos         = None
+    admite_UNKNOWN_(vacío)     = 'sí'
+    admite_N/A                 = 'no'
+    destino_tras_apply         = 'hatchery_openings.eggs_non_incubable_oversized'
+CHECK Instrucciones completas de eggs_non_incubable_oversized        OK · obligatorio=no · tipo=int · unidad=huevos · formato=entero ≥ 0 · UNKNOWN=sí · N/A=no
+  eggs_non_incubable_dirty:
+    campo                      = 'eggs_non_incubable_dirty'
+    significado                = 'Cantidad acumulada de huevos recibidos clasificados como no incubables por suciedad, hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido.'
+    obligatorio                = 'no'
+    tipo                       = 'int'
+    unidad                     = 'huevos'
+    formato                    = 'entero ≥ 0'
+    ejemplo                    = '50'
+    valores_permitidos         = None
+    admite_UNKNOWN_(vacío)     = 'sí'
+    admite_N/A                 = 'no'
+    destino_tras_apply         = 'hatchery_openings.eggs_non_incubable_dirty'
+CHECK Instrucciones completas de eggs_non_incubable_dirty            OK · obligatorio=no · tipo=int · unidad=huevos · formato=entero ≥ 0 · UNKNOWN=sí · N/A=no
+  eggs_non_incubable_broken:
+    campo                      = 'eggs_non_incubable_broken'
+    significado                = 'Cantidad acumulada de huevos recibidos clasificados como no incubables por rotura, hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido.'
+    obligatorio                = 'no'
+    tipo                       = 'int'
+    unidad                     = 'huevos'
+    formato                    = 'entero ≥ 0'
+    ejemplo                    = '10'
+    valores_permitidos         = None
+    admite_UNKNOWN_(vacío)     = 'sí'
+    admite_N/A                 = 'no'
+    destino_tras_apply         = 'hatchery_openings.eggs_non_incubable_broken'
+CHECK Instrucciones completas de eggs_non_incubable_broken           OK · obligatorio=no · tipo=int · unidad=huevos · formato=entero ≥ 0 · UNKNOWN=sí · N/A=no
+  fertile_eggs_to_pit:
+    campo                      = 'fertile_eggs_to_pit'
+    significado                = 'Cantidad acumulada de huevos fértiles enviados a fosa antes de la fecha de corte. Concepto separado de los no incubables. Vacío = desconocido; 0 = cero conocido.'
+    obligatorio                = 'no'
+    tipo                       = 'int'
+    unidad                     = 'huevos'
+    formato                    = 'entero ≥ 0'
+    ejemplo                    = '0'
+    valores_permitidos         = None
+    admite_UNKNOWN_(vacío)     = 'sí'
+    admite_N/A                 = 'no'
+    destino_tras_apply         = 'hatchery_openings.fertile_eggs_to_pit'
+CHECK Instrucciones completas de fertile_eggs_to_pit                 OK · obligatorio=no · tipo=int · unidad=huevos · formato=entero ≥ 0 · UNKNOWN=sí · N/A=no
+
+[Catalogos]
+  cabecera: ['catalog', 'code', 'description', 'status', 'parent_code', 'source']
+  filas de datos: 0
+CHECK hoja Catalogos presente y con cabecera del contrato            OK
+
+RESULTADO GLOBAL: PASS
