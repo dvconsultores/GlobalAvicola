@@ -1,0 +1,105 @@
+=== B1 validation.py _consistencia_incubadora: elimina cota eggs_set + sum(KNOWN no incubables) <= eggs_received ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_07_consistencia_sin_igualdad_forzada
+FAILED tests/test_cutover_v2_validation.py::test_consistencia_sin_tolerancias
+2 failed, 106 passed, 5 warnings in 22.18s
+=== B2 validation.py _derivados: eggs_non_incubable_total como suma parcial (no KNOWN tratados como 0) ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_06_total_no_incubable_derivado_y_detalle
+1 failed, 107 passed, 5 warnings in 22.14s
+=== B3 validation.py: igualdad forzada eggs_set + total_no_incubable == eggs_received ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_06_total_no_incubable_derivado_y_detalle
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_07_consistencia_sin_igualdad_forzada
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process
+FAILED tests/test_cutover_hatchery_v4.py::test_br03_operativo_incubation_load_sobre_apertura_v4
+FAILED tests/test_cutover_v2_validation.py::test_consistencia_sin_tolerancias
+FAILED tests/test_cutover_v2_red.py::test_red_09_primera_operacion_post_corte_consume_el_opening
+FAILED tests/test_cutover_v2_continuity.py::test_hatchery_siguiente_paso_de_incubacion
+7 failed, 101 passed, 5 warnings in 21.39s
+=== B4 validation.py: sin validacion fertile_eggs_to_pit > eggs_received ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_fosa_solo_acotada_por_lo_recibido
+FAILED tests/test_cutover_v2_validation.py::test_consistencia_sin_tolerancias
+2 failed, 106 passed, 5 warnings in 22.26s
+=== B5 validation.py _derivados: eggs_in_process = set - transferred - total no incubables (doble conteo) ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa
+1 failed, 107 passed, 5 warnings in 22.24s
+=== B6 operations/validators.py get_hatchery_egg_balance: no resta no incubables (vuelve a recibidos - cargados) ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process
+FAILED tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+2 failed, 106 passed, 5 warnings in 22.12s
+=== B7 operations/validators.py get_hatchery_egg_balance: resta los no incubables DOS veces ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process
+FAILED tests/test_cutover_hatchery_v4.py::test_br03_operativo_incubation_load_sobre_apertura_v4
+FAILED tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+3 failed, 105 passed, 5 warnings in 22.19s
+=== B8 service.py _hatchery_opening: eggs_discarded = suma de no incubables (agregado derivado, status KNOWN) ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_09_apply_persiste_componentes_y_estados
+FAILED tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+2 failed, 106 passed, 5 warnings in 22.10s
+=== B9 service.py _hatchery_opening: oversized y broken intercambiados al persistir ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_09_apply_persiste_componentes_y_estados
+FAILED tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+2 failed, 106 passed, 5 warnings in 22.05s
+=== B10 service.py detalle: formula V4 (es_v4=True) tambien para batches V3 historicos ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_11_registro_v3_historico_sigue_legible_sin_reparto
+1 failed, 107 passed, 5 warnings in 22.13s
+=== B11 service.py detalle: eggs_non_incubable_total como suma parcial (ignora UNKNOWN) ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_06_total_no_incubable_derivado_y_detalle
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_11_registro_v3_historico_sigue_legible_sin_reparto
+3 failed, 105 passed, 5 warnings in 22.23s
+=== B12 service.py detalle V4: eggs_in_process calculado aunque fertile_eggs_to_pit > 0 (ignora D-5) ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa
+1 failed, 107 passed, 5 warnings in 22.26s
+=== B13 contracts.py: allow_na=True en fertile_eggs_to_pit ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_01_contrato_hatchery_v4_23_columnas_sin_eggs_discarded
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_02_plantilla_xlsx_meta_instrucciones_datos_catalogos_y_csv
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_05_semantica_por_campo[N/A-NOT_APPLICABLE_NOT_ALLOWED-None-fertile_eggs_to_pit]
+FAILED tests/test_cutover_v2_contracts.py::test_metricas_que_admiten_na - Ass...
+4 failed, 104 passed, 5 warnings in 22.17s
+=== B14 contracts.py: reintroduce FieldSpec eggs_discarded al final de _INCUBADORA ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_05_semantica_por_campo[0-None-estado4-fertile_eggs_to_pit]
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_05_semantica_por_campo[None-None-estado5-eggs_non_incubable_oversized]
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_05_semantica_por_campo[None-None-estado5-eggs_non_incubable_dirty]
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_05_semantica_por_campo[None-None-estado5-eggs_non_incubable_broken]
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_05_semantica_por_campo[None-None-estado5-fertile_eggs_to_pit]
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_06_total_no_incubable_derivado_y_detalle
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_07_consistencia_sin_igualdad_forzada
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_fosa_solo_acotada_por_lo_recibido
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_09_apply_persiste_componentes_y_estados
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_11_registro_v3_historico_sigue_legible_sin_reparto
+FAILED tests/test_cutover_hatchery_v4.py::test_br03_operativo_incubation_load_sobre_apertura_v4
+FAILED tests/test_cutover_v2_validation.py::test_maestro_de_otra_empresa_no_resuelve
+FAILED tests/test_cutover_v2_validation.py::test_relaciones_padre_hijo - Asse...
+FAILED tests/test_cutover_v2_validation.py::test_consistencia_sin_tolerancias
+FAILED tests/test_cutover_v2_validation.py::test_orden_de_fechas - AssertionE...
+FAILED tests/test_cutover_v2_validation.py::test_lote_fuente_de_incubadora - ...
+FAILED tests/test_cutover_v2_validation.py::test_campo_obligatorio_de_incubadora
+FAILED tests/test_cutover_v2_red.py::test_red_02_plantilla_por_bu_no_generica
+FAILED tests/test_cutover_v2_red.py::test_red_05_incubadora_representada_y_aplicada
+FAILED tests/test_cutover_v2_red.py::test_red_08_registry_cerrado_sin_campos_sin_destino
+FAILED tests/test_cutover_v2_red.py::test_red_09_primera_operacion_post_corte_consume_el_opening
+FAILED tests/test_cutover_v2_contracts.py::test_registry_cerrado_cuatro_contratos_v2
+FAILED tests/test_cutover_v2_contracts.py::test_metricas_que_admiten_na - Ass...
+FAILED tests/test_cutover_v2_contracts.py::test_xlsx_positivo_por_bu[hatchery]
+FAILED tests/test_cutover_v2_contracts.py::test_csv_positivo_por_bu[hatchery]
+FAILED tests/test_cutover_v2_contracts.py::test_paridad_xlsx_csv[hatchery] - ...
+FAILED tests/test_cutover_v2_continuity.py::test_hatchery_siguiente_paso_de_incubacion
+51 failed, 57 passed, 22 warnings in 20.46s
+=== B15 contracts.py: swap de orden oversized/dirty en _INCUBADORA ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_01_contrato_hatchery_v4_23_columnas_sin_eggs_discarded
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_02_plantilla_xlsx_meta_instrucciones_datos_catalogos_y_csv
+FAILED tests/test_cutover_v2_red.py::test_red_02_plantilla_por_bu_no_generica
+FAILED tests/test_cutover_v2_red.py::test_red_08_registry_cerrado_sin_campos_sin_destino
+FAILED tests/test_cutover_v2_contracts.py::test_registry_cerrado_cuatro_contratos_v2
+5 failed, 103 passed, 5 warnings in 22.22s
+=== B16 migracion h3c4d5e6f7a8: server_default de *_status UNKNOWN -> KNOWN ===
+FAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_12_migracion_defaults_unknown_y_eggs_discarded_conservado
+1 failed, 107 passed, 5 warnings in 22.20s
+=== F1 CargasInicialesPage.tsx TotalNoIncubables: total null pintado como 0 (sin UNKNOWN) ===
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx (6 tests | 1 failed) 651ms
+     × d) V3 histórica (descartados 100 KNOWN, desglose UNKNOWN): columna histórica con 100 y total UNKNOWN sin repartir 70ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 · incubadora v4 en la UI (AC-V4-13) > d) V3 histórica (descartados 100 KNOWN, desglose UNKNOWN): columna histórica con 100 y total UNKNOWN sin repartir
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 12 passed (13)

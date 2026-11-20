@@ -1,0 +1,12 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+
+ Test Files  4 passed (4)
+      Tests  38 passed | 1 skipped (39)
+   Start at  15:59:50
+   Duration  5.27s (transform 612ms, setup 252ms, import 1.79s, tests 5.59s, environment 4.17s)
+

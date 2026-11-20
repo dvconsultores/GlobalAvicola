@@ -1,0 +1,18 @@
+=== F2 CargasInicialesPage: columna descartados V3 siempre visible
+     × a) V4 500/300/200 + fosa 25: cifras, total derivado 1.000 y sin columna de descartados históricos 399ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 16 passed (17)
+restaurado diff=0
+=== F3 fosa en 0 conocido se pinta como vacio/UNKNOWN
+     × c) fosa 0 conocida se pinta 0 (ni vacío ni UNKNOWN) 119ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 16 passed (17)
+restaurado diff=0
+=== F4 es: derivedLabel sin la palabra derivado
+     × a) V4 500/300/200 + fosa 25: cifras, total derivado 1.000 y sin columna de descartados históricos 273ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ Test Files  1 failed | 2 passed (3)
+      Tests  1 failed | 16 passed (17)
+restaurado diff=0
