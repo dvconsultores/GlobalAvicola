@@ -199,7 +199,7 @@ def test_br_t11_contrato_v3_en_progenitoras_y_reproductoras():
 
     assert contrato("broiler").version == "v2" and contrato("broiler").schema_id == "CUTOVER_BROILER_V2"
     assert not set(NUEVAS) & set(contrato("broiler").columns)
-    assert contrato("hatchery").version == "v3"
+    assert contrato("hatchery").version == "v4"  # SPEC 018: incubadora v4 (no incubables + fosa)
     assert lineage()["UNMAPPED_TEMPLATE_FIELDS"] == 0
 
 

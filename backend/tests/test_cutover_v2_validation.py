@@ -142,13 +142,30 @@ async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_id
 
     filas = [fila_incubadora("V-C6", eggs_set=10001),
              fila_incubadora("V-C7", eggs_transferred=9001),
-             fila_incubadora("V-C8", eggs_transferred=8000, eggs_discarded=1001),
+             # SPEC 018 · D-4: `eggs_set + Σ(no incubables KNOWN) ≤ eggs_received` (sustituye a la
+             # ecuación V3 `transferred + discarded ≤ set`; aquí 9000 + 500 + 300 + 1001 > 10000).
+             fila_incubadora("V-C8", eggs_non_incubable_broken=1001),
              fila_incubadora("V-C9", eggs_transferred=5000, chicks_hatched=5001),
-             fila_incubadora("V-C10", eggs_transferred=500, chicks_hatched=100, chicks_available=101)]
+             fila_incubadora("V-C10", eggs_transferred=500, chicks_hatched=100, chicks_available=101),
+             # SPEC 018 · D-4/D-5: cada no incubable y la fosa son parte del huevo recibido.
+             fila_incubadora("V-C11", eggs_non_incubable_dirty=10001),
+             fila_incubadora("V-C12", fertile_eggs_to_pit=10001)]
     _, errores = await _errores(http_client, auth_headers, "hatchery", filas, seeded_ids["company_id"], 64)
     assert errores == [(2, "eggs_set", "CONSISTENCY_MISMATCH"), (3, "eggs_transferred", "CONSISTENCY_MISMATCH"),
-                       (4, "eggs_discarded", "CONSISTENCY_MISMATCH"), (5, "chicks_hatched", "CONSISTENCY_MISMATCH"),
-                       (6, "chicks_available", "CONSISTENCY_MISMATCH")]
+                       (4, "eggs_non_incubable_broken", "CONSISTENCY_MISMATCH"), (5, "chicks_hatched", "CONSISTENCY_MISMATCH"),
+                       (6, "chicks_available", "CONSISTENCY_MISMATCH"), (7, "eggs_non_incubable_dirty", "CONSISTENCY_MISMATCH"),
+                       (8, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH")]
+
+    # SPEC 018 · AC-V4-07/D-4: NO se impone igualdad — recibidos puede incluir huevo aún no cargado
+    # (saldo BR-03) y un componente UNKNOWN no se cuenta como cero ni oculta el error.
+    filas = [fila_incubadora("V-C13", eggs_set=8500),                                            # 8500 + 1000 < 10000: válido
+             fila_incubadora("V-C14", eggs_set=9000, eggs_non_incubable_dirty=None),              # UNKNOWN no resta: válido
+             fila_incubadora("V-C15", eggs_set=8800, eggs_non_incubable_broken=None,
+                             eggs_non_incubable_dirty=None, eggs_non_incubable_oversized=500),     # 8800 + 500 ≤ 10000
+             fila_incubadora("V-C16", eggs_non_incubable_oversized=900, eggs_non_incubable_dirty=None,
+                             eggs_non_incubable_broken=None, fertile_eggs_to_pit=1000)]           # 9000 + 900 ≤ 10000
+    cuerpo, errores = await _errores(http_client, auth_headers, "hatchery", filas, seeded_ids["company_id"], 64)
+    assert errores == [] and cuerpo["valid_rows"] == 4, (cuerpo, errores)
 
 
 @pytest.mark.asyncio

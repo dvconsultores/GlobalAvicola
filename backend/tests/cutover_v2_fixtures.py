@@ -26,12 +26,13 @@ TEMPLATE_VERSION = "v2"
 SCHEMA_IDS = {
     "grandparent": "CUTOVER_GRANDPARENT_V3",
     "breeder": "CUTOVER_BREEDER_V3",
-    "hatchery": "CUTOVER_HATCHERY_V3",
+    "hatchery": "CUTOVER_HATCHERY_V4",
     "broiler": "CUTOVER_BROILER_V2",
 }
 
-#: SPEC 009: incubadora v3 · SPEC 014: progenitoras y reproductoras v3 (transferencias históricas).
-TEMPLATE_VERSIONS = {"grandparent": "v3", "breeder": "v3", "hatchery": "v3", "broiler": "v2"}
+#: SPEC 018: incubadora v4 (no incubables + huevos a fosa, sin `eggs_discarded`) ·
+#: SPEC 014: progenitoras y reproductoras v3 (transferencias históricas).
+TEMPLATE_VERSIONS = {"grandparent": "v3", "breeder": "v3", "hatchery": "v4", "broiler": "v2"}
 
 _IDENTIFICACION_AVES = (
     "legacy_lot_code", "existing_lot_code", "farm_code", "house_name", "area_code",
@@ -58,9 +59,18 @@ COLUMNAS_ENGORDE = _IDENTIFICACION_AVES + (
 COLUMNAS_INCUBADORA = (
     "legacy_lot_code", "existing_lot_code", "hatchery_code", "incubator_name", "hatcher_name",
     "source_lot_code", "generation", "egg_origin", "reception_date", "set_date", "expected_hatch_date",
-    "eggs_received", "eggs_set", "eggs_transferred", "eggs_discarded",
+    "eggs_received", "eggs_set",
+    # SPEC 018 · D-7: desglose de no incubables (oversized, dirty, broken) y huevos fértiles a fosa;
+    # `eggs_discarded` queda fuera del contrato V4.
+    "eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken",
+    "eggs_transferred", "fertile_eggs_to_pit",
     "chicks_hatched", "chicks_available",
 ) + _PROCEDENCIA
+
+#: SPEC 018 · D-4: componentes en `0` KNOWN ⇒ el saldo `recibidos − cargados` queda disponible
+#: íntegro para BR-03 (lo usan las pruebas que consumen huevo recibido sin cargar).
+SIN_NO_INCUBABLES = {"eggs_non_incubable_oversized": 0, "eggs_non_incubable_dirty": 0,
+                     "eggs_non_incubable_broken": 0}
 
 COLUMNAS = {
     "grandparent": COLUMNAS_REPRODUCTORAS,
@@ -292,10 +302,13 @@ def fila_engorde(ref: str, **extra: Any) -> list:
 
 
 def fila_incubadora(ref: str, **extra: Any) -> list:
+    # SPEC 018 · D-4: fila V4 coherente — recibidos = cargados + no incubables conocidos (500+300+200),
+    # sin huevo pendiente de cargar; la fosa es un cero conocido (`eggs_in_process = set − transferred`).
     base = dict(legacy_lot_code=ref, hatchery_code=PLANTA, incubator_name=INCUBADORA, hatcher_name=NACEDORA,
                 generation="breeder", egg_origin="internal", reception_date=iso_days_ago(120), set_date=iso_days_ago(118),
                 expected_hatch_date=iso_days_ago(97), eggs_received=10000, eggs_set=9000,
-                eggs_transferred=0, eggs_discarded=100, chicks_hatched=0, chicks_available=0,
+                eggs_non_incubable_oversized=500, eggs_non_incubable_dirty=300, eggs_non_incubable_broken=200,
+                eggs_transferred=0, fertile_eggs_to_pit=0, chicks_hatched=0, chicks_available=0,
                 source_system="LEGACY")
     base.update(extra)
     return fila("hatchery", **base)

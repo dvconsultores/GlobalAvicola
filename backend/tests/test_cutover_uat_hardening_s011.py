@@ -44,4 +44,4 @@ def test_data01_parser_ignora_cutover_de_meta():
                         cutover_datetime="2099-12-31T00:00:00+00:00")
     dto = parse_cutover_file(contenido, "corte.xlsx", contrato=contrato("hatchery"))
     assert "cutover_datetime" not in dto  # el DTO del parser no expone cutover_datetime de Meta
-    assert dto["business_unit"] == "hatchery" and dto["template_version"] == "v3"
+    assert dto["business_unit"] == "hatchery" and dto["template_version"] == "v4"  # SPEC 018

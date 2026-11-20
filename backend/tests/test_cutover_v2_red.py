@@ -20,8 +20,8 @@ import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
 from cutover_v2_fixtures import (  # noqa: E402
-    COLUMNAS, GALPON, GRANJA, SCHEMA_IDS, TEMPLATE_VERSIONS, aplicar, aprobar, asegurar_fases, corte, crear_batch,
-    csv_v2,
+    COLUMNAS, GALPON, GRANJA, SCHEMA_IDS, SIN_NO_INCUBABLES, TEMPLATE_VERSIONS, aplicar, aprobar, asegurar_fases, corte,
+    crear_batch, csv_v2,
     fila, fila_engorde, fila_incubadora, fila_reproductoras, headers_aprobador, items_por_referencia,
     preparar, subir, xlsx_v2,
 )
@@ -127,7 +127,8 @@ async def test_red_03_campos_especificos_por_bu_presentes(auth_headers, http_cli
                     "historical_mortality", "historical_culls"},
         "hatchery": {"hatchery_code", "incubator_name", "hatcher_name", "source_lot_code", "generation",
                      "reception_date", "set_date", "eggs_received", "eggs_set", "eggs_transferred",
-                     "eggs_discarded", "chicks_hatched", "chicks_available"},
+                     "eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken",
+                     "fertile_eggs_to_pit", "chicks_hatched", "chicks_available"},
     }
     for bu, campos in esperados.items():
         r = await http_client.get(f"/api/v1/cutover-templates/{bu}", headers=auth_headers)
@@ -213,14 +214,21 @@ async def test_red_05_incubadora_representada_y_aplicada(auth_headers, client, h
         ho = (await s.execute(select(HatcheryOpening).where(HatcheryOpening.lot_id == lote))).scalar_one()
         assert (ho.hatchery_id, ho.incubator_id, ho.hatcher_id) == (
             ids["hatchery_id"], ids["incubator_id"], ids["hatcher_id"])
-        assert (ho.eggs_received, ho.eggs_set, ho.eggs_discarded) == (10000, 9000, 100)
+        # SPEC 018 · D-2/D-8: V4 no captura `eggs_discarded` (NULL + NOT_APPLICABLE, columna V3
+        # conservada) y persiste el desglose de no incubables por componente.
+        assert (ho.eggs_received, ho.eggs_set) == (10000, 9000)
+        assert (ho.eggs_discarded, ho.eggs_discarded_status) == (None, "NOT_APPLICABLE")
+        assert (ho.eggs_non_incubable_oversized, ho.eggs_non_incubable_dirty,
+                ho.eggs_non_incubable_broken) == (500, 300, 200)
         assert ho.eggs_transferred == 0 and ho.eggs_transferred_status == "KNOWN"
         ob = (await s.execute(select(OpeningBalance).where(OpeningBalance.lot_id == lote))).scalar_one()
         assert ob.phase_at_activation_id == ids["INCUB"]
         assert ob.chicks_hatched_status == "KNOWN" and ob.accumulated_chicks_hatched == 0
         fase = (await s.execute(select(LotPhase).where(LotPhase.lot_id == lote))).scalar_one()
         assert fase.phase_id == ids["INCUB"] and fase.is_active
-        assert await get_hatchery_egg_balance(s, lote) == 1000  # recibidos − cargados
+        # SPEC 018 · D-4/AC-V4-10: los no incubables restan UNA sola vez, en el saldo recibido→cargado
+        # (10000 − 9000 − 1000), no en `eggs_in_process` (que sigue siendo `set − transferred`).
+        assert await get_hatchery_egg_balance(s, lote) == 0
 
 
 # ── RED-06 · upload real desde la plantilla descargada ───────────────────────
@@ -382,7 +390,9 @@ async def test_red_09_primera_operacion_post_corte_consume_el_opening(auth_heade
 
     # Incubadora ─────────────────────────────────────────────────────────────
     bh = await crear_batch(http_client, auth_headers, "hatchery", corte(39))
-    r = await subir(http_client, auth_headers, bh, xlsx_v2("hatchery", [fila_incubadora("CUT2-INC-9")], company_id=empresa))
+    # SPEC 018 · D-4/BR-03: sin no incubables (los tres en 0 KNOWN) el saldo recibido→cargado es 1000.
+    r = await subir(http_client, auth_headers, bh, xlsx_v2(
+        "hatchery", [fila_incubadora("CUT2-INC-9", **SIN_NO_INCUBABLES)], company_id=empresa))
     assert r.status_code == 200 and r.json()["status"] == "validated", r.text
     await aprobar(http_client, auth_headers, headers_aprobador(seeded_ids), bh)
     assert (await aplicar(http_client, auth_headers, bh)).status_code == 200

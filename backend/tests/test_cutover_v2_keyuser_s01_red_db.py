@@ -2,9 +2,10 @@
 
 Fase RED: estas pruebas describen el comportamiento *objetivo* de los ajustes de KeyUser
 (línea genética y raza propias de Global Avícola, catálogos con origen de dato y sin fugas
-entre empresas/inactivos, `egg_origin` en hatchery v3 y su persistencia en la apertura).
+entre empresas/inactivos, `egg_origin` en la incubadora —hoy contrato v4, SPEC 018— y su
+persistencia en la apertura).
 Varias DEBEN fallar sobre el código actual —el importador de hatchery aún es v2 y rechaza
-los archivos v3, y los códigos de error de maestros aún son genéricos (`MASTER_NOT_FOUND`)—:
+los archivos vigentes, y los códigos de error de maestros aún son genéricos (`MASTER_NOT_FOUND`)—:
 no es un fallo de la suite, es la especificación ejecutable de lo que falta.
 """
 from __future__ import annotations
@@ -23,7 +24,7 @@ from cutover_v2_fixtures import (  # noqa: E402,F401
     headers_aprobador, items_por_referencia, preparar, subir, xlsx_v2,
 )
 from test_cutover_v2_keyuser_s01_red_parse import (  # noqa: E402,F401
-    COLS_INC_V3, _row_inc_v3, _xlsx_inc_v3,
+    COLS_INC_V4, _row_inc_v4, _xlsx_inc_v4,
 )
 
 #: Códigos propios de esta suite (prefijo CUT9) para no colisionar con otras suites.
@@ -173,13 +174,13 @@ async def test_r11_catalogos_no_expone_inactivos(auth_headers, http_client, seed
     assert all(row[1] != "KS01-OFF" for row in filas)
 
 
-# ── R17-R19 · Hatchery v3: `egg_origin` y procedencia del huevo ─────────────
+# ── R17-R19 · Hatchery (v4): `egg_origin` y procedencia del huevo ───────────
 
 @pytest.mark.asyncio
 async def test_r17_purchased_no_exige_lote_interno(auth_headers, http_client, seeded_ids):
     """Huevo comprado (`purchased`): `source_lot_code` apunta fuera y NO se valida contra lotes."""
     await preparar(seeded_ids)
-    contenido = _xlsx_inc_v3([_row_inc_v3("R17", egg_origin="purchased", source_lot_code="NO-EXISTE-INT")])
+    contenido = _xlsx_inc_v4([_row_inc_v4("R17", egg_origin="purchased", source_lot_code="NO-EXISTE-INT")])
     _, _, errores = await _errores(http_client, auth_headers, "hatchery", contenido, 65)
     assert errores is not None
     assert all(f != "source_lot_code" for (_, f, _c) in errores)
@@ -189,7 +190,7 @@ async def test_r17_purchased_no_exige_lote_interno(auth_headers, http_client, se
 async def test_r18_internal_mantiene_validacion_source_lot(auth_headers, http_client, seeded_ids):
     """Huevo propio (`internal`): el lote fuente SÍ se valida y su ausencia es `MASTER_NOT_FOUND`."""
     await preparar(seeded_ids)
-    contenido = _xlsx_inc_v3([_row_inc_v3("R18", egg_origin="internal", source_lot_code="NO-EXISTE-INT")])
+    contenido = _xlsx_inc_v4([_row_inc_v4("R18", egg_origin="internal", source_lot_code="NO-EXISTE-INT")])
     _, _, errores = await _errores(http_client, auth_headers, "hatchery", contenido, 66)
     assert errores is not None
     assert (2, "source_lot_code", "MASTER_NOT_FOUND") in [(r, f, c) for (r, f, c) in errores]
@@ -199,7 +200,7 @@ async def test_r18_internal_mantiene_validacion_source_lot(auth_headers, http_cl
 async def test_r19_apply_persiste_egg_origin(auth_headers, http_client, seeded_ids):
     """Al aplicar, el `egg_origin` de la fila queda persistido en la apertura de incubación."""
     await preparar(seeded_ids)
-    contenido = _xlsx_inc_v3([_row_inc_v3("R19", egg_origin="purchased", source_lot_code=None)])
+    contenido = _xlsx_inc_v4([_row_inc_v4("R19", egg_origin="purchased", source_lot_code=None)])
     batch_id = await crear_batch(http_client, auth_headers, "hatchery", corte(67))
     r = await subir(http_client, auth_headers, batch_id, contenido)
     assert r.status_code == 200, r.text

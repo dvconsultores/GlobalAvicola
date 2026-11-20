@@ -182,9 +182,9 @@ async def test_c2_plantilla_descargable_y_cargable(auth_headers, http_client):
         wb = load_workbook(io.BytesIO(r.content))
         assert {"Instrucciones", "Meta", "Datos", "Catalogos"} <= set(wb.sheetnames)
         meta = {fila[0].value: fila[1].value for fila in wb["Meta"].iter_rows(min_row=2)}
-        # SPEC 014: grandparent y breeder suben a v3 (transferencias históricas); hatchery v3 (SPEC 009);
-        # broiler sigue en v2.
-        version_vigente = {"grandparent": "v3", "breeder": "v3", "hatchery": "v3", "broiler": "v2"}
+        # SPEC 014: grandparent y breeder suben a v3 (transferencias históricas); SPEC 018: hatchery sube
+        # a v4 (desglose de no incubables + huevo fértil a fosa); broiler sigue en v2.
+        version_vigente = {"grandparent": "v3", "breeder": "v3", "hatchery": "v4", "broiler": "v2"}
         assert meta["template_version"] == version_vigente[bu]
         assert meta["business_unit"] == bu
 

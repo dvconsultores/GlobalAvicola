@@ -123,11 +123,13 @@ REGLAS = {
 - En `CRIA`, `accumulated_egg_production` y `accumulated_eggs_to_hatchery` deben ser N/A o vacío (`METRIC_NOT_APPLICABLE_IN_PHASE`).
 - Estado de una métrica con dos sexos: KNOWN solo si ambos lo son; N/A si ambos; si no, UNKNOWN.""",
     "hatchery": """- `reception_date ≤ corte`; `reception_date ≤ set_date ≤ corte`; `expected_hatch_date ≥ set_date`.
-- `eggs_set ≤ eggs_received`; `eggs_transferred ≤ eggs_set`; `eggs_discarded ≤ eggs_set`; `eggs_transferred + eggs_discarded ≤ eggs_set`.
+- `eggs_set ≤ eggs_received`; `eggs_transferred ≤ eggs_set`.
+- No incubables (SPEC 018, V4): cada componente KNOWN (`eggs_non_incubable_oversized`, `eggs_non_incubable_dirty`, `eggs_non_incubable_broken`) `≤ eggs_received`, y `eggs_set + Σ(no incubables KNOWN) ≤ eggs_received`. **Sin igualdad**: la suma conocida es cota inferior porque `eggs_received` puede incluir huevo aún no cargado.
+- `fertile_eggs_to_pit ≤ eggs_received`. Su relación con `eggs_set`/`eggs_transferred` (resta en `eggs_in_process`, ecuación `transferred + fosa ≤ set`) queda pendiente de decisión de dominio: `OWNER_DOMAIN_DECISION_REQUIRED` · `OD-HATCH-V4-01`.
 - `chicks_hatched ≤ eggs_transferred` (o `≤ eggs_set` si transferidos no es KNOWN); `chicks_available ≤ chicks_hatched`.
-- Derivados: `eggs_in_process = eggs_set − eggs_transferred − eggs_discarded` (solo KNOWN), `incubation_day = corte − set_date`.
+- Derivados: `eggs_non_incubable_total = oversized + dirty + broken` solo si los tres son KNOWN (si falta alguno, UNKNOWN: nunca suma parcial); `eggs_in_process = eggs_set − eggs_transferred` solo si `eggs_set` y `eggs_transferred` son KNOWN y `fertile_eggs_to_pit` es KNOWN `= 0` (en otro caso, desconocido); `incubation_day = corte − set_date`.
 - `source_lot_code` debe ser un lote grandparent/breeder de la empresa (código actual o legado) compatible con `generation`.
-- Saldos tras el apply: huevo disponible en planta = `eggs_received − eggs_set` (+ recepciones − cargas post-corte); pollitos viables = `chicks_available` + nacimientos − salidas.""",
+- Saldos tras el apply: huevo por cargar = `eggs_received − eggs_set − Σ(no incubables KNOWN)` (un UNKNOWN no se resta: el saldo es entonces cota superior); huevo disponible en planta = ese saldo (+ recepciones − cargas post-corte); pollitos viables = `chicks_available` + nacimientos − salidas.""",
     "broiler": """- `real_start_date ≤ corte`; fase obligatoriamente `ENGORDE`.
 - Solo si las cinco piezas son KNOWN: `accumulated_birds_received − historical_mortality − historical_culls − partial_outbound_birds = live_birds`.
 - `age_days` vacío ⇒ se deriva de `real_start_date` (edad = corte − inicio) con estado KNOWN; declarado ⇒ se respeta.

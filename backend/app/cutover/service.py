@@ -28,7 +28,7 @@ from ..audit.models import AuditAction, AuditModule
 from ..business_units.service import unidades_habilitadas
 from ..lots.models import LotPhase, OpeningBalance
 from ..masters.models import BirdTypeEnum, Lot, LotStatus, ProductivePhase, SexEnum
-from .contracts import KNOWN, NOT_APPLICABLE, UNKNOWN, TemplateContract, contrato
+from .contracts import HATCHERY_TEMPLATE_VERSION, KNOWN, NOT_APPLICABLE, UNKNOWN, TemplateContract, contrato
 from .models import (CutoverBatch, CutoverBatchStatus, CutoverItem, CutoverItemStatus, CutoverStagingRow,
                      HatcheryOpening)
 from .parser import CutoverParseError, parse_cutover_file
@@ -53,6 +53,9 @@ _ESTADOS_CARGABLES = {
 
 COLUMNAS_INFORME_ERRORES = ("row_number", "field", "error_code", "message", "received_value", "column")
 
+#: SPEC 018 · D-3: componentes del desglose de no incubables (el total se deriva, no se persiste).
+_NO_INCUBABLES = ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken")
+
 #: Columnas destacadas del preview por BU (mandato §22); el detalle expandido trae todas.
 PREVIEW_DESTACADAS = {
     "grandparent": ("legacy_lot_code", "productive_phase_code", "farm_code", "house_name", "live_males", "live_females",
@@ -64,7 +67,8 @@ PREVIEW_DESTACADAS = {
     "broiler": ("legacy_lot_code", "farm_code", "house_name", "real_start_date", "age_days", "live_birds",
                 "historical_mortality", "historical_culls", "accumulated_feed_kg", "current_avg_weight_g"),
     "hatchery": ("legacy_lot_code", "hatchery_code", "incubator_name", "set_date", "eggs_received", "eggs_set",
-                 "eggs_transferred", "eggs_discarded", "chicks_hatched", "chicks_available", "expected_hatch_date"),
+                 "eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken",
+                 "eggs_transferred", "fertile_eggs_to_pit", "chicks_hatched", "chicks_available", "expected_hatch_date"),
 }
 
 
@@ -589,7 +593,19 @@ class CutoverService:
             eggs_received=_opcional(estado, "eggs_received"), eggs_received_status=_s(estado, "eggs_received"),
             eggs_set=_opcional(estado, "eggs_set"), eggs_set_status=_s(estado, "eggs_set"),
             eggs_transferred=_opcional(estado, "eggs_transferred"), eggs_transferred_status=_s(estado, "eggs_transferred"),
-            eggs_discarded=_opcional(estado, "eggs_discarded"), eggs_discarded_status=_s(estado, "eggs_discarded"),
+            # SPEC 018 (V4): cada no incubable y la fosa se persisten por separado con su estado.
+            eggs_non_incubable_oversized=_opcional(estado, "eggs_non_incubable_oversized"),
+            eggs_non_incubable_oversized_status=_s(estado, "eggs_non_incubable_oversized"),
+            eggs_non_incubable_dirty=_opcional(estado, "eggs_non_incubable_dirty"),
+            eggs_non_incubable_dirty_status=_s(estado, "eggs_non_incubable_dirty"),
+            eggs_non_incubable_broken=_opcional(estado, "eggs_non_incubable_broken"),
+            eggs_non_incubable_broken_status=_s(estado, "eggs_non_incubable_broken"),
+            fertile_eggs_to_pit=_opcional(estado, "fertile_eggs_to_pit"),
+            fertile_eggs_to_pit_status=_s(estado, "fertile_eggs_to_pit"),
+            # V4 no captura `eggs_discarded` (columna conservada para la V3 histórica): en un batch
+            # V4 la celda no existe y queda NULL + NOT_APPLICABLE, nunca derivada del total.
+            eggs_discarded=_opcional(estado, "eggs_discarded") if "eggs_discarded" in estado else None,
+            eggs_discarded_status=_s(estado, "eggs_discarded") if "eggs_discarded" in estado else NOT_APPLICABLE,
         )
 
     def _lot_phase(self, lote: Lot, fase_id: int, c: TemplateContract, estado: dict, opening: OpeningBalance) -> LotPhase:
@@ -794,7 +810,22 @@ class CutoverService:
                     cargados = ho.eggs_set if ho.eggs_set_status == KNOWN else None
                     transferidos = ho.eggs_transferred if ho.eggs_transferred_status == KNOWN else None
                     descartados = ho.eggs_discarded if ho.eggs_discarded_status == KNOWN else None
-                    en_proceso = (cargados - transferidos - descartados) if None not in (cargados, transferidos, descartados) else None
+                    # SPEC 018 · D-3: el total no incubable solo existe si los tres componentes son KNOWN
+                    # (nunca una suma parcial); no se persiste, se deriva al leer.
+                    no_incubables = {
+                        campo: (getattr(ho, campo) if getattr(ho, f"{campo}_status") == KNOWN else None)
+                        for campo in _NO_INCUBABLES
+                    }
+                    total_no_incubable = (sum(no_incubables.values())
+                                          if all(v is not None for v in no_incubables.values()) else None)
+                    fosa = ho.fertile_eggs_to_pit if ho.fertile_eggs_to_pit_status == KNOWN else None
+                    es_v4 = batch.template_version == HATCHERY_TEMPLATE_VERSION
+                    if es_v4:
+                        # D-5: `set − transferred` solo si la fosa es un cero conocido (OD-HATCH-V4-01).
+                        en_proceso = ((cargados - transferidos)
+                                      if None not in (cargados, transferidos) and fosa == 0 else None)
+                    else:  # V3 histórica: fórmula previa intacta
+                        en_proceso = (cargados - transferidos - descartados) if None not in (cargados, transferidos, descartados) else None
                     fila["opening"]["hatchery"] = {
                         "hatchery_id": ho.hatchery_id, "incubator_id": ho.incubator_id, "hatcher_id": ho.hatcher_id,
                         "source_lot_id": ho.source_lot_id, "source_lot_reference": ho.source_lot_reference, "generation": ho.generation,
@@ -806,6 +837,15 @@ class CutoverService:
                         "eggs_received": recibidos, "eggs_received_status": ho.eggs_received_status,
                         "eggs_set": cargados, "eggs_set_status": ho.eggs_set_status,
                         "eggs_transferred": transferidos, "eggs_transferred_status": ho.eggs_transferred_status,
+                        "eggs_non_incubable_oversized": no_incubables["eggs_non_incubable_oversized"],
+                        "eggs_non_incubable_oversized_status": ho.eggs_non_incubable_oversized_status,
+                        "eggs_non_incubable_dirty": no_incubables["eggs_non_incubable_dirty"],
+                        "eggs_non_incubable_dirty_status": ho.eggs_non_incubable_dirty_status,
+                        "eggs_non_incubable_broken": no_incubables["eggs_non_incubable_broken"],
+                        "eggs_non_incubable_broken_status": ho.eggs_non_incubable_broken_status,
+                        "eggs_non_incubable_total": total_no_incubable,
+                        "eggs_non_incubable_total_status": KNOWN if total_no_incubable is not None else UNKNOWN,
+                        "fertile_eggs_to_pit": fosa, "fertile_eggs_to_pit_status": ho.fertile_eggs_to_pit_status,
                         "eggs_discarded": descartados, "eggs_discarded_status": ho.eggs_discarded_status,
                         "eggs_in_process": en_proceso,
                         "chicks_available": opening.initial_mixed_count if opening.initial_mixed_status == KNOWN else None,
@@ -815,8 +855,15 @@ class CutoverService:
                     fila["lifetime"]["chicks_hatched"] = self._lifetime(
                         opening.accumulated_chicks_hatched, opening.chicks_hatched_status, post_inc["chicks_hatched"])
                     fila["lifetime"]["eggs_set"] = self._lifetime(cargados, ho.eggs_set_status, post_inc["eggs_loaded"])
+                    # D-4: los no incubables restan UNA sola vez, en el saldo recibido→cargado.
+                    if None in (recibidos, cargados):
+                        disponible = None
+                    elif es_v4:
+                        disponible = (recibidos - cargados - total_no_incubable) if total_no_incubable is not None else None
+                    else:
+                        disponible = recibidos - cargados
                     fila["current"].update({
-                        "eggs_available_hatchery": ((recibidos - cargados) if None not in (recibidos, cargados) else None),
+                        "eggs_available_hatchery": disponible,
                         "eggs_in_process": ((en_proceso + post_inc["eggs_loaded"] - post_inc["eggs_transferred"]) if en_proceso is not None else None),
                         "chicks_available": ((opening.initial_mixed_count + post_inc["chicks_hatched"] - post_inc["chicks_dispatched"]
                                               - post["mortality"] - post["culls"]) if opening.initial_mixed_status == KNOWN else None),

@@ -43,6 +43,9 @@ BALANCE_CONSISTENT = "CONSISTENT"
 BALANCE_INCONSISTENT = "INCONSISTENT"
 BALANCE_NOT_FULLY_VERIFIABLE = "NOT_FULLY_VERIFIABLE"
 
+#: SPEC 018 · D-3: componentes del desglose de no incubables (el total es derivado, nunca parcial).
+_NO_INCUBABLES = ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken")
+
 
 def _val(fila: dict, campo: str) -> Any:
     celda = fila["normalized"].get(campo)
@@ -318,24 +321,53 @@ class ValidadorDeDominio:
                             detalle=f"recibidas − mortalidad − descartes − salidas = {esperado} ≠ vivas {_val(fila, 'live_birds')}")
 
     def _consistencia_incubadora(self, fila: dict) -> None:
-        if _known(fila, "eggs_received", "eggs_set") and _val(fila, "eggs_set") > _val(fila, "eggs_received"):
+        """Invariantes del contrato V4 (SPEC 018 §2 D-4/D-5): sin `eggs_discarded` y sin igualdades forzadas."""
+        recibidos_known = _known(fila, "eggs_received")
+        recibidos = _val(fila, "eggs_received") if recibidos_known else None
+        cargados_excedidos = recibidos_known and _known(fila, "eggs_set") and _val(fila, "eggs_set") > recibidos
+        if cargados_excedidos:
             self._error(fila, "eggs_set", "CONSISTENCY_MISMATCH", detalle="huevos cargados > huevos recibidos")
         if _known(fila, "eggs_set"):
             cargados = _val(fila, "eggs_set")
-            excedidas = []
-            for campo in ("eggs_transferred", "eggs_discarded"):
-                if _known(fila, campo) and _val(fila, campo) > cargados:
-                    self._error(fila, campo, "CONSISTENCY_MISMATCH", detalle=f"{campo} > huevos cargados")
-                    excedidas.append(campo)
-            if not excedidas and _known(fila, "eggs_transferred", "eggs_discarded") and \
-                    _val(fila, "eggs_transferred") + _val(fila, "eggs_discarded") > cargados:
-                self._error(fila, "eggs_discarded", "CONSISTENCY_MISMATCH", detalle="transferidos + descartados > cargados")
+            if _known(fila, "eggs_transferred") and _val(fila, "eggs_transferred") > cargados:
+                self._error(fila, "eggs_transferred", "CONSISTENCY_MISMATCH", detalle="eggs_transferred > huevos cargados")
             if _known(fila, "chicks_hatched"):
                 tope_campo = "eggs_transferred" if _known(fila, "eggs_transferred") else "eggs_set"
                 if _val(fila, "chicks_hatched") > _val(fila, tope_campo):
                     self._error(fila, "chicks_hatched", "CONSISTENCY_MISMATCH", detalle=f"pollitos nacidos > {tope_campo}")
         if _known(fila, "chicks_hatched", "chicks_available") and _val(fila, "chicks_available") > _val(fila, "chicks_hatched"):
             self._error(fila, "chicks_available", "CONSISTENCY_MISMATCH", detalle="pollitos disponibles > nacidos")
+        if not recibidos_known:
+            return  # sin `eggs_received` no hay cota: un UNKNOWN nunca se trata como 0 ni dispara ni oculta errores
+        # D-4: los no incubables son una **clasificación del huevo recibido**, no parte de lo cargado:
+        # cada componente KNOWN no puede superar lo recibido.
+        componente_excedido = False
+        for campo in _NO_INCUBABLES:
+            if _known(fila, campo) and _val(fila, campo) > recibidos:
+                self._error(fila, campo, "CONSISTENCY_MISMATCH", detalle=f"{campo} > huevos recibidos")
+                componente_excedido = True
+        # D-4: `eggs_set + Σ(componentes KNOWN) ≤ eggs_received`. La suma conocida es una cota
+        # inferior (aunque falte algún componente) y **no se impone igualdad**: `received − set`
+        # incluye legítimamente huevo recibido aún no cargado (saldo por cargar de BR-03).
+        # El error se anota en el primer componente conocido que rompe la cota (sin doble error).
+        if not componente_excedido and not cargados_excedidos:
+            cargados = _val(fila, "eggs_set") if _known(fila, "eggs_set") else 0
+            acumulado = cargados
+            for campo in _NO_INCUBABLES:
+                if not _known(fila, campo):
+                    continue
+                acumulado += _val(fila, campo)
+                if acumulado > recibidos:
+                    self._error(fila, campo, "CONSISTENCY_MISMATCH",
+                                detalle=f"cargados + no incubables > recibidos: {cargados} + {acumulado - cargados} "
+                                        f"> {recibidos}")
+                    break
+        # D-5: `fertile_eggs_to_pit` son huevos fértiles **recibidos**; la única cota segura es la
+        # de lo recibido. Su relación con `eggs_set`/`eggs_transferred` (y su resta en
+        # `eggs_in_process`) es OD-HATCH-V4-01: decisión de dominio pendiente, no se valida aquí.
+        if _known(fila, "fertile_eggs_to_pit") and _val(fila, "fertile_eggs_to_pit") > recibidos:
+            self._error(fila, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH",
+                        detalle="huevos fértiles a fosa > huevos recibidos")
 
     def _derivados(self, fila: dict) -> None:
         derivados = fila["_derived"]
@@ -345,8 +377,14 @@ class ValidadorDeDominio:
             carga = _fecha(_val(fila, "set_date")) if _known(fila, "set_date") else None
             derivados["incubation_day"] = (self.corte - carga).days if carga else None
             derivados["age_days"] = (self.corte - recepcion).days if recepcion else None
-            if _known(fila, "eggs_set", "eggs_transferred", "eggs_discarded"):
-                derivados["eggs_in_process"] = _val(fila, "eggs_set") - _val(fila, "eggs_transferred") - _val(fila, "eggs_discarded")
+            # SPEC 018 · D-3: el total de no incubables solo existe si los tres componentes son KNOWN
+            # (nunca una suma parcial); se deriva al leer, no se persiste.
+            componentes = [_val(fila, c) if _known(fila, c) else None for c in _NO_INCUBABLES]
+            derivados["eggs_non_incubable_total"] = sum(componentes) if None not in componentes else None
+            # D-5: `set − transferred` solo si la fosa es un cero conocido (OD-HATCH-V4-01 pendiente).
+            if _known(fila, "eggs_set", "eggs_transferred", "fertile_eggs_to_pit") \
+                    and _val(fila, "fertile_eggs_to_pit") == 0:
+                derivados["eggs_in_process"] = _val(fila, "eggs_set") - _val(fila, "eggs_transferred")
             else:
                 derivados["eggs_in_process"] = None
             return

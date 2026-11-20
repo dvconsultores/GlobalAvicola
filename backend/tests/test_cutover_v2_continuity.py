@@ -16,8 +16,8 @@ import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
 from cutover_v2_fixtures import (  # noqa: E402
-    aplicar, aprobar, corte, crear_batch, fila_engorde, fila_incubadora, fila_reproductoras, headers_aprobador,
-    items_por_referencia, preparar, subir, xlsx_v2,
+    SIN_NO_INCUBABLES, aplicar, aprobar, corte, crear_batch, fila_engorde, fila_incubadora, fila_reproductoras,
+    headers_aprobador, items_por_referencia, preparar, subir, xlsx_v2,
 )
 from time_reference import iso_days_ago, recent_event_date  # noqa: E402
 
@@ -104,7 +104,8 @@ async def test_hatchery_siguiente_paso_de_incubacion(auth_headers, http_client, 
     """Incubadora: carga del huevo recibido no cargado (BR-03) y despacho de pollitos disponibles (BR-04) desde el opening."""
     ids = await preparar(seeded_ids)
     b, por_ref = await _lote_aplicado(http_client, auth_headers, seeded_ids, "hatchery", [
-        fila_incubadora("INC-CONT-1"),
+        # SPEC 018 · D-4/BR-03: sin no incubables (0 KNOWN) el saldo recibido→cargado es 1000.
+        fila_incubadora("INC-CONT-1", **SIN_NO_INCUBABLES),
         fila_incubadora("INC-CONT-2", eggs_transferred=8900, chicks_hatched=8000, chicks_available=500),
     ])
     l1, l2 = por_ref["INC-CONT-1"], por_ref["INC-CONT-2"]
@@ -116,7 +117,9 @@ async def test_hatchery_siguiente_paso_de_incubacion(auth_headers, http_client, 
     assert r.status_code == 400 and r.json().get("rule") == "BR-03", r.text
     f = await _fila(http_client, auth_headers, b, l1)
     assert f["opening"]["hatchery"]["eggs_received"] == 10000 and f["post"]["eggs_loaded"] == 1000
-    assert f["current"]["eggs_available_hatchery"] == 0 and f["current"]["eggs_in_process"] == 9900
+    # SPEC 018 · D-4/D-5: los no incubables no restan de `eggs_in_process` (nunca entraron en el
+    # set): en proceso = `set − transferred` + cargas post-corte. El saldo recibido→cargado es 0.
+    assert f["current"]["eggs_available_hatchery"] == 0 and f["current"]["eggs_in_process"] == 10000
     # Pollitos ya nacidos y disponibles al corte se despachan (viables = 500 + nacimientos − salidas).
     # BR-08: el despacho declara la granja/galpón de destino.
     r = await _evento(http_client, auth_headers, lot_id=l2, event_type="chick_dispatch", event_date=recent_event_date(),

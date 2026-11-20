@@ -82,7 +82,16 @@ def test_metricas_que_admiten_na():
     assert con_na == {"accumulated_egg_production", "accumulated_eggs_to_hatchery"}
     assert {f.name for f in CONTRACTS["broiler"].fields if f.allow_na} == {"partial_outbound_birds"}
     assert {f.name for f in CONTRACTS["hatchery"].fields if f.allow_na} == {
-        "set_date", "expected_hatch_date", "eggs_transferred", "eggs_discarded", "chicks_hatched", "chicks_available"}
+        "set_date", "expected_hatch_date", "eggs_transferred", "chicks_hatched", "chicks_available"}
+    # SPEC 018 · D-2/D-6: `eggs_discarded` sale del contrato y los 4 campos nuevos son métricas
+    # opcionales enteras sin N/A (vacío = UNKNOWN, `0` = cero conocido, `N/A` = error).
+    assert "eggs_discarded" not in CONTRACTS["hatchery"].columns
+    for campo in ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken",
+                  "fertile_eggs_to_pit"):
+        spec = CONTRACTS["hatchery"].by_name[campo]
+        assert (spec.kind, spec.metric, spec.required, spec.allow_na) == ("int", True, False, False), campo
+        assert spec.name in CONTRACTS["hatchery"].columns and spec.targets, campo
+    assert len(CONTRACTS["hatchery"].fields) == 23
     # Lo obligatorio nunca admite UNKNOWN: vivas y huevos recibidos/cargados son KNOWN o error.
     assert not any(f.allow_unknown for c in CONTRACTS.values() for f in c.fields if f.required)
 

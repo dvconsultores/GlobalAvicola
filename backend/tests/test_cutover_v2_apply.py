@@ -137,7 +137,9 @@ async def test_apply_hatchery_con_lote_fuente_y_na(auth_headers, http_client, se
             await s.commit()
         fuente = (await s.execute(select(Lot).where(Lot.lot_code == "CUT2-FUENTE-BR"))).scalar_one()
     filas = [fila_incubadora("INC-APP-1", source_lot_code="CUT2-FUENTE-BR", generation="breeder", set_date="N/A",
-                             expected_hatch_date=None, eggs_set=0, eggs_transferred="N/A", eggs_discarded=None,
+                             expected_hatch_date=None, eggs_set=0, eggs_transferred="N/A",
+                             eggs_non_incubable_oversized=200, eggs_non_incubable_dirty=50,
+                             eggs_non_incubable_broken=10, fertile_eggs_to_pit=0,
                              chicks_hatched="N/A", chicks_available="N/A")]
     _, por_ref = await _aplicado(http_client, auth_headers, seeded_ids, "hatchery", filas, 83)
     lote, ob, fases = await _lote_opening_fase(por_ref["INC-APP-1"])
@@ -154,7 +156,13 @@ async def test_apply_hatchery_con_lote_fuente_y_na(auth_headers, http_client, se
     assert (ho.expected_hatch_date, ho.expected_hatch_date_status) == (None, "UNKNOWN")
     assert (ho.eggs_received, ho.eggs_received_status, ho.eggs_set, ho.eggs_set_status) == (10000, "KNOWN", 0, "KNOWN")
     assert (ho.eggs_transferred, ho.eggs_transferred_status) == (None, "NOT_APPLICABLE")
-    assert (ho.eggs_discarded, ho.eggs_discarded_status) == (None, "UNKNOWN")
+    # SPEC 018 · D-2/D-8/AC-V4-09: V4 aplica `eggs_discarded` NULL + NOT_APPLICABLE (columna V3
+    # conservada) y persiste cada componente del desglose y la fosa por separado, con su estado.
+    assert (ho.eggs_discarded, ho.eggs_discarded_status) == (None, "NOT_APPLICABLE")
+    assert (ho.eggs_non_incubable_oversized, ho.eggs_non_incubable_oversized_status) == (200, "KNOWN")
+    assert (ho.eggs_non_incubable_dirty, ho.eggs_non_incubable_dirty_status) == (50, "KNOWN")
+    assert (ho.eggs_non_incubable_broken, ho.eggs_non_incubable_broken_status) == (10, "KNOWN")
+    assert (ho.fertile_eggs_to_pit, ho.fertile_eggs_to_pit_status) == (0, "KNOWN")
     assert (ob.accumulated_chicks_hatched, ob.chicks_hatched_status) == (None, "NOT_APPLICABLE")
     assert (ob.initial_mixed_count, ob.initial_mixed_status) == (0, "NOT_APPLICABLE")
     assert ob.feed_status == ob.weight_status == ob.mortality_status == "NOT_APPLICABLE"

@@ -1,7 +1,8 @@
 """SPEC 009 · Ajustes KeyUser sesión 01 — pruebas RED a nivel parser/contrato (sin base de datos).
 
 Fase RED: estas pruebas describen el comportamiento *objetivo* de las plantillas de cutover
-(mortalidad obligatoria en breeder, `egg_origin` y `generation` cerrados en hatchery v3). Varias
+(mortalidad obligatoria en breeder, `egg_origin` y `generation` cerrados en la incubadora; desde
+SPEC 018 el contrato vigente de incubadora es v4). Varias
 DEBEN fallar sobre el código actual hasta que se implementen los ajustes: no son un fallo de la
 suite, son la especificación ejecutable de lo que falta.
 
@@ -32,12 +33,15 @@ def _errores_de_fila(r) -> set:
     return {(e["field"], e["error_code"]) for row in r["rows"] for e in row["errors"]}
 
 
-#: Cabecera v3 de hatchery, declarada aquí como literal: la prueba no hereda el contrato de la
-#: implementación ni la fixture `COLUMNAS_INCUBADORA` (que en GREEN ya incluiría `egg_origin`).
-COLS_INC_V3 = (
+#: Cabecera v4 de hatchery, declarada aquí como literal: la prueba no hereda el contrato de la
+#: implementación ni la fixture `COLUMNAS_INCUBADORA` (SPEC 018 · D-7: 23 columnas, sin `eggs_discarded`).
+COLS_INC_V4 = (
     "legacy_lot_code", "existing_lot_code", "hatchery_code", "incubator_name", "hatcher_name",
     "source_lot_code", "generation", "egg_origin", "reception_date", "set_date", "expected_hatch_date",
-    "eggs_received", "eggs_set", "eggs_transferred", "eggs_discarded", "chicks_hatched", "chicks_available",
+    "eggs_received", "eggs_set",
+    "eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken",
+    "eggs_transferred", "fertile_eggs_to_pit",
+    "chicks_hatched", "chicks_available",
     "source_system", "source_reference", "notes",
 )
 
@@ -45,19 +49,20 @@ _BASE_INC = dict(
     hatchery_code=PLANTA, incubator_name=INCUBADORA, hatcher_name=NACEDORA,
     generation="breeder", egg_origin="internal", reception_date=iso_days_ago(120),
     set_date=iso_days_ago(118), expected_hatch_date=iso_days_ago(97), eggs_received=10000,
-    eggs_set=9000, eggs_transferred=0, eggs_discarded=100, chicks_hatched=0, chicks_available=0,
-    source_system="LEGACY",
+    eggs_set=9000, eggs_non_incubable_oversized=500, eggs_non_incubable_dirty=300,
+    eggs_non_incubable_broken=200, eggs_transferred=0, fertile_eggs_to_pit=0,
+    chicks_hatched=0, chicks_available=0, source_system="LEGACY",
 )
 
 
-def _row_inc_v3(ref, **extra):
+def _row_inc_v4(ref, **extra):
     d = dict(_BASE_INC, legacy_lot_code=ref)
     d.update(extra)
-    return ["" if d.get(c) is None else d.get(c) for c in COLS_INC_V3]
+    return ["" if d.get(c) is None else d.get(c) for c in COLS_INC_V4]
 
-def _xlsx_inc_v3(filas):
-    return xlsx_v2("hatchery", filas, company_id=1, columnas=COLS_INC_V3,
-                   template_version="v3", schema_id="CUTOVER_HATCHERY_V3")
+def _xlsx_inc_v4(filas):
+    return xlsx_v2("hatchery", filas, company_id=1, columnas=COLS_INC_V4,
+                   template_version="v4", schema_id="CUTOVER_HATCHERY_V4")
 
 
 # ── R1-R5 · Mortalidad histórica en reproductoras ───────────────────────────
@@ -100,57 +105,60 @@ def test_r5_grandparent_mortalidad_vacia_es_unknown_sin_error():
     assert row["normalized"]["historical_mortality_males"] == {"value": None, "status": "UNKNOWN"}
 
 
-# ── R12-R16 · Hatchery v3: `generation` y `egg_origin` ──────────────────────
+# ── R12-R16 · Hatchery: `generation` y `egg_origin` (contrato v4) ───────────
 
 def test_r12_hatchery_generation_grandparent_pasa():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R12", generation="grandparent")]),
-               template_version="v3")
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R12", generation="grandparent")]),
+               template_version="v4")
     assert r["rows"][0]["errors"] == []
 
 
 def test_r13_hatchery_generation_breeder_pasa():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R13", generation="breeder")]),
-               template_version="v3")
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R13", generation="breeder")]),
+               template_version="v4")
     assert r["rows"][0]["errors"] == []
 
 
 def test_r14_hatchery_generation_purchased_invalid_enum():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R14", generation="purchased")]),
-               template_version="v3")
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R14", generation="purchased")]),
+               template_version="v4")
     assert ("generation", "INVALID_ENUM") in _errores_de_fila(r)
 
 
 def test_r15_egg_origin_internal_pasa():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R15", egg_origin="internal")]),
-               template_version="v3")
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R15", egg_origin="internal")]),
+               template_version="v4")
     assert r["rows"][0]["errors"] == []
     assert r["rows"][0]["normalized"]["egg_origin"] == {"value": "internal", "status": "KNOWN"}
 
 
 def test_r16_egg_origin_purchased_pasa():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R16", egg_origin="purchased")]),
-               template_version="v3")
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R16", egg_origin="purchased")]),
+               template_version="v4")
     assert r["rows"][0]["errors"] == []
     assert r["rows"][0]["normalized"]["egg_origin"] == {"value": "purchased", "status": "KNOWN"}
 
 
-def test_r15b_egg_origin_vacio_rechaza_en_v3():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R15b", egg_origin=None)]),
-               template_version="v3")
+def test_r15b_egg_origin_vacio_rechaza_en_v4():
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R15b", egg_origin=None)]),
+               template_version="v4")
     assert ("egg_origin", "REQUIRED_FIELD_MISSING") in _errores_de_fila(r)
 
 
 def test_r14b_egg_origin_valor_invalido_enum():
-    r = _parse("hatchery", _xlsx_inc_v3([_row_inc_v3("R14b", egg_origin="comprado")]),
-               template_version="v3")
+    r = _parse("hatchery", _xlsx_inc_v4([_row_inc_v4("R14b", egg_origin="comprado")]),
+               template_version="v4")
     assert ("egg_origin", "INVALID_ENUM") in _errores_de_fila(r)
 
 
-def test_hatchery_v2_rechazada_por_version():
-    # hatchery vigente es v3; un archivo v2 se rechaza por versión, no se tolera.
-    with pytest.raises(CutoverParseError) as exc:
-        _parse("hatchery", xlsx_v2("hatchery", [_row_inc_v3("VX")], company_id=1, template_version="v2"))
-    assert exc.value.code == "TEMPLATE_VERSION_UNSUPPORTED"
+def test_hatchery_v2_y_v3_rechazadas_por_version():
+    # SPEC 018 · §1.6 / AC-V4-04: la incubadora vigente es v4; una plantilla v2 o una v3 anterior
+    # se rechazan por versión con la instrucción de descargar la v4 (no se toleran).
+    for version in ("v2", "v3"):
+        with pytest.raises(CutoverParseError) as exc:
+            _parse("hatchery", xlsx_v2("hatchery", [_row_inc_v4("VX")], company_id=1, template_version=version))
+        assert exc.value.code == "TEMPLATE_VERSION_UNSUPPORTED", version
+        assert "v4" in exc.value.message and "descargue" in exc.value.message.lower(), (version, exc.value.message)
 
 
 # ── R20-R21 · Linaje del contrato completo ──────────────────────────────────

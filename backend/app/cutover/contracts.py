@@ -16,10 +16,14 @@ from dataclasses import dataclass, field
 from typing import Optional
 
 TEMPLATE_VERSION = "v2"
-HATCHERY_TEMPLATE_VERSION = "v3"  # SPEC 009: incubadora versionada por la columna nueva egg_origin.
+#: SPEC 018 (V4): la incubadora deja `eggs_discarded` y captura el desglose de no incubables
+#: (tamaño excesivo, suciedad, rotura) y los huevos fértiles enviados a fosa.
+HATCHERY_TEMPLATE_VERSION = "v4"
 AVES_TEMPLATE_VERSION = "v3"  # SPEC 014: progenitoras y reproductoras v3 (transferencias históricas).
 #: Versiones aceptadas por el parser. `v1` está **retirada** (Q6): no se reinterpreta.
-SUPPORTED_TEMPLATE_VERSIONS = frozenset({TEMPLATE_VERSION, HATCHERY_TEMPLATE_VERSION})
+#: `v3` se conserva porque la siguen usando las plantillas de aves; el rechazo de una v3 de
+#: incubadora lo hace la regla «versión ≠ vigente de la BU» (SPEC 018 §1.6).
+SUPPORTED_TEMPLATE_VERSIONS = frozenset({TEMPLATE_VERSION, HATCHERY_TEMPLATE_VERSION, AVES_TEMPLATE_VERSION})
 RETIRED_TEMPLATE_VERSIONS = frozenset({"v1"})
 
 #: SPEC 009 · procedencia (gobernanza) de cada categoría de la hoja `Catalogos`.
@@ -267,13 +271,32 @@ _INCUBADORA = (
               targets=("hatchery_openings.expected_hatch_date",), status_column="expected_hatch_date_status", promotion="≥ set_date", consumer="planificación"),
     FieldSpec("eggs_received", "int", "Huevos fértiles recibidos en la planta.", required=True, metric=True, unit="huevos", example="10000",
               targets=("hatchery_openings.eggs_received",), status_column="eggs_received_status",
-              promotion="saldo de huevo en planta = recibidos − cargados", consumer="BR-03 carga de incubación"),
+              promotion="saldo por cargar = recibidos − cargados − no incubables conocidos", consumer="BR-03 carga de incubación"),
     FieldSpec("eggs_set", "int", "Huevos ya cargados en incubadora. ≤ recibidos.", required=True, metric=True, unit="huevos", example="9000",
               targets=("hatchery_openings.eggs_set",), status_column="eggs_set_status", promotion="≤ eggs_received", consumer="huevos en proceso"),
+    FieldSpec("eggs_non_incubable_oversized", "int",
+              "Cantidad acumulada de huevos recibidos clasificados como no incubables por tamaño excesivo (extra grande), hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido.",
+              metric=True, unit="huevos", example="200", targets=("hatchery_openings.eggs_non_incubable_oversized",),
+              status_column="eggs_non_incubable_oversized_status",
+              promotion="set + suma de no incubables conocidos ≤ eggs_received", consumer="saldo por cargar (BR-03), total no incubable (derivado)"),
+    FieldSpec("eggs_non_incubable_dirty", "int",
+              "Cantidad acumulada de huevos recibidos clasificados como no incubables por suciedad, hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido.",
+              metric=True, unit="huevos", example="50", targets=("hatchery_openings.eggs_non_incubable_dirty",),
+              status_column="eggs_non_incubable_dirty_status",
+              promotion="set + suma de no incubables conocidos ≤ eggs_received", consumer="saldo por cargar (BR-03), total no incubable (derivado)"),
+    FieldSpec("eggs_non_incubable_broken", "int",
+              "Cantidad acumulada de huevos recibidos clasificados como no incubables por rotura, hasta la fecha de corte. Vacío = desconocido; 0 = cero conocido.",
+              metric=True, unit="huevos", example="10", targets=("hatchery_openings.eggs_non_incubable_broken",),
+              status_column="eggs_non_incubable_broken_status",
+              promotion="set + suma de no incubables conocidos ≤ eggs_received", consumer="saldo por cargar (BR-03), total no incubable (derivado)"),
     FieldSpec("eggs_transferred", "int", "Huevos ya transferidos a nacedora. ≤ cargados.", metric=True, allow_na=True, unit="huevos", example="0",
               targets=("hatchery_openings.eggs_transferred",), status_column="eggs_transferred_status", promotion="≤ eggs_set", consumer="nacimientos"),
-    FieldSpec("eggs_discarded", "int", "Huevos descartados (ovoscopia, rotos) del proceso. ≤ cargados.", metric=True, allow_na=True, unit="huevos",
-              example="100", targets=("hatchery_openings.eggs_discarded",), status_column="eggs_discarded_status", promotion="≤ eggs_set", consumer="rendimiento"),
+    FieldSpec("fertile_eggs_to_pit", "int",
+              "Cantidad acumulada de huevos fértiles enviados a fosa antes de la fecha de corte. Concepto separado de los no incubables. Vacío = desconocido; 0 = cero conocido.",
+              metric=True, unit="huevos", example="0", targets=("hatchery_openings.fertile_eggs_to_pit",),
+              status_column="fertile_eggs_to_pit_status",
+              promotion="≤ eggs_received (relación con cargados/transferidos: decisión de dominio pendiente)",
+              consumer="huevos en proceso (solo si es cero conocido), reconciliación"),
     FieldSpec("chicks_hatched", "int", "Pollitos ya nacidos del proceso antes del corte.", metric=True, allow_na=True, unit="pollitos", example="0",
               targets=("opening_balances.accumulated_chicks_hatched",), status_column="chicks_hatched_status",
               promotion="≤ transferidos (o ≤ cargados si transferidos no es KNOWN)", consumer="lifetime nacimientos"),
@@ -297,7 +320,8 @@ _DOMINIO_ENGORDE = frozenset({
 })
 _DOMINIO_INCUBADORA = frozenset({
     "legacy_lot_code", "hatchery_code", "incubator_name", "hatcher_name", "source_lot_code", "generation", "egg_origin", "reception_date",
-    "set_date", "expected_hatch_date", "eggs_received", "eggs_set", "eggs_transferred", "eggs_discarded", "chicks_hatched",
+    "set_date", "expected_hatch_date", "eggs_received", "eggs_set", "eggs_transferred", "eggs_non_incubable_oversized",
+    "eggs_non_incubable_dirty", "eggs_non_incubable_broken", "fertile_eggs_to_pit", "chicks_hatched",
     "chicks_available", "source_system", "source_reference",
 })
 
@@ -319,7 +343,7 @@ CONTRACTS: dict[str, TemplateContract] = {
         required_domain_fields=_DOMINIO_ENGORDE,
     ),
     "hatchery": TemplateContract(
-        business_unit="hatchery", schema_id="CUTOVER_HATCHERY_V3", version=HATCHERY_TEMPLATE_VERSION, bird_type="hatchery",
+        business_unit="hatchery", schema_id="CUTOVER_HATCHERY_V4", version=HATCHERY_TEMPLATE_VERSION, bird_type="hatchery",
         lot_date_field="reception_date", phases=FASES_POR_BU["hatchery"], implicit_phase="INCUB", fields=_INCUBADORA,
         required_domain_fields=_DOMINIO_INCUBADORA,
     ),

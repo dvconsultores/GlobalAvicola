@@ -3,7 +3,7 @@ Business rules validators for operational events.
 BR-01 through BR-19 from the spec.
 """
 from datetime import date
-from sqlalchemy import func, select
+from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from .models import BirdMovement, EggMovement, EventStatus, EventType, HatcheryParams, OperationalEvent
@@ -190,6 +190,8 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
     IN:  EGG_RECEPTION_HATCHERY  (solo el fértil recibido: `Bases` p.9, `GA-REM-005-F`; las demás filas
                                   —diferencias vs enviado— se capturan y no cuentan)
     OUT: INCUBATION_LOAD (quantity_loaded from hatchery_params)
+
+    Apertura migrada (SPEC 018 · D-4): `recibidos − cargados − Σ(no incubables KNOWN)`.
     """
     res_in = await db.execute(
         select(func.coalesce(func.sum(EggMovement.quantity), 0))
@@ -213,10 +215,20 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
     # SPEC 006: un proceso de incubación migrado abre con huevo recibido y aún no cargado
     # (`hatchery_openings.eggs_received − eggs_set`); sin esto el lote nacía con saldo 0 y
     # `BR-03` rechazaba la primera carga posterior al corte.
+    # SPEC 018 · D-4: los no incubables V4 son una clasificación del huevo recibido que nunca
+    # entró en incubadora: restan UNA sola vez aquí, en el saldo recibido→cargado (no en
+    # `eggs_in_process`). Un componente `UNKNOWN` **no se resta ni se inventa** (el saldo es
+    # entonces una cota superior). Las aperturas V3 no cambian: sus componentes son `UNKNOWN`.
     from ..cutover.models import HatcheryOpening
 
+    componentes = [
+        case((getattr(HatcheryOpening, f"{campo}_status") == "KNOWN",
+              func.coalesce(getattr(HatcheryOpening, campo), 0)), else_=0)
+        for campo in ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken")
+    ]
+    no_incubables = sum(componentes[1:], componentes[0])
     apertura = (await db.execute(
-        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0))
+        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0) - no_incubables)
         .where(HatcheryOpening.lot_id == lot_id)
     )).scalar() or 0
     return int(apertura) + (res_in.scalar() or 0) - (res_out.scalar() or 0)
