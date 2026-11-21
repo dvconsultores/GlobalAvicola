@@ -147,3 +147,38 @@ async def test_o15_08_otras_bu_no_ganan_las_claves_nuevas(auth_headers, http_cli
     # Y el summary de siempre sigue ahí, intacto.
     assert resumen["live_males"] == 1000 and resumen["live_females"] == 9000
     assert resumen["historical_mortality_status"] == "KNOWN"
+
+
+@pytest.mark.asyncio
+async def test_o15_09_chicks_available_na_no_propaga(auth_headers, http_client, seeded_ids):
+    """Un `N/A` en `chicks_available` aporta 0 y **no** propaga UNKNOWN (D-18: solo UNKNOWN propaga)."""
+    await preparar(seeded_ids)
+
+    # (a) única fila válida con `chicks_available` N/A ⇒ 0 KNOWN, sin filas UNKNOWN.
+    preview = await _preview_de(http_client, auth_headers, "hatchery", [
+        fila_incubadora("O15-F", chicks_available="N/A"),
+    ], 86)
+    resumen = preview["summary"]
+    assert resumen["chicks_available"] == 0
+    assert resumen["chicks_available_status"] == "KNOWN"
+    assert resumen["chicks_available_unknown_rows"] == 0
+
+    # (b) N/A junto a un valor conocido ⇒ 5 KNOWN (el N/A no anula ni ensucia el total).
+    preview2 = await _preview_de(http_client, auth_headers, "hatchery", [
+        fila_incubadora("O15-G", chicks_available="N/A"),
+        fila_incubadora("O15-H", eggs_transferred=100, chicks_hatched=5, chicks_available=5),
+    ], 85)
+    resumen2 = preview2["summary"]
+    assert resumen2["chicks_available"] == 5
+    assert resumen2["chicks_available_status"] == "KNOWN"
+    assert resumen2["chicks_available_unknown_rows"] == 0
+
+    # (c) N/A + UNKNOWN (celda vacía) ⇒ UNKNOWN con **una** fila unknown: el N/A no cuenta.
+    preview3 = await _preview_de(http_client, auth_headers, "hatchery", [
+        fila_incubadora("O15-I", chicks_available="N/A"),
+        fila_incubadora("O15-J", chicks_available=None),
+    ], 84)
+    resumen3 = preview3["summary"]
+    assert resumen3["chicks_available"] is None
+    assert resumen3["chicks_available_status"] == "UNKNOWN"
+    assert resumen3["chicks_available_unknown_rows"] == 1

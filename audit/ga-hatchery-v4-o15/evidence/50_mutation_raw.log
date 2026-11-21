@@ -1,0 +1,825 @@
+================================================================================
+### MUTANTE B1
+--- comando: ./scripts/run_tests.sh tests/test_cutover_hatchery_v4_o15.py tests/test_cutover_hatchery_v4_od01.py tests/test_cutover_hatchery_v4.py -q   (cwd backend)
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+.FF..FF....................................................              [100%]
+=================================== FAILURES ===================================
+___________________ test_o15_02_una_unknown_propaga_unknown ____________________
+
+    def test_o15_02_una_unknown_propaga_unknown():
+        """AC-O15-02: `[900, UNKNOWN, 0] → UNKNOWN` — jamás la suma parcial 900."""
+>       assert _agregar_con_unknown([900, None, 0]) == (None, 1)
+E       assert (900, 1) == (None, 1)
+E         
+E         At index 0 diff: 900 != None
+E         Use -v to get more diff
+
+tests/test_cutover_hatchery_v4_o15.py:58: AssertionError
+________________________ test_o15_03_unica_fila_unknown ________________________
+
+    def test_o15_03_unica_fila_unknown():
+        """AC-O15-03: `[UNKNOWN] → UNKNOWN` (no se degrada a 0)."""
+>       assert _agregar_con_unknown([None]) == (None, 1)
+E       assert (0, 1) == (None, 1)
+E         
+E         At index 0 diff: 0 != None
+E         Use -v to get more diff
+
+tests/test_cutover_hatchery_v4_o15.py:63: AssertionError
+_______________ test_o15_06_summary_de_incubadora_con_dos_filas ________________
+
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY0ODcsInR5cGUiOiJhY2Nlc3MifQ.FGoZkubHETCPKtRFecMlCF1jpr2x657QirDLYd-Xpj0'}
+http_client = <httpx.AsyncClient object at 0x7f4adf943ed0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_o15_06_summary_de_incubadora_con_dos_filas(auth_headers, http_client, seeded_ids):
+        """A = 900 en proceso, B = UNKNOWN ⇒ summary UNKNOWN (nunca 900); con B' = 1000 ⇒ 1900 KNOWN."""
+        await preparar(seeded_ids)
+    
+        # A: set 9000 − transferred 8000 − fosa 100 = 900 · B: fosa vacía ⇒ en proceso UNKNOWN.
+        preview = await _preview_de(http_client, auth_headers, "hatchery", [
+            fila_incubadora("O15-A", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=100),
+            fila_incubadora("O15-B", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=None),
+        ], 91)
+        resumen = preview["summary"]
+        filas = _filas_por_ref(preview)
+    
+        assert filas["O15-A"]["derived"]["eggs_in_process"] == 900
+        assert filas["O15-B"]["derived"]["eggs_in_process"] is None
+    
+>       assert resumen["eggs_in_process"] is None                 # D-18: UNKNOWN, no suma parcial
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 900 is None
+
+tests/test_cutover_hatchery_v4_o15.py:94: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+_____________________ test_o15_07_summary_chicks_available _____________________
+
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY0ODgsInR5cGUiOiJhY2Nlc3MifQ.Pr-6yaLm9S0OZAaocK-3JkllUVRFMOlvmK8kp-vBk3Q'}
+http_client = <httpx.AsyncClient object at 0x7f4adf4bfc90>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_o15_07_summary_chicks_available(auth_headers, http_client, seeded_ids):
+        """`chicks_available` vacío ⇒ summary UNKNOWN; `0` conocido ⇒ 0 KNOWN (D-18/D-19)."""
+        await preparar(seeded_ids)
+    
+        preview = await _preview_de(http_client, auth_headers, "hatchery", [
+            fila_incubadora("O15-C", chicks_hatched=0, chicks_available=0),
+            fila_incubadora("O15-D", chicks_hatched=0, chicks_available=None),
+        ], 89)
+        resumen = preview["summary"]
+>       assert resumen["chicks_available"] is None
+E       assert 0 is None
+
+tests/test_cutover_hatchery_v4_o15.py:123: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_02_una_unknown_propaga_unknown
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_03_unica_fila_unknown
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_07_summary_chicks_available
+4 failed, 55 passed, 1 warning in 19.37s
+
+================================================================================
+### MUTANTE B2
+--- comando: ./scripts/run_tests.sh tests/test_cutover_hatchery_v4_o15.py tests/test_cutover_hatchery_v4_od01.py tests/test_cutover_hatchery_v4.py -q   (cwd backend)
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+....F......................................................              [100%]
+=================================== FAILURES ===================================
+____________________________ test_o15_05_sin_filas _____________________________
+
+    def test_o15_05_sin_filas():
+        """AC-O15-05: `[] → 0` — semantica vigente: sin filas = 0, los chips de conteo parten de 0."""
+>       assert _agregar_con_unknown([]) == (0, 0)
+E       assert (None, 0) == (0, 0)
+E         
+E         At index 0 diff: None != 0
+E         Use -v to get more diff
+
+tests/test_cutover_hatchery_v4_o15.py:73: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_05_sin_filas - assert ...
+1 failed, 58 passed, 1 warning in 15.35s
+
+================================================================================
+### MUTANTE B3
+--- comando: ./scripts/run_tests.sh tests/test_cutover_hatchery_v4_o15.py tests/test_cutover_hatchery_v4_od01.py tests/test_cutover_hatchery_v4.py -q   (cwd backend)
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+.....F.....................................................              [100%]
+=================================== FAILURES ===================================
+_______________ test_o15_06_summary_de_incubadora_con_dos_filas ________________
+
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY1NDYsInR5cGUiOiJhY2Nlc3MifQ.O_g6WBkHXDj6e8cHu1ZZSsCgGny6THmgmq8B0J0fjuU'}
+http_client = <httpx.AsyncClient object at 0x7f2c97348090>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_o15_06_summary_de_incubadora_con_dos_filas(auth_headers, http_client, seeded_ids):
+        """A = 900 en proceso, B = UNKNOWN ⇒ summary UNKNOWN (nunca 900); con B' = 1000 ⇒ 1900 KNOWN."""
+        await preparar(seeded_ids)
+    
+        # A: set 9000 − transferred 8000 − fosa 100 = 900 · B: fosa vacía ⇒ en proceso UNKNOWN.
+        preview = await _preview_de(http_client, auth_headers, "hatchery", [
+            fila_incubadora("O15-A", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=100),
+            fila_incubadora("O15-B", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=None),
+        ], 91)
+        resumen = preview["summary"]
+        filas = _filas_por_ref(preview)
+    
+        assert filas["O15-A"]["derived"]["eggs_in_process"] == 900
+        assert filas["O15-B"]["derived"]["eggs_in_process"] is None
+    
+>       assert resumen["eggs_in_process"] is None                 # D-18: UNKNOWN, no suma parcial
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       assert 900 is None
+
+tests/test_cutover_hatchery_v4_o15.py:94: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+=============================== warnings summary ===============================
+tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+1 failed, 58 passed, 1 warning in 19.05s
+
+================================================================================
+### MUTANTE B4
+--- comando: ./scripts/run_tests.sh tests/test_cutover_hatchery_v4_o15.py tests/test_cutover_hatchery_v4_od01.py tests/test_cutover_hatchery_v4.py -q   (cwd backend)
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+......F....................................................              [100%]
+=================================== FAILURES ===================================
+_____________________ test_o15_07_summary_chicks_available _____________________
+
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY1NzcsInR5cGUiOiJhY2Nlc3MifQ.Db2zBkHpSqfGo7uZ1kSXOXfp0qkJfgjB2VD0-uvR43w'}
+http_client = <httpx.AsyncClient object at 0x7f61c298fa10>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_o15_07_summary_chicks_available(auth_headers, http_client, seeded_ids):
+        """`chicks_available` vacío ⇒ summary UNKNOWN; `0` conocido ⇒ 0 KNOWN (D-18/D-19)."""
+        await preparar(seeded_ids)
+    
+        preview = await _preview_de(http_client, auth_headers, "hatchery", [
+            fila_incubadora("O15-C", chicks_hatched=0, chicks_available=0),
+            fila_incubadora("O15-D", chicks_hatched=0, chicks_available=None),
+        ], 89)
+        resumen = preview["summary"]
+>       assert resumen["chicks_available"] is None
+E       assert 0 is None
+
+tests/test_cutover_hatchery_v4_o15.py:123: AssertionError
+=============================== warnings summary ===============================
+tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_07_summary_chicks_available
+1 failed, 58 passed, 1 warning in 17.58s
+
+================================================================================
+### MUTANTE B5
+--- comando: ./scripts/run_tests.sh tests/test_cutover_hatchery_v4_o15.py tests/test_cutover_hatchery_v4_od01.py tests/test_cutover_hatchery_v4.py -q   (cwd backend)
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+...........................................................              [100%]
+=============================== warnings summary ===============================
+tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+59 passed, 1 warning in 16.87s
+
+================================================================================
+### MUTANTE B6
+--- comando: ./scripts/run_tests.sh tests/test_cutover_hatchery_v4_o15.py tests/test_cutover_hatchery_v4_od01.py tests/test_cutover_hatchery_v4.py -q   (cwd backend)
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+.....F.....................................................              [100%]
+=================================== FAILURES ===================================
+_______________ test_o15_06_summary_de_incubadora_con_dos_filas ________________
+
+auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY2MzUsInR5cGUiOiJhY2Nlc3MifQ.ZidHyq_r2P2rFjduDXQ7-t5cLiQfNgZ8xWQ6M3cjBeU'}
+http_client = <httpx.AsyncClient object at 0x7f3a046c92d0>
+seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
+
+    @pytest.mark.asyncio
+    async def test_o15_06_summary_de_incubadora_con_dos_filas(auth_headers, http_client, seeded_ids):
+        """A = 900 en proceso, B = UNKNOWN ⇒ summary UNKNOWN (nunca 900); con B' = 1000 ⇒ 1900 KNOWN."""
+        await preparar(seeded_ids)
+    
+        # A: set 9000 − transferred 8000 − fosa 100 = 900 · B: fosa vacía ⇒ en proceso UNKNOWN.
+        preview = await _preview_de(http_client, auth_headers, "hatchery", [
+            fila_incubadora("O15-A", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=100),
+            fila_incubadora("O15-B", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=None),
+        ], 91)
+        resumen = preview["summary"]
+        filas = _filas_por_ref(preview)
+    
+        assert filas["O15-A"]["derived"]["eggs_in_process"] == 900
+        assert filas["O15-B"]["derived"]["eggs_in_process"] is None
+    
+        assert resumen["eggs_in_process"] is None                 # D-18: UNKNOWN, no suma parcial
+        assert resumen["eggs_in_process"] != 900                 # explícito: nunca 900
+>       assert resumen["eggs_in_process_status"] == "UNKNOWN"
+E       AssertionError: assert 'KNOWN' == 'UNKNOWN'
+E         
+E         - UNKNOWN
+E         ? --
+E         + KNOWN
+
+tests/test_cutover_hatchery_v4_o15.py:96: AssertionError
+------------------------------ Captured log setup ------------------------------
+WARNING  passlib.handlers.bcrypt:bcrypt.py:622 (trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+=============================== warnings summary ===============================
+tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas
+1 failed, 58 passed, 1 warning in 18.85s
+
+================================================================================
+### MUTANTE F1
+--- comando: npx vitest run src/__tests__/cutoverHatcheryV4.test.tsx src/__tests__/cutoverV2.test.tsx   (cwd frontend)
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx (16 tests | 1 failed) 1350ms
+     × chip de huevos en proceso UNKNOWN no pinta una suma parcial 66ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §8 · O-15: agregado del preview con UNKNOWN > chip de huevos en proceso UNKNOWN no pinta una suma parcial
+AssertionError: expected 'Huevos en proceso: 0' to contain 'UNKNOWN'
+
+Expected: "UNKNOWN"
+Received: "Huevos en proceso: 0"
+
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx:408:30
+    406|
+    407|     const chip = screen.getByTestId('cutover-chip-eggs-in-process')
+    408|     expect(chip.textContent).toContain('UNKNOWN')
+       |                              ^
+    409|     expect(chip.textContent).not.toContain('900')
+    410|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 22 passed (23)
+   Start at  13:14:21
+   Duration  3.38s (transform 620ms, setup 142ms, import 1.60s, tests 2.23s, environment 1.85s)
+
+
+================================================================================
+### MUTANTE F2
+--- comando: npx vitest run src/__tests__/cutoverHatcheryV4.test.tsx src/__tests__/cutoverV2.test.tsx   (cwd frontend)
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx (16 tests | 1 failed) 1170ms
+     × preview por fila: A = 900 y B = UNKNOWN en «Huevos en proceso (derivado)» 67ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §8 · O-15: agregado del preview con UNKNOWN > preview por fila: A = 900 y B = UNKNOWN en «Huevos en proceso (derivado)»
+AssertionError: expected '0' to contain 'UNKNOWN'
+
+Expected: "UNKNOWN"
+Received: "0"
+
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx:453:32
+    451|
+    452|     const celdaB = screen.getByTestId('cutover-preview-in-process-3')
+    453|     expect(celdaB.textContent).toContain('UNKNOWN')
+       |                                ^
+    454|     expect(celdaB.textContent).not.toMatch(/\d/)
+    455|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 22 passed (23)
+   Start at  13:14:30
+   Duration  2.69s (transform 463ms, setup 147ms, import 1.13s, tests 1.76s, environment 1.42s)
+
+
+================================================================================
+### MUTANTE F3
+--- comando: npx vitest run src/__tests__/cutoverHatcheryV4.test.tsx src/__tests__/cutoverV2.test.tsx   (cwd frontend)
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx (16 tests | 1 failed) 1207ms
+     × chip de pollitos disponibles: UNKNOWN con null y numérico con KNOWN 64ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §8 · O-15: agregado del preview con UNKNOWN > chip de pollitos disponibles: UNKNOWN con null y numérico con KNOWN
+AssertionError: expected 'Pollitos disponibles: 0' to contain 'UNKNOWN'
+
+Expected: "UNKNOWN"
+Received: "Pollitos disponibles: 0"
+
+ ❯ src/__tests__/cutoverHatcheryV4.test.tsx:465:30
+    463|
+    464|     const chip = screen.getByTestId('cutover-chip-chicks-available')
+    465|     expect(chip.textContent).toContain('UNKNOWN')
+       |                              ^
+    466|     expect(chip.textContent).not.toMatch(/\d/)
+    467|   })
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 22 passed (23)
+   Start at  13:14:39
+   Duration  2.76s (transform 516ms, setup 135ms, import 1.34s, tests 1.79s, environment 1.32s)
+
+
+================================================================================
+### EXTRA (fuera del set designado) · MUTANTE B5 con backend/tests/test_cutover_v2_apply.py
+── 1/5 · Arrancando PostgreSQL de pruebas (espacio de usuario) ──
+── 2/5 · Reseteando la base de pruebas a un estado limpio ──
+── 3/5 · Aplicando la cadena real de migraciones ──
+INFO  [alembic.runtime.migration] Context impl PostgresqlImpl.
+INFO  [alembic.runtime.migration] Will assume transactional DDL.
+INFO  [alembic.runtime.migration] Running upgrade  -> 0c661168cb12, initial_schema
+INFO  [alembic.runtime.migration] Running upgrade 0c661168cb12 -> b53bbe02a476, add_masters
+INFO  [alembic.runtime.migration] Running upgrade b53bbe02a476 -> ad12f3f3ad19, add_lot_phases_and_opening_balances
+INFO  [alembic.runtime.migration] Running upgrade ad12f3f3ad19 -> 7922512fdef4, add_operational_events
+INFO  [alembic.runtime.migration] Running upgrade 7922512fdef4 -> e4c4cc5420de, add_review_and_corrections
+INFO  [alembic.runtime.migration] Running upgrade e4c4cc5420de -> 397a95b7e826, add_sap_integration_tables
+INFO  [alembic.runtime.migration] Running upgrade 397a95b7e826 -> ee30bd1aa374, add_audit_log
+INFO  [alembic.runtime.migration] Running upgrade ee30bd1aa374 -> 748464484981, add_view_type_to_users
+INFO  [alembic.runtime.migration] Running upgrade 748464484981 -> 4396a2b7e7d6, add_egg_storage_and_weekly_tracking_fields
+INFO  [alembic.runtime.migration] Running upgrade 4396a2b7e7d6 -> bfcc893f581a, add_evidences_alerts_reversals_and_sap
+INFO  [alembic.runtime.migration] Running upgrade bfcc893f581a -> a1b2c3d4e5f6, add_hatchery_bird_type
+INFO  [alembic.runtime.migration] Running upgrade a1b2c3d4e5f6 -> f1e2d3c4b5a6, Add egg_batches and chick_batches for generational traceability (T-083).
+INFO  [alembic.runtime.migration] Running upgrade f1e2d3c4b5a6 -> c1d2e3f4a5b6, add_operation_specific_fields
+INFO  [alembic.runtime.migration] Running upgrade c1d2e3f4a5b6 -> d2e3f4a5b6c7, add house_id to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> e5f6a7b8c9d0, add value_numeric to inspection_details
+INFO  [alembic.runtime.migration] Running upgrade e5f6a7b8c9d0 -> f6a7b8c9d0e1, add idempotency_key to operational_events
+INFO  [alembic.runtime.migration] Running upgrade f6a7b8c9d0e1 -> g7h8i9j0k1l2, generalize chick_batches for breeder + add generation to egg_batches
+INFO  [alembic.runtime.migration] Running upgrade g7h8i9j0k1l2 -> h8i9j0k1l2m3, add hatchery_purpose to lots
+INFO  [alembic.runtime.migration] Running upgrade d2e3f4a5b6c7 -> 4982c3092c14, add_company_id_indexes_to_master_tables
+INFO  [alembic.runtime.migration] Running upgrade 4982c3092c14, h8i9j0k1l2m3 -> c574733bab64, merge_hatchery_purpose_and_company_indexes
+INFO  [alembic.runtime.migration] Running upgrade c574733bab64 -> i9j0k1l2m3n4, make operational_events.lot_id nullable for inspection events
+INFO  [alembic.runtime.migration] Running upgrade i9j0k1l2m3n4 -> j0k1l2m3n4o5, añade EGG_RECEPTION_CLASSIFICATION al tipo enum eventtype
+INFO  [alembic.runtime.migration] Running upgrade j0k1l2m3n4o5 -> k1l2m3n4o5p6, corrige el valor 'hatchery' de birdtypeenum a 'HATCHERY'
+INFO  [alembic.runtime.migration] Running upgrade k1l2m3n4o5p6 -> l2m3n4o5p6q7, reconcilia los permisos de rol con el enforcement de RBAC (R-44)
+INFO  [alembic.runtime.migration] Running upgrade l2m3n4o5p6q7 -> m3n4o5p6q7r8, curvas estándar de peso por línea genética (`GA-REM-037` / `OD-06`)
+INFO  [alembic.runtime.migration] Running upgrade m3n4o5p6q7r8 -> n4o5p6q7r8s9, notificaciones internas (`GA-REM-038` / `OD-07`)
+INFO  [alembic.runtime.migration] Running upgrade n4o5p6q7r8s9 -> o5p6q7r8s9t0, áreas funcionales y fecha prevista de cierre (`GA-REM-039` / `GA-REM-038` B / `OD-08`)
+INFO  [alembic.runtime.migration] Running upgrade o5p6q7r8s9t0 -> p6q7r8s9t0u1, fundamento del acceso por unidad de negocio (`GA-REM-040` fase 1 · `OD-09` · `OD-10`)
+INFO  [alembic.runtime.migration] Running upgrade p6q7r8s9t0u1 -> q7r8s9t0u1v2, la concesión se acota a la empresa que la otorgó (`GA-REM-040` enm. A · `OD-09.d`)
+INFO  [alembic.runtime.migration] Running upgrade q7r8s9t0u1v2 -> r8s9t0u1v2w3, la concesión se marca al cambiar de empresa, no se borra (`OD-09.e` · `AC-B12`)
+INFO  [alembic.runtime.migration] Running upgrade r8s9t0u1v2w3 -> s9t0u1v2w3x4, clasificación pendiente de la cadena productiva (`GA-REM-040` fase 6 · `OD-10.c`)
+INFO  [alembic.runtime.migration] Running upgrade s9t0u1v2w3x4 -> t0u1v2w3x4y5, el reverso interno tiene estado propio: `REVERSED` (`OD-19 §1` · `GA-REM-041` · `R-136`)
+INFO  [alembic.runtime.migration] Running upgrade t0u1v2w3x4y5 -> u1v2w3x4y5z6, consumo diario de agua: tipo de evento y columna (`GA-REM-021` enmienda A · `B05` · `R-13` · `H360-B05`)
+INFO  [alembic.runtime.migration] Running upgrade u1v2w3x4y5z6 -> v2w3x4y5z6a7, la capacidad de reverso llega a las instalaciones existentes (`OD-19` Aclaración A · `GA-REM-041-B`)
+INFO  [alembic.runtime.migration] Running upgrade v2w3x4y5z6a7 -> w3x4y5z6a7b8, cuadre de la recepción de reproductoras: recibidas, mortalidad al arribo y rechazo (`GA-REM-021-B` · `B01` · `H360-B01`)
+INFO  [alembic.runtime.migration] Running upgrade w3x4y5z6a7b8 -> x4y5z6a7b8c9, sanos y débiles al nacer (`GA-REM-021-C` · `B13` · `H360-B13` · `Bases` p.9)
+INFO  [alembic.runtime.migration] Running upgrade x4y5z6a7b8c9 -> y5z6a7b8c9d0, catálogo canónico de unidades de negocio — dato determinista de despliegue (`GA-FE-02-C §2` · F1 de `GA-FE-02-B`)
+INFO  [alembic.runtime.migration] Running upgrade y5z6a7b8c9d0 -> z6a7b8c9d0e1, Refresh tokens revocados — `GA-REM-003` · AC04 (el logout revoca).
+INFO  [alembic.runtime.migration] Running upgrade z6a7b8c9d0e1 -> b7c8d9e0f1a2, Cutover operacional — GA-REQ-061 · T14 (C1: fundación de datos).
+INFO  [alembic.runtime.migration] Running upgrade b7c8d9e0f1a2 -> c8d9e0f1a2b3, Acciones RBAC y de auditoría del cutover — `GA-REQ-061` · T14 (C2).
+INFO  [alembic.runtime.migration] Running upgrade c8d9e0f1a2b3 -> d9e0f1a2b3c4, SAP HANA Cloud READ ONLY inbound — SPEC 005 · `AC-HANA-25`, `27`, `29`, `30`.
+INFO  [alembic.runtime.migration] Running upgrade d9e0f1a2b3c4 -> e0f1a2b3c4d5, SPEC 006 · Cutover v2 — apertura por unidad de negocio.
+INFO  [alembic.runtime.migration] Running upgrade e0f1a2b3c4d5 -> f1a2b3c4d5e6, SPEC 009 · egg_origin (origen comercial del huevo) en hatchery_openings.
+INFO  [alembic.runtime.migration] Running upgrade f1a2b3c4d5e6 -> g2b3c4d5e6f7, SPEC 014 · transferencias históricas entre lotes en opening_balances.
+INFO  [alembic.runtime.migration] Running upgrade g2b3c4d5e6f7 -> h3c4d5e6f7a8, SPEC 018 · incubadora v4 — desglose de no incubables y huevos fértiles a fosa.
+   migraciones aplicadas
+── 4/5 · Verificando esquema e integridad de la cadena ──
+   tablas=65 (55 + alembic_version) · head en BD=h3c4d5e6f7a8 · head en código=h3c4d5e6f7a8
+── 5/5 · Sembrando datos deterministas y ejecutando pytest ──
+(trapped) error reading bcrypt version
+Traceback (most recent call last):
+  File "/home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/handlers/bcrypt.py", line 620, in _load_backend_mixin
+    version = _bcrypt.__about__.__version__
+              ^^^^^^^^^^^^^^^^^
+AttributeError: module 'bcrypt' has no attribute '__about__'
+   seeds aplicados
+
+.........                                                                [100%]
+=============================== warnings summary ===============================
+tests/test_cutover_v2_apply.py::test_apply_grandparent_destino_por_campo
+  /home/maria/Proyectos/GlobalAvicola/backend/.venv/lib/python3.11/site-packages/passlib/utils/__init__.py:854: DeprecationWarning: 'crypt' is deprecated and slated for removal in Python 3.13
+    from crypt import crypt as _crypt
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+9 passed, 1 warning in 7.73s

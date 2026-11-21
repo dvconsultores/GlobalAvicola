@@ -144,3 +144,5 @@ Mandato `GA-HATCHERY-V4-O15-PREVIEW-UNKNOWN`. No se reabre V4 ni se tocan fórmu
 | AC-O15-01..05 | Helper: `[900,800,0]→1700`, `[900,UNKNOWN,0]→UNKNOWN`, `[UNKNOWN]→UNKNOWN`, `[0,0]→0`, `[]→0`. |
 | AC-O15-06 | `summary.eggs_in_process` y `summary.chicks_available` de incubadora siguen D-18/D-19 sobre un batch real con dos filas. |
 | AC-O15-07 | UI: fila A = 900, fila B = UNKNOWN, chip total = UNKNOWN (nunca 900); al completar B con 0 conocido el chip pasa al total numérico. |
+
+**Estado §8 (2026-11-21):** O-15 **CLOSED**. IMPL `19b547b`; backend 1965/0/59 · frontend 750 · E2E 223/0 · mutación 9/9 (B5 cerrado con `test_o15_09`). Ver `audit/ga-hatchery-v4-o15/CERTIFICATION.md`. O-16 (`accumulated_feed_kg` en otras BU) documentada, sin tocar.
