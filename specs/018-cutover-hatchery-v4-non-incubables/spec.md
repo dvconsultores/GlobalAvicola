@@ -54,6 +54,7 @@ Vocabulario operativo existente: `EggMovement.egg_type ∈ {fertile, dirty, brok
   - BR-03 apertura: `disponible_para_cargar = received − set − Σ(componentes KNOWN)` (un UNKNOWN **no se resta ni se inventa**; el saldo es entonces cota superior y se documenta). Registros V3: sin cambio (sus estados nuevos son UNKNOWN).
   - Reporte `current.eggs_available_hatchery` (V4): `received − set − total` si el total es KNOWN, si no `null`; V3: fórmula previa.
 - **D-5 `fertile_eggs_to_pit`**: entero ≥ 0, métrica opcional (vacío = UNKNOWN, `0` = cero), **sin N/A**. Única validación: `≤ eggs_received`. **No** se suma al total no incubable, **no** se suma a `eggs_discarded`. `eggs_in_process` V4 = `set − transferred` **solo si** `set` y `transferred` son KNOWN **y** `fertile_eggs_to_pit` es KNOWN y `= 0`; en otro caso `null` (su resta depende de OD-HATCH-V4-01).
+  - **SUPERADO por el amendment §7 (OD-HATCH-V4-01 = RATIFIED, 2026-11-21):** la fosa es POST-carga; ver §7. Se conserva el texto original por trazabilidad.
 - **D-6 Obligatoriedad/tipos**: los 4 campos son métricas opcionales; enteros ≥ 0; negativos, decimales y texto → error; `N/A` → error (no aplica conceptualmente).
 - **D-7 Orden de `Datos`**: `… eggs_received, eggs_set, eggs_non_incubable_oversized, eggs_non_incubable_dirty, eggs_non_incubable_broken, eggs_transferred, fertile_eggs_to_pit, chicks_hatched, chicks_available …` (23 columnas).
 - **D-8 Persistencia/migración**: columnas físicas en `hatchery_openings`: `eggs_non_incubable_oversized|dirty|broken`, `fertile_eggs_to_pit` (Integer, nullable) + sus `*_status` (String(15), `NOT NULL`, `server_default 'UNKNOWN'`). Sin backfill ni reparto de históricos. Nueva revisión Alembic tras `g2b3c4d5e6f7`; se avanzan conscientemente los pines de cabeza.
@@ -63,7 +64,7 @@ Vocabulario operativo existente: `EggMovement.egg_type ∈ {fertile, dirty, brok
 
 ## 3. Invariantes
 - **Confirmadas**: `set ≤ received`; `set + Σ(no incubables KNOWN) ≤ received`; cada no incubable `≤ received`; `fertile_to_pit ≤ received`; `transferred ≤ set`; `chicks_hatched ≤ transferred|set`; `chicks_available ≤ chicks_hatched`; sin doble conteo (no incubables restan una sola vez, en el saldo recibido→cargado).
-- **No confirmadas (OWNER_DOMAIN_DECISION_REQUIRED)**: ubicación de `fertile_eggs_to_pit` en el balance (`transferred + pit ≤ set`, resta en `eggs_in_process`, relación con nacimientos).
+- **No confirmadas**: ~~ubicación de `fertile_eggs_to_pit` en el balance~~ → **RESUELTA** por el amendment §7 (OD-HATCH-V4-01 = RATIFIED).
 - **AUTHORIZATION_GATE = PASS**: ninguna decisión bloquea la captura; la ecuación de fosa queda marcada.
 
 ## 4. ACs
@@ -89,3 +90,38 @@ T1 contrato+parser+plantilla+docs script · T2 modelo+migración+apply+detalle/r
 
 ## 6. Estado
 Ver `audit/ga-cutover-hatchery-v4/CERTIFICATION.md`. IMPL `2f772eb` + `0d7b0cc`; backend 1947/0/59 · frontend 740 · E2E 213/0 · mutación 20/20. Abierta: OD-HATCH-V4-01 (OWNER_DOMAIN_DECISION_REQUIRED).
+
+## 7. AMENDMENT — OD-HATCH-V4-01 = RATIFIED (decisión Owner, 2026-11-21)
+
+Mandato `GA-HATCHERY-V4-OD-FERTILE-EGGS-TO-PIT`. Continuación mínima: no se reimplementa V4, no se tocan los tres no incubables, no se reabre O-13, no hay migración
+(`fertile_eggs_to_pit` ya está persistido; head Alembic sigue `h3c4d5e6f7a8`).
+
+**Decisión Owner:** `fertile_eggs_to_pit` son huevos **ya cargados** en incubación y retirados del proceso durante la incubación/ovoscopia, **antes de continuar a nacedora/nacimiento**.
+Es un movimiento **POST-CARGA**; no es clasificación previa, no forma parte de los no incubables y no se suma a `eggs_discarded` (V3).
+
+### Modelo de dos etapas
+```
+ETAPA A (recepción/clasificación):  eggs_received → { eggs_set | oversized | dirty | broken | aún por cargar }      set + Σ(no incubables KNOWN) ≤ received   (sin igualdad)
+ETAPA B (incubación):               eggs_set → { eggs_transferred | fertile_eggs_to_pit | en proceso }              transferred + pit ≤ set
+```
+- **D-12 `eggs_in_process` V4** = `eggs_set − eggs_transferred − fertile_eggs_to_pit` **solo si los tres son KNOWN**; si cualquiera es UNKNOWN (o N/A en `eggs_transferred`) = UNKNOWN (nunca 1000 con pit UNKNOWN). Reemplaza la regla D-5 («solo con fosa = 0»).
+  Pit = 0 conocido es un cero conocido: `set − transferred`. No usa `eggs_received` ni los no incubables (ya excluidos antes de `eggs_set`).
+- **D-13 validación (cutover)**: `fertile_eggs_to_pit ≤ eggs_set` cuando `eggs_set` es KNOWN; y `eggs_transferred + fertile_eggs_to_pit ≤ eggs_set` cuando los tres son KNOWN (sin doble error si una cota ya falló).
+  Si `eggs_set` es UNKNOWN solo queda la cota derivada `pit ≤ eggs_received` (pit ⊆ set ⊆ received), que no contradice la decisión. Se conserva `transferred ≤ set` y `chicks_hatched ≤ transferred (o set)`.
+- **D-14 BR-03 no cambia**: el saldo disponible para cargar es `received − set − Σ(no incubables KNOWN)`; la fosa ocurre **después** de la carga y NO se resta.
+- **D-15 V3 no cambia**: `eggs_in_process = set − transferred − eggs_discarded`; no se reinterpreta con la fosa. En V4 `eggs_discarded = NOT_APPLICABLE` y no se deriva.
+- **D-16 transferencias operativas**: el operativo normal no tiene validador de `transfer_to_hatcher` ni evento de fosa → sin cambios (sigue como `OPERATIONAL_MODEL_GAP`; spec separada).
+- **D-17 semántica de la plantilla**: el significado de `fertile_eggs_to_pit` en `Instrucciones`/contrato pasa a «huevos ya cargados retirados a fosa durante la incubación/ovoscopia, antes de nacedora; acumulado al corte».
+
+### ACs del amendment
+| AC | Enunciado |
+|---|---|
+| AC-V4-15 | `fertile_eggs_to_pit > eggs_set` (set KNOWN) → `CONSISTENCY_MISMATCH` (H4-FOSA-04: set 9000, pit 9001). |
+| AC-V4-16 | `eggs_transferred + fertile_eggs_to_pit > eggs_set` → `CONSISTENCY_MISMATCH` (H4-FOSA-03: 8000 + 1001 > 9000); `= set` válido (H4-FOSA-02: 8000 + 1000 → en proceso 0). |
+| AC-V4-17 | `eggs_in_process = set − transferred − pit` cuando los tres KNOWN (H4-FOSA-01: 900); UNKNOWN si falta alguno (H4-FOSA-05); pit = 0 conocido → `set − transferred` (H4-FOSA-06). |
+| AC-V4-18 | Sin doble conteo (H4-FOSA-07): received 10000, no incubables 1000, set 9000, pit 100, transferred 8000 ⇒ disponible para cargar = 0, en proceso = 900 (ni −100 ni 800); BR-03 no resta la fosa. |
+| AC-V4-19 | V3 histórica sin cambios (fórmula con `eggs_discarded`); V4 `eggs_discarded` NULL/`NOT_APPLICABLE`. |
+| AC-V4-20 | Preview y reconciliación muestran «Huevos fértiles a fosa» como métrica separada y «Huevos en proceso» con la fórmula nueva; nunca como no incubable ni como descartado V3. |
+
+### Pruebas obligatorias (mandato §13)
+H4-FOSA-01 (9000/8000/100 → 900) · 02 (9000/8000/1000 → 0) · 03 (9000/8000/1001 → DENY) · 04 (9000, pit 9001 → DENY) · 05 (pit UNKNOWN → en proceso UNKNOWN) · 06 (pit 0 conocido) · 07 (no incubables + fosa sin doble conteo).

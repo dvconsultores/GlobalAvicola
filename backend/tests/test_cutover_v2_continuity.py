@@ -117,8 +117,9 @@ async def test_hatchery_siguiente_paso_de_incubacion(auth_headers, http_client, 
     assert r.status_code == 400 and r.json().get("rule") == "BR-03", r.text
     f = await _fila(http_client, auth_headers, b, l1)
     assert f["opening"]["hatchery"]["eggs_received"] == 10000 and f["post"]["eggs_loaded"] == 1000
-    # SPEC 018 · D-4/D-5: los no incubables no restan de `eggs_in_process` (nunca entraron en el
-    # set): en proceso = `set − transferred` + cargas post-corte. El saldo recibido→cargado es 0.
+    # SPEC 018 · D-4 + §7 D-12 (OD-HATCH-V4-01 RATIFIED 2026-11-21): los no incubables no restan de
+    # `eggs_in_process` (nunca entraron en el set) y la fosa POST-CARGA (0 KNOWN aquí) tampoco añade
+    # nada: en proceso = `set − transferred − fosa` + cargas post-corte. Saldo recibido→cargado = 0.
     assert f["current"]["eggs_available_hatchery"] == 0 and f["current"]["eggs_in_process"] == 10000
     # Pollitos ya nacidos y disponibles al corte se despachan (viables = 500 + nacimientos − salidas).
     # BR-08: el despacho declara la granja/galpón de destino.

@@ -6,7 +6,11 @@
  *     componentes son KNOWN; con un UNKNOWN se pinta UNKNOWN, nunca una suma parcial.
  *   - El desglose (extra grande / sucio / roto) se ve compacto en la misma celda, con su estado,
  *     sin fabricar cifras; `0` conocido se pinta `0`.
- *   - «Huevos fértiles a fosa» se muestra con valor + estado (fosa 0 ⇒ 0, no vacío ni UNKNOWN).
+ *   - «Huevos fértiles a fosa» es una métrica **separada** (fosa 0 conocida ⇒ 0, no vacío ni
+ *     UNKNOWN) y nunca se suma a los no incubables ni a los descartados V3.
+ *   - «Huevos en proceso» se pinta tal como lo entrega la API: SPEC 018 §7 · D-12
+ *     (`set − transferred − fosa` solo si los tres son KNOWN) es regla de servidor; la UI no
+ *     calcula nada y un `null` es UNKNOWN, jamás 0 ni una cifra inventada.
  *   - «Huevos descartados (histórico V3)» SOLO aparece si el batch trae descartados KNOWN; en V4
  *     (`NOT_APPLICABLE`) esa columna no se muestra y el preview no la usa como dato de entrada.
  */
@@ -103,6 +107,7 @@ function hatcheryV4(over: Record<string, any> = {}) {
     fertile_eggs_to_pit: 25, fertile_eggs_to_pit_status: 'KNOWN',
     // SPEC 018 · D-2: en V4 la columna histórica llega NULL + NOT_APPLICABLE (no se muestra).
     eggs_discarded: null, eggs_discarded_status: 'NOT_APPLICABLE',
+    // SPEC 018 §7 · D-12: `null` aquí significa «falta un KNOWN» (transferidos), nunca «fosa > 0».
     eggs_in_process: null,
     chicks_available: 0, chicks_available_status: 'KNOWN',
     ...over,
@@ -291,5 +296,91 @@ describe('SPEC 018 · incubadora v4 en la UI (AC-V4-13)', () => {
     }
     expect((es as any).cutover.fields.eggs_discarded).toBe('Huevos descartados (histórico V3)')
     expect((en as any).cutover.fields.eggs_discarded).toBe('Discarded eggs (V3 historical)')
+  })
+})
+
+/**
+ * SPEC 018 §7 · AMENDMENT OD-HATCH-V4-01 = RATIFIED (2026-11-21): la fosa es POST-CARGA.
+ *
+ * `eggs_in_process` V4 = `set − transferred − fosa` **solo si los tres son KNOWN** (D-12), y la fosa
+ * sigue siendo una métrica separada: no se suma a los no incubables ni a los descartados V3. Todo el
+ * cálculo vive en el backend; aquí se protege que la pantalla pinte exactamente lo que recibe.
+ */
+describe('SPEC 018 §7 · fosa post-carga en la UI (OD-HATCH-V4-01 ratificado)', () => {
+  it('a) reconciliación 9.000/8.000/100 con en proceso 900: fosa aparte y 900 en «Huevos en proceso»', async () => {
+    setSession(TODOS)
+    const hatchery = hatcheryV4({
+      eggs_transferred: 8000, eggs_transferred_status: 'KNOWN',
+      fertile_eggs_to_pit: 100, fertile_eggs_to_pit_status: 'KNOWN',
+      eggs_in_process: 900,   // 9.000 − 8.000 − 100, calculado por el servidor
+    })
+    const lote = reconciliacion(105, hatchery, {
+      current: { live: 0, eggs_available_hatchery: 0, eggs_in_process: 900, chicks_available: 0 },
+    })
+    mockGetConBatch(batchV4(), PREVIEW_V4, lote)
+    const rec = await abrirBatch()
+
+    // «Huevos en proceso» = 900 (D-12), tal cual lo entrega la API.
+    const enProceso = within(rec).getByTestId('cutover-eggs-in-process-105')
+    expect(enProceso.textContent).toMatch(/9\s?00/)
+    expect(enProceso.textContent).not.toContain('UNKNOWN')
+
+    // La fosa va en SU celda: 100, métrica separada del total no incubable.
+    const fosa = within(rec).getByTestId('cutover-fertile-pit-105')
+    expect(fosa.textContent?.trim()).toBe('100')
+
+    // El total no incubable sigue siendo el derivado de los tres componentes (1.000) y NO incluye la fosa.
+    const total = within(rec).getByTestId('cutover-non-incubable-total-105')
+    expect(total.textContent).toMatch(/1[.,]000/)
+    expect(total.textContent).not.toContain('100')
+    expect(within(total).getByTestId('cutover-non-incubable-eggs_non_incubable_oversized').textContent).toContain('500')
+    expect(within(total).getByTestId('cutover-non-incubable-eggs_non_incubable_dirty').textContent).toContain('300')
+    expect(within(total).getByTestId('cutover-non-incubable-eggs_non_incubable_broken').textContent).toContain('200')
+
+    // V4: ni columna de descartados históricos ni la fosa contada como descarte.
+    expect(within(rec).queryByTestId('cutover-th-eggs-discarded')).toBeNull()
+    expect(within(rec).queryByTestId('cutover-eggs-discarded-105')).toBeNull()
+    expect(rec.textContent).not.toMatch(/Huevos descartados/)
+  })
+
+  it('b) fosa UNKNOWN con en proceso null: «Huevos en proceso» es UNKNOWN (nunca 0 ni 1.000)', async () => {
+    setSession(TODOS)
+    const hatchery = hatcheryV4({
+      eggs_transferred: 0, eggs_transferred_status: 'KNOWN',
+      fertile_eggs_to_pit: null, fertile_eggs_to_pit_status: 'UNKNOWN',
+      eggs_in_process: null,  // D-12: falta un KNOWN ⇒ UNKNOWN, jamás un cero supuesto
+    })
+    mockGetConBatch(batchV4(), PREVIEW_V4, reconciliacion(106, hatchery))
+    const rec = await abrirBatch()
+
+    const enProceso = within(rec).getByTestId('cutover-eggs-in-process-106')
+    expect(enProceso.textContent).toContain('UNKNOWN')
+    expect(enProceso.textContent).not.toMatch(/\d/)
+
+    // La fosa se declara UNKNOWN, no 0.
+    const fosa = within(rec).getByTestId('cutover-fertile-pit-106')
+    expect(fosa.textContent).toContain('UNKNOWN')
+    expect(fosa.textContent).not.toMatch(/\d/)
+  })
+
+  it('c) fosa 0 conocida: la celda muestra 0 y en proceso = cargados − transferidos', async () => {
+    setSession(TODOS)
+    const hatchery = hatcheryV4({
+      eggs_transferred: 0, eggs_transferred_status: 'KNOWN',
+      fertile_eggs_to_pit: 0, fertile_eggs_to_pit_status: 'KNOWN',
+      eggs_in_process: 9000,  // 9.000 − 0 − 0: el cero conocido sí participa en la resta
+    })
+    const lote = reconciliacion(107, hatchery, {
+      current: { live: 0, eggs_available_hatchery: 0, eggs_in_process: 9000, chicks_available: 0 },
+    })
+    mockGetConBatch(batchV4(), PREVIEW_V4, lote)
+    const rec = await abrirBatch()
+
+    const fosa = within(rec).getByTestId('cutover-fertile-pit-107')
+    expect(fosa.textContent?.trim()).toBe('0')
+    expect(fosa.textContent).not.toContain('UNKNOWN')
+    const enProceso = within(rec).getByTestId('cutover-eggs-in-process-107')
+    expect(enProceso.textContent).toMatch(/9[.,]000/)
+    expect(enProceso.textContent).not.toContain('UNKNOWN')
   })
 })

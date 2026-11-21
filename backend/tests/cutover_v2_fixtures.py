@@ -302,8 +302,9 @@ def fila_engorde(ref: str, **extra: Any) -> list:
 
 
 def fila_incubadora(ref: str, **extra: Any) -> list:
-    # SPEC 018 · D-4: fila V4 coherente — recibidos = cargados + no incubables conocidos (500+300+200),
-    # sin huevo pendiente de cargar; la fosa es un cero conocido (`eggs_in_process = set − transferred`).
+    # SPEC 018 · D-4 + §7 D-12: fila V4 coherente — recibidos = cargados + no incubables conocidos
+    # (500+300+200), sin huevo pendiente de cargar; la fosa es un cero conocido
+    # (`eggs_in_process = set − transferred − fosa`).
     base = dict(legacy_lot_code=ref, hatchery_code=PLANTA, incubator_name=INCUBADORA, hatcher_name=NACEDORA,
                 generation="breeder", egg_origin="internal", reception_date=iso_days_ago(120), set_date=iso_days_ago(118),
                 expected_hatch_date=iso_days_ago(97), eggs_received=10000, eggs_set=9000,

@@ -821,9 +821,10 @@ class CutoverService:
                     fosa = ho.fertile_eggs_to_pit if ho.fertile_eggs_to_pit_status == KNOWN else None
                     es_v4 = batch.template_version == HATCHERY_TEMPLATE_VERSION
                     if es_v4:
-                        # D-5: `set − transferred` solo si la fosa es un cero conocido (OD-HATCH-V4-01).
-                        en_proceso = ((cargados - transferidos)
-                                      if None not in (cargados, transferidos) and fosa == 0 else None)
+                        # SPEC 018 §7 · D-12: fosa POST-CARGA; `set − transferred − fosa` solo si los
+                        # tres son KNOWN (un UNKNOWN nunca se toma por 0: jamás 1000 con fosa UNKNOWN).
+                        en_proceso = ((cargados - transferidos - fosa)
+                                      if None not in (cargados, transferidos, fosa) else None)
                     else:  # V3 histórica: fórmula previa intacta
                         en_proceso = (cargados - transferidos - descartados) if None not in (cargados, transferidos, descartados) else None
                     fila["opening"]["hatchery"] = {

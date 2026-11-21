@@ -3,8 +3,9 @@
 Cubre AC-V4-01..12 y BR-03 operativo del contrato `CUTOVER_HATCHERY_V4`
 (`specs/018-cutover-hatchery-v4-non-incubables/spec.md`): 23 columnas en el orden D-7, sin
 `eggs_discarded`, total no incubable solo si los tres componentes son KNOWN (D-3), sin
-igualdad forzada `received = set + no incubables` (D-4), fosa acotada solo por lo recibido
-(D-5 · OD-HATCH-V4-01 pendiente) y V3 histórica intacta (D-2/D-8).
+igualdad forzada `received = set + no incubables` (D-4), fosa POST-CARGA acotada por los
+cargados y `eggs_in_process = set − transferred − fosa` (SPEC 018 §7 · D-12/D-13,
+OD-HATCH-V4-01 RATIFIED 2026-11-21) y V3 histórica intacta (D-2/D-8).
 
 La cabecera V4 se copia **aquí**, de forma independiente del código: si el contrato cambia
 una columna, esta suite falla en lugar de heredar el cambio. Los helpers de archivos, batch y
@@ -332,21 +333,25 @@ async def test_ac_v4_07_consistencia_sin_igualdad_forzada(auth_headers, http_cli
 # ── AC-V4-08 · huevos fértiles a fosa ───────────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_ac_v4_08_fosa_solo_acotada_por_lo_recibido(auth_headers, http_client, seeded_ids):
-    """D-5: la única cota segura es `fosa ≤ received`.
+async def test_ac_v4_08_fosa_acotada_por_lo_cargado(auth_headers, http_client, seeded_ids):
+    """AC-V4-15/16 · D-13: la fosa es POST-CARGA (`pit ≤ set`, `transferred + pit ≤ set`).
 
-    OD-HATCH-V4-01 sigue pendiente: la relación fosa ↔ `eggs_set`/`eggs_transferred` NO se
-    valida, por lo que `fosa 9500 > set 9000` pero `≤ received 10000` es VÁLIDA.
+    OD-HATCH-V4-01 RATIFIED 2026-11-21: `fosa 9500 > set 9000` ya NO es válida (antes solo se
+    miraba lo recibido). Sin `eggs_set` KNOWN queda la cota derivada `fosa ≤ received`.
     """
     await preparar(seeded_ids)
     filas = [
-        fila_incubadora("ACV4-PIT-X", fertile_eggs_to_pit=10001),  # fosa > recibidos ⇒ error
-        fila_incubadora("ACV4-PIT-Y", fertile_eggs_to_pit=50),     # válida y sin relación con set
-        fila_incubadora("ACV4-PIT-Z", eggs_set=9000, fertile_eggs_to_pit=9500),  # > set, ≤ received ⇒ válida
+        fila_incubadora("ACV4-PIT-X", fertile_eggs_to_pit=10001),   # fosa > cargados (y > recibidos) ⇒ error
+        fila_incubadora("ACV4-PIT-Y", fertile_eggs_to_pit=50),      # ≤ cargados y ≤ transferidos + fosa ⇒ válida
+        fila_incubadora("ACV4-PIT-Z", eggs_set=9000, fertile_eggs_to_pit=9500),   # > set, ≤ received ⇒ error
+        fila_incubadora("ACV4-PIT-W", eggs_transferred=8000, fertile_eggs_to_pit=1001),  # 9001 > set ⇒ error
+        fila_incubadora("ACV4-PIT-V", eggs_set=9000, eggs_transferred=0, fertile_eggs_to_pit=9000),  # = set: válida
     ]
     cuerpo, errores = await _errores(http_client, auth_headers, filas, 82)
-    assert errores == [(2, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH")]
-    assert (cuerpo["valid_rows"], cuerpo["invalid_rows"]) == (2, 1)
+    assert errores == [(2, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH"),
+                       (4, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH"),
+                       (5, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH")]
+    assert (cuerpo["valid_rows"], cuerpo["invalid_rows"]) == (2, 3)
 
 
 @pytest.mark.asyncio
@@ -360,8 +365,8 @@ async def test_ac_v4_08_pipeline_completo_con_fosa(auth_headers, http_client, se
 
     preview = await _preview(http_client, auth_headers, batch_id)
     assert preview["ACV4-PIT-1"]["values"]["fertile_eggs_to_pit"] == {"value": 25, "status": "KNOWN"}
-    # D-5: con fosa > 0 `eggs_in_process` no se puede afirmar (OD-HATCH-V4-01 pendiente).
-    assert preview["ACV4-PIT-1"]["derived"]["eggs_in_process"] is None
+    # D-12: con fosa KNOWN `eggs_in_process = set − transferred − fosa` = 9000 − 0 − 25.
+    assert preview["ACV4-PIT-1"]["derived"]["eggs_in_process"] == 8975
     assert preview["ACV4-PIT-2"]["derived"]["eggs_in_process"] == 9000  # fosa 0 KNOWN
 
     lotes = await items_por_referencia(http_client, auth_headers, batch_id)
@@ -371,7 +376,7 @@ async def test_ac_v4_08_pipeline_completo_con_fosa(auth_headers, http_client, se
     rec = await _reconciliacion(http_client, auth_headers, batch_id)
     con_fosa = rec["ACV4-PIT-1"]["opening"]["hatchery"]
     assert (con_fosa["fertile_eggs_to_pit"], con_fosa["fertile_eggs_to_pit_status"]) == (25, "KNOWN")
-    assert con_fosa["eggs_in_process"] is None
+    assert con_fosa["eggs_in_process"] == 8975
     sin_fosa = rec["ACV4-PIT-2"]["opening"]["hatchery"]
     assert (sin_fosa["fertile_eggs_to_pit"], sin_fosa["eggs_in_process"]) == (0, 9000)
 # ── AC-V4-09 · apply por componente ─────────────────────────────────────────
@@ -418,8 +423,9 @@ async def test_ac_v4_09_apply_persiste_componentes_y_estados(auth_headers, http_
 async def test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process(auth_headers, http_client, seeded_ids):
     """D-4: los no incubables restan UNA sola vez, en el saldo recibido→cargado.
 
-    `eggs_in_process` sigue siendo `set − transferred` (9000, no 8000): restarlos también ahí
-    sería el doble conteo. Con un componente UNKNOWN el saldo BR-03 es cota superior.
+    `eggs_in_process` no los toca (9000 = `set − transferred − fosa` con fosa 0 KNOWN; SPEC 018 §7
+    D-12): restarlos también ahí sería el doble conteo. Con un componente UNKNOWN el saldo BR-03 es
+    cota superior.
     """
     await preparar(seeded_ids)
     from app.operations.validators import get_hatchery_egg_balance

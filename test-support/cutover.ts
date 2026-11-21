@@ -207,8 +207,8 @@ export function filasPorBu(bu: Bu, m: MaestrosCutover, ref: string): Record<stri
   if (bu === 'hatchery') {
     // SPEC 018 · contrato V4 (23 columnas): `eggs_discarded` **ya no pertenece** a incubadora y se
     // sustituye por el desglose de no incubables + los huevos fértiles enviados a fosa. Los tres
-    // componentes son KNOWN (500 + 300 + 200 = 1000 derivados) y la fosa es 25 ≠ 0: por
-    // OD-HATCH-V4-01 el `eggs_in_process` derivado queda UNKNOWN hasta que el dueño decida si resta.
+    // componentes son KNOWN (500 + 300 + 200 = 1000 derivados) y la fosa es 25 ≠ 0: por SPEC 018
+    // §7 · D-12 (OD-HATCH-V4-01 RATIFIED) el `eggs_in_process` derivado es 9 000 − 0 − 25 = 8 975.
     return [{
       legacy_lot_code: ref, hatchery_code: m.hatcheryCode, incubator_name: m.incubatorName, hatcher_name: m.hatcherName,
       generation: 'breeder', egg_origin: 'internal', reception_date: haceDias(50), set_date: haceDias(48), expected_hatch_date: haceDias(27),

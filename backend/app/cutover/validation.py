@@ -321,22 +321,45 @@ class ValidadorDeDominio:
                             detalle=f"recibidas − mortalidad − descartes − salidas = {esperado} ≠ vivas {_val(fila, 'live_birds')}")
 
     def _consistencia_incubadora(self, fila: dict) -> None:
-        """Invariantes del contrato V4 (SPEC 018 §2 D-4/D-5): sin `eggs_discarded` y sin igualdades forzadas."""
+        """Invariantes del contrato V4 (SPEC 018 §2 D-4 y §7 D-12/D-13, OD-HATCH-V4-01 RATIFIED
+        2026-11-21): sin `eggs_discarded`, sin igualdades forzadas y con el modelo de dos etapas
+        (`received → {set | no incubables | por cargar}`; `set → {transferred | fosa | en proceso}`)."""
         recibidos_known = _known(fila, "eggs_received")
         recibidos = _val(fila, "eggs_received") if recibidos_known else None
         cargados_excedidos = recibidos_known and _known(fila, "eggs_set") and _val(fila, "eggs_set") > recibidos
         if cargados_excedidos:
             self._error(fila, "eggs_set", "CONSISTENCY_MISMATCH", detalle="huevos cargados > huevos recibidos")
+        transferidos_excedidos = False
         if _known(fila, "eggs_set"):
             cargados = _val(fila, "eggs_set")
             if _known(fila, "eggs_transferred") and _val(fila, "eggs_transferred") > cargados:
                 self._error(fila, "eggs_transferred", "CONSISTENCY_MISMATCH", detalle="eggs_transferred > huevos cargados")
+                transferidos_excedidos = True
             if _known(fila, "chicks_hatched"):
                 tope_campo = "eggs_transferred" if _known(fila, "eggs_transferred") else "eggs_set"
                 if _val(fila, "chicks_hatched") > _val(fila, tope_campo):
                     self._error(fila, "chicks_hatched", "CONSISTENCY_MISMATCH", detalle=f"pollitos nacidos > {tope_campo}")
         if _known(fila, "chicks_hatched", "chicks_available") and _val(fila, "chicks_available") > _val(fila, "chicks_hatched"):
             self._error(fila, "chicks_available", "CONSISTENCY_MISMATCH", detalle="pollitos disponibles > nacidos")
+        # SPEC 018 §7 · D-13: `fertile_eggs_to_pit` son huevos **ya cargados** retirados a fosa durante
+        # la incubación/ovoscopia (etapa B: `set → {transferred | fosa | en proceso}`). Sus reglas NO
+        # dependen de `eggs_received`, por eso se evalúan antes de la cota de lo recibido:
+        #   (a) fosa ≤ cargados; (b) transferidos + fosa ≤ cargados (sin doble error si (a) o
+        #   `transferred ≤ set` ya fallaron); (c) sin `eggs_set` KNOWN solo queda la cota derivada
+        #   fosa ≤ recibidos (pit ⊆ set ⊆ received), que sí necesita `eggs_received`.
+        fosa = _val(fila, "fertile_eggs_to_pit") if _known(fila, "fertile_eggs_to_pit") else None
+        if fosa is not None:
+            if _known(fila, "eggs_set"):
+                if fosa > _val(fila, "eggs_set"):
+                    self._error(fila, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH",
+                                detalle="huevos fértiles a fosa > huevos cargados")
+                elif not transferidos_excedidos and _known(fila, "eggs_transferred") \
+                        and _val(fila, "eggs_transferred") + fosa > _val(fila, "eggs_set"):
+                    self._error(fila, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH",
+                                detalle="transferidos + huevos fértiles a fosa > cargados")
+            elif recibidos_known and fosa > recibidos:
+                self._error(fila, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH",
+                            detalle="huevos fértiles a fosa > huevos recibidos")
         if not recibidos_known:
             return  # sin `eggs_received` no hay cota: un UNKNOWN nunca se trata como 0 ni dispara ni oculta errores
         # D-4: los no incubables son una **clasificación del huevo recibido**, no parte de lo cargado:
@@ -362,12 +385,6 @@ class ValidadorDeDominio:
                                 detalle=f"cargados + no incubables > recibidos: {cargados} + {acumulado - cargados} "
                                         f"> {recibidos}")
                     break
-        # D-5: `fertile_eggs_to_pit` son huevos fértiles **recibidos**; la única cota segura es la
-        # de lo recibido. Su relación con `eggs_set`/`eggs_transferred` (y su resta en
-        # `eggs_in_process`) es OD-HATCH-V4-01: decisión de dominio pendiente, no se valida aquí.
-        if _known(fila, "fertile_eggs_to_pit") and _val(fila, "fertile_eggs_to_pit") > recibidos:
-            self._error(fila, "fertile_eggs_to_pit", "CONSISTENCY_MISMATCH",
-                        detalle="huevos fértiles a fosa > huevos recibidos")
 
     def _derivados(self, fila: dict) -> None:
         derivados = fila["_derived"]
@@ -381,10 +398,12 @@ class ValidadorDeDominio:
             # (nunca una suma parcial); se deriva al leer, no se persiste.
             componentes = [_val(fila, c) if _known(fila, c) else None for c in _NO_INCUBABLES]
             derivados["eggs_non_incubable_total"] = sum(componentes) if None not in componentes else None
-            # D-5: `set − transferred` solo si la fosa es un cero conocido (OD-HATCH-V4-01 pendiente).
-            if _known(fila, "eggs_set", "eggs_transferred", "fertile_eggs_to_pit") \
-                    and _val(fila, "fertile_eggs_to_pit") == 0:
-                derivados["eggs_in_process"] = _val(fila, "eggs_set") - _val(fila, "eggs_transferred")
+            # SPEC 018 §7 · D-12 (OD-HATCH-V4-01 RATIFIED 2026-11-21): la fosa es POST-CARGA, así que
+            # `set − transferred − fosa` solo si los tres son KNOWN (un UNKNOWN nunca se toma por 0:
+            # jamás 1000 con `fertile_eggs_to_pit` UNKNOWN). `pit = 0` conocido ⇒ `set − transferred`.
+            if _known(fila, "eggs_set", "eggs_transferred", "fertile_eggs_to_pit"):
+                derivados["eggs_in_process"] = (_val(fila, "eggs_set") - _val(fila, "eggs_transferred")
+                                               - _val(fila, "fertile_eggs_to_pit"))
             else:
                 derivados["eggs_in_process"] = None
             return

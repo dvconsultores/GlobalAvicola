@@ -147,7 +147,9 @@ async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_id
              fila_incubadora("V-C8", eggs_non_incubable_broken=1001),
              fila_incubadora("V-C9", eggs_transferred=5000, chicks_hatched=5001),
              fila_incubadora("V-C10", eggs_transferred=500, chicks_hatched=100, chicks_available=101),
-             # SPEC 018 · D-4/D-5: cada no incubable y la fosa son parte del huevo recibido.
+             # SPEC 018 · D-4 + §7 D-13 (OD-HATCH-V4-01 RATIFIED 2026-11-21): cada no incubable se acota
+             # contra lo recibido y la fosa POST-CARGA contra lo cargado (aquí 10001 > set 9000 ⇒ un
+             # solo error en `fertile_eggs_to_pit`, sin doble reporte).
              fila_incubadora("V-C11", eggs_non_incubable_dirty=10001),
              fila_incubadora("V-C12", fertile_eggs_to_pit=10001)]
     _, errores = await _errores(http_client, auth_headers, "hatchery", filas, seeded_ids["company_id"], 64)

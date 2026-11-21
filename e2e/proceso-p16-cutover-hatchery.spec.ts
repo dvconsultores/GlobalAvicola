@@ -10,8 +10,9 @@
  * SPEC 018 (§1.2/D-4): la incubadora deja `eggs_discarded` y captura el desglose de no incubables.
  * Aquí la fila canónica se ajusta a ceros **conocidos** para que el saldo «recibidos − cargados −
  * no incubables» conserve los 1 000 huevos que carga el primer evento post-corte; el desglose
- * 500/300/200 con fosa 25 —y el UNKNOWN de `eggs_in_process` que arrastra OD-HATCH-V4-01— se
- * certifica aparte en `proceso-spec018-cutover-hatchery-v4.spec.ts`.
+ * 500/300/200 con fosa 25 —y el `eggs_in_process` V4 (fosa POST-CARGA, SPEC 018 §7 · D-12) que
+ * arrastra— se certifica aparte en `proceso-spec018-cutover-hatchery-v4.spec.ts` y en
+ * `proceso-spec018b-hatchery-v4-fosa-od01.spec.ts`.
  */
 import { expect, test } from '@playwright/test'
 import { API, cabeceraAdmin } from '../test-support/e2e-api'

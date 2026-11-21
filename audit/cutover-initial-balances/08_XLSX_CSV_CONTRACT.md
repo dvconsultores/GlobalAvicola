@@ -1,6 +1,6 @@
 # CUTOVER-INITIAL-BALANCES · 08_XLSX_CSV_CONTRACT
 
-Fecha: 2026-11-20 · SPEC 006 · parser: `backend/app/cutover/parser.py` · plantillas: `backend/app/cutover/templates.py`
+Fecha: 2026-11-21 · SPEC 006 · parser: `backend/app/cutover/parser.py` · plantillas: `backend/app/cutover/templates.py`
 
 ## 1 · Descarga
 

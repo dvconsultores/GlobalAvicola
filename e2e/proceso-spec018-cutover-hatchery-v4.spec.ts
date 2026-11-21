@@ -10,8 +10,8 @@
  * Reglas del contrato que se verifican aquí (SPEC 018 §2):
  * - D-3: `eggs_non_incubable_total = oversized + dirty + broken` solo si los tres son KNOWN.
  * - D-4: el saldo es `received − set − Σ(no incubables KNOWN)` (una sola resta ⇒ nunca −1 000).
- * - D-5: `eggs_in_process = set − transferred` **solo** si `fertile_eggs_to_pit` es cero conocido;
- *   con fosa > 0 el derivado es UNKNOWN (OD-HATCH-V4-01 pendiente).
+ * - D-12 (SPEC 018 §7 · OD-HATCH-V4-01 RATIFIED): `eggs_in_process = set − transferred − fosa`
+ *   **solo** si los tres son KNOWN; la fosa es POST-CARGA (no es un no incubable ni un descarte).
  * - D-2: `eggs_discarded` fuera del contrato V4 ⇒ NULL + NOT_APPLICABLE en persistencia.
  *
  * La evidencia (capturas + JSON saneado, sin tokens ni DSN) queda en
@@ -270,7 +270,8 @@ test('E2E-V4-02 XLSX v4 de punta a punta por la interfaz: 500/300/200 + fosa 25,
   expect(prev.columns).toEqual(COLUMNAS_V4)
   const filaPrev = prev.rows.find((f: any) => f.legacy_lot_code === ref)
   expect(filaPrev.derived.eggs_non_incubable_total, 'D-3: total derivado de los tres KNOWN').toBe(1000)
-  expect(filaPrev.derived.eggs_in_process, 'D-5: con fosa ≠ 0 el derivado es UNKNOWN').toBeNull()
+  // SPEC 018 §7 · D-12: 9 000 − 0 − 25 = 8 975 (la fosa es post-carga y sí resta).
+  expect(filaPrev.derived.eggs_in_process, 'D-12: set − transferred − fosa').toBe(8975)
   expect(filaPrev.values.eggs_non_incubable_oversized).toEqual({ value: 500, status: 'KNOWN' })
   expect(filaPrev.values.eggs_non_incubable_dirty).toEqual({ value: 300, status: 'KNOWN' })
   expect(filaPrev.values.eggs_non_incubable_broken).toEqual({ value: 200, status: 'KNOWN' })
@@ -315,8 +316,8 @@ test('E2E-V4-02 XLSX v4 de punta a punta por la interfaz: 500/300/200 + fosa 25,
   await expect(totalUI.getByTestId('cutover-non-incubable-eggs_non_incubable_dirty')).toContainText('300')
   await expect(totalUI.getByTestId('cutover-non-incubable-eggs_non_incubable_broken')).toContainText('200')
   await expect(page.getByTestId(`cutover-fertile-pit-${lotId}`)).toHaveText('25')
-  // Columnas 3 y 4 de la fila = «en proceso» y «disponible»: UNKNOWN y 0 (nunca −1 000).
-  await expect(filaUI.locator('td').nth(3), 'fosa ≠ 0 ⇒ en proceso UNKNOWN').toContainText('UNKNOWN')
+  // Columnas 3 y 4 de la fila = «en proceso» y «disponible»: 8 975 (9 000 − 0 − 25) y 0 (nunca −1 000).
+  await expect(filaUI.locator('td').nth(3), 'D-12: set − transferred − fosa ⇒ 8 975').toContainText(/8[.,]975/)
   await expect(filaUI.locator('td').nth(4), 'D-4: una sola resta ⇒ 0, no −1 000').toHaveText('0')
   await page.screenshot({ path: `${PNG}/p02_reconciliacion.png`, fullPage: true })
   // ── 7 · la misma verdad por API (opening.hatchery + current) ──
@@ -337,9 +338,9 @@ test('E2E-V4-02 XLSX v4 de punta a punta por la interfaz: 500/300/200 + fosa 25,
   // D-2: fuera del contrato V4 ⇒ NULL + NOT_APPLICABLE persistidos (el histórico V3 no se toca).
   expect(h.eggs_discarded).toBeNull()
   expect(h.eggs_discarded_status).toBe('NOT_APPLICABLE')
-  // D-5: fosa > 0 ⇒ `eggs_in_process` UNKNOWN (OD-HATCH-V4-01 pendiente), ni 9 000 ni 8 000.
-  expect(h.eggs_in_process).toBeNull()
-  expect(lote.current.eggs_in_process).toBeNull()
+  // SPEC 018 §7 · D-12: `set − transferred − fosa` = 9 000 − 0 − 25 = 8 975 (ni 9 000 ni 8 000).
+  expect(h.eggs_in_process).toBe(8975)
+  expect(lote.current.eggs_in_process, 'sin eventos post-corte el en proceso es el de la apertura').toBe(8975)
   // D-4 / AC-V4-10: 10 000 − 9 000 − 1 000 = 0 y jamás −1 000 (una sola resta).
   expect(lote.current.eggs_available_hatchery).toBe(0)
   expect(lote.current.eggs_available_hatchery).not.toBe(-1000)
@@ -362,7 +363,7 @@ test('E2E-V4-02 XLSX v4 de punta a punta por la interfaz: 500/300/200 + fosa 25,
   const loteNuevo = loteRec(recNueva, ref)
   expect(loteNuevo.opening.hatchery.eggs_non_incubable_total).toBe(1000)
   expect(loteNuevo.current.eggs_available_hatchery).toBe(0)
-  expect(loteNuevo.current.eggs_in_process).toBeNull()
+  expect(loteNuevo.current.eggs_in_process).toBe(8975)
 
   ev['02'] = {
     batch: batch.id, lote: lotId, ref, archivo: 'cutover_template_hatchery_v4.xlsx',
@@ -603,7 +604,7 @@ test('E2E-V4-06 BR-03 post-corte: con 300 no incubables el saldo es 700 (no 1 00
   expect(lote.opening.hatchery.eggs_non_incubable_total).toBe(300)
   expect(lote.post.eggs_loaded).toBe(700)
   expect(lote.current.eggs_available_hatchery).toBe(0)
-  // D-5 con fosa = 0 conocido: en proceso = set − transferred (9 000) y, tras el post-corte, más lo
+  // D-12 con fosa = 0 conocido: en proceso = set − transferred − 0 (9 000) y, tras el post-corte, más lo
   // cargado (700) menos lo transferido (0) ⇒ 9 700. Nunca 9 000 − 700 ni un descuento del no incubable.
   expect(lote.opening.hatchery.eggs_in_process).toBe(9000)
   expect(lote.current.eggs_in_process).toBe(9700)

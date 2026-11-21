@@ -847,7 +847,9 @@ export default function CargasInicialesPage() {
                             <>
                               <td className="py-1 pr-3"><Metric value={lote.opening.hatchery?.eggs_received} status={lote.opening.hatchery?.eggs_received_status} /></td>
                               <td className="py-1 pr-3"><Metric value={lote.opening.hatchery?.eggs_set} status={lote.opening.hatchery?.eggs_set_status} /></td>
-                              <td className="py-1 pr-3"><Metric value={lote.current?.eggs_in_process ?? null} /></td>
+                              <td className="py-1 pr-3" data-testid={`cutover-eggs-in-process-${lote.lot_id}`}>
+                                <Metric value={lote.current?.eggs_in_process ?? null} />
+                              </td>
                               <td className="py-1 pr-3 font-semibold"><Metric value={lote.current?.eggs_available_hatchery ?? null} /></td>
                               <td className="py-1 pr-3" data-testid={`cutover-non-incubable-total-${lote.lot_id}`}>
                                 <TotalNoIncubables hatchery={lote.opening.hatchery} />
