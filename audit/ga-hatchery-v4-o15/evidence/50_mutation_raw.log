@@ -89,7 +89,7 @@ E         Use -v to get more diff
 tests/test_cutover_hatchery_v4_o15.py:63: AssertionError
 _______________ test_o15_06_summary_de_incubadora_con_dos_filas ________________
 
-auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY0ODcsInR5cGUiOiJhY2Nlc3MifQ.FGoZkubHETCPKtRFecMlCF1jpr2x657QirDLYd-Xpj0'}
+auth_headers = {'Authorization': 'Bearer <JWT_REDACTED>'}
 http_client = <httpx.AsyncClient object at 0x7f4adf943ed0>
 seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
 
@@ -123,7 +123,7 @@ Traceback (most recent call last):
 AttributeError: module 'bcrypt' has no attribute '__about__'
 _____________________ test_o15_07_summary_chicks_available _____________________
 
-auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY0ODgsInR5cGUiOiJhY2Nlc3MifQ.Pr-6yaLm9S0OZAaocK-3JkllUVRFMOlvmK8kp-vBk3Q'}
+auth_headers = {'Authorization': 'Bearer <JWT_REDACTED>'}
 http_client = <httpx.AsyncClient object at 0x7f4adf4bfc90>
 seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
 
@@ -311,7 +311,7 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 =================================== FAILURES ===================================
 _______________ test_o15_06_summary_de_incubadora_con_dos_filas ________________
 
-auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY1NDYsInR5cGUiOiJhY2Nlc3MifQ.O_g6WBkHXDj6e8cHu1ZZSsCgGny6THmgmq8B0J0fjuU'}
+auth_headers = {'Authorization': 'Bearer <JWT_REDACTED>'}
 http_client = <httpx.AsyncClient object at 0x7f2c97348090>
 seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
 
@@ -422,7 +422,7 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 =================================== FAILURES ===================================
 _____________________ test_o15_07_summary_chicks_available _____________________
 
-auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY1NzcsInR5cGUiOiJhY2Nlc3MifQ.Db2zBkHpSqfGo7uZ1kSXOXfp0qkJfgjB2VD0-uvR43w'}
+auth_headers = {'Authorization': 'Bearer <JWT_REDACTED>'}
 http_client = <httpx.AsyncClient object at 0x7f61c298fa10>
 seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
 
@@ -593,7 +593,7 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 =================================== FAILURES ===================================
 _______________ test_o15_06_summary_de_incubadora_con_dos_filas ________________
 
-auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY2MzUsInR5cGUiOiJhY2Nlc3MifQ.ZidHyq_r2P2rFjduDXQ7-t5cLiQfNgZ8xWQ6M3cjBeU'}
+auth_headers = {'Authorization': 'Bearer <JWT_REDACTED>'}
 http_client = <httpx.AsyncClient object at 0x7f3a046c92d0>
 seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
 

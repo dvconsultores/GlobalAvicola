@@ -136,7 +136,7 @@ AttributeError: module 'bcrypt' has no attribute '__about__'
 =================================== FAILURES ===================================
 __________________ test_o15_09_chicks_available_na_no_propaga __________________
 
-auth_headers = {'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJ0ZXN0X2FkbWluIiwiY29tcGF...joxLCJ2aWV3X3R5cGUiOiJ3ZWIiLCJleHAiOjE3OTUyODY4MjcsInR5cGUiOiJhY2Nlc3MifQ.rADGsKOzhHfBD0PlDZjQuwn4FaCbxgBgM3QZNqQVA4I'}
+auth_headers = {'Authorization': 'Bearer <JWT_REDACTED>'}
 http_client = <httpx.AsyncClient object at 0x7fe8d4bd79d0>
 seeded_ids = {'user_admin_id': 1, 'user_operator_id': 2, 'user_approver_id': 3, 'user_other_company_id': 4, ...}
 
