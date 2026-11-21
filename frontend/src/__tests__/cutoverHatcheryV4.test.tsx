@@ -384,3 +384,108 @@ describe('SPEC 018 §7 · fosa post-carga en la UI (OD-HATCH-V4-01 ratificado)',
     expect(enProceso.textContent).not.toContain('UNKNOWN')
   })
 })
+
+/**
+ * SPEC 018 §8 · RESIDUAL O-15 — el chip del resumen ya no convierte UNKNOWN en 0 (D-18/D-19/D-20).
+ *
+ * El backend publica `<clave>`, `<clave>_status` y `<clave>_unknown_rows`; la UI pinta UNKNOWN
+ * cuando el estado lo dice (o el valor es `null`), un número conocido tal cual y `0` conocido como
+ * `0`. La fila del preview muestra su propio derivado (`derived.eggs_in_process`).
+ */
+function previewO15(summary: Record<string, any>, rows: any[] = PREVIEW_V4.rows) {
+  return { ...PREVIEW_V4, summary: { ...PREVIEW_V4.summary, ...summary }, rows }
+}
+
+describe('SPEC 018 §8 · O-15: agregado del preview con UNKNOWN', () => {
+  it('chip de huevos en proceso UNKNOWN no pinta una suma parcial', async () => {
+    setSession(TODOS)
+    mockGetConBatch(batchV4(), previewO15({
+      eggs_in_process: null, eggs_in_process_status: 'UNKNOWN', eggs_in_process_unknown_rows: 1,
+    }), reconciliacion(111, hatcheryV4()))
+    await abrirBatch()
+
+    const chip = screen.getByTestId('cutover-chip-eggs-in-process')
+    expect(chip.textContent).toContain('UNKNOWN')
+    expect(chip.textContent).not.toContain('900')
+  })
+
+  it('chip de huevos en proceso numérico con estado KNOWN pinta el total', async () => {
+    setSession(TODOS)
+    mockGetConBatch(batchV4(), previewO15({
+      eggs_in_process: 1700, eggs_in_process_status: 'KNOWN', eggs_in_process_unknown_rows: 0,
+    }), reconciliacion(112, hatcheryV4()))
+    await abrirBatch()
+
+    const chip = screen.getByTestId('cutover-chip-eggs-in-process')
+    expect(chip.textContent).toMatch(/1[.,]700/)
+    expect(chip.textContent).not.toContain('UNKNOWN')
+  })
+
+  it('chip de huevos en proceso con cero conocido pinta 0', async () => {
+    setSession(TODOS)
+    mockGetConBatch(batchV4(), previewO15({
+      eggs_in_process: 0, eggs_in_process_status: 'KNOWN', eggs_in_process_unknown_rows: 0,
+    }), reconciliacion(113, hatcheryV4()))
+    await abrirBatch()
+
+    expect(screen.getByTestId('cutover-chip-eggs-in-process').textContent?.trim()).toMatch(/:\s*0$/)
+    expect(screen.getByTestId('cutover-chip-eggs-in-process').textContent).not.toContain('UNKNOWN')
+  })
+
+  it('preview por fila: A = 900 y B = UNKNOWN en «Huevos en proceso (derivado)»', async () => {
+    setSession(TODOS)
+    const filaA = { ...PREVIEW_V4.rows[0], row_number: 2, legacy_lot_code: 'INC-A',
+                    derived: { eggs_non_incubable_total: 1000, eggs_in_process: 900 } }
+    const filaB = { ...PREVIEW_V4.rows[0], row_number: 3, legacy_lot_code: 'INC-B',
+                    derived: { eggs_non_incubable_total: 1000, eggs_in_process: null } }
+    mockGetConBatch(batchV4(), previewO15({}, [filaA, filaB]), reconciliacion(114, hatcheryV4()))
+    await abrirBatch()
+
+    const th = screen.getByTestId('cutover-th-preview-in-process')
+    expect(th.textContent).toContain('Huevos en proceso')
+    expect(th.textContent).toContain('derivado')
+
+    const celdaA = screen.getByTestId('cutover-preview-in-process-2')
+    expect(celdaA.textContent).toMatch(/9\s?00/)
+    expect(celdaA.textContent).not.toContain('UNKNOWN')
+
+    const celdaB = screen.getByTestId('cutover-preview-in-process-3')
+    expect(celdaB.textContent).toContain('UNKNOWN')
+    expect(celdaB.textContent).not.toMatch(/\d/)
+  })
+
+  it('chip de pollitos disponibles: UNKNOWN con null y numérico con KNOWN', async () => {
+    setSession(TODOS)
+    mockGetConBatch(batchV4(), previewO15({
+      chicks_available: null, chicks_available_status: 'UNKNOWN', chicks_available_unknown_rows: 1,
+    }), reconciliacion(115, hatcheryV4()))
+    await abrirBatch()
+
+    const chip = screen.getByTestId('cutover-chip-chicks-available')
+    expect(chip.textContent).toContain('UNKNOWN')
+    expect(chip.textContent).not.toMatch(/\d/)
+  })
+
+  it('chip de pollitos disponibles con 0 conocido pinta 0 (no UNKNOWN)', async () => {
+    setSession(TODOS)
+    mockGetConBatch(batchV4(), previewO15({
+      chicks_available: 0, chicks_available_status: 'KNOWN', chicks_available_unknown_rows: 0,
+    }), reconciliacion(116, hatcheryV4()))
+    await abrirBatch()
+
+    const chip = screen.getByTestId('cutover-chip-chicks-available')
+    expect(chip.textContent?.trim()).toMatch(/:\s*0$/)
+    expect(chip.textContent).not.toContain('UNKNOWN')
+  })
+
+  it('respuesta antigua sin *_status: el chip sigue pintando el número', async () => {
+    setSession(TODOS)
+    const { eggs_in_process_status: _a, chicks_available_status: _b, ...sinEstados } = previewO15({}).summary
+    mockGetConBatch(batchV4(), { ...PREVIEW_V4, summary: { ...sinEstados, eggs_in_process: 1700, chicks_available: 25 } },
+                    reconciliacion(117, hatcheryV4()))
+    await abrirBatch()
+
+    expect(screen.getByTestId('cutover-chip-eggs-in-process').textContent).toMatch(/1[.,]700/)
+    expect(screen.getByTestId('cutover-chip-chicks-available').textContent).toMatch(/\b25\b/)
+  })
+})

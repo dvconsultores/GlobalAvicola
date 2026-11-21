@@ -1,0 +1,93 @@
+{
+  "inicio": "2026-11-21T17:27:15.928Z",
+  "regla": "SPEC 018 §8 · D-18/D-19/D-20: el total de una métrica con UNKNOWN es UNKNOWN (null), nunca una suma parcial",
+  "maestros": {
+    "companyId": 1,
+    "farmId": 6,
+    "houseId": 6,
+    "farmCode": "P16-G-Q42UHSPG",
+    "houseName": "P16-GALPON-Q42UHSPG",
+    "hatcheryCode": "P16-INC-Q42UHSPG",
+    "incubatorName": "P16-INCUBADORA-Q42UHSPG",
+    "hatcherName": "P16-NACEDORA-Q42UHSPG",
+    "lineCode": "P16-L-Q42UHSPG",
+    "breedName": "P16-RAZA-Q42UHSPG",
+    "prefijo": "Q42UHSPG"
+  },
+  "E2E-O15-01": {
+    "batch": 16,
+    "filas": {
+      "A": "E2E-O15-C834R07B-A",
+      "B": "E2E-O15-C834R07B-B"
+    },
+    "row_numbers": {
+      "A": 2,
+      "B": 3
+    },
+    "validacion": {
+      "total": 2,
+      "validas": 2,
+      "invalidas": 0
+    },
+    "summary": {
+      "eggs_in_process": null,
+      "eggs_in_process_status": "UNKNOWN",
+      "eggs_in_process_unknown_rows": 1
+    },
+    "derivados": {
+      "A": 900,
+      "B": null
+    },
+    "ui": {
+      "chip": "Huevos en proceso: \nUNKNOWN",
+      "A": "900",
+      "B": "UNKNOWN"
+    }
+  },
+  "E2E-O15-02": {
+    "batch": 17,
+    "camino": "re-subida al MISMO batch (estados cargables DRAFT/VALIDATING/VALIDATED: el staging se recrea)",
+    "filas": {
+      "A": "E2E-O15-C834R07B-A",
+      "B": "E2E-O15-C834R07B-B"
+    },
+    "row_numbers": {
+      "A": 2,
+      "B": 3
+    },
+    "antes": {
+      "eggs_in_process": null,
+      "status": "UNKNOWN"
+    },
+    "despues": {
+      "eggs_in_process": 1900,
+      "eggs_in_process_status": "KNOWN",
+      "eggs_in_process_unknown_rows": 0
+    },
+    "derivados": {
+      "A": 900,
+      "B": 1000
+    },
+    "ui": {
+      "chip": "Huevos en proceso: 1,900",
+      "A": "900",
+      "B": "1,000"
+    }
+  },
+  "E2E-O15-03": {
+    "batch": 18,
+    "fila": "E2E-O15-C834R07B-C",
+    "row_number": 2,
+    "summary": {
+      "eggs_in_process": 0,
+      "eggs_in_process_status": "KNOWN",
+      "eggs_in_process_unknown_rows": 0
+    },
+    "derivado": 0,
+    "ui": {
+      "chip": "Huevos en proceso: 0",
+      "fila": "0"
+    }
+  },
+  "fin": "2026-11-21T17:27:28.971Z"
+}

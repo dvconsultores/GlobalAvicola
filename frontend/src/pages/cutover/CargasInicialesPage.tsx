@@ -130,6 +130,12 @@ function totalDerivado(fila: CutoverPreviewRow): { value: number | null; status:
   return typeof bruto === 'number' ? { value: bruto, status: 'KNOWN' } : { value: null, status: 'UNKNOWN' }
 }
 
+/** SPEC 018 §8 · D-20: «huevos en proceso» derivado de una fila (lo calcula el backend; `null` = UNKNOWN). */
+function enProcesoDerivado(fila: CutoverPreviewRow): { value: number | null; status: string } {
+  const bruto = fila.derived?.eggs_in_process
+  return typeof bruto === 'number' ? { value: bruto, status: 'KNOWN' } : { value: null, status: 'UNKNOWN' }
+}
+
 function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation()
   return (
@@ -672,8 +678,8 @@ export default function CargasInicialesPage() {
                       <>
                         <span className="rounded-md bg-slate-100 px-2 py-1">{t('cutover.eggsReceived')}: <b className="tabular-nums">{Number(resumen?.eggs_received ?? 0).toLocaleString()}</b></span>
                         <span className="rounded-md bg-slate-100 px-2 py-1">{t('cutover.eggsSet')}: <b className="tabular-nums">{Number(resumen?.eggs_set ?? 0).toLocaleString()}</b></span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1">{t('cutover.eggsInProcess')}: <b className="tabular-nums">{Number(resumen?.eggs_in_process ?? 0).toLocaleString()}</b></span>
-                        <span className="rounded-md bg-slate-100 px-2 py-1">{t('cutover.chicksAvailable')}: <b className="tabular-nums">{Number(resumen?.chicks_available ?? 0).toLocaleString()}</b></span>
+                        <span className="rounded-md bg-slate-100 px-2 py-1" data-testid="cutover-chip-eggs-in-process">{t('cutover.eggsInProcess')}: <Metric value={resumen?.eggs_in_process} status={resumen?.eggs_in_process_status} /></span>
+                        <span className="rounded-md bg-slate-100 px-2 py-1" data-testid="cutover-chip-chicks-available">{t('cutover.chicksAvailable')}: <Metric value={resumen?.chicks_available} status={resumen?.chicks_available_status} /></span>
                         {(resumen?.hatcheries ?? []).length > 0 && (
                           <span className="rounded-md bg-slate-100 px-2 py-1">{t('cutover.hatcheries')}: {(resumen?.hatcheries ?? []).join(', ')}</span>
                         )}
@@ -721,6 +727,14 @@ export default function CargasInicialesPage() {
                               </span>
                             </th>
                           )}
+                          {muestraTotalDerivadoPreview && (
+                            <th className="py-1 pr-3 whitespace-nowrap" data-testid="cutover-th-preview-in-process">
+                              {t('cutover.eggsInProcess', 'Huevos en proceso')}{' '}
+                              <span className="text-[11px] lowercase text-slate-400">
+                                ({t('cutover.derivedLabel', 'derivado')})
+                              </span>
+                            </th>
+                          )}
                           <th className="py-1 pr-3">{t('common.status')}</th>
                         </tr>
                       </thead>
@@ -734,6 +748,11 @@ export default function CargasInicialesPage() {
                             {muestraTotalDerivadoPreview && (
                               <td className="py-1 pr-3 whitespace-nowrap" data-testid={`cutover-preview-total-${fila.row_number}`}>
                                 <Metric {...totalDerivado(fila)} />
+                              </td>
+                            )}
+                            {muestraTotalDerivadoPreview && (
+                              <td className="py-1 pr-3 whitespace-nowrap" data-testid={`cutover-preview-in-process-${fila.row_number}`}>
+                                <Metric {...enProcesoDerivado(fila)} />
                               </td>
                             )}
                             <td className="py-1 pr-3">
@@ -769,6 +788,15 @@ export default function CargasInicialesPage() {
                               <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
                             </span>
                             <Metric {...totalDerivado(fila)} />
+                          </div>
+                        )}
+                        {muestraTotalDerivadoPreview && (
+                          <div className="flex justify-between gap-2" data-testid={`cutover-preview-in-process-card-${fila.row_number}`}>
+                            <span className="text-slate-500">
+                              {t('cutover.eggsInProcess', 'Huevos en proceso')}{' '}
+                              <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
+                            </span>
+                            <Metric {...enProcesoDerivado(fila)} />
                           </div>
                         )}
                       </li>

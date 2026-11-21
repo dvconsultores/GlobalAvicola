@@ -125,3 +125,22 @@ ETAPA B (incubación):               eggs_set → { eggs_transferred | fertile_e
 
 ### Pruebas obligatorias (mandato §13)
 H4-FOSA-01 (9000/8000/100 → 900) · 02 (9000/8000/1000 → 0) · 03 (9000/8000/1001 → DENY) · 04 (9000, pit 9001 → DENY) · 05 (pit UNKNOWN → en proceso UNKNOWN) · 06 (pit 0 conocido) · 07 (no incubables + fosa sin doble conteo).
+
+## 8. RESIDUAL O-15 — agregado del preview y semántica UNKNOWN (2026-11-21)
+
+Mandato `GA-HATCHERY-V4-O15-PREVIEW-UNKNOWN`. No se reabre V4 ni se tocan fórmulas, V3, BR-03, no incubables ni `eggs_discarded`. **O-15 = P2 DATA SEMANTICS / UX, FIX_REQUIRED.**
+
+**Causa raíz (dueña: backend, capa de presentación del preview).** `CutoverService.preview()` (`backend/app/cutover/service.py`, bloque `summary`) acumula `eggs_in_process += derivados.get("eggs_in_process") or 0` y
+`chicks_available += _entero(...)` (`None → 0`): una fila con valor UNKNOWN aporta 0 al agregado y el chip muestra una suma parcial como si fuera el total. La reconciliación por lote ya conserva UNKNOWN. El frontend solo pinta lo que recibe (`Number(resumen?.x ?? 0)`).
+
+- **D-18 Semántica del agregado**: para una métrica que admite UNKNOWN, el total del lote de filas es la suma solo si **todas** las filas válidas aportan un valor conocido; si alguna es UNKNOWN, el total es **UNKNOWN** (`null`), nunca una suma parcial. `[900, 800, 0] → 1700`; `[900, UNKNOWN, 0] → UNKNOWN`; `[UNKNOWN] → UNKNOWN`; `[0, 0] → 0`; `[] → 0` (semántica vigente de «sin filas»: los chips de conteo parten de 0; no se inventa UNKNOWN).
+  NOT_APPLICABLE no es UNKNOWN: no propaga (contribuye 0 como hasta hoy).
+- **D-19 Contrato del summary** (patrón ya existente de `historical_mortality`): además del valor se publica `<clave>_status` (`KNOWN`/`UNKNOWN`) y `<clave>_unknown_rows` (conteo informativo). Con UNKNOWN el valor es `null`. Se aplica a `eggs_in_process` y `chicks_available` (incubadora). Un único helper puro (`_agregar_con_unknown`) concentra la regla.
+- **D-20 Preview por fila**: columna derivada «Huevos en proceso (derivado)» con `derived.eggs_in_process` (UNKNOWN si `null`), junto a «Total no incubables (derivado)». Los chips usan `Metric` (UNKNOWN visible; cero se ve como 0).
+- **Auditoría de otros agregados** (sin ampliar alcance): `eggs_received`/`eggs_set` son obligatorios (siempre conocidos); `live_*` son obligatorios; `historical_mortality` ya propaga UNKNOWN; **`accumulated_feed_kg`** (progenitoras/reproductoras/engorde) suma solo las filas KNOWN y presenta la suma parcial sin marca → misma clase de defecto, **O-16, no se toca** (otras BU; decisión de la Owner). `live_birds` de incubadora (= `chicks_available`) no se muestra en el chip de incubadora.
+
+| AC | Enunciado |
+|---|---|
+| AC-O15-01..05 | Helper: `[900,800,0]→1700`, `[900,UNKNOWN,0]→UNKNOWN`, `[UNKNOWN]→UNKNOWN`, `[0,0]→0`, `[]→0`. |
+| AC-O15-06 | `summary.eggs_in_process` y `summary.chicks_available` de incubadora siguen D-18/D-19 sobre un batch real con dos filas. |
+| AC-O15-07 | UI: fila A = 900, fila B = UNKNOWN, chip total = UNKNOWN (nunca 900); al completar B con 0 conocido el chip pasa al total numérico. |

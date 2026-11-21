@@ -110,6 +110,22 @@ def _opcional(estado: dict, campo: str) -> Optional[Any]:
     return _v(estado, campo) if _s(estado, campo) == KNOWN else None
 
 
+def _agregar_con_unknown(valores: list[Optional[int]]) -> tuple[Optional[int], int]:
+    """SPEC 018 §8 · D-18: total de una métrica que admite UNKNOWN.
+
+    El total del lote es la suma **solo si todas** las filas válidas aportan un valor conocido;
+    si alguna es UNKNOWN el total es UNKNOWN (`None`), nunca una suma parcial. Devuelve
+    `(total, filas_unknown)`. Una lista vacía es `(0, 0)`: semántica vigente de «sin filas» —los
+    chips de conteo parten de 0— y no se inventa UNKNOWN.
+    """
+    if not valores:
+        return 0, 0
+    desconocidas = sum(1 for valor in valores if valor is None)
+    if desconocidas:
+        return None, desconocidas
+    return sum(int(valor) for valor in valores if valor is not None), 0
+
+
 def _fecha(valor: Optional[str]) -> Optional[date]:
     return date.fromisoformat(valor) if valor else None
 
@@ -327,6 +343,9 @@ class CutoverService:
         }
         granjas: set[str] = set()
         plantas: set[str] = set()
+        #: SPEC 018 §8 · D-18: acumuladores por fila válida de incubadora (None = UNKNOWN).
+        en_proceso_filas: list[Optional[int]] = []
+        pollitos_filas: list[Optional[int]] = []
         for item in await self._items(batch):
             estado = item.opening_state or {}
             derivados = estado.get("_derived", {})
@@ -350,8 +369,10 @@ class CutoverService:
             if c.business_unit == "hatchery":
                 resumen["eggs_received"] += _entero(estado, "eggs_received")
                 resumen["eggs_set"] += _entero(estado, "eggs_set")
-                resumen["eggs_in_process"] += derivados.get("eggs_in_process") or 0
-                resumen["chicks_available"] += _entero(estado, "chicks_available")
+                # SPEC 018 §8 · D-18: el agregado propaga UNKNOWN (nunca una suma parcial); N/A no propaga.
+                en_proceso_filas.append(derivados.get("eggs_in_process"))
+                pollitos_filas.append(0 if _s(estado, "chicks_available") == NOT_APPLICABLE
+                                      else _opcional(estado, "chicks_available"))
                 resumen["live_birds"] += _entero(estado, "chicks_available")
                 if _v(estado, "hatchery_code"):
                     plantas.add(_v(estado, "hatchery_code"))
@@ -380,6 +401,13 @@ class CutoverService:
                     granjas.add(_v(estado, "farm_code"))
         resumen["farms"] = sorted(granjas)
         resumen["hatcheries"] = sorted(plantas)
+        if c.business_unit == "hatchery":
+            # SPEC 018 §8 · D-19: junto al valor se publica el estado y el conteo informativo de
+            # filas UNKNOWN; con UNKNOWN el valor es `null` (nunca la suma parcial).
+            resumen["eggs_in_process"], resumen["eggs_in_process_unknown_rows"] = _agregar_con_unknown(en_proceso_filas)
+            resumen["eggs_in_process_status"] = UNKNOWN if resumen["eggs_in_process"] is None else KNOWN
+            resumen["chicks_available"], resumen["chicks_available_unknown_rows"] = _agregar_con_unknown(pollitos_filas)
+            resumen["chicks_available_status"] = UNKNOWN if resumen["chicks_available"] is None else KNOWN
         if resumen["historical_mortality_unknown_rows"]:
             resumen["historical_mortality_status"] = UNKNOWN
         else:
