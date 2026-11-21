@@ -1,4 +1,4 @@
-"""SPEC 018 §7 · OD-HATCH-V4-01 RATIFIED 2026-11-21 — `fertile_eggs_to_pit` es POST-CARGA.
+"""SPEC 018 §7 · OD-HATCH-V4-01 RATIFIED — `fertile_eggs_to_pit` es POST-CARGA.
 
 Decisión Owner: los huevos fértiles a fosa son huevos **ya cargados** retirados del proceso
 durante la incubación/ovoscopia (antes de nacedora). Consecuencias certificadas aquí:

@@ -5,7 +5,7 @@ Cubre AC-V4-01..12 y BR-03 operativo del contrato `CUTOVER_HATCHERY_V4`
 `eggs_discarded`, total no incubable solo si los tres componentes son KNOWN (D-3), sin
 igualdad forzada `received = set + no incubables` (D-4), fosa POST-CARGA acotada por los
 cargados y `eggs_in_process = set − transferred − fosa` (SPEC 018 §7 · D-12/D-13,
-OD-HATCH-V4-01 RATIFIED 2026-11-21) y V3 histórica intacta (D-2/D-8).
+OD-HATCH-V4-01 RATIFIED) y V3 histórica intacta (D-2/D-8).
 
 La cabecera V4 se copia **aquí**, de forma independiente del código: si el contrato cambia
 una columna, esta suite falla en lugar de heredar el cambio. Los helpers de archivos, batch y
@@ -336,7 +336,7 @@ async def test_ac_v4_07_consistencia_sin_igualdad_forzada(auth_headers, http_cli
 async def test_ac_v4_08_fosa_acotada_por_lo_cargado(auth_headers, http_client, seeded_ids):
     """AC-V4-15/16 · D-13: la fosa es POST-CARGA (`pit ≤ set`, `transferred + pit ≤ set`).
 
-    OD-HATCH-V4-01 RATIFIED 2026-11-21: `fosa 9500 > set 9000` ya NO es válida (antes solo se
+    OD-HATCH-V4-01 RATIFIED: `fosa 9500 > set 9000` ya NO es válida (antes solo se
     miraba lo recibido). Sin `eggs_set` KNOWN queda la cota derivada `fosa ≤ received`.
     """
     await preparar(seeded_ids)
