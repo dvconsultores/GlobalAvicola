@@ -1,27 +1,27 @@
 {
-  "inicio": "2026-11-21T12:41:27.043Z",
+  "inicio": "2026-11-21T13:23:06.012Z",
   "regla": "SPEC 018 §7 · D-12: eggs_in_process = set − transferred − fertile_eggs_to_pit (solo si los tres KNOWN)",
   "maestros": {
     "companyId": 1,
-    "farmId": 5,
-    "houseId": 5,
-    "farmCode": "P16-G-D2P5BJJ1",
-    "houseName": "P16-GALPON-D2P5BJJ1",
-    "hatcheryCode": "P16-INC-D2P5BJJ1",
-    "incubatorName": "P16-INCUBADORA-D2P5BJJ1",
-    "hatcherName": "P16-NACEDORA-D2P5BJJ1",
-    "lineCode": "P16-L-D2P5BJJ1",
-    "breedName": "P16-RAZA-D2P5BJJ1",
-    "prefijo": "D2P5BJJ1"
+    "farmId": 118,
+    "houseId": 116,
+    "farmCode": "P16-G-J1E32EHX",
+    "houseName": "P16-GALPON-J1E32EHX",
+    "hatcheryCode": "P16-INC-J1E32EHX",
+    "incubatorName": "P16-INCUBADORA-J1E32EHX",
+    "hatcherName": "P16-NACEDORA-J1E32EHX",
+    "lineCode": "P16-L-J1E32EHX",
+    "breedName": "P16-RAZA-J1E32EHX",
+    "prefijo": "J1E32EHX"
   },
   "H4-FOSA-01": {
-    "batch": 9,
-    "lote": 8,
-    "ref": "E2E-OD01-HNSWMS9Z-F01",
+    "batch": 14,
+    "lote": 129,
+    "ref": "E2E-OD01-SYEQ8Y9B-F01",
     "opening": {
-      "hatchery_id": 3,
-      "incubator_id": 3,
-      "hatcher_id": 3,
+      "hatchery_id": 7,
+      "incubator_id": 7,
+      "hatcher_id": 7,
       "source_lot_id": null,
       "source_lot_reference": null,
       "generation": "breeder",
@@ -60,13 +60,13 @@
     }
   },
   "H4-FOSA-02": {
-    "batch": 10,
-    "lote": 9,
-    "ref": "E2E-OD01-HNSWMS9Z-F02",
+    "batch": 15,
+    "lote": 130,
+    "ref": "E2E-OD01-SYEQ8Y9B-F02",
     "opening": {
-      "hatchery_id": 3,
-      "incubator_id": 3,
-      "hatcher_id": 3,
+      "hatchery_id": 7,
+      "incubator_id": 7,
+      "hatcher_id": 7,
       "source_lot_id": null,
       "source_lot_reference": null,
       "generation": "breeder",
@@ -105,8 +105,8 @@
     }
   },
   "H4-FOSA-03": {
-    "batch": 11,
-    "ref": "E2E-OD01-HNSWMS9Z-F03",
+    "batch": 16,
+    "ref": "E2E-OD01-SYEQ8Y9B-F03",
     "status_batch": "validating",
     "invalidas": 1,
     "error": {
@@ -118,9 +118,9 @@
     "submit": 409
   },
   "H4-FOSA-04": {
-    "batch": 12,
-    "mal": "E2E-OD01-HNSWMS9Z-F04-MAL",
-    "bien": "E2E-OD01-HNSWMS9Z-F04-BIEN",
+    "batch": 17,
+    "mal": "E2E-OD01-SYEQ8Y9B-F04-MAL",
+    "bien": "E2E-OD01-SYEQ8Y9B-F04-BIEN",
     "error": {
       "fila": 2,
       "campo": "fertile_eggs_to_pit",
@@ -136,13 +136,13 @@
     }
   },
   "H4-FOSA-05": {
-    "batch": 13,
-    "lote": 10,
-    "ref": "E2E-OD01-HNSWMS9Z-F05",
+    "batch": 18,
+    "lote": 131,
+    "ref": "E2E-OD01-SYEQ8Y9B-F05",
     "opening": {
-      "hatchery_id": 3,
-      "incubator_id": 3,
-      "hatcher_id": 3,
+      "hatchery_id": 7,
+      "incubator_id": 7,
+      "hatcher_id": 7,
       "source_lot_id": null,
       "source_lot_reference": null,
       "generation": "breeder",
@@ -181,13 +181,13 @@
     }
   },
   "H4-FOSA-06": {
-    "batch": 14,
-    "lote": 11,
-    "ref": "E2E-OD01-HNSWMS9Z-F06",
+    "batch": 19,
+    "lote": 132,
+    "ref": "E2E-OD01-SYEQ8Y9B-F06",
     "opening": {
-      "hatchery_id": 3,
-      "incubator_id": 3,
-      "hatcher_id": 3,
+      "hatchery_id": 7,
+      "incubator_id": 7,
+      "hatcher_id": 7,
       "source_lot_id": null,
       "source_lot_reference": null,
       "generation": "breeder",
@@ -226,13 +226,13 @@
     }
   },
   "H4-FOSA-07": {
-    "batch": 15,
-    "lote": 12,
-    "ref": "E2E-OD01-HNSWMS9Z-F07",
+    "batch": 20,
+    "lote": 133,
+    "ref": "E2E-OD01-SYEQ8Y9B-F07",
     "opening": {
-      "hatchery_id": 3,
-      "incubator_id": 3,
-      "hatcher_id": 3,
+      "hatchery_id": 7,
+      "incubator_id": 7,
+      "hatcher_id": 7,
       "source_lot_id": null,
       "source_lot_reference": null,
       "generation": "breeder",
@@ -274,5 +274,5 @@
       "regla": "BR-03"
     }
   },
-  "fin": "2026-11-21T12:41:52.956Z"
+  "fin": "2026-11-21T13:23:31.783Z"
 }

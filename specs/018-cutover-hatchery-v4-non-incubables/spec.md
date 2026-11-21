@@ -89,7 +89,7 @@ Vocabulario operativo existente: `EggMovement.egg_type ∈ {fertile, dirty, brok
 T1 contrato+parser+plantilla+docs script · T2 modelo+migración+apply+detalle/reporte · T3 validación (cutover) + BR-03 · T4 tests backend · T5 seeds QA + pines Alembic · T6 frontend (preview/detalle/locales) + tests · T7 `test-support` + E2E hatchery · T8 docs/manual/plantillas v4.
 
 ## 6. Estado
-Ver `audit/ga-cutover-hatchery-v4/CERTIFICATION.md`. IMPL `2f772eb` + `0d7b0cc`; backend 1947/0/59 · frontend 740 · E2E 213/0 · mutación 20/20. Abierta: OD-HATCH-V4-01 (OWNER_DOMAIN_DECISION_REQUIRED).
+Ver `audit/ga-cutover-hatchery-v4/CERTIFICATION.md`. IMPL `2f772eb` + `0d7b0cc`; backend 1947/0/59 · frontend 740 · E2E 213/0 · mutación 20/20. OD-HATCH-V4-01 **RATIFIED** (2026-11-21): ver §7 y `audit/ga-hatchery-v4-od01/CERTIFICATION.md` (IMPL `22d800b` + `bee4832`; backend 1956+1 corregido · frontend 743 · E2E 220/0 · mutación 8/8).
 
 ## 7. AMENDMENT — OD-HATCH-V4-01 = RATIFIED (decisión Owner, 2026-11-21)
 
