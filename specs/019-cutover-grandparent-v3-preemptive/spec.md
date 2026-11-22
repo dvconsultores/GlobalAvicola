@@ -150,3 +150,5 @@ La hipótesis H1 (reclasificación) queda **descartada**; H2 (descarte) **ratifi
 | AC-SX-04 | SEXAGE-04: `100 M / 1000 H` con 10 aves «de sexaje» **sin** contarlas como cull (vivas M 90) → `CONSISTENCY_MISMATCH` (no hay corrección silenciosa de sexo). |
 | AC-SX-05 | SEXAGE-05: `culls > 0` y `transfers_out > 0` en el mismo lote cuadran sin doble conteo (`1000 − 50 − (20+10+20) − 900 = 0`). |
 | AC-SX-06 | El texto de instrucción de `historical_culls_*` de Progenitoras menciona el error de sexaje; el de Reproductoras queda idéntico (guarda). Plantilla `CUTOVER_GRANDPARENT_V3`, mismas columnas. |
+
+**Estado §5 (2026-11-22):** `OD-GP-SEXAGE-01 = CLOSED` (`SEXAGE_MODEL = HISTORICAL_CULL`). IMPL `f7bf1fd`; cutover backend 315 · frontend 30 · E2E 6/0 · mutación (M1 cerrado, M2/M3 detectados). Ver el amendment de `audit/ga-cutover-grandparent-v3/CERTIFICATION.md`.

@@ -141,7 +141,10 @@ def test_gp_v3_ac01_contrato_y_textos_refinados():
         assert "desalojo" in gp[nombre].meaning, nombre
         assert "no se registra a la vez como descarte y como transferencia" in gp[nombre].meaning, nombre
         # OD-GP-SEXAGE-01 RATIFICADA (§5, SEXAGE_MODEL = HISTORICAL_CULL): el sexaje es un descarte.
-        assert "sexaje" in gp[nombre].meaning, nombre
+        # Tres aserciones independientes: la enumeración de descartes, la decisión y lo que NO es.
+        assert "aves retiradas por error de sexaje" in gp[nombre].meaning, nombre
+        assert "es un descarte" in gp[nombre].meaning, nombre
+        assert "NO como cambio de sexo" in gp[nombre].meaning, nombre
     for nombre in TRANSFERENCIAS:
         assert "NO es una transferencia" in gp[nombre].meaning, nombre
         assert "CRIA→PROD" in gp[nombre].meaning, nombre
@@ -159,6 +162,7 @@ def test_gp_v3_ac01_contrato_y_textos_refinados():
             assert frase not in texto, (nombre, frase, texto)
     assert breeder["birds_placed_males"].meaning == "Machos alojados originalmente (histórico)."
     assert breeder["historical_culls_males"].meaning == "Descartes acumulados de machos antes del corte."
+    assert breeder["historical_culls_females"].meaning == "Descartes acumulados de hembras antes del corte."
     # GUARDA de la misma enmienda: el texto de Reproductoras NO menciona el sexaje (diferencia solo en Abuelas).
     for nombre in ("historical_culls_males", "historical_culls_females"):
         assert "sexaje" not in breeder[nombre].meaning, (nombre, breeder[nombre].meaning)

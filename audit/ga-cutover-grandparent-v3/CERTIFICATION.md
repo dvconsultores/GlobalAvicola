@@ -56,3 +56,71 @@ Escaneo de secretos antes del commit como **puerta** (falla si encuentra JWT/DSN
 - O-16 (feed parcial en otras BU), O-11, O-12, O-13, O-14 y OPERATIONAL_MODEL_GAP: sin cambios.
 - `Imagen de Procesos Documentado/…/.~lock.Formato…Borrador.xlsx#`: bloqueo de LibreOffice de alguien con un anexo abierto; no versionado ni tocado.
 - El push a `develop` redespliega UAT de forma automática (Watchtower); **no** hay despliegue de producción, no se cambiaron workflows y `main` no se modifica.
+
+---
+
+# AMENDMENT — OD-GP-SEXAGE-01 = RATIFIED (2026-11-22) · `GA-GRANDPARENT-V3-OD-SEXAGE`
+
+Spec: `specs/019-cutover-grandparent-v3-preemptive/spec.md` §5. Baseline `develop = 8c9bdb3`. Implementación `f7bf1fd` (+ test de cierre en el commit siguiente), en **`develop`**; `main` sin tocar, sin PR.
+
+## A. Decisión
+```text
+OD-GP-SEXAGE-01 = RATIFIED       SEXAGE_MODEL = HISTORICAL_CULL
+```
+Un error de sexaje que implica la **salida física del ave** del lote es un **descarte histórico** del sexo con el que estaba contabilizada. No es una reclasificación M↔H. Evidencia: anexos `Control de Producción` y `PES-02`, actividad `ABU-ENG-A06 «Error en sexo»` («registro de cantidad de aves»; regla de negocio idéntica a `ABU-ENG-A05 «Descarte»`; KPI «Descarte de aves y de huevos»).
+
+## B. Qué cambió (y qué no)
+| | |
+|---|---|
+| Fórmula | **sin cambio**; el sexaje no añade término |
+| Campos | **ninguno** añadido ni quitado; sin `historical_sex_correction_*` ni `sexage_error_*` |
+| Plantilla | `v3` / `CUTOVER_GRANDPARENT_V3`; **columnas sin cambio** (30 = 30); **instrucción sí cambió** (solo `grandparent`, `historical_culls_*`) |
+| Código de aplicación | `APPLICATION_CODE_CHANGE_REQUIRED = NO` para la **lógica**: validación, preview, apply, reconciliación y UNKNOWN ya trataban los descartes por sexo. Solo cambia **un string por sexo** en `contracts.py` (la instrucción), para que la decisión llegue al usuario que rellena la plantilla |
+| Reproductoras | intacta (texto idéntico carácter por carácter; con guarda) |
+
+Definición final de `historical_culls_*` (Progenitoras): todo descarte acumulado antes del corte que redujo **físicamente** la población: cría y levante, selección, desalojo, antes de conformar producción **y aves retiradas por error de sexaje**; se registra en el sexo con el que estaba contabilizada y no como cambio de sexo ni como transferencia; un ave no es a la vez descarte y transferencia.
+
+## C. Pruebas (SEXAGE-01..05) y protección de la decisión
+| ID | Caso | Resultado |
+|---|---|---|
+| SEXAGE-01 | machos: placed 100, mortalidad 5, culls 10 (pueden ser error de sexaje), live 85 | PASS · CONSISTENT |
+| SEXAGE-02 | hembras equivalente | PASS · CONSISTENT |
+| SEXAGE-03 | `historical_culls_males` UNKNOWN | PASS · `NOT_FULLY_VERIFIABLE`, `null`/UNKNOWN en preview y reconciliación (nunca un 0 conocido) |
+| SEXAGE-04 | 100 M / 1000 H, 10 aves de sexaje **sin** contar como cull | PASS · `CONSISTENCY_MISMATCH` (el sistema no corrige sexo en silencio) |
+| SEXAGE-05 | culls 50 (20 cría + 10 sexaje + 20 selección/desalojo) y salida 900: `1000 − 50 − 50 − 900 = 0` | PASS · sin doble conteo, sin métrica separada |
+Además: el diagnóstico previo (reclasificación M→H marca inconsistencia; descarte cuadra) pasa a documentar la decisión ratificada.
+
+## D. Regresión
+| Gate | Resultado | Evidencia |
+|---|---|---|
+| Cutover backend (Progenitoras, transferencias, contratos, validación, apply, red, continuidad, Incubadora V4/OD/O-15, GA-REQ-061 c1–c7, pines Alembic, QA dataset, guarda de fechas) | **315 passed, 0 failed** | `evidence/62_backend_cutover_full.log` |
+| Frontend cutover | 30 passed | `evidence/63_frontend_cutover.log` |
+| E2E `p16-grandparent` + `p16b` **Breeder V3** + `spec019` | **6 passed, 0 failed** | `evidence/64_e2e_grandparent_breeder.log` |
+| Plantilla regenerada | 30 columnas idénticas a `HEAD`, Meta v3/`CUTOVER_GRANDPARENT_V3`, instrucción nueva | `evidence/60_sexage_template_inspection.txt` |
+| Derivados | solo `03_GRANDPARENT` y `07_DATA_LINEAGE` cambian; `04_BREEDER` idéntico | `audit/cutover-initial-balances/` |
+No se repitió la regresión completa (backend 1986 / frontend 753 / E2E 227 del certificado anterior): el cambio es un texto de contrato y pruebas, sin lógica; las pruebas afectadas más sus vecinas se reejecutaron.
+
+## E. Sensibilidad
+| Mutante | Resultado |
+|---|---|
+| M1 quitar la mención en la enumeración de descartes | **SOBREVIVIÓ** (el test solo exigía la palabra «sexaje», que seguía en otra frase) → **cerrado** con tres aserciones independientes (`aves retiradas por error de sexaje`, `es un descarte`, `NO como cambio de sexo`); M1a/M1b/M1c ahora **detectados** (3/3) |
+| M2 texto de Progenitoras aplicado también a Reproductoras | detectado (guarda de Breeder) |
+| M3 descartes UNKNOWN tratados como 0 en la ecuación | detectado (T09 y SEXAGE-03) |
+Evidencia: `evidence/65_sexage_mutation.md`, `66_sexage_text_mutation.log`.
+
+## F. Observación nueva
+- **O-19 (preexistente, SPEC 006/014):** los descartes y la mortalidad históricos desconocidos se **almacenan** como `0` con el estado `*_status = UNKNOWN` (solo las cuatro transferencias usan columnas NULL). Las capas de lectura (preview, reconciliación, informes del cutover) respetan el estado y publican `null`; pero cualquier consumidor que lea la columna sin su estado vería `0`. No se cambia aquí (requeriría migración); riesgo latente respecto de la doctrina `UNKNOWN != 0`.
+- O-17, O-18, O-16, O-11, O-12, O-13, O-14 y OPERATIONAL_MODEL_GAP: sin cambios.
+
+## G. Decisión final
+```text
+OD-GP-SEXAGE-01 = CLOSED
+GRANDPARENT_V3 = CERTIFIED
+TRANSFERS = IMPLEMENTED
+SEXAGE = CLOSED            SEXAGE_MODEL = HISTORICAL_CULL
+WEIGHT_MODEL = SUFFICIENT
+EGG_HISTORY_MODEL = SUFFICIENT
+DEVELOP_READY_FOR_PR = YES
+OWNER_UAT_READY = YES
+OWNER_ACCEPTED = NO
+```
