@@ -140,6 +140,8 @@ def test_gp_v3_ac01_contrato_y_textos_refinados():
         assert "selección" in gp[nombre].meaning, nombre
         assert "desalojo" in gp[nombre].meaning, nombre
         assert "no se registra a la vez como descarte y como transferencia" in gp[nombre].meaning, nombre
+        # OD-GP-SEXAGE-01 RATIFICADA (§5, SEXAGE_MODEL = HISTORICAL_CULL): el sexaje es un descarte.
+        assert "sexaje" in gp[nombre].meaning, nombre
     for nombre in TRANSFERENCIAS:
         assert "NO es una transferencia" in gp[nombre].meaning, nombre
         assert "CRIA→PROD" in gp[nombre].meaning, nombre
@@ -157,6 +159,9 @@ def test_gp_v3_ac01_contrato_y_textos_refinados():
             assert frase not in texto, (nombre, frase, texto)
     assert breeder["birds_placed_males"].meaning == "Machos alojados originalmente (histórico)."
     assert breeder["historical_culls_males"].meaning == "Descartes acumulados de machos antes del corte."
+    # GUARDA de la misma enmienda: el texto de Reproductoras NO menciona el sexaje (diferencia solo en Abuelas).
+    for nombre in ("historical_culls_males", "historical_culls_females"):
+        assert "sexaje" not in breeder[nombre].meaning, (nombre, breeder[nombre].meaning)
     assert breeder["productive_phase_code"].meaning == (
         "Fase productiva REAL del lote al corte. Valores para esta unidad: CRIA, PROD.")
 
@@ -525,19 +530,19 @@ async def test_gp_v3_post_corte_no_vuelve_a_restar_lo_historico(auth_headers, ht
     assert fila_rec["opening"]["historical_mortality"] == 165 + 450
 
 
-# ── AC-GP-08 · diagnóstico de sexaje (H2 vs H1, sin cerrar) ─────────────────
+# ── AC-GP-08 · diagnóstico de sexaje (OD-GP-SEXAGE-01 RATIFICADA: es descarte) ──
 
 
 @pytest.mark.asyncio
 async def test_gp_v3_sexaje_descarte_cuadra_y_reclasificacion_no(auth_headers, http_client, seeded_ids):
-    """AC-GP-08: diagnóstico de sexaje — `OD-GP-SEXAGE-01` sigue ABIERTA.
+    """AC-GP-08: diagnóstico de sexaje — `OD-GP-SEXAGE-01` RATIFICADA (SPEC 019 §5, `SEXAGE_MODEL = HISTORICAL_CULL`).
 
-    El anexo «Error en sexo» admite dos lecturas y el contrato solo puede representar una:
-    (i) H2 · las aves mal sexadas se DESTRUYEN/descartan: alojadas 100 machos y 1000 hembras, 10 machos
-        descartados ⇒ 90 machos vivos y 1000 hembras vivas cuadran con la ecuación (CONSISTENT en ambos sexos);
+    Un error de sexaje que saca el ave del lote es un DESCARTE (H2 ratificada); la reclasificación macho↔hembra
+    (H1) NO se representa en el contrato y, si se carga de forma silenciosa, se detecta como inconsistencia:
+    (i) H2 · las aves mal sexadas salen del lote y se acumulan como descarte: alojadas 100 machos y 1000 hembras,
+        10 machos descartados ⇒ 90 machos vivos y 1000 hembras vivas cuadran con la ecuación (CONSISTENT en ambos);
     (ii) H1 · las aves se RECLASIFICAN de macho a hembra: mismo lote con 90 machos y 1010 hembras, sin descartes
-        ni transferencias ⇒ CONSISTENCY_MISMATCH en los DOS sexos. Es la evidencia de que el modelo actual no
-        puede representar una reclasificación y de que la decisión es del Owner, no del implementador.
+        ni transferencias ⇒ CONSISTENCY_MISMATCH en los DOS sexos. El contrato no corrige el sexo por su cuenta.
     """
     await preparar(seeded_ids)
     empresa = seeded_ids["company_id"]
@@ -616,4 +621,124 @@ async def test_gp_v3_preview_y_reconciliacion_por_sexo(auth_headers, http_client
         assert clave in opening_breeder, clave
     assert opening_breeder["historical_transfers_in_males"] == 0
     assert opening_breeder["historical_transfers_out_females"] == 0
+
+
+# ── OD-GP-SEXAGE-01 · RATIFICADA (SPEC 019 §5, SEXAGE_MODEL = HISTORICAL_CULL) ──
+
+
+@pytest.mark.asyncio
+async def test_gp_v3_sexage_01_descarte_machos(auth_headers, http_client, seeded_ids):
+    """AC-SX-01: 100 − 5 − 10 = 85 con transferencias 0 conocidas — los 10 descartes pueden ser error de sexaje.
+
+    El texto del contrato (Abuelas) admite expresamente que el acumulado de descartes incluya las aves retiradas
+    por error de sexaje: se registran en el sexo con el que estaban contabilizadas, sin cambio de sexo.
+    """
+    await preparar(seeded_ids)
+    filas = [_fila_gp(_ref("GP-SX01"),
+                      **{**MACHOS_CERO, "birds_placed_males": 100, "historical_mortality_males": 5,
+                         "historical_culls_males": 10, "historical_transfers_in_males": 0,
+                         "historical_transfers_out_males": 0, "live_males": 85}, **HEMBRAS_CERO)]
+    batch_id, r, v = await _validacion(http_client, auth_headers, filas, seeded_ids["company_id"], 58)
+    assert v["errors"] == []
+    p = await _preview(http_client, auth_headers, batch_id)
+    assert p["rows"][0]["derived"]["balance_check"] == {"males": "CONSISTENT", "females": "CONSISTENT"}
+    assert p["rows"][0]["values"]["historical_culls_males"] == {"value": 10, "status": "KNOWN"}
+
+
+@pytest.mark.asyncio
+async def test_gp_v3_sexage_02_descarte_hembras(auth_headers, http_client, seeded_ids):
+    """AC-SX-02: equivalente en hembras — 1000 − 30 − 20 = 950 y el sexo masculino no distrae."""
+    await preparar(seeded_ids)
+    filas = [_fila_gp(_ref("GP-SX02"), **MACHOS_CERO,
+                      **{**HEMBRAS_CERO, "birds_placed_females": 1000, "historical_mortality_females": 30,
+                         "historical_culls_females": 20, "historical_transfers_in_females": 0,
+                         "historical_transfers_out_females": 0, "live_females": 950})]
+    batch_id, r, v = await _validacion(http_client, auth_headers, filas, seeded_ids["company_id"], 59)
+    assert v["errors"] == []
+    p = await _preview(http_client, auth_headers, batch_id)
+    assert p["rows"][0]["derived"]["balance_check"] == {"males": "CONSISTENT", "females": "CONSISTENT"}
+    assert p["rows"][0]["values"]["historical_culls_females"] == {"value": 20, "status": "KNOWN"}
+
+
+@pytest.mark.asyncio
+async def test_gp_v3_sexage_03_culls_unknown(auth_headers, http_client, seeded_ids):
+    """AC-SX-03: descartes desconocidos ⇒ sin error, sexo NOT_FULLY_VERIFIABLE y jamás un `0` como valor conocido.
+
+    La celda vacía viaja como UNKNOWN y se publica como `null` en preview y reconciliación; el estado del sexo es
+    `UNKNOWN` tras el apply (la columna usa la convención `0` + estado de SPEC 006/014, nunca un 0 KNOWN).
+    """
+    await preparar(seeded_ids)
+    ref = _ref("GP-SX03")
+    filas = [_fila_gp(ref, **{**MACHOS_CERO, "historical_culls_males": None}, **HEMBRAS_CERO)]
+    batch_id, r, v = await _validacion(http_client, auth_headers, filas, seeded_ids["company_id"], 60)
+    assert v["errors"] == []
+    p = await _preview(http_client, auth_headers, batch_id)
+    assert p["rows"][0]["derived"]["balance_check"]["males"] == "NOT_FULLY_VERIFIABLE"
+    assert p["rows"][0]["values"]["historical_culls_males"] == {"value": None, "status": "UNKNOWN"}
+
+    assert r.json()["status"] == "validated", (r.text, v["errors"])
+    await aprobar(http_client, auth_headers, headers_aprobador(seeded_ids), batch_id)
+    assert (await aplicar(http_client, auth_headers, batch_id)).status_code == 200
+    lote_id = (await items_por_referencia(http_client, auth_headers, batch_id))[ref]
+
+    ob = await _opening(lote_id)
+    assert ob.culls_status == "UNKNOWN"
+    # Fidelidad al producto (SPEC 006/014, igual que en `test_gp_v3_t09_…`): la columna de descartes históricos se
+    # serializa con la convención `0` + estado `UNKNOWN`; el `0` NUNCA se publica como valor conocido —preview y
+    # reconciliación devuelven `null`—, que es donde el contrato garantiza «nunca un 0 inventado».
+    assert (ob.accumulated_culls_male, ob.culls_status) == (0, "UNKNOWN")
+    rec = (await _reconciliacion(http_client, auth_headers, batch_id, lote_id))["opening"]
+    assert rec["historical_culls"] is None and rec["culls_status"] == "UNKNOWN"
+
+
+@pytest.mark.asyncio
+async def test_gp_v3_sexage_04_sin_reclasificacion_silenciosa(auth_headers, http_client, seeded_ids):
+    """AC-SX-04: 10 aves «de sexaje» que no se cuentan como descarte ⇒ CONSISTENCY_MISMATCH en `live_males`.
+
+    Alojadas 100 machos y 1000 hembras con las vivas de machos ya «corregidas» (90) y sin descartes, mortalidad ni
+    transferencias, la ecuación masculina da 100 ≠ 90: el sistema informa la inconsistencia y NO reasigna el ave al
+    sexo contrario —las hembras siguen exactamente como se cargaron (1000 vivas, 0 descartes)—.
+    """
+    await preparar(seeded_ids)
+    filas = [_fila_gp(_ref("GP-SX04"),
+                      **{**MACHOS_CERO, "birds_placed_males": 100, "historical_mortality_males": 0,
+                         "historical_culls_males": 0, "historical_transfers_in_males": 0,
+                         "historical_transfers_out_males": 0, "live_males": 90},
+                      **{**HEMBRAS_CERO, "birds_placed_females": 1000, "historical_mortality_females": 0,
+                         "historical_culls_females": 0, "historical_transfers_in_females": 0,
+                         "historical_transfers_out_females": 0, "live_females": 1000})]
+    errores, _ = await _errores(http_client, auth_headers, filas, seeded_ids["company_id"], 61)
+    assert errores == [(2, "live_males", "CONSISTENCY_MISMATCH")]
+    batch_id, _, _ = await _validacion(http_client, auth_headers, filas, seeded_ids["company_id"], 62)
+    p = await _preview(http_client, auth_headers, batch_id)
+    assert p["rows"][0]["derived"]["balance_check"] == {"males": "INCONSISTENT", "females": "CONSISTENT"}
+    # Sin corrección silenciosa de sexo: las cifras femeninas y las masculinas quedan como se declararon.
+    valores = p["rows"][0]["values"]
+    assert (valores["live_males"]["value"], valores["historical_culls_males"]["value"]) == (90, 0)
+    assert (valores["live_females"]["value"], valores["historical_culls_females"]["value"]) == (1000, 0)
+
+
+@pytest.mark.asyncio
+async def test_gp_v3_sexage_05_cull_y_transfer_out_sin_doble_conteo(auth_headers, http_client, seeded_ids):
+    """AC-SX-05: 1000 − 50 − (20 + 10 + 20) − 900 = 0 — descarte y transferencia de salida no se solapan.
+
+    La celda acumulada de descartes suma las tres fuentes del anexo: 20 de cría/levante, 10 retiradas por error de
+    sexaje y 20 de selección/desalojo. No existe una métrica separada de sexaje (el sexaje ES un descarte), de modo
+    que las 900 aves que salieron a otro lote se registran solo como transferencia de salida: sin doble conteo.
+    """
+    await preparar(seeded_ids)
+    descartes_cria, descartes_sexaje, descartes_seleccion = 20, 10, 20
+    filas = [_fila_gp(_ref("GP-SX05"),
+                      **{**MACHOS_CERO, "birds_placed_males": 1000, "historical_mortality_males": 50,
+                         "historical_culls_males": descartes_cria + descartes_sexaje + descartes_seleccion,
+                         "historical_transfers_in_males": 0, "historical_transfers_out_males": 900,
+                         "live_males": 0}, **HEMBRAS_CERO)]
+    batch_id, r, v = await _validacion(http_client, auth_headers, filas, seeded_ids["company_id"], 62)
+    assert v["errors"] == []
+    p = await _preview(http_client, auth_headers, batch_id)
+    assert p["rows"][0]["derived"]["balance_check"] == {"males": "CONSISTENT", "females": "CONSISTENT"}
+    valores = p["rows"][0]["values"]
+    assert valores["historical_culls_males"]["value"] == 50
+    assert valores["historical_transfers_out_males"]["value"] == 900
+    assert valores["live_males"]["value"] == 0
 

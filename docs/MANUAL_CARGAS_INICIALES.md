@@ -135,11 +135,11 @@ En Progenitoras los movimientos de población **entre lotes** son reales: selecc
 | Punto | Cómo se registra |
 |---|---|
 | (a) **Aves alojadas** | `birds_placed_males` / `birds_placed_females` = aves **efectivamente recibidas y alojadas** al abrir el lote (conteo real tras la recepción y el sexaje). **No** es la cantidad planificada ni solicitada en la importación, y **no** se le suman las transferencias. |
-| (b) **Descartes históricos** | `historical_culls_*` = **TODO** descarte que redujo la población del lote: cría y levante, **selección y desalojo**, antes de conformar producción. Un ave descartada **no se repite** como transferencia. |
+| (b) **Descartes históricos** | `historical_culls_*` = **TODO** descarte que redujo físicamente la población del lote: cría y levante, **selección y desalojo**, antes de conformar producción, y las **aves retiradas por error de sexaje**. Un ave descartada **no se repite** como transferencia. |
 | (c) **Traslado / conformación entre lotes** | El lote **origen** informa la **SALIDA** (`historical_transfers_out_males` / `..._out_females`) y el lote **destino** la **ENTRADA** (`historical_transfers_in_*`), cada uno por sexo y acumulado hasta el corte. Cuando se cargan ambos lotes, la suma de salidas de los orígenes debe coincidir con las entradas del destino, pero **el sistema no lo exige**: las cargas pueden ser parciales (origen cerrado sin destino migrado, o al revés). |
 | (d) **Cambio de fase del mismo lote** | El paso **CRIA → PROD** del **mismo** lote **NO es una transferencia**: deje las cuatro columnas de transferencias en `0` conocido (o vacías). La fase se informa en `productive_phase_code` y no mueve población entre lotes. |
 | (e) **Mortalidad histórica** | En Progenitoras es **opcional**: vacía = desconocida, y el sistema **no** verifica la ecuación de ese sexo. (En Reproductoras es obligatoria.) |
-| (f) **Error de sexaje** | Hoy **no existe un campo propio**. Si las aves de sexo equivocado **se descartan**, regístrelas como **descartes del sexo correspondiente**; si se **reclasifican de macho a hembra**, el contrato actual **no puede representarlo** (decisión pendiente `OD-GP-SEXAGE-01`): la ecuación de ese sexo marcará inconsistencia, consulte antes de cargar. |
+| (f) **Error de sexaje** | Un error de sexaje que provoca la salida física del ave del lote es un **DESCARTE**: se acumula en **Descartes históricos** (`historical_culls_males` / `historical_culls_females`) del sexo con el que estaba contabilizada. **No** existe un campo propio de sexaje ni se modela como cambio de sexo (macho↔hembra) dentro del lote. Si desconoce el acumulado de descartes, deje la celda **vacía** (desconocido): el sistema **no** inventa un 0. |
 | (g) **Ejemplo del desalojo** | Ver el lote B más abajo. |
 
 **Ejemplo — desalojo del lote B (Abuelas, ambos sexos):**
@@ -154,6 +154,8 @@ En Progenitoras los movimientos de población **entre lotes** son reales: selecc
 | **Vivas al corte** | **50** | **350** | `live_*` |
 
 Comprobación por sexo (solo con piezas conocidas): machos `100 + 0 − 4 − 6 − 40 = 50`; hembras `1.000 + 0 − 26 − 24 − 600 = 350`. El lote **destino** de esas 40 aves (machos) y 600 aves (hembras) declara `historical_transfers_in_males = 40` y `historical_transfers_in_females = 600`.
+
+**Ejemplo — lote A con un error de sexaje entre los descartes:** alojadas 1.000 aves, mortalidad 50, descartes 50 (20 de cría + **10 retiradas por error de sexaje** + 20 de selección/desalojo) y 900 transferidas al lote B ⇒ vivas = `1.000 − 50 − 50 − 900 = 0`.
 
 ---
 

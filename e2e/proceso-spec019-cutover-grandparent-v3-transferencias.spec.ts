@@ -25,7 +25,9 @@
  *   con su código y el batch no se envía a aprobación.
  * - **E2E-GP-04** (AC-GP-08) una plantilla Meta v2 de grandparent se rechaza indicando v3, y la fila
  *   diagnóstica de sexaje (reclasificación M→H) marca CONSISTENCY_MISMATCH mientras la variante como
- *   descarte de machos valida (evidencia para OD-GP-SEXAGE-01).
+ *   descarte de machos valida (OD-GP-SEXAGE-01 RATIFICADA = HISTORICAL_CULL: el error de sexaje que
+ *   saca el ave del lote es un descarte y la reclasificación no se representa: el sistema la detecta
+ *   como inconsistencia en lugar de corregir el sexo).
  *
  * Cada test usa un corte propio (la misma carga y corte es DUPLICATE_UPLOAD) y ninguna fecha literal:
  * todas se derivan de `haceDias`. La evidencia saneada (cifras y códigos, sin tokens ni DSN) queda en
@@ -610,7 +612,8 @@ test('E2E-GP-04 plantilla v2 rechazada y sexaje diagnóstico: reclasificación i
   expect(textoRechazo).toContain('TEMPLATE_VERSION_UNSUPPORTED')
   expect(textoRechazo).toContain('v3')
 
-  // ── b · sexaje: la reclasificación M→H no la representa el contrato (marca inconsistencia) ──
+  // ── b · sexaje: RATIFICADO como descarte (OD-GP-SEXAGE-01); la reclasificación M→H no la representa el
+  //        contrato y el sistema la marca como inconsistencia en lugar de corregir el sexo ──
   const batchSex = await crearBatch(request, 65)
   const refSex = `E2E-GP04-SEXAJE-${s}`
   const reclasificacion = produccion(refSex, {
@@ -625,7 +628,8 @@ test('E2E-GP-04 plantilla v2 rechazada y sexaje diagnóstico: reclasificación i
   expect(errores.some(e => e.error_code === 'CONSISTENCY_MISMATCH' && e.field === 'live_females'),
     'hembras: 1000 − 0 − 0 = 1000 ≠ 1010 (OD-GP-SEXAGE-01)').toBe(true)
 
-  // La variante como DESCARTE de machos sí valida: el descarte es la hipótesis que el contrato modela.
+  // La variante como DESCARTE de machos sí valida: con OD-GP-SEXAGE-01 RATIFICADA (HISTORICAL_CULL) el error de
+  // sexaje que saca el ave del lote ES un descarte, único modelo que el contrato representa. No hay métrica aparte.
   const descarte = produccion(refSex, {
     ...LOTE_A, placed: [100, 1000], mort: [0, 0], culls: [10, 0], entradas: [0, 0], salidas: [0, 0], live: [90, 1000],
   })

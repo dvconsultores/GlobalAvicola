@@ -55,7 +55,7 @@ El contrato no lo dice con claridad hoy → texto explícito y prueba (`GP-V3-PH
 | H1 reclasificación M↔H | Ningún anexo la describe. |
 | **H2 descarte** | `ABU-ENG-A06 «Error en sexo»` (control de producción y `PES-02`): *«Registro de la cantidad de aves»*, regla de negocio: *«De 18 a 20 semanas el descarte se vuelve comercial. Todo descarte se vende a la misma empresa»* (texto idéntico a `ABU-ENG-A05 «Descarte»`); KPI «Descarte de aves y de huevos». |
 | H3 otro | — |
-**Clasificación: `UNRESOLVED` (con inclinación a H2).** El modelo actual **no tiene ningún concepto de sexaje** (0 coincidencias en app/seeds/docs/specs). La regla de A06 parece copiada de A05, así que no basta para afirmar H2 sin el usuario clave.
+**Clasificación (histórica, SUPERADA por el amendment §5): `UNRESOLVED` (con inclinación a H2).** El modelo actual **no tiene ningún concepto de sexaje** (0 coincidencias en app/seeds/docs/specs). La regla de A06 parece copiada de A05, así que no basta para afirmar H2 sin el usuario clave.
 Consecuencias: **no se agregan campos** de corrección de sexo. Si fuera H2, ya queda cubierto por `historical_culls_*` (por sexo). Si fuera H1, el contrato **no puede** representarlo (la ecuación marcaría `INCONSISTENT`):
 se deja una prueba diagnóstica que lo demuestra y la decisión **`OD-GP-SEXAGE-01 = OWNER_DECISION_REQUIRED`**, no bloqueante para las transferencias.
 
@@ -85,7 +85,7 @@ Capitalización (≥ 24 semanas) es un **hito/estado** de paso a producción; no
 - **D-1** Sin campos nuevos ni versión nueva (`TRANSFERS = IMPLEMENTED`).
 - **D-2** Textos de contrato refinados **solo para grandparent**: `birds_placed_*`, `historical_culls_*`, `historical_transfers_*` y `productive_phase_code`/fase (fase ≠ transferencia). Sin cambio estructural.
 - **D-3** Visibilidad: el resaltado del preview de grandparent incluye las cuatro transferencias; etiquetas i18n es/en de las cuatro; la reconciliación añade claves **aditivas** por sexo (`historical_transfers_in_males|females`, `..._out_...`; `null` = UNKNOWN) manteniendo los totales. Sin cambios de tabla UI de reconciliación (backlog).
-- **D-4** Sexaje: sin campos; prueba diagnóstica; `OD-GP-SEXAGE-01` abierta.
+- **D-4** Sexaje: sin campos; prueba diagnóstica; `OD-GP-SEXAGE-01` abierta → **RATIFICADA como `HISTORICAL_CULL` (amendment §5)**.
 - **D-5** Reconciliación cruzada `Σ salidas` vs `Σ entradas` entre lotes: **evaluada y NO implementada** (cargas parciales, origen cerrado, destino no migrado); `GP-XLOT-RECON = BACKLOG`.
 - **D-6** Reproductoras: sin cambios de contrato ni de texto; las claves aditivas de reconciliación son infraestructura compartida y deben dejar Breeder V3 verde.
 
@@ -114,3 +114,39 @@ T1 backend (contrato grandparent, preview highlight, claves de reconciliación) 
 Ver `audit/ga-cutover-grandparent-v3/CERTIFICATION.md`.
 
 **Estado (2026-11-22):** implementación `e161d16` en `develop`. Backend 1986/0/59 · frontend 753 · E2E 227/0 · mutación 10/10. `TRANSFERS = IMPLEMENTED` (SPEC 014), `SEXAGE = OWNER_DECISION_REQUIRED` (OD-GP-SEXAGE-01), `WEIGHT_MODEL = SUFFICIENT`, `EGG_HISTORY_MODEL = SUFFICIENT`. Ver `audit/ga-cutover-grandparent-v3/CERTIFICATION.md`.
+
+## 5. AMENDMENT — OD-GP-SEXAGE-01 = RATIFIED (2026-11-22)
+
+Mandato `GA-GRANDPARENT-V3-OD-SEXAGE`. Cierra la única decisión de dominio pendiente de este ciclo. **No** reabre Grandparent V3: sin campos, sin versión nueva, sin migración, sin cambio de fórmula, Reproductoras intacta.
+
+```text
+Status:   RATIFIED
+Decision: HISTORICAL_CULL
+Owner date: 2026-11-22
+SEXAGE_MODEL = HISTORICAL_CULL
+```
+**Decisión Owner.** En Progenitoras, un «error de sexaje» que implica la **salida del ave del lote** es un **descarte**. No es una reclasificación macho↔hembra dentro de la población activa. Se acumula en `historical_culls_males` o `historical_culls_females` según el sexo **bajo el cual estaba contabilizada** el ave antes de retirarla.
+
+**Razonamiento de dominio.** Los anexos de Abuelas (`Control de Producción` y `PES-02`, hoja `ABU-ENG-A06 «Error en sexo»`) lo describen como *«registro de la cantidad de aves»* y su regla de negocio es el mismo texto de `ABU-ENG-A05 «Descarte»`
+(*«De 18 a 20 semanas el descarte se vuelve comercial; todo descarte se vende a la misma empresa»*); el KPI asociado es «Descarte de aves y de huevos». Ningún anexo describe un cambio de sexo de un ave que permanece en el lote.
+La hipótesis H1 (reclasificación) queda **descartada**; H2 (descarte) **ratificada**.
+
+**Consecuencias de contrato (sin lógica nueva).**
+- La ecuación certificada **no cambia** y el sexaje no añade ningún término: `live = placed + in − mortality − culls − out` (por sexo, solo con los seis KNOWN).
+- **Sin campos** `historical_sex_correction_*` ni `sexage_error_*`.
+- `historical_culls_*` (Progenitoras) = **todo** descarte acumulado antes del corte que redujo físicamente la población del lote: cría/levante, selección, desalojo, antes de conformar producción **y aves retiradas por error de sexaje**. Texto de la plantilla ampliado **solo en `grandparent`** (cambio de texto, no de columnas ni de schema; sigue `CUTOVER_GRANDPARENT_V3`).
+- **UNKNOWN:** si no se conoce el acumulado de descartes (incluido el de sexaje), la celda va vacía: no se inventa 0 y el balance de ese sexo queda `NOT_FULLY_VERIFIABLE`.
+- **Sin doble conteo:** un ave retirada por error de sexaje es **un descarte**, no «descarte + transferencia» (salvo que hayan ocurrido dos hechos distintos). Descartes → `historical_culls_*`; aves enviadas a otro lote → `historical_transfers_out_*`; aves recibidas → `historical_transfers_in_*`.
+- Fase ≠ transferencia (sin cambio). Reconciliación entre lotes (sin cambio).
+- **Una reclasificación silenciosa sigue sin ser posible:** si alguien carga vivas M/H «corregidas» sin descartes, la ecuación marca `CONSISTENCY_MISMATCH` (el sistema no corrige sexo).
+
+**Verificación de código (§11 del mandato).** `historical_culls_*` participan en validación (ecuación), preview, apply (`accumulated_culls_male|female`), reconciliación (lifetime) y UNKNOWN (estado `culls_status`). **`APPLICATION_CODE_CHANGE_REQUIRED = NO`** para la lógica; solo se amplía el **texto** de instrucción del contrato de Progenitoras.
+
+| AC | Enunciado |
+|---|---|
+| AC-SX-01 | SEXAGE-01: machos `placed 100, mortalidad 5, culls 10 (pueden ser error de sexaje), transfers 0 → live 85` válido y consistente. |
+| AC-SX-02 | SEXAGE-02: hembras equivalente. |
+| AC-SX-03 | SEXAGE-03: `historical_culls_males` UNKNOWN → sin error, `NOT_FULLY_VERIFIABLE`, NULL/UNKNOWN tras apply; nunca 0. |
+| AC-SX-04 | SEXAGE-04: `100 M / 1000 H` con 10 aves «de sexaje» **sin** contarlas como cull (vivas M 90) → `CONSISTENCY_MISMATCH` (no hay corrección silenciosa de sexo). |
+| AC-SX-05 | SEXAGE-05: `culls > 0` y `transfers_out > 0` en el mismo lote cuadran sin doble conteo (`1000 − 50 − (20+10+20) − 900 = 0`). |
+| AC-SX-06 | El texto de instrucción de `historical_culls_*` de Progenitoras menciona el error de sexaje; el de Reproductoras queda idéntico (guarda). Plantilla `CUTOVER_GRANDPARENT_V3`, mismas columnas. |

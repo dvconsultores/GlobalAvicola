@@ -1,0 +1,17 @@
+OD-GP-SEXAGE-01 · inspección de la plantilla de Progenitoras (CUTOVER_GRANDPARENT_V3)
+====================================================================================================
+archivo: docs/plantillas_carga_inicial/cutover_template_grandparent_v3.xlsx (regenerado con construir_plantilla("grandparent", 0))
+Meta · template_version = 'v3' (HEAD: 'v3')
+Meta · schema_id        = 'CUTOVER_GRANDPARENT_V3' (HEAD: 'CUTOVER_GRANDPARENT_V3')
+Meta · business_unit    = 'grandparent' (HEAD: 'grandparent')
+Meta completa: [('business_unit', 'grandparent'), ('company', 0), ('cutover_datetime', None), ('generated_at', '2026-11-22T22:54:35.569306+00:00'), ('key', 'value'), ('schema_id', 'CUTOVER_GRANDPARENT_V3'), ('template_version', 'v3')]
+Columnas de Datos idénticas al archivo HEAD (git show HEAD:...): SI
+número de columnas de Datos: 30 (HEAD: 30)
+¿hay columnas de sexaje/sexage? ['sex']
+Sin columnas nuevas ni campos de sexaje: solo cambia el texto de instrucción (no schema, no versión).
+
+Instrucciones · historical_culls_males (texto nuevo):
+Descartes acumulados de machos antes del corte: TODO descarte que redujo físicamente la población del lote (cría y levante, selección, desalojo, antes de conformar producción y aves retiradas por error de sexaje). Un error de sexaje que saca el ave del lote es un descarte: se registra aquí, en el sexo con el que estaba contabilizada, y NO como cambio de sexo ni como transferencia. Un ave no se registra a la vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.
+
+Instrucciones · historical_culls_females (texto nuevo):
+Descartes acumulados de hembras antes del corte: TODO descarte que redujo físicamente la población del lote (cría y levante, selección, desalojo, antes de conformar producción y aves retiradas por error de sexaje). Un error de sexaje que saca el ave del lote es un descarte: se registra aquí, en el sexo con el que estaba contabilizada, y NO como cambio de sexo ni como transferencia. Un ave no se registra a la vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.

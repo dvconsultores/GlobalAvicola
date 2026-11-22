@@ -217,17 +217,21 @@ def _metricas_reproductoras(bu: str) -> tuple[FieldSpec, ...]:
               targets=("opening_balances.accumulated_mortality_female",), status_column="mortality_status", promotion="ídem", consumer="lifetime mortalidad"),
     FieldSpec("historical_culls_males", "int",
               _gp_o_base(bu,
-                         "Descartes acumulados de machos antes del corte: TODO descarte que redujo la población del lote "
-                         "(cría y levante, selección y desalojo, antes de conformar producción). Un ave no se registra a la "
-                         "vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.",
+                         "Descartes acumulados de machos antes del corte: TODO descarte que redujo físicamente la población "
+                         "del lote (cría y levante, selección, desalojo, antes de conformar producción y aves retiradas por "
+                         "error de sexaje). Un error de sexaje que saca el ave del lote es un descarte: se registra aquí, "
+                         "en el sexo con el que estaba contabilizada, y NO como cambio de sexo ni como transferencia. "
+                         "Un ave no se registra a la vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.",
                          "Descartes acumulados de machos antes del corte."),
               metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_culls_male",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
     FieldSpec("historical_culls_females", "int",
               _gp_o_base(bu,
-                         "Descartes acumulados de hembras antes del corte: TODO descarte que redujo la población del lote "
-                         "(cría y levante, selección y desalojo, antes de conformar producción). Un ave no se registra a la "
-                         "vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.",
+                         "Descartes acumulados de hembras antes del corte: TODO descarte que redujo físicamente la población "
+                         "del lote (cría y levante, selección, desalojo, antes de conformar producción y aves retiradas por "
+                         "error de sexaje). Un error de sexaje que saca el ave del lote es un descarte: se registra aquí, "
+                         "en el sexo con el que estaba contabilizada, y NO como cambio de sexo ni como transferencia. "
+                         "Un ave no se registra a la vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.",
                          "Descartes acumulados de hembras antes del corte."),
               metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_culls_female",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
