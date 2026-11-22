@@ -1,0 +1,85 @@
+SPEC 019 · Inspección de la plantilla regenerada (Progenitoras / Abuelas) — 2026-11-22
+Archivo: docs/plantillas_carga_inicial/cutover_template_grandparent_v3.xlsx (11083 bytes)
+Origen: el builder del propio código, exactamente como en la regeneración de hatchery v4:
+  backend/.venv/bin/python -c "from app.cutover.templates import construir_plantilla; open('docs/plantillas_carga_inicial/cutover_template_grandparent_v3.xlsx','wb').write(construir_plantilla('grandparent', 0))"
+(sin catálogos y con company 0, igual que la copia de referencia previa del repositorio).
+
+== Hojas ==
+  Instrucciones, Meta, Datos, Catalogos
+
+== Meta ==
+  key = value
+  template_version = v3
+  schema_id = CUTOVER_GRANDPARENT_V3
+  company = 0
+  business_unit = grandparent
+  generated_at = 2026-11-22T15:57:41.316462+00:00
+  cutover_datetime = (vacío)
+
+== Hoja Datos ==
+  Filas: 1 (solo cabecera, igual que la copia previa: no trae filas de datos)
+  Número de columnas: 30
+  Columnas: legacy_lot_code, existing_lot_code, farm_code, house_name, area_code, productive_phase_code, real_start_date, phase_start_date, genetic_line_code, breed_name, sex, live_males, live_females, birds_placed_males, birds_placed_females, historical_mortality_males, historical_mortality_females, historical_culls_males, historical_culls_females, historical_transfers_in_males, historical_transfers_in_females, historical_transfers_out_males, historical_transfers_out_females, accumulated_feed_kg, current_avg_weight_g, accumulated_egg_production, accumulated_eggs_to_hatchery, source_system, source_reference, notes
+  Transferencias históricas presentes (4/4): historical_transfers_in_males, historical_transfers_in_females, historical_transfers_out_males, historical_transfers_out_females
+  Cabecera idéntica a la del archivo previo (git show HEAD:docs/plantillas_carga_inicial/cutover_template_grandparent_v3.xlsx): SÍ (30/30 columnas, mismo orden)
+
+== Hoja Catalogos ==
+  Filas: 1 (solo cabecera: builder invocado sin catálogos)
+
+== Hoja Instrucciones ==
+  Filas: 44 · columnas: 11
+  Cabecera (fila 14): campo | significado | obligatorio | tipo | unidad | formato | ejemplo | valores_permitidos | admite_UNKNOWN_(vacío) | admite_N/A | destino_tras_apply
+
+  Textos nuevos de los campos refinados solo para Progenitoras (SPEC 019 · D-2):
+
+  -- productive_phase_code
+     campo: productive_phase_code
+     significado: Fase productiva REAL del lote al corte. Valores para esta unidad: CRIA, PROD. La fase describe el MISMO lote: cambiar de fase (CRIA→PROD) NO es una transferencia y no se registra en las columnas de transferencias históricas.
+     obligatorio: sí
+     tipo: text
+     unidad: (vacío)
+     formato: texto
+     ejemplo: PROD
+     valores_permitidos: CRIA, PROD
+     admite_UNKNOWN_(vacío): no (obligatorio)
+     admite_N/A: no
+     destino_tras_apply: lot_phases.phase_id, opening_balances.phase_at_activation_id
+
+  -- birds_placed_males
+     campo: birds_placed_males
+     significado: Machos efectivamente recibidos y alojados al abrir el lote (conteo real tras la recepción y el sexaje), NO la cantidad planificada ni solicitada en la importación. Es el alojamiento original: no se le suman transferencias. Vacío = desconocido.
+     obligatorio: no
+     tipo: int
+     unidad: aves
+     formato: entero ≥ 0
+     ejemplo: 1100
+     valores_permitidos: (vacío)
+     admite_UNKNOWN_(vacío): sí
+     admite_N/A: no
+     destino_tras_apply: opening_balances.placed_male_count
+
+  -- historical_culls_males
+     campo: historical_culls_males
+     significado: Descartes acumulados de machos antes del corte: TODO descarte que redujo la población del lote (cría y levante, selección y desalojo, antes de conformar producción). Un ave no se registra a la vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.
+     obligatorio: no
+     tipo: int
+     unidad: aves
+     formato: entero ≥ 0
+     ejemplo: 0
+     valores_permitidos: (vacío)
+     admite_UNKNOWN_(vacío): sí
+     admite_N/A: no
+     destino_tras_apply: opening_balances.accumulated_culls_male
+
+  -- historical_transfers_out_males
+     campo: historical_transfers_out_males
+     significado: Machos enviados a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte. Aplica a traslados y conformación de lote (desalojo). El cambio de fase CRIA→PROD del MISMO lote NO es una transferencia: no se registra aquí.
+     obligatorio: no
+     tipo: int
+     unidad: aves
+     formato: entero ≥ 0
+     ejemplo: 0
+     valores_permitidos: (vacío)
+     admite_UNKNOWN_(vacío): sí
+     admite_N/A: no
+     destino_tras_apply: opening_balances.accumulated_transfers_out_male

@@ -138,7 +138,9 @@ def _identificacion_aves(bu: str) -> tuple[FieldSpec, ...]:
         FieldSpec("area_code", "text", "Código del área funcional (Catalogos → area).",
                   example="", master="area", targets=("lots.area_id",), promotion="resuelto por código", consumer="avisos (GA-REM-039)"),
         FieldSpec("productive_phase_code", "text",
-                  f"Fase productiva REAL del lote al corte. Valores para esta unidad: {', '.join(FASES_POR_BU[bu])}.",
+                  f"Fase productiva REAL del lote al corte. Valores para esta unidad: {', '.join(FASES_POR_BU[bu])}."
+                  + (" La fase describe el MISMO lote: cambiar de fase (CRIA→PROD) NO es una transferencia y no se "
+                     "registra en las columnas de transferencias históricas." if bu == "grandparent" else ""),
                   required=True, example=FASES_POR_BU[bu][-1], master="productive_phase", values=FASES_POR_BU[bu],
                   targets=("lot_phases.phase_id", "opening_balances.phase_at_activation_id"),
                   promotion="fase declarada; nunca la primera activa", consumer="transición de fase (R-191), KPIs por fase"),
@@ -168,6 +170,21 @@ _PROCEDENCIA = (
               example="", targets=("cutover_items.opening_state.notes",), promotion="texto", consumer="—"),
 )
 
+def _gp_o_base(bu: str, texto_gp: str, texto_base: str) -> str:
+    """SPEC 019 · D-2: el significado se refina **solo** en Progenitoras; Reproductoras conserva su texto."""
+    return texto_gp if bu == "grandparent" else texto_base
+
+
+#: SPEC 019 · D-2/§1.5: coletilla de Progenitoras en las transferencias históricas (fase ≠ transferencia).
+_GP_NOTA_FASE = (" Aplica a traslados y conformación de lote (desalojo). El cambio de fase CRIA→PROD del MISMO lote "
+                 "NO es una transferencia: no se registra aquí.")
+
+
+def _con_nota_gp(bu: str, texto: str) -> str:
+    """Texto de transferencias: idéntico en Reproductoras, con la aclaración de fase en Progenitoras."""
+    return texto + _GP_NOTA_FASE if bu == "grandparent" else texto
+
+
 def _metricas_reproductoras(bu: str) -> tuple[FieldSpec, ...]:
     _req = bu == "breeder"  # SPEC 009: mortalidad obligatoria solo en Reproductoras (breeder).
     return (
@@ -176,33 +193,57 @@ def _metricas_reproductoras(bu: str) -> tuple[FieldSpec, ...]:
               consumer="BR-01 mortalidad/descarte/salida, saldo de aves"),
     FieldSpec("live_females", "int", "Hembras vivas al momento del corte.", required=True, metric=True, unit="aves", example="9000",
               targets=("opening_balances.initial_female_count",), promotion="saldo vivo", consumer="BR-01, postura (hen-day)"),
-    FieldSpec("birds_placed_males", "int", "Machos alojados originalmente (histórico).", metric=True, unit="aves", example="1100",
+    FieldSpec("birds_placed_males", "int",
+              _gp_o_base(bu,
+                         "Machos efectivamente recibidos y alojados al abrir el lote (conteo real tras la recepción y el "
+                         "sexaje), NO la cantidad planificada ni solicitada en la importación. Es el alojamiento original: "
+                         "no se le suman transferencias. Vacío = desconocido.",
+                         "Machos alojados originalmente (histórico)."),
+              metric=True, unit="aves", example="1100",
               targets=("opening_balances.placed_male_count",), status_column="placed_status",
               promotion="consistencia: alojadas + transferencias de entrada − mortalidad − descartes − transferencias de salida = vivas (solo si todo KNOWN)", consumer="informe de lote"),
-    FieldSpec("birds_placed_females", "int", "Hembras alojadas originalmente (histórico).", metric=True, unit="aves", example="9600",
+    FieldSpec("birds_placed_females", "int",
+              _gp_o_base(bu,
+                         "Hembras efectivamente recibidas y alojadas al abrir el lote (conteo real tras la recepción y el "
+                         "sexaje), NO la cantidad planificada ni solicitada en la importación. Es el alojamiento original: "
+                         "no se le suman transferencias. Vacío = desconocido.",
+                         "Hembras alojadas originalmente (histórico)."),
+              metric=True, unit="aves", example="9600",
               targets=("opening_balances.placed_female_count",), status_column="placed_status", promotion="ídem", consumer="informe de lote"),
     FieldSpec("historical_mortality_males", "int", "Mortalidad acumulada de machos ANTES del corte.", required=_req, metric=True, unit="aves", example="50",
               targets=("opening_balances.accumulated_mortality_male",), status_column="mortality_status",
               promotion="histórico; no se resta al saldo", consumer="lifetime mortalidad, KPI"),
     FieldSpec("historical_mortality_females", "int", "Mortalidad acumulada de hembras ANTES del corte.", required=_req, metric=True, unit="aves", example="450",
               targets=("opening_balances.accumulated_mortality_female",), status_column="mortality_status", promotion="ídem", consumer="lifetime mortalidad"),
-    FieldSpec("historical_culls_males", "int", "Descartes acumulados de machos antes del corte.", metric=True, unit="aves", example="0",
+    FieldSpec("historical_culls_males", "int",
+              _gp_o_base(bu,
+                         "Descartes acumulados de machos antes del corte: TODO descarte que redujo la población del lote "
+                         "(cría y levante, selección y desalojo, antes de conformar producción). Un ave no se registra a la "
+                         "vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.",
+                         "Descartes acumulados de machos antes del corte."),
+              metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_culls_male",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
-    FieldSpec("historical_culls_females", "int", "Descartes acumulados de hembras antes del corte.", metric=True, unit="aves", example="0",
+    FieldSpec("historical_culls_females", "int",
+              _gp_o_base(bu,
+                         "Descartes acumulados de hembras antes del corte: TODO descarte que redujo la población del lote "
+                         "(cría y levante, selección y desalojo, antes de conformar producción). Un ave no se registra a la "
+                         "vez como descarte y como transferencia. Vacío = desconocido; 0 = cero conocido.",
+                         "Descartes acumulados de hembras antes del corte."),
+              metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_culls_female",), status_column="culls_status", promotion="histórico", consumer="lifetime descartes"),
-    FieldSpec("historical_transfers_in_males", "int", "Machos recibidos desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+    FieldSpec("historical_transfers_in_males", "int", _con_nota_gp(bu, "Machos recibidos desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte."), metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_transfers_in_male",), status_column="transfers_in_status",
               negative_message="La cantidad de transferencias históricas no puede ser negativa.",
               promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
-    FieldSpec("historical_transfers_in_females", "int", "Hembras recibidas desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+    FieldSpec("historical_transfers_in_females", "int", _con_nota_gp(bu, "Hembras recibidas desde otros lotes (transferencias de ENTRADA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte."), metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_transfers_in_female",), status_column="transfers_in_status",
               negative_message="La cantidad de transferencias históricas no puede ser negativa.",
               promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
-    FieldSpec("historical_transfers_out_males", "int", "Machos enviados a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+    FieldSpec("historical_transfers_out_males", "int", _con_nota_gp(bu, "Machos enviados a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte."), metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_transfers_out_male",), status_column="transfers_out_status",
               negative_message="La cantidad de transferencias históricas no puede ser negativa.",
               promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
-    FieldSpec("historical_transfers_out_females", "int", "Hembras enviadas a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte.", metric=True, unit="aves", example="0",
+    FieldSpec("historical_transfers_out_females", "int", _con_nota_gp(bu, "Hembras enviadas a otros lotes (transferencias de SALIDA) acumulados antes de la fecha de corte. 0 solo si se sabe que no hubo; vacío = desconocido. No registrar movimientos posteriores al corte."), metric=True, unit="aves", example="0",
               targets=("opening_balances.accumulated_transfers_out_female",), status_column="transfers_out_status",
               negative_message="La cantidad de transferencias históricas no puede ser negativa.",
               promotion="histórico acumulado hasta el corte; entra en la ecuación vivas = alojadas + entradas − mortalidad − descartes − salidas (solo si todo KNOWN); no crea eventos", consumer="informe de lote, reconciliación"),
