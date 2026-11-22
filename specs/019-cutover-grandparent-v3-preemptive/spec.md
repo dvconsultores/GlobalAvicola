@@ -112,3 +112,5 @@ T1 backend (contrato grandparent, preview highlight, claves de reconciliación) 
 
 ## 4. Estado
 Ver `audit/ga-cutover-grandparent-v3/CERTIFICATION.md`.
+
+**Estado (2026-11-22):** implementación `e161d16` en `develop`. Backend 1986/0/59 · frontend 753 · E2E 227/0 · mutación 10/10. `TRANSFERS = IMPLEMENTED` (SPEC 014), `SEXAGE = OWNER_DECISION_REQUIRED` (OD-GP-SEXAGE-01), `WEIGHT_MODEL = SUFFICIENT`, `EGG_HISTORY_MODEL = SUFFICIENT`. Ver `audit/ga-cutover-grandparent-v3/CERTIFICATION.md`.

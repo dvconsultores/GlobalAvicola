@@ -1,29 +1,29 @@
 {
-  "inicio": "2026-11-22T15:55:30.672Z",
+  "inicio": "2026-11-22T16:59:40.471Z",
   "spec": "019",
   "regla": "vivas = alojadas + entradas − mortalidad − descartes − salidas (por sexo, solo si los seis son KNOWN)",
   "maestros": {
-    "farmCode": "P16-G-FTSHDVO6",
-    "houseName": "P16-GALPON-FTSHDVO6",
-    "lineCode": "P16-L-FTSHDVO6"
+    "farmCode": "P16-G-2TKOF4ID",
+    "houseName": "P16-GALPON-2TKOF4ID",
+    "lineCode": "P16-L-2TKOF4ID"
   },
   "E2E-GP-01": {
-    "batch": 4,
+    "batch": 24,
     "corte_dias": 55,
     "refs": {
-      "A": "E2E-GP-A-Q10QL7BI",
-      "B": "E2E-GP-B-Q10QL7BI",
-      "C": "E2E-GP-C-Q10QL7BI"
+      "A": "E2E-GP-A-IMAHQUR7",
+      "B": "E2E-GP-B-IMAHQUR7",
+      "C": "E2E-GP-C-IMAHQUR7"
     },
     "plantilla": {
-      "bytes": 11800,
+      "bytes": 19866,
       "meta": {
         "key": "value",
         "template_version": "v3",
         "schema_id": "CUTOVER_GRANDPARENT_V3",
         "company": "1",
         "business_unit": "grandparent",
-        "generated_at": "2026-11-22T15:55:37.397309+00:00",
+        "generated_at": "2026-11-22T16:59:46.798643+00:00",
         "cutover_datetime": "2026-09-28T01:00:00-04:00"
       },
       "transferencias_en_datos": [
@@ -45,15 +45,15 @@
       "estado": "validated"
     },
     "preview_api": {
-      "E2E-GP-A-Q10QL7BI": {
+      "E2E-GP-A-IMAHQUR7": {
         "males": "CONSISTENT",
         "females": "CONSISTENT"
       },
-      "E2E-GP-B-Q10QL7BI": {
+      "E2E-GP-B-IMAHQUR7": {
         "males": "CONSISTENT",
         "females": "CONSISTENT"
       },
-      "E2E-GP-C-Q10QL7BI": {
+      "E2E-GP-C-IMAHQUR7": {
         "males": "CONSISTENT",
         "females": "CONSISTENT"
       }
@@ -69,14 +69,14 @@
     },
     "lotes": {
       "ids": {
-        "A": 7,
-        "B": 8,
-        "C": 9
+        "A": 134,
+        "B": 135,
+        "C": 136
       },
       "A": {
-        "lot_id": 7,
+        "lot_id": 134,
         "activation_date": "2026-09-28",
-        "phase_at_activation_id": 1,
+        "phase_at_activation_id": 3,
         "age_days": 145,
         "initial_male_count": 95,
         "initial_female_count": 950,
@@ -92,10 +92,10 @@
         "accumulated_broiler_received": null,
         "activation_reason": "Cutover operacional v2 (SPEC 006)",
         "support_document_url": null,
-        "id": 5,
+        "id": 21,
         "is_manual_activation": false,
         "activated_by_id": 1,
-        "created_at": "2026-11-22T15:55:49.892316Z",
+        "created_at": "2026-11-22T16:59:58.151816Z",
         "initial_mixed_count": 0,
         "accumulated_mortality_mixed": 0,
         "accumulated_culls_mixed": 0,
@@ -125,12 +125,12 @@
         "template_version": "v3",
         "source_system": "LEGACY",
         "source_reference": null,
-        "legacy_lot_code": "E2E-GP-A-Q10QL7BI"
+        "legacy_lot_code": "E2E-GP-A-IMAHQUR7"
       },
       "B": {
-        "lot_id": 8,
+        "lot_id": 135,
         "activation_date": "2026-09-28",
-        "phase_at_activation_id": 1,
+        "phase_at_activation_id": 3,
         "age_days": 145,
         "initial_male_count": 50,
         "initial_female_count": 350,
@@ -146,10 +146,10 @@
         "accumulated_broiler_received": null,
         "activation_reason": "Cutover operacional v2 (SPEC 006)",
         "support_document_url": null,
-        "id": 6,
+        "id": 22,
         "is_manual_activation": false,
         "activated_by_id": 1,
-        "created_at": "2026-11-22T15:55:49.892316Z",
+        "created_at": "2026-11-22T16:59:58.151816Z",
         "initial_mixed_count": 0,
         "accumulated_mortality_mixed": 0,
         "accumulated_culls_mixed": 0,
@@ -179,12 +179,12 @@
         "template_version": "v3",
         "source_system": "LEGACY",
         "source_reference": null,
-        "legacy_lot_code": "E2E-GP-B-Q10QL7BI"
+        "legacy_lot_code": "E2E-GP-B-IMAHQUR7"
       },
       "C": {
-        "lot_id": 9,
+        "lot_id": 136,
         "activation_date": "2026-09-28",
-        "phase_at_activation_id": 2,
+        "phase_at_activation_id": 4,
         "age_days": 155,
         "initial_male_count": 40,
         "initial_female_count": 600,
@@ -200,10 +200,10 @@
         "accumulated_broiler_received": null,
         "activation_reason": "Cutover operacional v2 (SPEC 006)",
         "support_document_url": null,
-        "id": 7,
+        "id": 23,
         "is_manual_activation": false,
         "activated_by_id": 1,
-        "created_at": "2026-11-22T15:55:49.892316Z",
+        "created_at": "2026-11-22T16:59:58.151816Z",
         "initial_mixed_count": 0,
         "accumulated_mortality_mixed": 0,
         "accumulated_culls_mixed": 0,
@@ -233,14 +233,14 @@
         "template_version": "v3",
         "source_system": "LEGACY",
         "source_reference": null,
-        "legacy_lot_code": "E2E-GP-C-Q10QL7BI"
+        "legacy_lot_code": "E2E-GP-C-IMAHQUR7"
       }
     },
     "suma_vivas": 2085,
     "fases": {
-      "A": 1,
-      "B": 1,
-      "C": 2
+      "A": 3,
+      "B": 3,
+      "C": 4
     },
     "reconciliacion": {
       "A": {
@@ -359,11 +359,11 @@
     }
   },
   "E2E-GP-02": {
-    "batch": 5,
+    "batch": 25,
     "corte_dias": 57,
     "refs": {
-      "B": "E2E-GP02-B-Q10QL7BI",
-      "C": "E2E-GP02-C-Q10QL7BI"
+      "B": "E2E-GP02-B-IMAHQUR7",
+      "C": "E2E-GP02-C-IMAHQUR7"
     },
     "lote_B": {
       "opening": {
@@ -466,10 +466,10 @@
     "lote_B_final": 397
   },
   "E2E-GP-03": {
-    "batch_unknown": 6,
-    "batch_errores": 7,
+    "batch_unknown": 26,
+    "batch_errores": 27,
     "unknown": {
-      "batch": 6,
+      "batch": 26,
       "verdict": {
         "males": "NOT_FULLY_VERIFIABLE",
         "females": "NOT_FULLY_VERIFIABLE"
@@ -540,8 +540,8 @@
     }
   },
   "E2E-GP-04": {
-    "batch_v2": 8,
-    "batch_sexaje": 9,
+    "batch_v2": 28,
+    "batch_sexaje": 29,
     "rechazo_v2": {
       "status": 422,
       "detalle": "{\"detail\":\"TEMPLATE_VERSION_UNSUPPORTED: La plantilla de grandparent vigente es v3: descargue la plantilla v3 de grandparent y vuelva a cargar.\"}"
@@ -566,5 +566,5 @@
       "estado": "validated"
     }
   },
-  "fin": "2026-11-22T15:56:12.632Z"
+  "fin": "2026-11-22T17:00:17.099Z"
 }

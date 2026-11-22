@@ -1,0 +1,205 @@
+SPEC 019 · Progenitoras V3 preventiva — Campana de MUTACION (registro crudo por mutante)
+Commit de implementacion (base y origen de restauracion): e161d16 (rama develop)
+Fecha: 2026-11-22 · Ejecucion secuencial, un mutante a la vez
+Restauracion: git restore --source=e161d16 -- <archivo>  (sin checkout/stash/reset/add/commit/push)
+Comprobacion de restauracion: git diff --stat -- <archivo>  => salida vacia en los 10 casos
+NOTA: cada bloque reproduce la salida del comando de prueba indicado en la delegacion (filtro grep
+      del propio comando: ^(FAILED|ERROR)|passed|failed  /  ×|FAIL|Tests |Test Files).
+      Log redactado: todo token JWT (prefijo base64 del header) sustituido por <JWT_REDACTED>.
+
+================================================================================
+BASELINE (antes de mutar)
+================================================================----------------
+[BACKEND] cd /home/maria/Proyectos/GlobalAvicola/backend
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+40 passed, 2 warnings in 26.65s
+
+[FRONTEND] cd /home/maria/Proyectos/GlobalAvicola/frontend
+$ npx vitest run src/__tests__/cutoverGrandparentV3.test.tsx src/__tests__/r061.cutoverFlow.test.tsx 2>&1 | grep -E "×|FAIL|Tests |Test Files" | tail -15
+Test Files  2 passed (2)
+      Tests  7 passed (7)
+
+=> Baseline VERDE en ambas suites (40 backend / 7 frontend). Procede la campana.
+
+================================================================================
+MUTANTE B1 · backend/app/cutover/contracts.py :: _gp_o_base()
+CAMBIO: `return texto_gp if bu == "grandparent" else texto_base`
+     -> `return texto_base`   (el texto refinado de Progenitoras desaparece)
+ESPERADO: falla AC-GP-01
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_plantilla_instrucciones_refinadas
+2 failed, 38 passed, 2 warnings in 26.66s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/contracts.py
+              git diff --stat -- backend/app/cutover/contracts.py  -> (vacio)
+
+================================================================================
+MUTANTE B2 · backend/app/cutover/contracts.py :: _gp_o_base() + _con_nota_gp()
+CAMBIO: condicion `bu == "grandparent"` -> `bu in ("grandparent","breeder")` en ambas funciones
+        (el texto de Progenitoras se aplica TAMBIEN a breeder)
+ESPERADO: falla la guarda 'breeder intacto'
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+1 failed, 39 passed, 2 warnings in 27.01s
+RESULTADO: DETECTADO  (guarda D-6 «breeder intacto», bloque frases_gp)
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/contracts.py
+              git diff --stat -- backend/app/cutover/contracts.py  -> (vacio)
+
+================================================================================
+MUTANTE B3 · backend/app/cutover/contracts.py :: _con_nota_gp()
+CAMBIO: `return texto + _GP_NOTA_FASE if bu == "grandparent" else texto` -> `return texto`
+        (no se anade _GP_NOTA_FASE)
+ESPERADO: falla AC-GP-01 (frase 'NO es una transferencia')
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_plantilla_instrucciones_refinadas
+2 failed, 38 passed, 2 warnings in 27.13s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/contracts.py
+              git diff --stat -- backend/app/cutover/contracts.py  -> (vacio)
+
+================================================================================
+MUTANTE B4 · backend/app/cutover/service.py :: PREVIEW_DESTACADAS['grandparent']
+CAMBIO: se eliminan las 4 transferencias del final de la tupla
+        "historical_transfers_in_males", "historical_transfers_in_females",
+        "historical_transfers_out_males", "historical_transfers_out_females"
+ESPERADO: falla AC-GP-09
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_preview_y_reconciliacion_por_sexo
+1 failed, 39 passed, 2 warnings in 26.01s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/service.py
+              git diff --stat -- backend/app/cutover/service.py  -> (vacio)
+
+================================================================================
+MUTANTE B5 · backend/app/cutover/service.py :: _transferencia_por_sexo()
+CAMBIO: `return None if columna is None else int(columna)` -> `return 0 if columna is None else int(columna)`
+        (UNKNOWN -> 0)
+ESPERADO: falla el test de UNKNOWN/persistencia
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t09_unknown_no_se_inventa_ni_se_aplica_como_cero
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_persistencia_por_sexo_con_known_y_unknown
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_preview_y_reconciliacion_por_sexo
+3 failed, 37 passed, 2 warnings in 26.56s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/service.py
+              git diff --stat -- backend/app/cutover/service.py  -> (vacio)
+
+================================================================================
+MUTANTE B6 · backend/app/cutover/service.py :: detalle de reconciliacion (claves M/H)
+CAMBIO: "historical_transfers_in_males"  lee opening.accumulated_transfers_OUT_male
+        "historical_transfers_out_males" lee opening.accumulated_transfers_IN_male
+        (valores de in_males y out_males intercambiados)
+ESPERADO: falla conformacion / E2E-nivel API de claves M/H
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t09_unknown_no_se_inventa_ni_se_aplica_como_cero
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_conformation01_origenes_con_salida_y_destino_con_entrada
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_persistencia_por_sexo_con_known_y_unknown
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_post_corte_no_vuelve_a_restar_lo_historico
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_preview_y_reconciliacion_por_sexo
+5 failed, 35 passed, 2 warnings in 27.10s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/service.py
+              git diff --stat -- backend/app/cutover/service.py  -> (vacio)
+
+================================================================================
+MUTANTE B7 · backend/app/cutover/validation.py :: _consistencia_reproductoras()
+CAMBIO: la ecuacion ignora las transferencias de SALIDA
+        guarda: _known(fila, vivas, alojadas, entradas, mort, desc)      (sin `salidas`)
+        esperado = alojadas + entradas - mort - desc                     (sin restar salidas)
+ESPERADO: fallan GP-V3-T02/T04/T06/T07 (y los de breeder)
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t02_salida_de_machos
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t04_salida_de_hembras
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t06_entrada_y_salida_simultaneas
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t07_conformacion_dos_origenes_un_destino
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t08_saldo_inconsistente
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t09_unknown_no_se_inventa_ni_se_aplica_como_cero
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_conformation01_origenes_con_salida_y_destino_con_entrada
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_desalojo_descarte_de_cria_y_seleccion
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_persistencia_por_sexo_con_known_y_unknown
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_post_corte_no_vuelve_a_restar_lo_historico
+FAILED tests/test_cutover_historical_transfers_red.py::test_br_t02_salida_de_machos_lote_origen
+FAILED tests/test_cutover_historical_transfers_red.py::test_br_t04_salida_de_hembras
+FAILED tests/test_cutover_historical_transfers_red.py::test_br_t06_entradas_y_salidas_a_la_vez
+FAILED tests/test_cutover_historical_transfers_red.py::test_br_t08_unknown_no_inventa_cero_y_queda_no_verificable
+FAILED tests/test_cutover_historical_transfers_red.py::test_br_t10_decimal_y_na_en_transferencias
+FAILED tests/test_cutover_historical_transfers_apply_red.py::test_ht_apply_origen_y_receptor
+FAILED tests/test_cutover_historical_transfers_apply_red.py::test_ht_unknown_no_es_cero
+FAILED tests/test_cutover_historical_transfers_apply_red.py::test_ht_reconciliacion_expone_transferencias
+FAILED tests/test_cutover_historical_transfers_apply_red.py::test_ht_sin_doble_conteo
+19 failed, 21 passed, 2 warnings in 28.89s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/validation.py
+              git diff --stat -- backend/app/cutover/validation.py  -> (vacio)
+
+================================================================================
+MUTANTE B8 · backend/app/cutover/validation.py :: _consistencia_reproductoras()
+CAMBIO: transferencias UNKNOWN se tratan como 0 (la ecuacion se calcula igualmente)
+        guarda: _known(fila, vivas, alojadas, mort, desc)     (fuera entradas y salidas)
+        esperado = alojadas + (entradas or 0) - mort - desc - (salidas or 0)
+ESPERADO: falla GP-V3-T09 / T01-vacias
+--------------------------------------------------------------------------------
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_cutover_historical_transfers_red.py tests/test_cutover_historical_transfers_apply_red.py -q 2>&1 | grep -E "^(FAILED|ERROR)|passed|failed" | tail -25
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t01_sin_transferencias_y_transferencias_vacias
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_t09_unknown_no_se_inventa_ni_se_aplica_como_cero
+FAILED tests/test_cutover_historical_transfers_red.py::test_br_t08_unknown_no_inventa_cero_y_queda_no_verificable
+FAILED tests/test_cutover_historical_transfers_apply_red.py::test_ht_unknown_no_es_cero
+4 failed, 36 passed, 2 warnings in 31.23s
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- backend/app/cutover/validation.py
+              git diff --stat -- backend/app/cutover/validation.py  -> (vacio)
+
+================================================================================
+MUTANTE F1 · frontend/public/locales/es/translation.json (cutover.fields)
+CAMBIO: se elimina la clave "historical_transfers_out_females"
+        (linea: "historical_transfers_out_females": "Transf. hist. salida hembras",)
+ESPERADO: fallan la paridad es/en y/o el test de etiquetas
+--------------------------------------------------------------------------------
+$ npx vitest run src/__tests__/cutoverGrandparentV3.test.tsx src/__tests__/r061.cutoverFlow.test.tsx 2>&1 | grep -E "×|FAIL|Tests |Test Files" | tail -15
+× a) grandparent: las 4 transferencias salen con etiqueta propia; 200 y 0 conocidos visibles y UNKNOWN donde está vacío 726ms
+     × b) paridad ES/EN: las 4 claves existen con texto propio y distinto del nombre técnico 10ms
+     × AC84/85: claves del namespace cutover presentes en ES y EN (sin hardcodes) 15ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 3 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/__tests__/cutoverGrandparentV3.test.tsx > SPEC 019 · Progenitoras V3 en el preview (AC-GP-09) > a) grandparent: las 4 transferencias salen con etiqueta propia; 200 y 0 conocidos visibles y UNKNOWN donde está vacío
+ FAIL  src/__tests__/cutoverGrandparentV3.test.tsx > SPEC 019 · Progenitoras V3 en el preview (AC-GP-09) > b) paridad ES/EN: las 4 claves existen con texto propio y distinto del nombre técnico
+ FAIL  src/__tests__/r061.cutoverFlow.test.tsx > GA-REQ-061 · C8 · Cargas Iniciales (jsdom) > AC84/85: claves del namespace cutover presentes en ES y EN (sin hardcodes)
+ Test Files  2 failed (2)
+      Tests  3 failed | 4 passed (7)
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- frontend/public/locales/es/translation.json
+              git diff --stat -- frontend/public/locales/es/translation.json  -> (vacio)
+
+================================================================================
+MUTANTE F2 · frontend/public/locales/en/translation.json (cutover.fields)
+CAMBIO: "historical_transfers_in_males": "Hist. transfers in (males)"
+     -> "historical_transfers_in_males": "historical_transfers_in_males"   (nombre tecnico como valor)
+ESPERADO: falla el test 'texto propio distinto del nombre tecnico'
+--------------------------------------------------------------------------------
+$ npx vitest run src/__tests__/cutoverGrandparentV3.test.tsx src/__tests__/r061.cutoverFlow.test.tsx 2>&1 | grep -E "×|FAIL|Tests |Test Files" | tail -15
+× b) paridad ES/EN: las 4 claves existen con texto propio y distinto del nombre técnico 15ms
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+ FAIL  src/__tests__/cutoverGrandparentV3.test.tsx > SPEC 019 · Progenitoras V3 en el preview (AC-GP-09) > b) paridad ES/EN: las 4 claves existen con texto propio y distinto del nombre técnico
+ Test Files  1 failed | 1 passed (2)
+      Tests  1 failed | 6 passed (7)
+RESULTADO: DETECTADO
+RESTAURACION: git restore --source=e161d16 -- frontend/public/locales/en/translation.json
+              git diff --stat -- frontend/public/locales/en/translation.json  -> (vacio)
+
+================================================================================
+CIERRE
+================================================================================
+Mutantes ejecutados: 10 (B1..B8, F1, F2)
+DETECTADOS: 10 · SUPERVIVIENTES: 0
+Restauraciones verificadas con `git diff --stat -- <archivo>` vacio: 10/10
+Integridad final: `git diff --quiet e161d16 -- backend frontend e2e` -> exit 0 (arbol identico al commit)
+Redaccion JWT: 0 ocurrencias del prefijo de token en este archivo y en 50_mutation_campaign.md
+Sin git add/commit/push/stash/reset/checkout. Sin cambios bajo audit/ salvo la evidencia de esta campana.
