@@ -60,7 +60,10 @@ _NO_INCUBABLES = ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "e
 PREVIEW_DESTACADAS = {
     "grandparent": ("legacy_lot_code", "productive_phase_code", "farm_code", "house_name", "live_males", "live_females",
                     "historical_mortality_males", "historical_mortality_females", "accumulated_feed_kg",
-                    "current_avg_weight_g", "accumulated_egg_production"),
+                    "current_avg_weight_g", "accumulated_egg_production",
+                    # SPEC 019 · D-3: las transferencias históricas se ven en el resaltado de Progenitoras.
+                    "historical_transfers_in_males", "historical_transfers_in_females",
+                    "historical_transfers_out_males", "historical_transfers_out_females"),
     "breeder": ("legacy_lot_code", "productive_phase_code", "farm_code", "house_name", "live_males", "live_females",
                 "historical_mortality_males", "historical_mortality_females", "accumulated_feed_kg",
                 "current_avg_weight_g", "accumulated_egg_production"),
@@ -108,6 +111,11 @@ def _entero(estado: dict, campo: str) -> int:
 
 def _opcional(estado: dict, campo: str) -> Optional[Any]:
     return _v(estado, campo) if _s(estado, campo) == KNOWN else None
+
+
+def _transferencia_por_sexo(columna: Optional[int]) -> Optional[int]:
+    """SPEC 019 · D-3: transferencia histórica por sexo en la reconciliación (`NULL` = UNKNOWN, nunca 0)."""
+    return None if columna is None else int(columna)
 
 
 def _agregar_con_unknown(valores: list[Optional[int]]) -> tuple[Optional[int], int]:
@@ -797,6 +805,11 @@ class CutoverService:
                     "historical_culls": historico_culls, "culls_status": opening.culls_status,
                     "historical_transfers_in": transf_in, "transfers_in_status": opening.transfers_in_status,
                     "historical_transfers_out": transf_out, "transfers_out_status": opening.transfers_out_status,
+                    # SPEC 019 · D-3: claves ADITIVAS por sexo (None = UNKNOWN; nunca un 0 inventado).
+                    "historical_transfers_in_males": _transferencia_por_sexo(opening.accumulated_transfers_in_male),
+                    "historical_transfers_in_females": _transferencia_por_sexo(opening.accumulated_transfers_in_female),
+                    "historical_transfers_out_males": _transferencia_por_sexo(opening.accumulated_transfers_out_male),
+                    "historical_transfers_out_females": _transferencia_por_sexo(opening.accumulated_transfers_out_female),
                     "feed_kg": feed_opening, "feed_status": opening.feed_status,
                     "avg_weight_g": opening.current_avg_weight if opening.weight_status == KNOWN else None,
                     "weight_status": opening.weight_status,

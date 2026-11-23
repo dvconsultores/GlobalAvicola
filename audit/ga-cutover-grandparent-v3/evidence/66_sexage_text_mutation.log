@@ -1,0 +1,49 @@
+# SPEC 019 §5 · OD-GP-SEXAGE-01 — mutantes del texto de sexaje (Grandparent)
+# Test: backend/tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+# Contrato mutado: backend/app/cutover/contracts.py (restaurado siempre desde f7bf1fd)
+
+## Baseline (sin mutacion)
+$ cd backend && ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_time_determinism.py -q 2>&1 | tail -4
+35 passed, 1 warning in 29.50s
+
+## M1a — quitar ' y aves retiradas por "\n "<- "error de sexaje)' de las DOS enumeraciones (queda ')')
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py -q
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+1 failed, 24 passed, 1 warning in 25.11s
+# resultado: KILLED
+
+## Restauracion M1a
+$ git restore --source=f7bf1fd -- backend/app/cutover/contracts.py
+$ git diff --stat -- backend/app/cutover/contracts.py
+# (vacio)
+
+## M1b — quitar la frase 'Un error de sexaje que saca el ave del lote es un descarte: se registra aqui,
+## en el sexo con el que estaba contabilizada, y NO como cambio de sexo ni como transferencia. ' de las dos
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py -q
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+1 failed, 24 passed, 1 warning in 25.09s
+# resultado: KILLED
+
+## Restauracion M1b
+$ git restore --source=f7bf1fd -- backend/app/cutover/contracts.py
+$ git diff --stat -- backend/app/cutover/contracts.py
+# (vacio)
+
+## M1c — cambiar 'NO como cambio de sexo' por 'como cambio de sexo' en las dos
+$ ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py -q
+FAILED tests/test_cutover_grandparent_v3.py::test_gp_v3_ac01_contrato_y_textos_refinados
+1 failed, 24 passed, 1 warning in 25.77s
+# resultado: KILLED
+
+## Restauracion M1c y verificacion final
+$ git restore --source=f7bf1fd -- backend/app/cutover/contracts.py
+$ git diff --stat -- backend/app/cutover/contracts.py
+# (vacio)
+$ git diff --quiet f7bf1fd -- backend/app && echo APP_DIFF_VS_F7BF1FD_EMPTY
+APP_DIFF_VS_F7BF1FD_EMPTY
+
+## Baseline final (2 ficheros)
+$ cd backend && ./scripts/run_tests.sh tests/test_cutover_grandparent_v3.py tests/test_time_determinism.py -q 2>&1 | tail -4
+35 passed, 1 warning in 32.64s
+
+# Resumen: 3/3 mutantes KILLED · 0 supervivientes · backend/app sin cambios respecto a f7bf1fd.
