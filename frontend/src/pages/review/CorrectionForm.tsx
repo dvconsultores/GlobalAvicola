@@ -28,6 +28,8 @@ export default function CorrectionForm() {
 
  const [fieldName, setFieldName] = useState('')
  const [campos, setCampos] = useState<any[]>([])
+ // `020` · AC-S2-C04/C07: catálogo del maestro del campo seleccionado (selector controlado).
+ const [catalogo, setCatalogo] = useState<any[]>([])
  const [correctedValue, setCorrectedValue] = useState('')
  const [correctionTypeId, setCorrectionTypeId] = useState<number | undefined>()
  const [reason, setReason] = useState('')
@@ -64,6 +66,19 @@ export default function CorrectionForm() {
  }
  fetch()
  }, [id, refresco])
+
+ // `020` · AC-S2-C04: clave de catálogo del campo seleccionado (`null` si no es de maestro).
+ // Se calcula antes de cualquier `return` para que los hooks mantengan un orden estable.
+ const claveMaestro = campos.find((f: any) => String(f.field_name) === fieldName)?.master ?? null
+
+ useEffect(() => {
+ if (!claveMaestro) { setCatalogo([]); return }
+ let cancelado = false
+ api.get(`/masters/${claveMaestro}?limit=100`)
+ .then(({ data }: any) => { if (!cancelado) setCatalogo(Array.isArray(data) ? data : []) })
+ .catch(() => { if (!cancelado) setCatalogo([]) })
+ return () => { cancelado = true }
+ }, [claveMaestro])
 
  if (estado !== 'ok') return <div className="py-4 sm:py-6"><ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} /></div>
 
@@ -153,15 +168,28 @@ export default function CorrectionForm() {
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{t('review.originalValue')}</label>
- <input type="text" value={campoActual?.current_value ?? ''} readOnly aria-readonly="true" data-testid="correction-original"
+ <input type="text" value={campoActual?.current_display ?? campoActual?.current_value ?? ''} readOnly aria-readonly="true" data-testid="correction-original"
  className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-slate-100 text-slate-600" />
  <p className="text-xs text-slate-400 mt-1">{t('review.originalByOperator')}</p>
  </div>
  <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
  <label className="block text-xs font-semibold text-amber-700 uppercase mb-1">{t('review.correctedValue')}</label>
+ {/* `020` · AC-S2-C04/C07: los campos de maestro NO admiten texto libre: selector del catálogo. */}
+ {campoActual?.master ? (
+ <select value={correctedValue} onChange={e => { setCorrectedValue(e.target.value); setError('') }}
+ data-testid="correction-corrected-master"
+ aria-label={etiquetaCampo(campoActual)}
+ className="w-full border border-amber-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-400">
+ <option value="">-- {t('common.select')} --</option>
+ {catalogo
+ .filter((r: any) => String(r.id) !== String(campoActual?.current_value ?? ''))
+ .map((r: any) => <option key={String(r.id)} value={String(r.id)}>{r.name}</option>)}
+ </select>
+ ) : (
  <input {...propsValor} value={correctedValue} onChange={e => { setCorrectedValue(e.target.value); setError('') }}
  data-testid="correction-corrected"
  className="w-full border border-amber-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-400" />
+ )}
  <p className="text-xs text-amber-600 mt-1">{t('review.correctedByYou')}</p>
  </div>
  </div>

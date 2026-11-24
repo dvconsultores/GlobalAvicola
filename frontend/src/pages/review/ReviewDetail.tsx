@@ -218,7 +218,7 @@ export default function ReviewDetail() {
  </h3>
  {corrections.map((c: any) => (
  <div key={c.id} className="text-xs text-slate-600 mb-2 p-2 bg-amber-50 rounded-lg">
- <p><strong>{describirCampoCorregido(t, c.field_name)}:</strong> "{c.original_value}" → "{c.corrected_value}"</p>
+ <p><strong>{describirCampoCorregido(t, c.field_name)}:</strong> "{c.original_display ?? c.original_value}" → "{c.corrected_display ?? c.corrected_value}"</p>
  <p className="text-slate-400 mt-0.5">{c.reason} — {formatFechaHora(c.created_at, i18n.language)}
  {c.corrected_by_name ? ` · ${c.corrected_by_name}` : ''}</p>
  </div>
