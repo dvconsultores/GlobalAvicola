@@ -3,7 +3,7 @@ import re
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..audit.helpers import audit_correction
@@ -134,6 +134,7 @@ class CorrectionService:
             lot_id=event.lot_id,
         )
 
+        await self._anotar_nombres([correction])
         return correction
 
     async def _corregir_submovimiento(self, event, data: schemas.CorrectionCreate, operaciones) -> tuple[str | None, str | None]:
@@ -255,6 +256,9 @@ class CorrectionService:
                 "row_id": None,
                 "row_label": None,
                 "value_type": _tipo_de_valor(columna.type.python_type if columna is not None else str),
+                # `AC-S2-C04`: de qué catálogo es el campo y cómo se llama hoy su registro.
+                "master": MAESTROS_CORREGIBLES[campo][0] if campo in MAESTROS_CORREGIBLES else None,
+                "current_display": await self._nombre_de_maestro(campo, valor),
             })
 
         for bm in event.bird_movements:
@@ -292,7 +296,9 @@ class CorrectionService:
             )
             .order_by(models.CorrectionLog.created_at.desc())
         )
-        return list(result.scalars().all())
+        correcciones = list(result.scalars().all())
+        await self._anotar_nombres(correcciones)
+        return correcciones
 
     async def get_corrections(
         self,
@@ -318,7 +324,35 @@ class CorrectionService:
         corrections = list(result.scalars().all())
         count_r = await self.db.execute(cq)
         total = count_r.scalar() or 0
+        await self._anotar_nombres(corrections)
         return corrections, total
+
+    async def _nombre_de_maestro(self, campo: str, valor) -> str | None:
+        """Nombre del registro de catálogo que un campo de maestro referencia (`AC-S2-C04`); `None` si no aplica."""
+        if campo not in MAESTROS_CORREGIBLES or valor is None:
+            return None
+        try:
+            identificador = int(str(valor))
+        except ValueError:
+            return None
+        from ..masters import models as masters_models
+
+        modelo = getattr(masters_models, MAESTROS_CORREGIBLES[campo][1])
+        consulta = select(modelo.name).where(modelo.id == identificador)
+        if hasattr(modelo, "company_id") and self.company_id is not None:
+            # el catálogo compartido (`company_id` nulo) es legible; el de otra empresa no se nombra
+            consulta = consulta.where(or_(modelo.company_id == self.company_id, modelo.company_id.is_(None)))
+        return (await self.db.execute(consulta)).scalar_one_or_none()
+
+    async def _anotar_nombres(self, correcciones) -> None:
+        """`AC-S2-C05`: el historial lee nombres de maestro, no ids (atributos transitorios de lectura)."""
+        for c in correcciones:
+            if c.field_name in MAESTROS_CORREGIBLES:
+                c.original_display = await self._nombre_de_maestro(c.field_name, c.original_value)
+                c.corrected_display = await self._nombre_de_maestro(c.field_name, c.corrected_value)
+            else:
+                c.original_display = None
+                c.corrected_display = None
 
 
 def func_count():
@@ -397,6 +431,52 @@ SIEMPRE_OFRECIDOS = frozenset({"observations"})
 #: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: lo que no es anulable no se puede vaciar.
 NO_VACIABLES: dict[str, str] = {"event_date": "La fecha del evento no puede quedar vacía"}
 
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.3` · `AC-S2-C03`: nombre que el operador lee en el
+#: formulario para cada campo corregible. El mensaje de un valor imposible se muestra en pantalla,
+#: junto al dato: el identificador técnico (`sample_size`) no le dice nada.
+ETIQUETAS_CAMPO: dict[str, str] = {
+    "observations": "Observaciones",
+    "event_date": "Fecha del evento",
+    "sap_document_ref": "Documento SAP",
+    "vaccination_route": "Vía de aplicación",
+    "vaccine_lot_number": "Lote de vacuna",
+    "dosage_per_bird": "Dosis por ave",
+    "treatment_days": "Días de tratamiento",
+    "sample_size": "Tamaño de muestra",
+    "water_liters": "Litros de agua",
+    "chicks_healthy": "Pollitos sanos",
+    "chicks_weak": "Pollitos débiles",
+    "supplier_id": "Proveedor",
+    "cause_id": "Causa de mortalidad",
+    "cull_cause_id": "Causa de descarte",
+    "vaccine_id": "Vacuna",
+    "medication_id": "Medicamento",
+    "transport_id": "Transporte",
+    "destination_farm_id": "Granja destino",
+    "destination_plant_id": "Planta destino",
+    "lot_id": "Lote",
+    "farm_id": "Granja",
+    "house_id": "Galpón",
+    "extra_data": "Datos adicionales",
+    "quantity": "Cantidad",
+    "avg_weight": "Peso promedio",
+    "week_number": "Semana",
+    "quantity_kg": "Cantidad de alimento (kg)",
+}
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.2` · `AC-S2-C04`: campo de maestro → (recurso de la API
+#: del catálogo, modelo ORM). Un `*_id` se corrige con el identificador pero se **lee** por nombre.
+MAESTROS_CORREGIBLES: dict[str, tuple[str, str]] = {
+    "supplier_id": ("suppliers", "Supplier"),
+    "cause_id": ("mortality-causes", "MortalityCause"),
+    "cull_cause_id": ("cull-causes", "CullCause"),
+    "vaccine_id": ("vaccines", "Vaccine"),
+    "medication_id": ("medications", "Medication"),
+    "destination_farm_id": ("farms", "Farm"),
+    "destination_plant_id": ("processing-plants", "ProcessingPlant"),
+    "transport_id": ("transports", "Transport"),
+}
+
 _PATRON_SUBMOVIMIENTO = re.compile(r"^(bird_movements|feed_movements)\[(\d+)\]\.(\w+)$")
 
 
@@ -413,6 +493,13 @@ def _parsear_submovimiento(field_name: str) -> tuple[str, int, str] | None:
         return None
     tabla, fila_id, campo = encontrado.groups()
     return tabla, int(fila_id), campo
+
+
+def etiqueta_de_campo(field_name: str) -> str:
+    """Nombre funcional (español) de un campo corregible; nunca el identificador técnico (`AC-S2-C03`)."""
+    parseado = _parsear_submovimiento(field_name)
+    campo = parseado[2] if parseado is not None else field_name
+    return ETIQUETAS_CAMPO.get(campo, campo)
 
 
 def _campos_admitidos(event, es_recepcion_breeder: bool = False) -> str:
@@ -440,7 +527,7 @@ def _convertir_valor_de_fila(field_name: str, campo: str, valor: str | None):
             return None
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"El campo '{field_name}' requiere un valor numérico",
+            detail=f"«{etiqueta_de_campo(field_name)}» requiere un valor numérico",
         )
     texto = str(valor).strip()
     decimal = campo in ("avg_weight", "quantity_kg")
@@ -450,14 +537,17 @@ def _convertir_valor_de_fila(field_name: str, campo: str, valor: str | None):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                f"El valor '{valor}' no es válido para el campo '{field_name}': "
+                f"El valor '{valor}' no es válido para «{etiqueta_de_campo(field_name)}»: "
                 f"se esperaba un {'número decimal' if decimal else 'número entero'}"
             ),
         ) from None
     if numero < 0 or (decimal and numero <= 0):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"El valor '{valor}' no es válido para el campo '{field_name}': debe ser mayor a cero",
+            detail=(
+                f"El valor '{valor}' no es válido para «{etiqueta_de_campo(field_name)}»: "
+                "debe ser mayor a cero"
+            ),
         )
     return numero
 
@@ -523,10 +613,23 @@ def _convertir(event, campo: str, valor: str | None):
             return json.loads(valor)
         return tipo(valor)
     except (ValueError, TypeError):
+        # `AC-S2-C03`: el aviso se lee en el formulario, junto al dato; el nombre técnico no.
+        if tipo is _date:
+            descripcion = "una fecha (AAAA-MM-DD)"
+        elif tipo is int:
+            descripcion = "un número entero"
+        elif tipo is float:
+            descripcion = "un número decimal"
+        elif tipo is bool:
+            descripcion = "sí o no"
+        elif tipo is dict:
+            descripcion = "un objeto JSON"
+        else:
+            descripcion = "texto"
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                f"El valor '{valor}' no es valido para el campo '{campo}' "
-                f"(se esperaba {tipo.__name__})"
+                f"El valor '{valor}' no es válido para «{etiqueta_de_campo(campo)}»: "
+                f"se esperaba {descripcion}"
             ),
         ) from None

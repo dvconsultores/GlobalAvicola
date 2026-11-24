@@ -130,13 +130,15 @@ async def test_no_se_puede_corregir_lo_que_no_es_un_dato_operativo(
 
 @pytest.mark.asyncio
 async def test_un_valor_del_tipo_equivocado_da_400_no_500(auth_headers, http_client):
+    # El nombre funcional lo exige el SPEC 020 (AC-S2-C03, hallazgo A5 de la Sesión 2).
     evento = await _evento(http_client, auth_headers)
     r = await http_client.post("/api/v1/corrections", headers=auth_headers, json={
         "event_id": evento["id"], "field_name": "treatment_days",
         "corrected_value": "no es un número", "reason": "prueba de tipos",
     })
     assert r.status_code == 400, f"Debe explicarse, no romperse: {r.status_code}"
-    assert "treatment_days" in r.text
+    assert "Días de tratamiento" in r.text, r.text  # AC-S2-C03: el error se nombra como lo lee el operador
+    assert "treatment_days" not in r.text, r.text   # y nunca con el nombre de columna
 
 
 # ── Estados no corregibles (BR-15, BR-16, RR-01) ──────────────────────────────
