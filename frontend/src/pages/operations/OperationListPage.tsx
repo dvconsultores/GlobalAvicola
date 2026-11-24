@@ -10,6 +10,17 @@ import { useDebouncedValue } from '../../hooks/useDebouncedValue'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
+// `SPEC 020` (AC-S2-U01): «Se creará al aprobar» describe SÓLO la importación de
+// abuelos (la única que crea lote al aprobar). Cualquier otro evento sin lote es de
+// nivel granja — nunca «#null».
+const lotCellLabel = (ev: any, t: any): string => {
+ if (ev.lot_code) return ev.lot_code
+ if (ev.lot_id) return `#${ev.lot_id}`
+ return ev.event_type === 'grandparent_import'
+ ? t('operations.lotAutoPending', 'Se creará al aprobar')
+ : t('operations.noLotFarmLevel', 'Sin lote (nivel granja)')
+}
+
 const STATUS_COLORS: Record<string, string> = {
  registered: 'bg-blue-100 text-blue-800', pending_review: 'bg-yellow-100 text-yellow-800',
  approved: 'bg-green-100 text-green-800', rejected: 'bg-red-100 text-red-800',
@@ -167,7 +178,7 @@ export default function OperationListPage() {
  <div key={ev.id} data-testid={`operation-row-${ev.id}`} className="px-4 py-3 lg:grid lg:grid-cols-7 lg:gap-3 lg:items-center">
  <div className="flex items-center gap-2 mb-1 lg:mb-0">
  <ClipboardList size={20} className="text-slate-400 shrink-0" aria-hidden="true" />
- <span className="text-sm font-mono font-medium text-slate-700">{ev.lot_code ?? (ev.lot_id ? `#${ev.lot_id}` : t('operations.lotAutoPending', 'Se creará al aprobar'))}</span>
+ <span className="text-sm font-mono font-medium text-slate-700">{lotCellLabel(ev, t)}</span>
  </div>
  <span className="block text-sm text-slate-600">{ev.farm_name ?? '—'}</span>
  <span className="block text-sm font-medium text-slate-700">{getEventLabel(t, ev.event_type)}</span>

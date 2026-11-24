@@ -658,7 +658,9 @@
     "detail": "Detalle",
     "id": "ID",
     "lot": "Lote",
-    "lotFilterPlaceholder": "ID del lote",
+    "lotFilterPlaceholder": "Ej.: L-0001",
+    "lotCodeLabel": "Código de lote",
+    "dateRangeInvalid": "La fecha inicial no puede ser posterior a la fecha final",
     "lotFilterNumeric": "Escriba el ID numérico del lote (solo dígitos)",
     "farm": "Granja",
     "house": "Galpón",
@@ -1154,6 +1156,7 @@
     "importCountryPlaceholder": "Ej. Francia",
     "importLotAutoNote": "Si no selecciona un lote, se creará automáticamente al aprobar la importación.",
     "lotAutoPending": "Se creará al aprobar",
+    "noLotFarmLevel": "Sin lote (nivel granja)",
     "pendingClassification": {
       "title": "Pendientes de clasificar",
       "link": "Pendientes de clasificar",

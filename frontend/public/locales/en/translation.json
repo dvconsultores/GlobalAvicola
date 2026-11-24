@@ -658,7 +658,9 @@
     "detail": "Detail",
     "id": "ID",
     "lot": "Lot",
-    "lotFilterPlaceholder": "Lot ID",
+    "lotFilterPlaceholder": "e.g. L-0001",
+    "lotCodeLabel": "Lot code",
+    "dateRangeInvalid": "The start date cannot be after the end date",
     "lotFilterNumeric": "Enter the numeric lot ID (digits only)",
     "farm": "Farm",
     "house": "House",
@@ -1154,6 +1156,7 @@
     "importCountryPlaceholder": "e.g. France",
     "importLotAutoNote": "If you don't select a lot, one will be created automatically when the import is approved.",
     "lotAutoPending": "Created on approval",
+    "noLotFarmLevel": "No lot (farm level)",
     "pendingClassification": {
       "title": "Pending classification",
       "link": "Pending classification",
