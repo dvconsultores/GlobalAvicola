@@ -1,4 +1,5 @@
 """Review & Approval REST API router."""
+from datetime import date
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -23,9 +24,12 @@ steps_router = APIRouter(route_class=RutaTransaccional, prefix="/approval-steps"
 async def list_pending_review(
     farm_id: Optional[int] = Query(None),
     lot_id: Optional[int] = Query(None),
+    lot_code: Optional[str] = Query(
+        None, max_length=50,
+        description="Código de lote (coincidencia parcial, sin distinguir mayúsculas)"),
     event_type: Optional[str] = Query(None),
-    date_from: Optional[str] = Query(None),
-    date_to: Optional[str] = Query(None),
+    date_from: Optional[date] = Query(None),
+    date_to: Optional[date] = Query(None),
     status: Optional[str] = Query(None),
     registered_by_id: Optional[int] = Query(None),
     limit: int = Query(50, ge=1, le=200),
@@ -37,7 +41,16 @@ async def list_pending_review(
     histórico). Con `status` (lista separada por comas del catálogo cerrado):
     filtra en servidor; valor fuera del catálogo ⇒ 422 (`R-197` C-03).
     `operator_id` no forma parte del contrato y se ignora si llega.
+
+    `lot_code` (`AC-S2-R01`) busca por el código del lote tal como se teclea, igual
+    que el Historial. `date_from`/`date_to` (`AC-S2-R02`) son fechas: un rango
+    imposible es una petición inválida (400), no un fallo del servidor.
     """
+    if date_from is not None and date_to is not None and date_from > date_to:
+        raise HTTPException(
+            status_code=400,
+            detail="La fecha inicial no puede ser posterior a la fecha final",
+        )
     estados: Optional[list[str]] = None
     if status:
         pedidos = [s.strip() for s in status.split(",") if s.strip()]
@@ -50,7 +63,7 @@ async def list_pending_review(
         estados = pedidos
     svc = ReviewService(db, current_user)
     events, total = await svc.get_pending_review_events(
-        farm_id=farm_id, lot_id=lot_id, event_type=event_type,
+        farm_id=farm_id, lot_id=lot_id, lot_code=lot_code, event_type=event_type,
         date_from=date_from, date_to=date_to,
         statuses=estados, registered_by_id=registered_by_id,
         limit=limit, offset=offset,
@@ -137,14 +150,21 @@ async def complete_review(
 async def list_pending_approvals(
     farm_id: Optional[int] = Query(None),
     lot_id: Optional[int] = Query(None),
+    lot_code: Optional[str] = Query(
+        None, max_length=50,
+        description="Código de lote (coincidencia parcial, sin distinguir mayúsculas)"),
     limit: int = Query(50, ge=1, le=200),
     offset: int = Query(0, ge=0),
     db: AsyncSession = Depends(get_db),
     current_user: dict = Depends(require_permission("approvals", "approve")),
 ):
-    """Get events pending approval (status=corrected)."""
+    """Get events pending approval (status=corrected).
+
+    `lot_code` (`AC-S2-R01`): mismo contrato que la bandeja de revisión —parcial y
+    sin distinguir mayúsculas—, porque aprobar es la decisión que cierra el ciclo.
+    """
     events, total = await ApprovalService(db, current_user).get_pending_approvals(
-        farm_id=farm_id, lot_id=lot_id, limit=limit, offset=offset,
+        farm_id=farm_id, lot_id=lot_id, lot_code=lot_code, limit=limit, offset=offset,
     )
     return {"events": events, "total": total}
 
