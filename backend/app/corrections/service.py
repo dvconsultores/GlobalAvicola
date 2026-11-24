@@ -64,6 +64,9 @@ class CorrectionService:
         else:
             valor_original = _leer_valor(event, data.field_name)
             valor_aplicado = _convertir(event, data.field_name, data.corrected_value)
+            if valor_aplicado is None and data.field_name in NO_VACIABLES:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=NO_VACIABLES[data.field_name])
+            operaciones.validar_cantidades_del_candidato(event, {data.field_name: valor_aplicado})
             if data.field_name in ("chicks_healthy", "chicks_weak"):  # `GA-REM-021-C` · `AC-B13-11`: la corrección respeta `BR-21`
                 from ..operations.validators import validate_birth_registration
 
@@ -390,6 +393,9 @@ FUERA_DEL_SELECTOR = frozenset({"lot_id", "farm_id", "house_id", "extra_data"})
 
 #: `observations` se ofrece siempre, aunque esté vacío: es el campo de uso más frecuente.
 SIEMPRE_OFRECIDOS = frozenset({"observations"})
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: lo que no es anulable no se puede vaciar.
+NO_VACIABLES: dict[str, str] = {"event_date": "La fecha del evento no puede quedar vacía"}
 
 _PATRON_SUBMOVIMIENTO = re.compile(r"^(bird_movements|feed_movements)\[(\d+)\]\.(\w+)$")
 

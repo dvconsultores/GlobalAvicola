@@ -61,6 +61,9 @@ from .validators import (
     # `GA-UAT-BREEDER-CRIA-S1-2026-11-10` · `spec 015 §4.1`: el «no vacío» por operación (`RR-20`..`RR-23`).
     validate_contenido_minimo,
     validate_water_consumption,
+    # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: la muestra y las cantidades (`RR-24`..`RR-26`).
+    validate_muestra,
+    validate_cantidades_no_negativas,
 )
 
 
@@ -1048,6 +1051,9 @@ class OperationsService:
         # son las filas que este mismo servicio persiste, nunca un total enviado por el cliente.
         validate_reception_reconciliation(event_type, cadena_del_lote, data.received_total, data.dead_on_arrival,
                                           data.rejected_on_arrival, sum(bm.quantity for bm in data.bird_movements))
+        validate_muestra(event_type, data.sample_size, data.received_total, data.dead_on_arrival,
+                         sum(bm.quantity for bm in data.bird_movements))
+        validate_cantidades_no_negativas(data.dosage_per_bird, data.treatment_days, data.chicks_healthy, data.chicks_weak)
         # `GA-REM-005-C` (`R-170`) + `GA-REM-021-C` (`B13`): una sola contabilidad de nacimientos (`BR-21`).
         validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
                                     [(bm.sex, bm.quantity) for bm in data.bird_movements])
@@ -1313,6 +1319,7 @@ class OperationsService:
                 event.event_type, await self._tipo_de_lote(lote_destino),
                 cambios.get("received_total", event.received_total), cambios.get("dead_on_arrival", event.dead_on_arrival),
                 cambios.get("rejected_on_arrival", event.rejected_on_arrival), sum(bm.quantity for bm in event.bird_movements))
+        self.validar_cantidades_del_candidato(event, cambios)
         # `GA-REM-005-E` `AC-R173-10` · `docs/13 §2`: la auditoría de la edición conserva valor anterior y nuevo
         previos = {key: _valor_auditable(getattr(event, key, None)) for key in cambios}
         for key, val in cambios.items():
@@ -1389,6 +1396,22 @@ class OperationsService:
                     self.db, cand["sap_document_ref"], tipo_del_lote, codigo_del_lote,
                     company_id=self.company_id,
                 )
+
+    def validar_cantidades_del_candidato(self, event: models.OperationalEvent, cambios: dict) -> None:
+        """`SPEC 020 §3.1` (`RR-24`..`RR-26`): paridad de edición y corrección sobre el estado candidato.
+
+        Solo corre la regla cuyo campo cambia: editar un campo ajeno de un evento histórico con
+        un valor ya inválido no se bloquea. Las alojadas salen de las filas persistidas.
+        """
+        if any(k in cambios for k in ("sample_size", "received_total", "dead_on_arrival")):
+            validate_muestra(
+                event.event_type, cambios.get("sample_size", event.sample_size),
+                cambios.get("received_total", event.received_total),
+                cambios.get("dead_on_arrival", event.dead_on_arrival),
+                sum(bm.quantity or 0 for bm in event.bird_movements))
+        no_negativas = {k: cambios[k] for k in ("dosage_per_bird", "treatment_days", "chicks_healthy", "chicks_weak") if k in cambios}
+        if no_negativas:
+            validate_cantidades_no_negativas(**no_negativas)
 
     async def _exigir_sin_vinculo_efectivo(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
         """`GA-REM-031-A` · `R-178`: un evento casado en un vínculo de trazabilidad no se reasigna.

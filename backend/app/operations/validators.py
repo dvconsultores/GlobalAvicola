@@ -849,6 +849,42 @@ def validate_contenido_minimo(event_type, vaccine_id=None, medication_id=None,
                 "Registre la cantidad de alimento (kg) mayor a cero", "RR-23")
 
 
+def validate_muestra(event_type, sample_size, received_total=None, dead_on_arrival=None, alojadas: int = 0) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §3.1` — `RR-24` y `RR-25`.
+
+    La muestra tomada es una porción física de las aves: si se declara, es un entero >= 1
+    (vacío = ausente; 0 y negativos no describen una muestra) y, en la recepción, no puede
+    superar la población recibida. Población = `received_total` si está declarado; si no,
+    las alojadas (Σ `bird_movements.quantity`, calculadas por el servidor) más la mortalidad
+    al arribo declarada. Igual o menor: permitido. En el pesaje solo rige el mínimo de 1.
+    """
+    if sample_size is None:
+        return
+    if sample_size < 1:
+        raise BusinessRuleViolation("El tamaño de muestra debe ser mayor a cero", "RR-24")
+    tipo = getattr(event_type, "value", event_type)
+    if tipo == EventType.BIRD_RECEPTION.value:
+        poblacion = received_total if received_total is not None else (alojadas or 0) + (dead_on_arrival or 0)
+        if sample_size > poblacion:
+            raise BusinessRuleViolation(
+                f"La muestra tomada no puede superar las aves recibidas ({poblacion})", "RR-25")
+
+
+def validate_cantidades_no_negativas(dosage_per_bird=None, treatment_days=None, chicks_healthy=None, chicks_weak=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §3.1` — `RR-26`: dosis, días y pollitos no son negativos.
+
+    Vacío/`None` = ausente (nunca se valida); `0` es un cero conocido y se permite.
+    """
+    for valor, mensaje in (
+        (dosage_per_bird, "La dosis por ave no puede ser negativa"),
+        (treatment_days, "Los días de tratamiento no pueden ser negativos"),
+        (chicks_healthy, "Los pollitos sanos no pueden ser negativos"),
+        (chicks_weak, "Los pollitos débiles no pueden ser negativos"),
+    ):
+        if valor is not None and valor < 0:
+            raise BusinessRuleViolation(mensaje, "RR-26")
+
+
 def validate_segregation(registered_by_id: int, action_user_id: int, action: str = "aprobar") -> None:
     """BR-14: Operator cannot approve own data. Enforces segregation of duties."""
     if registered_by_id == action_user_id:
