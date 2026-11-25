@@ -43,6 +43,12 @@ class CorrectionService:
                 detail=f"El evento no se puede corregir en estado '{_traducir_estado(event.status)}'",
             )
 
+        # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-27` (`OD-S2-01`): toda corrección **nueva**
+        # declara su tipo. Se exige antes de cualquier otra validación de valor —un registro de
+        # corrección sin tipo no es un registro— y sin distinguir «no existe» de «no es tuyo»
+        # (`AC26`), para no filtrar catálogos de otra empresa.
+        await self._exigir_tipo_de_correccion(data.correction_type_id)
+
         # P0-2: aplicar el valor corregido al dato.
         #
         # Hasta ahora se creaba el registro de correccion, se cambiaba el estado a
@@ -63,6 +69,21 @@ class CorrectionService:
                 event, data, operaciones)
         else:
             valor_original = _leer_valor(event, data.field_name)
+            # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-31`/`RR-32`: el valor llega como
+            # **texto**, así que un vacío o solo espacios no describe el dato. Se valida antes de
+            # convertirlo: la conversión de `cause_id` vacío daría `None` y la de espacios, un
+            # mensaje genérico; aquí sale el rechazo funcional que el formulario muestra.
+            if data.field_name == "vaccine_lot_number":
+                from ..operations.validators import validate_lote_de_vacuna
+
+                validate_lote_de_vacuna(event.event_type, data.corrected_value)
+            if data.field_name in ("cause_id", "cull_cause_id"):
+                from ..operations.validators import validate_motivo_de_la_baja
+
+                validate_motivo_de_la_baja(
+                    event.event_type,
+                    data.corrected_value if data.field_name == "cause_id" else event.cause_id,
+                    data.corrected_value if data.field_name == "cull_cause_id" else event.cull_cause_id)
             valor_aplicado = _convertir(event, data.field_name, data.corrected_value)
             if valor_aplicado is None and data.field_name in NO_VACIABLES:
                 raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=NO_VACIABLES[data.field_name])
@@ -136,6 +157,27 @@ class CorrectionService:
 
         await self._anotar_nombres([correction])
         return correction
+
+    async def _exigir_tipo_de_correccion(self, correction_type_id: int | None) -> None:
+        """`GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` — `RR-27` (`OD-S2-01`).
+
+        El tipo de la corrección es obligatorio —ausente, `null`, `0` y negativo no lo son—, tiene
+        que existir, estar activo (`OD-21`) y ser alcanzable: propio de la empresa o compartido
+        (`verificar_catalogo_de_empresa`). Cualquier otra cosa es una violación de `RR-27` con el
+        mismo mensaje: no se distingue «no existe» de «no es tuyo».
+        """
+        from ..masters.models import CorrectionType
+        from ..operations.validators import BusinessRuleViolation
+        from ..tenancy import verificar_catalogo_de_empresa
+
+        if correction_type_id is None or correction_type_id <= 0:
+            raise BusinessRuleViolation(MENSAJE_TIPO_DE_CORRECCION, "RR-27")
+        try:
+            await verificar_catalogo_de_empresa(
+                self.db, CorrectionType, correction_type_id, self.company_id,
+                "Tipo de corrección", exigir_activo=True)
+        except BusinessRuleViolation:
+            raise BusinessRuleViolation(MENSAJE_TIPO_DE_CORRECCION, "RR-27") from None
 
     async def _corregir_submovimiento(self, event, data: schemas.CorrectionCreate, operaciones) -> tuple[str | None, str | None]:
         """Aplica la corrección a una fila de `bird_movements` / `feed_movements`.
@@ -427,6 +469,11 @@ FUERA_DEL_SELECTOR = frozenset({"lot_id", "farm_id", "house_id", "extra_data"})
 
 #: `observations` se ofrece siempre, aunque esté vacío: es el campo de uso más frecuente.
 SIEMPRE_OFRECIDOS = frozenset({"observations"})
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-27` (`OD-S2-01`): el tipo es un dato del
+#: registro de corrección y el formulario lo lee tal cual. Un tipo inexistente y el de otra
+#: empresa se rechazan con el mismo texto: el ajeno se comporta como inexistente (`AC26`).
+MENSAJE_TIPO_DE_CORRECCION = "Seleccione el tipo de corrección"
 
 #: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: lo que no es anulable no se puede vaciar.
 NO_VACIABLES: dict[str, str] = {"event_date": "La fecha del evento no puede quedar vacía"}

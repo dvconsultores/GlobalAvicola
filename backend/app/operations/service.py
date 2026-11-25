@@ -64,6 +64,9 @@ from .validators import (
     # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: la muestra y las cantidades (`RR-24`..`RR-26`).
     validate_muestra,
     validate_cantidades_no_negativas,
+    # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: el lote de la vacuna y el motivo de la baja (`RR-31`, `RR-32`).
+    validate_lote_de_vacuna,
+    validate_motivo_de_la_baja,
 )
 
 
@@ -1054,6 +1057,10 @@ class OperationsService:
         validate_muestra(event_type, data.sample_size, data.received_total, data.dead_on_arrival,
                          sum(bm.quantity for bm in data.bird_movements))
         validate_cantidades_no_negativas(data.dosage_per_bird, data.treatment_days, data.chicks_healthy, data.chicks_weak)
+        # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: el alta exige siempre el lote de la vacuna
+        # (`RR-31`) y el motivo de la baja o el descarte (`RR-32`).
+        validate_lote_de_vacuna(event_type, data.vaccine_lot_number)
+        validate_motivo_de_la_baja(event_type, data.cause_id, data.cull_cause_id)
         # `GA-REM-005-C` (`R-170`) + `GA-REM-021-C` (`B13`): una sola contabilidad de nacimientos (`BR-21`).
         validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
                                     [(bm.sex, bm.quantity) for bm in data.bird_movements])
@@ -1412,6 +1419,16 @@ class OperationsService:
         no_negativas = {k: cambios[k] for k in ("dosage_per_bird", "treatment_days", "chicks_healthy", "chicks_weak") if k in cambios}
         if no_negativas:
             validate_cantidades_no_negativas(**no_negativas)
+        # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: `RR-31` y `RR-32` solo se evalúan si la
+        # modificación **toca** el campo —también con `None` o vacío, que es precisamente lo que
+        # se rechaza—. Un histórico sin el dato sigue editándose en cualquier otro campo.
+        if "vaccine_lot_number" in cambios:
+            validate_lote_de_vacuna(event.event_type, cambios["vaccine_lot_number"])
+        if any(k in cambios for k in ("cause_id", "cull_cause_id")):
+            validate_motivo_de_la_baja(
+                event.event_type,
+                cambios.get("cause_id", event.cause_id),
+                cambios.get("cull_cause_id", event.cull_cause_id))
 
     async def _exigir_sin_vinculo_efectivo(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
         """`GA-REM-031-A` · `R-178`: un evento casado en un vínculo de trazabilidad no se reasigna.

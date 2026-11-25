@@ -885,6 +885,45 @@ def validate_cantidades_no_negativas(dosage_per_bird=None, treatment_days=None, 
             raise BusinessRuleViolation(mensaje, "RR-26")
 
 
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-31` / `RR-32`: los mensajes se leen en el
+#: formulario, junto al dato; el identificador de la regla viaja solo en `BusinessRuleViolation`.
+MENSAJE_LOTE_DE_VACUNA = "Ingrese el lote de la vacuna aplicada"
+MENSAJE_CAUSA_DE_MORTALIDAD = (
+    "Seleccione la causa de la mortalidad (use «Desconocida» si no se pudo determinar)")
+MENSAJE_CAUSA_DE_DESCARTE = (
+    "Seleccione la causa del descarte (use «Desconocida» si no se pudo determinar)")
+
+
+def validate_lote_de_vacuna(event_type, vaccine_lot_number=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-31` (`OD-S2-05`): el lote de la vacuna.
+
+    Una vacunación dice con qué lote de vacuna se aplicó: sin ese dato no describe una
+    aplicación. Espacios no son texto —tras `strip` el lote sigue vacío—. Quien decide que la
+    regla aplica es el llamador: el alta la exige siempre, la edición y la corrección solo
+    cuando la modificación toca el campo, para que un histórico sin el dato siga editándose.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.VACCINATION.value:
+        return
+    if vaccine_lot_number is None or str(vaccine_lot_number).strip() == "":
+        raise BusinessRuleViolation(MENSAJE_LOTE_DE_VACUNA, "RR-31")
+
+
+def validate_motivo_de_la_baja(event_type, cause_id=None, cull_cause_id=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-32` (`OD-S2-06`): la baja dice por qué.
+
+    La mortalidad declara `cause_id` y el descarte `cull_cause_id`. `NULL` no es un valor: lo
+    que no se pudo determinar se registra con el valor explícito compartido «Desconocida». Como
+    en `RR-31`, el llamador decide cuándo aplica: solo si la modificación toca ese campo, de modo
+    que un evento histórico sin causa sigue siendo legible y editable en otros campos.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo == EventType.MORTALITY_RECORDING.value and cause_id is None:
+        raise BusinessRuleViolation(MENSAJE_CAUSA_DE_MORTALIDAD, "RR-32")
+    if tipo == EventType.CULL_RECORDING.value and cull_cause_id is None:
+        raise BusinessRuleViolation(MENSAJE_CAUSA_DE_DESCARTE, "RR-32")
+
+
 def validate_segregation(registered_by_id: int, action_user_id: int, action: str = "aprobar") -> None:
     """BR-14: Operator cannot approve own data. Enforces segregation of duties."""
     if registered_by_id == action_user_id:
