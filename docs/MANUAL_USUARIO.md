@@ -223,7 +223,7 @@ El campo «Semana» **no se rellena solo**: es opcional y el «Ej.: 12» que apa
 
 ### 9.3 · Inspección de granja sin lote
 
-Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja no tiene una cadena productiva inequívoca, el registro queda en **Pendientes de clasificar** (botón en Historial), donde se ve con su granja y galpón. La clasificación desde la pantalla todavía no está disponible: la gestiona el equipo de soporte.
+Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja no tiene una cadena productiva inequívoca, el registro queda en **Pendientes de clasificar** (botón en Historial), donde se ve con su granja y galpón. La clasificación se hace desde esa misma pantalla, indicando el código de la unidad de negocio y un motivo, y queda auditada (requiere el permiso de administración de maestros).
 
 Una inspección de granja es un evento de **nivel granja**: aunque se clasifique o se apruebe, **no se le asigna un lote** (en el Historial la columna Lote dice «Sin lote (nivel granja)»). Clasificarla solo la atribuye a una unidad de negocio; no es lo mismo que asignarle un lote. El texto «Se creará al aprobar» aparece únicamente en la importación de abuelas, que sí crea su lote al aprobarse.
 

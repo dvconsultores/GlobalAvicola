@@ -6,14 +6,17 @@ había y el nombre de lo que quedó: el operador no reconoce un número. Y no to
 es un maestro: la muestra tomada y las observaciones no pertenecen a ningún catálogo, así que su
 fila del selector no debe anunciar ninguno.
 
-Trazabilidad: `spec 020 (AC-S2-C03..C05)` · casos `CORR-S2-01, 02, 03, 08, 09`.
+Trazabilidad: `spec 020 (AC-S2-C03..C05)` · casos `CORR-S2-01, 02, 03, 08, 09, 11`.
 """
 
 from __future__ import annotations
 
+import json
 import uuid
 
 import pytest
+from sqlalchemy import text
+from sqlalchemy.ext.asyncio import create_async_engine
 
 from tests.test_uat_s2_write_contract import (
     _alta_recepcion,
@@ -104,6 +107,35 @@ async def _recepcion_breeder_100(client, headers, **extra) -> dict:
     respuesta = await _alta_recepcion(client, headers, **cuerpo)
     assert respuesta.status_code == 201, respuesta.text
     return respuesta.json()
+
+
+async def _token_de_otra_empresa(client, headers, company_id: int) -> dict:
+    """Un token con el contexto de la otra empresa, emitido por el super admin."""
+    r = await client.post("/api/v1/switch-company", headers=headers,
+                          json={"company_id": company_id})
+    assert r.status_code == 200, r.text
+    datos = r.json()
+    token = datos.get("access_token") or datos.get("token")
+    assert token, f"switch-company no devolvió un token: {datos}"
+    return {"Authorization": f"Bearer {token}"}
+
+
+async def _apuntar_el_evento_a_supplier(event_id: int, supplier_id: int, url: str) -> None:
+    """Deja el evento apuntando a otro proveedor por SQL: un estado imposible por API.
+
+    Corregir o editar hacia un proveedor de otra empresa se rechaza (`CORR-S2-10`), así que el
+    único modo de llegar a ese registro es una escritura directa —el dato heredado o manipulado
+    que la lectura defensiva debe tolerar.
+    """
+    motor = create_async_engine(url)
+    try:
+        async with motor.begin() as conexion:
+            await conexion.execute(
+                text("UPDATE operational_events SET supplier_id = :s WHERE id = :e"),
+                {"s": supplier_id, "e": event_id},
+            )
+    finally:
+        await motor.dispose()
 
 
 # ── CORR-S2-01 · el selector de un campo maestro ─────────────────────────────
@@ -237,3 +269,50 @@ async def test_corr_s2_09_corregir_la_muestra_guarda_la_traza_y_sube_la_version(
     assert despues["status"] == "corrected", despues
     assert despues["version"] == antes["version"] + 1, (antes, despues)
     assert despues["sample_size"] == 40, despues
+
+
+# ── CORR-S2-11 · un maestro de otra empresa no se nombra ─────────────────────
+
+@pytest.mark.asyncio
+async def test_corr_s2_11_un_maestro_de_otra_empresa_no_se_nombra(
+        auth_headers, client, seeded_ids, test_database_url):
+    """CORR-S2-11: el proveedor ajeno se lee por su identificador, nunca por su nombre.
+
+    La empresa del actor solo puede nombrar los registros de su propio catálogo o los
+    compartidos (`company_id` nulo): el proveedor de la otra empresa se comporta como
+    inexistente. El evento se deja apuntando a él por SQL —un estado imposible por API, el
+    del dato heredado— y ni el selector ni el historial revelan su nombre.
+    """
+    propio_id, nombre_propio = await _proveedor(client, auth_headers)
+    headers_ajenos = await _token_de_otra_empresa(client, auth_headers,
+                                                  seeded_ids["company_id_2"])
+    ajeno_id, nombre_ajeno = await _proveedor(client, headers_ajenos)
+    assert ajeno_id != propio_id, (propio_id, ajeno_id)
+
+    evento = await _recepcion_con_proveedor(client, auth_headers, propio_id)
+    await _apuntar_el_evento_a_supplier(evento["id"], ajeno_id, test_database_url)
+
+    # El selector: el campo sigue anunciando su catálogo y el id que hoy tiene el evento,
+    # pero sin nombre a la vista.
+    entrada = _por_sufijo(await _campos(client, auth_headers, evento["id"]), "supplier_id")
+    assert entrada["master"] == "suppliers", entrada
+    assert entrada["current_value"] == str(ajeno_id), entrada
+    assert entrada["current_display"] is None, entrada
+
+    # El historial: la corrección que devuelve el evento a un proveedor propio conserva el
+    # original como id, sin bautizarlo. El proveedor propio sí se nombra: el silencio es del
+    # ajeno, no del catálogo.
+    r = await _corregir(client, auth_headers, evento["id"], "supplier_id", str(propio_id))
+    assert r.status_code == 201, r.text
+    creada = r.json()
+    assert creada["original_value"] == str(ajeno_id), creada
+    assert creada["original_display"] is None, creada
+    assert creada["corrected_display"] == nombre_propio, creada
+
+    historial = await _historial(client, auth_headers, evento["id"])
+    fila = _ultima(historial, "supplier_id")
+    assert fila["original_value"] == str(ajeno_id), fila
+    assert fila["original_display"] is None, fila
+    assert fila["corrected_value"] == str(propio_id), fila
+    assert fila["corrected_display"] == nombre_propio, fila
+    assert nombre_ajeno not in json.dumps(historial, ensure_ascii=False), historial
