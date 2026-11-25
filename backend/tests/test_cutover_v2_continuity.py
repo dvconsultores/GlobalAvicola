@@ -19,6 +19,7 @@ from cutover_v2_fixtures import (  # noqa: E402
     SIN_NO_INCUBABLES, aplicar, aprobar, corte, crear_batch, fila_engorde, fila_incubadora, fila_reproductoras,
     headers_aprobador, items_por_referencia, preparar, subir, xlsx_v2,
 )
+from owner_decisions_support import causa_desconocida  # noqa: E402
 from time_reference import iso_days_ago, recent_event_date  # noqa: E402
 
 DIAS_CORTE = 30
@@ -34,6 +35,17 @@ async def _lote_aplicado(client, headers, seeded_ids, bu: str, filas: list, dias
 
 
 async def _evento(client, headers, **cuerpo):
+    """Registra un evento.
+
+    `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`: la baja dice por qué. Se añade
+    la causa compartida «Desconocida» (`company_id` NULL, ya sembrada) —el valor explícito para lo
+    que no se pudo determinar— en el único punto por el que este archivo crea eventos, para que las
+    pruebas sigan midiendo la continuidad del corte y no el catálogo.
+    """
+    if cuerpo.get("event_type") == "mortality_recording":
+        cuerpo.setdefault("cause_id", await causa_desconocida(client, headers))
+    elif cuerpo.get("event_type") == "cull_recording":
+        cuerpo.setdefault("cull_cause_id", await causa_desconocida(client, headers, "cull-causes"))
     return await client.post("/api/v1/operations", headers=headers, json=cuerpo)
 
 
