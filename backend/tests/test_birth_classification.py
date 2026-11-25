@@ -49,7 +49,7 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import BirdTypeEnum, Company, Lot, LotStatus
+    from app.masters.models import BirdTypeEnum, Company, CorrectionType, Lot, LotStatus
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -113,8 +113,14 @@ async def esc(test_database_url):
                  "lr": _lote(a, "LR", BirdTypeEnum.BREEDER), "lhb": _lote(b, "LHB", BirdTypeEnum.HATCHERY)}
         s.add_all(lotes.values())
         await s.flush()
+        # `SPEC 020 §6` · `RR-27`: la corrección declara su tipo. El actor `corrector` no lee los
+        # maestros, así que el tipo se siembra aquí, en la empresa del evento.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}TIPO-CORRECCION",
+                                         description=f"{PREFIJO}tipo de corrección de prueba", is_active=True)
+        s.add(tipo_correccion)
+        await s.flush()
         await s.commit()
-        d = {"a": a.id, "b": b.id, "url": test_database_url}
+        d = {"a": a.id, "b": b.id, "url": test_database_url, "tipo_correccion": tipo_correccion.id}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -136,6 +142,7 @@ async def esc(test_database_url):
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p",
             "DELETE FROM roles WHERE name LIKE :p",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",  # `RR-27`
             "DELETE FROM companies WHERE name LIKE :p",
         ):
             await c.execute(text(sql), p)
@@ -289,10 +296,12 @@ async def test_b13_11_14_edicion_correccion_y_auditoria(http_client, esc):
     r = await http_client.put(ruta, headers=_token(esc["operador"]), json={"chicks_healthy": 89, "chicks_weak": 6})
     assert r.status_code == 200 and (r.json()["chicks_healthy"], r.json()["chicks_weak"]) == (89, 6), r.text
     r = await http_client.post("/api/v1/corrections", headers=_token(esc["corrector"]),
-                               json={"event_id": ev["id"], "field_name": "chicks_weak", "corrected_value": "7", "reason": f"{PREFIJO}reconteo"})
+                               json={"event_id": ev["id"], "field_name": "chicks_weak", "corrected_value": "7", "reason": f"{PREFIJO}reconteo",
+                                     "correction_type_id": esc["tipo_correccion"]})
     assert r.status_code == 400, ("corrección que supera los nacidos (89 + 7 > 95)", r.text[:160])
     r = await http_client.post("/api/v1/corrections", headers=_token(esc["corrector"]),
-                               json={"event_id": ev["id"], "field_name": "chicks_weak", "corrected_value": "4", "reason": f"{PREFIJO}reconteo"})
+                               json={"event_id": ev["id"], "field_name": "chicks_weak", "corrected_value": "4", "reason": f"{PREFIJO}reconteo",
+                                     "correction_type_id": esc["tipo_correccion"]})
     assert r.status_code == 201, r.text
     assert (await _sql(esc, "SELECT chicks_weak FROM operational_events WHERE id = :e", e=ev["id"]))[0][0] == 4
     assert await _viables(esc, esc["lh"]) == 95, "ni la edición ni la corrección tocan los nacidos"

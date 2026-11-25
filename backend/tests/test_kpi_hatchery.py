@@ -26,6 +26,7 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
+from tests.owner_decisions_support import causa_desconocida
 from tests.time_reference import iso_days_ago
 
 PREFIJO = "KH-TEST-"
@@ -184,6 +185,8 @@ async def test_t_015_07_el_descarte_separa_rendimiento_de_nacimiento(
     """
     await _evento(client, auth_headers, seeded_ids, incubadora, "cull_recording",
                   aprobar_con=aprobador,
+                  # `SPEC 020 §6` · `RR-32`: el descarte declara su causa, no la infiere el servidor.
+                  cull_cause_id=await causa_desconocida(client, auth_headers, "cull-causes"),
                   bird_movements=[{"sex": "mixed", "quantity": NACIDOS - VIABLES}])
 
     k = (await client.get(f"/api/v1/reports/kpis/hatchery?lot_id={incubadora}",

@@ -53,7 +53,9 @@ async def esc(test_database_url):
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
     from app.integrations.sap.models import SapReference, SapReferenceType
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus, Supplier, Transport
+    from app.masters.models import (
+        BirdTypeEnum, Company, CorrectionType, Farm, FarmType, House, Lot, LotStatus, Supplier, Transport,
+    )
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -132,12 +134,17 @@ async def esc(test_database_url):
         sup_c = Supplier(company_id=c.id, name=f"{PREFIJO}PROVEEDOR-C", country="Francia", supplier_type="international", is_active=True)
         tr_c = Transport(company_id=c.id, name=f"{PREFIJO}TRANSPORTE-C", plate="ABUE-C", is_active=True)
         s.add_all([sup_a, sup_b, tr_a, tr_b, sup_c, tr_c])
+        # `SPEC 020 §6` · `RR-27`: la corrección declara su tipo. El actor `op_ambos` no lee
+        # los maestros, así que el tipo se siembra aquí, en la empresa del evento (A).
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}TIPO-CORRECCION",
+                                         description=f"{PREFIJO}tipo de corrección de prueba", is_active=True)
+        s.add(tipo_correccion)
         s.add(SapReference(company_id=a.id, ref_type=SapReferenceType.PURCHASE_ORDER, sap_code="ABUE-OC-A", quantity=100, unit="aves", is_active=True))
         s.add(SapReference(company_id=c.id, ref_type=SapReferenceType.PURCHASE_ORDER, sap_code="ABUE-OC-C", quantity=100, unit="aves", is_active=True))
         await s.flush()
         await s.commit()
         d = {"a": a.id, "b": b.id, "c": c.id, "url": test_database_url, "sup_a": sup_a.id, "sup_b": sup_b.id, "sup_c": sup_c.id,
-             "tr_a": tr_a.id, "tr_b": tr_b.id, "tr_c": tr_c.id}
+             "tr_a": tr_a.id, "tr_b": tr_b.id, "tr_c": tr_c.id, "tipo_correccion": tipo_correccion.id}
         d.update({k: v.id for k, v in granjas.items()}); d.update({f"galpon_{k[-1]}": v.id for k, v in galpones.items()})
         d.update({k: v.id for k, v in u.items()}); d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -156,6 +163,7 @@ async def esc(test_database_url):
             "DELETE FROM egg_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM sap_references WHERE sap_code LIKE :p",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",  # `RR-27`: el tipo se crea en la prueba
             "DELETE FROM lots WHERE lot_code LIKE :p",
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
@@ -403,10 +411,14 @@ async def test_r152_17_la_edicion_revalida_el_plan(http_client, esc):
 async def test_r152_18_la_correccion_revalida_el_plan(http_client, esc):
     evento = (await _post(http_client, esc, "op_ambos", _importacion(esc))).json()
     antes = await _evento(esc, evento["id"])
+    # `SPEC 020 §6` · `RR-27`: una corrección declara su tipo, no lo supone el servidor.
+    tipo = esc["tipo_correccion"]
 
     async def _corregir(campo, valor):
         return await http_client.post("/api/v1/corrections", headers=_token(esc["op_ambos"]),
-                                      json={"event_id": evento["id"], "field_name": campo, "corrected_value": valor, "reason": f"{PREFIJO}corrección de prueba"})
+                                      json={"event_id": evento["id"], "field_name": campo, "corrected_value": valor,
+                                            "correction_type_id": tipo,
+                                            "reason": f"{PREFIJO}corrección de prueba"})
 
     r = await _corregir("extra_data", json.dumps({"import_plan": _plan(transit_mortality=50)}))
     assert _es_br(r, "BR-22"), ("AC-R152-18: identidad rota por corrección", r.status_code, r.text)

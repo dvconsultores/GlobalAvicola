@@ -13,7 +13,7 @@ import uuid
 
 import pytest
 import pytest_asyncio
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, text
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
 import app.audit.models  # noqa: F401
@@ -41,6 +41,18 @@ async def motor(test_database_url):
     from app.masters import models as m
 
     async with e.begin() as c:
+        # `RR-32`: la causa es un dato del evento de descarte (`cull_cause_id`), así que el
+        # evento —y lo que cuelga de él— se retira antes que el maestro que referencia.
+        p = {"p": f"{PREFIJO}%"}
+        filtro = ("SELECT id FROM operational_events WHERE cull_cause_id IN "
+                  "(SELECT id FROM cull_causes WHERE name LIKE :p)")
+        for tabla in ("approval_actions", "correction_logs", "bird_movements", "egg_movements",
+                      "feed_movements", "hatchery_params", "inspection_details", "egg_storage",
+                      "evidences", "operational_alerts"):
+            await c.execute(text(f"DELETE FROM {tabla} WHERE event_id IN ({filtro})"), p)
+        await c.execute(text(f"DELETE FROM reversals WHERE original_event_id IN ({filtro}) "
+                             f"OR reversal_event_id IN ({filtro})"), p)
+        await c.execute(text(f"DELETE FROM operational_events WHERE id IN ({filtro})"), p)
         for modelo in (m.Medication, m.CullCause, m.RejectionReason, m.CorrectionType,
                        m.ProductivePhase, m.Incubator, m.Hatcher, m.Hatchery):
             if hasattr(modelo, "name"):
@@ -221,7 +233,10 @@ async def test_t_090_06_la_causa_creada_se_puede_usar_en_un_descarte(
         "lot_id": seeded_ids["lot_id"], "farm_id": seeded_ids["farm_id"],
         "house_id": seeded_ids["house_id"], "event_type": "cull_recording",
         "event_date": iso_days_ago(0),
-        "bird_movements": [{"sex": "mixed", "quantity": 3, "cull_cause_id": causa["id"]}],
+        # `SPEC 020 §6` · `RR-32`: la causa del descarte es el dato del evento
+        # (`cull_cause_id`), no un atributo de la fila de aves.
+        "cull_cause_id": causa["id"],
+        "bird_movements": [{"sex": "mixed", "quantity": 3}],
     })
     assert r.status_code == 201, f"la causa recién creada no se pudo usar: {r.text}"
 

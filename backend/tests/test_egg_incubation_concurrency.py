@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import asyncio
 import uuid
+from datetime import datetime, time, timezone
 
 import pytest
 import pytest_asyncio
@@ -25,7 +26,7 @@ import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.time_reference import days_ago, recent_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -123,9 +124,20 @@ async def esc(test_database_url):
                  "lhb": _lote(b, "LHB", BirdTypeEnum.HATCHERY, granja_b), "lb": _lote(b, "LB", BirdTypeEnum.BREEDER, granja_b)}
         s.add_all(lotes.values())
         await s.flush()
+        # `SPEC 020 §6` · `RR-30`: el lote de incubadora que recibe la baja declara su inicio,
+        # anterior a cualquier fecha de evento de la suite.
+        lotes["lh"].start_date = datetime.combine(days_ago(60), time.min, tzinfo=timezone.utc)
+        await s.flush()
+        # `RR-32`: la baja y el descarte declaran su causa; «Desconocida» es la fila compartida
+        # (`company_id NULL`) que siembra la migración, leída aquí sin pasar por el catálogo.
+        causas = {}
+        for tabla in ("mortality_causes", "cull_causes"):
+            causas[tabla] = (await s.execute(
+                text(f"SELECT id FROM {tabla} WHERE company_id IS NULL AND name = 'Desconocida'"))).scalar_one()
         await s.commit()
         d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpones[granja_a].id, "planta_a": planta_a.id, "galpon_p": galpones[planta_a].id,
-             "granja_b": granja_b.id, "galpon_b": galpones[granja_b].id, "url": test_database_url}
+             "granja_b": granja_b.id, "galpon_b": galpones[granja_b].id, "url": test_database_url,
+             "causa_mortalidad": causas["mortality_causes"], "causa_descarte": causas["cull_causes"]}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -188,7 +200,7 @@ async def _eventos(esc, lote, tipo) -> int:
     return await _cuenta(esc, "SELECT count(*) FROM operational_events WHERE lot_id = :l AND event_type::text ILIKE :t", l=lote, t=tipo)
 
 
-def _cuerpo(esc, lote, tipo, n, *, granja, galpon, egg_type="fertile"):
+def _cuerpo(esc, lote, tipo, n, *, granja, galpon, egg_type="fertile", **campos):
     cuerpo = {"lot_id": esc[lote], "event_type": tipo, "event_date": recent_event_date(), "farm_id": esc[granja], "house_id": esc[galpon]}
     if tipo == "incubation_load":
         cuerpo["hatchery_params"] = [{"quantity_loaded": n}]
@@ -200,6 +212,7 @@ def _cuerpo(esc, lote, tipo, n, *, granja, galpon, egg_type="fertile"):
         cuerpo["egg_movements"] = [{"egg_type": egg_type, "quantity": n}]
     if tipo == "egg_dispatch":
         cuerpo["destination_farm_id"] = esc["planta_a"]
+    cuerpo.update(campos)  # `RR-32`: la causa de la baja o del descarte viaja en el alta
     return cuerpo
 
 
@@ -317,7 +330,9 @@ async def test_r161_16_control_r171_mortalidad_y_descarte_en_incubadora_restan_d
     r = await _op(http_client, esc, "operador", "lh", "birth_registration", 100)
     assert r.status_code == 201, r.text
     assert (await _saldos(esc, esc["lh"]))["viables"] == 100
-    assert (await _op(http_client, esc, "operador", "lh", "mortality_recording", 10)).status_code == 201
-    assert (await _op(http_client, esc, "operador", "lh", "cull_recording", 5)).status_code == 201
+    assert (await _op(http_client, esc, "operador", "lh", "mortality_recording", 10,
+                      cause_id=esc["causa_mortalidad"])).status_code == 201
+    assert (await _op(http_client, esc, "operador", "lh", "cull_recording", 5,
+                      cull_cause_id=esc["causa_descarte"])).status_code == 201
     assert (await _saldos(esc, esc["lh"]))["viables"] == 85, "R-171 es UI_ONLY: el dominio ya resta mortalidad y descarte de viables"
     assert _es_br(await _op(http_client, esc, "operador", "lh", "chick_dispatch", 86), "BR-04")

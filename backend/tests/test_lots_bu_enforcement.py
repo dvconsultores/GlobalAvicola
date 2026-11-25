@@ -20,7 +20,7 @@ from __future__ import annotations
 import os
 import pathlib
 import uuid
-from datetime import date
+from datetime import date, datetime, time, timezone
 
 import pytest
 import pytest_asyncio
@@ -32,7 +32,8 @@ import app.business_units.models  # noqa: F401
 import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.owner_decisions_support import tipo_de_alimento
+from tests.time_reference import days_ago, recent_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -145,6 +146,11 @@ async def esc(test_database_url):
         lg2 = _lote(a, "LG2", BirdTypeEnum.GRANDPARENT)  # sin eventos: activate-manual exige un lote sin operaciones
         s.add_all([lr, lg, lh, ln, lb, lh2, lg2])
         await s.flush()
+        # `SPEC 020 §6` · `RR-30`: el lote que recibe operaciones declara su inicio, anterior a
+        # cualquier fecha que la suite genere; sin él la semana productiva es
+        # `LOT_DATE_INCOMPLETE`.
+        lr.start_date = datetime.combine(days_ago(60), time.min, tzinfo=timezone.utc)
+        await s.flush()
 
         def _evento(empresa, lote, autor):
             return OperationalEvent(company_id=empresa.id, lot_id=lote.id, event_type=EventType.FARM_INSPECTION,
@@ -193,6 +199,7 @@ async def esc(test_database_url):
             "DELETE FROM lot_phases WHERE lot_id IN (SELECT id FROM lots WHERE lot_code LIKE :p)",
             "DELETE FROM lots WHERE lot_code LIKE :p",
             "DELETE FROM productive_phases WHERE name LIKE :p",  # `GA-REM-015-B` (`R-175`): la fase creada por la fixture se retira
+            "DELETE FROM feed_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",  # `RR-33`: el tipo de alimento se crea en la prueba
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
@@ -262,8 +269,14 @@ async def _cerrable(http_client, esc, cab, lote):
     r = await http_client.post("/api/v1/operations", headers=cab, json={**base, "event_type": "weight_recording",
                                "bird_movements": [{"sex": "mixed", "quantity": 10, "avg_weight": 2000}]})
     assert r.status_code == 201, r.text
+    # `SPEC 020 §6` · `RR-34`: el consumo deriva la fase del lote en la fecha del evento.
+    r = await http_client.post(f"/api/v1/lots/{lote}/phases", headers=cab, json={
+        "lot_id": lote, "phase_id": esc["fase"], "start_date": days_ago(60).isoformat()})
+    assert r.status_code == 201, r.text
     r = await http_client.post("/api/v1/operations", headers=cab, json={**base, "event_type": "feed_registration",
-                               "feed_movements": [{"quantity_kg": 100.0}]})
+                               "feed_movements": [
+                                   {"quantity_kg": 100.0,
+                                    "feed_type_id": await tipo_de_alimento(http_client, cab)}]})
     assert r.status_code == 201, r.text
     motor = create_async_engine(esc["url"])
     try:

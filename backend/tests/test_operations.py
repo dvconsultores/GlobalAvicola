@@ -1,5 +1,6 @@
 """Tests for Operations module — events, business rules."""
 import pytest
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.time_reference import recent_event_date
 
 
@@ -53,7 +54,8 @@ async def test_create_feed_registration(auth_headers, client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 250.0}],
+        "feed_movements": [{"quantity_kg": 250.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],  # `SPEC 020 §6` · `RR-33`
     })
     assert resp.status_code == 201
     data = resp.json()
@@ -267,7 +269,8 @@ async def test_create_feed_registration(auth_headers, client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 250.0}],
+        "feed_movements": [{"quantity_kg": 250.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],  # `SPEC 020 §6` · `RR-33`
     })
     assert resp.status_code == 201
     data = resp.json()

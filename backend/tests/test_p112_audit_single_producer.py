@@ -32,7 +32,8 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.audit.models import AuditAction, AuditLog, AuditModule
-from tests.time_reference import iso_days_ago
+from tests.owner_decisions_support import tipo_de_alimento
+from tests.time_reference import days_ago, iso_days_ago
 
 PREFIJO = "P112-"
 
@@ -175,12 +176,34 @@ async def _evento(client, cabecera, ids, lot_id, tipo, **extra) -> int:
     return r.json()["id"]
 
 
-async def _requisitos_br05(client, cabecera, ids, lot_id) -> None:
-    """Pesaje y alimento: lo mínimo que `BR-05` exige para poder cerrar."""
+async def _requisitos_br05(client, cabecera, ids, lot_id, motor) -> None:
+    """Pesaje y alimento: lo mínimo que `BR-05` exige para poder cerrar.
+
+    `SPEC 020 §6`: el consumo declara su tipo de alimento (`RR-33`) y deriva su fase del
+    lote (`RR-34`). La fase se abre por Core —no por `POST /lots/{id}/phases`— para no
+    añadir filas de auditoría que el cierre de este módulo cuenta.
+    """
     await _evento(client, cabecera, ids, lot_id, "weight_recording",
                   bird_movements=[{"sex": "mixed", "quantity": 10, "avg_weight": 2000}])
+    await _abrir_fase_del_lote(motor, lot_id)
     await _evento(client, cabecera, ids, lot_id, "feed_registration",
-                  feed_movements=[{"quantity_kg": ALIMENTO_KG}])
+                  feed_movements=[{"quantity_kg": ALIMENTO_KG,
+                                   "feed_type_id": await tipo_de_alimento(client, cabecera)}])
+
+
+async def _abrir_fase_del_lote(motor, lot_id: int) -> None:
+    """`RR-34`: deja el lote con una fase productiva vigente desde su fecha de inicio."""
+    from sqlalchemy import insert, select
+
+    from app.lots.models import LotPhase
+    from app.masters.models import ProductivePhase
+
+    async with motor.begin() as c:
+        fase_id = (await c.execute(
+            select(ProductivePhase.id).order_by(ProductivePhase.id).limit(1)
+        )).scalar_one()
+        await c.execute(insert(LotPhase).values(
+            lot_id=lot_id, phase_id=fase_id, start_date=days_ago(90), is_active=True))
 
 
 async def _aprobar_todo(motor, lot_id) -> None:
@@ -269,7 +292,7 @@ async def test_p112_02_aprobacion_una_fila(client, auth_headers, seeded_ids, mot
 
 async def test_p112_03_cierre_auditado(client, auth_headers, seeded_ids, motor):
     lot_id = await _lote(client, auth_headers, seeded_ids)
-    await _requisitos_br05(client, auth_headers, seeded_ids, lot_id)
+    await _requisitos_br05(client, auth_headers, seeded_ids, lot_id, motor)
     await _aprobar_todo(motor, lot_id)
 
     cierre = await client.post(f"/api/v1/lots/{lot_id}/close", headers=auth_headers)
