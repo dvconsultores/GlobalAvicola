@@ -44,6 +44,10 @@ def _payload(**extra) -> dict:
         "event_date": recent_event_date(),
         # `spec 015 §4.1` (`RR-21`): una vacunación sin vacuna ya no se registra.
         "vaccine_id": 1,
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-31`: la vacunación declara el
+        # lote de la vacuna aplicada. El valor por defecto solo abre la puerta: la prueba sigue
+        # midiendo la persistencia de cada campo (`P0-14`), no `RR-31`.
+        "vaccine_lot_number": "LOT-P014-BASE",
         "bird_movements": [{"sex": "mixed", "quantity": 10}],
     }
     base.update(extra)
