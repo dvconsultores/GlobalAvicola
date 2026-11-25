@@ -11,6 +11,12 @@ from __future__ import annotations
 
 import pytest
 
+from tests.owner_decisions_support import (
+    LOTE_DE_VACUNA,
+    fase_vigente_del_lote,
+    tipo_de_alimento,
+    tipo_de_correccion,
+)
 from tests.time_reference import recent_event_date
 
 LOTE = 2
@@ -71,7 +77,9 @@ async def test_rr21_vacunacion_sin_vacuna_es_400(auth_headers, client):
 
 
 async def test_rr21_vacunacion_con_vacuna_es_201(auth_headers, client):
-    r = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water")
+    # `RR-31`: la vacunación que sí se registra declara además con qué lote se aplicó.
+    r = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water",
+                    vaccine_lot_number=LOTE_DE_VACUNA)
     assert r.status_code == 201, r.text
     assert r.json()["vaccine_id"] == 1
 
@@ -112,8 +120,11 @@ async def test_rr23_alimento_con_cero_kilos_es_rechazado(auth_headers, client):
 
 
 async def test_rr23_alimento_con_kilos_es_201(auth_headers, client):
+    # `RR-33` / `RR-34`: la fila nombra su tipo de alimento y el lote tiene fase vigente ese día.
+    await fase_vigente_del_lote(client, auth_headers, LOTE, recent_event_date())
     r = await _alta(client, auth_headers, "feed_registration",
-                    feed_movements=[{"quantity_kg": 12.5}])
+                    feed_movements=[{"quantity_kg": 12.5,
+                                     "feed_type_id": await tipo_de_alimento(client, auth_headers)}])
     assert r.status_code == 201, r.text
     det = await client.get(f"/api/v1/operations/{r.json()['id']}", headers=auth_headers)
     assert det.status_code == 200, det.text
@@ -123,7 +134,8 @@ async def test_rr23_alimento_con_kilos_es_201(auth_headers, client):
 # ── edición · la regla se revalida sobre el estado candidato ─────────────────
 
 async def test_edicion_no_puede_vaciar_la_vacuna(auth_headers, client):
-    alta = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water")
+    alta = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water",
+                       vaccine_lot_number=LOTE_DE_VACUNA)
     assert alta.status_code == 201, alta.text
     eid = alta.json()["id"]
 
@@ -140,13 +152,15 @@ async def test_edicion_no_puede_vaciar_la_vacuna(auth_headers, client):
 # ── corrección · vaciar la vacuna tampoco es una puerta trasera ─────────────
 
 async def test_correccion_no_puede_vaciar_la_vacuna(auth_headers, client):
-    alta = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water")
+    alta = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water",
+                       vaccine_lot_number=LOTE_DE_VACUNA)
     assert alta.status_code == 201, alta.text
     eid = alta.json()["id"]
 
     r = await client.post("/api/v1/corrections", headers=auth_headers, json={
         "event_id": eid, "field_name": "vaccine_id",
         "corrected_value": "", "reason": "Se cargó la vacuna equivocada",
+        "correction_type_id": await tipo_de_correccion(client, auth_headers),
     })
     assert r.status_code == 400, r.text
     assert r.json()["detail"] == "Seleccione la vacuna aplicada"

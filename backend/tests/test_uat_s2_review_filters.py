@@ -21,6 +21,11 @@ import uuid
 
 import pytest
 
+from tests.owner_decisions_support import (
+    fase_vigente_del_lote,
+    tipo_de_alimento,
+    tipo_de_correccion,
+)
 from tests.time_reference import iso_days_ago
 
 # Prefijo de los lotes que este módulo crea: los hace irrepetibles y reconocibles.
@@ -50,13 +55,17 @@ async def _crear_lote(client, headers, seeded_ids) -> dict:
 
 async def _crear_evento(client, headers, lote, event_date: str) -> dict:
     """Evento `feed_registration` sobre el lote, con la fecha pedida."""
+    # `RR-33` / `RR-34`: el consumo nombra su tipo de alimento y el lote tiene fase vigente ese día.
+    # La fase se abre al inicio del lote (no por evento) para que cubra cualquier fecha del caso.
+    await fase_vigente_del_lote(client, headers, lote["id"], iso_days_ago(30))
     r = await client.post("/api/v1/operations", headers=headers, json={
         "lot_id": lote["id"],
         "farm_id": lote["farm_id"],
         "house_id": lote["house_id"],
         "event_type": "feed_registration",
         "event_date": event_date,
-        "feed_movements": [{"quantity_kg": 25.0}],
+        "feed_movements": [{"quantity_kg": 25.0,
+                            "feed_type_id": await tipo_de_alimento(client, headers)}],
     })
     assert r.status_code == 201, r.text
     return r.json()
@@ -79,6 +88,8 @@ async def _corregir(client, headers, event_id: int) -> dict:
         "field_name": "observations",
         "corrected_value": "Ajuste del UAT S2",
         "reason": "Error de digitación",
+        # `RR-27` (`OD-S2-01`, ratificado por la Owner): toda corrección declara su tipo.
+        "correction_type_id": await tipo_de_correccion(client, headers),
     })
     assert r.status_code == 201, r.text
 
