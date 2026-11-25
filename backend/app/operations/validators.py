@@ -847,6 +847,11 @@ def validate_contenido_minimo(event_type, vaccine_id=None, medication_id=None,
         if not any((cantidad or 0) > 0 for cantidad in kilos):
             raise BusinessRuleViolation(
                 "Registre la cantidad de alimento (kg) mayor a cero", "RR-23")
+        # `GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` · `RR-33` (`OD-S2-07`): un consumo sin identificar el
+        # alimento no es trazable. Toda fila con kilos debe nombrar su tipo de alimento.
+        if any((getattr(fila, "quantity_kg", None) or 0) > 0 and getattr(fila, "feed_type_id", None) is None
+               for fila in (feed_movements or [])):
+            raise BusinessRuleViolation("Seleccione el tipo de alimento", "RR-33")
 
 
 def validate_muestra(event_type, sample_size, received_total=None, dead_on_arrival=None, alojadas: int = 0) -> None:

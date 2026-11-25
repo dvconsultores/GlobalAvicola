@@ -123,6 +123,11 @@ class CorrectionService:
                 # `GA-REM-023-B` · `R-176` (+ `R-45`): la fecha y el documento SAP también pasan por ella
                 # (`BR-06`, `BR-19`, `BR-11`, `BR-18`): corregir no es una puerta trasera.
                 await operaciones.verificar_destino_de_edicion(event, {data.field_name: valor_aplicado})
+            if data.field_name in ("event_date", "lot_id"):  # `RR-30` / `RR-34`: la semana sigue a la fecha
+                await operaciones.recalcular_semana_y_fase_del_evento(
+                    event,
+                    valor_aplicado if data.field_name == "event_date" else event.event_date,
+                    valor_aplicado if data.field_name == "lot_id" else event.lot_id)
             setattr(event, data.field_name, valor_aplicado)
             event.version += 1
 
@@ -199,7 +204,7 @@ class CorrectionService:
         filas = event.bird_movements if tabla == "bird_movements" else event.feed_movements
         fila = next((f for f in filas if f.id == fila_id), None)
         if (fila is None
-                or campo not in SUBMOV_CORREGIBLES[tabla]):
+                or campo not in _submov_corregibles(event, tabla)):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=(
@@ -315,7 +320,7 @@ class CorrectionService:
             })
 
         for bm in event.bird_movements:
-            for campo in sorted(SUBMOV_CORREGIBLES["bird_movements"]):
+            for campo in sorted(_submov_corregibles(event, "bird_movements")):
                 if campo == "quantity" and es_recepcion_breeder:
                     continue
                 campos.append({
@@ -327,7 +332,7 @@ class CorrectionService:
                     "value_type": _tipo_de_valor(float if campo == "avg_weight" else int),
                 })
         for fm in event.feed_movements:
-            for campo in sorted(SUBMOV_CORREGIBLES["feed_movements"]):
+            for campo in sorted(_submov_corregibles(event, "feed_movements")):
                 campos.append({
                     "field_name": f"feed_movements[{fm.id}].{campo}",
                     "label_key": f"corrections.fields.feed_movements.{campo}",
@@ -560,10 +565,21 @@ def etiqueta_de_campo(field_name: str) -> str:
     return ETIQUETAS_CAMPO.get(campo, campo)
 
 
+def _submov_corregibles(event, tabla: str) -> set[str]:
+    """Campos corregibles de una fila. `RR-30`: la semana es derivada y no se corrige en esos eventos."""
+    from ..operations.semana import TIPOS_CON_SEMANA_DERIVADA
+
+    campos = SUBMOV_CORREGIBLES[tabla]
+    if getattr(event.event_type, "value", event.event_type) in TIPOS_CON_SEMANA_DERIVADA:
+        return campos - {"week_number"}
+    return campos
+
+
 def _campos_admitidos(event, es_recepcion_breeder: bool = False) -> str:
     """Lista de campos corregibles: los del evento y los de sus filas, con su id."""
     admitidos = sorted(campos_corregibles())
-    for tabla, campos in SUBMOV_CORREGIBLES.items():
+    for tabla in SUBMOV_CORREGIBLES:
+        campos = _submov_corregibles(event, tabla)
         filas = event.bird_movements if tabla == "bird_movements" else event.feed_movements
         for fila in filas:
             for campo in sorted(campos):

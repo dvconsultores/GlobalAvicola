@@ -71,6 +71,7 @@ from .validators import (
     validate_contenido_de_inspeccion,
     validate_distribucion_con_aves,
 )
+from .semana import TIPOS_CON_FASE_DERIVADA, TIPOS_CON_SEMANA_DERIVADA, semana_productiva
 
 
 LOT_OPTIONAL_EVENTS = {
@@ -362,6 +363,10 @@ class OperationsService:
 
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
+        # `spec 020 §6` · `RR-30` / `RR-34`: la semana y la fase se derivan del lote y de la fecha del
+        # evento; el valor que mande el cliente se ignora y, sin datos del lote, no se inventa.
+        semana_derivada, fase_derivada = await self.derivar_semana_y_fase(
+            event_type, data.lot_id, data.event_date)
 
         # Create event.
         #
@@ -386,11 +391,18 @@ class OperationsService:
 
         # Create sub-movements
         for bm in data.bird_movements:
-            self.db.add(models.BirdMovement(event_id=event.id, **bm.model_dump()))
+            datos_bm = bm.model_dump()
+            if semana_derivada is not None:
+                datos_bm["week_number"] = semana_derivada
+            self.db.add(models.BirdMovement(event_id=event.id, **datos_bm))
         for em in data.egg_movements:
             self.db.add(models.EggMovement(event_id=event.id, **em.model_dump()))
         for fm in data.feed_movements:
-            self.db.add(models.FeedMovement(event_id=event.id, **fm.model_dump()))
+            datos_fm = fm.model_dump()
+            if semana_derivada is not None:
+                datos_fm["week_number"] = semana_derivada
+            datos_fm["phase_id"] = fase_derivada
+            self.db.add(models.FeedMovement(event_id=event.id, **datos_fm))
         for hp in data.hatchery_params:
             self.db.add(models.HatcheryParams(event_id=event.id, **hp.model_dump()))
         for ins in data.inspection_details:
@@ -1332,6 +1344,9 @@ class OperationsService:
                 cambios.get("received_total", event.received_total), cambios.get("dead_on_arrival", event.dead_on_arrival),
                 cambios.get("rejected_on_arrival", event.rejected_on_arrival), sum(bm.quantity for bm in event.bird_movements))
         self.validar_cantidades_del_candidato(event, cambios)
+        if "event_date" in cambios or "lot_id" in cambios:  # `RR-30` / `RR-34`: la semana sigue a la fecha
+            await self.recalcular_semana_y_fase_del_evento(
+                event, cambios.get("event_date", event.event_date), lote_destino)
         # `GA-REM-005-E` `AC-R173-10` · `docs/13 §2`: la auditoría de la edición conserva valor anterior y nuevo
         previos = {key: _valor_auditable(getattr(event, key, None)) for key in cambios}
         for key, val in cambios.items():
@@ -1408,6 +1423,61 @@ class OperationsService:
                     self.db, cand["sap_document_ref"], tipo_del_lote, codigo_del_lote,
                     company_id=self.company_id,
                 )
+
+    async def derivar_semana_y_fase(self, event_type, lot_id, event_date) -> tuple[int | None, int | None]:
+        """`SPEC 020 §6` · `RR-30` / `RR-34`: `(semana productiva, fase vigente)` de un evento.
+
+        La semana sale de `semana_productiva(lots.start_date, event_date)` —la única función canónica— y
+        solo para los eventos de `TIPOS_CON_SEMANA_DERIVADA`; la fase, del `lot_phases` vigente en
+        `event_date`, solo para el alimento. Lo que no se puede derivar **no se inventa**: sin fecha de
+        inicio del lote (o con un evento anterior a ella) es `LOT_DATE_INCOMPLETE`; sin fase vigente,
+        `LOT_PHASE_INCOMPLETE`. Ambos son `400` con su regla.
+        """
+        from datetime import datetime as _datetime
+
+        from sqlalchemy import or_
+
+        from ..lots.models import LotPhase
+        from ..masters.models import Lot
+        from .validators import BusinessRuleViolation
+
+        tipo = getattr(event_type, "value", event_type)
+        if tipo not in TIPOS_CON_SEMANA_DERIVADA or lot_id is None:
+            return None, None
+        inicio = (await self.db.execute(
+            self._acotar_a_empresa(select(Lot.start_date).where(Lot.id == lot_id), Lot.company_id)
+        )).scalar_one_or_none()
+        try:
+            semana = semana_productiva(inicio, event_date)
+        except ValueError:
+            raise BusinessRuleViolation(
+                "Fecha del lote incompleta (LOT_DATE_INCOMPLETE): el lote no tiene fecha de inicio, o el "
+                "evento es anterior a ella, y no se puede derivar la semana", "RR-30")
+        fase = None
+        if tipo in TIPOS_CON_FASE_DERIVADA:
+            dia = event_date.date() if isinstance(event_date, _datetime) else event_date
+            fase = (await self.db.execute(
+                select(LotPhase.phase_id)
+                .where(LotPhase.lot_id == lot_id, LotPhase.start_date <= dia,
+                       or_(LotPhase.end_date.is_(None), LotPhase.end_date >= dia))
+                .order_by(LotPhase.start_date.desc(), LotPhase.id.desc()).limit(1)
+            )).scalar_one_or_none()
+            if fase is None:
+                raise BusinessRuleViolation(
+                    "El lote no tiene una fase productiva vigente en la fecha del evento "
+                    "(LOT_PHASE_INCOMPLETE): registre la fase del lote antes de registrar alimento", "RR-34")
+        return semana, fase
+
+    async def recalcular_semana_y_fase_del_evento(self, event: models.OperationalEvent, event_date, lot_id) -> None:
+        """`RR-30` / `RR-34`: tras cambiar la fecha o el lote, las filas del evento siguen a la nueva fecha."""
+        semana, fase = await self.derivar_semana_y_fase(event.event_type, lot_id, event_date)
+        if semana is None:
+            return
+        for fila in event.bird_movements:
+            fila.week_number = semana
+        for fila in event.feed_movements:
+            fila.week_number = semana
+            fila.phase_id = fase
 
     def validar_cantidades_del_candidato(self, event: models.OperationalEvent, cambios: dict) -> None:
         """`SPEC 020 §3.1` (`RR-24`..`RR-26`): paridad de edición y corrección sobre el estado candidato.

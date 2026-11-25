@@ -2,10 +2,11 @@
 
 A diferencia de los contratos de rechazo (`RR-20`..`RR-23`, `RR-25`, `BR-01`, `BR-08`), aquí no se
 fija lo que el producto *debe* hacer sino lo que **hoy** hace en los puntos donde el contenido
-mínimo aún no está decidido: el pesaje sin semana, el alimento sin tipo ni fase y la recepción de
-reproductoras sin datos opcionales de origen. Las decisiones ratificadas por la Owner el
-25-11-2026 ya son regla (`RR-28` la inspección con contenido, `RR-29` la distribución con aves,
-`RR-31` el lote de vacuna y `RR-32` la causa de la baja), así que sus pines fijan el rechazo y,
+mínimo aún no está decidido: la recepción de reproductoras sin datos opcionales de origen. Las
+decisiones ratificadas por la Owner el 25-11-2026 ya son regla (`RR-28` la inspección con
+contenido, `RR-29` la distribución con aves, `RR-30` la semana derivada de la edad del lote,
+`RR-31` el lote de vacuna, `RR-32` la causa de la baja, `RR-33` el tipo de alimento y `RR-34` la
+fase derivada del lote), así que sus pines fijan el rechazo y,
 con el dato obligatorio presente, lo que **sigue** siendo opcional. Cada caso lleva en su docstring el ID y
 la decisión (`OD-S2-0x`) o el hallazgo (`S2-D1`) que fija, de modo que si el producto cambia el
 test falla y obliga a revisar la decisión de forma consciente.
@@ -16,9 +17,13 @@ necesita otro tipo de ave, el helper de lote de `test_uat_s2_write_contract.py`.
 
 from __future__ import annotations
 
+import uuid
+from datetime import date
+
 import pytest
 
-from tests.test_uat_s2_owner_decisions_a import _id_de_la_desconocida
+from app.operations.semana import semana_productiva
+from tests.test_uat_s2_owner_decisions_a import _id_de_la_desconocida, _lista
 from tests.test_uat_s2_write_contract import AVES_RECIBIDAS, _alta_recepcion, _lote
 from tests.time_reference import recent_event_date
 
@@ -64,6 +69,53 @@ async def _lote_con_aves(client, headers, aves: int = 50) -> int:
     })
     assert r.status_code == 201, r.text
     return lote
+
+
+async def _inicio_del_lote(client, headers, lote: int) -> date:
+    """Fecha de inicio del lote, leída del propio lote: la base de la semana derivada."""
+    r = await client.get(f"/api/v1/lots/{lote}", headers=headers)
+    assert r.status_code == 200, r.text
+    return date.fromisoformat(r.json()["start_date"][:10])
+
+
+async def _semana_esperada(client, headers, lote: int, fecha: str) -> int:
+    """`RR-30`: la semana que la regla deriva para el evento, según la edad del lote."""
+    return semana_productiva(await _inicio_del_lote(client, headers, lote),
+                             date.fromisoformat(fecha[:10]))
+
+
+async def _fase(client, headers) -> int:
+    """Una fase productiva válida del catálogo de la empresa (se crea si no hay)."""
+    items = await _lista(client, headers, "productive-phases")
+    if items:
+        return items[0]["id"]
+    r = await client.post("/api/v1/masters/productive-phases", headers=headers, json={
+        "name": f"Fase PIN {uuid.uuid4().hex[:6]}", "code": f"PIN{uuid.uuid4().hex[:6].upper()}",
+        "order": 90})
+    assert r.status_code == 201, r.text
+    return r.json()["id"]
+
+
+async def _tipo_de_alimento(client, headers) -> int:
+    """Un tipo de alimento válido del catálogo de la empresa (se crea si no hay)."""
+    items = await _lista(client, headers, "feed-types")
+    if items:
+        return items[0]["id"]
+    r = await client.post("/api/v1/masters/feed-types", headers=headers, json={
+        "name": f"Alimento PIN {uuid.uuid4().hex[:6]}", "code": f"AL{uuid.uuid4().hex[:6].upper()}"})
+    assert r.status_code == 201, r.text
+    return r.json()["id"]
+
+
+async def _lote_con_fase(client, headers) -> tuple[int, int]:
+    """Lote nuevo con una fase productiva vigente desde su inicio (`RR-34`)."""
+    lote = await _lote(client, headers)
+    fase = await _fase(client, headers)
+    r = await client.post(f"/api/v1/lots/{lote}/phases", headers=headers, json={
+        "lot_id": lote, "phase_id": fase,
+        "start_date": (await _inicio_del_lote(client, headers, lote)).isoformat()})
+    assert r.status_code == 201, r.text
+    return lote, fase
 
 
 # ── OPS-S2-01 · inspección de granja con parámetro observado ─────────────────
@@ -133,21 +185,41 @@ async def test_ops_s2_05_distribucion_sin_aves_es_400(auth_headers, client):
     assert r.json()["rule"] == "RR-29"
 
 
-# ── OPS-S2-06 · el alimento sin tipo, fase ni semana ─────────────────────────
+# ── OPS-S2-06 · el alimento nombra su tipo (RR-33) y su fase es derivada (RR-34) ──
 
 @pytest.mark.asyncio
-async def test_ops_s2_06_alimento_sin_tipo_ni_fase_ni_semana_es_201(auth_headers, client):
-    """`OPS-S2-06`: una fila de kilos sin tipo de alimento, fase ni semana entra con `201`.
+async def test_ops_s2_06_alimento_sin_tipo_es_400(auth_headers, client):
+    """`OPS-S2-06` · `RR-33`: ratificado por la Owner el 25-11-2026 (`OD-S2-07`), el alimento sin tipo se rechaza.
 
-    El único dato mínimo del alimento es la cantidad (`RR-23`); tipo, fase y semana se pueden
-    completar después.
+    El tipo de alimento es dato del operador; la fase la deriva el servidor de la fase vigente
+    del lote (`RR-34`) y la semana, de la edad del lote (`RR-30`).
     """
     r = await _alta(client, auth_headers, "feed_registration",
                     feed_movements=[{"quantity_kg": 12.5}])
+    assert r.status_code == 400, r.text
+    assert r.json()["rule"] == "RR-33"
+
+
+@pytest.mark.asyncio
+async def test_ops_s2_06_alimento_con_tipo_y_fase_vigente_es_201(auth_headers, client):
+    """`OPS-S2-06` · `RR-33`/`RR-34`: con tipo de alimento y fase vigente en el lote, entra con `201`.
+
+    Ni la fase ni la semana viajan en el cuerpo: el servidor deriva la fase de la fase vigente
+    del lote en la fecha del evento y la semana de la edad del lote (`RR-30`).
+    """
+    lote, fase = await _lote_con_fase(client, auth_headers)
+    tipo = await _tipo_de_alimento(client, auth_headers)
+    fecha = recent_event_date()
+    r = await client.post("/api/v1/operations", headers=auth_headers, json={
+        "lot_id": lote, "event_type": "feed_registration", "event_date": fecha,
+        "feed_movements": [{"feed_type_id": tipo, "quantity_kg": 12.5}]})
     assert r.status_code == 201, r.text
     det = await client.get(f"/api/v1/operations/{r.json()['id']}", headers=auth_headers)
     assert det.status_code == 200, det.text
-    assert det.json()["feed_movements"][0]["quantity_kg"] == pytest.approx(12.5)
+    fila = det.json()["feed_movements"][0]
+    assert fila["quantity_kg"] == pytest.approx(12.5)
+    assert fila["phase_id"] == fase
+    assert fila["week_number"] == await _semana_esperada(client, auth_headers, lote, fecha)
 
 
 @pytest.mark.asyncio
@@ -158,15 +230,17 @@ async def test_ops_s2_06_alimento_sin_kilos_es_400(auth_headers, client):
     assert r.json()["rule"] == "RR-23"
 
 
-# ── OPS-S2-07 · el pesaje sin semana está pendiente (OD-S2-04) ───────────────
+# ── OPS-S2-07 · el pesaje sin semana: la semana se deriva (RR-30) ────────────
 
 @pytest.mark.asyncio
 async def test_ops_s2_07_pesaje_sin_semana_es_201(auth_headers, client):
-    """`OPS-S2-07`: un pesaje con peso y cantidad, pero **sin** semana, entra con `201`.
+    """`OPS-S2-07` · `RR-30`: ratificado por la Owner el 25-11-2026 (`OD-S2-04`), el pesaje sin semana entra con `201`.
 
-    Pin de `OD-S2-04`: la semana de vida no es dato obligatorio del pesaje; se puede derivar o
-    quedar vacía hasta que la Owner decida.
+    La semana deja de ser dato del cliente: el servidor la deriva de la edad del lote
+    (`(fecha_evento − inicio_del_lote).days // 7 + 1`), así que llega rellena con el valor
+    que la regla dicta para esa fecha.
     """
+    fecha = recent_event_date()
     r = await _alta(client, auth_headers, "weight_recording",
                     bird_movements=[{"sex": "male", "quantity": 10, "avg_weight": 2.1}])
     assert r.status_code == 201, r.text
@@ -174,7 +248,7 @@ async def test_ops_s2_07_pesaje_sin_semana_es_201(auth_headers, client):
     assert det.status_code == 200, det.text
     fila = det.json()["bird_movements"][0]
     assert fila["avg_weight"] == pytest.approx(2.1)
-    assert fila["week_number"] is None
+    assert fila["week_number"] == await _semana_esperada(client, auth_headers, LOTE, fecha)
 
 
 @pytest.mark.asyncio
@@ -191,7 +265,7 @@ async def test_ops_s2_07_pesaje_sin_peso_es_400(auth_headers, client):
 async def test_ops_s2_08_vacunacion_sin_lote_de_vacuna_es_400(auth_headers, client):
     """`OPS-S2-08` · `RR-31`: ratificado por la Owner el 25-11-2026 (`OD-S2-05`), la vacunación sin lote de vacuna se rechaza.
 
-    Con el lote de vacuna presente, la semana sigue siendo opcional (pendiente de `RR-30`).
+    Con el lote de vacuna presente, el alta entra; la semana la deriva el servidor (`RR-30`).
     """
     r = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water")
     assert r.status_code == 400, r.text
@@ -217,8 +291,8 @@ async def test_ops_s2_08_vacunacion_sin_vacuna_es_400(auth_headers, client):
 async def test_ops_s2_09_mortalidad_sin_causa_es_400(auth_headers, client):
     """`OPS-S2-09` · `RR-32`: ratificado por la Owner el 25-11-2026 (`OD-S2-06`), la baja sin causa se rechaza.
 
-    Con la causa presente (la compartida «Desconocida»), la semana sigue siendo opcional
-    (pendiente de `RR-30`). La cantidad se mantiene dentro del saldo del lote.
+    Con la causa presente (la compartida «Desconocida»), el alta entra y la semana la deriva el
+    servidor de la edad del lote (`RR-30`). La cantidad se mantiene dentro del saldo del lote.
     """
     lote = await _lote_con_aves(client, auth_headers)
     r = await client.post("/api/v1/operations", headers=auth_headers, json={
@@ -239,6 +313,8 @@ async def test_ops_s2_09_mortalidad_sin_causa_es_400(auth_headers, client):
     det = await client.get(f"/api/v1/operations/{valida.json()['id']}", headers=auth_headers)
     assert det.status_code == 200, det.text
     assert det.json()["cause_id"] == causa
+    assert det.json()["bird_movements"][0]["week_number"] == await _semana_esperada(
+        client, auth_headers, lote, recent_event_date())
 
 
 @pytest.mark.asyncio
@@ -256,8 +332,8 @@ async def test_ops_s2_09_mortalidad_sin_cantidad_es_400(auth_headers, client):
 async def test_ops_s2_10_desecho_sin_causa_es_400(auth_headers, client):
     """`OPS-S2-10` · `RR-32`: ratificado por la Owner el 25-11-2026 (`OD-S2-06`), el desecho sin causa se rechaza.
 
-    Con la causa presente (la compartida «Desconocida»), la semana sigue siendo opcional
-    (pendiente de `RR-30`).
+    Con la causa presente (la compartida «Desconocida»), el alta entra y la semana la deriva el
+    servidor de la edad del lote (`RR-30`).
     """
     lote = await _lote_con_aves(client, auth_headers)
     r = await client.post("/api/v1/operations", headers=auth_headers, json={
@@ -278,6 +354,8 @@ async def test_ops_s2_10_desecho_sin_causa_es_400(auth_headers, client):
     det = await client.get(f"/api/v1/operations/{valida.json()['id']}", headers=auth_headers)
     assert det.status_code == 200, det.text
     assert det.json()["cull_cause_id"] == causa
+    assert det.json()["bird_movements"][0]["week_number"] == await _semana_esperada(
+        client, auth_headers, lote, recent_event_date())
 
 
 @pytest.mark.asyncio
