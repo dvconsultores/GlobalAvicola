@@ -286,41 +286,39 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     expect(estadoCrudo, 'el estado no debe mostrarse como in_review').toBe(false);
   });
 
-  test('P5b — filtro de lote en /review valida sin llamar a la API con abc', async ({ page }) => {
+  test('P5b — filtro de lote en /review busca por código sin avisos de formato (SPEC 020)', async ({ page }) => {
     await entrar(page, 'admin');
     const urls: string[] = [];
-    page.on('request', (r) => { if (r.url().includes('lot_id=')) urls.push(r.url()); });
+    page.on('request', (r) => { if (r.url().includes('/review/pending')) urls.push(r.url()); });
     await page.goto('/review');
-    const input = page.getByPlaceholder('ID del lote').first();
+    const input = page.getByTestId('review-filter-lot');
     await expect(input).toBeVisible({ timeout: 15000 });
     await input.fill('abc');
     await page.waitForTimeout(900);
     const pistas = await page.locator('[data-testid="lot-filter-hint"]').count();
-    const llamadaInvalida = urls.some((u) => u.includes('lot_id=abc'));
+    const alertas = await page.locator('[role="alert"]').count();
+    const conLotId = urls.some((u) => u.includes('lot_id='));
+    const conLotCode = urls.some((u) => u.includes('lot_code=abc'));
     const cuerpo = await page.locator('body').innerText();
     const errorVisible = cuerpo.includes('Input should') || cuerpo.includes('Valor no válido');
-    anotar('P5b', pistas === 1 && !llamadaInvalida && !errorVisible,
-      `pistas=${pistas} llamadaAbc=${llamadaInvalida} errorVisible=${errorVisible}`);
-    expect(pistas, 'exactamente una pista de filtro').toBe(1);
-    expect(llamadaInvalida, 'no debe llamar con lot_id=abc').toBe(false);
+    anotar('P5b', pistas === 0 && alertas === 0 && !conLotId && conLotCode && !errorVisible,
+      `pistas=${pistas} alertas=${alertas} lotId=${conLotId} lotCode=${conLotCode} errorVisible=${errorVisible}`);
+    expect(pistas, 'sin pista de formato de id').toBe(0);
+    expect(alertas, 'sin avisos de validación').toBe(0);
+    expect(conLotId, 'no debe consultar con lot_id=').toBe(false);
+    expect(conLotCode, 'debe consultar con lot_code=abc').toBe(true);
     expect(errorVisible, 'sin toast de validación crudo').toBe(false);
-    urls.length = 0;
-    await input.fill('');
-    await input.fill('12');
-    await page.waitForTimeout(1200);
-    const valida = urls.some((u) => u.includes('lot_id=12'));
-    anotar('P5b.12', valida, `peticiones con lot_id=12: ${valida}`);
-    expect(valida, 'debe pedir el listado con lot_id=12').toBe(true);
   });
 
   test('P5c — el toast se dibuja por encima del overlay del diálogo y el rechazo se completa', async ({ page, request }) => {
     // `F9`: `/approvals` está paginada y en la corrida completa hay muchos eventos
     // corregidos de otros procesos; se filtra por el lote del escenario para que la
-    // fila buscada esté en la primera página.
+    // fila buscada esté en la primera página. El filtro de Aprobaciones es por
+    // código de lote (SPEC 020, AC-S2-R03).
     const filtrarPorLote = async () => {
-      const filtro = page.getByPlaceholder('ID del lote').first();
+      const filtro = page.getByTestId('approval-filter-lot');
       await expect(filtro).toBeVisible({ timeout: 15000 });
-      await filtro.fill(String(esc.lotId));
+      await filtro.fill(esc.codigo.toLowerCase());
       await page.waitForTimeout(700); // debounce 400 ms + red
     };
 

@@ -243,9 +243,13 @@ test.describe('SPEC 020 · UAT Sesión 2 (reproductoras/cría)', () => {
     await expect(page.getByRole('row').filter({ hasText: escB.codigo }),
       'el otro lote queda fuera de la tabla').toHaveCount(0)
 
-    await lotFilter.fill('')
+    // El filtro por el código de B trae B y deja fuera A; luego se vuelve al de A.
+    await lotFilter.fill(escB.codigo.slice(-6).toLowerCase())
     await expect(page.getByRole('row').filter({ hasText: escB.codigo }),
-      'sin filtro vuelve el otro lote').toBeVisible({ timeout: 20_000 })
+      'el filtro por el código de B muestra B').toBeVisible({ timeout: 20_000 })
+    await expect(page.getByRole('row').filter({ hasText: escA.codigo }),
+      'y ya no A').toHaveCount(0)
+    await lotFilter.fill(escA.codigo.slice(-6).toLowerCase())
 
     const desde = page.getByTestId('review-filter-date-from')
     const hasta = page.getByTestId('review-filter-date-to')
