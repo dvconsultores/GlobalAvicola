@@ -27,6 +27,11 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
+from tests.owner_decisions_support import (
+    causa_desconocida,
+    fase_vigente_del_lote,
+    tipo_de_alimento,
+)
 from tests.time_reference import iso_days_ago, reference_today
 
 PREFIJO = "CL-TEST-"
@@ -92,6 +97,21 @@ async def _crear_lote(client, cabecera, ids, **extra):
 
 
 async def _evento(client, cabecera, ids, lot_id, tipo, **extra):
+    """Registra uno de los eventos del lote y devuelve su id.
+
+    `spec 020 §6` ratificado por la Owner el 25-11-2026: el consumo declara su tipo de alimento
+    (`RR-33`) y exige una fase productiva vigente en la fecha del evento (`RR-34`); la baja
+    declara su causa (`RR-32`). Se añaden aquí —el único punto por el que este archivo crea
+    eventos— para que las pruebas sigan midiendo lo suyo (`BR-05`, el resumen, `R7`).
+    """
+    fecha = iso_days_ago(7)
+    if tipo == "feed_registration":
+        await fase_vigente_del_lote(client, cabecera, lot_id, fecha)
+        alimento = await tipo_de_alimento(client, cabecera)
+        for fila in extra.get("feed_movements", []):
+            fila.setdefault("feed_type_id", alimento)
+    if tipo == "mortality_recording" and "cause_id" not in extra:
+        extra["cause_id"] = await causa_desconocida(client, cabecera)
     r = await client.post(
         "/api/v1/operations",
         headers=cabecera,
@@ -100,7 +120,7 @@ async def _evento(client, cabecera, ids, lot_id, tipo, **extra):
             "farm_id": ids["farm_id"],
             "house_id": ids["house_id"],
             "event_type": tipo,
-            "event_date": iso_days_ago(7),
+            "event_date": fecha,
             **extra,
         },
     )
@@ -397,6 +417,17 @@ async def test_t_073_06_no_se_cierra_el_lote_de_otra_empresa(
         "code": f"CLH{sufijo[:6]}"})
     assert galpon.status_code in (200, 201), galpon.text
     propios["house_id"] = galpon.json()["id"]
+
+    # `spec 020 §6` · `RR-33` / `RR-34`: el consumo del lote de CONTROL necesita un tipo de
+    # alimento y una fase productiva **de su empresa**. Se siembran con el administrador de la
+    # empresa 2 porque el sujeto solo tiene `masters:read`; los fixtures los reutilizan por lista.
+    for recurso, cuerpo in (
+        ("feed-types", {"name": f"CL-TEST Alimento {sufijo}", "code": f"CLA{sufijo[:6]}"}),
+        ("productive-phases", {"name": f"CL-TEST Fase {sufijo}",
+                               "code": f"CLF{sufijo[:6]}", "order": 1}),
+    ):
+        maestro = await client.post(f"/api/v1/masters/{recurso}", headers=admin_2, json=cuerpo)
+        assert maestro.status_code in (200, 201), f"{recurso}: {maestro.text}"
 
     # `GA-REM-040` fase 3: sin unidades concedidas el sujeto no ve ni su propio lote, que es
     # lo que `OD-09.c` dicta. Se configura la empresa —habilitar y conceder— como hará un
