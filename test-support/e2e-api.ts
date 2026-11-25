@@ -150,9 +150,38 @@ export async function crearEscenario(
     company_id: companyId, farm_id: granja.id, house_id: galpon.id,
     lot_code: `${prefijo}-LOTE-${s}`, bird_type: birdType, sex: 'mixed',
   })
+  // `SPEC 020 §6` · `RR-34`: un lote operativo tiene su fase productiva vigente (el alimento la deriva
+  // de ahí). El escenario la declara al nacer, desde la fecha de inicio del propio lote.
+  await faseVigente(request, cabecera, lote.id, String(lote.start_date || hoy()).slice(0, 10), `${prefijo}F${s}`)
 
   return { companyId, farmId: granja.id, houseId: galpon.id, lotId: lote.id, codigo: lote.lot_code }
 }
+
+/** `RR-34`: abre la fase productiva vigente del lote desde `desde` (crea una fase maestra si no hay). */
+export async function faseVigente(
+  request: APIRequestContext, cabecera: any, lotId: number, desde: string, codigo = `F${sufijo()}`,
+): Promise<number> {
+  const r = await request.get(`${API}/masters/productive-phases?limit=100`, { headers: cabecera })
+  const fases = r.ok() ? await r.json() : []
+  const faseId = Array.isArray(fases) && fases.length
+    ? fases[0].id
+    : (await crear(request, cabecera, '/masters/productive-phases', { name: `Fase ${codigo}`, code: codigo.slice(0, 20), order: 1 })).id
+  await crear(request, cabecera, `/lots/${lotId}/phases`, { lot_id: lotId, phase_id: faseId, start_date: desde })
+  return faseId
+}
+
+/** `RR-32`: id de la causa compartida «Desconocida» (`mortality-causes` o `cull-causes`). */
+export async function causaDesconocida(
+  request: APIRequestContext, cabecera: any, recurso: 'mortality-causes' | 'cull-causes' = 'mortality-causes',
+): Promise<number> {
+  const r = await request.get(`${API}/masters/${recurso}?search=Desconocida&limit=100`, { headers: cabecera })
+  const fila = (await r.json()).find((f: any) => f.name === 'Desconocida')
+  if (!fila) throw new Error(`«Desconocida» no existe en ${recurso}`)
+  return fila.id
+}
+
+/** `RR-31`: lote de vacuna válido para una vacunación de escenario. */
+export const LOTE_DE_VACUNA = 'E2E-VAC-001'
 
 export interface Maestros {
   causaMortalidadId: number
