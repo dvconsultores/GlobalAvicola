@@ -13,6 +13,7 @@ Rojo en HEAD (`b58136a`):
 from __future__ import annotations
 
 import sys
+from datetime import date, timedelta
 from pathlib import Path
 
 import pytest
@@ -22,6 +23,17 @@ import app.database as database
 
 sys.path.insert(0, str(Path(__file__).parent))
 from time_reference import days_ago  # noqa: E402
+
+
+def _etiqueta_semana(fecha: date) -> str:
+    """Etiqueta que publica el panel (`S<semana ISO>`) para un evento de `fecha`.
+
+    `_get_mortality_trend` agrupa por `extract('week', event_date)`: la semana que hay
+    que leer es la **del evento**, nunca la del reloj. Un evento fechado con
+    `days_ago(2)` cae en la semana ISO anterior cuando hoy es lunes o martes, y leer la
+    semana de hoy convertía esa coincidencia del calendario en un falso fallo de R-141.
+    """
+    return f"S{fecha.isocalendar().week}"
 
 
 async def _fase() -> int:
@@ -163,24 +175,63 @@ async def test_r141_uniformidad_mismo_conjunto_que_detalle(auth_headers, http_cl
 
 @pytest.mark.asyncio
 async def test_r141_tendencia_mortalidad_ignora_cancelados(auth_headers, http_client, seeded_ids):
-    """AC-R141-4: la tendencia del panel suma solo eventos del conjunto aceptado."""
-    from datetime import datetime, timezone
+    """AC-R141-4: la tendencia del panel suma solo eventos del conjunto aceptado.
 
+    La fecha de los dos eventos se fija explícitamente y la semana se deriva de **esa**
+    fecha: es la misma que agrupa el producto (`extract('week', event_date)`). Leer la
+    semana de `reference_today()` ataba el test al día de ejecución —de lunes a martes
+    el evento de anteayer cae en la semana ISO anterior y Δ=0—, sin defecto del producto.
+    """
     from app.operations.models import EventType
 
     empresa, user_id = seeded_ids["company_id"], seeded_ids["user_admin_id"]
     lote = await _lote(empresa, "GA022F-R141D")
+    fecha = days_ago(2)
 
-    def _semana_actual(dashboard: dict) -> int:
-        from time_reference import reference_today
-        wk = f"S{reference_today().isocalendar().week}"
-        return sum(t["mortality"] for t in dashboard.get("mortality_trend", []) if t["week"] == wk)
+    def _semana_del_evento(dashboard: dict) -> int:
+        etiqueta = _etiqueta_semana(fecha)
+        return sum(t["mortality"] for t in dashboard.get("mortality_trend", []) if t["week"] == etiqueta)
 
-    antes = _semana_actual((await http_client.get("/api/v1/dashboard/admin", headers=auth_headers)).json())
+    antes = _semana_del_evento((await http_client.get("/api/v1/dashboard/admin", headers=auth_headers)).json())
     await _evento(lote, empresa, user_id, EventType.MORTALITY_RECORDING, status="approved",
-                  movimientos=[{"sex": "male", "quantity": 10}])
+                  movimientos=[{"sex": "male", "quantity": 10}], fecha=fecha)
     await _evento(lote, empresa, user_id, EventType.MORTALITY_RECORDING, status="cancelled",
-                  movimientos=[{"sex": "male", "quantity": 500}])
-    despues = _semana_actual((await http_client.get("/api/v1/dashboard/admin", headers=auth_headers)).json())
+                  movimientos=[{"sex": "male", "quantity": 500}], fecha=fecha)
+    despues = _semana_del_evento((await http_client.get("/api/v1/dashboard/admin", headers=auth_headers)).json())
 
     assert despues - antes == 10, f"510 = incluir cancelados; Δ={despues - antes}"
+
+
+# ── R-141 · la etiqueta de semana sale de la fecha del evento, no del reloj ───
+#
+# Fechas literales a propósito: este test es **puro** —no toca la base, ni el reloj, ni
+# `BR-19`—, de modo que no caduca como caducaría una fecha de evento escrita a mano. Las
+# fronteras ISO (lunes, domingo, 29-dic-2025 en la semana 1 de 2026, 1-ene-2027 en la
+# semana 53 de 2026) son hechos del calendario, no del día en que se ejecute la suite. Se
+# escriben como `date(a, m, d)` y no como cadenas `YYYY-MM-DD` justamente para no
+# confundirlas con las fechas de evento que prohíbe
+# `test_t028_04_sin_fechas_literales_en_los_tests`.
+@pytest.mark.parametrize(
+    ("caso", "fecha", "etiqueta"),
+    [
+        ("lunes", date(2026, 11, 23), "S48"),
+        ("domingo de la misma semana", date(2026, 11, 29), "S48"),
+        ("domingo anterior al cambio de año", date(2025, 12, 28), "S52"),
+        ("29-dic-2025 — ISO semana 1 de 2026", date(2025, 12, 29), "S1"),
+        ("31-dic-2026 — ISO semana 53 de 2026", date(2026, 12, 31), "S53"),
+        ("1-ene-2027 — ISO semana 53 de 2026", date(2027, 1, 1), "S53"),
+        ("primer lunes de 2027", date(2027, 1, 4), "S1"),
+    ],
+)
+def test_r141_tendencia_semana_iso_en_fronteras(caso, fecha, etiqueta):
+    """La etiqueta se calcula con la fecha del evento en los bordes de la semana ISO."""
+    assert _etiqueta_semana(fecha) == etiqueta, f"{caso}: la semana debe salir del evento"
+
+    lunes = fecha - timedelta(days=fecha.weekday())
+    for desplazamiento in range(7):
+        dia = lunes + timedelta(days=desplazamiento)
+        assert _etiqueta_semana(dia) == etiqueta, (
+            f"{caso}: toda la semana ISO del evento comparte etiqueta; {dia} dio "
+            f"{_etiqueta_semana(dia)}. Si la etiqueta se tomara del reloj, los siete días "
+            f"dejarían de coincidir y volvería el defecto de R-141")
+
