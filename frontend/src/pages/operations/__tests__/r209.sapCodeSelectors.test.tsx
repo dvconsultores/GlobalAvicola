@@ -36,6 +36,8 @@ const GALPON_55 = { id: 55, name: 'Galpón 55', farm_id: 1, capacity: 5000 }
 const OC_CON_CODIGO = { id: 12, sap_code: '4500001234', doc_number: '4500001234', description: 'OC salida', extra_data: {} }
 const OC_SIN_CODIGO = { id: 5, sap_code: null, doc_number: null, ref_id: null, description: 'REFERENCIA-VACIA', extra_data: {} }
 const OT_CON_CODIGO = { id: 9, sap_code: '4500009', doc_number: '4500009', description: 'OT alimento' }
+// `SPEC 020 §6` · `RR-33`: el alimento exige tipo de alimento declarado.
+const TIPO_ALIMENTO = { id: 2, name: 'Iniciador' }
 
 if (!window.matchMedia) {
   // @ts-expect-error polyfill de prueba
@@ -52,6 +54,7 @@ function mockCatalogo(oc: any) {
     if (url.startsWith('/lots')) return Promise.resolve({ data: [LOTE] })
     if (url.startsWith('/masters/farms')) return Promise.resolve({ data: [FARM] })
     if (url.startsWith('/masters/houses')) return Promise.resolve({ data: [GALPON_55] })
+    if (url.startsWith('/masters/feed-types')) return Promise.resolve({ data: [TIPO_ALIMENTO] })
     if (url.startsWith('/masters/transports')) return Promise.resolve({ data: [{ id: 1, name: 'Camión', plate: 'ABC-123' }] })
     if (url.startsWith('/sap/references')) {
       return Promise.resolve({ data: { references: url.includes('transfer_order') ? [OT_CON_CODIGO] : [oc] } })
@@ -114,6 +117,8 @@ describe('R-209 · selectores SAP guardan el código canónico', () => {
     await abrirEvento(/feed_registration/)
     await elegirEnSelector(/Seleccionar lote/, /L-BR-209-01/)
     await elegirEnSelector(/Sin orden/, /4500009/)
+    // `SPEC 020 §6` · `RR-33`: sin tipo de alimento el envío se bloquea; se elige uno del catálogo.
+    cambio('feed_movements.0.feed_type_id', '2')
     const campo = document.querySelector('[name="feed_movements.0.quantity_kg"]') as HTMLElement | null
     if (campo) fireEvent.change(campo, { target: { value: '100' } })
     const payload = await guardar()

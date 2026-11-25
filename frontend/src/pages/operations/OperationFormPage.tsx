@@ -21,6 +21,8 @@ import {
 // ============================================================
 // Thermal zones — Ross/Cobb dynamic curves by bird type + week
 import { getThermalZone, DEFAULT_THERMAL_ZONE } from '../../data/thermalCurves'
+import { SemanaDerivada, FaseDerivada } from './DerivedFields'
+import { semanaProductiva, faseVigente, type FaseDelLote } from '../../utils/semanaProductiva'
 // Incubator (setter) and Hatcher fixed ranges
 const INCUBATOR_TEMP_RANGE: [number, number] = [37.5, 38.0]
 const HATCHER_TEMP_RANGE: [number, number] = [37.0, 37.5]
@@ -286,6 +288,20 @@ export default function OperationFormPage() {
  const lotId = watch('lot_id')
  // `R-190`: el lote seleccionado a nivel de componente — la derivación del JSX y de la guarda lo consulta.
  const selectedLot = useMemo(() => lots.find((l: any) => l.id === lotId) ?? null, [lots, lotId])
+ // `SPEC 020 §6` · `RR-30`/`RR-34`: semana y fase de solo lectura, derivadas del lote y de la fecha.
+ const fechaDelEvento = watch('event_date')
+ const semanaDerivada = useMemo(
+   () => semanaProductiva(selectedLot?.start_date, fechaDelEvento), [selectedLot, fechaDelEvento])
+ const [fasesDelLote, setFasesDelLote] = useState<FaseDelLote[]>([])
+ useEffect(() => {
+   if (eventType !== 'feed_registration' || !lotId) { setFasesDelLote([]); return }
+   let vigente = true
+   api.get(`/lots/${lotId}/phases`)
+     .then((r) => { if (vigente) setFasesDelLote(Array.isArray(r.data) ? r.data : []) })
+     .catch(() => { if (vigente) setFasesDelLote([]) })
+   return () => { vigente = false }
+ }, [eventType, lotId])
+ const faseDerivada = useMemo(() => faseVigente(fasesDelLote, fechaDelEvento), [fasesDelLote, fechaDelEvento])
 
  // `QA-007` · `BR-23`: la OC de una recepción de aves debe ser de la cadena productiva del lote.
  // Sin lote no se puede filtrar (ni elegir): el selector se bloquea hasta conocer la cadena.
@@ -675,7 +691,7 @@ export default function OperationFormPage() {
  <div className="space-y-4">
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
- <label className={lc}>{t('operations.mortalityCause', 'Causa de mortalidad')}</label>
+ <label className={lc}>{t('operations.mortalityCause', 'Causa de mortalidad')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <SearchSelect
  value={watch('cause_id' as any) ?? ''}
  onChange={(v) => setValue('cause_id' as any, v ? Number(v) : undefined)}
@@ -687,7 +703,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
+ <SemanaDerivada semana={semanaDerivada} />
  </div>
  </div>
  {renderMFRows(false, true)}
@@ -698,7 +714,7 @@ export default function OperationFormPage() {
  <div className="space-y-4">
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
- <label className={lc}>{t('operations.cullCause', 'Causa de descarte')}</label>
+ <label className={lc}>{t('operations.cullCause', 'Causa de descarte')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <SearchSelect
  value={watch('cull_cause_id' as any) ?? ''}
  onChange={(v) => setValue('cull_cause_id' as any, v ? Number(v) : undefined)}
@@ -710,7 +726,7 @@ export default function OperationFormPage() {
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
+ <SemanaDerivada semana={semanaDerivada} />
  </div>
  </div>
  {renderMFRows(false, true)}
@@ -743,7 +759,7 @@ export default function OperationFormPage() {
  </select>
  </div>
  <div>
- <label className={lc}>{t('operations.vaccineLot', 'Lote de vacuna')}</label>
+ <label className={lc}>{t('operations.vaccineLot', 'Lote de vacuna')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  <input {...register('vaccine_lot_number')} className={ic} placeholder="LOT-2024-001" />
  </div>
  <div>
@@ -787,7 +803,7 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3">
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('bird_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
+ <SemanaDerivada semana={semanaDerivada} />
  </div>
  <div>
  <label className={lc}>{t('operations.sampleSize', 'Aves pesadas')}</label>
@@ -1176,21 +1192,15 @@ export default function OperationFormPage() {
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-2">
  <div>
  <label className={lc}>{t('operations.feedPhase', 'Fase de alimento')}</label>
- <select {...register('extra_data.feed_phase' as any)} className={ic}>
- <option value="">{t('operations.selectType', 'Seleccionar...')}</option>
- <option value="pre_starter">{t('operations.feedPreStarter', 'Pre-iniciador')}</option>
- <option value="starter">{t('operations.feedStarter', 'Iniciador')}</option>
- <option value="grower">{t('operations.feedGrower', 'Crecimiento')}</option>
- <option value="finisher">{t('operations.feedFinisher', 'Finalizador')}</option>
- </select>
+ <FaseDerivada fase={faseDerivada} lotElegido={Boolean(lotId)} />
  </div>
  <div>
- <label className={lc}>{t('operations.feedType', 'Tipo de Alimento')}</label>
+ <label className={lc}>{t('operations.feedType', 'Tipo de Alimento')}{/*REQ*/}<span aria-hidden="true" className="text-red-500"> *</span></label>
  {sel(register('feed_movements.0.feed_type_id', { valueAsNumber: true }), feedTypes, t('operations.selectType', 'Seleccionar...'))}
  </div>
  <div>
  <label className={lc}>{t('operations.weekNumber', 'Semana')}</label>
- <input type="number" inputMode="decimal" min="1" {...register('feed_movements.0.week_number', { valueAsNumber: true })} className={ic} placeholder={t('operations.weekPlaceholder')} />
+ <SemanaDerivada semana={semanaDerivada} />
  </div>
  </div>
  <div className="flex flex-col gap-3 lg:grid lg:grid-cols-3">

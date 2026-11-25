@@ -147,6 +147,8 @@ describe('SPEC 020 · UAT-S2 · corrección de campos de maestro con selector co
     montarForm([CAMPO_MAESTRO])
     await waitFor(() => expect(selectorMaestro().options.length).toBe(2))
     fireEvent.change(selectorMaestro(), { target: { value: '31' } })
+    // `SPEC 020 §6` · `RR-27`: el tipo de corrección es obligatorio.
+    fireEvent.change(screen.getByTestId('correction-type'), { target: { value: '1' } })
     fireEvent.change(screen.getByPlaceholderText(/Explica por qué/), { target: { value: 'proveedor mal seleccionado' } })
     fireEvent.click(screen.getByRole('button', { name: /Guardar Corrección/ }))
 
@@ -155,6 +157,7 @@ describe('SPEC 020 · UAT-S2 · corrección de campos de maestro con selector co
       event_id: 55,
       field_name: 'supplier_id',
       corrected_value: '31',
+      correction_type_id: 1,
       reason: 'proveedor mal seleccionado',
     }))
     const enviado = (post.mock.calls[0][1] as any).corrected_value

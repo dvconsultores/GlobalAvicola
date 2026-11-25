@@ -50,11 +50,15 @@ describe('R-220 · B10 · cosméticos R7–R12/R14/R15', () => {
     expect(s).toContain('flex flex-wrap items-center justify-between gap-2 shadow-sm')
   })
 
-  it('R14 · los 65 input number declaran inputMode decimal', () => {
+  it('R14 · todos los input number declaran inputMode decimal (61 tras la semana derivada)', () => {
     const s = src('pages/operations/OperationFormPage.tsx')
     const nums = (s.match(/type="number"/g) ?? []).length
     const modes = (s.match(/type="number" inputMode="decimal"/g) ?? []).length
-    expect(nums).toBe(65)
+    // `SPEC 020 §6` · `RR-30`/`RR-34`: la «Semana» de mortalidad, descarte, pesaje y alimento dejó
+    // de ser un input — se muestra derivada de solo lectura (`SemanaDerivada`) — así que el total
+    // baja de 65 a 61. La regla que este guarda protege sigue intacta: ningún input number sin
+    // `inputMode="decimal"`.
+    expect(nums).toBe(61)
     expect(modes).toBe(nums)
   })
 

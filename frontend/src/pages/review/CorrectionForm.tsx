@@ -92,7 +92,8 @@ export default function CorrectionForm() {
  if ((tipo === 'integer' || tipo === 'decimal') && correctedValue.trim() && Number.isNaN(Number(correctedValue))) {
  return t('corrections.valueNumeric')
  }
- if (reason.trim().length < 5) return t('corrections.reasonMin')
+ if (!correctionTypeId) return t('corrections.typeRequired')  // `SPEC 020 §6` · `RR-27`
+    if (reason.trim().length < 5) return t('corrections.reasonMin')
  return ''
  }
 
@@ -109,7 +110,7 @@ export default function CorrectionForm() {
  field_name: fieldName,
  original_value: campoActual?.current_value ?? '',
  corrected_value: correctedValue,
- correction_type_id: correctionTypeId || null,
+ correction_type_id: correctionTypeId,
  reason,
  })
  toast.success(t('review.correctionSaved'))
@@ -196,8 +197,8 @@ export default function CorrectionForm() {
 
  {/* Correction type */}
  <div>
- <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('review.correctionType')}</label>
- <select value={correctionTypeId || ''} onChange={e => setCorrectionTypeId(e.target.value ? Number(e.target.value) : undefined)}
+ <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('review.correctionType')} *</label>
+ <select data-testid="correction-type" aria-required="true" value={correctionTypeId || ''} onChange={e => { setCorrectionTypeId(e.target.value ? Number(e.target.value) : undefined); setError('') }}
  className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm">
  <option value="">-- {t('common.select')} --</option>
  {correctionTypes.map((ct: any) => (

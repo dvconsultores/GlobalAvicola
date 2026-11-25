@@ -1316,7 +1316,17 @@
       "cortina": "Curtain",
       "extractor": "Exhaust fan",
       "otro": "Other"
-    }
+    },
+    "mortalityCauseRequired": "Select the cause of mortality (use “Unknown” if it could not be determined)",
+    "cullCauseRequired": "Select the cause of the cull (use “Unknown” if it could not be determined)",
+    "vaccineLotRequired": "Enter the lot of the vaccine applied",
+    "feedTypeRequired": "Select the feed type",
+    "inspectionContentRequired": "Record at least one inspection item: a value, a note or evidence",
+    "distributionRequired": "The distribution must include at least one bird (the total cannot be zero)",
+    "derivedWeek": "Week {{n}}",
+    "derivedWeekPending": "Calculated once the lot and the date are chosen",
+    "derivedPhase": "Phase: {{name}}",
+    "derivedPhaseNone": "The lot has no productive phase in effect on that date: record the lot phase before recording feed"
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -1738,6 +1748,7 @@
       "feed_movements": {
         "quantity_kg": "Feed quantity (kg)"
       }
-    }
+    },
+    "typeRequired": "Select the correction type"
   }
 }

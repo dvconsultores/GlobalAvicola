@@ -1316,7 +1316,17 @@
       "cortina": "Cortina",
       "extractor": "Extractor",
       "otro": "Otro"
-    }
+    },
+    "mortalityCauseRequired": "Seleccione la causa de la mortalidad (use «Desconocida» si no se pudo determinar)",
+    "cullCauseRequired": "Seleccione la causa del descarte (use «Desconocida» si no se pudo determinar)",
+    "vaccineLotRequired": "Ingrese el lote de la vacuna aplicada",
+    "feedTypeRequired": "Seleccione el tipo de alimento",
+    "inspectionContentRequired": "Registre al menos un dato de la inspección: un valor, una observación o una evidencia",
+    "distributionRequired": "La distribución debe incluir al menos un ave (la suma no puede ser cero)",
+    "derivedWeek": "Semana {{n}}",
+    "derivedWeekPending": "Se calcula al elegir el lote y la fecha",
+    "derivedPhase": "Fase: {{name}}",
+    "derivedPhaseNone": "El lote no tiene una fase productiva vigente en esa fecha: registre la fase del lote antes de registrar alimento"
   },
   "weekly": {
     "weekNumber": "N° Sem",
@@ -1738,6 +1748,7 @@
       "feed_movements": {
         "quantity_kg": "Cantidad de alimento (kg)"
       }
-    }
+    },
+    "typeRequired": "Seleccione el tipo de corrección"
   }
 }

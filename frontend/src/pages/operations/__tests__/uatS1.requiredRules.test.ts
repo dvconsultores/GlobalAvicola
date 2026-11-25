@@ -75,14 +75,19 @@ describe('F6 · obligatorios por operación (paridad cliente-servidor)', () => {
   })
 
   it('positivo: con los datos exigidos no hay error (null)', () => {
+    // `SPEC 020 §6`: cada fixture lleva además los datos que `RR-28`, `RR-31`, `RR-32` y `RR-33`
+    // volvieron obligatorios (causa, lote de vacuna, tipo de alimento, contenido de inspección).
     const validos = [
-      [{ event_type: 'mortality_recording', bird_movements: [{}, { quantity: 3 }] }, {}],
+      [{ event_type: 'mortality_recording', cause_id: 7, bird_movements: [{}, { quantity: 3 }] }, {}],
       [{ event_type: 'water_consumption', water_liters: 120 }, {}],
       [{ event_type: 'weight_recording', bird_movements: [{ avg_weight: 2150 }] }, {}],
-      [{ event_type: 'vaccination', vaccine_id: 4 }, {}],
+      [{ event_type: 'vaccination', vaccine_id: 4, vaccine_lot_number: 'LOT-2026-01' }, {}],
       [{ event_type: 'medication', medication_id: 9 }, {}],
-      [{ event_type: 'feed_registration', feed_movements: [{ quantity_kg: 100 }] }, {}],
-      [{ event_type: 'farm_inspection' }, { derivedFarmId: 1, derivedHouseId: 11 }],
+      [{ event_type: 'feed_registration', feed_movements: [{ quantity_kg: 100, feed_type_id: 2 }] }, {}],
+      [{
+        event_type: 'farm_inspection',
+        house_inspections: [{ house_id: 11, temperature: 27.5 }],
+      }, { derivedFarmId: 1, derivedHouseId: 11 }],
     ] as const
     for (const [datos, contexto] of validos) {
       expect(validarObligatoriosDeOperacion(datos as any, contexto as any), (datos as any).event_type)

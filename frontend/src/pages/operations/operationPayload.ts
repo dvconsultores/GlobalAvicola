@@ -171,12 +171,44 @@ export function validarObligatoriosDeOperacion(
     return 'operations.weightRequired'
   }
   if (tipo === 'vaccination' && !idDeclarado(datos?.vaccine_id)) return 'operations.vaccineRequired'
+  // `SPEC 020 §6` · `RR-31`: la vacunación dice con qué lote de vacuna se aplicó.
+  if (tipo === 'vaccination' && String(datos?.vaccine_lot_number ?? '').trim() === '') return 'operations.vaccineLotRequired'
+  // `RR-32`: la baja y el descarte dicen por qué («Desconocida» es un valor de catálogo, `NULL` no).
+  if (tipo === 'mortality_recording' && !idDeclarado(datos?.cause_id)) return 'operations.mortalityCauseRequired'
+  if (tipo === 'cull_recording' && !idDeclarado(datos?.cull_cause_id)) return 'operations.cullCauseRequired'
+  // `RR-29`: una distribución mueve aves (suma > 0).
+  if (tipo === 'bird_distribution') {
+    const total = (datos?.bird_movements || [])
+      .reduce((suma: number, fila: any) => suma + numeroDeclarado(fila?.quantity), 0)
+    if (total <= 0) return 'operations.distributionRequired'
+  }
+  // `RR-28`: una inspección de granja no se guarda completamente vacía.
+  if (tipo === 'farm_inspection' && !inspeccionConContenido(datos)) return 'operations.inspectionContentRequired'
   if (tipo === 'medication' && !idDeclarado(datos?.medication_id)) return 'operations.medicationRequired'
   if (tipo === 'feed_registration'
     && !(datos?.feed_movements || []).some((fila: any) => numeroDeclarado(fila?.quantity_kg) > 0)) {
     return 'operations.feedRequired'
   }
+  // `RR-33`: toda fila de alimento con kilos nombra su tipo de alimento.
+  if (tipo === 'feed_registration'
+    && (datos?.feed_movements || []).some((fila: any) => numeroDeclarado(fila?.quantity_kg) > 0 && !idDeclarado(fila?.feed_type_id))) {
+    return 'operations.feedTypeRequired'
+  }
   return null
+}
+
+/**
+ * `RR-28`: ¿la inspección de granja trae algo sustantivo? Un valor numérico, una condición de cama,
+ * notas, un equipo observado o una observación general. Los valores por defecto de la UI no cuentan.
+ */
+export function inspeccionConContenido(datos: any): boolean {
+  const conTexto = (v: unknown) => typeof v === 'string' && v.trim() !== ''
+  const numero = (v: unknown) => v !== null && v !== undefined && v !== '' && !Number.isNaN(Number(v))
+  if (conTexto(datos?.observations)) return true
+  return (datos?.house_inspections || []).some((h: any) =>
+    numero(h?.temperature) || numero(h?.humidity) || conTexto(h?.litter_condition)
+    || conTexto(h?.litter_notes) || conTexto(h?.equipment_notes)
+    || (h?.equipment_items || []).some((e: any) => conTexto(e?.observation)))
 }
 
 // ============================================================

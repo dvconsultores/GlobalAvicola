@@ -88,6 +88,11 @@ const montar = (campos: any[]) => {
 
 const selectorCampo = () => screen.getAllByRole('combobox')[0] as HTMLSelectElement
 
+/** `SPEC 020 §6` · `RR-27`: el tipo de corrección es obligatorio; sin él ningún envío es válido. */
+const elegirTipoDeCorreccion = () => {
+  fireEvent.change(screen.getByTestId('correction-type'), { target: { value: '1' } })
+}
+
 beforeEach(() => {
   get.mockReset(); post.mockReset(); vi.clearAllMocks()
   post.mockResolvedValue({ data: {} })
@@ -123,6 +128,8 @@ describe('015 · UAT-S1 · formulario de corrección con campos reales', () => {
     await waitFor(() => expect(selectorCampo().options.length).toBe(2))
     fireEvent.change(selectorCampo(), { target: { value: 'bird_movements[5].avg_weight' } })
     fireEvent.change(screen.getByTestId('correction-corrected'), { target: { value: '2.5' } })
+    // `SPEC 020 §6` · `RR-27`: con tipo elegido, el faltante que se mide aquí es el motivo corto.
+    elegirTipoDeCorreccion()
     fireEvent.change(screen.getByPlaceholderText(/Explica por qué/), { target: { value: 'abc' } })
     fireEvent.click(screen.getByRole('button', { name: /Guardar Corrección/ }))
 
@@ -138,6 +145,7 @@ describe('015 · UAT-S1 · formulario de corrección con campos reales', () => {
     await waitFor(() => expect(selectorCampo().options.length).toBe(2))
     fireEvent.change(selectorCampo(), { target: { value: 'bird_movements[5].avg_weight' } })
     fireEvent.change(screen.getByTestId('correction-corrected'), { target: { value: '2.5' } })
+    elegirTipoDeCorreccion()
     fireEvent.change(screen.getByPlaceholderText(/Explica por qué/), { target: { value: 'pesaje mal digitado' } })
     fireEvent.click(screen.getByRole('button', { name: /Guardar Corrección/ }))
 
@@ -147,6 +155,7 @@ describe('015 · UAT-S1 · formulario de corrección con campos reales', () => {
       field_name: 'bird_movements[5].avg_weight',
       original_value: '2.0',
       corrected_value: '2.5',
+      correction_type_id: 1,
       reason: 'pesaje mal digitado',
     }))
   })
