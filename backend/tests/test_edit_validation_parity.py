@@ -23,6 +23,7 @@ import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
+from tests.owner_decisions_support import LOTE_DE_VACUNA
 from tests.time_reference import beyond_open_period, earlier_event_date, future_event_date, recent_event_date
 
 pytestmark = pytest.mark.asyncio
@@ -48,7 +49,7 @@ async def esc(test_database_url):
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
     from app.integrations.sap.models import SapReference, SapReferenceType
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus, Vaccine
+    from app.masters.models import BirdTypeEnum, Company, CorrectionType, Farm, FarmType, House, Lot, LotStatus, Vaccine
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -61,6 +62,11 @@ async def esc(test_database_url):
         vacuna = Vaccine(company_id=a.id, name=f"{PREFIJO}VAC-{uuid.uuid4().hex[:6]}", is_active=True)
         vacuna_b = Vaccine(company_id=b.id, name=f"{PREFIJO}VACB-{uuid.uuid4().hex[:6]}", is_active=True)
         s.add_all([vacuna, vacuna_b])
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-27`: toda corrección nueva
+        # declara su tipo, de la empresa del evento. Se siembra aquí para que las pruebas sigan
+        # midiendo la paridad de las reglas del alta (`AC-R176-*`) y no el catálogo.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}Tipo-{uuid.uuid4().hex[:6]}", is_active=True)
+        s.add(tipo_correccion)
         await s.flush()
         unidades = {u.code: u for u in (await s.execute(select(BusinessUnit))).scalars()}
         hab = {}
@@ -129,7 +135,7 @@ async def esc(test_database_url):
         await s.commit()
         d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpon_a.id, "galpon_chico": galpon_chico.id, "galpon_a2": galpon_a2.id,
              "planta_a": planta_a.id, "galpon_p": galpon_p.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id, "url": test_database_url,
-             "vacuna": vacuna.id, "vacuna_b": vacuna_b.id}
+             "vacuna": vacuna.id, "vacuna_b": vacuna_b.id, "tipo_correccion": tipo_correccion.id}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -159,6 +165,7 @@ async def esc(test_database_url):
             "DELETE FROM users WHERE username LIKE :p",
             "DELETE FROM roles WHERE name LIKE :p",
             "DELETE FROM vaccines WHERE name LIKE :p",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM companies WHERE name LIKE :p",
         ):
             await c.execute(text(sql), p)
@@ -227,6 +234,8 @@ def _cuerpo(esc, lote, tipo, n=None, *, galpon=None, **extra):
     elif tipo == "vaccination":
         # `RR-21` (SPEC 015 §4.1): la vacunación exige la vacuna aplicada, del catálogo de la empresa del lote.
         cuerpo["vaccine_id"] = esc["vacuna_b"] if lote == "lb" else esc["vacuna"]
+        # `spec 020 §6` · `RR-31`: la vacunación declara el lote de la vacuna aplicada.
+        cuerpo["vaccine_lot_number"] = LOTE_DE_VACUNA
     cuerpo.update(extra)
     return cuerpo
 
@@ -242,9 +251,10 @@ async def _put(http_client, esc, actor, event_id, cuerpo, company_id=None):
 
 
 async def _corregir(http_client, esc, actor, event_id, campo, valor):
+    # `spec 020 §6` · `RR-27`: el tipo de corrección es obligatorio y de la empresa del evento.
     return await http_client.post("/api/v1/corrections", headers=_token(esc[actor]),
                                   json={"event_id": event_id, "field_name": campo, "corrected_value": "" if valor is None else str(valor),
-                                        "reason": f"{PREFIJO}corrección de prueba"})
+                                        "reason": f"{PREFIJO}corrección de prueba", "correction_type_id": esc["tipo_correccion"]})
 
 
 async def _sin_cambios(esc, event_id, antes_evento, antes_efectos, *, lote=None, saldo=None):
