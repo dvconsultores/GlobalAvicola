@@ -2,9 +2,11 @@
 
 A diferencia de los contratos de rechazo (`RR-20`..`RR-23`, `RR-25`, `BR-01`, `BR-08`), aquí no se
 fija lo que el producto *debe* hacer sino lo que **hoy** hace en los puntos donde el contenido
-mínimo aún no está decidido: la inspección sin parámetros, la distribución sin aves, el pesaje sin
-semana, la vacunación sin lote de vacuna, la mortalidad y el desecho sin causa ni semana, la
-recepción de reproductoras sin datos opcionales de origen. Cada caso lleva en su docstring el ID y
+mínimo aún no está decidido: el pesaje sin semana, el alimento sin tipo ni fase y la recepción de
+reproductoras sin datos opcionales de origen. Las decisiones ratificadas por la Owner el
+25-11-2026 ya son regla (`RR-28` la inspección con contenido, `RR-29` la distribución con aves,
+`RR-31` el lote de vacuna y `RR-32` la causa de la baja), así que sus pines fijan el rechazo y,
+con el dato obligatorio presente, lo que **sigue** siendo opcional. Cada caso lleva en su docstring el ID y
 la decisión (`OD-S2-0x`) o el hallazgo (`S2-D1`) que fija, de modo que si el producto cambia el
 test falla y obliga a revisar la decisión de forma consciente.
 
@@ -16,6 +18,7 @@ from __future__ import annotations
 
 import pytest
 
+from tests.test_uat_s2_owner_decisions_a import _id_de_la_desconocida
 from tests.test_uat_s2_write_contract import AVES_RECIBIDAS, _alta_recepcion, _lote
 from tests.time_reference import recent_event_date
 
@@ -80,21 +83,14 @@ async def test_ops_s2_01_inspeccion_con_parametro_es_201(auth_headers, client):
     assert len(det.json()["inspection_details"]) == 1
 
 
-# ── OPS-S2-02 · el contenido mínimo de la inspección está pendiente (OD-S2-02)
+# ── OPS-S2-02 · la inspección completamente vacía (RR-28) ────────────────────
 
 @pytest.mark.asyncio
-async def test_ops_s2_02_inspeccion_sin_parametros_es_201(auth_headers, client):
-    """`OPS-S2-02`: una inspección **sin** parámetros entra hoy con `201`.
-
-    Pin de `OD-S2-02`: el contenido mínimo de la inspección está pendiente de decisión de la
-    Owner. Este test cambiará **solo** con esa decisión: si aparece una regla «no vacío» para
-    `inspection_details`, aquí llegará el `400` y habrá que actualizar el pin a conciencia.
-    """
+async def test_ops_s2_02_inspeccion_sin_parametros_es_400(auth_headers, client):
+    """`OPS-S2-02` · `RR-28`: ratificado por la Owner el 25-11-2026 (`OD-S2-02`), una inspección completamente vacía se rechaza"""
     r = await _alta_ubicacion(client, auth_headers, "farm_inspection")
-    assert r.status_code == 201, r.text
-    det = await client.get(f"/api/v1/operations/{r.json()['id']}", headers=auth_headers)
-    assert det.status_code == 200, det.text
-    assert not det.json()["inspection_details"]
+    assert r.status_code == 400, r.text
+    assert r.json()["rule"] == "RR-28"
 
 
 @pytest.mark.asyncio
@@ -127,21 +123,14 @@ async def test_ops_s2_03_recepcion_sin_proveedor_ni_raza_es_201(auth_headers, cl
     assert cuerpo["received_total"] == AVES_RECIBIDAS
 
 
-# ── OPS-S2-05 · la distribución sin filas con cantidad está pendiente (OD-S2-03)
+# ── OPS-S2-05 · la distribución sin aves (RR-29) ────────────────────────────
 
 @pytest.mark.asyncio
-async def test_ops_s2_05_distribucion_sin_aves_es_201(auth_headers, client):
-    """`OPS-S2-05`: una distribución sin ninguna fila con cantidad entra hoy con `201`.
-
-    Pin de `OD-S2-03`: la regla «la suma de las aves distribuidas debe ser mayor que cero» está
-    pendiente de decisión de la Owner. Mover el lote sin mover aves no describe nada, pero el
-    producto aún lo acepta.
-    """
+async def test_ops_s2_05_distribucion_sin_aves_es_400(auth_headers, client):
+    """`OPS-S2-05` · `RR-29`: ratificado por la Owner el 25-11-2026 (`OD-S2-03`), una distribución completamente vacía se rechaza"""
     r = await _alta_ubicacion(client, auth_headers, "bird_distribution", bird_movements=[])
-    assert r.status_code == 201, r.text
-    det = await client.get(f"/api/v1/operations/{r.json()['id']}", headers=auth_headers)
-    assert det.status_code == 200, det.text
-    assert not det.json()["bird_movements"]
+    assert r.status_code == 400, r.text
+    assert r.json()["rule"] == "RR-29"
 
 
 # ── OPS-S2-06 · el alimento sin tipo, fase ni semana ─────────────────────────
@@ -196,18 +185,22 @@ async def test_ops_s2_07_pesaje_sin_peso_es_400(auth_headers, client):
     assert r.json()["rule"] == "RR-20"
 
 
-# ── OPS-S2-08 · la vacunación sin lote de vacuna está pendiente (OD-S2-05) ───
+# ── OPS-S2-08 · la vacunación sin lote de vacuna (RR-31) ─────────────────────
 
 @pytest.mark.asyncio
-async def test_ops_s2_08_vacunacion_sin_lote_de_vacuna_es_201(auth_headers, client):
-    """`OPS-S2-08`: la vacunación con vacuna pero **sin** número de lote entra con `201`.
+async def test_ops_s2_08_vacunacion_sin_lote_de_vacuna_es_400(auth_headers, client):
+    """`OPS-S2-08` · `RR-31`: ratificado por la Owner el 25-11-2026 (`OD-S2-05`), la vacunación sin lote de vacuna se rechaza.
 
-    Pin de `OD-S2-05`: el lote de la vacuna es trazabilidad deseable, no dato mínimo; la regla
-    «no vacío» solo alcanza a la vacuna aplicada (`RR-21`).
+    Con el lote de vacuna presente, la semana sigue siendo opcional (pendiente de `RR-30`).
     """
     r = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water")
-    assert r.status_code == 201, r.text
-    assert r.json()["vaccine_lot_number"] is None
+    assert r.status_code == 400, r.text
+    assert r.json()["rule"] == "RR-31"
+
+    valida = await _alta(client, auth_headers, "vaccination", vaccine_id=1, vaccination_route="water",
+                         vaccine_lot_number="PIN-VAC-1")
+    assert valida.status_code == 201, valida.text
+    assert valida.json()["vaccine_lot_number"] == "PIN-VAC-1"
 
 
 @pytest.mark.asyncio
@@ -218,14 +211,14 @@ async def test_ops_s2_08_vacunacion_sin_vacuna_es_400(auth_headers, client):
     assert r.json()["rule"] == "RR-21"
 
 
-# ── OPS-S2-09 · la mortalidad sin causa ni semana (OD-S2-06 / OD-S2-04) ──────
+# ── OPS-S2-09 · la mortalidad sin causa (RR-32) ─────────────────────────────
 
 @pytest.mark.asyncio
-async def test_ops_s2_09_mortalidad_sin_causa_ni_semana_es_201(auth_headers, client):
-    """`OPS-S2-09`: una baja con cantidad, **sin** causa ni semana, entra con `201`.
+async def test_ops_s2_09_mortalidad_sin_causa_es_400(auth_headers, client):
+    """`OPS-S2-09` · `RR-32`: ratificado por la Owner el 25-11-2026 (`OD-S2-06`), la baja sin causa se rechaza.
 
-    Pines de `OD-S2-06` (la causa de la muerte no es obligatoria) y `OD-S2-04` (la semana se
-    puede derivar). La cantidad se mantiene dentro del saldo del lote.
+    Con la causa presente (la compartida «Desconocida»), la semana sigue siendo opcional
+    (pendiente de `RR-30`). La cantidad se mantiene dentro del saldo del lote.
     """
     lote = await _lote_con_aves(client, auth_headers)
     r = await client.post("/api/v1/operations", headers=auth_headers, json={
@@ -233,28 +226,38 @@ async def test_ops_s2_09_mortalidad_sin_causa_ni_semana_es_201(auth_headers, cli
         "event_date": recent_event_date(),
         "bird_movements": [{"sex": "mixed", "quantity": 1}],
     })
-    assert r.status_code == 201, r.text
-    det = await client.get(f"/api/v1/operations/{r.json()['id']}", headers=auth_headers)
+    assert r.status_code == 400, r.text
+    assert r.json()["rule"] == "RR-32"
+
+    causa = await _id_de_la_desconocida(client, auth_headers, "mortality-causes")
+    valida = await client.post("/api/v1/operations", headers=auth_headers, json={
+        "lot_id": lote, "event_type": "mortality_recording",
+        "event_date": recent_event_date(), "cause_id": causa,
+        "bird_movements": [{"sex": "mixed", "quantity": 1}],
+    })
+    assert valida.status_code == 201, valida.text
+    det = await client.get(f"/api/v1/operations/{valida.json()['id']}", headers=auth_headers)
     assert det.status_code == 200, det.text
-    assert det.json()["cause_id"] is None
+    assert det.json()["cause_id"] == causa
 
 
 @pytest.mark.asyncio
 async def test_ops_s2_09_mortalidad_sin_cantidad_es_400(auth_headers, client):
-    """`OPS-S2-09` / `BR-01`: la mortalidad sin ninguna cantidad es `400`."""
-    r = await _alta(client, auth_headers, "mortality_recording")
+    """`OPS-S2-09` / `BR-01`: la mortalidad sin ninguna cantidad es `400` (con la causa ya declarada)."""
+    causa = await _id_de_la_desconocida(client, auth_headers, "mortality-causes")
+    r = await _alta(client, auth_headers, "mortality_recording", cause_id=causa)
     assert r.status_code == 400, r.text
     assert r.json()["rule"] == "BR-01"
 
 
-# ── OPS-S2-10 · el desecho sin causa ni semana (OD-S2-06 / OD-S2-04) ────────
+# ── OPS-S2-10 · el desecho sin causa (RR-32) ────────────────────────────────
 
 @pytest.mark.asyncio
-async def test_ops_s2_10_desecho_sin_causa_ni_semana_es_201(auth_headers, client):
-    """`OPS-S2-10`: un desecho con cantidad, **sin** causa ni semana, entra con `201`.
+async def test_ops_s2_10_desecho_sin_causa_es_400(auth_headers, client):
+    """`OPS-S2-10` · `RR-32`: ratificado por la Owner el 25-11-2026 (`OD-S2-06`), el desecho sin causa se rechaza.
 
-    Misma decisión que la mortalidad (`OD-S2-06`, `OD-S2-04`) sobre la otra salida de aves del
-    lote: la cantidad es el dato mínimo, la causa se puede completar después.
+    Con la causa presente (la compartida «Desconocida»), la semana sigue siendo opcional
+    (pendiente de `RR-30`).
     """
     lote = await _lote_con_aves(client, auth_headers)
     r = await client.post("/api/v1/operations", headers=auth_headers, json={
@@ -262,16 +265,26 @@ async def test_ops_s2_10_desecho_sin_causa_ni_semana_es_201(auth_headers, client
         "event_date": recent_event_date(),
         "bird_movements": [{"sex": "mixed", "quantity": 1}],
     })
-    assert r.status_code == 201, r.text
-    det = await client.get(f"/api/v1/operations/{r.json()['id']}", headers=auth_headers)
+    assert r.status_code == 400, r.text
+    assert r.json()["rule"] == "RR-32"
+
+    causa = await _id_de_la_desconocida(client, auth_headers, "cull-causes")
+    valida = await client.post("/api/v1/operations", headers=auth_headers, json={
+        "lot_id": lote, "event_type": "cull_recording",
+        "event_date": recent_event_date(), "cull_cause_id": causa,
+        "bird_movements": [{"sex": "mixed", "quantity": 1}],
+    })
+    assert valida.status_code == 201, valida.text
+    det = await client.get(f"/api/v1/operations/{valida.json()['id']}", headers=auth_headers)
     assert det.status_code == 200, det.text
-    assert det.json()["cull_cause_id"] is None
+    assert det.json()["cull_cause_id"] == causa
 
 
 @pytest.mark.asyncio
 async def test_ops_s2_10_desecho_sin_cantidad_es_400(auth_headers, client):
-    """`OPS-S2-10` / `BR-01`: el desecho sin ninguna cantidad es `400`."""
-    r = await _alta(client, auth_headers, "cull_recording")
+    """`OPS-S2-10` / `BR-01`: el desecho sin ninguna cantidad es `400` (con la causa ya declarada)."""
+    causa = await _id_de_la_desconocida(client, auth_headers, "cull-causes")
+    r = await _alta(client, auth_headers, "cull_recording", cull_cause_id=causa)
     assert r.status_code == 400, r.text
     assert r.json()["rule"] == "BR-01"
 

@@ -67,6 +67,9 @@ from .validators import (
     # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: el lote de la vacuna y el motivo de la baja (`RR-31`, `RR-32`).
     validate_lote_de_vacuna,
     validate_motivo_de_la_baja,
+    # `spec 020 §6`: contenido de la inspección (`RR-28`) y distribución con aves (`RR-29`).
+    validate_contenido_de_inspeccion,
+    validate_distribucion_con_aves,
 )
 
 
@@ -1061,6 +1064,8 @@ class OperationsService:
         # (`RR-31`) y el motivo de la baja o el descarte (`RR-32`).
         validate_lote_de_vacuna(event_type, data.vaccine_lot_number)
         validate_motivo_de_la_baja(event_type, data.cause_id, data.cull_cause_id)
+        validate_contenido_de_inspeccion(event_type, data.inspection_details, data.observations)
+        validate_distribucion_con_aves(event_type, data.bird_movements)
         # `GA-REM-005-C` (`R-170`) + `GA-REM-021-C` (`B13`): una sola contabilidad de nacimientos (`BR-21`).
         validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
                                     [(bm.sex, bm.quantity) for bm in data.bird_movements])
@@ -1424,6 +1429,9 @@ class OperationsService:
         # se rechaza—. Un histórico sin el dato sigue editándose en cualquier otro campo.
         if "vaccine_lot_number" in cambios:
             validate_lote_de_vacuna(event.event_type, cambios["vaccine_lot_number"])
+        if "observations" in cambios:  # `RR-28`: la inspección no puede quedar sin contenido (estado candidato)
+            validate_contenido_de_inspeccion(
+                event.event_type, event.inspection_details, cambios["observations"], len(event.evidences or []))
         if any(k in cambios for k in ("cause_id", "cull_cause_id")):
             validate_motivo_de_la_baja(
                 event.event_type,

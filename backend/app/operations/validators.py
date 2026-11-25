@@ -924,6 +924,71 @@ def validate_motivo_de_la_baja(event_type, cause_id=None, cull_cause_id=None) ->
         raise BusinessRuleViolation(MENSAJE_CAUSA_DE_DESCARTE, "RR-32")
 
 
+MENSAJE_INSPECCION_SIN_CONTENIDO = (
+    "Registre al menos un dato de la inspección: un valor, una observación o una evidencia")
+MENSAJE_DISTRIBUCION_SIN_MOVIMIENTOS = (
+    "Registre la distribución de aves por galpón o sexo (al menos un movimiento)")
+MENSAJE_DISTRIBUCION_NEGATIVA = "La cantidad distribuida no puede ser negativa"
+MENSAJE_DISTRIBUCION_EN_CERO = (
+    "La distribución debe incluir al menos un ave (la suma no puede ser cero)")
+
+
+def _con_texto(valor) -> bool:
+    """Texto real: ni `None` ni solo espacios."""
+    return valor is not None and str(valor).strip() != ""
+
+
+def detalle_de_inspeccion_con_contenido(detalle) -> bool:
+    """`RR-28`: un detalle aporta contenido si trae un valor, un valor numérico o un estado elegido.
+
+    Acepta un objeto con atributos o un `dict`. El nombre del parámetro solo identifica *qué* se
+    observó: sin valor ni estado no dice nada, así que no cuenta.
+    """
+    def _leer(clave):
+        return detalle.get(clave) if isinstance(detalle, dict) else getattr(detalle, clave, None)
+
+    return _con_texto(_leer("value")) or _leer("value_numeric") is not None or _con_texto(_leer("status"))
+
+
+def validate_contenido_de_inspeccion(event_type, inspection_details=None, observations=None,
+                                     n_evidencias: int = 0) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-28` (`OD-S2-02`).
+
+    Una inspección de granja no se guarda completamente vacía: necesita al menos UNO de un
+    detalle con contenido, una observación con texto o una evidencia ya adjunta. El contexto
+    (granja, galpón, fecha, inspector) lo exigen `BR-08` y el alta; `lot_id` nulo sigue
+    permitido. La evidencia se adjunta después del alta, de modo que en el alta solo cuentan
+    detalles y observaciones; en edición y corrección se evalúa el estado candidato.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.FARM_INSPECTION.value:
+        return
+    if any(detalle_de_inspeccion_con_contenido(d) for d in (inspection_details or [])):
+        return
+    if _con_texto(observations) or (n_evidencias or 0) > 0:
+        return
+    raise BusinessRuleViolation(MENSAJE_INSPECCION_SIN_CONTENIDO, "RR-28")
+
+
+def validate_distribucion_con_aves(event_type, bird_movements=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-29` (`OD-S2-03`).
+
+    Una distribución representa una distribución física real: al menos un movimiento, cada
+    cantidad >= 0 y la suma > 0. No se fabrica un movimiento cero. Las validaciones de saldo y de
+    capacidad del galpón siguen donde estaban.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.BIRD_DISTRIBUTION.value:
+        return
+    cantidades = [(getattr(fila, "quantity", None) or 0) for fila in (bird_movements or [])]
+    if not cantidades:
+        raise BusinessRuleViolation(MENSAJE_DISTRIBUCION_SIN_MOVIMIENTOS, "RR-29")
+    if any(c < 0 for c in cantidades):
+        raise BusinessRuleViolation(MENSAJE_DISTRIBUCION_NEGATIVA, "RR-29")
+    if sum(cantidades) <= 0:
+        raise BusinessRuleViolation(MENSAJE_DISTRIBUCION_EN_CERO, "RR-29")
+
+
 def validate_segregation(registered_by_id: int, action_user_id: int, action: str = "aprobar") -> None:
     """BR-14: Operator cannot approve own data. Enforces segregation of duties."""
     if registered_by_id == action_user_id:

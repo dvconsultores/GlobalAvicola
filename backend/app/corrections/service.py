@@ -256,6 +256,17 @@ class CorrectionService:
             validate_contenido_minimo(event.event_type, event.vaccine_id, event.medication_id,
                                       candidatas, event.feed_movements)
 
+        if (tabla == "bird_movements" and campo == "quantity"
+                and event.event_type == EventType.BIRD_DISTRIBUTION):
+            # `spec 020 §6` · `RR-29`: la corrección no puede dejar la distribución en cero (estado candidato).
+            from types import SimpleNamespace
+
+            from ..operations.validators import validate_distribucion_con_aves
+
+            candidatas = [SimpleNamespace(quantity=valor)] + [
+                SimpleNamespace(quantity=otra.quantity) for otra in event.bird_movements if otra.id != fila.id]
+            validate_distribucion_con_aves(event.event_type, candidatas)
+
         setattr(fila, campo, valor)
         event.version += 1
         return (
