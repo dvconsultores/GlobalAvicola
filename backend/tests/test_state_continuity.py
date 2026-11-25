@@ -53,7 +53,7 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus
+    from app.masters.models import BirdTypeEnum, Company, CorrectionType, Farm, FarmType, House, Lot, LotStatus
     from app.operations.models import BirdMovement, EventStatus, EventType, OperationalEvent
     from app.review.models import ActionType, ApprovalAction
 
@@ -137,6 +137,12 @@ async def esc(test_database_url):
         lr, lg, lh, lb = _lote(a, "LR", BirdTypeEnum.BREEDER), _lote(a, "LG", BirdTypeEnum.GRANDPARENT), _lote(a, "LH", BirdTypeEnum.HATCHERY), _lote(b, "LB", BirdTypeEnum.BREEDER)
         s.add_all([lr, lg, lh, lb])
         await s.flush()
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-27`: toda corrección nueva
+        # declara su tipo, de la empresa del evento. Se siembra para que estas pruebas sigan
+        # midiendo la continuidad de estados (`R-135`) y no el catálogo de correcciones.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}Tipo-{uuid.uuid4().hex[:6]}", is_active=True)
+        s.add(tipo_correccion)
+        await s.flush()
 
         def _evento(empresa, lote, estado, autor, granja=None, galpon=None, tipo=EventType.FARM_INSPECTION):
             return OperationalEvent(company_id=empresa.id, lot_id=lote.id, farm_id=granja, house_id=galpon, event_type=tipo,
@@ -175,7 +181,8 @@ async def esc(test_database_url):
         await s.flush()
         await s.commit()
         d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpon_a.id, "lr": lr.id, "lg": lg.id, "lh": lh.id, "lb": lb.id,
-             "motivo_rev": MOTIVO_REV, "motivo_rej": MOTIVO_REJ, "url": test_database_url}
+             "motivo_rev": MOTIVO_REV, "motivo_rej": MOTIVO_REJ, "url": test_database_url,
+             "tipo_correccion": tipo_correccion.id}
         d.update({k: v.id for k, v in u.items()})
         d.update({f"ev_{k}": v.id for k, v in ev.items()})
     yield d
@@ -199,6 +206,7 @@ async def esc(test_database_url):
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p",
             "DELETE FROM roles WHERE name LIKE :p",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM companies WHERE name LIKE :p",
         ):
             await c.execute(text(sql), p)
@@ -244,7 +252,9 @@ async def _submit(http_client, esc, actor, ev, company_id=None):
 
 async def _corregir(http_client, esc, actor, ev, company_id=None, **extra):
     cuerpo = {"event_id": esc[ev], "field_name": "observations", "corrected_value": f"{PREFIJO}corregido",
-              "reason": f"{PREFIJO}error de digitación en observaciones"}
+              "reason": f"{PREFIJO}error de digitación en observaciones",
+              # `spec 020 §6` · `RR-27`: el tipo de corrección es obligatorio y de la empresa del evento.
+              "correction_type_id": esc["tipo_correccion"]}
     cuerpo.update(extra)
     return await http_client.post("/api/v1/corrections", headers=_token(esc[actor], company_id), json=cuerpo)
 
