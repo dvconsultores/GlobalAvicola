@@ -28,7 +28,7 @@ import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
 from tests.audit_harness import listener_auditoria_como_runtime  # noqa: F401
-from tests.time_reference import recent_event_date
+from tests.time_reference import days_ago, recent_event_date
 
 # `P1-12-REOPEN` (§1.3): las mutaciones se auditan en runtime (con listener).
 pytestmark = [pytest.mark.asyncio, pytest.mark.usefixtures("listener_auditoria_como_runtime")]
@@ -53,7 +53,9 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus
+    from app.lots.models import LotPhase
+    from app.masters.models import (BirdTypeEnum, Company, CorrectionType, CullCause, Farm, FarmType, FeedType, House, Lot,
+                                    LotStatus, MortalityCause, ProductivePhase)
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -118,6 +120,10 @@ async def esc(test_database_url):
         await s.flush()
 
         def _lote(empresa, marca, tipo, granja, **kw):
+            # `spec 020 §6` · `RR-30`: mortalidad, descarte y alimento derivan su semana del inicio
+            # del lote. Se declara uno holgadamente anterior a cualquier fecha de evento; la prueba
+            # que mide `BR-06` pasa el suyo.
+            kw.setdefault("start_date", datetime.combine(days_ago(60), datetime.min.time(), tzinfo=timezone.utc))
             return Lot(company_id=empresa.id, lot_code=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}", bird_type=tipo,
                        status=kw.pop("status", LotStatus.ACTIVE), farm_id=granja.id, house_id=galpones[granja].id, **kw)
 
@@ -130,9 +136,28 @@ async def esc(test_database_url):
         lotes["lhb"] = _lote(b, "LHB", BirdTypeEnum.HATCHERY, granja_b)
         s.add_all(lotes.values())
         await s.flush()
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026: se siembra el dato válido que el
+        # contrato exige —tipo de corrección (`RR-27`), tipo de alimento (`RR-33`) y fase vigente de
+        # los lotes con alimento (`RR-34`)— para que estas pruebas sigan midiendo el saldo
+        # (`R-173`/`R-174`) y no el catálogo. La causa compartida «Desconocida» (`RR-32`) ya existe
+        # en la base de pruebas: se busca, no se siembra.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}Tipo-{uuid.uuid4().hex[:6]}", is_active=True)
+        tipo_alimento = FeedType(company_id=a.id, name=f"{PREFIJO}Alimento-{uuid.uuid4().hex[:6]}",
+                                 code=f"{PREFIJO}AL-{uuid.uuid4().hex[:4]}", is_active=True)
+        fase = ProductivePhase(name=f"{PREFIJO}Fase", code=f"{PREFIJO}FP", order=1)
+        s.add_all([tipo_correccion, tipo_alimento, fase])
+        await s.flush()
+        for clave in ("lr", "lr2"):  # el alimento de `AC-R173-17` nace en `lr` y se mueve a `lr2`
+            s.add(LotPhase(lot_id=lotes[clave].id, phase_id=fase.id, start_date=days_ago(60), is_active=True))
+        causa_mortalidad, causa_descarte = [
+            (await s.execute(select(modelo.id).where(modelo.name == "Desconocida",
+                                                     modelo.company_id.is_(None)))).scalar_one()
+            for modelo in (MortalityCause, CullCause)]
         await s.commit()
         d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpones[granja_a].id, "planta_a": planta_a.id, "galpon_p": galpones[planta_a].id,
-             "granja_b": granja_b.id, "galpon_b": galpones[granja_b].id, "url": test_database_url}
+             "granja_b": granja_b.id, "galpon_b": galpones[granja_b].id, "url": test_database_url,
+             "tipo_correccion": tipo_correccion.id, "tipo_alimento": tipo_alimento.id,
+             "causa_mortalidad": causa_mortalidad, "causa_descarte": causa_descarte}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -153,10 +178,14 @@ async def esc(test_database_url):
             "DELETE FROM feed_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM bird_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM lot_phases WHERE lot_id IN (SELECT id FROM lots WHERE lot_code LIKE :p)",
             "DELETE FROM lots WHERE lot_code LIKE :p",
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM feed_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM productive_phases WHERE name LIKE :p",
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p",
             "DELETE FROM roles WHERE name LIKE :p",
@@ -223,12 +252,19 @@ def _cuerpo(esc, lote, tipo, n, *, egg_type="fertile"):
         cuerpo["hatchery_params"] = [{"quantity_loaded": n}]
     elif tipo in ("mortality_recording", "cull_recording", "chick_dispatch", "birth_registration", "bird_reception", "bird_exit"):
         cuerpo["bird_movements"] = [{"sex": "mixed", "quantity": n}]
+        # `spec 020 §6` · `RR-32`: la baja y el descarte dicen por qué. «Desconocida» es el valor
+        # explícito para lo que no se pudo determinar; con él la prueba mide el saldo, no `RR-32`.
+        if tipo == "mortality_recording":
+            cuerpo["cause_id"] = esc["causa_mortalidad"]
+        elif tipo == "cull_recording":
+            cuerpo["cull_cause_id"] = esc["causa_descarte"]
         if tipo == "birth_registration":
             cuerpo.update({"chicks_healthy": n, "chicks_weak": 0})
         if tipo == "bird_reception":  # `BR-20`: la recepción de reproductoras declara su cuadre (setup)
             cuerpo.update({"received_total": n, "dead_on_arrival": 0, "rejected_on_arrival": 0})
     elif tipo == "feed_registration":
-        cuerpo["feed_movements"] = [{"quantity_kg": float(n)}]
+        # `RR-33`: el consumo declara su tipo de alimento; la fase vigente la siembra el fixture.
+        cuerpo["feed_movements"] = [{"quantity_kg": float(n), "feed_type_id": esc["tipo_alimento"]}]
     else:
         cuerpo["egg_movements"] = [{"egg_type": egg_type, "quantity": n}]
     if tipo == "egg_dispatch":
@@ -254,8 +290,10 @@ async def _put(http_client, esc, actor, event_id, cuerpo, company_id=None):
 
 
 async def _corregir(http_client, esc, actor, event_id, campo, valor, company_id=None):
+    # `spec 020 §6` · `RR-27`: el tipo de corrección es obligatorio y de la empresa del evento.
     return await http_client.post("/api/v1/corrections", headers=_token(esc[actor], company_id),
-                                  json={"event_id": event_id, "field_name": campo, "corrected_value": str(valor), "reason": f"{PREFIJO}corrección de prueba"})
+                                  json={"event_id": event_id, "field_name": campo, "corrected_value": str(valor), "reason": f"{PREFIJO}corrección de prueba",
+                                        "correction_type_id": esc["tipo_correccion"]})
 
 
 async def _cancelar(http_client, esc, actor, event_id, company_id=None):
