@@ -25,6 +25,7 @@ import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
 from app.operations.models import EventStatus
+from tests.owner_decisions_support import fase_vigente_del_lote, tipo_de_alimento
 from tests.time_reference import iso_days_ago
 
 PREFIJO = "CA-TEST-"
@@ -109,11 +110,17 @@ async def lote_cerrable(client, auth_headers, seeded_ids, motor):
     })
     assert r.status_code == 201, r.text
     lot_id = r.json()["id"]
+    # `spec 020 §6` · `RR-34`: el consumo exige fase productiva vigente en la fecha del evento;
+    # se abre la fase al inicio del lote para que cubra el día en que se registran los eventos.
+    await fase_vigente_del_lote(client, auth_headers, lot_id, iso_days_ago(0))
 
     ids = []
     for tipo, extra in (
         ("weight_recording", {"bird_movements": [{"sex": "mixed", "quantity": 10, "avg_weight": 2000}]}),
-        ("feed_registration", {"feed_movements": [{"quantity_kg": 100.0}]}),
+        # `RR-33`: el consumo nombra su tipo de alimento.
+        ("feed_registration", {"feed_movements": [{
+            "quantity_kg": 100.0,
+            "feed_type_id": await tipo_de_alimento(client, auth_headers)}]}),
         ("farm_inspection", {"inspection_details": [
             {"parameter": "Bioseguridad", "value": "ok", "status": "ok"}]}),
     ):
@@ -230,10 +237,15 @@ async def test_t_076_05_un_registro_de_otro_lote_no_influye(
         "bird_type": "broiler", "sex": "mixed",
     })
     assert otro.status_code == 201, otro.text
+    otro_id = otro.json()["id"]
+    # `spec 020 §6` · `RR-34` / `RR-33`: también el lote ajeno necesita fase vigente y tipo de alimento.
+    await fase_vigente_del_lote(client, auth_headers, otro_id, iso_days_ago(0))
     pendiente = await client.post("/api/v1/operations", headers=auth_headers, json={
-        "lot_id": otro.json()["id"], "farm_id": seeded_ids["farm_id"],
+        "lot_id": otro_id, "farm_id": seeded_ids["farm_id"],
         "house_id": seeded_ids["house_id"], "event_type": "feed_registration",
-        "event_date": iso_days_ago(0), "feed_movements": [{"quantity_kg": 50.0}],
+        "event_date": iso_days_ago(0), "feed_movements": [{
+            "quantity_kg": 50.0,
+            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],
     })
     assert pendiente.status_code == 201, pendiente.text   # queda en `registered`
 
