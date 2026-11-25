@@ -17,6 +17,7 @@ import re
 
 import pytest
 
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.time_reference import (
     CLOSED_PERIOD_DAYS,
     at_open_period_boundary,
@@ -27,12 +28,19 @@ from tests.time_reference import (
 )
 
 # Un evento cualquiera que no dependa de catálogos ausentes en las semillas.
-def _payload(event_date: str) -> dict:
+async def _payload(client, headers, event_date: str) -> dict:
+    """Un consumo de alimento válido en la fecha pedida.
+
+    El tipo de alimento se lee de los maestros sembrados: desde el 25-11-2026 el contrato lo
+    exige (`RR-33`) y un id literal dejaría de ser válido al cambiar la base.
+    """
     return {
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": event_date,
-        "feed_movements": [{"quantity_kg": 10.0}],
+        "feed_movements": [
+            {"quantity_kg": 10.0, "feed_type_id": await tipo_de_alimento(client, headers)}
+        ],
     }
 
 
@@ -42,7 +50,7 @@ def _payload(event_date: str) -> dict:
 async def test_t028_01_br19_antes_del_limite_se_acepta(auth_headers, client):
     """Día 89: dentro del período abierto, el evento debe registrarse."""
     r = await client.post("/api/v1/operations", headers=auth_headers,
-                          json=_payload(inside_open_period()))
+                          json=await _payload(client, auth_headers, inside_open_period()))
     assert r.status_code == 201, r.text
 
 
@@ -54,7 +62,7 @@ async def test_t028_02_br19_en_el_limite_exacto_se_acepta(auth_headers, client):
     coincidir y el fallo obligaría a actualizar la constante de forma consciente.
     """
     r = await client.post("/api/v1/operations", headers=auth_headers,
-                          json=_payload(at_open_period_boundary()))
+                          json=await _payload(client, auth_headers, at_open_period_boundary()))
     assert r.status_code == 201, (
         f"El límite exacto de {CLOSED_PERIOD_DAYS} días debe aceptarse: {r.text}")
 
@@ -66,7 +74,7 @@ async def test_t028_03a_br19_pasado_el_limite_no_persiste(auth_headers, http_cli
     n_antes = len(antes.json())
 
     await http_client.post("/api/v1/operations", headers=auth_headers,
-                           json=_payload(beyond_open_period()))
+                           json=await _payload(http_client, auth_headers, beyond_open_period()))
 
     despues = await http_client.get("/api/v1/operations?limit=200", headers=auth_headers)
     assert len(despues.json()) == n_antes, (
@@ -83,7 +91,7 @@ async def test_t028_03b_br19_pasado_el_limite_responde_400(auth_headers, http_cl
     aserción correcta, para que Stage 2 tenga un criterio objetivo que satisfacer.
     """
     r = await http_client.post("/api/v1/operations", headers=auth_headers,
-                               json=_payload(beyond_open_period()))
+                               json=await _payload(http_client, auth_headers, beyond_open_period()))
     assert r.status_code == 400, (
         f"BR-19 debe responder 400, no {r.status_code} (R-26). Cuerpo: {r.text[:200]}")
     assert "período cerrado" in r.text or "BR-19" in r.text
@@ -172,7 +180,7 @@ async def test_r30_una_fecha_futura_se_rechaza(auth_headers, client):
     from tests.time_reference import iso_days_ago
 
     r = await client.post("/api/v1/operations", headers=auth_headers,
-                          json=_payload(iso_days_ago(-10)))
+                          json=await _payload(client, auth_headers, iso_days_ago(-10)))
     assert r.status_code == 400, f"Una fecha futura debe rechazarse: {r.status_code}"
     assert "futura" in r.text.lower()
     assert r.json().get("rule") == "BR-19"
@@ -184,7 +192,7 @@ async def test_r30_un_dia_de_holgura_por_zona_horaria(auth_headers, client):
     from tests.time_reference import iso_days_ago
 
     r = await client.post("/api/v1/operations", headers=auth_headers,
-                          json=_payload(iso_days_ago(-1)))
+                          json=await _payload(client, auth_headers, iso_days_ago(-1)))
     assert r.status_code == 201, r.text
 
 
@@ -192,7 +200,7 @@ async def test_r30_un_dia_de_holgura_por_zona_horaria(auth_headers, client):
 async def test_r26_el_error_de_regla_cita_la_regla(auth_headers, http_client):
     """`R-26`: contrato único de error — `400`, mensaje y `rule`."""
     r = await http_client.post("/api/v1/operations", headers=auth_headers,
-                               json=_payload(beyond_open_period()))
+                               json=await _payload(http_client, auth_headers, beyond_open_period()))
     assert r.status_code == 400
     cuerpo = r.json()
     assert isinstance(cuerpo["detail"], str), "`detail` debe seguir siendo texto"

@@ -15,42 +15,59 @@ from __future__ import annotations
 
 import pytest
 
+from tests.owner_decisions_support import causa_desconocida, tipo_de_alimento
 from tests.time_reference import beyond_open_period, iso_days_ago, recent_event_date
 
 
-def _evento(**extra) -> dict:
+def _evento(datos: dict, **extra) -> dict:
+    """Evento base con los datos que el contrato ratificado exige.
+
+    El alimento declara su tipo (`RR-33`); la mortalidad, su causa (`RR-32`). Esos ids se leen
+    de los maestros sembrados al construir el caso, no se escriben aquí.
+    """
     base = {
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 5.0}],
+        "feed_movements": [{"quantity_kg": 5.0, "feed_type_id": datos["feed_type_id"]}],
     }
     base.update(extra)
     return base
 
 
-# Cada caso: (regla, descripción, payload). Las ocho primeras salían como 500.
+async def _datos_requeridos(client, headers) -> dict:
+    return {
+        "feed_type_id": await tipo_de_alimento(client, headers),
+        "cause_id": await causa_desconocida(client, headers),
+    }
+
+
+# Cada caso: (regla, descripción, constructor del payload). El constructor recibe los datos
+# del contrato para poder citarlos; las ocho primeras reglas salían como 500 antes de `R-26`.
 CASOS = [
     ("BR-08", "evento de ubicación sin granja",
-     _evento(event_type="bird_reception", farm_id=None, house_id=None,
-             bird_movements=[{"sex": "mixed", "quantity": 10}])),
+     lambda d: _evento(d, event_type="bird_reception", farm_id=None, house_id=None,
+                       bird_movements=[{"sex": "mixed", "quantity": 10}])),
     ("BR-08", "inspección de granja sin galpón",
-     _evento(event_type="farm_inspection", farm_id=1, house_id=None)),
-    ("BR-19", "fecha en período cerrado", _evento(event_date=beyond_open_period())),
-    ("BR-19", "fecha futura", _evento(event_date=iso_days_ago(-10))),
-    ("BR-07", "lote inexistente", _evento(lot_id=999999)),
+     lambda d: _evento(d, event_type="farm_inspection", farm_id=1, house_id=None)),
+    ("BR-19", "fecha en período cerrado",
+     lambda d: _evento(d, event_date=beyond_open_period())),
+    ("BR-19", "fecha futura", lambda d: _evento(d, event_date=iso_days_ago(-10))),
+    ("BR-07", "lote inexistente", lambda d: _evento(d, lot_id=999999)),
     ("BR-01", "mortalidad sobre el saldo",
-     _evento(event_type="mortality_recording",
-             bird_movements=[{"sex": "female", "quantity": 999999}], feed_movements=[])),
+     lambda d: _evento(d, event_type="mortality_recording", cause_id=d["cause_id"],
+                       bird_movements=[{"sex": "female", "quantity": 999999}],
+                       feed_movements=[])),
 ]
 
 
-@pytest.mark.parametrize("regla,descripcion,payload", CASOS,
+@pytest.mark.parametrize("regla,descripcion,constructor", CASOS,
                          ids=[f"{r}-{d}" for r, d, _ in CASOS])
 @pytest.mark.asyncio
 async def test_toda_violacion_es_un_400_con_su_regla(
-    auth_headers, http_client, regla, descripcion, payload
+    auth_headers, http_client, regla, descripcion, constructor
 ):
+    payload = constructor(await _datos_requeridos(http_client, auth_headers))
     r = await http_client.post("/api/v1/operations", headers=auth_headers, json=payload)
     assert r.status_code == 400, (
         f"{descripcion}: se esperaba 400 y llegó {r.status_code}. Cuerpo: {r.text[:200]}")
@@ -64,8 +81,10 @@ async def test_toda_violacion_es_un_400_con_su_regla(
 @pytest.mark.asyncio
 async def test_ninguna_violacion_sale_como_500(auth_headers, http_client):
     """Barrido: ninguno de los casos conocidos puede producir un 5xx."""
-    for regla, descripcion, payload in CASOS:
-        r = await http_client.post("/api/v1/operations", headers=auth_headers, json=payload)
+    datos = await _datos_requeridos(http_client, auth_headers)
+    for regla, descripcion, constructor in CASOS:
+        r = await http_client.post("/api/v1/operations", headers=auth_headers,
+                                   json=constructor(datos))
         assert r.status_code < 500, f"{descripcion} ({regla}) sigue produciendo {r.status_code}"
 
 
