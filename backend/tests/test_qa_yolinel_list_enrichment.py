@@ -14,6 +14,7 @@ import uuid
 
 import pytest
 
+from tests.owner_decisions_support import fase_vigente_del_lote, tipo_de_alimento
 from tests.time_reference import iso_days_ago, recent_event_date
 
 PREFIJO = "ENR-"
@@ -41,13 +42,17 @@ async def _crear_lote(client, cabecera, seeded_ids) -> dict:
 
 async def _crear_evento(client, cabecera, lote) -> dict:
     """Evento `feed_registration` sobre el lote, con la cadena del propio lote."""
+    # `spec 020 §6` · `RR-33` / `RR-34`: el consumo nombra su tipo de alimento y el lote tiene
+    # fase vigente ese día. La fase se abre al inicio del lote para que cubra cualquier fecha.
+    await fase_vigente_del_lote(client, cabecera, lote["id"], iso_days_ago(30))
     resp = await client.post("/api/v1/operations", headers=cabecera, json={
         "lot_id": lote["id"],
         "farm_id": lote["farm_id"],
         "house_id": lote["house_id"],
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 120.0}],
+        "feed_movements": [{"quantity_kg": 120.0,
+                            "feed_type_id": await tipo_de_alimento(client, cabecera)}],
     })
     assert resp.status_code == 201, resp.text
     return resp.json()

@@ -42,7 +42,7 @@ async def esc(test_database_url):
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
     from app.corrections.models import CorrectionLog
-    from app.masters.models import BirdTypeEnum, Company, Lot, LotStatus
+    from app.masters.models import BirdTypeEnum, Company, CorrectionType, Lot, LotStatus
     from app.operations.models import EventStatus, EventType, OperationalEvent
     from app.review.models import ActionType, ApprovalAction
 
@@ -85,6 +85,9 @@ async def esc(test_database_url):
             await conceder_unidad(s, user=usuario, company_business_unit=hab)
         lr = Lot(company_id=a.id, lot_code=f"{PREFIJO}LR-{uuid.uuid4().hex[:6]}", bird_type=BirdTypeEnum.BREEDER, status=LotStatus.ACTIVE)
         s.add(lr)
+        # `spec 020 §6` · `RR-27`: toda corrección nueva declara su tipo, de la empresa del evento.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}Tipo-{uuid.uuid4().hex[:6]}", is_active=True)
+        s.add(tipo_correccion)
         await s.flush()
 
         def _evento(estado):
@@ -104,7 +107,8 @@ async def esc(test_database_url):
                             corrected_by_id=u["c1"].id, reason=f"{PREFIJO}corrección de C1"))
         await s.flush()
         await s.commit()
-        d = {"a": a.id, "lr": lr.id, "rol_c1": roles["c1"][0].id, "url": test_database_url}
+        d = {"a": a.id, "lr": lr.id, "rol_c1": roles["c1"][0].id, "tipo_correccion": tipo_correccion.id,
+             "url": test_database_url}
         d.update({k: v.id for k, v in u.items()})
         d.update({f"ev_{k}": v.id for k, v in ev.items()})
     yield d
@@ -118,6 +122,7 @@ async def esc(test_database_url):
             "DELETE FROM approval_actions WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM approval_steps WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM correction_logs WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM lots WHERE lot_code LIKE :p",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
@@ -148,9 +153,11 @@ async def _aprobar(http_client, esc, actor, ev):
 
 
 async def _corregir(http_client, esc, actor, ev):
+    # `spec 020 §6` · `RR-27`: el tipo de la corrección es obligatorio y de la empresa del evento.
     return await http_client.post("/api/v1/corrections", headers=_token(esc[actor]),
                                   json={"event_id": esc[ev], "field_name": "observations", "corrected_value": f"{PREFIJO}v2",
-                                        "reason": f"{PREFIJO}error de digitación"})
+                                        "reason": f"{PREFIJO}error de digitación",
+                                        "correction_type_id": esc["tipo_correccion"]})
 
 
 async def _es_br14(r):

@@ -27,6 +27,7 @@ import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
+from tests.owner_decisions_support import LOTE_DE_VACUNA
 from tests.time_reference import recent_event_date
 
 pytestmark = pytest.mark.asyncio
@@ -194,6 +195,8 @@ async def _evento_en(http_client, esc, estado: str, *, lote="lote", tipo="vaccin
     if tipo == "vaccination":
         # `RR-21` (SPEC 015 §4.1): la vacunación exige la vacuna aplicada, del catálogo de la empresa del evento.
         cuerpo["vaccine_id"] = esc["vacuna_b"] if lote == "lote_b" else esc["vacuna"]
+        # `spec 020 §6` · `RR-31`: la aplicación dice con qué lote de vacuna se hizo.
+        cuerpo["vaccine_lot_number"] = LOTE_DE_VACUNA
     actor = "rev_b" if lote == "lote_b" else "op"
     r = await http_client.post("/api/v1/operations", headers=_token(esc[actor]), json=cuerpo)
     assert r.status_code == 201, r.text
