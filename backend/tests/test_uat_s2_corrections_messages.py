@@ -15,6 +15,7 @@ import uuid
 
 import pytest
 
+from tests.owner_decisions_support import fase_vigente_del_lote, tipo_de_alimento
 from tests.test_uat_s2_write_contract import (
     _alta_recepcion,
     _campos,
@@ -90,9 +91,13 @@ async def _recepcion_breeder(client, headers) -> dict:
 
 async def _evento_con_alimento(client, headers, cantidad_kg: float = 25.0) -> dict:
     lote = await _lote(client, headers)
+    # `RR-34`: el alimento se registra sobre un lote con fase productiva vigente en la fecha del
+    # evento, y `RR-33`: cada fila con kilos nombra su tipo de alimento.
+    await fase_vigente_del_lote(client, headers, lote, recent_event_date())
     r = await client.post("/api/v1/operations", headers=headers, json={
         "lot_id": lote, "event_type": "feed_registration", "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": cantidad_kg}],
+        "feed_movements": [{"quantity_kg": cantidad_kg,
+                            "feed_type_id": await tipo_de_alimento(client, headers)}],
     })
     assert r.status_code == 201, r.text
     return r.json()

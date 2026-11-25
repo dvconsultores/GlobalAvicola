@@ -14,6 +14,7 @@ import uuid
 
 import pytest
 
+from tests.owner_decisions_support import causa_desconocida, tipo_de_correccion
 from tests.time_reference import lot_start_date, recent_event_date
 
 
@@ -39,6 +40,8 @@ async def _recepcion(client, headers, lot_id: int, cantidad: int):
 async def _mortalidad(client, headers, lot_id: int, cantidad: int):
     r = await client.post("/api/v1/operations", headers=headers, json={
         "lot_id": lot_id, "event_type": "mortality_recording", "event_date": recent_event_date(),
+        # `RR-32`: la baja dice por qué; «Desconocida» es el valor explícito de lo no determinado.
+        "cause_id": await causa_desconocida(client, headers, "mortality-causes"),
         "bird_movements": [{"sex": "mixed", "quantity": cantidad}],
     })
     assert r.status_code == 201, r.text
@@ -61,9 +64,11 @@ async def _fila_de(client, headers, event_id: int, sufijo: str) -> dict:
 
 
 async def _corregir(client, headers, event_id, campo, valor, motivo="Error de digitación"):
+    # `RR-27` (`OD-S2-01`, ratificado por la Owner): toda corrección declara su tipo.
+    tipo = await tipo_de_correccion(client, headers)
     return await client.post("/api/v1/corrections", headers=headers, json={
         "event_id": event_id, "field_name": campo,
-        "corrected_value": valor, "reason": motivo,
+        "corrected_value": valor, "reason": motivo, "correction_type_id": tipo,
     })
 
 

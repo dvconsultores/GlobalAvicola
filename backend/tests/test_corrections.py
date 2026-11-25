@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import pytest
 
+from tests.owner_decisions_support import LOTE_DE_VACUNA, tipo_de_correccion
 from tests.time_reference import iso_days_ago, recent_event_date
 
 
@@ -20,6 +21,7 @@ async def _evento(client, headers, **extra):
     cuerpo = {
         "lot_id": 2, "event_type": "vaccination", "event_date": recent_event_date(),
         "vaccine_id": 1, "vaccination_route": "water", "treatment_days": 3,
+        "vaccine_lot_number": LOTE_DE_VACUNA,  # `RR-31`: una vacunación dice con qué lote se aplicó
         "observations": "original",
     }
     cuerpo.update(extra)
@@ -29,9 +31,11 @@ async def _evento(client, headers, **extra):
 
 
 async def _corregir(client, headers, event_id, campo, valor, motivo="Error de digitación"):
+    # `RR-27` (`OD-S2-01`, ratificado por la Owner): toda corrección declara su tipo.
+    tipo = await tipo_de_correccion(client, headers)
     return await client.post("/api/v1/corrections", headers=headers, json={
         "event_id": event_id, "field_name": campo,
-        "corrected_value": valor, "reason": motivo,
+        "corrected_value": valor, "reason": motivo, "correction_type_id": tipo,
     })
 
 
@@ -75,10 +79,12 @@ async def test_el_registro_conserva_el_valor_original(auth_headers, client):
 async def test_el_original_lo_lee_el_servidor_no_el_cliente(auth_headers, client):
     """Si el valor original lo aporta quien corrige, la auditoría deja de ser evidencia."""
     evento = await _evento(client, auth_headers, observations="lo que realmente había")
+    tipo = await tipo_de_correccion(client, auth_headers)  # `RR-27`
     r = await client.post("/api/v1/corrections", headers=auth_headers, json={
         "event_id": evento["id"], "field_name": "observations",
         "original_value": "una versión conveniente",   # mentira deliberada
         "corrected_value": "nuevo", "reason": "prueba de integridad",
+        "correction_type_id": tipo,
     })
     assert r.status_code == 201, r.text
     assert r.json()["original_value"] == "lo que realmente había", (
@@ -132,9 +138,11 @@ async def test_no_se_puede_corregir_lo_que_no_es_un_dato_operativo(
 async def test_un_valor_del_tipo_equivocado_da_400_no_500(auth_headers, http_client):
     # El nombre funcional lo exige el SPEC 020 (AC-S2-C03, hallazgo A5 de la Sesión 2).
     evento = await _evento(http_client, auth_headers)
+    tipo = await tipo_de_correccion(http_client, auth_headers)  # `RR-27`
     r = await http_client.post("/api/v1/corrections", headers=auth_headers, json={
         "event_id": evento["id"], "field_name": "treatment_days",
         "corrected_value": "no es un número", "reason": "prueba de tipos",
+        "correction_type_id": tipo,
     })
     assert r.status_code == 400, f"Debe explicarse, no romperse: {r.status_code}"
     assert "Días de tratamiento" in r.text, r.text  # AC-S2-C03: el error se nombra como lo lee el operador

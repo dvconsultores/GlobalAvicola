@@ -53,7 +53,16 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus
+    from app.masters.models import (
+        BirdTypeEnum,
+        Company,
+        CorrectionType,
+        Farm,
+        FarmType,
+        House,
+        Lot,
+        LotStatus,
+    )
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -132,8 +141,12 @@ async def esc(test_database_url):
                  "lb": _lote(b, "LB", BirdTypeEnum.BREEDER), "lpb": _lote(b, "LPB", BirdTypeEnum.BROILER)}
         s.add_all(lotes.values())
         await s.flush()
+        # `RR-27` (`OD-S2-01`): la empresa tiene tipos de corrección; toda corrección declara uno.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}Tipo de corrección", is_active=True)
+        s.add(tipo_correccion)
+        await s.flush()
         await s.commit()
-        d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpon_a.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id, "url": test_database_url}
+        d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpon_a.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id, "url": test_database_url, "tipo_correccion": tipo_correccion.id}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -154,6 +167,7 @@ async def esc(test_database_url):
             "DELETE FROM lots WHERE lot_code LIKE :p",
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
+            "DELETE FROM correction_types WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p",
@@ -315,20 +329,23 @@ async def test_bu02_engorde_positivo_independiente(http_client, esc):
 async def test_c01_c03_la_correccion_aplica_el_valor_conserva_el_original_y_respeta_rr11(http_client, esc):
     ev = (await _agua(http_client, esc, "operador", "lr", 123.5)).json()
     r = await http_client.post("/api/v1/corrections", headers=_token(esc["corrector"]),
-                               json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": "200.5", "reason": f"{PREFIJO}lectura mal anotada"})
+                               json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": "200.5", "reason": f"{PREFIJO}lectura mal anotada",
+                                     "correction_type_id": esc["tipo_correccion"]})
     assert r.status_code == 201, r.text
     assert (await _sql(esc, "SELECT water_liters FROM operational_events WHERE id = :e", e=ev["id"]))[0][0] == 200.5
     assert (await _sql(esc, "SELECT original_value FROM correction_logs WHERE event_id = :e", e=ev["id"]))[0][0] == "123.5"
     for malo in ("0", "-5"):
         r = await http_client.post("/api/v1/corrections", headers=_token(esc["corrector"]),
-                                   json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": malo, "reason": f"{PREFIJO}error"})
+                                   json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": malo, "reason": f"{PREFIJO}error",
+                                         "correction_type_id": esc["tipo_correccion"]})
         assert r.status_code == 400, (malo, r.text)
 
 
 async def test_c02_sin_permiso_no_se_corrige_y_el_aprobado_es_inmutable(http_client, esc):
     ev = (await _agua(http_client, esc, "operador", "lr", 123.5)).json()
     r = await http_client.post("/api/v1/corrections", headers=_token(esc["sin_perm"]),
-                               json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": "1", "reason": f"{PREFIJO}x"})
+                               json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": "1", "reason": f"{PREFIJO}x",
+                                     "correction_type_id": esc["tipo_correccion"]})
     assert r.status_code == 403
     motor = create_async_engine(esc["url"])
     async with motor.begin() as c:
@@ -336,7 +353,8 @@ async def test_c02_sin_permiso_no_se_corrige_y_el_aprobado_es_inmutable(http_cli
     await motor.dispose()
     assert (await http_client.put(f"/api/v1/operations/{ev['id']}", headers=_token(esc["operador"]), json={"water_liters": 1})).status_code == 400
     r = await http_client.post("/api/v1/corrections", headers=_token(esc["corrector"]),
-                               json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": "1", "reason": f"{PREFIJO}x"})
+                               json={"event_id": ev["id"], "field_name": "water_liters", "corrected_value": "1", "reason": f"{PREFIJO}x",
+                                     "correction_type_id": esc["tipo_correccion"]})
     assert r.status_code == 400
 
 
