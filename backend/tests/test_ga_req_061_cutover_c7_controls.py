@@ -20,6 +20,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 from test_ga_req_061_cutover_c2_lifecycle import BU_FIXTURE, _crear_batch, _subir, _xlsx  # noqa: E402
 from test_ga_req_061_cutover_c3_lifecycle import _headers_aprobar, _otorgar  # noqa: E402
 from test_ga_req_061_cutover_c4_apply import _fase  # noqa: E402
+from owner_decisions_support import causa_desconocida  # noqa: E402
 from time_reference import days_ago, iso_days_ago, recent_event_date  # noqa: E402
 
 CORTE_PASADO = days_ago(50).isoformat() + "T00:00:00+00:00"
@@ -91,6 +92,10 @@ async def test_ctl02_mortalidad_post_cutover_por_api_sigue_operando(auth_headers
 
     r = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": lote, "event_type": "mortality_recording", "event_date": recent_event_date(),
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`: la baja dice por qué. La
+        # causa compartida «Desconocida» (ya sembrada) es el valor explícito para lo no determinado;
+        # con ella el control mide que el motor sigue operando sobre un lote MIGRATED.
+        "cause_id": await causa_desconocida(client, auth_headers),
         "bird_movements": [{"sex": "female", "quantity": 10, "avg_weight": 1500.0}]})
     assert r.status_code == 201, r.text
 
