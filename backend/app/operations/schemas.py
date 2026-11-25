@@ -83,6 +83,9 @@ class FeedMovementSchema(BaseModel):
     sacks_count: Optional[int] = None
     week_number: Optional[int] = None
     sap_order_id: Optional[str] = None
+    # `SPEC 020 §6` · `RR-34`: la fase se deriva del lote en la fecha del evento. Se **lee**,
+    # no se escribe; por eso no entra en `FeedMovementCreateSchema`.
+    phase_id: Optional[int] = None
 
 
 class FeedMovementCreateSchema(FeedMovementSchema):
@@ -93,6 +96,10 @@ class FeedMovementCreateSchema(FeedMovementSchema):
     """
 
     quantity_kg: float = Field(default=0.0, gt=0, validate_default=True)
+    # `RR-34` · `phase_id` es de solo lectura, pero el esquema de escritura lo hereda del de
+    # lectura. Se excluye del volcado para que un valor del cliente no llegue nunca al
+    # `INSERT`: la fase la deriva el servidor, no el formulario.
+    phase_id: Optional[int] = Field(default=None, exclude=True)
 
 
 class EggStorageSchema(BaseModel):

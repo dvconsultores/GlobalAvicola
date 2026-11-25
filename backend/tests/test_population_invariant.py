@@ -403,7 +403,9 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # `d9e0f1a2b3c4` (tablas inbound SAP HANA, solo lectura). SPEC 006 la avanza a
     # `e0f1a2b3c4d5` (apertura por BU: columnas de `opening_balances` + `hatchery_openings`).
     # SPEC 018 avanza la cabeza a h3c4d5e6f7a8 (desglose de no incubables y fosa en hatchery_openings).
-    assert cabezas == ["h3c4d5e6f7a8"], cabezas
+    # SPEC 020 §6 avanza la cabeza a i4d5e6f7a8b9: columna feed_movements.phase_id y causa
+    # compartida 'Desconocida'.
+    assert cabezas == ["i4d5e6f7a8b9"], cabezas
     # y hay una ruta nueva de `GA-REM-003` · AC04 (`/api/v1/logout`), 211 → 212.
     # `R-197` · C2 añade `/api/v1/review/events/{event_id}/actions`, 212 → 213.
     # `R-218` · C2 añade `/api/v1/reports/lot/{lot_id}/weekly`, 213 → 214.
