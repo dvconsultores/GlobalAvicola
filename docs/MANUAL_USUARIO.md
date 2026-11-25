@@ -199,6 +199,8 @@ Esta sección resume los cambios que notarás al registrar y revisar operaciones
 
 Al corregir un registro, el formulario ofrece **solo los campos realmente corregibles** de ese evento (por ejemplo «Peso promedio · fila 1 (Macho)»). El **valor original es de solo lectura**, se exige un **motivo de al menos 5 caracteres** y el historial del evento muestra el cambio como **original → corregido**, con usuario y fecha. La cantidad recibida de un lote de reproductoras **no se corrige de forma aislada**: es la identidad del lote y se ajusta con la operación que corresponda.
 
+Los campos que apuntan a un catálogo —proveedor, medicamento, vacuna, causas de mortalidad o descarte, transporte, granja o planta de destino— muestran el **nombre** actual y se corrigen **eligiendo de una lista** del catálogo; nunca se escribe un código. Una corrección **no puede saltarse las reglas del campo**: por ejemplo, el tamaño de muestra debe ser mayor que 0 y, en una recepción, no mayor que las aves recibidas; las dosis y los días de tratamiento no pueden ser negativos; y la fecha del evento no puede quedar vacía. Los avisos de error nombran el campo como lo ves en pantalla (por ejemplo «Peso promedio»). Quien corrige un registro **no puede aprobarlo**: lo aprueba otra persona.
+
 ### 9.2 · Datos obligatorios por operación
 
 Los campos obligatorios llevan un «*» en el formulario. El detalle por operación es:
@@ -217,9 +219,13 @@ Los campos obligatorios llevan un «*» en el formulario. El detalle por operaci
 
 El campo «Semana» **no se rellena solo**: es opcional y el «Ej.: 12» que aparece dentro del campo es solo una ayuda.
 
+**Muestra tomada** (recepción) y **Aves pesadas** (pesaje): son opcionales, pero si las registras deben ser mayores que 0; en la recepción no pueden superar las aves recibidas.
+
 ### 9.3 · Inspección de granja sin lote
 
 Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja no tiene una cadena productiva inequívoca, el registro queda en **Pendientes de clasificar** (botón en Historial), donde se ve con su granja y galpón. La clasificación desde la pantalla todavía no está disponible: la gestiona el equipo de soporte.
+
+Una inspección de granja es un evento de **nivel granja**: aunque se clasifique o se apruebe, **no se le asigna un lote** (en el Historial la columna Lote dice «Sin lote (nivel granja)»). Clasificarla solo la atribuye a una unidad de negocio; no es lo mismo que asignarle un lote. El texto «Se creará al aprobar» aparece únicamente en la importación de abuelas, que sí crea su lote al aprobarse.
 
 ### 9.4 · Reportes
 
@@ -231,4 +237,4 @@ Solo se muestran las pestañas de las **unidades de negocio asignadas** a tu usu
 
 ### 9.6 · Filtros y avisos
 
-El filtro por lote espera un instante antes de consultar y muestra **un solo aviso** si el código no es válido. Los **avisos (toasts)** quedan siempre visibles por encima de los cuadros de diálogo, y el **rechazo de un registro exige escribir el motivo dentro del cuadro** (al menos 10 caracteres).
+Los filtros de lote de **Historial, Revisión y Aprobaciones** buscan por el **código del lote** —basta escribir una parte, sin distinguir mayúsculas— y esperan un instante antes de consultar. En el Centro de Revisión el rango de fechas avisa, **una sola vez y en español**, si la fecha inicial es posterior a la final, y acepta indicar solo el inicio, solo el fin o un único día. Los **avisos (toasts)** quedan siempre visibles por encima de los cuadros de diálogo, y el **rechazo de un registro exige escribir el motivo dentro del cuadro** (al menos 10 caracteres).
