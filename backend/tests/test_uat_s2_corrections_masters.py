@@ -52,7 +52,7 @@ async def _tipo_de_correccion(client, headers) -> int:
     r = await client.get("/api/v1/masters/correction-types", headers=headers)
     assert r.status_code == 200, r.text
     datos = r.json()
-    items = datos["items"] if isinstance(datos, dict) else datos
+    items = [i for i in (datos["items"] if isinstance(datos, dict) else datos) if i.get("is_active", True)]
     if items:
         return items[0]["id"]
     r = await client.post("/api/v1/masters/correction-types", headers=headers,

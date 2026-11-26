@@ -30,8 +30,8 @@ async def causa_desconocida(client, headers, recurso: str = "mortality-causes") 
 
 
 async def tipo_de_correccion(client, headers) -> int:
-    """Id de un tipo de corrección de la empresa (se crea uno si no hay)."""
-    filas = await _lista(client, headers, "correction-types")
+    """Id de un tipo de corrección ACTIVO de la empresa (se crea uno si no hay)."""
+    filas = [f for f in await _lista(client, headers, "correction-types") if f.get("is_active", True)]
     if filas:
         return filas[0]["id"]
     r = await client.post("/api/v1/masters/correction-types", headers=headers,
@@ -41,8 +41,8 @@ async def tipo_de_correccion(client, headers) -> int:
 
 
 async def tipo_de_alimento(client, headers) -> int:
-    """Id de un tipo de alimento de la empresa (se crea uno si no hay)."""
-    filas = await _lista(client, headers, "feed-types")
+    """Id de un tipo de alimento ACTIVO de la empresa (se crea uno si no hay)."""
+    filas = [f for f in await _lista(client, headers, "feed-types") if f.get("is_active", True)]
     if filas:
         return filas[0]["id"]
     r = await client.post("/api/v1/masters/feed-types", headers=headers,

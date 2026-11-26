@@ -52,7 +52,7 @@ async def _lista(client, headers, recurso: str) -> list[dict]:
 
 async def _tipo_de_correccion(client, headers) -> int:
     """`RR-27`: un tipo de corrección válido del catálogo de la empresa (se crea si no hay)."""
-    items = await _lista(client, headers, "correction-types")
+    items = [i for i in await _lista(client, headers, "correction-types") if i.get("is_active", True)]
     if items:
         return items[0]["id"]
     r = await client.post("/api/v1/masters/correction-types", headers=headers,
@@ -298,6 +298,40 @@ async def test_od01_04_tipo_inexistente_o_de_otra_empresa_es_400(
                                       tipo=ajeno.json()["id"])
     assert de_otra_empresa.status_code == 400, de_otra_empresa.text
     assert de_otra_empresa.json()["detail"] == MENSAJE_TIPO, de_otra_empresa.json()
+
+
+@pytest.mark.asyncio
+async def test_od01_05_tipo_inactivo_es_400_y_reactivado_vuelve_a_servir(auth_headers, client):
+    """`OD01-05` · `RR-27` (`OD-21`): un tipo desactivado no tipifica correcciones nuevas.
+
+    El catálogo conserva el tipo (las correcciones históricas lo siguen nombrando), pero una
+    corrección nueva con él es 400 con el mismo mensaje que «sin tipo». Reactivado, el mismo
+    tipo vuelve a servir: el rechazo se debe a la inactividad y a nada más.
+    """
+    alta = await client.post("/api/v1/masters/correction-types", headers=auth_headers,
+                             json={"name": f"Tipo retirado {uuid.uuid4().hex[:6].upper()}"})
+    assert alta.status_code == 201, alta.text
+    tipo = alta.json()["id"]
+    evento = await _alta_vacunacion(client, auth_headers, vaccine_lot_number="OD-VAC-05")
+    assert evento.status_code == 201, evento.text
+    event_id = evento.json()["id"]
+
+    baja = await client.put(f"/api/v1/masters/correction-types/{tipo}", headers=auth_headers,
+                            json={"is_active": False})
+    assert baja.status_code == 200, baja.text
+    assert baja.json()["is_active"] is False, baja.json()
+
+    inactivo = await _corregir(client, auth_headers, event_id, "observations", "x", tipo=tipo)
+    assert inactivo.status_code == 400, inactivo.text
+    assert inactivo.json()["detail"] == MENSAJE_TIPO, inactivo.json()
+    assert inactivo.json()["rule"] == "RR-27", inactivo.json()
+
+    reactivado = await client.put(f"/api/v1/masters/correction-types/{tipo}", headers=auth_headers,
+                                  json={"is_active": True})
+    assert reactivado.status_code == 200, reactivado.text
+    ok = await _corregir(client, auth_headers, event_id, "observations", "x", tipo=tipo)
+    assert ok.status_code == 201, ok.text
+    assert ok.json()["correction_type_id"] == tipo, ok.json()
 
 # ══════════════════════════════════════════════════════════════════════════════
 #  OD05 · `RR-31` — la vacunación dice con qué lote de vacuna se aplicó
