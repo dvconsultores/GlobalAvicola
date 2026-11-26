@@ -1749,6 +1749,7 @@
         "quantity_kg": "Cantidad de alimento (kg)"
       }
     },
-    "typeRequired": "Seleccione el tipo de corrección"
+    "typeRequired": "Seleccione el tipo de corrección",
+    "noValue": "Sin valor"
   }
 }

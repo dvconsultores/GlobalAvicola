@@ -22,3 +22,22 @@ export function describirCampoCorregido(t: (k: string, o?: any) => any, fieldNam
  }
  return String(t(`corrections.fields.${nombre}`, nombre))
 }
+
+/**
+ * `020` · §7 `AC-O23-07`: etiqueta funcional de un registro de catálogo en el selector de
+ * corrección: `código — nombre` cuando el maestro tiene código (`sap_code` del proveedor, `code`
+ * de la granja, `plate` del transporte); si no, el nombre. Nunca el id solo.
+ */
+export function etiquetaDeMaestro(registro: any): string {
+ const codigo = registro?.sap_code || registro?.code || registro?.plate
+ const nombre = String(registro?.name ?? '')
+ return codigo ? `${String(codigo)} — ${nombre}` : nombre
+}
+
+/**
+ * `020` · §7 `AC-O23-07`: un valor de corrección vacío (`null`, `undefined` o cadena vacía) no
+ * tiene texto que mostrar: la pantalla dice «Sin valor», nunca `null`, `undefined` ni un hueco.
+ */
+export function esValorVacio(valor: unknown): boolean {
+ return valor === null || valor === undefined || String(valor) === ''
+}

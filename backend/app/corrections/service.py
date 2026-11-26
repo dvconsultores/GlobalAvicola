@@ -69,6 +69,13 @@ class CorrectionService:
                 event, data, operaciones)
         else:
             valor_original = _leer_valor(event, data.field_name)
+            # `spec 020 §7` · `AC-O23-04`: completar un maestro vacío solo en un campo que el tipo admite.
+            if (data.field_name in MAESTROS_CORREGIBLES and valor_original is None
+                    and not _maestro_aplica(event, data.field_name)):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"«{etiqueta_de_campo(data.field_name)}» no aplica a este tipo de evento",
+                )
             # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-31`/`RR-32`: el valor llega como
             # **texto**, así que un vacío o solo espacios no describe el dato. Se valida antes de
             # convertirlo: la conversión de `cause_id` vacío daría `None` y la de espacios, un
@@ -123,6 +130,10 @@ class CorrectionService:
                 # `GA-REM-023-B` · `R-176` (+ `R-45`): la fecha y el documento SAP también pasan por ella
                 # (`BR-06`, `BR-19`, `BR-11`, `BR-18`): corregir no es una puerta trasera.
                 await operaciones.verificar_destino_de_edicion(event, {data.field_name: valor_aplicado})
+            if data.field_name in MAESTROS_CORREGIBLES and valor_aplicado is not None:
+                # `AC-O23-05` · `OD-21`: una corrección nueva no asigna un maestro dado de baja. Va después
+                # de la guarda de empresa para que el ajeno siga siendo «no encontrado» (`AC26`).
+                await self._exigir_maestro_activo(data.field_name, valor_aplicado)
             if data.field_name in ("event_date", "lot_id"):  # `RR-30` / `RR-34`: la semana sigue a la fecha
                 await operaciones.recalcular_semana_y_fase_del_evento(
                     event,
@@ -283,7 +294,8 @@ class CorrectionService:
         """Campos realmente corregibles de **ese** evento (`S1-CORR-01`).
 
         El formulario de corrección consume esta lista en lugar de ofrecer «Observaciones»
-        fijo: los campos del evento con valor, más los de cada fila de submovimiento con el
+        fijo: los campos del evento con valor, los de maestro vacíos que su tipo admite
+        (`AC-O23-02`), más los de cada fila de submovimiento con el
         id de su fila. Un evento fuera de estado corregible no es un error, es una lista
         vacía (`AC-S1-C05`).
         """
@@ -304,7 +316,9 @@ class CorrectionService:
             if campo in FUERA_DEL_SELECTOR:
                 continue
             valor = getattr(event, campo, None)
-            if valor is None and campo not in SIEMPRE_OFRECIDOS:
+            # `AC-O23-02`: un maestro vacío se ofrece si su tipo de evento lo admite (metadata, no valor).
+            if (valor is None and campo not in SIEMPRE_OFRECIDOS
+                    and not (campo in MAESTROS_CORREGIBLES and _maestro_aplica(event, campo))):
                 continue
             columna = columnas.get(campo)
             campos.append({
@@ -401,6 +415,22 @@ class CorrectionService:
             # el catálogo compartido (`company_id` nulo) es legible; el de otra empresa no se nombra
             consulta = consulta.where(or_(modelo.company_id == self.company_id, modelo.company_id.is_(None)))
         return (await self.db.execute(consulta)).scalar_one_or_none()
+
+    async def _exigir_maestro_activo(self, campo: str, valor) -> None:
+        """`AC-O23-05` · `OD-21`: el maestro que asigna una corrección nueva está activo (la lectura histórica no cambia)."""
+        from ..masters import models as masters_models
+        from ..operations.validators import BusinessRuleViolation
+
+        modelo = getattr(masters_models, MAESTROS_CORREGIBLES[campo][1])
+        if not hasattr(modelo, "is_active"):
+            return
+        activo = (await self.db.execute(
+            select(modelo.is_active).where(modelo.id == int(valor)))).scalar_one_or_none()
+        if activo is False:
+            raise BusinessRuleViolation(
+                f"«{etiqueta_de_campo(campo)}»: el registro seleccionado está inactivo; elija uno activo del catálogo",
+                "OD-21",
+            )
 
     async def _anotar_nombres(self, correcciones) -> None:
         """`AC-S2-C05`: el historial lee nombres de maestro, no ids (atributos transitorios de lectura)."""
@@ -539,6 +569,30 @@ MAESTROS_CORREGIBLES: dict[str, tuple[str, str]] = {
     "destination_plant_id": ("processing-plants", "ProcessingPlant"),
     "transport_id": ("transports", "Transport"),
 }
+
+#: `spec 020 §7` · `AC-O23-01` (`O-23`): campos de maestro que el alta de cada tipo de evento admite
+#: (formulario de alta). La corregibilidad de un maestro vacío depende de esta metadata, no del valor.
+MAESTROS_POR_TIPO_DE_EVENTO: dict[EventType, frozenset[str]] = {
+    EventType.BIRD_RECEPTION: frozenset({"supplier_id"}),
+    EventType.BIRD_EXIT: frozenset({"destination_farm_id", "destination_plant_id", "transport_id"}),
+    EventType.EGG_DISPATCH: frozenset({"transport_id"}),
+    EventType.EGG_RECEPTION_HATCHERY: frozenset({"transport_id"}),
+    EventType.TRANSPORT_INSPECTION: frozenset({"transport_id"}),
+    EventType.BIRTH_REGISTRATION: frozenset({"vaccine_id"}),
+    EventType.CHICK_DISPATCH: frozenset({"destination_farm_id", "transport_id"}),
+    EventType.GRANDPARENT_IMPORT: frozenset({"supplier_id", "transport_id"}),
+    EventType.MORTALITY_RECORDING: frozenset({"cause_id"}),
+    EventType.CULL_RECORDING: frozenset({"cull_cause_id"}),
+    EventType.VACCINATION: frozenset({"vaccine_id"}),
+    EventType.MEDICATION: frozenset({"medication_id"}),
+}
+
+
+def _maestro_aplica(event, campo: str) -> bool:
+    """`AC-O23-01`: el campo de maestro pertenece al tipo del evento."""
+    tipo = getattr(event.event_type, "value", event.event_type)
+    return campo in MAESTROS_POR_TIPO_DE_EVENTO.get(EventType(tipo), frozenset())
+
 
 _PATRON_SUBMOVIMIENTO = re.compile(r"^(bird_movements|feed_movements)\[(\d+)\]\.(\w+)$")
 

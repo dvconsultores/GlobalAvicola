@@ -7,7 +7,7 @@ import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { describirCampoCorregido } from '../../utils/correctionFields'
+import { describirCampoCorregido, esValorVacio, etiquetaDeMaestro } from '../../utils/correctionFields'
 
 /** `015` · AC-S1-C02/C03: campos cuyo valor se puede dejar vacío al corregir. */
 const VACIOS_PERMITIDOS = /^(observations|bird_movements\[\d+\]\.(avg_weight|week_number))$/
@@ -84,6 +84,9 @@ export default function CorrectionForm() {
  if (estado !== 'ok') return <div className="py-4 sm:py-6"><ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} /></div>
 
  const campoActual = campos.find((f: any) => String(f.field_name) === fieldName) || null
+ // `020` · §7 `AC-O23-07`: el original vacío se lee «Sin valor» (un maestro nulo también es corregible).
+ const valorOriginal = campoActual?.current_display ?? campoActual?.current_value
+ const textoOriginal = esValorVacio(valorOriginal) ? String(t('corrections.noValue', 'Sin valor')) : String(valorOriginal)
 
  /** Devuelve el mensaje de error (clave i18n) o '' si el formulario es válido. */
  const validar = (): string => {
@@ -170,7 +173,7 @@ export default function CorrectionForm() {
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{t('review.originalValue')}</label>
- <input type="text" value={campoActual?.current_display ?? campoActual?.current_value ?? ''} readOnly aria-readonly="true" data-testid="correction-original"
+ <input type="text" value={textoOriginal} readOnly aria-readonly="true" data-testid="correction-original"
  className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-slate-100 text-slate-600" />
  <p className="text-xs text-slate-400 mt-1">{t('review.originalByOperator')}</p>
  </div>
@@ -184,8 +187,10 @@ export default function CorrectionForm() {
  className="w-full border border-amber-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-400">
  <option value="">-- {t('common.select')} --</option>
  {catalogo
+ // `020` · §7 `AC-O23-05/07` (`OD-21`): solo registros activos, con etiqueta funcional.
+ .filter((r: any) => r.is_active !== false)
  .filter((r: any) => String(r.id) !== String(campoActual?.current_value ?? ''))
- .map((r: any) => <option key={String(r.id)} value={String(r.id)}>{r.name}</option>)}
+ .map((r: any) => <option key={String(r.id)} value={String(r.id)}>{etiquetaDeMaestro(r)}</option>)}
  </select>
  ) : (
  <input {...propsValor} value={correctedValue} onChange={e => { setCorrectedValue(e.target.value); setError('') }}
