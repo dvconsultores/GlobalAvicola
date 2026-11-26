@@ -1,0 +1,69 @@
+=== 1 · corregido, solo · reloj=real · backend/tests/test_ga_rem_022_r131_r141.py -k tendencia
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_mortalidad_ignora_cancelados PASSED [ 12%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[lunes-fecha0-S48] PASSED [ 25%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo de la misma semana-fecha1-S48] PASSED [ 37%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo anterior al cambio de a\xf1o-fecha2-S52] PASSED [ 50%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[29-dic-2025 \u2014 ISO semana 1 de 2026-fecha3-S1] PASSED [ 62%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[31-dic-2026 \u2014 ISO semana 53 de 2026-fecha4-S53] PASSED [ 75%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[1-ene-2027 \u2014 ISO semana 53 de 2026-fecha5-S53] PASSED [ 87%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[primer lunes de 2027-fecha6-S1] PASSED [100%]
+================== 8 passed, 4 deselected, 1 warning in 2.76s ==================
+RC=0
+=== 2 · corregido, reloj controlado · reloj=2026-11-22 · backend/tests/test_ga_rem_022_r131_r141.py -k tendencia
+GA reloj controlado: 2026-11-22 (Sunday)
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_mortalidad_ignora_cancelados PASSED [ 12%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[lunes-fecha0-S48] PASSED [ 25%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo de la misma semana-fecha1-S48] PASSED [ 37%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo anterior al cambio de a\xf1o-fecha2-S52] PASSED [ 50%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[29-dic-2025 \u2014 ISO semana 1 de 2026-fecha3-S1] PASSED [ 62%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[31-dic-2026 \u2014 ISO semana 53 de 2026-fecha4-S53] PASSED [ 75%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[1-ene-2027 \u2014 ISO semana 53 de 2026-fecha5-S53] PASSED [ 87%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[primer lunes de 2027-fecha6-S1] PASSED [100%]
+================== 8 passed, 4 deselected, 1 warning in 2.79s ==================
+RC=0
+=== 2 · corregido, reloj controlado · reloj=2026-11-23 · backend/tests/test_ga_rem_022_r131_r141.py -k tendencia
+GA reloj controlado: 2026-11-23 (Monday)
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_mortalidad_ignora_cancelados PASSED [ 12%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[lunes-fecha0-S48] PASSED [ 25%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo de la misma semana-fecha1-S48] PASSED [ 37%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo anterior al cambio de a\xf1o-fecha2-S52] PASSED [ 50%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[29-dic-2025 \u2014 ISO semana 1 de 2026-fecha3-S1] PASSED [ 62%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[31-dic-2026 \u2014 ISO semana 53 de 2026-fecha4-S53] PASSED [ 75%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[1-ene-2027 \u2014 ISO semana 53 de 2026-fecha5-S53] PASSED [ 87%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[primer lunes de 2027-fecha6-S1] PASSED [100%]
+================== 8 passed, 4 deselected, 1 warning in 2.73s ==================
+RC=0
+=== 2 · corregido, reloj controlado · reloj=2026-11-24 · backend/tests/test_ga_rem_022_r131_r141.py -k tendencia
+GA reloj controlado: 2026-11-24 (Tuesday)
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_mortalidad_ignora_cancelados PASSED [ 12%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[lunes-fecha0-S48] PASSED [ 25%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo de la misma semana-fecha1-S48] PASSED [ 37%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[domingo anterior al cambio de a\xf1o-fecha2-S52] PASSED [ 50%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[29-dic-2025 \u2014 ISO semana 1 de 2026-fecha3-S1] PASSED [ 62%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[31-dic-2026 \u2014 ISO semana 53 de 2026-fecha4-S53] PASSED [ 75%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[1-ene-2027 \u2014 ISO semana 53 de 2026-fecha5-S53] PASSED [ 87%]
+tests/test_ga_rem_022_r131_r141.py::test_r141_tendencia_semana_iso_en_fronteras[primer lunes de 2027-fecha6-S1] PASSED [100%]
+================== 8 passed, 4 deselected, 1 warning in 2.72s ==================
+RC=0
+=== 3 · versión previa (90a5fb7^), reloj controlado · reloj=2026-11-22 · backend/tests/test_o20_version_previa_tmp.py -k tendencia_mortalidad
+GA reloj controlado: 2026-11-22 (Sunday)
+tests/test_o20_version_previa_tmp.py::test_r141_tendencia_mortalidad_ignora_cancelados PASSED [100%]
+================== 1 passed, 4 deselected, 1 warning in 3.97s ==================
+RC=0
+=== 3 · versión previa (90a5fb7^), reloj controlado · reloj=2026-11-23 · backend/tests/test_o20_version_previa_tmp.py -k tendencia_mortalidad
+GA reloj controlado: 2026-11-23 (Monday)
+tests/test_o20_version_previa_tmp.py::test_r141_tendencia_mortalidad_ignora_cancelados FAILED [100%]
+>       assert despues - antes == 10, f"510 = incluir cancelados; Δ={despues - antes}"
+E       AssertionError: 510 = incluir cancelados; Δ=0
+FAILED tests/test_o20_version_previa_tmp.py::test_r141_tendencia_mortalidad_ignora_cancelados
+================== 1 failed, 4 deselected, 1 warning in 2.87s ==================
+RC=1
+=== 3 · versión previa (90a5fb7^), reloj controlado · reloj=2026-11-24 · backend/tests/test_o20_version_previa_tmp.py -k tendencia_mortalidad
+GA reloj controlado: 2026-11-24 (Tuesday)
+tests/test_o20_version_previa_tmp.py::test_r141_tendencia_mortalidad_ignora_cancelados FAILED [100%]
+>       assert despues - antes == 10, f"510 = incluir cancelados; Δ={despues - antes}"
+E       AssertionError: 510 = incluir cancelados; Δ=0
+FAILED tests/test_o20_version_previa_tmp.py::test_r141_tendencia_mortalidad_ignora_cancelados
+================== 1 failed, 4 deselected, 1 warning in 2.99s ==================
+RC=1
+FIN
