@@ -182,6 +182,24 @@ export async function causaDesconocida(
 
 /** `RR-31`: lote de vacuna válido para una vacunación de escenario. */
 export const LOTE_DE_VACUNA = 'E2E-VAC-001'
+/** Primer registro ACTIVO de un catálogo de la empresa; si no hay ninguno, se crea. */
+async function activoOCreado(
+  request: APIRequestContext, cabecera: any, ruta: string, nombre: string,
+): Promise<number> {
+  const r = await request.get(`${API}${ruta}?limit=100`, { headers: cabecera })
+  const filas = r.ok() ? await r.json() : []
+  const activo = (Array.isArray(filas) ? filas : []).find((f: any) => f.is_active !== false)
+  if (activo) return activo.id
+  return (await crear(request, cabecera, ruta, { company_id: empresaActiva(cabecera), name: `${nombre} ${sufijo()}` })).id
+}
+/** `RR-33` (`OD-S2-07`): un tipo de alimento activo de la empresa. */
+export async function tipoDeAlimento(request: APIRequestContext, cabecera: any): Promise<number> {
+  return activoOCreado(request, cabecera, '/masters/feed-types', 'Alimento E2E')
+}
+/** `RR-27` (`OD-S2-01`): un tipo de corrección activo de la empresa. */
+export async function tipoDeCorreccion(request: APIRequestContext, cabecera: any): Promise<number> {
+  return activoOCreado(request, cabecera, '/masters/correction-types', 'Error de digitación E2E')
+}
 
 export interface Maestros {
   causaMortalidadId: number

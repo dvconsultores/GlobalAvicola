@@ -9,7 +9,7 @@
  * formulario de corrección.
  */
 import { test, expect, type APIRequestContext } from '@playwright/test'
-import {
+import { tipoDeCorreccion,
   API, hoy, sufijo, empresaActiva, cabeceraAdmin, crearEscenario, registrar,
 } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
@@ -206,27 +206,30 @@ test.describe('SPEC 020 §6 · decisiones Owner de la Sesión 2 (reproductoras/c
     request, page,
   }) => {
     const m = await montar(request)
-    let tipos = await listar(request, m.admin, '/masters/correction-types?limit=100')
-    if (!tipos.length) {
-      await crear(request, m.admin, '/masters/correction-types', { company_id: m.esc.companyId, name: `Error de digitación ${sufijo()}` })
-      tipos = await listar(request, m.admin, '/masters/correction-types?limit=100')
-    }
+    // un tipo de corrección ACTIVO (el selector de la pantalla no ofrece inactivos)
+    const tipoId = await tipoDeCorreccion(request, m.admin)
 
-    // evento a corregir: un pesaje que se envía a revisión y se pone en revisión
-    const alta = await registrar(request, m.operador, {
-      lot_id: m.loteId, event_type: 'weight_recording', event_date: fechaDeVida(6),
-      bird_movements: [{ sex: 'mixed', quantity: 0, avg_weight: 1500 }],
-    })
-    expect(alta.status(), await alta.text()).toBe(201)
-    const id = (await alta.json()).id as number
-    const enviado = await request.post(`${API}/operations/${id}/submit`, { headers: m.operador })
-    expect(enviado.status(), await enviado.text()).toBe(200)
-    const revision = await request.post(`${API}/review/start/${id}`, { headers: m.admin })
-    expect(revision.status(), await revision.text()).toBe(200)
+    // evento a corregir: un pesaje que se envía a revisión y se pone en revisión. Un evento ya
+    // corregido no admite otra corrección (estado 'corrected'): cada camino usa el suyo.
+    const pesajeEnRevision = async (): Promise<number> => {
+      const alta = await registrar(request, m.operador, {
+        lot_id: m.loteId, event_type: 'weight_recording', event_date: fechaDeVida(6),
+        bird_movements: [{ sex: 'mixed', quantity: 0, avg_weight: 1500 }],
+      })
+      expect(alta.status(), await alta.text()).toBe(201)
+      const nuevo = (await alta.json()).id as number
+      const enviado = await request.post(`${API}/operations/${nuevo}/submit`, { headers: m.operador })
+      expect(enviado.status(), await enviado.text()).toBe(200)
+      const revision = await request.post(`${API}/review/start/${nuevo}`, { headers: m.admin })
+      expect(revision.status(), await revision.text()).toBe(200)
+      return nuevo
+    }
+    const id = await pesajeEnRevision()
+    const idFecha = await pesajeEnRevision()
 
     // API — el servidor también exige el tipo (RR-27) y la semana sigue a la fecha corregida (RR-30)
     const sinTipo = await request.post(`${API}/corrections`, { headers: m.admin, data: {
-      event_id: id, field_name: 'event_date', corrected_value: fechaDeVida(14), reason: 'Fecha mal digitada',
+      event_id: idFecha, field_name: 'event_date', corrected_value: fechaDeVida(14), reason: 'Fecha mal digitada',
     } })
     expect(sinTipo.status(), '14 · corrección sin tipo ⇒ DENY').toBe(400)
     expect((await sinTipo.json()).rule).toBe('RR-27')
@@ -247,17 +250,22 @@ test.describe('SPEC 020 §6 · decisiones Owner de la Sesión 2 (reproductoras/c
     await page.getByRole('button', { name: /Guardar Corrección/ }).click()
     await expect(page.getByText('Seleccione el tipo de corrección'), 'aviso inline en español').toBeVisible()
     expect(posts, 'sin tipo no se envía nada').toBe(0)
-    await page.getByTestId('correction-type').selectOption({ index: 1 })
+    await page.getByTestId('correction-type').selectOption(String(tipoId))
     await page.getByRole('button', { name: /Guardar Corrección/ }).click()
     await expect(page).toHaveURL(new RegExp(`/review/${id}$`), { timeout: 20_000 })
+    expect(posts, 'con tipo se envía una sola vez').toBe(1)
+    const corregido = await detalle(request, m.admin, id)
+    expect(corregido.status, 'la corrección desde pantalla se aplicó').toBe('corrected')
+    expect(corregido.observations).toBe('Observación corregida desde pantalla')
 
-    // API — con tipo, corregir la fecha recalcula la semana
+    // API — con tipo, corregir la fecha recalcula la semana (otro pesaje, aún en revisión)
+    expect((await detalle(request, m.admin, idFecha)).bird_movements[0].week_number, 'día 6 ⇒ semana 1').toBe(1)
     const conTipo = await request.post(`${API}/corrections`, { headers: m.admin, data: {
-      event_id: id, field_name: 'event_date', corrected_value: fechaDeVida(14), reason: 'Fecha mal digitada',
-      correction_type_id: tipos[0].id,
+      event_id: idFecha, field_name: 'event_date', corrected_value: fechaDeVida(14), reason: 'Fecha mal digitada',
+      correction_type_id: tipoId,
     } })
     expect(conTipo.status(), `15 · corrección de fecha con tipo ⇒ ALLOW: ${await conTipo.text()}`).toBe(201)
-    expect((await detalle(request, m.admin, id)).bird_movements[0].week_number, 'día 14 ⇒ semana 3').toBe(3)
+    expect((await detalle(request, m.admin, idFecha)).bird_movements[0].week_number, 'día 14 ⇒ semana 3').toBe(3)
   })
 
   test('E2E-S2D-08 · Históricos: los eventos anteriores siguen legibles en lista y detalle', async ({ request, page }) => {
@@ -272,6 +280,6 @@ test.describe('SPEC 020 §6 · decisiones Owner de la Sesión 2 (reproductoras/c
     }
     await entrar(page, 'admin')
     await page.goto('/operations')
-    await expect(page.getByRole('row').nth(1), 'la lista de operaciones se pinta').toBeVisible({ timeout: 20_000 })
+    await expect(page.getByTestId(/^operation-row-\d+$/).first(), 'la lista de operaciones se pinta').toBeVisible({ timeout: 20_000 })
   })
 })

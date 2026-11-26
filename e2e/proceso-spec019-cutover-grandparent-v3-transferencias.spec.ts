@@ -38,7 +38,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
-import { API, cabeceraAdmin, cabeceraAprobador, sufijo } from '../test-support/e2e-api'
+import { API, cabeceraAdmin, cabeceraAprobador, causaDesconocida, sufijo } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
 import {
   asegurarFases, construirCsv, corteHaceDias, corteParaInput, crearMaestrosCutover, filasPorBu,
@@ -474,6 +474,7 @@ test('E2E-GP-02 post-corte: la mortalidad posterior no vuelve a restar lo transf
   // ── mortalidad POSTERIOR al corte en el lote origen (3 machos) ──
   const mov = await request.post(`${API}/operations`, { headers: cab, data: {
     lot_id: idB, event_type: 'mortality_recording', event_date: haceDias(7),
+    cause_id: await causaDesconocida(request, cab),
     bird_movements: [{ sex: 'male', quantity: 3, avg_weight: 3600 }],
   } })
   expect(mov.status(), await mov.text()).toBe(201)
@@ -493,6 +494,7 @@ test('E2E-GP-02 post-corte: la mortalidad posterior no vuelve a restar lo transf
   // ── el lote destino (PROD) admite un evento propio y coherente con su saldo ──
   const baja = await request.post(`${API}/operations`, { headers: cab, data: {
     lot_id: idC, event_type: 'mortality_recording', event_date: haceDias(5),
+    cause_id: await causaDesconocida(request, cab),
     bird_movements: [{ sex: 'male', quantity: 2, avg_weight: 3400 }],
   } })
   expect(baja.status(), await baja.text()).toBe(201)

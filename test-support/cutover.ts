@@ -10,7 +10,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
-import { API, empresaActiva, sufijo } from './e2e-api'
+import { API, causaDesconocida, empresaActiva, sufijo } from './e2e-api'
 
 export type Bu = 'grandparent' | 'breeder' | 'hatchery' | 'broiler'
 
@@ -245,6 +245,7 @@ export async function primerEventoPostCorte(request: APIRequestContext, cab: any
   if (bu === 'broiler') {
     return request.post(`${API}/operations`, { headers: cab, data: {
       lot_id: lotId, event_type: 'mortality_recording', event_date: fecha,
+      cause_id: await causaDesconocida(request, cab),
       bird_movements: [{ sex: 'mixed', quantity: 35, avg_weight: 900 }],
     } })
   }
@@ -256,6 +257,7 @@ export async function primerEventoPostCorte(request: APIRequestContext, cab: any
   }
   return request.post(`${API}/operations`, { headers: cab, data: {
     lot_id: lotId, event_type: 'mortality_recording', event_date: fecha,
+      cause_id: await causaDesconocida(request, cab),
     bird_movements: [{ sex: 'female', quantity: 20, avg_weight: 3200 }, { sex: 'male', quantity: 15, avg_weight: 3600 }],
   } })
 }

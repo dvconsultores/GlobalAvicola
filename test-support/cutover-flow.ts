@@ -11,7 +11,7 @@ import { expect, type APIRequestContext, type Browser, type Page } from '@playwr
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { resolve } from 'node:path'
 import { entrar } from './auth'
-import { API, cabeceraAdmin, cabeceraAprobador, sufijo } from './e2e-api'
+import { API, cabeceraAdmin, cabeceraAprobador, causaDesconocida, sufijo } from './e2e-api'
 import {
   asegurarFases, construirCsv, corteParaInput, crearMaestrosCutover, filasPorBu, habilitarCutoverEnRoles,
   habilitarUnidad, primerEventoPostCorte, rellenarPlantilla, type Bu,
@@ -231,7 +231,8 @@ export async function flujoPorBu(page: Page, browser: Browser, request: APIReque
     lot_id: lotId, event_type: bu === 'hatchery' ? 'incubation_load' : 'mortality_recording',
     event_date: fechaCorte,
     ...(bu === 'hatchery' ? { hatchery_params: [{ quantity_loaded: 1 }] }
-      : { bird_movements: [{ sex: bu === 'broiler' ? 'mixed' : 'female', quantity: 1, avg_weight: 1000 }] }),
+      : { cause_id: await causaDesconocida(request, cab),
+          bird_movements: [{ sex: bu === 'broiler' ? 'mixed' : 'female', quantity: 1, avg_weight: 1000 }] }),
   } })
   const cuerpoRetro = await retro.json()
   pasos.cut_gl_02 = { status: retro.status(), body: cuerpoRetro }

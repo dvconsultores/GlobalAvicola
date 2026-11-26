@@ -13,7 +13,7 @@
 import { test, expect, type APIRequestContext } from '@playwright/test'
 import * as fs from 'node:fs'
 import {
-  API, hoy, cabeceraAdmin, cabeceraAprobador, crearEscenario, crearMaestros, registrar,
+  API, LOTE_DE_VACUNA, hoy, cabeceraAdmin, cabeceraAprobador, crearEscenario, crearMaestros, registrar,
   type Escenario, type Maestros,
 } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
@@ -235,45 +235,56 @@ function construirCasos(): Caso[] {
       tipo: 'bird_distribution',
       nombre: 'Distribución de aves',
       contrato: [
-        'granja + galpón (BR-08) — su único obligatorio: el vacío CON ubicación es un 201',
+        'granja + galpón (BR-08)',
+        '≥1 movimiento, cantidades ≥ 0 y Σ > 0 (RR-29, OD-S2-03): el vacío con ubicación ya no es un registro',
       ],
       ubicacion: true,
-      minimo: {},
+      minimo: aves(10),
       vacios: [
-        { nombre: 'solo ubicación (contrato: solo ubicación)', extra: {}, ubicacion: true, negativo: false },
+        { nombre: 'solo ubicación (sin movimientos)', extra: {}, ubicacion: true, negativo: true },
       ],
       omisiones: [
-        { nombre: 'sin galpón', extra: { farm_id: esc.farmId }, ubicacion: false },
-        { nombre: 'sin granja', extra: { house_id: esc.houseId }, ubicacion: false },
+        { nombre: 'suma cero', extra: aves(0), ubicacion: true },
+        { nombre: 'sin galpón', extra: { ...aves(10), farm_id: esc.farmId }, ubicacion: false },
+        { nombre: 'sin granja', extra: { ...aves(10), house_id: esc.houseId }, ubicacion: false },
       ],
     },
     {
       tipo: 'farm_inspection',
       nombre: 'Inspección de granja',
-      contrato: ['granja (BR-08)', 'galpón (BR-08)', 'paridad cliente-servidor (§4.2)'],
+      contrato: [
+        'granja (BR-08)', 'galpón (BR-08)', 'paridad cliente-servidor (§4.2)',
+        'al menos un dato: valor, observación o evidencia (RR-28, OD-S2-02)',
+      ],
       ubicacion: true,
-      minimo: {},
+      minimo: { observations: 'Inspección sin novedades' },
       vacios: [
         { nombre: 'sin granja ni galpón', extra: {}, ubicacion: false, negativo: true },
-        {
-          nombre: 'con granja y galpón (contrato: solo ubicación)',
-          extra: {}, ubicacion: true, negativo: false,
-        },
+        { nombre: 'con granja y galpón pero sin contenido', extra: {}, ubicacion: true, negativo: true },
       ],
       omisiones: [
-        { nombre: 'sin galpón', extra: { farm_id: esc.farmId }, ubicacion: false },
-        { nombre: 'sin granja', extra: { house_id: esc.houseId }, ubicacion: false },
+        { nombre: 'sin galpón', extra: { observations: 'Inspección sin novedades', farm_id: esc.farmId }, ubicacion: false },
+        { nombre: 'sin granja', extra: { observations: 'Inspección sin novedades', house_id: esc.houseId }, ubicacion: false },
+        {
+          nombre: 'solo valores por defecto',
+          extra: { inspection_details: [{ parameter: 'Bioseguridad', value: '', value_numeric: null }] },
+          ubicacion: true,
+        },
       ],
     },
     {
       tipo: 'feed_registration',
       nombre: 'Registro de alimento',
-      contrato: ['≥1 fila de feed_movements con quantity_kg > 0 (RR-23)'],
+      contrato: [
+        '≥1 fila de feed_movements con quantity_kg > 0 (RR-23)',
+        'feed_type_id presente (RR-33, OD-S2-07); la fase se deriva del lote (RR-34)',
+      ],
       ubicacion: false,
-      minimo: { feed_movements: [{ quantity_kg: 12.5 }] },
+      minimo: { feed_movements: [{ quantity_kg: 12.5, feed_type_id: maestros.alimentoId }] },
       vacios: [{ nombre: 'sin filas de alimento', extra: {}, ubicacion: false, negativo: true }],
       omisiones: [
-        { nombre: 'con kg 0', extra: { feed_movements: [{ quantity_kg: 0 }] }, ubicacion: false },
+        { nombre: 'con kg 0', extra: { feed_movements: [{ quantity_kg: 0, feed_type_id: maestros.alimentoId }] }, ubicacion: false },
+        { nombre: 'sin tipo de alimento', extra: { feed_movements: [{ quantity_kg: 12.5 }] }, ubicacion: false },
       ],
     },
     {
@@ -306,11 +317,15 @@ function construirCasos(): Caso[] {
     {
       tipo: 'vaccination',
       nombre: 'Vacunación',
-      contrato: ['vaccine_id presente (RR-21)'],
+      contrato: ['vaccine_id presente (RR-21)', 'vaccine_lot_number con texto (RR-31, OD-S2-05)'],
       ubicacion: false,
-      minimo: { vaccine_id: maestros.vacunaId },
+      minimo: { vaccine_id: maestros.vacunaId, vaccine_lot_number: LOTE_DE_VACUNA },
       vacios: [{ nombre: 'sin vacuna', extra: {}, ubicacion: false, negativo: true }],
-      omisiones: [{ nombre: 'sin vacuna (omitida)', extra: {}, ubicacion: false }],
+      omisiones: [
+        { nombre: 'sin vacuna (omitida)', extra: { vaccine_lot_number: LOTE_DE_VACUNA }, ubicacion: false },
+        { nombre: 'sin lote de vacuna', extra: { vaccine_id: maestros.vacunaId }, ubicacion: false },
+        { nombre: 'lote de vacuna en blanco', extra: { vaccine_id: maestros.vacunaId, vaccine_lot_number: '   ' }, ubicacion: false },
+      ],
     },
     {
       tipo: 'medication',
@@ -324,25 +339,41 @@ function construirCasos(): Caso[] {
     {
       tipo: 'mortality_recording',
       nombre: 'Mortalidad',
-      contrato: ['Σ bird_movements.quantity > 0 (BR-01)', 'total ≤ saldo de aves (BR-01, D4)'],
+      contrato: [
+        'Σ bird_movements.quantity > 0 (BR-01)', 'total ≤ saldo de aves (BR-01, D4)',
+        'cause_id presente; «Desconocida» si no se determinó (RR-32, OD-S2-06)',
+      ],
       ubicacion: false,
-      minimo: aves(3),
-      vacios: [{ nombre: 'sin cantidad', extra: {}, ubicacion: false, negativo: true }],
+      minimo: { ...aves(3), cause_id: maestros.causaMortalidadId },
+      vacios: [{ nombre: 'sin cantidad', extra: { cause_id: maestros.causaMortalidadId }, ubicacion: false, negativo: true }],
       omisiones: [
-        { nombre: 'cantidad 0', extra: aves(0), ubicacion: false },
-        { nombre: 'cantidad > saldo', extra: sobreSaldo, ubicacion: false },
+        { nombre: 'cantidad 0', extra: { ...aves(0), cause_id: maestros.causaMortalidadId }, ubicacion: false },
+        {
+          nombre: 'cantidad > saldo',
+          extra: async (r: APIRequestContext) => ({ ...(await sobreSaldo(r)), cause_id: maestros.causaMortalidadId }),
+          ubicacion: false,
+        },
+        { nombre: 'sin causa', extra: aves(3), ubicacion: false },
       ],
     },
     {
       tipo: 'cull_recording',
       nombre: 'Descarte',
-      contrato: ['Σ bird_movements.quantity > 0 (BR-01)', 'total ≤ saldo de aves (BR-01, D4)'],
+      contrato: [
+        'Σ bird_movements.quantity > 0 (BR-01)', 'total ≤ saldo de aves (BR-01, D4)',
+        'cull_cause_id presente; «Desconocida» si no se determinó (RR-32, OD-S2-06)',
+      ],
       ubicacion: false,
-      minimo: aves(2),
-      vacios: [{ nombre: 'sin cantidad', extra: {}, ubicacion: false, negativo: true }],
+      minimo: { ...aves(2), cull_cause_id: maestros.causaDescarteId },
+      vacios: [{ nombre: 'sin cantidad', extra: { cull_cause_id: maestros.causaDescarteId }, ubicacion: false, negativo: true }],
       omisiones: [
-        { nombre: 'cantidad 0', extra: aves(0), ubicacion: false },
-        { nombre: 'cantidad > saldo', extra: sobreSaldo, ubicacion: false },
+        { nombre: 'cantidad 0', extra: { ...aves(0), cull_cause_id: maestros.causaDescarteId }, ubicacion: false },
+        {
+          nombre: 'cantidad > saldo',
+          extra: async (r: APIRequestContext) => ({ ...(await sobreSaldo(r)), cull_cause_id: maestros.causaDescarteId }),
+          ubicacion: false,
+        },
+        { nombre: 'sin causa', extra: aves(2), ubicacion: false },
       ],
     },
     {
@@ -620,6 +651,7 @@ test.describe('P18B · obligatorios por operación y circuito Reproductoras/Crí
     // NEGATIVO · por encima del saldo: 400 en español, con el saldo y sin códigos internos.
     const excedido = saldo + 1
     const r = await registrar(request, operador, cuerpo('mortality_recording', {
+      cause_id: maestros.causaMortalidadId,
       bird_movements: [{ sex: 'mixed', quantity: excedido }],
     }, false))
     const cuerpoR = await jsonSeguro(r)
@@ -644,6 +676,7 @@ test.describe('P18B · obligatorios por operación y circuito Reproductoras/Crí
     // mortalidad cuyas filas suman menos que el saldo se acepta aunque una fila supere la
     // población de ese sexo (los machos recibidos eran 100).
     const d4 = await registrar(request, operador, cuerpo('mortality_recording', {
+      cause_id: maestros.causaMortalidadId,
       bird_movements: [
         { sex: 'male', quantity: 300 },
         { sex: 'female', quantity: 200 },
@@ -699,6 +732,17 @@ test.describe('P18B · obligatorios por operación y circuito Reproductoras/Crí
     await captura('p18b_mortalidad_vacio.png')
 
     await cantidad.fill('4')
+    // `RR-32` (`OD-S2-06`): sin causa tampoco hay POST; «Desconocida» es un valor explícito.
+    await guardar().click()
+    await expect(
+      page.getByText('Seleccione la causa de la mortalidad (use «Desconocida» si no se pudo determinar)'),
+      'mensaje inline de la causa obligatoria',
+    ).toBeVisible()
+    comparar('UI · mortalidad sin causa: peticiones POST', posts.length, 0)
+    await page.getByRole('button', { name: 'Seleccionar causa...' }).first().click()
+    const buscarCausa = page.getByPlaceholder(/Buscar/i).first()
+    if (await buscarCausa.count()) await buscarCausa.fill('Desconocida')
+    await page.getByRole('button', { name: 'Desconocida', exact: true }).first().click()
     const respuesta = esperarPost()
     await guardar().click()
     const guardada = await respuesta
@@ -747,6 +791,8 @@ test.describe('P18B · obligatorios por operación y circuito Reproductoras/Crí
 
     await page.getByRole('button', { name: 'Seleccionar vacuna...' }).first().click()
     await page.getByRole('button', { name: String(nombreVacuna) }).first().click()
+    // `RR-31` (`OD-S2-05`): la vacunación nueva declara el lote de la vacuna.
+    await page.locator('input[name="vaccine_lot_number"]').first().fill(LOTE_DE_VACUNA)
     const respuestaVacuna = esperarPost()
     await guardar().click()
     comparar('UI · vacunación con vacuna: HTTP del POST', (await respuestaVacuna).status(), 201)

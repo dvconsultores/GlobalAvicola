@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'node:fs';
-import { API, cabeceraAdmin, crearEscenario, hoy, sufijo } from '../test-support/e2e-api';
+import { causaDesconocida, API, cabeceraAdmin, crearEscenario, hoy, sufijo } from '../test-support/e2e-api';
 import { crearRol, crearUsuario, entrarComo } from '../test-support/admin-rbac';
 import { entrar } from '../test-support/auth';
 
@@ -85,6 +85,7 @@ test.beforeAll(async ({ request }) => {
     data: {
       event_type: 'mortality_recording',
       lot_id: breeder.lotId,
+      cause_id: await causaDesconocida(request, admin),
       event_date: hoy(),
       bird_movements: [{ sex: 'male', quantity: 3 }],
     },
@@ -111,6 +112,7 @@ test.beforeAll(async ({ request }) => {
     data: {
       event_type: 'mortality_recording',
       lot_id: broiler.lotId,
+      cause_id: await causaDesconocida(request, admin),
       event_date: hoy(),
       bird_movements: [{ sex: 'mixed', quantity: 3 }],
     },
@@ -210,6 +212,7 @@ test('P1 API: identidad BU breeder aísla datos del broiler', async ({ request }
     data: {
       event_type: 'mortality_recording',
       lot_id: broiler.lotId,
+      cause_id: await causaDesconocida(request, admin),
       event_date: hoy(),
       bird_movements: [{ sex: 'mixed', quantity: 1 }],
     },

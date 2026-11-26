@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'node:fs';
-import { API, cabeceraAdmin, crearEscenario, crearMaestros, hoy, sufijo } from '../test-support/e2e-api';
+import { LOTE_DE_VACUNA, API, cabeceraAdmin, crearEscenario, crearMaestros, hoy, sufijo } from '../test-support/e2e-api';
 import { entrar } from '../test-support/auth';
 
 test.describe.configure({ mode: 'serial' });
@@ -124,6 +124,11 @@ test('P19-1b · vacunación: sin vacuna no hay POST; con vacuna, 201', async ({ 
   expect(posts.n, 'vacunación vacía: 0 POST').toBe(0)
   await sinTextoCrudo(page)
   await elegir(page, 'Seleccionar vacuna...', vacuna)
+  // `RR-31` (`OD-S2-05`): con vacuna pero sin lote tampoco hay POST.
+  await guardar(page)
+  await expect(page.getByText('Ingrese el lote de la vacuna aplicada')).toBeVisible()
+  expect(posts.n, 'vacunación sin lote: 0 POST').toBe(0)
+  await page.locator('input[name="vaccine_lot_number"]').first().fill(LOTE_DE_VACUNA)
   const respuesta = esperarPost(page)
   await guardar(page)
   const r = await respuesta
@@ -158,6 +163,11 @@ test('P19-1d · alimento: sin kg no hay POST; con kg, 201', async ({ page }) => 
   expect(posts.n, 'alimento vacío: 0 POST').toBe(0)
   await sinTextoCrudo(page)
   await page.locator('input[name="feed_movements.0.quantity_kg"]').fill('12.5')
+  // `RR-33` (`OD-S2-07`): con kilos pero sin tipo de alimento tampoco hay POST.
+  await guardar(page)
+  await expect(page.getByText('Seleccione el tipo de alimento')).toBeVisible()
+  expect(posts.n, 'alimento sin tipo: 0 POST').toBe(0)
+  await page.locator('select[name="feed_movements.0.feed_type_id"]').selectOption(String(maestros.alimentoId))
   const respuesta = esperarPost(page)
   await guardar(page)
   const r = await respuesta

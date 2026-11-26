@@ -22,7 +22,7 @@
  */
 import { test, expect, type APIRequestContext } from '@playwright/test'
 import {
-  API, cabeceraAdmin, crearEscenario, hoy, registrar, sufijo,
+  API, cabeceraAdmin, crearEscenario, hoy, registrar, sufijo, tipoDeAlimento,
 } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
 
@@ -116,7 +116,7 @@ test.describe('SPEC 008 · listados maestros, origen y BR-23', () => {
       lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId,
       event_type: 'feed_registration', event_date: hoy(),
       observations: 'evento pendiente del centro de revisión',
-      feed_movements: [{ quantity_kg: 300.0 }],
+      feed_movements: [{ quantity_kg: 300.0, feed_type_id: await tipoDeAlimento(request, cab) }],
     })
     expect(alta.status(), await alta.text()).toBe(201)
     const envio = await request.post(`${API}/operations/${(await alta.json()).id}/submit`, { headers: cab })

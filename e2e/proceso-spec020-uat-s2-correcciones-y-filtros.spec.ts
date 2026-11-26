@@ -20,7 +20,7 @@
  */
 import { test, expect, type APIRequestContext } from '@playwright/test'
 import {
-  API, hoy, sufijo, empresaActiva, cabeceraAdmin, crearEscenario, registrar,
+  API, hoy, sufijo, empresaActiva, cabeceraAdmin, crearEscenario, registrar, tipoDeCorreccion,
 } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
 
@@ -79,9 +79,16 @@ async function abrirCorreccion(
   await expect(
     page.getByTestId('correction-original'), 'el formulario de corrección se abre',
   ).toBeVisible({ timeout: 20_000 })
+  // `RR-27` (`OD-S2-01`): se elige el tipo de corrección (el selector solo ofrece activos).
+  const tipo = page.getByTestId('correction-type')
+  await expect(tipo.locator('option').nth(1), 'hay al menos un tipo de corrección activo').toBeAttached()
+  await tipo.selectOption({ index: 1 })
 }
 
 test.describe('SPEC 020 · UAT Sesión 2 (reproductoras/cría)', () => {
+  test.beforeAll(async ({ request }) => {
+    await tipoDeCorreccion(request, await cabeceraAdmin(request))
+  })
   test('E2E-S2-01 · Recepción → Revisión → Corrección de maestro → Aprobación', async ({
     request, page,
   }) => {
@@ -289,6 +296,7 @@ test.describe('SPEC 020 · UAT Sesión 2 (reproductoras/cría)', () => {
     const idEvento = (await crear(request, admin, '/operations', {
       farm_id: esc.farmId, house_id: esc.houseId,
       event_type: 'farm_inspection', event_date: hoy(),
+      observations: 'Inspección de granja sin novedades',
     })).id as number
 
     await entrar(page, 'admin')

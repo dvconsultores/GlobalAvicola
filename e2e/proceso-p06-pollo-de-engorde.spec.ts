@@ -26,7 +26,7 @@
  */
 import { test, expect } from '@playwright/test'
 import {
-  API, cabeceraAdmin, cabeceraAprobador, crearEscenario, crearMaestros, hoy, registrar,
+  API, LOTE_DE_VACUNA, cabeceraAdmin, cabeceraAprobador, crearEscenario, crearMaestros, hoy, registrar,
 } from '../test-support/e2e-api'
 
 const RECIBIDAS = 5_000
@@ -63,9 +63,9 @@ async function cadenaDeEngorde(request: any, cab: any, aprobarTodo = true) {
     ['bird_distribution', { bird_movements: [{ sex: 'mixed', quantity: RECIBIDAS }] }],
     ['feed_registration', { feed_movements: [{ quantity_kg: ALIMENTO_KG, feed_type_id: m.alimentoId }] }],
     ['weight_recording', { bird_movements: [{ sex: 'mixed', quantity: 100, avg_weight: 2400 }] }],
-    ['mortality_recording', { bird_movements: [{ sex: 'mixed', quantity: MORTALIDAD, mortality_cause_id: m.causaMortalidadId }] }],
-    ['cull_recording', { bird_movements: [{ sex: 'mixed', quantity: DESCARTES, cull_cause_id: m.causaDescarteId }] }],
-    ['vaccination', { vaccine_id: m.vacunaId }],
+    ['mortality_recording', { cause_id: m.causaMortalidadId, bird_movements: [{ sex: 'mixed', quantity: MORTALIDAD }] }],
+    ['cull_recording', { cull_cause_id: m.causaDescarteId, bird_movements: [{ sex: 'mixed', quantity: DESCARTES }] }],
+    ['vaccination', { vaccine_id: m.vacunaId, vaccine_lot_number: LOTE_DE_VACUNA }],
     ['medication', { medication_id: m.medicamentoId }],
   ]
 

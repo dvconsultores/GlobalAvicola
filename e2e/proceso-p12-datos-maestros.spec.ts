@@ -106,7 +106,8 @@ test.describe('P-12 · gestión de datos maestros', () => {
     const descarte = await registrar(request, cab, {
       lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId,
       event_type: 'cull_recording', event_date: hoy(),
-      bird_movements: [{ sex: 'mixed', quantity: 5, cull_cause_id: (await causa.json()).id }],
+      cull_cause_id: (await causa.json()).id,
+      bird_movements: [{ sex: 'mixed', quantity: 5 }],
     })
     expect(descarte.status(), `la causa recién creada no se pudo usar: ${await descarte.text()}`)
       .toBe(201)

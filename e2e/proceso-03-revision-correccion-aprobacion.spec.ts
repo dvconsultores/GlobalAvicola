@@ -11,6 +11,7 @@
  * `RC-03` no se reabre.
  */
 import { test, expect, type APIRequestContext } from '@playwright/test'
+import { tipoDeAlimento, tipoDeCorreccion } from '../test-support/e2e-api'
 
 const API = 'http://127.0.0.1:8099/api/v1'
 
@@ -42,7 +43,7 @@ async function eventoEnRevision(request: APIRequestContext) {
     data: {
       lot_id: 2, event_type: 'feed_registration', event_date: hoy(),
       observations: 'valor original del operador',
-      feed_movements: [{ quantity_kg: 300.0 }],
+      feed_movements: [{ quantity_kg: 300.0, feed_type_id: await tipoDeAlimento(request, await como(request, 'admin')) }],
     },
   })
   expect(creado.status(), await creado.text()).toBe(201)
@@ -68,7 +69,7 @@ test.describe('Proceso 03 · Revisión → Corrección → Aprobación', () => {
     const correccion = await request.post(`${API}/corrections`, {
       headers: admin,
       data: {
-        event_id: id, field_name: 'observations',
+        event_id: id, correction_type_id: await tipoDeCorreccion(request, admin), field_name: 'observations',
         corrected_value: 'valor corregido por el supervisor',
         reason: 'Error de digitación detectado en revisión',
       },
@@ -138,7 +139,7 @@ test.describe('Proceso 03 · Revisión → Corrección → Aprobación', () => {
     for (const campo of ['status', 'approved_by_id', 'company_id']) {
       const r = await request.post(`${API}/corrections`, {
         headers: admin,
-        data: { event_id: id, field_name: campo, corrected_value: '1',
+        data: { event_id: id, correction_type_id: await tipoDeCorreccion(request, admin), field_name: campo, corrected_value: '1',
                 reason: 'intento de escalada de privilegios' },
       })
       expect(r.status(), `'${campo}' no es corregible`).toBe(400)
@@ -179,7 +180,7 @@ test.describe('Proceso 03 · Revisión → Corrección → Aprobación', () => {
 
     await request.post(`${API}/corrections`, {
       headers: admin,
-      data: { event_id: id, field_name: 'observations', corrected_value: 'x',
+      data: { event_id: id, correction_type_id: await tipoDeCorreccion(request, admin), field_name: 'observations', corrected_value: 'x',
               reason: 'prueba de auditoría del ciclo' },
     })
 

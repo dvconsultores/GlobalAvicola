@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'node:fs';
-import { API, cabeceraAdmin, crearEscenario, crearMaestros, hoy, sufijo } from '../test-support/e2e-api';
+import {
+  API, LOTE_DE_VACUNA, cabeceraAdmin, causaDesconocida, crearEscenario, crearMaestros, hoy, sufijo,
+  tipoDeCorreccion,
+} from '../test-support/e2e-api';
 import { entrar } from '../test-support/auth';
 
 const PREFIJO = 'S1P18D';
@@ -76,6 +79,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
         data: {
           event_type: 'mortality_recording',
           lot_id: esc.lotId,
+          cause_id: await causaDesconocida(request, admin),
           event_date: hoy(),
           bird_movements: [{ sex: 'male', quantity: 3 }],
         },
@@ -87,7 +91,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     const crearVac = async () =>
       request.post(`${API}/operations`, {
         headers: admin,
-        data: { event_type: 'vaccination', lot_id: esc.lotId, event_date: hoy(), vaccine_id: vacunaId },
+        data: { event_type: 'vaccination', lot_id: esc.lotId, event_date: hoy(), vaccine_id: vacunaId, vaccine_lot_number: LOTE_DE_VACUNA },
         failOnStatusCode: false,
       });
 
@@ -101,6 +105,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
       headers: admin,
       data: {
         event_id: eventoCorregidoId,
+        correction_type_id: await tipoDeCorreccion(request, admin),
         field_name: 'observations',
         original_value: '',
         corrected_value: 'revisado',
@@ -178,7 +183,8 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     await page.waitForTimeout(1500);
     const kpis = reqs.some((u) => u.includes('/reports/kpis') && u.includes(`lot_id=${esc.lotId}`));
     const weekly = reqs.some((u) => u.includes(`/reports/lot/${esc.lotId}/weekly`));
-    const ajeno = reqs.some((u) => u.includes('lot_id=2')) && esc.lotId !== 2;
+    // parámetro exacto: 'lot_id=2' como subcadena también casa con 'lot_id=29'
+    const ajeno = reqs.some((u) => /[?&]lot_id=2(?!\d)/.test(u)) && Number(esc.lotId) !== 2;
     anotar('P4a', kpis && weekly && !ajeno, `kpis=${kpis} weekly=${weekly} lot_id=2=${ajeno} opciones=${nOpciones}`);
     expect(kpis, 'petición a /reports/kpis con el lote del escenario').toBe(true);
     expect(weekly, 'petición a /reports/lot/<id>/weekly').toBe(true);
