@@ -68,13 +68,14 @@ function setSession(permissions: string[]) {
   })
 }
 
-const montarForm = (campos: any[]) => {
+const TIPOS_POR_DEFECTO = [{ id: 1, name: 'Error de digitación' }, { id: 2, name: 'Dato incompleto' }]
+const montarForm = (campos: any[], tipos: any[] = TIPOS_POR_DEFECTO) => {
   get.mockImplementation((url: string) => {
     const u = String(url)
     if (u === '/operations/55') return Promise.resolve({ data: { ...EVENTO } })
     if (u === '/corrections/events/55/correctable-fields') return Promise.resolve({ data: campos })
     if (u.startsWith('/masters/correction-types')) {
-      return Promise.resolve({ data: [{ id: 1, name: 'Error de digitación' }, { id: 2, name: 'Dato incompleto' }] })
+      return Promise.resolve({ data: tipos })
     }
     return Promise.resolve({ data: [] })
   })
@@ -130,5 +131,16 @@ describe('SPEC 020 §6 · RR-27 · tipo de corrección obligatorio', () => {
     }))
     const enviado = (post.mock.calls[0][1] as any).correction_type_id
     expect(typeof enviado).toBe('number')
+  })
+
+  it('c · un tipo de corrección inactivo no se ofrece (el servidor lo rechazaría)', async () => {
+    montarForm([CAMPO_TEXTO], [
+      { id: 1, name: 'Tipo retirado', is_active: false },
+      { id: 2, name: 'Dato incompleto', is_active: true },
+    ])
+    await waitFor(() => expect(selectorTipo().options.length).toBe(2))
+    const nombres = Array.from(selectorTipo().options).map(o => o.textContent)
+    expect(nombres).not.toContain('Tipo retirado')
+    expect(nombres).toContain('Dato incompleto')
   })
 })

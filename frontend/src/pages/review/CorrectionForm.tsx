@@ -55,7 +55,8 @@ export default function CorrectionForm() {
  setFieldName(porDefecto ? String(porDefecto.field_name) : '')
 
  const { data: ctypes } = await api.get('/masters/correction-types')
- setCorrectionTypes(Array.isArray(ctypes) ? ctypes : [])
+ // `RR-27`: el servidor solo acepta tipos activos (`OD-21`); ofrecer uno inactivo garantiza un rechazo.
+ setCorrectionTypes(Array.isArray(ctypes) ? ctypes.filter((ct: any) => ct.is_active !== false) : [])
  setEstado('ok')
  } catch (err: any) {
  console.error(err)
