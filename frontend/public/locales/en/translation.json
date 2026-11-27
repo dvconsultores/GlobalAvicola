@@ -125,7 +125,9 @@
     "eggsAvailable": "Eggs available at hatchery",
     "openingHatchery": "Hatchery opening",
     "eggsNonIncubableTotal": "Total non-incubable eggs",
-    "fertileEggsToPit": "Fertile eggs sent to pit (post-load)",
+    "fertileEggsToPit": "Fertile eggs sent to pit (pre-load)",
+    "eggsAvailableToSet": "Available to set",
+    "stagesHint": "Pre-load: received − non-incubable − pit − set = available to set. Post-load: set − transferred = eggs in process.",
     "eggsDiscardedHistorical": "Discarded eggs (V3 historical)",
     "derivedLabel": "derived",
     "derivedHint": "Calculated by the system from the components: not editable.",
@@ -188,7 +190,7 @@
       "eggs_non_incubable_oversized": "Non-incubable oversized egg",
       "eggs_non_incubable_dirty": "Non-incubable dirty egg",
       "eggs_non_incubable_broken": "Non-incubable broken egg",
-      "fertile_eggs_to_pit": "Fertile eggs sent to pit (post-load)",
+      "fertile_eggs_to_pit": "Fertile eggs sent to pit (pre-load)",
       "eggs_discarded": "Discarded eggs (V3 historical)",
       "chicks_hatched": "Chicks hatched",
       "chicks_available": "Chicks available",
@@ -658,7 +660,9 @@
     "detail": "Detail",
     "id": "ID",
     "lot": "Lot",
-    "lotFilterPlaceholder": "Lot ID",
+    "lotFilterPlaceholder": "e.g. L-0001",
+    "lotCodeLabel": "Lot code",
+    "dateRangeInvalid": "The start date cannot be after the end date",
     "lotFilterNumeric": "Enter the numeric lot ID (digits only)",
     "farm": "Farm",
     "house": "House",
@@ -1154,6 +1158,7 @@
     "importCountryPlaceholder": "e.g. France",
     "importLotAutoNote": "If you don't select a lot, one will be created automatically when the import is approved.",
     "lotAutoPending": "Created on approval",
+    "noLotFarmLevel": "No lot (farm level)",
     "pendingClassification": {
       "title": "Pending classification",
       "link": "Pending classification",
@@ -1313,7 +1318,17 @@
       "cortina": "Curtain",
       "extractor": "Exhaust fan",
       "otro": "Other"
-    }
+    },
+    "mortalityCauseRequired": "Select the cause of mortality (use “Unknown” if it could not be determined)",
+    "cullCauseRequired": "Select the cause of the cull (use “Unknown” if it could not be determined)",
+    "vaccineLotRequired": "Enter the lot of the vaccine applied",
+    "feedTypeRequired": "Select the feed type",
+    "inspectionContentRequired": "Record at least one inspection item: a value, a note or evidence",
+    "distributionRequired": "The distribution must include at least one bird (the total cannot be zero)",
+    "derivedWeek": "Week {{n}}",
+    "derivedWeekPending": "Calculated once the lot and the date are chosen",
+    "derivedPhase": "Phase: {{name}}",
+    "derivedPhaseNone": "The lot has no productive phase in effect on that date: record the lot phase before recording feed"
   },
   "weekly": {
     "weekNumber": "Week N°",
@@ -1719,14 +1734,14 @@
       "water_liters": "Water liters",
       "chicks_healthy": "Healthy chicks",
       "chicks_weak": "Weak chicks",
-      "supplier_id": "Supplier (code)",
-      "cause_id": "Cause (code)",
-      "cull_cause_id": "Cull cause (code)",
-      "vaccine_id": "Vaccine (code)",
-      "medication_id": "Medication (code)",
-      "transport_id": "Transport (code)",
-      "destination_farm_id": "Destination farm (code)",
-      "destination_plant_id": "Destination plant (code)",
+      "supplier_id": "Supplier",
+      "cause_id": "Mortality cause",
+      "cull_cause_id": "Cull cause",
+      "vaccine_id": "Vaccine",
+      "medication_id": "Medication",
+      "transport_id": "Transport",
+      "destination_farm_id": "Destination farm",
+      "destination_plant_id": "Destination plant",
       "bird_movements": {
         "avg_weight": "Average weight",
         "quantity": "Quantity",
@@ -1735,6 +1750,8 @@
       "feed_movements": {
         "quantity_kg": "Feed quantity (kg)"
       }
-    }
+    },
+    "typeRequired": "Select the correction type",
+    "noValue": "No value"
   }
 }

@@ -1,5 +1,5 @@
 """Review & Approval service — business logic for review workflow."""
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
@@ -163,9 +163,10 @@ class ReviewService(SegregacionMixin):
         self,
         farm_id: Optional[int] = None,
         lot_id: Optional[int] = None,
+        lot_code: Optional[str] = None,
         event_type: Optional[str] = None,
-        date_from: Optional[str] = None,
-        date_to: Optional[str] = None,
+        date_from: Optional[date] = None,
+        date_to: Optional[date] = None,
         statuses: Optional[list[str]] = None,
         registered_by_id: Optional[int] = None,
         limit: int = 50,
@@ -177,6 +178,12 @@ class ReviewService(SegregacionMixin):
         (`registered,pending_review`); con `status` (lista ya validada por el
         router contra `ESTADOS_BANDEJA`) se filtra en la consulta, antes de
         paginar (`GA-REM-032 AC10`). `registered_by_id` filtra por operador.
+
+        `lot_code` (`AC-S2-R01`) llega ya como texto tecleado y se resuelve contra el
+        maestro con el mismo patrón que el Historial: parcial, sin distinguir
+        mayúsculas y con los comodines de `LIKE` escapados, para que un `%` no
+        devuelva la cola entera. `date_from`/`date_to` (`AC-S2-R02`) son `date`, no
+        texto: compararlos como cadena contra una columna `Date` era un error de tipo.
         """
         _ambito = await self._ambito_de_unidad()
         estados = [EventStatus(s) for s in statuses] if statuses else [
@@ -198,6 +205,16 @@ class ReviewService(SegregacionMixin):
         if lot_id:
             base = base.where(OperationalEvent.lot_id == lot_id)
             count_q = count_q.where(OperationalEvent.lot_id == lot_id)
+        if lot_code and lot_code.strip():
+            # `AC-S2-R01`: el revisor conoce el código del lote, no su id interno.
+            from ..masters.models import Lot
+
+            patron = lot_code.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            por_codigo = OperationalEvent.lot_id.in_(
+                select(Lot.id).where(Lot.company_id == self.company_id,
+                                     Lot.lot_code.ilike(f"%{patron}%", escape="\\")))
+            base = base.where(por_codigo)
+            count_q = count_q.where(por_codigo)
         if event_type:
             base = base.where(OperationalEvent.event_type == event_type)
             count_q = count_q.where(OperationalEvent.event_type == event_type)
@@ -528,10 +545,15 @@ class ApprovalService(SegregacionMixin):
         self,
         farm_id: Optional[int] = None,
         lot_id: Optional[int] = None,
+        lot_code: Optional[str] = None,
         limit: int = 50,
         offset: int = 0,
     ) -> tuple[list[OperationalEvent], int]:
-        """Get events pending approval (status=corrected)."""
+        """Get events pending approval (status=corrected).
+
+        `lot_code` (`AC-S2-R01`): mismo patrón que la bandeja de revisión —parcial,
+        sin distinguir mayúsculas y con los comodines de `LIKE` escapados—.
+        """
         _ambito = await self._ambito_de_unidad()
         base = select(OperationalEvent).where(
             OperationalEvent.company_id == self.company_id,
@@ -550,6 +572,15 @@ class ApprovalService(SegregacionMixin):
         if lot_id:
             base = base.where(OperationalEvent.lot_id == lot_id)
             cq = cq.where(OperationalEvent.lot_id == lot_id)
+        if lot_code and lot_code.strip():
+            from ..masters.models import Lot
+
+            patron = lot_code.strip().replace("\\", "\\\\").replace("%", "\\%").replace("_", "\\_")
+            por_codigo = OperationalEvent.lot_id.in_(
+                select(Lot.id).where(Lot.company_id == self.company_id,
+                                     Lot.lot_code.ilike(f"%{patron}%", escape="\\")))
+            base = base.where(por_codigo)
+            cq = cq.where(por_codigo)
 
         base = base.order_by(OperationalEvent.event_date.desc()).offset(offset).limit(limit)
 

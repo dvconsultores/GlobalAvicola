@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
 import * as fs from 'node:fs'
-import { API, cabeceraAdmin, cabeceraAdminEnOtraEmpresa, crearEscenario, hoy, sufijo } from '../test-support/e2e-api'
+import {
+  API, cabeceraAdmin, cabeceraAdminEnOtraEmpresa, causaDesconocida, crearEscenario, hoy, sufijo,
+} from '../test-support/e2e-api'
 import { crearRol, crearUsuario } from '../test-support/admin-rbac'
 test.describe.configure({ mode: 'serial' })
 let admin: any, adminOtra: any, evB = 0, evR = 0, tokA = '', tokB = ''
@@ -41,10 +43,12 @@ test.beforeAll(async ({ request }) => {
   })
   const mB = await op({
     event_type: 'mortality_recording', lot_id: b.lotId, event_date: hoy(),
+    cause_id: await causaDesconocida(request, admin),
     bird_movements: [{ sex: 'male', quantity: 3 }],
   })
   const mR = await op({
     event_type: 'mortality_recording', lot_id: r.lotId, event_date: hoy(),
+    cause_id: await causaDesconocida(request, admin),
     bird_movements: [{ sex: 'mixed', quantity: 3 }],
   })
   evB = (await mB.json()).id

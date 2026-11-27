@@ -1,6 +1,9 @@
 import { test, expect } from '@playwright/test';
 import * as fs from 'node:fs';
-import { API, cabeceraAdmin, crearEscenario, crearMaestros, hoy, sufijo } from '../test-support/e2e-api';
+import {
+  API, LOTE_DE_VACUNA, cabeceraAdmin, causaDesconocida, crearEscenario, crearMaestros, hoy, sufijo,
+  tipoDeCorreccion,
+} from '../test-support/e2e-api';
 import { entrar } from '../test-support/auth';
 
 const PREFIJO = 'S1P18D';
@@ -76,6 +79,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
         data: {
           event_type: 'mortality_recording',
           lot_id: esc.lotId,
+          cause_id: await causaDesconocida(request, admin),
           event_date: hoy(),
           bird_movements: [{ sex: 'male', quantity: 3 }],
         },
@@ -87,7 +91,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     const crearVac = async () =>
       request.post(`${API}/operations`, {
         headers: admin,
-        data: { event_type: 'vaccination', lot_id: esc.lotId, event_date: hoy(), vaccine_id: vacunaId },
+        data: { event_type: 'vaccination', lot_id: esc.lotId, event_date: hoy(), vaccine_id: vacunaId, vaccine_lot_number: LOTE_DE_VACUNA },
         failOnStatusCode: false,
       });
 
@@ -101,6 +105,7 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
       headers: admin,
       data: {
         event_id: eventoCorregidoId,
+        correction_type_id: await tipoDeCorreccion(request, admin),
         field_name: 'observations',
         original_value: '',
         corrected_value: 'revisado',
@@ -178,7 +183,8 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     await page.waitForTimeout(1500);
     const kpis = reqs.some((u) => u.includes('/reports/kpis') && u.includes(`lot_id=${esc.lotId}`));
     const weekly = reqs.some((u) => u.includes(`/reports/lot/${esc.lotId}/weekly`));
-    const ajeno = reqs.some((u) => u.includes('lot_id=2')) && esc.lotId !== 2;
+    // parámetro exacto: 'lot_id=2' como subcadena también casa con 'lot_id=29'
+    const ajeno = reqs.some((u) => /[?&]lot_id=2(?!\d)/.test(u)) && Number(esc.lotId) !== 2;
     anotar('P4a', kpis && weekly && !ajeno, `kpis=${kpis} weekly=${weekly} lot_id=2=${ajeno} opciones=${nOpciones}`);
     expect(kpis, 'petición a /reports/kpis con el lote del escenario').toBe(true);
     expect(weekly, 'petición a /reports/lot/<id>/weekly').toBe(true);
@@ -286,41 +292,39 @@ test.describe('P18D UAT S1 — reportes, i18n y UX', () => {
     expect(estadoCrudo, 'el estado no debe mostrarse como in_review').toBe(false);
   });
 
-  test('P5b — filtro de lote en /review valida sin llamar a la API con abc', async ({ page }) => {
+  test('P5b — filtro de lote en /review busca por código sin avisos de formato (SPEC 020)', async ({ page }) => {
     await entrar(page, 'admin');
     const urls: string[] = [];
-    page.on('request', (r) => { if (r.url().includes('lot_id=')) urls.push(r.url()); });
+    page.on('request', (r) => { if (r.url().includes('/review/pending')) urls.push(r.url()); });
     await page.goto('/review');
-    const input = page.getByPlaceholder('ID del lote').first();
+    const input = page.getByTestId('review-filter-lot');
     await expect(input).toBeVisible({ timeout: 15000 });
     await input.fill('abc');
     await page.waitForTimeout(900);
     const pistas = await page.locator('[data-testid="lot-filter-hint"]').count();
-    const llamadaInvalida = urls.some((u) => u.includes('lot_id=abc'));
+    const alertas = await page.locator('[role="alert"]').count();
+    const conLotId = urls.some((u) => u.includes('lot_id='));
+    const conLotCode = urls.some((u) => u.includes('lot_code=abc'));
     const cuerpo = await page.locator('body').innerText();
     const errorVisible = cuerpo.includes('Input should') || cuerpo.includes('Valor no válido');
-    anotar('P5b', pistas === 1 && !llamadaInvalida && !errorVisible,
-      `pistas=${pistas} llamadaAbc=${llamadaInvalida} errorVisible=${errorVisible}`);
-    expect(pistas, 'exactamente una pista de filtro').toBe(1);
-    expect(llamadaInvalida, 'no debe llamar con lot_id=abc').toBe(false);
+    anotar('P5b', pistas === 0 && alertas === 0 && !conLotId && conLotCode && !errorVisible,
+      `pistas=${pistas} alertas=${alertas} lotId=${conLotId} lotCode=${conLotCode} errorVisible=${errorVisible}`);
+    expect(pistas, 'sin pista de formato de id').toBe(0);
+    expect(alertas, 'sin avisos de validación').toBe(0);
+    expect(conLotId, 'no debe consultar con lot_id=').toBe(false);
+    expect(conLotCode, 'debe consultar con lot_code=abc').toBe(true);
     expect(errorVisible, 'sin toast de validación crudo').toBe(false);
-    urls.length = 0;
-    await input.fill('');
-    await input.fill('12');
-    await page.waitForTimeout(1200);
-    const valida = urls.some((u) => u.includes('lot_id=12'));
-    anotar('P5b.12', valida, `peticiones con lot_id=12: ${valida}`);
-    expect(valida, 'debe pedir el listado con lot_id=12').toBe(true);
   });
 
   test('P5c — el toast se dibuja por encima del overlay del diálogo y el rechazo se completa', async ({ page, request }) => {
     // `F9`: `/approvals` está paginada y en la corrida completa hay muchos eventos
     // corregidos de otros procesos; se filtra por el lote del escenario para que la
-    // fila buscada esté en la primera página.
+    // fila buscada esté en la primera página. El filtro de Aprobaciones es por
+    // código de lote (SPEC 020, AC-S2-R03).
     const filtrarPorLote = async () => {
-      const filtro = page.getByPlaceholder('ID del lote').first();
+      const filtro = page.getByTestId('approval-filter-lot');
       await expect(filtro).toBeVisible({ timeout: 15000 });
-      await filtro.fill(String(esc.lotId));
+      await filtro.fill(esc.codigo.toLowerCase());
       await page.waitForTimeout(700); // debounce 400 ms + red
     };
 

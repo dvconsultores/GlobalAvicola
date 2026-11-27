@@ -25,6 +25,7 @@ import app.audit.models  # noqa: F401
 import app.corrections.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
+from tests.owner_decisions_support import causa_desconocida
 from tests.time_reference import iso_days_ago, recent_event_date
 
 PREFIJO = "NR-TEST-"
@@ -320,7 +321,10 @@ async def test_t_038_21_la_mortalidad_sobre_umbral_avisa(
                   bird_movements=[{"sex": "mixed", "quantity": 1000}],
                   received_total=1000, dead_on_arrival=0, rejected_on_arrival=0)  # `GA-REM-021-B` (`B01`), solo setup
     muerte = await _evento(client, seeded_ids, lote, tipo="mortality_recording",
-                           bird_movements=[{"sex": "mixed", "quantity": 200}])
+                           bird_movements=[{"sex": "mixed", "quantity": 200}],
+                           # `SPEC 020 §6` · `RR-32`: la baja declara su causa; lo que no se
+                           # pudo determinar se registra con «Desconocida», nunca con `NULL`.
+                           cause_id=await causa_desconocida(client, auth_headers))
 
     avisados = await _destinatarios(test_database_url, "operational_event", muerte["id"])
     assert seeded_ids["user_operator_id"] in avisados, "falta quien registró la mortalidad"

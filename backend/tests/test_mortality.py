@@ -16,6 +16,7 @@ import math
 
 import pytest
 
+from tests.owner_decisions_support import causa_desconocida
 from tests.time_reference import recent_event_date
 
 
@@ -30,13 +31,19 @@ async def _recepcion(client, headers, lot_id: int, cantidad: int):
 
 
 async def _mortalidad(client, headers, lot_id: int, cantidad: int, cause_id=None):
+    """Registra una mortalidad.
+
+    `spec 020 §6` · `RR-32`: la baja declara su causa. Cuando la prueba no nombra una, se usa
+    la causa compartida «Desconocida», que es el valor explícito para «no se pudo determinar»;
+    así el test sigue midiendo su regla —`BR-01`, la alerta, `BR-06`— y no `RR-32`.
+    """
     cuerpo = {
         "lot_id": lot_id, "event_type": "mortality_recording",
         "event_date": recent_event_date(),
         "bird_movements": [{"sex": "mixed", "quantity": cantidad}],
     }
-    if cause_id is not None:
-        cuerpo["cause_id"] = cause_id
+    cuerpo["cause_id"] = (cause_id if cause_id is not None
+                          else await causa_desconocida(client, headers))
     return await client.post("/api/v1/operations", headers=headers, json=cuerpo)
 
 
@@ -185,6 +192,8 @@ async def test_ac06_fecha_anterior_a_la_activacion_del_lote(auth_headers, client
         "lot_id": seeded_ids["lot_id"], "event_type": "mortality_recording",
         "event_date": iso_days_ago(CLOSED_PERIOD_DAYS + 500),
         "bird_movements": [{"sex": "mixed", "quantity": 1}],
+        # `RR-32`: con la causa declarada el rechazo llega por la fecha, que es lo que se mide.
+        "cause_id": await causa_desconocida(client, auth_headers),
     })
     assert lejana.status_code == 400
     assert lejana.json()["rule"] in ("BR-06", "BR-19"), (
@@ -206,6 +215,8 @@ async def test_ac07_la_secuencia_completa_cuadra(auth_headers, client, seeded_id
     descarte = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": lot, "event_type": "cull_recording", "event_date": recent_event_date(),
         "bird_movements": [{"sex": "mixed", "quantity": 5}],
+        # `spec 020 §6` · `RR-32`: el descarte declara su causa.
+        "cull_cause_id": await causa_desconocida(client, auth_headers, "cull-causes"),
     })
     assert descarte.status_code == 201, descarte.text
 

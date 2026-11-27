@@ -1,0 +1,29 @@
+[BASE backend] rc=0
+======================== 64 passed, 1 warning in 26.70s ========================
+[BASE frontend] rc=0
+ Test Files  4 passed (4)
+      Tests  45 passed (45)
+[B01] MUERTO · RR-27 tipo de corrección no exigido
+[B02] SOBREVIVE · RR-27 tipo inactivo aceptado
+[B03] MUERTO · RR-31 lote de vacuna en blanco aceptado
+[B04] MUERTO · RR-32 causa de mortalidad no exigida
+[B05] MUERTO · RR-32 causa de descarte no exigida
+[B06] MUERTO · RR-28 inspección vacía aceptada
+[B07] MUERTO · RR-28 valores por defecto cuentan como contenido
+[B08] MUERTO · RR-29 distribución de suma cero aceptada
+[B09] MUERTO · RR-33 alimento sin tipo aceptado
+[B10] MUERTO · RR-30 semana ISO-like (sin +1)
+[B11] MUERTO · RR-34 sin fase vigente se acepta
+[B12] MUERTO · RR-30 corrección de fecha no recalcula la semana
+[B13] MUERTO · «Desconocida» compartida no se lista
+[F01] MUERTO · RR-27 UI sin tipo envía
+[F02] MUERTO · RR-27 UI ofrece tipos inactivos
+[F03] MUERTO · RR-31 UI lote de vacuna no exigido
+[F04] MUERTO · RR-32 UI causa de mortalidad no exigida
+[F05] MUERTO · RR-32 UI causa de descarte no exigida
+[F06] MUERTO · RR-29 UI distribución en cero aceptada
+[F07] MUERTO · RR-28 UI inspección vacía aceptada
+[F08] MUERTO · RR-33 UI alimento sin tipo aceptado
+[F09] MUERTO · RR-30 UI semana sin +1
+SOBREVIVIENTES / NO APLICABLES: ['B02']
+EXIT=0

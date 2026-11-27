@@ -1,0 +1,19 @@
+[BASE backend] rc=0
+======================== 14 passed, 1 warning in 11.38s ========================
+[BASE frontend] rc=0
+ Test Files  1 passed (1)
+      Tests  7 passed (7)
+[B01] MUERTO · AC-O23-02 el maestro vacío no se ofrece (corregibilidad por valor)
+[B02] MUERTO · AC-O23-01 todo maestro aplica a todo tipo
+[B03] MUERTO · AC-O23-04 sin rechazo de campo ajeno al tipo
+[B04] MUERTO · AC-O23-05 maestro inactivo aceptado
+[B05] MUERTO · AC-O23-05 guarda de activo no invocada
+[B06] MUERTO · AC-O23-01 la recepción no admite proveedor
+[F01] MUERTO · AC-O23-07 original vacío no dice «Sin valor»
+[F02] MUERTO · AC-O23-05/07 el selector ofrece inactivos
+[F03] MUERTO · AC-O23-07 etiqueta sin código
+[F04] MUERTO · AC-O23-07 el historial no dice «Sin valor»
+[F05] MUERTO · AC-O23-07 el original vuelve a mostrarse en blanco
+SOBREVIVIENTES / NO APLICABLES: ninguno
+RC=0
+FIN

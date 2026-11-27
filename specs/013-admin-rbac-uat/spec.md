@@ -92,3 +92,20 @@ SPEC suficiente PASS · alcance acotado PASS · reglas de negocio (DR-1…DR-4 d
 
 Fuera de alcance: política de clave, ciclo de vida de tokens (OD-01/DR-4), RBAC, SESIÓN 1.
 **Constitution Gate:** spec suficiente PASS · alcance acotado PASS · sin decisión material nueva PASS · sin cambio de API/DB PASS · seguridad PASS (backend sin cambios, anti-IDOR intacto) · AC verificables PASS. **AUTHORIZATION GATE: PASS.**
+
+## 8. Amendment O-28 — `GA-O28-FE02-USER-BU-PANEL-FLAKINESS` (2026-11-27)
+
+**Entrada:** vitest rojo de forma recurrente en `gaFe02.userBuPanel` y `uatAdminRbac.userBuPanel` (observación O-28, abierta desde SPEC 020 §7). Bloquea `DEVELOP_READY_FOR_PR`.
+
+**Clasificación:** `TEST_DEFECT` (carrera asíncrona en el punto de sincronización del test). Componente sin cambios.
+
+**Causa:** `openPanel` daba el panel por abierto al ver el **título** del `Modal`, que se pinta en el mismo render que el indicador «cargando» (`role=status`). Las filas de unidades y las cabeceras de estado solo se renderizan cuando `load()` resuelve las dos peticiones. Las consultas síncronas siguientes (`getByText('Engorde' | 'Progenitoras' | 'users.businessUnits.companyState')`) dependían de que la carga ya hubiera terminado. Los 4 fallos reproducidos muestran el indicador de carga en el DOM. En aislamiento pasa 30/30; en el archivo y la subsuite falla (2/10, 2/3); con orden aleatorio no aparece dependencia de orden. Producto correcto: indicador → contenido, verificado en navegador por la E2E P-17-B.
+
+**Contrato del test:** abrir el panel = el indicador de carga desapareció **y** el contenido (cabeceras de estado EMPRESA/USUARIO) está presente (`waitFor` sobre esa condición concreta). Sin pausas, sin `setTimeout`, sin `skip`, sin aserciones retiradas ni relajadas.
+
+| AC | Enunciado |
+|---|---|
+| **AC-O28-01** | Los 10 tests de los dos archivos esperan el fin de la carga antes de consultar el contenido del panel. |
+| **AC-O28-02** | Estabilidad: archivo afectado 20/20, subsuite SPEC 013 / GA-FE-02 10/10, vitest completa 3/3 sin fallos. |
+| **AC-O28-03** | Sensibilidad: con la carga diferida a una tarea posterior, el `openPanel` anterior falla y el nuevo pasa. |
+| **AC-O28-04** | Falso verde: si la API devuelve `[]` unidades, los tests que esperan unidades fallan. |

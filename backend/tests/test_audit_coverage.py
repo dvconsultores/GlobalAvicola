@@ -19,6 +19,7 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.audit.models import AuditAction, AuditLog, AuditModule
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.audit_harness import listener_auditoria_como_runtime  # noqa: F401
 
 # `P1-12-REOPEN` (§1.3): los conteos «exactamente 1» se verifican en runtime (con listener).
@@ -153,7 +154,8 @@ async def test_t_081_05_el_cierre_de_revision_se_audita(
         "lot_id": seeded_ids["lot_id"], "farm_id": seeded_ids["farm_id"],
         "house_id": seeded_ids["house_id"], "event_type": "feed_registration",
         "event_date": __import__("tests.time_reference", fromlist=["x"]).iso_days_ago(0),
-        "feed_movements": [{"quantity_kg": 10.0}],
+        "feed_movements": [{"quantity_kg": 10.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],  # `SPEC 020 §6` · `RR-33`
     })
     assert evento.status_code == 201, evento.text
     event_id = evento.json()["id"]

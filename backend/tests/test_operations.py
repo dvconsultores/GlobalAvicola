@@ -1,6 +1,17 @@
 """Tests for Operations module — events, business rules."""
 import pytest
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.time_reference import recent_event_date
+
+
+async def _causa_desconocida(client, headers) -> int:
+    """`RR-32`: el valor compartido sembrado por la migración, leído por el listado del catálogo."""
+    resp = await client.get("/api/v1/masters/mortality-causes", headers=headers,
+                            params={"search": "Desconocida"})
+    assert resp.status_code == 200, resp.text
+    causas = [c for c in resp.json() if c["name"] == "Desconocida"]
+    assert causas, f"el catálogo debe ofrecer «Desconocida»: {resp.json()}"
+    return causas[0]["id"]
 
 
 @pytest.mark.asyncio
@@ -43,7 +54,8 @@ async def test_create_feed_registration(auth_headers, client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 250.0}],
+        "feed_movements": [{"quantity_kg": 250.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],  # `SPEC 020 §6` · `RR-33`
     })
     assert resp.status_code == 201
     data = resp.json()
@@ -53,10 +65,13 @@ async def test_create_feed_registration(auth_headers, client):
 @pytest.mark.asyncio
 async def test_mortality_exceeds_balance_blocked(auth_headers, client):
     """BR-01: Mortality cannot exceed available bird balance."""
+    # `RR-32`: la baja declara siempre su causa, así que el alta llega hasta la comprobación
+    # del saldo, que es la regla que este test mide.
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "mortality_recording",
         "event_date": recent_event_date(),
+        "cause_id": await _causa_desconocida(client, auth_headers),
         "bird_movements": [{"sex": "female", "quantity": 99999, "avg_weight": 2000.0}],
     })
     assert resp.status_code == 400
@@ -254,7 +269,8 @@ async def test_create_feed_registration(auth_headers, client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 250.0}],
+        "feed_movements": [{"quantity_kg": 250.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],  # `SPEC 020 §6` · `RR-33`
     })
     assert resp.status_code == 201
     data = resp.json()
@@ -264,10 +280,13 @@ async def test_create_feed_registration(auth_headers, client):
 @pytest.mark.asyncio
 async def test_mortality_exceeds_balance_blocked(auth_headers, client):
     """BR-01: Mortality cannot exceed available bird balance."""
+    # `RR-32`: la baja declara siempre su causa, así que el alta llega hasta la comprobación
+    # del saldo, que es la regla que este test mide.
     resp = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": 2,
         "event_type": "mortality_recording",
         "event_date": recent_event_date(),
+        "cause_id": await _causa_desconocida(client, auth_headers),
         "bird_movements": [{"sex": "female", "quantity": 99999, "avg_weight": 2000.0}],
     })
     assert resp.status_code == 400

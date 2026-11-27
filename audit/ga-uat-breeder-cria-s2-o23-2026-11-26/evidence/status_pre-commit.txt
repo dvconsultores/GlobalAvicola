@@ -1,0 +1,7 @@
+HEAD=963f536 dirty=10 2026-11-26T16:56:18-05:00
+vitest rc=0
+tsc rc=0
+build rc=0
+backend rc=0
+e2e rc=0
+FIN 2026-11-26T17:55:09-05:00

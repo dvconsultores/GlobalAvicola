@@ -1,0 +1,16 @@
+HEAD=ec84718 2026-11-27T06:31:57-05:00 carga=1.80 1.55 2.38
+A1 muestra identidad, y EMPRESA vs USUARIO
+A2 conceder llama POST exacto
+A3 revocar pide confirmación
+A4 sobre uno mismo
+A5 fallo al cargar concesiones
+A6 sin business_units:read
+A7 AC-UI-01
+A8 AC-UI-02
+A9 AC-UI-03
+A10 AC-UI-04
+B
+F
+C
+D
+FIN 2026-11-27T06:38:40-05:00

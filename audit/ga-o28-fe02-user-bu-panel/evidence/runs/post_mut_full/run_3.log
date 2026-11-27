@@ -1,0 +1,1018 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ✓ src/__tests__/spec016.buildProvenance.test.ts (22 tests | 1 skipped) 2852ms
+     ✓ vite build con GIT_SHA/BUILD_TIME deja version.json y el SHA en el bundle  2376ms
+ ✓ src/__tests__/cutoverHatcheryV4.test.tsx (18 tests) 2486ms
+     ✓ a) V4 500/300/200 + fosa 25: cifras, total derivado 1.000 y sin columna de descartados históricos  605ms
+ ✓ src/pages/operations/__tests__/r190.locationEventsHouse.test.tsx (11 tests) 4346ms
+     ✓ AC-R190-01 · distribución · lote sin galpón + galpón de fila ⇒ house_id del evento  1094ms
+     ✓ AC-R190-02 · salida · lote sin galpón ⇒ selector «Galpón del evento» y house_id  596ms
+     ✓ AC-R190-03 · recolección · lote sin galpón ⇒ house_id del evento  336ms
+     ✓ AC-R190-04b · inspección de granja con granja y galpón de fila ⇒ farm_id y house_id (control)  368ms
+     ✓ AC-R190-05 · lote CON galpón ⇒ el house_id del lote manda (control)  400ms
+     ✓ AC-R190-07 · traslado · lote sin galpón ⇒ house_id = galpón origen de la fila 0  355ms
+     ✓ AC-R190-08a · despacho de huevos ⇒ house_id del selector  384ms
+ ✓ src/pages/operations/__tests__/f01.payloadContract.test.tsx (4 tests) 2191ms
+     ✓ AC03/AC04 · sin almacenamiento capturado ⇒ egg_storage_records = [] (nunca [{}])  854ms
+     ✓ AC08-AC11 · la OC elegida viaja en sap_document_ref con su código canónico  434ms
+     ✓ AC55/AC56 · alimento e incubadora sin contenido ⇒ [] (F-01d, nunca [{}])  483ms
+     ✓ AC15 · sin almacenamiento capturado ⇒ egg_storage_records = [] en recepción  416ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.usersList.test.tsx (6 tests) 2130ms
+     ✓ (b bis) el botón «Buscar» aplica la búsqueda igual que Enter  308ms
+     ✓ (c) con 100 filas avisa del truncado; con 99 no  1030ms
+     ✓ (c bis) con 99 filas no hay aviso de truncado  604ms
+ ✓ src/__tests__/qaYolinel.red.test.tsx (23 tests) 2090ms
+     ✓ la carga inicial se estabiliza en 1 GET /review/pending (sin interacción)  420ms
+     ✓ /masters/companies: ningún th dice «Editar» ni «Guardar»  403ms
+ ✓ src/pages/operations/__tests__/f01e.receptionHouse.test.tsx (4 tests) 2087ms
+     ✓ AC-F01E-01 · lote SIN galpón + galpón elegido en la fila ⇒ house_id del evento = galpón de la fila  858ms
+     ✓ AC-F01E-02 · lote CON galpón ⇒ el house_id del lote se conserva (sin regresión)  452ms
+     ✓ AC-F01E-03 · sin galpón en el lote NI en las filas ⇒ house_id ausente (sin inventar)  385ms
+     ✓ AC-F01E-04 · frontera: la importación no cambia (sin fallback de galpón)  389ms
+ ✓ src/pages/review/__tests__/f4.lotFilterDebounce.test.tsx (4 tests) 2326ms
+     ✓ código no numérico ⇒ se consulta con `lot_code` tras el debounce, sin aviso de formato  704ms
+     ✓ tres caracteres seguidos ⇒ una sola petición extra (sin ráfaga)  637ms
+     ✓ código no numérico ⇒ viaja `lot_code` tras el debounce y nunca `lot_id`  476ms
+     ✓ tres caracteres seguidos ⇒ una sola petición extra  506ms
+stderr | src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx > S2-01 · edición sin cambiar la contraseña > FE-03 · cambiar el apellido ⇒ un PUT, ningún POST /password, sin error
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx > S2-01 · edición sin cambiar la contraseña > FE-04 · cambiar el email ⇒ un PUT, ningún POST /password, sin error
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx > S2-01 · edición sin cambiar la contraseña > FE-05 · cambiar el nombre ⇒ un PUT, ningún POST /password, sin error
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/review/__tests__/r197.reviewQueue.test.tsx (5 tests) 1888ms
+     ✓ AC05 · 7 pestañas (incluye corrected/rejected) y el estado activo viaja en la URL  485ms
+     ✓ AC04 · con users:read el filtro viaja como `registered_by_id` (no `operator_id`)  1098ms
+ ✓ src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx (13 tests) 1791ms
+     ✓ FE-01 · cambiar SOLO el rol ⇒ un PUT y ninguna petición a /password  442ms
+ ✓ src/pages/review/__tests__/uatS2.reviewFilters.test.tsx (5 tests) 1715ms
+     ✓ REV-S2-UI-02 · un texto no numérico no muestra ningún aviso de formato  516ms
+     ✓ REV-S2-UI-05 · ApprovalPanel envía `lot_code` a /approvals/pending  454ms
+stderr | src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx > R-209 · selectores SAP guardan el código canónico > AC-R209-02 · feed_registration guarda el código de la OT
+An update to OperationFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/operations/__tests__/r209.sapCodeSelectors.test.tsx (3 tests) 1837ms
+     ✓ AC-R209-01 · bird_exit guarda el código de la OC  947ms
+     ✓ AC-R209-02 · feed_registration guarda el código de la OT  410ms
+     ✓ AC-R209-03 · referencia sin código ⇒ clave ausente (nunca String(id))  477ms
+stderr | src/pages/operations/__tests__/qaYolinel.sapOrderByUnit.test.tsx > QA-007 · la OC de la recepción se filtra por la cadena del lote > AC-01.5 · con lote breeder, las OC se piden con business_unit=breeder
+An update to OperationFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/operations/__tests__/r194.hatcheryChain.test.tsx (6 tests) 2210ms
+     ✓ AC-R194-01 · recepción con ubicación y arrival_date en el payload  730ms
+     ✓ AC-R194-02 · los fértiles viajan como egg_movements[fertile]  307ms
+     ✓ AC-R194-04b · nacimiento: dosis negativa ⇒ sin POST y operations.dosageInvalid  335ms
+     ✓ AC-R194-06 · hatchery_id viaja en la fila  339ms
+stderr | src/pages/operations/__tests__/qaYolinel.sapOrderByUnit.test.tsx > QA-007 · la OC de la recepción se filtra por la cadena del lote > AC-01.3 · la OC de cadena desconocida se rotula «sin cadena» en el selector
+An update to OperationFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/operations/__tests__/qaYolinel.sapOrderByUnit.test.tsx (3 tests) 1353ms
+     ✓ AC-01.5 · con lote breeder, las OC se piden con business_unit=breeder  701ms
+     ✓ AC-01.3 · la OC de cadena desconocida se rotula «sin cadena» en el selector  407ms
+ ✓ src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx (15 tests) 1280ms
+stderr | src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx > R-205 · recepción de reproductoras — paridad hub/detalle/URL > AC-R205-03 · URL directa por pasos (control) ⇒ cuadre y payload
+An update to OperationFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/operations/__tests__/r205.breederReceptionParity.test.tsx (5 tests) 1775ms
+     ✓ AC-R205-01 · hub con deep link (type+lot) ⇒ cuadre visible y payload completo  649ms
+     ✓ AC-R205-03 · URL directa por pasos (control) ⇒ cuadre y payload  530ms
+ ✓ src/pages/lots/__tests__/gaFe06.lotFormContract.test.tsx (5 tests) 1352ms
+     ✓ PLD capturada ⇒ viaja en POST /lots como planned_close_date (YYYY-MM-DD)  567ms
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-01 · farm: POST sin `company_id` (contrato R-50) y éxito
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-02 · house: selector de granja ⇒ POST con `farm_id`
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-03a · incubator: selector de planta ⇒ POST con `hatchery_id`
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-03b · hatcher: selector de planta ⇒ POST con `hatchery_id`
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/operations/__tests__/r210.weightUnit.test.tsx (5 tests) 1284ms
+     ✓ AC-R210-01 · weight_recording rotula en gramos (sin «(kg)»)  530ms
+     ✓ AC-R210-03 · serialización sin conversión: 2150 g viaja como 2150  336ms
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-04 · capacity vacía ⇒ `null` (nunca cadena vacía)
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-06 · 422 lista ⇒ texto legible (regresión R-215)
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/masters/__tests__/r196.mastersCreate.test.tsx > R-196 · creación de maestros por entidad (RED) > AC-08 · 409 duplicado ⇒ texto legible (regresión)
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/masters/__tests__/r196.mastersCreate.test.tsx (9 tests) 1203ms
+     ✓ AC-01 · farm: POST sin `company_id` (contrato R-50) y éxito  354ms
+stderr | src/__tests__/gaFe03.routeGuards.test.tsx > GA-FE-03 · guardas de ruta (fail-closed visual, sin depender del menú) > E sin contexto: /poultry/broiler falla cerrada; el control global sigue accesible
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+Error fetching farms: TypeError: Cannot read properties of undefined (reading 'x-total-count')
+    at /home/maria/Proyectos/GlobalAvicola/frontend/src/pages/masters/MasterListPage.tsx:120:31
+    at processTicksAndRejections (node:internal/process/task_queues:95:5)
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to MasterListPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/__tests__/gaFe03.routeGuards.test.tsx (8 tests) 1195ms
+     ✓ D: /users, /roles, /audit, /masters/farms, /sap → denegadas  454ms
+ ✓ src/pages/operations/__tests__/uatS1.requiredFields.test.tsx (3 tests) 917ms
+     ✓ AC-S1-F6-01 · mortalidad con lote y cantidad vacía ⇒ sin POST y operations.quantityRequired  478ms
+ ✓ src/pages/operations/__tests__/f4.historyLotCodeFilter.test.tsx (3 tests) 985ms
+     ✓ escribir «lt-01» ⇒ una sola petición con `lot_code` tras el debounce y nunca `lot_id`  442ms
+     ✓ tres caracteres seguidos ⇒ una sola petición extra  444ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.usersRoles.test.tsx (11 tests) 890ms
+ ✓ src/pages/operations/__tests__/f01.errorRendering.test.tsx (1 test) 884ms
+     ✓ AC19-AC26 · 422 estructurado ⇒ mensaje legible y página usable (sin excepción de React)  880ms
+stderr | src/pages/lots/__tests__/r192.closeLotError.test.tsx > R-192 · el cierre de lote no falla en silencio > AC-R192-11 · un 400 R7 se muestra como toast con el detail del backend
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/components/__tests__/r215.errorRendering.test.tsx (6 tests) 881ms
+     ✓ 01 · maestros: 422 lista ⇒ texto legible, sin React #31  387ms
+stderr | src/pages/lots/__tests__/r192.closeLotError.test.tsx > R-192 · el cierre de lote no falla en silencio > AC-R192-12 · tras 200 aparece el resumen con los totales netos (control)
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/lots/__tests__/r192.closeLotError.test.tsx > R-192 · el cierre de lote no falla en silencio > AC-R192-13 · 403 y 404 se muestran legibles
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/lots/__tests__/r192.closeLotError.test.tsx > R-192 · el cierre de lote no falla en silencio > AC-R192-13 · 403 y 404 se muestran legibles
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/lots/__tests__/r192.closeLotError.test.tsx > R-192 · el cierre de lote no falla en silencio > AC-R192-14 · un 422 con detail estructurado se muestra y no rompe el render
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/lots/__tests__/r192.closeLotError.test.tsx (4 tests) 1000ms
+     ✓ AC-R192-11 · un 400 R7 se muestra como toast con el detail del backend  434ms
+ ✓ src/pages/sap/__tests__/sapInbound.test.tsx (8 tests) 896ms
+ ✓ src/__tests__/r061.cutoverFlow.test.tsx (4 tests) 925ms
+     ✓ AC82+AC80: crea la carga, muestra estado y preview por BU con errores de validación  377ms
+     ✓ AC81: «Aplicar» deshabilitado con filas inválidas pendientes (aunque haya permiso)  367ms
+ ✓ src/pages/operations/__tests__/o3.classifyDialog.test.tsx (10 tests) 897ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 794ms
+     ✓ muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)  330ms
+ ✓ src/pages/users/__tests__/r195.usersEdit.test.tsx (5 tests) 960ms
+     ✓ AC-01 · el PUT envía SOLO el subconjunto permitido (sin username/company_id)  475ms
+ ✓ src/pages/approvals/__tests__/uatS1.rejectReason.test.tsx (3 tests) 900ms
+     ✓ abrir «Rechazar» ofrece el campo de motivo  485ms
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+ ✓ src/__tests__/cutoverV2.test.tsx (7 tests) 826ms
+     ✓ RC-5: lista las cargas de la empresa y abre una existente (persistencia visible)  421ms
+stderr | src/pages/lots/__tests__/r191.phaseTransition.test.tsx > R-191 · transición de fase por UI > AC-R191-02 · 422 del servidor ⇒ toast.error con mensaje legible
+An update to LotDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/lots/__tests__/r191.phaseTransition.test.tsx (4 tests) 719ms
+     ✓ AC-R191-03 · el POST lleva lot_id y phase_id (resuelto por código PROD) y nunca phase_code  414ms
+ ✓ src/pages/operations/__tests__/r206.importQuarantine.test.tsx (1 test) 917ms
+     ✓ el payload omite quarantine_end_date (canónico: vacío ⇒ ausencia)  914ms
+stderr | src/pages/operations/__tests__/gaFe05.submitGates.test.tsx > GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) > un clic ⇒ una mutación + GET fresco + estado actualizado y CTA desaparece
+An update to OperationDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/operations/__tests__/gaFe05.submitGates.test.tsx > GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) > doble clic ⇒ una sola mutación (loading deshabilita)
+An update to OperationDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/operations/__tests__/gaFe05.submitGates.test.tsx > GA-FE-05 · R-181 · CTA de envío/reenvío por estado (RED) > fallo (403) ⇒ sin éxito falso + error + reconciliación por GET
+An update to OperationDetailPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/operations/__tests__/gaFe05.submitGates.test.tsx (10 tests) 621ms
+stderr | src/__tests__/r220.loteB6.test.tsx > R-220 · B6 · sin operations:create no hay callejón hacia /operations/new > con operations:create el flujo de registro sigue disponible (control)
+In HTML, <button> cannot be a descendant of <button>.
+This will cause a hydration error.
+
+  <MemoryRouter initialEntries={[...]}>
+    <Router basename={undefined} location={{pathname:"...", ...}} navigationType="POP" navigator={{index:0, ...}} ...>
+      <Routes>
+        <RenderedRoute match={{params:{...}, ...}} routeContext={{outlet:null, ...}}>
+          <ProcessStagePage>
+            <div>
+            <div>
+              <div>
+              <div className="mb-6">
+                <StageTimeline stages={[...]} onStageSelect={function goToOperation} completedStages={[...]} ...>
+                  <div className="space-y-2 ...">
+                    <div className="relative">
+                      <div>
+>                     <button
+>                       type="button"
+>                       onClick={function onClick}
+>                       className="w-full relative group transition-all rounded-xl border overflow-hidden ring-2 ring-..."
+>                       aria-expanded={true}
+>                       aria-controls="stage-content-0"
+>                       aria-label="farm_inspection - Pending"
+>                     >
+                        <div className={"relative..."}>
+                          <div>
+                          <div id="stage-cont..." className="mt-4 pt-4 ...">
+>                           <button
+>                             onClick={function onClick}
+>                             className="w-full py-2.5 px-3 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue..."
+>                             aria-label="Registrar operación farm_inspection"
+>                           >
+                    ...
+              ...
+
+<button> cannot contain a nested <button>.
+See this log for the ancestor stack trace.
+
+ ✓ src/__tests__/r220.loteB6.test.tsx (3 tests) 734ms
+     ✓ solo-lectura: la vista Secuencia no ofrece «Registrar operación»  429ms
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-02 · Home sin `dashboard:read` ⇒ hub útil; con permiso ⇒ dashboard
+An update to HomeRoute inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · maestros: 403/500 ⇒ estado distinguido (no «vacío»)
+Error fetching farms: { response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · roles: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+stderr | src/__tests__/r212.permissionAwareness.test.tsx > R-212 · superficies conscientes del permiso (RED) > AC-R212-04 · corrección: 403/500 ⇒ estado distinguido (no «vacío»)
+{ response: { status: 403 } }
+
+ ✓ src/__tests__/r212.permissionAwareness.test.tsx (15 tests) 636ms
+ ✓ src/pages/audit/__tests__/r219.auditPage.test.tsx (5 tests) 645ms
+ ✓ src/pages/approvals/__tests__/r208.batchGates.test.tsx (2 tests) 632ms
+     ✓ revisor sin approvals:* tras seleccionar ⇒ sin «Aprobar todos» ni «Rechazar todos»  424ms
+ ✓ src/pages/review/__tests__/uatS2.correctionMaster.test.tsx (7 tests) 619ms
+ ✓ src/__tests__/cutoverGrandparentV3.test.tsx (3 tests) 592ms
+     ✓ a) grandparent: las 4 transferencias salen con etiqueta propia; 200 y 0 conocidos visibles y UNKNOWN donde está vacío  414ms
+ ✓ src/pages/review/__tests__/gaFe04.reviewGates.test.tsx (2 tests) 502ms
+     ✓ solo review:read ⇒ sin Iniciar/Completar/Devolver  370ms
+ ✓ src/components/notifications/__tests__/NotificationBell.test.tsx (9 tests) 572ms
+ ✓ src/pages/approvals/__tests__/gaFe04.approvalGates.test.tsx (3 tests) 460ms
+stderr | src/__tests__/gaFe04.routeParity.test.tsx > GA-FE-04 · Paridad ruta↔acción (deep links de alta) > control: C con create en su unidad ⇒ /lots/new permitido
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to LotFormPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/__tests__/gaFe04.routeParity.test.tsx (4 tests) 516ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 562ms
+     ✓ AC-UI-01: «Revocar» abre la confirmación en un portal sobre el modal y revoca (AR-13)  351ms
+ ✓ src/__tests__/r220.loteB3.test.tsx (1 test) 491ms
+     ✓ AC-R220-B·B9 · el botón eliminar máquina se ancla a su propia fila (relative)  487ms
+ ✓ src/__tests__/uatAdminRbac.homeNoLoop.test.tsx (3 tests) 524ms
+     ✓ AC-AR23-01 · sesión {audit:read, lots:read} sin unidades: aviso neutro, sin bucle  498ms
+ ✓ src/pages/review/__tests__/uatS1.correctionForm.test.tsx (4 tests) 474ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.profilePage.test.tsx (5 tests) 604ms
+     ✓ nueva ≠ confirmación: no llama a la API y lo explica  316ms
+ ✓ src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx (7 tests) 480ms
+ ✓ src/pages/sap/__tests__/gaFe04.sapGates.test.tsx (2 tests) 428ms
+     ✓ solo sap:read ⇒ sin Consolidar ni Exportar  314ms
+ ✓ src/__tests__/r220.loteA.test.tsx (2 tests) 583ms
+     ✓ AC-R220-A·A9 · doble clic en «Aprobar» ⇒ un solo POST /approvals/approve  533ms
+ ✓ src/__tests__/r220.loteB1B2.test.tsx (3 tests) 567ms
+     ✓ B1 · existe hamburguesa y monta el drawer al pulsarla  448ms
+ ✓ src/components/ui/__tests__/ui-components.test.tsx (45 tests) 624ms
+ ✓ src/pages/review/__tests__/r197.reviewDetail.test.tsx (5 tests) 531ms
+ ✓ src/pages/review/__tests__/qaYolinel.reviewColumns.test.tsx (2 tests) 332ms
+ ✓ src/pages/operations/__tests__/r207.reversalSurface.test.tsx (4 tests) 446ms
+ ✓ src/pages/reports/__tests__/uatS1.reports.test.tsx (5 tests) 301ms
+ ✓ src/__tests__/r220.loteA6.test.tsx (2 tests) 351ms
+ ✓ src/__tests__/r220.loteA7.test.tsx (2 tests) 406ms
+ ✓ src/pages/operations/__tests__/uatS1.pendingClassification.test.tsx (4 tests) 316ms
+ ✓ src/pages/review/__tests__/uatS2c.correctionType.test.tsx (3 tests) 408ms
+     ✓ a · sin tipo de corrección el envío se bloquea: no hay POST y se ve el aviso  301ms
+ ✓ src/pages/masters/__tests__/qaYolinel.mastersList.test.tsx (3 tests) 381ms
+ ✓ src/__tests__/r220.loteC.test.tsx (8 tests) 326ms
+ ✓ src/pages/users/__tests__/UsersPage.test.tsx (5 tests) 354ms
+ ✓ src/__tests__/r220.loteB7.test.tsx (2 tests) 290ms
+ ✓ src/components/layout/__tests__/gaFe02b.companySelector.test.tsx (5 tests) 416ms
+ ✓ src/components/layout/__tests__/gaFe03.sidebar.test.tsx (5 tests) 465ms
+ ✓ src/__tests__/r220.loteA3.test.tsx (2 tests) 350ms
+ ✓ src/__tests__/uatS1.i18nToast.test.tsx (4 tests) 218ms
+ ✓ src/__tests__/r220.loteB2.test.tsx (2 tests) 309ms
+ ✓ src/components/__tests__/uatS1.toastPortal.test.tsx (1 test) 188ms
+ ✓ src/__tests__/qaYolinel.listColumns.test.tsx (3 tests) 202ms
+ ✓ src/pages/review/__tests__/uatS1.reviewDetailCorrections.test.tsx (3 tests) 210ms
+ ✓ src/pages/lots/__tests__/uatS1.lotTabs.test.tsx (5 tests) 201ms
+ ✓ src/pages/operations/__tests__/gaFe03.menuHub.test.tsx (4 tests) 252ms
+ ✓ src/pages/lots/__tests__/gaFe07.inactiveAreaEligibility.test.tsx (2 tests) 149ms
+ ✓ src/pages/operations/__tests__/uatS2.listLotLabel.test.tsx (3 tests) 251ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ✓ src/pages/operations/__tests__/r198.evidenceContract.test.tsx (4 tests) 213ms
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+ ✓ src/components/ui/__tests__/signature-pad.test.tsx (8 tests) 132ms
+ ✓ src/pages/operations/__tests__/uatS1.detailNames.test.tsx (3 tests) 136ms
+ ✓ src/pages/masters/__tests__/gaFe04.mastersGates.test.tsx (2 tests) 138ms
+ ✓ src/__tests__/r220.loteA2.test.tsx (2 tests) 182ms
+ ✓ src/components/layout/__tests__/gaFe03.mobileNav.test.tsx (3 tests) 131ms
+ ✓ src/components/operations/__tests__/WeightEvaluation.test.tsx (7 tests) 166ms
+ ✓ src/pages/users/__tests__/gaFe04.usersGates.test.tsx (2 tests) 150ms
+ ✓ src/pages/reports/__tests__/r218.weeklySeries.test.tsx (2 tests) 149ms
+ ✓ src/components/layout/__tests__/backNavigation.test.tsx (4 tests) 136ms
+ ✓ src/services/__tests__/uatAdminRbac.forbiddenReconcile.test.ts (5 tests) 117ms
+ ✓ src/pages/lots/__tests__/gaFe04.lotsGates.test.tsx (2 tests) 129ms
+ ✓ src/__tests__/r220.loteA4.test.tsx (1 test) 103ms
+ ✓ src/pages/operations/__tests__/uatS2c.derivedFields.test.tsx (6 tests) 76ms
+ ✓ src/components/__tests__/f4.toastSpanishDetail.test.tsx (6 tests) 96ms
+stderr | src/hooks/__tests__/useUnsavedChangesGuard.test.tsx > 004 · useUnsavedChangesGuard (AC14) > el popstate interceptado abre la confirmación (browser back)
+An update to Probe inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/hooks/__tests__/useUnsavedChangesGuard.test.tsx (3 tests) 56ms
+ ✓ src/auth/__tests__/gaFe04.actionAuthority.test.tsx (5 tests) 50ms
+ ✓ src/__tests__/r220.loteCb.test.ts (9 tests) 31ms
+ ✓ src/stores/__tests__/gaFe02.sessionBoot.test.ts (2 tests) 43ms
+ ✓ src/hooks/__tests__/useDebouncedValue.test.ts (3 tests) 24ms
+ ✓ src/hooks/__tests__/useMediaQuery.test.ts (4 tests) 24ms
+ ✓ src/data/__tests__/gaFe08.lotsNav.test.ts (12 tests) 16ms
+ ✓ src/stores/__tests__/gaFe02.session.test.ts (5 tests) 13ms
+ ✓ src/auth/__tests__/gaFe03.navigation.test.ts (16 tests) 18ms
+ ✓ src/pages/operations/__tests__/r190.resolverUbicacion.test.ts (17 tests) 12ms
+ ✓ src/stores/__tests__/uatAdminRbac.sessionRefresh.test.ts (3 tests) 9ms
+ ✓ src/services/__tests__/gaFe02.businessUnitsService.test.ts (7 tests) 9ms
+ ✓ src/data/__tests__/gaFe02.i18n.test.ts (44 tests) 13ms
+ ✓ src/data/__tests__/gaFe02.nav.test.ts (6 tests) 6ms
+ ✓ src/data/__tests__/processCatalog.test.ts (7 tests) 8ms
+ ✓ src/utils/__tests__/semanaProductiva.test.ts (16 tests) 6ms
+ ✓ src/stores/__tests__/gaRem003.logoutRevocation.test.ts (2 tests) 6ms
+ ✓ src/__tests__/r220.loteB10.test.tsx (8 tests) 7ms
+ ✓ src/stores/__tests__/auth.store.test.ts (6 tests) 7ms
+ ✓ src/services/__tests__/uatAdminRbac.sessionWiring.test.ts (3 tests) 9ms
+ ✓ src/pages/operations/__tests__/grandparentImportContract.test.ts (6 tests) 9ms
+ ✓ src/pages/operations/__tests__/f01d.serializers.test.ts (5 tests) 7ms
+ ✓ src/services/__tests__/weightCurves.test.ts (6 tests) 8ms
+ ✓ src/pages/operations/__tests__/receptionFormContract.test.ts (6 tests) 8ms
+ ✓ src/pages/operations/__tests__/uatS1.requiredRules.test.ts (11 tests) 9ms
+ ✓ src/__tests__/r220.loteD.test.ts (7 tests) 6ms
+ ✓ src/__tests__/r220.loteB.test.tsx (3 tests) 7ms
+ ✓ src/pages/operations/__tests__/r206.emptyOptional.test.ts (7 tests) 5ms
+ ✓ src/auth/__tests__/gaFe02.permissions.test.ts (7 tests) 7ms
+ ✓ src/pages/operations/__tests__/uatS2c.requiredRules.test.ts (20 tests) 11ms
+ ✓ src/utils/__tests__/correctionFields.test.ts (4 tests) 6ms
+ ✓ src/components/__tests__/f01.getErrorMessage.test.ts (6 tests) 6ms
+ ✓ src/pages/operations/__tests__/r205.stageDerivation.test.ts (9 tests) 5ms
+ ✓ src/__tests__/r220.loteA1617.test.ts (7 tests) 5ms
+ ✓ src/pages/operations/__tests__/eggDispatchFormContract.test.ts (2 tests) 6ms
+ ✓ src/__tests__/r220.loteA5.test.tsx (3 tests) 7ms
+ ✓ src/pages/operations/__tests__/r153.importLotOptional.test.ts (3 tests) 4ms
+ ✓ src/__tests__/r220.loteA8.test.tsx (2 tests) 3ms
+
+ Test Files  133 passed (133)
+      Tests  821 passed | 1 skipped (822)
+   Start at  07:16:39
+   Duration  97.33s (transform 4.23s, setup 9.53s, import 50.70s, tests 74.84s, environment 125.92s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/post_mut_full/run_3.json

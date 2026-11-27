@@ -6,7 +6,7 @@ import { execFileSync } from 'node:child_process'
 import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from 'node:fs'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
-import { API, cabeceraAdmin, sufijo } from '../test-support/e2e-api'
+import { API, cabeceraAdmin, causaDesconocida, sufijo } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
 import {
   asegurarFases, corteHaceDias, corteParaInput, crearMaestrosCutover, filasPorBu,
@@ -211,6 +211,7 @@ test.describe('P-16 · Cargas Iniciales v3 — reproductoras con transferencias 
     // ── 8 · un evento post-corte en el ORIGEN no vuelve a restar lo transferido ──
     const mov = await request.post(`${API}/operations`, { headers: cab, data: {
       lot_id: idOri, event_type: 'mortality_recording', event_date: haceDias(7),
+      cause_id: await causaDesconocida(request, cab),
       bird_movements: [{ sex: 'male', quantity: 15, avg_weight: 3600 }],
     } })
     expect(mov.status(), await mov.text()).toBe(201)

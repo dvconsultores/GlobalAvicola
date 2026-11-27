@@ -60,10 +60,20 @@ class MasterService:
     #: exige contexto. No hay clase por omisión.
     _CONTROL_GLOBAL = {"companies"}
 
-    def _apply_company_filter(self, query):
+    #: Catálogos con valores de plataforma: `company_id NULL` = compartido, solo lectura para
+    #: la empresa.
+    #:
+    #: Se declaran por nombre de tabla, como las otras dos listas, en vez de deducirse de
+    #: `company_id` anulable: la anulabilidad dice que el esquema lo permite, no que este
+    #: catálogo lo use. El patrón de `verificar_catalogo_de_empresa` (`app/tenancy.py`) ya
+    #: trata `NULL` como compartido al **referenciar**; esto es lo mismo al **listar**, y sin
+    #: el listado la fila compartida sería inalcanzable aunque la validación la admitiera.
+    _CATALOGOS_CON_COMPARTIDOS = {"mortality_causes", "cull_causes"}
+
+    def _apply_company_filter(self, query, incluir_compartidos: bool = False):
         """Acota la consulta al inquilino del actor. `RQ-03` · `AC05`.
 
-        Tres casos y ninguno implícito:
+        Cuatro casos y ninguno implícito:
 
         ```
         CONTROL GLOBAL       sin filtro, **solo** para la autoridad global y **solo** sobre
@@ -71,6 +81,9 @@ class MasterService:
         SIN EMPRESA          cero filas, autoridad global incluida. `OD-14.d`: sin contexto
                              no se obtiene la unión de inquilinos.
         CON EMPRESA          por `company_id`, o por `id` si el modelo **es** el inquilino.
+        CATÁLOGO COMPARTIDO  en lectura, y solo en los catálogos de
+                             `_CATALOGOS_CON_COMPARTIDOS`, además de las filas propias salen
+                             las de `company_id NULL` — `SPEC 020 §6` · `RR-32`.
         ```
 
         El caso de en medio era `fail-open` —`R-116`—: `if not self.user_company_id: return
@@ -78,6 +91,11 @@ class MasterService:
         intención no se había resuelto («return empty or filter by id»). Un actor sin empresa
         efectiva veía los maestros de todas. `GA-REM-040` había resuelto el mismo dilema al
         revés para las unidades: sin concesiones, ninguna unidad, nunca «toda la empresa».
+
+        El cuarto caso es **solo de lectura y explícito** (`incluir_compartidos`): el detalle,
+        la actualización y la baja lo llaman sin el parámetro, de modo que la fila compartida
+        sigue siendo invisible para ellos y acaban en 404. Una fila de plataforma se lista
+        junto a las propias; no se edita ni se da de baja desde un inquilino.
 
         Los catálogos de plataforma sin `company_id` —fases productivas y similares— quedan
         fuera a propósito: su diseño admite el uso compartido, y así consta en
@@ -94,6 +112,12 @@ class MasterService:
         if self.model.__tablename__ in self._INQUILINO_POR_IDENTIDAD:
             return query.where(self.model.id == self.user_company_id)
         if hasattr(self.model, "company_id"):
+            if incluir_compartidos and self.model.__tablename__ in self._CATALOGOS_CON_COMPARTIDOS:
+                # La compartida (`company_id NULL`) es de plataforma: se lee, no se toca.
+                return query.where(or_(
+                    self.model.company_id == self.user_company_id,
+                    self.model.company_id.is_(None),
+                ))
             query = query.where(self.model.company_id == self.user_company_id)
         return query
 
@@ -133,7 +157,10 @@ class MasterService:
         query = select(self.model)
 
         # Company isolation
-        query = self._apply_company_filter(query)
+        # `incluir_compartidos=True`: el **listado** de los catálogos de
+        # `_CATALOGOS_CON_COMPARTIDOS` muestra también las filas de plataforma. El detalle y
+        # las escrituras no, porque no pasan el parámetro (`SPEC 020 §6` · `RR-32`).
+        query = self._apply_company_filter(query, incluir_compartidos=True)
         # Unidad de negocio. Antes del recuento y de la paginación: si fuera después, el
         # total contaría filas ocultas —revelándolas por diferencia— y la primera página
         # llegaría con huecos donde estaban las ajenas.
@@ -169,7 +196,12 @@ class MasterService:
         return items, total
 
     async def get_by_id(self, item_id: int) -> Any:
-        """Get single item by ID, respecting company isolation."""
+        """Get single item by ID, respecting company isolation.
+
+        Sin `incluir_compartidos`: la fila compartida (`company_id NULL`) se lista pero no se
+        abre por identificador, así que `update` y `deactivate` —que pasan por aquí— no pueden
+        tocarla desde una empresa (`SPEC 020 §6` · `RR-32`).
+        """
         query = self._apply_company_filter(select(self.model))
         query = self._apply_business_unit_filter(query)
         query = query.where(self.model.id == item_id)

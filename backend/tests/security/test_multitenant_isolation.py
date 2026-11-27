@@ -26,7 +26,8 @@ import pytest
 import pytest_asyncio
 
 from app.auth.security import create_access_token
-from tests.time_reference import iso_days_ago
+from tests.owner_decisions_support import fase_vigente_del_lote
+from tests.time_reference import iso_days_ago, lot_start_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -58,12 +59,24 @@ async def recursos_b(http_client, seeded_ids) -> dict:
         "name": f"B galpon {s}", "farm_id": granja.json()["id"], "capacity": 5000})
     lote = await http_client.post("/api/v1/lots", headers=cabecera, json={
         "lot_code": f"MT-LOT-{s}", "farm_id": granja.json()["id"],
-        "bird_type": "broiler", "sex": "mixed"})
+        "bird_type": "broiler", "sex": "mixed",
+        # `spec 020 §6` · `RR-30`: el consumo deriva su semana del inicio del lote.
+        "start_date": lot_start_date().isoformat()})
     assert lote.status_code in (200, 201), lote.text
+
+    # `spec 020 §6` ratificado por la Owner el 25-11-2026: el evento de apoyo es un consumo de
+    # alimento y el contrato exige tipo de alimento (`RR-33`) y fase vigente del lote (`RR-34`).
+    # Se declaran esos datos válidos para que estas pruebas sigan midiendo el aislamiento entre
+    # empresas, no el catálogo.
+    alimento = await http_client.post("/api/v1/masters/feed-types", headers=cabecera, json={
+        "name": f"B alimento {s}", "code": f"MT-AL-{s}"})
+    assert alimento.status_code == 201, alimento.text
+    await fase_vigente_del_lote(http_client, cabecera, lote.json()["id"], iso_days_ago(60))
 
     evento = await http_client.post("/api/v1/operations", headers=cabecera, json={
         "lot_id": lote.json()["id"], "event_type": "feed_registration",
-        "event_date": iso_days_ago(0), "feed_movements": [{"quantity_kg": 5.0}]})
+        "event_date": iso_days_ago(0),
+        "feed_movements": [{"quantity_kg": 5.0, "feed_type_id": alimento.json()["id"]}]})
     assert evento.status_code == 201, evento.text
 
     return {

@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import pytest
 
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.time_reference import recent_event_date
 
 pytestmark = pytest.mark.asyncio
@@ -125,7 +126,10 @@ async def test_r32_ningun_campo_de_flujo_es_fijable_por_put(
     """`PUT /operations/{id}` aprobaba sin revisión, sin segregación y sin aprobador."""
     creado = await http_client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": seeded_ids["lot_id"], "event_type": "feed_registration",
-        "event_date": recent_event_date(), "feed_movements": [{"quantity_kg": 5.0}]})
+        "event_date": recent_event_date(),
+        "feed_movements": [
+            {"quantity_kg": 5.0, "feed_type_id": await tipo_de_alimento(http_client, auth_headers)}
+        ]})
     assert creado.status_code == 201, creado.text
     eid = creado.json()["id"]
 
@@ -143,7 +147,10 @@ async def test_r32_el_estado_solo_avanza_por_el_flujo(auth_headers, client, seed
     """La vía legítima sigue existiendo: enviar a revisión sí cambia el estado."""
     creado = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": seeded_ids["lot_id"], "event_type": "feed_registration",
-        "event_date": recent_event_date(), "feed_movements": [{"quantity_kg": 5.0}]})
+        "event_date": recent_event_date(),
+        "feed_movements": [
+            {"quantity_kg": 5.0, "feed_type_id": await tipo_de_alimento(client, auth_headers)}
+        ]})
     eid = creado.json()["id"]
 
     enviado = await client.post(f"/api/v1/operations/{eid}/submit", headers=auth_headers)

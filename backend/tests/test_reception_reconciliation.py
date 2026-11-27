@@ -16,6 +16,7 @@ Escenario (prefijo `CUADRE-`):
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, time, timezone
 
 import pytest
 import pytest_asyncio
@@ -30,7 +31,7 @@ import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.time_reference import days_ago, recent_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -55,7 +56,9 @@ async def esc(test_database_url):
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
     from app.integrations.sap.models import SapReference, SapReferenceType
-    from app.masters.models import BirdTypeEnum, Company, Farm, FarmType, House, Lot, LotStatus
+    from app.masters.models import (BirdTypeEnum, Company, Farm, FarmType, FeedType, House, Lot,
+                                    LotStatus, MortalityCause, ProductivePhase)
+    from app.lots.models import LotPhase
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -124,19 +127,36 @@ async def esc(test_database_url):
         await s.flush()
 
         def _lote(empresa, marca, tipo, estado=LotStatus.ACTIVE):
-            return Lot(company_id=empresa.id, lot_code=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}", bird_type=tipo, status=estado)
+            # `spec 020 §6` · `RR-30`: mortalidad y alimento derivan su semana del inicio del lote.
+            return Lot(company_id=empresa.id, lot_code=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}", bird_type=tipo,
+                       status=estado, start_date=datetime.combine(days_ago(60), time.min, tzinfo=timezone.utc))
 
         lotes = {"lr": _lote(a, "LR", BirdTypeEnum.BREEDER), "lr2": _lote(a, "LR2", BirdTypeEnum.BREEDER), "lp": _lote(a, "LP", BirdTypeEnum.BROILER),
                  "lg": _lote(a, "LG", BirdTypeEnum.GRANDPARENT), "lh": _lote(a, "LH", BirdTypeEnum.HATCHERY), "ln": _lote(a, "LN", None),
                  "lb": _lote(b, "LB", BirdTypeEnum.BREEDER), "lpb": _lote(b, "LPB", BirdTypeEnum.BROILER)}
         s.add_all(lotes.values())
+        await s.flush()
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026: se siembra el dato válido que el
+        # contrato exige —tipo de alimento (`RR-33`) y fase vigente del lote (`RR-34`), más la causa
+        # compartida «Desconocida» (`RR-32`, ya sembrada)— para que estas pruebas sigan midiendo el
+        # cuadre de la recepción y no el catálogo.
+        fase = ProductivePhase(name=f"{PREFIJO}Fase", code=f"{PREFIJO}FP", order=1)
+        alimento = FeedType(company_id=a.id, name=f"{PREFIJO}Alimento", code=f"{PREFIJO}AL", is_active=True)
+        s.add_all([fase, alimento])
+        await s.flush()
+        for lote in lotes.values():
+            s.add(LotPhase(lot_id=lote.id, phase_id=fase.id, start_date=days_ago(60), is_active=True))
+        await s.flush()
+        causa_mortalidad = (await s.execute(select(MortalityCause.id).where(
+            MortalityCause.name == "Desconocida", MortalityCause.company_id.is_(None)))).scalar_one()
         oc = SapReference(company_id=a.id, ref_type=SapReferenceType.PURCHASE_ORDER, sap_code=f"{PREFIJO}OC-{uuid.uuid4().hex[:6]}",
                           quantity=250, unit="aves", is_active=True)
         s.add(oc)
         await s.flush()
         await s.commit()
         d = {"a": a.id, "b": b.id, "granja_a": granja_a.id, "galpon_a": galpon_a.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id,
-             "oc": oc.sap_code, "url": test_database_url}
+             "oc": oc.sap_code, "url": test_database_url, "alimento": alimento.id,
+             "causa_mortalidad": causa_mortalidad}
         d.update({k: v.id for k, v in u.items()})
         d.update({k: v.id for k, v in lotes.items()})
     yield d
@@ -154,7 +174,10 @@ async def esc(test_database_url):
             "DELETE FROM bird_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM sap_references WHERE sap_code LIKE :p",
+            "DELETE FROM lot_phases WHERE lot_id IN (SELECT id FROM lots WHERE lot_code LIKE :p)",
             "DELETE FROM lots WHERE lot_code LIKE :p",
+            "DELETE FROM productive_phases WHERE code LIKE :p",
+            "DELETE FROM feed_types WHERE code LIKE :p",
             "DELETE FROM houses WHERE farm_id IN (SELECT id FROM farms WHERE name LIKE :p)",
             "DELETE FROM farms WHERE name LIKE :p",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
@@ -255,7 +278,9 @@ async def test_b01_02_07_19_dos_entregas_parciales_cuadradas_contra_la_misma_oc_
     assert _es_br(r, "BR-18"), ("control GA-TD-014: 200 + 100 > 250", r.text)
     # R-130: una salida mayor que el saldo se acota; una igual pasa
     def _mortalidad(n):
+        # `spec 020 §6` · `RR-32`: la baja dice por qué; «Desconocida» es el valor explícito.
         return {"lot_id": esc["lr"], "event_type": "mortality_recording", "event_date": recent_event_date(),
+                "cause_id": esc["causa_mortalidad"],
                 "farm_id": esc["granja_a"], "house_id": esc["galpon_a"], "bird_movements": [{"sex": "mixed", "quantity": n}]}
     r = await http_client.post("/api/v1/operations", headers=_token(esc["operador"]), json=_mortalidad(191))
     assert r.status_code == 400, r.text
@@ -313,10 +338,12 @@ async def test_b01_17_la_identidad_y_sus_campos_solo_viven_en_la_recepcion_de_re
     r = await _recibir(http_client, esc, "actor_b", "lpb", granja="granja_b", galpon="galpon_b", filas=(("mixed", 100),), total=None, dead=3, rej=None)
     assert r.status_code == 201 and r.json()["dead_on_arrival"] == 3, r.text
     assert await _saldo(esc, esc["lpb"]) == 100, "AC-B01-17: la mortalidad al arribo no entra al saldo"
-    # otro tipo de evento
+    # otro tipo de evento. `spec 020 §6` · `RR-33`: el consumo declara su tipo de alimento (la fase
+    # vigente la siembra el fixture), para que el 400 sea el de la regla que esta prueba mide.
     r = await http_client.post("/api/v1/operations", headers=_token(esc["operador"]), json={
         "lot_id": esc["lr"], "event_type": "feed_registration", "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 5.0}], "received_total": 100, "dead_on_arrival": 0, "rejected_on_arrival": 0})
+        "feed_movements": [{"quantity_kg": 5.0, "feed_type_id": esc["alimento"]}],
+        "received_total": 100, "dead_on_arrival": 0, "rejected_on_arrival": 0})
     assert r.status_code == 400, r.text
     # progenitoras, incubadora (global situada en A, unidades habilitadas) y lote sin cadena
     assert (await _recibir(http_client, esc, "operador_g", "lg")).status_code == 400
@@ -382,6 +409,8 @@ async def test_r167_la_mortalidad_al_arribo_afecta_al_saldo_exactamente_cero_vec
     # un evento de mortalidad es otro hecho y descuenta exactamente una vez
     r = await http_client.post("/api/v1/operations", headers=_token(esc["operador"]), json={
         "lot_id": esc["lr"], "event_type": "mortality_recording", "event_date": recent_event_date(),
+        # `spec 020 §6` · `RR-32`: la baja dice por qué; «Desconocida» es el valor explícito.
+        "cause_id": esc["causa_mortalidad"],
         "farm_id": esc["granja_a"], "house_id": esc["galpon_a"], "bird_movements": [{"sex": "mixed", "quantity": 5}]})
     assert r.status_code == 201, r.text
     assert await _saldo(esc, esc["lr"]) == 85

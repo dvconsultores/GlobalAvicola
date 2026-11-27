@@ -39,6 +39,9 @@ TEST_HOUSE_2_NAME = "TEST Galpon 02"
 TEST_HOUSE_NAME = "TEST-GALPON-01"
 TEST_LOT_CODE = "TEST-LOTE-BROILER-01"
 TEST_LOT_CODE_2 = "TEST-LOTE-BROILER-02"
+#: Fase productiva de prueba. `RR-34` deriva del lote la fase de un consumo de alimento, así
+#: que un lote sin fase vigente no es un lote correctamente configurado.
+TEST_PHASE_CODE = "TEST-FASE"
 
 #: La suite heredada (`test_operations.py`, `test_full_workflow_audit.py`)
 #: referencia identificadores fijos: farm_id=1, house_id=1, lot_id=2.
@@ -345,6 +348,50 @@ async def seed_test_data() -> dict[str, int]:
         lots = (await session.execute(select(Lot).order_by(Lot.id))).scalars().all()
         created["lot_id"] = lots[0].id
         created["lot_id_2"] = lots[1].id if len(lots) > 1 else lots[0].id
+
+        # `SPEC 020 §6` · `RR-34`. El lote sembrado representa un lote **correctamente
+        # configurado**, y eso incluye su fase productiva: el consumo de alimento deriva la
+        # fase del lote en la fecha del evento, de modo que un lote sin fase vigente no es
+        # utilizable para lo que el producto ya exige. Se siembra una fase de prueba
+        # (reutilizada por `code` si ya existe) y se abre en ambos lotes desde su fecha de
+        # inicio. Idempotente: el vínculo solo se crea si el lote no tiene ya una fase.
+        from app.lots.models import LotPhase
+        from app.masters.models import ProductivePhase
+
+        fase = (
+            await session.execute(
+                select(ProductivePhase).where(ProductivePhase.code == TEST_PHASE_CODE)
+            )
+        ).scalar_one_or_none()
+        if fase is None:
+            fase = ProductivePhase(
+                name="TEST Fase", code=TEST_PHASE_CODE, order=1, is_initial=True, is_active=True
+            )
+            session.add(fase)
+            await session.flush()
+        created["productive_phase_id"] = fase.id
+        lotes_sembrados = (
+            await session.execute(
+                select(Lot)
+                .where(Lot.lot_code.in_((TEST_LOT_CODE, TEST_LOT_CODE_2)))
+                .order_by(Lot.id)
+            )
+        ).scalars().all()
+        for lote in lotes_sembrados:
+            ya_tiene_fase = (
+                await session.execute(select(LotPhase).where(LotPhase.lot_id == lote.id))
+            ).scalars().first()
+            if ya_tiene_fase is None:
+                session.add(
+                    LotPhase(
+                        lot_id=lote.id,
+                        phase_id=fase.id,
+                        start_date=lot_start_date().date(),
+                        end_date=None,
+                        is_active=True,
+                    )
+                )
+        await session.flush()
 
         usuarios = {
             u.username: u.id

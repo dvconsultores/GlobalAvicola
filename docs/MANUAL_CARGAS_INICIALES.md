@@ -201,7 +201,7 @@ Describe un proceso de incubación en curso al corte. **Versión v4** (SPEC 018)
 | `eggs_non_incubable_dirty` | no | Huevos **recibidos** clasificados como no incubables por **sucio** (acumulado al corte). Vacío = no se conoce; `0` = cero conocido. |
 | `eggs_non_incubable_broken` | no | Huevos **recibidos** clasificados como no incubables por **roto** (acumulado al corte). Vacío = no se conoce; `0` = cero conocido. |
 | `eggs_transferred` | no | Huevos transferidos a nacedora (≤ cargados). |
-| `fertile_eggs_to_pit` | no | Huevos **fértiles a fosa**: huevos **ya cargados** en incubación y retirados del proceso en la incubación/ovoscopia, **antes de pasar a nacedora** (acumulado al corte). Es un movimiento **post-carga**: ≤ cargados, y transferidos + fosa ≤ cargados. Vacío = no se conoce; `0` = cero conocido. |
+| `fertile_eggs_to_pit` | no | Huevos **fértiles a fosa**: cantidad acumulada de huevos fértiles **recibidos** que se enviaron a fosa **antes de la carga** en incubadora (acumulado al corte). Esta cantidad **ya no forma parte de los huevos cargados**. Es una salida **pre-carga**: ≤ recibidos, y cargados + no incubables + fosa ≤ recibidos. Vacío = no se conoce; `0` = cero conocido. |
 | `chicks_hatched` | no | Pollitos ya nacidos antes del corte. |
 | `chicks_available` | no | Pollitos nacidos que siguen en planta sin despachar. |
 
@@ -209,15 +209,22 @@ Describe un proceso de incubación en curso al corte. **Versión v4** (SPEC 018)
 
 - **No incubables** (`eggs_non_incubable_oversized`, `_dirty`, `_broken`): son huevos **recibidos** en la planta que al corte se clasificaron como **no incubables** (extra grande, sucio, roto). Siempre **acumulado hasta el corte**. Celda **vacía = no se conoce** el dato; `0` = cero conocido; `N/A` no se admite.
 - El **total de no incubables lo calcula el sistema** (`extra grande + sucios + rotos`) y **no se digita**: solo se obtiene cuando **los tres** son conocidos; si falta alguno, el total queda como desconocido (nunca se suma a medias).
-- **Balance**: `recibidos = cargados + no incubables + huevo aún por cargar` (más el huevo que quede sin clasificar). Los no incubables se restan **una sola vez**, del saldo recibido → cargado, **nunca** de lo cargado. Por eso `cargados + no incubables` **no puede superar** a los recibidos (si los supera, la fila se rechaza), y **la diferencia que queda es huevo recibido que aún no se ha cargado**: no es un error y no se fuerza a cero.
+- **Balance**: `recibidos = no incubables + huevos fértiles a fosa + cargados + huevo aún por cargar` (más el huevo que quede sin clasificar). No incubables y fosa se restan **una sola vez**, del saldo recibido → cargado, **nunca** de lo cargado. Por eso `cargados + no incubables + fosa` **no puede superar** a los recibidos (si los supera, la fila se rechaza; puede ser igual), y **la diferencia que queda es huevo recibido que aún no se ha cargado**: no es un error y no se fuerza a cero.
 - **Histórico**: las cargas de Incubadora **ya aplicadas con la plantilla v3 conservan su dato histórico de Huevos descartados**; no se desglosan.
 
-### Huevos fértiles a fosa (regla ratificada · `OD-HATCH-V4-01 = RATIFIED`, 2026-11-21 · SPEC 018 §7)
+### Huevos fértiles a fosa (regla vigente · `OD-HATCH-V4-02 = RATIFIED`, 2026-11-26 · SPEC 018 §9)
 
-- Los huevos fértiles a fosa son huevos **ya cargados** en incubación que se retiraron del proceso durante la **incubación/ovoscopia**, **antes de continuar a nacedora/nacimiento**. Es un movimiento **POST-CARGA**: no es una clasificación previa y no forma parte de los huevos recibidos «aún por cargar».
-- **Límites**: la fosa **no puede superar los huevos cargados** (`fosa ≤ cargados`) y, cuando cargados y transferidos son conocidos, **`transferidos + fosa ≤ cargados`**. Si los cargados no se conocen, solo se valida `fosa ≤ recibidos`.
-- **Huevos en proceso** = `cargados − transferidos − fosa`, y **solo** cuando **los tres** datos son conocidos; si falta cualquiera, «en proceso» queda **desconocido** (nunca se toma un vacío por `0`, ni se muestra 1 000 con la fosa sin declarar). Una fosa `0` **conocida** es un cero real: `en proceso = cargados − transferidos`.
-- **Sin doble conteo**: la fosa **no se suma** al total de no incubables, **no se suma** a los huevos descartados (histórico V3) y **no se resta** del saldo «recibidos − cargados − no incubables», porque ocurre **después** de la carga.
+> La regla anterior (`OD-HATCH-V4-01`, que situaba la fosa **después** de la carga) queda **SUPERSEDED** por nueva evidencia de la usuaria funcional: la fosa se descuenta **desde el principio** de los huevos recibidos; cuando se cargan los huevos, esa cantidad ya fue descontada.
+
+- Los huevos fértiles a fosa son huevos **recibidos** que se envían a fosa **antes de cargarse** en incubadora. Es una salida **PRE-CARGA**, como los no incubables, pero es un concepto **distinto** de ellos: no se suma al total de no incubables ni a los huevos descartados (histórico V3).
+- **Dos etapas, sin mezclar**:
+  - **Pre-carga**: `recibidos → no incubables (extra grande, sucio, roto) · fosa · cargados · aún por cargar`. Regla: `cargados + extra grande + sucios + rotos + fosa ≤ recibidos` (puede ser igual; si la supera, la fila se rechaza). La fosa sola tampoco puede superar a los recibidos.
+  - **Post-carga**: `cargados → transferidos · en proceso`. Regla: `transferidos ≤ cargados`. La fosa **no** interviene aquí.
+- **Saldo disponible para cargar** = `recibidos − cargados − extra grande − sucios − rotos − fosa`, y **solo** cuando **todos** son conocidos; si falta alguno, el saldo queda **desconocido** (nunca se toma un vacío por `0`). Ejemplo: 10 000 recibidos, 8 500 cargados, 200 + 200 + 100 no incubables y 200 a fosa ⇒ saldo **800**.
+- **Huevos en proceso** = `cargados − transferidos`, solo cuando ambos son conocidos. **No** se resta la fosa (ya se descontó antes de cargar). En el ejemplo, con 8 000 transferidos ⇒ en proceso **500** (no 300).
+- En la operación diaria, una carga de incubación posterior al corte se valida contra el **saldo disponible para cargar** (BR-03), el mismo de la vista previa y la reconciliación. Si a la carga inicial le falta **algún** dato (extra grande, sucios, rotos o fosa vacíos), el saldo es **desconocido** y el sistema **no permite registrar cargas** en ese lote: aparece «No se puede determinar el saldo disponible para cargar porque la carga inicial de Incubadora contiene valores desconocidos…». La suma de lo que sí se conoce solo sirve para rechazar una fila imposible; no demuestra cuánto huevo queda.
+- **Cómo se desbloquea**: un usuario con permiso de correcciones completa el dato faltante con una **corrección de la carga inicial** (indicando el motivo; queda auditada y conserva el valor original «desconocido»). En cuanto los seis datos son conocidos, el saldo vuelve a ser exacto y las cargas se validan normalmente. Un `0` conocido es un cero real y no bloquea nada.
+- La vista previa muestra las dos etapas en orden: recibidos, no incubables, fosa, cargados y «Saldo disponible para cargar (derivado)»; luego transferidos y «Huevos en proceso (derivado)».
 
 ### «Generación» vs «Origen del huevo» (SPEC 009)
 

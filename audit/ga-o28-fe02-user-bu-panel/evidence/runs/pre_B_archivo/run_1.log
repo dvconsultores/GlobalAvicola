@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 558ms
+     ✓ AC-UI-01: «Revocar» abre la confirmación en un portal sobre el modal y revoca (AR-13)  378ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 697ms
+     ✓ muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)  328ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  06:33:26
+   Duration  2.50s (transform 427ms, setup 173ms, import 1.19s, tests 1.25s, environment 1.83s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/pre_B_archivo/run_1.json

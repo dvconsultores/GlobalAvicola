@@ -1,0 +1,25 @@
+archivo: docs/plantillas_carga_inicial/cutover_template_hatchery_v4.xlsx
+hojas: ['Instrucciones', 'Meta', 'Datos', 'Catalogos']
+== Meta
+template_version | v4
+schema_id | CUTOVER_HATCHERY_V4
+business_unit | hatchery
+== Datos
+columnas: 23
+cabecera: legacy_lot_code;existing_lot_code;hatchery_code;incubator_name;hatcher_name;source_lot_code;generation;egg_origin;reception_date;set_date;expected_hatch_date;eggs_received;eggs_set;eggs_non_incubable_oversized;eggs_non_incubable_dirty;eggs_non_incubable_broken;eggs_transferred;fertile_eggs_to_pit;chicks_hatched;chicks_available;source_system;source_reference;notes
+== Instrucciones (fertile_eggs_to_pit)
+PLANTILLA DE CORTE OPERACIONAL (Cargas Iniciales) — cómo se llena: fertile_eggs_to_pit
+None: Cantidad acumulada de huevos fértiles recibidos que fueron enviados a fosa antes de la carga en incubadora, hasta la fecha de corte. Esta cantidad ya no forma parte de los huevos cargados. Concepto PRE-CARGA, separado de los no incubables y de eggs_discarded. ≤ huevos recibidos; cargados + no incubables + fosa ≤ recibidos. Vacío = desconocido; 0 = cero conocido.
+None: no
+None: int
+None: huevos
+None: entero ≥ 0
+None: 100
+None: None
+None: sí
+None: no
+None: hatchery_openings.fertile_eggs_to_pit
+== comprobaciones
+menciona 'ovoscopia': False
+menciona 'POST-CARGA': False
+menciona 'antes de la carga en incubadora': True

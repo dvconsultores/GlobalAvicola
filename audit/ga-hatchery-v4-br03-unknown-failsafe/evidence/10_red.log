@@ -1,0 +1,11 @@
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u01_dirty_unknown_saldo_unknown_y_carga_denegada
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u02_corregir_dirty_700_da_saldo_300
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u03_cero_conocido_calcula_y_autoriza
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u04_suma_conocida_excedida_se_rechaza
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[fertile_eggs_to_pit-85]
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_oversized-86]
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_dirty-87]
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_broken-88]
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_retiro_de_recepcion_con_saldo_unknown_se_deniega
+FAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_v3_historica_no_se_bloquea
+=================== 10 failed, 1 passed, 1 warning in 9.45s ====================

@@ -14,7 +14,7 @@ import { test, expect, type APIRequestContext } from '@playwright/test'
 import * as fs from 'node:fs'
 import {
   API, hoy, sufijo, empresaActiva, cabeceraAdmin, cabeceraAprobador, cabeceraOtraEmpresa,
-  crearEscenario, registrar,
+  crearEscenario, registrar, tipoDeCorreccion,
 } from '../test-support/e2e-api'
 import { entrar } from '../test-support/auth'
 
@@ -101,11 +101,14 @@ test.describe('P18A · corrección por submovimiento e inspección sin lote (spe
       /^bird_movements\[\d+\]\.avg_weight$/,
     )
 
+    // `RR-27` (`OD-S2-01`): toda corrección nueva declara su tipo.
+    const tipoCorreccion = await tipoDeCorreccion(request, admin)
     // NEGATIVO (i) — la cantidad de una recepción breeder no se corrige aislada (`BR-20`).
     const cantidad = await request.post(`${API}/corrections`, {
       headers: admin,
       data: {
         event_id: idEvento,
+        correction_type_id: tipoCorreccion,
         field_name: `bird_movements[${filaMacho.row_id}].quantity`,
         corrected_value: '120',
         reason: 'Intento de corregir la cantidad de la recepción aislada',
@@ -150,6 +153,7 @@ test.describe('P18A · corrección por submovimiento e inspección sin lote (spe
     await corregido.fill('2.5')
     const motivo = page.locator('form textarea').first()
 
+    await page.getByTestId('correction-type').selectOption(String(tipoCorreccion))
     // NEGATIVO (ii) — motivo de 3 caracteres: mensaje inline y NINGUNA llamada al backend.
     await motivo.fill('abc')
     const guardar = page.locator('form button[type="submit"]').first()
@@ -244,6 +248,7 @@ test.describe('P18A · corrección por submovimiento e inspección sin lote (spe
       headers: admin,
       data: {
         event_id: idEvento,
+        correction_type_id: tipoCorreccion,
         field_name: campoMacho,
         corrected_value: '2.6',
         reason: 'Corrección posterior a la aprobación',

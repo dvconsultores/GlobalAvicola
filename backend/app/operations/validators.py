@@ -3,6 +3,8 @@ Business rules validators for operational events.
 BR-01 through BR-19 from the spec.
 """
 from datetime import date
+from typing import Optional
+
 from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -184,14 +186,16 @@ async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
     return (res_in.scalar() or 0) - (res_out.scalar() or 0)
 
 
-async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
+async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> Optional[int]:
     """
     Eggs available at hatchery (received - loaded into incubators).
     IN:  EGG_RECEPTION_HATCHERY  (solo el fértil recibido: `Bases` p.9, `GA-REM-005-F`; las demás filas
                                   —diferencias vs enviado— se capturan y no cuentan)
     OUT: INCUBATION_LOAD (quantity_loaded from hatchery_params)
 
-    Apertura migrada (SPEC 018 · D-4): `recibidos − cargados − Σ(no incubables KNOWN)`.
+    Apertura migrada (SPEC 018 §10): saldo **exacto** de `saldo_apertura_por_cargar` (V4: recibidos −
+    cargados − no incubables − fosa con los seis KNOWN). Si la apertura tiene un componente UNKNOWN el
+    saldo del lote es UNKNOWN (`None`): BR-03 no autoriza cargas hasta corregir la carga inicial.
     """
     res_in = await db.execute(
         select(func.coalesce(func.sum(EggMovement.quantity), 0))
@@ -212,25 +216,16 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
-    # SPEC 006: un proceso de incubación migrado abre con huevo recibido y aún no cargado
-    # (`hatchery_openings.eggs_received − eggs_set`); sin esto el lote nacía con saldo 0 y
-    # `BR-03` rechazaba la primera carga posterior al corte.
-    # SPEC 018 · D-4: los no incubables V4 son una clasificación del huevo recibido que nunca
-    # entró en incubadora: restan UNA sola vez aquí, en el saldo recibido→cargado (no en
-    # `eggs_in_process`). Un componente `UNKNOWN` **no se resta ni se inventa** (el saldo es
-    # entonces una cota superior). Las aperturas V3 no cambian: sus componentes son `UNKNOWN`.
-    from ..cutover.models import HatcheryOpening
+    # SPEC 006: un proceso de incubación migrado abre con huevo recibido y aún no cargado; sin esa
+    # apertura el lote nacía con saldo 0 y `BR-03` rechazaba la primera carga posterior al corte.
+    # SPEC 018 §10 (BR-03 UNKNOWN FAIL-SAFE): la apertura sale de la función canónica compartida con
+    # el preview y la reconciliación. Un componente pre-carga UNKNOWN NO se omite: la suma conocida es
+    # una cota superior, no un saldo demostrado ⇒ el saldo es UNKNOWN y no autoriza consumo.
+    from ..cutover.saldo_incubadora import saldo_apertura_del_lote
 
-    componentes = [
-        case((getattr(HatcheryOpening, f"{campo}_status") == "KNOWN",
-              func.coalesce(getattr(HatcheryOpening, campo), 0)), else_=0)
-        for campo in ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken")
-    ]
-    no_incubables = sum(componentes[1:], componentes[0])
-    apertura = (await db.execute(
-        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0) - no_incubables)
-        .where(HatcheryOpening.lot_id == lot_id)
-    )).scalar() or 0
+    _, apertura = await saldo_apertura_del_lote(db, lot_id)
+    if apertura is None:
+        return None
     return int(apertura) + (res_in.scalar() or 0) - (res_out.scalar() or 0)
 
 
@@ -335,6 +330,11 @@ async def validate_incubation_load(db: AsyncSession, lot_id: int, quantity: int)
         raise BusinessRuleViolation("La cantidad a cargar debe ser mayor a cero", "BR-03")
     await bloquear_saldo_del_lote(db, lot_id)
     balance = await get_hatchery_egg_balance(db, lot_id)
+    if balance is None:
+        # SPEC 018 §10: sin saldo exacto (apertura con componentes UNKNOWN) no se autoriza ninguna carga.
+        from ..cutover.saldo_incubadora import MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO
+
+        raise BusinessRuleViolation(MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO)
     if quantity > balance:
         raise BusinessRuleViolation(
             f"Carga de incubadora ({quantity}) excede los huevos disponibles en incubadora ({balance}). "
@@ -407,6 +407,11 @@ async def validate_retiro_de_entrada(db: AsyncSession, event, n: int, motivo: st
     }
     for etiqueta, regla, saldo_de in reglas.get(event.event_type, []):
         saldo = await saldo_de(db, lot_id)
+        if saldo is None:
+            # SPEC 018 §10: con el saldo inicial UNKNOWN no se puede demostrar que el lote quede `≥ 0`.
+            from ..cutover.saldo_incubadora import MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO
+
+            raise BusinessRuleViolation(MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO)
         if saldo - n < 0:
             raise BusinessRuleViolation(
                 f"{motivo} dejaría el saldo de {etiqueta} del lote en {saldo - n} (saldo {saldo}, entrada {n})", regla,
@@ -847,6 +852,151 @@ def validate_contenido_minimo(event_type, vaccine_id=None, medication_id=None,
         if not any((cantidad or 0) > 0 for cantidad in kilos):
             raise BusinessRuleViolation(
                 "Registre la cantidad de alimento (kg) mayor a cero", "RR-23")
+        # `GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` · `RR-33` (`OD-S2-07`): un consumo sin identificar el
+        # alimento no es trazable. Toda fila con kilos debe nombrar su tipo de alimento.
+        if any((getattr(fila, "quantity_kg", None) or 0) > 0 and getattr(fila, "feed_type_id", None) is None
+               for fila in (feed_movements or [])):
+            raise BusinessRuleViolation("Seleccione el tipo de alimento", "RR-33")
+
+
+def validate_muestra(event_type, sample_size, received_total=None, dead_on_arrival=None, alojadas: int = 0) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §3.1` — `RR-24` y `RR-25`.
+
+    La muestra tomada es una porción física de las aves: si se declara, es un entero >= 1
+    (vacío = ausente; 0 y negativos no describen una muestra) y, en la recepción, no puede
+    superar la población recibida. Población = `received_total` si está declarado; si no,
+    las alojadas (Σ `bird_movements.quantity`, calculadas por el servidor) más la mortalidad
+    al arribo declarada. Igual o menor: permitido. En el pesaje solo rige el mínimo de 1.
+    """
+    if sample_size is None:
+        return
+    if sample_size < 1:
+        raise BusinessRuleViolation("El tamaño de muestra debe ser mayor a cero", "RR-24")
+    tipo = getattr(event_type, "value", event_type)
+    if tipo == EventType.BIRD_RECEPTION.value:
+        poblacion = received_total if received_total is not None else (alojadas or 0) + (dead_on_arrival or 0)
+        if sample_size > poblacion:
+            raise BusinessRuleViolation(
+                f"La muestra tomada no puede superar las aves recibidas ({poblacion})", "RR-25")
+
+
+def validate_cantidades_no_negativas(dosage_per_bird=None, treatment_days=None, chicks_healthy=None, chicks_weak=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §3.1` — `RR-26`: dosis, días y pollitos no son negativos.
+
+    Vacío/`None` = ausente (nunca se valida); `0` es un cero conocido y se permite.
+    """
+    for valor, mensaje in (
+        (dosage_per_bird, "La dosis por ave no puede ser negativa"),
+        (treatment_days, "Los días de tratamiento no pueden ser negativos"),
+        (chicks_healthy, "Los pollitos sanos no pueden ser negativos"),
+        (chicks_weak, "Los pollitos débiles no pueden ser negativos"),
+    ):
+        if valor is not None and valor < 0:
+            raise BusinessRuleViolation(mensaje, "RR-26")
+
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-31` / `RR-32`: los mensajes se leen en el
+#: formulario, junto al dato; el identificador de la regla viaja solo en `BusinessRuleViolation`.
+MENSAJE_LOTE_DE_VACUNA = "Ingrese el lote de la vacuna aplicada"
+MENSAJE_CAUSA_DE_MORTALIDAD = (
+    "Seleccione la causa de la mortalidad (use «Desconocida» si no se pudo determinar)")
+MENSAJE_CAUSA_DE_DESCARTE = (
+    "Seleccione la causa del descarte (use «Desconocida» si no se pudo determinar)")
+
+
+def validate_lote_de_vacuna(event_type, vaccine_lot_number=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-31` (`OD-S2-05`): el lote de la vacuna.
+
+    Una vacunación dice con qué lote de vacuna se aplicó: sin ese dato no describe una
+    aplicación. Espacios no son texto —tras `strip` el lote sigue vacío—. Quien decide que la
+    regla aplica es el llamador: el alta la exige siempre, la edición y la corrección solo
+    cuando la modificación toca el campo, para que un histórico sin el dato siga editándose.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.VACCINATION.value:
+        return
+    if vaccine_lot_number is None or str(vaccine_lot_number).strip() == "":
+        raise BusinessRuleViolation(MENSAJE_LOTE_DE_VACUNA, "RR-31")
+
+
+def validate_motivo_de_la_baja(event_type, cause_id=None, cull_cause_id=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-32` (`OD-S2-06`): la baja dice por qué.
+
+    La mortalidad declara `cause_id` y el descarte `cull_cause_id`. `NULL` no es un valor: lo
+    que no se pudo determinar se registra con el valor explícito compartido «Desconocida». Como
+    en `RR-31`, el llamador decide cuándo aplica: solo si la modificación toca ese campo, de modo
+    que un evento histórico sin causa sigue siendo legible y editable en otros campos.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo == EventType.MORTALITY_RECORDING.value and cause_id is None:
+        raise BusinessRuleViolation(MENSAJE_CAUSA_DE_MORTALIDAD, "RR-32")
+    if tipo == EventType.CULL_RECORDING.value and cull_cause_id is None:
+        raise BusinessRuleViolation(MENSAJE_CAUSA_DE_DESCARTE, "RR-32")
+
+
+MENSAJE_INSPECCION_SIN_CONTENIDO = (
+    "Registre al menos un dato de la inspección: un valor, una observación o una evidencia")
+MENSAJE_DISTRIBUCION_SIN_MOVIMIENTOS = (
+    "Registre la distribución de aves por galpón o sexo (al menos un movimiento)")
+MENSAJE_DISTRIBUCION_NEGATIVA = "La cantidad distribuida no puede ser negativa"
+MENSAJE_DISTRIBUCION_EN_CERO = (
+    "La distribución debe incluir al menos un ave (la suma no puede ser cero)")
+
+
+def _con_texto(valor) -> bool:
+    """Texto real: ni `None` ni solo espacios."""
+    return valor is not None and str(valor).strip() != ""
+
+
+def detalle_de_inspeccion_con_contenido(detalle) -> bool:
+    """`RR-28`: un detalle aporta contenido si trae un valor, un valor numérico o un estado elegido.
+
+    Acepta un objeto con atributos o un `dict`. El nombre del parámetro solo identifica *qué* se
+    observó: sin valor ni estado no dice nada, así que no cuenta.
+    """
+    def _leer(clave):
+        return detalle.get(clave) if isinstance(detalle, dict) else getattr(detalle, clave, None)
+
+    return _con_texto(_leer("value")) or _leer("value_numeric") is not None or _con_texto(_leer("status"))
+
+
+def validate_contenido_de_inspeccion(event_type, inspection_details=None, observations=None,
+                                     n_evidencias: int = 0) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-28` (`OD-S2-02`).
+
+    Una inspección de granja no se guarda completamente vacía: necesita al menos UNO de un
+    detalle con contenido, una observación con texto o una evidencia ya adjunta. El contexto
+    (granja, galpón, fecha, inspector) lo exigen `BR-08` y el alta; `lot_id` nulo sigue
+    permitido. La evidencia se adjunta después del alta, de modo que en el alta solo cuentan
+    detalles y observaciones; en edición y corrección se evalúa el estado candidato.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.FARM_INSPECTION.value:
+        return
+    if any(detalle_de_inspeccion_con_contenido(d) for d in (inspection_details or [])):
+        return
+    if _con_texto(observations) or (n_evidencias or 0) > 0:
+        return
+    raise BusinessRuleViolation(MENSAJE_INSPECCION_SIN_CONTENIDO, "RR-28")
+
+
+def validate_distribucion_con_aves(event_type, bird_movements=None) -> None:
+    """`GA-UAT-BREEDER-CRIA-S2` · `SPEC 020 §6` — `RR-29` (`OD-S2-03`).
+
+    Una distribución representa una distribución física real: al menos un movimiento, cada
+    cantidad >= 0 y la suma > 0. No se fabrica un movimiento cero. Las validaciones de saldo y de
+    capacidad del galpón siguen donde estaban.
+    """
+    tipo = getattr(event_type, "value", event_type)
+    if tipo != EventType.BIRD_DISTRIBUTION.value:
+        return
+    cantidades = [(getattr(fila, "quantity", None) or 0) for fila in (bird_movements or [])]
+    if not cantidades:
+        raise BusinessRuleViolation(MENSAJE_DISTRIBUCION_SIN_MOVIMIENTOS, "RR-29")
+    if any(c < 0 for c in cantidades):
+        raise BusinessRuleViolation(MENSAJE_DISTRIBUCION_NEGATIVA, "RR-29")
+    if sum(cantidades) <= 0:
+        raise BusinessRuleViolation(MENSAJE_DISTRIBUCION_EN_CERO, "RR-29")
 
 
 def validate_segregation(registered_by_id: int, action_user_id: int, action: str = "aprobar") -> None:

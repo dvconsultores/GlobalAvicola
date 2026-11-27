@@ -99,11 +99,25 @@ beforeEach(() => {
   mockApi()
 })
 
+/**
+ * O-28: el título del Modal se pinta al abrir, con el cuerpo aún en «cargando» (`role=status`); las
+ * filas de unidades y las cabeceras de estado solo existen cuando la carga termina. Esperar al título
+ * y consultar luego con `getBy*` dependía de que la carga ya hubiera resuelto (no determinista).
+ * Se espera el mismo hecho que ve el usuario: el indicador de carga desaparece y el contenido aparece.
+ */
+async function esperarCargaDelPanel() {
+  await waitFor(() => {
+    expect(screen.queryByText('common.loading')).toBeNull()
+    expect(screen.getByText('users.businessUnits.companyState')).toBeTruthy()
+  })
+}
+
 async function openPanel(username: string) {
   render(<ToastProvider><UsersPage /></ToastProvider>)
   const openBtn = await screen.findByRole('button', { name: `users.businessUnits.open — ${username}` })
   fireEvent.click(openBtn)
   await screen.findByText('users.businessUnits.title')
+  await esperarCargaDelPanel()
 }
 
 describe('GA-FE-02 · Panel de unidades del usuario', () => {

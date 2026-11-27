@@ -25,6 +25,7 @@ from cutover_v2_fixtures import (  # noqa: E402
     fila, fila_engorde, fila_incubadora, fila_reproductoras, headers_aprobador, items_por_referencia,
     preparar, subir, xlsx_v2,
 )
+from owner_decisions_support import causa_desconocida  # noqa: E402
 from time_reference import iso_days_ago, recent_event_date  # noqa: E402
 
 
@@ -226,9 +227,9 @@ async def test_red_05_incubadora_representada_y_aplicada(auth_headers, client, h
         assert ob.chicks_hatched_status == "KNOWN" and ob.accumulated_chicks_hatched == 0
         fase = (await s.execute(select(LotPhase).where(LotPhase.lot_id == lote))).scalar_one()
         assert fase.phase_id == ids["INCUB"] and fase.is_active
-        # SPEC 018 · D-4/AC-V4-10 + §7 D-12: los no incubables restan UNA sola vez, en el saldo
-        # recibido→cargado (10000 − 9000 − 1000), no en `eggs_in_process` (= `set − transferred − fosa`;
-        # aquí con fosa 0 KNOWN sigue siendo `set − transferred`).
+        # SPEC 018 · D-4/AC-V4-10 + §9 D-24/D-25: no incubables y fosa (PRE-CARGA) restan UNA sola vez,
+        # en el saldo recibido→cargado (10000 − 9000 − 1000 − fosa 0), no en `eggs_in_process`
+        # (= `set − transferred`).
         assert await get_hatchery_egg_balance(s, lote) == 0
 
 
@@ -382,6 +383,9 @@ async def test_red_09_primera_operacion_post_corte_consume_el_opening(auth_heade
         assert r.json().get("rule") == "CUT-GL-02", r.text
     r = await http_client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": lote_eng, "event_type": "mortality_recording", "event_date": recent_event_date(),
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`: la baja dice por qué. La
+        # causa compartida «Desconocida» (ya sembrada) es el valor explícito para lo no determinado.
+        "cause_id": await causa_desconocida(http_client, auth_headers),
         "bird_movements": [{"sex": "mixed", "quantity": 35, "avg_weight": 900.0}]})
     assert r.status_code == 201, r.text
     rec = (await http_client.get(f"/api/v1/cutover-batches/{b}/reconciliation", headers=auth_headers)).json()

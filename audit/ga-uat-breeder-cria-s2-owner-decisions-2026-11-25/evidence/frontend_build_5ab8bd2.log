@@ -1,0 +1,16 @@
+dist/assets/index-iNwFoA6V.css                               91.25 kB │ gzip:  15.90 kB
+dist/assets/rolldown-runtime-hePW80VL.js                      0.71 kB │ gzip:   0.42 kB
+dist/assets/purify.es-7fJ1DZ6H.js                            26.92 kB │ gzip:  10.69 kB
+dist/assets/jspdf.plugin.autotable-knrFLnck.js               29.72 kB │ gzip:   9.46 kB
+dist/assets/index.es-BodmHCVD.js                            151.41 kB │ gzip:  48.90 kB
+dist/assets/html2canvas-Dn6bw578.js                         199.49 kB │ gzip:  46.77 kB
+dist/assets/xlsx-Df23SrNv.js                                280.95 kB │ gzip:  93.75 kB
+dist/assets/jspdf.es.min-DXLu1y1a.js                        399.05 kB │ gzip: 129.62 kB
+dist/assets/index-DuF0X73_.js                             1,470.27 kB │ gzip: 398.78 kB
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/stores/auth.store.ts is dynamically imported by src/stores/company.store.ts but also statically imported by src/App.tsx, src/auth/actionAuthority.tsx, src/components/layout/AppLayout.tsx, src/components/layout/Header.tsx, src/components/layout/MobileDrawer.tsx, ..., dynamic import will not move module into another chunk.
+
+[33m[INEFFECTIVE_DYNAMIC_IMPORT] [0msrc/stores/company.store.ts is dynamically imported by src/stores/auth.store.ts but also statically imported by src/components/layout/Header.tsx, src/pages/admin/UnitAccessPage.tsx, src/pages/dashboard/DashboardPage.tsx, src/pages/operations/ProcessStagePage.tsx, src/pages/sap/SapManagerPage.tsx, ..., dynamic import will not move module into another chunk.
+
+✓ built in 1.75s
+RC=0

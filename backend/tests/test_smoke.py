@@ -20,6 +20,7 @@ import uuid
 
 import pytest
 
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.time_reference import iso_days_ago
 
 pytestmark = pytest.mark.asyncio
@@ -104,7 +105,10 @@ async def test_humo_09_evidencia_subida_y_lectura(client, auth_headers, seeded_i
     """`GA-REM-009`: la evidencia debe escribirse y poder recuperarse."""
     evento = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": seeded_ids["lot_id"], "event_type": "feed_registration",
-        "event_date": iso_days_ago(0), "feed_movements": [{"quantity_kg": 1.0}]})
+        "event_date": iso_days_ago(0),
+        "feed_movements": [
+            {"quantity_kg": 1.0, "feed_type_id": await tipo_de_alimento(client, auth_headers)}
+        ]})
     assert evento.status_code == 201, evento.text
     eid = evento.json()["id"]
 

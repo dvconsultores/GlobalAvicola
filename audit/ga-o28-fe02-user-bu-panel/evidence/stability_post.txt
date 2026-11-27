@@ -1,0 +1,7 @@
+HEAD=ec84718 dirty=3 2026-11-27T06:39:55-05:00 carga=1.85 3.35 3.09
+archivo RESUMEN: 20/20 corridas sin fallos
+spec013 RESUMEN: 10/10 corridas sin fallos
+full RESUMEN: 3/3 corridas sin fallos
+tsc rc=0
+build rc=0
+FIN 2026-11-27T06:48:14-05:00

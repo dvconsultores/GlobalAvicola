@@ -1,0 +1,12 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 382ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 555ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  07:10:24
+   Duration  1.97s (transform 375ms, setup 176ms, import 946ms, tests 937ms, environment 1.43s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/post_mut_archivo/run_6.json

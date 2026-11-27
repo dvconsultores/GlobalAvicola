@@ -125,7 +125,9 @@
     "eggsAvailable": "Huevo disponible en planta",
     "openingHatchery": "Apertura de incubación",
     "eggsNonIncubableTotal": "Total no incubables",
-    "fertileEggsToPit": "Huevos fértiles a fosa (post-carga)",
+    "fertileEggsToPit": "Huevos fértiles a fosa (pre-carga)",
+    "eggsAvailableToSet": "Saldo disponible para cargar",
+    "stagesHint": "Pre-carga: recibidos − no incubables − fosa − cargados = saldo disponible para cargar. Post-carga: cargados − transferidos = huevos en proceso.",
     "eggsDiscardedHistorical": "Huevos descartados (histórico V3)",
     "derivedLabel": "derivado",
     "derivedHint": "Calculado por el sistema a partir de los componentes: no es editable.",
@@ -188,7 +190,7 @@
       "eggs_non_incubable_oversized": "No incubable extra grande",
       "eggs_non_incubable_dirty": "No incubable sucio",
       "eggs_non_incubable_broken": "No incubable roto",
-      "fertile_eggs_to_pit": "Huevos fértiles a fosa (post-carga)",
+      "fertile_eggs_to_pit": "Huevos fértiles a fosa (pre-carga)",
       "eggs_discarded": "Huevos descartados (histórico V3)",
       "chicks_hatched": "Pollitos nacidos",
       "chicks_available": "Pollitos disponibles",
@@ -658,7 +660,9 @@
     "detail": "Detalle",
     "id": "ID",
     "lot": "Lote",
-    "lotFilterPlaceholder": "ID del lote",
+    "lotFilterPlaceholder": "Ej.: L-0001",
+    "lotCodeLabel": "Código de lote",
+    "dateRangeInvalid": "La fecha inicial no puede ser posterior a la fecha final",
     "lotFilterNumeric": "Escriba el ID numérico del lote (solo dígitos)",
     "farm": "Granja",
     "house": "Galpón",
@@ -1154,6 +1158,7 @@
     "importCountryPlaceholder": "Ej. Francia",
     "importLotAutoNote": "Si no selecciona un lote, se creará automáticamente al aprobar la importación.",
     "lotAutoPending": "Se creará al aprobar",
+    "noLotFarmLevel": "Sin lote (nivel granja)",
     "pendingClassification": {
       "title": "Pendientes de clasificar",
       "link": "Pendientes de clasificar",
@@ -1313,7 +1318,17 @@
       "cortina": "Cortina",
       "extractor": "Extractor",
       "otro": "Otro"
-    }
+    },
+    "mortalityCauseRequired": "Seleccione la causa de la mortalidad (use «Desconocida» si no se pudo determinar)",
+    "cullCauseRequired": "Seleccione la causa del descarte (use «Desconocida» si no se pudo determinar)",
+    "vaccineLotRequired": "Ingrese el lote de la vacuna aplicada",
+    "feedTypeRequired": "Seleccione el tipo de alimento",
+    "inspectionContentRequired": "Registre al menos un dato de la inspección: un valor, una observación o una evidencia",
+    "distributionRequired": "La distribución debe incluir al menos un ave (la suma no puede ser cero)",
+    "derivedWeek": "Semana {{n}}",
+    "derivedWeekPending": "Se calcula al elegir el lote y la fecha",
+    "derivedPhase": "Fase: {{name}}",
+    "derivedPhaseNone": "El lote no tiene una fase productiva vigente en esa fecha: registre la fase del lote antes de registrar alimento"
   },
   "weekly": {
     "weekNumber": "N° Sem",
@@ -1719,14 +1734,14 @@
       "water_liters": "Litros de agua",
       "chicks_healthy": "Pollitos sanos",
       "chicks_weak": "Pollitos débiles",
-      "supplier_id": "Proveedor (código)",
-      "cause_id": "Causa (código)",
-      "cull_cause_id": "Causa de descarte (código)",
-      "vaccine_id": "Vacuna (código)",
-      "medication_id": "Medicamento (código)",
-      "transport_id": "Transporte (código)",
-      "destination_farm_id": "Granja destino (código)",
-      "destination_plant_id": "Planta destino (código)",
+      "supplier_id": "Proveedor",
+      "cause_id": "Causa de mortalidad",
+      "cull_cause_id": "Causa de descarte",
+      "vaccine_id": "Vacuna",
+      "medication_id": "Medicamento",
+      "transport_id": "Transporte",
+      "destination_farm_id": "Granja destino",
+      "destination_plant_id": "Planta destino",
       "bird_movements": {
         "avg_weight": "Peso promedio",
         "quantity": "Cantidad",
@@ -1735,6 +1750,8 @@
       "feed_movements": {
         "quantity_kg": "Cantidad de alimento (kg)"
       }
-    }
+    },
+    "typeRequired": "Seleccione el tipo de corrección",
+    "noValue": "Sin valor"
   }
 }

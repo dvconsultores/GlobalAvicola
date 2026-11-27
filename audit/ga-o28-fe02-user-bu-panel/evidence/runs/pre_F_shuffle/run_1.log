@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+      Running tests with seed "1001"
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 565ms
+     ✓ AC-UI-01: «Revocar» abre la confirmación en un portal sobre el modal y revoca (AR-13)  337ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 682ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  06:34:00
+   Duration  2.75s (transform 551ms, setup 235ms, import 1.54s, tests 1.25s, environment 1.92s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/pre_F_shuffle/run_1.json

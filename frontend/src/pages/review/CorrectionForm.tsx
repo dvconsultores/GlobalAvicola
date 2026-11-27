@@ -7,7 +7,7 @@ import api from '../../services/api'
 import ErrorState from '../../components/ui/ErrorState'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { describirCampoCorregido } from '../../utils/correctionFields'
+import { describirCampoCorregido, esValorVacio, etiquetaDeMaestro } from '../../utils/correctionFields'
 
 /** `015` · AC-S1-C02/C03: campos cuyo valor se puede dejar vacío al corregir. */
 const VACIOS_PERMITIDOS = /^(observations|bird_movements\[\d+\]\.(avg_weight|week_number))$/
@@ -28,6 +28,8 @@ export default function CorrectionForm() {
 
  const [fieldName, setFieldName] = useState('')
  const [campos, setCampos] = useState<any[]>([])
+ // `020` · AC-S2-C04/C07: catálogo del maestro del campo seleccionado (selector controlado).
+ const [catalogo, setCatalogo] = useState<any[]>([])
  const [correctedValue, setCorrectedValue] = useState('')
  const [correctionTypeId, setCorrectionTypeId] = useState<number | undefined>()
  const [reason, setReason] = useState('')
@@ -53,7 +55,8 @@ export default function CorrectionForm() {
  setFieldName(porDefecto ? String(porDefecto.field_name) : '')
 
  const { data: ctypes } = await api.get('/masters/correction-types')
- setCorrectionTypes(Array.isArray(ctypes) ? ctypes : [])
+ // `RR-27`: el servidor solo acepta tipos activos (`OD-21`); ofrecer uno inactivo garantiza un rechazo.
+ setCorrectionTypes(Array.isArray(ctypes) ? ctypes.filter((ct: any) => ct.is_active !== false) : [])
  setEstado('ok')
  } catch (err: any) {
  console.error(err)
@@ -65,9 +68,25 @@ export default function CorrectionForm() {
  fetch()
  }, [id, refresco])
 
+ // `020` · AC-S2-C04: clave de catálogo del campo seleccionado (`null` si no es de maestro).
+ // Se calcula antes de cualquier `return` para que los hooks mantengan un orden estable.
+ const claveMaestro = campos.find((f: any) => String(f.field_name) === fieldName)?.master ?? null
+
+ useEffect(() => {
+ if (!claveMaestro) { setCatalogo([]); return }
+ let cancelado = false
+ api.get(`/masters/${claveMaestro}?limit=100`)
+ .then(({ data }: any) => { if (!cancelado) setCatalogo(Array.isArray(data) ? data : []) })
+ .catch(() => { if (!cancelado) setCatalogo([]) })
+ return () => { cancelado = true }
+ }, [claveMaestro])
+
  if (estado !== 'ok') return <div className="py-4 sm:py-6"><ErrorState kind={estado} onRetry={() => setRefresco(n => n + 1)} /></div>
 
  const campoActual = campos.find((f: any) => String(f.field_name) === fieldName) || null
+ // `020` · §7 `AC-O23-07`: el original vacío se lee «Sin valor» (un maestro nulo también es corregible).
+ const valorOriginal = campoActual?.current_display ?? campoActual?.current_value
+ const textoOriginal = esValorVacio(valorOriginal) ? String(t('corrections.noValue', 'Sin valor')) : String(valorOriginal)
 
  /** Devuelve el mensaje de error (clave i18n) o '' si el formulario es válido. */
  const validar = (): string => {
@@ -77,7 +96,8 @@ export default function CorrectionForm() {
  if ((tipo === 'integer' || tipo === 'decimal') && correctedValue.trim() && Number.isNaN(Number(correctedValue))) {
  return t('corrections.valueNumeric')
  }
- if (reason.trim().length < 5) return t('corrections.reasonMin')
+ if (!correctionTypeId) return t('corrections.typeRequired')  // `SPEC 020 §6` · `RR-27`
+    if (reason.trim().length < 5) return t('corrections.reasonMin')
  return ''
  }
 
@@ -94,7 +114,7 @@ export default function CorrectionForm() {
  field_name: fieldName,
  original_value: campoActual?.current_value ?? '',
  corrected_value: correctedValue,
- correction_type_id: correctionTypeId || null,
+ correction_type_id: correctionTypeId,
  reason,
  })
  toast.success(t('review.correctionSaved'))
@@ -153,23 +173,38 @@ export default function CorrectionForm() {
  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
  <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
  <label className="block text-xs font-semibold text-slate-500 uppercase mb-1">{t('review.originalValue')}</label>
- <input type="text" value={campoActual?.current_value ?? ''} readOnly aria-readonly="true" data-testid="correction-original"
+ <input type="text" value={textoOriginal} readOnly aria-readonly="true" data-testid="correction-original"
  className="w-full border border-slate-200 rounded-lg px-3 py-2.5 text-sm bg-slate-100 text-slate-600" />
  <p className="text-xs text-slate-400 mt-1">{t('review.originalByOperator')}</p>
  </div>
  <div className="bg-amber-50 rounded-lg p-4 border border-amber-200">
  <label className="block text-xs font-semibold text-amber-700 uppercase mb-1">{t('review.correctedValue')}</label>
+ {/* `020` · AC-S2-C04/C07: los campos de maestro NO admiten texto libre: selector del catálogo. */}
+ {campoActual?.master ? (
+ <select value={correctedValue} onChange={e => { setCorrectedValue(e.target.value); setError('') }}
+ data-testid="correction-corrected-master"
+ aria-label={etiquetaCampo(campoActual)}
+ className="w-full border border-amber-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-400">
+ <option value="">-- {t('common.select')} --</option>
+ {catalogo
+ // `020` · §7 `AC-O23-05/07` (`OD-21`): solo registros activos, con etiqueta funcional.
+ .filter((r: any) => r.is_active !== false)
+ .filter((r: any) => String(r.id) !== String(campoActual?.current_value ?? ''))
+ .map((r: any) => <option key={String(r.id)} value={String(r.id)}>{etiquetaDeMaestro(r)}</option>)}
+ </select>
+ ) : (
  <input {...propsValor} value={correctedValue} onChange={e => { setCorrectedValue(e.target.value); setError('') }}
  data-testid="correction-corrected"
  className="w-full border border-amber-300 rounded-lg px-3 py-2.5 text-sm bg-white focus:ring-2 focus:ring-amber-400" />
+ )}
  <p className="text-xs text-amber-600 mt-1">{t('review.correctedByYou')}</p>
  </div>
  </div>
 
  {/* Correction type */}
  <div>
- <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('review.correctionType')}</label>
- <select value={correctionTypeId || ''} onChange={e => setCorrectionTypeId(e.target.value ? Number(e.target.value) : undefined)}
+ <label className="block text-sm font-medium text-slate-700 mb-1.5">{t('review.correctionType')} *</label>
+ <select data-testid="correction-type" aria-required="true" value={correctionTypeId || ''} onChange={e => { setCorrectionTypeId(e.target.value ? Number(e.target.value) : undefined); setError('') }}
  className="w-full border border-slate-300 rounded-lg px-3 py-2.5 text-sm">
  <option value="">-- {t('common.select')} --</option>
  {correctionTypes.map((ct: any) => (

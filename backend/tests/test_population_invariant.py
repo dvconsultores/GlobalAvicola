@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import asyncio
 import uuid
+from datetime import datetime, time, timezone
 
 import pytest
 import pytest_asyncio
@@ -27,7 +28,7 @@ import app.business_units.models  # noqa: F401
 import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.time_reference import days_ago, recent_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -44,8 +45,8 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import (BirdTypeEnum, Company, Farm, FarmType, House, Lot,
-                                    LotStatus)
+    from app.masters.models import (BirdTypeEnum, Company, CullCause, Farm, FarmType, House,
+                                    Lot, LotStatus, MortalityCause)
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -107,18 +108,29 @@ async def esc(test_database_url):
         await s.flush()
 
         def _lote(empresa, marca, tipo, estado=LotStatus.ACTIVE):
+            # `spec 020 §6` · `RR-30`: mortalidad y descarte derivan su semana del inicio del lote.
+            # Se declara uno holgadamente anterior a cualquier fecha de evento.
             return Lot(company_id=empresa.id, lot_code=f"{PREFIJO}{marca}-{uuid.uuid4().hex[:6]}",
-                       bird_type=tipo, status=estado, farm_id=None)
+                       bird_type=tipo, status=estado, farm_id=None,
+                       start_date=datetime.combine(days_ago(60), time.min, tzinfo=timezone.utc))
 
         lr, lg, lh = _lote(a, "LR", BirdTypeEnum.BREEDER), _lote(a, "LG", BirdTypeEnum.GRANDPARENT), _lote(a, "LH", BirdTypeEnum.HATCHERY)
         lc = _lote(a, "LC", BirdTypeEnum.BREEDER, LotStatus.CLOSED)
         lb = _lote(b, "LB", BirdTypeEnum.BREEDER)
         s.add_all([lr, lg, lh, lc, lb])
         await s.flush()
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`: la baja dice por qué. La
+        # causa compartida «Desconocida» (fila con `company_id` NULL) ya existe en la base de
+        # pruebas: se busca, no se siembra. Con ella estas pruebas siguen midiendo el saldo.
+        causa_mortalidad, causa_descarte = [
+            (await s.execute(select(modelo.id).where(modelo.name == "Desconocida",
+                                                     modelo.company_id.is_(None)))).scalar_one()
+            for modelo in (MortalityCause, CullCause)]
         await s.commit()
         d = {"a": a.id, "b": b.id, "actor_a": actor_a.id, "actor_b": actor_b.id, "sin_perm": sin_perm.id,
              "granja_a": granja_a.id, "galpon_a": galpon_a.id, "granja_b": granja_b.id, "galpon_b": galpon_b.id,
-             "lr": lr.id, "lg": lg.id, "lh": lh.id, "lc": lc.id, "lb": lb.id, "url": test_database_url}
+             "lr": lr.id, "lg": lg.id, "lh": lh.id, "lc": lc.id, "lb": lb.id, "url": test_database_url,
+             "causa_mortalidad": causa_mortalidad, "causa_descarte": causa_descarte}
     yield d
     async with motor.begin() as c:
         p = {"p": f"{PREFIJO}%"}
@@ -165,8 +177,14 @@ async def _decremento(http_client, esc, lote, tipo, n, *, actor="actor_a", granj
     kwargs = {}
     if tipo == "bird_exit":  # la salida es evento de ubicación (`BR-08`)
         kwargs = {"granja": esc[granja or "granja_a"], "galpon": esc[galpon or "galpon_a"]}
-    return await http_client.post("/api/v1/operations", headers=_token(esc[actor]),
-                                  json=_cuerpo(esc, lote, tipo, n, extra=extra, **kwargs))
+    # `spec 020 §6` · `RR-32`: la baja y el descarte dicen por qué. «Desconocida» es el valor
+    # explícito para lo que no se pudo determinar; con él la prueba llega a medir el saldo (`BR-01`).
+    cuerpo = _cuerpo(esc, lote, tipo, n, extra=extra, **kwargs)
+    if tipo == "mortality_recording":
+        cuerpo.setdefault("cause_id", esc["causa_mortalidad"])
+    elif tipo == "cull_recording":
+        cuerpo.setdefault("cull_cause_id", esc["causa_descarte"])
+    return await http_client.post("/api/v1/operations", headers=_token(esc[actor]), json=cuerpo)
 
 
 async def _saldo(esc, lote) -> int:
@@ -403,7 +421,9 @@ def test_ac14_sin_migracion_ni_rutas_nuevas():
     # `d9e0f1a2b3c4` (tablas inbound SAP HANA, solo lectura). SPEC 006 la avanza a
     # `e0f1a2b3c4d5` (apertura por BU: columnas de `opening_balances` + `hatchery_openings`).
     # SPEC 018 avanza la cabeza a h3c4d5e6f7a8 (desglose de no incubables y fosa en hatchery_openings).
-    assert cabezas == ["h3c4d5e6f7a8"], cabezas
+    # SPEC 020 §6 avanza la cabeza a i4d5e6f7a8b9: columna feed_movements.phase_id y causa
+    # compartida 'Desconocida'.
+    assert cabezas == ["i4d5e6f7a8b9"], cabezas
     # y hay una ruta nueva de `GA-REM-003` · AC04 (`/api/v1/logout`), 211 → 212.
     # `R-197` · C2 añade `/api/v1/review/events/{event_id}/actions`, 212 → 213.
     # `R-218` · C2 añade `/api/v1/reports/lot/{lot_id}/weekly`, 213 → 214.

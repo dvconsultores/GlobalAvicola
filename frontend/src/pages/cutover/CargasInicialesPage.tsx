@@ -13,7 +13,7 @@
  *   - UNKNOWN y N/A se muestran como tales (`null` nunca se pinta como 0 — AC77).
  *   - Todo texto sale de i18n (AC84/85); responsive 360/390/desktop (tablas con scroll, cards en móvil).
  */
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Fragment, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate, useSearchParams } from 'react-router-dom'
 import {
@@ -135,6 +135,38 @@ function enProcesoDerivado(fila: CutoverPreviewRow): { value: number | null; sta
   const bruto = fila.derived?.eggs_in_process
   return typeof bruto === 'number' ? { value: bruto, status: 'KNOWN' } : { value: null, status: 'UNKNOWN' }
 }
+
+/** SPEC 018 §9 · D-24: saldo disponible para cargar de una fila (lo calcula el backend; `null` = UNKNOWN). */
+function disponibleDerivado(fila: CutoverPreviewRow): { value: number | null; status: string } {
+  const bruto = fila.derived?.eggs_available_to_set
+  return typeof bruto === 'number' ? { value: bruto, status: 'KNOWN' } : { value: null, status: 'UNKNOWN' }
+}
+
+/**
+ * SPEC 018 §9 · D-26: columnas derivadas del preview de incubadora, cada una tras su columna ancla para
+ * leer las dos etapas: PRE-CARGA (recibidos → no incubables → fosa → cargados → saldo disponible) y
+ * POST-CARGA (transferidos → en proceso). Si el ancla no está en la vista, la derivada va al final.
+ */
+interface DerivadaPreview {
+  clave: string
+  tras: string
+  etiqueta: string
+  porDefecto: string
+  thTestId?: string
+  celdaTestId: string
+  cardTestId?: string
+  valor: (fila: CutoverPreviewRow) => { value: number | null; status: string }
+}
+const DERIVADAS_PREVIEW: DerivadaPreview[] = [
+  { clave: 'total', tras: 'eggs_non_incubable_broken', etiqueta: 'cutover.eggsNonIncubableTotal', porDefecto: 'Total no incubables',
+    celdaTestId: 'cutover-preview-total', valor: totalDerivado },
+  { clave: 'available', tras: 'eggs_set', etiqueta: 'cutover.eggsAvailableToSet', porDefecto: 'Saldo disponible para cargar',
+    thTestId: 'cutover-th-preview-available', celdaTestId: 'cutover-preview-available', cardTestId: 'cutover-preview-available-card',
+    valor: disponibleDerivado },
+  { clave: 'in-process', tras: 'eggs_transferred', etiqueta: 'cutover.eggsInProcess', porDefecto: 'Huevos en proceso',
+    thTestId: 'cutover-th-preview-in-process', celdaTestId: 'cutover-preview-in-process', cardTestId: 'cutover-preview-in-process-card',
+    valor: enProcesoDerivado },
+]
 
 function StatusBadge({ status }: { status: string }) {
   const { t } = useTranslation()
@@ -359,6 +391,12 @@ export default function CargasInicialesPage() {
     String(preview?.template_version ?? '') === 'v4' ||
     (preview?.rows ?? []).some(fila => !!fila.derived && 'eggs_non_incubable_total' in fila.derived)
   )
+  /** SPEC 018 §9 · D-26: derivadas tras su ancla; las de ancla ausente se pintan al final. */
+  const derivadasTras = (col: string): DerivadaPreview[] =>
+    (muestraTotalDerivadoPreview ? DERIVADAS_PREVIEW.filter(d => d.tras === col) : [])
+  const derivadasHuerfanas: DerivadaPreview[] = muestraTotalDerivadoPreview
+    ? DERIVADAS_PREVIEW.filter(d => !columnasPreview.includes(d.tras))
+    : []
   /** SPEC 018 · D-10: «Huevos descartados (histórico V3)» solo si el batch trae algún descartado KNOWN. */
   const muestraDescartadosHistoricos = esIncubadora &&
     (reconciliation?.lots ?? []).some(lote => lote.opening?.hatchery?.eggs_discarded_status === 'KNOWN')
@@ -709,6 +747,11 @@ export default function CargasInicialesPage() {
                     )}
                     <span className="rounded-md bg-amber-50 text-amber-800 px-2 py-1">{t('cutover.unknownMetrics')}: <b className="tabular-nums">{resumen?.unknown_metrics ?? 0}</b></span>
                   </div>
+                  {muestraTotalDerivadoPreview && (
+                    <p className="text-xs text-slate-500" data-testid="cutover-preview-stages">
+                      {t('cutover.stagesHint', 'Pre-carga: recibidos − no incubables − fosa − cargados = saldo disponible para cargar. Post-carga: cargados − transferidos = huevos en proceso.')}
+                    </p>
+                  )}
 
                   {/* Tabla (≥ sm) */}
                   <div className="hidden sm:block overflow-x-auto">
@@ -717,24 +760,26 @@ export default function CargasInicialesPage() {
                         <tr className="text-slate-500 text-left border-b">
                           <th className="py-1 pr-3">{t('cutover.sourceRow')}</th>
                           {columnasPreview.map(col => (
-                            <th key={col} className="py-1 pr-3 whitespace-nowrap">{t(`cutover.fields.${col}`, col)}</th>
+                            <Fragment key={col}>
+                              <th className="py-1 pr-3 whitespace-nowrap">{t(`cutover.fields.${col}`, col)}</th>
+                              {derivadasTras(col).map(d => (
+                                <th key={d.clave} className="py-1 pr-3 whitespace-nowrap" data-testid={d.thTestId}>
+                                  {t(d.etiqueta, d.porDefecto)}{' '}
+                                  <span className="text-[11px] lowercase text-slate-400">
+                                    ({t('cutover.derivedLabel', 'derivado')})
+                                  </span>
+                                </th>
+                              ))}
+                            </Fragment>
                           ))}
-                          {muestraTotalDerivadoPreview && (
-                            <th className="py-1 pr-3 whitespace-nowrap">
-                              {t('cutover.eggsNonIncubableTotal', 'Total no incubables')}{' '}
-                              <span className="text-[11px] lowercase text-slate-400">
-                                ({t('cutover.derivedLabel', 'derivado')})
-                              </span>
-                            </th>
-                          )}
-                          {muestraTotalDerivadoPreview && (
-                            <th className="py-1 pr-3 whitespace-nowrap" data-testid="cutover-th-preview-in-process">
-                              {t('cutover.eggsInProcess', 'Huevos en proceso')}{' '}
-                              <span className="text-[11px] lowercase text-slate-400">
-                                ({t('cutover.derivedLabel', 'derivado')})
-                              </span>
-                            </th>
-                          )}
+                          {derivadasHuerfanas.map(d => (
+                                <th key={d.clave} className="py-1 pr-3 whitespace-nowrap" data-testid={d.thTestId}>
+                                  {t(d.etiqueta, d.porDefecto)}{' '}
+                                  <span className="text-[11px] lowercase text-slate-400">
+                                    ({t('cutover.derivedLabel', 'derivado')})
+                                  </span>
+                                </th>
+                          ))}
                           <th className="py-1 pr-3">{t('common.status')}</th>
                         </tr>
                       </thead>
@@ -743,18 +788,20 @@ export default function CargasInicialesPage() {
                           <tr key={fila.row_number} className="border-b last:border-0">
                             <td className="py-1 pr-3 tabular-nums">{fila.row_number}</td>
                             {columnasPreview.map(col => (
-                              <td key={col} className="py-1 pr-3 whitespace-nowrap"><Cell cell={fila.values[col]} /></td>
+                              <Fragment key={col}>
+                                <td className="py-1 pr-3 whitespace-nowrap"><Cell cell={fila.values[col]} /></td>
+                                {derivadasTras(col).map(d => (
+                                  <td key={d.clave} className="py-1 pr-3 whitespace-nowrap" data-testid={`${d.celdaTestId}-${fila.row_number}`}>
+                                  <Metric {...d.valor(fila)} />
+                                </td>
+                                ))}
+                              </Fragment>
                             ))}
-                            {muestraTotalDerivadoPreview && (
-                              <td className="py-1 pr-3 whitespace-nowrap" data-testid={`cutover-preview-total-${fila.row_number}`}>
-                                <Metric {...totalDerivado(fila)} />
-                              </td>
-                            )}
-                            {muestraTotalDerivadoPreview && (
-                              <td className="py-1 pr-3 whitespace-nowrap" data-testid={`cutover-preview-in-process-${fila.row_number}`}>
-                                <Metric {...enProcesoDerivado(fila)} />
-                              </td>
-                            )}
+                            {derivadasHuerfanas.map(d => (
+                                  <td key={d.clave} className="py-1 pr-3 whitespace-nowrap" data-testid={`${d.celdaTestId}-${fila.row_number}`}>
+                                  <Metric {...d.valor(fila)} />
+                                </td>
+                            ))}
                             <td className="py-1 pr-3">
                               <Badge variant={fila.status === 'valid' || fila.status === 'applied' ? 'approved' : 'rejected'}>
                                 {t(`cutover.itemStatus.${fila.status}`, fila.status)}
@@ -776,29 +823,33 @@ export default function CargasInicialesPage() {
                           </Badge>
                         </div>
                         {columnasPreview.filter(c => c !== 'legacy_lot_code').map(col => (
-                          <div key={col} className="flex justify-between gap-2">
-                            <span className="text-slate-500">{t(`cutover.fields.${col}`, col)}</span>
-                            <Cell cell={fila.values[col]} />
-                          </div>
+                          <Fragment key={col}>
+                            <div className="flex justify-between gap-2">
+                              <span className="text-slate-500">{t(`cutover.fields.${col}`, col)}</span>
+                              <Cell cell={fila.values[col]} />
+                            </div>
+                            {derivadasTras(col).map(d => (
+                              <div key={d.clave} className="flex justify-between gap-2"
+                                data-testid={d.cardTestId ? `${d.cardTestId}-${fila.row_number}` : undefined}>
+                                <span className="text-slate-500">
+                                  {t(d.etiqueta, d.porDefecto)}{' '}
+                                  <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
+                                </span>
+                                <Metric {...d.valor(fila)} />
+                              </div>
+                            ))}
+                          </Fragment>
                         ))}
-                        {muestraTotalDerivadoPreview && (
-                          <div className="flex justify-between gap-2">
-                            <span className="text-slate-500">
-                              {t('cutover.eggsNonIncubableTotal', 'Total no incubables')}{' '}
-                              <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
-                            </span>
-                            <Metric {...totalDerivado(fila)} />
-                          </div>
-                        )}
-                        {muestraTotalDerivadoPreview && (
-                          <div className="flex justify-between gap-2" data-testid={`cutover-preview-in-process-card-${fila.row_number}`}>
-                            <span className="text-slate-500">
-                              {t('cutover.eggsInProcess', 'Huevos en proceso')}{' '}
-                              <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
-                            </span>
-                            <Metric {...enProcesoDerivado(fila)} />
-                          </div>
-                        )}
+                        {derivadasHuerfanas.map(d => (
+                              <div key={d.clave} className="flex justify-between gap-2"
+                                data-testid={d.cardTestId ? `${d.cardTestId}-${fila.row_number}` : undefined}>
+                                <span className="text-slate-500">
+                                  {t(d.etiqueta, d.porDefecto)}{' '}
+                                  <span className="text-[11px] lowercase">({t('cutover.derivedLabel', 'derivado')})</span>
+                                </span>
+                                <Metric {...d.valor(fila)} />
+                              </div>
+                        ))}
                       </li>
                     ))}
                   </ul>
@@ -832,9 +883,6 @@ export default function CargasInicialesPage() {
                         {esIncubadora ? (
                           <>
                             <th className="py-1 pr-3">{t('cutover.eggsReceived')}</th>
-                            <th className="py-1 pr-3">{t('cutover.eggsSet')}</th>
-                            <th className="py-1 pr-3">{t('cutover.eggsInProcess')}</th>
-                            <th className="py-1 pr-3">{t('cutover.eggsAvailable')}</th>
                             <th className="py-1 pr-3 whitespace-nowrap" data-testid="cutover-th-non-incubable-total">
                               {t('cutover.eggsNonIncubableTotal', 'Total no incubables')}{' '}
                               <span className="text-[11px] lowercase text-slate-400">
@@ -842,6 +890,9 @@ export default function CargasInicialesPage() {
                               </span>
                             </th>
                             <th className="py-1 pr-3 whitespace-nowrap">{t('cutover.fertileEggsToPit', 'Huevos fértiles a fosa')}</th>
+                            <th className="py-1 pr-3">{t('cutover.eggsSet')}</th>
+                            <th className="py-1 pr-3">{t('cutover.eggsAvailable')}</th>
+                            <th className="py-1 pr-3">{t('cutover.eggsInProcess')}</th>
                             {muestraDescartadosHistoricos && (
                               <th className="py-1 pr-3 whitespace-nowrap" data-testid="cutover-th-eggs-discarded">
                                 {t('cutover.eggsDiscardedHistorical', 'Huevos descartados (histórico V3)')}
@@ -874,11 +925,6 @@ export default function CargasInicialesPage() {
                           {esIncubadora ? (
                             <>
                               <td className="py-1 pr-3"><Metric value={lote.opening.hatchery?.eggs_received} status={lote.opening.hatchery?.eggs_received_status} /></td>
-                              <td className="py-1 pr-3"><Metric value={lote.opening.hatchery?.eggs_set} status={lote.opening.hatchery?.eggs_set_status} /></td>
-                              <td className="py-1 pr-3" data-testid={`cutover-eggs-in-process-${lote.lot_id}`}>
-                                <Metric value={lote.current?.eggs_in_process ?? null} />
-                              </td>
-                              <td className="py-1 pr-3 font-semibold"><Metric value={lote.current?.eggs_available_hatchery ?? null} /></td>
                               <td className="py-1 pr-3" data-testid={`cutover-non-incubable-total-${lote.lot_id}`}>
                                 <TotalNoIncubables hatchery={lote.opening.hatchery} />
                               </td>
@@ -887,6 +933,13 @@ export default function CargasInicialesPage() {
                                   value={lote.opening.hatchery?.fertile_eggs_to_pit ?? null}
                                   status={lote.opening.hatchery?.fertile_eggs_to_pit_status}
                                 />
+                              </td>
+                              <td className="py-1 pr-3"><Metric value={lote.opening.hatchery?.eggs_set} status={lote.opening.hatchery?.eggs_set_status} /></td>
+                              <td className="py-1 pr-3 font-semibold" data-testid={`cutover-eggs-available-${lote.lot_id}`}>
+                                <Metric value={lote.current?.eggs_available_hatchery ?? null} />
+                              </td>
+                              <td className="py-1 pr-3" data-testid={`cutover-eggs-in-process-${lote.lot_id}`}>
+                                <Metric value={lote.current?.eggs_in_process ?? null} />
                               </td>
                               {muestraDescartadosHistoricos && (
                                 <td className="py-1 pr-3" data-testid={`cutover-eggs-discarded-${lote.lot_id}`}>

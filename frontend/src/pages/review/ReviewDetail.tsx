@@ -7,7 +7,7 @@ import BackNavigation from '../../components/layout/BackNavigation'
 import api from '../../services/api'
 import { useCan } from '../../auth/actionAuthority'
 import { useToast, getErrorMessage } from '../../components/Toast'
-import { describirCampoCorregido } from '../../utils/correctionFields'
+import { describirCampoCorregido, esValorVacio } from '../../utils/correctionFields'
 
 const getEventLabel = (t: any, key: string) => t(`eventsShort.${key}`, key)
 
@@ -25,6 +25,13 @@ const STATUS_COLORS: Record<string, string> = {
 export default function ReviewDetail() {
  const can = useCan()
  const { t, i18n } = useTranslation()
+ // `020` · §7 `AC-O23-07`: el historial lee «Sin valor» donde no había dato, y el nombre (no el id) donde lo hay.
+ const valorDelHistorial = (display: unknown, valor: unknown) => {
+  const texto = display ?? valor
+  return esValorVacio(texto)
+   ? <em data-testid="correction-no-value">{String(t('corrections.noValue', 'Sin valor'))}</em>
+   : `"${String(texto)}"`
+ }
  const { id } = useParams<{ id: string }>()
  const toast = useToast()
  const enVuelo = useRef(false)
@@ -218,7 +225,7 @@ export default function ReviewDetail() {
  </h3>
  {corrections.map((c: any) => (
  <div key={c.id} className="text-xs text-slate-600 mb-2 p-2 bg-amber-50 rounded-lg">
- <p><strong>{describirCampoCorregido(t, c.field_name)}:</strong> "{c.original_value}" → "{c.corrected_value}"</p>
+ <p><strong>{describirCampoCorregido(t, c.field_name)}:</strong> {valorDelHistorial(c.original_display, c.original_value)} → {valorDelHistorial(c.corrected_display, c.corrected_value)}</p>
  <p className="text-slate-400 mt-0.5">{c.reason} — {formatFechaHora(c.created_at, i18n.language)}
  {c.corrected_by_name ? ` · ${c.corrected_by_name}` : ''}</p>
  </div>

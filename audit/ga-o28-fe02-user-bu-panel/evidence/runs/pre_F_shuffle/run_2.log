@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+      Running tests with seed "1002"
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 439ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 707ms
+     ✓ conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)  400ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  06:34:03
+   Duration  2.66s (transform 497ms, setup 193ms, import 1.42s, tests 1.15s, environment 1.83s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/pre_F_shuffle/run_2.json

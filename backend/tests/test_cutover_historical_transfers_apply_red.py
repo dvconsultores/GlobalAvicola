@@ -20,6 +20,7 @@ from cutover_v2_fixtures import (  # noqa: E402
     aplicar, aprobar, corte, crear_batch, fila_engorde, fila_reproductoras, headers_aprobador,
     items_por_referencia, preparar, subir, xlsx_v2,
 )
+from owner_decisions_support import causa_desconocida  # noqa: E402
 from time_reference import recent_event_date  # noqa: E402
 
 from app.lots.models import OpeningBalance  # noqa: E402
@@ -141,6 +142,10 @@ async def test_ht_sin_doble_conteo(auth_headers, http_client, seeded_ids):
     r = await http_client.post("/api/v1/operations", headers=auth_headers,
                                json={"lot_id": lote, "event_type": "mortality_recording",
                                      "event_date": recent_event_date(),
+                                     # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`:
+                                     # la baja dice por qué; «Desconocida» es el valor explícito para lo
+                                     # que no se pudo determinar, y aquí solo es setup del saldo.
+                                     "cause_id": await causa_desconocida(http_client, auth_headers),
                                      "bird_movements": [{"sex": "male", "quantity": 15, "avg_weight": 3600.0}]})
     assert r.status_code == 201, r.text
     f = await _fila(http_client, auth_headers, b, lote)

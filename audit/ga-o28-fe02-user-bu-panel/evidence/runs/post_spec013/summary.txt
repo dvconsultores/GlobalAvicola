@@ -1,0 +1,12 @@
+run_1: total=197 passed=197 failed=0 skipped=0
+run_2: total=197 passed=197 failed=0 skipped=0
+run_3: total=197 passed=197 failed=0 skipped=0
+run_4: total=197 passed=197 failed=0 skipped=0
+run_5: total=197 passed=197 failed=0 skipped=0
+run_6: total=197 passed=197 failed=0 skipped=0
+run_7: total=197 passed=197 failed=0 skipped=0
+run_8: total=197 passed=197 failed=0 skipped=0
+run_9: total=197 passed=197 failed=0 skipped=0
+run_10: total=197 passed=197 failed=0 skipped=0
+
+RESUMEN: 10/10 corridas sin fallos

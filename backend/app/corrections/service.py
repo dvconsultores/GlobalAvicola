@@ -3,7 +3,7 @@ import re
 from typing import Any, Optional
 
 from fastapi import HTTPException, status
-from sqlalchemy import select
+from sqlalchemy import or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from ..audit.helpers import audit_correction
@@ -43,6 +43,12 @@ class CorrectionService:
                 detail=f"El evento no se puede corregir en estado '{_traducir_estado(event.status)}'",
             )
 
+        # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-27` (`OD-S2-01`): toda corrección **nueva**
+        # declara su tipo. Se exige antes de cualquier otra validación de valor —un registro de
+        # corrección sin tipo no es un registro— y sin distinguir «no existe» de «no es tuyo»
+        # (`AC26`), para no filtrar catálogos de otra empresa.
+        await self._exigir_tipo_de_correccion(data.correction_type_id)
+
         # P0-2: aplicar el valor corregido al dato.
         #
         # Hasta ahora se creaba el registro de correccion, se cambiaba el estado a
@@ -63,7 +69,32 @@ class CorrectionService:
                 event, data, operaciones)
         else:
             valor_original = _leer_valor(event, data.field_name)
+            # `spec 020 §7` · `AC-O23-04`: completar un maestro vacío solo en un campo que el tipo admite.
+            if (data.field_name in MAESTROS_CORREGIBLES and valor_original is None
+                    and not _maestro_aplica(event, data.field_name)):
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail=f"«{etiqueta_de_campo(data.field_name)}» no aplica a este tipo de evento",
+                )
+            # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-31`/`RR-32`: el valor llega como
+            # **texto**, así que un vacío o solo espacios no describe el dato. Se valida antes de
+            # convertirlo: la conversión de `cause_id` vacío daría `None` y la de espacios, un
+            # mensaje genérico; aquí sale el rechazo funcional que el formulario muestra.
+            if data.field_name == "vaccine_lot_number":
+                from ..operations.validators import validate_lote_de_vacuna
+
+                validate_lote_de_vacuna(event.event_type, data.corrected_value)
+            if data.field_name in ("cause_id", "cull_cause_id"):
+                from ..operations.validators import validate_motivo_de_la_baja
+
+                validate_motivo_de_la_baja(
+                    event.event_type,
+                    data.corrected_value if data.field_name == "cause_id" else event.cause_id,
+                    data.corrected_value if data.field_name == "cull_cause_id" else event.cull_cause_id)
             valor_aplicado = _convertir(event, data.field_name, data.corrected_value)
+            if valor_aplicado is None and data.field_name in NO_VACIABLES:
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail=NO_VACIABLES[data.field_name])
+            operaciones.validar_cantidades_del_candidato(event, {data.field_name: valor_aplicado})
             if data.field_name in ("chicks_healthy", "chicks_weak"):  # `GA-REM-021-C` · `AC-B13-11`: la corrección respeta `BR-21`
                 from ..operations.validators import validate_birth_registration
 
@@ -99,6 +130,15 @@ class CorrectionService:
                 # `GA-REM-023-B` · `R-176` (+ `R-45`): la fecha y el documento SAP también pasan por ella
                 # (`BR-06`, `BR-19`, `BR-11`, `BR-18`): corregir no es una puerta trasera.
                 await operaciones.verificar_destino_de_edicion(event, {data.field_name: valor_aplicado})
+            if data.field_name in MAESTROS_CORREGIBLES and valor_aplicado is not None:
+                # `AC-O23-05` · `OD-21`: una corrección nueva no asigna un maestro dado de baja. Va después
+                # de la guarda de empresa para que el ajeno siga siendo «no encontrado» (`AC26`).
+                await self._exigir_maestro_activo(data.field_name, valor_aplicado)
+            if data.field_name in ("event_date", "lot_id"):  # `RR-30` / `RR-34`: la semana sigue a la fecha
+                await operaciones.recalcular_semana_y_fase_del_evento(
+                    event,
+                    valor_aplicado if data.field_name == "event_date" else event.event_date,
+                    valor_aplicado if data.field_name == "lot_id" else event.lot_id)
             setattr(event, data.field_name, valor_aplicado)
             event.version += 1
 
@@ -131,7 +171,29 @@ class CorrectionService:
             lot_id=event.lot_id,
         )
 
+        await self._anotar_nombres([correction])
         return correction
+
+    async def _exigir_tipo_de_correccion(self, correction_type_id: int | None) -> None:
+        """`GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` — `RR-27` (`OD-S2-01`).
+
+        El tipo de la corrección es obligatorio —ausente, `null`, `0` y negativo no lo son—, tiene
+        que existir, estar activo (`OD-21`) y ser alcanzable: propio de la empresa o compartido
+        (`verificar_catalogo_de_empresa`). Cualquier otra cosa es una violación de `RR-27` con el
+        mismo mensaje: no se distingue «no existe» de «no es tuyo».
+        """
+        from ..masters.models import CorrectionType
+        from ..operations.validators import BusinessRuleViolation
+        from ..tenancy import verificar_catalogo_de_empresa
+
+        if correction_type_id is None or correction_type_id <= 0:
+            raise BusinessRuleViolation(MENSAJE_TIPO_DE_CORRECCION, "RR-27")
+        try:
+            await verificar_catalogo_de_empresa(
+                self.db, CorrectionType, correction_type_id, self.company_id,
+                "Tipo de corrección", exigir_activo=True)
+        except BusinessRuleViolation:
+            raise BusinessRuleViolation(MENSAJE_TIPO_DE_CORRECCION, "RR-27") from None
 
     async def _corregir_submovimiento(self, event, data: schemas.CorrectionCreate, operaciones) -> tuple[str | None, str | None]:
         """Aplica la corrección a una fila de `bird_movements` / `feed_movements`.
@@ -153,7 +215,7 @@ class CorrectionService:
         filas = event.bird_movements if tabla == "bird_movements" else event.feed_movements
         fila = next((f for f in filas if f.id == fila_id), None)
         if (fila is None
-                or campo not in SUBMOV_CORREGIBLES[tabla]):
+                or campo not in _submov_corregibles(event, tabla)):
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=(
@@ -210,6 +272,17 @@ class CorrectionService:
             validate_contenido_minimo(event.event_type, event.vaccine_id, event.medication_id,
                                       candidatas, event.feed_movements)
 
+        if (tabla == "bird_movements" and campo == "quantity"
+                and event.event_type == EventType.BIRD_DISTRIBUTION):
+            # `spec 020 §6` · `RR-29`: la corrección no puede dejar la distribución en cero (estado candidato).
+            from types import SimpleNamespace
+
+            from ..operations.validators import validate_distribucion_con_aves
+
+            candidatas = [SimpleNamespace(quantity=valor)] + [
+                SimpleNamespace(quantity=otra.quantity) for otra in event.bird_movements if otra.id != fila.id]
+            validate_distribucion_con_aves(event.event_type, candidatas)
+
         setattr(fila, campo, valor)
         event.version += 1
         return (
@@ -221,7 +294,8 @@ class CorrectionService:
         """Campos realmente corregibles de **ese** evento (`S1-CORR-01`).
 
         El formulario de corrección consume esta lista en lugar de ofrecer «Observaciones»
-        fijo: los campos del evento con valor, más los de cada fila de submovimiento con el
+        fijo: los campos del evento con valor, los de maestro vacíos que su tipo admite
+        (`AC-O23-02`), más los de cada fila de submovimiento con el
         id de su fila. Un evento fuera de estado corregible no es un error, es una lista
         vacía (`AC-S1-C05`).
         """
@@ -242,7 +316,9 @@ class CorrectionService:
             if campo in FUERA_DEL_SELECTOR:
                 continue
             valor = getattr(event, campo, None)
-            if valor is None and campo not in SIEMPRE_OFRECIDOS:
+            # `AC-O23-02`: un maestro vacío se ofrece si su tipo de evento lo admite (metadata, no valor).
+            if (valor is None and campo not in SIEMPRE_OFRECIDOS
+                    and not (campo in MAESTROS_CORREGIBLES and _maestro_aplica(event, campo))):
                 continue
             columna = columnas.get(campo)
             campos.append({
@@ -252,10 +328,13 @@ class CorrectionService:
                 "row_id": None,
                 "row_label": None,
                 "value_type": _tipo_de_valor(columna.type.python_type if columna is not None else str),
+                # `AC-S2-C04`: de qué catálogo es el campo y cómo se llama hoy su registro.
+                "master": MAESTROS_CORREGIBLES[campo][0] if campo in MAESTROS_CORREGIBLES else None,
+                "current_display": await self._nombre_de_maestro(campo, valor),
             })
 
         for bm in event.bird_movements:
-            for campo in sorted(SUBMOV_CORREGIBLES["bird_movements"]):
+            for campo in sorted(_submov_corregibles(event, "bird_movements")):
                 if campo == "quantity" and es_recepcion_breeder:
                     continue
                 campos.append({
@@ -267,7 +346,7 @@ class CorrectionService:
                     "value_type": _tipo_de_valor(float if campo == "avg_weight" else int),
                 })
         for fm in event.feed_movements:
-            for campo in sorted(SUBMOV_CORREGIBLES["feed_movements"]):
+            for campo in sorted(_submov_corregibles(event, "feed_movements")):
                 campos.append({
                     "field_name": f"feed_movements[{fm.id}].{campo}",
                     "label_key": f"corrections.fields.feed_movements.{campo}",
@@ -289,7 +368,9 @@ class CorrectionService:
             )
             .order_by(models.CorrectionLog.created_at.desc())
         )
-        return list(result.scalars().all())
+        correcciones = list(result.scalars().all())
+        await self._anotar_nombres(correcciones)
+        return correcciones
 
     async def get_corrections(
         self,
@@ -315,7 +396,51 @@ class CorrectionService:
         corrections = list(result.scalars().all())
         count_r = await self.db.execute(cq)
         total = count_r.scalar() or 0
+        await self._anotar_nombres(corrections)
         return corrections, total
+
+    async def _nombre_de_maestro(self, campo: str, valor) -> str | None:
+        """Nombre del registro de catálogo que un campo de maestro referencia (`AC-S2-C04`); `None` si no aplica."""
+        if campo not in MAESTROS_CORREGIBLES or valor is None:
+            return None
+        try:
+            identificador = int(str(valor))
+        except ValueError:
+            return None
+        from ..masters import models as masters_models
+
+        modelo = getattr(masters_models, MAESTROS_CORREGIBLES[campo][1])
+        consulta = select(modelo.name).where(modelo.id == identificador)
+        if hasattr(modelo, "company_id") and self.company_id is not None:
+            # el catálogo compartido (`company_id` nulo) es legible; el de otra empresa no se nombra
+            consulta = consulta.where(or_(modelo.company_id == self.company_id, modelo.company_id.is_(None)))
+        return (await self.db.execute(consulta)).scalar_one_or_none()
+
+    async def _exigir_maestro_activo(self, campo: str, valor) -> None:
+        """`AC-O23-05` · `OD-21`: el maestro que asigna una corrección nueva está activo (la lectura histórica no cambia)."""
+        from ..masters import models as masters_models
+        from ..operations.validators import BusinessRuleViolation
+
+        modelo = getattr(masters_models, MAESTROS_CORREGIBLES[campo][1])
+        if not hasattr(modelo, "is_active"):
+            return
+        activo = (await self.db.execute(
+            select(modelo.is_active).where(modelo.id == int(valor)))).scalar_one_or_none()
+        if activo is False:
+            raise BusinessRuleViolation(
+                f"«{etiqueta_de_campo(campo)}»: el registro seleccionado está inactivo; elija uno activo del catálogo",
+                "OD-21",
+            )
+
+    async def _anotar_nombres(self, correcciones) -> None:
+        """`AC-S2-C05`: el historial lee nombres de maestro, no ids (atributos transitorios de lectura)."""
+        for c in correcciones:
+            if c.field_name in MAESTROS_CORREGIBLES:
+                c.original_display = await self._nombre_de_maestro(c.field_name, c.original_value)
+                c.corrected_display = await self._nombre_de_maestro(c.field_name, c.corrected_value)
+            else:
+                c.original_display = None
+                c.corrected_display = None
 
 
 def func_count():
@@ -391,6 +516,84 @@ FUERA_DEL_SELECTOR = frozenset({"lot_id", "farm_id", "house_id", "extra_data"})
 #: `observations` se ofrece siempre, aunque esté vacío: es el campo de uso más frecuente.
 SIEMPRE_OFRECIDOS = frozenset({"observations"})
 
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6` · `RR-27` (`OD-S2-01`): el tipo es un dato del
+#: registro de corrección y el formulario lo lee tal cual. Un tipo inexistente y el de otra
+#: empresa se rechazan con el mismo texto: el ajeno se comporta como inexistente (`AC26`).
+MENSAJE_TIPO_DE_CORRECCION = "Seleccione el tipo de corrección"
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: lo que no es anulable no se puede vaciar.
+NO_VACIABLES: dict[str, str] = {"event_date": "La fecha del evento no puede quedar vacía"}
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.3` · `AC-S2-C03`: nombre que el operador lee en el
+#: formulario para cada campo corregible. El mensaje de un valor imposible se muestra en pantalla,
+#: junto al dato: el identificador técnico (`sample_size`) no le dice nada.
+ETIQUETAS_CAMPO: dict[str, str] = {
+    "observations": "Observaciones",
+    "event_date": "Fecha del evento",
+    "sap_document_ref": "Documento SAP",
+    "vaccination_route": "Vía de aplicación",
+    "vaccine_lot_number": "Lote de vacuna",
+    "dosage_per_bird": "Dosis por ave",
+    "treatment_days": "Días de tratamiento",
+    "sample_size": "Tamaño de muestra",
+    "water_liters": "Litros de agua",
+    "chicks_healthy": "Pollitos sanos",
+    "chicks_weak": "Pollitos débiles",
+    "supplier_id": "Proveedor",
+    "cause_id": "Causa de mortalidad",
+    "cull_cause_id": "Causa de descarte",
+    "vaccine_id": "Vacuna",
+    "medication_id": "Medicamento",
+    "transport_id": "Transporte",
+    "destination_farm_id": "Granja destino",
+    "destination_plant_id": "Planta destino",
+    "lot_id": "Lote",
+    "farm_id": "Granja",
+    "house_id": "Galpón",
+    "extra_data": "Datos adicionales",
+    "quantity": "Cantidad",
+    "avg_weight": "Peso promedio",
+    "week_number": "Semana",
+    "quantity_kg": "Cantidad de alimento (kg)",
+}
+
+#: `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.2` · `AC-S2-C04`: campo de maestro → (recurso de la API
+#: del catálogo, modelo ORM). Un `*_id` se corrige con el identificador pero se **lee** por nombre.
+MAESTROS_CORREGIBLES: dict[str, tuple[str, str]] = {
+    "supplier_id": ("suppliers", "Supplier"),
+    "cause_id": ("mortality-causes", "MortalityCause"),
+    "cull_cause_id": ("cull-causes", "CullCause"),
+    "vaccine_id": ("vaccines", "Vaccine"),
+    "medication_id": ("medications", "Medication"),
+    "destination_farm_id": ("farms", "Farm"),
+    "destination_plant_id": ("processing-plants", "ProcessingPlant"),
+    "transport_id": ("transports", "Transport"),
+}
+
+#: `spec 020 §7` · `AC-O23-01` (`O-23`): campos de maestro que el alta de cada tipo de evento admite
+#: (formulario de alta). La corregibilidad de un maestro vacío depende de esta metadata, no del valor.
+MAESTROS_POR_TIPO_DE_EVENTO: dict[EventType, frozenset[str]] = {
+    EventType.BIRD_RECEPTION: frozenset({"supplier_id"}),
+    EventType.BIRD_EXIT: frozenset({"destination_farm_id", "destination_plant_id", "transport_id"}),
+    EventType.EGG_DISPATCH: frozenset({"transport_id"}),
+    EventType.EGG_RECEPTION_HATCHERY: frozenset({"transport_id"}),
+    EventType.TRANSPORT_INSPECTION: frozenset({"transport_id"}),
+    EventType.BIRTH_REGISTRATION: frozenset({"vaccine_id"}),
+    EventType.CHICK_DISPATCH: frozenset({"destination_farm_id", "transport_id"}),
+    EventType.GRANDPARENT_IMPORT: frozenset({"supplier_id", "transport_id"}),
+    EventType.MORTALITY_RECORDING: frozenset({"cause_id"}),
+    EventType.CULL_RECORDING: frozenset({"cull_cause_id"}),
+    EventType.VACCINATION: frozenset({"vaccine_id"}),
+    EventType.MEDICATION: frozenset({"medication_id"}),
+}
+
+
+def _maestro_aplica(event, campo: str) -> bool:
+    """`AC-O23-01`: el campo de maestro pertenece al tipo del evento."""
+    tipo = getattr(event.event_type, "value", event.event_type)
+    return campo in MAESTROS_POR_TIPO_DE_EVENTO.get(EventType(tipo), frozenset())
+
+
 _PATRON_SUBMOVIMIENTO = re.compile(r"^(bird_movements|feed_movements)\[(\d+)\]\.(\w+)$")
 
 
@@ -409,10 +612,28 @@ def _parsear_submovimiento(field_name: str) -> tuple[str, int, str] | None:
     return tabla, int(fila_id), campo
 
 
+def etiqueta_de_campo(field_name: str) -> str:
+    """Nombre funcional (español) de un campo corregible; nunca el identificador técnico (`AC-S2-C03`)."""
+    parseado = _parsear_submovimiento(field_name)
+    campo = parseado[2] if parseado is not None else field_name
+    return ETIQUETAS_CAMPO.get(campo, campo)
+
+
+def _submov_corregibles(event, tabla: str) -> set[str]:
+    """Campos corregibles de una fila. `RR-30`: la semana es derivada y no se corrige en esos eventos."""
+    from ..operations.semana import TIPOS_CON_SEMANA_DERIVADA
+
+    campos = SUBMOV_CORREGIBLES[tabla]
+    if getattr(event.event_type, "value", event.event_type) in TIPOS_CON_SEMANA_DERIVADA:
+        return campos - {"week_number"}
+    return campos
+
+
 def _campos_admitidos(event, es_recepcion_breeder: bool = False) -> str:
     """Lista de campos corregibles: los del evento y los de sus filas, con su id."""
     admitidos = sorted(campos_corregibles())
-    for tabla, campos in SUBMOV_CORREGIBLES.items():
+    for tabla in SUBMOV_CORREGIBLES:
+        campos = _submov_corregibles(event, tabla)
         filas = event.bird_movements if tabla == "bird_movements" else event.feed_movements
         for fila in filas:
             for campo in sorted(campos):
@@ -434,7 +655,7 @@ def _convertir_valor_de_fila(field_name: str, campo: str, valor: str | None):
             return None
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"El campo '{field_name}' requiere un valor numérico",
+            detail=f"«{etiqueta_de_campo(field_name)}» requiere un valor numérico",
         )
     texto = str(valor).strip()
     decimal = campo in ("avg_weight", "quantity_kg")
@@ -444,14 +665,17 @@ def _convertir_valor_de_fila(field_name: str, campo: str, valor: str | None):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                f"El valor '{valor}' no es válido para el campo '{field_name}': "
+                f"El valor '{valor}' no es válido para «{etiqueta_de_campo(field_name)}»: "
                 f"se esperaba un {'número decimal' if decimal else 'número entero'}"
             ),
         ) from None
     if numero < 0 or (decimal and numero <= 0):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"El valor '{valor}' no es válido para el campo '{field_name}': debe ser mayor a cero",
+            detail=(
+                f"El valor '{valor}' no es válido para «{etiqueta_de_campo(field_name)}»: "
+                "debe ser mayor a cero"
+            ),
         )
     return numero
 
@@ -517,10 +741,23 @@ def _convertir(event, campo: str, valor: str | None):
             return json.loads(valor)
         return tipo(valor)
     except (ValueError, TypeError):
+        # `AC-S2-C03`: el aviso se lee en el formulario, junto al dato; el nombre técnico no.
+        if tipo is _date:
+            descripcion = "una fecha (AAAA-MM-DD)"
+        elif tipo is int:
+            descripcion = "un número entero"
+        elif tipo is float:
+            descripcion = "un número decimal"
+        elif tipo is bool:
+            descripcion = "sí o no"
+        elif tipo is dict:
+            descripcion = "un objeto JSON"
+        else:
+            descripcion = "texto"
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=(
-                f"El valor '{valor}' no es valido para el campo '{campo}' "
-                f"(se esperaba {tipo.__name__})"
+                f"El valor '{valor}' no es válido para «{etiqueta_de_campo(campo)}»: "
+                f"se esperaba {descripcion}"
             ),
         ) from None

@@ -28,6 +28,7 @@ import app.review.models  # noqa: F401
 from app.lots.models import LotPhase, OpeningBalance
 from app.masters.models import Lot, ProductivePhase
 from app.operations.validators import get_current_bird_balance
+from tests.owner_decisions_support import causa_desconocida
 from tests.time_reference import days_ago, iso_days_ago, recent_event_date, reference_today
 
 PREFIJO = "OB-TEST-"
@@ -149,6 +150,12 @@ def _hoy() -> str:
 
 
 async def _mortalidad(client, auth_headers, seeded_ids, lot_id, cantidad, fecha=None):
+    """Registra una mortalidad declarando su causa.
+
+    `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`: la baja dice por qué. Se usa la
+    causa compartida «Desconocida» (`company_id` NULL, ya sembrada), que es el valor explícito para
+    lo que no se pudo determinar; con ella la prueba llega a medir el saldo y `BR-01`.
+    """
     return await client.post(
         "/api/v1/operations",
         headers=auth_headers,
@@ -158,6 +165,7 @@ async def _mortalidad(client, auth_headers, seeded_ids, lot_id, cantidad, fecha=
             "house_id": seeded_ids["house_id"],
             "event_type": "mortality_recording",
             "event_date": fecha or recent_event_date(),
+            "cause_id": await causa_desconocida(client, auth_headers),
             "bird_movements": [{"sex": "male", "quantity": cantidad}],
         },
     )

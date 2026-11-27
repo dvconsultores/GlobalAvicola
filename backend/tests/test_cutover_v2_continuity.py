@@ -19,6 +19,7 @@ from cutover_v2_fixtures import (  # noqa: E402
     SIN_NO_INCUBABLES, aplicar, aprobar, corte, crear_batch, fila_engorde, fila_incubadora, fila_reproductoras,
     headers_aprobador, items_por_referencia, preparar, subir, xlsx_v2,
 )
+from owner_decisions_support import causa_desconocida  # noqa: E402
 from time_reference import iso_days_ago, recent_event_date  # noqa: E402
 
 DIAS_CORTE = 30
@@ -34,6 +35,17 @@ async def _lote_aplicado(client, headers, seeded_ids, bu: str, filas: list, dias
 
 
 async def _evento(client, headers, **cuerpo):
+    """Registra un evento.
+
+    `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-32`: la baja dice por qué. Se añade
+    la causa compartida «Desconocida» (`company_id` NULL, ya sembrada) —el valor explícito para lo
+    que no se pudo determinar— en el único punto por el que este archivo crea eventos, para que las
+    pruebas sigan midiendo la continuidad del corte y no el catálogo.
+    """
+    if cuerpo.get("event_type") == "mortality_recording":
+        cuerpo.setdefault("cause_id", await causa_desconocida(client, headers))
+    elif cuerpo.get("event_type") == "cull_recording":
+        cuerpo.setdefault("cull_cause_id", await causa_desconocida(client, headers, "cull-causes"))
     return await client.post("/api/v1/operations", headers=headers, json=cuerpo)
 
 
@@ -117,9 +129,9 @@ async def test_hatchery_siguiente_paso_de_incubacion(auth_headers, http_client, 
     assert r.status_code == 400 and r.json().get("rule") == "BR-03", r.text
     f = await _fila(http_client, auth_headers, b, l1)
     assert f["opening"]["hatchery"]["eggs_received"] == 10000 and f["post"]["eggs_loaded"] == 1000
-    # SPEC 018 · D-4 + §7 D-12 (OD-HATCH-V4-01 RATIFIED): los no incubables no restan de
-    # `eggs_in_process` (nunca entraron en el set) y la fosa POST-CARGA (0 KNOWN aquí) tampoco añade
-    # nada: en proceso = `set − transferred − fosa` + cargas post-corte. Saldo recibido→cargado = 0.
+    # SPEC 018 · D-4 + §9 D-23 (OD-HATCH-V4-02 RATIFIED): los no incubables y la fosa son PRE-CARGA y
+    # no restan de `eggs_in_process` (nunca entraron en el set): en proceso = `set − transferred` +
+    # cargas post-corte. Saldo recibido→cargado = 0.
     assert f["current"]["eggs_available_hatchery"] == 0 and f["current"]["eggs_in_process"] == 10000
     # Pollitos ya nacidos y disponibles al corte se despachan (viables = 500 + nacimientos − salidas).
     # BR-08: el despacho declara la granja/galpón de destino.

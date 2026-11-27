@@ -35,6 +35,7 @@ RED esperado en HEAD: 01/02/03 rojos (201/201/null), 04/05 verdes.
 from __future__ import annotations
 
 import uuid
+from datetime import datetime, time, timezone
 
 import pytest
 import pytest_asyncio
@@ -46,7 +47,7 @@ import app.business_units.models  # noqa: F401
 import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.time_reference import days_ago, recent_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -131,7 +132,10 @@ async def esc(test_database_url):
         await s.flush()
         lote = Lot(company_id=a.id, lot_code=f"{PREFIJO}L-{uuid.uuid4().hex[:6]}",
                    bird_type=BirdTypeEnum.BREEDER, status=LotStatus.ACTIVE,
-                   farm_id=None)
+                   farm_id=None,
+                   # `SPEC 020 §6` · `RR-30`: el evento con lote deriva su semana productiva, y
+                   # eso exige una fecha de inicio anterior a él.
+                   start_date=datetime.combine(days_ago(60), time.min, tzinfo=timezone.utc))
         s.add(lote)
         await s.flush()
         await s.commit()

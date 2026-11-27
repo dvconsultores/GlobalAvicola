@@ -8,6 +8,7 @@
  * demuestra el proceso de extremo a extremo.
  */
 import { test, expect, type APIRequestContext } from '@playwright/test'
+import { causaDesconocida } from '../test-support/e2e-api'
 
 const API = 'http://127.0.0.1:8099/api/v1'
 
@@ -85,6 +86,7 @@ test.describe('Proceso 02 · Control de producción diario', () => {
       headers: cabecera,
       data: {
         lot_id: 2, event_type: 'mortality_recording', event_date: hoy(),
+        cause_id: await causaDesconocida(request, cabecera),
         bird_movements: [{ sex: 'mixed', quantity: saldo + 1 }],
       },
     })
@@ -101,6 +103,7 @@ test.describe('Proceso 02 · Control de producción diario', () => {
       headers: cabecera,
       data: {
         lot_id: 2, event_type: 'mortality_recording', event_date: hoy(),
+        cause_id: await causaDesconocida(request, cabecera),
         bird_movements: [{ sex: 'mixed', quantity: 0 }],
       },
     })
@@ -124,6 +127,7 @@ test.describe('Proceso 02 · Control de producción diario', () => {
       headers: cabecera,
       data: {
         lot_id: 1, event_type: 'mortality_recording', event_date: hoy(),
+        cause_id: await causaDesconocida(request, cabecera),
         bird_movements: [{ sex: 'mixed', quantity: cantidad }],
       },
     })
@@ -198,6 +202,7 @@ test.describe('Proceso 02 · Control de producción diario', () => {
       data: {
         lot_id: (await lote.json()).id, event_type: 'mortality_recording',
         event_date: hoy(), bird_movements: [{ sex: 'mixed', quantity: 1 }],
+        cause_id: await causaDesconocida(request, cabecera),
       },
     })
     expect(r.status()).toBeGreaterThanOrEqual(400)

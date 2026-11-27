@@ -1,7 +1,8 @@
 /**
- * `F4` (AC-S1-F01) · RED jsdom — el filtro «Lote» de Revisión y Aprobaciones espera
- * 400 ms antes de pedir y valida el formato en cliente: si no son dígitos no se
- * consulta con ese filtro y se muestra UN único aviso en español.
+ * `F4` (AC-S1-F01) + `SPEC 020` (AC-S2-R03) · RED jsdom — el filtro «Lote» de Revisión
+ * y Aprobaciones espera 400 ms antes de pedir y viaja como CÓDIGO parcial (`lot_code`,
+ * el backend lo acepta sin distinguir mayúsculas); `lot_id` deja de usarse y ya no hay
+ * aviso de formato numérico.
  */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen, waitFor, fireEvent } from '@testing-library/react'
@@ -15,13 +16,22 @@ vi.mock('../../../services/api', () => ({
     put: vi.fn(), patch: vi.fn(), delete: vi.fn(),
   },
 }))
+const mocks = vi.hoisted(() => {
+  const toastError = vi.fn()
+  // `t` y `toast` deben ser referencias ESTABLES: si cambian de identidad en cada
+  // render, `fetchEvents` (que depende de ellas) se re-dispara en bucle y el conteo
+  // de peticiones por ráfaga deja de ser medible.
+  const t = (k: string, f?: any) => (typeof f === 'string' ? f : k)
+  const toast = { success: vi.fn(), error: toastError, warning: vi.fn(), info: vi.fn() }
+  return { toastError, t, toast }
+})
+const toastError = mocks.toastError
 vi.mock('react-i18next', () => ({
-  useTranslation: () => ({ t: (k: string, f?: any) => (typeof f === 'string' ? f : k) }),
+  useTranslation: () => ({ t: mocks.t }),
 }))
-const toastError = vi.fn()
 vi.mock('../../../components/Toast', async (importOriginal) => {
   const actual = await importOriginal<any>()
-  return { ...actual, useToast: () => ({ success: vi.fn(), error: toastError, warning: vi.fn(), info: vi.fn() }) }
+  return { ...actual, useToast: () => mocks.toast }
 })
 
 import ReviewCenter from '../ReviewCenter'
@@ -75,34 +85,23 @@ const renderApprovals = () => render(
 )
 
 describe('F4 · filtro de lote de Revisión', () => {
-  it('texto no numérico ⇒ ninguna petición con `lot_id` y un aviso en español', async () => {
+  it('código no numérico ⇒ se consulta con `lot_code` tras el debounce, sin aviso de formato', async () => {
     setSession(['review:read', 'review:review'])
     renderReview()
     await waitFor(() => expect(llamadasA('/review/pending').length).toBe(1))
 
-    fireEvent.change(screen.getByTestId('review-filter-lot'), { target: { value: 'abc' } })
-
-    expect(await screen.findByTestId('lot-filter-hint', {}, { timeout: 2000 })).toBeTruthy()
-    expect(screen.getByTestId('lot-filter-hint').textContent).toBe('Escriba el ID numérico del lote (solo dígitos)')
-    // El aviso es único (no se duplica uno por carácter).
-    expect(screen.getAllByTestId('lot-filter-hint').length).toBe(1)
-    expect(screen.queryByText(/Input should be/i)).toBeNull()
-    expect(llamadasA('/review/pending').some((u) => u.includes('lot_id=abc'))).toBe(false)
-    expect(toastError).not.toHaveBeenCalled()
-  })
-
-  it('ID numérico ⇒ se consulta con `lot_id` tras el debounce', async () => {
-    setSession(['review:read', 'review:review'])
-    renderReview()
-    await waitFor(() => expect(llamadasA('/review/pending').length).toBe(1))
-
-    fireEvent.change(screen.getByTestId('review-filter-lot'), { target: { value: '12' } })
+    fireEvent.change(screen.getByTestId('review-filter-lot'), { target: { value: 'lt-01' } })
 
     await waitFor(
-      () => expect(llamadasA('/review/pending').some((u) => u.includes('lot_id=12'))).toBe(true),
+      () => expect(llamadasA('/review/pending').some((u) => u.includes('lot_code=lt-01'))).toBe(true),
       { timeout: 2000 },
     )
+    // Sin avisos duplicados: el mensaje de formato numérico ya no existe.
     expect(screen.queryByTestId('lot-filter-hint')).toBeNull()
+    expect(screen.queryByRole('alert')).toBeNull()
+    expect(screen.queryByText(/Input should be/i)).toBeNull()
+    expect(llamadasA('/review/pending').some((u) => u.includes('lot_id='))).toBe(false)
+    expect(toastError).not.toHaveBeenCalled()
   })
 
   it('tres caracteres seguidos ⇒ una sola petición extra (sin ráfaga)', async () => {
@@ -112,12 +111,12 @@ describe('F4 · filtro de lote de Revisión', () => {
     const antes = llamadasA('/review/pending').length
 
     const input = screen.getByTestId('review-filter-lot')
-    fireEvent.change(input, { target: { value: '1' } })
-    fireEvent.change(input, { target: { value: '12' } })
-    fireEvent.change(input, { target: { value: '123' } })
+    fireEvent.change(input, { target: { value: 'l' } })
+    fireEvent.change(input, { target: { value: 'lt' } })
+    fireEvent.change(input, { target: { value: 'lt-1' } })
 
     await waitFor(
-      () => expect(llamadasA('/review/pending').some((u) => u.includes('lot_id=123'))).toBe(true),
+      () => expect(llamadasA('/review/pending').some((u) => u.includes('lot_code=lt-1'))).toBe(true),
       { timeout: 2000 },
     )
     expect(llamadasA('/review/pending').length - antes, 'peticiones por la ráfaga').toBe(1)
@@ -125,28 +124,37 @@ describe('F4 · filtro de lote de Revisión', () => {
 })
 
 describe('F4 · filtro de lote de Aprobaciones', () => {
-  it('texto no numérico ⇒ no viaja `lot_id` y se avisa en español una sola vez', async () => {
+  it('código no numérico ⇒ viaja `lot_code` tras el debounce y nunca `lot_id`', async () => {
     setSession(['approvals:approve'])
     renderApprovals()
     await waitFor(() => expect(llamadasA('/approvals/pending').length).toBe(1))
 
     fireEvent.change(screen.getByTestId('approval-filter-lot'), { target: { value: 'lt-01' } })
 
-    expect(await screen.findByTestId('lot-filter-hint', {}, { timeout: 2000 })).toBeTruthy()
-    expect(llamadasA('/approvals/pending').some((u) => u.includes('lot_id=lt-01'))).toBe(false)
+    await waitFor(
+      () => expect(llamadasA('/approvals/pending').some((u) => u.includes('lot_code=lt-01'))).toBe(true),
+      { timeout: 2000 },
+    )
+    expect(screen.queryByTestId('lot-filter-hint')).toBeNull()
+    expect(llamadasA('/approvals/pending').some((u) => u.includes('lot_id='))).toBe(false)
     expect(toastError).not.toHaveBeenCalled()
   })
 
-  it('ID numérico ⇒ consulta con `lot_id` tras el debounce', async () => {
+  it('tres caracteres seguidos ⇒ una sola petición extra', async () => {
     setSession(['approvals:approve'])
     renderApprovals()
     await waitFor(() => expect(llamadasA('/approvals/pending').length).toBe(1))
+    const antes = llamadasA('/approvals/pending').length
 
-    fireEvent.change(screen.getByTestId('approval-filter-lot'), { target: { value: '12' } })
+    const input = screen.getByTestId('approval-filter-lot')
+    fireEvent.change(input, { target: { value: 'L' } })
+    fireEvent.change(input, { target: { value: 'L-' } })
+    fireEvent.change(input, { target: { value: 'L-0' } })
 
     await waitFor(
-      () => expect(llamadasA('/approvals/pending').some((u) => u.includes('lot_id=12'))).toBe(true),
+      () => expect(llamadasA('/approvals/pending').some((u) => u.includes('lot_code=L-0'))).toBe(true),
       { timeout: 2000 },
     )
+    expect(llamadasA('/approvals/pending').length - antes).toBe(1)
   })
 })

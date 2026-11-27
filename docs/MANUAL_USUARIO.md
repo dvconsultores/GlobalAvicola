@@ -199,27 +199,37 @@ Esta sección resume los cambios que notarás al registrar y revisar operaciones
 
 Al corregir un registro, el formulario ofrece **solo los campos realmente corregibles** de ese evento (por ejemplo «Peso promedio · fila 1 (Macho)»). El **valor original es de solo lectura**, se exige un **motivo de al menos 5 caracteres** y el historial del evento muestra el cambio como **original → corregido**, con usuario y fecha. La cantidad recibida de un lote de reproductoras **no se corrige de forma aislada**: es la identidad del lote y se ajusta con la operación que corresponda.
 
+Los campos que apuntan a un catálogo —proveedor, medicamento, vacuna, causas de mortalidad o descarte, transporte, granja o planta de destino— muestran el **nombre** actual y se corrigen **eligiendo de una lista** del catálogo; nunca se escribe un código. Una corrección **no puede saltarse las reglas del campo**: por ejemplo, el tamaño de muestra debe ser mayor que 0 y, en una recepción, no mayor que las aves recibidas; las dosis y los días de tratamiento no pueden ser negativos; y la fecha del evento no puede quedar vacía. Los avisos de error nombran el campo como lo ves en pantalla (por ejemplo «Peso promedio»). Quien corrige un registro **no puede aprobarlo**: lo aprueba otra persona.
+
+El **tipo de corrección es obligatorio** en toda corrección nueva: sin elegirlo el formulario avisa «Seleccione el tipo de corrección» y no envía nada. La lista solo ofrece los tipos de corrección **activos** del catálogo. Las correcciones anteriores que no lo tienen se siguen leyendo. Si corriges la **fecha** de un pesaje, una mortalidad, un descarte o un consumo de alimento, la **semana** (y la fase del alimento) se **recalculan** con la nueva fecha; la semana ya no se corrige a mano. Una corrección tampoco puede **vaciar** el lote de la vacuna ni la causa de una mortalidad o un descarte.
+
+Si un dato de catálogo **quedó vacío** al registrar (por ejemplo, una recepción sin proveedor), puedes **completarlo** con una corrección: elige el campo, verás «Valor original: Sin valor», y selecciona el registro correcto de la lista. La lista solo muestra registros **activos** de tu empresa, con su código y nombre (por ejemplo «PROV-001 — Proveedor ABC»). Solo se ofrecen los campos que corresponden a esa operación (una recepción ofrece proveedor, no vacuna). El historial lo muestra como «Proveedor: Sin valor → "Proveedor ABC"».
+
 ### 9.2 · Datos obligatorios por operación
 
 Los campos obligatorios llevan un «*» en el formulario. El detalle por operación es:
 
 | Operación | Qué debes completar |
 |---|---|
-| Inspección de granja | Granja y galpón |
+| Inspección de granja | Granja y galpón, y **al menos un dato**: un valor medido (temperatura, humedad), una condición de cama, una nota o equipo observado, una observación o una evidencia. Una inspección completamente vacía no se guarda; el lote sigue siendo opcional (nivel granja) |
 | Recepción de reproductoras | Aves recibidas, muertas al arribo y rechazadas, cuadradas con las aves alojadas |
-| Distribución | Granja y galpón |
-| Alimento | Kilogramos mayores que 0 |
+| Distribución | Granja y galpón, y **aves**: la suma de las aves distribuidas debe ser mayor que 0 (una distribución de cero aves no mueve nada y se rechaza); siguen rigiendo el saldo y la capacidad del galpón |
+| Alimento | **Tipo de alimento** y kilogramos mayores que 0. La **fase** no se escribe: es la fase productiva vigente del lote en la fecha del evento |
 | Agua | Litros mayores que 0 |
 | Pesaje | Peso promedio mayor que 0 |
-| Vacunación | Vacuna |
+| Vacunación | Vacuna y **lote de la vacuna** (texto; solo espacios no cuenta) |
 | Medicación | Medicamento |
-| Mortalidad / Descarte / Salida | Cantidad mayor que 0 y no mayor al saldo de aves vivas; el transporte de la salida es opcional |
+| Mortalidad / Descarte / Salida | Cantidad mayor que 0 y no mayor al saldo de aves vivas; el transporte de la salida es opcional. La **mortalidad** y el **descarte** exigen además su **causa**: si no se pudo determinar, elige «Desconocida» (dejarla vacía no es lo mismo) |
 
-El campo «Semana» **no se rellena solo**: es opcional y el «Ej.: 12» que aparece dentro del campo es solo una ayuda.
+La **Semana** ya no se escribe: en pesaje, mortalidad, descarte y alimento aparece como «Semana N» de **solo lectura** y la calcula el sistema con la **edad del lote** (semana 1 = días 0 a 6 desde el inicio del lote, no la semana del calendario). Si el lote no tiene fecha de inicio, o el evento es anterior a ella, el registro se rechaza con el aviso «Fecha del lote incompleta» en lugar de inventar una semana. Para registrar **alimento** el lote necesita una **fase productiva vigente** en esa fecha (se registra desde el detalle del lote); si no la tiene, el sistema lo avisa y no la inventa.
+
+**Muestra tomada** (recepción) y **Aves pesadas** (pesaje): son opcionales, pero si las registras deben ser mayores que 0; en la recepción no pueden superar las aves recibidas.
 
 ### 9.3 · Inspección de granja sin lote
 
-Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja no tiene una cadena productiva inequívoca, el registro queda en **Pendientes de clasificar** (botón en Historial), donde se ve con su granja y galpón. La clasificación desde la pantalla todavía no está disponible: la gestiona el equipo de soporte.
+Si la granja tiene lotes de una sola cadena, el registro se atribuye a esa unidad de negocio y aparece en **Historial** y en **Revisión**. Si la granja no tiene una cadena productiva inequívoca, el registro queda en **Pendientes de clasificar** (botón en Historial), donde se ve con su granja y galpón. La clasificación se hace desde esa misma pantalla, indicando el código de la unidad de negocio y un motivo, y queda auditada (requiere el permiso de administración de maestros).
+
+Una inspección de granja es un evento de **nivel granja**: aunque se clasifique o se apruebe, **no se le asigna un lote** (en el Historial la columna Lote dice «Sin lote (nivel granja)»). Clasificarla solo la atribuye a una unidad de negocio; no es lo mismo que asignarle un lote. El texto «Se creará al aprobar» aparece únicamente en la importación de abuelas, que sí crea su lote al aprobarse.
 
 ### 9.4 · Reportes
 
@@ -231,4 +241,8 @@ Solo se muestran las pestañas de las **unidades de negocio asignadas** a tu usu
 
 ### 9.6 · Filtros y avisos
 
-El filtro por lote espera un instante antes de consultar y muestra **un solo aviso** si el código no es válido. Los **avisos (toasts)** quedan siempre visibles por encima de los cuadros de diálogo, y el **rechazo de un registro exige escribir el motivo dentro del cuadro** (al menos 10 caracteres).
+Los filtros de lote de **Historial, Revisión y Aprobaciones** buscan por el **código del lote** —basta escribir una parte, sin distinguir mayúsculas— y esperan un instante antes de consultar. En el Centro de Revisión el rango de fechas avisa, **una sola vez y en español**, si la fecha inicial es posterior a la final, y acepta indicar solo el inicio, solo el fin o un único día. Los **avisos (toasts)** quedan siempre visibles por encima de los cuadros de diálogo, y el **rechazo de un registro exige escribir el motivo dentro del cuadro** (al menos 10 caracteres).
+
+### 9.7 · Registros anteriores
+
+Las reglas anteriores aplican a lo que se **registra o corrige desde ahora**. Los registros históricos que no tienen lote de vacuna, causa, tipo de alimento, semana o tipo de corrección **se siguen leyendo, auditando y reportando** tal como estaban: no se rellenan ni se inventan valores.

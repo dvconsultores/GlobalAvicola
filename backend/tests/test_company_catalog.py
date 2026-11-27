@@ -271,6 +271,8 @@ def test_t10_ac20_ac21_sin_migracion_y_sin_conector():
     # cutover v2). Se preserva la invariante de cabeza única y se fija la cabeza vigente.
     assert len(cabezas) == 1, cabezas
     # SPEC 018 avanza la cabeza a h3c4d5e6f7a8 (desglose de no incubables y fosa en hatchery_openings).
-    assert cabezas == ["h3c4d5e6f7a8"], cabezas
+    # SPEC 020 §6 avanza la cabeza a i4d5e6f7a8b9: columna feed_movements.phase_id y causa
+    # compartida 'Desconocida'.
+    assert cabezas == ["i4d5e6f7a8b9"], cabezas
     assert isinstance(Company.__table__.c.sap_config.type, String)
     assert settings.SAP_ADAPTER in ("manual", "mock")

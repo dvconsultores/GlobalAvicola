@@ -29,7 +29,7 @@ export default function ApprovalPanel() {
  const [events, setEvents] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [total, setTotal] = useState(0)
- const [lotId, setLotId] = useState('')
+ const [lotCode, setLotCode] = useState('')
  const [farmId, setFarmId] = useState('')
  const [farms, setFarms] = useState<any[]>([])
  const [page, setPage] = useState(0)
@@ -43,15 +43,15 @@ export default function ApprovalPanel() {
  const [singleRejectId, setSingleRejectId] = useState<number | null>(null)
  const limit = 20
 
- // `F4` (AC-S1-F01): 400 ms de espera y validación de formato antes de pedir.
- const lotIdDebounced = useDebouncedValue(lotId.trim(), 400)
- const lotIdInvalido = lotIdDebounced !== '' && !/^\d+$/.test(lotIdDebounced)
+ // `F4` (AC-S1-F01): 400 ms de espera antes de pedir. `SPEC 020` (AC-S2-R03): el
+ // filtro viaja como CÓDIGO parcial (`lot_code`); `lot_id` deja de usarse.
+ const lotCodeDebounced = useDebouncedValue(lotCode.trim(), 400)
 
  const fetchEvents = useCallback(async () => {
  setLoading(true)
  try {
  const params = new URLSearchParams({ limit: String(limit), offset: String(page * limit) })
- if (lotIdDebounced && !lotIdInvalido) params.set('lot_id', lotIdDebounced)
+ if (lotCodeDebounced) params.set('lot_code', lotCodeDebounced)
  if (farmId) params.set('farm_id', farmId)
  const { data } = await api.get(`/approvals/pending?${params}`)
  setEvents(data.events || [])
@@ -61,7 +61,7 @@ export default function ApprovalPanel() {
  } finally {
  setLoading(false)
  }
- }, [lotIdDebounced, lotIdInvalido, farmId, page, t, toast])
+ }, [lotCodeDebounced, farmId, page, t, toast])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
 
@@ -219,20 +219,14 @@ export default function ApprovalPanel() {
  <FilterGroup label={t('review.lot', 'Lote')}>
  <input
  type="text"
- inputMode="numeric"
- placeholder={t('review.lotFilterPlaceholder', 'ID del lote')}
- value={lotId}
- onChange={e => { setLotId(e.target.value); setPage(0) }}
- aria-label={t('review.lotFilterPlaceholder', 'ID del lote')}
- aria-invalid={lotIdInvalido}
+ maxLength={50}
+ placeholder={t('review.lotFilterPlaceholder', 'Ej.: L-0001')}
+ value={lotCode}
+ onChange={e => { setLotCode(e.target.value); setPage(0) }}
+ aria-label={t('review.lotCodeLabel', 'Código de lote')}
  data-testid="approval-filter-lot"
- className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+ className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-36 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
- {lotIdInvalido && (
- <span role="alert" data-testid="lot-filter-hint" className="text-xs text-amber-700">
- {t('review.lotFilterNumeric', 'Escriba el ID numérico del lote (solo dígitos)')}
- </span>
- )}
  </FilterGroup>
 
  {/* `QA-015`: filtro por granja — viaja como `farm_id` a /approvals/pending. */}

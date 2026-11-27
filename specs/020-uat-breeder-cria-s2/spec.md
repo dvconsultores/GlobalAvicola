@@ -1,0 +1,133 @@
+# SPEC 020 — UAT Gestión Avícola · Reproductoras/Cría · Sesión 2
+**Identificador:** `GA-UAT-BREEDER-CRIA-S2-2026-11-24` · **Fecha:** 2026-11-24
+**Tipo:** enmienda mínima a `GA-REM-006` (correcciones), `GA-REM-021` (datos de operación) y a los filtros del Centro de Revisión. No es arquitectura nueva. Sin migración (cabeza Alembic `h3c4d5e6f7a8`).
+**Entrada:** UAT de Yolinel del 24-11-2026 (empresa `QA Avícola Integral. C.A.`, usuarios `qa.admin` y `qa.pruebas.unidades`) sobre lo entregado en la Sesión 1 (SPEC 015).
+**Baseline:** `develop` = `00fd162` (= runtime UAT, build del 22-11-2026 23:09Z); `main` = `1587073` (merge del PR #2, contiene develop).
+**Fuera de alcance:** Cargas Iniciales, Progenitoras V3, Incubadora V4, O-19, SAP, workflows, ramas, PR y producción.
+
+## 1. Gate 0 — runtime probado
+El PDF no trae marca de versión (`YOLINEL_BACKEND_SHA` / `YOLINEL_FRONTEND_SHA` = `NOT_ACCESSIBLE`, inferido y no medido). Su historial de corrección está sellado 22/11/2026 15:22 (hora Caracas), antes del build `00fd162`: probó un build intermedio entre `8531d95` y `00fd162`, todos descendientes de la entrega de la Sesión 1 (`562c346`). Sus capturas muestran funciones de la Sesión 1 (campos corregibles por fila, código de lote en las listas, mínimos de pesaje, vacunación y alimento).
+
+```
+DEPLOYMENT_MISMATCH = NO · SESSION2_FINDINGS_VALID_FOR_CODE = YES · SESSION1_REGRESSION = NO
+```
+Cierre incompleto de la Sesión 1: `S1-ID-02` (filtro por código de lote) solo llegó al Historial, no a Revisión ni a Aprobaciones.
+
+## 2. Hallazgos y disposición
+| ID | Hallazgo | Clasificación | Disposición |
+|---|---|---|---|
+| **S2-A1/A2** | Corrección: el campo de maestro muestra el ID y no hay selector (8 campos: `supplier_id`, `cause_id`, `cull_cause_id`, `vaccine_id`, `medication_id`, `destination_farm_id`, `destination_plant_id`, `transport_id`) | UX / NEW_REQUIREMENT (observación O-4 de la Sesión 1) | FIX (P2) |
+| **S2-A3** | Corrección acepta tamaño de muestra negativo | **BUG P1** | FIX |
+| S2-A3b | Corrección de peso promedio negativo | EXPECTED (ya da 400; solo falla el nombre técnico, ver A5) | NO-OP + test pin |
+| S2-A4 | Corrección con peso promedio vacío se guarda | EXPECTED (`avg_weight` es opcional en recepción) | FIX parcial: campos no vaciables explícitos |
+| **S2-A5** | Mensajes con nombre técnico (`bird_movements[642].avg_weight`) | UX P2 | FIX |
+| S2-A6 | Corrección sin Tipo de corrección | OWNER_DECISION_REQUIRED (nullable en BD y esquema; ningún SPEC lo exige) | `OD-S2-01` |
+| **S2-B1** | Filtro de lote de Revisión y Aprobaciones pide ID | UX P2 · cierre incompleto de S1-ID-02 | FIX |
+| **S2-B2** | Cualquier rango de fechas en Revisión da error y no filtra | **BUG P2** | FIX |
+| S2-C1 | Inspección de granja se guarda sin ningún valor | OWNER_DECISION_REQUIRED (contrato vigente S1 §4.2: granja + galpón + fecha) | `OD-S2-02` |
+| S2-C2 | Inspección aprobada sigue sin lote | EXPECTED (decisión D1) + **BUG de UX P2**: la lista muestra «Se creará al aprobar» a cualquier evento sin lote | FIX del texto |
+| S2-D1 | Recepción se guarda con proveedor, línea, galpón por fila y peso vacíos | EXPECTED (opcionales; `BR-08` y `BR-20` vigentes) | NO-OP |
+| **S2-D2** | Recepción acepta muestra mayor que lo recibido | **BUG P1** | FIX |
+| S2-E | Distribución se guarda con cero aves | OWNER_DECISION_REQUIRED (mortalidad, descarte, salida y despachos rechazan el cero; la distribución no tiene regla) | `OD-S2-03` |
+| S2-F | Alimento sin Fase ni Tipo de alimento | EXPECTED (D2 de S1: solo kg > 0, `RR-23`) | NO-OP |
+| S2-G | Pesaje sin Semana | OWNER_DECISION_REQUIRED | `OD-S2-04` |
+| S2-H | Vacunación sin lote de vacuna | OWNER_DECISION_REQUIRED | `OD-S2-05` |
+| S2-I/J | Mortalidad y descarte sin causa ni semana | OWNER_DECISION_REQUIRED | `OD-S2-06` y `OD-S2-04` |
+| S2-I/J-b | Mortalidad/descarte «con todos los campos vacíos» | NOT_REPRODUCED (las capturas muestran cantidades cargadas; la mortalidad vacía sigue dando 400, `S1-MORT`) | NO-OP |
+
+## 3. Criterios de aceptación
+### 3.1 Validación de escritura (alta, edición y corrección comparten las mismas funciones)
+| AC | Enunciado |
+|---|---|
+| **AC-S2-V01** | `RR-24` · `sample_size`, si se declara, es entero ≥ 1 (vacío = ausente; 0 y negativos ⇒ 400: «El tamaño de muestra debe ser mayor a cero»). Alta, edición y corrección; `bird_reception` y `weight_recording`. |
+| **AC-S2-V02** | `RR-25` · En `bird_reception`, `sample_size` ≤ población recibida. Población = `received_total` si está declarado; si no, Σ `quantity` de `bird_movements` + `dead_on_arrival` (si se declaró). Igual ⇒ permitido; menor ⇒ permitido; mayor ⇒ 400 «La muestra tomada no puede superar las aves recibidas (N)»; población 0 con muestra declarada ⇒ 400. En `weight_recording` solo rige V01. La corrección revalida contra el estado persistido; el `PUT` evalúa el estado candidato. |
+| **AC-S2-V03** | `RR-26` · `dosage_per_bird` ≥ 0 y `treatment_days` ≥ 0 en alta, edición y corrección. `chicks_healthy` / `chicks_weak` negativos ⇒ 400 también al corregir. |
+| **AC-S2-V04** | Restricción de diseño: estas restricciones viven en las rutas de escritura (validadores y esquemas Create/Update), **no** en `OperationalEventBase` ni `OperationalEventRead`: hay filas históricas inválidas (p. ej. el evento 1115 de UAT con `sample_size = -1`) que deben seguir leyéndose. Ese dato no se toca. |
+
+### 3.2 Correcciones
+| AC | Enunciado |
+|---|---|
+| **AC-S2-C01** | La corrección de un campo del evento hereda el contrato del campo: el valor corregido se valida con las mismas reglas que el alta/edición (restricciones de `OperationalEventUpdate` y V01..V03), de modo que VALID(original) == VALID(corregido). |
+| **AC-S2-C02** | Campos no vaciables: vaciar `event_date` ⇒ 400 en español; los que el contrato del tipo exige (`water_liters`, `vaccine_id`, `medication_id`, peso del pesaje) siguen sin poder vaciarse; los opcionales (p. ej. `avg_weight` de recepción, `sample_size`, `observations`, proveedor) sí. |
+| **AC-S2-C03** | Todo error de una corrección usa el nombre funcional del campo en español (`sample_size` ⇒ «Tamaño de muestra», `avg_weight` ⇒ «Peso promedio», `week_number` ⇒ «Semana», `quantity` ⇒ «Cantidad», `quantity_kg` ⇒ «Cantidad de alimento (kg)», `water_liters` ⇒ «Litros de agua», `event_date` ⇒ «Fecha del evento», …) y nunca `bird_movements[..]`, `feed_movements[..]` ni nombres de columna. Excepción: el 400 de campo no corregible conserva los identificadores técnicos (contrato de API de la Sesión 1, `AC-S1-C03`; la UI no puede provocarlo). |
+| **AC-S2-C04** | `GET /corrections/events/{id}/correctable-fields` añade, para los 8 campos de maestro, `master` (clave del catálogo: `suppliers`, `mortality-causes`, `cull-causes`, `vaccines`, `medications`, `farms`, `processing-plants`, `transports`) y `current_display` (nombre del registro actual); `current_value` sigue siendo el id (auditoría). |
+| **AC-S2-C05** | `CorrectionRead` añade `original_display` y `corrected_display` (opcionales, calculados al leer) para que el historial muestre nombres y no ids en los campos de maestro. |
+| **AC-S2-C06** | La referencia de maestro corregida debe pertenecer a la empresa (`BR-07`, ya garantizado por `verificar_destino_de_edicion`): un test lo fija. |
+| **AC-S2-C07** | El formulario de corrección muestra un selector controlado (lista del catálogo) para los campos de maestro, con el valor actual por nombre; nunca un campo libre de ids. |
+
+### 3.3 Filtros de Revisión
+| AC | Enunciado |
+|---|---|
+| **AC-S2-R01** | `GET /review/pending` y `GET /approvals/pending` aceptan `lot_code` (parcial, insensible a mayúsculas, con escape de `%` y `_`, mismo patrón que `GET /operations`) dentro del alcance de empresa y unidad; `lot_id` se conserva. |
+| **AC-S2-R02** | `date_from` y `date_to` de `GET /review/pending` se tipan como fecha; límites inclusivos; solo inicio, solo fin, mismo día y rango válido ⇒ 200 y filtran; inicio > fin ⇒ 400 «La fecha inicial no puede ser posterior a la fecha final». `/approvals/pending` no declara fechas y no las gana en este ciclo. |
+| **AC-S2-R03** | `ReviewCenter` y `ApprovalPanel` filtran por **código** de lote (texto, debounce 400 ms, sin validación numérica); el rango de fechas valida inicio ≤ fin en el cliente con un único mensaje en español. |
+
+### 3.4 UX de inspección
+| AC | Enunciado |
+|---|---|
+| **AC-S2-U01** | En la lista de Operaciones la celda Lote muestra el código; sin lote: «Se creará al aprobar» solo para `grandparent_import`; para cualquier otro evento «Sin lote (nivel granja)» (claves i18n `es` y `en` en `frontend/public/locales/{es,en}/translation.json`). |
+
+## 4. Decisiones Owner pendientes
+| ID | Decisión | Recomendación |
+|---|---|---|
+| **OD-S2-01** | Tipo de corrección obligatorio | Sí, solo para correcciones nuevas, en cliente y servidor |
+| **OD-S2-02** | Contenido mínimo de la inspección de granja | A definir por la Owner |
+| **OD-S2-03** | Distribución: suma de aves > 0 | Sí, como el resto de movimientos de aves |
+| **OD-S2-04** | Semana: obligatoria vs derivada de la fecha y el inicio del lote (pesaje, mortalidad, descarte) | Derivada y editable |
+| **OD-S2-05** | Lote de vacuna obligatorio | No hasta definir la trazabilidad sanitaria |
+| **OD-S2-06** | Causa de mortalidad/descarte obligatoria | Sí, con valor desconocido/otra válido |
+
+## 5. Pruebas esperadas
+Backend: `CORR-S2-01..10` (proveedor por descripción, selector de proveedor, selector de medicamento, muestra negativa DENY, peso negativo DENY, vaciar requerido DENY, vaciar anulable ALLOW, nombres funcionales, auditoría original→corregido preservada, referencia de otra empresa DENY), `REV-S2-01..05` (código de lote, rango válido, un solo día, rango inválido, Aprobaciones con el contrato de lote) y `OPS-S2-01..11` (pines del contrato vigente: inspección mínima, inspección sin contenido permitida hasta decisión, recepción mínima, muestra mayor DENY / igual / menor ALLOW, distribución vacía permitida hasta decisión, alimento mínimo, pesaje con semana manual o vacía, vacunación sin lote de vacuna, mortalidad mínima, descarte mínimo).
+Frontend: selector de maestro y nombres en el formulario de corrección, filtros por código y rango de fechas, texto de la celda Lote.
+E2E: Recepción → Revisión → Corrección → Aprobación (maestro original, cambio de maestro por selector, campo numérico, error de rango, auditoría) y los eventos operativos con mínimos válidos y negativos.
+Cierre: regresión completa sin tests relajados, sensibilidad tras el commit de implementación y restauración explícita por SHA.
+
+## 6. Cierre de las decisiones Owner (ratificadas el 25-11-2026)
+
+`OD-S2-01..07 = RATIFIED`. Las reglas viven en las rutas de escritura (alta, edición `PUT` y corrección comparten las mismas funciones), **no** en los esquemas de lectura: los históricos incompletos siguen siendo legibles y no se rellenan (sin *backfill*). En edición y corrección, una regla de campo se evalúa cuando la modificación **toca** ese campo (no se puede vaciar ni dejar inválido), de modo que un histórico sin ese dato puede seguir corrigiéndose en otros campos.
+
+| Regla | Decisión | Contrato |
+|---|---|---|
+| **RR-27** | OD-S2-01 | `POST /corrections` exige `correction_type_id` (ni ausente, ni `null`, ni `0`); debe existir en el catálogo `correction_types` activo y alcanzable (empresa o compartido). 400 en español. `CorrectionRead` sigue admitiendo `null` en las históricas. Frontend: selector obligatorio. |
+| **RR-28** | OD-S2-02 | Una `farm_inspection` exige contenido: al menos UNO de (a) un `inspection_details` con contenido (`value` con texto tras `trim`, `value_numeric` informado o un `status` elegido; un parámetro sin valor ni estado no cuenta), (b) `observations` con texto tras `trim`, (c) una evidencia ya adjunta al evento. Los valores por defecto/técnicos de la UI no cuentan. `lot_id = NULL` sigue permitido. Limitación: la evidencia se adjunta con posterioridad al alta (`POST /operations/{id}/evidences`), de modo que en el **alta** solo (a) y (b) son alcanzables; (c) cuenta al evaluar una edición/corrección de un evento que ya tiene evidencia (observación O-26). |
+| **RR-29** | OD-S2-03 | `bird_distribution`: al menos un movimiento de aves, cada `quantity ≥ 0` y `Σ quantity > 0`; no se fabrican movimientos cero. Se conservan intactas las validaciones de saldo y capacidad. Aplica a alta, edición y corrección. |
+| **RR-30** | OD-S2-04 | `week_number` es **derivado y no editable** para `mortality_recording`, `cull_recording`, `weight_recording` y `feed_registration`. Función canónica única `semana_productiva(inicio_lote, fecha_evento) = (fecha_evento − inicio_lote).days // 7 + 1` (semana 1 = días 0–6 de vida del lote; **no** es la semana ISO). Fecha base: `lots.start_date` (la misma con la que el sistema calcula la edad del lote, p. ej. la curva de peso). El valor que mande el cliente se ignora. Cambiar `event_date` (edición o corrección) recalcula las semanas de todas las filas del evento. Sin `start_date` en el lote, o evento anterior al inicio: 400 con regla `RR-30` y mensaje «Fecha del lote incompleta…» (`LOT_DATE_INCOMPLETE`); no se inventa semana. `week_number` deja de ser campo corregible para esos cuatro tipos. Los históricos conservan su valor. |
+| **RR-31** | OD-S2-05 | `vaccination` nueva exige `vaccine_lot_number` con texto tras `trim`; una edición o corrección no puede vaciarlo. Históricos con `NULL`: legibles. Sin maestro nuevo (el campo es texto). |
+| **RR-32** | OD-S2-06 | `mortality_recording` exige `cause_id` y `cull_recording` exige `cull_cause_id` (catálogo `mortality_causes` / `cull_causes`, alcanzable). Una edición o corrección no puede dejarlos en `NULL`. `NULL ≠ DESCONOCIDA`: se siembra el valor explícito compartido «Desconocida» en ambos catálogos (migración de datos idempotente, solo si no existe ya un valor compartido equivalente). Históricos sin causa: legibles y sin *backfill*. |
+| **RR-33** | OD-S2-07 | `feed_registration`: cada fila con `quantity_kg > 0` exige `feed_type_id` (catálogo, alcanzable); se mantiene `RR-23` (al menos una fila con kg > 0). |
+| **RR-34** | OD-S2-07 | La **fase** del alimento es derivada, no un input: la fase productiva vigente del lote en `event_date` (`lot_phases`: `start_date ≤ fecha` y `end_date` nulo o `≥ fecha`). Se persiste en `feed_movements.phase_id` (nulable, sin *backfill*) al crear, y se recalcula si cambia `event_date`. Lote sin fase vigente en esa fecha: 400 con regla `RR-34` (`LOT_PHASE_INCOMPLETE`); no se inventa. Se expone en la lectura como solo lectura. |
+
+### 6.1 O-20
+`test_r141_tendencia_mortalidad_ignora_cancelados` compara el evento (fijado a «hoy − 2 días») con la semana ISO de **hoy**: falla cuando el día del reloj cae lunes o martes (el evento queda en la semana anterior). Clasificación: `TEST_DEFECT`. La tendencia del panel (`/dashboard/admin`, `mortality_trend`) agrega por semana ISO **de calendario** a través de lotes: es otro concepto que la semana productiva (`RR-30`) y su semántica es correcta. Corrección: el test fija el evento y calcula la semana ISO **del propio evento**, con casos deterministas en frontera de semana y de año; sin relajar la aserción `Δ == 10`. Prueba de determinismo con el reloj de los tests fijado (plugin de evidencia `reloj_controlado`, que fija `reference_today()`; el repositorio no expone un override de reloj): la versión anterior falla en lunes y martes (`Δ=0`) y pasa en domingo; la corregida pasa en domingo, lunes y martes, sola y dentro de la suite completa.
+
+### 6.2 Pruebas y cierre
+`OD01-01..03`, `OD02-01..05`, `OD03-01..05`, `OD04-01..05`, `OD05-01..04`, `OD06-01..05`, `OD07-01..05` (backend, con espejo en frontend donde hay UI); E2E de recorrido completo en Reproductoras/Cría; regresión completa sin relajar pruebas; sensibilidad tras el commit de implementación con restauración explícita por SHA. Observaciones nuevas: `O-26` (evidencia solo posterior al alta).
+
+### 6.3 Estado de implementación (26-11-2026)
+`IMPLEMENTADO` en `develop`. Migración `i4d5e6f7a8b9` (cabeza Alembic): «Desconocida» compartida en `mortality_causes`/`cull_causes` y `feed_movements.phase_id`. Backend `7ee3327`, `412e234`, `a1c2d53`, `edb3d04`; frontend `7e18207`, `1bc438f`. Pruebas `OD01-01..05`, `OD02-01..05`, `OD03-01..05`, `OD04-01..05`, `OD05-01..04`, `OD06-01..05`, `OD07-01..05`, `T-CAT-1..6`, espejo en vitest y E2E `proceso-spec020b` (16 pasos).
+
+Hallazgo de la E2E, corregido: el formulario de corrección ofrecía tipos **inactivos**, que el servidor rechaza (`RR-27` exige activo); ahora el selector solo ofrece tipos activos (`1bc438f`, `OD01-05`).
+
+Observaciones: `O-26` (evidencia solo tras el alta); `O-27` un lote sin fase productiva vigente en la fecha no puede registrar alimento hasta que se registre su fase (`RR-34`, ratificado: no se inventa) — en el retest UAT, los lotes de prueba deben tener su fase cargada; `O-23` (asignar por corrección un maestro a un campo que estaba vacío) sigue abierta — cerrada después por §7. Certificación: `audit/ga-uat-breeder-cria-s2-owner-decisions-2026-11-25/CERTIFICATION.md`.
+
+## 7. Enmienda O-23 · `NULL_TO_MASTER_CORRECTION` (26-11-2026)
+
+Residual posterior al cierre de §6 (`SESSION2 = CERTIFIED`); no reabre la Sesión 2 ni cambia `OD-S2-01..07`. Clasificación: `P2 FUNCTIONAL GAP` · `FIX_REQUIRED`.
+
+**Causa raíz (discovery).** `campos_corregibles_de_evento` descartaba todo campo del evento con valor `NULL` salvo `observations` (`SIEMPRE_OFRECIDOS`): la corregibilidad dependía del **valor**, no de la **metadata** del campo, y el formulario —que ya construye el selector a partir de `master`, sin mirar el valor— nunca recibía el campo. En el servidor, `POST /corrections` no bloqueaba `NULL → id`, pero tampoco acotaba el maestro al tipo de evento ni exigía maestro activo (`OD-21`).
+
+| AC | Enunciado |
+|---|---|
+| **AC-O23-01** | Metadata contractual `MAESTROS_POR_TIPO_DE_EVENTO` (tipo → campos de maestro que su alta admite, extraída del formulario de alta): recepción de aves → proveedor; salida de aves → granja destino, planta destino, transporte; despacho de huevo, recepción de huevo en incubadora e inspección de transporte → transporte; nacimiento → vacuna; despacho de pollitos → granja destino, transporte; importación de progenitoras → proveedor, transporte; mortalidad → causa de mortalidad; descarte → causa de descarte; vacunación → vacuna; medicación → medicamento. |
+| **AC-O23-02** | `GET /corrections/events/{id}/correctable-fields` ofrece un campo de maestro con valor `NULL` cuando el campo aplica al tipo del evento, con `master` (clave del catálogo), `current_value = null` y `current_display = null`. Un campo con valor se sigue ofreciendo como hasta ahora. Los campos vacíos que no son de maestro siguen fuera (fuera de alcance). Seguridad sin cambios: sin token 401, sin permiso 403, evento de otra empresa o inexistente 404. |
+| **AC-O23-03** | Direcciones. **A** `NULL → maestro válido` = ALLOW. **B** `maestro A → maestro B` = ALLOW. **C** `maestro → NULL` según el contrato vigente del campo (`AC-S2-C02`, `RR-21`, `RR-32`: proveedor, transporte y destinos admiten vaciarse; vacuna, medicamento y causas, no). **D** `NULL → maestro` inexistente, de otra empresa o inactivo = DENY (400) y el evento queda intacto. |
+| **AC-O23-04** | `NULL → maestro` en un campo que **no aplica** al tipo del evento = 400: no hay correcciones arbitrarias aunque se manipule el payload. |
+| **AC-O23-05** | `OD-21` en correcciones: el maestro que una corrección **nueva** asigna debe estar activo, sea cual sea el valor original; el de otra empresa sigue siendo «no encontrado» (`BR-07`, `AC26`). La lectura histórica de un maestro hoy inactivo no cambia: el valor original se sigue mostrando por nombre. |
+| **AC-O23-06** | Auditoría: `CorrectionLog.original_value = NULL`, `corrected_value = id` canónico, tipo de corrección, motivo, autor, fecha y evento; el registro de auditoría guarda lo mismo. El valor efectivo del evento es el id corregido (`RR-01`). |
+| **AC-O23-07** | UI: el valor original vacío se lee «Sin valor» (nunca `null`, `undefined`, `0` ni un campo en blanco); el valor corregido de un maestro es un selector del catálogo con **solo registros activos** y etiqueta funcional (`código — nombre` cuando el maestro tiene código: `sap_code`, `code`, `plate`), nunca el id solo. El historial muestra «Proveedor: Sin valor → <nombre>». |
+| **AC-O23-08** | Las reglas del campo se aplican igual que en `A→B` (`RR-21`, `RR-31`, `RR-32`, `BR-07`, vínculo efectivo): sin *bypass*. |
+
+Pruebas: backend `O23-B01..B09` (`backend/tests/test_uat_s2_o23_null_to_master.py`), frontend `O23-F01..F06` (vitest), E2E `proceso-spec020c` (positivo con refresco y re-login, y negativo por API: otra empresa e inactivo). `O-26`, `O-27`, `O-11`, `O-12`, `O-16` y `O-19` quedan fuera de este ciclo.
+
+**Estado (26-11-2026):** `IMPLEMENTADO` en `develop` — `backend/app/corrections/service.py` (`MAESTROS_POR_TIPO_DE_EVENTO`, `_maestro_aplica`, `_exigir_maestro_activo`), `CorrectionForm.tsx`, `ReviewDetail.tsx`, `utils/correctionFields.ts` y `corrections.noValue` (es/en). Sin migración. Certificación: `audit/ga-uat-breeder-cria-s2-o23-2026-11-26/CERTIFICATION.md`.

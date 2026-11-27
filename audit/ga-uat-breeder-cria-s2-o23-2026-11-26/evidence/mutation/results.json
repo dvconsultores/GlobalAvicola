@@ -1,0 +1,112 @@
+{
+  "_meta": {
+    "sha_restauracion": "26522ad29c8c1832f800d2e6366031305d294ed1",
+    "linea_base_backend": {
+      "rc": 0,
+      "resumen": "======================== 14 passed, 1 warning in 11.38s ========================"
+    },
+    "linea_base_frontend": {
+      "rc": 0,
+      "resumen": " Test Files  1 passed (1)\n      Tests  7 passed (7)"
+    }
+  },
+  "B01": {
+    "capa": "backend",
+    "descripcion": "AC-O23-02 el maestro vacío no se ofrece (corregibilidad por valor)",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 17,
+    "resumen": "=================== 1 failed, 13 passed, 1 warning in 10.29s ===================\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b01_la_recepcion_sin_proveedor_ofrece_el_campo"
+  },
+  "B02": {
+    "capa": "backend",
+    "descripcion": "AC-O23-01 todo maestro aplica a todo tipo",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 19,
+    "resumen": "=================== 3 failed, 11 passed, 1 warning in 11.42s ===================\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b01_la_mortalidad_no_ofrece_campos_que_no_le_tocan\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b09_poner_vacuna_a_una_recepcion_es_400\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b09b_la_recepcion_no_ofrece_vacuna_ni_causa"
+  },
+  "B03": {
+    "capa": "backend",
+    "descripcion": "AC-O23-04 sin rechazo de campo ajeno al tipo",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 17,
+    "resumen": "=================== 1 failed, 13 passed, 1 warning in 10.00s ===================\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b09_poner_vacuna_a_una_recepcion_es_400"
+  },
+  "B04": {
+    "capa": "backend",
+    "descripcion": "AC-O23-05 maestro inactivo aceptado",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 18,
+    "resumen": "=================== 2 failed, 12 passed, 1 warning in 10.97s ===================\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b03_un_proveedor_desactivado_es_400\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b03b_cambiar_a_un_proveedor_desactivado_es_400"
+  },
+  "B05": {
+    "capa": "backend",
+    "descripcion": "AC-O23-05 guarda de activo no invocada",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 16,
+    "resumen": "=================== 2 failed, 12 passed, 1 warning in 10.22s ===================\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b03_un_proveedor_desactivado_es_400\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b03b_cambiar_a_un_proveedor_desactivado_es_400"
+  },
+  "B06": {
+    "capa": "backend",
+    "descripcion": "AC-O23-01 la recepción no admite proveedor",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 17,
+    "resumen": "=================== 4 failed, 10 passed, 1 warning in 9.79s ====================\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b01_la_recepcion_sin_proveedor_ofrece_el_campo\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b02_completar_el_proveedor_nulo_deja_la_traza\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b03_un_proveedor_desactivado_es_400\nFAILED tests/test_uat_s2_o23_null_to_master.py::test_o23_b08_la_fila_y_la_auditoria_dejan_el_antes_nulo"
+  },
+  "F01": {
+    "capa": "frontend",
+    "descripcion": "AC-O23-07 original vacío no dice «Sin valor»",
+    "archivo": "frontend/src/utils/correctionFields.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed (1)\n      Tests  2 failed | 5 passed (7)\n× F01 · el valor original de un maestro vacío se lee «Sin valor» 1054ms\n× F07 · el historial de un maestro vacío dice «Sin valor» y muestra el nombre corregido 1015ms\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F01 · el valor original de un maestro vacío se lee «Sin valor»\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F07 · el historial de un maestro vacío dice «Sin valor» y muestra el nombre corregido"
+  },
+  "F02": {
+    "capa": "frontend",
+    "descripcion": "AC-O23-05/07 el selector ofrece inactivos",
+    "archivo": "frontend/src/pages/review/CorrectionForm.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 7,
+    "resumen": " Test Files  1 failed (1)\n      Tests  4 failed | 3 passed (7)\n× F03 · el selector solo ofrece los registros activos del catálogo 1016ms\n× F04 · la etiqueta funcional del proveedor es «código — nombre» 1009ms\n× F05 · sin código se ofrece el nombre y ninguna opción es solo el id 1009ms\n× F06 · guardar envía el id del proveedor elegido y refresca el detalle 1010ms\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F03 · el selector solo ofrece los registros activos del catálogo\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F04 · la etiqueta funcional del proveedor es «código — nombre»\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F05 · sin código se ofrece el nombre y ninguna opción es solo el id\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F06 · guardar envía el id del proveedor elegido y refresca el detalle"
+  },
+  "F03": {
+    "capa": "frontend",
+    "descripcion": "AC-O23-07 etiqueta sin código",
+    "archivo": "frontend/src/utils/correctionFields.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 3,
+    "resumen": " Test Files  1 failed (1)\n      Tests  1 failed | 6 passed (7)\n× F04 · la etiqueta funcional del proveedor es «código — nombre» 36ms\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F04 · la etiqueta funcional del proveedor es «código — nombre»"
+  },
+  "F04": {
+    "capa": "frontend",
+    "descripcion": "AC-O23-07 el historial no dice «Sin valor»",
+    "archivo": "frontend/src/pages/review/ReviewDetail.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 5,
+    "resumen": " Test Files  1 failed (1)\n      Tests  1 failed | 6 passed (7)\n× F07 · el historial de un maestro vacío dice «Sin valor» y muestra el nombre corregido 1021ms\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F07 · el historial de un maestro vacío dice «Sin valor» y muestra el nombre corregido"
+  },
+  "F05": {
+    "capa": "frontend",
+    "descripcion": "AC-O23-07 el original vuelve a mostrarse en blanco",
+    "archivo": "frontend/src/pages/review/CorrectionForm.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 4,
+    "resumen": " Test Files  1 failed (1)\n      Tests  1 failed | 6 passed (7)\n× F01 · el valor original de un maestro vacío se lee «Sin valor» 1049ms\nFAIL  src/pages/review/__tests__/uatS2o23.nullToMaster.test.tsx > O-23 · spec 020 §7 > F01 · el valor original de un maestro vacío se lee «Sin valor»"
+  }
+}

@@ -72,7 +72,7 @@ export default function ReviewCenter() {
  const [events, setEvents] = useState<any[]>([])
  const [loading, setLoading] = useState(true)
  const [total, setTotal] = useState(0)
- const [lotId, setLotId] = useState('')
+ const [lotCode, setLotCode] = useState('')
  const [eventType, setEventType] = useState('')
  const [dateFrom, setDateFrom] = useState('')
  const [dateTo, setDateTo] = useState('')
@@ -88,9 +88,12 @@ export default function ReviewCenter() {
  const limit = 20
 
  // `F4` (AC-S1-F01): el filtro de lote espera 400 ms desde la última tecla (sin
- // una petición por carácter) y sólo viaja al servidor si es un id numérico.
- const lotIdDebounced = useDebouncedValue(lotId.trim(), 400)
- const lotIdInvalido = lotIdDebounced !== '' && !/^\d+$/.test(lotIdDebounced)
+ // una petición por carácter). `SPEC 020` (AC-S2-R03): viaja como CÓDIGO parcial
+ // (`lot_code`); `lot_id` deja de usarse.
+ const lotCodeDebounced = useDebouncedValue(lotCode.trim(), 400)
+ // `SPEC 020` (AC-S2-R03): inicio > fin se detecta en cliente — no se consulta el
+ // backend (que respondería 400) y se explica con un único aviso.
+ const rangoInvalido = Boolean(dateFrom && dateTo && dateFrom > dateTo)
 
  const setActiveTab = (tab: StatusTab) => {
  setSearchParams({ status: tab })
@@ -116,6 +119,9 @@ export default function ReviewCenter() {
  const canReadUsers = can({ permission: 'users:read' })
 
  const fetchEvents = useCallback(async () => {
+ // `SPEC 020` (AC-S2-R03): con rango inválido se conserva la lista anterior (no se
+ // vacía ni se pide) — el aviso inline explica el motivo.
+ if (rangoInvalido) return
  setLoading(true)
  try {
  const params = new URLSearchParams({
@@ -123,7 +129,7 @@ export default function ReviewCenter() {
  offset: String(page * limit),
  status: statusFilter,
  })
- if (lotIdDebounced && !lotIdInvalido) params.set('lot_id', lotIdDebounced)
+ if (lotCodeDebounced) params.set('lot_code', lotCodeDebounced)
  if (eventType) params.set('event_type', eventType)
  if (dateFrom) params.set('date_from', dateFrom)
  if (dateTo) params.set('date_to', dateTo)
@@ -144,7 +150,7 @@ export default function ReviewCenter() {
  } finally {
  setLoading(false)
  }
- }, [lotIdDebounced, lotIdInvalido, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, canReadUsers])
+ }, [lotCodeDebounced, rangoInvalido, eventType, dateFrom, dateTo, farmId, operatorId, page, statusFilter, canReadUsers])
 
  useEffect(() => { fetchEvents() }, [fetchEvents])
  useEffect(() => {
@@ -157,7 +163,7 @@ export default function ReviewCenter() {
  }, [])
 
  const clearFilters = () => {
- setLotId('')
+ setLotCode('')
  setEventType('')
  setDateFrom('')
  setDateTo('')
@@ -277,20 +283,14 @@ export default function ReviewCenter() {
  <FilterGroup label={t('review.lot', 'Lote')}>
  <input
  type="text"
- inputMode="numeric"
- placeholder={t('review.lotFilterPlaceholder', 'ID del lote')}
- value={lotId}
- onChange={e => { setLotId(e.target.value); setPage(0) }}
- aria-label={t('review.lotFilterPlaceholder', 'ID del lote')}
- aria-invalid={lotIdInvalido}
+ maxLength={50}
+ placeholder={t('review.lotFilterPlaceholder', 'Ej.: L-0001')}
+ value={lotCode}
+ onChange={e => { setLotCode(e.target.value); setPage(0) }}
+ aria-label={t('review.lotCodeLabel', 'Código de lote')}
  data-testid="review-filter-lot"
- className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-24 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
+ className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-36 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
- {lotIdInvalido && (
- <span role="alert" data-testid="lot-filter-hint" className="text-xs text-amber-700">
- {t('review.lotFilterNumeric', 'Escriba el ID numérico del lote (solo dígitos)')}
- </span>
- )}
  </FilterGroup>
 
  <FilterGroup label={t('review.farm', 'Granja')}>
@@ -340,6 +340,8 @@ export default function ReviewCenter() {
  type="date"
  value={dateFrom}
  onChange={e => { setDateFrom(e.target.value); setPage(0) }}
+ aria-invalid={rangoInvalido}
+ data-testid="review-filter-date-from"
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
  <span className="text-xs text-slate-400">—</span>
@@ -347,8 +349,16 @@ export default function ReviewCenter() {
  type="date"
  value={dateTo}
  onChange={e => { setDateTo(e.target.value); setPage(0) }}
+ aria-invalid={rangoInvalido}
+ data-testid="review-filter-date-to"
  className="border border-slate-300 rounded-lg px-3 py-2 text-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none"
  />
+ {/* `SPEC 020` (AC-S2-R03): un único aviso para el rango invertido. */}
+ {rangoInvalido && (
+ <span role="alert" data-testid="review-date-range-hint" className="text-xs text-amber-700">
+ {t('review.dateRangeInvalid', 'La fecha inicial no puede ser posterior a la fecha final')}
+ </span>
+ )}
  </FilterGroup>
  </FilterPanel>
 

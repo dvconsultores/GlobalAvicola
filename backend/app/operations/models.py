@@ -223,6 +223,7 @@ class FeedMovement(Base):
     sacks_count: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # G-08: número de bultos/sacos
     week_number: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)  # G-11: semana productiva
     sap_order_id: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # orden de transferencia SAP
+    phase_id: Mapped[Optional[int]] = mapped_column(Integer, ForeignKey("productive_phases.id"), nullable=True)  # RR-34: fase derivada del lote en event_date, solo lectura
 
     event: Mapped["OperationalEvent"] = relationship("OperationalEvent", back_populates="feed_movements")
 

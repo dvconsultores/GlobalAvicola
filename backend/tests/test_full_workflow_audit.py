@@ -22,7 +22,27 @@ import pytest_asyncio
 from httpx import ASGITransport, AsyncClient
 
 from app.main import app
+from tests.owner_decisions_support import (
+    causa_desconocida,
+    tipo_de_alimento,
+    tipo_de_correccion,
+)
 from tests.time_reference import recent_event_date
+
+
+# ============================================================
+# Datos que el contrato ratificado exige (`SPEC 020 §6`, 25-11-2026)
+# ============================================================
+
+#: El alimento declara su tipo (`RR-33`), la corrección su tipo (`RR-27`) y la mortalidad su
+#: causa (`RR-32`). Se leen de los maestros sembrados en lugar de escribir un id literal: un
+#: `feed_type_id=1` fijo solo funciona mientras la base tenga exactamente esa fila.
+async def _feed_type_id(client) -> int:
+    return await tipo_de_alimento(client, dict(client.headers))
+
+
+async def _correction_type_id(client) -> int:
+    return await tipo_de_correccion(client, dict(client.headers))
 
 
 # ============================================================
@@ -158,7 +178,8 @@ async def test_f1_create_feed_registration(admin_client):
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
         "feed_movements": [
-            {"quantity_kg": 250.0, "sacks_count": 5, "feed_type_id": 1},
+            {"quantity_kg": 250.0, "sacks_count": 5,
+             "feed_type_id": await _feed_type_id(admin_client)},
         ],
         "observations": "Alimento etapa iniciación — prueba funcional",
     }
@@ -312,7 +333,9 @@ async def test_f1_idempotency_prevention(admin_client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 100.0}],
+        "feed_movements": [
+            {"quantity_kg": 100.0, "feed_type_id": await _feed_type_id(admin_client)}
+        ],
         "idempotency_key": key,
     }
 
@@ -417,6 +440,7 @@ async def test_f3_start_review_and_correct(admin_client):
         "original_value": "800",
         "corrected_value": "850",
         "reason": "Error de digitación: se recibieron 850 aves, no 800",
+        "correction_type_id": await _correction_type_id(admin_client),  # `RR-27`
     }
     corr_resp = await admin_client.post("/api/v1/corrections", json=correction_payload)
     assert corr_resp.status_code == 201, f"F3 CORRECTION failed: {corr_resp.text}"
@@ -495,7 +519,9 @@ async def test_f4_approve_event(admin_client, client):
             "lot_id": 2,
             "event_type": "feed_registration",
             "event_date": recent_event_date(),
-            "feed_movements": [{"quantity_kg": 300.0}],
+            "feed_movements": [
+                {"quantity_kg": 300.0, "feed_type_id": await _feed_type_id(admin_client)}
+            ],
             "observations": "Evento para aprobación",
         }
         create_resp = await admin_client.post("/api/v1/operations", json=payload)
@@ -514,6 +540,7 @@ async def test_f4_approve_event(admin_client, client):
             "field_name": "observations",
             "corrected_value": "Ajuste por peso real del bulto",
             "reason": "Ajuste por peso real del bulto",
+            "correction_type_id": await _correction_type_id(admin_client),  # `RR-27`
         })
     else:
         event_id = pending["events"][0]["id"]
@@ -696,7 +723,9 @@ async def test_f6_audit_trail_complete(admin_client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 500.0}],
+        "feed_movements": [
+            {"quantity_kg": 500.0, "feed_type_id": await _feed_type_id(admin_client)}
+        ],
         "observations": "Evento para auditoría completa",
     }
     create_resp = await admin_client.post("/api/v1/operations", json=payload)
@@ -743,6 +772,7 @@ async def test_f6_audit_trail_complete(admin_client):
         "original_value": "500.0",
         "corrected_value": "525.0",
         "reason": "Ajuste por diferencia de báscula",
+        "correction_type_id": await _correction_type_id(admin_client),  # `RR-27`
     })
     audit4 = await admin_client.get("/api/v1/audit", params={
         "entity_type": "operational_event",
@@ -906,6 +936,7 @@ async def test_f7_full_workflow_simulated_multirole(admin_client):
         "original_value": "3000",
         "corrected_value": "3200",
         "reason": "Error de digitación: guía de despacho indica 3200 aves hembra",
+        "correction_type_id": await _correction_type_id(admin_client),  # `RR-27`
     })
     assert resp.status_code == 201
     corr = resp.json()
@@ -974,7 +1005,9 @@ async def test_f8_cancel_event_with_audit(admin_client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 100.0}],
+        "feed_movements": [
+            {"quantity_kg": 100.0, "feed_type_id": await _feed_type_id(admin_client)}
+        ],
         "observations": "Evento para cancelación",
     }
     resp = await admin_client.post("/api/v1/operations", json=payload)
@@ -1013,7 +1046,9 @@ async def test_f8b_duplicate_sap_document_blocked(admin_client):
         "lot_id": 2,
         "event_type": "feed_registration",
         "event_date": recent_event_date(),
-        "feed_movements": [{"quantity_kg": 100.0}],
+        "feed_movements": [
+            {"quantity_kg": 100.0, "feed_type_id": await _feed_type_id(admin_client)}
+        ],
         "sap_document_ref": sap_ref,
     }
 
@@ -1039,6 +1074,7 @@ async def test_f8c_business_rule_mortality_exceeds_balance(admin_client):
         "lot_id": 2,
         "event_type": "mortality_recording",
         "event_date": recent_event_date(),
+        "cause_id": await causa_desconocida(admin_client, dict(admin_client.headers)),  # `RR-32`
         "bird_movements": [{"sex": "female", "quantity": 999999}],
     })
     assert resp.status_code == 400, f"BR-01 debe bloquear mortalidad excesiva. Got {resp.status_code}"

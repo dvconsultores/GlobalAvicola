@@ -15,6 +15,7 @@ from __future__ import annotations
 import pytest
 
 from app.auth.security import create_access_token
+from tests.owner_decisions_support import tipo_de_alimento
 from tests.time_reference import recent_event_date
 
 
@@ -149,7 +150,12 @@ async def test_ac04_el_operador_si_puede_registrar_operaciones(http_client, seed
                                    "lot_id": seeded_ids["lot_id"],
                                    "event_type": "feed_registration",
                                    "event_date": recent_event_date(),
-                                   "feed_movements": [{"quantity_kg": 5.0}]})
+                                   "feed_movements": [
+                                       {"quantity_kg": 5.0,
+                                        "feed_type_id": await tipo_de_alimento(
+                                            http_client,
+                                            _token(seeded_ids["user_admin_id"]))}
+                                   ]})
     assert r.status_code == 201, f"El operador tiene operations:create: {r.text[:200]}"
 
 

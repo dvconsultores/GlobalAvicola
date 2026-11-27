@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import pytest
 
+from tests.owner_decisions_support import LOTE_DE_VACUNA
 from tests.time_reference import recent_event_date
 
 # Lote sembrado por la suite: gallina reproductora con granja y nave asignadas.
@@ -46,6 +47,8 @@ async def _vacunacion(client, headers, lote):
         "event_date": recent_event_date(),
         "vaccine_id": 1,
         "vaccination_route": "water",
+        # `RR-31` (`OD-S2-05`, ratificado por la Owner): la vacunación dice con qué lote se aplicó.
+        "vaccine_lot_number": LOTE_DE_VACUNA,
     }
     if lote.get("farm_id") is not None:
         cuerpo["farm_id"] = lote["farm_id"]

@@ -80,10 +80,11 @@ async def test_o15_06_summary_de_incubadora_con_dos_filas(auth_headers, http_cli
     """A = 900 en proceso, B = UNKNOWN ⇒ summary UNKNOWN (nunca 900); con B' = 1000 ⇒ 1900 KNOWN."""
     await preparar(seeded_ids)
 
-    # A: set 9000 − transferred 8000 − fosa 100 = 900 · B: fosa vacía ⇒ en proceso UNKNOWN.
+    # SPEC 018 §9 · D-23: en proceso = set − transferred (la fosa es PRE-CARGA y no resta).
+    # A: 8900 − 8000 = 900 (8900 + 1000 + fosa 100 = 10000 recibidos) · B: transferidos vacío ⇒ UNKNOWN.
     preview = await _preview_de(http_client, auth_headers, "hatchery", [
-        fila_incubadora("O15-A", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=100),
-        fila_incubadora("O15-B", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=None),
+        fila_incubadora("O15-A", eggs_set=8900, eggs_transferred=8000, fertile_eggs_to_pit=100),
+        fila_incubadora("O15-B", eggs_set=9000, eggs_transferred=None, fertile_eggs_to_pit=0),
     ], 91)
     resumen = preview["summary"]
     filas = _filas_por_ref(preview)
@@ -96,9 +97,9 @@ async def test_o15_06_summary_de_incubadora_con_dos_filas(auth_headers, http_cli
     assert resumen["eggs_in_process_status"] == "UNKNOWN"
     assert resumen["eggs_in_process_unknown_rows"] == 1
 
-    # Con B' de fosa 0 conocida (en proceso 1000) el total pasa a ser numérico.
+    # Con B' de transferidos 8000 conocidos (en proceso 1000) el total pasa a ser numérico.
     preview2 = await _preview_de(http_client, auth_headers, "hatchery", [
-        fila_incubadora("O15-A2", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=100),
+        fila_incubadora("O15-A2", eggs_set=8900, eggs_transferred=8000, fertile_eggs_to_pit=100),
         fila_incubadora("O15-B2", eggs_set=9000, eggs_transferred=8000, fertile_eggs_to_pit=0),
     ], 90)
     resumen2 = preview2["summary"]

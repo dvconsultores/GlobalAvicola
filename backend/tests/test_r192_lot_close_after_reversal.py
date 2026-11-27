@@ -34,6 +34,11 @@ import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
 from app.operations.models import EventStatus, OperationalEvent, Reversal
+from tests.owner_decisions_support import (
+    causa_desconocida,
+    fase_vigente_del_lote,
+    tipo_de_alimento,
+)
 from tests.time_reference import iso_days_ago
 
 pytestmark = pytest.mark.asyncio
@@ -126,6 +131,8 @@ async def lote_cerrable(client, auth_headers, seeded_ids, motor):
     })
     assert r.status_code == 201, r.text
     lot_id = r.json()["id"]
+    # `spec 020 §6` · `RR-34`: el consumo exige fase vigente en la fecha del evento.
+    await fase_vigente_del_lote(client, auth_headers, lot_id, iso_days_ago(0))
 
     ids = []
     for tipo, extra in (
@@ -133,7 +140,10 @@ async def lote_cerrable(client, auth_headers, seeded_ids, motor):
             {"sex": "mixed", "quantity": 100, "house_id": seeded_ids["house_id"]}]}),
         ("weight_recording", {"bird_movements": [
             {"sex": "mixed", "quantity": 10, "avg_weight": 2000}]}),
-        ("feed_registration", {"feed_movements": [{"quantity_kg": 100.0}]}),
+        # `RR-33`: el consumo nombra su tipo de alimento.
+        ("feed_registration", {"feed_movements": [{
+            "quantity_kg": 100.0,
+            "feed_type_id": await tipo_de_alimento(client, auth_headers)}]}),
         ("farm_inspection", {"inspection_details": [
             {"parameter": "Bioseguridad", "value": "ok", "status": "ok"}]}),
     ):
@@ -200,6 +210,8 @@ async def test_r192_01_un_par_revertido_no_impide_el_cierre(
         "house_id": seeded_ids["house_id"], "event_type": "mortality_recording",
         "event_date": iso_days_ago(0),
         "bird_movements": [{"sex": "mixed", "quantity": 5}],
+        # `spec 020 §6` · `RR-32`: la baja declara su causa.
+        "cause_id": await causa_desconocida(client, auth_headers),
     })
     assert mort.status_code == 201, mort.text
     mort_id = mort.json()["id"]
@@ -230,6 +242,8 @@ async def test_r192_02_la_contrapartida_pendiente_si_impide_el_cierre(
         "house_id": seeded_ids["house_id"], "event_type": "mortality_recording",
         "event_date": iso_days_ago(0),
         "bird_movements": [{"sex": "mixed", "quantity": 5}],
+        # `spec 020 §6` · `RR-32`: la baja declara su causa.
+        "cause_id": await causa_desconocida(client, auth_headers),
     })
     assert mort.status_code == 201, mort.text
     mort_id = mort.json()["id"]
@@ -259,10 +273,11 @@ async def test_r192_03_el_resumen_excluye_cancelados(
     client, auth_headers, seeded_ids, lote_cerrable, motor
 ):
     """`AC05`/`AC07` · mortalidad 5 aprobada + 10 anulada ⇒ 5; huevos 100 + 40 anulados ⇒ 100."""
+    causa = await causa_desconocida(client, auth_headers)  # `RR-32`
     creados = []
     for tipo, extra in (
-        ("mortality_recording", {"bird_movements": [{"sex": "mixed", "quantity": 5}]}),
-        ("mortality_recording", {"bird_movements": [{"sex": "mixed", "quantity": 10}]}),
+        ("mortality_recording", {"bird_movements": [{"sex": "mixed", "quantity": 5}], "cause_id": causa}),
+        ("mortality_recording", {"bird_movements": [{"sex": "mixed", "quantity": 10}], "cause_id": causa}),
         ("egg_collection", {"egg_movements": [{"egg_type": "table", "quantity": 100}]}),
         ("egg_collection", {"egg_movements": [{"egg_type": "table", "quantity": 40}]}),
     ):
@@ -303,7 +318,8 @@ async def test_r192_04_el_resumen_excluye_el_par_revertido(
         "lot_id": lote_cerrable["lot_id"], "farm_id": seeded_ids["farm_id"],
         "house_id": seeded_ids["house_id"], "event_type": "feed_registration",
         "event_date": iso_days_ago(0),
-        "feed_movements": [{"quantity_kg": 7.0}],
+        "feed_movements": [{"quantity_kg": 7.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],
     })
     assert feed.status_code == 201, feed.text
     feed_id = feed.json()["id"]
@@ -337,6 +353,8 @@ async def test_r192_05_br05_ignora_el_pesaje_revertido(
     })
     assert r.status_code == 201, r.text
     lot_id = r.json()["id"]
+    # `spec 020 §6` · `RR-34`: el consumo de 50 kg exige fase vigente en la fecha del evento.
+    await fase_vigente_del_lote(client, auth_headers, lot_id, iso_days_ago(0))
 
     peso = await client.post("/api/v1/operations", headers=auth_headers, json={
         "lot_id": lot_id, "farm_id": seeded_ids["farm_id"],
@@ -352,7 +370,8 @@ async def test_r192_05_br05_ignora_el_pesaje_revertido(
         "lot_id": lot_id, "farm_id": seeded_ids["farm_id"],
         "house_id": seeded_ids["house_id"], "event_type": "feed_registration",
         "event_date": iso_days_ago(0),
-        "feed_movements": [{"quantity_kg": 50.0}],
+        "feed_movements": [{"quantity_kg": 50.0,
+                            "feed_type_id": await tipo_de_alimento(client, auth_headers)}],
     })
     assert feed.status_code == 201, feed.text
     await _fijar_estado(motor, feed.json()["id"], EventStatus.APPROVED)

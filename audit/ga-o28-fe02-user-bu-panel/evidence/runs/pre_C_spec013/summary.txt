@@ -1,0 +1,8 @@
+run_1: total=197 passed=196 failed=1 skipped=0
+    FAIL gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04) [396 ms] «TestingLibraryElementError: Unable to find an element with the text: users.businessUnits.companyState. This co» loading_en_DOM=True
+run_2: total=197 passed=196 failed=1 skipped=0
+    FAIL gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04) [500 ms] «TestingLibraryElementError: Unable to find an element with the text: users.businessUnits.companyState. This co» loading_en_DOM=True
+run_3: total=197 passed=197 failed=0 skipped=0
+
+RESUMEN: 1/3 corridas sin fallos
+  2× gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)

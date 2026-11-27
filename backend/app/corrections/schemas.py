@@ -33,6 +33,10 @@ class CorrectionRead(BaseModel):
     correction_type_id: Optional[int] = None
     reason: str
     created_at: datetime
+    # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.2` · `AC-S2-C05`: el historial se lee con el nombre
+    # del maestro anterior y del nuevo, no con su identificador.
+    original_display: Optional[str] = None
+    corrected_display: Optional[str] = None
 
     model_config = {"from_attributes": True}
 
@@ -56,3 +60,7 @@ class CorrectableFieldRead(BaseModel):
     row_id: Optional[int] = None
     row_label: Optional[str] = None
     value_type: str
+    # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.2` · `AC-S2-C04`: de qué catálogo es el campo (si lo
+    # es) y qué nombre tiene hoy el registro al que apunta.
+    master: Optional[str] = None
+    current_display: Optional[str] = None

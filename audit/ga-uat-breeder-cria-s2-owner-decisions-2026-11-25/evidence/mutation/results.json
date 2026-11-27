@@ -1,0 +1,211 @@
+{
+  "_meta": {
+    "sha_restauracion": "5ab8bd270b9b24a994edfcd978336f465327a5e5",
+    "linea_base_backend": {
+      "rc": 0,
+      "resumen": "=================== 65 passed, 1 warning in 66.71s (0:01:06) ==================="
+    },
+    "linea_base_frontend": {
+      "rc": 0,
+      "resumen": " Test Files  4 passed (4)\n      Tests  45 passed (45)"
+    }
+  },
+  "B01": {
+    "capa": "backend",
+    "descripcion": "RR-27 tipo de corrección no exigido",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 31,
+    "resumen": "=================== 1 failed, 63 passed, 1 warning in 25.21s ===================\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od01_01_correccion_sin_tipo_es_400_en_espanol"
+  },
+  "B02": {
+    "capa": "backend",
+    "descripcion": "RR-27 tipo inactivo aceptado",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 85,
+    "resumen": "============== 1 failed, 64 passed, 1 warning in 70.76s (0:01:10) ==============\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od01_05_tipo_inactivo_es_400_y_reactivado_vuelve_a_servir"
+  },
+  "B03": {
+    "capa": "backend",
+    "descripcion": "RR-31 lote de vacuna en blanco aceptado",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 33,
+    "resumen": "=================== 2 failed, 62 passed, 1 warning in 28.01s ===================\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od05_02_lote_de_vacuna_en_blanco_es_400\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od05_06_la_edicion_no_puede_vaciar_el_lote_de_vacuna"
+  },
+  "B04": {
+    "capa": "backend",
+    "descripcion": "RR-32 causa de mortalidad no exigida",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 34,
+    "resumen": "=================== 3 failed, 61 passed, 1 warning in 28.88s ===================\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_01_mortalidad_sin_causa_es_400\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_06_corregir_la_causa_a_vacio_es_400\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_08_la_edicion_no_puede_dejar_la_causa_en_null"
+  },
+  "B05": {
+    "capa": "backend",
+    "descripcion": "RR-32 causa de descarte no exigida",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 40,
+    "resumen": "=================== 2 failed, 62 passed, 1 warning in 33.73s ===================\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_03_descarte_sin_causa_es_400\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_07_corregir_la_causa_del_descarte_a_vacio_es_400"
+  },
+  "B06": {
+    "capa": "backend",
+    "descripcion": "RR-28 inspección vacía aceptada",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 45,
+    "resumen": "=================== 6 failed, 58 passed, 1 warning in 39.10s ===================\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_01_inspeccion_completamente_vacia_es_400\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_01b_un_detalle_sin_valor_ni_estado_no_es_contenido\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_03_solo_observacion_sustantiva_es_201_y_con_espacios_es_400\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_04_la_evidencia_ya_adjunta_cuenta_al_corregir\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_06_corregir_las_observaciones_a_vacio_sin_otro_contenido_es_400\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_07_la_edicion_no_deja_la_inspeccion_vacia"
+  },
+  "B07": {
+    "capa": "backend",
+    "descripcion": "RR-28 valores por defecto cuentan como contenido",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 36,
+    "resumen": "=================== 1 failed, 63 passed, 1 warning in 30.32s ===================\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od02_01b_un_detalle_sin_valor_ni_estado_no_es_contenido"
+  },
+  "B08": {
+    "capa": "backend",
+    "descripcion": "RR-29 distribución de suma cero aceptada",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 35,
+    "resumen": "=================== 2 failed, 62 passed, 1 warning in 28.56s ===================\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od03_02_distribucion_con_suma_cero_es_400\nFAILED tests/test_uat_s2_owner_decisions_b.py::test_od03_06_corregir_la_unica_cantidad_a_cero_es_400"
+  },
+  "B09": {
+    "capa": "backend",
+    "descripcion": "RR-33 alimento sin tipo aceptado",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 35,
+    "resumen": "=================== 1 failed, 63 passed, 1 warning in 28.59s ===================\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od07_01_alimento_sin_tipo_es_400"
+  },
+  "B10": {
+    "capa": "backend",
+    "descripcion": "RR-30 semana ISO-like (sin +1)",
+    "archivo": "backend/app/operations/semana.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 35,
+    "resumen": "================== 18 failed, 46 passed, 1 warning in 28.84s ===================\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[0-1]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[6-1]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[7-2]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[13-2]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[14-3]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[20-3]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01_la_semana_sale_de_la_edad_del_lote[21-4]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01b_los_cuatro_eventos_derivan_la_misma_semana\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01c_la_semana_que_manda_el_cliente_se_ignora\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_02_cambiar_la_fecha_recalcula_la_semana\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_04_cambio_de_anio_y_de_semana_iso_no_alteran_la_semana_productiva[inicio0-evento0-1]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_04_cambio_de_anio_y_de_semana_iso_no_alteran_la_semana_productiva[inicio1-evento1-2]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_04_cambio_de_anio_y_de_semana_iso_no_alteran_la_semana_productiva[inicio2-evento2-3]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_04_cambio_de_anio_y_de_semana_iso_no_alteran_la_semana_productiva[inicio3-evento3-1]\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_04_cambio_de_anio_y_de_semana_iso_no_alteran_la_semana_productiva[inicio4-evento4-2]"
+  },
+  "B11": {
+    "capa": "backend",
+    "descripcion": "RR-34 sin fase vigente se acepta",
+    "archivo": "backend/app/operations/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 42,
+    "resumen": "=================== 1 failed, 63 passed, 1 warning in 35.78s ===================\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od07_05_sin_fase_vigente_no_se_inventa"
+  },
+  "B12": {
+    "capa": "backend",
+    "descripcion": "RR-30 corrección de fecha no recalcula la semana",
+    "archivo": "backend/app/corrections/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 50,
+    "resumen": "=================== 1 failed, 63 passed, 1 warning in 40.64s ===================\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_02_cambiar_la_fecha_recalcula_la_semana"
+  },
+  "B13": {
+    "capa": "backend",
+    "descripcion": "«Desconocida» compartida no se lista",
+    "archivo": "backend/app/masters/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 53,
+    "resumen": "=================== 8 failed, 56 passed, 1 warning in 43.09s ===================\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_02_mortalidad_con_la_causa_desconocida_es_201\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_04_descarte_con_causa_valida_es_201\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_06_corregir_la_causa_a_vacio_es_400\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_07_corregir_la_causa_del_descarte_a_vacio_es_400\nFAILED tests/test_uat_s2_owner_decisions_a.py::test_od06_08_la_edicion_no_puede_dejar_la_causa_en_null\nFAILED tests/test_uat_s2_owner_decisions_c.py::test_od04_01b_los_cuatro_eventos_derivan_la_misma_semana\nFAILED tests/test_uat_s2_owner_decisions_cat.py::test_t_cat_2_el_listado_trae_la_compartida_y_las_propias\nFAILED tests/test_uat_s2_owner_decisions_cat.py::test_t_cat_3_la_compartida_se_ve_desde_cualquier_empresa_las_propias_no"
+  },
+  "F01": {
+    "capa": "frontend",
+    "descripcion": "RR-27 UI sin tipo envía",
+    "archivo": "frontend/src/pages/review/CorrectionForm.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× a · sin tipo de corrección el envío se bloquea: no hay POST y se ve el aviso 1477ms\nFAIL  src/pages/review/__tests__/uatS2c.correctionType.test.tsx > SPEC 020 §6 · RR-27 · tipo de corrección obligatorio > a · sin tipo de corrección el envío se bloquea: no hay POST y se ve el aviso"
+  },
+  "F02": {
+    "capa": "frontend",
+    "descripcion": "RR-27 UI ofrece tipos inactivos",
+    "archivo": "frontend/src/pages/review/CorrectionForm.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× c · un tipo de corrección inactivo no se ofrece (el servidor lo rechazaría) 1044ms\nFAIL  src/pages/review/__tests__/uatS2c.correctionType.test.tsx > SPEC 020 §6 · RR-27 · tipo de corrección obligatorio > c · un tipo de corrección inactivo no se ofrece (el servidor lo rechazaría)"
+  },
+  "F03": {
+    "capa": "frontend",
+    "descripcion": "RR-31 UI lote de vacuna no exigido",
+    "archivo": "frontend/src/pages/operations/operationPayload.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 7,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  3 failed | 42 passed (45)\n× lote undefined ⇒ clave de lote de vacuna 16ms\n× lote \"\" ⇒ clave de lote de vacuna 1ms\n× lote \"   \" ⇒ clave de lote de vacuna 1ms\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > lote de vacuna obligatorio (RR-31) > lote undefined ⇒ clave de lote de vacuna\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > lote de vacuna obligatorio (RR-31) > lote \"\" ⇒ clave de lote de vacuna\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > lote de vacuna obligatorio (RR-31) > lote \"   \" ⇒ clave de lote de vacuna"
+  },
+  "F04": {
+    "capa": "frontend",
+    "descripcion": "RR-32 UI causa de mortalidad no exigida",
+    "archivo": "frontend/src/pages/operations/operationPayload.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× mortalidad sin causa ⇒ clave de causa de mortalidad 35ms\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > causa obligatoria (RR-32) > mortalidad sin causa ⇒ clave de causa de mortalidad"
+  },
+  "F05": {
+    "capa": "frontend",
+    "descripcion": "RR-32 UI causa de descarte no exigida",
+    "archivo": "frontend/src/pages/operations/operationPayload.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× descarte sin causa ⇒ clave de causa de descarte; con causa ⇒ sin faltante 68ms\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > causa obligatoria (RR-32) > descarte sin causa ⇒ clave de causa de descarte; con causa ⇒ sin faltante"
+  },
+  "F06": {
+    "capa": "frontend",
+    "descripcion": "RR-29 UI distribución en cero aceptada",
+    "archivo": "frontend/src/pages/operations/operationPayload.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× sin filas o con suma cero ⇒ clave de distribución 17ms\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > distribución con aves (RR-29) > sin filas o con suma cero ⇒ clave de distribución"
+  },
+  "F07": {
+    "capa": "frontend",
+    "descripcion": "RR-28 UI inspección vacía aceptada",
+    "archivo": "frontend/src/pages/operations/operationPayload.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× completamente vacía ⇒ clave de contenido 20ms\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > inspección de granja con contenido (RR-28) > completamente vacía ⇒ clave de contenido"
+  },
+  "F08": {
+    "capa": "frontend",
+    "descripcion": "RR-33 UI alimento sin tipo aceptado",
+    "archivo": "frontend/src/pages/operations/operationPayload.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 6,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  1 failed | 44 passed (45)\n× kilos sin tipo ⇒ clave de tipo de alimento 33ms\nFAIL  src/pages/operations/__tests__/uatS2c.requiredRules.test.ts > tipo de alimento obligatorio (RR-33) > kilos sin tipo ⇒ clave de tipo de alimento"
+  },
+  "F09": {
+    "capa": "frontend",
+    "descripcion": "RR-30 UI semana sin +1",
+    "archivo": "frontend/src/utils/semanaProductiva.ts",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 7,
+    "resumen": " Test Files  1 failed | 3 passed (4)\n      Tests  12 failed | 33 passed (45)\n× lote 2026-10-01 · evento 2026-10-01 ⇒ semana 1 12ms\n× lote 2026-10-01 · evento 2026-10-07 ⇒ semana 1 1ms\n× lote 2026-10-01 · evento 2026-10-08 ⇒ semana 2 1ms\n× lote 2026-10-01 · evento 2026-10-14 ⇒ semana 2 1ms\n× lote 2026-10-01 · evento 2026-10-15 ⇒ semana 3 1ms\n× fronteras: lote 2025-12-29 · evento 2026-01-04 ⇒ semana 1 1ms\n× fronteras: lote 2025-12-29 · evento 2026-01-05 ⇒ semana 2 1ms\n× fronteras: lote 2025-12-28 · evento 2026-01-11 ⇒ semana 3 2ms\n× fronteras: lote 2026-11-25 · evento 2026-12-01 ⇒ semana 1 1ms\n× fronteras: lote 2026-12-31 · evento 2027-01-07 ⇒ semana 2 1ms\n× fronteras: lote 2026-02-28 · evento 2026-03-01 ⇒ semana 1 1ms\n× acepta el inicio del lote como instante ISO con hora 1ms\nFAIL  src/utils/__tests__/semanaProductiva.test.ts > semanaProductiva (OD04) > lote 2026-10-01 · evento 2026-10-01 ⇒ semana 1\nFAIL  src/utils/__tests__/semanaProductiva.test.ts > semanaProductiva (OD04) > lote 2026-10-01 · evento 2026-10-07 ⇒ semana 1\nFAIL  src/utils/__tests__/semanaProductiva.test.ts > semanaProductiva (OD04) > lote 2026-10-01 · evento 2026-10-08 ⇒ semana 2"
+  }
+}

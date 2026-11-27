@@ -32,6 +32,7 @@ from .contracts import HATCHERY_TEMPLATE_VERSION, KNOWN, NOT_APPLICABLE, UNKNOWN
 from .models import (CutoverBatch, CutoverBatchStatus, CutoverItem, CutoverItemStatus, CutoverStagingRow,
                      HatcheryOpening)
 from .parser import CutoverParseError, parse_cutover_file
+from .saldo_incubadora import saldo_apertura_por_cargar, valores_de_apertura
 from .schemas import CutoverBatchCreate
 from .validation import BALANCE_NOT_FULLY_VERIFIABLE, ValidadorDeDominio
 
@@ -69,9 +70,12 @@ PREVIEW_DESTACADAS = {
                 "current_avg_weight_g", "accumulated_egg_production"),
     "broiler": ("legacy_lot_code", "farm_code", "house_name", "real_start_date", "age_days", "live_birds",
                 "historical_mortality", "historical_culls", "accumulated_feed_kg", "current_avg_weight_g"),
-    "hatchery": ("legacy_lot_code", "hatchery_code", "incubator_name", "set_date", "eggs_received", "eggs_set",
+    # SPEC 018 §9 · D-26: dos etapas. PRE-CARGA = recibidos → no incubables → fosa → cargados (el saldo
+    # disponible derivado va tras los cargados); POST-CARGA = transferidos (en proceso derivado detrás).
+    "hatchery": ("legacy_lot_code", "hatchery_code", "incubator_name", "set_date", "eggs_received",
                  "eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken",
-                 "eggs_transferred", "fertile_eggs_to_pit", "chicks_hatched", "chicks_available", "expected_hatch_date"),
+                 "fertile_eggs_to_pit", "eggs_set", "eggs_transferred", "chicks_hatched", "chicks_available",
+                 "expected_hatch_date"),
 }
 
 
@@ -797,6 +801,8 @@ class CutoverService:
                 "lot_id": item.lot_id, "lot_code": lote.lot_code if lote else None,
                 "legacy_lot_code": (lote.legacy_lot_code if lote else None) or item.legacy_lot_reference,
                 "origin": lote.origin if lote else None, "business_unit": batch.business_unit,
+                # SPEC 018 §10: id de la apertura, para corregirla por la vía gobernada.
+                "opening_id": opening.id,
                 "opening": {
                     "live": live, "live_males": int(opening.initial_male_count or 0),
                     "live_females": int(opening.initial_female_count or 0), "live_mixed": int(opening.initial_mixed_count or 0),
@@ -862,10 +868,9 @@ class CutoverService:
                     fosa = ho.fertile_eggs_to_pit if ho.fertile_eggs_to_pit_status == KNOWN else None
                     es_v4 = batch.template_version == HATCHERY_TEMPLATE_VERSION
                     if es_v4:
-                        # SPEC 018 §7 · D-12: fosa POST-CARGA; `set − transferred − fosa` solo si los
-                        # tres son KNOWN (un UNKNOWN nunca se toma por 0: jamás 1000 con fosa UNKNOWN).
-                        en_proceso = ((cargados - transferidos - fosa)
-                                      if None not in (cargados, transferidos, fosa) else None)
+                        # SPEC 018 §9 · D-23 (OD-HATCH-V4-02): la fosa es PRE-CARGA; en proceso =
+                        # `set − transferred` solo si ambos son KNOWN (la fosa ya no resta aquí).
+                        en_proceso = (cargados - transferidos) if None not in (cargados, transferidos) else None
                     else:  # V3 histórica: fórmula previa intacta
                         en_proceso = (cargados - transferidos - descartados) if None not in (cargados, transferidos, descartados) else None
                     fila["opening"]["hatchery"] = {
@@ -897,13 +902,9 @@ class CutoverService:
                     fila["lifetime"]["chicks_hatched"] = self._lifetime(
                         opening.accumulated_chicks_hatched, opening.chicks_hatched_status, post_inc["chicks_hatched"])
                     fila["lifetime"]["eggs_set"] = self._lifetime(cargados, ho.eggs_set_status, post_inc["eggs_loaded"])
-                    # D-4: los no incubables restan UNA sola vez, en el saldo recibido→cargado.
-                    if None in (recibidos, cargados):
-                        disponible = None
-                    elif es_v4:
-                        disponible = (recibidos - cargados - total_no_incubable) if total_no_incubable is not None else None
-                    else:
-                        disponible = recibidos - cargados
+                    # D-4 + §9 D-24 + §10: no incubables y fosa (PRE-CARGA) restan UNA sola vez, con la
+                    # función canónica compartida con el preview y BR-03 (V4: exacto solo con todo KNOWN).
+                    disponible = saldo_apertura_por_cargar(valores_de_apertura(ho), es_v4)
                     fila["current"].update({
                         "eggs_available_hatchery": disponible,
                         "eggs_in_process": ((en_proceso + post_inc["eggs_loaded"] - post_inc["eggs_transferred"]) if en_proceso is not None else None),

@@ -1,0 +1,206 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ❯ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests | 1 failed) 784ms
+     × conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06) 106ms
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: navigation to another Document
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+Not implemented: HTMLCanvasElement's getContext() method: without installing the canvas npm package
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx > GA-FE-02 · Panel de unidades del usuario > conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)
+TestingLibraryElementError: Unable to find an element with the text: Engorde. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body[39m
+  [33mstyle[39m=[32m"overflow: hidden;"[39m
+[36m>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"py-4 sm:py-6"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex items-center justify-between mb-6"[39m
+      [36m>[39m
+        [36m<div>[39m
+          [36m<h1[39m
+            [33mclass[39m=[32m"text-2xl font-bold text-[#1E3A5F] flex items-center gap-2"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33maria-hidden[39m=[32m"true"[39m
+              [33mclass[39m=[32m"lucide lucide-users"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"24"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"24"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M16 3.128a4 4 0 0 1 0 7.744"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M22 21v-2a4 4 0 0 0-3-3.87"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"9"[39m
+                [33mcy[39m=[32m"7"[39m
+                [33mr[39m=[32m"4"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+            [0m [0m
+            [0mnav.users[0m
+          [36m</h1>[39m
+          [36m<p[39m
+            [33mclass[39m=[32m"text-xs text-slate-400 mt-1"[39m
+          [36m>[39m
+            [0mactions.readOnlyViewer[0m
+          [36m</p>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"flex flex-col sm:flex-row gap-2 mb-3"[39m
+      [36m>[39m
+        [36m<input[39m
+          [33maria-label[39m=[32m"users.search"[39m
+          [33mclass[39m=[32m"flex-1 border border-slate-300 rounded-lg px-3 py-2.5 text-sm"[39m
+          [33mplaceholder[39m=[32m"users.search"[39m
+          [33mtype[39m=[32m"search"[39m
+          [33mvalue[39m=[32m""[39m
+        [36m/>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"bg-[#1E3A5F] text-white px-4 py-2.5 rounded-lg text-sm font-medium hover:bg-blue-800 transition"[39m
+        [36m>[39m
+          [0musers.searchAction[0m
+        [36m</button>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"hidden lg:block bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden"[39m
+      [36m>[39m
+        [36m<table[39m
+          [33mclass[39m=[32m"w-full text-sm"[39m
+        [36m>[39m
+          [36m<thead[39m
+            [33mclass[39m=[32m"bg-slate-50 border-b border-slate-200"[39m
+          [36m>[39m
+            [36m<tr>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0musers.username[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0musers.firstName[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0musers.email[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0musers.role[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0musers.view[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0musers.status[0m
+              [36m</th>[39m
+              [36m<th[39m
+                [33mclass[39m=[32m"px-4 py-3 text-left font-semibold text-slate-600"[39m
+              [36m>[39m
+                [0mcommon.actions[0m
+              [36m</th>[39m
+            [36m</tr>[39m
+          [36m</thead>[39m
+          [36m<tbody[39m
+            [33mclass[39m=[32m"divide-y divide-slate-100"[39m
+          [36m>[39m
+            [36m<tr[39m
+              [33mclass[39m=[32m"hover:bg-slate-50 transition"[39m
+            [36m>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 font-medium text-[#1E3A5F]"[39m
+              [36m>[39m
+                [0mcarlos[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [0mCarlos[0m
+                [0m [0m
+                [0mRuiz[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 text-slate-500"[39m
+              [36m>[39m
+                [0mc@x.com[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3 text-slate-500"[39m
+              [36m>[39m
+                [0m—[0m
+              [36m</td>[39m
+              [36m<td[39m
+                [33mclass[39m=[32m"px-4 py-3"[39m
+              [36m>[39m
+                [36m<span[39m
+                  [33mclass[39m=[32m"px-2 py-0.5 rounded-full text-xs font-medium flex items-center gap-1 w-fit bg-blue-100 text-blue-700"[39m
+                [36m>[39m
+                  [36m<svg[39m
+                    [33maria-hidden[39m=[32m"true"[39m
+                    [33mclass[39m=[32m"lucide lucide-monitor"[39m
+                    [33mfill[39m=[32m"none"[39m
+                    [33mheight[39m=[32m"12"[39m
+                    [33mstroke[39m=[32m"currentColor"[39m
+                    [33mstroke-linecap[39m=[32m"round"[39m
+                    [33mstroke-linejoin[39m=[32m"round"[39m
+                    [33mstroke-width[39m=[32m"2"[39m
+                    [33mviewBox[39m=[32m"0 0 24 24"[39m
+                    [33mwidth[39m=[32m"12"[39m
+                    [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                  [36m>[39m
+                    [36m<rect[39m
+                      [33mheight[39m=[32m"14"[39m
+                      [33mrx[39m=[32m"2"[39m
+                      [33mwidth[39m=[32m"20"[39m
+                      [33mx[39m=[...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx:128:31
+    126|   it('conceder llama POST exacto y refetchea las concesiones (AC-UBU-0…
+    127|     await openPanel('carlos')
+    128|     const broilerRow = screen.getByText('Engorde').closest('li')!
+       |                               ^
+    129|     // broiler está inactiva: sin acción de concesión (contrato 409 no…
+    130|     expect(within(broilerRow).queryByRole('button', { name: 'admin.gra…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 132 passed (133)
+      Tests  1 failed | 820 passed | 1 skipped (822)
+   Start at  04:59:41
+   Duration  95.68s (transform 4.21s, setup 9.64s, import 49.41s, tests 74.45s, environment 122.98s)
+

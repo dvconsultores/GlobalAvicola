@@ -26,7 +26,8 @@ import app.lots.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.auth.security import create_access_token
-from tests.time_reference import recent_event_date
+from tests.owner_decisions_support import LOTE_DE_VACUNA
+from tests.time_reference import days_ago, lot_start_date, recent_event_date
 
 pytestmark = pytest.mark.asyncio
 
@@ -39,7 +40,9 @@ FAMILIAS = [
     ("tr", "transport_id", "transport_inspection", {"inspection_details": [{"parameter": "Higiene", "value": "ok", "status": "ok"}]}),
     ("mc", "cause_id", "mortality_recording", {"bird_movements": [{"sex": "mixed", "quantity": 1}]}),
     ("cc", "cull_cause_id", "cull_recording", {"bird_movements": [{"sex": "mixed", "quantity": 1}]}),
-    ("vac", "vaccine_id", "vaccination", {}),
+    # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-31`: la vacunación declara con qué
+    # lote de vacuna se aplicó; sin ese dato el alta no describe una aplicación.
+    ("vac", "vaccine_id", "vaccination", {"vaccine_lot_number": LOTE_DE_VACUNA}),
     ("med", "medication_id", "medication", {}),
     ("plant", "destination_plant_id", "bird_exit", {"bird_movements": [{"sex": "mixed", "quantity": 1}]}),
 ]
@@ -62,9 +65,10 @@ async def esc(test_database_url):
     from app.auth.security import hash_password
     from app.business_units.models import BusinessUnit, CompanyBusinessUnit
     from app.business_units.service import conceder_unidad
-    from app.masters.models import (BirdTypeEnum, Breed, Company, CullCause, Farm, FarmType, FeedType, GeneticLine,
-                                    Hatchery, House, Incubator, Lot, LotStatus, Medication, MortalityCause,
-                                    ProcessingPlant, Supplier, Transport, Vaccine)
+    from app.masters.models import (BirdTypeEnum, Breed, Company, CorrectionType, CullCause, Farm, FarmType, FeedType,
+                                    GeneticLine, Hatchery, House, Incubator, Lot, LotStatus, Medication, MortalityCause,
+                                    ProcessingPlant, ProductivePhase, Supplier, Transport, Vaccine)
+    from app.lots.models import LotPhase
 
     motor = create_async_engine(test_database_url)
     async with async_sessionmaker(motor, expire_on_commit=False)() as s:
@@ -115,10 +119,22 @@ async def esc(test_database_url):
         s.add(galpon)
         await s.flush()
         lote = Lot(company_id=a.id, lot_code=f"{PREFIJO}LR-{uuid.uuid4().hex[:6]}", bird_type=BirdTypeEnum.BREEDER,
-                   status=LotStatus.ACTIVE, farm_id=granja.id, house_id=galpon.id)
+                   status=LotStatus.ACTIVE, farm_id=granja.id, house_id=galpon.id,
+                   # `spec 020 §6` · `RR-30`: mortalidad, descarte y alimento derivan su semana del inicio.
+                   start_date=lot_start_date())
         lote_h = Lot(company_id=a.id, lot_code=f"{PREFIJO}LH-{uuid.uuid4().hex[:6]}", bird_type=BirdTypeEnum.HATCHERY,
-                     status=LotStatus.ACTIVE, farm_id=granja.id, house_id=galpon.id)
+                     status=LotStatus.ACTIVE, farm_id=granja.id, house_id=galpon.id, start_date=lot_start_date())
         s.add_all([lote, lote_h])
+        await s.flush()
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-34`: el consumo de alimento exige
+        # la fase productiva vigente del lote en la fecha del evento. Se siembra una que cubre
+        # cualquier fecha de la suite.
+        fase = ProductivePhase(name=f"{PREFIJO}FASE", code=f"{PREFIJO}FP-{uuid.uuid4().hex[:4]}", order=1)
+        s.add(fase)
+        await s.flush()
+        for l in (lote, lote_h):
+            s.add(LotPhase(lot_id=l.id, phase_id=fase.id, start_date=days_ago(60), is_active=True))
+        await s.flush()
 
         # Un catálogo por familia y por dueño: A, B y compartido (`company_id = NULL`).
         modelos = {"sup": Supplier, "tr": Transport, "mc": MortalityCause, "cc": CullCause,
@@ -152,6 +168,14 @@ async def esc(test_database_url):
         s.add(raza)
         await s.flush()
         catalogos["raza"] = raza.id
+        # `spec 020 §6` ratificado por la Owner el 25-11-2026 · `RR-27`: toda corrección nueva
+        # declara su tipo, de la empresa del evento. Sin él la corrección se rechaza antes de
+        # mirar el valor, y esta prueba no llegaría a medir el repunte a un catálogo ajeno.
+        tipo_correccion = CorrectionType(company_id=a.id, name=f"{PREFIJO}CORR-{uuid.uuid4().hex[:4]}",
+                                         is_active=True)
+        s.add(tipo_correccion)
+        await s.flush()
+        catalogos["tipo_correccion"] = tipo_correccion.id
         await s.commit()
         d = {"url": test_database_url, "a": a.id, "b": b.id, "op": op.id, "actor_b": actor_b.id, "global": global_.id,
              "granja": granja.id, "galpon": galpon.id, "lote": lote.id, "lote_h": lote_h.id}
@@ -173,7 +197,9 @@ async def esc(test_database_url):
             "DELETE FROM egg_movements WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM inspection_details WHERE event_id IN (SELECT id FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p))",
             "DELETE FROM operational_events WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
+            "DELETE FROM lot_phases WHERE lot_id IN (SELECT id FROM lots WHERE lot_code LIKE :p)",
             "DELETE FROM lots WHERE lot_code LIKE :p",
+            "DELETE FROM productive_phases WHERE code LIKE :p",
             "DELETE FROM incubators WHERE name LIKE :p",
             "DELETE FROM hatchers WHERE name LIKE :p",
             "DELETE FROM hatcheries WHERE name LIKE :p",
@@ -185,6 +211,7 @@ async def esc(test_database_url):
             "DELETE FROM mortality_causes WHERE name LIKE :p", "DELETE FROM cull_causes WHERE name LIKE :p",
             "DELETE FROM vaccines WHERE name LIKE :p", "DELETE FROM medications WHERE name LIKE :p",
             "DELETE FROM processing_plants WHERE name LIKE :p", "DELETE FROM feed_types WHERE name LIKE :p",
+            "DELETE FROM correction_types WHERE name LIKE :p",
             "DELETE FROM company_business_units WHERE company_id IN (SELECT id FROM companies WHERE name LIKE :p)",
             "DELETE FROM permissions WHERE role_id IN (SELECT id FROM roles WHERE name LIKE :p)",
             "DELETE FROM users WHERE username LIKE :p", "DELETE FROM roles WHERE name LIKE :p",
@@ -284,6 +311,7 @@ async def test_r179_03_04_la_edicion_y_la_correccion_no_repuntan_a_un_catalogo_a
     assert await _causa() == antes, "AC-R179-05: el evento no cambia"
     r = await http_client.post("/api/v1/corrections", headers=_token(esc["op"]),
                                json={"event_id": evento, "field_name": "cause_id", "corrected_value": str(esc["mc_b"]),
+                                     "correction_type_id": esc["tipo_correccion"],
                                      "reason": f"{PREFIJO}corrección de prueba"})
     assert _es_br(r, "BR-07"), ("AC-R179-04: corrección hacia la causa de B", r.status_code, r.text)
     assert await _causa() == antes
@@ -312,13 +340,16 @@ async def test_r179_06_el_catalogo_compartido_se_acepta(http_client, esc, clave,
 async def test_r179_07_12_la_empresa_la_deriva_el_servidor(http_client, esc):
     await _poblar(http_client, esc)
     cuerpo = _cuerpo(esc, "vaccination", {}, "vaccine_id", esc["vac_b"])
+    # `spec 020 §6` · `RR-31`: la vacunación declara el lote de la vacuna aplicada.
+    cuerpo["vaccine_lot_number"] = LOTE_DE_VACUNA
     # el actor de A declara el contexto de B: su empresa efectiva no cambia (OD-11) y el lote sigue siendo de A
     r = await _post(http_client, esc, "op", cuerpo, company_id=esc["b"])
     assert r.status_code in (400, 403, 404), ("AC-R179-07: declarar otra empresa no autoriza el catálogo ajeno", r.status_code, r.text)
     # autoridad global situada en A: mismo contrato que el actor de empresa
     r = await _post(http_client, esc, "global", cuerpo, company_id=esc["a"])
     assert _es_br(r, "BR-07"), ("AC-R179-12: global situada en A con vacuna de B", r.status_code, r.text)
-    r = await _post(http_client, esc, "global", _cuerpo(esc, "vaccination", {}, "vaccine_id", esc["vac_a"]), company_id=esc["a"])
+    r = await _post(http_client, esc, "global", _cuerpo(esc, "vaccination", {"vaccine_lot_number": LOTE_DE_VACUNA},
+                                                       "vaccine_id", esc["vac_a"]), company_id=esc["a"])
     assert r.status_code == 201, ("AC-R179-12: global situada en A con vacuna de A", r.text)
 
 

@@ -17,7 +17,7 @@
  */
 import { test, expect } from '@playwright/test'
 import {
-  API, cabeceraAdmin, crearMaestros, hoy, registrar, sufijo,
+  API, LOTE_DE_VACUNA, cabeceraAdmin, crearMaestros, faseVigente, hoy, registrar, sufijo,
 } from '../test-support/e2e-api'
 
 const ORDENADO = 5_000
@@ -107,6 +107,8 @@ test.describe('P-03 · cadena de cría de reproductoras', () => {
   test('la cadena completa se recorre de la inspección a la salida', async ({ request }) => {
     const cab = await cabeceraAdmin(request)
     const esc = await escenarioConCurva(request, cab, 'P03')
+    // `RR-34` (`OD-S2-07`): la fase del alimento se deriva del lote; el lote nace con su fase.
+    await faseVigente(request, cab, esc.lotId, haceDias(EDAD_AL_PESAR))
     const m = await crearMaestros(request, cab, 'P03')
     const oc = await ordenDeCompra(request, cab)
     const base = { lot_id: esc.lotId, farm_id: esc.farmId, house_id: esc.houseId, event_date: hoy() }
@@ -122,9 +124,9 @@ test.describe('P-03 · cadena de cría de reproductoras', () => {
       ['feed_registration', { feed_movements: [{ quantity_kg: 380.0, feed_type_id: m.alimentoId }] }],
       // Dentro de norma: la cadena no debe generar alerta por sí misma.
       ['weight_recording', { bird_movements: [{ sex: 'mixed', quantity: 100, avg_weight: 150 }] }],
-      ['mortality_recording', { bird_movements: [{ sex: 'mixed', quantity: 9, mortality_cause_id: m.causaMortalidadId }] }],
-      ['cull_recording', { bird_movements: [{ sex: 'mixed', quantity: 4, cull_cause_id: m.causaDescarteId }] }],
-      ['vaccination', { vaccine_id: m.vacunaId }],
+      ['mortality_recording', { cause_id: m.causaMortalidadId, bird_movements: [{ sex: 'mixed', quantity: 9 }] }],
+      ['cull_recording', { cull_cause_id: m.causaDescarteId, bird_movements: [{ sex: 'mixed', quantity: 4 }] }],
+      ['vaccination', { vaccine_id: m.vacunaId, vaccine_lot_number: LOTE_DE_VACUNA }],
       ['medication', { medication_id: m.medicamentoId }],
       ['bird_exit', { bird_movements: [{ sex: 'mixed', quantity: 150 }] }],
     ]

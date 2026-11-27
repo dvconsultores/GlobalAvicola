@@ -10,9 +10,9 @@
  * SPEC 018 (§1.2/D-4): la incubadora deja `eggs_discarded` y captura el desglose de no incubables.
  * Aquí la fila canónica se ajusta a ceros **conocidos** para que el saldo «recibidos − cargados −
  * no incubables» conserve los 1 000 huevos que carga el primer evento post-corte; el desglose
- * 500/300/200 con fosa 25 —y el `eggs_in_process` V4 (fosa POST-CARGA, SPEC 018 §7 · D-12) que
+ * 500/300/200 con fosa 25 —y el `eggs_in_process` V4 (fosa PRE-CARGA, SPEC 018 §9 · D-23) que
  * arrastra— se certifica aparte en `proceso-spec018-cutover-hatchery-v4.spec.ts` y en
- * `proceso-spec018b-hatchery-v4-fosa-od01.spec.ts`.
+ * `proceso-spec018d-hatchery-v4-fosa-od02.spec.ts`.
  */
 import { expect, test } from '@playwright/test'
 import { API, cabeceraAdmin } from '../test-support/e2e-api'
@@ -36,7 +36,7 @@ test.describe('P-16 · Cargas Iniciales v4 — incubadora', () => {
         ...fila,
         // Ceros conocidos: el saldo BR-03 de la apertura queda en 1 000 = lo que carga el evento post-corte.
         eggs_non_incubable_oversized: 0, eggs_non_incubable_dirty: 0, eggs_non_incubable_broken: 0,
-        // Fosa en cero conocido ⇒ `eggs_in_process` derivable (con fosa > 0 sería UNKNOWN).
+        // Fosa en cero conocido: la fosa es PRE-CARGA y saldría del saldo por cargar (SPEC 018 §9).
         fertile_eggs_to_pit: 0,
       })),
     })

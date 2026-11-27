@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+      Running tests with seed "1010"
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 436ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 687ms
+     ✓ sobre uno mismo: sin acción de concesión y nota visible (AC-UBU-11 UI)  371ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  06:34:29
+   Duration  2.71s (transform 602ms, setup 167ms, import 1.53s, tests 1.12s, environment 1.90s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/pre_F_shuffle/run_10.json

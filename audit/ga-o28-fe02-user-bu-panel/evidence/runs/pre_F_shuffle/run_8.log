@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+      Running tests with seed "1008"
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 549ms
+     ✓ AC-UI-02: con historia + concesión viva se resuelve la VIVA (AR-14)  305ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 697ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  06:34:22
+   Duration  2.53s (transform 470ms, setup 185ms, import 1.26s, tests 1.25s, environment 1.78s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/pre_F_shuffle/run_8.json

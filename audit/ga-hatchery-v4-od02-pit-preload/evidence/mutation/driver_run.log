@@ -1,0 +1,19 @@
+[BASE backend] rc=0
+======================== 62 passed, 1 warning in 20.02s ========================
+[BASE frontend] rc=0
+ Test Files  1 passed (1)
+      Tests  18 passed (18)
+[M1] MUERTO · §33.1 la fosa vuelve a restarse de eggs_in_process (derivado)
+[M2] MUERTO · §33.2 se elimina la fosa de la ecuación pre-carga
+[M3] MUERTO · §33.3 `<=` pasa a `<` (la igualdad se rechaza)
+[M4] MUERTO · §33.4 `<=` pasa a `>=`
+[M5] MUERTO · §33.5 UNKNOWN se convierte en 0 (saldo disponible)
+[M6] MUERTO · reconciliación: la fosa vuelve a restarse de en proceso
+[M7] MUERTO · reconciliación: el disponible no resta la fosa
+[M8] MUERTO · BR-03 operativo no resta la fosa
+[M9] MUERTO · vuelve la regla superada transferidos + fosa ≤ cargados
+[F1] MUERTO · preview: la columna de saldo pinta otro derivado
+[F2] MUERTO · preview: el saldo deja la etapa pre-carga (tras recibidos)
+[F3] MUERTO · i18n: la fosa vuelve a rotularse post-carga
+SOBREVIVIENTES / NO APLICABLES: ninguno
+FIN

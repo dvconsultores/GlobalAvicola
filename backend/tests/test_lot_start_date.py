@@ -25,6 +25,7 @@ import app.corrections.models  # noqa: F401
 import app.operations.models  # noqa: F401
 import app.review.models  # noqa: F401
 from app.masters.models import Lot
+from tests.owner_decisions_support import fase_vigente_del_lote, tipo_de_alimento
 from tests.time_reference import (
     days_ago, iso_days_ago, reference_today, reference_today_utc,
 )
@@ -146,9 +147,14 @@ async def test_t_047_03_la_edad_deriva_del_inicio_declarado(
     lot_id = r.json()["id"]
 
     # `BR-05` exige pesaje y alimento para poder cerrar.
+    # `SPEC 020 §6`: el consumo declara su tipo de alimento (`RR-33`) y deriva su fase del
+    # lote en la fecha del evento (`RR-34`); el lote nacido por API aún no tenía fase.
+    await fase_vigente_del_lote(client, auth_headers, lot_id, iso_days_ago(DIAS_DE_VIDA))
     for tipo, extra in (
         ("weight_recording", {"bird_movements": [{"sex": "mixed", "quantity": 10, "avg_weight": 2000}]}),
-        ("feed_registration", {"feed_movements": [{"quantity_kg": 100.0}]}),
+        ("feed_registration", {"feed_movements": [
+            {"quantity_kg": 100.0,
+             "feed_type_id": await tipo_de_alimento(client, auth_headers)}]}),
     ):
         ev = await client.post(
             "/api/v1/operations",

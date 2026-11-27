@@ -4,8 +4,9 @@
  * Certifica por API y por interfaz que el **preview** de un batch de incubadora nunca presenta una
  * suma parcial como si fuera el total (D-18/D-19/D-20):
  *
- * - **E2E-O15-01** dos procesos en el mismo batch: A (10 000 / 9 000 / transferidos 8 000 / fosa 100
- *   ⇒ en proceso 900) y B (idéntico pero `fertile_eggs_to_pit` **vacío** ⇒ UNKNOWN). La fila A muestra
+ * - **E2E-O15-01** dos procesos en el mismo batch: A (10 000 / 9 000 / transferidos 8 100 ⇒ en proceso
+ *   900) y B (idéntico pero `eggs_transferred` **vacío** ⇒ UNKNOWN; desde SPEC 018 §9 · OD-HATCH-V4-02
+ *   la fosa es PRE-CARGA y ya no interviene en «en proceso»). La fila A muestra
  *   900, la fila B «UNKNOWN», el chip total «UNKNOWN» (jamás 900) y la API publica
  *   `eggs_in_process = null` con `eggs_in_process_status = 'UNKNOWN'` y `eggs_in_process_unknown_rows = 1`.
  * - **E2E-O15-02** completar el UNKNOWN con un **0 conocido**: se vuelve a subir al **mismo batch**
@@ -44,10 +45,14 @@ const filaV4 = (ref: string, extra: Record<string, unknown> = {}): Record<string
   ...filasPorBu('hatchery', maestros, ref)[0], ...extra,
 })
 
-/** Fila con fosa KNOWN (`valor`), transferidos 8 000 y no incubables conocidos en 0 ⇒ en proceso = set − 8 000 − fosa. */
+/**
+ * Fila con no incubables y fosa en 0 conocido y transferidos `8 000 + valor` (o vacío si `valor` es
+ * `null`) ⇒ en proceso = 9 000 − transferidos (SPEC 018 §9 · D-23: `set − transferred`). `valor` 100 ⇒
+ * 900; `0` ⇒ 1 000; `null` ⇒ UNKNOWN. La fosa (PRE-CARGA) ya no vuelve UNKNOWN el en proceso.
+ */
 const filaConFosa = (ref: string, valor: number | null): Record<string, unknown> => filaV4(ref, {
   eggs_non_incubable_oversized: 0, eggs_non_incubable_dirty: 0, eggs_non_incubable_broken: 0,
-  eggs_transferred: 8000, fertile_eggs_to_pit: valor,
+  eggs_transferred: valor === null ? null : 8000 + valor, fertile_eggs_to_pit: 0,
 })
 
 /** Batch nuevo por API. Cada escenario usa un corte propio: la misma carga y corte es DUPLICATE_UPLOAD. */
@@ -123,7 +128,7 @@ test.afterAll(() => {
   writeFileSync(`${EV}/e2e_spec018c_o15.json`, JSON.stringify(ev, null, 2))
 })
 
-test('E2E-O15-01 dos procesos (A conocido, B con fosa vacía) ⇒ fila A 900, fila B UNKNOWN y chip UNKNOWN', async ({ page, request }) => {
+test('E2E-O15-01 dos procesos (A conocido, B con transferidos vacío) ⇒ fila A 900, fila B UNKNOWN y chip UNKNOWN', async ({ page, request }) => {
   test.setTimeout(240_000)
   const refA = `E2E-O15-${s}-A`
   const refB = `E2E-O15-${s}-B`
@@ -143,7 +148,7 @@ test('E2E-O15-01 dos procesos (A conocido, B con fosa vacía) ⇒ fila A 900, fi
   expect(prev.summary.eggs_in_process_unknown_rows).toBe(1)
   const porRef = filasPorRef(prev)
   expect(porRef[refA].derived.eggs_in_process, '9 000 − 8 000 − 100').toBe(900)
-  expect(porRef[refB].derived.eggs_in_process, 'fosa UNKNOWN ⇒ en proceso UNKNOWN').toBeNull()
+  expect(porRef[refB].derived.eggs_in_process, 'transferidos UNKNOWN ⇒ en proceso UNKNOWN').toBeNull()
   const rowA = porRef[refA].row_number
   const rowB = porRef[refB].row_number
 
@@ -200,7 +205,7 @@ test('E2E-O15-02 completar el UNKNOWN con 0 conocido (re-subida al MISMO batch) 
   expect(despues.summary.eggs_in_process_unknown_rows).toBe(0)
   const porRef = filasPorRef(despues)
   expect(porRef[refA].derived.eggs_in_process).toBe(900)
-  expect(porRef[refB].derived.eggs_in_process, 'fosa 0 conocido ⇒ set − transferidos').toBe(1000)
+  expect(porRef[refB].derived.eggs_in_process, 'transferidos 8 000 conocidos ⇒ set − transferidos').toBe(1000)
   const rowA = porRef[refA].row_number
   const rowB = porRef[refB].row_number
 

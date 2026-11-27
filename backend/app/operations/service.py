@@ -61,7 +61,17 @@ from .validators import (
     # `GA-UAT-BREEDER-CRIA-S1-2026-11-10` · `spec 015 §4.1`: el «no vacío» por operación (`RR-20`..`RR-23`).
     validate_contenido_minimo,
     validate_water_consumption,
+    # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §3.1`: la muestra y las cantidades (`RR-24`..`RR-26`).
+    validate_muestra,
+    validate_cantidades_no_negativas,
+    # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: el lote de la vacuna y el motivo de la baja (`RR-31`, `RR-32`).
+    validate_lote_de_vacuna,
+    validate_motivo_de_la_baja,
+    # `spec 020 §6`: contenido de la inspección (`RR-28`) y distribución con aves (`RR-29`).
+    validate_contenido_de_inspeccion,
+    validate_distribucion_con_aves,
 )
+from .semana import TIPOS_CON_FASE_DERIVADA, TIPOS_CON_SEMANA_DERIVADA, semana_productiva
 
 
 LOT_OPTIONAL_EVENTS = {
@@ -353,6 +363,10 @@ class OperationsService:
 
         # Business rules per event type
         await self._apply_business_rules(event_type, data)
+        # `spec 020 §6` · `RR-30` / `RR-34`: la semana y la fase se derivan del lote y de la fecha del
+        # evento; el valor que mande el cliente se ignora y, sin datos del lote, no se inventa.
+        semana_derivada, fase_derivada = await self.derivar_semana_y_fase(
+            event_type, data.lot_id, data.event_date)
 
         # Create event.
         #
@@ -377,11 +391,18 @@ class OperationsService:
 
         # Create sub-movements
         for bm in data.bird_movements:
-            self.db.add(models.BirdMovement(event_id=event.id, **bm.model_dump()))
+            datos_bm = bm.model_dump()
+            if semana_derivada is not None:
+                datos_bm["week_number"] = semana_derivada
+            self.db.add(models.BirdMovement(event_id=event.id, **datos_bm))
         for em in data.egg_movements:
             self.db.add(models.EggMovement(event_id=event.id, **em.model_dump()))
         for fm in data.feed_movements:
-            self.db.add(models.FeedMovement(event_id=event.id, **fm.model_dump()))
+            datos_fm = fm.model_dump()
+            if semana_derivada is not None:
+                datos_fm["week_number"] = semana_derivada
+            datos_fm["phase_id"] = fase_derivada
+            self.db.add(models.FeedMovement(event_id=event.id, **datos_fm))
         for hp in data.hatchery_params:
             self.db.add(models.HatcheryParams(event_id=event.id, **hp.model_dump()))
         for ins in data.inspection_details:
@@ -1048,6 +1069,15 @@ class OperationsService:
         # son las filas que este mismo servicio persiste, nunca un total enviado por el cliente.
         validate_reception_reconciliation(event_type, cadena_del_lote, data.received_total, data.dead_on_arrival,
                                           data.rejected_on_arrival, sum(bm.quantity for bm in data.bird_movements))
+        validate_muestra(event_type, data.sample_size, data.received_total, data.dead_on_arrival,
+                         sum(bm.quantity for bm in data.bird_movements))
+        validate_cantidades_no_negativas(data.dosage_per_bird, data.treatment_days, data.chicks_healthy, data.chicks_weak)
+        # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: el alta exige siempre el lote de la vacuna
+        # (`RR-31`) y el motivo de la baja o el descarte (`RR-32`).
+        validate_lote_de_vacuna(event_type, data.vaccine_lot_number)
+        validate_motivo_de_la_baja(event_type, data.cause_id, data.cull_cause_id)
+        validate_contenido_de_inspeccion(event_type, data.inspection_details, data.observations)
+        validate_distribucion_con_aves(event_type, data.bird_movements)
         # `GA-REM-005-C` (`R-170`) + `GA-REM-021-C` (`B13`): una sola contabilidad de nacimientos (`BR-21`).
         validate_birth_registration(event_type, cadena_del_lote, data.chicks_healthy, data.chicks_weak,
                                     [(bm.sex, bm.quantity) for bm in data.bird_movements])
@@ -1313,6 +1343,10 @@ class OperationsService:
                 event.event_type, await self._tipo_de_lote(lote_destino),
                 cambios.get("received_total", event.received_total), cambios.get("dead_on_arrival", event.dead_on_arrival),
                 cambios.get("rejected_on_arrival", event.rejected_on_arrival), sum(bm.quantity for bm in event.bird_movements))
+        self.validar_cantidades_del_candidato(event, cambios)
+        if "event_date" in cambios or "lot_id" in cambios:  # `RR-30` / `RR-34`: la semana sigue a la fecha
+            await self.recalcular_semana_y_fase_del_evento(
+                event, cambios.get("event_date", event.event_date), lote_destino)
         # `GA-REM-005-E` `AC-R173-10` · `docs/13 §2`: la auditoría de la edición conserva valor anterior y nuevo
         previos = {key: _valor_auditable(getattr(event, key, None)) for key in cambios}
         for key, val in cambios.items():
@@ -1389,6 +1423,90 @@ class OperationsService:
                     self.db, cand["sap_document_ref"], tipo_del_lote, codigo_del_lote,
                     company_id=self.company_id,
                 )
+
+    async def derivar_semana_y_fase(self, event_type, lot_id, event_date) -> tuple[int | None, int | None]:
+        """`SPEC 020 §6` · `RR-30` / `RR-34`: `(semana productiva, fase vigente)` de un evento.
+
+        La semana sale de `semana_productiva(lots.start_date, event_date)` —la única función canónica— y
+        solo para los eventos de `TIPOS_CON_SEMANA_DERIVADA`; la fase, del `lot_phases` vigente en
+        `event_date`, solo para el alimento. Lo que no se puede derivar **no se inventa**: sin fecha de
+        inicio del lote (o con un evento anterior a ella) es `LOT_DATE_INCOMPLETE`; sin fase vigente,
+        `LOT_PHASE_INCOMPLETE`. Ambos son `400` con su regla.
+        """
+        from datetime import datetime as _datetime
+
+        from sqlalchemy import or_
+
+        from ..lots.models import LotPhase
+        from ..masters.models import Lot
+        from .validators import BusinessRuleViolation
+
+        tipo = getattr(event_type, "value", event_type)
+        if tipo not in TIPOS_CON_SEMANA_DERIVADA or lot_id is None:
+            return None, None
+        inicio = (await self.db.execute(
+            self._acotar_a_empresa(select(Lot.start_date).where(Lot.id == lot_id), Lot.company_id)
+        )).scalar_one_or_none()
+        try:
+            semana = semana_productiva(inicio, event_date)
+        except ValueError:
+            raise BusinessRuleViolation(
+                "Fecha del lote incompleta (LOT_DATE_INCOMPLETE): el lote no tiene fecha de inicio, o el "
+                "evento es anterior a ella, y no se puede derivar la semana", "RR-30")
+        fase = None
+        if tipo in TIPOS_CON_FASE_DERIVADA:
+            dia = event_date.date() if isinstance(event_date, _datetime) else event_date
+            fase = (await self.db.execute(
+                select(LotPhase.phase_id)
+                .where(LotPhase.lot_id == lot_id, LotPhase.start_date <= dia,
+                       or_(LotPhase.end_date.is_(None), LotPhase.end_date >= dia))
+                .order_by(LotPhase.start_date.desc(), LotPhase.id.desc()).limit(1)
+            )).scalar_one_or_none()
+            if fase is None:
+                raise BusinessRuleViolation(
+                    "El lote no tiene una fase productiva vigente en la fecha del evento "
+                    "(LOT_PHASE_INCOMPLETE): registre la fase del lote antes de registrar alimento", "RR-34")
+        return semana, fase
+
+    async def recalcular_semana_y_fase_del_evento(self, event: models.OperationalEvent, event_date, lot_id) -> None:
+        """`RR-30` / `RR-34`: tras cambiar la fecha o el lote, las filas del evento siguen a la nueva fecha."""
+        semana, fase = await self.derivar_semana_y_fase(event.event_type, lot_id, event_date)
+        if semana is None:
+            return
+        for fila in event.bird_movements:
+            fila.week_number = semana
+        for fila in event.feed_movements:
+            fila.week_number = semana
+            fila.phase_id = fase
+
+    def validar_cantidades_del_candidato(self, event: models.OperationalEvent, cambios: dict) -> None:
+        """`SPEC 020 §3.1` (`RR-24`..`RR-26`): paridad de edición y corrección sobre el estado candidato.
+
+        Solo corre la regla cuyo campo cambia: editar un campo ajeno de un evento histórico con
+        un valor ya inválido no se bloquea. Las alojadas salen de las filas persistidas.
+        """
+        if any(k in cambios for k in ("sample_size", "received_total", "dead_on_arrival")):
+            validate_muestra(
+                event.event_type, cambios.get("sample_size", event.sample_size),
+                cambios.get("received_total", event.received_total),
+                cambios.get("dead_on_arrival", event.dead_on_arrival),
+                sum(bm.quantity or 0 for bm in event.bird_movements))
+        no_negativas = {k: cambios[k] for k in ("dosage_per_bird", "treatment_days", "chicks_healthy", "chicks_weak") if k in cambios}
+        if no_negativas:
+            validate_cantidades_no_negativas(**no_negativas)
+        # `GA-UAT-BREEDER-CRIA-S2` · `spec 020 §6`: `RR-31` y `RR-32` solo se evalúan si la
+        # modificación **toca** el campo —también con `None` o vacío, que es precisamente lo que
+        # se rechaza—. Un histórico sin el dato sigue editándose en cualquier otro campo.
+        if "vaccine_lot_number" in cambios:
+            validate_lote_de_vacuna(event.event_type, cambios["vaccine_lot_number"])
+        if "observations" in cambios:  # `RR-28`: la inspección no puede quedar sin contenido (estado candidato)
+            validate_contenido_de_inspeccion(
+                event.event_type, event.inspection_details, cambios["observations"], len(event.evidences or []))
+        if any(k in cambios for k in ("cause_id", "cull_cause_id")):
+            validate_motivo_de_la_baja(
+                event.event_type,
+                cambios.get("cause_id", event.cause_id),
+                cambios.get("cull_cause_id", event.cull_cause_id))
 
     async def _exigir_sin_vinculo_efectivo(self, event: models.OperationalEvent, cambios: dict, lote_destino: int | None) -> None:
         """`GA-REM-031-A` · `R-178`: un evento casado en un vínculo de trazabilidad no se reasigna.
