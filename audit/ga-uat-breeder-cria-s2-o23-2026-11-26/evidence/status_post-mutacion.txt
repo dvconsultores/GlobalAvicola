@@ -1,0 +1,7 @@
+HEAD=26522ad dirty=0 2026-11-26T17:59:33-05:00
+vitest rc=1
+tsc rc=0
+build rc=0
+backend rc=0
+e2e rc=0
+FIN 2026-11-26T18:52:57-05:00

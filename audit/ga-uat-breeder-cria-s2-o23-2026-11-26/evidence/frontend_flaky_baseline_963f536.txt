@@ -1,0 +1,15 @@
+Clasificación del fallo intermitente de vitest en la regresión post-mutación (26-11-2026).
+
+HEAD 26522ad (O-23), suite completa:
+  corrida post-mutación: 1 failed | 818 passed | 1 skipped -> uatAdminRbac.userBuPanel «AC-UI-01 Revocar» (no encuentra «Progenitoras»)
+  repetición:            1 failed | 818 passed | 1 skipped -> gaFe02.userBuPanel «AC-UBU-02/03/04» (no encuentra users.businessUnits.companyState)
+  corrida pre-commit (mismo código + árbol sin commitear): 820 passed
+  uatAdminRbac.userBuPanel aislado x3: 4 passed x3
+
+Línea base 963f536 (SIN O-23), worktree desacoplado temporal, misma node_modules, suite completa x3:
+  1 failed | 812 passed -> gaFe02.userBuPanel AC-UBU-02/03/04
+  1 failed | 812 passed -> gaFe02.userBuPanel AC-UBU-02/03/04
+  1 failed | 812 passed -> uatAdminRbac.userBuPanel AC-UI-01
+
+O-23 no modifica frontend/src/pages/users ni componentes compartidos (git diff 963f536 26522ad -- src/pages/users src/components: vacío).
+Conclusión: PRE_EXISTING_FLAKE de carga en los tests del panel de unidades del usuario (getByText síncrono tras carga asíncrona); no introducido por O-23. Observación O-28; no se toca en este ciclo (no se relaja ningún test).

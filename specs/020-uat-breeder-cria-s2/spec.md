@@ -109,7 +109,7 @@ Cierre: regresión completa sin tests relajados, sensibilidad tras el commit de 
 
 Hallazgo de la E2E, corregido: el formulario de corrección ofrecía tipos **inactivos**, que el servidor rechaza (`RR-27` exige activo); ahora el selector solo ofrece tipos activos (`1bc438f`, `OD01-05`).
 
-Observaciones: `O-26` (evidencia solo tras el alta); `O-27` un lote sin fase productiva vigente en la fecha no puede registrar alimento hasta que se registre su fase (`RR-34`, ratificado: no se inventa) — en el retest UAT, los lotes de prueba deben tener su fase cargada; `O-23` (asignar por corrección un maestro a un campo que estaba vacío) sigue abierta. Certificación: `audit/ga-uat-breeder-cria-s2-owner-decisions-2026-11-25/CERTIFICATION.md`.
+Observaciones: `O-26` (evidencia solo tras el alta); `O-27` un lote sin fase productiva vigente en la fecha no puede registrar alimento hasta que se registre su fase (`RR-34`, ratificado: no se inventa) — en el retest UAT, los lotes de prueba deben tener su fase cargada; `O-23` (asignar por corrección un maestro a un campo que estaba vacío) sigue abierta — cerrada después por §7. Certificación: `audit/ga-uat-breeder-cria-s2-owner-decisions-2026-11-25/CERTIFICATION.md`.
 
 ## 7. Enmienda O-23 · `NULL_TO_MASTER_CORRECTION` (26-11-2026)
 
@@ -129,3 +129,5 @@ Residual posterior al cierre de §6 (`SESSION2 = CERTIFIED`); no reabre la Sesi�
 | **AC-O23-08** | Las reglas del campo se aplican igual que en `A→B` (`RR-21`, `RR-31`, `RR-32`, `BR-07`, vínculo efectivo): sin *bypass*. |
 
 Pruebas: backend `O23-B01..B09` (`backend/tests/test_uat_s2_o23_null_to_master.py`), frontend `O23-F01..F06` (vitest), E2E `proceso-spec020c` (positivo con refresco y re-login, y negativo por API: otra empresa e inactivo). `O-26`, `O-27`, `O-11`, `O-12`, `O-16` y `O-19` quedan fuera de este ciclo.
+
+**Estado (26-11-2026):** `IMPLEMENTADO` en `develop` — `backend/app/corrections/service.py` (`MAESTROS_POR_TIPO_DE_EVENTO`, `_maestro_aplica`, `_exigir_maestro_activo`), `CorrectionForm.tsx`, `ReviewDetail.tsx`, `utils/correctionFields.ts` y `corrections.noValue` (es/en). Sin migración. Certificación: `audit/ga-uat-breeder-cria-s2-o23-2026-11-26/CERTIFICATION.md`.

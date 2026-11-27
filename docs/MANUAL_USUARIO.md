@@ -203,6 +203,8 @@ Los campos que apuntan a un catálogo —proveedor, medicamento, vacuna, causas 
 
 El **tipo de corrección es obligatorio** en toda corrección nueva: sin elegirlo el formulario avisa «Seleccione el tipo de corrección» y no envía nada. La lista solo ofrece los tipos de corrección **activos** del catálogo. Las correcciones anteriores que no lo tienen se siguen leyendo. Si corriges la **fecha** de un pesaje, una mortalidad, un descarte o un consumo de alimento, la **semana** (y la fase del alimento) se **recalculan** con la nueva fecha; la semana ya no se corrige a mano. Una corrección tampoco puede **vaciar** el lote de la vacuna ni la causa de una mortalidad o un descarte.
 
+Si un dato de catálogo **quedó vacío** al registrar (por ejemplo, una recepción sin proveedor), puedes **completarlo** con una corrección: elige el campo, verás «Valor original: Sin valor», y selecciona el registro correcto de la lista. La lista solo muestra registros **activos** de tu empresa, con su código y nombre (por ejemplo «PROV-001 — Proveedor ABC»). Solo se ofrecen los campos que corresponden a esa operación (una recepción ofrece proveedor, no vacuna). El historial lo muestra como «Proveedor: Sin valor → "Proveedor ABC"».
+
 ### 9.2 · Datos obligatorios por operación
 
 Los campos obligatorios llevan un «*» en el formulario. El detalle por operación es:
