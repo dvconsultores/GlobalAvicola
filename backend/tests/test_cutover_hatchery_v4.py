@@ -426,8 +426,8 @@ async def test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process(auth_heade
     """D-4: los no incubables restan UNA sola vez, en el saldo recibido→cargado.
 
     `eggs_in_process` no los toca (9000 = `set − transferred`; SPEC 018 §9 D-23): restarlos también
-    ahí sería el doble conteo. Con un componente UNKNOWN el saldo BR-03 es
-    cota superior.
+    ahí sería el doble conteo. Con un componente UNKNOWN el saldo BR-03 es UNKNOWN (SPEC 018 §10):
+    la suma conocida es una cota superior y no autoriza cargas.
     """
     await preparar(seeded_ids)
     from app.operations.validators import get_hatchery_egg_balance
@@ -439,7 +439,7 @@ async def test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process(auth_heade
         # (b) 10000 − 9000 − 400 = 600
         fila_incubadora("ACV4-BC-B", eggs_non_incubable_oversized=400, eggs_non_incubable_dirty=0,
                         eggs_non_incubable_broken=0),
-        # (c) `dirty` UNKNOWN no se resta ni se inventa: 10000 − 9000 − 500 = 500 (cota superior)
+        # (c) `dirty` UNKNOWN: el saldo es UNKNOWN (la cota 10000 − 9000 − 500 = 500 no es un saldo)
         fila_incubadora("ACV4-BC-C", eggs_non_incubable_oversized=400, eggs_non_incubable_dirty=None,
                         eggs_non_incubable_broken=100),
     ], 85)
@@ -447,7 +447,7 @@ async def test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process(auth_heade
     async with database.async_session() as s:
         assert await get_hatchery_egg_balance(s, lotes["ACV4-BC-A"]) == 0
         assert await get_hatchery_egg_balance(s, lotes["ACV4-BC-B"]) == 600
-        assert await get_hatchery_egg_balance(s, lotes["ACV4-BC-C"]) == 500
+        assert await get_hatchery_egg_balance(s, lotes["ACV4-BC-C"]) is None
 
     rec = await _reconciliacion(http_client, auth_headers, batch_id)
     total = rec["ACV4-BC-A"]["opening"]["hatchery"]
@@ -458,7 +458,7 @@ async def test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process(auth_heade
     assert rec["ACV4-BC-B"]["current"]["eggs_available_hatchery"] == 600 and parcial["eggs_in_process"] == 9000
     desconocido = rec["ACV4-BC-C"]["opening"]["hatchery"]
     assert desconocido["eggs_non_incubable_total"] is None
-    assert rec["ACV4-BC-C"]["current"]["eggs_available_hatchery"] is None  # cota superior, sin número inventado
+    assert rec["ACV4-BC-C"]["current"]["eggs_available_hatchery"] is None  # UNKNOWN, sin número inventado
     assert desconocido["eggs_in_process"] == 9000
 # ── AC-V4-11 · V3 histórica intacta ─────────────────────────────────────────
 

@@ -25,7 +25,9 @@ from ..lots.models import OpeningBalance
 from ..masters.models import Lot
 from ..transaction import RutaTransaccional
 from . import schemas
+from .contracts import KNOWN
 from .models import OpeningBalanceCorrection
+from .saldo_incubadora import COMPONENTES_PRE_CARGA, es_version_v4, valores_de_apertura, version_de_apertura
 
 router = APIRouter(route_class=RutaTransaccional, prefix="/opening-balances", tags=["Cutover"])
 
@@ -42,6 +44,11 @@ CAMPOS_CORREGIBLES = (
     "accumulated_mortality_mixed",
     "accumulated_culls_mixed",
 )
+
+#: SPEC 018 §10 · BR-03 UNKNOWN FAIL-SAFE: componentes PRE-CARGA de una apertura de incubadora **V4**
+#: (`hatchery_openings`) que la corrección gobernada completa (UNKNOWN → valor) o corrige. Es la vía para
+#: que BR-03 vuelva a tener un saldo exacto; el operador nunca escribe un saldo a mano.
+CAMPOS_CORREGIBLES_INCUBADORA = COMPONENTES_PRE_CARGA
 
 
 class OpeningCorrectionService:
@@ -69,6 +76,8 @@ class OpeningCorrectionService:
 
     async def corregir(self, opening_id: int, data: schemas.OpeningCorrectionCreate) -> OpeningBalanceCorrection:
         opening = await self._opening_propio(opening_id)
+        if data.field in CAMPOS_CORREGIBLES_INCUBADORA:
+            return await self._corregir_incubadora(opening, data)
         if data.field not in CAMPOS_CORREGIBLES:
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -101,6 +110,63 @@ class OpeningCorrectionService:
             modulo=AuditModule.CUTOVER, entity_type="opening_balance",
             entity_id=str(opening.id), company_id=self._empresa(), lot_id=opening.lot_id,
             previous_values={data.field: viejo}, new_values={data.field: nuevo},
+            change_reason=data.reason,
+        )
+        await self.db.commit()
+        await self.db.refresh(correccion)
+        return correccion
+
+    async def _corregir_incubadora(self, opening: OpeningBalance, data) -> OpeningBalanceCorrection:
+        """Completa o corrige un componente pre-carga de una apertura de incubadora V4 (SPEC 018 §10).
+
+        Conserva el original (`old_value` vacío = era UNKNOWN), exige razón, audita y no deja una apertura
+        imposible: el componente y la suma conocida `cargados + no incubables + fosa` no superan lo recibido.
+        """
+        from .models import HatcheryOpening
+
+        apertura = (await self.db.execute(
+            select(HatcheryOpening).where(HatcheryOpening.opening_id == opening.id))).scalar_one_or_none()
+        if apertura is None or not es_version_v4(await version_de_apertura(self.db, opening.lot_id)):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"CORRECTION_FIELD_INVALID: '{data.field}' no es un campo corregible")
+        if data.new_value < 0:
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="CORRECTION_VALUE_INVALID: el valor no puede ser negativo")
+
+        valores = valores_de_apertura(apertura)
+        viejo = valores[data.field]            # None = UNKNOWN (se conserva como tal)
+        nuevo = int(data.new_value)
+        valores[data.field] = nuevo
+        recibidos = valores["eggs_received"]
+        conocidos = (valores["eggs_set"] or 0) + sum(valores[c] for c in COMPONENTES_PRE_CARGA if valores[c] is not None)
+        if recibidos is not None and (nuevo > recibidos or conocidos > recibidos):
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail="CORRECTION_VALUE_INVALID: cargados + no incubables + fosa superarían los huevos recibidos")
+
+        setattr(apertura, data.field, nuevo)
+        setattr(apertura, f"{data.field}_status", KNOWN)
+        correccion = OpeningBalanceCorrection(
+            opening_id=opening.id,
+            field=data.field,
+            old_value=None if viejo is None else str(viejo),
+            new_value=str(nuevo),
+            delta=None if viejo is None else str(nuevo - viejo),
+            reason=data.reason,
+            requested_by_id=int(self.current_user["id"]),
+            applied_at=datetime.now(timezone.utc),
+        )
+        self.db.add(correccion)
+        await self.db.flush()
+
+        await audit_accion(
+            self.db, usuario=self.current_user, accion=AuditAction.CORRECT,
+            modulo=AuditModule.CUTOVER, entity_type="opening_balance",
+            entity_id=str(opening.id), company_id=self._empresa(), lot_id=opening.lot_id,
+            previous_values={data.field: viejo, f"{data.field}_status": "UNKNOWN" if viejo is None else KNOWN},
+            new_values={data.field: nuevo, f"{data.field}_status": KNOWN},
             change_reason=data.reason,
         )
         await self.db.commit()

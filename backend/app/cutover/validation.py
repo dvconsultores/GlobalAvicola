@@ -390,13 +390,13 @@ class ValidadorDeDominio:
                 derivados["eggs_in_process"] = _val(fila, "eggs_set") - _val(fila, "eggs_transferred")
             else:
                 derivados["eggs_in_process"] = None
-            # D-24: saldo disponible para cargar = recibidos − cargados − no incubables − fosa, solo si
-            # TODOS son KNOWN; con un UNKNOWN el saldo es UNKNOWN (no se da una cifra definitiva).
-            if _known(fila, "eggs_received", "eggs_set", *_SALIDAS_PRE_CARGA):
-                derivados["eggs_available_to_set"] = (_val(fila, "eggs_received") - _val(fila, "eggs_set")
-                                                     - sum(_val(fila, c) for c in _SALIDAS_PRE_CARGA))
-            else:
-                derivados["eggs_available_to_set"] = None
+            # D-24 + §10: saldo disponible para cargar con la función canónica (la misma de la
+            # reconciliación y de BR-03): exacto solo si los seis son KNOWN; con un UNKNOWN, UNKNOWN.
+            from .saldo_incubadora import saldo_apertura_por_cargar
+
+            valores = {c: (_val(fila, c) if _known(fila, c) else None)
+                       for c in ("eggs_received", "eggs_set", *_SALIDAS_PRE_CARGA)}
+            derivados["eggs_available_to_set"] = saldo_apertura_por_cargar(valores, es_v4=True)
             return
         inicio = _fecha(_val(fila, "real_start_date"))
         edad_declarada = _val(fila, "age_days") if bu == "broiler" and _known(fila, "age_days") else None

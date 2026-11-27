@@ -179,7 +179,8 @@ async def test_pit_preload_04_fosa_mayor_que_recibidos(auth_headers, http_client
 async def test_pit_preload_05_fosa_unknown_saldo_unknown(auth_headers, http_client, seeded_ids):
     """AC-V4-25: fosa vacía ⇒ saldo disponible UNKNOWN (nunca 1000); `dirty` UNKNOWN igual.
 
-    En proceso no depende de la fosa: 8500 − 0. BR-03 operativo no resta lo desconocido (D-25).
+    En proceso no depende de la fosa: 8500 − 0. BR-03 operativo comparte el UNKNOWN (§10 · D-28/D-30:
+    la suma conocida es una cota, no un saldo; reemplaza a D-25).
     """
     await preparar(seeded_ids)
     batch_id = await _aplicar_batch(http_client, auth_headers, headers_aprobador(seeded_ids), [
@@ -201,8 +202,8 @@ async def test_pit_preload_05_fosa_unknown_saldo_unknown(auth_headers, http_clie
 
     lotes = await items_por_referencia(http_client, auth_headers, batch_id)
     saldos = await _saldos_br03(lotes)
-    assert saldos["PIT-PRE-05"] == 10000 - 8500 - 500           # fosa UNKNOWN no se resta
-    assert saldos["PIT-PRE-05B"] == 10000 - 8500 - 300 - 200     # dirty UNKNOWN no se resta; la fosa sí
+    assert saldos["PIT-PRE-05"] is None                          # fosa UNKNOWN ⇒ saldo UNKNOWN (§10)
+    assert saldos["PIT-PRE-05B"] is None                         # dirty UNKNOWN ⇒ saldo UNKNOWN (§10)
 
 
 # ── PIT-PRELOAD-06 · fosa 0 conocida ─────────────────────────────────────────

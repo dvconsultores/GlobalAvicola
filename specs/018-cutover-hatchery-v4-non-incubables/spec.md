@@ -188,4 +188,29 @@ La fosa **no** vuelve a intervenir en la etapa B.
 | AC-V4-28 | O-15 vigente: una fila con en proceso UNKNOWN ⇒ agregado UNKNOWN (nunca 0 ni suma parcial). |
 | AC-V4-29 | La plantilla v4 regenerada describe la fosa como pre-carga («antes de la carga en incubadora»); sin «durante incubación/ovoscopia». |
 
-**Estado §9:** ver `audit/ga-hatchery-v4-od02-pit-preload/CERTIFICATION.md`.
+**Estado §9:** ver `audit/ga-hatchery-v4-od02-pit-preload/CERTIFICATION.md`. La regla D-25 (BR-03 «un UNKNOWN no se resta») queda **reemplazada por §10**.
+
+## 10. BR-03 UNKNOWN FAIL-SAFE — integridad del saldo disponible posterior al corte (2026-11-26)
+
+Mandato `GA-HATCHERY-V4-BR03-UNKNOWN-FAILSAFE`. No reabre la semántica PRE-CARGA (§9) ni el balance post-carga (`eggs_in_process = set − transferred`).
+
+**Defecto (revisión de la Owner sobre el cierre de §9).** D-25 permitía que BR-03 omitiera un componente pre-carga UNKNOWN y autorizara cargas con la suma conocida. Esa cifra es una **cota superior**, no un saldo demostrado: con `received 10000, set 8500, oversized 200, dirty UNKNOWN, broken 100, pit 200` BR-03 daba 1000; si `dirty` era 700, el saldo real era 300 y se podían cargar 800 (**sobreconsumo de 500**).
+
+**Doctrina:** `UNKNOWN ≠ 0` y `UNKNOWN ≠ SAFE_TO_IGNORE`.
+
+- **D-28 saldo canónico.** Una sola función (`backend/app/cutover/saldo_incubadora.py · saldo_apertura_por_cargar`) da el saldo de apertura por cargar a preview (`derived.eggs_available_to_set`), reconciliación (`current.eggs_available_hatchery`) y BR-03 (`get_hatchery_egg_balance`). V4: `received − set − oversized − dirty − broken − pit` solo si los seis son KNOWN; si cualquiera es UNKNOWN ⇒ **UNKNOWN**. `0` conocido es un cero real. V3 histórica: `received − set` (su contrato no tenía esos componentes; sin cambios).
+- **D-29 dos usos distintos de la suma parcial conocida.** *Consistencia* (D-21): `set + Σ(pre-carga KNOWN) ≤ received` sí se evalúa con UNKNOWN y, si la supera, la fila se rechaza de inmediato. *Autorización* de una carga nueva: **no** puede usar la cota; exige saldo exacto (`KNOWN`).
+- **D-30 BR-03.** `quantity > 0` y saldo UNKNOWN ⇒ **400** `rule = CUTOVER_BALANCE_INCOMPLETE`, mensaje funcional: «No se puede determinar el saldo disponible para cargar porque la carga inicial de Incubadora contiene valores desconocidos. Corrija o complete la carga inicial antes de registrar una nueva carga de huevos.» La misma regla protege la anulación/reasignación de una recepción en incubadora (no se puede demostrar que el lote quede `≥ 0`). Un lote sin apertura migrada no cambia.
+- **D-31 corrección gobernada.** El operador nunca escribe un saldo. `POST /opening-balances/{id}/corrections` (permiso `corrections:correct`, razón obligatoria, auditado, conserva el original: `old_value` vacío = era UNKNOWN) admite ahora los cuatro componentes pre-carga de una apertura **V4** y rechaza (422) un valor que deje `cargados + no incubables + fosa > recibidos`. Con los seis componentes KNOWN, BR-03 vuelve a operar. La reconciliación expone `opening_id` para esa corrección.
+
+| AC | Enunciado |
+|---|---|
+| AC-V4-30 | BR03-U01: `dirty` UNKNOWN ⇒ saldo UNKNOWN en preview, reconciliación y BR-03; carga de 1 ⇒ 400 `CUTOVER_BALANCE_INCOMPLETE`. |
+| AC-V4-31 | BR03-U02: corregir `dirty = 700` ⇒ saldo 300; cargar 300 ⇒ 201; 1 más ⇒ 400 BR-03. |
+| AC-V4-32 | BR03-U03: `dirty = 0` conocido ⇒ saldo 1000; cargar 1000 ⇒ 201. |
+| AC-V4-33 | BR03-U04: con un UNKNOWN, la suma conocida > recibidos ⇒ fila rechazada; una corrección que la provocaría ⇒ 422. |
+| AC-V4-34 | BR03-U05/U06: UNKNOWN en la fosa o en cualquiera de los tres no incubables ⇒ misma denegación (sin trato especial para la fosa). |
+| AC-V4-35 | BR03-U07: todo KNOWN (10000/8500/200/200/100/200) ⇒ saldo 800; 800 ⇒ 201; 801 ⇒ 400 BR-03. |
+| AC-V4-36 | V3 histórica sin cambios; anular una recepción de incubadora con saldo inicial UNKNOWN ⇒ 400 `CUTOVER_BALANCE_INCOMPLETE`. |
+
+**Estado §10:** ver `audit/ga-hatchery-v4-br03-unknown-failsafe/CERTIFICATION.md`.

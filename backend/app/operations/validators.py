@@ -3,6 +3,8 @@ Business rules validators for operational events.
 BR-01 through BR-19 from the spec.
 """
 from datetime import date
+from typing import Optional
+
 from sqlalchemy import case, func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -184,14 +186,16 @@ async def get_egg_balance(db: AsyncSession, lot_id: int) -> int:
     return (res_in.scalar() or 0) - (res_out.scalar() or 0)
 
 
-async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
+async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> Optional[int]:
     """
     Eggs available at hatchery (received - loaded into incubators).
     IN:  EGG_RECEPTION_HATCHERY  (solo el fértil recibido: `Bases` p.9, `GA-REM-005-F`; las demás filas
                                   —diferencias vs enviado— se capturan y no cuentan)
     OUT: INCUBATION_LOAD (quantity_loaded from hatchery_params)
 
-    Apertura migrada (SPEC 018 · D-4): `recibidos − cargados − Σ(no incubables KNOWN)`.
+    Apertura migrada (SPEC 018 §10): saldo **exacto** de `saldo_apertura_por_cargar` (V4: recibidos −
+    cargados − no incubables − fosa con los seis KNOWN). Si la apertura tiene un componente UNKNOWN el
+    saldo del lote es UNKNOWN (`None`): BR-03 no autoriza cargas hasta corregir la carga inicial.
     """
     res_in = await db.execute(
         select(func.coalesce(func.sum(EggMovement.quantity), 0))
@@ -212,30 +216,16 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
             OperationalEvent.status.not_in([EventStatus.CANCELLED]),
         )
     )
-    # SPEC 006: un proceso de incubación migrado abre con huevo recibido y aún no cargado
-    # (`hatchery_openings.eggs_received − eggs_set`); sin esto el lote nacía con saldo 0 y
-    # `BR-03` rechazaba la primera carga posterior al corte.
-    # SPEC 018 · D-4: los no incubables V4 son una clasificación del huevo recibido que nunca
-    # entró en incubadora: restan UNA sola vez aquí, en el saldo recibido→cargado (no en
-    # `eggs_in_process`). Un componente `UNKNOWN` **no se resta ni se inventa** (el saldo es
-    # entonces una cota superior). Las aperturas V3 no cambian: sus componentes son `UNKNOWN`.
-    from ..cutover.models import HatcheryOpening
+    # SPEC 006: un proceso de incubación migrado abre con huevo recibido y aún no cargado; sin esa
+    # apertura el lote nacía con saldo 0 y `BR-03` rechazaba la primera carga posterior al corte.
+    # SPEC 018 §10 (BR-03 UNKNOWN FAIL-SAFE): la apertura sale de la función canónica compartida con
+    # el preview y la reconciliación. Un componente pre-carga UNKNOWN NO se omite: la suma conocida es
+    # una cota superior, no un saldo demostrado ⇒ el saldo es UNKNOWN y no autoriza consumo.
+    from ..cutover.saldo_incubadora import saldo_apertura_del_lote
 
-    componentes = [
-        case((getattr(HatcheryOpening, f"{campo}_status") == "KNOWN",
-              func.coalesce(getattr(HatcheryOpening, campo), 0)), else_=0)
-        for campo in ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken")
-    ]
-    no_incubables = sum(componentes[1:], componentes[0])
-    # SPEC 018 §9 · D-25 (OD-HATCH-V4-02): la fosa es PRE-CARGA y también sale del huevo recibido;
-    # como los no incubables, solo se resta si es KNOWN (un UNKNOWN no se inventa: cota superior).
-    fosa = case((HatcheryOpening.fertile_eggs_to_pit_status == "KNOWN",
-                 func.coalesce(HatcheryOpening.fertile_eggs_to_pit, 0)), else_=0)
-    apertura = (await db.execute(
-        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0)
-               - no_incubables - fosa)
-        .where(HatcheryOpening.lot_id == lot_id)
-    )).scalar() or 0
+    _, apertura = await saldo_apertura_del_lote(db, lot_id)
+    if apertura is None:
+        return None
     return int(apertura) + (res_in.scalar() or 0) - (res_out.scalar() or 0)
 
 
@@ -340,6 +330,11 @@ async def validate_incubation_load(db: AsyncSession, lot_id: int, quantity: int)
         raise BusinessRuleViolation("La cantidad a cargar debe ser mayor a cero", "BR-03")
     await bloquear_saldo_del_lote(db, lot_id)
     balance = await get_hatchery_egg_balance(db, lot_id)
+    if balance is None:
+        # SPEC 018 §10: sin saldo exacto (apertura con componentes UNKNOWN) no se autoriza ninguna carga.
+        from ..cutover.saldo_incubadora import MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO
+
+        raise BusinessRuleViolation(MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO)
     if quantity > balance:
         raise BusinessRuleViolation(
             f"Carga de incubadora ({quantity}) excede los huevos disponibles en incubadora ({balance}). "
@@ -412,6 +407,11 @@ async def validate_retiro_de_entrada(db: AsyncSession, event, n: int, motivo: st
     }
     for etiqueta, regla, saldo_de in reglas.get(event.event_type, []):
         saldo = await saldo_de(db, lot_id)
+        if saldo is None:
+            # SPEC 018 §10: con el saldo inicial UNKNOWN no se puede demostrar que el lote quede `≥ 0`.
+            from ..cutover.saldo_incubadora import MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO
+
+            raise BusinessRuleViolation(MENSAJE_SALDO_INCOMPLETO, REGLA_SALDO_INCOMPLETO)
         if saldo - n < 0:
             raise BusinessRuleViolation(
                 f"{motivo} dejaría el saldo de {etiqueta} del lote en {saldo - n} (saldo {saldo}, entrada {n})", regla,

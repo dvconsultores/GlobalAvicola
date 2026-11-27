@@ -162,6 +162,8 @@ class CutoverReconciliationLot(BaseModel):
     legacy_lot_code: Optional[str] = None
     origin: Optional[str] = None
     business_unit: Optional[str] = None
+    #: SPEC 018 §10: id del opening (`POST /opening-balances/{id}/corrections`).
+    opening_id: Optional[int] = None
     opening: CutoverOpeningRead
     post: CutoverPostRead
     lifetime: CutoverLifetimeRead
