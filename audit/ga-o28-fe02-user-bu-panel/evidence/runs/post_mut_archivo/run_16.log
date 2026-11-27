@@ -1,0 +1,13 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 370ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 562ms
+     ✓ muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)  304ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  07:10:49
+   Duration  2.08s (transform 414ms, setup 137ms, import 1.17s, tests 932ms, environment 1.43s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/post_mut_archivo/run_16.json

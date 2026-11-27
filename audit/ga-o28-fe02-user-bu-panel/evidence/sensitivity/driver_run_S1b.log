@@ -1,0 +1,5 @@
+IMPL_SHA=906e198
+[S1b] OK · patrón defectuoso reintroducido, red instantánea, subsuite SPEC 013 / GA-FE-02 (como en la reproducción C) · esperado=FALLA_ALGUNA · corridas con fallo=1/10
+      falla: gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)
+TREE=CLEAN
+FIN

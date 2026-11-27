@@ -1,0 +1,20 @@
+IMPL_SHA=906e198
+[S1] NO_CUMPLE · patrón defectuoso reintroducido (openPanel sin esperar la carga), red instantánea · esperado=FALLA_ALGUNA · corridas con fallo=0/20
+[S2] OK · patrón defectuoso + respuesta de unidades diferida 20 ms (red lenta) · esperado=FALLA_SIEMPRE · corridas con fallo=5/5
+      falla: gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)
+      falla: gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)
+      falla: gaFe02.userBuPanel.test.tsx › revocar pide confirmación, llama DELETE y refetchea (AC-UBU-08/09)
+      falla: gaFe02.userBuPanel.test.tsx › sobre uno mismo: sin acción de concesión y nota visible (AC-UBU-11 UI)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-01: «Revocar» abre la confirmación en un portal sobre el modal y revoca (AR-13)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-02: con historia + concesión viva se resuelve la VIVA (AR-14)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-03: el panel identifica EMPRESA (nombre) y USUARIO (nombre + login) (AR-15)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-04: la confirmación de revocar nombra al usuario y a la unidad (AR-16)
+[S3] OK · CONTROL: patrón nuevo + respuesta diferida 20 ms (debe pasar) · esperado=PASA_SIEMPRE · corridas con fallo=0/5
+[S4] OK · falso verde: la API devuelve [] unidades · esperado=FALLA_SIEMPRE · corridas con fallo=3/3
+      falla: gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)
+      falla: gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)
+      falla: gaFe02.userBuPanel.test.tsx › revocar pide confirmación, llama DELETE y refetchea (AC-UBU-08/09)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-01: «Revocar» abre la confirmación en un portal sobre el modal y revoca (AR-13)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-02: con historia + concesión viva se resuelve la VIVA (AR-14)
+      falla: uatAdminRbac.userBuPanel.test.tsx › AC-UI-04: la confirmación de revocar nombra al usuario y a la unidad (AR-16)
+TREE=CLEAN

@@ -1,0 +1,282 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+
+stderr | src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx > S2-01 · edición sin cambiar la contraseña > FE-03 · cambiar el apellido ⇒ un PUT, ningún POST /password, sin error
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx > S2-01 · edición sin cambiar la contraseña > FE-04 · cambiar el email ⇒ un PUT, ningún POST /password, sin error
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+stderr | src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx > S2-01 · edición sin cambiar la contraseña > FE-05 · cambiar el nombre ⇒ un PUT, ningún POST /password, sin error
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+An update to UsersPage inside a test was not wrapped in act(...).
+
+When testing, code that causes React state updates should be wrapped into act(...):
+
+act(() => {
+  /* fire events that update state */
+});
+/* assert on the output */
+
+This ensures that you're testing the behavior the user would see in the browser. Learn more at https://react.dev/link/wrap-tests-with-act
+
+ ✓ src/pages/admin/__tests__/gaFe02.UnitAccessPage.test.tsx (15 tests) 1462ms
+ ✓ src/pages/users/__tests__/uatUsersS2.editRoleOnly.test.tsx (13 tests) 2177ms
+     ✓ FE-01 · cambiar SOLO el rol ⇒ un PUT y ninguna petición a /password  499ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.usersList.test.tsx (6 tests) 2227ms
+     ✓ (c) con 100 filas avisa del truncado; con 99 no  1065ms
+     ✓ (c bis) con 99 filas no hay aviso de truncado  645ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.usersRoles.test.tsx (11 tests) 929ms
+     ✓ la papelera se rotula «Desactivar usuario» (aria-label + title) y confirma con users.deactivate  307ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 952ms
+     ✓ muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)  455ms
+ ✓ src/pages/users/__tests__/r195.usersEdit.test.tsx (5 tests) 1027ms
+     ✓ AC-01 · el PUT envía SOLO el subconjunto permitido (sin username/company_id)  464ms
+ ✓ src/components/ui/__tests__/ui-components.test.tsx (45 tests) 504ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.profilePage.test.tsx (5 tests) 472ms
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 530ms
+     ✓ AC-UI-01: «Revocar» abre la confirmación en un portal sobre el modal y revoca (AR-13)  334ms
+ ✓ src/services/__tests__/uatAdminRbac.forbiddenReconcile.test.ts (5 tests) 127ms
+ ✓ src/stores/__tests__/gaFe02.sessionBoot.test.ts (2 tests) 45ms
+ ✓ src/components/layout/__tests__/gaFe02b.companySelector.test.tsx (5 tests) 263ms
+ ✓ src/stores/__tests__/gaFe02.session.test.ts (5 tests) 12ms
+ ✓ src/data/__tests__/gaFe02.i18n.test.ts (44 tests) 9ms
+ ✓ src/services/__tests__/uatAdminRbac.sessionWiring.test.ts (3 tests) 9ms
+ ✓ src/stores/__tests__/uatAdminRbac.sessionRefresh.test.ts (3 tests) 10ms
+ ✓ src/services/__tests__/gaFe02.businessUnitsService.test.ts (7 tests) 8ms
+ ✓ src/data/__tests__/gaFe02.nav.test.ts (6 tests) 6ms
+ ✓ src/auth/__tests__/gaFe02.permissions.test.ts (7 tests) 4ms
+
+ Test Files  19 passed (19)
+      Tests  197 passed (197)
+   Start at  07:11:02
+   Duration  13.50s (transform 1.03s, setup 1.25s, import 5.73s, tests 10.77s, environment 17.56s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/post_mut_spec013/run_1.json

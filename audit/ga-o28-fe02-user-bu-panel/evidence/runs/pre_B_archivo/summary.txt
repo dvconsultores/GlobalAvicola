@@ -1,0 +1,16 @@
+run_1: total=10 passed=10 failed=0 skipped=0
+run_2: total=10 passed=10 failed=0 skipped=0
+run_3: total=10 passed=10 failed=0 skipped=0
+run_4: total=10 passed=10 failed=0 skipped=0
+run_5: total=10 passed=10 failed=0 skipped=0
+run_6: total=10 passed=10 failed=0 skipped=0
+run_7: total=10 passed=10 failed=0 skipped=0
+run_8: total=10 passed=10 failed=0 skipped=0
+run_9: total=10 passed=9 failed=1 skipped=0
+    FAIL gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04) [359 ms] «TestingLibraryElementError: Unable to find an element with the text: users.businessUnits.companyState. This co» loading_en_DOM=True
+run_10: total=10 passed=9 failed=1 skipped=0
+    FAIL gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06) [133 ms] «TestingLibraryElementError: Unable to find an element with the text: Engorde. This could be because the text i» loading_en_DOM=True
+
+RESUMEN: 8/10 corridas sin fallos
+  1× gaFe02.userBuPanel.test.tsx › muestra identidad, y EMPRESA vs USUARIO como estados separados (AC-UBU-02/03/04)
+  1× gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)

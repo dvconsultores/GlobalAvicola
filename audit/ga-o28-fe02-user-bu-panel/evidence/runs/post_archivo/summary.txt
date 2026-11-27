@@ -1,0 +1,22 @@
+run_1: total=10 passed=10 failed=0 skipped=0
+run_2: total=10 passed=10 failed=0 skipped=0
+run_3: total=10 passed=10 failed=0 skipped=0
+run_4: total=10 passed=10 failed=0 skipped=0
+run_5: total=10 passed=10 failed=0 skipped=0
+run_6: total=10 passed=10 failed=0 skipped=0
+run_7: total=10 passed=10 failed=0 skipped=0
+run_8: total=10 passed=10 failed=0 skipped=0
+run_9: total=10 passed=10 failed=0 skipped=0
+run_10: total=10 passed=10 failed=0 skipped=0
+run_11: total=10 passed=10 failed=0 skipped=0
+run_12: total=10 passed=10 failed=0 skipped=0
+run_13: total=10 passed=10 failed=0 skipped=0
+run_14: total=10 passed=10 failed=0 skipped=0
+run_15: total=10 passed=10 failed=0 skipped=0
+run_16: total=10 passed=10 failed=0 skipped=0
+run_17: total=10 passed=10 failed=0 skipped=0
+run_18: total=10 passed=10 failed=0 skipped=0
+run_19: total=10 passed=10 failed=0 skipped=0
+run_20: total=10 passed=10 failed=0 skipped=0
+
+RESUMEN: 20/20 corridas sin fallos

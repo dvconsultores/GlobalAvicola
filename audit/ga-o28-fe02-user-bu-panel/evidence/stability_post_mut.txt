@@ -1,0 +1,7 @@
+HEAD=906e198 dirty=0 2026-11-27T07:10:10-05:00 carga=4.22 3.27 3.09
+archivo RESUMEN: 20/20 corridas sin fallos
+spec013 RESUMEN: 10/10 corridas sin fallos
+full RESUMEN: 3/3 corridas sin fallos
+tsc rc=0
+build rc=0
+FIN 2026-11-27T07:18:28-05:00

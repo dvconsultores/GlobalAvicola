@@ -1,0 +1,14 @@
+
+ RUN  v4.1.11 /home/maria/Proyectos/GlobalAvicola/frontend
+      Running tests with seed "1003"
+
+ ✓ src/pages/users/__tests__/uatAdminRbac.userBuPanel.test.tsx (4 tests) 549ms
+ ✓ src/pages/users/__tests__/gaFe02.userBuPanel.test.tsx (6 tests) 643ms
+     ✓ revocar pide confirmación, llama DELETE y refetchea (AC-UBU-08/09)  320ms
+
+ Test Files  2 passed (2)
+      Tests  10 passed (10)
+   Start at  06:34:06
+   Duration  2.44s (transform 382ms, setup 147ms, import 1.20s, tests 1.19s, environment 1.83s)
+
+JSON report written to /home/maria/Proyectos/GlobalAvicola/audit/ga-o28-fe02-user-bu-panel/evidence/runs/pre_F_shuffle/run_3.json

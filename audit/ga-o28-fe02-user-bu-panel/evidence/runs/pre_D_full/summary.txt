@@ -1,0 +1,4 @@
+run_1: total=822 passed=822 failed=0 skipped=0
+run_2: total=822 passed=822 failed=0 skipped=0
+
+RESUMEN: 2/2 corridas sin fallos

@@ -1,0 +1,14 @@
+run_1: total=197 passed=197 failed=0 skipped=0
+run_2: total=197 passed=197 failed=0 skipped=0
+run_3: total=197 passed=197 failed=0 skipped=0
+run_4: total=197 passed=197 failed=0 skipped=0
+run_5: total=197 passed=196 failed=1 skipped=0
+    FAIL gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06) [153 ms] «TestingLibraryElementError: Unable to find an element with the text: Engorde. This could be because the text i» loading_en_DOM=True
+run_6: total=197 passed=197 failed=0 skipped=0
+run_7: total=197 passed=197 failed=0 skipped=0
+run_8: total=197 passed=197 failed=0 skipped=0
+run_9: total=197 passed=197 failed=0 skipped=0
+run_10: total=197 passed=197 failed=0 skipped=0
+
+RESUMEN: 9/10 corridas sin fallos
+  1× gaFe02.userBuPanel.test.tsx › conceder llama POST exacto y refetchea las concesiones (AC-UBU-05/06)
