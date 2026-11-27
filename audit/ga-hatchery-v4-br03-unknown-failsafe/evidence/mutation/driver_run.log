@@ -1,0 +1,12 @@
+[BASE backend] rc=0
+================== 64 passed, 3 warnings in 71.50s (0:01:11) ===================
+[M1] MUERTO · §23.1 fosa UNKNOWN tratada como 0
+[M2] MUERTO · §23.2 sucio UNKNOWN tratado como 0
+[M3] MUERTO · §23.3 la suma conocida se usa como saldo exacto
+[M4] MUERTO · §23.4 se elimina el bloqueo de BR-03 por saldo UNKNOWN
+[M5] MUERTO · §23.5 el 0 conocido se trata como UNKNOWN
+[M6] MUERTO · la guarda de retiro de entrada ignora el saldo UNKNOWN
+[M7] MUERTO · la corrección gobernada deja una apertura imposible
+[M8] MUERTO · la corrección no marca el componente como KNOWN
+[M9] MUERTO · V3 histórica tratada como V4 (se bloquearía)
+SOBREVIVIENTES / NO APLICABLES: ninguno

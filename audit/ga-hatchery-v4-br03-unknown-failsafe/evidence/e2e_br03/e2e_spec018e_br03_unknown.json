@@ -1,0 +1,26 @@
+{
+  "inicio": "2026-11-27T11:06:33.365Z",
+  "regla": "SPEC 018 §10 · saldo de apertura exacto (los seis KNOWN) o UNKNOWN; con UNKNOWN BR-03 no autoriza cargas",
+  "BR03-01": {
+    "batch": 21,
+    "lote": 131,
+    "opening_id": 18,
+    "ref": "E2E-BR03-6GXK4SJT",
+    "bloqueo": {
+      "status": 400,
+      "rule": "CUTOVER_BALANCE_INCOMPLETE",
+      "detail": "No se puede determinar el saldo disponible para cargar porque la carga inicial de Incubadora contiene valores desconocidos. Corrija o complete la carga inicial antes de registrar una nueva carga de huevos."
+    },
+    "correccion": {
+      "old_value": null,
+      "new_value": "0"
+    },
+    "carga_600": 201,
+    "carga_401": {
+      "status": 400,
+      "rule": "BR-03"
+    },
+    "saldo_final": 400
+  },
+  "fin": "2026-11-27T11:06:49.405Z"
+}

@@ -1,0 +1,19 @@
+Clasificación de O-28 en GA-HATCHERY-V4-BR03-UNKNOWN-FAILSAFE (26/27-11-2026).
+
+Esta misión NO modifica frontend: git diff 92fa7d3 fd52b90 --stat -- frontend = 0 líneas
+(la entrada de vitest es idéntica byte a byte a la línea base 92fa7d3).
+
+Corridas de vitest completa:
+  pre-commit (árbol de fd52b90 sin commitear, carga ~9.5): 1 failed | 821 passed -> gaFe02.userBuPanel «revocar ... (AC-UBU-08/09)» (no encuentra «Progenitoras»)
+  repetición pre-commit (carga ~9.5):                       1 failed | 821 passed -> gaFe02.userBuPanel «revocar ... (AC-UBU-08/09)»
+  aislado (2 archivos userBuPanel, carga ~9.5):             2 failed | 8 passed  -> gaFe02 «conceder (AC-UBU-05/06)» (no encuentra «Engorde»)
+                                                                                   uatAdminRbac «AC-UI-03» (no encuentra users.businessUnits.companyState)
+  post-mutación (HEAD fd52b90, carga 0.24):                 1 failed | 820 passed | 1 skipped -> gaFe02 «conceder (AC-UBU-05/06)»
+
+El test que falla cambia en cada corrida y siempre es del panel de unidades del usuario
+(getByText síncrono tras una carga asíncrona de catálogos/i18n). Mismo patrón que la clasificación de
+audit/ga-uat-breeder-cria-s2-o23-2026-11-26/evidence/frontend_flaky_baseline_963f536.txt (línea base 963f536, 3 de 3).
+Novedad: ahora también falla aislado y con la máquina descargada => el flake es más frecuente de lo registrado.
+
+Conclusión: PRE_EXISTING_FLAKE O-28, no introducido por esta misión. No se relaja ni se omite ningún test.
+Se recomienda una remediación propia de O-28 (esperar con findBy* la carga del panel).

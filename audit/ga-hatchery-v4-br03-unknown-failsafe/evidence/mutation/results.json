@@ -1,0 +1,90 @@
+{
+  "_meta": {
+    "sha_restauracion": "fd52b9049bf2b88b47ec2b8ea850ac829778fdae",
+    "linea_base_backend": {
+      "rc": 0,
+      "resumen": "================== 64 passed, 3 warnings in 71.50s (0:01:11) ==================="
+    }
+  },
+  "M1": {
+    "capa": "backend",
+    "descripcion": "§23.1 fosa UNKNOWN tratada como 0",
+    "archivo": "backend/app/cutover/saldo_incubadora.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 94,
+    "resumen": "============= 3 failed, 61 passed, 3 warnings in 74.97s (0:01:14) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[fertile_eggs_to_pit-85]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_retiro_de_recepcion_con_saldo_unknown_se_deniega\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown"
+  },
+  "M2": {
+    "capa": "backend",
+    "descripcion": "§23.2 sucio UNKNOWN tratado como 0",
+    "archivo": "backend/app/cutover/saldo_incubadora.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 93,
+    "resumen": "============= 5 failed, 59 passed, 3 warnings in 74.31s (0:01:14) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u01_dirty_unknown_saldo_unknown_y_carga_denegada\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u04_suma_conocida_excedida_se_rechaza\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_dirty-87]\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process"
+  },
+  "M3": {
+    "capa": "backend",
+    "descripcion": "§23.3 la suma conocida se usa como saldo exacto",
+    "archivo": "backend/app/cutover/saldo_incubadora.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 82,
+    "resumen": "============= 9 failed, 55 passed, 3 warnings in 67.00s (0:01:07) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u01_dirty_unknown_saldo_unknown_y_carga_denegada\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u04_suma_conocida_excedida_se_rechaza\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[fertile_eggs_to_pit-85]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_oversized-86]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_dirty-87]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_broken-88]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_retiro_de_recepcion_con_saldo_unknown_se_deniega\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process"
+  },
+  "M4": {
+    "capa": "backend",
+    "descripcion": "§23.4 se elimina el bloqueo de BR-03 por saldo UNKNOWN",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 84,
+    "resumen": "============= 5 failed, 59 passed, 3 warnings in 69.83s (0:01:09) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u01_dirty_unknown_saldo_unknown_y_carga_denegada\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[fertile_eggs_to_pit-85]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_oversized-86]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_dirty-87]\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u05_u06_cualquier_componente_unknown_bloquea[eggs_non_incubable_broken-88]"
+  },
+  "M5": {
+    "capa": "backend",
+    "descripcion": "§23.5 el 0 conocido se trata como UNKNOWN",
+    "archivo": "backend/app/cutover/saldo_incubadora.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 79,
+    "resumen": "============= 5 failed, 59 passed, 3 warnings in 65.57s (0:01:05) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u03_cero_conocido_calcula_y_autoriza\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_06_fosa_cero_conocida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_01_en_proceso_no_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process\nFAILED tests/test_cutover_hatchery_v4.py::test_br03_operativo_incubation_load_sobre_apertura_v4"
+  },
+  "M6": {
+    "capa": "backend",
+    "descripcion": "la guarda de retiro de entrada ignora el saldo UNKNOWN",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 91,
+    "resumen": "============= 1 failed, 63 passed, 3 warnings in 73.93s (0:01:13) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_retiro_de_recepcion_con_saldo_unknown_se_deniega"
+  },
+  "M7": {
+    "capa": "backend",
+    "descripcion": "la corrección gobernada deja una apertura imposible",
+    "archivo": "backend/app/cutover/opening_corrections.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 71,
+    "resumen": "================== 1 failed, 63 passed, 2 warnings in 58.52s ===================\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u04_suma_conocida_excedida_se_rechaza"
+  },
+  "M8": {
+    "capa": "backend",
+    "descripcion": "la corrección no marca el componente como KNOWN",
+    "archivo": "backend/app/cutover/opening_corrections.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 73,
+    "resumen": "============= 3 failed, 61 passed, 3 warnings in 60.16s (0:01:00) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u02_corregir_dirty_700_da_saldo_300\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u03_cero_conocido_calcula_y_autoriza\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_u04_suma_conocida_excedida_se_rechaza"
+  },
+  "M9": {
+    "capa": "backend",
+    "descripcion": "V3 histórica tratada como V4 (se bloquearía)",
+    "archivo": "backend/app/cutover/saldo_incubadora.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 73,
+    "resumen": "============= 1 failed, 63 passed, 2 warnings in 61.96s (0:01:01) ==============\nFAILED tests/test_cutover_hatchery_v4_br03_unknown.py::test_br03_v3_historica_no_se_bloquea"
+  }
+}
