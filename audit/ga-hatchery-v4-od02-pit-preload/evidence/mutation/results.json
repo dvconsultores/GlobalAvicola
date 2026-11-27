@@ -1,0 +1,121 @@
+{
+  "_meta": {
+    "sha_restauracion": "8b288b22bd5ae573c209643db7f6dc1a7e3ac41f",
+    "linea_base_backend": {
+      "rc": 0,
+      "resumen": "======================== 62 passed, 1 warning in 20.02s ========================"
+    },
+    "linea_base_frontend": {
+      "rc": 0,
+      "resumen": " Test Files  1 passed (1)\n      Tests  18 passed (18)"
+    }
+  },
+  "M1": {
+    "capa": "backend",
+    "descripcion": "§33.1 la fosa vuelve a restarse de eggs_in_process (derivado)",
+    "archivo": "backend/app/cutover/validation.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 26,
+    "resumen": "=================== 6 failed, 56 passed, 1 warning in 19.59s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_01_en_proceso_no_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_03_fosa_grande_con_todo_transferido_en_proceso_cero\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_doble_conteo_fosa_solo_en_la_etapa_pre_carga\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_o15_agregado_en_proceso_sigue_unknown\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa\nFAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas"
+  },
+  "M2": {
+    "capa": "backend",
+    "descripcion": "§33.2 se elimina la fosa de la ecuación pre-carga",
+    "archivo": "backend/app/cutover/validation.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 26,
+    "resumen": "=================== 8 failed, 54 passed, 1 warning in 19.55s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_01_saldo_disponible_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_02_suma_igual_a_recibidos_es_valida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_03_suma_mayor_que_recibidos_se_rechaza\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_04_fosa_mayor_que_recibidos\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_doble_conteo_fosa_solo_en_la_etapa_pre_carga\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_fosa_acotada_por_lo_recibido\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa"
+  },
+  "M3": {
+    "capa": "backend",
+    "descripcion": "§33.3 `<=` pasa a `<` (la igualdad se rechaza)",
+    "archivo": "backend/app/cutover/validation.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 23,
+    "resumen": "================== 13 failed, 49 passed, 1 warning in 16.66s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_02_suma_igual_a_recibidos_es_valida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_03_suma_mayor_que_recibidos_se_rechaza\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_04_fosa_mayor_que_recibidos\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_v3_historica_no_cambia\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_07_consistencia_sin_igualdad_forzada\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_fosa_acotada_por_lo_recibido\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_09_apply_persiste_componentes_y_estados\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_10_no_double_count_en_br03_ni_en_eggs_in_process\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_11_registro_v3_historico_sigue_legible_sin_reparto\nFAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_06_summary_de_incubadora_con_dos_filas\nFAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_07_summary_chicks_available\nFAILED tests/test_cutover_hatchery_v4_o15.py::test_o15_09_chicks_available_na_no_propaga"
+  },
+  "M4": {
+    "capa": "backend",
+    "descripcion": "§33.4 `<=` pasa a `>=`",
+    "archivo": "backend/app/cutover/validation.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 21,
+    "resumen": "================== 23 failed, 39 passed, 1 warning in 15.70s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_01_saldo_disponible_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_02_suma_igual_a_recibidos_es_valida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_03_suma_mayor_que_recibidos_se_rechaza\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_04_fosa_mayor_que_recibidos\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_06_fosa_cero_conocida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_01_en_proceso_no_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_02_03_transferidos_contra_cargados_sin_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_03_fosa_grande_con_todo_transferido_en_proceso_cero\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_doble_conteo_fosa_solo_en_la_etapa_pre_carga\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_o15_agregado_en_proceso_sigue_unknown\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_v3_historica_no_cambia\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_06_total_no_incubable_derivado_y_detalle\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_07_consistencia_sin_igualdad_forzada\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_fosa_acotada_por_lo_recibido"
+  },
+  "M5": {
+    "capa": "backend",
+    "descripcion": "§33.5 UNKNOWN se convierte en 0 (saldo disponible)",
+    "archivo": "backend/app/cutover/validation.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 25,
+    "resumen": "=================== 1 failed, 61 passed, 1 warning in 18.86s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown"
+  },
+  "M6": {
+    "capa": "backend",
+    "descripcion": "reconciliación: la fosa vuelve a restarse de en proceso",
+    "archivo": "backend/app/cutover/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 26,
+    "resumen": "=================== 3 failed, 59 passed, 1 warning in 19.67s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_01_en_proceso_no_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_doble_conteo_fosa_solo_en_la_etapa_pre_carga\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_pipeline_completo_con_fosa"
+  },
+  "M7": {
+    "capa": "backend",
+    "descripcion": "reconciliación: el disponible no resta la fosa",
+    "archivo": "backend/app/cutover/service.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 26,
+    "resumen": "=================== 5 failed, 57 passed, 1 warning in 19.76s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_01_saldo_disponible_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_02_suma_igual_a_recibidos_es_valida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_01_en_proceso_no_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_doble_conteo_fosa_solo_en_la_etapa_pre_carga"
+  },
+  "M8": {
+    "capa": "backend",
+    "descripcion": "BR-03 operativo no resta la fosa",
+    "archivo": "backend/app/operations/validators.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 27,
+    "resumen": "=================== 4 failed, 58 passed, 1 warning in 20.48s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_01_saldo_disponible_resta_la_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_02_suma_igual_a_recibidos_es_valida\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_05_fosa_unknown_saldo_unknown\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_doble_conteo_fosa_solo_en_la_etapa_pre_carga"
+  },
+  "M9": {
+    "capa": "backend",
+    "descripcion": "vuelve la regla superada transferidos + fosa ≤ cargados",
+    "archivo": "backend/app/cutover/validation.py",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 27,
+    "resumen": "=================== 4 failed, 58 passed, 1 warning in 20.53s ===================\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_preload_04_fosa_mayor_que_recibidos\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_02_03_transferidos_contra_cargados_sin_fosa\nFAILED tests/test_cutover_hatchery_v4_od02.py::test_pit_post_03_fosa_grande_con_todo_transferido_en_proceso_cero\nFAILED tests/test_cutover_hatchery_v4.py::test_ac_v4_08_fosa_acotada_por_lo_recibido"
+  },
+  "F1": {
+    "capa": "frontend",
+    "descripcion": "preview: la columna de saldo pinta otro derivado",
+    "archivo": "frontend/src/pages/cutover/CargasInicialesPage.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 4,
+    "resumen": " Test Files  1 failed (1)\n      Tests  2 failed | 16 passed (18)\n× a) preview en dos etapas: recibidos → no incubables → fosa → cargados → saldo → transferidos → en proceso 117ms\n× b) preview con fosa vacía: saldo disponible UNKNOWN (nunca 1.000) y en proceso numérico 102ms\nFAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §9 · fosa pre-carga en la UI (OD-HATCH-V4-02 ratificado) > a) preview en dos etapas: recibidos → no incubables → fosa → cargados → saldo → transferidos → en proceso\nFAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §9 · fosa pre-carga en la UI (OD-HATCH-V4-02 ratificado) > b) preview con fosa vacía: saldo disponible UNKNOWN (nunca 1.000) y en proceso numérico"
+  },
+  "F2": {
+    "capa": "frontend",
+    "descripcion": "preview: el saldo deja la etapa pre-carga (tras recibidos)",
+    "archivo": "frontend/src/pages/cutover/CargasInicialesPage.tsx",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 4,
+    "resumen": " Test Files  1 failed (1)\n      Tests  1 failed | 17 passed (18)\n× a) preview en dos etapas: recibidos → no incubables → fosa → cargados → saldo → transferidos → en proceso 116ms\nFAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §9 · fosa pre-carga en la UI (OD-HATCH-V4-02 ratificado) > a) preview en dos etapas: recibidos → no incubables → fosa → cargados → saldo → transferidos → en proceso"
+  },
+  "F3": {
+    "capa": "frontend",
+    "descripcion": "i18n: la fosa vuelve a rotularse post-carga",
+    "archivo": "frontend/public/locales/es/translation.json",
+    "estado": "MUERTO",
+    "rc": 1,
+    "segundos": 4,
+    "resumen": " Test Files  1 failed (1)\n      Tests  1 failed | 17 passed (18)\n× e) i18n: la fosa se rotula pre-carga en ES y EN (ya no post-carga) 21ms\nFAIL  src/__tests__/cutoverHatcheryV4.test.tsx > SPEC 018 §9 · fosa pre-carga en la UI (OD-HATCH-V4-02 ratificado) > e) i18n: la fosa se rotula pre-carga en ES y EN (ya no post-carga)"
+  }
+}
