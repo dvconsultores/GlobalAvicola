@@ -207,13 +207,14 @@ export function filasPorBu(bu: Bu, m: MaestrosCutover, ref: string): Record<stri
   if (bu === 'hatchery') {
     // SPEC 018 · contrato V4 (23 columnas): `eggs_discarded` **ya no pertenece** a incubadora y se
     // sustituye por el desglose de no incubables + los huevos fértiles enviados a fosa. Los tres
-    // componentes son KNOWN (500 + 300 + 200 = 1000 derivados) y la fosa es 25 ≠ 0: por SPEC 018
-    // §7 · D-12 (OD-HATCH-V4-01 RATIFIED) el `eggs_in_process` derivado es 9 000 − 0 − 25 = 8 975.
+    // componentes son KNOWN (500 + 300 + 200 = 1000 derivados) y la fosa es un cero conocido: por SPEC
+    // 018 §9 · D-21 (OD-HATCH-V4-02, fosa PRE-CARGA) recibidos 10 000 = cargados 9 000 + 1 000 + fosa 0.
+    // Un escenario con fosa > 0 debe bajar los cargados o los no incubables.
     return [{
       legacy_lot_code: ref, hatchery_code: m.hatcheryCode, incubator_name: m.incubatorName, hatcher_name: m.hatcherName,
       generation: 'breeder', egg_origin: 'internal', reception_date: haceDias(50), set_date: haceDias(48), expected_hatch_date: haceDias(27),
       eggs_received: 10000, eggs_set: 9000, eggs_non_incubable_oversized: 500, eggs_non_incubable_dirty: 300,
-      eggs_non_incubable_broken: 200, eggs_transferred: 0, fertile_eggs_to_pit: 25, chicks_hatched: 0, chicks_available: 0,
+      eggs_non_incubable_broken: 200, eggs_transferred: 0, fertile_eggs_to_pit: 0, chicks_hatched: 0, chicks_available: 0,
       source_system: 'LEGACY', source_reference: `E2E-${ref}`,
     }]
   }

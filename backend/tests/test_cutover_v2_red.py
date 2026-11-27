@@ -227,9 +227,9 @@ async def test_red_05_incubadora_representada_y_aplicada(auth_headers, client, h
         assert ob.chicks_hatched_status == "KNOWN" and ob.accumulated_chicks_hatched == 0
         fase = (await s.execute(select(LotPhase).where(LotPhase.lot_id == lote))).scalar_one()
         assert fase.phase_id == ids["INCUB"] and fase.is_active
-        # SPEC 018 · D-4/AC-V4-10 + §7 D-12: los no incubables restan UNA sola vez, en el saldo
-        # recibido→cargado (10000 − 9000 − 1000), no en `eggs_in_process` (= `set − transferred − fosa`;
-        # aquí con fosa 0 KNOWN sigue siendo `set − transferred`).
+        # SPEC 018 · D-4/AC-V4-10 + §9 D-24/D-25: no incubables y fosa (PRE-CARGA) restan UNA sola vez,
+        # en el saldo recibido→cargado (10000 − 9000 − 1000 − fosa 0), no en `eggs_in_process`
+        # (= `set − transferred`).
         assert await get_hatchery_egg_balance(s, lote) == 0
 
 

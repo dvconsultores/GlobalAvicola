@@ -227,8 +227,13 @@ async def get_hatchery_egg_balance(db: AsyncSession, lot_id: int) -> int:
         for campo in ("eggs_non_incubable_oversized", "eggs_non_incubable_dirty", "eggs_non_incubable_broken")
     ]
     no_incubables = sum(componentes[1:], componentes[0])
+    # SPEC 018 §9 · D-25 (OD-HATCH-V4-02): la fosa es PRE-CARGA y también sale del huevo recibido;
+    # como los no incubables, solo se resta si es KNOWN (un UNKNOWN no se inventa: cota superior).
+    fosa = case((HatcheryOpening.fertile_eggs_to_pit_status == "KNOWN",
+                 func.coalesce(HatcheryOpening.fertile_eggs_to_pit, 0)), else_=0)
     apertura = (await db.execute(
-        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0) - no_incubables)
+        select(func.coalesce(HatcheryOpening.eggs_received, 0) - func.coalesce(HatcheryOpening.eggs_set, 0)
+               - no_incubables - fosa)
         .where(HatcheryOpening.lot_id == lot_id)
     )).scalar() or 0
     return int(apertura) + (res_in.scalar() or 0) - (res_out.scalar() or 0)

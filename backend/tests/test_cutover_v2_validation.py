@@ -147,9 +147,9 @@ async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_id
              fila_incubadora("V-C8", eggs_non_incubable_broken=1001),
              fila_incubadora("V-C9", eggs_transferred=5000, chicks_hatched=5001),
              fila_incubadora("V-C10", eggs_transferred=500, chicks_hatched=100, chicks_available=101),
-             # SPEC 018 · D-4 + §7 D-13 (OD-HATCH-V4-01 RATIFIED): cada no incubable se acota
-             # contra lo recibido y la fosa POST-CARGA contra lo cargado (aquí 10001 > set 9000 ⇒ un
-             # solo error en `fertile_eggs_to_pit`, sin doble reporte).
+             # SPEC 018 · D-4 + §9 D-21 (OD-HATCH-V4-02 RATIFIED): cada salida PRE-CARGA (no
+             # incubables y fosa) se acota contra lo recibido (aquí fosa 10001 > 10000 ⇒ un solo
+             # error en `fertile_eggs_to_pit`, sin doble reporte).
              fila_incubadora("V-C11", eggs_non_incubable_dirty=10001),
              fila_incubadora("V-C12", fertile_eggs_to_pit=10001)]
     _, errores = await _errores(http_client, auth_headers, "hatchery", filas, seeded_ids["company_id"], 64)
@@ -165,7 +165,7 @@ async def test_consistencia_sin_tolerancias(auth_headers, http_client, seeded_id
              fila_incubadora("V-C15", eggs_set=8800, eggs_non_incubable_broken=None,
                              eggs_non_incubable_dirty=None, eggs_non_incubable_oversized=500),     # 8800 + 500 ≤ 10000
              fila_incubadora("V-C16", eggs_non_incubable_oversized=900, eggs_non_incubable_dirty=None,
-                             eggs_non_incubable_broken=None, fertile_eggs_to_pit=1000)]           # 9000 + 900 ≤ 10000
+                             eggs_non_incubable_broken=None, fertile_eggs_to_pit=100)]            # 9000 + 900 + 100 ≤ 10000
     cuerpo, errores = await _errores(http_client, auth_headers, "hatchery", filas, seeded_ids["company_id"], 64)
     assert errores == [] and cuerpo["valid_rows"] == 4, (cuerpo, errores)
 
