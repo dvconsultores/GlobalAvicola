@@ -1,0 +1,23 @@
+GA-UAT-YOLINEL-STALE-ARTIFACT-INCIDENT · evidencia de registro y contenido (2026-11-28, sin credenciales ni tokens)
+
+Docker Hub dvconsultores/globalavicola-backend (digest del índice OCI):
+  dev          = sha256:a8948d0b1861486a24b36af36924532334b290b5aec1c86b2d4bf3bfe1a357d5  (publicado 2026-11-27T12:20:27Z)
+  sha-28fa481  = sha256:a8948d0b1861486a24b36af36924532334b290b5aec1c86b2d4bf3bfe1a357d5  => dev == sha-28fa481
+  latest       = sha256:b291329d8c008f7cfa96aa0d29e0a94d3ad4e8a93f9a3471d0417504ae1b9e73  (publicado 2026-11-27T23:16:39Z = 19:16 Caracas)
+  sha-0d17b21  = sha256:b291329d8c008f7cfa96aa0d29e0a94d3ad4e8a93f9a3471d0417504ae1b9e73  => latest == sha-0d17b21
+Frontend (Docker Hub API de tags): dev = sha-28fa481 (d6193187ca7b), latest = sha-0d17b21 (a394a600e6a4).
+
+Git: 28fa481^{tree} == 0d17b21^{tree} == 54765d13fd76 (el merge del PR #3 no cambia ningún archivo respecto de develop).
+
+Contenido de las imágenes backend (capas descargadas por la API pública del registro, linux/amd64):
+  dev    : diff -rq backend/app(repo 28fa481) vs /app/app de la imagen => SIN DIFERENCIAS
+  latest : diff -rq backend/app(repo 28fa481) vs /app/app de la imagen => SIN DIFERENCIAS
+  contracts.py (ambas): «…huevos fértiles recibidos que fueron enviados a fosa antes de la carga en incubadora… ya no forma parte de los huevos cargados. Concepto PRE-CARGA…»; ocurrencias de «POST-CARGA|YA CARGADOS» = 0
+Plantilla generada con el código del repo (construir_plantilla('hatchery')): hoja Instrucciones con el mismo texto PRE-CARGA.
+
+Frontend público https://avicola.globaldv.net:
+  /locales/es/translation.json == repo 28fa481 byte a byte (sha256 ba7f9465706e9d63); huellas «Sin lote (nivel granja)», «Sin valor», «Saldo disponible para cargar» PRESENTES
+  /assets/index-Bq8gfawu.js contiene identificadores ausentes en 1587073: cutover-preview-available-, cutover-eggs-available-, noLotFarmLevel, corrections.noValue
+  (los nombres de assets difieren de un build local: el build de CI inyecta GIT_SHA/BUILD_TIME; no se usa como prueba)
+
+No accesible desde esta sesión: host UAT (SSH denegado por política en sesiones previas), digest del contenedor en ejecución, config del proxy (openresty), URL de producción, credenciales de UAT (la clave QA de SPEC 007 ya no existe en /tmp).

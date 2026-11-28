@@ -1,0 +1,12 @@
+Huellas de contenido en producción (2026-11-28T06:33:35-05:00):
+  bundle noLotFarmLevel: 0
+  bundle corrections.noValue: 0
+  bundle cutover-preview-available-: 0
+  bundle cutover-eggs-available-: 0
+  locales «Sin lote (nivel granja)»: 0
+  locales «Sin valor»: 0
+  locales «Saldo disponible para cargar»: 0
+  translation.json == repo 8531d95: SI
+  texto fosa en contracts.py de 8531d95:
+Cantidad acumulada de huevos YA CARGADOS en incubación que fueron retirados a fosa (huevos fértiles) durante la incubación/ovoscopia, antes de continuar a na
+  commits de producto entre 8531d95 y 0d17b21: 39

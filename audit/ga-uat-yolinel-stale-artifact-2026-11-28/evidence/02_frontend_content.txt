@@ -1,0 +1,4 @@
+translation.json sha256 público: ba7f9465706e9d63  repo 28fa481: ba7f9465706e9d63  IGUAL
+  huella «Sin lote (nivel granja)»: PRESENTE
+  huella «Sin valor»: PRESENTE
+  huella «Saldo disponible para cargar»: PRESENTE

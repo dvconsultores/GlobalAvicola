@@ -1,0 +1,13 @@
+== 2026-11-28T06:33:10-05:00 https://avicola.liderpollo.online
+DNS: 198.199.71.8 
+req1 backend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:03Z","environment":"production"} frontend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:06Z"}
+req2 backend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:03Z","environment":"production"} frontend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:06Z"}
+req3 backend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:03Z","environment":"production"} frontend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:06Z"}
+req4 backend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:03Z","environment":"production"} frontend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:06Z"}
+req5 backend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:03Z","environment":"production"} frontend={"git_sha":"8531d95451f7b67b9cb3c9325c491dfd55eec45f","build_time":"2026-11-21T18:21:06Z"}
+HEADERS /:
+Server: openresty
+Last-Modified: Sat, 21 Nov 2026 18:21:19 GMT
+ETag: "6b01e11f-322"
+X-Served-By: avicola.liderpollo.online
+assets: /assets/index-5TjrTTDK.css /assets/index-D4wCod6I.js /assets/rolldown-runtime-QTnfLwEv.js 

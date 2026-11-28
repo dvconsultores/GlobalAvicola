@@ -1,0 +1,19 @@
+Veredicto (2026-11-28 06:35 -05:00)
+
+Ambiente de Yolinel = PRODUCCIÓN https://avicola.liderpollo.online (198.199.71.8, openresty, environment=production).
+Prueba de contenido: el contracts.py del SHA que sirve producción (8531d95) contiene literalmente el texto de su captura
+(«Cantidad acumulada de huevos YA CARGADOS en incubación que fueron retirados a fosa ... durante la incubación/ovoscopia ...»).
+
+Producción sirve 8531d95 (build 2026-11-21T18:21Z) en backend y frontend, 5/5 peticiones; bundle y locales sin ninguna huella
+de SPEC 020 / O-23 / OD-02 / BR-03; translation.json == 8531d95 byte a byte.
+
+Línea de tiempo de main / :latest:
+  2026-11-21 18:21Z  8531d95 desplegado en producción (último despliegue observado)
+  2026-11-22 20:38 -04 PR #2 -> main 1587073 (3 commits de producto)  -> NO desplegado en producción
+  2026-11-27 19:16 -04 PR #3 -> main 0d17b21 (:latest publicado 23:16Z, contenido == repo verificado) -> NO desplegado en producción
+  39 commits de producto entre 8531d95 y 0d17b21; 1 migración nueva: i4d5e6f7a8b9_spec020_owner_decisions
+  (aditiva: feed_movements.phase_id NULL sin backfill + siembra idempotente de causa compartida «Desconocida»;
+   la aplica el entrypoint con `alembic upgrade head`).
+
+Causa: STALE_DOCKER_IMAGE en producción (el servidor no recrea los contenedores con :latest desde el 21/11).
+UAT (avicola.globaldv.net) es correcto: 28fa481, contenido verificado.

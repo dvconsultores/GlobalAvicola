@@ -1,0 +1,25 @@
+== 2026-11-28T06:29:01-05:00
+DNS:
+84.247.161.106
+
+req1 backend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:18Z","environment":"development"} frontend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:13Z"}
+req2 backend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:18Z","environment":"development"} frontend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:13Z"}
+req3 backend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:18Z","environment":"development"} frontend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:13Z"}
+req4 backend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:18Z","environment":"development"} frontend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:13Z"}
+req5 backend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:18Z","environment":"development"} frontend={"git_sha":"28fa481971f3a39aee5adcb1154f2969a164e6fd","build_time":"2026-11-27T12:20:13Z"}
+
+HEADERS /:
+Server: openresty
+Last-Modified: Fri, 27 Nov 2026 12:20:34 GMT
+ETag: "6b097592-322"
+X-Frame-Options: SAMEORIGIN
+X-Content-Type-Options: nosniff
+X-XSS-Protection: 1; mode=block
+X-Served-By: avicola.globaldv.net
+HEADERS /version.json:
+Server: openresty
+Last-Modified: Fri, 27 Nov 2026 12:20:34 GMT
+ETag: "6b097592-5a"
+Cache-Control: no-store
+X-Content-Type-Options: nosniff
+X-Served-By: avicola.globaldv.net
